@@ -1,0 +1,21 @@
+language: php
+services: docker
+
+php:
+  - 5.6
+  - 7.2
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+install:
+  - composer install
+
+script:
+  # PHP syntax check
+  - bash -c '! (find . -name "*.php" ! -path "./vendor/*" -print0 | xargs -0 -n1 -P4 php -l | grep "Parse error")'
+  # PHP cs fixer
+  - vendor/bin/php-cs-fixer fix --no-interaction --dry-run --diff --rules=@PSR2 tests #classes controllers
+  # PHP Unit
+  - vendor/bin/phpunit tests
