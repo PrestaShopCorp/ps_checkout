@@ -34,7 +34,8 @@ class Prestashoppayments extends PaymentModule
 {
     public $hookList = [
         'paymentOptions',
-        'paymentReturn'
+        'paymentReturn',
+        'actionFrontControllerSetMedia'
     ];
 
     public function __construct()
@@ -71,11 +72,11 @@ class Prestashoppayments extends PaymentModule
     public function hookPaymentOptions($params)
     {
         if (!$this->active) {
-            return;
+            return false;
         }
 
         if (!$this->checkCurrency($params['cart'])) {
-            return;
+            return false;
         }
 
         $payment_options = [
@@ -133,5 +134,19 @@ class Prestashoppayments extends PaymentModule
         }
 
         return false;
+    }
+
+    public function hookActionFrontControllerSetMedia()
+    {
+        $currentPage = $this->context->controller->php_self;
+
+        if ($currentPage != 'order') {
+            return false;
+        }
+
+        $this->registerJavascript(
+            'prestashoppayments-paypal-api',
+            'modules/'.$this->module->name.'/views/js/api-paypal.js'
+        );
     }
 }
