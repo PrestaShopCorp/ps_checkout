@@ -144,9 +144,18 @@ class Prestashoppayments extends PaymentModule
             return false;
         }
 
-        $this->registerJavascript(
+        $this->context->controller->registerJavascript(
+            'prestashoppayments-axios',
+            'https://unpkg.com/axios/dist/axios.min.js',
+            [
+                'server' => 'remote',
+                'position' => 'head'
+            ]
+        );
+
+        $this->context->controller->registerJavascript(
             'prestashoppayments-paypal-api',
-            'modules/'.$this->module->name.'/views/js/api-paypal.js'
+            'modules/'.$this->name.'/views/js/api-paypal.js'
         );
     }
 }

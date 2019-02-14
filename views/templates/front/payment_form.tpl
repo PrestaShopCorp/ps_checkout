@@ -25,10 +25,7 @@
 
 <section class="additional-information">
 
-    {* <script src="https://paypal.com/sdk/js?client-id=<client_id>&components=buttons,hosted-fields"></script> *}
-    <script src="https://www.paypal.com/sdk/js?components=hosted-fields&client-id=<client_id>"
-    data-client-token="<client_token>">
-    </script>
+    <script id="paypalSdk" src="https://www.paypal.com/sdk/js?components=hosted-fields&client-id=<client_id>"></script>
 
     <form action="{$action}" id="payment-form">
 
