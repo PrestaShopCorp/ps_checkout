@@ -12,9 +12,11 @@
       "phpunit/phpunit": "~5.7"
   },
   "autoload": {
-      "classmap": []
+      "psr-4": {
+          "PrestaShop\\Module\\PrestashopPayment\\": "classes/"
+      }
   },
   "require": {
-    "friendsofphp/php-cs-fixer": "^2.14"
+      "friendsofphp/php-cs-fixer": "^2.14"
   }
 }

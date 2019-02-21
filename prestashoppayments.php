@@ -25,6 +25,9 @@
 */
 
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+use PrestaShop\Module\PrestashopPayment\Api\Maasland;
+
+require_once __DIR__ . '/vendor/autoload.php';
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -80,7 +83,7 @@ class Prestashoppayments extends PaymentModule
         }
 
         $payment_options = [
-            $this->getPaypalPaymentOption(),
+            // $this->getPaypalPaymentOption(),
             $this->getHostedFieldPaymentOption()
         ];
 
@@ -117,6 +120,10 @@ class Prestashoppayments extends PaymentModule
 
     public function generateHostedFieldsForm()
     {
+        $this->context->smarty->assign(array(
+            'clientToken' => (new Maasland)->getClientToken()
+        ));
+
         return $this->context->smarty->fetch('module:prestashoppayments/views/templates/front/payment_form.tpl');
     }
 
@@ -156,6 +163,11 @@ class Prestashoppayments extends PaymentModule
         $this->context->controller->registerJavascript(
             'prestashoppayments-paypal-api',
             'modules/'.$this->name.'/views/js/api-paypal.js'
+        );
+
+        $this->context->controller->registerStylesheet(
+            'prestashoppayments-css-hostedfields',
+            'modules/'.$this->name.'/views/css/hostedFields.css'
         );
     }
 }

@@ -25,16 +25,17 @@
 
 <section class="additional-information">
 
-    <script id="paypalSdk" src="https://www.paypal.com/sdk/js?components=hosted-fields&client-id=<client_id>"></script>
+    <script id="paypalSdk" src="https://www.paypal.com/sdk/js?components=hosted-fields&client-id=<client_id>&intent=capture&debug=true&currency=EUR"
+        data-client-token="{$clientToken|escape:'htmlall':'UTF-8'}">
+    </script>
 
-    <form action="{$action}" id="payment-form">
+    <form id="hosted-fields-form">
 
         <div class="form-group row">
             <div class="col-md-8">
                 <label for="card-number" class="form-control-label required">{l s='Card number' mod='prestashoppayments'}</label>
                 <div id="card-number"></div>
             </div>
-            {* <div class="col-md-3 form-control-comment"></div> *}
         </div>
 
         <div class="form-group row">
@@ -46,7 +47,6 @@
                 <label for="cvv" class="form-control-label required">{l s='CVC' mod='prestashoppayments'}</label>
                 <div id="cvv"></div>
             </div>
-            {* <div class="col-md-3 form-control-comment"></div> *}
         </div>
 
     </form>
