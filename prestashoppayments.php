@@ -145,6 +145,8 @@ class Prestashoppayments extends PaymentModule
 
     public function hookActionFrontControllerSetMedia()
     {
+        dump((new Maasland)->createOrder());
+        die('test');
         $currentPage = $this->context->controller->php_self;
 
         if ($currentPage != 'order') {

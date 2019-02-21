@@ -69,22 +69,21 @@ class Maasland
         return $data['client_token'];
     }
 
-    public function createOrder($payload)
+    public function createOrder($payload = array())
     {
-        $route = '/v2/checkout/orders/';
+        // $route = '/v2/checkout/orders/';
 
         $client = new Client();
-        $response = $client->post($this->paypalApi . $route, [
+        $response = $client->post('http://127.0.0.1:8000/payments/order/create', [
             'headers' =>
             [
-                'Authorization' => 'Bearer ' . $this->getAccessToken(),
                 'Content-Type' => 'application/json',
-                'Prefer' => 'return=representation'
+                'Accept' => 'application/json'
             ],
         ]);
 
         $data = json_decode($response->getBody(), true);
 
-        return $data['client_token'];
+        return $data;
     }
 }
