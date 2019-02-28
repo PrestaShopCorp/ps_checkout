@@ -31,6 +31,7 @@ use GuzzleHttp\Client;
 class Maasland
 {
     private $paypalApi = 'https://api.sandbox.paypal.com';
+    private $maaslandApi = 'http://172.17.0.1:8000';
 
     public function getAccessToken()
     {
@@ -71,15 +72,15 @@ class Maasland
 
     public function createOrder($payload = array())
     {
-        // $route = '/v2/checkout/orders/';
+        $route = '/payments/order/create';
 
         $client = new Client();
-        $response = $client->post('http://127.0.0.1:8000/payments/order/create', [
+        $response = $client->post($this->maaslandApi . $route, [
             'headers' =>
             [
                 'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
             ],
+            'body' => $payload
         ]);
 
         $data = json_decode($response->getBody(), true);
