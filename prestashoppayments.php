@@ -251,10 +251,10 @@ class Prestashoppayments extends PaymentModule
                     'given_name' => $invoiceAddress->lastname,
                     'surname' => $invoiceAddress->firstname
                 ],
-                'email_address' => ,
-                'payer_id' => '',
-                'phone' => ,
-                'birth_date' => ,
+                // 'email_address' => ,
+                // 'payer_id' => '',
+                // 'phone' => ,
+                // 'birth_date' => ,
                 'address' => [
                     'address_line_1' => $invoiceAddress->address1,
                     'address_line_2' => $invoiceAddress->address1,
