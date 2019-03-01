@@ -27,61 +27,112 @@
 namespace PrestaShop\Module\PrestashopPayment\Api;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 class Maasland
 {
     private $paypalApi = 'https://api.sandbox.paypal.com';
     private $maaslandApi = 'http://172.17.0.1:8000';
 
+    /**
+     * @var Client
+     */
+    private $client;
+
+    public function __construct(Client $client = null) {
+        // Client can be provided for tests
+        if (null === $client) {
+            $client = new Client();
+        }
+        $this->client = $client;
+    }
+
+    /**
+     * Generate access token from api
+     * 
+     * @return bool|string access token or false in case of error.
+     */
     public function getAccessToken()
     {
         $route = '/v1/oauth2/token';
 
-        $client = new Client();
-        $response = $client->post($this->paypalApi . $route, [
-            'headers' =>
-            [
-                'Content-Type' => 'application/x-www-form-urlencoded',
-            ],
-            'body' => 'grant_type=client_credentials',
-            'auth' => ['<username>', '<password>', 'basic']
-        ]);
+        try {
+            $response = $this->client->post($this->paypalApi . $route, [
+                'headers' =>
+                [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                ],
+                'body' => 'grant_type=client_credentials',
+                'auth' => ['<user>', '<password>', 'basic']
+            ]);
+        }
+        catch (ClientException $e) {
+            // TODO: Log the error ? Return an error message ?
+            return false;
+        }
 
         $data = json_decode($response->getBody(), true);
 
-        return $data['access_token'];
+        return isset($data['access_token']) ? $data['access_token'] : false;
     }
 
+    /**
+     * Generate client token in order to display hosted fields and payment by paypal. (needed by paypal sdk)
+     * 
+     * @return bool|string client token or false if error occured
+     */
     public function getClientToken()
     {
         $route = '/v1/identity/generate-token';
 
-        $client = new Client();
-        $response = $client->post($this->paypalApi . $route, [
-            'headers' =>
-            [
-                'Authorization' => 'Bearer ' . $this->getAccessToken(),
-                'Content-Type' => 'application/json'
-            ],
-        ]);
+        $accessToken = $this->getAccessToken();
+        if ($accessToken === false) {
+            return false;
+        }
+
+        try {
+            $response = $this->client->post($this->paypalApi . $route, [
+                'headers' =>
+                [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Content-Type' => 'application/json'
+                ],
+            ]);
+        }
+        catch (ClientException $e) {
+            // TODO: Log the error ? Return an error message ?
+            return false;
+        }
 
         $data = json_decode($response->getBody(), true);
 
-        return $data['client_token'];
+        return isset($data['client_token']) ? $data['client_token'] : false;
     }
 
+    /**
+     * Create order to paypal api
+     * 
+     * @param array Cart details
+     * 
+     * @return array|bool data with paypal order id or false if error
+     */
     public function createOrder($payload = array())
     {
         $route = '/payments/order/create';
 
-        $client = new Client();
-        $response = $client->post($this->maaslandApi . $route, [
-            'headers' =>
-            [
-                'Content-Type' => 'application/json',
-            ],
-            'body' => $payload
-        ]);
+        try {
+            $response = $this->client->post($this->maaslandApi . $route, [
+                'headers' =>
+                [
+                    'Content-Type' => 'application/json',
+                ],
+                'body' => $payload
+            ]);
+        }
+        catch (ClientException $e) {
+            // TODO: Log the error ? Return an error message ?
+            return false;
+        }
 
         $data = json_decode($response->getBody(), true);
 
