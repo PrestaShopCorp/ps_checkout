@@ -70,8 +70,8 @@ $(document).ready(function() {
 
     function initHostedFields() {
     //check whether hosted fields is eligible for that Partner Account
-    // if (paypal.HostedFields.isEligible())
-    // {
+    if (paypal.HostedFields.isEligible())
+    {
         // render hosted fields
         paypal.HostedFields.render({
             paymentsSDK: true,
@@ -135,6 +135,7 @@ $(document).ready(function() {
             });
         });
     }
+}
 
 
 let getAccessToken = {

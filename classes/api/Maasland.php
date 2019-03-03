@@ -32,7 +32,7 @@ use GuzzleHttp\Exception\ClientException;
 class Maasland
 {
     private $paypalApi = 'https://api.sandbox.paypal.com';
-    private $maaslandApi = 'http://172.17.0.1:8000';
+    private $maaslandApi = 'http://10.0.75.1:8000';
 
     /**
      * @var Client
@@ -49,7 +49,7 @@ class Maasland
 
     /**
      * Generate access token from api
-     * 
+     *
      * @return bool|string access token or false in case of error.
      */
     public function getAccessToken()
@@ -78,7 +78,7 @@ class Maasland
 
     /**
      * Generate client token in order to display hosted fields and payment by paypal. (needed by paypal sdk)
-     * 
+     *
      * @return bool|string client token or false if error occured
      */
     public function getClientToken()
@@ -111,10 +111,10 @@ class Maasland
 
     /**
      * Create order to paypal api
-     * 
+     *
      * @param array Cart details
-     * 
-     * @return array|bool data with paypal order id or false if error
+     *
+     * @return int|bool data with paypal order id or false if error
      */
     public function createOrder($payload = array())
     {
@@ -136,6 +136,6 @@ class Maasland
 
         $data = json_decode($response->getBody(), true);
 
-        return $data;
+        return isset($data['order_id']) ? $data['order_id'] : false;
     }
 }
