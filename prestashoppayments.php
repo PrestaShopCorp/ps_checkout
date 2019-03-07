@@ -94,7 +94,7 @@ class Prestashoppayments extends PaymentModule
     public function getPaypalPaymentOption()
     {
         $paypalPaymentOption = new PaymentOption();
-        $paypalPaymentOption->setCallToActionText($this->l('Pay with paypal'))
+        $paypalPaymentOption->setCallToActionText($this->l('and other payment methods'))
                             ->setAction($this->context->link->getModuleLink($this->name, 'validation', array(), true))
                             ->setInputs([
                                 'token' => [
@@ -103,7 +103,7 @@ class Prestashoppayments extends PaymentModule
                                     'value' =>'12345689',
                                 ],
                             ])
-                            ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/mastercard.jpg'));
+                            ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/paypal.png'));
 
         return $paypalPaymentOption;
     }
@@ -111,37 +111,36 @@ class Prestashoppayments extends PaymentModule
     public function getHostedFieldsPaymentOption()
     {
         $hostedFieldsPaymentOption = new PaymentOption();
-        $hostedFieldsPaymentOption->setCallToActionText($this->l('Hosted fields'))
-                      ->setAction('https://payment-webinit.sogenactif.com/paymentInit')
+        $hostedFieldsPaymentOption->setCallToActionText($this->l('100% secure payments'))
+                      ->setAction($this->context->link->getModuleLink($this->name, 'CreateOrder', array(), true))
                       ->setForm($this->generateHostedFieldsForm())
-                      ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/mastercard.jpg'));
+                      ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/payement-cards.png'));
 
         return $hostedFieldsPaymentOption;
     }
 
     public function generateHostedFieldsForm()
     {
-        dump(json_decode((new PaypalOrder )->createJsonPaypalOrder($this->context->cart)));
+        $paypalOrderDetail = json_decode((new PaypalOrder )->createJsonPaypalOrder($this->context->cart));
+        $paypalOrderId = (new Maasland)->createOrder($paypalOrderDetail);
 
         $this->context->smarty->assign(array(
-            'clientToken' => (new Maasland)->getClientToken()
+            'clientToken' => (new Maasland)->getClientToken(),
+            'paypalOrderId' => $paypalOrderId, // media:addJsDef not working
+            'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'CreateOrder', array(), true)
         ));
-
-        Media::addJsDef([
-            'paypalOrderId' => '<order_id>',
-        ]);
 
         return $this->context->smarty->fetch('module:prestashoppayments/views/templates/front/hosted-fields.tpl');
     }
 
     public function checkCurrency($cart)
     {
-        $currency_order = new \Currency($cart->id_currency);
-        $currencies_module = $this->getCurrency($cart->id_currency);
+        $currencyOrder = new \Currency($cart->id_currency);
+        $currenciesModule = $this->getCurrency($cart->id_currency);
 
-        if (is_array($currencies_module)) {
-            foreach ($currencies_module as $currency_module) {
-                if ($currency_order->id == $currency_module['id_currency']) {
+        if (is_array($currenciesModule)) {
+            foreach ($currenciesModule as $currencyModule) {
+                if ($currencyOrder->id == $currencyModule['id_currency']) {
                     return true;
                 }
             }

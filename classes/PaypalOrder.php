@@ -86,9 +86,9 @@ class PaypalOrder
             $item = [];
 
             $item['name'] = $value['name'];
-            $item['description'] = $value['description_short'];
+            $item['description'] = strip_tags($value['description_short']);
             $item['sku'] = $value['unity'];
-            $item['url'] = $this->getProductUrlById($value['id_product']);
+            // $item['url'] = $this->getProductUrlById($value['id_product']); // not allowed for the moment
             $item['unit_amount']['currency_code'] = $params['currency']['iso_code'];
             $item['unit_amount']['value'] = $value['price'];
             $item['tax']['currency_code'] = $params['currency']['iso_code'];
@@ -100,9 +100,8 @@ class PaypalOrder
         }
 
         $payload = json_encode([
-            'mode'=> 'paypal', // paypal or card
             'intent' => 'capture', // capture or authorize
-            'custom_id' => $params['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
+            'custom_id' => (string) $params['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
             'description' => 'Order sponsorized by PS Payments',
             'soft_descriptor' => 'MR '.$params['addresses']['shipping']->lastname.' '.$params['addresses']['shipping']->firstname,
@@ -127,14 +126,14 @@ class PaypalOrder
             'items' => $items,
             'shipping' => [
                 'name' => [
-                    'prefix' => '', // Mr / Ms
+                    'prefix' => 'Mr', // Mr / Ms
                     'given_name' => $params['addresses']['shipping']->lastname,
                     'surname' => $params['addresses']['shipping']->firstname
                 ],
                 'address' => [
                     'address_line_1' => $params['addresses']['shipping']->address1,
                     'address_line_2' => $params['addresses']['shipping']->address2,
-                    'admin_area_1' => $this->getStateNameById($params['addresses']['shipping']->id_state),
+                    'admin_area_1' => (string) $this->getStateNameById($params['addresses']['shipping']->id_state),
                     'admin_area_2' => $params['addresses']['shipping']->city,
                     'country_code' => $this->getCountryIsoCodeById($params['addresses']['shipping']->id_country),
                     'postal_code' => $params['addresses']['shipping']->postcode
@@ -145,14 +144,16 @@ class PaypalOrder
                     'given_name' => $params['addresses']['invoice']->lastname,
                     'surname' => $params['addresses']['invoice']->firstname
                 ],
-                // 'email_address' => ,
-                // 'payer_id' => '',
-                // 'phone' => ,
-                // 'birth_date' => ,
+                'email_address' => 'test@test.com',
+                'payer_id' => '<payer_id>', // should be empty
+                'phone' => [
+                    'phone_type' => 'MOBILE'
+                ],
+                'birth_date' => '1992-10-12',
                 'address' => [
                     'address_line_1' => $params['addresses']['invoice']->address1,
-                    'address_line_2' => $params['addresses']['invoice']->address1,
-                    'admin_area_1' => $this->getStateNameById($params['addresses']['invoice']->id_state), //The highest level sub-division in a country, which is usually a province, state, or ISO-3166-2 subdivision.
+                    'address_line_2' => $params['addresses']['invoice']->address2,
+                    'admin_area_1' => (string) $this->getStateNameById($params['addresses']['invoice']->id_state), //The highest level sub-division in a country, which is usually a province, state, or ISO-3166-2 subdivision.
                     'admin_area_2' => $params['addresses']['invoice']->city, // A city, town, or village. Smaller than admin_area_level_1
                     'country_code' => $this->getCountryIsoCodeById($params['addresses']['invoice']->id_country),
                     'postal_code' => $params['addresses']['invoice']->postcode,

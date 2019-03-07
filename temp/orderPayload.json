@@ -1,0 +1,73 @@
+{
+    "intent": "CAPTURE",
+    "purchase_units": [
+        {
+            "reference_id": "camera_shop_seller_88b8e56d-f601-4ad8-92af-4ca66a8279d1",
+            "description": "Camera Shop Purchase",
+            "amount": {
+                "currency_code": "EUR",
+                "value": "36.00",
+                "breakdown": {
+                    "item_total": {
+                        "currency_code": "EUR",
+                        "value": "25.00"
+                    },
+                    "shipping": {
+                        "currency_code": "EUR",
+                        "value": "3.50"
+                    },
+                    "handling": {
+                        "currency_code": "EUR",
+                        "value": "4.00"
+                    },
+                    "tax_total": {
+                        "currency_code": "EUR",
+                        "value": "1.50"
+                    },
+                    "insurance": {
+                        "currency_code": "EUR",
+                        "value": "5.00"
+                    },
+                    "shipping_discount": {
+                        "currency_code": "EUR",
+                        "value": "3.00"
+                    }
+                }
+            },
+            "payee": {
+                "merchant_id": "6P73JMNVAL9CW"
+            },
+            "items": [
+                {
+                    "name": "Lens Cleaner 50ml",
+                    "sku": "5158936",
+                    "unit_amount": {
+                        "currency_code": "EUR",
+                        "value": "25.00"
+                    },
+                    "tax": {
+                        "currency_code": "EUR",
+                        "value": "1.50"
+                    },
+                    "quantity": "1",
+                    "category": "PHYSICAL_GOODS"
+                }
+            ],
+            "shipping": {
+                "address": {
+                    "address_line_1": "500 Hillside Street",
+                    "address_line_2": "#1000",
+                    "admin_area_1": "CA",
+                    "admin_area_2": "San Jose",
+                    "postal_code": "95131",
+                    "country_code": "US"
+                }
+            },
+            "shipping_method": "United Postal Service",
+            "payment_group_id": 1,
+            "custom_id": "custom_value_88b8e56d-f601-4ad8-92af-4ca66a8279d1",
+            "invoice_id": "invoice_number_88b8e56d-f601-4ad8-92af-4ca66a8279d1",
+            "soft_descriptor": "Camera Shop-San Jose"
+        }
+    ]
+}

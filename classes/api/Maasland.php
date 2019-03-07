@@ -28,11 +28,12 @@ namespace PrestaShop\Module\PrestashopPayment\Api;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Stream\Stream;
 
 class Maasland
 {
     private $paypalApi = 'https://api.sandbox.paypal.com';
-    private $maaslandApi = 'http://10.0.75.1:8000';
+    private $maaslandApi = 'http://10.0.75.1:1234';
 
     /**
      * @var Client
@@ -65,8 +66,7 @@ class Maasland
                 'body' => 'grant_type=client_credentials',
                 'auth' => ['<user>', '<password>', 'basic']
             ]);
-        }
-        catch (ClientException $e) {
+        } catch (ClientException $e) {
             // TODO: Log the error ? Return an error message ?
             return false;
         }
@@ -98,8 +98,7 @@ class Maasland
                     'Content-Type' => 'application/json'
                 ],
             ]);
-        }
-        catch (ClientException $e) {
+        } catch (ClientException $e) {
             // TODO: Log the error ? Return an error message ?
             return false;
         }
@@ -118,6 +117,7 @@ class Maasland
      */
     public function createOrder($payload = array())
     {
+        return $this->createOrderSandbox();
         $route = '/payments/order/create';
 
         try {
@@ -125,17 +125,48 @@ class Maasland
                 'headers' =>
                 [
                     'Content-Type' => 'application/json',
+                    'Accept' => 'application/json'
                 ],
-                'body' => $payload
+                'json' => json_encode($payload)
             ]);
+        } catch (ClientException $e) {
+            // TODO: Log the error ? Return an error message ?
+            return false;
         }
-        catch (ClientException $e) {
+
+        $data = json_decode($response->getBody(), true);
+        dump($data);
+
+        return isset($data['id']) ? $data['id'] : false;
+    }
+
+    public function createOrderSandbox()
+    {
+        $route = '/v2/checkout/orders/';
+
+        $accessToken = $this->getAccessToken();
+        // dump(json_decode(file_get_contents(__DIR__.'/../../temp/orderPayload.json')));
+
+        try {
+            $response = $this->client->post($this->paypalApi . $route, [
+                'headers' =>
+                [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json'
+                ],
+                'body' => json_encode(json_decode(file_get_contents(__DIR__.'/../../temp/orderPayload.json')))
+            ]);
+        } catch (ClientException $e) {
+            dump((string)$e->getResponse()->getBody());
+            throw $e;
+
             // TODO: Log the error ? Return an error message ?
             return false;
         }
 
         $data = json_decode($response->getBody(), true);
 
-        return isset($data['order_id']) ? $data['order_id'] : false;
+        return isset($data['id']) ? $data['id'] : false;
     }
 }

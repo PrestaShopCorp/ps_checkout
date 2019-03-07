@@ -27,7 +27,7 @@
 */
 
 $(document).ready(function() {
-
+    console.log(paypalOrderId)
     initHostedFields()
     // $.ajax(getAccessToken).done(response => {
     //     $.ajax(getClientToken(response.access_token)).done(response => {
@@ -38,44 +38,17 @@ $(document).ready(function() {
 
 })
 
-    // const apiSandboxPaypal = axios.create({
-    //     baseURL: 'https://api.sandbox.paypal.com'
-    // })
-
-    // const getAccessToken = apiSandboxPaypal.post('/v1/oauth2/token', {}, {
-    //     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    //     params: {
-    //         grant_type: 'client_credentials',
-    //     },
-    //     auth: {
-    //         username: '<username>',
-    //         password: '<password>'
-    //     }
-    // }).then(response => {
-    //     return response.data.access_token
-    // })
-
-    // getAccessToken.then(response => {
-    //     console.log(response)
-    // })
-
-    // const getClientToken = apiSandboxPaypal.post('/v1/identity/generate-token', {}, {
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //         'Authorization': 'Bearer ' + '<access_token>'
-    //     }
-    // }).then(response => {
-    //     document.getElementById('paypalSdk').setAttribute('data-client-token', response.data.client_token)
-    // })
-
-    function initHostedFields() {
+function initHostedFields() {
     //check whether hosted fields is eligible for that Partner Account
     if (paypal.HostedFields.isEligible())
     {
         // render hosted fields
         paypal.HostedFields.render({
-            paymentsSDK: true,
-            createOrder: function () {return "<order_id>";},  // Insert your Order ID here that you receive from your Create Order API call
+            createOrder: function () {
+                return paypalOrderId
+                // return paypalOrderId
+            },
+            // Insert your Order ID here that you receive from your Create Order API call
             // styles: {
             //     'input': {
             //         'font-size': '1rem',
@@ -97,39 +70,41 @@ $(document).ready(function() {
                     selector: '#expiration-date',
                     placeholder: 'mm/yyyy'
                 }
-            },
-            options: {
-                locale: 'fr_FR'
             }
         }).then(function (hf) {
             $('#hosted-fields-form').submit(function (event) {
                 event.preventDefault();
 
+                // TODO : Patch a first time the order to prevent any modifications of the cart
+
                 hf.submit({
-                    contingencies: ['3D_SECURE'] // only necessary if using 3D Secure verification
+                    // contingencies: ['3D_SECURE'] // only necessary if using 3D Secure verification
                 }).then(function (payload) {
-                    /** sample payload
-                    * {
-                    * "liabilityShifted":   true,
-                    * "orderId": ""
-                    * }
-                    */
+
+                    console.log(payload)
+
                     if (payload.liabilityShifted === undefined) {
-                        // No 3DS Contingency Passed
-                        window.location.replace("http://www.paypal.com?order_id="+orderId);
+                        // No 3DS Contingency Passed or card not enrolled to 3ds
+                        window.location.replace(orderValidationLink);
+                        // $(this).submit();
+                        console.log('undefined')
                     }
 
                     if (payload.liabilityShifted) {
                         // 3DS Contingency Passed - Buyer confirmed Successfully
-                        window.location.replace("http://www.paypal.com?order_id="+orderId);
+                        window.location.replace(orderValidationLink);
+                        // $(this).submit();
+                        console.log('success')
                     }
 
                     if (payload.liabilityShifted === false) {
                         // 3DS Contingency Passed, but Buyer skipped 3DS
-                        window.location.replace("http://www.3ds-skipped.com?order_id="+orderId);
+                        window.location.replace(orderValidationLink);
+                        // $(this).submit();
+                        console.log('error')
                     }
                 }).catch(function (err) {
-                    console.log('error: ', JSON.stringify(err));
+                    console.log(err);
                     document.getElementById("consoleLog").innerHTML = JSON.stringify(err);
                 });
             });

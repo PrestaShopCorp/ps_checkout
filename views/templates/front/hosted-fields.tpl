@@ -29,6 +29,8 @@
         data-client-token="{$clientToken|escape:'htmlall':'UTF-8'}">
     </script>
 
+    <div id="payments-sdk__contingency-lightbox"></div>
+
     <form id="hosted-fields-form">
 
         <div class="form-group row">
@@ -51,4 +53,14 @@
 
     </form>
 
+    <div id="consoleLog"></div>
+
 </section>
+
+{literal}
+<script type="text/javascript">
+    var paypalOrderId = "{/literal}{$paypalOrderId|escape:'htmlall':'UTF-8'}{literal}";
+    var orderValidationLink = "{/literal}{$orderValidationLink|escape:'htmlall':'UTF-8'}{literal}";
+</script>
+{/literal}
+
