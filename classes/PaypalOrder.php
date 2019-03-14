@@ -103,8 +103,8 @@ class PaypalOrder
             'intent' => 'capture', // capture or authorize
             'custom_id' => (string) $params['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
-            'description' => 'Order sponsorized by PS Payments',
-            'soft_descriptor' => 'MR '.$params['addresses']['shipping']->lastname.' '.$params['addresses']['shipping']->firstname,
+            'description' => 'Checking out with your cart from {SHOP}',
+            'soft_descriptor' => 'MR '.$params['addresses']['invoice']->lastname.' '.$params['addresses']['invoice']->firstname,
             'amount' => [
                 'currency_code' => $params['currency']['iso_code'],
                 'value' => $params['cart']['totals']['total']['amount'],
@@ -126,9 +126,10 @@ class PaypalOrder
             'items' => $items,
             'shipping' => [
                 'name' => [
-                    'prefix' => 'Mr', // Mr / Ms
-                    'given_name' => $params['addresses']['shipping']->lastname,
-                    'surname' => $params['addresses']['shipping']->firstname
+                    'full_name' => 'Mr '.$params['addresses']['shipping']->lastname.' '.$params['addresses']['shipping']->firstname,
+                    // 'prefix' => 'Mr', // Mr / Ms
+                    // 'given_name' => $params['addresses']['shipping']->lastname,
+                    // 'surname' => $params['addresses']['shipping']->firstname
                 ],
                 'address' => [
                     'address_line_1' => $params['addresses']['shipping']->address1,
@@ -144,11 +145,14 @@ class PaypalOrder
                     'given_name' => $params['addresses']['invoice']->lastname,
                     'surname' => $params['addresses']['invoice']->firstname
                 ],
-                'email_address' => 'test@test.com',
-                'payer_id' => '<payer_id>', // should be empty
-                'phone' => [
-                    'phone_type' => 'MOBILE'
-                ],
+                'email_address' => 'test@prestashop.com',
+                // 'phone' => [
+                //     'phone_number_details' => [
+                //         'country_code' => '33',
+                //         'national_number' => '654565452'
+                //     ],
+                //     'phone_type' => 'MOBILE'
+                // ],
                 'birth_date' => '1992-10-12',
                 'address' => [
                     'address_line_1' => $params['addresses']['invoice']->address1,

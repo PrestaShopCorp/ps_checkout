@@ -24,17 +24,76 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
+use PrestaShop\Module\PrestashopPayment\Api\Maasland;
+
 class prestashoppaymentsValidateOrderModuleFrontController extends ModuleFrontController
 {
-    public function init()
+    public function postProcess()
     {
-        $orderId = (int) Tools::getValue('id_order');
+        // TODO : add some check
+        $orderId = Tools::getValue('orderId');
 
-        $orderStatus = Tools::getValue('status');
+        $cart = $this->context->cart;
 
+        if ($cart->id_customer == 0 ||
+            $cart->id_address_delivery == 0 ||
+            $cart->id_address_invoice == 0 ||
+            !$this->module->active) {
+            Tools::redirect('index.php?controller=order&step=1');
+        }
 
-        dump($orderId);
-        dump($orderStatus);
-        // die('test');
+        // Check that this payment option is still available in case the customer changed
+        // his address just before the end of the checkout process
+        $authorized = false;
+        foreach (Module::getPaymentModules() as $module) {
+            if ($module['name'] == 'prestashoppayments') {
+                $authorized = true;
+                break;
+            }
+        }
+
+        if (!$authorized) {
+            die($this->l('This payment method is not available.'));
+        }
+
+        $customer = new Customer($cart->id_customer);
+
+        if (!Validate::isLoadedObject($customer)) {
+            Tools::redirect('index.php?controller=order&step=1');
+        }
+
+        $currency = $this->context->currency;
+        $total = (float)$cart->getOrderTotal(true, Cart::BOTH);
+
+        $this->module->validateOrder(
+            (int)$cart->id,
+            Configuration::get('PS_OS_CHEQUE'),
+            $total,
+            $this->module->displayName,
+            null,
+            array('transaction_id' => $orderId),
+            (int)$currency->id,
+            false,
+            $customer->secure_key
+        );
+
+        // TODO : patch the order in order to update the order id with the order id of the prestashop order
+
+        $responseCaptureOrder = (new Maasland)->captureOrder($orderId);
+        // dump($responseCaptureOrder);
+        // die();
+
+        $order = new OrderHistory();
+        $order->id_order = $this->module->currentOrder;
+
+        if ($responseCaptureOrder['status'] === 'COMPLETED') {
+            $order->changeIdOrderState(_PS_OS_PAYMENT_, $this->module->currentOrder);
+        } else {
+            $order->changeIdOrderState(_PS_OS_ERROR_, $this->module->currentOrder);
+        }
+
+        $order->save();
+
+        Tools::redirect('index.php?controller=order-confirmation&id_cart='.(int)$cart->id.'&id_module='.(int)$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key);
     }
 }

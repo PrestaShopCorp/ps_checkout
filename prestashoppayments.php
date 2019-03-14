@@ -39,6 +39,7 @@ class Prestashoppayments extends PaymentModule
     public $hookList = [
         'paymentOptions',
         'paymentReturn',
+        'actionValidateOrder',
         'actionFrontControllerSetMedia'
     ];
 
@@ -95,26 +96,34 @@ class Prestashoppayments extends PaymentModule
     {
         $paypalPaymentOption = new PaymentOption();
         $paypalPaymentOption->setCallToActionText($this->l('and other payment methods'))
-                            ->setAction($this->context->link->getModuleLink($this->name, 'validation', array(), true))
-                            ->setInputs([
-                                'token' => [
-                                    'name' =>'token',
-                                    'type' =>'hidden',
-                                    'value' =>'12345689',
-                                ],
-                            ])
+                            ->setAction($this->context->link->getModuleLink($this->name, 'CreateOrder', array(), true))
+                            ->setAdditionalInformation($this->generatePaypalForm())
                             ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/paypal.png'));
 
         return $paypalPaymentOption;
+    }
+
+    public function generatePaypalForm()
+    {
+        // $paypalOrderDetail = json_decode((new PaypalOrder )->createJsonPaypalOrder($this->context->cart));
+        // $paypalOrderId = (new Maasland)->createOrder($paypalOrderDetail);
+
+        // $this->context->smarty->assign(array(
+        //     'clientToken' => (new Maasland)->getClientToken(),
+        //     'paypalOrderId' => $paypalOrderId, // media:addJsDef not working
+        //     'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'CreateOrder', array(), true)
+        // ));
+
+        return $this->context->smarty->fetch('module:prestashoppayments/views/templates/front/paypal.tpl');
     }
 
     public function getHostedFieldsPaymentOption()
     {
         $hostedFieldsPaymentOption = new PaymentOption();
         $hostedFieldsPaymentOption->setCallToActionText($this->l('100% secure payments'))
-                      ->setAction($this->context->link->getModuleLink($this->name, 'CreateOrder', array(), true))
-                      ->setForm($this->generateHostedFieldsForm())
-                      ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/payement-cards.png'));
+                    ->setAction($this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true))
+                    ->setForm($this->generateHostedFieldsForm())
+                    ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/payement-cards.png'));
 
         return $hostedFieldsPaymentOption;
     }
@@ -122,15 +131,20 @@ class Prestashoppayments extends PaymentModule
     public function generateHostedFieldsForm()
     {
         $paypalOrderDetail = json_decode((new PaypalOrder )->createJsonPaypalOrder($this->context->cart));
-        $paypalOrderId = (new Maasland)->createOrder($paypalOrderDetail);
+        $paypalOrder = (new Maasland)->createOrder($paypalOrderDetail);
 
         $this->context->smarty->assign(array(
-            'clientToken' => (new Maasland)->getClientToken(),
-            'paypalOrderId' => $paypalOrderId, // media:addJsDef not working
-            'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'CreateOrder', array(), true)
+            'clientToken' => $paypalOrder['client_token'],
+            'paypalOrderId' => $paypalOrder['id'], // media:addJsDef not working
+            'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true)
         ));
 
         return $this->context->smarty->fetch('module:prestashoppayments/views/templates/front/hosted-fields.tpl');
+    }
+
+    public function hookActionValidateOrder($params)
+    {
+
     }
 
     public function checkCurrency($cart)

@@ -25,7 +25,7 @@
 
 <section class="additional-information">
 
-    <script id="paypalSdk" src="https://www.paypal.com/sdk/js?components=hosted-fields&client-id=<client_id>&intent=capture&debug=true&currency=EUR"
+    <script id="paypalSdk" src="https://www.paypal.com/sdk/js?components=hosted-fields,buttons&client-id=<client_id>&intent=capture&currency=EUR"
         data-client-token="{$clientToken|escape:'htmlall':'UTF-8'}">
     </script>
 
@@ -36,18 +36,20 @@
         <div class="form-group row">
             <div class="col-md-8">
                 <label for="card-number" class="form-control-label required">{l s='Card number' mod='prestashoppayments'}</label>
-                <div id="card-number"></div>
+                <div id="card-number" class="form-control">
+                    <div id="card-image"></div>
+                </div>
             </div>
         </div>
 
         <div class="form-group row">
             <div class="col-md-4">
                 <label for="expiration-date" class="form-control-label required">{l s='Expiry date' mod='prestashoppayments'}</label>
-                <div id="expiration-date"></div>
+                <div id="expiration-date" class="form-control"></div>
             </div>
             <div class="col-md-4">
                 <label for="cvv" class="form-control-label required">{l s='CVC' mod='prestashoppayments'}</label>
-                <div id="cvv"></div>
+                <div id="cvv" class="form-control"></div>
             </div>
         </div>
 

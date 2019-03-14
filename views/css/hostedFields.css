@@ -26,13 +26,66 @@
 * to avoid any conflicts with others containers.
 */
 
-.braintree-hosted-fields-focused {
-    /* outline: .1875rem solid #2fb5d2;
-    background-color: #fff;
-    color: #232323; */
+#card-number {
+    position: relative;
+    height: 45px;
+    margin-top: 6px;
 }
 
-#card-number input {
+#expiration-date {
+    height: 45px;
+    margin-top: 6px;
+}
+
+#cvv {
+    height: 45px;
+    margin-top: 6px;
+}
+
+#card-image {
+    position: absolute;
+    top: 7px;
+    right: 1em;
+    width: 44px;
+    height: 28px;
+    background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/346994/card_sprite.png);
+    background-size: 86px 458px;
+    border-radius: 1px;
+    background-position: -100px 0;
+    background-repeat: no-repeat;
+    margin-bottom: 1em;
+}
+
+#card-image.visa {
+    background-position: 0 -398px;
+}
+#card-image.master-card {
+    background-position: 0 -281px;
+}
+#card-image.american-express {
+    background-position: 0 -370px;
+}
+#card-image.discover {
+    background-position: 0 -163px;
+}
+#card-image.maestro {
+    background-position: 0 -251px;
+}
+#card-image.jcb {
+    background-position: 0 -221px;
+}
+#card-image.diners-club {
+    background-position: 0 -133px;
+}
+
+.braintree-hosted-fields-focused {
+    outline: .1875rem solid #2fb5d2;
+    border: unset;
+    background-color: #fff;
+    color: #232323;
+}
+
+/* #card-number input {
     background: #f1f1f1;
     color: #7a7a7a;
     border: 1px solid rgba(0,0,0,.25);
@@ -42,14 +95,11 @@
     padding: .5rem .75rem;
     font-size: 1rem;
     line-height: 1.25;
-    /* background-color: #fff;
-    background-image: none;
-    background-clip: padding-box; */
     border-radius: 0;
     touch-action: manipulation;
-}
+} */
 
-#card-number input:focus {
+/* #card-number input:focus {
     outline: .1875rem solid #2fb5d2;
     background-color: #fff;
     color: #232323;
@@ -61,4 +111,4 @@
 
 #hosted-fields-form #cvv input {
 
-}
+} */
