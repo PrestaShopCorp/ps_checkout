@@ -62,6 +62,9 @@ function initHostedFields() {
                 },
                 ':focus': {
                     'border-color': 'red'
+                },
+                'input.invalid': {
+                    'color': '#c05c67'
                 }
             },
             fields: {
