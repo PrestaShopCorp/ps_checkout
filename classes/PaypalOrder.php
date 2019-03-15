@@ -164,7 +164,7 @@ class PaypalOrder
                 ]
             ],
             'payee' => [
-                'merchant_id' => '<merchant_id>' // merchant id which is return at the end of the onboarding - Test mechant id : J3ZKFAYGHALUJ
+                'merchant_id' => '7RN2XXLUBYHHS' // merchant id which is return at the end of the onboarding - Test mechant id : 7RN2XXLUBYHHS
             ]
         ]);
 
