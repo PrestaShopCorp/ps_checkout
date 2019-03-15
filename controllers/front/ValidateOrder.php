@@ -80,8 +80,6 @@ class prestashoppaymentsValidateOrderModuleFrontController extends ModuleFrontCo
         // TODO : patch the order in order to update the order id with the order id of the prestashop order
 
         $responseCaptureOrder = (new Maasland)->captureOrder($orderId);
-        // dump($responseCaptureOrder);
-        // die();
 
         $order = new OrderHistory();
         $order->id_order = $this->module->currentOrder;
