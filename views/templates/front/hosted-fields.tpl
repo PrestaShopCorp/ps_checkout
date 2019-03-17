@@ -25,7 +25,7 @@
 
 <section class="additional-information">
 
-    <script id="paypalSdk" src="https://www.paypal.com/sdk/js?components=hosted-fields,buttons&client-id=<client_id>&intent=capture&currency=EUR"
+    <script id="paypalSdk" src="https://www.paypal.com/sdk/js?components=hosted-fields,buttons&client-id=AWZMaFOTMPjG2oXFw1GqSp1hlrlFUTupuNqX0A0NJA_df0rcGQbyD9VwNAudXiRcAbSaePPPJ4FvgTqi&intent=capture&currency=EUR"
         data-client-token="{$clientToken|escape:'htmlall':'UTF-8'}">
     </script>
 
@@ -37,7 +37,9 @@
             <div class="col-md-8">
                 <label for="card-number" class="form-control-label required">{l s='Card number' mod='prestashoppayments'}</label>
                 <div id="card-number" class="form-control">
-                    <div id="card-image"></div>
+                    <div id="card-image">
+                        <i class="material-icons defautl-credit-card">credit_card</i>
+                    </div>
                 </div>
             </div>
         </div>

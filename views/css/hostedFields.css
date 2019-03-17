@@ -93,6 +93,12 @@
     backface-visibility: hidden;
 }
 
+.defautl-credit-card {
+    position: absolute;
+    top: 2px;
+    right: 10px;
+}
+
 @keyframes shake {
     10%,
     90% {

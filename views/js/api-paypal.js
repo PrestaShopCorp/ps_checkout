@@ -89,6 +89,7 @@ function initHostedFields() {
                 // Change card bg depending on card type
                 if (event.cards.length === 1) {
                     // $(form).removeClass().addClass(event.cards[0].type);
+                    $('.defautl-credit-card').hide()
                     $('#card-image').removeClass().addClass(event.cards[0].type)
                     $('header').addClass('header-slide')
 
@@ -101,6 +102,7 @@ function initHostedFields() {
                         });
                     }
                 } else {
+                    $('.defautl-credit-card').show()
                     $('#card-image').removeClass()
                     hf.setAttribute({
                         field: 'cvv',
@@ -137,7 +139,7 @@ function initHostedFields() {
                         console.log('error')
                     }
                 }).catch(function (err) {
-                    document.getElementById("consoleLog").innerHTML = JSON.stringify(err);
+                    document.getElementById('consoleLog').innerHTML = JSON.stringify(err);
                     console.log(err)
                 });
             });
