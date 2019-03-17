@@ -23,8 +23,26 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 
-<section class="additional-information">
 
-    <div id="paypal-button-container"></div>
+<form id="conditions-to-approve-paypal" method="GET">
+    <ul>
+        <li>
+        <div class="float-xs-left">
+            <span class="custom-checkbox">
+            <input id="conditions_to_approve[terms-and-conditions]-paypal" name="conditions_to_approve[terms-and-conditions]" required="" type="checkbox" value="1" class="ps-shown-by-js">
+            <span><i class="material-icons rtl-no-flip checkbox-checked"></i></span>
+            </span>
+        </div>
+        <div class="condition-label">
+            <label class="js-terms" for="conditions_to_approve[terms-and-conditions]-paypal">
+            I agree to the <a href="" id="cta-terms-and-conditions-0">terms of service</a> and will adhere to them unconditionally.
+            </label>
+        </div>
+        </li>
+    </ul>
+</form>
 
-</section>
+<div>You will be temporarily redirected to the related payment service.</div>
+
+<div id="paypal-button-container"></div>
+

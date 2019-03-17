@@ -37,6 +37,10 @@ $(document).ready(function() {
 
 function initSmartButtons() {
     paypal.Buttons({
+        style: {
+            shape:  'pill',
+            size: 'small'
+        },
         createOrder: function() {
             return paypalOrderId
         },
@@ -115,15 +119,13 @@ function initHostedFields() {
 
             $('#hosted-fields-form').submit(function (event) {
                 event.preventDefault();
+                toggleLoader(true)
 
                 // TODO : Patch a first time the order to prevent any modifications of the cart
 
                 hf.submit({
-                    contingencies: ['3D_SECURE'] // only necessary if using 3D Secure verification
+                    // contingencies: ['3D_SECURE'] // only necessary if using 3D Secure verification
                 }).then(function (payload) {
-
-                    console.log(payload)
-
                     if (payload.liabilityShifted === undefined) { // No 3DS Contingency Passed or card not enrolled to 3ds
                         window.location.replace(orderValidationLink + '?orderId=' + payload.orderId);
                         console.log('undefined')
@@ -139,10 +141,19 @@ function initHostedFields() {
                         console.log('error')
                     }
                 }).catch(function (err) {
+                    toggleLoader(false)
                     document.getElementById('consoleLog').innerHTML = JSON.stringify(err);
                     console.log(err)
                 });
             });
         });
+    }
+}
+
+function toggleLoader(enable) {
+    if (enable === true) {
+        $('#payment-confirmation :button').prepend('<span class="spinner-hosted-fields"></span>')
+    } else {
+        $('.spinner-hosted-fields').remove()
     }
 }
