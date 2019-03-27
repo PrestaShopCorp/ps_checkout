@@ -25,8 +25,8 @@
 */
 
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use PrestaShop\Module\PrestashopPayment\Api\Maasland;
-use PrestaShop\Module\PrestashopPayment\PaypalOrder;
+use PrestaShop\Module\PrestashopPayments\Api\Maasland;
+use PrestaShop\Module\PrestashopPayments\PaypalOrder;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -36,10 +36,10 @@ if (!defined('_PS_VERSION_')) {
 
 class Prestashoppayments extends PaymentModule
 {
+    // hook list used by the module
     public $hookList = [
         'paymentOptions',
         'paymentReturn',
-        'actionValidateOrder',
         'actionFrontControllerSetMedia'
     ];
 
@@ -64,16 +64,33 @@ class Prestashoppayments extends PaymentModule
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
     }
 
+    /**
+     * Function executed at the install of the module
+     *
+     * @return bool
+     */
     public function install()
     {
         return parent::install() && $this->registerHook($this->hookList);
     }
 
+    /**
+     * Function executed at the uninstall of the module
+     *
+     * @return bool
+     */
     public function uninstall()
     {
         return parent::uninstall();
     }
 
+    /**
+     * Add payment option at the checkout in the front office
+     *
+     * @param array params return by the hook
+     *
+     * @return array all payment option available
+     */
     public function hookPaymentOptions($params)
     {
         if (!$this->active) {
@@ -92,6 +109,11 @@ class Prestashoppayments extends PaymentModule
         return $payment_options;
     }
 
+    /**
+     * Generate paypal payment option
+     *
+     * @return object PaymentOption
+     */
     public function getPaypalPaymentOption()
     {
         $paypalPaymentOption = new PaymentOption();
@@ -103,6 +125,11 @@ class Prestashoppayments extends PaymentModule
         return $paypalPaymentOption;
     }
 
+    /**
+     * Create the pay by paypal button
+     *
+     * @return void tpl that include the paypal button
+     */
     public function generatePaypalForm()
     {
         // $paypalOrderDetail = json_decode((new PaypalOrder )->createJsonPaypalOrder($this->context->cart));
@@ -117,6 +144,11 @@ class Prestashoppayments extends PaymentModule
         return $this->context->smarty->fetch('module:prestashoppayments/views/templates/front/paypal.tpl');
     }
 
+    /**
+     * Generate hostfields payment option
+     *
+     * @return object PaymentOption
+     */
     public function getHostedFieldsPaymentOption()
     {
         $hostedFieldsPaymentOption = new PaymentOption();
@@ -128,6 +160,11 @@ class Prestashoppayments extends PaymentModule
         return $hostedFieldsPaymentOption;
     }
 
+    /**
+     * Create the hosted fields form
+     *
+     * @return void tpl that include hosted fields
+     */
     public function generateHostedFieldsForm()
     {
         $paypalOrderDetail = json_decode((new PaypalOrder )->createJsonPaypalOrder($this->context->cart));
@@ -142,11 +179,14 @@ class Prestashoppayments extends PaymentModule
         return $this->context->smarty->fetch('module:prestashoppayments/views/templates/front/hosted-fields.tpl');
     }
 
-    public function hookActionValidateOrder($params)
-    {
-
-    }
-
+    /**
+     * Check if the module can process to a payment with the
+     * current currency
+     *
+     * @param object $cart
+     *
+     * @return bool
+     */
     public function checkCurrency($cart)
     {
         $currencyOrder = new \Currency($cart->id_currency);
@@ -163,6 +203,11 @@ class Prestashoppayments extends PaymentModule
         return false;
     }
 
+    /**
+     * Load asset on the front office
+     *
+     * @return void
+     */
     public function hookActionFrontControllerSetMedia()
     {
         $currentPage = $this->context->controller->php_self;

@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopPayment;
+namespace PrestaShop\Module\PrestashopPayments;
 
 use PrestaShop\PrestaShop\Adapter\Presenter\Cart\CartPresenter;
 

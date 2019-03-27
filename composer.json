@@ -14,7 +14,7 @@
   },
   "autoload": {
       "psr-4": {
-          "PrestaShop\\Module\\PrestashopPayment\\": "classes/"
+          "PrestaShop\\Module\\PrestashopPayments\\": "classes/"
       }
   },
   "require": {

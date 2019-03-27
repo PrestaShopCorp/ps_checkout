@@ -24,74 +24,96 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-use PrestaShop\Module\PrestashopPayment\Api\Maasland;
+use PrestaShop\Module\PrestashopPayments\Payment;
 
 class prestashoppaymentsValidateOrderModuleFrontController extends ModuleFrontController
 {
+    public function initContent()
+    {
+        if ($this->checkIfContextIsValid()) {
+            throw new \PrestaShopException('The context is not valid');
+        }
+
+        if ($this->checkIfPaymentOptionIsAvailable()) {
+            throw new \PrestaShopException('This payment method is not available.');
+        }
+
+        parent::initContent();
+    }
+
     public function postProcess()
     {
-        // TODO : add some check
-        $orderId = Tools::getValue('orderId');
+        $paypalOrderId = Tools::getValue('orderId');
+
+        if (false === $paypalOrderId) {
+            throw new \PrestaShopException('Paypal order id is missing.');
+        }
 
         $cart = $this->context->cart;
 
-        if ($cart->id_customer == 0 ||
-            $cart->id_address_delivery == 0 ||
-            $cart->id_address_invoice == 0 ||
-            !$this->module->active) {
-            Tools::redirect('index.php?controller=order&step=1');
-        }
-
-        // Check that this payment option is still available in case the customer changed
-        // his address just before the end of the checkout process
-        $authorized = false;
-        foreach (Module::getPaymentModules() as $module) {
-            if ($module['name'] == 'prestashoppayments') {
-                $authorized = true;
-                break;
-            }
-        }
-
-        if (!$authorized) {
-            die($this->l('This payment method is not available.'));
-        }
-
         $customer = new Customer($cart->id_customer);
 
-        if (!Validate::isLoadedObject($customer)) {
+        if (false === Validate::isLoadedObject($customer)) {
             Tools::redirect('index.php?controller=order&step=1');
         }
 
         $currency = $this->context->currency;
         $total = (float)$cart->getOrderTotal(true, Cart::BOTH);
 
-        $this->module->validateOrder(
-            (int)$cart->id,
-            Configuration::get('PS_OS_CHEQUE'),
-            $total,
-            $this->module->displayName,
-            null,
-            array('transaction_id' => $orderId),
-            (int)$currency->id,
-            false,
-            $customer->secure_key
-        );
+        $payment = new Payment($paypalOrderId, $this->module->currentOrder);
 
-        // TODO : patch the order in order to update the order id with the order id of the prestashop order
+        $dataOrder = [
+            'cartId' => (int)$cart->id,
+            'orderStateId' => Configuration::get('PS_OS_CHEQUE'),
+            'amount' => $total,
+            'paymentMethod' => $this->module->displayName,
+            'message' => null,
+            'extraVars' => array('transaction_id' => $paypalOrderId),
+            'currencyId' => (int)$currency->id,
+            'secureKey' => $customer->secure_key
+        ];
 
-        $responseCaptureOrder = (new Maasland)->captureOrder($orderId);
-
-        $order = new OrderHistory();
-        $order->id_order = $this->module->currentOrder;
-
-        if ($responseCaptureOrder['status'] === 'COMPLETED') {
-            $order->changeIdOrderState(_PS_OS_PAYMENT_, $this->module->currentOrder);
-        } else {
-            $order->changeIdOrderState(_PS_OS_ERROR_, $this->module->currentOrder);
-        }
-
-        $order->save();
+        $payment->validateOrder($dataOrder);
 
         Tools::redirect('index.php?controller=order-confirmation&id_cart='.(int)$cart->id.'&id_module='.(int)$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key);
+    }
+
+    /**
+     * Check if the context is valid and if the module is active
+     *
+     * @return bool
+     */
+    public function checkIfContextIsValid()
+    {
+        $cart = $this->context->cart;
+
+        // check if customer and adresses are correctly set in the cart
+        if ($cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0) {
+            return false;
+        }
+
+        // check if module is active
+        if (false === $this->module->active) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check that this payment option is still available in case the customer changed
+     * his address just before the end of the checkout process
+     *
+     * @return bool
+     */
+    public function checkIfPaymentOptionIsAvailable()
+    {
+        foreach (Module::getPaymentModules() as $module) {
+            if ($module['name'] == 'prestashoppayments') {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopPayment\Api;
+namespace PrestaShop\Module\PrestashopPayments\Api;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -111,10 +111,32 @@ class Maasland
         }
 
         $data = json_decode($response->getBody(), true);
-        dump($payload);
-        dump($data);
 
         return isset($data) ? $data : false;
+    }
+
+    /**
+     * Get paypal order details
+     *
+     * @param string orderId paypal
+     *
+     * @return array|bool paypal order
+     */
+    public function getOrderDetails($orderId)
+    {
+        // TODO : waiting maasland integration
+    }
+
+    /**
+     * Get paypal order details
+     *
+     * @param string orderId paypal
+     *
+     * @return array|bool paypal order
+     */
+    public function authorizeOrder($orderId)
+    {
+        // TODO : waiting maasland integration
     }
 
     /**
