@@ -110,7 +110,7 @@ class Prestashoppayments extends PaymentModule
 
         $this->context->smarty->assign(array(
             'clientToken' => $paypalOrder['client_token'],
-            'paypalOrderId' => $paypalOrder['id'], // media:addJsDef not working
+            'paypalOrderId' => $paypalOrder['id'],
             'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true)
         ));
 

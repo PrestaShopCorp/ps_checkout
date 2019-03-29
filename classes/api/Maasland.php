@@ -32,6 +32,9 @@ use GuzzleHttp\Stream\Stream;
 
 class Maasland
 {
+    public $debugMode = false; // true for false x)
+    public $timeout = 3;
+
     private $maaslandApi = 'http://10.0.75.1:1234';
 
     /**
@@ -61,8 +64,8 @@ class Maasland
 
         try {
             $response = $this->client->post($this->maaslandApi . $route, [
-                'timeout' => 3,
-                'exceptions' => false,
+                'timeout' => $this->timeout,
+                'exceptions' => $this->debugMode,
                 'headers' =>
                 [
                     'Content-Type' => 'application/json',
@@ -98,8 +101,8 @@ class Maasland
 
         try {
             $response = $this->client->post($this->maaslandApi . $route, [
-                'timeout' => 3,
-                'exceptions' => false,
+                'timeout' => $this->timeout,
+                'exceptions' => $this->debugMode,
                 'headers' =>
                 [
                     'Content-Type' => 'application/json',
@@ -130,13 +133,25 @@ class Maasland
     }
 
     /**
-     * Get paypal order details
+     * Authorize an order
      *
      * @param string orderId paypal
      *
      * @return array|bool paypal order
      */
     public function authorizeOrder($orderId)
+    {
+        // TODO : waiting maasland integration
+    }
+
+    /**
+     * Refund an order
+     *
+     * @param string orderId paypal
+     *
+     * @return array|bool paypal order
+     */
+    public function refundOrder($payload)
     {
         // TODO : waiting maasland integration
     }
@@ -158,8 +173,8 @@ class Maasland
 
         try {
             $response = $this->client->post($this->maaslandApi . $route, [
-                'timeout' => 3,
-                'exceptions' => false,
+                'timeout' => $this->timeout,
+                'exceptions' => $this->debugMode,
                 'headers' =>
                 [
                     'Content-Type' => 'application/json',

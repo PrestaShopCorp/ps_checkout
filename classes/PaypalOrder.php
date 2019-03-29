@@ -51,6 +51,7 @@ class PaypalOrder
 
         $cartPresenter = new CartPresenter();
         $cartPresenter = $cartPresenter->present($cart);
+        dump($cartPresenter);
 
         $shippingAddress = \Address::initialize($cartPresenter['id_address_delivery']);
         $invoiceAddress = \Address::initialize($cartPresenter['id_address_invoice']);
@@ -81,6 +82,8 @@ class PaypalOrder
     public function createJsonFromData($params)
     {
         $items = [];
+        $totalTaxItem = 0;
+        $totalAmountItemWithoutTax = 0;
 
         foreach ($params['products'] as $product => $value) {
             $item = [];
@@ -94,7 +97,10 @@ class PaypalOrder
             $item['tax']['currency_code'] = $params['currency']['iso_code'];
             $item['tax']['value'] = $value['price'] * $value['rate'] / 100;
             $item['quantity'] = $value['quantity'];
-            $item['category'] = $value['is_virtual'] === '1' ? 'DIGITAL_GOODS' : 'PHYSICAL_GOODS' ;
+            $item['category'] = $value['is_virtual'] === '1' ? 'DIGITAL_GOODS' : 'PHYSICAL_GOODS';
+
+            $totalTaxItem = $totalTaxItem + ($value['price'] * $value['cart_quantity']);
+            $totalAmountItemWithoutTax = $totalAmountItemWithoutTax + ($value['price'] * $value['rate'] / 100) * $value['cart_quantity'];
 
             $items[] = $item;
         }
@@ -111,7 +117,7 @@ class PaypalOrder
                 'breakdown' => [
                     'item_total' => [
                         'currency_code' => $params['currency']['iso_code'],
-                        'value' => $params['cart']['totals']['total_excluding_tax']['amount']
+                        'value' => $totalTaxItem
                     ],
                     'shipping' => [
                         'currency_code' => $params['currency']['iso_code'],
@@ -119,7 +125,7 @@ class PaypalOrder
                     ],
                     'tax_total' => [
                         'currency_code' => $params['currency']['iso_code'],
-                        'value' => $params['cart']['totals']['total_including_tax']['amount'] - $params['cart']['totals']['total_excluding_tax']['amount']
+                        'value' => $totalAmountItemWithoutTax
                     ],
                 ]
             ],
