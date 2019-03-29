@@ -27,7 +27,7 @@
 namespace PrestaShop\Module\PrestashopPayments\Api;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Stream\Stream;
 
 class Maasland
@@ -61,6 +61,7 @@ class Maasland
 
         try {
             $response = $this->client->post($this->maaslandApi . $route, [
+                'timeout' => 3,
                 'exceptions' => false,
                 'headers' =>
                 [
@@ -69,7 +70,7 @@ class Maasland
                 ],
                 'json' => json_encode($payload)
             ]);
-        } catch (ClientException $e) {
+        } catch (RequestException $e) {
             // TODO: Log the error ? Return an error message ?
             return false;
         }
@@ -97,6 +98,7 @@ class Maasland
 
         try {
             $response = $this->client->post($this->maaslandApi . $route, [
+                'timeout' => 3,
                 'exceptions' => false,
                 'headers' =>
                 [
@@ -105,7 +107,7 @@ class Maasland
                 ],
                 'json' => json_encode($payload)
             ]);
-        } catch (ClientException $e) {
+        } catch (RequestException $e) {
             // TODO: Log the error ? Return an error message ?
             return false;
         }
@@ -156,6 +158,8 @@ class Maasland
 
         try {
             $response = $this->client->post($this->maaslandApi . $route, [
+                'timeout' => 3,
+                'exceptions' => false,
                 'headers' =>
                 [
                     'Content-Type' => 'application/json',
@@ -163,7 +167,7 @@ class Maasland
                 ],
                 'json' => json_encode($payload)
             ]);
-        } catch (ClientException $e) {
+        } catch (RequestException $e) {
             // TODO: Log the error ? Return an error message ?
             return false;
         }

@@ -93,13 +93,26 @@ class Prestashoppayments extends PaymentModule
      */
     public function hookPaymentOptions($params)
     {
-        if (!$this->active) {
+        if (false === $this->active) {
             return false;
         }
 
-        if (!$this->checkCurrency($params['cart'])) {
+        if (false === $this->checkCurrency($params['cart'])) {
             return false;
         }
+
+        $paypalOrderDetail = json_decode((new PaypalOrder )->createJsonPaypalOrder($this->context->cart));
+        $paypalOrder = (new Maasland)->createOrder($paypalOrderDetail);
+
+        if (false === $paypalOrder) {
+            return false;
+        }
+
+        $this->context->smarty->assign(array(
+            'clientToken' => $paypalOrder['client_token'],
+            'paypalOrderId' => $paypalOrder['id'], // media:addJsDef not working
+            'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true)
+        ));
 
         $payment_options = [
             $this->getPaypalPaymentOption(),
@@ -132,15 +145,6 @@ class Prestashoppayments extends PaymentModule
      */
     public function generatePaypalForm()
     {
-        // $paypalOrderDetail = json_decode((new PaypalOrder )->createJsonPaypalOrder($this->context->cart));
-        // $paypalOrderId = (new Maasland)->createOrder($paypalOrderDetail);
-
-        // $this->context->smarty->assign(array(
-        //     'clientToken' => (new Maasland)->getClientToken(),
-        //     'paypalOrderId' => $paypalOrderId, // media:addJsDef not working
-        //     'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'CreateOrder', array(), true)
-        // ));
-
         return $this->context->smarty->fetch('module:prestashoppayments/views/templates/front/paypal.tpl');
     }
 
@@ -167,15 +171,6 @@ class Prestashoppayments extends PaymentModule
      */
     public function generateHostedFieldsForm()
     {
-        $paypalOrderDetail = json_decode((new PaypalOrder )->createJsonPaypalOrder($this->context->cart));
-        $paypalOrder = (new Maasland)->createOrder($paypalOrderDetail);
-
-        $this->context->smarty->assign(array(
-            'clientToken' => $paypalOrder['client_token'],
-            'paypalOrderId' => $paypalOrder['id'], // media:addJsDef not working
-            'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true)
-        ));
-
         return $this->context->smarty->fetch('module:prestashoppayments/views/templates/front/hosted-fields.tpl');
     }
 
