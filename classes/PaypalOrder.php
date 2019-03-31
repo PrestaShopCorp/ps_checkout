@@ -30,28 +30,26 @@ use PrestaShop\PrestaShop\Adapter\Presenter\Cart\CartPresenter;
 
 class PaypalOrder
 {
-    public function createJsonPaypalOrder(\Cart $cart)
+    public function createJsonPaypalOrder(\Context $context)
     {
         return $this->createJsonFromData(
-            $this->fetchDataFromCart($cart)
+            $this->fetchDataFromCart($context->cart, $context->customer)
         );
     }
 
     /**
      * @param \Cart Current cart
+     * @param \Customer Current customer
      *
      * @return array Data to be added in the Paypal payload
      */
-    public function fetchDataFromCart(\Cart $cart)
+    public function fetchDataFromCart(\Cart $cart, \Customer $customer)
     {
         // TODO: check cart
-
-        $link = \Context::getContext()->link;
         $productList = $cart->getProducts();
 
         $cartPresenter = new CartPresenter();
         $cartPresenter = $cartPresenter->present($cart);
-        dump($cartPresenter);
 
         $shippingAddress = \Address::initialize($cartPresenter['id_address_delivery']);
         $invoiceAddress = \Address::initialize($cartPresenter['id_address_invoice']);
@@ -61,6 +59,7 @@ class PaypalOrder
                 $cartPresenter,
                 ['id' => $cart->id]
             ),
+            'customer' => $customer,
             'products' => $productList,
             'addresses' => [
                 'shipping' => $shippingAddress,
@@ -133,9 +132,6 @@ class PaypalOrder
             'shipping' => [
                 'name' => [
                     'full_name' => 'Mr '.$params['addresses']['shipping']->lastname.' '.$params['addresses']['shipping']->firstname,
-                    // 'prefix' => 'Mr', // Mr / Ms
-                    // 'given_name' => $params['addresses']['shipping']->lastname,
-                    // 'surname' => $params['addresses']['shipping']->firstname
                 ],
                 'address' => [
                     'address_line_1' => $params['addresses']['shipping']->address1,
@@ -148,18 +144,17 @@ class PaypalOrder
             ],
             'payer' => [
                 'name' => [
-                    'given_name' => $params['addresses']['invoice']->lastname,
-                    'surname' => $params['addresses']['invoice']->firstname
+                    'given_name' => $params['customer']->lastname,
+                    'surname' => $params['customer']->firstname
                 ],
-                'email_address' => 'test@prestashop.com',
-                // 'phone' => [
-                //     'phone_number_details' => [
-                //         'country_code' => '33',
-                //         'national_number' => '654565452'
-                //     ],
-                //     'phone_type' => 'MOBILE'
-                // ],
-                'birth_date' => '1992-10-12',
+                'email_address' => $params['customer']->email,
+                'phone' => [
+                    'phone_number' => [
+                        'national_number' => $params['addresses']['invoice']->phone
+                    ],
+                    'phone_type' => 'MOBILE' // TODO - Function to determine if phone is mobile or not
+                ],
+                'birth_date' => $params['customer']->birthday,
                 'address' => [
                     'address_line_1' => $params['addresses']['invoice']->address1,
                     'address_line_2' => $params['addresses']['invoice']->address2,

@@ -101,7 +101,7 @@ class Prestashoppayments extends PaymentModule
             return false;
         }
 
-        $paypalOrderDetail = json_decode((new PaypalOrder )->createJsonPaypalOrder($this->context->cart));
+        $paypalOrderDetail = json_decode((new PaypalOrder )->createJsonPaypalOrder($this->context));
         $paypalOrder = (new Maasland)->createOrder($paypalOrderDetail);
 
         if (false === $paypalOrder) {
