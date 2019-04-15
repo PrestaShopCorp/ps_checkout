@@ -38,8 +38,28 @@ $(document).ready(function() {
 function initSmartButtons() {
     paypal.Buttons({
         style: {
-            shape:  'pill',
+            shape: 'pill',
             size: 'small'
+        },
+        onInit: function(data, actions) {
+            // Disable the buttons
+            actions.disable();
+            // Listen for changes to the checkbox
+            document.querySelector('.buttons-approve').addEventListener('change', function(event) {
+                // Enable or disable the button when it is checked or unchecked
+                if (event.target.checked) {
+                    actions.enable();
+                    document.querySelector('#paypal-approve-error').classList.add('hide-paypal-error');
+                } else {
+                    actions.disable();
+                }
+            });
+        },
+        onClick: function() {
+            // Show a validation error if the checkbox is not checked
+            if (!document.querySelector('.buttons-approve').checked) {
+                document.querySelector('#paypal-approve-error').classList.remove('hide-paypal-error');
+            }
         },
         createOrder: function() {
             return paypalOrderId

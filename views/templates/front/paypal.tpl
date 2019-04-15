@@ -29,12 +29,12 @@
         <li>
         <div class="float-xs-left">
             <span class="custom-checkbox">
-            <input id="conditions_to_approve[terms-and-conditions]-paypal" name="conditions_to_approve[terms-and-conditions]" required="" type="checkbox" value="1" class="ps-shown-by-js">
+            <input id="conditions_to_approve-paypal" name="conditions_to_approve" required="" type="checkbox" value="1" class="ps-shown-by-js buttons-approve">
             <span><i class="material-icons rtl-no-flip checkbox-checked"></i></span>
             </span>
         </div>
         <div class="condition-label">
-            <label class="js-terms" for="conditions_to_approve[terms-and-conditions]-paypal">
+            <label class="js-terms paypal-label" for="conditions_to_approve-paypal">
             I agree to the <a href="" id="cta-terms-and-conditions-0">terms of service</a> and will adhere to them unconditionally.
             </label>
         </div>
@@ -42,7 +42,14 @@
     </ul>
 </form>
 
-<div>You will be temporarily redirected to the related payment service.</div>
+<div class="paypal-tips">You will be temporarily redirected to the related payment service.</div>
 
 <div id="paypal-button-container"></div>
 
+<div id="paypal-approve-error" class="hide-paypal-error">
+    <article class="alert alert-danger" role="alert" data-alert="danger">
+        <ul>
+            <li>Impossible de mettre à jour vos informations, veuillez vérifier vos données.</li>
+        </ul>
+    </article>
+</div>

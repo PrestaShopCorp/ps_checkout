@@ -282,8 +282,8 @@ class Prestashoppayments extends PaymentModule
         );
 
         $this->context->controller->registerStylesheet(
-            'prestashoppayments-css-hostedfields',
-            'modules/'.$this->name.'/views/css/hostedFields.css'
+            'prestashoppayments-css-paymentOptions',
+            'modules/'.$this->name.'/views/css/paymentOptions.css'
         );
     }
 }
