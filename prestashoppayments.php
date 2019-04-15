@@ -24,16 +24,35 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
+use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+use PrestaShop\Module\PrestashopPayments\Api\Maasland;
+use PrestaShop\Module\PrestashopPayments\GenerateJsonPaypalOrder;
+use PrestaShop\Module\PrestashopPayments\Payment;
+
+require_once __DIR__ . '/vendor/autoload.php';
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class prestashoppayments extends Module
+class Prestashoppayments extends PaymentModule
 {
+    // hook list used by the module
+    public $hookList = [
+        'paymentOptions',
+        'paymentReturn',
+        'actionFrontControllerSetMedia',
+        'actionObjectOrderSlipAddBefore'
+    ];
+
+    public $configurationList = array(
+        'PS_PAY_INTENT' => 'CAPTURE'
+    );
+
     public function __construct()
     {
         $this->name = 'prestashoppayments';
-        $this->tab = 'payment';
+        $this->tab = 'payments_gateways';
         $this->version = '1.0.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
@@ -49,5 +68,222 @@ class prestashoppayments extends Module
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
+    }
+
+    /**
+     * Function executed at the install of the module
+     *
+     * @return bool
+     */
+    public function install()
+    {
+        foreach ($this->configurationList as $name => $value) {
+            Configuration::updateValue($name, $value);
+        }
+
+        return parent::install() && $this->registerHook($this->hookList);
+    }
+
+    /**
+     * Function executed at the uninstall of the module
+     *
+     * @return bool
+     */
+    public function uninstall()
+    {
+        foreach (array_keys($this->configurationList) as $name) {
+            Configuration::deleteByName($name);
+        }
+
+        return parent::uninstall();
+    }
+
+    /**
+     * Add payment option at the checkout in the front office
+     *
+     * @param array params return by the hook
+     *
+     * @return array all payment option available
+     */
+    public function hookPaymentOptions($params)
+    {
+        if (false === $this->active) {
+            return false;
+        }
+
+        if (false === $this->checkCurrency($params['cart'])) {
+            return false;
+        }
+
+        $payload = (new GenerateJsonPaypalOrder)->create($this->context);
+        $paypalOrder = (new Maasland)->createOrder($payload);
+
+        if (false === $paypalOrder) {
+            return false;
+        }
+
+        $this->context->smarty->assign(array(
+            'clientToken' => $paypalOrder['client_token'],
+            'paypalOrderId' => $paypalOrder['id'],
+            'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true),
+            'intent' => strtolower(Configuration::get('PS_PAY_INTENT'))
+        ));
+
+        $payment_options = [
+            $this->getPaypalPaymentOption(),
+            $this->getHostedFieldsPaymentOption()
+        ];
+
+        return $payment_options;
+    }
+
+    /**
+     * Hook executed when a slip order is created
+     * Used when a partial refund is made in order to refund the patpal order
+     *
+     * @param array params return by the hook
+     */
+    public function hookActionObjectOrderSlipAddBefore($params)
+    {
+        return false;
+        if (false === Tools::isSubmit('partialRefund')) {
+            return false;
+        }
+
+        dump($params);
+        die('test');
+
+        $refunds = $params['productList'];
+
+        $totalRefund = 0;
+
+        foreach ($refunds as $idOrderDetails => $amountDetail) {
+            $totalRefund = $totalRefund + $amountDetail['quantity'] * $amountDetail['amount'];
+        }
+
+        $orderPayment = OrderPayment::getByOrderId($params['order']->id);
+
+        if (false === is_array($orderPayment)) {
+            return false;
+        }
+
+        $orderPayment = current($orderPayment);
+
+        $paypalOrderId = $orderPayment->transaction_id;
+
+        if (false === isset($paypalOrderId)) {
+            return false;
+        }
+
+        $currency = \Currency::getCurrency(Configuration::get('PS_CURRENCY_DEFAULT'));
+        $currencyIsoCode = $currency['iso_code'];
+
+        $payment = new Payment($paypalOrderId);
+
+        $refund = $payment->refundOrder($totalRefund, $currencyIsoCode);
+
+        if (false === $refund) {
+            die('cannot process to a refund. Error form paypal');
+        }
+    }
+
+    /**
+     * Generate paypal payment option
+     *
+     * @return object PaymentOption
+     */
+    public function getPaypalPaymentOption()
+    {
+        $paypalPaymentOption = new PaymentOption();
+        $paypalPaymentOption->setCallToActionText($this->l('and other payment methods'))
+                            ->setAction($this->context->link->getModuleLink($this->name, 'CreateOrder', array(), true))
+                            ->setAdditionalInformation($this->generatePaypalForm())
+                            ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/paypal.png'));
+
+        return $paypalPaymentOption;
+    }
+
+    /**
+     * Create the pay by paypal button
+     *
+     * @return void tpl that include the paypal button
+     */
+    public function generatePaypalForm()
+    {
+        return $this->context->smarty->fetch('module:prestashoppayments/views/templates/front/paypal.tpl');
+    }
+
+    /**
+     * Generate hostfields payment option
+     *
+     * @return object PaymentOption
+     */
+    public function getHostedFieldsPaymentOption()
+    {
+        $hostedFieldsPaymentOption = new PaymentOption();
+        $hostedFieldsPaymentOption->setCallToActionText($this->l('100% secure payments'))
+                    ->setAction($this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true))
+                    ->setForm($this->generateHostedFieldsForm())
+                    ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/payement-cards.png'));
+
+        return $hostedFieldsPaymentOption;
+    }
+
+    /**
+     * Create the hosted fields form
+     *
+     * @return void tpl that include hosted fields
+     */
+    public function generateHostedFieldsForm()
+    {
+        return $this->context->smarty->fetch('module:prestashoppayments/views/templates/front/hosted-fields.tpl');
+    }
+
+    /**
+     * Check if the module can process to a payment with the
+     * current currency
+     *
+     * @param object $cart
+     *
+     * @return bool
+     */
+    public function checkCurrency($cart)
+    {
+        $currencyOrder = new \Currency($cart->id_currency);
+        $currenciesModule = $this->getCurrency($cart->id_currency);
+
+        if (is_array($currenciesModule)) {
+            foreach ($currenciesModule as $currencyModule) {
+                if ($currencyOrder->id == $currencyModule['id_currency']) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Load asset on the front office
+     *
+     * @return void
+     */
+    public function hookActionFrontControllerSetMedia()
+    {
+        $currentPage = $this->context->controller->php_self;
+
+        if ($currentPage != 'order') {
+            return false;
+        }
+
+        $this->context->controller->registerJavascript(
+            'prestashoppayments-paypal-api',
+            'modules/'.$this->name.'/views/js/api-paypal.js'
+        );
+
+        $this->context->controller->registerStylesheet(
+            'prestashoppayments-css-paymentOptions',
+            'modules/'.$this->name.'/views/css/paymentOptions.css'
+        );
     }
 }

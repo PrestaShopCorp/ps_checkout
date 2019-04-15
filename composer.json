@@ -9,12 +9,15 @@
   },
   "require-dev": {
       "php": ">=5.6",
-      "phpunit/phpunit": "~5.7"
+      "phpunit/phpunit": "~5.7",
+      "guzzlehttp/guzzle": "~5.0"
   },
   "autoload": {
-      "classmap": []
+      "psr-4": {
+          "PrestaShop\\Module\\PrestashopPayments\\": "classes/"
+      }
   },
   "require": {
-    "friendsofphp/php-cs-fixer": "^2.14"
+      "friendsofphp/php-cs-fixer": "^2.14"
   }
 }
