@@ -2,8 +2,8 @@
 $rootDir = getenv('_PS_ROOT_DIR_');
 
 if (!$rootDir) {
-  echo '[ERROR] Define _PS_ROOT_DIR_ with the path to PrestaShop folder'. PHP_EOL;
-  exit(1);
+    echo '[ERROR] Define _PS_ROOT_DIR_ with the path to PrestaShop folder'. PHP_EOL;
+    exit(1);
 }
 
 // Add module composer autoloader
@@ -47,7 +47,7 @@ $constantsToDefine = [
   '_PS_OS_COD_VALIDATION_',
 ];
 foreach ($constantsToDefine as $constant) {
-  if (!defined($constant)) {
-    define($constant, 'DUMMY_VALUE');
-  }
+    if (!defined($constant)) {
+        define($constant, 'DUMMY_VALUE');
+    }
 }

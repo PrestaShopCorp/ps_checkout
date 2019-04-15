@@ -52,7 +52,7 @@ class Payment
      *
      * @return void
      */
-    public function setPaypalOrderDetail()
+    public function loadPaypalOrderDetail()
     {
         if (null !== $this->paypalOrderDetail) {
             return false;
@@ -93,7 +93,7 @@ class Payment
         // TODO : patch the order in order to update the order id with the order id
         // of the prestashop order
 
-        $this->setPaypalOrderDetail();
+        $this->loadPaypalOrderDetail();
 
         switch ($this->paypalOrderDetail['intent']) {
             case self::INTENT_CAPTURE:
@@ -102,6 +102,8 @@ class Payment
             case self::INTENT_AUTHORIZE:
                 $responseStatus = $this->authorizeOrder($this->paypalOrderDetail['id']);
                 break;
+            default:
+                throw new \Exception(sprintf('Unknown Intent type %s', $this->paypalOrderDetail['intent']));
         }
 
         $orderState = $this->setOrderState($module->currentOrder, $responseStatus);
@@ -121,7 +123,7 @@ class Payment
      */
     public function refundOrder($amount, $currencyCode)
     {
-        $this->setPaypalOrderDetail();
+        $this->loadPaypalOrderDetail();
 
         $purchaseUnits = current($this->paypalOrderDetail['purchase_units']);
         $capture = current($purchaseUnits['payments']['captures']);

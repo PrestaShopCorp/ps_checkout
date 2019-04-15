@@ -35,7 +35,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class Prestashoppayments extends PaymentModule
+class PrestashopPayments extends PaymentModule
 {
     // hook list used by the module
     public $hookList = [
@@ -206,7 +206,7 @@ class Prestashoppayments extends PaymentModule
     /**
      * Create the pay by paypal button
      *
-     * @return void tpl that include the paypal button
+     * @return string tpl that include the paypal button
      */
     public function generatePaypalForm()
     {
@@ -232,7 +232,7 @@ class Prestashoppayments extends PaymentModule
     /**
      * Create the hosted fields form
      *
-     * @return void tpl that include hosted fields
+     * @return string tpl that include hosted fields
      */
     public function generateHostedFieldsForm()
     {

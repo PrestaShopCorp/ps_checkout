@@ -4,8 +4,8 @@ parameters:
 		- /web/module/classes
 		- /web/module/controllers
 		- /web/module/prestashoppayments.php
-	excludes_analyse:
-
 	ignoreErrors:
+		- '#Access to an undefined property PrestashopPayments::\$confirmUninstall\.#'
+		- '#Access to an undefined property PrestashopPayments::\$bootstrap\.#'
 
 	level: 1
