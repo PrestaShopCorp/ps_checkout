@@ -28,18 +28,15 @@ use GuzzleHttp\Message\Response;
 use GuzzleHttp\Stream\Stream;
 use GuzzleHttp\Subscriber\Mock;
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\PrestashopPayment\Api\Maasland;
+use PrestaShop\Module\PrestashopPayments\Api\Maasland;
 
-class MaaslandGetAccessTokenTest extends TestCase
+class MaaslandCreateOrderTest extends TestCase
 {
-    public function testGetAccessTokenWorksAsExpected()
+    public function testCreateOrderDefaultScenario()
     {
+        // TODO: Display a dummy but valid payload
         $result = [
-            'scope' => 'https://uri.paypal.com/services/identity/proxyclient [...]',
-            'nonce' => '2018-11-16T10:00:15Zqvf4GUEaln6b55p8e1sbdWtTrXkp8i8H0RpxnA_O5s8',
-            'access_token' => 'Access-Token',
-            'token_type' => 'Bearer',
-            'expires_in' => 30546
+            'data-key' => 'data-value',
         ];
         $client = new Client();
 
@@ -52,38 +49,35 @@ class MaaslandGetAccessTokenTest extends TestCase
 
         $maasland = new Maasland($client);
 
-        $this->assertSame('Access-Token', $maasland->getAccessToken());
+        $this->assertSame($result, $maasland->createOrder([]));
     }
 
-    public function testGetAccessTokenUnauthorized()
+    public function testCreateOrderUnauthorized()
     {
-        // Data taken from cURL
-        $result = '{"name":"AUTHENTICATION_FAILURE","message":"Authentication failed due to invalid authentication credentials or ' .
-            'a missing Authorization header.","links":[{"href":"https://developer.paypal.com/docs/api/overview/#error","rel":"information_link"}]}';
         $client = new Client();
 
         $mock = new Mock([
-            new Response(401, [], Stream::factory($result)),
+            new Response(401, [], Stream::factory('')),
         ]);
         $client->getEmitter()->attach($mock);
 
         $maasland = new Maasland($client);
 
-        $this->assertSame(false, $maasland->getAccessToken());
+        $this->assertSame(false, $maasland->createOrder([]));
     }
 
-    public function testGetAccessTokenMissingAccessToken()
+    public function testCreateOrderInvalidResponse()
     {
-        $result = [];
+        $result = 'I\'m not valid json';
         $client = new Client();
 
         $mock = new Mock([
-            new Response(200, [], Stream::factory(json_encode($result))),
+            new Response(200, [], Stream::factory($result)),
         ]);
         $client->getEmitter()->attach($mock);
 
         $maasland = new Maasland($client);
 
-        $this->assertSame(false, $maasland->getAccessToken());
+        $this->assertSame(false, $maasland->createOrder([]));
     }
 }
