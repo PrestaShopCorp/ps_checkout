@@ -23,9 +23,9 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 
-<section class="additional-information">
+<div class="additional-information">
 
-    <script id="paypalSdk" src="https://www.paypal.com/sdk/js?components=hosted-fields,buttons&client-id=AWZMaFOTMPjG2oXFw1GqSp1hlrlFUTupuNqX0A0NJA_df0rcGQbyD9VwNAudXiRcAbSaePPPJ4FvgTqi&intent=capture&currency=EUR"
+    <script id="paypalSdk" src="https://www.paypal.com/sdk/js?components=hosted-fields,buttons&amp;client-id=AWZMaFOTMPjG2oXFw1GqSp1hlrlFUTupuNqX0A0NJA_df0rcGQbyD9VwNAudXiRcAbSaePPPJ4FvgTqi&amp;intent={$intent|escape:'htmlall':'UTF-8'}&amp;currency=EUR"
         data-client-token="{$clientToken|escape:'htmlall':'UTF-8'}">
     </script>
 
@@ -59,12 +59,12 @@
 
     <div id="consoleLog"></div>
 
-</section>
+</div>
 
 {literal}
 <script type="text/javascript">
-    var paypalOrderId = "{/literal}{$paypalOrderId|escape:'htmlall':'UTF-8'}{literal}";
-    var orderValidationLink = "{/literal}{$orderValidationLink|escape:'htmlall':'UTF-8'}{literal}";
+    let paypalOrderId = "{/literal}{$paypalOrderId|escape:'htmlall':'UTF-8'}{literal}";
+    let orderValidationLink = "{/literal}{$orderValidationLink|escape:'htmlall':'UTF-8'}{literal}";
 </script>
 {/literal}
 

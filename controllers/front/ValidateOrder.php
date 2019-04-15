@@ -60,7 +60,7 @@ class prestashoppaymentsValidateOrderModuleFrontController extends ModuleFrontCo
         $currency = $this->context->currency;
         $total = (float)$cart->getOrderTotal(true, Cart::BOTH);
 
-        $payment = new Payment($paypalOrderId, $this->module->currentOrder);
+        $payment = new Payment($paypalOrderId);
 
         $dataOrder = [
             'cartId' => (int)$cart->id,

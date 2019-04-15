@@ -28,9 +28,9 @@ namespace PrestaShop\Module\PrestashopPayments;
 
 use PrestaShop\PrestaShop\Adapter\Presenter\Cart\CartPresenter;
 
-class PaypalOrder
+class GenerateJsonPaypalOrder
 {
-    public function createJsonPaypalOrder(\Context $context)
+    public function create(\Context $context)
     {
         return $this->createJsonFromData(
             $this->fetchDataFromCart($context->cart, $context->customer)
@@ -105,7 +105,7 @@ class PaypalOrder
         }
 
         $payload = json_encode([
-            'intent' => 'capture', // capture or authorize
+            'intent' => \Configuration::get('PS_PAY_INTENT'), // capture or authorize
             'custom_id' => (string) $params['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
             'description' => 'Checking out with your cart from {SHOP}',
@@ -124,7 +124,7 @@ class PaypalOrder
                     ],
                     'tax_total' => [
                         'currency_code' => $params['currency']['iso_code'],
-                        'value' => $totalAmountItemWithoutTax
+                        'value' =>  $totalAmountItemWithoutTax
                     ],
                 ]
             ],
@@ -166,6 +166,13 @@ class PaypalOrder
             ],
             'payee' => [
                 'merchant_id' => '7RN2XXLUBYHHS' // merchant id which is return at the end of the onboarding - Test mechant id : 7RN2XXLUBYHHS
+            ],
+            'application_context' => [
+                'brand_name' => 'PrestaShop Payments',
+                'locale' => 'bs-BA',
+                'return_url' => 'https://myshop.com/order/confirm',
+                'cancel_url' => 'https://myshop.com/order/cancel',
+                'shipping_preference' => 'SET_PROVIDED_ADDRESS'
             ]
         ]);
 

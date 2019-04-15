@@ -33,55 +33,112 @@ class Payment
     const INTENT_CAPTURE = 'CAPTURE';
     const INTENT_AUTHORIZE = 'AUTHORIZE';
 
-    public $paypalOrder = null;
-    public $psOrderId = null;
+    public $paypalOrderId = null;
+    public $paypalOrderDetail = null;
 
-    public function __construct($paypalOrderId = null, $psOrderId = null)
+    public function __construct($paypalOrderId = null)
     {
-        if ($paypalOrderId === null || $psOrderId === null) {
-            // TODO : Create paypal Order - Import class PaypalOrder.php
+        if ($paypalOrderId === null) {
+            throw new \PrestaShopException('Paypal order id is required');
         }
 
-        $this->paypalOrder = (new Maasland)->getOrderDetails($paypalOrderId);
-        $this->psOrderId = $psOrderId;
+        $this->paypalOrderId = $paypalOrderId;
+    }
+
+    /**
+     * Load paypal order detail
+     *
+     * @param string $paypalOrderId
+     *
+     * @return void
+     */
+    public function setPaypalOrderDetail()
+    {
+        if (null !== $this->paypalOrderDetail) {
+            return false;
+        }
+
+        $paypalOrder = (new Maasland)->fetchOrder($this->paypalOrderId);
+
+        if (false === $paypalOrder) {
+            return false;
+        }
+
+        $this->paypalOrderDetail = $paypalOrder;
     }
 
     /**
      * Process the validation for an order
      *
-     * @param array $dataOrder array with all information required by PaymentModule->validateOrder()
+     * @param array $payload array with all information required by PaymentModule->validateOrder()
      *
      * @return void
      */
-    public function validateOrder($dataOrder)
+    public function validateOrder($payload)
     {
         $module = \Module::getInstanceByName('prestashoppayments');
 
         $module->validateOrder(
-            $dataOrder['cartId'],
-            $dataOrder['orderStateId'],
-            $dataOrder['amount'],
-            $dataOrder['paymentMethod'],
-            $dataOrder['message'],
-            $dataOrder['extraVars'],
-            $dataOrder['currencyId'],
+            $payload['cartId'],
+            $payload['orderStateId'],
+            $payload['amount'],
+            $payload['paymentMethod'],
+            $payload['message'],
+            $payload['extraVars'],
+            $payload['currencyId'],
             false,
-            $dataOrder['secureKey']
+            $payload['secureKey']
         );
 
         // TODO : patch the order in order to update the order id with the order id
         // of the prestashop order
 
-        switch ($this->paypalOrder['intent']) {
-            case INTENT_CAPTURE:
-                $responseStatus = $this->captureOrder($this->paypalOrder['id']);
+        $this->setPaypalOrderDetail();
+
+        switch ($this->paypalOrderDetail['intent']) {
+            case self::INTENT_CAPTURE:
+                $responseStatus = $this->captureOrder($this->paypalOrderDetail['id']);
                 break;
-            case INTENT_AUTHORIZE:
-                $responseStatus = $this->authorizeOrder($this->paypalOrder['id']);
+            case self::INTENT_AUTHORIZE:
+                $responseStatus = $this->authorizeOrder($this->paypalOrderDetail['id']);
                 break;
         }
 
-        $this->setOrderState($responseStatus);
+        $orderState = $this->setOrderState($module->currentOrder, $responseStatus);
+
+        if ($orderState === _PS_OS_PAYMENT_) {
+            $this->setTransactionId($module->currentOrder, $payload['extraVars']['transaction_id']);
+        }
+    }
+
+    /**
+     * Refund order
+     *
+     * @param float $amount value to refund
+     * @param string $currenctCode
+     *
+     * @return bool
+     */
+    public function refundOrder($amount, $currencyCode)
+    {
+        $this->setPaypalOrderDetail();
+
+        $purchaseUnits = current($this->paypalOrderDetail['purchase_units']);
+        $capture = current($purchaseUnits['payments']['captures']);
+        $captureId = $capture['id'];
+
+        $payload = [
+            'orderId' => $this->paypalOrderId,
+            'captureId' => $captureId,
+            'amount' =>
+            [
+                'currency_code' => $currencyCode,
+                'value' => $amount
+            ],
+            'note_to_payer' => 'Refund by '.\Configuration::get('PS_SHOP_NAME')
+        ];
+
+        return (new Maasland)->refundOrder($payload);
     }
 
     /**
@@ -96,7 +153,7 @@ class Payment
         $maasland = new Maasland();
         $response = $maasland->authorizeOrder($orderId);
 
-        return $response['status'];
+        return isset($response['status']) ? $response['status'] : false;
     }
 
     /**
@@ -111,28 +168,56 @@ class Payment
         $maasland = new Maasland();
         $response = $maasland->captureOrder($orderId);
 
-        return $response['status'];
+        return isset($response['status']) ? $response['status'] : false;
+    }
+
+    /**
+     * Set the transactionId (paypal order id) to the payment associated to the order
+     *
+     * @param int $psOrderId from prestashop
+     * @param string $transactionId paypal order id
+     *
+     * @return bool
+     */
+    public function setTransactionId($psOrderId, $transactionId)
+    {
+        $paymentOrder = \OrderPayment::getByOrderId($psOrderId);
+
+        if (false === is_array($paymentOrder)) {
+            return false;
+        }
+
+        $paymentOrder = current($paymentOrder);
+
+        $paymentOrder = new \OrderPayment($paymentOrder->id);
+        $paymentOrder->transaction_id = $transactionId;
+
+        return $paymentOrder->save();
     }
 
     /**
      * Set the status of the prestashop order if the payment has been
      * successfully captured or not
      *
+     * @param int $orderId from prestashop
      * @param string $status
      *
-     * @return bool
+     * @return int order state id to set to the order depending on the status return by paypal
      */
-    public function setOrderState($status)
+    public function setOrderState($orderId, $status)
     {
-        $order = new OrderHistory();
-        $order->id_order = $this->psOrderId;
+        $order = new \OrderHistory();
+        $order->id_order = $orderId;
 
         if ($status === 'COMPLETED') {
-            $order->changeIdOrderState(_PS_OS_PAYMENT_, $this->psOrderId);
+            $orderState = _PS_OS_PAYMENT_;
         } else {
-            $order->changeIdOrderState(_PS_OS_ERROR_, $this->psOrderId);
+            $orderState = _PS_OS_ERROR_;
         }
 
-        return $order->save();
+        $order->changeIdOrderState(_PS_OS_PAYMENT_, $orderId);
+        $order->save();
+
+        return $orderState;
     }
 }

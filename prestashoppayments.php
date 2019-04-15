@@ -26,7 +26,8 @@
 
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\Module\PrestashopPayments\Api\Maasland;
-use PrestaShop\Module\PrestashopPayments\PaypalOrder;
+use PrestaShop\Module\PrestashopPayments\GenerateJsonPaypalOrder;
+use PrestaShop\Module\PrestashopPayments\Payment;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -40,8 +41,13 @@ class Prestashoppayments extends PaymentModule
     public $hookList = [
         'paymentOptions',
         'paymentReturn',
-        'actionFrontControllerSetMedia'
+        'actionFrontControllerSetMedia',
+        'actionObjectOrderSlipAddBefore'
     ];
+
+    public $configurationList = array(
+        'PS_PAY_INTENT' => 'CAPTURE'
+    );
 
     public function __construct()
     {
@@ -71,6 +77,10 @@ class Prestashoppayments extends PaymentModule
      */
     public function install()
     {
+        foreach ($this->configurationList as $name => $value) {
+            Configuration::updateValue($name, $value);
+        }
+
         return parent::install() && $this->registerHook($this->hookList);
     }
 
@@ -81,6 +91,10 @@ class Prestashoppayments extends PaymentModule
      */
     public function uninstall()
     {
+        foreach (array_keys($this->configurationList) as $name) {
+            Configuration::deleteByName($name);
+        }
+
         return parent::uninstall();
     }
 
@@ -101,8 +115,8 @@ class Prestashoppayments extends PaymentModule
             return false;
         }
 
-        $paypalOrderDetail = json_decode((new PaypalOrder )->createJsonPaypalOrder($this->context));
-        $paypalOrder = (new Maasland)->createOrder($paypalOrderDetail);
+        $payload = (new GenerateJsonPaypalOrder)->create($this->context);
+        $paypalOrder = (new Maasland)->createOrder($payload);
 
         if (false === $paypalOrder) {
             return false;
@@ -111,7 +125,8 @@ class Prestashoppayments extends PaymentModule
         $this->context->smarty->assign(array(
             'clientToken' => $paypalOrder['client_token'],
             'paypalOrderId' => $paypalOrder['id'],
-            'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true)
+            'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true),
+            'intent' => strtolower(Configuration::get('PS_PAY_INTENT'))
         ));
 
         $payment_options = [
@@ -120,6 +135,56 @@ class Prestashoppayments extends PaymentModule
         ];
 
         return $payment_options;
+    }
+
+    /**
+     * Hook executed when a slip order is created
+     * Used when a partial refund is made in order to refund the patpal order
+     *
+     * @param array params return by the hook
+     */
+    public function hookActionObjectOrderSlipAddBefore($params)
+    {
+        return false;
+        if (false === Tools::isSubmit('partialRefund')) {
+            return false;
+        }
+
+        dump($params);
+        die('test');
+
+        $refunds = $params['productList'];
+
+        $totalRefund = 0;
+
+        foreach ($refunds as $idOrderDetails => $amountDetail) {
+            $totalRefund = $totalRefund + $amountDetail['quantity'] * $amountDetail['amount'];
+        }
+
+        $orderPayment = OrderPayment::getByOrderId($params['order']->id);
+
+        if (false === is_array($orderPayment)) {
+            return false;
+        }
+
+        $orderPayment = current($orderPayment);
+
+        $paypalOrderId = $orderPayment->transaction_id;
+
+        if (false === isset($paypalOrderId)) {
+            return false;
+        }
+
+        $currency = \Currency::getCurrency(Configuration::get('PS_CURRENCY_DEFAULT'));
+        $currencyIsoCode = $currency['iso_code'];
+
+        $payment = new Payment($paypalOrderId);
+
+        $refund = $payment->refundOrder($totalRefund, $currencyIsoCode);
+
+        if (false === $refund) {
+            die('cannot process to a refund. Error form paypal');
+        }
     }
 
     /**

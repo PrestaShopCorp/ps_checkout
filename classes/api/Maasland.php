@@ -33,9 +33,9 @@ use GuzzleHttp\Stream\Stream;
 class Maasland
 {
     public $debugMode = false; // true for false x)
-    public $timeout = 3;
+    public $timeout = 5;
 
-    private $maaslandApi = 'http://10.0.75.1:1234';
+    private $maaslandApi = 'http://host.docker.internal:1234';
 
     /**
      * @var Client
@@ -46,7 +46,18 @@ class Maasland
     {
         // Client can be provided for tests
         if (null === $client) {
-            $client = new Client();
+            $client = new Client(array(
+                'base_url' => $this->maaslandApi,
+                'defaults' => array(
+                    'timeout' => $this->timeout,
+                    'exceptions' => $this->debugMode,
+                    'headers' =>
+                    [
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json'
+                    ],
+                ),
+            ));
         }
         $this->client = $client;
     }
@@ -63,15 +74,8 @@ class Maasland
         $route = '/payments/order/create';
 
         try {
-            $response = $this->client->post($this->maaslandApi . $route, [
-                'timeout' => $this->timeout,
-                'exceptions' => $this->debugMode,
-                'headers' =>
-                [
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json'
-                ],
-                'json' => json_encode($payload)
+            $response = $this->client->post($route, [
+                'json' => $payload
             ]);
         } catch (RequestException $e) {
             // TODO: Log the error ? Return an error message ?
@@ -100,14 +104,7 @@ class Maasland
         ];
 
         try {
-            $response = $this->client->post($this->maaslandApi . $route, [
-                'timeout' => $this->timeout,
-                'exceptions' => $this->debugMode,
-                'headers' =>
-                [
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json'
-                ],
+            $response = $this->client->post($route, [
                 'json' => json_encode($payload)
             ]);
         } catch (RequestException $e) {
@@ -127,9 +124,26 @@ class Maasland
      *
      * @return array|bool paypal order
      */
-    public function getOrderDetails($orderId)
+    public function fetchOrder($orderId)
     {
-        // TODO : waiting maasland integration
+        $route = '/payments/order/fetch';
+
+        $payload = [
+            'orderId' => $orderId
+        ];
+
+        try {
+            $response = $this->client->post($route, [
+                'json' => json_encode($payload)
+            ]);
+        } catch (RequestException $e) {
+            // TODO: Log the error ? Return an error message ?
+            return false;
+        }
+
+        $data = json_decode($response->getBody(), true);
+
+        return isset($data) ? $data : false;
     }
 
     /**
@@ -153,7 +167,20 @@ class Maasland
      */
     public function refundOrder($payload)
     {
-        // TODO : waiting maasland integration
+        $route = '/payments/order/refund';
+
+        try {
+            $response = $this->client->post($route, [
+                'json' => json_encode($payload)
+            ]);
+        } catch (RequestException $e) {
+            // TODO: Log the error ? Return an error message ?
+            return false;
+        }
+
+        $data = json_decode($response->getBody(), true);
+
+        return isset($data) ? $data : false;
     }
 
     /**
@@ -172,14 +199,7 @@ class Maasland
         ];
 
         try {
-            $response = $this->client->post($this->maaslandApi . $route, [
-                'timeout' => $this->timeout,
-                'exceptions' => $this->debugMode,
-                'headers' =>
-                [
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json'
-                ],
+            $response = $this->client->post($route, [
                 'json' => json_encode($payload)
             ]);
         } catch (RequestException $e) {
