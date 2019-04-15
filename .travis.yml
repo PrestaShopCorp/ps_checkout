@@ -19,3 +19,8 @@ script:
   - vendor/bin/php-cs-fixer fix --no-interaction --dry-run --diff --rules=@PSR2 tests #classes controllers
   # PHP Unit
   - vendor/bin/phpunit tests
+  # PHP Stan
+  - if [ ${TRAVIS_PHP_VERSION:0:2} == "7." ]; then
+      docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop
+      docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html phpstan analyse --configuration=/web/module/tests/phpstan/phpstan.neon
+    fi
