@@ -1,23 +1,27 @@
 {
-  "config": {
-      "preferred-install": "dist",
-      "platform": {
-          "php": "5.6"
-      },
-      "optimize-autoloader": true,
-      "prepend-autoloader": false
-  },
-  "require-dev": {
-      "php": ">=5.6",
-      "phpunit/phpunit": "~5.7",
-      "guzzlehttp/guzzle": "~5.0"
-  },
-  "autoload": {
-      "psr-4": {
-          "PrestaShop\\Module\\PrestashopPayments\\": "classes/"
-      }
-  },
-  "require": {
-      "friendsofphp/php-cs-fixer": "^2.14"
-  }
+    "config": {
+        "preferred-install": "dist",
+        "platform": {
+            "php": "5.6"
+        },
+        "optimize-autoloader": true,
+        "prepend-autoloader": false
+    },
+    "require-dev": {
+        "php": ">=5.6",
+        "phpunit/phpunit": "~5.7",
+        "guzzlehttp/guzzle": "~5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "PrestaShop\\Module\\PrestashopPayments\\": "classes/"
+        },
+        "classmap": [
+            "prestashoppayments.php",
+            "controllers/"
+        ]
+    },
+    "require": {
+        "friendsofphp/php-cs-fixer": "^2.14"
+    }
 }

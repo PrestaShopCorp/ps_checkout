@@ -1,0 +1,11 @@
+parameters:
+	bootstrap: /web/module/tests/phpstan/bootstrap.php
+	paths:
+		- /web/module/classes
+		- /web/module/controllers
+		- /web/module/prestashoppayments.php
+	ignoreErrors:
+		- '#Access to an undefined property PrestashopPayments::\$confirmUninstall\.#'
+		- '#Access to an undefined property PrestashopPayments::\$bootstrap\.#'
+
+	level: 1
