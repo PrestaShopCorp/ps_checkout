@@ -31,6 +31,8 @@ $(document).ready(function() {
         return
     }
 
+    hideDefaultPaymentButtonIfPaypalIsChecked()
+
     initHostedFields()
     initSmartButtons()
 })
@@ -168,6 +170,23 @@ function initHostedFields() {
             });
         });
     }
+}
+
+function hideDefaultPaymentButtonIfPaypalIsChecked() {
+    let conditionsToApproveId = document.getElementById('conditions-to-approve')
+    let paymentDefaultButton = document.getElementById('payment-confirmation')
+
+    document.getElementsByName('payment-option').forEach(function(item) {
+        item.addEventListener('input', function() {
+            if (item.checked && item.dataset.moduleName === paypalPaymentOption) {
+                paymentDefaultButton.classList.add('paypal-hide-default')
+                conditionsToApproveId.classList.add('paypal-hide-default')
+            } else {
+                paymentDefaultButton.classList.remove('paypal-hide-default')
+                conditionsToApproveId.classList.remove('paypal-hide-default')
+            }
+        })
+    })
 }
 
 function toggleLoader(enable) {

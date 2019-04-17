@@ -63,6 +63,7 @@
 
 {literal}
 <script type="text/javascript">
+    let paypalPaymentOption = "{/literal}{$paypalPaymentOption|escape:'htmlall':'UTF-8'}{literal}";
     let paypalOrderId = "{/literal}{$paypalOrderId|escape:'htmlall':'UTF-8'}{literal}";
     let orderValidationLink = "{/literal}{$orderValidationLink|escape:'htmlall':'UTF-8'}{literal}";
 </script>
