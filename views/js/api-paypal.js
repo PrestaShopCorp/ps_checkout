@@ -31,6 +31,8 @@ $(document).ready(function() {
         return
     }
 
+    hostedFieldsErrors = JSON.parse(hostedFieldsErrors)
+
     hideDefaultPaymentButtonIfPaypalIsChecked()
 
     initHostedFields()
@@ -163,13 +165,36 @@ function initHostedFields() {
                         console.log('error')
                     }
                 }).catch(function (err) {
+                    displayCardError(err)
                     toggleLoader(false)
-                    document.getElementById('consoleLog').innerHTML = JSON.stringify(err);
                     console.log(err)
                 });
             });
         });
     }
+}
+
+function displayCardError(err) {
+    if (typeof err.details === 'undefined') {
+        return
+    }
+
+    let displayError = document.getElementById('hostedFieldsErrors')
+    let errorList = document.getElementById('hostedFieldsErrorList')
+
+    // reset previous messages set in the div
+    errorList.innerHTML = ''
+
+    displayError.classList.remove('hide-paypal-error')
+
+    Object.keys(err.details).forEach(function (item) {
+        let errorCode = err.details[item].issue
+        let errorMessage = hostedFieldsErrors[errorCode]
+
+        let li = document.createElement('li')
+        li.appendChild(document.createTextNode(errorMessage));
+        errorList.appendChild(li)
+    })
 }
 
 function hideDefaultPaymentButtonIfPaypalIsChecked() {

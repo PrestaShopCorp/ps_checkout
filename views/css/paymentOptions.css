@@ -44,6 +44,10 @@
     margin-bottom: 0;
 }
 
+#hostedFieldsErrors ul {
+    margin-bottom: 0;
+}
+
 .hide-paypal-error {
     display: none;
     visibility: hidden;

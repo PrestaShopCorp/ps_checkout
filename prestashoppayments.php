@@ -28,6 +28,7 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\Module\PrestashopPayments\Api\Maasland;
 use PrestaShop\Module\PrestashopPayments\GenerateJsonPaypalOrder;
 use PrestaShop\Module\PrestashopPayments\Payment;
+use PrestaShop\Module\PrestashopPayments\HostedFieldsErrors;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -123,7 +124,6 @@ class PrestashopPayments extends PaymentModule
         }
 
         $this->context->smarty->assign(array(
-            'paypalPaymentOption' => $this->name.'_paypal',
             'clientToken' => $paypalOrder['client_token'],
             'paypalOrderId' => $paypalOrder['id'],
             'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true),
@@ -278,6 +278,11 @@ class PrestashopPayments extends PaymentModule
         if ($currentPage != 'order') {
             return false;
         }
+
+        Media::addJsDef(array(
+            'paypalPaymentOption' => $this->name.'_paypal',
+            'hostedFieldsErrors' => (new HostedFieldsErrors)->getHostedFieldsErrors()
+        ));
 
         $this->context->controller->registerJavascript(
             'prestashoppayments-paypal-api',

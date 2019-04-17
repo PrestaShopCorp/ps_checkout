@@ -57,13 +57,16 @@
 
     </form>
 
-    <div id="consoleLog"></div>
-
+    <div id="hostedFieldsErrors" class="hide-paypal-error">
+        <div class="alert alert-danger" role="alert" data-alert="danger">
+            <ul id="hostedFieldsErrorList">
+            </ul>
+        </div>
+    </div>
 </div>
 
 {literal}
 <script type="text/javascript">
-    let paypalPaymentOption = "{/literal}{$paypalPaymentOption|escape:'htmlall':'UTF-8'}{literal}";
     let paypalOrderId = "{/literal}{$paypalOrderId|escape:'htmlall':'UTF-8'}{literal}";
     let orderValidationLink = "{/literal}{$orderValidationLink|escape:'htmlall':'UTF-8'}{literal}";
 </script>
