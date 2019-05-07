@@ -190,7 +190,6 @@ class Payment
         }
 
         $paymentOrder = current($paymentOrder);
-
         $paymentOrder = new \OrderPayment($paymentOrder->id);
         $paymentOrder->transaction_id = $transactionId;
 

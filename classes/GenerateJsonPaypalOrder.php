@@ -170,8 +170,8 @@ class GenerateJsonPaypalOrder
             'application_context' => [
                 'brand_name' => 'PrestaShop Payments',
                 'locale' => 'bs-BA',
-                'return_url' => \Tools::getShopDomainSsl(true).__PS_BASE_URI__,
-                'cancel_url' => 'https://myshop.com/order/cancel',
+                // 'return_url' => \Tools::getShopDomainSsl(true).__PS_BASE_URI__,
+                // 'cancel_url' => 'https://myshop.com/order/cancel',
                 'shipping_preference' => 'SET_PROVIDED_ADDRESS'
             ]
         ]);

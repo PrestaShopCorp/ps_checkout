@@ -29,6 +29,7 @@ use PrestaShop\Module\PrestashopPayments\Api\Maasland;
 use PrestaShop\Module\PrestashopPayments\GenerateJsonPaypalOrder;
 use PrestaShop\Module\PrestashopPayments\Payment;
 use PrestaShop\Module\PrestashopPayments\HostedFieldsErrors;
+use PrestaShop\Module\PrestashopPayments\Translations\Translations;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -43,11 +44,13 @@ class PrestashopPayments extends PaymentModule
         'paymentOptions',
         'paymentReturn',
         'actionFrontControllerSetMedia',
-        'actionObjectOrderSlipAddBefore'
+        'actionOrderSlipAdd'
     ];
 
     public $configurationList = array(
-        'PS_PAY_INTENT' => 'CAPTURE'
+        'PS_PAY_INTENT' => 'CAPTURE',
+        'PS_PAY_FIREBASE_UID' => '',
+        'PS_PAY_FIREBASE_REFRESH_TOKEN' => '',
     );
 
     public function __construct()
@@ -61,6 +64,8 @@ class PrestashopPayments extends PaymentModule
         $this->module_key = '95646b26789fa27cde178690e033f9ef';
 
         $this->bootstrap = true;
+
+        $this->controllers = array('AdminAjaxPrestashopPayments');
 
         parent::__construct();
 
@@ -97,6 +102,24 @@ class PrestashopPayments extends PaymentModule
         }
 
         return parent::uninstall();
+    }
+
+    public function getContent()
+    {
+        $translations = (new Translations($this))->getTranslations();
+
+        $firebaseAccount = array(
+            'uid' => Configuration::get('PS_PAY_FIREBASE_UID'),
+            'refreshToken' => Configuration::get('PS_PAY_FIREBASE_REFRESH_TOKEN')
+        );
+
+        Media::addJsDef(array(
+            'prestashopPaymentsAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopPayments'),
+            'translations' => json_encode($translations),
+            'firebaseAccount' => json_encode($firebaseAccount)
+        ));
+
+        return $this->display(__FILE__, '/views/app/app.tpl');
     }
 
     /**
@@ -144,15 +167,11 @@ class PrestashopPayments extends PaymentModule
      *
      * @param array params return by the hook
      */
-    public function hookActionObjectOrderSlipAddBefore($params)
+    public function hookActionOrderSlipAdd($params)
     {
-        return false;
         if (false === Tools::isSubmit('partialRefund')) {
             return false;
         }
-
-        dump($params);
-        die('test');
 
         $refunds = $params['productList'];
 
