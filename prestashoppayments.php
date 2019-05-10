@@ -281,7 +281,7 @@ class PrestashopPayments extends PaymentModule
 
         Media::addJsDef(array(
             'paypalPaymentOption' => $this->name.'_paypal',
-            'hostedFieldsErrors' => (new HostedFieldsErrors)->getHostedFieldsErrors()
+            'hostedFieldsErrors' => (new HostedFieldsErrors($this))->getHostedFieldsErrors()
         ));
 
         $this->context->controller->registerJavascript(

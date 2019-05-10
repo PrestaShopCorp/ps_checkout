@@ -30,13 +30,9 @@ class HostedFieldsErrors
 {
     private $module = null;
 
-    public function __construct($moduleName = null)
+    public function __construct(\Module $module)
     {
-        if (null === $moduleName) {
-            $moduleName = 'prestashoppayments';
-        }
-
-        $this->module = \Module::getInstanceByName($moduleName);
+        $this->module = $module;
     }
 
     /**
