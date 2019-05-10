@@ -50,15 +50,12 @@ export default {
     ]),
   },
   created() {
-    let script;
-    // const ref = document.getElementsByTagName('script')[0];
-    const ref = document.getElementsByTagName('script')[0];
     if (!document.getElementById('paypal-js')) {
-      script = document.createElement('script');
-      script.id = 'paypal-js';
-      script.async = true;
-      script.src = 'https://www.paypal.com/webapps/merchantboarding/js/lib/lightbox/partner.js';
-      ref.parentNode.insertBefore(script, ref);
+      const paypalScript = document.createElement('script');
+      paypalScript.setAttribute('src', 'https://www.paypal.com/webapps/merchantboarding/js/lib/lightbox/partner.js');
+      paypalScript.setAttribute('id', 'paypal-js');
+      paypalScript.setAttribute('async', 'true');
+      document.head.appendChild(paypalScript);
     }
   },
   methods: {
