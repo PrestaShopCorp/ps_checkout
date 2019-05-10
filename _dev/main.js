@@ -5,7 +5,7 @@ import store from './store';
 import './assets/css/compliant.css';
 import './assets/css/ui-kit.css';
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = process.env.NODE_ENV === 'production';
 
 new Vue({
   router,

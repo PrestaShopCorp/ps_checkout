@@ -23,36 +23,24 @@
  * International Registered Trademark & Property of PrestaShop SA
  *-->
 <template>
-  <button type="button" class="btn" :class="classObject" @click="onClick">
-    <slot />
-  </button>
+  <div class="container-fluid feature-block p-5">
+    <div class="feature-image">
+      <img src="@/assets/images/brush.png">
+    </div>
+    <div class="feature-text mt-4">
+      Cash on delivery, recurring payments, point of sales terminal, … and more to come!
+    </div>
+  </div>
 </template>
 
-<script>
-export default {
-  props: {
-    primary: {type: Boolean},
-    ghost: {type: Boolean},
-  },
-  computed: {
-    classObject() {
-      if (this.ghost) {
-        return {
-          'btn-outline-primary': this.primary,
-          'btn-outline-secondary': !this.primary,
-        };
-      }
-
-      return {
-        'btn-primary': this.primary,
-        'btn-secondary': !this.primary,
-      };
-    },
-  },
-  methods: {
-    onClick() {
-      this.$emit('click');
-    },
-  },
-};
-</script>
+<style scoped>
+.feature-block {
+  border: 2px dashed #DDDDDD;
+  border-radius: 3px;
+  text-align: center;
+}
+.feature-text {
+  color: #6C868E;
+  font-size: 16px;
+}
+</style>

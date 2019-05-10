@@ -14,24 +14,24 @@
           </div>
         </div>
         <div class="connect-ps-image mr-5">
-          <img src="../assets/images/ps-services-account.png" alt="">
+          <img src="@/assets/images/ps-services-account.png" alt="">
         </div>
       </div>
     </div>
-    <BlockReassurance />
+    <Reassurance />
   </div>
 </template>
 
 <script>
 import {mapState} from 'vuex';
-import PSButton from '@/components/widgets/ps-button';
-import BlockReassurance from '@/components/widgets/block-reassurance';
+import PSButton from '@/components/form/button';
+import Reassurance from '@/components/block/reassurance';
 
 export default {
   name: 'Authentication',
   components: {
     PSButton,
-    BlockReassurance,
+    Reassurance,
   },
   computed: {
     ...mapState([

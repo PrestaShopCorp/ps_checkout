@@ -20,15 +20,15 @@
           <div class="card-text max-size">
             <div class="form-group">
               <label class="form-control-label">Email</label>
-              <input v-model="formFields.email" type="text" class="form-control">
+              <input v-model="business.email" type="text" class="form-control">
             </div>
             <div class="form-group">
               <label class="form-control-label">Password</label>
-              <input v-model="formFields.password" type="password" class="form-control">
+              <input v-model="business.password" type="password" class="form-control">
             </div>
             <div class="form-group">
               <label class="form-control-label">Confirm password</label>
-              <input v-model="formFields.confirmPassword" type="password" class="form-control is-invalid">
+              <input v-model="business.confirmPassword" type="password" class="form-control is-invalid">
               <div class="invalid-feedback">This is a danger label</div>
             </div>
           </div>
@@ -37,56 +37,56 @@
           <div class="card-text max-size">
             <div class="form-group">
               <label class="form-control-label">Full name</label>
-              <input v-model="formFields.businessLegalName" type="text" class="form-control">
+              <input v-model="business.businessLegalName" type="text" class="form-control">
             </div>
             <div class="form-group">
               <label class="form-control-label">Business legal name</label>
-              <input v-model="formFields.businessAddress" type="text" class="form-control">
+              <input v-model="business.address" type="text" class="form-control">
             </div>
             <div class="row">
               <div class="form-group col">
                 <label class="form-control-label">Confirm password</label>
-                <input v-model="formFields.businessCountry" type="text" class="form-control">
+                <input v-model="business.country" type="text" class="form-control">
               </div>
               <div class="form-group col">
                 <label class="form-control-label">Confirm password</label>
-                <input v-model="formFields.businessPostCode" type="text" class="form-control">
+                <input v-model="business.postCode" type="text" class="form-control">
               </div>
             </div>
             <div class="row">
               <div class="form-group col">
                 <label class="form-control-label">Confirm password</label>
-                <input v-model="formFields.businessCity" type="text" class="form-control">
+                <input v-model="business.city" type="text" class="form-control">
               </div>
               <div class="form-group col">
                 <label class="form-control-label">Confirm password</label>
-                <input v-model="formFields.businessIsoCode" type="text" class="form-control">
+                <input v-model="business.isoCode" type="text" class="form-control">
               </div>
             </div>
             <div class="row">
               <div class="form-group col-3">
                 <label class="form-control-label">Tel</label>
-                <input v-model="formFields.businessIsoCode" type="text" class="form-control">
+                <input v-model="business.isoCode" type="text" class="form-control">
               </div>
               <div class="form-group col-6">
                 <label class="form-control-label">Confirm password</label>
-                <input v-model="formFields.businessPhoneNumber" type="text" class="form-control">
+                <input v-model="business.phoneNumber" type="text" class="form-control">
               </div>
             </div>
             <div class="form-group">
               <label class="form-control-label">Full name</label>
-              <input v-model="formFields.businessName" type="text" class="form-control">
+              <input v-model="business.name" type="text" class="form-control">
             </div>
             <div class="form-group">
               <label class="form-control-label">Business legal name</label>
-              <input v-model="formFields.businessType" type="text" class="form-control">
+              <input v-model="business.type" type="text" class="form-control">
             </div>
             <div class="form-group">
               <label class="form-control-label">Business legal name</label>
-              <input v-model="formFields.businessSales" type="text" class="form-control">
+              <input v-model="business.sales" type="text" class="form-control">
             </div>
             <div class="form-group">
-              <PSCheckbox v-model="formFields.termsOfUse">I have read and agreed with the terms of use of my data.</PSCheckbox>
+              <PSCheckbox v-model="business.termsOfUse">I have read and agreed with the terms of use of my data.</PSCheckbox>
             </div>
           </div>
         </div>
@@ -102,40 +102,40 @@
         </div>
       </div>
     </form>
-    <BlockReassurance />
+    <Reassurance />
   </div>
 </template>
 
 <script>
 import {mapState} from 'vuex';
-import PSButton from '@/components/widgets/ps-button';
-import PSCheckbox from '@/components/widgets/ps-checkbox';
-import BlockReassurance from '@/components/widgets/block-reassurance';
+import PSButton from '@/components/form/button';
+import PSCheckbox from '@/components/form/checkbox';
+import Reassurance from '@/components/block/reassurance';
 import {request} from '@/requests/ajax.js';
 
 export default {
   components: {
     PSButton,
     PSCheckbox,
-    BlockReassurance,
+    Reassurance,
   },
   data() {
     return {
       currentStep: 1,
-      formFields: {
+      business: {
         email: '',
         password: '',
         confirmPassword: '',
-        businessLegalName: '',
-        businessAddress: '',
-        businessCountry: '',
-        businessPostCode: '',
-        businessCity: '',
-        businessIsoCode: '',
-        businessPhoneNumber: '',
-        businessName: '',
-        businessType: '',
-        businessSales: '',
+        legalName: '',
+        address: '',
+        country: '',
+        postCode: '',
+        city: '',
+        isoCode: '',
+        phoneNumber: '',
+        name: '',
+        type: '',
+        sales: '',
         termsOfUse: false,
       },
     };
@@ -145,7 +145,7 @@ export default {
       'trans',
     ]),
     confirmPassword() {
-      return this.formFields.confirmPassword;
+      return this.business.confirmPassword;
     },
   },
   watch: {
@@ -158,8 +158,8 @@ export default {
       request({
         action: 'SignUp',
         data: {
-          email: this.formFields.email,
-          password: this.formFields.password,
+          email: this.business.email,
+          password: this.business.password,
         },
       }).then((user) => {
         if (user.error) {

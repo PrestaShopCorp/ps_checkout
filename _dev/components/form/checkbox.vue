@@ -23,24 +23,34 @@
  * International Registered Trademark & Property of PrestaShop SA
  *-->
 <template>
-  <div class="container-fluid feature-block p-5">
-    <div class="feature-image">
-      <img src="../../assets/images/brush.png">
-    </div>
-    <div class="feature-text mt-4">
-      Cash on delivery, recurring payments, point of sales terminal, … and more to come!
-    </div>
+  <div class="md-checkbox">
+    <label>
+      <input :id="id" v-model="checked" type="checkbox" :class="{'indeterminate' : isIndeterminate }">
+      <i class="md-checkbox-control" />
+      <slot />
+    </label>
   </div>
 </template>
 
-<style scoped>
-.feature-block {
-  border: 2px dashed #DDDDDD;
-  border-radius: 3px;
-  text-align: center;
-}
-.feature-text {
-  color: #6C868E;
-  font-size: 16px;
-}
-</style>
+<script>
+export default {
+  props: {
+    id: {
+      type: String,
+    },
+    isIndeterminate: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+  data: () => ({
+    checked: false,
+  }),
+  watch: {
+    checked(val) {
+      this.$emit('input', val);
+    },
+  },
+};
+</script>

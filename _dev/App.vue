@@ -13,8 +13,8 @@
 </template>
 
 <script>
-import Menu from '@/components/widgets/menu/Menu.vue';
-import MenuItem from '@/components/widgets/menu/MenuItem.vue';
+import Menu from '@/components/menu/menu';
+import MenuItem from '@/components/menu/menu-item';
 import {mapState} from 'vuex';
 
 export default {
@@ -27,11 +27,6 @@ export default {
     ...mapState([
       'trans',
     ]),
-  },
-  methods: {
-    test() {
-      return 'toto';
-    },
   },
 };
 </script>

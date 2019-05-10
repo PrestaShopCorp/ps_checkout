@@ -44,15 +44,15 @@
         </div>
       </div>
     </form>
-    <BlockReassurance />
+    <Reassurance />
   </div>
 </template>
 
 <script>
 import {mapState} from 'vuex';
-import PSButton from '@/components/widgets/ps-button';
-import PSAlert from '@/components/widgets/ps-alert';
-import BlockReassurance from '@/components/widgets/block-reassurance';
+import PSButton from '@/components/form/button';
+import PSAlert from '@/components/form/alert';
+import Reassurance from '@/components/block/reassurance';
 import {request} from '@/requests/ajax.js';
 
 export default {
@@ -60,7 +60,7 @@ export default {
   components: {
     PSButton,
     PSAlert,
-    BlockReassurance,
+    Reassurance,
   },
   data() {
     return {

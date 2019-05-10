@@ -29,7 +29,7 @@ namespace PrestaShop\Module\PrestashopPayments\Translations;
 class Translations
 {
     /**
-     * @var Module
+     * @var \Module
      */
     private $module = null;
 

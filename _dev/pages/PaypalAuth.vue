@@ -9,7 +9,7 @@
             <span class="payments"> Payments</span>
           </div>
           <div class="powered-by">
-            <span>Powered by <img src="../assets/images/paypal.png"></span>
+            <span>Powered by <img src="@/assets/images/paypal.png"></span>
           </div>
           <br>
           <div class="connect-paypal-text">
@@ -27,22 +27,22 @@
           </div>
         </div>
         <div class="connect-paypal-image mr-md-0 mr-lg-5">
-          <img src="../assets/images/almost-ready.png" alt="">
+          <img src="@/assets/images/almost-ready.png" alt="">
         </div>
       </div>
     </div>
-    <BlockReassurance />
+    <Reassurance />
   </div>
 </template>
 
 <script>
 import {mapState} from 'vuex';
-import BlockReassurance from '@/components/widgets/block-reassurance';
+import Reassurance from '@/components/block/reassurance';
 
 export default {
   name: 'PaypalAuth',
   components: {
-    BlockReassurance,
+    Reassurance,
   },
   computed: {
     ...mapState([

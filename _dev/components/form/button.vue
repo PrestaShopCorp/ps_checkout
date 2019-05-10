@@ -23,50 +23,36 @@
  * International Registered Trademark & Property of PrestaShop SA
  *-->
 <template>
-  <div class="ps-alert alert" :class="classObject" role="alert">
-    <button
-      v-if="hasClose"
-      type="button"
-      class="close"
-      data-dismiss="alert"
-      aria-label="Close"
-      @click.stop="onClick"
-    >
-      <span class="material-icons">close</span>
-    </button>
-    <p class="alert-text">
-      <slot />
-    </p>
-  </div>
+  <button type="button" class="btn" :class="classObject" @click="onClick">
+    <slot />
+  </button>
 </template>
 
 <script>
-const ALERT_TYPE_INFO = 'ALERT_TYPE_INFO';
-const ALERT_TYPE_WARNING = 'ALERT_TYPE_WARNING';
-const ALERT_TYPE_DANGER = 'ALERT_TYPE_DANGER';
-const ALERT_TYPE_SUCCESS = 'ALERT_TYPE_SUCCESS';
-
 export default {
+  name: 'PsButton',
   props: {
-    alertType: {type: String, required: true},
-    hasClose: {type: Boolean, required: true},
+    primary: {type: Boolean},
+    ghost: {type: Boolean},
   },
   computed: {
     classObject() {
+      if (this.ghost) {
+        return {
+          'btn-outline-primary': this.primary,
+          'btn-outline-secondary': !this.primary,
+        };
+      }
+
       return {
-        'alert-info': this.alertType === ALERT_TYPE_INFO,
-        'alert-warning': this.alertType === ALERT_TYPE_WARNING,
-        'alert-danger': this.alertType === ALERT_TYPE_DANGER,
-        'alert-success': this.alertType === ALERT_TYPE_SUCCESS,
+        'btn-primary': this.primary,
+        'btn-secondary': !this.primary,
       };
-    },
-    isInfo() {
-      return this.alertType === ALERT_TYPE_INFO;
     },
   },
   methods: {
     onClick() {
-      this.$emit('closeAlert');
+      this.$emit('click');
     },
   },
 };

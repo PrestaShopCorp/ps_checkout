@@ -1,15 +1,15 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import Authentication from '@/views/Authentication.vue';
-import PaypalAuth from '@/views/PaypalAuth.vue';
-import Signup from '@/views/Signup.vue';
-import Login from '@/views/Login.vue';
-import Customize from '@/views/Customize.vue';
-// import Manage from '@/views/Manage.vue';
-// import Advanced from '@/views/Advanced.vue';
-// import Fees from '@/views/Fees.vue';
-// import Help from '@/views/Help.vue';
+import Authentication from '@/pages/Authentication.vue';
+import PaypalAuth from '@/pages/PaypalAuth.vue';
+import Signup from '@/pages/Signup.vue';
+import Login from '@/pages/Login.vue';
+import Customize from '@/pages/Customize.vue';
+// import Manage from '@/pages/Manage.vue';
+// import Advanced from '@/pages/Advanced.vue';
+// import Fees from '@/pages/Fees.vue';
+// import Help from '@/pages/Help.vue';
 
 Vue.use(Router);
 

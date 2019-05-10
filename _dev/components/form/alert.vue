@@ -23,37 +23,50 @@
  * International Registered Trademark & Property of PrestaShop SA
  *-->
 <template>
-  <div class="md-checkbox">
-    <label>
-      <input :id="id" v-model="checked" type="checkbox" :class="{'indeterminate' : isIndeterminate }">
-      <i class="md-checkbox-control" />
+  <div class="ps-alert alert" :class="classObject" role="alert">
+    <button
+      v-if="hasClose"
+      type="button"
+      class="close"
+      data-dismiss="alert"
+      aria-label="Close"
+      @click.stop="closeAlert()"
+    >
+      <span class="material-icons">close</span>
+    </button>
+    <p class="alert-text">
       <slot />
-    </label>
+    </p>
   </div>
 </template>
 
 <script>
+const ALERT_TYPE_INFO = 'ALERT_TYPE_INFO';
+const ALERT_TYPE_WARNING = 'ALERT_TYPE_WARNING';
+const ALERT_TYPE_DANGER = 'ALERT_TYPE_DANGER';
+const ALERT_TYPE_SUCCESS = 'ALERT_TYPE_SUCCESS';
+
 export default {
   props: {
-    id: {
-      type: String,
+    alertType: {type: String, required: true},
+    hasClose: {type: Boolean, required: true},
+  },
+  computed: {
+    classObject() {
+      return {
+        'alert-info': this.alertType === ALERT_TYPE_INFO,
+        'alert-warning': this.alertType === ALERT_TYPE_WARNING,
+        'alert-danger': this.alertType === ALERT_TYPE_DANGER,
+        'alert-success': this.alertType === ALERT_TYPE_SUCCESS,
+      };
     },
-    model: {
-      type: Object,
-      required: false,
-    },
-    isIndeterminate: {
-      type: Boolean,
-      required: false,
-      default: false,
+    isInfo() {
+      return this.alertType === ALERT_TYPE_INFO;
     },
   },
-  data: () => ({
-    checked: false,
-  }),
-  watch: {
-    checked(val) {
-      this.$emit('input', val);
+  methods: {
+    closeAlert() {
+      this.$emit('closeAlert');
     },
   },
 };

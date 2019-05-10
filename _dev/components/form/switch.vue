@@ -1,41 +1,41 @@
 <template>
-    <div class="mod-switch">
-        <label @click="toggleSwitch(false)" :class="{ active : !isActive }">{{ leftText }}</label>
-        <label @click="toggleSwitch(true)" :class="{ active : isActive }">{{ rightText }}</label>
-        <span class="switch-slide" :class="{ active : isActive }"></span>
-    </div>
+  <div class="mod-switch">
+    <label :class="{ active : !isActive }" @click="toggleSwitch(false)">{{ leftText }}</label>
+    <label :class="{ active : isActive }" @click="toggleSwitch(true)">{{ rightText }}</label>
+    <span class="switch-slide" :class="{ active : isActive }" />
+  </div>
 </template>
 
 <script>
 export default {
-    name: 'PowerSwitch',
-    data () {
-        return {
-            isActive: this.value
-        }
+  name: 'PowerSwitch',
+  props: {
+    value: Boolean,
+    leftText: {
+      type: String,
+      required: true,
     },
-    props: {
-        value: Boolean,
-        leftText: {
-            type: String,
-            require: true
-        },
-        rightText: {
-            type: String,
-            require: true
-        }
+    rightText: {
+      type: String,
+      required: true,
     },
-    methods: {
-        toggleSwitch (value) {
-            this.isActive = value
-        }
+  },
+  data() {
+    return {
+      isActive: this.value,
+    };
+  },
+  watch: {
+    isActive(val) {
+      this.$emit('input', val);
     },
-    watch: {
-        isActive (val) {
-            this.$emit('input', val)
-        }
-    }
-}
+  },
+  methods: {
+    toggleSwitch(value) {
+      this.isActive = value;
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">

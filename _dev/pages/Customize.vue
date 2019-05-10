@@ -22,7 +22,7 @@
 import {mapState} from 'vuex';
 import ActivePayment from '@/components/panel/active-payment';
 import PaypalFlow from '@/components/panel/paypal-flow';
-import FeatureIncoming from '@/components/widgets/feature-incoming';
+import FeatureIncoming from '@/components/block/feature-incoming';
 
 export default {
   name: 'Customize',
