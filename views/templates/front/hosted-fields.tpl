@@ -57,8 +57,12 @@
 
     </form>
 
-    <div id="consoleLog"></div>
-
+    <div id="hostedFieldsErrors" class="hide-paypal-error">
+        <div class="alert alert-danger" role="alert" data-alert="danger">
+            <ul id="hostedFieldsErrorList">
+            </ul>
+        </div>
+    </div>
 </div>
 
 {literal}

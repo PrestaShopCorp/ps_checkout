@@ -26,6 +26,11 @@
 * to avoid any conflicts with others containers.
 */
 
+.paypal-hide-default {
+    display: none !important;
+    visibility: hidden !important;
+}
+
 .paypal-label {
     cursor: pointer;
 }
@@ -36,6 +41,10 @@
 }
 
 #paypal-approve-error ul {
+    margin-bottom: 0;
+}
+
+#hostedFieldsErrors ul {
     margin-bottom: 0;
 }
 

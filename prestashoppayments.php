@@ -28,6 +28,7 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\Module\PrestashopPayments\Api\Maasland;
 use PrestaShop\Module\PrestashopPayments\GenerateJsonPaypalOrder;
 use PrestaShop\Module\PrestashopPayments\Payment;
+use PrestaShop\Module\PrestashopPayments\HostedFieldsErrors;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -195,7 +196,8 @@ class PrestashopPayments extends PaymentModule
     public function getPaypalPaymentOption()
     {
         $paypalPaymentOption = new PaymentOption();
-        $paypalPaymentOption->setCallToActionText($this->l('and other payment methods'))
+        $paypalPaymentOption->setModuleName($this->name.'_paypal')
+                            ->setCallToActionText($this->l('and other payment methods'))
                             ->setAction($this->context->link->getModuleLink($this->name, 'CreateOrder', array(), true))
                             ->setAdditionalInformation($this->generatePaypalForm())
                             ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/paypal.png'));
@@ -221,7 +223,8 @@ class PrestashopPayments extends PaymentModule
     public function getHostedFieldsPaymentOption()
     {
         $hostedFieldsPaymentOption = new PaymentOption();
-        $hostedFieldsPaymentOption->setCallToActionText($this->l('100% secure payments'))
+        $hostedFieldsPaymentOption->setModuleName($this->name.'_hostedFields')
+                    ->setCallToActionText($this->l('100% secure payments'))
                     ->setAction($this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true))
                     ->setForm($this->generateHostedFieldsForm())
                     ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/payement-cards.png'));
@@ -275,6 +278,11 @@ class PrestashopPayments extends PaymentModule
         if ($currentPage != 'order') {
             return false;
         }
+
+        Media::addJsDef(array(
+            'paypalPaymentOption' => $this->name.'_paypal',
+            'hostedFieldsErrors' => (new HostedFieldsErrors($this))->getHostedFieldsErrors()
+        ));
 
         $this->context->controller->registerJavascript(
             'prestashoppayments-paypal-api',
