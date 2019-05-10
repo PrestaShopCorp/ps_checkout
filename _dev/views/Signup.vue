@@ -108,11 +108,10 @@
 
 <script>
 import {mapState} from 'vuex';
-import firebase from 'firebase/app';
-import 'firebase/auth';
 import PSButton from '@/components/widgets/ps-button';
 import PSCheckbox from '@/components/widgets/ps-checkbox';
 import BlockReassurance from '@/components/widgets/block-reassurance';
+import {request} from '@/requests/ajax.js';
 
 export default {
   components: {
@@ -156,14 +155,43 @@ export default {
   },
   methods: {
     signUp() {
-      firebase.auth().createUserWithEmailAndPassword(this.formFields.email, this.formFields.password).then(
-        (user) => {
-          console.log(user);
+      request({
+        action: 'SignUp',
+        data: {
+          email: this.formFields.email,
+          password: this.formFields.password,
         },
-        (err) => {
-          console.log(err);
-        },
-      );
+      }).then((user) => {
+        if (user.error) {
+          this.hasError = true;
+
+          switch (user.error.message) {
+          case 'EMAIL_NOT_FOUND':
+            this.errorMessage = 'There is no user record corresponding to this identifier. The user may have been deleted.';
+            break;
+          case 'INVALID_EMAIL':
+            this.errorMessage = 'The email address is badly formatted.';
+            break;
+          case 'INVALID_PASSWORD':
+            this.errorMessage = 'The password is invalid.';
+            break;
+          default:
+            this.errorMessage = 'There is an error.';
+            break;
+          }
+        } else {
+          this.$store.dispatch('updateFirebaseAccount', {
+            firebase: {
+              email: user.email,
+              idToken: user.idToken,
+              localId: user.localId,
+              refreshToken: user.refreshToken,
+            },
+          }).then(() => {
+            this.$router.push('/authentication/paypal');
+          });
+        }
+      });
     },
     checkPasswordMatch() {
 

@@ -49,8 +49,12 @@ class PrestashopPayments extends PaymentModule
 
     public $configurationList = array(
         'PS_PAY_INTENT' => 'CAPTURE',
-        'PS_PAY_FIREBASE_UID' => '',
+        'PS_PAY_FIREBASE_PUBLIC_API_KEY' => 'AIzaSyASHFE2F08ncoOH9NhoCF8_6z7qnoLVKSA',
+        'PS_PAY_FIREBASE_EMAIL' => '',
+        'PS_PAY_FIREBASE_ID_TOKEN' => '',
+        'PS_PAY_FIREBASE_LOCAL_ID' => '',
         'PS_PAY_FIREBASE_REFRESH_TOKEN' => '',
+        'PS_PAY_SHOP_UUID_V4' => ''
     );
 
     public function __construct()
@@ -109,7 +113,9 @@ class PrestashopPayments extends PaymentModule
         $translations = (new Translations($this))->getTranslations();
 
         $firebaseAccount = array(
-            'uid' => Configuration::get('PS_PAY_FIREBASE_UID'),
+            'email' => Configuration::get('PS_PAY_FIREBASE_EMAIL'),
+            'idToken' => Configuration::get('PS_PAY_FIREBASE_ID_TOKEN'),
+            'localId' => Configuration::get('PS_PAY_FIREBASE_LOCAL_ID'),
             'refreshToken' => Configuration::get('PS_PAY_FIREBASE_REFRESH_TOKEN')
         );
 

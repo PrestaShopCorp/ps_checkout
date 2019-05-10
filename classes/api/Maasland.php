@@ -29,6 +29,7 @@ namespace PrestaShop\Module\PrestashopPayments\Api;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Stream\Stream;
+use PrestaShop\Module\PrestashopPayments\FirebaseClient;
 
 class Maasland
 {
@@ -54,7 +55,10 @@ class Maasland
                     'headers' =>
                     [
                         'Content-Type' => 'application/json',
-                        'Accept' => 'application/json'
+                        'Accept' => 'application/json',
+                        'Authorization' => 'Bearer '.(new FirebaseClient())->getToken(),
+                        'Shop-Id' => '', // TODO: make a valid uuid v4
+                        'Hook-Url' => '' // TODO: Create front controller to manage hook callback
                     ],
                 ),
             ));

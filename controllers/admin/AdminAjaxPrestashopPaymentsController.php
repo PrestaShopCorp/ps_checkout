@@ -24,14 +24,43 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
+use PrestaShop\Module\PrestashopPayments\FirebaseClient;
+
 class AdminAjaxPrestashopPaymentsController extends ModuleAdminController
 {
-    public function ajaxProcessSaveFirebaseToken()
+    public function ajaxProcessSignIn()
     {
-        $uid = Tools::getValue('uid');
-        $refreshToken = Tools::getValue('refreshToken');
+        $email = Tools::getValue('email');
+        $password = Tools::getValue('password');
 
-        Configuration::updateValue('PS_PAY_FIREBASE_UID', $uid);
-        Configuration::updateValue('PS_PAY_FIREBASE_REFRESH_TOKEN', $refreshToken);
+        $firebase = new FirebaseClient();
+        $signIn = $firebase->signInWithEmailAndPassword($email, $password);
+
+        $this->saveFirebaseAccountIfNoErrors($signIn);
+
+        $this->ajaxDie(json_encode($signIn));
+    }
+
+    public function ajaxProcessSignUp()
+    {
+        $email = Tools::getValue('email');
+        $password = Tools::getValue('password');
+
+        $firebase = new FirebaseClient();
+        $signUp = $firebase->signUpWithEmailAndPassword($email, $password);
+
+        $this->saveFirebaseAccountIfNoErrors($signUp);
+
+        $this->ajaxDie(json_encode($signUp));
+    }
+
+    public function saveFirebaseAccountIfNoErrors($user)
+    {
+        if (false === isset($user['error'])) {
+            Configuration::updateValue('PS_PAY_FIREBASE_EMAIL', $user['email']);
+            Configuration::updateValue('PS_PAY_FIREBASE_ID_TOKEN', $user['idToken']);
+            Configuration::updateValue('PS_PAY_FIREBASE_LOCAL_ID', $user['localId']);
+            Configuration::updateValue('PS_PAY_FIREBASE_REFRESH_TOKEN', $user['refreshToken']);
+        }
     }
 }
