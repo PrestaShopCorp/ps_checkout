@@ -16,5 +16,5 @@ module.exports = {
     },
   },
   outputDir: 'views/app/',
-  publicPath: 'modules/prestashoppayments/views/app/',
+  publicPath: 'modules/ps_checkout/views/app/',
 };

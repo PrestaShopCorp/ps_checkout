@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopPayments;
+namespace PrestaShop\Module\PrestashopCheckout;
 
 class HostedFieldsErrors
 {

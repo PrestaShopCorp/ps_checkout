@@ -24,9 +24,9 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-use PrestaShop\Module\PrestashopPayments\Payment;
+use PrestaShop\Module\PrestashopCheckout\Payment;
 
-class prestashoppaymentsValidateOrderModuleFrontController extends ModuleFrontController
+class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontController
 {
     public function initContent()
     {
@@ -109,7 +109,7 @@ class prestashoppaymentsValidateOrderModuleFrontController extends ModuleFrontCo
     public function checkIfPaymentOptionIsAvailable()
     {
         foreach (Module::getPaymentModules() as $module) {
-            if ($module['name'] == 'prestashoppayments') {
+            if ($module['name'] == 'ps_checkout') {
                 return true;
             }
         }

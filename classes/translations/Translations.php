@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopPayments\Translations;
+namespace PrestaShop\Module\PrestashopCheckout\Translations;
 
 class Translations
 {

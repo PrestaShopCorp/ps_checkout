@@ -3,9 +3,9 @@ parameters:
 	paths:
 		- /web/module/classes
 		- /web/module/controllers
-		- /web/module/prestashoppayments.php
+		- /web/module/ps_checkout.php
 	ignoreErrors:
-		- '#Access to an undefined property PrestashopPayments::\$confirmUninstall\.#'
-		- '#Access to an undefined property PrestashopPayments::\$bootstrap\.#'
+		- '#Access to an undefined property PrestashopCheckout::\$confirmUninstall\.#'
+		- '#Access to an undefined property PrestashopCheckout::\$bootstrap\.#'
 
 	level: 1

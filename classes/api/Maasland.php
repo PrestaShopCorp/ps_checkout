@@ -24,12 +24,12 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopPayments\Api;
+namespace PrestaShop\Module\PrestashopCheckout\Api;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Stream\Stream;
-use PrestaShop\Module\PrestashopPayments\FirebaseClient;
+use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
 
 class Maasland
 {

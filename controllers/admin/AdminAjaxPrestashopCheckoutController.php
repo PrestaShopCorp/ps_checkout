@@ -24,9 +24,9 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-use PrestaShop\Module\PrestashopPayments\FirebaseClient;
+use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
 
-class AdminAjaxPrestashopPaymentsController extends ModuleAdminController
+class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {
     public function ajaxProcessSignIn()
     {

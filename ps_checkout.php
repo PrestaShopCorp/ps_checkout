@@ -25,11 +25,11 @@
 */
 
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use PrestaShop\Module\PrestashopPayments\Api\Maasland;
-use PrestaShop\Module\PrestashopPayments\GenerateJsonPaypalOrder;
-use PrestaShop\Module\PrestashopPayments\Payment;
-use PrestaShop\Module\PrestashopPayments\HostedFieldsErrors;
-use PrestaShop\Module\PrestashopPayments\Translations\Translations;
+use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
+use PrestaShop\Module\PrestashopCheckout\GenerateJsonPaypalOrder;
+use PrestaShop\Module\PrestashopCheckout\Payment;
+use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
+use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -37,7 +37,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class PrestashopPayments extends PaymentModule
+class ps_checkout extends PaymentModule
 {
     // hook list used by the module
     public $hookList = [
@@ -59,7 +59,7 @@ class PrestashopPayments extends PaymentModule
 
     public function __construct()
     {
-        $this->name = 'prestashoppayments';
+        $this->name = 'ps_checkout';
         $this->tab = 'payments_gateways';
         $this->version = '1.0.0';
         $this->author = 'PrestaShop';
@@ -69,11 +69,11 @@ class PrestashopPayments extends PaymentModule
 
         $this->bootstrap = true;
 
-        $this->controllers = array('AdminAjaxPrestashopPayments');
+        $this->controllers = array('AdminAjaxPrestashopCheckout');
 
         parent::__construct();
 
-        $this->displayName = $this->l('Prestashop payments');
+        $this->displayName = $this->l('PrestaShop Checkout');
         $this->description = $this->l('New prestashop payment system');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
@@ -120,7 +120,7 @@ class PrestashopPayments extends PaymentModule
         );
 
         Media::addJsDef(array(
-            'prestashopPaymentsAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopPayments'),
+            'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
             'translations' => json_encode($translations),
             'firebaseAccount' => json_encode($firebaseAccount)
         ));
@@ -237,7 +237,7 @@ class PrestashopPayments extends PaymentModule
      */
     public function generatePaypalForm()
     {
-        return $this->context->smarty->fetch('module:prestashoppayments/views/templates/front/paypal.tpl');
+        return $this->context->smarty->fetch('module:ps_checkout/views/templates/front/paypal.tpl');
     }
 
     /**
@@ -264,7 +264,7 @@ class PrestashopPayments extends PaymentModule
      */
     public function generateHostedFieldsForm()
     {
-        return $this->context->smarty->fetch('module:prestashoppayments/views/templates/front/hosted-fields.tpl');
+        return $this->context->smarty->fetch('module:ps_checkout/views/templates/front/hosted-fields.tpl');
     }
 
     /**
@@ -310,12 +310,12 @@ class PrestashopPayments extends PaymentModule
         ));
 
         $this->context->controller->registerJavascript(
-            'prestashoppayments-paypal-api',
+            'ps-checkout-paypal-api',
             'modules/'.$this->name.'/views/js/api-paypal.js'
         );
 
         $this->context->controller->registerStylesheet(
-            'prestashoppayments-css-paymentOptions',
+            'ps-checkout-css-paymentOptions',
             'modules/'.$this->name.'/views/css/paymentOptions.css'
         );
     }

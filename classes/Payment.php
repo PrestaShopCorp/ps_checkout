@@ -24,9 +24,9 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopPayments;
+namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopPayments\Api\Maasland;
+use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
 
 class Payment
 {
@@ -76,7 +76,7 @@ class Payment
      */
     public function validateOrder($payload)
     {
-        $module = \Module::getInstanceByName('prestashoppayments');
+        $module = \Module::getInstanceByName('ps_checkout');
 
         $module->validateOrder(
             $payload['cartId'],
