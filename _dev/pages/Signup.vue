@@ -111,7 +111,6 @@ import {mapState} from 'vuex';
 import PSButton from '@/components/form/button';
 import PSCheckbox from '@/components/form/checkbox';
 import Reassurance from '@/components/block/reassurance';
-import {request} from '@/requests/ajax.js';
 
 export default {
   components: {
@@ -140,6 +139,8 @@ export default {
           sales: '',
         },
       },
+      hasError: false,
+      errorMessage: '',
     };
   },
   computed: {
@@ -157,41 +158,28 @@ export default {
   },
   methods: {
     signUp() {
-      request({
-        action: 'SignUp',
-        data: {
-          email: this.form.email,
-          password: this.form.password,
-        },
-      }).then((user) => {
-        if (user.error) {
-          this.hasError = true;
-
-          switch (user.error.message) {
-          case 'EMAIL_NOT_FOUND':
-            this.errorMessage = 'There is no user record corresponding to this identifier. The user may have been deleted.';
-            break;
-          case 'INVALID_EMAIL':
-            this.errorMessage = 'The email address is badly formatted.';
-            break;
-          case 'INVALID_PASSWORD':
-            this.errorMessage = 'The password is invalid.';
-            break;
-          default:
-            this.errorMessage = 'There is an error.';
-            break;
-          }
-        } else {
-          this.$store.dispatch('updateFirebaseAccount', {
-            firebase: {
-              email: user.email,
-              idToken: user.idToken,
-              localId: user.localId,
-              refreshToken: user.refreshToken,
-            },
-          }).then(() => {
-            this.$router.push('/authentication/paypal');
-          });
+      this.$store.dispatch({
+        type: 'signup',
+        email: this.form.email,
+        password: this.form.password,
+      }).then((payload) => {
+        this.currentStep = 2;
+      }).catch((err) => {
+        console.log(err);
+        this.hasError = true;
+        switch (err.error.message) {
+        case 'EMAIL_NOT_FOUND':
+          this.errorMessage = 'There is no user record corresponding to this identifier. The user may have been deleted.';
+          break;
+        case 'INVALID_EMAIL':
+          this.errorMessage = 'The email address is badly formatted.';
+          break;
+        case 'INVALID_PASSWORD':
+          this.errorMessage = 'The password is invalid.';
+          break;
+        default:
+          this.errorMessage = 'There is an error.';
+          break;
         }
       });
     },
