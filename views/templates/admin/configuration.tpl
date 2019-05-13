@@ -25,5 +25,8 @@
 
 <div id="app"></div>
 
-<script src=/PrestaShop/modules/ps_checkout/views/js/chunk-vendors.js></script>
-<script src=/PrestaShop/modules/ps_checkout/views/js/index.js></script>
+<script src="../modules/ps_checkout/views/js/chunk-vendors.js"></script>
+<script src="../modules/ps_checkout/views/js/index.js"></script>
+
+<!-- Uncomment me to work in watch mode -->
+<!--<script src="//localhost:8080/index.js"></script>-->
