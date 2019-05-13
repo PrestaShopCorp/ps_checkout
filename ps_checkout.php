@@ -126,7 +126,10 @@ class ps_checkout extends PaymentModule
             'firebaseAccount' => json_encode($firebaseAccount)
         ));
 
-        return $this->display(__FILE__, '/views/app/app.tpl');
+        // We only add CSS here, the JS must be added after the div
+        $this->context->controller->addCss($this->_path.'views/css/index.css');
+
+        return $this->display(__FILE__, '/views/templates/admin/configuration.tpl');
     }
 
     /**
