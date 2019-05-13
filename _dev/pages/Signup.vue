@@ -20,15 +20,15 @@
           <div class="card-text max-size">
             <div class="form-group">
               <label class="form-control-label">Email</label>
-              <input v-model="business.email" type="text" class="form-control">
+              <input v-model="form.email" type="text" class="form-control">
             </div>
             <div class="form-group">
               <label class="form-control-label">Password</label>
-              <input v-model="business.password" type="password" class="form-control">
+              <input v-model="form.password" type="password" class="form-control">
             </div>
             <div class="form-group">
               <label class="form-control-label">Confirm password</label>
-              <input v-model="business.confirmPassword" type="password" class="form-control is-invalid">
+              <input v-model="form.confirmPassword" type="password" class="form-control is-invalid">
               <div class="invalid-feedback">This is a danger label</div>
             </div>
           </div>
@@ -37,56 +37,56 @@
           <div class="card-text max-size">
             <div class="form-group">
               <label class="form-control-label">Full name</label>
-              <input v-model="business.businessLegalName" type="text" class="form-control">
+              <input v-model="form.business.businessLegalName" type="text" class="form-control">
             </div>
             <div class="form-group">
               <label class="form-control-label">Business legal name</label>
-              <input v-model="business.address" type="text" class="form-control">
+              <input v-model="form.business.address" type="text" class="form-control">
             </div>
             <div class="row">
               <div class="form-group col">
                 <label class="form-control-label">Confirm password</label>
-                <input v-model="business.country" type="text" class="form-control">
+                <input v-model="form.business.country" type="text" class="form-control">
               </div>
               <div class="form-group col">
                 <label class="form-control-label">Confirm password</label>
-                <input v-model="business.postCode" type="text" class="form-control">
+                <input v-model="form.business.postCode" type="text" class="form-control">
               </div>
             </div>
             <div class="row">
               <div class="form-group col">
                 <label class="form-control-label">Confirm password</label>
-                <input v-model="business.city" type="text" class="form-control">
+                <input v-model="form.business.city" type="text" class="form-control">
               </div>
               <div class="form-group col">
                 <label class="form-control-label">Confirm password</label>
-                <input v-model="business.isoCode" type="text" class="form-control">
+                <input v-model="form.business.isoCode" type="text" class="form-control">
               </div>
             </div>
             <div class="row">
               <div class="form-group col-3">
                 <label class="form-control-label">Tel</label>
-                <input v-model="business.isoCode" type="text" class="form-control">
+                <input v-model="form.business.isoCode" type="text" class="form-control">
               </div>
               <div class="form-group col-6">
                 <label class="form-control-label">Confirm password</label>
-                <input v-model="business.phoneNumber" type="text" class="form-control">
+                <input v-model="form.business.phoneNumber" type="text" class="form-control">
               </div>
             </div>
             <div class="form-group">
               <label class="form-control-label">Full name</label>
-              <input v-model="business.name" type="text" class="form-control">
+              <input v-model="form.business.name" type="text" class="form-control">
             </div>
             <div class="form-group">
               <label class="form-control-label">Business legal name</label>
-              <input v-model="business.type" type="text" class="form-control">
+              <input v-model="form.business.type" type="text" class="form-control">
             </div>
             <div class="form-group">
               <label class="form-control-label">Business legal name</label>
-              <input v-model="business.sales" type="text" class="form-control">
+              <input v-model="form.business.sales" type="text" class="form-control">
             </div>
             <div class="form-group">
-              <PSCheckbox v-model="business.termsOfUse">I have read and agreed with the terms of use of my data.</PSCheckbox>
+              <PSCheckbox v-model="form.termsOfUse">I have read and agreed with the terms of use of my data.</PSCheckbox>
             </div>
           </div>
         </div>
@@ -122,21 +122,23 @@ export default {
   data() {
     return {
       currentStep: 1,
-      business: {
+      form: {
         email: '',
         password: '',
         confirmPassword: '',
-        legalName: '',
-        address: '',
-        country: '',
-        postCode: '',
-        city: '',
-        isoCode: '',
-        phoneNumber: '',
-        name: '',
-        type: '',
-        sales: '',
         termsOfUse: false,
+        business: {
+          legalName: '',
+          address: '',
+          country: '',
+          postCode: '',
+          city: '',
+          isoCode: '',
+          phoneNumber: '',
+          name: '',
+          type: '',
+          sales: '',
+        },
       },
     };
   },
@@ -145,7 +147,7 @@ export default {
       'trans',
     ]),
     confirmPassword() {
-      return this.business.confirmPassword;
+      return this.form.confirmPassword;
     },
   },
   watch: {
@@ -158,8 +160,8 @@ export default {
       request({
         action: 'SignUp',
         data: {
-          email: this.business.email,
-          password: this.business.password,
+          email: this.form.email,
+          password: this.form.password,
         },
       }).then((user) => {
         if (user.error) {
