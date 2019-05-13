@@ -5,7 +5,7 @@ parameters:
 		- /web/module/controllers
 		- /web/module/ps_checkout.php
 	ignoreErrors:
-		- '#Access to an undefined property PrestashopCheckout::\$confirmUninstall\.#'
-		- '#Access to an undefined property PrestashopCheckout::\$bootstrap\.#'
+		- '#Access to an undefined property ps_checkout::\$confirmUninstall\.#'
+		- '#Access to an undefined property ps_checkout::\$bootstrap\.#'
 
 	level: 1
