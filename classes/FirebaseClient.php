@@ -66,7 +66,7 @@ class FirebaseClient
         if (isset($params['api_key'])) {
             $this->apiKey = $params['api_key'];
         } else {
-            $this->apiKey = \Configuration::get('PS_PAY_FIREBASE_PUBLIC_API_KEY');
+            $this->apiKey = \Configuration::get('PS_CHECKOUT_FIREBASE_PUBLIC_API_KEY');
         }
 
         $this->client = new Client(
@@ -156,7 +156,7 @@ class FirebaseClient
             $this->refreshToken();
         }
 
-        return \Configuration::get('PS_PAY_FIREBASE_ID_TOKEN');
+        return \Configuration::get('PS_CHECKOUT_FIREBASE_ID_TOKEN');
     }
 
     /**
@@ -172,12 +172,12 @@ class FirebaseClient
         $response = $this->post($this->baseUrlSecureToken.'token', array(
             'json' => array(
                 'grant_type' => 'refresh_token',
-                'refresh_token' => \Configuration::get('PS_PAY_FIREBASE_REFRESH_TOKEN')
+                'refresh_token' => \Configuration::get('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN')
             ),
         ));
 
         if (isset($response['id_token'])) {
-            \Configuration::updateValue('PS_PAY_FIREBASE_ID_TOKEN', $response['id_token']);
+            \Configuration::updateValue('PS_CHECKOUT_FIREBASE_ID_TOKEN', $response['id_token']);
         }
 
         return $response;
@@ -192,7 +192,7 @@ class FirebaseClient
     {
         $query = 'SELECT date_upd
                 FROM '._DB_PREFIX_.'configuration
-                WHERE name="PS_PAY_FIREBASE_ID_TOKEN"
+                WHERE name="PS_CHECKOUT_FIREBASE_ID_TOKEN"
                 AND date_upd > NOW() + INTERVAL 1 HOUR';
 
         $dateUpd = \Db::getInstance()->getValue($query);

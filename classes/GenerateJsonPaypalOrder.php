@@ -105,7 +105,7 @@ class GenerateJsonPaypalOrder
         }
 
         $payload = json_encode([
-            'intent' => \Configuration::get('PS_PAY_INTENT'), // capture or authorize
+            'intent' => \Configuration::get('PS_CHECKOUT_INTENT'), // capture or authorize
             'custom_id' => (string) $params['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
             'description' => 'Checking out with your cart from {SHOP}',

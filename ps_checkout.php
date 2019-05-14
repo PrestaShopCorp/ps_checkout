@@ -48,13 +48,13 @@ class ps_checkout extends PaymentModule
     ];
 
     public $configurationList = array(
-        'PS_PAY_INTENT' => 'CAPTURE',
-        'PS_PAY_FIREBASE_PUBLIC_API_KEY' => 'AIzaSyASHFE2F08ncoOH9NhoCF8_6z7qnoLVKSA',
-        'PS_PAY_FIREBASE_EMAIL' => '',
-        'PS_PAY_FIREBASE_ID_TOKEN' => '',
-        'PS_PAY_FIREBASE_LOCAL_ID' => '',
-        'PS_PAY_FIREBASE_REFRESH_TOKEN' => '',
-        'PS_PAY_SHOP_UUID_V4' => ''
+        'PS_CHECKOUT_INTENT' => 'CAPTURE',
+        'PS_CHECKOUT_FIREBASE_PUBLIC_API_KEY' => 'AIzaSyASHFE2F08ncoOH9NhoCF8_6z7qnoLVKSA',
+        'PS_CHECKOUT_FIREBASE_EMAIL' => '',
+        'PS_CHECKOUT_FIREBASE_ID_TOKEN' => '',
+        'PS_CHECKOUT_FIREBASE_LOCAL_ID' => '',
+        'PS_CHECKOUT_FIREBASE_REFRESH_TOKEN' => '',
+        'PS_CHECKOUT_SHOP_UUID_V4' => ''
     );
 
     public function __construct()
@@ -113,10 +113,10 @@ class ps_checkout extends PaymentModule
         $translations = (new Translations($this))->getTranslations();
 
         $firebaseAccount = array(
-            'email' => Configuration::get('PS_PAY_FIREBASE_EMAIL'),
-            'idToken' => Configuration::get('PS_PAY_FIREBASE_ID_TOKEN'),
-            'localId' => Configuration::get('PS_PAY_FIREBASE_LOCAL_ID'),
-            'refreshToken' => Configuration::get('PS_PAY_FIREBASE_REFRESH_TOKEN')
+            'email' => Configuration::get('PS_CHECKOUT_FIREBASE_EMAIL'),
+            'idToken' => Configuration::get('PS_CHECKOUT_FIREBASE_ID_TOKEN'),
+            'localId' => Configuration::get('PS_CHECKOUT_FIREBASE_LOCAL_ID'),
+            'refreshToken' => Configuration::get('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN')
         );
 
         Media::addJsDef(array(
@@ -156,7 +156,7 @@ class ps_checkout extends PaymentModule
             'clientToken' => $paypalOrder['client_token'],
             'paypalOrderId' => $paypalOrder['id'],
             'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true),
-            'intent' => strtolower(Configuration::get('PS_PAY_INTENT'))
+            'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT'))
         ));
 
         $payment_options = [
