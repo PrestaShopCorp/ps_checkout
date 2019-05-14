@@ -34,7 +34,20 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $password = Tools::getValue('password');
 
         $firebase = new FirebaseClient();
-        $signIn = $firebase->signInWithEmailAndPassword($email, $password);
+
+        try {
+            $signIn = $firebase->signInWithEmailAndPassword($email, $password);
+        } catch (\Exception $e) {
+            PrestaShopLogger::addLog(sprintf($this->l('Failed login with Firebase: %s'), $e->getMessage()), 1);
+            $this->ajaxDie(
+                json_encode(
+                    array(
+                        'error' => true,
+                        'message' => $e->getMessage()
+                    )
+                )
+            );
+        }
 
         $this->saveFirebaseAccountIfNoErrors($signIn);
 
@@ -47,14 +60,28 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $password = Tools::getValue('password');
 
         $firebase = new FirebaseClient();
-        $signUp = $firebase->signUpWithEmailAndPassword($email, $password);
+
+        try {
+            $signUp = $firebase->signUpWithEmailAndPassword($email, $password);
+        } catch (\Exception $e) {
+            PrestaShopLogger::addLog(sprintf($this->l('Failed signup with Firebase: %s'), $e->getMessage()), 1);
+            $this->ajaxDie(
+                json_encode(
+                    array(
+                        'error' => true,
+                        'message' => $e->getMessage()
+                    )
+                )
+            );
+        }
 
         $this->saveFirebaseAccountIfNoErrors($signUp);
 
         $this->ajaxDie(json_encode($signUp));
     }
 
-    public function saveFirebaseAccountIfNoErrors($user)
+    // TODO: replace save action by StoreManager.php class
+    private function saveFirebaseAccountIfNoErrors($user)
     {
         if (false === isset($user['error'])) {
             Configuration::updateValue('PS_CHECKOUT_FIREBASE_EMAIL', $user['email']);
