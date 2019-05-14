@@ -47,6 +47,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                     )
                 )
             );
+            return false;
         }
 
         $this->saveFirebaseAccountIfNoErrors($signIn);
@@ -73,6 +74,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                     )
                 )
             );
+            return false;
         }
 
         $this->saveFirebaseAccountIfNoErrors($signUp);
