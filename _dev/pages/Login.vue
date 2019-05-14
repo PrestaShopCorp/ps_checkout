@@ -53,6 +53,7 @@ import {mapState} from 'vuex';
 import PSButton from '@/components/form/button';
 import PSAlert from '@/components/form/alert';
 import Reassurance from '@/components/block/reassurance';
+import {EMAIL_NOT_FOUND, INVALID_EMAIL, INVALID_PASSWORD} from '@/lib/auth';
 
 export default {
   name: 'Login',
@@ -85,13 +86,13 @@ export default {
       }).catch((err) => {
         this.hasError = true;
         switch (err.error.message) {
-        case 'EMAIL_NOT_FOUND':
+        case EMAIL_NOT_FOUND:
           this.errorMessage = 'There is no user record corresponding to this identifier. The user may have been deleted.';
           break;
-        case 'INVALID_EMAIL':
+        case INVALID_EMAIL:
           this.errorMessage = 'The email address is badly formatted.';
           break;
-        case 'INVALID_PASSWORD':
+        case INVALID_PASSWORD:
           this.errorMessage = 'The password is invalid.';
           break;
         default:

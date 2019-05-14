@@ -95,9 +95,11 @@
             <PSButton ghost @click="previousStep()">Back</PSButton>
           </div>
           <div>
-            <PSButton v-if="currentStep === 1" primary @click="nextStep()">Continue</PSButton>
-            <PSButton v-if="currentStep === 1" primary @click="signUp()">create</PSButton>
-            <PSButton v-if="currentStep === 2" primary @click="createAccount()">Create account</PSButton>
+            <template v-if="currentStep === 1">
+              <PSButton primary @click="nextStep()">Continue</PSButton>
+              <PSButton primary @click="signUp()">create</PSButton>
+            </template>
+            <PSButton v-else-if="currentStep === 2" primary @click="createAccount()">Create account</PSButton>
           </div>
         </div>
       </div>
@@ -111,6 +113,7 @@ import {mapState} from 'vuex';
 import PSButton from '@/components/form/button';
 import PSCheckbox from '@/components/form/checkbox';
 import Reassurance from '@/components/block/reassurance';
+import {EMAIL_NOT_FOUND, INVALID_EMAIL, INVALID_PASSWORD} from '@/lib/auth';
 
 export default {
   components: {
@@ -168,13 +171,13 @@ export default {
         console.log(err);
         this.hasError = true;
         switch (err.error.message) {
-        case 'EMAIL_NOT_FOUND':
+        case EMAIL_NOT_FOUND:
           this.errorMessage = 'There is no user record corresponding to this identifier. The user may have been deleted.';
           break;
-        case 'INVALID_EMAIL':
+        case INVALID_EMAIL:
           this.errorMessage = 'The email address is badly formatted.';
           break;
-        case 'INVALID_PASSWORD':
+        case INVALID_PASSWORD:
           this.errorMessage = 'The password is invalid.';
           break;
         default:

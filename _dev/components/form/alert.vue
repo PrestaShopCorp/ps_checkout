@@ -41,10 +41,7 @@
 </template>
 
 <script>
-const ALERT_TYPE_INFO = 'ALERT_TYPE_INFO';
-const ALERT_TYPE_WARNING = 'ALERT_TYPE_WARNING';
-const ALERT_TYPE_DANGER = 'ALERT_TYPE_DANGER';
-const ALERT_TYPE_SUCCESS = 'ALERT_TYPE_SUCCESS';
+import * as types from '@/lib/alert';
 
 export default {
   props: {
@@ -54,14 +51,14 @@ export default {
   computed: {
     classObject() {
       return {
-        'alert-info': this.alertType === ALERT_TYPE_INFO,
-        'alert-warning': this.alertType === ALERT_TYPE_WARNING,
-        'alert-danger': this.alertType === ALERT_TYPE_DANGER,
-        'alert-success': this.alertType === ALERT_TYPE_SUCCESS,
+        'alert-info': this.alertType === types.ALERT_TYPE_INFO,
+        'alert-warning': this.alertType === types.ALERT_TYPE_WARNING,
+        'alert-danger': this.alertType === types.ALERT_TYPE_DANGER,
+        'alert-success': this.alertType === types.ALERT_TYPE_SUCCESS,
       };
     },
     isInfo() {
-      return this.alertType === ALERT_TYPE_INFO;
+      return this.alertType === types.ALERT_TYPE_INFO;
     },
   },
   methods: {
