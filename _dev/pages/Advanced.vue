@@ -3,8 +3,6 @@
 </template>
 
 <script>
-import {mapState} from 'vuex';
-
 export default {
   name: 'Advanced',
   components: {
@@ -12,11 +10,6 @@ export default {
   data() {
     return {
     };
-  },
-  computed: {
-    ...mapState([
-      'trans',
-    ]),
   },
 };
 </script>

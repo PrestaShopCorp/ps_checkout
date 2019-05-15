@@ -45,7 +45,9 @@ class Translations
      */
     public function getTranslations()
     {
-        $translations = array(
+        $locale = \Context::getContext()->language->locale;
+
+        $translations[$locale] = array(
             'menu' => array(
                 'authentication' => $this->module->l('Authentication'),
                 'customizeCheckout' => $this->module->l('Customize checkout experience'),

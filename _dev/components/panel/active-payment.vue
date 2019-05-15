@@ -25,8 +25,6 @@
 </template>
 
 <script>
-import {mapState} from 'vuex';
-
 export default {
   components: {
 
@@ -35,11 +33,6 @@ export default {
     return {
       slides: [],
     };
-  },
-  computed: {
-    ...mapState([
-      'trans',
-    ]),
   },
   methods: {
     updatePosition(payload) {

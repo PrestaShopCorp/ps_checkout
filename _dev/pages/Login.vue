@@ -49,7 +49,6 @@
 </template>
 
 <script>
-import {mapState} from 'vuex';
 import PSButton from '@/components/form/button';
 import PSAlert from '@/components/form/alert';
 import Reassurance from '@/components/block/reassurance';
@@ -69,11 +68,6 @@ export default {
       hasError: false,
       errorMessage: '',
     };
-  },
-  computed: {
-    ...mapState([
-      'trans',
-    ]),
   },
   methods: {
     logIn() {

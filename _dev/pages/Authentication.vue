@@ -23,7 +23,6 @@
 </template>
 
 <script>
-import {mapState} from 'vuex';
 import PSButton from '@/components/form/button';
 import Reassurance from '@/components/block/reassurance';
 
@@ -32,11 +31,6 @@ export default {
   components: {
     PSButton,
     Reassurance,
-  },
-  computed: {
-    ...mapState([
-      'trans',
-    ]),
   },
   methods: {
     signUp() {

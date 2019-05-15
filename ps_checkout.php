@@ -121,6 +121,7 @@ class ps_checkout extends PaymentModule
 
         Media::addJsDef(array(
             'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
+            'contextLocale' => $this->context->language->locale,
             'translations' => json_encode($translations),
             'firebaseAccount' => json_encode($firebaseAccount)
         ));

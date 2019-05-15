@@ -109,7 +109,6 @@
 </template>
 
 <script>
-import {mapState} from 'vuex';
 import PSButton from '@/components/form/button';
 import PSCheckbox from '@/components/form/checkbox';
 import Reassurance from '@/components/block/reassurance';
@@ -147,9 +146,6 @@ export default {
     };
   },
   computed: {
-    ...mapState([
-      'trans',
-    ]),
     confirmPassword() {
       return this.form.confirmPassword;
     },

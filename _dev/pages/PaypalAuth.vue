@@ -31,23 +31,17 @@
         </div>
       </div>
     </div>
-    <Reassurance />
+    <Reassurance url="https://google.com" />
   </div>
 </template>
 
 <script>
-import {mapState} from 'vuex';
 import Reassurance from '@/components/block/reassurance';
 
 export default {
   name: 'PaypalAuth',
   components: {
     Reassurance,
-  },
-  computed: {
-    ...mapState([
-      'trans',
-    ]),
   },
   created() {
     if (!document.getElementById('paypal-js')) {
