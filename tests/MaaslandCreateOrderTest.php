@@ -28,7 +28,7 @@ use GuzzleHttp\Message\Response;
 use GuzzleHttp\Stream\Stream;
 use GuzzleHttp\Subscriber\Mock;
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\PrestashopPayments\Api\Maasland;
+use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
 
 class MaaslandCreateOrderTest extends TestCase
 {

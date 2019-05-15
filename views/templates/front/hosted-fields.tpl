@@ -35,7 +35,7 @@
 
         <div class="form-group row">
             <div class="col-md-8">
-                <label for="card-number" class="form-control-label required">{l s='Card number' mod='prestashoppayments'}</label>
+                <label for="card-number" class="form-control-label required">{l s='Card number' mod='ps_checkout'}</label>
                 <div id="card-number" class="form-control">
                     <div id="card-image">
                         <i class="material-icons defautl-credit-card">credit_card</i>
@@ -46,11 +46,11 @@
 
         <div class="form-group row">
             <div class="col-md-4">
-                <label for="expiration-date" class="form-control-label required">{l s='Expiry date' mod='prestashoppayments'}</label>
+                <label for="expiration-date" class="form-control-label required">{l s='Expiry date' mod='ps_checkout'}</label>
                 <div id="expiration-date" class="form-control"></div>
             </div>
             <div class="col-md-4">
-                <label for="cvv" class="form-control-label required">{l s='CVC' mod='prestashoppayments'}</label>
+                <label for="cvv" class="form-control-label required">{l s='CVC' mod='ps_checkout'}</label>
                 <div id="cvv" class="form-control"></div>
             </div>
         </div>

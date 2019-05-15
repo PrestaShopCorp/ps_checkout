@@ -25,10 +25,11 @@
 */
 
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use PrestaShop\Module\PrestashopPayments\Api\Maasland;
-use PrestaShop\Module\PrestashopPayments\GenerateJsonPaypalOrder;
-use PrestaShop\Module\PrestashopPayments\Payment;
-use PrestaShop\Module\PrestashopPayments\HostedFieldsErrors;
+use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
+use PrestaShop\Module\PrestashopCheckout\GenerateJsonPaypalOrder;
+use PrestaShop\Module\PrestashopCheckout\Payment;
+use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
+use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -36,23 +37,29 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class PrestashopPayments extends PaymentModule
+class ps_checkout extends PaymentModule
 {
     // hook list used by the module
     public $hookList = [
         'paymentOptions',
         'paymentReturn',
         'actionFrontControllerSetMedia',
-        'actionObjectOrderSlipAddBefore'
+        'actionOrderSlipAdd'
     ];
 
     public $configurationList = array(
-        'PS_PAY_INTENT' => 'CAPTURE'
+        'PS_CHECKOUT_INTENT' => 'CAPTURE',
+        'PS_CHECKOUT_FIREBASE_PUBLIC_API_KEY' => 'AIzaSyASHFE2F08ncoOH9NhoCF8_6z7qnoLVKSA',
+        'PS_CHECKOUT_FIREBASE_EMAIL' => '',
+        'PS_CHECKOUT_FIREBASE_ID_TOKEN' => '',
+        'PS_CHECKOUT_FIREBASE_LOCAL_ID' => '',
+        'PS_CHECKOUT_FIREBASE_REFRESH_TOKEN' => '',
+        'PS_CHECKOUT_SHOP_UUID_V4' => ''
     );
 
     public function __construct()
     {
-        $this->name = 'prestashoppayments';
+        $this->name = 'ps_checkout';
         $this->tab = 'payments_gateways';
         $this->version = '1.0.0';
         $this->author = 'PrestaShop';
@@ -62,9 +69,11 @@ class PrestashopPayments extends PaymentModule
 
         $this->bootstrap = true;
 
+        $this->controllers = array('AdminAjaxPrestashopCheckout');
+
         parent::__construct();
 
-        $this->displayName = $this->l('Prestashop payments');
+        $this->displayName = $this->l('PrestaShop Checkout');
         $this->description = $this->l('New prestashop payment system');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
@@ -99,6 +108,27 @@ class PrestashopPayments extends PaymentModule
         return parent::uninstall();
     }
 
+    public function getContent()
+    {
+        $translations = (new Translations($this))->getTranslations();
+
+        $firebaseAccount = array(
+            'email' => Configuration::get('PS_CHECKOUT_FIREBASE_EMAIL'),
+            'idToken' => Configuration::get('PS_CHECKOUT_FIREBASE_ID_TOKEN'),
+            'localId' => Configuration::get('PS_CHECKOUT_FIREBASE_LOCAL_ID'),
+            'refreshToken' => Configuration::get('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN')
+        );
+
+        Media::addJsDef(array(
+            'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
+            'contextLocale' => $this->context->language->locale,
+            'translations' => json_encode($translations),
+            'firebaseAccount' => json_encode($firebaseAccount)
+        ));
+
+        return $this->display(__FILE__, '/views/app/app.tpl');
+    }
+
     /**
      * Add payment option at the checkout in the front office
      *
@@ -127,7 +157,7 @@ class PrestashopPayments extends PaymentModule
             'clientToken' => $paypalOrder['client_token'],
             'paypalOrderId' => $paypalOrder['id'],
             'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true),
-            'intent' => strtolower(Configuration::get('PS_PAY_INTENT'))
+            'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT'))
         ));
 
         $payment_options = [
@@ -144,15 +174,11 @@ class PrestashopPayments extends PaymentModule
      *
      * @param array params return by the hook
      */
-    public function hookActionObjectOrderSlipAddBefore($params)
+    public function hookActionOrderSlipAdd($params)
     {
-        return false;
         if (false === Tools::isSubmit('partialRefund')) {
             return false;
         }
-
-        dump($params);
-        die('test');
 
         $refunds = $params['productList'];
 
@@ -212,7 +238,7 @@ class PrestashopPayments extends PaymentModule
      */
     public function generatePaypalForm()
     {
-        return $this->context->smarty->fetch('module:prestashoppayments/views/templates/front/paypal.tpl');
+        return $this->context->smarty->fetch('module:ps_checkout/views/templates/front/paypal.tpl');
     }
 
     /**
@@ -239,7 +265,7 @@ class PrestashopPayments extends PaymentModule
      */
     public function generateHostedFieldsForm()
     {
-        return $this->context->smarty->fetch('module:prestashoppayments/views/templates/front/hosted-fields.tpl');
+        return $this->context->smarty->fetch('module:ps_checkout/views/templates/front/hosted-fields.tpl');
     }
 
     /**
@@ -285,12 +311,12 @@ class PrestashopPayments extends PaymentModule
         ));
 
         $this->context->controller->registerJavascript(
-            'prestashoppayments-paypal-api',
+            'ps-checkout-paypal-api',
             'modules/'.$this->name.'/views/js/api-paypal.js'
         );
 
         $this->context->controller->registerStylesheet(
-            'prestashoppayments-css-paymentOptions',
+            'ps-checkout-css-paymentOptions',
             'modules/'.$this->name.'/views/css/paymentOptions.css'
         );
     }

@@ -14,10 +14,10 @@
     },
     "autoload": {
         "psr-4": {
-            "PrestaShop\\Module\\PrestashopPayments\\": "classes/"
+            "PrestaShop\\Module\\PrestashopCheckout\\": "classes/"
         },
         "classmap": [
-            "prestashoppayments.php",
+            "ps_checkout.php",
             "controllers/"
         ]
     },

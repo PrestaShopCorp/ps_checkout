@@ -1,3 +1,4 @@
+
 <?php
 /**
 * 2007-2019 PrestaShop
@@ -24,32 +25,12 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout;
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
 
-class HostedFieldsErrors
-{
-    private $module = null;
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
-    public function __construct(\Module $module)
-    {
-        $this->module = $module;
-    }
-
-    /**
-     * Return a list of errors code when a credit card is invalid with
-     * the associated message
-     *
-     * @return string
-     */
-    public function getHostedFieldsErrors()
-    {
-        //TODO: Complete with all error code possible - waiting response from paypal
-        $errors = array(
-            'INVALID_STRING_LENGTH' => $this->module->l('The value of a field is either too short or too long'),
-            'INVALID_EXPIRATION_YEAR' => $this->module->l('Expiration Year must be between current year and 2099'),
-            'INVALID_PARAMETER_SYNTAX' => $this->module->l('The value of a field does not conform to the expected format')
-        );
-
-        return json_encode($errors);
-    }
-}
+header('Location: ../');
+exit;

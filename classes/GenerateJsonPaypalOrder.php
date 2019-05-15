@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopPayments;
+namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\PrestaShop\Adapter\Presenter\Cart\CartPresenter;
 
@@ -105,7 +105,7 @@ class GenerateJsonPaypalOrder
         }
 
         $payload = json_encode([
-            'intent' => \Configuration::get('PS_PAY_INTENT'), // capture or authorize
+            'intent' => \Configuration::get('PS_CHECKOUT_INTENT'), // capture or authorize
             'custom_id' => (string) $params['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
             'description' => 'Checking out with your cart from {SHOP}',
@@ -170,8 +170,8 @@ class GenerateJsonPaypalOrder
             'application_context' => [
                 'brand_name' => 'PrestaShop Payments',
                 'locale' => 'bs-BA',
-                'return_url' => \Tools::getShopDomainSsl(true).__PS_BASE_URI__,
-                'cancel_url' => 'https://myshop.com/order/cancel',
+                // 'return_url' => \Tools::getShopDomainSsl(true).__PS_BASE_URI__,
+                // 'cancel_url' => 'https://myshop.com/order/cancel',
                 'shipping_preference' => 'SET_PROVIDED_ADDRESS'
             ]
         ]);

@@ -1,2 +1,2 @@
-# prestashoppayments
-Module for PrestaShop Payments 
+# ps_checkout
+Module for PrestaShop Payments
