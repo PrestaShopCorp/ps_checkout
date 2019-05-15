@@ -18,7 +18,7 @@
         </div>
       </div>
     </div>
-    <Reassurance />
+    <Reassurance url="https://google.com" />
   </div>
 </template>
 

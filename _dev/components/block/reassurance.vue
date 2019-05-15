@@ -31,16 +31,17 @@
       <li class="third-li">Offer the most relevant <b>Local Payment Methods</b> to customers across the globe</li>
     </ul>
     <div class="learn-more">
-      <a href="#" class="card-link" @click="onClick()">Learn more <i class="material-icons">arrow_right_alt</i></a>
+      <a class="card-link" :href="url" target="_blank">Learn more <i class="material-icons">arrow_right_alt</i></a>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  methods: {
-    onClick() {
-      console.log('click');
+  props: {
+    url: {
+      type: String,
+      required: true,
     },
   },
 };

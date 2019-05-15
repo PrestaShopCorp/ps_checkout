@@ -104,7 +104,7 @@
         </div>
       </div>
     </form>
-    <Reassurance />
+    <Reassurance url="https://google.com" />
   </div>
 </template>
 
