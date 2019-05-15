@@ -28,7 +28,7 @@
         <div v-if="hasError" class="card-block row py-0">
           <div class="card-text max-size">
             <div class="form-group">
-              <PSAlert alert-type="ALERT_TYPE_DANGER" :has-close="true" @closeAlert="hasError = false">
+              <PSAlert :alert-type="ALERT_TYPE_DANGER" :has-close="true" @closeAlert="hasError = false">
                 {{ errorMessage }}
               </PSAlert>
             </div>
@@ -53,6 +53,7 @@ import PSButton from '@/components/form/button';
 import PSAlert from '@/components/form/alert';
 import Reassurance from '@/components/block/reassurance';
 import {EMAIL_NOT_FOUND, INVALID_EMAIL, INVALID_PASSWORD} from '@/lib/auth';
+import {ALERT_TYPE_DANGER} from '@/lib/alert';
 
 export default {
   name: 'Login',
@@ -68,6 +69,9 @@ export default {
       hasError: false,
       errorMessage: '',
     };
+  },
+  computed: {
+    ALERT_TYPE_DANGER: () => ALERT_TYPE_DANGER,
   },
   methods: {
     logIn() {

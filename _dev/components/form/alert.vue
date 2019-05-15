@@ -57,9 +57,6 @@ export default {
         'alert-success': this.alertType === types.ALERT_TYPE_SUCCESS,
       };
     },
-    isInfo() {
-      return this.alertType === types.ALERT_TYPE_INFO;
-    },
   },
   methods: {
     closeAlert() {
