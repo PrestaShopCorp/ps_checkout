@@ -47,7 +47,7 @@ class Maasland
     public function __construct(Client $client = null)
     {
         // temporary
-        $conf = json_decode(file_get_contents(__DIR__.'/../../maaslandConf.json'));
+        $conf = json_decode(file_get_contents(_PS_MODULE_DIR_.'/ps_checkout/maaslandConf.json'));
         $this->maaslandLive = $conf->integration->live;
         $this->maaslandSandbox = $conf->integration->sandbox;
 
