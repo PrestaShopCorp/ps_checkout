@@ -36,8 +36,8 @@ class Maasland
     public $debugMode = false; // true for false x)
     public $timeout = 5;
 
-    private $maaslandLive = '';
-    private $maaslandSandbox = '';
+    private $maaslandLive = 'http://host.docker.internal:1234';
+    private $maaslandSandbox = 'http://host.docker.internal:1234';
 
     /**
      * @var Client
@@ -47,9 +47,11 @@ class Maasland
     public function __construct(Client $client = null)
     {
         // temporary
-        $conf = json_decode(file_get_contents(_PS_MODULE_DIR_.'/ps_checkout/maaslandConf.json'));
-        $this->maaslandLive = $conf->integration->live;
-        $this->maaslandSandbox = $conf->integration->sandbox;
+        if (true === file_exists(__DIR__.'/../../maaslandConf.json')) {
+            $conf = json_decode(file_get_contents(__DIR__.'/../../maaslandConf.json'));
+            $this->maaslandLive = $conf->integration->live;
+            $this->maaslandSandbox = $conf->integration->sandbox;
+        }
 
         // Client can be provided for tests
         if (null === $client) {
