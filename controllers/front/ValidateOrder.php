@@ -44,9 +44,22 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
     public function postProcess()
     {
         $paypalOrderId = Tools::getValue('orderId');
+        $paymentMethod = Tools::getValue('paymentMethod');
 
         if (false === $paypalOrderId) {
             throw new \PrestaShopException('Paypal order id is missing.');
+        }
+
+        switch ($paymentMethod) {
+            case 'card':
+                $paymentMethod = $this->l('Payment by card');
+                break;
+            case 'paypal':
+                $paymentMethod = $this->l('Payment by PayPal');
+                break;
+            default:
+                $paymentMethod = $this->l('Payment by PrestaShop Checkout');
+                break;
         }
 
         $cart = $this->context->cart;
@@ -66,7 +79,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
             'cartId' => (int)$cart->id,
             'orderStateId' => Configuration::get('PS_OS_CHEQUE'),
             'amount' => $total,
-            'paymentMethod' => $this->module->displayName,
+            'paymentMethod' => $paymentMethod,
             'message' => null,
             'extraVars' => array('transaction_id' => $paypalOrderId),
             'currencyId' => (int)$currency->id,

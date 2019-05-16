@@ -69,7 +69,7 @@ function initSmartButtons() {
       return paypalOrderId;
     },
     onApprove(payload) {
-      window.location.replace(`${orderValidationLink}?orderId=${payload.orderID}`);
+      window.location.replace(`${orderValidationLink}?orderId=${payload.orderID}&paymentMethod=paypal`);
     },
   }).render('#paypal-button-container');
 }
@@ -147,12 +147,12 @@ function initHostedFields() {
           // contingencies: ['3D_SECURE'] // only necessary if using 3D Secure verification
         }).then((payload) => {
           if (payload.liabilityShifted === undefined) { // No 3DS Contingency Passed or card not enrolled to 3ds
-            window.location.replace(`${orderValidationLink  }?orderId=${  payload.orderId}`);
+            window.location.replace(`${orderValidationLink}?orderId=${payload.orderId}&paymentMethod=card`);
             console.log('undefined');
           }
 
           if (payload.liabilityShifted) { // 3DS Contingency Passed - Buyer confirmed Successfully
-            window.location.replace(`${orderValidationLink  }?orderId=${  payload.orderId}`);
+            window.location.replace(`${orderValidationLink}?orderId=${payload.orderId}&paymentMethod=card`);
             console.log('success');
           }
 
