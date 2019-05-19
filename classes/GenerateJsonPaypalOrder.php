@@ -90,16 +90,15 @@ class GenerateJsonPaypalOrder
             $item['name'] = $value['name'];
             $item['description'] = strip_tags($value['description_short']);
             $item['sku'] = $value['unity'];
-            // $item['url'] = $this->getProductUrlById($value['id_product']); // not allowed for the moment
             $item['unit_amount']['currency_code'] = $params['currency']['iso_code'];
-            $item['unit_amount']['value'] = $value['price'];
+            $item['unit_amount']['value'] = \Tools::ps_round($value['price'], $this->getNbDecimalToRound($params['currency']['iso_code']));
             $item['tax']['currency_code'] = $params['currency']['iso_code'];
-            $item['tax']['value'] = $value['price'] * $value['rate'] / 100;
+            $item['tax']['value'] = \Tools::ps_round($value['price'] * $value['rate'] / 100, $this->getNbDecimalToRound($params['currency']['iso_code']));
             $item['quantity'] = $value['quantity'];
             $item['category'] = $value['is_virtual'] === '1' ? 'DIGITAL_GOODS' : 'PHYSICAL_GOODS';
 
-            $totalTaxItem = $totalTaxItem + ($value['price'] * $value['cart_quantity']);
-            $totalAmountItemWithoutTax = $totalAmountItemWithoutTax + ($value['price'] * $value['rate'] / 100) * $value['cart_quantity'];
+            $totalTaxItem = \Tools::ps_round($totalTaxItem + ($value['price'] * $value['cart_quantity']), $this->getNbDecimalToRound($params['currency']['iso_code']));
+            $totalAmountItemWithoutTax = \Tools::ps_round($totalAmountItemWithoutTax + $item['tax']['value'] * $value['cart_quantity'], $this->getNbDecimalToRound($params['currency']['iso_code']));
 
             $items[] = $item;
         }
@@ -165,18 +164,36 @@ class GenerateJsonPaypalOrder
                 ]
             ],
             'payee' => [
-                'merchant_id' => '7RN2XXLUBYHHS' // merchant id which is return at the end of the onboarding - Test mechant id : 7RN2XXLUBYHHS
+                'merchant_id' => \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT')
             ],
             'application_context' => [
-                'brand_name' => 'PrestaShop Payments',
+                'brand_name' => 'PrestaShop Checkout',
                 'locale' => 'bs-BA',
-                // 'return_url' => \Tools::getShopDomainSsl(true).__PS_BASE_URI__,
-                // 'cancel_url' => 'https://myshop.com/order/cancel',
                 'shipping_preference' => 'SET_PROVIDED_ADDRESS'
             ]
         ]);
 
         return $payload;
+    }
+
+    /**
+     * Get decimal to round correspondent to the payment currency used
+     * Advise from PayPal: Always round to 2 decimals except for HUF, JPY and TWD
+     * currencies which require a round with 0 decimal
+     *
+     * @param string $currencyIsoCode iso code of the currency used to pass the payment
+     *
+     * @return int
+     */
+    public function getNbDecimalToRound($currencyIsoCode)
+    {
+        $currency_wt_decimal = array('HUF', 'JPY', 'TWD');
+
+        if (in_array($currencyIsoCode, $currency_wt_decimal)) {
+            return (int) 0;
+        }
+
+        return (int) 2;
     }
 
     /**
