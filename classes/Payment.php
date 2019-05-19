@@ -132,6 +132,10 @@ class Payment
         $payload = [
             'orderId' => $this->paypalOrderId,
             'captureId' => $captureId,
+            'payee' =>
+            [
+                'merchant_id' => \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT')
+            ],
             'amount' =>
             [
                 'currency_code' => $currencyCode,
