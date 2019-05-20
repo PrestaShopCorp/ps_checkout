@@ -39,6 +39,11 @@ class webHookValidation
     {
         $error = array();
 
+        if (empty($payload)) {
+            $error['payload'] = 'Payload can\'t be empty';
+            return $error;
+        }
+
         if (empty($payload['Shop-Id'])) {
             $error['Shop-Id'] = 'Shop-Id can\'t be empty';
         }

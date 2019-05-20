@@ -55,6 +55,12 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     private $resource;
 
     /**
+     * Order Id coming from Paypal
+     * @var int
+     */
+    private $orderId;
+
+    /**
      * Id coming from PSL
      * @var int
      */
@@ -70,28 +76,32 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      * Id coming from Firebase
      * @var int
      */
-    private $psxId;
+    private $firebaseId;
 
 
     public function initContent()
     {
+        // Check IP address whitelist
+        if (!$this->checkIPWhitelist()) {
+            return false;
+        }
+        
         $payload = json_decode(\Tools::getValue('payload'));
-
         $errors = (new webHookValidation)->validate($payload);
 
-        // if there is errors, return them
+        // If there is errors, return them
         if (is_array($errors)) {
             throw new \PrestaShopException($errors);
         }
         
-        // set attributes
         $this->setAtributesValues($payload);
 
-        // check if have execution permissions
-        $this->checkExecutionPermissions();
+        // Check if have execution permissions
+        if (!$this->checkExecutionPermissions()) {
+            return false;
+        }
         
-        // dispatch hook
-        $this->dispatchWebHook();
+        $this->dispatchWebHook($payload);
     }
 
     /**
@@ -105,11 +115,28 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     {
         $this->shopId = (int)$payload['Shop-Id'];
         $this->merchantId = (int)$payload['Merchant-Id'];
-        $this->psxId = (int)$payload['Psx-Id'];
+        $this->firebaseId = (int)$payload['Psx-Id'];
         $this->summary = (string)$payload['summary'];
         $this->category = (string)$payload['category'];
         $this->eventType = (string)$payload['eventType'];
         $this->resource = (array)$payload['resource'];
+    }
+
+    /**
+     * Check if the calling IP is in the whitelist
+     *
+     * @return bool
+     */
+    private function checkIPWhitelist()
+    {
+        $sourceIp = $_SERVER['REMOTE_ADDR'];
+
+        // check white list
+        if (!in_array($sourceIp, array(PS_CHECKOUT_IP_PROD, PS_CHECKOUT_IP_DEV))) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -119,19 +146,9 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     private function checkExecutionPermissions()
     {
-        $sourceIp = $_SERVER['REMOTE_ADDR'];
-
-        /*
-            @TODO : Get real datas
-        */
-        $localShopId = 1;
-        $localMerchantId = 1;
-        $localPsxId = 1;
-
-        // check white list
-        if (!in_array($sourceIp, array(PS_CHECKOUT_IP_PROD, PS_CHECKOUT_IP_DEV))) {
-            return false;
-        }
+        $localShopId = $this->module->configurationList['PS_CHECKOUT_SHOP_UUID_V4'];
+        $localMerchantId = $this->module->configurationList['PS_CHECKOUT_PAYPAL_ID_MERCHANT'];
+        $localFirebaseId = $this->module->configurationList['PS_CHECKOUT_FIREBASE_ID_TOKEN'];
 
         if ($this->shopId !== $localShopId) {
             return false;
@@ -141,7 +158,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
             return false;
         }
 
-        if ($this->psxId !== $localPsxId) {
+        if ($this->firebaseId !== $localFirebaseId) {
             return false;
         }
 
@@ -151,16 +168,24 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     /**
      * Dispatch the web Hook according to the category
      *
+     * @param array $payLoad
+     * 
      * @return void
      */
-    private function dispatchWebHook()
+    private function dispatchWebHook($payload)
     {
         if ('ShopNotificationMerchantAccount' === $this->category) {
             // do merchant management
         }
 
         if ('ShopNotificationOrderChange' === $this->category) {
-            // do update order
+            $orderError = (new webHookValidation)->validateOrderId($payload['orderId']);
+
+            if (is_string($orderError)) {
+                throw new \PrestaShopException($orderError);
+            }
+
+            // do order change
         }
     }
     
