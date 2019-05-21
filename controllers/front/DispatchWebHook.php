@@ -211,7 +211,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     private function dispatchOrderEventType()
     {
-        $orderAction = new Refund;
+        $orderAction = new Payment;
 
         if ($this->eventType === self::PS_CHECKOUT_PAYMENT_REVERSED 
         || $this->eventType === self::PS_CHECKOUT_PAYMENT_REVERSED) {
@@ -219,10 +219,10 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
                 $this->resource
             );
         }
-        
-        if ($this->eventType === self::PAYMENT.CAPTURE.PENDING 
-        || $this->eventType === self::PAYMENT.CAPTURE.COMPLETED 
-        || $this->eventType === self::PAYMENT.CAPTURE.DENIED) {
+
+        if ($this->eventType === self::PS_CHECKOUT_PAYMENT_PENDING
+        || $this->eventType === self::PS_CHECKOUT_PAYMENT_COMPLETED 
+        || $this->eventType === self::PS_CHECKOUT_PAYMENT_DENIED) {
             $orderAction->updateStatusOrderWebHook(
                 $this->resource
             );

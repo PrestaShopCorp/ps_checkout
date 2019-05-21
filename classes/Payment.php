@@ -148,14 +148,16 @@ class Payment
         /*
         *   @TODO : Get datas from resource
         */
-        // $order;
-        // $product_list;
-        // $shipping_cost;
-        // $amout;
-        // $amount_choosen;
-        // $add_tax;
+        /*
+            $order;
+            $product_list;
+            $shipping_cost;
+            $amout;
+            $amount_choosen;
+            $add_tax;
 
-        \OrderSlipCore::create($order, $product_list, $shipping_cost, $amount, $amount_choosen, $add_tax);
+            \OrderSlipCore::create($order, $product_list, $shipping_cost, $amount, $amount_choosen, $add_tax);
+        */
     }
 
     /**
