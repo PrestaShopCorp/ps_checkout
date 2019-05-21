@@ -25,11 +25,14 @@
 */
 
 use PrestaShop\Module\PrestashopCheckout\webHookValidation;
+use PrestaShop\Module\PrestashopCheckout\Payment;
 
 class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontController
 {
     const PS_CHECKOUT_IP_PROD = '0.0.0.0';
-    const PS_CHECKOUT_IP_DEV = '172.17.0.2';
+    const PS_CHECKOUT_IP_DEV = '172.17.0.1';
+    const PS_CHECKOUT_SHOP_UID_LABEL = 'PS_CHECKOUT_SHOP_UUID_V4';
+    const PS_CHECKOUT_PAYPAL_ID_LABEL = 'PS_CHECKOUT_PAYPAL_ID_MERCHANT';
 
     /**
      * Contains the summary of the event, coming from Paypal
@@ -49,7 +52,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     private $eventType;
 
     /**
-     * Get all the 
+     * Get all the datas
      * @var array
      */
     private $resource;
@@ -85,13 +88,16 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         if (!$this->checkIPWhitelist()) {
             return false;
         }
-        
+
         $payload = json_decode(\Tools::getValue('payload'));
         $errors = (new webHookValidation)->validate($payload);
 
         // If there is errors, return them
         if (is_array($errors)) {
-            throw new \PrestaShopException($errors);
+            /*
+            * @TODO : Throw array exception
+            */
+            return false;
         }
         
         $this->setAtributesValues($payload);
@@ -132,7 +138,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         $sourceIp = $_SERVER['REMOTE_ADDR'];
 
         // check white list
-        if (!in_array($sourceIp, array(PS_CHECKOUT_IP_PROD, PS_CHECKOUT_IP_DEV))) {
+        if (!in_array($sourceIp, array(self::PS_CHECKOUT_IP_PROD, self::PS_CHECKOUT_IP_DEV))) {
             return false;
         }
 
@@ -146,19 +152,17 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     private function checkExecutionPermissions()
     {
-        $localShopId = $this->module->configurationList['PS_CHECKOUT_SHOP_UUID_V4'];
-        $localMerchantId = $this->module->configurationList['PS_CHECKOUT_PAYPAL_ID_MERCHANT'];
-        $localFirebaseId = $this->module->configurationList['PS_CHECKOUT_FIREBASE_ID_TOKEN'];
+        /*
+        *   @TODO : Get payload hash to confirm that it's not modified
+        */
+        $localShopId = $this->module->configurationList[self::PS_CHECKOUT_SHOP_UID_LABEL];
+        $localMerchantId = $this->module->configurationList[self::PS_CHECKOUT_PAYPAL_ID_LABEL];
 
         if ($this->shopId !== $localShopId) {
             return false;
         }
 
         if ($this->merchantId !== $localMerchantId) {
-            return false;
-        }
-
-        if ($this->firebaseId !== $localFirebaseId) {
             return false;
         }
 
@@ -182,10 +186,34 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
             $orderError = (new webHookValidation)->validateOrderId($payload['orderId']);
 
             if (is_string($orderError)) {
-                throw new \PrestaShopException($orderError);
+                /*
+                * @TODO : Throw array exception
+                */
+                return false;
             }
+            
+            $this->dispatchOrderEventType();
+        }
+    }
 
-            // do order change
+    /**
+     * Dispatch the order event type
+     *
+     * @return void
+     */
+    private function dispatchOrderEventType()
+    {
+        $orderAction = new Payment;
+
+        switch ($this->eventType) {
+            case 'PAYMENT.CAPTURE.REFUNDED': 
+                $orderAction->refundOrderWebHook(
+                    $this->resource
+                );
+                break;
+            default:
+                # code...
+                break;
         }
     }
     
