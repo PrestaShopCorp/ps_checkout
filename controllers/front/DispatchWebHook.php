@@ -33,6 +33,15 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     const PS_CHECKOUT_IP_DEV = '172.17.0.1';
     const PS_CHECKOUT_SHOP_UID_LABEL = 'PS_CHECKOUT_SHOP_UUID_V4';
     const PS_CHECKOUT_PAYPAL_ID_LABEL = 'PS_CHECKOUT_PAYPAL_ID_MERCHANT';
+    const PS_CHECKOUT_MERCHANT_REVOKED = 'MERCHANT.PARTNER-CONSENT.REVOKED';
+    const PS_CHECKOUT_MERCHANT_COMPLETED = 'MERCHANT.ONBOARDING.COMPLETED';
+    const PS_CHECKOUT_PAYMENT_REVERSED = 'PAYMENT.CAPTURE.REVERSED';
+    const PS_CHECKOUT_PAYMENT_REFUNED = 'PAYMENT.CAPTURE.REFUNDED';
+    const PS_CHECKOUT_PAYMENT_AUTH_VOIDED = 'PAYMENT.AUTHORIZATION.VOIDED';
+    const PS_CHECKOUT_PAYMENT_PENDING = 'PAYMENT.CAPTURE.PENDING';
+    const PS_CHECKOUT_PAYMENT_COMPLETED = 'PAYMENT.CAPTURE.COMPLETED';
+    const PS_CHECKOUT_PAYMENT_DENIED = 'PAYMENT.CAPTURE.DENIED';
+
 
     /**
      * Contains the summary of the event, coming from Paypal
@@ -80,7 +89,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      * @var int
      */
     private $firebaseId;
-
 
     public function initContent()
     {
@@ -203,17 +211,21 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     private function dispatchOrderEventType()
     {
-        $orderAction = new Payment;
+        $orderAction = new Refund;
 
-        switch ($this->eventType) {
-            case 'PAYMENT.CAPTURE.REFUNDED': 
-                $orderAction->refundOrderWebHook(
-                    $this->resource
-                );
-                break;
-            default:
-                # code...
-                break;
+        if ($this->eventType === self::PS_CHECKOUT_PAYMENT_REVERSED 
+        || $this->eventType === self::PS_CHECKOUT_PAYMENT_REVERSED) {
+            $orderAction->refundOrderWebHook(
+                $this->resource
+            );
+        }
+        
+        if ($this->eventType === self::PAYMENT.CAPTURE.PENDING 
+        || $this->eventType === self::PAYMENT.CAPTURE.COMPLETED 
+        || $this->eventType === self::PAYMENT.CAPTURE.DENIED) {
+            $orderAction->updateStatusOrderWebHook(
+                $this->resource
+            );
         }
     }
     
