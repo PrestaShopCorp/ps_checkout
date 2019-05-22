@@ -29,8 +29,8 @@ use PrestaShop\Module\PrestashopCheckout\Payment;
 
 class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontController
 {
-    const PS_CHECKOUT_IP_PROD = '0.0.0.0';
-    const PS_CHECKOUT_IP_DEV = '172.17.0.1';
+    const PSESSENTIALS_DEV_URL = 'out.psessentials-integration.net';
+    const PSESSENTIALS_PROD_URL = 'out.psessentials.net';
     const PS_CHECKOUT_SHOP_UID_LABEL = 'PS_CHECKOUT_SHOP_UUID_V4';
     const PS_CHECKOUT_PAYPAL_ID_LABEL = 'PS_CHECKOUT_PAYPAL_ID_MERCHANT';
     const PS_CHECKOUT_MERCHANT_REVOKED = 'MERCHANT.PARTNER-CONSENT.REVOKED';
@@ -143,14 +143,56 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     private function checkIPWhitelist()
     {
-        $sourceIp = $_SERVER['REMOTE_ADDR'];
+        $sourceIp = $this->getSourceIP();
 
-        // check white list
-        if (!in_array($sourceIp, array(self::PS_CHECKOUT_IP_PROD, self::PS_CHECKOUT_IP_DEV))) {
+        $devIP = dns_get_record(self::PSESSENTIALS_DEV_URL, 'DNS_TXT');
+        $prodIP = dns_get_record(self::PSESSENTIALS_PROD_URL, 'DNS_TXT');
+
+        if (!$this->findWhiteListInDNS($devIP, $sourceIp) && !$this->findWhiteListInDNS($prodIP, $sourceIp)) {
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Get the source IP from the HTTP_CLIENT_IP or HTTP_X_FORWARDED_FOR or REMOTE_ADDR
+     * 
+     * @return string
+     */
+    private function getSourceIP()
+    {
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            return $_SERVER['HTTP_CLIENT_IP'];
+        }
+        
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+            
+        return $_SERVER['REMOTE_ADDR'];
+    }
+
+    /**
+     * Check if the called IP can be found in the DNS record
+     *
+     * @param  array $recordDNS
+     * @param  string $searchIP
+     * 
+     * @return bool
+     */
+    private function findWhiteListInDNS($recordDNS, $searchIP)
+    {
+        $foundInWhiteList = false;
+
+        foreach ($recordDNS => $value) {
+            if (stristr($value['txt'], $searchIP)) {
+                $foundInWhiteList = true;
+                continue;
+            }
+        }
+
+        return (bool)$foundInWhiteList;
     }
 
     /**
