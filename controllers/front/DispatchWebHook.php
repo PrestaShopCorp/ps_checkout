@@ -185,7 +185,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     {
         $foundInWhiteList = false;
 
-        foreach ($recordDNS => $value) {
+        foreach ($recordDNS as $value) {
             if (stristr($value['txt'], $searchIP)) {
                 $foundInWhiteList = true;
                 continue;
