@@ -26,7 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-class OrderDispatcher implements ReminderStepsValidation
+class OrderDispatcher implements InterfaceDispatcher
 {
     const PS_CHECKOUT_PAYMENT_REVERSED = 'PAYMENT.CAPTURE.REVERSED';
     const PS_CHECKOUT_PAYMENT_REFUNED = 'PAYMENT.CAPTURE.REFUNDED';
