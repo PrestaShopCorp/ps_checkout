@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  presta_ckt:
+    ports:
+      - 80:80
+      - 9223:9223
+    volumes:
+      - .:/var/www/html/modules/ps_checkout
+    working_dir: /var/www/html/modules/ps_checkout
+
+  mariadb_ckt:
+    ports:
+      - 3308:3306
+

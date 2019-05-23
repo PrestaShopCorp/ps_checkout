@@ -21,6 +21,9 @@ config.xml
 composer.phar
 /vendor/
 
+.env
+docker-compose.override.yml
+
 # Commit your application's lock file https://getcomposer.org/doc/01-basic-usage.md#commit-your-composer-lock-file-to-version-control
 # You may choose to ignore a library lock file http://getcomposer.org/doc/02-libraries.md#lock-file
 # composer.lock
@@ -140,10 +143,6 @@ Temporary Items
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
-
-# Gradle
-.idea/**/gradle.xml
-.idea/**/libraries
 
 # Gradle and Maven with auto-import
 # When using Gradle or Maven with auto-import, you should exclude module files,
@@ -294,6 +293,3 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/vim,vuejs,emacs,linux,macos,windows,phpstorm,composer,sublimetext,visualstudiocode
-
-# CS Fixer
-.php_cs.cache
