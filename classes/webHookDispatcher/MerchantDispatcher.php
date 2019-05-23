@@ -28,7 +28,7 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 class MerchantDispatcher implements ReminderStepsValidation
 {
-    const PS_CHECKOUT_MERCHANT_REVOKED = 'MERCHANT.PARTNER-CONSENT.REVOKED';
+    const PS_CHECKOUT_MERCHANT_REVOKED = 'PARTNER.CONSENT.REVOKED';
     const PS_CHECKOUT_MERCHANT_COMPLETED = 'PRESTASHOP.MERCHANT.INTEGRATIONS';
     
     /**

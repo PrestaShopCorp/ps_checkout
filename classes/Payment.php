@@ -143,23 +143,6 @@ class Payment
         return (new Maasland)->refundOrder($payload);
     }
 
-    public function refundOrderWebHook($resource)
-    {
-        /*
-        *   @TODO : Get datas from resource
-        */
-        /*
-            $order;
-            $product_list;
-            $shipping_cost;
-            $amout;
-            $amount_choosen;
-            $add_tax;
-
-            \OrderSlipCore::create($order, $product_list, $shipping_cost, $amount, $amount_choosen, $add_tax);
-        */
-    }
-
     /**
      * Return the status of the authorise
      *
