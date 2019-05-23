@@ -23,46 +23,46 @@
 </template>
 
 <script>
-import PSButton from '@/components/form/button';
-import Reassurance from '@/components/block/reassurance';
+  import PSButton from '@/components/form/button';
+  import Reassurance from '@/components/block/reassurance';
 
-export default {
-  name: 'Authentication',
-  components: {
-    PSButton,
-    Reassurance,
-  },
-  methods: {
-    signUp() {
-      this.$router.push('/authentication/signup');
+  export default {
+    name: 'Authentication',
+    components: {
+      PSButton,
+      Reassurance,
     },
-    logIn() {
-      this.$router.push('/authentication/login');
+    methods: {
+      signUp() {
+        this.$router.push('/authentication/signup');
+      },
+      logIn() {
+        this.$router.push('/authentication/login');
+      },
     },
-  },
-};
+  };
 </script>
 
 <style scoped>
-.d-flex {
-  align-items: flex-start;
-}
-.align-item {
-  align-items: center;
-}
-.connect-ps-content {
-  text-align: center;
-}
-.connect-ps-title {
-  color: #363A41;
-  font-size: 32px;
-  line-height: 43px;
-  padding-bottom: 25px;
-}
-.connect-ps-text {
-  color: #363A41;
-  font-size: 16px;
-  line-height: 24px;
-  padding-bottom: 25px;
-}
+  .d-flex {
+    align-items: flex-start;
+  }
+  .align-item {
+    align-items: center;
+  }
+  .connect-ps-content {
+    text-align: center;
+  }
+  .connect-ps-title {
+    color: #363A41;
+    font-size: 32px;
+    line-height: 43px;
+    padding-bottom: 25px;
+  }
+  .connect-ps-text {
+    color: #363A41;
+    font-size: 16px;
+    line-height: 24px;
+    padding-bottom: 25px;
+  }
 </style>

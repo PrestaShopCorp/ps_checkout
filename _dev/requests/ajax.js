@@ -2,7 +2,7 @@ import axios from 'axios';
 import {forEach} from 'lodash';
 
 const api = axios.create({
-  baseURL: prestashopCheckoutAjax,
+  baseURL: window.prestashopCheckoutAjax,
 });
 
 export function ajax(params) {

@@ -25,45 +25,45 @@
 </template>
 
 <script>
-export default {
-  components: {
+  export default {
+    components: {
 
-  },
-  data() {
-    return {
-      slides: [],
-    };
-  },
-  methods: {
-    updatePosition(payload) {
-      console.log(payload);
     },
-  },
-};
+    data() {
+      return {
+        slides: [],
+      };
+    },
+    methods: {
+      updatePosition(payload) {
+        console.log(payload);
+      },
+    },
+  };
 </script>
 
 <style scoped>
-.test {
-  text-align: center;
-}
-.payment-method-container {
-  width: 500px;
-}
-.payment-method {
-  position: relative;
-  display: block;
-  margin-bottom: 10px;
-  margin-bottom: .625rem;
-  background-color: #fff;
-  border: 1px solid #dddddd;
-  border-radius: 3px;
-  max-width: 475px;
-  height: 60px;
-}
-.payment-block {
+  .test {
+    text-align: center;
+  }
+  .payment-method-container {
+    width: 500px;
+  }
+  .payment-method {
+    position: relative;
+    display: block;
+    margin-bottom: 10px;
+    margin-bottom: .625rem;
+    background-color: #fff;
+    border: 1px solid #dddddd;
+    border-radius: 3px;
+    max-width: 475px;
+    height: 60px;
+  }
+  .payment-block {
 
-}
-.number {
-  text-align: right;
-}
+  }
+  .number {
+    text-align: right;
+  }
 </style>

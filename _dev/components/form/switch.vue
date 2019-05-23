@@ -7,39 +7,39 @@
 </template>
 
 <script>
-export default {
-  name: 'PowerSwitch',
-  props: {
-    value: Boolean,
-    leftText: {
-      type: String,
-      required: true,
+  export default {
+    name: 'PowerSwitch',
+    props: {
+      value: Boolean,
+      leftText: {
+        type: String,
+        required: true,
+      },
+      rightText: {
+        type: String,
+        required: true,
+      },
     },
-    rightText: {
-      type: String,
-      required: true,
+    data() {
+      return {
+        isActive: this.value,
+      };
     },
-  },
-  data() {
-    return {
-      isActive: this.value,
-    };
-  },
-  watch: {
-    isActive(val) {
-      this.$emit('input', val);
+    watch: {
+      isActive(val) {
+        this.$emit('input', val);
+      },
     },
-  },
-  methods: {
-    toggleSwitch(value) {
-      this.isActive = value;
+    methods: {
+      toggleSwitch(value) {
+        this.isActive = value;
+      },
     },
-  },
-};
+  };
 </script>
 
 <style scoped lang="scss">
-.mod-switch {
+  .mod-switch {
     position: relative;
     display: inline-block;
     min-width: 130px;
@@ -51,8 +51,8 @@ export default {
     border-radius: 1px;
     text-align: center;
     vertical-align: middle;
-}
-.mod-switch label {
+  }
+  .mod-switch label {
     position: relative;
     z-index: 2;
     float: left;
@@ -68,11 +68,11 @@ export default {
     font-weight: 400;
     cursor: pointer;
     transition: color .2s ease-out;
-}
-.mod-switch .active {
+  }
+  .mod-switch .active {
     color: #fff;
-}
-.switch-slide {
+  }
+  .switch-slide {
     position: absolute;
     top: 0;
     left: 0;
@@ -83,9 +83,9 @@ export default {
     color: #fff;
     background-color: #c05c67;
     transition: all .3s ease-out;
-}
-.switch-slide.active {
+  }
+  .switch-slide.active {
     background-color: #2eacce;
     left: 50%;
-}
+  }
 </style>
