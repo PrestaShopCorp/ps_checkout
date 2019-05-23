@@ -24,6 +24,8 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
+use PrestaShop\Module\PrestashopCheckout\OrderDispatcher;
+use PrestaShop\Module\PrestashopCheckout\MerchantDispatcher;
 use PrestaShop\Module\PrestashopCheckout\webHookValidation;
 use PrestaShop\Module\PrestashopCheckout\Payment;
 
@@ -33,15 +35,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     const PSESSENTIALS_PROD_URL = 'out.psessentials.net';
     const PS_CHECKOUT_SHOP_UID_LABEL = 'PS_CHECKOUT_SHOP_UUID_V4';
     const PS_CHECKOUT_PAYPAL_ID_LABEL = 'PS_CHECKOUT_PAYPAL_ID_MERCHANT';
-    const PS_CHECKOUT_MERCHANT_REVOKED = 'MERCHANT.PARTNER-CONSENT.REVOKED';
-    const PS_CHECKOUT_MERCHANT_COMPLETED = 'MERCHANT.ONBOARDING.COMPLETED';
-    const PS_CHECKOUT_PAYMENT_REVERSED = 'PAYMENT.CAPTURE.REVERSED';
-    const PS_CHECKOUT_PAYMENT_REFUNED = 'PAYMENT.CAPTURE.REFUNDED';
-    const PS_CHECKOUT_PAYMENT_AUTH_VOIDED = 'PAYMENT.AUTHORIZATION.VOIDED';
-    const PS_CHECKOUT_PAYMENT_PENDING = 'PAYMENT.CAPTURE.PENDING';
-    const PS_CHECKOUT_PAYMENT_COMPLETED = 'PAYMENT.CAPTURE.COMPLETED';
-    const PS_CHECKOUT_PAYMENT_DENIED = 'PAYMENT.CAPTURE.DENIED';
-
 
     /**
      * Contains the summary of the event, coming from Paypal
@@ -93,7 +86,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     public function initContent()
     {
         // Check IP address whitelist
-        if (!$this->checkIPWhitelist()) {
+        if (false === $this->checkIPWhitelist()) {
             return false;
         }
 
@@ -111,7 +104,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         $this->setAtributesValues($payload);
 
         // Check if have execution permissions
-        if (!$this->checkExecutionPermissions()) {
+        if (false === $this->checkExecutionPermissions()) {
             return false;
         }
         
@@ -148,7 +141,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         $devIP = dns_get_record(self::PSESSENTIALS_DEV_URL, 'DNS_TXT');
         $prodIP = dns_get_record(self::PSESSENTIALS_PROD_URL, 'DNS_TXT');
 
-        if (!$this->findWhiteListInDNS($devIP, $sourceIp) && !$this->findWhiteListInDNS($prodIP, $sourceIp)) {
+        if (false === $this->findWhiteListInDNS($devIP, $sourceIp) && false === $this->findWhiteListInDNS($prodIP, $sourceIp)) {
             return false;
         }
 
@@ -229,7 +222,11 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     private function dispatchWebHook($payload)
     {
         if ('ShopNotificationMerchantAccount' === $this->category) {
-            // do merchant management
+            $merchantManager = new MerchantDispatcher;
+            $merchantManager->dispatchEventType(
+                $this->eventType,
+                $this->resource
+            );
         }
 
         if ('ShopNotificationOrderChange' === $this->category) {
@@ -241,34 +238,12 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
                 */
                 return false;
             }
-            
-            $this->dispatchOrderEventType();
-        }
-    }
 
-    /**
-     * Dispatch the order event type
-     *
-     * @return void
-     */
-    private function dispatchOrderEventType()
-    {
-        $orderAction = new Payment;
-
-        if ($this->eventType === self::PS_CHECKOUT_PAYMENT_REVERSED 
-        || $this->eventType === self::PS_CHECKOUT_PAYMENT_REVERSED) {
-            $orderAction->refundOrderWebHook(
+            $orderManager = new OrderDispatcher;
+            $orderManager->dispatchEventType(
+                $this->eventType,
                 $this->resource
             );
         }
-
-        if ($this->eventType === self::PS_CHECKOUT_PAYMENT_PENDING
-        || $this->eventType === self::PS_CHECKOUT_PAYMENT_COMPLETED 
-        || $this->eventType === self::PS_CHECKOUT_PAYMENT_DENIED) {
-            $orderAction->updateStatusOrderWebHook(
-                $this->resource
-            );
-        }
-    }
-    
+    }    
 }
