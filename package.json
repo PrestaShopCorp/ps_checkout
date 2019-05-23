@@ -2,10 +2,14 @@
   "name": "app",
   "version": "0.1.0",
   "private": true,
+  "jest": {
+    "preset": "jest-puppeteer"
+  },
   "scripts": {
     "serve": "vue-cli-service serve --no-clean --port 8080",
     "build": "NODE_ENV=production vue-cli-service build --no-clean",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test": "jest"
   },
   "dependencies": {
     "@vue/cli": "^3.7.0",
@@ -28,7 +32,10 @@
     "eslint-config-prestashop": "0.0.2",
     "eslint-plugin-import": "^2.17.2",
     "eslint-plugin-vue": "^5.2.2",
+    "jest": "^24.8.0",
+    "jest-puppeteer": "^4.1.1",
     "node-sass": "^4.11.0",
+    "puppeteer": "^1.17.0",
     "sass-loader": "^7.1.0",
     "vue-template-compiler": "^2.6.10"
   }
