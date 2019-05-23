@@ -25,6 +25,7 @@
 **/
 
 namespace PrestaShop\Module\PrestashopCheckout;
+use PrestaShop\Module\PrestashopCheckout\Merchant;
 
 class MerchantDispatcher implements InterfaceDispatcher
 {
@@ -41,12 +42,14 @@ class MerchantDispatcher implements InterfaceDispatcher
      */
     public function dispatchEventType($eventType, $resource)
     {
+        $merchant = new Merchant;
+
         if ($eventType === self::PS_CHECKOUT_MERCHANT_REVOKED ) {
-            $this->setMerchantRevoked($resource);
+            $merchant->setMerchantRevoked($resource);
         }
 
         if ($eventType === self::PS_CHECKOUT_MERCHANT_COMPLETED ) {
-            $this->setMerchantCompleted($resource);
+            $merchant->setMerchantCompleted($resource);
         }
     }
 }

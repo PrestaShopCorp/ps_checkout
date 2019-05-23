@@ -25,6 +25,7 @@
 **/
 
 namespace PrestaShop\Module\PrestashopCheckout;
+use PrestaShop\Module\PrestashopCheckout\Order;
 
 class OrderDispatcher implements InterfaceDispatcher
 {
@@ -67,12 +68,14 @@ class OrderDispatcher implements InterfaceDispatcher
      */
     private function dispatchPaymentAction($eventType, $resource)
     {
+        $order = new Order;
+        
         if ($eventType === self::PS_CHECKOUT_PAYMENT_REFUNED) {
-            $this->dispatchPaymentAction($eventType, $resource);
+            $order->dispatchPaymentAction($eventType, $resource);
         }
 
         if ($eventType === self::PS_CHECKOUT_PAYMENT_REVERSED) {
-            $this->dispatchPaymentAction($eventType, $resource);
+            $order->dispatchPaymentAction($eventType, $resource);
         }
     }
 
@@ -86,16 +89,18 @@ class OrderDispatcher implements InterfaceDispatcher
      */
     private function dispatchPaymentStatus($eventType, $resource)
     {
+        $order = new Order;
+
         if ($eventType === self::PS_CHECKOUT_PAYMENT_PENDING) {
-            $this->dispatchPaymentStatus($eventType, $resource);
+            $order->dispatchPaymentStatus($eventType, $resource);
         }
 
         if ($eventType === self::PS_CHECKOUT_PAYMENT_COMPLETED) {
-            $this->dispatchPaymentStatus($eventType, $resource);
+            $order->dispatchPaymentStatus($eventType, $resource);
         }
 
         if ($eventType === self::PS_CHECKOUT_PAYMENT_DENIED) {
-            $this->dispatchPaymentStatus($eventType, $resource);
+            $order->dispatchPaymentStatus($eventType, $resource);
         }
     }
 }
