@@ -9,6 +9,11 @@ function resolve(dir) {
 }
 
 module.exports = {
+  devServer: {
+    host: 'localhost',
+    port: '8080',
+    disableHostCheck: true,
+  },
   chainWebpack: (config) => {
     Object.keys(pages).forEach((page) => {
       if (process.env.NODE_ENV === 'production') {

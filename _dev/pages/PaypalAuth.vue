@@ -28,6 +28,7 @@
               data-paypal-button="true"
               href="https://www.sandbox.paypal.com/partnerexp/appEntry?referralToken=ZDVhMGE0NmQtM2JjYi00YTFhLTk0NDctZGRjNjVlYzZhMTgxTFN2SklwL1hPRXA1VzVJcDBWNTlXZmVId25vam5SK3JRdW9RVlRUdTVPcz0=&context_token=2080289890742334464&displayMode=minibrowser"
               target="PPFrame"
+              @click.stop="false"
             >
               Link account
             </a>
@@ -50,14 +51,28 @@
     components: {
       Reassurance,
     },
+    destroy() {
+      const element = document.getElementById('paypal-js');
+      element.parentNode.removeChild(element);
+    },
     created() {
-      if (!document.getElementById('paypal-js')) {
-        const paypalScript = document.createElement('script');
-        paypalScript.setAttribute('src', 'https://www.paypal.com/webapps/merchantboarding/js/lib/lightbox/partner.js');
-        paypalScript.setAttribute('id', 'paypal-js');
-        paypalScript.setAttribute('async', 'true');
-        document.head.appendChild(paypalScript);
-      }
+      const paypalScript = document.createElement('script');
+      paypalScript.setAttribute('src', 'https://www.paypal.com/webapps/merchantboarding/js/lib/lightbox/partner.js');
+      paypalScript.setAttribute('id', 'paypal-js');
+      paypalScript.setAttribute('async', 'true');
+      document.head.appendChild(paypalScript);
+    },
+    mounted() {
+      const interval = setInterval(() => {
+        if (window.PAYPAL !== undefined
+          && Object.keys(window.PAYPAL.apps).length > 0
+          && Object.keys(window.PAYPAL.apps.Signup).length > 0
+          && Object.keys(window.PAYPAL.apps.Signup.MiniBrowser).length > 1
+        ) {
+          window.PAYPAL.apps.Signup.MiniBrowser.init();
+          clearInterval(interval);
+        }
+      }, 200);
     },
     methods: {
       paypalOnboarding() {
