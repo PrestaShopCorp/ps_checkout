@@ -23,7 +23,14 @@
             </p>
           </div>
           <div>
-            <a class="btn btn-primary" data-paypal-button="true" href="https://www.sandbox.paypal.com/partnerexp/appEntry?referralToken=ZDVhMGE0NmQtM2JjYi00YTFhLTk0NDctZGRjNjVlYzZhMTgxTFN2SklwL1hPRXA1VzVJcDBWNTlXZmVId25vam5SK3JRdW9RVlRUdTVPcz0=&context_token=2080289890742334464&displayMode=minibrowser" target="PPFrame">Link account</a>
+            <a
+              class="btn btn-primary"
+              data-paypal-button="true"
+              href="https://www.sandbox.paypal.com/partnerexp/appEntry?referralToken=ZDVhMGE0NmQtM2JjYi00YTFhLTk0NDctZGRjNjVlYzZhMTgxTFN2SklwL1hPRXA1VzVJcDBWNTlXZmVId25vam5SK3JRdW9RVlRUdTVPcz0=&context_token=2080289890742334464&displayMode=minibrowser"
+              target="PPFrame"
+            >
+              Link account
+            </a>
           </div>
         </div>
         <div class="connect-paypal-image mr-md-0 mr-lg-5">
@@ -36,75 +43,75 @@
 </template>
 
 <script>
-import Reassurance from '@/components/block/reassurance';
+  import Reassurance from '@/components/block/reassurance';
 
-export default {
-  name: 'PaypalAuth',
-  components: {
-    Reassurance,
-  },
-  created() {
-    if (!document.getElementById('paypal-js')) {
-      const paypalScript = document.createElement('script');
-      paypalScript.setAttribute('src', 'https://www.paypal.com/webapps/merchantboarding/js/lib/lightbox/partner.js');
-      paypalScript.setAttribute('id', 'paypal-js');
-      paypalScript.setAttribute('async', 'true');
-      document.head.appendChild(paypalScript);
-    }
-  },
-  methods: {
-    paypalOnboarding() {
-
+  export default {
+    name: 'PaypalAuth',
+    components: {
+      Reassurance,
     },
-  },
-};
+    created() {
+      if (!document.getElementById('paypal-js')) {
+        const paypalScript = document.createElement('script');
+        paypalScript.setAttribute('src', 'https://www.paypal.com/webapps/merchantboarding/js/lib/lightbox/partner.js');
+        paypalScript.setAttribute('id', 'paypal-js');
+        paypalScript.setAttribute('async', 'true');
+        document.head.appendChild(paypalScript);
+      }
+    },
+    methods: {
+      paypalOnboarding() {
+
+      },
+    },
+  };
 </script>
 
 <style scoped>
-.d-flex {
-  align-items: flex-start;
-}
-a.btn.btn-primary {
-  text-transform: unset;
-}
-.align-item {
-  align-items: center;
-}
-.powered-by {
-  font-size: 12px;
-}
-.prestashop {
-  color: #15082E;
-}
-.payments {
-  color: #D01665;
-}
-.connect-paypal-content {
-  text-align: left;
-}
-.connect-paypal-title {
-  color: #363A41;
-  font-size: 32px;
-  line-height: 42px;
-  padding-bottom: 10px;
-}
-.connect-paypal-prestashop {
-  color: #363A41;
-  font-size: 40px;
-  font-weight: 600;
-  line-height: 42px;
-  padding-bottom: 10px;
-}
-.connect-paypal-text {
-  color: #363A41;
-  font-size: 16px;
-  line-height: 24px;
-  max-width: 500px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-.firebase-account {
-  color: #6C868E;
-  font-size: 14px;
-}
+  .d-flex {
+    align-items: flex-start;
+  }
+  a.btn.btn-primary {
+    text-transform: unset;
+  }
+  .align-item {
+    align-items: center;
+  }
+  .powered-by {
+    font-size: 12px;
+  }
+  .prestashop {
+    color: #15082E;
+  }
+  .payments {
+    color: #D01665;
+  }
+  .connect-paypal-content {
+    text-align: left;
+  }
+  .connect-paypal-title {
+    color: #363A41;
+    font-size: 32px;
+    line-height: 42px;
+    padding-bottom: 10px;
+  }
+  .connect-paypal-prestashop {
+    color: #363A41;
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 42px;
+    padding-bottom: 10px;
+  }
+  .connect-paypal-text {
+    color: #363A41;
+    font-size: 16px;
+    line-height: 24px;
+    max-width: 500px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .firebase-account {
+    color: #6C868E;
+    font-size: 14px;
+  }
 </style>

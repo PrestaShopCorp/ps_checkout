@@ -6,17 +6,30 @@ module.exports = {
   'extends': [
     'eslint-config-prestashop',
     'plugin:vue/strongly-recommended',
-    'plugin:vue/recommended'
   ],
   plugins: [
     'import',
     'vue'
   ],
   rules: {
-    indent: ['error', 2],
+    'vue/script-indent': [
+      'error',
+      2,
+      {
+        'baseIndent': 1
+      }
+    ],
     'vue/singleline-html-element-content-newline': 'off',
     'vue/max-attributes-per-line': 'off',
     'no-console': 'off',
     'no-debugger': 'off'
   },
+  'overrides': [
+    {
+      'files': ['*.vue'],
+      'rules': {
+        'indent': 'off'
+      }
+    }
+  ],
 }

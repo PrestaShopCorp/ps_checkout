@@ -12,7 +12,7 @@
               <p>So we can build your account and connect to PayPal.</p>
             </div>
             <div class="step">
-              <span>Step {{ currentStep }} of 2</span>
+              <span>Step {{ currentStep }} of 2</span>
             </div>
           </div>
         </div>
@@ -86,7 +86,9 @@
               <input v-model="form.business.sales" type="text" class="form-control">
             </div>
             <div class="form-group">
-              <PSCheckbox v-model="form.termsOfUse">I have read and agreed with the terms of use of my data.</PSCheckbox>
+              <PSCheckbox v-model="form.termsOfUse">
+                I have read and agreed with the terms of use of my data.
+              </PSCheckbox>
             </div>
           </div>
         </div>
@@ -99,7 +101,9 @@
               <PSButton primary @click="nextStep()">Continue</PSButton>
               <PSButton primary @click="signUp()">create</PSButton>
             </template>
-            <PSButton v-else-if="currentStep === 2" primary @click="createAccount()">Create account</PSButton>
+            <PSButton v-else-if="currentStep === 2" primary @click="createAccount()">
+              Create account
+            </PSButton>
           </div>
         </div>
       </div>
@@ -109,113 +113,113 @@
 </template>
 
 <script>
-import PSButton from '@/components/form/button';
-import PSCheckbox from '@/components/form/checkbox';
-import Reassurance from '@/components/block/reassurance';
-import {EMAIL_NOT_FOUND, INVALID_EMAIL, INVALID_PASSWORD} from '@/lib/auth';
+  import PSButton from '@/components/form/button';
+  import PSCheckbox from '@/components/form/checkbox';
+  import Reassurance from '@/components/block/reassurance';
+  import {EMAIL_NOT_FOUND, INVALID_EMAIL, INVALID_PASSWORD} from '@/lib/auth';
 
-export default {
-  components: {
-    PSButton,
-    PSCheckbox,
-    Reassurance,
-  },
-  data() {
-    return {
-      currentStep: 1,
-      form: {
-        email: '',
-        password: '',
-        confirmPassword: '',
-        termsOfUse: false,
-        business: {
-          legalName: '',
-          address: '',
-          country: '',
-          postCode: '',
-          city: '',
-          isoCode: '',
-          phoneNumber: '',
-          name: '',
-          type: '',
-          sales: '',
+  export default {
+    components: {
+      PSButton,
+      PSCheckbox,
+      Reassurance,
+    },
+    data() {
+      return {
+        currentStep: 1,
+        form: {
+          email: '',
+          password: '',
+          confirmPassword: '',
+          termsOfUse: false,
+          business: {
+            legalName: '',
+            address: '',
+            country: '',
+            postCode: '',
+            city: '',
+            isoCode: '',
+            phoneNumber: '',
+            name: '',
+            type: '',
+            sales: '',
+          },
         },
+        hasError: false,
+        errorMessage: '',
+      };
+    },
+    computed: {
+      confirmPassword() {
+        return this.form.confirmPassword;
       },
-      hasError: false,
-      errorMessage: '',
-    };
-  },
-  computed: {
-    confirmPassword() {
-      return this.form.confirmPassword;
     },
-  },
-  watch: {
-    confirmPassword(val) {
-      console.log(val);
+    watch: {
+      confirmPassword(val) {
+        console.log(val);
+      },
     },
-  },
-  methods: {
-    signUp() {
-      this.$store.dispatch({
-        type: 'signup',
-        email: this.form.email,
-        password: this.form.password,
-      }).then((payload) => {
-        this.currentStep = 2;
-      }).catch((err) => {
-        console.log(err);
-        this.hasError = true;
-        switch (err.error.message) {
-        case EMAIL_NOT_FOUND:
-          this.errorMessage = 'There is no user record corresponding to this identifier. The user may have been deleted.';
-          break;
-        case INVALID_EMAIL:
-          this.errorMessage = 'The email address is badly formatted.';
-          break;
-        case INVALID_PASSWORD:
-          this.errorMessage = 'The password is invalid.';
-          break;
-        default:
-          this.errorMessage = 'There is an error.';
-          break;
-        }
-      });
-    },
-    checkPasswordMatch() {
+    methods: {
+      signUp() {
+        this.$store.dispatch({
+          type: 'signup',
+          email: this.form.email,
+          password: this.form.password,
+        }).then(() => {
+          this.currentStep = 2;
+        }).catch((err) => {
+          console.log(err);
+          this.hasError = true;
+          switch (err.error.message) {
+          case EMAIL_NOT_FOUND:
+            this.errorMessage = 'There is no user record corresponding to this identifier. The user may have been deleted.';
+            break;
+          case INVALID_EMAIL:
+            this.errorMessage = 'The email address is badly formatted.';
+            break;
+          case INVALID_PASSWORD:
+            this.errorMessage = 'The password is invalid.';
+            break;
+          default:
+            this.errorMessage = 'There is an error.';
+            break;
+          }
+        });
+      },
+      checkPasswordMatch() {
 
+      },
+      nextStep() {
+        this.currentStep = 2;
+      },
+      previousStep() {
+        if (this.currentStep === 1) {
+          this.$router.push('/authentication');
+        }
+        this.currentStep = 1;
+      },
     },
-    nextStep() {
-      this.currentStep = 2;
-    },
-    previousStep() {
-      if (this.currentStep === 1) {
-        this.$router.push('/authentication');
-      }
-      this.currentStep = 1;
-    },
-  },
-};
+  };
 </script>
 
 <style scoped>
-.card-text.header {
-  text-align: center;
-}
-.card-text .title {
-  font-size: 32px;
-}
-.card-text .text {
-  font-size: 16px;
-}
-.card-text .step {
-  font-size: 16px;
-  font-weight: 600;
-}
-.d-flex {
-  align-items: flex-start;
-}
-.max-size {
-  max-width: 480px !important;
-}
+  .card-text.header {
+    text-align: center;
+  }
+  .card-text .title {
+    font-size: 32px;
+  }
+  .card-text .text {
+    font-size: 16px;
+  }
+  .card-text .step {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .d-flex {
+    align-items: flex-start;
+  }
+  .max-size {
+    max-width: 480px !important;
+  }
 </style>

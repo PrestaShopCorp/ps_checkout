@@ -8,7 +8,16 @@
         <div class="card-text">
           <div class="form-group">
             <label class="form-control-label">Paypal checkout</label>
-            <select id="form_carrier_options_default_carrier" name="form[carrier_options][default_carrier]" class="custom-select"><option value="-1">Best price</option><option value="-2">Best grade</option><option value="1" selected="selected">PrestaShop</option><option value="2">My carrier</option></select>
+            <select
+              id="form_carrier_options_default_carrier"
+              name="form[carrier_options][default_carrier]"
+              class="custom-select"
+            >
+              <option value="-1">Best price</option>
+              <option value="-2">Best grade</option>
+              <option value="1" selected="selected">PrestaShop</option>
+              <option value="2">My carrier</option>
+            </select>
             <small class="form-text">Your shop's default carrier</small>
           </div>
         </div>
@@ -18,12 +27,12 @@
 </template>
 
 <script>
-export default {
-  components: {
-  },
-  data() {
-    return {
-    };
-  },
-};
+  export default {
+    components: {
+    },
+    data() {
+      return {
+      };
+    },
+  };
 </script>
