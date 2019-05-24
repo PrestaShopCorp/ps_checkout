@@ -26,7 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-class webHookValidation
+class WebHookValidation
 {
     /**
      * Validates the webHook datas
@@ -37,47 +37,46 @@ class webHookValidation
      */
     public function validate($payload)
     {
-        $error = array();
+        $errors = array();
 
         if (empty($payload)) {
-            $error['payload'] = 'Payload can\'t be empty';
-            return $error;
+            return $errors['payload'] = 'Payload can\'t be empty';
         }
 
         if (empty($payload['Shop-Id'])) {
-            $error['Shop-Id'] = 'Shop-Id can\'t be empty';
+            $errors['Shop-Id'] = 'Shop-Id can\'t be empty';
         }
 
         if (empty($payload['Merchant-Id'])) {
-            $error['Merchant-Id'] = 'Merchant-Id can\'t be empty';
+            $errors['Merchant-Id'] = 'Merchant-Id can\'t be empty';
         }
 
         if (empty($payload['Psx-Id'])) {
-            $error['Psx-Id'] = 'Psx-Id can\'t be empty';
+            $errors['Psx-Id'] = 'Psx-Id can\'t be empty';
         }
 
         if (!in_array($payload['category'], array('ShopNotificationMerchantAccount', 'ShopNotificationOrderChange'))) {
-            $error['category'] = 'category must "ShopNotificationMerchantAccount" or "ShopNotificationOrderChange"';
+            $errors['category'] = 'category must "ShopNotificationMerchantAccount" or "ShopNotificationOrderChange"';
         }
 
         if (!is_string($payload['eventType'])) {
-            $error['eventType'] = 'eventType must be a string';
+            $errors['eventType'] = 'eventType must be a string';
         }
 
         if (empty($payload['eventType']) || !is_string('eventType')) {
-            $error['eventType'] = 'eventType can\'t be empty';
+            $errors['eventType'] = 'eventType can\'t be empty';
         }        
 
         if (!is_array($payload['resource'])) {
-            $error['resource'] = 'resource must be an array';
+            $errors['resource'] = 'resource must be an array';
         }
 
         if (empty($payload['resource'])) {
-            $error['resource'] = 'resource \'t be empty';
+            $errors['resource'] = 'resource \'t be empty';
         }
 
-        if (!empty($error)) {
-            return $error;
+        if (!empty($errors)) {
+            return $errors;
         }
 
         return true;

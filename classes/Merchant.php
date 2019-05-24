@@ -37,13 +37,7 @@ class Merchant
      */
     public function setMerchantRevoked($resource)
     {
-        try {
-            \Configuration::updateValue('PS_CHECKOUT_MERCHANT_REVOKED', 1);
-        } catch (\Exception $e) {
-            /*
-            * @TODO : Throw array exception
-            */
-        }
+        return  \Configuration::updateValue('PS_CHECKOUT_MERCHANT_REVOKED', 1);
     }
 
     /**
@@ -55,12 +49,6 @@ class Merchant
      */
     public function setMerchantCompleted($resource)
     {
-        try {
-            \Configuration::updateValue('PS_CHECKOUT_MERCHANT_COMPLETED', 1);
-        } catch (\Exception $e) {
-            /*
-            * @TODO : Throw array exception
-            */
-        }
+        return \Configuration::updateValue('PS_CHECKOUT_MERCHANT_COMPLETED', 1);
     }
 }

@@ -26,8 +26,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-interface InterfaceDispatcher {
-    
+interface InterfaceDispatcher
+{
     /**
      * @param string $eventType
      * @param array $resource

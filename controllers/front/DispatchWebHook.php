@@ -141,11 +141,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         $devIP = dns_get_record(self::PSESSENTIALS_DEV_URL, 'DNS_TXT');
         $prodIP = dns_get_record(self::PSESSENTIALS_PROD_URL, 'DNS_TXT');
 
-        if (false === $this->findWhiteListInDNS($devIP, $sourceIp) && false === $this->findWhiteListInDNS($prodIP, $sourceIp)) {
-            return false;
-        }
-
-        return true;
+        return $this->findWhiteListInDNS($prodIP, $sourceIp) || $this->findWhiteListInDNS($devIP, $sourceIp);
     }
 
     /**
@@ -176,16 +172,13 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     private function findWhiteListInDNS($recordDNS, $searchIP)
     {
-        $foundInWhiteList = false;
-
         foreach ($recordDNS as $value) {
             if (stristr($value['txt'], $searchIP)) {
-                $foundInWhiteList = true;
-                continue;
+                return true;
             }
         }
 
-        return (bool)$foundInWhiteList;
+        return false;
     }
 
     /**
@@ -232,7 +225,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         if ('ShopNotificationOrderChange' === $this->category) {
             $orderError = (new webHookValidation)->validateOrderId($payload['orderId']);
 
-            if (is_string($orderError)) {
+            if (true !== $orderError) {
                 /*
                 * @TODO : Throw array exception
                 */
