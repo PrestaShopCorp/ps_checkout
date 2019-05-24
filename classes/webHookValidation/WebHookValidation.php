@@ -28,6 +28,11 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 class WebHookValidation
 {
+    const ALLOWED_CATEGORIES = array(
+        'ShopNotificationMerchantAccount',
+        'ShopNotificationOrderChange'
+    );
+
     /**
      * Validates the webHook datas
      * 
@@ -55,15 +60,15 @@ class WebHookValidation
             $errors['Psx-Id'] = 'Psx-Id can\'t be empty';
         }
 
-        if (!in_array($payload['category'], array('ShopNotificationMerchantAccount', 'ShopNotificationOrderChange'))) {
-            $errors['category'] = 'category must "ShopNotificationMerchantAccount" or "ShopNotificationOrderChange"';
+        if (!in_array($payload['category'], self::ALLOWED_CATEGORIES)) {
+            $errors['category'] = sprintf('Category must be one of these values: %s', implode(', ', self::ALLOWED_CATEGORIES));
         }
 
         if (!is_string($payload['eventType'])) {
             $errors['eventType'] = 'eventType must be a string';
         }
 
-        if (empty($payload['eventType']) || !is_string('eventType')) {
+        if (empty($payload['eventType'])) {
             $errors['eventType'] = 'eventType can\'t be empty';
         }        
 

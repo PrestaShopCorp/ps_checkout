@@ -31,19 +31,15 @@ class Merchant
     /**
      * Set the merchant revoked in the Configuration table
      *
-     * @param  array $resource
-     *
      * @return bool
      */
-    public function setMerchantRevoked($resource)
+    public function setMerchantRevoked()
     {
         return  \Configuration::updateValue('PS_CHECKOUT_MERCHANT_REVOKED', 1);
     }
 
     /**
      * Set the merchant completed in the Configuration table
-     *
-     * @param  array $resource
      *
      * @return bool
      */

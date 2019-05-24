@@ -217,8 +217,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         if ('ShopNotificationMerchantAccount' === $this->category) {
             $merchantManager = new MerchantDispatcher;
             $merchantManager->dispatchEventType(
-                $this->eventType,
-                $this->resource
+                $this->eventType
             );
         }
 
