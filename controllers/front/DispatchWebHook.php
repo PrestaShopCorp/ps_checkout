@@ -26,7 +26,7 @@
 
 use PrestaShop\Module\PrestashopCheckout\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\MerchantDispatcher;
-use PrestaShop\Module\PrestashopCheckout\webHookValidation;
+use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 use PrestaShop\Module\PrestashopCheckout\Payment;
 
 class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontController
@@ -91,7 +91,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         }
 
         $payload = json_decode(\Tools::getValue('payload'));
-        $errors = (new webHookValidation)->validate($payload);
+        $errors = (new WebHookValidation)->validate($payload);
 
         // If there is errors, return them
         if (is_array($errors)) {
@@ -223,7 +223,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         }
 
         if ('ShopNotificationOrderChange' === $this->category) {
-            $orderError = (new webHookValidation)->validateOrderId($payload['orderId']);
+            $orderError = (new WebHookValidation)->validateOrderId($payload['orderId']);
 
             if (true !== $orderError) {
                 /*
