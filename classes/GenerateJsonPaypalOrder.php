@@ -28,6 +28,9 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\PrestaShop\Adapter\Presenter\Cart\CartPresenter;
 
+/**
+ * Generate the payload waited by paypal to create an order (paypal order)
+ */
 class GenerateJsonPaypalOrder
 {
     public function create(\Context $context)

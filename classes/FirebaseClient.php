@@ -29,6 +29,9 @@ namespace PrestaShop\Module\PrestashopCheckout;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
+/**
+ * Handle firebase signIn/signUp
+ */
 class FirebaseClient
 {
     /**
