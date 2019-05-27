@@ -27,9 +27,10 @@
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
 use PrestaShop\Module\PrestashopCheckout\GenerateJsonPaypalOrder;
-use PrestaShop\Module\PrestashopCheckout\Payment;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
+use PrestaShop\Module\PrestashopCheckout\Refund;
+use PrestaShop\Module\PrestashopCheckout\PaypalOrderRepository;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -49,6 +50,7 @@ class ps_checkout extends PaymentModule
 
     public $configurationList = array(
         'PS_CHECKOUT_INTENT' => 'CAPTURE',
+        'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => '7RN2XXLUBYHHS',
         'PS_CHECKOUT_FIREBASE_PUBLIC_API_KEY' => 'AIzaSyASHFE2F08ncoOH9NhoCF8_6z7qnoLVKSA',
         'PS_CHECKOUT_FIREBASE_EMAIL' => '',
         'PS_CHECKOUT_FIREBASE_ID_TOKEN' => '',
@@ -68,8 +70,6 @@ class ps_checkout extends PaymentModule
         $this->module_key = '95646b26789fa27cde178690e033f9ef';
 
         $this->bootstrap = true;
-
-        $this->controllers = array('AdminAjaxPrestashopCheckout');
 
         parent::__construct();
 
@@ -178,7 +178,18 @@ class ps_checkout extends PaymentModule
      */
     public function hookActionOrderSlipAdd($params)
     {
+        // Check if a partial refund is made
         if (false === Tools::isSubmit('partialRefund')) {
+            return false;
+        }
+
+        // Check if the order was made with the ps_checkout module
+        if ($params['order']->module !== $this->name) {
+            return false;
+        }
+
+        // Stop the paypal refund if the merchant want to generate a discount
+        if (true === Tools::isSubmit('generateDiscountRefund')) {
             return false;
         }
 
@@ -190,29 +201,24 @@ class ps_checkout extends PaymentModule
             $totalRefund = $totalRefund + $amountDetail['quantity'] * $amountDetail['amount'];
         }
 
-        $orderPayment = OrderPayment::getByOrderId($params['order']->id);
+        $paypalOrderId = (new PaypalOrderRepository)->getPaypalOrderIdByPsOrderId($params['order']->id);
 
-        if (false === is_array($orderPayment)) {
+        if (true === empty($paypalOrderId)) {
+            $this->context->controller->errors[] = $this->l('Impossible to refund. Cannot find the PayPal Order associated to this order.');
             return false;
         }
 
-        $orderPayment = current($orderPayment);
-
-        $paypalOrderId = $orderPayment->transaction_id;
-
-        if (false === isset($paypalOrderId)) {
-            return false;
-        }
-
-        $currency = \Currency::getCurrency(Configuration::get('PS_CURRENCY_DEFAULT'));
+        $currency = Currency::getCurrency($params['order']->id_currency);
         $currencyIsoCode = $currency['iso_code'];
 
-        $payment = new Payment($paypalOrderId);
+        $refund = new Refund($paypalOrderId, $currencyIsoCode, $totalRefund);
+        $refund = $refund->refundOrder();
 
-        $refund = $payment->refundOrder($totalRefund, $currencyIsoCode);
-
-        if (false === $refund) {
-            die('cannot process to a refund. Error form paypal');
+        if (true === $refund['error']) {
+            foreach ($refund['messages'] as $message) {
+                $this->context->controller->errors[] = $message;
+            }
+            return false;
         }
     }
 
