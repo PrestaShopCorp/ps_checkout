@@ -27,14 +27,18 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Stream\Stream;
 use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
 
+/**
+ * Handle all call make to PSL (maasland)
+ */
 class Maasland
 {
-    public $debugMode = false; // true for false x)
-    public $timeout = 5;
+    public $catchExceptions = true;
+    public $timeout = 10;
 
     private $maaslandLive = 'http://host.docker.internal:1234';
     private $maaslandSandbox = 'http://host.docker.internal:1234';
@@ -59,7 +63,7 @@ class Maasland
                 'base_url' => $this->maaslandSandbox,
                 'defaults' => array(
                     'timeout' => $this->timeout,
-                    'exceptions' => $this->debugMode,
+                    'exceptions' => $this->catchExceptions,
                     'headers' =>
                     [
                         'Content-Type' => 'application/json',
@@ -89,9 +93,12 @@ class Maasland
             $response = $this->client->post($route, [
                 'json' => $payload
             ]);
-        } catch (RequestException $e) {
-            // TODO: Log the error ? Return an error message ?
+        } catch (ServerException $e) {
+            \PrestaShopLogger::addLog($e->getMessage());
             return false;
+        } catch (ClientException $e) {
+            $response = json_decode($e->getResponse()->getBody()->getContents());
+            return $response;
         }
 
         $data = json_decode($response->getBody(), true);
@@ -119,9 +126,12 @@ class Maasland
             $response = $this->client->post($route, [
                 'json' => json_encode($payload)
             ]);
-        } catch (RequestException $e) {
-            // TODO: Log the error ? Return an error message ?
+        } catch (ServerException $e) {
+            \PrestaShopLogger::addLog($e->getMessage());
             return false;
+        } catch (ClientException $e) {
+            $response = json_decode($e->getResponse()->getBody()->getContents());
+            return $response;
         }
 
         $data = json_decode($response->getBody(), true);
@@ -148,9 +158,12 @@ class Maasland
             $response = $this->client->post($route, [
                 'json' => json_encode($payload)
             ]);
-        } catch (RequestException $e) {
-            // TODO: Log the error ? Return an error message ?
+        } catch (ServerException $e) {
+            \PrestaShopLogger::addLog($e->getMessage());
             return false;
+        } catch (ClientException $e) {
+            $response = json_decode($e->getResponse()->getBody()->getContents());
+            return $response;
         }
 
         $data = json_decode($response->getBody(), true);
@@ -185,9 +198,12 @@ class Maasland
             $response = $this->client->post($route, [
                 'json' => json_encode($payload)
             ]);
-        } catch (RequestException $e) {
-            // TODO: Log the error ? Return an error message ?
+        } catch (ServerException $e) {
+            \PrestaShopLogger::addLog($e->getMessage());
             return false;
+        } catch (ClientException $e) {
+            $response = json_decode($e->getResponse()->getBody()->getContents());
+            return $response;
         }
 
         $data = json_decode($response->getBody(), true);
@@ -214,9 +230,12 @@ class Maasland
             $response = $this->client->post($route, [
                 'json' => json_encode($payload)
             ]);
-        } catch (RequestException $e) {
-            // TODO: Log the error ? Return an error message ?
+        } catch (ServerException $e) {
+            \PrestaShopLogger::addLog($e->getMessage());
             return false;
+        } catch (ClientException $e) {
+            $response = json_decode($e->getResponse()->getBody()->getContents());
+            return $response;
         }
 
         $data = json_decode($response->getBody(), true);
