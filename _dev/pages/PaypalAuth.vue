@@ -24,13 +24,20 @@
           </div>
           <div>
             <a
+              v-show="paypalIsLoaded === true"
               class="btn btn-primary"
               data-paypal-button="true"
               href="https://www.sandbox.paypal.com/partnerexp/appEntry?referralToken=ZDVhMGE0NmQtM2JjYi00YTFhLTk0NDctZGRjNjVlYzZhMTgxTFN2SklwL1hPRXA1VzVJcDBWNTlXZmVId25vam5SK3JRdW9RVlRUdTVPcz0=&context_token=2080289890742334464&displayMode=minibrowser"
               target="PPFrame"
-              @click.stop="false"
             >
               Link account
+            </a>
+            <a
+              v-show="paypalIsLoaded === false"
+              href="#"
+              class="btn btn-primary"
+            >
+              Loading ...
             </a>
           </div>
         </div>
@@ -48,12 +55,22 @@
 
   export default {
     name: 'PaypalAuth',
+    data() {
+      return {
+        paypalIsLoaded: false,
+      };
+    },
     components: {
       Reassurance,
     },
-    destroy() {
-      const element = document.getElementById('paypal-js');
-      element.parentNode.removeChild(element);
+    destroyed() {
+      const paypalScript = document.getElementById('paypal-js');
+      const signupScript = document.getElementById('signup-js');
+      const bizScript = document.getElementById('biz-js');
+
+      paypalScript.parentNode.removeChild(paypalScript);
+      signupScript.parentNode.removeChild(signupScript);
+      bizScript.parentNode.removeChild(bizScript);
     },
     created() {
       const paypalScript = document.createElement('script');
@@ -70,6 +87,7 @@
           && Object.keys(window.PAYPAL.apps.Signup.MiniBrowser).length > 1
         ) {
           window.PAYPAL.apps.Signup.MiniBrowser.init();
+          this.paypalIsLoaded = true;
           clearInterval(interval);
         }
       }, 200);
