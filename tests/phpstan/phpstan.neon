@@ -1,9 +1,9 @@
 parameters:
-	bootstrap: /web/module/tests/phpstan/bootstrap.php
+	bootstrap: tests/phpstan/bootstrap.php
 	paths:
-		- /web/module/classes
-		- /web/module/controllers
-		- /web/module/ps_checkout.php
+		- classes
+		- controllers
+		- ps_checkout.php
 	ignoreErrors:
 		- '#Access to an undefined property ps_checkout::\$confirmUninstall\.#'
 		- '#Access to an undefined property ps_checkout::\$bootstrap\.#'
