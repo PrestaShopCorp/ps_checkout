@@ -79,6 +79,52 @@ class Maasland
     }
 
     /**
+     * Generate the paypal link to onboard merchant
+     *
+     * @return string|bool onboarding link
+     */
+    public function getPaypalOnboardingLink($email, $locale)
+    {
+        $route = '/payments/onboarding/onboard';
+
+        $link = new \Link();
+        $callBackUrl = $link->getAdminLink('AdminPaypalOnboardingPrestashopCheckout');
+
+        $currency = \Currency::getCurrency(\Configuration::get('PS_CURRENCY_DEFAULT'));
+        $isoCode = $currency['iso_code'];
+
+        $payload = [
+            'url' => $callBackUrl,
+            'person_details' => [
+                'email_address' => $email
+            ],
+            'business_details' => [
+                'phone_contacts' => [],
+                'business_type' => 'PARTNERSHIP'
+            ],
+            'preferred_language_code' => str_replace('-', '_', $locale),
+            'primary_currency_code' => $isoCode,
+        ];
+
+        try {
+            $response = $this->client->post($route, [
+                'json' => json_encode($payload)
+            ]);
+        } catch (ServerException $e) {
+            \PrestaShopLogger::addLog($e->getMessage());
+            return false;
+        } catch (ClientException $e) {
+            $response = json_decode($e->getResponse()->getBody()->getContents());
+            return $response;
+        }
+
+        $data = json_decode($response->getBody(), true);
+        $onboardingLink = $data['links']['1']['href'];
+
+        return isset($onboardingLink) ? $onboardingLink : false;
+    }
+
+    /**
      * Create order to paypal api
      *
      * @param array Cart details

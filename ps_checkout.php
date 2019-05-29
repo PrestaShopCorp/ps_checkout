@@ -119,9 +119,14 @@ class ps_checkout extends PaymentModule
             'refreshToken' => Configuration::get('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN')
         );
 
+        $email = $this->context->employee->email;
+        $language = Language::getLanguage($this->context->employee->id_lang);
+        $locale = $language['locale'];
+
         Media::addJsDef(array(
             'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
             'contextLocale' => $this->context->language->locale,
+            'paypalOnboardingLink' => (new Maasland())->getPaypalOnboardingLink($email, $locale),
             'translations' => json_encode($translations),
             'firebaseAccount' => json_encode($firebaseAccount)
         ));

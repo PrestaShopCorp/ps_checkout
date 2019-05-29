@@ -27,7 +27,7 @@
               v-show="paypalIsLoaded === true"
               class="btn btn-primary"
               data-paypal-button="true"
-              href="https://www.sandbox.paypal.com/partnerexp/appEntry?referralToken=ZDVhMGE0NmQtM2JjYi00YTFhLTk0NDctZGRjNjVlYzZhMTgxTFN2SklwL1hPRXA1VzVJcDBWNTlXZmVId25vam5SK3JRdW9RVlRUdTVPcz0=&context_token=2080289890742334464&displayMode=minibrowser"
+              :href="$store.state.paypalOnboardingLink+'&displayMode=minibrowser'"
               target="PPFrame"
             >
               Link account

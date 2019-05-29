@@ -28,7 +28,7 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
 {
     public function init()
     {
-        $idMerchant = Tools::getValue('merchantId');
+        $idMerchant = Tools::getValue('merchantIdInPayPal');
 
         if (true === empty($idMerchant)) {
             throw new PrestaShopException('merchantId cannot be empty');
