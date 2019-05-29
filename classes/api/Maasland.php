@@ -57,6 +57,8 @@ class Maasland
             $this->maaslandSandbox = $conf->integration->sandbox;
         }
 
+        $link = new \Link();
+
         // Client can be provided for tests
         if (null === $client) {
             $client = new Client(array(
@@ -69,8 +71,8 @@ class Maasland
                         'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer '.(new FirebaseClient())->getToken(),
-                        'Shop-Id' => '', // TODO: make a valid uuid v4
-                        'Hook-Url' => '' // TODO: Create front controller to manage hook callback
+                        'Shop-Id' => \Configuration::get('PS_CHECKOUT_SHOP_UUID_V4'),
+                        'Hook-Url' => $link->getModuleLink('ps_checkout', 'DispatchWebHook', array(), true)
                     ],
                 ),
             ));

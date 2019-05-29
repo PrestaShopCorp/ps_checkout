@@ -31,6 +31,7 @@ use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 use PrestaShop\Module\PrestashopCheckout\Refund;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrderRepository;
+use Ramsey\Uuid\Uuid;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -50,7 +51,7 @@ class ps_checkout extends PaymentModule
 
     public $configurationList = array(
         'PS_CHECKOUT_INTENT' => 'CAPTURE',
-        'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => '7RN2XXLUBYHHS',
+        'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => '',
         'PS_CHECKOUT_FIREBASE_PUBLIC_API_KEY' => 'AIzaSyASHFE2F08ncoOH9NhoCF8_6z7qnoLVKSA',
         'PS_CHECKOUT_FIREBASE_EMAIL' => '',
         'PS_CHECKOUT_FIREBASE_ID_TOKEN' => '',
@@ -88,6 +89,10 @@ class ps_checkout extends PaymentModule
     public function install()
     {
         foreach ($this->configurationList as $name => $value) {
+            if ($name === 'PS_CHECKOUT_SHOP_UUID_V4') {
+                $uuid4 = Uuid::uuid4();
+                $value = $uuid4->toString();
+            }
             Configuration::updateValue($name, $value);
         }
 
