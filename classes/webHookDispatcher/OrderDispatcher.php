@@ -25,6 +25,7 @@
 **/
 
 namespace PrestaShop\Module\PrestashopCheckout;
+
 // use PrestaShop\Module\PrestashopCheckout\Order;
 
 class OrderDispatcher implements InterfaceDispatcher
@@ -39,20 +40,18 @@ class OrderDispatcher implements InterfaceDispatcher
     /**
      * Dispatch the Event Type to manage the merchant status
      *
-     * @param  string $eventType
-     * @param  array $resource
-     *
-     * @return void
+     * @param string $eventType
+     * @param array $resource
      */
     public function dispatchEventType($eventType, $resource)
     {
-        if ($eventType === self::PS_CHECKOUT_PAYMENT_REFUNED 
+        if ($eventType === self::PS_CHECKOUT_PAYMENT_REFUNED
         || $eventType === self::PS_CHECKOUT_PAYMENT_REVERSED) {
             $this->dispatchPaymentAction($eventType, $resource);
         }
 
-        if ($eventType === self::PS_CHECKOUT_PAYMENT_PENDING 
-        || $eventType === self::PS_CHECKOUT_PAYMENT_COMPLETED 
+        if ($eventType === self::PS_CHECKOUT_PAYMENT_PENDING
+        || $eventType === self::PS_CHECKOUT_PAYMENT_COMPLETED
         || $eventType === self::PS_CHECKOUT_PAYMENT_DENIED) {
             $this->dispatchPaymentStatus($eventType, $resource);
         }
@@ -61,15 +60,13 @@ class OrderDispatcher implements InterfaceDispatcher
     /**
      * Dispatch the Event Type to the payments action Refunded or Revesed
      *
-     * @param  string $eventType
-     * @param  array $resource
-     *
-     * @return void
+     * @param string $eventType
+     * @param array $resource
      */
     private function dispatchPaymentAction($eventType, $resource)
     {
         // $order = new Order;
-        
+
         if ($eventType === self::PS_CHECKOUT_PAYMENT_REFUNED) {
             // $order->dispatchPaymentAction($eventType, $resource);
         }
@@ -82,25 +79,23 @@ class OrderDispatcher implements InterfaceDispatcher
     /**
      * Dispatch the event Type the the payment status PENDING / COMPLETED / DENIED
      *
-     * @param  string $eventType
-     * @param  array $resource
-     *
-     * @return void
+     * @param string $eventType
+     * @param array $resource
      */
     private function dispatchPaymentStatus($eventType, $resource)
     {
         // $order = new Order;
 
         if ($eventType === self::PS_CHECKOUT_PAYMENT_PENDING) {
-           // $order->dispatchPaymentStatus($eventType, $resource);
+            // $order->dispatchPaymentStatus($eventType, $resource);
         }
 
         if ($eventType === self::PS_CHECKOUT_PAYMENT_COMPLETED) {
-           // $order->dispatchPaymentStatus($eventType, $resource);
+            // $order->dispatchPaymentStatus($eventType, $resource);
         }
 
         if ($eventType === self::PS_CHECKOUT_PAYMENT_DENIED) {
-           // $order->dispatchPaymentStatus($eventType, $resource);
+            // $order->dispatchPaymentStatus($eventType, $resource);
         }
     }
 }

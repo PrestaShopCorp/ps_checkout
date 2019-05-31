@@ -294,3 +294,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/vim,vuejs,emacs,linux,macos,windows,phpstorm,composer,sublimetext,visualstudiocode
+
+# CS Fixer
+.php_cs.cache

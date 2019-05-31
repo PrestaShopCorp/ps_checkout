@@ -23,7 +23,6 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
-
 use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 
 class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontController
@@ -71,24 +70,24 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
         }
 
         $currency = $this->context->currency;
-        $total = (float)$cart->getOrderTotal(true, Cart::BOTH);
+        $total = (float) $cart->getOrderTotal(true, Cart::BOTH);
 
         $payment = new ValidateOrder($paypalOrderId);
 
         $dataOrder = [
-            'cartId' => (int)$cart->id,
+            'cartId' => (int) $cart->id,
             'orderStateId' => Configuration::get('PS_OS_CHEQUE'),
             'amount' => $total,
             'paymentMethod' => $paymentMethod,
             'message' => null,
             'extraVars' => array('transaction_id' => $paypalOrderId),
-            'currencyId' => (int)$currency->id,
-            'secureKey' => $customer->secure_key
+            'currencyId' => (int) $currency->id,
+            'secureKey' => $customer->secure_key,
         ];
 
         $payment->validateOrder($dataOrder);
 
-        Tools::redirect('index.php?controller=order-confirmation&id_cart='.(int)$cart->id.'&id_module='.(int)$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key);
+        Tools::redirect('index.php?controller=order-confirmation&id_cart=' . (int) $cart->id . '&id_module=' . (int) $this->module->id . '&id_order=' . $this->module->currentOrder . '&key=' . $customer->secure_key);
     }
 
     /**

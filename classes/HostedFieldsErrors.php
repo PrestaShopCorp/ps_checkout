@@ -47,7 +47,7 @@ class HostedFieldsErrors
         $errors = array(
             'INVALID_STRING_LENGTH' => $this->module->l('The value of a field is either too short or too long'),
             'INVALID_EXPIRATION_YEAR' => $this->module->l('Expiration Year must be between current year and 2099'),
-            'INVALID_PARAMETER_SYNTAX' => $this->module->l('The value of a field does not conform to the expected format')
+            'INVALID_PARAMETER_SYNTAX' => $this->module->l('The value of a field does not conform to the expected format'),
         );
 
         return json_encode($errors);

@@ -30,14 +30,14 @@ class WebHookValidation
 {
     const ALLOWED_CATEGORIES = array(
         'ShopNotificationMerchantAccount',
-        'ShopNotificationOrderChange'
+        'ShopNotificationOrderChange',
     );
 
     /**
      * Validates the webHook datas
-     * 
+     *
      * @param array $payload
-     * 
+     *
      * @return array Error lists, bool if ok
      */
     public function validate($payload)
@@ -70,7 +70,7 @@ class WebHookValidation
 
         if (empty($payload['eventType'])) {
             $errors['eventType'] = 'eventType can\'t be empty';
-        }        
+        }
 
         if (!is_array($payload['resource'])) {
             $errors['resource'] = 'resource must be an array';
@@ -90,7 +90,7 @@ class WebHookValidation
     /**
      * Validates the webHook data "Order Id"
      *
-     * @param  array $payload
+     * @param array $payload
      *
      * @return string|bool
      */
@@ -99,7 +99,7 @@ class WebHookValidation
         if (empty($payload['orderId'])) {
             return 'orderId can\'t be empty';
         }
-        
+
         return true;
     }
 }

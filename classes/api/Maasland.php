@@ -29,7 +29,6 @@ namespace PrestaShop\Module\PrestashopCheckout\Api;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Stream\Stream;
 use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
 
 /**
@@ -56,8 +55,8 @@ class Maasland
     public function __construct(\Link $link, Client $client = null)
     {
         // temporary
-        if (true === file_exists(__DIR__.'/../../maaslandConf.json')) {
-            $conf = json_decode(file_get_contents(__DIR__.'/../../maaslandConf.json'));
+        if (true === file_exists(__DIR__ . '/../../maaslandConf.json')) {
+            $conf = json_decode(file_get_contents(__DIR__ . '/../../maaslandConf.json'));
             $this->maaslandLive = $conf->integration->live;
             $this->maaslandSandbox = $conf->integration->sandbox;
         }
@@ -71,13 +70,12 @@ class Maasland
                 'defaults' => array(
                     'timeout' => $this->timeout,
                     'exceptions' => $this->catchExceptions,
-                    'headers' =>
-                    [
+                    'headers' => [
                         'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
-                        'Authorization' => 'Bearer '.(new FirebaseClient())->getToken(),
+                        'Authorization' => 'Bearer ' . (new FirebaseClient())->getToken(),
                         'Shop-Id' => \Configuration::get('PS_CHECKOUT_SHOP_UUID_V4'),
-                        'Hook-Url' => $this->link->getModuleLink('ps_checkout', 'DispatchWebHook', array(), true)
+                        'Hook-Url' => $this->link->getModuleLink('ps_checkout', 'DispatchWebHook', array(), true),
                     ],
                 ),
             ));
@@ -102,11 +100,11 @@ class Maasland
         $payload = [
             'url' => $callBackUrl,
             'person_details' => [
-                'email_address' => $email
+                'email_address' => $email,
             ],
             'business_details' => [
                 'phone_contacts' => [],
-                'business_type' => 'PARTNERSHIP'
+                'business_type' => 'PARTNERSHIP',
             ],
             'preferred_language_code' => str_replace('-', '_', $locale),
             'primary_currency_code' => $isoCode,
@@ -114,13 +112,15 @@ class Maasland
 
         try {
             $response = $this->client->post($route, [
-                'json' => json_encode($payload)
+                'json' => json_encode($payload),
             ]);
         } catch (ServerException $e) {
             \PrestaShopLogger::addLog($e->getMessage());
+
             return false;
         } catch (ClientException $e) {
             $response = json_decode($e->getResponse()->getBody()->getContents());
+
             return $response;
         }
 
@@ -146,10 +146,11 @@ class Maasland
 
         try {
             $response = $this->client->post($route, [
-                'json' => $payload
+                'json' => $payload,
             ]);
         } catch (ServerException $e) {
             \PrestaShopLogger::addLog($e->getMessage());
+
             return false;
         } catch (ClientException $e) {
             $response = $e->getResponse();
@@ -173,18 +174,20 @@ class Maasland
 
         $payload = [
             'mode' => 'paypal',
-            'orderId' => (string) $orderId
+            'orderId' => (string) $orderId,
         ];
 
         try {
             $response = $this->client->post($route, [
-                'json' => json_encode($payload)
+                'json' => json_encode($payload),
             ]);
         } catch (ServerException $e) {
             \PrestaShopLogger::addLog($e->getMessage());
+
             return false;
         } catch (ClientException $e) {
             $response = json_decode($e->getResponse()->getBody()->getContents(), true);
+
             return $response;
         }
 
@@ -205,18 +208,20 @@ class Maasland
         $route = '/payments/order/fetch';
 
         $payload = [
-            'orderId' => $orderId
+            'orderId' => $orderId,
         ];
 
         try {
             $response = $this->client->post($route, [
-                'json' => json_encode($payload)
+                'json' => json_encode($payload),
             ]);
         } catch (ServerException $e) {
             \PrestaShopLogger::addLog($e->getMessage());
+
             return false;
         } catch (ClientException $e) {
             $response = json_decode($e->getResponse()->getBody()->getContents());
+
             return $response;
         }
 
@@ -250,13 +255,15 @@ class Maasland
 
         try {
             $response = $this->client->post($route, [
-                'json' => json_encode($payload)
+                'json' => json_encode($payload),
             ]);
         } catch (ServerException $e) {
             \PrestaShopLogger::addLog($e->getMessage());
+
             return false;
         } catch (ClientException $e) {
             $response = json_decode($e->getResponse()->getBody()->getContents());
+
             return $response;
         }
 
@@ -277,18 +284,20 @@ class Maasland
         $route = '/payments/order/update';
 
         $payload = [
-            'orderId' => (string) $orderId
+            'orderId' => (string) $orderId,
         ];
 
         try {
             $response = $this->client->post($route, [
-                'json' => json_encode($payload)
+                'json' => json_encode($payload),
             ]);
         } catch (ServerException $e) {
             \PrestaShopLogger::addLog($e->getMessage());
+
             return false;
         } catch (ClientException $e) {
             $response = json_decode($e->getResponse()->getBody()->getContents());
+
             return $response;
         }
 

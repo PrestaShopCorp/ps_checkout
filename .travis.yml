@@ -16,11 +16,11 @@ script:
   # PHP syntax check
   - bash -c '! (find . -name "*.php" ! -path "./vendor/*" -print0 | xargs -0 -n1 -P4 php -l | grep "Parse error")'
   # PHP cs fixer
-  - vendor/bin/php-cs-fixer fix --no-interaction --dry-run --diff --rules=@PSR2 tests #classes controllers
+  - vendor/bin/php-cs-fixer fix --no-interaction --dry-run --diff
   # PHP Unit
   - vendor/bin/phpunit tests
   # PHP Stan
   - if [ ${TRAVIS_PHP_VERSION:0:2} == "7." ]; then
       docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop;
-      docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html quetzacoalt/phpstan analyse --configuration=/web/module/tests/phpstan/phpstan.neon;
+      docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module phpstan/phpstan analyse --configuration=/web/module/tests/phpstan/phpstan.neon;
     fi

@@ -27,7 +27,6 @@
 namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
-use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
 
 /**
  * Handle the refund of a paypal order
@@ -104,16 +103,14 @@ class Refund
         $payload = [
             'orderId' => $this->paypalOrderId,
             'captureId' => $this->getCaptureId(),
-            'payee' =>
-            [
-                'merchant_id' => \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT')
+            'payee' => [
+                'merchant_id' => \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT'),
             ],
-            'amount' =>
-            [
+            'amount' => [
                 'currency_code' => $this->currencyCode,
-                'value' => $this->amount
+                'value' => $this->amount,
             ],
-            'note_to_payer' => 'Refund by '.\Configuration::get('PS_SHOP_NAME')
+            'note_to_payer' => 'Refund by ' . \Configuration::get('PS_SHOP_NAME'),
         ];
 
         return $payload;
@@ -123,7 +120,7 @@ class Refund
      * Handle the differents error that can be thrown by paypal
      *
      * @param string $responseErrors Errors returned by paypal(PSL).
-     * In case of multiple error, errors are delimited with semicolon
+     *                               In case of multiple error, errors are delimited with semicolon
      *
      * @return array List of error meassages
      */
@@ -133,7 +130,7 @@ class Refund
 
         $errors = array(
             'error' => true,
-            'messages' => []
+            'messages' => [],
         );
 
         foreach ($responseErrors as $error) {
@@ -165,7 +162,7 @@ class Refund
     /**
      * Cancel the refund in prestashop if the refund cannot be processed from paypal
      *
-     * @return boolean
+     * @return bool
      */
     public function cancelPsRefund()
     {
