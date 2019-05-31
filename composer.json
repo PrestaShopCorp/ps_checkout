@@ -22,6 +22,7 @@
         ]
     },
     "require": {
-        "friendsofphp/php-cs-fixer": "^2.14"
+        "friendsofphp/php-cs-fixer": "^2.14",
+        "ramsey/uuid": "^3.8"
     }
 }

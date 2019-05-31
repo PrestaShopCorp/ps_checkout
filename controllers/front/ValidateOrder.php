@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-use PrestaShop\Module\PrestashopCheckout\Payment;
+use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 
 class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontController
 {
@@ -73,7 +73,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
         $currency = $this->context->currency;
         $total = (float)$cart->getOrderTotal(true, Cart::BOTH);
 
-        $payment = new Payment($paypalOrderId);
+        $payment = new ValidateOrder($paypalOrderId);
 
         $dataOrder = [
             'cartId' => (int)$cart->id,
