@@ -61,7 +61,7 @@ class Refund
      */
     public function refundOrder()
     {
-        $refund = (new Maasland)->refundOrder($this->getPayload());
+        $refund = (new Maasland(\Context::getContext()->link))->refundOrder($this->getPayload());
 
         if (isset($refund->statusCode) && $refund->statusCode === 422) {
             return $this->handleCallbackErrors($refund->error);
@@ -79,7 +79,7 @@ class Refund
     {
         $paypalOrder = (new PaypalOrder($this->paypalOrderId))->getOrder();
 
-        if (false === $paypalOrder) {
+        if (null === $paypalOrder) {
             return false;
         }
 

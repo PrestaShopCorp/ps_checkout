@@ -48,7 +48,12 @@ class Maasland
      */
     private $client;
 
-    public function __construct(Client $client = null)
+    /**
+     * @var \Link
+     */
+    private $link;
+
+    public function __construct(\Link $link, Client $client = null)
     {
         // temporary
         if (true === file_exists(__DIR__.'/../../maaslandConf.json')) {
@@ -57,7 +62,7 @@ class Maasland
             $this->maaslandSandbox = $conf->integration->sandbox;
         }
 
-        $link = new \Link();
+        $this->link = $link;
 
         // Client can be provided for tests
         if (null === $client) {
@@ -72,7 +77,7 @@ class Maasland
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer '.(new FirebaseClient())->getToken(),
                         'Shop-Id' => \Configuration::get('PS_CHECKOUT_SHOP_UUID_V4'),
-                        'Hook-Url' => $link->getModuleLink('ps_checkout', 'DispatchWebHook', array(), true)
+                        'Hook-Url' => $this->link->getModuleLink('ps_checkout', 'DispatchWebHook', array(), true)
                     ],
                 ),
             ));
@@ -89,8 +94,7 @@ class Maasland
     {
         $route = '/payments/onboarding/onboard';
 
-        $link = new \Link();
-        $callBackUrl = $link->getAdminLink('AdminPaypalOnboardingPrestashopCheckout');
+        $callBackUrl = $this->link->getAdminLink('AdminPaypalOnboardingPrestashopCheckout');
 
         $currency = \Currency::getCurrency(\Configuration::get('PS_CURRENCY_DEFAULT'));
         $isoCode = $currency['iso_code'];
@@ -134,7 +138,7 @@ class Maasland
      *
      * @param array Cart details
      *
-     * @return int|bool data with paypal order id or false if error
+     * @return array|bool data with paypal order id or false if error
      */
     public function createOrder($payload = array())
     {
@@ -148,11 +152,10 @@ class Maasland
             \PrestaShopLogger::addLog($e->getMessage());
             return false;
         } catch (ClientException $e) {
-            $response = json_decode($e->getResponse()->getBody()->getContents());
-            return $response;
+            $response = $e->getResponse();
         }
 
-        $data = json_decode($response->getBody(), true);
+        $data = json_decode($response->getBody()->getContents(), true);
 
         return isset($data) ? $data : false;
     }

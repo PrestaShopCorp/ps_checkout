@@ -100,7 +100,7 @@ class ValidateOrder
      */
     private function authorizeOrder($orderId)
     {
-        $maasland = new Maasland();
+        $maasland = new Maasland(\Context::getContext()->link);
         $response = $maasland->authorizeOrder($orderId);
 
         return isset($response['status']) ? $response['status'] : false;
@@ -115,7 +115,7 @@ class ValidateOrder
      */
     private function captureOrder($orderId)
     {
-        $maasland = new Maasland();
+        $maasland = new Maasland(\Context::getContext()->link);
         $response = $maasland->captureOrder($orderId);
 
         return isset($response['status']) ? $response['status'] : false;

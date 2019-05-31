@@ -30,6 +30,19 @@ use GuzzleHttp\Subscriber\Mock;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
 
+class Link
+{
+    public function getAdminLink()
+    {
+        return 'adminLink';
+    }
+
+    public function getModuleLink()
+    {
+        return 'moduleLink';
+    }
+}
+
 class MaaslandCreateOrderTest extends TestCase
 {
     public function testCreateOrderDefaultScenario()
@@ -47,7 +60,7 @@ class MaaslandCreateOrderTest extends TestCase
         // Add the mock subscriber to the client.
         $client->getEmitter()->attach($mock);
 
-        $maasland = new Maasland($client);
+        $maasland = new Maasland(new Link(), $client);
 
         $this->assertSame($result, $maasland->createOrder([]));
     }
@@ -61,7 +74,7 @@ class MaaslandCreateOrderTest extends TestCase
         ]);
         $client->getEmitter()->attach($mock);
 
-        $maasland = new Maasland($client);
+        $maasland = new Maasland(new Link(), $client);
 
         $this->assertSame(false, $maasland->createOrder([]));
     }
@@ -76,7 +89,7 @@ class MaaslandCreateOrderTest extends TestCase
         ]);
         $client->getEmitter()->attach($mock);
 
-        $maasland = new Maasland($client);
+        $maasland = new Maasland(new Link(), $client);
 
         $this->assertSame(false, $maasland->createOrder([]));
     }

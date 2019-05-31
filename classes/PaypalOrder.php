@@ -45,7 +45,7 @@ class PaypalOrder
      */
     private function loadOrder($id)
     {
-        $order = (new Maasland)->fetchOrder($id);
+        $order = (new Maasland(\Context::getContext()->link))->fetchOrder($id);
 
         if (false === $order) {
             return false;
