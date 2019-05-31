@@ -39,12 +39,8 @@ class ValidateOrder
 
     public $paypalOrderId = null;
 
-    public function __construct($paypalOrderId = null)
+    public function __construct($paypalOrderId)
     {
-        if (null === $paypalOrderId) {
-            throw new \PrestaShopException('Paypal order id is required');
-        }
-
         $this->paypalOrderId = $paypalOrderId;
     }
 
@@ -75,6 +71,7 @@ class ValidateOrder
         // of the prestashop order
 
         $paypalOrder = (new PaypalOrder($this->paypalOrderId));
+        $paypalOrder = $paypalOrder->getOrder();
 
         switch ($paypalOrder['intent']) {
             case self::INTENT_CAPTURE:
@@ -90,7 +87,7 @@ class ValidateOrder
         $orderState = $this->setOrderState($module->currentOrder, $responseStatus);
 
         if ($orderState === _PS_OS_PAYMENT_) {
-            $this->setTransactionId($module->currentOrder, $payload['extraVars']['transaction_id']);
+            $this->setTransactionId($module->currentOrderReference, $payload['extraVars']['transaction_id']);
         }
     }
 
@@ -99,9 +96,9 @@ class ValidateOrder
      *
      * @param string $orderId paypal order id
      *
-     * @return string state of the order
+     * @return string|bool state of the order
      */
-    public function authorizeOrder($orderId)
+    private function authorizeOrder($orderId)
     {
         $maasland = new Maasland();
         $response = $maasland->authorizeOrder($orderId);
@@ -114,9 +111,9 @@ class ValidateOrder
      *
      * @param string $orderId paypal order id
      *
-     * @return string state of the order
+     * @return string|bool state of the order
      */
-    public function captureOrder($orderId)
+    private function captureOrder($orderId)
     {
         $maasland = new Maasland();
         $response = $maasland->captureOrder($orderId);
@@ -127,24 +124,26 @@ class ValidateOrder
     /**
      * Set the transactionId (paypal order id) to the payment associated to the order
      *
-     * @param int $psOrderId from prestashop
+     * @param string $psOrderRef from prestashop
      * @param string $transactionId paypal order id
      *
      * @return bool
      */
-    public function setTransactionId($psOrderId, $transactionId)
+    private function setTransactionId($psOrderRef, $transactionId)
     {
-        $paymentOrder = \OrderPayment::getByOrderId($psOrderId);
+        $orderPayments = new \PrestaShopCollection('OrderPayment');
+        $orderPayments->where('order_reference', '=', $psOrderRef);
 
-        if (false === is_array($paymentOrder)) {
+        $orderPayment = $orderPayments->getFirst();
+
+        if (true === empty($orderPayment)) {
             return false;
         }
 
-        $paymentOrder = current($paymentOrder);
-        $paymentOrder = new \OrderPayment($paymentOrder->id);
-        $paymentOrder->transaction_id = $transactionId;
+        $payment = new \OrderPayment($orderPayment->id);
+        $payment->transaction_id = $transactionId;
 
-        return $paymentOrder->save();
+        return $payment->save();
     }
 
     /**
@@ -156,7 +155,7 @@ class ValidateOrder
      *
      * @return int order state id to set to the order depending on the status return by paypal
      */
-    public function setOrderState($orderId, $status)
+    private function setOrderState($orderId, $status)
     {
         $order = new \OrderHistory();
         $order->id_order = $orderId;
@@ -167,7 +166,7 @@ class ValidateOrder
             $orderState = _PS_OS_ERROR_;
         }
 
-        $order->changeIdOrderState(_PS_OS_PAYMENT_, $orderId);
+        $order->changeIdOrderState($orderState, $orderId);
         $order->save();
 
         return $orderState;

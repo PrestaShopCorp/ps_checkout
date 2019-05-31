@@ -193,10 +193,10 @@ class GenerateJsonPaypalOrder
         $currency_wt_decimal = array('HUF', 'JPY', 'TWD');
 
         if (in_array($currencyIsoCode, $currency_wt_decimal)) {
-            return (int) 0;
+            return 0;
         }
 
-        return (int) 2;
+        return 2;
     }
 
     /**

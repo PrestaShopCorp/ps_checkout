@@ -121,9 +121,12 @@ class Maasland
         }
 
         $data = json_decode($response->getBody(), true);
-        $onboardingLink = $data['links']['1']['href'];
 
-        return isset($onboardingLink) ? $onboardingLink : false;
+        if (false === isset($data['links']['1']['href'])) {
+            return false;
+        }
+
+        return $data['links']['1']['href'];
     }
 
     /**
@@ -178,7 +181,7 @@ class Maasland
             \PrestaShopLogger::addLog($e->getMessage());
             return false;
         } catch (ClientException $e) {
-            $response = json_decode($e->getResponse()->getBody()->getContents());
+            $response = json_decode($e->getResponse()->getBody()->getContents(), true);
             return $response;
         }
 

@@ -24,7 +24,7 @@
           </div>
           <div>
             <a
-              v-show="paypalIsLoaded === true"
+              v-show="paypalIsLoaded"
               class="btn btn-primary"
               data-paypal-button="true"
               :href="$store.state.paypalOnboardingLink+'&displayMode=minibrowser'"
@@ -33,7 +33,7 @@
               Link account
             </a>
             <a
-              v-show="paypalIsLoaded === false"
+              v-show="!paypalIsLoaded"
               href="#"
               class="btn btn-primary"
             >

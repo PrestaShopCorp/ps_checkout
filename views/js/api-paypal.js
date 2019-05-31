@@ -144,7 +144,7 @@ function initHostedFields() {
         // TODO : Patch a first time the order to prevent any modifications of the cart
 
         hf.submit({
-          // contingencies: ['3D_SECURE'] // only necessary if using 3D Secure verification
+          contingencies: ['3D_SECURE'], // only necessary if using 3D Secure verification
         }).then((payload) => {
           if (payload.liabilityShifted === undefined) { // No 3DS Contingency Passed or card not enrolled to 3ds
             window.location.replace(`${orderValidationLink}?orderId=${payload.orderId}&paymentMethod=card`);

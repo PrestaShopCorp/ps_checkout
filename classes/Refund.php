@@ -44,7 +44,7 @@ class Refund
     public $currencyCode = null;
     public $amount = null;
 
-    public function __construct(string $paypalOrderId, string $currencyCode, float $amount)
+    public function __construct($paypalOrderId, $currencyCode, $amount)
     {
         $this->paypalOrderId = $paypalOrderId;
         $this->currencyCode = $currencyCode;
@@ -78,6 +78,10 @@ class Refund
     public function getCaptureId()
     {
         $paypalOrder = (new PaypalOrder($this->paypalOrderId))->getOrder();
+
+        if (false === $paypalOrder) {
+            return false;
+        }
 
         $purchaseUnits = current($paypalOrder['purchase_units']);
         $capture = current($purchaseUnits['payments']['captures']);

@@ -115,6 +115,10 @@ class ps_checkout extends PaymentModule
 
     public function getContent()
     {
+        // $test = new PaypalOrderRepository();
+        // // $bouh = $test->getPsOrderIdByPaypalOrderId('5Y0260308V7856100');
+        // $bouh = $test->getPaypalOrderIdByPsOrderRef('GWCAOWMWL');
+        // dump($bouh);
         $translations = (new Translations($this))->getTranslations();
 
         $firebaseAccount = array(
@@ -211,9 +215,9 @@ class ps_checkout extends PaymentModule
             $totalRefund = $totalRefund + $amountDetail['quantity'] * $amountDetail['amount'];
         }
 
-        $paypalOrderId = (new PaypalOrderRepository)->getPaypalOrderIdByPsOrderId($params['order']->id);
+        $paypalOrderId = (new PaypalOrderRepository)->getPaypalOrderIdByPsOrderRef($params['order']->reference);
 
-        if (true === empty($paypalOrderId)) {
+        if (false === $paypalOrderId) {
             $this->context->controller->errors[] = $this->l('Impossible to refund. Cannot find the PayPal Order associated to this order.');
             return false;
         }

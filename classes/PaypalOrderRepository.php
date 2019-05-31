@@ -40,39 +40,43 @@ class PaypalOrderRepository
      */
     public function getPsOrderIdByPaypalOrderId($paypalOrderId)
     {
-        $orderPayments = new PrestaShopCollection('OrderPayment');
+        $orderPayments = new \PrestaShopCollection('OrderPayment');
         $orderPayments->where('transaction_id', '=', $paypalOrderId);
 
-        if (true === is_array($orderPayments)) {
-            $orderPayment = current($orderPayments);
-            $orderReference = $orderPayment->order_reference;
-        } else {
-            $orderReference = $orderPayments->order_reference;
+        $payment = $orderPayments->getFirst();
+
+        if (true === empty($payment)) {
+            return false;
         }
 
-        $order = new PrestaShopCollection('Order');
-        $order->where('reference', '=', $orderReference);
+        $orders = new \PrestaShopCollection('Order');
+        $orders->where('reference', '=', $payment->order_reference);
+
+        $order = $orders->getFirst();
+
+        if (true === empty($order)) {
+            return false;
+        }
 
         return $order->id;
     }
 
     /**
-     * Return Paypal order ID for the given PrestaShop order ID
+     * Return Paypal order ID for the given PrestaShop order reference
      *
-     * @param int $psOrderId Order ID prestashop
+     * @param string $psOrderRef Order reference prestashop
      *
      * @return string Order ID Paypal
      */
-    public function getPaypalOrderIdByPsOrderId($psOrderId)
+    public function getPaypalOrderIdByPsOrderRef($psOrderRef)
     {
-        $orderPayment = \OrderPayment::getByOrderId($psOrderId);
+        $orderPayments = new \PrestaShopCollection('OrderPayment');
+        $orderPayments->where('order_reference', '=', $psOrderRef);
+
+        $orderPayment = $orderPayments->getFirst();
 
         if (true === empty($orderPayment)) {
             return false;
-        }
-
-        if (true === is_array($orderPayment)) {
-            $orderPayment = current($orderPayment);
         }
 
         return $orderPayment->transaction_id;
