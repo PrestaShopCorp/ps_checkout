@@ -46,7 +46,8 @@ class ps_checkout extends PaymentModule
         'paymentOptions',
         'paymentReturn',
         'actionFrontControllerSetMedia',
-        'actionOrderSlipAdd'
+        'actionOrderSlipAdd',
+        'orderConfirmation'
     ];
 
     public $configurationList = array(
@@ -115,10 +116,6 @@ class ps_checkout extends PaymentModule
 
     public function getContent()
     {
-        // $test = new PaypalOrderRepository();
-        // // $bouh = $test->getPsOrderIdByPaypalOrderId('5Y0260308V7856100');
-        // $bouh = $test->getPaypalOrderIdByPsOrderRef('GWCAOWMWL');
-        // dump($bouh);
         $translations = (new Translations($this))->getTranslations();
 
         $firebaseAccount = array(
@@ -135,7 +132,7 @@ class ps_checkout extends PaymentModule
         Media::addJsDef(array(
             'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
             'contextLocale' => $this->context->language->locale,
-            'paypalOnboardingLink' => (new Maasland())->getPaypalOnboardingLink($email, $locale),
+            'paypalOnboardingLink' => (new Maasland($this->context->link))->getPaypalOnboardingLink($email, $locale),
             'translations' => json_encode($translations),
             'firebaseAccount' => json_encode($firebaseAccount)
         ));
@@ -163,7 +160,7 @@ class ps_checkout extends PaymentModule
         }
 
         $payload = (new GenerateJsonPaypalOrder)->create($this->context);
-        $paypalOrder = (new Maasland)->createOrder($payload);
+        $paypalOrder = (new Maasland($this->context->link))->createOrder($payload);
 
         if (false === $paypalOrder) {
             return false;
@@ -288,6 +285,26 @@ class ps_checkout extends PaymentModule
     public function generateHostedFieldsForm()
     {
         return $this->context->smarty->fetch('module:ps_checkout/views/templates/front/hosted-fields.tpl');
+    }
+
+    /**
+     * Hook executed at the order confirmation
+     */
+    public function hookOrderConfirmation($params)
+    {
+        if ($params['order']->module !== $this->name) {
+            return false;
+        }
+
+        if ($params['order']->valid) {
+            $this->context->smarty->assign(array(
+                'status' => 'ok', 'id_order' => $params['order']->id
+            ));
+        } else {
+            $this->context->smarty->assign('status', 'failed');
+        }
+
+        return $this->display(__FILE__, '/views/templates/hook/orderConfirmation.tpl');
     }
 
     /**
