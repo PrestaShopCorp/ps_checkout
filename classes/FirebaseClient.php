@@ -36,30 +36,35 @@ class FirebaseClient
 {
     /**
      * Client used to request Firebase API
+     *
      * @var Client
      */
     protected $client;
 
     /**
      * API key used for calls to Firebase
+     *
      * @var string
      */
     protected $apiKey;
 
     /**
      * API url used for calls to Firebase like auth/create user
+     *
      * @var string
      */
     protected $baseUrl = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/';
 
     /**
      * API url used for calls to Firebase in order to get refresh the token
+     *
      * @var string
      */
     protected $baseUrlSecureToken = 'https://securetoken.googleapis.com/v1/';
 
     /**
      * Number of seconds to wait before timeout
+     *
      * @var int
      */
     protected $timeOut = 10;
@@ -76,15 +81,15 @@ class FirebaseClient
             array(
                 'base_url' => $this->baseUrl,
                 'defaults' => array(
-                    'timeout'         => $this->timeOut,
+                    'timeout' => $this->timeOut,
                     'allow_redirects' => false,
                     'query' => array(
                         'key' => $this->apiKey,
                     ),
                     'headers' => array(
-                        'Content-Type' => 'application/json'
+                        'Content-Type' => 'application/json',
                     ),
-                )
+                ),
             )
         );
     }
@@ -92,7 +97,8 @@ class FirebaseClient
     /**
      * Auth user with email & password
      *
-     * @link https://firebase.google.com/docs/reference/rest/auth/#section-sign-in-email-password Firebase documentation
+     * @see https://firebase.google.com/docs/reference/rest/auth/#section-sign-in-email-password Firebase documentation
+     *
      * @param string $email
      * @param string $password
      *
@@ -112,7 +118,8 @@ class FirebaseClient
     /**
      * Create user with email & password
      *
-     * @link https://firebase.google.com/docs/reference/rest/auth#section-create-email-password Firebase documentation
+     * @see https://firebase.google.com/docs/reference/rest/auth#section-create-email-password Firebase documentation
+     *
      * @param string $email
      * @param string $password
      *
@@ -132,7 +139,8 @@ class FirebaseClient
     /**
      * Get user details related to API token in order to authentify him
      *
-     * @link https://firebase.google.com/docs/reference/rest/auth/#section-get-account-info Firebase documentation
+     * @see https://firebase.google.com/docs/reference/rest/auth/#section-get-account-info Firebase documentation
+     *
      * @param string $token
      *
      * @return array
@@ -165,17 +173,18 @@ class FirebaseClient
     /**
      * Refresh the token
      *
-     * @link https://firebase.google.com/docs/reference/rest/auth#section-refresh-token Firebase documentation
+     * @see https://firebase.google.com/docs/reference/rest/auth#section-refresh-token Firebase documentation
+     *
      * @param string $token
      *
      * @return array
      */
     public function refreshToken()
     {
-        $response = $this->post($this->baseUrlSecureToken.'token', array(
+        $response = $this->post($this->baseUrlSecureToken . 'token', array(
             'json' => array(
                 'grant_type' => 'refresh_token',
-                'refresh_token' => \Configuration::get('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN')
+                'refresh_token' => \Configuration::get('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN'),
             ),
         ));
 
@@ -194,7 +203,7 @@ class FirebaseClient
     public function checkIfTokenIsValid()
     {
         $query = 'SELECT date_upd
-                FROM '._DB_PREFIX_.'configuration
+                FROM ' . _DB_PREFIX_ . 'configuration
                 WHERE name="PS_CHECKOUT_FIREBASE_ID_TOKEN"
                 AND date_upd > NOW() + INTERVAL 1 HOUR';
 
@@ -219,7 +228,7 @@ class FirebaseClient
             }
         }
 
-        $body = json_decode((string)$response->getBody(), true);
+        $body = json_decode((string) $response->getBody(), true);
 
         return $body;
     }

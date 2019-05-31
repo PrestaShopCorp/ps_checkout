@@ -27,7 +27,6 @@
 namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
-use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
 
 /**
  * Class that allow to validate an order
@@ -48,8 +47,6 @@ class ValidateOrder
      * Process the validation for an order
      *
      * @param array $payload array with all information required by PaymentModule->validateOrder()
-     *
-     * @return void
      */
     public function validateOrder($payload)
     {

@@ -54,28 +54,28 @@ class Translations
                 'manageActivity' => $this->module->l('Manage Activity'),
                 'advancedSettings' => $this->module->l('Advanced settings'),
                 'fees' => $this->module->l('Fees'),
-                'help' => $this->module->l('Help')
+                'help' => $this->module->l('Help'),
             ),
             'general' => array(
-                'save' => $this->module->l('Save')
+                'save' => $this->module->l('Save'),
             ),
             'auth' => array(
-                'test' => $this->module->l('test')
+                'test' => $this->module->l('test'),
             ),
             'customize' => array(
-                'test1' => $this->module->l('test2')
+                'test1' => $this->module->l('test2'),
             ),
             'manage' => array(
-                'test' => $this->module->l('test')
+                'test' => $this->module->l('test'),
             ),
             'advanced' => array(
-                'test' => $this->module->l('test')
+                'test' => $this->module->l('test'),
             ),
             'fees' => array(
-                'test' => $this->module->l('test')
+                'test' => $this->module->l('test'),
             ),
             'help' => array(
-                'test' => $this->module->l('test')
+                'test' => $this->module->l('test'),
             ),
         );
 

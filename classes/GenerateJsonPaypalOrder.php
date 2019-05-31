@@ -111,29 +111,29 @@ class GenerateJsonPaypalOrder
             'custom_id' => (string) $params['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
             'description' => 'Checking out with your cart from {SHOP}',
-            'soft_descriptor' => 'MR '.$params['addresses']['invoice']->lastname.' '.$params['addresses']['invoice']->firstname,
+            'soft_descriptor' => 'MR ' . $params['addresses']['invoice']->lastname . ' ' . $params['addresses']['invoice']->firstname,
             'amount' => [
                 'currency_code' => $params['currency']['iso_code'],
                 'value' => $params['cart']['totals']['total']['amount'],
                 'breakdown' => [
                     'item_total' => [
                         'currency_code' => $params['currency']['iso_code'],
-                        'value' => $totalTaxItem
+                        'value' => $totalTaxItem,
                     ],
                     'shipping' => [
                         'currency_code' => $params['currency']['iso_code'],
-                        'value' => $params['cart']['subtotals']['shipping']['amount']
+                        'value' => $params['cart']['subtotals']['shipping']['amount'],
                     ],
                     'tax_total' => [
                         'currency_code' => $params['currency']['iso_code'],
-                        'value' =>  $totalAmountItemWithoutTax
+                        'value' => $totalAmountItemWithoutTax,
                     ],
-                ]
+                ],
             ],
             'items' => $items,
             'shipping' => [
                 'name' => [
-                    'full_name' => 'Mr '.$params['addresses']['shipping']->lastname.' '.$params['addresses']['shipping']->firstname,
+                    'full_name' => 'Mr ' . $params['addresses']['shipping']->lastname . ' ' . $params['addresses']['shipping']->firstname,
                 ],
                 'address' => [
                     'address_line_1' => $params['addresses']['shipping']->address1,
@@ -141,20 +141,20 @@ class GenerateJsonPaypalOrder
                     'admin_area_1' => (string) $this->getStateNameById($params['addresses']['shipping']->id_state),
                     'admin_area_2' => $params['addresses']['shipping']->city,
                     'country_code' => $this->getCountryIsoCodeById($params['addresses']['shipping']->id_country),
-                    'postal_code' => $params['addresses']['shipping']->postcode
-                ]
+                    'postal_code' => $params['addresses']['shipping']->postcode,
+                ],
             ],
             'payer' => [
                 'name' => [
                     'given_name' => $params['customer']->lastname,
-                    'surname' => $params['customer']->firstname
+                    'surname' => $params['customer']->firstname,
                 ],
                 'email_address' => $params['customer']->email,
                 'phone' => [
                     'phone_number' => [
-                        'national_number' => $params['addresses']['invoice']->phone
+                        'national_number' => $params['addresses']['invoice']->phone,
                     ],
-                    'phone_type' => 'MOBILE' // TODO - Function to determine if phone is mobile or not
+                    'phone_type' => 'MOBILE', // TODO - Function to determine if phone is mobile or not
                 ],
                 'birth_date' => $params['customer']->birthday,
                 'address' => [
@@ -164,16 +164,16 @@ class GenerateJsonPaypalOrder
                     'admin_area_2' => $params['addresses']['invoice']->city, // A city, town, or village. Smaller than admin_area_level_1
                     'country_code' => $this->getCountryIsoCodeById($params['addresses']['invoice']->id_country),
                     'postal_code' => $params['addresses']['invoice']->postcode,
-                ]
+                ],
             ],
             'payee' => [
-                'merchant_id' => \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT')
+                'merchant_id' => \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT'),
             ],
             'application_context' => [
                 'brand_name' => 'PrestaShop Checkout',
                 'locale' => 'bs-BA',
-                'shipping_preference' => 'SET_PROVIDED_ADDRESS'
-            ]
+                'shipping_preference' => 'SET_PROVIDED_ADDRESS',
+            ],
         ]);
 
         return $payload;

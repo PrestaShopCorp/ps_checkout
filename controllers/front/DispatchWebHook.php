@@ -23,11 +23,9 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
-
 use PrestaShop\Module\PrestashopCheckout\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\MerchantDispatcher;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
-use PrestaShop\Module\PrestashopCheckout\Payment;
 
 class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontController
 {
@@ -38,6 +36,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
     /**
      * Contains the summary of the event, coming from Paypal
+     *
      * @var string
      */
     private $summary;
@@ -49,36 +48,42 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
     /**
      * Contains the Event Type coming from PSL
+     *
      * @var string
      */
     private $eventType;
 
     /**
      * Get all the datas
+     *
      * @var array
      */
     private $resource;
 
     /**
      * Order Id coming from Paypal
+     *
      * @var int
      */
     private $orderId;
 
     /**
      * Id coming from PSL
+     *
      * @var int
      */
     private $shopId;
 
     /**
      * Id coming from Paypal
+     *
      * @var int
      */
     private $merchantId;
 
     /**
      * Id coming from Firebase
+     *
      * @var int
      */
     private $firebaseId;
@@ -91,7 +96,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         }
 
         $payload = json_decode(\Tools::getValue('payload'));
-        $errors = (new WebHookValidation)->validate($payload);
+        $errors = (new WebHookValidation())->validate($payload);
 
         // If there is errors, return them
         if (is_array($errors)) {
@@ -100,33 +105,31 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
             */
             return false;
         }
-        
+
         $this->setAtributesValues($payload);
 
         // Check if have execution permissions
         if (false === $this->checkExecutionPermissions()) {
             return false;
         }
-        
+
         $this->dispatchWebHook($payload);
     }
 
     /**
      * Set Attributes values from the payload
      *
-     * @param  array $payload
-     *
-     * @return void
+     * @param array $payload
      */
     private function setAtributesValues($payload)
     {
-        $this->shopId = (int)$payload['Shop-Id'];
-        $this->merchantId = (int)$payload['Merchant-Id'];
-        $this->firebaseId = (int)$payload['Psx-Id'];
-        $this->summary = (string)$payload['summary'];
-        $this->category = (string)$payload['category'];
-        $this->eventType = (string)$payload['eventType'];
-        $this->resource = (array)$payload['resource'];
+        $this->shopId = (int) $payload['Shop-Id'];
+        $this->merchantId = (int) $payload['Merchant-Id'];
+        $this->firebaseId = (int) $payload['Psx-Id'];
+        $this->summary = (string) $payload['summary'];
+        $this->category = (string) $payload['category'];
+        $this->eventType = (string) $payload['eventType'];
+        $this->resource = (array) $payload['resource'];
     }
 
     /**
@@ -146,7 +149,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
     /**
      * Get the source IP from the HTTP_CLIENT_IP or HTTP_X_FORWARDED_FOR or REMOTE_ADDR
-     * 
+     *
      * @return string
      */
     private function getSourceIP()
@@ -154,20 +157,20 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
             return $_SERVER['HTTP_CLIENT_IP'];
         }
-        
+
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             return $_SERVER['HTTP_X_FORWARDED_FOR'];
         }
-            
+
         return $_SERVER['REMOTE_ADDR'];
     }
 
     /**
      * Check if the called IP can be found in the DNS record
      *
-     * @param  array $recordDNS
-     * @param  string $searchIP
-     * 
+     * @param array $recordDNS
+     * @param string $searchIP
+     *
      * @return bool
      */
     private function findWhiteListInDNS($recordDNS, $searchIP)
@@ -209,20 +212,18 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      * Dispatch the web Hook according to the category
      *
      * @param array $payLoad
-     * 
-     * @return void
      */
     private function dispatchWebHook($payload)
     {
         if ('ShopNotificationMerchantAccount' === $this->category) {
-            $merchantManager = new MerchantDispatcher;
+            $merchantManager = new MerchantDispatcher();
             $merchantManager->dispatchEventType(
                 $this->eventType
             );
         }
 
         if ('ShopNotificationOrderChange' === $this->category) {
-            $orderError = (new WebHookValidation)->validateOrderId($payload['orderId']);
+            $orderError = (new WebHookValidation())->validateOrderId($payload['orderId']);
 
             if (true !== $orderError) {
                 /*
@@ -231,11 +232,11 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
                 return false;
             }
 
-            $orderManager = new OrderDispatcher;
+            $orderManager = new OrderDispatcher();
             $orderManager->dispatchEventType(
                 $this->eventType,
                 $this->resource
             );
         }
-    }    
+    }
 }

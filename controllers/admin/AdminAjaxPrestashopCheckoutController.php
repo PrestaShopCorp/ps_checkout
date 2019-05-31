@@ -23,7 +23,6 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
-
 use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
@@ -43,10 +42,11 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 json_encode(
                     array(
                         'error' => true,
-                        'message' => $e->getMessage()
+                        'message' => $e->getMessage(),
                     )
                 )
             );
+
             return false;
         }
 
@@ -70,10 +70,11 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 json_encode(
                     array(
                         'error' => true,
-                        'message' => $e->getMessage()
+                        'message' => $e->getMessage(),
                     )
                 )
             );
+
             return false;
         }
 

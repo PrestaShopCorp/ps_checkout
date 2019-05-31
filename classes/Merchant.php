@@ -27,7 +27,7 @@
 namespace PrestaShop\Module\PrestashopCheckout;
 
 class Merchant
-{   
+{
     /**
      * Set the merchant revoked in the Configuration table
      *

@@ -23,7 +23,6 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
-
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
 use PrestaShop\Module\PrestashopCheckout\GenerateJsonPaypalOrder;
@@ -47,7 +46,7 @@ class ps_checkout extends PaymentModule
         'paymentReturn',
         'actionFrontControllerSetMedia',
         'actionOrderSlipAdd',
-        'orderConfirmation'
+        'orderConfirmation',
     ];
 
     public $configurationList = array(
@@ -58,7 +57,7 @@ class ps_checkout extends PaymentModule
         'PS_CHECKOUT_FIREBASE_ID_TOKEN' => '',
         'PS_CHECKOUT_FIREBASE_LOCAL_ID' => '',
         'PS_CHECKOUT_FIREBASE_REFRESH_TOKEN' => '',
-        'PS_CHECKOUT_SHOP_UUID_V4' => ''
+        'PS_CHECKOUT_SHOP_UUID_V4' => '',
     );
 
     public function __construct()
@@ -122,7 +121,7 @@ class ps_checkout extends PaymentModule
             'email' => Configuration::get('PS_CHECKOUT_FIREBASE_EMAIL'),
             'idToken' => Configuration::get('PS_CHECKOUT_FIREBASE_ID_TOKEN'),
             'localId' => Configuration::get('PS_CHECKOUT_FIREBASE_LOCAL_ID'),
-            'refreshToken' => Configuration::get('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN')
+            'refreshToken' => Configuration::get('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN'),
         );
 
         $email = $this->context->employee->email;
@@ -134,10 +133,10 @@ class ps_checkout extends PaymentModule
             'contextLocale' => $this->context->language->locale,
             'paypalOnboardingLink' => (new Maasland($this->context->link))->getPaypalOnboardingLink($email, $locale),
             'translations' => json_encode($translations),
-            'firebaseAccount' => json_encode($firebaseAccount)
+            'firebaseAccount' => json_encode($firebaseAccount),
         ));
 
-        $this->context->controller->addCss($this->_path.'views/css/index.css');
+        $this->context->controller->addCss($this->_path . 'views/css/index.css');
 
         return $this->display(__FILE__, '/views/templates/admin/configuration.tpl');
     }
@@ -159,7 +158,7 @@ class ps_checkout extends PaymentModule
             return false;
         }
 
-        $payload = (new GenerateJsonPaypalOrder)->create($this->context);
+        $payload = (new GenerateJsonPaypalOrder())->create($this->context);
         $paypalOrder = (new Maasland($this->context->link))->createOrder($payload);
 
         if (false === $paypalOrder) {
@@ -170,12 +169,12 @@ class ps_checkout extends PaymentModule
             'clientToken' => $paypalOrder['client_token'],
             'paypalOrderId' => $paypalOrder['id'],
             'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true),
-            'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT'))
+            'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT')),
         ));
 
         $payment_options = [
             $this->getPaypalPaymentOption(),
-            $this->getHostedFieldsPaymentOption()
+            $this->getHostedFieldsPaymentOption(),
         ];
 
         return $payment_options;
@@ -212,10 +211,11 @@ class ps_checkout extends PaymentModule
             $totalRefund = $totalRefund + $amountDetail['quantity'] * $amountDetail['amount'];
         }
 
-        $paypalOrderId = (new PaypalOrderRepository)->getPaypalOrderIdByPsOrderRef($params['order']->reference);
+        $paypalOrderId = (new PaypalOrderRepository())->getPaypalOrderIdByPsOrderRef($params['order']->reference);
 
         if (false === $paypalOrderId) {
             $this->context->controller->errors[] = $this->l('Impossible to refund. Cannot find the PayPal Order associated to this order.');
+
             return false;
         }
 
@@ -229,6 +229,7 @@ class ps_checkout extends PaymentModule
             foreach ($refund['messages'] as $message) {
                 $this->context->controller->errors[] = $message;
             }
+
             return false;
         }
     }
@@ -241,11 +242,11 @@ class ps_checkout extends PaymentModule
     public function getPaypalPaymentOption()
     {
         $paypalPaymentOption = new PaymentOption();
-        $paypalPaymentOption->setModuleName($this->name.'_paypal')
+        $paypalPaymentOption->setModuleName($this->name . '_paypal')
                             ->setCallToActionText($this->l('and other payment methods'))
                             ->setAction($this->context->link->getModuleLink($this->name, 'CreateOrder', array(), true))
                             ->setAdditionalInformation($this->generatePaypalForm())
-                            ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/paypal.png'));
+                            ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/paypal.png'));
 
         return $paypalPaymentOption;
     }
@@ -268,11 +269,11 @@ class ps_checkout extends PaymentModule
     public function getHostedFieldsPaymentOption()
     {
         $hostedFieldsPaymentOption = new PaymentOption();
-        $hostedFieldsPaymentOption->setModuleName($this->name.'_hostedFields')
+        $hostedFieldsPaymentOption->setModuleName($this->name . '_hostedFields')
                     ->setCallToActionText($this->l('100% secure payments'))
                     ->setAction($this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true))
                     ->setForm($this->generateHostedFieldsForm())
-                    ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/payement-cards.png'));
+                    ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payement-cards.png'));
 
         return $hostedFieldsPaymentOption;
     }
@@ -298,7 +299,7 @@ class ps_checkout extends PaymentModule
 
         if ($params['order']->valid) {
             $this->context->smarty->assign(array(
-                'status' => 'ok', 'id_order' => $params['order']->id
+                'status' => 'ok', 'id_order' => $params['order']->id,
             ));
         } else {
             $this->context->smarty->assign('status', 'failed');
@@ -333,8 +334,6 @@ class ps_checkout extends PaymentModule
 
     /**
      * Load asset on the front office
-     *
-     * @return void
      */
     public function hookActionFrontControllerSetMedia()
     {
@@ -345,18 +344,18 @@ class ps_checkout extends PaymentModule
         }
 
         Media::addJsDef(array(
-            'paypalPaymentOption' => $this->name.'_paypal',
-            'hostedFieldsErrors' => (new HostedFieldsErrors($this))->getHostedFieldsErrors()
+            'paypalPaymentOption' => $this->name . '_paypal',
+            'hostedFieldsErrors' => (new HostedFieldsErrors($this))->getHostedFieldsErrors(),
         ));
 
         $this->context->controller->registerJavascript(
             'ps-checkout-paypal-api',
-            'modules/'.$this->name.'/views/js/api-paypal.js'
+            'modules/' . $this->name . '/views/js/api-paypal.js'
         );
 
         $this->context->controller->registerStylesheet(
             'ps-checkout-css-paymentOptions',
-            'modules/'.$this->name.'/views/css/paymentOptions.css'
+            'modules/' . $this->name . '/views/css/paymentOptions.css'
         );
     }
 }

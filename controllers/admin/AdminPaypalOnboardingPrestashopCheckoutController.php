@@ -23,7 +23,6 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
-
 class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminController
 {
     public function init()
@@ -46,7 +45,7 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
                 true,
                 array(),
                 array(
-                    'configure' => 'ps_checkout'
+                    'configure' => 'ps_checkout',
                 )
             )
         );
