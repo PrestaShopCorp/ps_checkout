@@ -9,7 +9,7 @@ steps:
 
 - name: 'gcr.io/$PROJECT_ID/composer'
   args: ['install']
-  
+
 - name: gcr.io/cloud-builders/gsutil
   args: ['cp', 'gs://ps_checkout_${_ENVIRONMENT}/maaslandConf.json', '.']
   
