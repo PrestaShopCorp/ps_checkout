@@ -5,7 +5,7 @@
 config.xml
 
 ### Temporary config ###
-/maaslandConf.json
+# /maaslandConf.json
 
 ### Vuejs ignore build files ###
 /views/js/index.js

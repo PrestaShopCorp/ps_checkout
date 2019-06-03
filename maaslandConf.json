@@ -1,0 +1,6 @@
+{
+    "integration": {
+        "live": "https://live-checkout.psessentials-integration.net/",
+        "sandbox": "https://sandbox-checkout.psessentials-integration.net/"
+    }
+}

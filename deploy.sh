@@ -9,7 +9,7 @@ kubectl cp /workspace/$FILEPATH $ENV-shops/$NAME:/
 kubectl exec -t --namespace=$ENV-shops $NAME -- bash -c \
     "
     /presthost/core/bin/console  prestashop:module uninstall ps_checkout || true;
-    sudo -u presthost -H bash -c 'rm -rf /presthost/userland/modules/ps_checkout\';
+    sudo -u presthost -H bash -c 'rm -rf /presthost/userland/modules/ps_checkout';
     sudo -u presthost -H bash -c \"unzip -o /$FILEPATH -d /presthost/userland/modules > /dev/null 2>&1;\";
     rm -f /${FILEPATH};
     /presthost/core/bin/console  prestashop:module install ps_checkout;
