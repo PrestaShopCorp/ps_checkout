@@ -26,6 +26,10 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+// DOGE: Add unit tests
+//   * Show you expect to receive several errors in some case 
+//   * Or only one error
+//   * Show the method works properly when you sent weird data (i.e a boolean, a string)
 class WebHookValidation
 {
     const ALLOWED_CATEGORIES = array(

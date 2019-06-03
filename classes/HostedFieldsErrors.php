@@ -26,6 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+// DOGE: Should this class be moved in the subfolder translations?
 class HostedFieldsErrors
 {
     private $module = null;
@@ -50,6 +51,7 @@ class HostedFieldsErrors
             'INVALID_PARAMETER_SYNTAX' => $this->module->l('The value of a field does not conform to the expected format'),
         );
 
+        // DOGE: Remove `json_encode` from here
         return json_encode($errors);
     }
 }

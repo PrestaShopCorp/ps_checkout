@@ -36,6 +36,7 @@ class PaypalOrderRepository
      *
      * @param int $paypalOrderId Order ID paypal
      *
+     * // DOGE: `@return int|false
      * @return int Order ID prestashop
      */
     public function getPsOrderIdByPaypalOrderId($paypalOrderId)
@@ -66,6 +67,7 @@ class PaypalOrderRepository
      *
      * @param string $psOrderRef Order reference prestashop
      *
+     * // DOGE:  @return string|false
      * @return string Order ID Paypal
      */
     public function getPaypalOrderIdByPsOrderRef($psOrderRef)

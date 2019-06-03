@@ -94,6 +94,7 @@ class GenerateJsonPaypalOrder
             $item['description'] = strip_tags($value['description_short']);
             $item['sku'] = $value['unity'];
             $item['unit_amount']['currency_code'] = $params['currency']['iso_code'];
+            // DOGE: In order to make this method unit testable, you should move `\Tools::ps_round` in a dedicated method (will be mocked)
             $item['unit_amount']['value'] = \Tools::ps_round($value['price'], $this->getNbDecimalToRound($params['currency']['iso_code']));
             $item['tax']['currency_code'] = $params['currency']['iso_code'];
             $item['tax']['value'] = \Tools::ps_round($value['price'] * $value['rate'] / 100, $this->getNbDecimalToRound($params['currency']['iso_code']));
@@ -167,6 +168,7 @@ class GenerateJsonPaypalOrder
                 ],
             ],
             'payee' => [
+                // DOGE: Move this core dependency to a dedicated method (mock)
                 'merchant_id' => \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT'),
             ],
             'application_context' => [

@@ -45,6 +45,7 @@ class Translations
      */
     public function getTranslations()
     {
+        // DOGE: In order to be unit testable, $locale should be sent as class or method param
         $locale = \Context::getContext()->language->locale;
 
         $translations[$locale] = array(

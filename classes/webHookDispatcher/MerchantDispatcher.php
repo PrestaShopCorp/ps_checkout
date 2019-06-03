@@ -26,6 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+// DOGE: Missing `implements InterfaceDispatcher`
 class MerchantDispatcher
 {
     const PS_CHECKOUT_MERCHANT_REVOKED = 'PARTNER.CONSENT.REVOKED';

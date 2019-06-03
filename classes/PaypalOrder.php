@@ -57,6 +57,7 @@ class PaypalOrder
     /**
      * getter for the order
      *
+     * // DOGE array or null
      * @return array
      */
     public function getOrder()
@@ -69,6 +70,7 @@ class PaypalOrder
      *
      * @param array $order
      */
+    // DOGE: add array in param: `array $order`
     public function setOrder($order)
     {
         $this->order = $order;

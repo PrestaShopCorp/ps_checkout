@@ -209,6 +209,7 @@ class FirebaseClient
 
         $dateUpd = \Db::getInstance()->getValue($query);
 
+        // DOGE: return !!$dateUpd; also works
         if (false === $dateUpd) {
             return false;
         }
