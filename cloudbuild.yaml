@@ -11,9 +11,6 @@ steps:
   args: ['install']
 
 - name: gcr.io/cloud-builders/gsutil
-  args: ['cp', './maaslandConf.json', 'gs://ps_checkout_${_ENVIRONMENT}/maaslandConf.json']
-
-- name: gcr.io/cloud-builders/gsutil
   args: ['cp', 'gs://ps_checkout_${_ENVIRONMENT}/maaslandConf.json', '.']
   
 - name: 'gcr.io/$PROJECT_ID/zip-tool'

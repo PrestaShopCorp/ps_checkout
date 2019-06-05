@@ -1,6 +1,6 @@
 module.exports = {
     launch: {
-        executablePath: 'google-chrome-unstable',
+        'headless': false,
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',

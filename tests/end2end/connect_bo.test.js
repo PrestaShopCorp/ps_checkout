@@ -1,3 +1,4 @@
+jest.setTimeout(30000);
 describe('Google', () => {
   beforeAll(async () => {
     await page.goto('http://localhost/admin-dev');
@@ -14,5 +15,6 @@ describe('Google', () => {
 
   it('should display "Preston" text on page', async () => {
     await expect(page).toMatch("Preston");
-  });
+  })
+
 });

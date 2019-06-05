@@ -12,21 +12,22 @@ init: ## Initialise configuration
 
 
 build: ## Build and run the app
-	docker exec -t ps_ckt bash -c "npm run build"
+	docker exec -t ps_ckt bash -c "yarn build"
 
 up: init ## Up all your containers `make up opt="--force-recreate --build"`
-	$(DKC) up -d --remove-orphans
-	$(MAKE) dependancies
+	$(DKC) up -d --remove-orphans --build
 	# $(MAKE) build
 	bash bin/docker.sh
-	docker exec -t ps_ckt bash -c "chgrp -R www-data /var/www/html && chmod -R 775 node_modules"
+	docker exec -t ps_ckt bash -c "chgrp -R www-data /var/www/html"
+	$(MAKE) dependancies
 	# FIX psaddonsconnect
 	docker exec -t ps_ckt bash -c "rm -rf /var/www/html/modules/psaddonsconnect"
 	$(DKC) ps
 
 dependancies: ## Install dependancies
-	$(DK_PS) "npm install"
+	$(DK_PS) "yarn install"
 	$(DK_PS) "composer install"
+	# docker exec -t ps_ckt bash -c "chmod -R 0777 node_modules"
 
 test: ## Run all tests
 	$(MAKE) test-unit
@@ -41,7 +42,7 @@ test-unit: ## Run units tests
 # Launch functional tests. e.g behat, JBehave, Behave, CucumberJS, Cucumber etc...
 
 test-integration: ## Run integration tests
-	$(DK_PS) "npm run test"
+	$(DK_PS) "yarn test"
 
 bash: ## Go to preta container
 	docker exec -it ps_ckt bash
