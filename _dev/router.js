@@ -1,11 +1,11 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import Authentication from '@/pages/Authentication.vue';
 import PaypalAuth from '@/pages/PaypalAuth.vue';
 import Signup from '@/pages/Signup.vue';
 import Login from '@/pages/Login.vue';
 import Customize from '@/pages/Customize.vue';
+import Accounts from '@/pages/Accounts.vue';
 // import Manage from '@/pages/Manage.vue';
 // import Advanced from '@/pages/Advanced.vue';
 // import Fees from '@/pages/Fees.vue';
@@ -22,7 +22,7 @@ export default new Router({
     {
       path: '/authentication',
       name: 'Authentication',
-      component: Authentication,
+      component: Accounts,
     },
     {
       path: '/authentication/login',
