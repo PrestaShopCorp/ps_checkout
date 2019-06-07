@@ -84,18 +84,18 @@ class OrderStates
         );
 
         if (true === \Db::getInstance()->insert(self::ORDER_STATE_TABLE, $data)) {
-            return (int) \Db::getInstance()->Insert_ID(); 
-        };
+            return (int) \Db::getInstance()->Insert_ID();
+        }
 
-        throw new PrestaShopException('Not able to insert the new order state');
+        throw new \PrestaShopException('Not able to insert the new order state');
     }
 
     /**
      * Create the Paypal States Lang
      *
-     * @param  int $orderStateId
-     * @param  string $translations
-     * @param  int $langId
+     * @param int $orderStateId
+     * @param string $translations
+     * @param int $langId
      *
      * @return bool
      */
@@ -103,13 +103,13 @@ class OrderStates
     {
         $data = array(
             'id_order_state' => $orderStateId,
-            'id_lang' => (int)$langId,
+            'id_lang' => (int) $langId,
             'name' => pSQL($translations),
             'template' => self::ORDER_STATE_TEMPLATE,
         );
 
         if (false === \Db::getInstance()->insert(self::ORDER_STATE_LANG_TABLE, $data)) {
-            throw new PrestaShopException('Not able to insert the new order state language');
+            throw new \PrestaShopException('Not able to insert the new order state language');
         }
 
         return true;
@@ -122,9 +122,11 @@ class OrderStates
      */
     private function paypalStatesExist()
     {
-        $statesAlreadyExist = \Db::getInstance()->getValue('SELECT COUNT(id_order_state) 
+        $statesAlreadyExist = \Db::getInstance()->getValue(
+            'SELECT COUNT(id_order_state)
             FROM `' . _DB_PREFIX_ . 'order_state`
-            WHERE module_name = "'.self::MODULE_NAME.'"');
+            WHERE module_name = "' . self::MODULE_NAME . '"'
+        );
 
         return (int) $statesAlreadyExist;
     }

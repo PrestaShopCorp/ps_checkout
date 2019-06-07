@@ -47,7 +47,7 @@ class OrderStatesTranslations
      *
      * @return array translation list
      */
-    public function getTranslations(string $isoCode)
+    public function getTranslations($isoCode)
     {
         $isoCode = $this->confirmIsoCode($isoCode);
 
@@ -62,11 +62,11 @@ class OrderStatesTranslations
     /**
      * Return an ISO which can get a result in the translations arrays
      *
-     * @param  string $isoCode
+     * @param string $isoCode
      *
      * @return string
      */
-    private function confirmIsoCode(string $isoCode)
+    private function confirmIsoCode($isoCode)
     {
         if (false === isset(self::STATE_WAITING_PAYPAL_PAYMENT[$isoCode])) {
             return self::STANDARD_ISO_CODE;

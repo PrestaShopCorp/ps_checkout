@@ -97,8 +97,8 @@ class ps_checkout extends PaymentModule
             Configuration::updateValue($name, $value);
         }
 
-        return parent::install() && 
-            $this->registerHook($this->hookList) && 
+        return parent::install() &&
+            $this->registerHook($this->hookList) &&
             (new OrderStates())->installPaypalStates();
     }
 
