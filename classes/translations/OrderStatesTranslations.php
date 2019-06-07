@@ -68,10 +68,10 @@ class OrderStatesTranslations
      */
     private function confirmIsoCode($isoCode)
     {
-        if (!isset(self::PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT[$isoCode]) ||
-            !isset(self::PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT[$isoCode]) ||
-            !isset(self::PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT[$isoCode]) ||
-            !isset(self::PS_CHECKOUT_STATE_AUTHORIZED[$isoCode])) {
+        if (!array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT) ||
+            !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT) ||
+            !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT) ||
+            !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_AUTHORIZED)) {
             return self::STANDARD_ISO_CODE;
         }
 
