@@ -68,7 +68,7 @@ class OrderStatesTranslations
      */
     private function confirmIsoCode($isoCode)
     {
-        if (false === isset(self::STATE_WAITING_PAYPAL_PAYMENT[$isoCode])) {
+        if (null !== self::STATE_WAITING_PAYPAL_PAYMENT[$isoCode]) {
             return self::STANDARD_ISO_CODE;
         }
 
