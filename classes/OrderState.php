@@ -36,46 +36,56 @@ class OrderStates
     const ORDER_STATE_LANG_TABLE = 'order_state_lang';
     const BLUE_HEXA_COLOR = '#4169E1';
     const ORDER_STATES = array(
-        'STATE_WAITING_PAYPAL_PAYMENT',
-        'STATE_WAITING_CREDIT_CARD_PAYMENT',
-        'STATE_WAITING_LOCAL_PAYMENT',
-        'STATE_AUTHORIZED',
+        'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT',
+        'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT',
+        'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT',
+        'PS_CHECKOUT_STATE_AUTHORIZED',
     );
 
     /**
      * Insert the new paypal states if it does not exists
+     * Create a new order state for each ps_checkout new order states
      *
      * @return bool
      */
     public function installPaypalStates()
     {
-        if (count(self::ORDER_STATES) === $this->paypalStatesExist()) {
-            return true;
-        }
-
-        $languagesList = \Language::getLanguages();
-        $orderStatesTranslations = new OrderStatesTranslations();
-
-        // We create a new order state for each ps_checkout new order states
         foreach (self::ORDER_STATES as $state) {
-            $orderStateId = $this->createPaypalStateId();
-
-            // For each languages in the shop, we insert a new order state name
-            foreach ($languagesList as $key => $lang) {
-                $statesTranslations = $orderStatesTranslations->getTranslations($lang['iso_code']);
-                $addTranslations = $this->createPaypalStateLangs($orderStateId, $statesTranslations[$state], $lang['id_lang']);
-            }
+            $orderStateId = $this->getPaypalStateId($state);
+            $this->createPaypalStateLangs($state, $orderStateId);
         }
 
         return true;
     }
 
     /**
-     * Create the Paypal States id
+     * Get the paypal state id if it already exist.
+     * Get the paypal state id if it doesn't exist by creating it
+     *
+     * @param string $state
+     *
+     * @return int
+     */
+    private function getPaypalStateId($state)
+    {
+        $stateId = \Configuration::get($state);
+
+        // Is state ID already existing in the Configuration table ?
+        if (false === $stateId) {
+            return $this->createPaypalStateId($state);
+        }
+
+        return (int) $stateId;
+    }
+
+    /**
+     * Create the Paypal State id
+     *
+     * @param string $state
      *
      * @return int orderStateId
      */
-    private function createPaypalStateId()
+    private function createPaypalStateId($state)
     {
         $data = array(
             'module_name' => self::MODULE_NAME,
@@ -84,7 +94,10 @@ class OrderStates
         );
 
         if (true === \Db::getInstance()->insert(self::ORDER_STATE_TABLE, $data)) {
-            return (int) \Db::getInstance()->Insert_ID();
+            $insertedId = (int) \Db::getInstance()->Insert_ID();
+            \Configuration::updateValue($state, $insertedId);
+
+            return $insertedId;
         }
 
         throw new \PrestaShopException('Not able to insert the new order state');
@@ -93,13 +106,52 @@ class OrderStates
     /**
      * Create the Paypal States Lang
      *
+     * @param string $state
      * @param int $orderStateId
-     * @param string $translations
+     */
+    private function createPaypalStateLangs($state, $orderStateId)
+    {
+        $languagesList = \Language::getLanguages();
+        $orderStatesTranslations = new OrderStatesTranslations();
+
+        // For each languages in the shop, we insert a new order state name
+        foreach ($languagesList as $key => $lang) {
+            if (true === $this->stateLangAlreadyExists($orderStateId, (int) $lang['id_lang'])) {
+                continue;
+            }
+
+            $statesTranslations = $orderStatesTranslations->getTranslations($lang['iso_code']);
+            $this->insertNewStateLang($orderStateId, $statesTranslations[$state], (int) $lang['id_lang']);
+        }
+    }
+
+    /**
+     * Check if Paypal State language already exists in the table ORDEr_STATE_LANG_TABLE
+     *
+     * @param int $orderStateId
      * @param int $langId
      *
      * @return bool
      */
-    private function createPaypalStateLangs(int $orderStateId, string $translations, int $langId)
+    private function stateLangAlreadyExists($orderStateId, $langId)
+    {
+        return (bool) \Db::getInstance()->getValue(
+            'SELECT id_order_state
+            FROM  `' . _DB_PREFIX_ . self::ORDER_STATE_LANG_TABLE . '`
+            WHERE
+                id_order_state = ' . $orderStateId . '
+                AND id_lang = ' . $langId
+        );
+    }
+
+    /**
+     * Create the Paypal States Lang
+     *
+     * @param int $orderStateId
+     * @param string $translations
+     * @param int $langId
+     */
+    private function insertNewStateLang($orderStateId, $translations, $langId)
     {
         $data = array(
             'id_order_state' => $orderStateId,
@@ -111,23 +163,5 @@ class OrderStates
         if (false === \Db::getInstance()->insert(self::ORDER_STATE_LANG_TABLE, $data)) {
             throw new \PrestaShopException('Not able to insert the new order state language');
         }
-
-        return true;
-    }
-
-    /**
-     * Check if the Paypal states already exist
-     *
-     * @return int
-     */
-    private function paypalStatesExist()
-    {
-        $statesAlreadyExist = \Db::getInstance()->getValue(
-            'SELECT COUNT(id_order_state)
-            FROM `' . _DB_PREFIX_ . 'order_state`
-            WHERE module_name = "' . self::MODULE_NAME . '"'
-        );
-
-        return (int) $statesAlreadyExist;
     }
 }

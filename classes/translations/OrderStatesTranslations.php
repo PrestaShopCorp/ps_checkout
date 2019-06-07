@@ -29,16 +29,16 @@ namespace PrestaShop\Module\PrestashopCheckout\Translations;
 class OrderStatesTranslations
 {
     const STANDARD_ISO_CODE = 'en';
-    const STATE_WAITING_PAYPAL_PAYMENT = array(
+    const PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT = array(
         'en' => 'Waiting for PayPal payment',
     );
-    const STATE_WAITING_CREDIT_CARD_PAYMENT = array(
+    const PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT = array(
         'en' => 'Waiting for Credit Card Payment',
     );
-    const STATE_WAITING_LOCAL_PAYMENT = array(
+    const PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT = array(
         'en' => 'Waiting for Local Payment Method Payment ',
     );
-    const STATE_AUTHORIZED = array(
+    const PS_CHECKOUT_STATE_AUTHORIZED = array(
         'en' => 'Authorized. To be captured by merchant. ',
     );
 
@@ -52,10 +52,10 @@ class OrderStatesTranslations
         $isoCode = $this->confirmIsoCode($isoCode);
 
         return array(
-            'STATE_WAITING_PAYPAL_PAYMENT' => self::STATE_WAITING_PAYPAL_PAYMENT[$isoCode],
-            'STATE_WAITING_CREDIT_CARD_PAYMENT' => self::STATE_WAITING_CREDIT_CARD_PAYMENT[$isoCode],
-            'STATE_WAITING_LOCAL_PAYMENT' => self::STATE_WAITING_LOCAL_PAYMENT[$isoCode],
-            'STATE_AUTHORIZED' => self::STATE_AUTHORIZED[$isoCode],
+            'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT[$isoCode],
+            'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT[$isoCode],
+            'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT[$isoCode],
+            'PS_CHECKOUT_STATE_AUTHORIZED' => self::PS_CHECKOUT_STATE_AUTHORIZED[$isoCode],
         );
     }
 
@@ -68,7 +68,10 @@ class OrderStatesTranslations
      */
     private function confirmIsoCode($isoCode)
     {
-        if (null !== self::STATE_WAITING_PAYPAL_PAYMENT[$isoCode]) {
+        if (!isset(self::PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT[$isoCode]) ||
+            !isset(self::PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT[$isoCode]) ||
+            !isset(self::PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT[$isoCode]) ||
+            !isset(self::PS_CHECKOUT_STATE_AUTHORIZED[$isoCode])) {
             return self::STANDARD_ISO_CODE;
         }
 
