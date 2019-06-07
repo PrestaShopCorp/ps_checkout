@@ -30,6 +30,7 @@ use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 use PrestaShop\Module\PrestashopCheckout\Refund;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrderRepository;
+use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use Ramsey\Uuid\Uuid;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -96,7 +97,9 @@ class ps_checkout extends PaymentModule
             Configuration::updateValue($name, $value);
         }
 
-        return parent::install() && $this->registerHook($this->hookList);
+        return parent::install() &&
+            $this->registerHook($this->hookList) &&
+            (new OrderStates())->installPaypalStates();
     }
 
     /**
