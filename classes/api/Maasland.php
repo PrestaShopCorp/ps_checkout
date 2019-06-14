@@ -88,6 +88,36 @@ class Maasland
      *
      * @return string|bool onboarding link
      */
+    public function getMerchantIntegration()
+    {
+        $route = '/payments/shop/get_merchant_integrations';
+
+        $payload = array();
+
+        try {
+            $response = $this->client->post($route, [
+                'json' => json_encode($payload),
+            ]);
+        } catch (ServerException $e) {
+            \PrestaShopLogger::addLog($e->getMessage());
+
+            return false;
+        } catch (ClientException $e) {
+            $response = json_decode($e->getResponse()->getBody()->getContents());
+
+            return $response;
+        }
+
+        $data = json_decode($response->getBody(), true);
+
+        return isset($data) ? $data : false;
+    }
+
+    /**
+     * Generate the paypal link to onboard merchant
+     *
+     * @return string|bool onboarding link
+     */
     public function getPaypalOnboardingLink($email, $locale)
     {
         $route = '/payments/onboarding/onboard';
@@ -101,6 +131,15 @@ class Maasland
             'url' => $callBackUrl,
             'person_details' => [
                 'email_address' => $email,
+                'nationality_country_code' => 'US',
+                'home_address' => [
+                    'line1' => 'Road of the street',
+                    'line2' => 'string',
+                    'state' => 'TX',
+                    'city' => 'Paris',
+                    'postal_code' => '75042',
+                    'country_code' => 'US',
+                ]
             ],
             'business_details' => [
                 'phone_contacts' => [],
@@ -120,7 +159,6 @@ class Maasland
             return false;
         } catch (ClientException $e) {
             $response = json_decode($e->getResponse()->getBody()->getContents());
-
             return $response;
         }
 
