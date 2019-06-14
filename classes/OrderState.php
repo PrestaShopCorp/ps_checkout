@@ -44,7 +44,6 @@ class OrderStates
         'PS_CHECKOUT_STATE_PARTIAL_REFUND' => self::YELLOW_HEXA_COLOR,
     );
 
-
     /**
      * Insert the new paypal states if it does not exists
      * Create a new order state for each ps_checkout new order states
