@@ -24,9 +24,28 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
+use PrestaShop\Module\PrestashopCheckout\StoreManager;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {
+    public function ajaxProcessFirebaseLogout()
+    {
+        (new StoreManager)->firebaseLogout();
+    }
+
+    public function ajaxProcessUnlinkPaypal()
+    {
+        (new StoreManager)->unlinkPaypal();
+    }
+
+    public function ajaxProcessUpdatePaymentMethodsOrder()
+    {
+        Configuration::updateValue('PS_CHECKOUT_PAYMENT_METHODS_ORDER', Tools::getValue('paymentMethods'));
+
+        dump(json_decode(Tools::getValue('paymentMethods'), true));
+        $this->ajaxDie(json_encode('test'));
+    }
+
     public function ajaxProcessSignIn()
     {
         $email = Tools::getValue('email');

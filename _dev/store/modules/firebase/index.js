@@ -1,10 +1,10 @@
 import actions from './actions';
 import mutations from './mutations';
 
-const firebase = JSON.parse(global.firebaseAccount);
+const store = JSON.parse(global.store);
 
 const state = {
-  account: firebase,
+  account: store.firebase.account,
 };
 
 export default {

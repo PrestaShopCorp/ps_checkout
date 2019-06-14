@@ -47,7 +47,7 @@
         <AccountList />
       </div>
     </div>
-    <div class="row">
+    <div v-if="$store.state.firebase.account.status === false || $store.state.paypal.account.status === false" class="row">
       <div class="container">
         <Reassurance />
       </div>

@@ -7,28 +7,38 @@
       <div class="card-block row">
         <div class="card-text">
           <div class="row">
-            <div class="col-12 col-sm-6 col-md-8 col-lg-9 pl-0">
+            <div class="col-12 col-sm-6 col-md-8 col-lg-8 pl-0">
               <h2>PrestaShop Essentials account</h2>
-              <!-- <p class="mb-0">
-                Bank transfer
-                <span class="text-muted">v2.0.4 - by PrestaShop</span>
-              </p> -->
               <p class="text-muted mb-0">
-                Activate all payment methods with your PrestaShop Essentials account.
+                <template v-if="$store.state.firebase.account.status === false">
+                  Activate all payment methods with your PrestaShop Essentials account.
+                </template>
+                <template v-else>
+                  You are connected with
+                </template>
               </p>
               <p class="text-muted mb-0">
-                Create a new account or login with your current account.
+                <template v-if="$store.state.firebase.account.status === false">
+                  Create a new account or login with your current account.
+                </template>
+                <template v-else>
+                  <b>{{ $store.state.firebase.account.email }}</b>
+                </template>
               </p>
             </div>
-            <div class="col-12 col-sm-4 col-md-3 col-lg-2 m-auto">
-              <div class="text-center">
+            <div class="col-12 col-sm-4 col-md-3 col-lg-3 m-auto">
+              <div class="text-center float-right" v-if="$store.state.firebase.account.status === false">
                 <a href="#" class="btn btn-primary-reverse btn-outline-primary light-button mb-1">
                   Create account
                 </a>
+                <br>
                 or
                 <a href="#">
                   <b>Log in</b>
                 </a>
+              </div>
+              <div class="text-right" v-else>
+                <a href="#" class="text-muted" @click="firebaseLogout($event)">Log out</a>
               </div>
             </div>
           </div>
@@ -36,20 +46,25 @@
             <div class="line-separator my-4" />
           </div>
           <div class="row">
-            <div class="col-12 col-sm-6 col-md-8 col-lg-9 pl-0">
+            <div class="col-12 col-sm-6 col-md-8 col-lg-8 pl-0">
               <h2>PayPal account</h2>
               <p class="text-muted">
-                To activate payment methods link your existing PayPal account
-                or create a new one.
+                <template v-if="$store.state.paypal.account.status === false">
+                  To activate payment methods link your existing PayPal account
+                  or create a new one.
+                </template>
+                <template v-else>
+                  Your PrestaShop Essentials account is linked with this PayPal account.
+                </template>
               </p>
             </div>
-            <div class="col-12 col-sm-4 col-md-3 col-lg-2 mt-auto mb-auto">
-              <div class="text-center">
+            <div class="col-12 col-sm-4 col-md-3 col-lg-3 m-auto">
+              <div class="text-center float-right" v-if="$store.state.paypal.account.status === false">
                 <a
                   v-show="paypalIsLoaded"
                   class="btn btn-primary-reverse btn-outline-primary light-button"
                   data-paypal-button="true"
-                  :href="$store.state.paypalOnboardingLink+'&displayMode=minibrowser'"
+                  :href="$store.state.paypal.account.paypalOnboardingLink+'&displayMode=minibrowser'"
                   target="PPFrame"
                 >
                   Link to PayPal account
@@ -60,6 +75,9 @@
                 >
                   <b>Loading ...</b>
                 </a>
+              </div>
+              <div class="text-right" v-else>
+                <a href="#" class="text-muted" @click="paypalUnlink($event)">Use another account</a>
               </div>
             </div>
           </div>
@@ -77,6 +95,16 @@
       };
     },
     components: {
+    },
+    methods: {
+      firebaseLogout(e) {
+        e.preventDefault();
+        this.$store.dispatch('logout');
+      },
+      paypalUnlink(e) {
+        e.preventDefault();
+        this.$store.dispatch('unlink');
+      },
     },
     destroyed() {
       const paypalScript = document.getElementById('paypal-js');

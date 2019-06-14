@@ -48,14 +48,12 @@
         </div>
       </div>
     </form>
-    <Reassurance url="https://google.com" />
   </div>
 </template>
 
 <script>
   import PSButton from '@/components/form/button';
   import PSAlert from '@/components/form/alert';
-  import Reassurance from '@/components/block/reassurance';
   import {EMAIL_NOT_FOUND, INVALID_EMAIL, INVALID_PASSWORD} from '@/lib/auth';
   import {ALERT_TYPE_DANGER} from '@/lib/alert';
 
@@ -64,7 +62,6 @@
     components: {
       PSButton,
       PSAlert,
-      Reassurance,
     },
     data() {
       return {
