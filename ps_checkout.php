@@ -31,6 +31,7 @@ use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 use PrestaShop\Module\PrestashopCheckout\Refund;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrderRepository;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
+use PrestaShop\Module\PrestashopCheckout\StorePresenter;
 use Ramsey\Uuid\Uuid;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -52,6 +53,7 @@ class ps_checkout extends PaymentModule
 
     public $configurationList = array(
         'PS_CHECKOUT_INTENT' => 'CAPTURE',
+        'PS_CHECKOUT_PAYMENT_METHODS_ORDER' => '',
         'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => '',
         'PS_CHECKOUT_FIREBASE_PUBLIC_API_KEY' => 'AIzaSyASHFE2F08ncoOH9NhoCF8_6z7qnoLVKSA',
         'PS_CHECKOUT_FIREBASE_EMAIL' => '',
@@ -120,23 +122,11 @@ class ps_checkout extends PaymentModule
     {
         $translations = (new Translations($this))->getTranslations();
 
-        $firebaseAccount = array(
-            'email' => Configuration::get('PS_CHECKOUT_FIREBASE_EMAIL'),
-            'idToken' => Configuration::get('PS_CHECKOUT_FIREBASE_ID_TOKEN'),
-            'localId' => Configuration::get('PS_CHECKOUT_FIREBASE_LOCAL_ID'),
-            'refreshToken' => Configuration::get('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN'),
-        );
-
-        $email = $this->context->employee->email;
-        $language = Language::getLanguage($this->context->employee->id_lang);
-        $locale = $language['locale'];
-
         Media::addJsDef(array(
             'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
             'contextLocale' => $this->context->language->locale,
-            'paypalOnboardingLink' => (new Maasland($this->context->link))->getPaypalOnboardingLink($email, $locale),
             'translations' => json_encode($translations),
-            'firebaseAccount' => json_encode($firebaseAccount),
+            'store' => json_encode((new StorePresenter)->present())
         ));
 
         $this->context->controller->addCss($this->_path . 'views/css/index.css');
@@ -175,10 +165,27 @@ class ps_checkout extends PaymentModule
             'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT')),
         ));
 
-        $payment_options = [
-            $this->getPaypalPaymentOption(),
-            $this->getHostedFieldsPaymentOption(),
-        ];
+        $paymentMethods = \Configuration::get('PS_CHECKOUT_PAYMENT_METHODS_ORDER');
+
+        $payment_options = array();
+
+        // if no paymentMethods position is set, by default put credit card (hostedFields) as first position
+        if (true === empty($paymentMethods)) {
+            $payment_options = array(
+                $this->getPaypalPaymentOption(),
+                $this->getHostedFieldsPaymentOption(),
+            );
+        } else {
+            $paymentMethods = json_decode($paymentMethods, true);
+
+            foreach ($paymentMethods as $position => $paymentMethod) {
+                if ($paymentMethod['name'] === 'card') {
+                    array_push($payment_options, $this->getHostedFieldsPaymentOption());
+                } else {
+                    array_push($payment_options, $this->getPaypalPaymentOption());
+                }
+            }
+        }
 
         return $payment_options;
     }
