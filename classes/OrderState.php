@@ -35,11 +35,13 @@ class OrderStates
     const ORDER_STATE_TABLE = 'order_state';
     const ORDER_STATE_LANG_TABLE = 'order_state_lang';
     const BLUE_HEXA_COLOR = '#4169E1';
+    const YELLOW_HEXA_COLOR = '#C7BA19';
     const ORDER_STATES = array(
-        'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT',
-        'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT',
-        'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT',
-        'PS_CHECKOUT_STATE_AUTHORIZED',
+        'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT' => self::BLUE_HEXA_COLOR,
+        'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT' => self::BLUE_HEXA_COLOR,
+        'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT' => self::BLUE_HEXA_COLOR,
+        'PS_CHECKOUT_STATE_AUTHORIZED' => self::BLUE_HEXA_COLOR,
+        'PS_CHECKOUT_STATE_PARTIAL_REFUND' => self::YELLOW_HEXA_COLOR,
     );
 
     /**
@@ -50,8 +52,8 @@ class OrderStates
      */
     public function installPaypalStates()
     {
-        foreach (self::ORDER_STATES as $state) {
-            $orderStateId = $this->getPaypalStateId($state);
+        foreach (self::ORDER_STATES as $state => $color) {
+            $orderStateId = $this->getPaypalStateId($state, $color);
             $this->createPaypalStateLangs($state, $orderStateId);
         }
 
@@ -66,13 +68,13 @@ class OrderStates
      *
      * @return int
      */
-    private function getPaypalStateId($state)
+    private function getPaypalStateId($state, $color)
     {
         $stateId = \Configuration::get($state);
 
         // Is state ID already existing in the Configuration table ?
         if (false === $stateId) {
-            return $this->createPaypalStateId($state);
+            return $this->createPaypalStateId($state, $color);
         }
 
         return (int) $stateId;
@@ -85,11 +87,11 @@ class OrderStates
      *
      * @return int orderStateId
      */
-    private function createPaypalStateId($state)
+    private function createPaypalStateId($state, $color)
     {
         $data = array(
             'module_name' => self::MODULE_NAME,
-            'color' => self::BLUE_HEXA_COLOR,
+            'color' => $color,
             'unremovable' => 1,
         );
 
