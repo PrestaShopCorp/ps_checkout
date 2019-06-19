@@ -63,6 +63,11 @@ class Maasland
 
         $this->link = $link;
 
+        $bnCode = 'PrestaShop_Cart_PrestaShopCheckout_PSDownload';
+        if (getenv('PLATEFORM') === 'PSREADY') { // if on ready send an empty bn-code
+            $bnCode = '';
+        }
+
         // Client can be provided for tests
         if (null === $client) {
             $client = new Client(array(
@@ -76,6 +81,7 @@ class Maasland
                         'Authorization' => 'Bearer ' . (new FirebaseClient())->getToken(),
                         'Shop-Id' => \Configuration::get('PS_CHECKOUT_SHOP_UUID_V4'),
                         'Hook-Url' => $this->link->getModuleLink('ps_checkout', 'DispatchWebHook', array(), true),
+                        'Bn-Code' => $bnCode,
                     ],
                 ),
             ));
