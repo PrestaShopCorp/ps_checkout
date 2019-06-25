@@ -26,9 +26,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\PaypalOrderRepository;
-use PrestaShop\Module\PrestashopCheckout\OrderStates;
-
 class WebHookOrder
 {
     /**
@@ -62,10 +59,8 @@ class WebHookOrder
     /**
      * __construct
      *
-     * @param  string $initiateBy
-     * @param  array $resource
-     *
-     * @return void
+     * @param string $initiateBy
+     * @param array $resource
      */
     public function __construct($initiateBy, $resource)
     {
@@ -80,8 +75,6 @@ class WebHookOrder
     /**
      * Check if we can refund the order
      * Refund the order and update the status
-     *
-     * @return void
      */
     public function updateOrder()
     {

@@ -26,9 +26,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\WebHookOrder;
-use PrestaShop\Module\PrestashopCheckout\OrderStates;
-
 class OrderDispatcher implements InterfaceDispatcher
 {
     const PS_CHECKOUT_PAYMENT_REVERSED = 'PAYMENT.CAPTURE.REVERSED';
