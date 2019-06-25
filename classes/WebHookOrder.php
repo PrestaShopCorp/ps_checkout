@@ -158,7 +158,7 @@ class WebHookOrder
             $orderDetailList[$key]['id_order_detail'] = $value['id_order_detail'];
             $orderDetailList[$key]['quantity'] = $quantityToRefund;
             $orderDetailList[$key]['amount'] = $refundAmountDetail;
-            $orderDetailList[$key]['unit_price'] = $orderDetailList[$key]['amount'] / $quantity;
+            $orderDetailList[$key]['unit_price'] = $orderDetailList[$key]['amount'] / $quantityToRefund;
         }
 
         return $this->refundOrder($order, $orderDetailList);
