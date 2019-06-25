@@ -26,9 +26,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\PaypalOrderRepository;
-use PrestaShop\Module\PrestashopCheckout\OrderStates;
-
 class WebHookOrder
 {
     /**
@@ -61,7 +58,7 @@ class WebHookOrder
 
     public function __construct($initiateBy, $resource)
     {
-        $paypalOrderRepository = new PaypalOrderRepository;
+        $paypalOrderRepository = new PaypalOrderRepository();
 
         $this->initiateBy = (string) $initiateBy;
         $this->orderId = (int) $paypalOrderRepository->getPsOrderIdByPaypalOrderId($resource['orderId']);
@@ -72,8 +69,6 @@ class WebHookOrder
     /**
      * Check if we can refund the order
      * Refund the order and update the status
-     *
-     * @return void
      */
     public function updateOrder()
     {
@@ -99,7 +94,7 @@ class WebHookOrder
     /**
      * Get Order slip already refunded value
      *
-     * @param  object $order
+     * @param object $order
      *
      * @return float
      */
@@ -121,8 +116,8 @@ class WebHookOrder
     /**
      * Prepare the datas to fully refund the order
      *
-     * @param  object $order
-     * @param  array $orderProductList
+     * @param object $order
+     * @param array $orderProductList
      *
      * @return bool
      */
@@ -141,20 +136,20 @@ class WebHookOrder
     /**
      * Prepare the orderDetailList to do a partial refund on the order
      *
-     * @param  object $order
-     * @param  array $orderProductList
+     * @param object $order
+     * @param array $orderProductList
      *
      * @return bool
      */
     private function doPartialRefund(Order $order, $orderProductList)
     {
         $orderDetailList = array();
-        $refundPercent =  $this->amount / $order->total_products_wt;
+        $refundPercent = $this->amount / $order->total_products_wt;
 
         foreach ($orderProductList as $key => $value) {
             $refundAmountDetail = $value['price'] * $refundPercent;
             $quantityFloor = floor($refundAmountDetail / $value['price']);
-            $quantityToRefund = ($quantityFloor == 0)? 1 : $quantityFloor;
+            $quantityToRefund = ($quantityFloor == 0) ? 1 : $quantityFloor;
 
             $orderDetailList[$key]['id_order_detail'] = $value['id_order_detail'];
             $orderDetailList[$key]['quantity'] = $quantityToRefund;
@@ -168,8 +163,8 @@ class WebHookOrder
     /**
      * Refund the order
      *
-     * @param  object $order
-     * @param  array $orderProductList
+     * @param object $order
+     * @param array $orderProductList
      *
      * @return bool
      */
