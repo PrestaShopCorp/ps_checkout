@@ -90,12 +90,8 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
     public function initContent()
     {
-        // Check IP address whitelist
-        if (false === $this->checkIPWhitelist()) {
-            return false;
-        }
-
-        $payload = json_decode(\Tools::getValue('payload'));
+        $headerValues = getallheaders();
+        $payload = \Tools::jsonDecode(\Tools::getValue('resource'));
         $errors = (new WebHookValidation())->validate($payload);
 
         // If there is errors, return them
@@ -106,7 +102,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
             return false;
         }
 
-        $this->setAtributesValues($payload);
+        $this->setAtributesValues($headerValues, $payload);
 
         // Check if have execution permissions
         if (false === $this->checkExecutionPermissions()) {
@@ -121,67 +117,18 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      *
      * @param array $payload
      */
-    private function setAtributesValues($payload)
+    private function setAtributesValues($headerValues, $payload)
     {
-        $this->shopId = (int) $payload['Shop-Id'];
-        $this->merchantId = (int) $payload['Merchant-Id'];
-        $this->firebaseId = (int) $payload['Psx-Id'];
-        $this->summary = (string) $payload['summary'];
-        $this->category = (string) $payload['category'];
-        $this->eventType = (string) $payload['eventType'];
-        $this->resource = (array) $payload['resource'];
-    }
+        // from payload header
+        $this->shopId = (int) $headerValues['Shop-Id'];
+        $this->merchantId = (int) $headerValues['Merchant-Id'];
+        $this->firebaseId = (int) $headerValues['Psx-Id'];
+        $this->eventType = (string) $headerValues['eventType'];
+        $this->category = (string) $headerValues['category'];
+        $this->summary = (string) $headerValues['summary'];
 
-    /**
-     * Check if the calling IP is in the whitelist
-     *
-     * @return bool
-     */
-    private function checkIPWhitelist()
-    {
-        $sourceIp = $this->getSourceIP();
-
-        $devIP = dns_get_record(self::PSESSENTIALS_DEV_URL, 'DNS_TXT');
-        $prodIP = dns_get_record(self::PSESSENTIALS_PROD_URL, 'DNS_TXT');
-
-        return $this->findWhiteListInDNS($prodIP, $sourceIp) || $this->findWhiteListInDNS($devIP, $sourceIp);
-    }
-
-    /**
-     * Get the source IP from the HTTP_CLIENT_IP or HTTP_X_FORWARDED_FOR or REMOTE_ADDR
-     *
-     * @return string
-     */
-    private function getSourceIP()
-    {
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            return $_SERVER['HTTP_CLIENT_IP'];
-        }
-
-        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            return $_SERVER['HTTP_X_FORWARDED_FOR'];
-        }
-
-        return $_SERVER['REMOTE_ADDR'];
-    }
-
-    /**
-     * Check if the called IP can be found in the DNS record
-     *
-     * @param array $recordDNS
-     * @param string $searchIP
-     *
-     * @return bool
-     */
-    private function findWhiteListInDNS($recordDNS, $searchIP)
-    {
-        foreach ($recordDNS as $value) {
-            if (stristr($value['txt'], $searchIP)) {
-                return true;
-            }
-        }
-
-        return false;
+        // from payload data
+        $this->resource = (array) $payload;
     }
 
     /**
