@@ -26,6 +26,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use PrestaShop\Module\PrestashopCheckout\WebHookOrder;
+use PrestaShop\Module\PrestashopCheckout\OrderStates;
+
 class OrderDispatcher implements InterfaceDispatcher
 {
     const PS_CHECKOUT_PAYMENT_REVERSED = 'PAYMENT.CAPTURE.REVERSED';
@@ -64,14 +67,14 @@ class OrderDispatcher implements InterfaceDispatcher
      */
     private function dispatchPaymentAction($eventType, $resource)
     {
-        $order = new WebHookOrder();
         $initiateBy = 'Merchant';
 
         if ($eventType === self::PS_CHECKOUT_PAYMENT_REVERSED) {
             $initiateBy = 'Paypal';
         }
 
-        $order->updateOrder($initiateBy, $resource);
+        $order = new WebHookOrder($initiateBy, $resource);
+        $order->updateOrder();
     }
 
     /**

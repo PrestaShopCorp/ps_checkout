@@ -26,6 +26,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use PrestaShop\Module\PrestashopCheckout\PaypalOrderRepository;
+use PrestaShop\Module\PrestashopCheckout\OrderStates;
+
 class WebHookOrder
 {
     /**
@@ -52,10 +55,18 @@ class WebHookOrder
     /**
      * Currency ID from ISO Code
      *
-     * @var id
+     * @var int
      */
     private $currencyId;
 
+    /**
+     * __construct
+     *
+     * @param  string $initiateBy
+     * @param  array $resource
+     *
+     * @return void
+     */
     public function __construct($initiateBy, $resource)
     {
         $paypalOrderRepository = new PaypalOrderRepository();
@@ -69,12 +80,12 @@ class WebHookOrder
     /**
      * Check if we can refund the order
      * Refund the order and update the status
+     *
+     * @return void
      */
     public function updateOrder()
     {
-        // checker si déjà refunded
-
-        $order = new Order($this->orderId);
+        $order = new \Order($this->orderId);
         $amountAlreadyRefunded = $this->getOrderSlipAmount($order);
         $expectiveTotalAmountToRefund = $amountAlreadyRefunded + $this->amount;
 
@@ -98,7 +109,7 @@ class WebHookOrder
      *
      * @return float
      */
-    private function getOrderSlipAmount(Order $order)
+    private function getOrderSlipAmount(\Order $order)
     {
         $orderSlips = \OrderSlip::getOrdersSlip($order->id_customer, $this->orderId);
         $value = 0;
@@ -121,7 +132,7 @@ class WebHookOrder
      *
      * @return bool
      */
-    private function doTotalRefund(Order $order, $orderProductList)
+    private function doTotalRefund(\Order $order, $orderProductList)
     {
         $shippingCost = $order->total_shipping;
 
@@ -141,7 +152,7 @@ class WebHookOrder
      *
      * @return bool
      */
-    private function doPartialRefund(Order $order, $orderProductList)
+    private function doPartialRefund(\Order $order, $orderProductList)
     {
         $orderDetailList = array();
         $refundPercent = $this->amount / $order->total_products_wt;
@@ -168,7 +179,7 @@ class WebHookOrder
      *
      * @return bool
      */
-    private function refundOrder(Order $order, $orderProductList)
+    private function refundOrder(\Order $order, $orderProductList)
     {
         $refundVoucher = 0;
         $refundShipping = 0;
