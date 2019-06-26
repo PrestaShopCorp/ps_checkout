@@ -46,7 +46,7 @@
         <AccountList />
       </div>
     </div>
-    <div v-if="$store.state.firebase.account.status === false || $store.state.paypal.account.status === false" class="row">
+    <div v-if="firebaseStatusAccount === false || paypalStatusAccount === false" class="row">
       <div class="container">
         <Reassurance />
       </div>
@@ -67,11 +67,13 @@
       Reassurance,
       PSAlert,
     },
-    data() {
-      return {
-      };
-    },
     computed: {
+      firebaseStatusAccount() {
+        return this.$store.state.firebase.account.status;
+      },
+      paypalStatusAccount() {
+        return this.$store.state.paypal.account.status;
+      },
       ALERT_TYPE_DANGER: () => ALERT_TYPE_DANGER,
       ALERT_TYPE_WARNING: () => ALERT_TYPE_WARNING,
     },

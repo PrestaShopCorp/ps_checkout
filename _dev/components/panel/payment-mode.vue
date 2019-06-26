@@ -65,11 +65,9 @@
         this.$store.dispatch('updateCaptureMode', captureMode);
       },
       updatePaymentMode() {
-        let mode = '';
+        let mode = 'LIVE';
         if (this.paymentMode === 'LIVE') {
           mode = 'SANDBOX';
-        } else {
-          mode = 'LIVE';
         }
 
         this.$store.dispatch('updatePaymentMode', mode);

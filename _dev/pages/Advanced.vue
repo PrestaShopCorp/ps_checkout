@@ -23,9 +23,5 @@
       PaymentMode,
       FraudTool,
     },
-    data() {
-      return {
-      };
-    },
   };
 </script>
