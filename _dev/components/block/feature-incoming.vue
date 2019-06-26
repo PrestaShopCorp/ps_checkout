@@ -28,7 +28,7 @@
       <img src="@/assets/images/brush.png">
     </div>
     <div class="text-muted mt-4">
-      Cash on delivery, recurring payments, point of sales terminal, … and more to come!
+      {{ $t('block.feature-incoming.text') }}
     </div>
   </div>
 </template>

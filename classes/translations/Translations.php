@@ -133,6 +133,9 @@ class Translations
                     concerning fraud and chargeback costs.'),
                     'discoverFraudTool' => $this->module->l('Discover fraud tool'),
                 ),
+                'feature-incoming' => array(
+                    'text' => $this->module->l('Cash on delivery, recurring payments, point of sales terminal, … and more to come!'),
+                ),
             ),
         );
 
