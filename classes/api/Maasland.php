@@ -39,8 +39,8 @@ class Maasland
     public $catchExceptions = true;
     public $timeout = 10;
 
-    private $maaslandLive = 'http://host.docker.internal:1234';
-    private $maaslandSandbox = 'http://host.docker.internal:1234';
+    private $maaslandLive = 'https://api-live-checkout.psessentials.net/';
+    private $maaslandSandbox = 'https://api-sandbox-checkout.psessentials.net/';
 
     /**
      * @var Client
@@ -54,7 +54,7 @@ class Maasland
 
     public function __construct(\Link $link, Client $client = null)
     {
-        // temporary
+        // TODO: make a method to set the correct api url to use depending on the environment
         if (true === file_exists(__DIR__ . '/../../maaslandConf.json')) {
             $conf = json_decode(file_get_contents(__DIR__ . '/../../maaslandConf.json'));
             $this->maaslandLive = $conf->integration->live;
@@ -137,19 +137,6 @@ class Maasland
             'url' => $callBackUrl,
             'person_details' => [
                 'email_address' => $email,
-                'nationality_country_code' => 'US',
-                'home_address' => [
-                    'line1' => 'Road of the street',
-                    'line2' => 'string',
-                    'state' => 'TX',
-                    'city' => 'Paris',
-                    'postal_code' => '75042',
-                    'country_code' => 'US',
-                ]
-            ],
-            'business_details' => [
-                'phone_contacts' => [],
-                'business_type' => 'PARTNERSHIP',
             ],
             'preferred_language_code' => str_replace('-', '_', $locale),
             'primary_currency_code' => $isoCode,
