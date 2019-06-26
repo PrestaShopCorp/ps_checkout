@@ -3,14 +3,14 @@
     <div class="card">
       <div class="card-block row">
         <div class="card-text">
-          <h1>How much fees will be taken on my sales from the processing service provider?</h1>
+          <h1>{{ $t('panel.fees.title') }}</h1>
 
           <div class="row pt-4">
             <div class="col-12 col-sm-4 col-md-4 col-lg-4">
               <form class="form form-horizontal">
-                <p>Calculate how much fees you will be paying when invoicing your clients.</p>
+                <p>{{ $t('panel.fees.calculateMuch') }}</p>
                 <div class="form-group">
-                  <label class="form-control-label">Your country of residence</label>
+                  <label class="form-control-label">{{ $t('panel.fees.countryResidence') }}</label>
                   <select class="custom-select" v-model="toto">
                     <option v-for="(country, index) in fees" :key="index" :value="index">
                       {{ country.name }}
@@ -18,7 +18,7 @@
                   </select>
                 </div>
                 <div v-if="toto !== 'fr'" class="form-group">
-                  <label class="form-control-label">Your estimated monthly sales</label>
+                  <label class="form-control-label">{{ $t('panel.fees.estimatedSales') }}</label>
                   <select class="custom-select">
                     <option v-for="(test, index) in fees[toto].paypalWallet" :key="index" :value="index">
                       <template>{{ index }}</template>
@@ -31,25 +31,25 @@
               <table class="table">
                 <thead>
                   <tr>
-                    <th>Payment method</th>
-                    <th>Fees</th>
+                    <th>{{ $t('panel.fees.paymentMethod') }}</th>
+                    <th>{{ $t('panel.fees.fees') }}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <th>PayPal</th>
+                    <th>{{ $t('panel.fees.paypal') }}</th>
                     <td>test 1</td>
                   </tr>
                   <tr>
-                    <th>Visa, Mastercard, Discover</th>
+                    <th>{{ $t('panel.fees.cardList') }}</th>
                     <td>test 2</td>
                   </tr>
                   <tr>
-                    <th>American Express</th>
+                    <th>{{ $t('panel.fees.amex') }}</th>
                     <td>test 3</td>
                   </tr>
                   <tr>
-                    <th>Local Payment Methods</th>
+                    <th>{{ $t('panel.fees.lpm') }}</th>
                     <td>test 4</td>
                   </tr>
                 </tbody>
@@ -68,11 +68,6 @@
       return {
         toto: 'es',
       };
-    },
-    components: {
-    },
-    methods: {
-
     },
     computed: {
       fees() {

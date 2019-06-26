@@ -2,7 +2,7 @@
   <form class="form form-horizontal">
     <div class="card">
       <h3 class="card-header">
-        <i class="material-icons">help</i> Help for {{ moduleName }}
+        <i class="material-icons">help</i> {{ $t('panel.help.title') }} {{ moduleName }}
       </h3>
       <div class="card-block row">
         <div class="card-text">
@@ -48,9 +48,6 @@
         type: String,
         required: true,
       },
-    },
-    methods: {
-
     },
     created() {
       getFaq(this.moduleKey, this.psVersion, this.isoCode).then((response) => {

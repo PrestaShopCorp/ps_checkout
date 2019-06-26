@@ -93,8 +93,6 @@
         paypalIsLoaded: false,
       };
     },
-    components: {
-    },
     methods: {
       firebaseLogout() {
         this.$store.dispatch('logout');
