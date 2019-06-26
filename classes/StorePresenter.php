@@ -161,13 +161,9 @@ class StorePresenter
         $language = \Language::getLanguage($context->employee->id_lang);
         $locale = $language['locale'];
 
-        $paypalOnboardingLing = (new Maasland($context->link))->getPaypalOnboardingLink($email, $locale);
+        $paypalOnboardingLink = (new Maasland($context->link))->getPaypalOnboardingLink($email, $locale);
 
-        if (false === $paypalOnboardingLing) {
-            return false;
-        }
-
-        return $paypalOnboardingLing;
+        return $paypalOnboardingLink;
     }
 
     /**
