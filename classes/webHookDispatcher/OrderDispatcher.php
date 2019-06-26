@@ -64,6 +64,14 @@ class OrderDispatcher implements InterfaceDispatcher
      */
     private function dispatchPaymentAction($eventType, $resource)
     {
+        $orderError = (new WebHookValidation())->validateRefundResourceValues($resource);
+
+        if (true !== $orderError) {
+            /*
+            * @TODO : Throw array exception
+            */
+        }
+
         $initiateBy = 'Merchant';
 
         if ($eventType === self::PS_CHECKOUT_PAYMENT_REVERSED) {

@@ -74,7 +74,9 @@ class WebHookOrder
 
     /**
      * Check if we can refund the order
-     * Refund the order and update the status
+     * Refund the order and update thresourcee status
+     *
+     * @return bool
      */
     public function updateOrder()
     {

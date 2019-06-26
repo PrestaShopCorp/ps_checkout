@@ -91,8 +91,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     public function initContent()
     {
         $headerValues = getallheaders();
-        $payload = \Tools::jsonDecode(\Tools::getValue('resource'));
-        $errors = (new WebHookValidation())->validate($payload);
+        $errors = (new WebHookValidation())->validateHeaderDatas($headerValues);
 
         // If there is errors, return them
         if (is_array($errors)) {
@@ -101,6 +100,8 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
             */
             return false;
         }
+
+        $payload = \Tools::jsonDecode(\Tools::getValue('resource'));
 
         $this->setAtributesValues($headerValues, $payload);
 
@@ -115,9 +116,10 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     /**
      * Set Attributes values from the payload
      *
+     * @param array $headerValues
      * @param array $payload
      */
-    private function setAtributesValues($headerValues, $payload)
+    private function setAtributesValues(array $headerValues, $payload)
     {
         // from payload header
         $this->shopId = (int) $headerValues['Shop-Id'];
@@ -170,15 +172,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         }
 
         if ('ShopNotificationOrderChange' === $this->category) {
-            $orderError = (new WebHookValidation())->validateOrderId($payload['orderId']);
-
-            if (true !== $orderError) {
-                /*
-                * @TODO : Throw array exception
-                */
-                return false;
-            }
-
             $orderManager = new OrderDispatcher();
             $orderManager->dispatchEventType(
                 $this->eventType,
