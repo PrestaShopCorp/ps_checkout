@@ -58,6 +58,7 @@ class Translations
             ),
             'general' => array(
                 'save' => $this->module->l('Save'),
+                'testModeOn' => $this->module->l('Test mode is turned ON'),
             ),
             'pages' => array(
                 'accounts' => array(

@@ -11,7 +11,7 @@
     <div v-if="paymentMode === 'SANDBOX'" class="row">
       <div class="container">
         <PSAlert :alert-type="ALERT_TYPE_WARNING">
-          <p>Test mode is turned ON</p>
+          <p>{{ $t('general.testModeOn') }}</p>
         </PSAlert>
       </div>
     </div>
