@@ -38,7 +38,7 @@
                 </a>
               </div>
               <div class="text-right" v-else>
-                <a href="#" class="text-muted" @click="firebaseLogout($event)">Log out</a>
+                <a href="#" class="text-muted" @click.prevent="firebaseLogout()">Log out</a>
               </div>
             </div>
           </div>
@@ -77,7 +77,7 @@
                 </a>
               </div>
               <div class="text-right" v-else>
-                <a href="#" class="text-muted" @click="paypalUnlink($event)">Use another account</a>
+                <a href="#" class="text-muted" @click.prevent="paypalUnlink()">Use another account</a>
               </div>
             </div>
           </div>
@@ -97,12 +97,10 @@
     components: {
     },
     methods: {
-      firebaseLogout(e) {
-        e.preventDefault();
+      firebaseLogout() {
         this.$store.dispatch('logout');
       },
-      paypalUnlink(e) {
-        e.preventDefault();
+      paypalUnlink() {
         this.$store.dispatch('unlink');
       },
     },
