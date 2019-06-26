@@ -2,24 +2,24 @@
   <form class="form form-horizontal">
     <div class="card">
       <h3 class="card-header">
-        <i class="material-icons">settings</i> Account settings
+        <i class="material-icons">settings</i> {{ $t('panel.account-list.accountSettings') }}
       </h3>
       <div class="card-block row">
         <div class="card-text">
           <div class="row">
             <div class="col-12 col-sm-6 col-md-8 col-lg-8 pl-0">
-              <h2>PrestaShop Essentials account</h2>
+              <h2>{{ $t('panel.account-list.essentialsAccount') }}</h2>
               <p class="text-muted mb-0">
                 <template v-if="$store.state.firebase.account.status === false">
-                  Activate all payment methods with your PrestaShop Essentials account.
+                  {{ $t('panel.account-list.activateAllPayment') }}
                 </template>
                 <template v-else>
-                  You are connected with
+                  {{ $t('panel.account-list.connectedWitdh') }}
                 </template>
               </p>
               <p class="text-muted mb-0">
                 <template v-if="$store.state.firebase.account.status === false">
-                  Create a new account or login with your current account.
+                  {{ $t('panel.account-list.createNewAccount') }}
                 </template>
                 <template v-else>
                   <b>{{ $store.state.firebase.account.email }}</b>
@@ -29,16 +29,16 @@
             <div class="col-12 col-sm-4 col-md-3 col-lg-3 m-auto">
               <div class="text-center float-right" v-if="$store.state.firebase.account.status === false">
                 <a href="#" class="btn btn-primary-reverse btn-outline-primary light-button mb-1">
-                  Create account
+                  {{ $t('panel.account-list.createAccount') }}
                 </a>
                 <br>
-                or
+                {{ $t('panel.account-list.or') }}
                 <a href="#">
-                  <b>Log in</b>
+                  <b>{{ $t('panel.account-list.logIn') }}</b>
                 </a>
               </div>
               <div class="text-right" v-else>
-                <a href="#" class="text-muted" @click.prevent="firebaseLogout()">Log out</a>
+                <a href="#" class="text-muted" @click.prevent="firebaseLogout()">{{ $t('panel.account-list.logOut') }}</a>
               </div>
             </div>
           </div>
@@ -47,14 +47,13 @@
           </div>
           <div class="row">
             <div class="col-12 col-sm-6 col-md-8 col-lg-8 pl-0">
-              <h2>PayPal account</h2>
+              <h2>{{ $t('panel.account-list.paypalAccount') }}</h2>
               <p class="text-muted">
                 <template v-if="$store.state.paypal.account.status === false">
-                  To activate payment methods link your existing PayPal account
-                  or create a new one.
+                  {{ $t('panel.account-list.activatePayment') }}
                 </template>
                 <template v-else>
-                  Your PrestaShop Essentials account is linked with this PayPal account.
+                  {{ $t('panel.account-list.accountIsLinked') }}
                 </template>
               </p>
             </div>
@@ -67,17 +66,17 @@
                   :href="$store.state.paypal.account.paypalOnboardingLink+'&displayMode=minibrowser'"
                   target="PPFrame"
                 >
-                  Link to PayPal account
+                  {{ $t('panel.account-list.linkToPaypal') }}
                 </a>
                 <a
                   v-show="!paypalIsLoaded"
                   href="#"
                 >
-                  <b>Loading ...</b>
+                  <b>{{ $t('panel.account-list.linkToPaypal') }} ...</b>
                 </a>
               </div>
               <div class="text-right" v-else>
-                <a href="#" class="text-muted" @click.prevent="paypalUnlink()">Use another account</a>
+                <a href="#" class="text-muted" @click.prevent="paypalUnlink()">{{ $t('panel.account-list.useAnotherAccount') }}</a>
               </div>
             </div>
           </div>

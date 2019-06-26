@@ -82,7 +82,21 @@ class Translations
             ),
             'panel' => array(
                 'account-list' => array(
-                    'test' => 'test',
+                    'accountSettings' => 'Account settings',
+                    'essentialsAccount' => 'PrestaShop Essentials account',
+                    'activateAllPayment' => 'Activate all payment methods with your PrestaShop Essentials account.',
+                    'connectedWitdh' => 'You are connected with',
+                    'createNewAccount' => 'Create a new account or login with your current account.',
+                    'createAccount' => 'Create account',
+                    'or' => 'or',
+                    'logIn' => 'Log in',
+                    'logOut' => 'Log out',
+                    'paypalAccount' => 'PayPal account',
+                    'activatePayment' => 'To activate payment methods link your existing PayPal account or create a new one.',
+                    'accountIsLinked' => 'Your PrestaShop Essentials account is linked with this PayPal account.',
+                    'linkToPaypal' => 'Link to PayPal account',
+                    'loading' => 'Loading',
+                    'useAnotherAccount' => 'Use another account',
                 ),
             ),
         );
