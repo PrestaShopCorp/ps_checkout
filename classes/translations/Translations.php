@@ -112,6 +112,20 @@ class Translations
                     '' => $this->module->l('test'),
                 ),
             ),
+            'block' => array(
+                'reassurance' => array(
+                    'title' => $this->module->l('PrestaShop Payments, all-in-one module for your payment options'),
+                    'firstTip1' => $this->module->l('All payment methods'),
+                    'firstTip2' => $this->module->l('accept cards, PayPal and much more.'),
+                    'secondTip1' => $this->module->l('Benefit from all'),
+                    'secondTip2' => $this->module->l('PayPal expertise and advantages'),
+                    'secondTip3' => $this->module->l('(fraud prevention, secure technology, dispute resolution, …)'),
+                    'thirdTip1' => $this->module->l('Offer the most relevant'),
+                    'thirdTip2' => $this->module->l('Local Payment Methods'),
+                    'thirdTip3' => $this->module->l('to customers across the globe.'),
+                    'learnMore' => $this->module->l('Learn more'),
+                ),
+            ),
         );
 
         return $translations;
