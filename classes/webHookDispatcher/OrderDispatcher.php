@@ -26,8 +26,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-// use PrestaShop\Module\PrestashopCheckout\Order;
-
 class OrderDispatcher implements InterfaceDispatcher
 {
     const PS_CHECKOUT_PAYMENT_REVERSED = 'PAYMENT.CAPTURE.REVERSED';
@@ -52,7 +50,8 @@ class OrderDispatcher implements InterfaceDispatcher
 
         if ($eventType === self::PS_CHECKOUT_PAYMENT_PENDING
         || $eventType === self::PS_CHECKOUT_PAYMENT_COMPLETED
-        || $eventType === self::PS_CHECKOUT_PAYMENT_DENIED) {
+        || $eventType === self::PS_CHECKOUT_PAYMENT_DENIED
+        || $eventType === self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED) {
             $this->dispatchPaymentStatus($eventType, $resource);
         }
     }
@@ -65,15 +64,22 @@ class OrderDispatcher implements InterfaceDispatcher
      */
     private function dispatchPaymentAction($eventType, $resource)
     {
-        // $order = new Order;
+        $orderError = (new WebHookValidation())->validateRefundResourceValues($resource);
 
-        if ($eventType === self::PS_CHECKOUT_PAYMENT_REFUNED) {
-            // $order->dispatchPaymentAction($eventType, $resource);
+        if (true !== $orderError) {
+            /*
+            * @TODO : Throw array exception
+            */
         }
+
+        $initiateBy = 'Merchant';
 
         if ($eventType === self::PS_CHECKOUT_PAYMENT_REVERSED) {
-            // $order->dispatchPaymentAction($eventType, $resource);
+            $initiateBy = 'Paypal';
         }
+
+        $order = new WebHookOrder($initiateBy, $resource);
+        $order->updateOrder();
     }
 
     /**
@@ -84,18 +90,22 @@ class OrderDispatcher implements InterfaceDispatcher
      */
     private function dispatchPaymentStatus($eventType, $resource)
     {
-        // $order = new Order;
+        $states = new OrderStates();
 
         if ($eventType === self::PS_CHECKOUT_PAYMENT_PENDING) {
-            // $order->dispatchPaymentStatus($eventType, $resource);
+            // $states->dispatchPaymentStatus($eventType, $resource);
         }
 
         if ($eventType === self::PS_CHECKOUT_PAYMENT_COMPLETED) {
-            // $order->dispatchPaymentStatus($eventType, $resource);
+            // $states->dispatchPaymentStatus($eventType, $resource);
         }
 
         if ($eventType === self::PS_CHECKOUT_PAYMENT_DENIED) {
-            // $order->dispatchPaymentStatus($eventType, $resource);
+            // $states->dispatchPaymentStatus($eventType, $resource);
+        }
+
+        if ($eventType === self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED) {
+            // $states->dispatchPaymentStatus($eventType, $resource);
         }
     }
 }
