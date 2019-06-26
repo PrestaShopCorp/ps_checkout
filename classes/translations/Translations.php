@@ -136,6 +136,10 @@ class Translations
                 'feature-incoming' => array(
                     'text' => $this->module->l('Cash on delivery, recurring payments, point of sales terminal, … and more to come!'),
                 ),
+                'dispute' => array(
+                    'pendingDispute' => $this->module->l('pending disputes'),
+                    'goToDispute' => $this->module->l('Go to Disputes Management Plateform'),
+                ),
             ),
         );
 
