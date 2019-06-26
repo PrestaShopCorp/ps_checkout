@@ -111,7 +111,7 @@ class GenerateJsonPaypalOrder
             'custom_id' => (string) $params['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
             'description' => 'Checking out with your cart from {SHOP}',
-            'soft_descriptor' => 'MR ' . $params['addresses']['invoice']->lastname . ' ' . $params['addresses']['invoice']->firstname,
+            'soft_descriptor' => \Configuration::get('PS_SHOP_NAME'),
             'amount' => [
                 'currency_code' => $params['currency']['iso_code'],
                 'value' => $params['cart']['totals']['total']['amount'],
