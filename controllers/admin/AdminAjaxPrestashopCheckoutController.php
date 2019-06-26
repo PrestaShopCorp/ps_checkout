@@ -41,9 +41,16 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessUpdatePaymentMethodsOrder()
     {
         Configuration::updateValue('PS_CHECKOUT_PAYMENT_METHODS_ORDER', Tools::getValue('paymentMethods'));
+    }
 
-        dump(json_decode(Tools::getValue('paymentMethods'), true));
-        $this->ajaxDie(json_encode('test'));
+    public function ajaxProcessUpdateCaptureMode()
+    {
+        Configuration::updateValue('PS_CHECKOUT_INTENT', Tools::getValue('captureMode'));
+    }
+
+    public function ajaxProcessUpdatePaymentMode()
+    {
+        Configuration::updateValue('PS_CHECKOUT_MODE', Tools::getValue('paymentMode'));
     }
 
     public function ajaxProcessSignIn()
