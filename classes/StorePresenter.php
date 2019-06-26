@@ -27,7 +27,6 @@
 namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
-use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
 
 /**
  * Present the store to the vuejs app (vuex)
@@ -153,8 +152,6 @@ class StorePresenter
 
     /**
      * Generate the paypal onboarding link
-     *
-     * @return void
      */
     private function getPaypalOnboardingLink()
     {
@@ -180,7 +177,7 @@ class StorePresenter
      */
     private function getFirebaseAccount()
     {
-        $idToken = (new FirebaseClient)->getToken();
+        $idToken = (new FirebaseClient())->getToken();
 
         $firebaseAccount = array(
             'account' => array(

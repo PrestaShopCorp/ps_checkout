@@ -30,12 +30,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {
     public function ajaxProcessFirebaseLogout()
     {
-        (new StoreManager)->firebaseLogout();
+        (new StoreManager())->firebaseLogout();
     }
 
     public function ajaxProcessUnlinkPaypal()
     {
-        (new StoreManager)->unlinkPaypal();
+        (new StoreManager())->unlinkPaypal();
     }
 
     public function ajaxProcessUpdatePaymentMethodsOrder()

@@ -50,7 +50,7 @@ class ps_checkout extends PaymentModule
         'actionOrderSlipAdd',
         'orderConfirmation',
         'displayAdminAfterHeader',
-        'ActionAdminControllerSetMedia'
+        'ActionAdminControllerSetMedia',
     ];
 
     public $configurationList = array(
@@ -131,7 +131,7 @@ class ps_checkout extends PaymentModule
             'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
             'contextLocale' => $this->context->language->locale,
             'translations' => json_encode($translations),
-            'store' => json_encode((new StorePresenter($this))->present())
+            'store' => json_encode((new StorePresenter($this))->present()),
         ));
 
         $this->context->controller->addCss($this->_path . 'views/css/index.css');
@@ -365,12 +365,12 @@ class ps_checkout extends PaymentModule
             true,
             array(),
             array(
-                'configure' => 'ps_checkout'
+                'configure' => 'ps_checkout',
             )
         );
 
         $this->context->smarty->assign(array(
-            'configureLink' => $link
+            'configureLink' => $link,
         ));
 
         return $this->display(__FILE__, '/views/templates/hook/adminAfterHeader.tpl');

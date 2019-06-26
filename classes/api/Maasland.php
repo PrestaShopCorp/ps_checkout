@@ -152,6 +152,7 @@ class Maasland
             return false;
         } catch (ClientException $e) {
             $response = json_decode($e->getResponse()->getBody()->getContents());
+
             return $response;
         }
 
