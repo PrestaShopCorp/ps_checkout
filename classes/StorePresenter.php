@@ -79,35 +79,35 @@ class StorePresenter
                 'fees' => array(
                     'fr' => array(
                         'name' => $this->module->l('France'),
-                        'paypalWallet' => '2.90% + €0.35',
-                        'card' => '1.20% + €0.35',
-                        'lpm' => '1.20% + €0.35',
-                        'amex' => '3.50% + €0.35',
+                        'paypalWallet' => '2.90% + 0.35€',
+                        'card' => '1.20% + 0.35€',
+                        'lpm' => '1.20% + 0.35€',
+                        'amex' => '3.50% + 0.35€',
                     ),
                     'es' => array(
                         'name' => $this->module->l('Spain'),
                         'paypalWallet' => array(
-                            '< €2.500' => '3.4% + €0.35',
-                            '€2.500 - €10.000' => '2.9% + €0.35',
-                            '€10.000 - €50.000' => '2.7% + €0.35',
-                            '€50.000 - €100.000' => '2.4% + €0.35',
-                            '> €100.000' => '1.9% + €0.35',
+                            '< 2.500€' => '3.4% + 0.35€',
+                            '2.500€ - 10.000€' => '2.9% + 0.35€',
+                            '10.000€ - 50.000€' => '2.7% + 0.35€',
+                            '50.000€ - 100.000€' => '2.4% + 0.35€',
+                            '> €100.000€' => '1.9% + 0.35€',
                         ),
-                        'card' => '1.20% + €0.35',
-                        'lpm' => '1.20% + €0.35',
-                        'amex' => '3.50% + €0.35',
+                        'card' => '1.20% + 0.35€',
+                        'lpm' => '1.20% + 0.35€',
+                        'amex' => '3.50% + 0.35€',
                     ),
                     'it' => array(
                         'name' => $this->module->l('Italy'),
                         'paypalWallet' => array(
-                            '< €2.500' => '3.4% + €0.35',
-                            '€2.500 - €10.000' => '2.7% + €0.35',
-                            '€10.000 - €100.000' => '2.2% + €0.35',
-                            '> €100.000' => '1.8% + €0.35',
+                            '< 2.500€' => '3.4% + 0.35€',
+                            '2.500€ - 10.000€' => '2.7% + 0.35€',
+                            '10.000€ - 100.000€' => '2.2% + 0.35€',
+                            '> 100.000€' => '1.8% + 0.35€',
                         ),
-                        'card' => '1.20% + €0.35',
-                        'lpm' => '1.20% + €0.35',
-                        'amex' => '3.50% + €0.35',
+                        'card' => '1.20% + 0.35€',
+                        'lpm' => '1.20% + 0.35€',
+                        'amex' => '3.50% + 0.35€',
                     ),
                     'uk' => array(
                         'name' => $this->module->l('United kingdom'),
@@ -129,6 +129,11 @@ class StorePresenter
         return $configuration;
     }
 
+    /**
+     * Get payment methods order
+     *
+     * @return array payment method
+     */
     private function getPaymentsMethods()
     {
         $paymentMethods = \Configuration::get('PS_CHECKOUT_PAYMENT_METHODS_ORDER');
@@ -152,6 +157,8 @@ class StorePresenter
 
     /**
      * Generate the paypal onboarding link
+     *
+     * @return string|bool paypal onboarding link
      */
     private function getPaypalOnboardingLink()
     {
@@ -201,7 +208,7 @@ class StorePresenter
             'account' => array(
                 'idMerchant' => $idMerchant,
                 'paypalOnboardingLink' => $this->getPaypalOnboardingLink(),
-                'status' => true === empty($idMerchant) ? false : true,
+                'status' => !empty($idMerchant),
             ),
         );
 
