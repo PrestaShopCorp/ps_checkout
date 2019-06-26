@@ -125,6 +125,14 @@ class Translations
                     'thirdTip3' => $this->module->l('to customers across the globe.'),
                     'learnMore' => $this->module->l('Learn more'),
                 ),
+                'fraud-tool' => array(
+                    'title' => $this->module->l('Fraud tool'),
+                    'text' => $this->module->l('PayPal algorithms limits your fraud rate automatically.
+                    If you want to go further in Fraud management, there is a complete
+                    tool on PayPal platform to set specific rules and drive your performance
+                    concerning fraud and chargeback costs.'),
+                    'discoverFraudTool' => $this->module->l('Discover fraud tool'),
+                ),
             ),
         );
 
