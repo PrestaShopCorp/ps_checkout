@@ -370,6 +370,7 @@ class ps_checkout extends PaymentModule
         );
 
         $this->context->smarty->assign(array(
+            'imgPath' => $this->_path.'views/img/',
             'configureLink' => $link,
         ));
 

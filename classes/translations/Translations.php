@@ -114,7 +114,7 @@ class Translations
                     'paymentAction' => $this->module->l('Payment action'),
                     'capture' => $this->module->l('CAPTURE'),
                     'authorize' => $this->module->l('AUTHORIZE'),
-                    'helpBoxPaymentMode' => $this->module->l('Authorize process holds all payments on customers’ account. Mark the order as « Shipped » or « Payment accepted » to capture payments. Local Payment Methods are not compatible with Authorize process.'),
+                    'helpBoxPaymentMode' => $this->module->l('Authorize process holds all payments on customers’ account. Mark the order as « Shipped » or « Payment accepted » to capture payments. Local Payment Methods are not compatible with Authorize process.'),
                     'infoAlertText' => $this->module->l('We recommend Authorize process only for lean manufacturers and craft products sellers.'),
                     'environment' => $this->module->l('Environment'),
                     'sandboxMode' => $this->module->l('Sandbox mode'),

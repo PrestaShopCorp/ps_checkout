@@ -35,7 +35,6 @@
                         <div class="row module-item-wrapper-list py-3">
                             <div class="col-12 col-sm-2 col-md-2 col-lg-3 m-auto">
                                 <div class="img m-auto">
-                                    <!-- <img src="/modules/ps_checkout/views/img/logo.png" alt=""> -->
                                 </div>
                             </div>
                             <div class="row col-12 col-sm-6 col-md-7 col-lg-7 pl-0">
@@ -51,10 +50,10 @@
                                         {l s='Included payment methods' mod='ps_checkout'}
                                     </label>
                                     <div>
-                                        <img class="payment-icon" src="/modules/ps_checkout/views/img/paypal.jpg" alt="">
-                                        <img class="payment-icon" src="/modules/ps_checkout/views/img/visa.jpg" alt="">
-                                        <img class="payment-icon" src="/modules/ps_checkout/views/img/mastercard.jpg" alt="">
-                                        <img class="payment-icon" src="/modules/ps_checkout/views/img/discover.jpg" alt="">
+                                        <img class="payment-icon" src="{$imgPath|escape:'htmlall':'UTF-8'}paypal.jpg" alt="">
+                                        <img class="payment-icon" src="{$imgPath|escape:'htmlall':'UTF-8'}visa.jpg" alt="">
+                                        <img class="payment-icon" src="{$imgPath|escape:'htmlall':'UTF-8'}mastercard.jpg" alt="">
+                                        <img class="payment-icon" src="{$imgPath|escape:'htmlall':'UTF-8'}discover.jpg" alt="">
                                     </div>
                                 </div>
                             </div>
