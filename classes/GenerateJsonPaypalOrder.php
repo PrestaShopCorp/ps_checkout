@@ -36,17 +36,18 @@ class GenerateJsonPaypalOrder
     public function create(\Context $context)
     {
         return $this->createJsonFromData(
-            $this->fetchDataFromCart($context->cart, $context->customer)
+            $this->fetchDataFromCart($context->cart, $context->customer, $context->language)
         );
     }
 
     /**
      * @param \Cart Current cart
      * @param \Customer Current customer
+     * @param \Language Current language
      *
      * @return array Data to be added in the Paypal payload
      */
-    public function fetchDataFromCart(\Cart $cart, \Customer $customer)
+    public function fetchDataFromCart(\Cart $cart, \Customer $customer, \Language $language)
     {
         // TODO: check cart
         $productList = $cart->getProducts();
@@ -63,6 +64,7 @@ class GenerateJsonPaypalOrder
                 ['id' => $cart->id]
             ),
             'customer' => $customer,
+            'language' => $language,
             'products' => $productList,
             'addresses' => [
                 'shipping' => $shippingAddress,
@@ -171,7 +173,7 @@ class GenerateJsonPaypalOrder
             ],
             'application_context' => [
                 'brand_name' => 'PrestaShop Checkout',
-                'locale' => 'bs-BA',
+                'locale' => $params['language']->locale,
                 'shipping_preference' => 'SET_PROVIDED_ADDRESS',
             ],
         ]);
