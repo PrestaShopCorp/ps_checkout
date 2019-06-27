@@ -2,6 +2,15 @@ import * as types from './mutation-types';
 import {ajax} from '@/requests/ajax.js';
 
 export default {
+  logout({commit}) {
+    return ajax({
+      action: 'FirebaseLogout',
+    }).then(() => {
+      commit(types.LOGOUT_ACCOUNT);
+      return Promise.resolve(true);
+    });
+  },
+
   login({commit}, payload) {
     return ajax({
       action: 'SignIn',

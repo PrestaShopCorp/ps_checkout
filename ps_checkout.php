@@ -31,6 +31,7 @@ use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 use PrestaShop\Module\PrestashopCheckout\Refund;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrderRepository;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
+use PrestaShop\Module\PrestashopCheckout\StorePresenter;
 use Ramsey\Uuid\Uuid;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -42,18 +43,24 @@ if (!defined('_PS_VERSION_')) {
 class ps_checkout extends PaymentModule
 {
     // hook list used by the module
-    public $hookList = [
+    const HOOK_LIST = [
         'paymentOptions',
         'paymentReturn',
         'actionFrontControllerSetMedia',
         'actionOrderSlipAdd',
         'orderConfirmation',
+        'displayAdminAfterHeader',
+        'ActionAdminControllerSetMedia',
     ];
 
     public $configurationList = array(
         'PS_CHECKOUT_INTENT' => 'CAPTURE',
+        'PS_CHECKOUT_MODE' => 'LIVE',
+        'PS_CHECKOUT_PAYMENT_METHODS_ORDER' => '',
         'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => '',
-        'PS_CHECKOUT_FIREBASE_PUBLIC_API_KEY' => 'AIzaSyASHFE2F08ncoOH9NhoCF8_6z7qnoLVKSA',
+        'PS_CHECKOUT_FIREBASE_PUBLIC_API_KEY' => 'AIzaSyBEm26bA2KR893rY68enLdVGpqnkoW2Juo',
+        'PS_CHECKOUT_PAYPAL_CLIENT_ID_LIVE' => 'AXjYFXWyb4xJCErTUDiFkzL0Ulnn-bMm4fal4G-1nQXQ1ZQxp06fOuE7naKUXGkq2TZpYSiI9xXbs4eo',
+        'PS_CHECKOUT_PAYPAL_CLIENT_ID_SANDBOX' => 'AWZMaFOTMPjG2oXFw1GqSp1hlrlFUTupuNqX0A0NJA_df0rcGQbyD9VwNAudXiRcAbSaePPPJ4FvgTqi',
         'PS_CHECKOUT_FIREBASE_EMAIL' => '',
         'PS_CHECKOUT_FIREBASE_ID_TOKEN' => '',
         'PS_CHECKOUT_FIREBASE_LOCAL_ID' => '',
@@ -76,7 +83,7 @@ class ps_checkout extends PaymentModule
         parent::__construct();
 
         $this->displayName = $this->l('PrestaShop Checkout');
-        $this->description = $this->l('New prestashop payment system');
+        $this->description = $this->l('Provide every payment method to your customer with one module, and manage every sale where your business happens.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
@@ -98,7 +105,7 @@ class ps_checkout extends PaymentModule
         }
 
         return parent::install() &&
-            $this->registerHook($this->hookList) &&
+            $this->registerHook(self::HOOK_LIST) &&
             (new OrderStates())->installPaypalStates();
     }
 
@@ -120,23 +127,11 @@ class ps_checkout extends PaymentModule
     {
         $translations = (new Translations($this))->getTranslations();
 
-        $firebaseAccount = array(
-            'email' => Configuration::get('PS_CHECKOUT_FIREBASE_EMAIL'),
-            'idToken' => Configuration::get('PS_CHECKOUT_FIREBASE_ID_TOKEN'),
-            'localId' => Configuration::get('PS_CHECKOUT_FIREBASE_LOCAL_ID'),
-            'refreshToken' => Configuration::get('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN'),
-        );
-
-        $email = $this->context->employee->email;
-        $language = Language::getLanguage($this->context->employee->id_lang);
-        $locale = $language['locale'];
-
         Media::addJsDef(array(
             'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
             'contextLocale' => $this->context->language->locale,
-            'paypalOnboardingLink' => (new Maasland($this->context->link))->getPaypalOnboardingLink($email, $locale),
             'translations' => json_encode($translations),
-            'firebaseAccount' => json_encode($firebaseAccount),
+            'store' => json_encode((new StorePresenter($this))->present()),
         ));
 
         $this->context->controller->addCss($this->_path . 'views/css/index.css');
@@ -173,12 +168,31 @@ class ps_checkout extends PaymentModule
             'paypalOrderId' => $paypalOrder['id'],
             'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true),
             'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT')),
+            'currencyIsoCode' => $this->context->currency->iso_code,
+            // 'idMerchant' => Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT') // ask by paypal team -> waiting confirmation
         ));
 
-        $payment_options = [
-            $this->getPaypalPaymentOption(),
-            $this->getHostedFieldsPaymentOption(),
-        ];
+        $paymentMethods = \Configuration::get('PS_CHECKOUT_PAYMENT_METHODS_ORDER');
+
+        // if no paymentMethods position is set, by default put credit card (hostedFields) as first position
+        if (true === empty($paymentMethods)) {
+            $payment_options = array(
+                $this->getHostedFieldsPaymentOption(),
+                $this->getPaypalPaymentOption(),
+            );
+        } else {
+            $payment_options = array();
+
+            $paymentMethods = json_decode($paymentMethods, true);
+
+            foreach ($paymentMethods as $position => $paymentMethod) {
+                if ($paymentMethod['name'] === 'card') {
+                    array_push($payment_options, $this->getHostedFieldsPaymentOption());
+                } else {
+                    array_push($payment_options, $this->getPaypalPaymentOption());
+                }
+            }
+        }
 
         return $payment_options;
     }
@@ -333,6 +347,48 @@ class ps_checkout extends PaymentModule
         }
 
         return false;
+    }
+
+    /**
+     * Display promotion block in the admin payment controller
+     */
+    public function hookDisplayAdminAfterHeader()
+    {
+        $currentController = $this->context->controller->controller_name;
+
+        if ('AdminPayment' !== $currentController) {
+            return false;
+        }
+
+        $link = $this->context->link->getAdminLink(
+            'AdminModules',
+            true,
+            array(),
+            array(
+                'configure' => 'ps_checkout',
+            )
+        );
+
+        $this->context->smarty->assign(array(
+            'imgPath' => $this->_path . 'views/img/',
+            'configureLink' => $link,
+        ));
+
+        return $this->display(__FILE__, '/views/templates/hook/adminAfterHeader.tpl');
+    }
+
+    /**
+     * Load asset on the back office
+     */
+    public function hookActionAdminControllerSetMedia()
+    {
+        $currentController = $this->context->controller->controller_name;
+
+        if ('AdminPayment' !== $currentController) {
+            return false;
+        }
+
+        $this->context->controller->addCss($this->_path . 'views/css/adminAfterHeader.css');
     }
 
     /**

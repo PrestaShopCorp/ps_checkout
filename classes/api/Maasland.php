@@ -39,8 +39,8 @@ class Maasland
     public $catchExceptions = true;
     public $timeout = 10;
 
-    private $maaslandLive = 'http://host.docker.internal:1234';
-    private $maaslandSandbox = 'http://host.docker.internal:1234';
+    private $maaslandLive = 'https://api-live-checkout.psessentials.net/';
+    private $maaslandSandbox = 'https://api-sandbox-checkout.psessentials.net/';
 
     /**
      * @var Client
@@ -54,7 +54,7 @@ class Maasland
 
     public function __construct(\Link $link, Client $client = null)
     {
-        // temporary
+        // TODO: make a method to set the correct api url to use depending on the environment
         if (true === file_exists(__DIR__ . '/../../maaslandConf.json')) {
             $conf = json_decode(file_get_contents(__DIR__ . '/../../maaslandConf.json'));
             $this->maaslandLive = $conf->integration->live;
@@ -62,6 +62,11 @@ class Maasland
         }
 
         $this->link = $link;
+
+        $bnCode = 'PrestaShop_Cart_PrestaShopCheckout_PSDownload';
+        if (getenv('PLATEFORM') === 'PSREADY') { // if on ready send an empty bn-code
+            $bnCode = '';
+        }
 
         // Client can be provided for tests
         if (null === $client) {
@@ -76,11 +81,42 @@ class Maasland
                         'Authorization' => 'Bearer ' . (new FirebaseClient())->getToken(),
                         'Shop-Id' => \Configuration::get('PS_CHECKOUT_SHOP_UUID_V4'),
                         'Hook-Url' => $this->link->getModuleLink('ps_checkout', 'DispatchWebHook', array(), true),
+                        'Bn-Code' => $bnCode,
                     ],
                 ),
             ));
         }
         $this->client = $client;
+    }
+
+    /**
+     * Generate the paypal link to onboard merchant
+     *
+     * @return string|bool onboarding link
+     */
+    public function getMerchantIntegration()
+    {
+        $route = '/payments/shop/get_merchant_integrations';
+
+        $payload = array();
+
+        try {
+            $response = $this->client->post($route, [
+                'json' => json_encode($payload),
+            ]);
+        } catch (ServerException $e) {
+            \PrestaShopLogger::addLog($e->getMessage());
+
+            return false;
+        } catch (ClientException $e) {
+            $response = json_decode($e->getResponse()->getBody()->getContents());
+
+            return $response;
+        }
+
+        $data = json_decode($response->getBody(), true);
+
+        return isset($data) ? $data : false;
     }
 
     /**
@@ -101,10 +137,6 @@ class Maasland
             'url' => $callBackUrl,
             'person_details' => [
                 'email_address' => $email,
-            ],
-            'business_details' => [
-                'phone_contacts' => [],
-                'business_type' => 'PARTNERSHIP',
             ],
             'preferred_language_code' => str_replace('-', '_', $locale),
             'primary_currency_code' => $isoCode,

@@ -36,17 +36,18 @@ class GenerateJsonPaypalOrder
     public function create(\Context $context)
     {
         return $this->createJsonFromData(
-            $this->fetchDataFromCart($context->cart, $context->customer)
+            $this->fetchDataFromCart($context->cart, $context->customer, $context->language)
         );
     }
 
     /**
      * @param \Cart Current cart
      * @param \Customer Current customer
+     * @param \Language Current language
      *
      * @return array Data to be added in the Paypal payload
      */
-    public function fetchDataFromCart(\Cart $cart, \Customer $customer)
+    public function fetchDataFromCart(\Cart $cart, \Customer $customer, \Language $language)
     {
         // TODO: check cart
         $productList = $cart->getProducts();
@@ -63,6 +64,7 @@ class GenerateJsonPaypalOrder
                 ['id' => $cart->id]
             ),
             'customer' => $customer,
+            'language' => $language,
             'products' => $productList,
             'addresses' => [
                 'shipping' => $shippingAddress,
@@ -111,7 +113,7 @@ class GenerateJsonPaypalOrder
             'custom_id' => (string) $params['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
             'description' => 'Checking out with your cart from {SHOP}',
-            'soft_descriptor' => 'MR ' . $params['addresses']['invoice']->lastname . ' ' . $params['addresses']['invoice']->firstname,
+            'soft_descriptor' => \Configuration::get('PS_SHOP_NAME'),
             'amount' => [
                 'currency_code' => $params['currency']['iso_code'],
                 'value' => $params['cart']['totals']['total']['amount'],
@@ -171,7 +173,7 @@ class GenerateJsonPaypalOrder
             ],
             'application_context' => [
                 'brand_name' => 'PrestaShop Checkout',
-                'locale' => 'bs-BA',
+                'locale' => $params['language']->locale,
                 'shipping_preference' => 'SET_PROVIDED_ADDRESS',
             ],
         ]);

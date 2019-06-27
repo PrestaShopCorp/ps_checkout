@@ -46,7 +46,7 @@
   export default {
     props: {
       alertType: {type: String, required: true},
-      hasClose: {type: Boolean, required: true},
+      hasClose: {type: Boolean, required: false, default: false},
     },
     computed: {
       classObject() {

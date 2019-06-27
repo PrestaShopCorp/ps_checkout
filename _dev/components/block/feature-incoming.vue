@@ -27,8 +27,8 @@
     <div class="feature-image">
       <img src="@/assets/images/brush.png">
     </div>
-    <div class="feature-text mt-4">
-      Cash on delivery, recurring payments, point of sales terminal, … and more to come!
+    <div class="text-muted mt-4">
+      {{ $t('block.feature-incoming.text') }}
     </div>
   </div>
 </template>
@@ -39,8 +39,7 @@
     border-radius: 3px;
     text-align: center;
   }
-  .feature-text {
-    color: #6C868E;
+  .text-muted {
     font-size: 16px;
   }
 </style>

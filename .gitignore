@@ -13,6 +13,7 @@ config.xml
 /views/js/chunk-vendors.js
 /views/js/chunk-vendors.js.map
 /views/css/index.css
+/views/css/chunk-vendors.css
 /views/img/almost-ready.png
 /views/img/brush.png
 /views/img/ps-services-account.png

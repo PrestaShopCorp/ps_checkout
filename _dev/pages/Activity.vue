@@ -2,26 +2,26 @@
   <div>
     <div class="row">
       <div class="container">
-        <PaymentMode />
+        <Dispute />
       </div>
     </div>
     <div class="row">
       <div class="container">
-        <FraudTool />
+        <FeatureIncoming />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-  import PaymentMode from '@/components/panel/payment-mode';
-  import FraudTool from '@/components/block/fraud-tool';
+  import Dispute from '@/components/block/dispute';
+  import FeatureIncoming from '@/components/block/feature-incoming';
 
   export default {
-    name: 'Advanced',
+    name: 'Activity',
     components: {
-      PaymentMode,
-      FraudTool,
+      Dispute,
+      FeatureIncoming,
     },
   };
 </script>

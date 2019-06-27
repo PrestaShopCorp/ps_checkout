@@ -1,16 +1,15 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import firebase from './modules/firebase';
+import paypal from './modules/paypal';
+import configuration from './modules/configuration';
 
 Vue.use(Vuex);
 
-const paypalOnboardingLink = global.paypalOnboardingLink;
-
 export default new Vuex.Store({
-  state: {
-    paypalOnboardingLink,
-  },
   modules: {
     firebase,
+    paypal,
+    configuration,
   },
 });

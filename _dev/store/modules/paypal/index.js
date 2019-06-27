@@ -4,7 +4,7 @@ import mutations from './mutations';
 const store = JSON.parse(global.store);
 
 const state = {
-  account: store.firebase.account,
+  account: store.paypal.account,
 };
 
 export default {
