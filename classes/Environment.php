@@ -68,7 +68,7 @@ class Environment
     /**
      * Check if the module is in integration or production
      *
-     * @return boolean true if the module is in integration
+     * @return bool true if the module is in integration
      */
     private function isCustomized()
     {
@@ -78,7 +78,7 @@ class Environment
     /**
      * Check if the module is in SANDBOX or LIVE mode
      *
-     * @return boolean true if the module is in LIVE mode
+     * @return bool true if the module is in LIVE mode
      */
     private function isLive()
     {

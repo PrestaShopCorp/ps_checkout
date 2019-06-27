@@ -28,7 +28,6 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use PrestaShop\Module\PrestashopCheckout\Environment;
 
 /**
  * Handle firebase signIn/signUp
