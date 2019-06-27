@@ -11,16 +11,16 @@
                 <p>{{ $t('panel.fees.calculateMuch') }}</p>
                 <div class="form-group">
                   <label class="form-control-label">{{ $t('panel.fees.countryResidence') }}</label>
-                  <select class="custom-select" v-model="toto">
+                  <select class="custom-select" v-model="country">
                     <option v-for="(country, index) in fees" :key="index" :value="index">
                       {{ country.name }}
                     </option>
                   </select>
                 </div>
-                <div v-if="toto !== 'fr'" class="form-group">
+                <div v-if="country !== 'fr'" class="form-group">
                   <label class="form-control-label">{{ $t('panel.fees.estimatedSales') }}</label>
                   <select class="custom-select">
-                    <option v-for="(test, index) in fees[toto].paypalWallet" :key="index" :value="index">
+                    <option v-for="(fee, index) in fees[country].paypalWallet" :key="index" :value="index">
                       <template>{{ index }}</template>
                     </option>
                   </select>
@@ -66,7 +66,7 @@
   export default {
     data() {
       return {
-        toto: 'es',
+        country: 'fr',
       };
     },
     computed: {
