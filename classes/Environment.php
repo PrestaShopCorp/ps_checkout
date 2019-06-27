@@ -57,7 +57,6 @@ class Environment
         // if there is a custom config
         if (true === $this->isCustomized()) {
             $this->setCustomConf(); // set it
-            return false;
         }
 
         if (false === $this->isLive()) {
