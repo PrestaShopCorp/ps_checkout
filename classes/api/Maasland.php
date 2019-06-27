@@ -30,6 +30,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ClientException;
 use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
+use PrestaShop\Module\PrestashopCheckout\Environment;
 
 /**
  * Handle all call make to PSL (maasland)
@@ -38,9 +39,6 @@ class Maasland
 {
     public $catchExceptions = true;
     public $timeout = 10;
-
-    private $maaslandLive = 'https://api-live-checkout.psessentials.net/';
-    private $maaslandSandbox = 'https://api-sandbox-checkout.psessentials.net/';
 
     /**
      * @var Client
@@ -54,13 +52,6 @@ class Maasland
 
     public function __construct(\Link $link, Client $client = null)
     {
-        // TODO: make a method to set the correct api url to use depending on the environment
-        if (true === file_exists(__DIR__ . '/../../maaslandConf.json')) {
-            $conf = json_decode(file_get_contents(__DIR__ . '/../../maaslandConf.json'));
-            $this->maaslandLive = $conf->integration->live;
-            $this->maaslandSandbox = $conf->integration->sandbox;
-        }
-
         $this->link = $link;
 
         $bnCode = 'PrestaShop_Cart_PrestaShopCheckout_PSDownload';
@@ -71,7 +62,7 @@ class Maasland
         // Client can be provided for tests
         if (null === $client) {
             $client = new Client(array(
-                'base_url' => $this->maaslandSandbox,
+                'base_url' => (new Environment())->getMaaslandUrl(),
                 'defaults' => array(
                     'timeout' => $this->timeout,
                     'exceptions' => $this->catchExceptions,

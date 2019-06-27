@@ -32,6 +32,7 @@ use PrestaShop\Module\PrestashopCheckout\Refund;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrderRepository;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\Module\PrestashopCheckout\StorePresenter;
+use PrestaShop\Module\PrestashopCheckout\Environment;
 use Ramsey\Uuid\Uuid;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -58,9 +59,6 @@ class ps_checkout extends PaymentModule
         'PS_CHECKOUT_MODE' => 'LIVE',
         'PS_CHECKOUT_PAYMENT_METHODS_ORDER' => '',
         'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => '',
-        'PS_CHECKOUT_FIREBASE_PUBLIC_API_KEY' => 'AIzaSyBEm26bA2KR893rY68enLdVGpqnkoW2Juo',
-        'PS_CHECKOUT_PAYPAL_CLIENT_ID_LIVE' => 'AXjYFXWyb4xJCErTUDiFkzL0Ulnn-bMm4fal4G-1nQXQ1ZQxp06fOuE7naKUXGkq2TZpYSiI9xXbs4eo',
-        'PS_CHECKOUT_PAYPAL_CLIENT_ID_SANDBOX' => 'AWZMaFOTMPjG2oXFw1GqSp1hlrlFUTupuNqX0A0NJA_df0rcGQbyD9VwNAudXiRcAbSaePPPJ4FvgTqi',
         'PS_CHECKOUT_FIREBASE_EMAIL' => '',
         'PS_CHECKOUT_FIREBASE_ID_TOKEN' => '',
         'PS_CHECKOUT_FIREBASE_LOCAL_ID' => '',
@@ -164,6 +162,7 @@ class ps_checkout extends PaymentModule
         }
 
         $this->context->smarty->assign(array(
+            'paypalClientId' => (new Environment())->getPaypalClientId(),
             'clientToken' => $paypalOrder['client_token'],
             'paypalOrderId' => $paypalOrder['id'],
             'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true),

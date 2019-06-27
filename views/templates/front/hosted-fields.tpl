@@ -25,7 +25,7 @@
 
 <div class="additional-information">
 
-    <script id="paypalSdk" src="https://www.paypal.com/sdk/js?components=hosted-fields,buttons&amp;client-id=AWZMaFOTMPjG2oXFw1GqSp1hlrlFUTupuNqX0A0NJA_df0rcGQbyD9VwNAudXiRcAbSaePPPJ4FvgTqi&amp;intent={$intent|escape:'htmlall':'UTF-8'}&amp;currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}"
+    <script id="paypalSdk" src="https://www.paypal.com/sdk/js?components=hosted-fields,buttons&amp;client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&amp;intent={$intent|escape:'htmlall':'UTF-8'}&amp;currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}"
         data-client-token="{$clientToken|escape:'htmlall':'UTF-8'}">
     </script>
 
