@@ -9,7 +9,7 @@
           <div class="form-group row">
             <label class="form-control-label">
               {{ $t('panel.payment-mode.paymentAction') }}
-              <span class="help-box" data-toggle="popover" data-content="Name of the second domain of your shop, (e.g. myshop-media-server-1.com). If you do not have another domain, leave this field blank." data-original-title="" title=""/>
+              <span class="help-box" data-toggle="popover" :data-content="$t('panel.payment-mode.helpBoxPaymentMode')" data-original-title="" title=""/>
             </label>
             <div class="col-sm">
               <div class="btn-group" role="group" aria-label="First group">
@@ -25,7 +25,6 @@
             <label class="form-control-label">
               {{ $t('panel.payment-mode.environment') }}
             </label>
-            <!-- <p class="sr-only">Name of the second domain of your shop, (e.g. myshop-media-server-1.com). If you do not have another domain, leave this field blank.</p> -->
             <div class="col-sm">
               <input v-if="paymentMode === 'LIVE'" class="form-control" type="text" readonly :value="$t('panel.payment-mode.productionMode')">
               <input v-else class="form-control" type="text" readonly :value="$t('panel.payment-mode.sandboxMode')">
