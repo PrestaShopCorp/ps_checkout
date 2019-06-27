@@ -63,7 +63,7 @@ class Refund
         $refund = (new Maasland(\Context::getContext()->link))->refundOrder($this->getPayload());
 
         if (isset($refund->statusCode) && $refund->statusCode === 422) {
-            return $this->handleCallbackErrors($refund->error);
+            return $this->handleCallbackErrors($refund->message);
         }
 
         return $refund;
