@@ -28,6 +28,7 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use PrestaShop\Module\PrestashopCheckout\Environment;
 
 /**
  * Handle firebase signIn/signUp
@@ -74,7 +75,7 @@ class FirebaseClient
         if (isset($params['api_key'])) {
             $this->apiKey = $params['api_key'];
         } else {
-            $this->apiKey = \Configuration::get('PS_CHECKOUT_FIREBASE_PUBLIC_API_KEY');
+            $this->apiKey = (new Environment())->getFirebaseApiKey();
         }
 
         $this->client = new Client(
