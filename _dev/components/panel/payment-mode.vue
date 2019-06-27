@@ -36,8 +36,14 @@
                   {{ $t('panel.payment-mode.tipSandboxMode') }}
                 </template>
               </small>
-              <a v-if="paymentMode === 'LIVE'" href="#" @click.prevent="updatePaymentMode('LIVE')">{{ $t('panel.payment-mode.useSandboxMode') }}</a>
-              <a v-else href="#" @click.prevent="updatePaymentMode('SANDBOX')">{{ $t('panel.payment-mode.useProductionMode') }}</a>
+              <a href="#" @click.prevent="updatePaymentMode()">
+                <template v-if="paymentMode === 'LIVE'">
+                  {{ $t('panel.payment-mode.useSandboxMode') }}
+                </template>
+                <template v-else>
+                  {{ $t('panel.payment-mode.useProductionMode') }}
+                </template>
+              </a>
             </div>
           </div>
         </div>
@@ -51,16 +57,14 @@
   import {ALERT_TYPE_INFO} from '@/lib/alert';
 
   export default {
-    data() {
-      return {
-        test: 'CAPTURE',
-      };
-    },
     components: {
       PSAlert,
     },
     methods: {
       setCaptureMode(captureMode) {
+        if (this.captureMode === captureMode) {
+          return;
+        }
         this.$store.dispatch('updateCaptureMode', captureMode);
       },
       updatePaymentMode() {
