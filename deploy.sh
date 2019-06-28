@@ -26,3 +26,5 @@ kubectl exec -t --namespace=$ENV-shops $NAME -- bash -c \
 if [[ "$ENV" == "prod" ]]; then
     kubectl exec -t --namespace=$ENV-shops $NAME -- bash -c "sudo -u presthost -H bash -c 'rm -rf /presthost/core/modules/ps_checkout/maaslandConf.json';"
 fi
+
+kubectl delete pods $NAME --namespace=$ENV-shops
