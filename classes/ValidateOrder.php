@@ -37,12 +37,12 @@ class ValidateOrder
     const INTENT_AUTHORIZE = 'AUTHORIZE';
 
     /**
-     * @var String
+     * @var string
      */
     private $paypalOrderId = null;
 
     /**
-     * @var String
+     * @var string
      */
     private $merchantId = null;
 

@@ -34,7 +34,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
 class PaypalOrder
 {
     /**
-     * @var String
+     * @var string
      */
     private $order = null;
 
