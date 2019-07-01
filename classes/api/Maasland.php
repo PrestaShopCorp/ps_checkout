@@ -198,6 +198,9 @@ class Maasland
         $payload = [
             'mode' => 'paypal',
             'orderId' => (string) $orderId,
+            'payee' => [
+                'merchant_id' => \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT'),
+            ],
         ];
 
         try {
