@@ -86,8 +86,8 @@ class GenerateJsonPaypalOrder
     public function createJsonFromData($params)
     {
         $items = [];
-        $totalTaxItem = 0;
-        $totalAmountItemWithoutTax = 0;
+        $totalWithoutTax = 0;
+        $totalTax = 0;
 
         foreach ($params['products'] as $product => $value) {
             $item = [];
@@ -102,8 +102,8 @@ class GenerateJsonPaypalOrder
             $item['quantity'] = $value['quantity'];
             $item['category'] = $value['is_virtual'] === '1' ? 'DIGITAL_GOODS' : 'PHYSICAL_GOODS';
 
-            $totalTaxItem = \Tools::ps_round($totalTaxItem + ($value['price'] * $value['cart_quantity']), $this->getNbDecimalToRound($params['currency']['iso_code']));
-            $totalAmountItemWithoutTax = \Tools::ps_round($totalAmountItemWithoutTax + $item['tax']['value'] * $value['cart_quantity'], $this->getNbDecimalToRound($params['currency']['iso_code']));
+            $totalWithoutTax = \Tools::ps_round($totalWithoutTax + ($item['unit_amount']['value'] * $item['quantity']), $this->getNbDecimalToRound($params['currency']['iso_code']));
+            $totalTax = \Tools::ps_round($totalTax + ($item['tax']['value'] * $item['quantity']), $this->getNbDecimalToRound($params['currency']['iso_code']));
 
             $items[] = $item;
         }
@@ -112,7 +112,7 @@ class GenerateJsonPaypalOrder
             'intent' => \Configuration::get('PS_CHECKOUT_INTENT'), // capture or authorize
             'custom_id' => (string) $params['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
-            'description' => 'Checking out with your cart from {SHOP}',
+            'description' => 'Checking out with your cart from' . \Configuration::get('PS_SHOP_NAME'),
             'soft_descriptor' => \Configuration::get('PS_SHOP_NAME'),
             'amount' => [
                 'currency_code' => $params['currency']['iso_code'],
@@ -120,7 +120,7 @@ class GenerateJsonPaypalOrder
                 'breakdown' => [
                     'item_total' => [
                         'currency_code' => $params['currency']['iso_code'],
-                        'value' => $totalTaxItem,
+                        'value' => $totalWithoutTax,
                     ],
                     'shipping' => [
                         'currency_code' => $params['currency']['iso_code'],
@@ -128,7 +128,7 @@ class GenerateJsonPaypalOrder
                     ],
                     'tax_total' => [
                         'currency_code' => $params['currency']['iso_code'],
-                        'value' => $totalAmountItemWithoutTax,
+                        'value' => $totalTax,
                     ],
                 ],
             ],
