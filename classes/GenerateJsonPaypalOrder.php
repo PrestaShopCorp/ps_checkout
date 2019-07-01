@@ -112,7 +112,7 @@ class GenerateJsonPaypalOrder
             'intent' => \Configuration::get('PS_CHECKOUT_INTENT'), // capture or authorize
             'custom_id' => (string) $params['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
-            'description' => 'Checking out with your cart from' . \Configuration::get('PS_SHOP_NAME'),
+            'description' => 'Checking out with your cart from ' . \Configuration::get('PS_SHOP_NAME'),
             'soft_descriptor' => \Configuration::get('PS_SHOP_NAME'),
             'amount' => [
                 'currency_code' => $params['currency']['iso_code'],

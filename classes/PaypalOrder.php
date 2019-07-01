@@ -33,6 +33,9 @@ use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
  */
 class PaypalOrder
 {
+    /**
+     * @var array
+     */
     private $order = null;
 
     public function __construct(string $id)
@@ -52,6 +55,16 @@ class PaypalOrder
         }
 
         $this->setOrder($order);
+    }
+
+    /**
+     * Getter the intent of an order (CAPTURE or AUTHORIZE)
+     *
+     * @return string intent of the order
+     */
+    public function getOrderIntent()
+    {
+        return $this->order['intent'];
     }
 
     /**

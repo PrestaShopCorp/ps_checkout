@@ -188,16 +188,20 @@ class Maasland
      * Capture order funds
      *
      * @param string orderId paypal
+     * @param string merchantId
      *
      * @return array|bool response from paypal if the payment is accepted or false if error occured
      */
-    public function captureOrder($orderId)
+    public function captureOrder($orderId, $merchantId)
     {
         $route = '/payments/order/capture';
 
         $payload = [
             'mode' => 'paypal',
             'orderId' => (string) $orderId,
+            'payee' => [
+                'merchant_id' => $merchantId,
+            ],
         ];
 
         try {
@@ -216,7 +220,7 @@ class Maasland
 
         $data = json_decode($response->getBody(), true);
 
-        return isset($data) ? $data : false;
+        return isset($data['status']) ? $data['status'] : false;
     }
 
     /**
@@ -257,10 +261,11 @@ class Maasland
      * Authorize an order
      *
      * @param string orderId paypal
+     * @param string merchantId
      *
      * @return array|bool paypal order
      */
-    public function authorizeOrder($orderId)
+    public function authorizeOrder($orderId, $merchantId)
     {
         // TODO : waiting maasland integration
     }
