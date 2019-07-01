@@ -36,11 +36,20 @@ class ValidateOrder
     const INTENT_CAPTURE = 'CAPTURE';
     const INTENT_AUTHORIZE = 'AUTHORIZE';
 
-    public $paypalOrderId = null;
+    /**
+     * @var String
+     */
+    private $paypalOrderId = null;
 
-    public function __construct($paypalOrderId)
+    /**
+     * @var String
+     */
+    private $merchantId = null;
+
+    public function __construct($paypalOrderId, $merchantId)
     {
-        $this->paypalOrderId = $paypalOrderId;
+        $this->setMerchantId($merchantId);
+        $this->setPaypalOrderId($paypalOrderId);
     }
 
     /**
@@ -68,17 +77,17 @@ class ValidateOrder
         // of the prestashop order
 
         $paypalOrder = (new PaypalOrder($this->paypalOrderId));
-        $paypalOrder = $paypalOrder->getOrder();
+        $maasland = new Maasland(\Context::getContext()->link);
 
-        switch ($paypalOrder['intent']) {
+        switch ($paypalOrder->getOrderIntent()) {
             case self::INTENT_CAPTURE:
-                $responseStatus = $this->captureOrder($paypalOrder['id']);
+                $responseStatus = $maasland->captureOrder($paypalOrder['id'], $this->merchantId);
                 break;
             case self::INTENT_AUTHORIZE:
-                $responseStatus = $this->authorizeOrder($paypalOrder['id']);
+                $responseStatus = $maasland->authorizeOrder($paypalOrder['id'], $this->merchantId);
                 break;
             default:
-                throw new \Exception(sprintf('Unknown Intent type %s', $paypalOrder['intent']));
+                throw new \Exception(sprintf('Unknown Intent type %s', $paypalOrder->getOrderIntent()));
         }
 
         $orderState = $this->setOrderState($module->currentOrder, $responseStatus);
@@ -86,36 +95,6 @@ class ValidateOrder
         if ($orderState === _PS_OS_PAYMENT_) {
             $this->setTransactionId($module->currentOrderReference, $payload['extraVars']['transaction_id']);
         }
-    }
-
-    /**
-     * Return the status of the authorise
-     *
-     * @param string $orderId paypal order id
-     *
-     * @return string|bool state of the order
-     */
-    private function authorizeOrder($orderId)
-    {
-        $maasland = new Maasland(\Context::getContext()->link);
-        $response = $maasland->authorizeOrder($orderId);
-
-        return isset($response['status']) ? $response['status'] : false;
-    }
-
-    /**
-     * Return the status of the capture
-     *
-     * @param string $orderId paypal order id
-     *
-     * @return string|bool state of the order
-     */
-    private function captureOrder($orderId)
-    {
-        $maasland = new Maasland(\Context::getContext()->link);
-        $response = $maasland->captureOrder($orderId);
-
-        return isset($response['status']) ? $response['status'] : false;
     }
 
     /**
@@ -167,5 +146,25 @@ class ValidateOrder
         $order->save();
 
         return $orderState;
+    }
+
+    /**
+     * setter for merchantId
+     *
+     * @param string $merchantId
+     */
+    public function setMerchantId($merchantId)
+    {
+        $this->merchantId = $merchantId;
+    }
+
+    /**
+     * setter for orderId
+     *
+     * @param string $orderId
+     */
+    public function setPaypalOrderId($orderId)
+    {
+        $this->paypalOrderId = $orderId;
     }
 }

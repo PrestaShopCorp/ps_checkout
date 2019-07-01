@@ -72,7 +72,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
         $currency = $this->context->currency;
         $total = (float) $cart->getOrderTotal(true, Cart::BOTH);
 
-        $payment = new ValidateOrder($paypalOrderId);
+        $payment = new ValidateOrder($paypalOrderId, \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT'));
 
         $dataOrder = [
             'cartId' => (int) $cart->id,
