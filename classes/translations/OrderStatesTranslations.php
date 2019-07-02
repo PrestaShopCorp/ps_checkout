@@ -42,10 +42,10 @@ class OrderStatesTranslations
         'en' => 'Authorized. To be captured by merchant',
     );
     const PS_CHECKOUT_STATE_PARTIAL_REFUND = array(
-        'en' => 'Partial refund ',
+        'en' => 'Partial refund',
     );
     const PS_CHECKOUT_STATE_WAITING_CAPTURE = array(
-        'en' => 'Waiting capture'
+        'en' => 'Waiting capture',
     );
 
     /**
