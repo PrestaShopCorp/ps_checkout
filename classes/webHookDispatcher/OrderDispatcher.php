@@ -26,7 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-class OrderDispatcher implements InterfaceDispatcher
+class OrderDispatcher
 {
     const PS_CHECKOUT_PAYMENT_REVERSED = 'PAYMENT.CAPTURE.REVERSED';
     const PS_CHECKOUT_PAYMENT_REFUNED = 'PAYMENT.CAPTURE.REFUNDED';
@@ -76,7 +76,7 @@ class OrderDispatcher implements InterfaceDispatcher
             $validationValues->validateRefundOrderIdValue($orderId)
         );
 
-        if (true !== $orderError) {
+        if (!is_array($orderError)) {
             /*
             * @TODO : Throw array exception
             */
@@ -103,21 +103,28 @@ class OrderDispatcher implements InterfaceDispatcher
         $validationValues = new WebHookValidation();
         $orderError = $validationValues->validateRefundOrderIdValue($orderId);
 
-        if (true !== $orderError) {
+        if (!is_array($orderError)) {
             /*
             * @TODO : Throw array exception
             */
         }
 
         $paypalOrderRepository = new PaypalOrderRepository();
-        $psOrderId = (int) $paypalOrderRepository->getPsOrderIdByPaypalOrderId($orderId);
+        $psOrderId = $paypalOrderRepository->getPsOrderIdByPaypalOrderId($orderId);
+
+        if (false === $psOrderId) {
+            /*
+            * @TODO : Throw array exception
+            */
+            return false;
+        }
 
         $order = new \OrderHistory();
         $order->id_order = $psOrderId;
 
         $order->changeIdOrderState(
             self::PS_EVENTTYPE_TO_PS_STATE_ID[$eventType],
-            $orderIpsOrderIdd
+            $psOrderId
         );
 
         if (true !== $order->save()) {

@@ -48,23 +48,19 @@ class WebHookValidation
             return $errors[] = 'Header can\'t be empty';
         }
 
-        if (empty($headerValues['Shop-Id'])) {
+        if (empty($headerValues['shop-id'])) {
             $errors[] = 'Shop-Id can\'t be empty';
         }
 
-        if (empty($headerValues['Merchant-Id'])) {
+        if (empty($headerValues['merchant-id'])) {
             $errors[] = 'Merchant-Id can\'t be empty';
         }
 
-        if (empty($headerValues['Psx-Id'])) {
+        if (empty($headerValues['psx-id'])) {
             $errors[] = 'Psx-Id can\'t be empty';
         }
 
-        if (!empty($errors)) {
-            return $errors;
-        }
-
-        return true;
+        return $errors;
     }
 
     /**
@@ -86,27 +82,19 @@ class WebHookValidation
             $errors[] = 'Amount can\'t be empty';
         }
 
-        if (empty($resource['amount']['value'])) {
+        if (empty($resource['amount']->value)) {
             $errors[] = 'Amount value can\'t be empty';
         }
 
-        if (0 >= $resource['amount']['value']) {
+        if (0 >= (float) $resource['amount']->value) {
             $errors[] = 'Amount value must be higher than 0';
         }
 
-        if (empty($resource['amount']['currency'])) {
+        if (empty($resource['amount']->currency)) {
             $errors[] = 'Amount currency can\'t be empty';
         }
 
-        if (empty($resource['orderId'])) {
-            $errors[] = 'OrderId can\'t be empty';
-        }
-
-        if (!empty($errors)) {
-            return $errors;
-        }
-
-        return true;
+        return $errors;
     }
 
     /**
@@ -120,14 +108,10 @@ class WebHookValidation
     {
         $errors = array();
 
-        if (!is_int($orderId)) {
-            return $errors[] = 'orderId must be an integer';
+        if (empty($orderId)) {
+            return $errors[] = 'orderId must not be empty';
         }
 
-        if (!empty($errors)) {
-            return $errors;
-        }
-
-        return true;
+        return $errors;
     }
 }

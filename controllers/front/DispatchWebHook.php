@@ -96,15 +96,15 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     private function setAtributesValues(array $headerValues)
     {
-        $this->shopId = (int) $headerValues['Shop-Id'];
-        $this->merchantId = (int) $headerValues['Merchant-Id'];
-        $this->firebaseId = (int) $headerValues['Psx-Id'];
+        $this->shopId = (int) $headerValues['shop-id'];
+        $this->merchantId = (int) $headerValues['merchant-id'];
+        $this->firebaseId = (int) $headerValues['psx-id'];
         $this->payload = array(
             'resource' => (array) \Tools::jsonDecode(\Tools::getValue('resource')),
             'eventType' => (string) \Tools::getValue('eventType'),
             'category' => (string) \Tools::getValue('category'),
             'summary' => (string) \Tools::getValue('summary'),
-            'orderId' => (int) \Tools::getValue('orderId'),
+            'orderId' => (string) \Tools::getValue('orderId'),
         );
     }
 
