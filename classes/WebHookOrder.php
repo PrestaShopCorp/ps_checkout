@@ -28,6 +28,7 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 class WebHookOrder
 {
+    const REFUND_STATE = 'PS_CHECKOUT_STATE_PARTIAL_REFUND';
     /**
      * Tell if refund is initiate by Paypal or Merchant
      *
@@ -182,7 +183,7 @@ class WebHookOrder
         $refundAddTax = true;
         $refundVoucherChoosen = false;
 
-        return \OrderSlip::create(
+        $refundOrder = (bool) \OrderSlip::create(
             $order,
             $orderProductList,
             $refundShipping,
@@ -190,5 +191,28 @@ class WebHookOrder
             $refundVoucherChoosen,
             $refundAddTax
         );
+
+        if (true !== $refundOrder) {
+            /*
+            * @TODO : Throw array exception
+            */
+            return false;
+        }
+
+        $order = new \OrderHistory();
+        $order->id_order = $this->orderId;
+
+        $order->changeIdOrderState(
+            \Configuration::get(self::REFUND_STATE),
+            $this->orderId
+        );
+
+        if (true !== $order->save()) {
+            /*
+            * @TODO : Throw array exception
+            */
+        }
+
+        return true;
     }
 }

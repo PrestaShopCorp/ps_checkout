@@ -168,46 +168,4 @@ class OrderStates
             throw new \PrestaShopException('Not able to insert the new order state language');
         }
     }
-
-    /**
-     * Update the order state id
-     *
-     * @param int $stateId
-     * @param int $orderId
-     */
-    public function updateOrderStatus($stateId, $orderId)
-    {
-        $paypalOrderRepository = new PaypalOrderRepository();
-        $prestashopOrderId = (int) $paypalOrderRepository->getPsOrderIdByPaypalOrderId($orderId);
-
-        $updateOrderStatus = \Db::getInstance()->update(
-            self::ORDER_TABLE,
-            array('current_state' => $stateId),
-            'order_id = ' . $prestashopOrderId
-        );
-
-        if (!$updateOrderStatus) {
-            /*
-            * @TODO : Throw array exception
-            */
-        }
-
-        $dateNow = new DateTime('NOW');
-
-        $addNewOrderHistory = \Db::getInstance()->insert(
-            self::ORDER_HISTORY_TABLE,
-            array(
-                'id_employee' => 0,
-                'id_order' => $orderId,
-                'id_order_state' => $stateId,
-                'date_add' => $dateNow->format('Y-m-d H:i:s'),
-            )
-        );
-
-        if (!$addNewOrderHistory) {
-            /*
-            * @TODO : Throw array exception
-            */
-        }
-    }
 }
