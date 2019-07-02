@@ -64,8 +64,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
     /**
      * Initialize the webhook script
-     *
-     * @return void
      */
     public function initContent()
     {
@@ -110,7 +108,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         );
     }
 
-
     /**
      * Check the IP whitelist and Shop, Merchant and Psx Ids
      *
@@ -137,8 +134,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
     /**
      * Dispatch the web Hook according to the category
-     *
-     * @return void
      */
     private function dispatchWebHook()
     {

@@ -34,6 +34,12 @@ class OrderDispatcher implements InterfaceDispatcher
     const PS_CHECKOUT_PAYMENT_PENDING = 'PAYMENT.CAPTURE.PENDING';
     const PS_CHECKOUT_PAYMENT_COMPLETED = 'PAYMENT.CAPTURE.COMPLETED';
     const PS_CHECKOUT_PAYMENT_DENIED = 'PAYMENT.CAPTURE.DENIED';
+    const PS_EVENTTYPE_TO_PS_STATE_ID = array(
+        self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED => 6, // Canceled
+        self::PS_CHECKOUT_PAYMENT_PENDING => 3, // Processing in progress
+        self::PS_CHECKOUT_PAYMENT_COMPLETED => 2, // Payment accepted
+        self::PS_CHECKOUT_PAYMENT_DENIED => 8, // Payment error
+    );
 
     /**
      * Dispatch the Event Type to manage the merchant status
@@ -104,6 +110,9 @@ class OrderDispatcher implements InterfaceDispatcher
         }
 
         $states = new OrderStates();
-        $states->updateOrderState($eventType, $orderId);
+        $states->updateOrderStatus(
+            self::PS_EVENTTYPE_TO_PS_STATE_ID[$eventType],
+            $orderId
+        );
     }
 }
