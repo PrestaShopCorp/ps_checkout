@@ -61,13 +61,14 @@ class WebHookOrder
      *
      * @param string $initiateBy
      * @param array $resource
+     * @param int $orderId
      */
-    public function __construct($initiateBy, $resource)
+    public function __construct($initiateBy, $resource, $orderId)
     {
         $paypalOrderRepository = new PaypalOrderRepository();
 
         $this->initiateBy = (string) $initiateBy;
-        $this->orderId = (int) $paypalOrderRepository->getPsOrderIdByPaypalOrderId($resource['orderId']);
+        $this->orderId = (int) $paypalOrderRepository->getPsOrderIdByPaypalOrderId($orderId);
         $this->amount = (float) $resource['amount']['value'];
         $this->currencyId = (string) \Currency::getIdByIsoCode($resource['amount']['currency']);
     }

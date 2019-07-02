@@ -45,31 +45,31 @@ class WebHookValidation
         $errors = array();
 
         if (empty($headerValues)) {
-            return $errors['header'] = 'Header can\'t be empty';
+            return $errors[] = 'Header can\'t be empty';
         }
 
         if (empty($headerValues['Shop-Id'])) {
-            $errors['header'][] = 'Shop-Id can\'t be empty';
+            $errors[] = 'Shop-Id can\'t be empty';
         }
 
         if (empty($headerValues['Merchant-Id'])) {
-            $errors['header'][] = 'Merchant-Id can\'t be empty';
+            $errors[] = 'Merchant-Id can\'t be empty';
         }
 
         if (empty($headerValues['Psx-Id'])) {
-            $errors['header'][] = 'Psx-Id can\'t be empty';
+            $errors[] = 'Psx-Id can\'t be empty';
         }
 
         if (!in_array($headerValues['category'], self::ALLOWED_CATEGORIES)) {
-            $errors['header'][] = sprintf('Category must be one of these values: %s', implode(', ', self::ALLOWED_CATEGORIES));
+            $errors[] = sprintf('Category must be one of these values: %s', implode(', ', self::ALLOWED_CATEGORIES));
         }
 
         if (!is_string($headerValues['eventType'])) {
-            $errors['header'][] = 'eventType must be a string';
+            $errors[] = 'eventType must be a string';
         }
 
         if (empty($headerValues['eventType'])) {
-            $errors['header'][] = 'eventType can\'t be empty';
+            $errors[] = 'eventType can\'t be empty';
         }
 
         if (!empty($errors)) {
@@ -91,31 +91,53 @@ class WebHookValidation
         $errors = array();
 
         if (empty($resource)) {
-            return $errors['resource'] = 'Resource can\'t be empty';
+            return $errors[] = 'Resource can\'t be empty';
         }
 
         if (empty($resource['amount'])) {
-            $errors['amount'][] = 'Amount can\'t be empty';
+            $errors[] = 'Amount can\'t be empty';
         }
 
         if (empty($resource['amount']['value'])) {
-            $errors['amount'][] = 'Amount value can\'t be empty';
+            $errors[] = 'Amount value can\'t be empty';
         }
 
         if (0 >= $resource['amount']['value']) {
-            $errors['amount'][] = 'Amount value must be higher than 0';
+            $errors[] = 'Amount value must be higher than 0';
         }
 
         if (empty($resource['amount']['currency'])) {
-            $errors['amount'][] = 'Amount currency can\'t be empty';
+            $errors[] = 'Amount currency can\'t be empty';
         }
 
         if (empty($resource['orderId'])) {
-            $errors['amount'][] = 'OrderId can\'t be empty';
+            $errors[] = 'OrderId can\'t be empty';
         }
 
-        if (!is_int($resource['orderId'])) {
-            $errors['amount'][] = 'OrderId must be a int';
+        if (!empty($errors)) {
+            return $errors;
+        }
+
+        return true;
+    }
+
+    /**
+     * Validates the webHook orderId
+     *
+     * @param int $orderId
+     *
+     * @return array|bool Error lists, bool if ok
+     */
+    public function validateRefundOrderIdValue($orderId)
+    {
+        $errors = array();
+
+        if (!is_int($orderId)) {
+            return $errors[] = 'orderId must be an integer';
+        }
+
+        if (!empty($errors)) {
+            return $errors;
         }
 
         return true;

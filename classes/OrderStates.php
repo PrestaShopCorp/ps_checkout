@@ -167,4 +167,20 @@ class OrderStates
             throw new \PrestaShopException('Not able to insert the new order state language');
         }
     }
+
+    /**
+     * updateOrderState
+     *
+     * @param  string $eventType
+     * @param  int $resource
+     *
+     * @return void
+     */
+    public function updateOrderState($eventType, $orderId)
+    {
+        $paypalOrderRepository = new PaypalOrderRepository();
+
+
+
+    }
 }

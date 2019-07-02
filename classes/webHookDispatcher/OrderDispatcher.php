@@ -38,21 +38,20 @@ class OrderDispatcher implements InterfaceDispatcher
     /**
      * Dispatch the Event Type to manage the merchant status
      *
-     * @param string $eventType
-     * @param array $resource
+     * @param array $payload
      */
-    public function dispatchEventType($eventType, $resource)
+    public function dispatchEventType($payload)
     {
-        if ($eventType === self::PS_CHECKOUT_PAYMENT_REFUNED
-        || $eventType === self::PS_CHECKOUT_PAYMENT_REVERSED) {
-            $this->dispatchPaymentAction($eventType, $resource);
+        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REFUNED
+        || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REVERSED) {
+            $this->dispatchPaymentAction($payload['eventType'], $payload['resource'], $payload['orderId']);
         }
 
-        if ($eventType === self::PS_CHECKOUT_PAYMENT_PENDING
-        || $eventType === self::PS_CHECKOUT_PAYMENT_COMPLETED
-        || $eventType === self::PS_CHECKOUT_PAYMENT_DENIED
-        || $eventType === self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED) {
-            $this->dispatchPaymentStatus($eventType, $resource);
+        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_PENDING
+        || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_COMPLETED
+        || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_DENIED
+        || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED) {
+            $this->dispatchPaymentStatus($payload['eventType'], $payload['orderId']);
         }
     }
 
@@ -61,10 +60,15 @@ class OrderDispatcher implements InterfaceDispatcher
      *
      * @param string $eventType
      * @param array $resource
+     * @param int $orderId
      */
-    private function dispatchPaymentAction($eventType, $resource)
+    private function dispatchPaymentAction($eventType, $resource, $orderId)
     {
-        $orderError = (new WebHookValidation())->validateRefundResourceValues($resource);
+        $validationValues = new WebHookValidation();
+        $orderError = array_merge(
+            $validationValues->validateRefundResourceValues($resource),
+            $validationValues->validateRefundOrderIdValue($orderId)
+        );
 
         if (true !== $orderError) {
             /*
@@ -78,34 +82,28 @@ class OrderDispatcher implements InterfaceDispatcher
             $initiateBy = 'Paypal';
         }
 
-        $order = new WebHookOrder($initiateBy, $resource);
+        $order = new WebHookOrder($initiateBy, $resource, $orderId);
         $order->updateOrder();
     }
 
     /**
-     * Dispatch the event Type the the payment status PENDING / COMPLETED / DENIED
+     * Dispatch the event Type the the payment status PENDING / COMPLETED / DENIED / AUTH_VOIDED
      *
      * @param string $eventType
-     * @param array $resource
+     * @param int $orderId
      */
-    private function dispatchPaymentStatus($eventType, $resource)
+    private function dispatchPaymentStatus($eventType, $orderId)
     {
+        $validationValues = new WebHookValidation();
+        $orderError = $validationValues->validateRefundOrderIdValue($orderId);
+
+        if (true !== $orderError) {
+            /*
+            * @TODO : Throw array exception
+            */
+        }
+
         $states = new OrderStates();
-
-        if ($eventType === self::PS_CHECKOUT_PAYMENT_PENDING) {
-            // $states->dispatchPaymentStatus($eventType, $resource);
-        }
-
-        if ($eventType === self::PS_CHECKOUT_PAYMENT_COMPLETED) {
-            // $states->dispatchPaymentStatus($eventType, $resource);
-        }
-
-        if ($eventType === self::PS_CHECKOUT_PAYMENT_DENIED) {
-            // $states->dispatchPaymentStatus($eventType, $resource);
-        }
-
-        if ($eventType === self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED) {
-            // $states->dispatchPaymentStatus($eventType, $resource);
-        }
+        $states->updateOrderState($eventType, $orderId);
     }
 }
