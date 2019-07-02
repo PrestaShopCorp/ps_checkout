@@ -69,9 +69,16 @@ class WebHookOrder
         $paypalOrderRepository = new PaypalOrderRepository();
 
         $this->initiateBy = (string) $initiateBy;
-        $this->orderId = (int) $paypalOrderRepository->getPsOrderIdByPaypalOrderId($orderId);
-        $this->amount = (float) $resource['amount']['value'];
-        $this->currencyId = (string) \Currency::getIdByIsoCode($resource['amount']['currency']);
+        $this->orderId = $paypalOrderRepository->getPsOrderIdByPaypalOrderId($orderId);
+
+        if (false === $this->orderId) {
+            /*
+            * @TODO : Throw array exception
+            */
+        }
+
+        $this->amount = (float) $resource['amount']->value;
+        $this->currencyId = (string) \Currency::getIdByIsoCode($resource['amount']->currency_code);
     }
 
     /**
@@ -183,14 +190,19 @@ class WebHookOrder
         $refundAddTax = true;
         $refundVoucherChoosen = false;
 
-        $refundOrder = (bool) \OrderSlip::create(
-            $order,
-            $orderProductList,
-            $refundShipping,
-            $refundVoucher,
-            $refundVoucherChoosen,
-            $refundAddTax
-        );
+        // If all products have already been refunded, that catch
+        try {
+            $refundOrder = (bool) \OrderSlip::create(
+                $order,
+                $orderProductList,
+                $refundShipping,
+                $refundVoucher,
+                $refundVoucherChoosen,
+                $refundAddTax
+            );
+        } catch (\Exception $e) {
+            $refundOrder = false;
+        }
 
         if (true !== $refundOrder) {
             /*
