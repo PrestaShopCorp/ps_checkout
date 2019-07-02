@@ -220,7 +220,11 @@ class Maasland
 
         $data = json_decode($response->getBody(), true);
 
-        return isset($data['status']) ? $data['status'] : false;
+        if (false === isset($data['purchase_units'][0]['payments']['captures'][0]['status'])) {
+            return false;
+        }
+
+        return $data['purchase_units'][0]['payments']['captures'][0]['status'];
     }
 
     /**

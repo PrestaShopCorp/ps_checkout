@@ -49,18 +49,6 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
             throw new \PrestaShopException('Paypal order id is missing.');
         }
 
-        switch ($paymentMethod) {
-            case 'card':
-                $paymentMethod = $this->l('Payment by card');
-                break;
-            case 'paypal':
-                $paymentMethod = $this->l('Payment by PayPal');
-                break;
-            default:
-                $paymentMethod = $this->l('Payment by PrestaShop Checkout');
-                break;
-        }
-
         $cart = $this->context->cart;
 
         $customer = new Customer($cart->id_customer);

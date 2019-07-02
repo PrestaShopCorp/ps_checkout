@@ -36,6 +36,12 @@ class ValidateOrder
     const INTENT_CAPTURE = 'CAPTURE';
     const INTENT_AUTHORIZE = 'AUTHORIZE';
 
+    const CAPTURE_STATUS_PENDING = 'PENDING';
+    const CAPTURE_STATUS_DENIED = 'DENIED';
+    const CAPTURE_STATUS_VOIDED = 'VOIDED';
+    const CAPTURE_STATUS_COMPLETED = 'COMPLETED';
+    const CAPTURE_STATUS_DECLINED = 'DECLINED';
+
     /**
      * @var string
      */
@@ -66,7 +72,7 @@ class ValidateOrder
             $payload['orderStateId'],
             $payload['amount'],
             $payload['paymentMethod'],
-            $payload['message'],
+            $this->getPaymentMessageTranslation($payload['message']),
             $payload['extraVars'],
             $payload['currencyId'],
             false,
@@ -76,25 +82,44 @@ class ValidateOrder
         // TODO : patch the order in order to update the order id with the order id
         // of the prestashop order
 
-        $paypalOrder = (new PaypalOrder($this->paypalOrderId));
+        $paypalOrder = new PaypalOrder($this->paypalOrderId);
+        $order = $paypalOrder->getOrder();
         $maasland = new Maasland(\Context::getContext()->link);
 
         switch ($paypalOrder->getOrderIntent()) {
             case self::INTENT_CAPTURE:
-                $responseStatus = $maasland->captureOrder($paypalOrder['id'], $this->merchantId);
+                $responseStatus = $maasland->captureOrder($order['id'], $this->merchantId);
                 break;
             case self::INTENT_AUTHORIZE:
-                $responseStatus = $maasland->authorizeOrder($paypalOrder['id'], $this->merchantId);
+                $responseStatus = $maasland->authorizeOrder($order['id'], $this->merchantId);
                 break;
             default:
                 throw new \Exception(sprintf('Unknown Intent type %s', $paypalOrder->getOrderIntent()));
         }
 
-        $orderState = $this->setOrderState($module->currentOrder, $responseStatus);
+        $orderState = $this->setOrderState($module->currentOrder, $responseStatus, $payload['message']);
 
         if ($orderState === _PS_OS_PAYMENT_) {
             $this->setTransactionId($module->currentOrderReference, $payload['extraVars']['transaction_id']);
         }
+    }
+
+    /**
+     * Get payment message
+     *
+     * @param string $paymentMethod can be 'paypal' or 'card'
+     *
+     * @return string translation
+     */
+    private function getPaymentMessageTranslation($paymentMethod)
+    {
+        $paymentMessage = 'Payment by card';
+
+        if ($paymentMethod === 'paypal') {
+            $paymentMessage = 'Payment by PayPal';
+        }
+
+        return $paymentMessage;
     }
 
     /**
@@ -128,24 +153,52 @@ class ValidateOrder
      *
      * @param int $orderId from prestashop
      * @param string $status
+     * @param string $paymentMethod can be 'paypal' or 'card'
      *
      * @return int order state id to set to the order depending on the status return by paypal
      */
-    private function setOrderState($orderId, $status)
+    private function setOrderState($orderId, $status, $paymentMethod)
     {
         $order = new \OrderHistory();
         $order->id_order = $orderId;
 
-        if ($status === 'COMPLETED') {
-            $orderState = _PS_OS_PAYMENT_;
-        } else {
-            $orderState = _PS_OS_ERROR_;
+        switch ($status) {
+            case self::CAPTURE_STATUS_COMPLETED:
+                $orderState = _PS_OS_PAYMENT_;
+                break;
+            case self::CAPTURE_STATUS_DECLINED:
+                $orderState = _PS_OS_ERROR_;
+                break;
+            case self::CAPTURE_STATUS_PENDING:
+                $orderState = $this->setPendingStatus($paymentMethod);
+                break;
+            default:
+                $orderState = $this->setPendingStatus($paymentMethod);
+                break;
         }
 
         $order->changeIdOrderState($orderState, $orderId);
         $order->save();
 
         return $orderState;
+    }
+
+    /**
+     * Set pending status depending on the method used to make the payment
+     *
+     * @param string $paymentMethod can be 'paypal' or 'card'
+     *
+     * @return int id state
+     */
+    private function setPendingStatus($paymentMethod)
+    {
+        $stateId = \Configuration::get('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
+
+        if ($paymentMethod === 'paypal') {
+            $stateId = \Configuration::get('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
+        }
+
+        return $stateId;
     }
 
     /**
