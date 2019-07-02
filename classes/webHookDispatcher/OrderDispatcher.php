@@ -96,7 +96,7 @@ class OrderDispatcher implements InterfaceDispatcher
      * Dispatch the event Type the the payment status PENDING / COMPLETED / DENIED / AUTH_VOIDED
      *
      * @param string $eventType
-     * @param int $orderId
+     * @param int $orderIdgst
      */
     private function dispatchPaymentStatus($eventType, $orderId)
     {
@@ -109,10 +109,21 @@ class OrderDispatcher implements InterfaceDispatcher
             */
         }
 
-        $states = new OrderStates();
-        $states->updateOrderStatus(
+        $paypalOrderRepository = new PaypalOrderRepository();
+        $psOrderId = (int) $paypalOrderRepository->getPsOrderIdByPaypalOrderId($orderId);
+
+        $order = new \OrderHistory();
+        $order->id_order = $psOrderId;
+
+        $order->changeIdOrderState(
             self::PS_EVENTTYPE_TO_PS_STATE_ID[$eventType],
-            $orderId
+            $orderIpsOrderIdd
         );
+
+        if (true !== $order->save()) {
+            /*
+            * @TODO : Throw array exception
+            */
+        }
     }
 }
