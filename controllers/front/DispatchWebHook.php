@@ -102,7 +102,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         $this->payload = array(
             'resource' => (array) \Tools::jsonDecode(\Tools::getValue('resource')),
             'eventType' => (string) \Tools::getValue('eventType'),
-            'category' => (string) \Tools::getValue('eventType'),
+            'category' => (string) \Tools::getValue('category'),
             'summary' => (string) \Tools::getValue('summary'),
             'orderId' => (int) \Tools::getValue('orderId'),
         );

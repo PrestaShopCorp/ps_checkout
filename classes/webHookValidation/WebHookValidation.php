@@ -60,18 +60,6 @@ class WebHookValidation
             $errors[] = 'Psx-Id can\'t be empty';
         }
 
-        if (!in_array($headerValues['category'], self::ALLOWED_CATEGORIES)) {
-            $errors[] = sprintf('Category must be one of these values: %s', implode(', ', self::ALLOWED_CATEGORIES));
-        }
-
-        if (!is_string($headerValues['eventType'])) {
-            $errors[] = 'eventType must be a string';
-        }
-
-        if (empty($headerValues['eventType'])) {
-            $errors[] = 'eventType can\'t be empty';
-        }
-
         if (!empty($errors)) {
             return $errors;
         }
