@@ -10,7 +10,7 @@
         </PSAlert>
         <PSAlert :alert-type="ALERT_TYPE_WARNING">
           <h2>{{ $t('pages.accounts.documentNeeded') }}</h2>
-          <p>{{ $t('pages.accounts.additionalDocumentsNeeded') }} :</p>
+          <p>{{ $t('pages.accounts.additionalDocumentsNeeded') }}</p>
           <ul class="my-1">
             <li><b>{{ $t('pages.accounts.photoIds') }}</b></li>
           </ul>

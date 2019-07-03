@@ -47,7 +47,7 @@
                                 </div>
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-4 pl-0">
                                     <label class="text-muted">
-                                        {l s='Including' mod='ps_checkout'} :
+                                        {l s='Including:' mod='ps_checkout'}
                                     </label>
                                     <div>
                                         <img class="payment-icon" src="{$imgPath|escape:'htmlall':'UTF-8'}paypal.jpg" alt="">

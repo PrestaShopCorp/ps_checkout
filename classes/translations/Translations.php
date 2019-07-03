@@ -67,7 +67,7 @@ class Translations
                     'didntReceiveEmail' => $this->module->l('No confirmation email?'),
                     'sendEmailAgain' => $this->module->l('Send it again'),
                     'documentNeeded' => $this->module->l('Information needed'),
-                    'additionalDocumentsNeeded' => $this->module->l('Additional information is required to complete background check. Please upload the following document(s)'),
+                    'additionalDocumentsNeeded' => $this->module->l('Additional information is required to complete background check. Please upload the following document(s):'),
                     'photoIds' => $this->module->l('Photo IDs, such as driving licence, for all beneficial owners'),
                     'uploadFile' => $this->module->l('Upload file(s)'),
                     'undergoingCheck' => $this->module->l('Background check is currently undergoing'),
