@@ -86,7 +86,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
             return false;
         }
 
-        $this->dispatchWebHook($this->payload);
+        $this->dispatchWebHook();
     }
 
     /**
