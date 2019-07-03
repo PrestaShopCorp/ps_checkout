@@ -5,7 +5,7 @@ substitutions:
 steps:
 - name: 'gcr.io/cloud-builders/npm'
   entrypoint: sh
-  args: ['-c', ' npm install && npm run build']
+  args: ['-c', ' yarn install && yarn build']
 
 - name: 'gcr.io/$PROJECT_ID/composer'
   args: ['install']
