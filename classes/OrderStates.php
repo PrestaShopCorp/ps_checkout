@@ -32,6 +32,8 @@ class OrderStates
 {
     const MODULE_NAME = 'ps_checkout';
     const ORDER_STATE_TEMPLATE = 'payment';
+    const ORDER_TABLE = 'orders';
+    const ORDER_HISTORY_TABLE = 'order_history';
     const ORDER_STATE_TABLE = 'order_state';
     const ORDER_STATE_LANG_TABLE = 'order_state_lang';
     const BLUE_HEXA_COLOR = '#4169E1';

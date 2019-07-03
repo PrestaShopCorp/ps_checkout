@@ -35,39 +35,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     const PS_CHECKOUT_PAYPAL_ID_LABEL = 'PS_CHECKOUT_PAYPAL_ID_MERCHANT';
 
     /**
-     * Contains the summary of the event, coming from Paypal
-     *
-     * @var string
-     */
-    private $summary;
-
-    /**
-     * @var string
-     */
-    private $category;
-
-    /**
-     * Contains the Event Type coming from PSL
-     *
-     * @var string
-     */
-    private $eventType;
-
-    /**
-     * Get all the datas
-     *
-     * @var array
-     */
-    private $resource;
-
-    /**
-     * Order Id coming from Paypal
-     *
-     * @var int
-     */
-    private $orderId;
-
-    /**
      * Id coming from PSL
      *
      * @var int
@@ -88,10 +55,21 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     private $firebaseId;
 
+    /**
+     * Get all the HTTP body values
+     *
+     * @var array
+     */
+    private $payload;
+
+    /**
+     * Initialize the webhook script
+     */
     public function initContent()
     {
         $headerValues = getallheaders();
-        $errors = (new WebHookValidation())->validateHeaderDatas($headerValues);
+        $validationValues = new WebHookValidation();
+        $errors = $validationValues->validateHeaderDatas($headerValues);
 
         // If there is errors, return them
         if (is_array($errors)) {
@@ -101,36 +79,33 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
             return false;
         }
 
-        $payload = \Tools::jsonDecode(\Tools::getValue('resource'));
-
-        $this->setAtributesValues($headerValues, $payload);
+        $this->setAtributesValues($headerValues);
 
         // Check if have execution permissions
         if (false === $this->checkExecutionPermissions()) {
             return false;
         }
 
-        $this->dispatchWebHook($payload);
+        $this->dispatchWebHook();
     }
 
     /**
      * Set Attributes values from the payload
      *
      * @param array $headerValues
-     * @param array $payload
      */
-    private function setAtributesValues(array $headerValues, $payload)
+    private function setAtributesValues(array $headerValues)
     {
-        // from payload header
-        $this->shopId = (int) $headerValues['Shop-Id'];
-        $this->merchantId = (int) $headerValues['Merchant-Id'];
-        $this->firebaseId = (int) $headerValues['Psx-Id'];
-        $this->eventType = (string) $headerValues['eventType'];
-        $this->category = (string) $headerValues['category'];
-        $this->summary = (string) $headerValues['summary'];
-
-        // from payload data
-        $this->resource = (array) $payload;
+        $this->shopId = (int) $headerValues['shop-id'];
+        $this->merchantId = (int) $headerValues['merchant-id'];
+        $this->firebaseId = (int) $headerValues['psx-id'];
+        $this->payload = array(
+            'resource' => (array) \Tools::jsonDecode(\Tools::getValue('resource')),
+            'eventType' => (string) \Tools::getValue('eventType'),
+            'category' => (string) \Tools::getValue('category'),
+            'summary' => (string) \Tools::getValue('summary'),
+            'orderId' => (string) \Tools::getValue('orderId'),
+        );
     }
 
     /**
@@ -159,23 +134,20 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
     /**
      * Dispatch the web Hook according to the category
-     *
-     * @param array $payLoad
      */
-    private function dispatchWebHook($payload)
+    private function dispatchWebHook()
     {
-        if ('ShopNotificationMerchantAccount' === $this->category) {
+        if ('ShopNotificationMerchantAccount' === $this->payload['category']) {
             $merchantManager = new MerchantDispatcher();
             $merchantManager->dispatchEventType(
-                $this->eventType
+                $this->payload['eventType']
             );
         }
 
-        if ('ShopNotificationOrderChange' === $this->category) {
+        if ('ShopNotificationOrderChange' === $this->payload['category']) {
             $orderManager = new OrderDispatcher();
             $orderManager->dispatchEventType(
-                $this->eventType,
-                $this->resource
+                $this->payload
             );
         }
     }

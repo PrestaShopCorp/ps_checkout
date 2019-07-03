@@ -28,6 +28,7 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 class WebHookOrder
 {
+    const REFUND_STATE = 'PS_CHECKOUT_STATE_PARTIAL_REFUND';
     /**
      * Tell if refund is initiate by Paypal or Merchant
      *
@@ -61,15 +62,23 @@ class WebHookOrder
      *
      * @param string $initiateBy
      * @param array $resource
+     * @param int $orderId
      */
-    public function __construct($initiateBy, $resource)
+    public function __construct($initiateBy, $resource, $orderId)
     {
         $paypalOrderRepository = new PaypalOrderRepository();
 
         $this->initiateBy = (string) $initiateBy;
-        $this->orderId = (int) $paypalOrderRepository->getPsOrderIdByPaypalOrderId($resource['orderId']);
-        $this->amount = (float) $resource['amount']['value'];
-        $this->currencyId = (string) \Currency::getIdByIsoCode($resource['amount']['currency']);
+        $this->orderId = $paypalOrderRepository->getPsOrderIdByPaypalOrderId($orderId);
+
+        if (false === $this->orderId) {
+            /*
+            * @TODO : Throw array exception
+            */
+        }
+
+        $this->amount = (float) $resource['amount']->value;
+        $this->currencyId = (string) \Currency::getIdByIsoCode($resource['amount']->currency_code);
     }
 
     /**
@@ -181,13 +190,41 @@ class WebHookOrder
         $refundAddTax = true;
         $refundVoucherChoosen = false;
 
-        return \OrderSlip::create(
-            $order,
-            $orderProductList,
-            $refundShipping,
-            $refundVoucher,
-            $refundVoucherChoosen,
-            $refundAddTax
+        // If all products have already been refunded, that catch
+        try {
+            $refundOrder = (bool) \OrderSlip::create(
+                $order,
+                $orderProductList,
+                $refundShipping,
+                $refundVoucher,
+                $refundVoucherChoosen,
+                $refundAddTax
+            );
+        } catch (\Exception $e) {
+            $refundOrder = false;
+        }
+
+        if (true !== $refundOrder) {
+            /*
+            * @TODO : Throw array exception
+            */
+            return false;
+        }
+
+        $order = new \OrderHistory();
+        $order->id_order = $this->orderId;
+
+        $order->changeIdOrderState(
+            \Configuration::get(self::REFUND_STATE),
+            $this->orderId
         );
+
+        if (true !== $order->save()) {
+            /*
+            * @TODO : Throw array exception
+            */
+        }
+
+        return true;
     }
 }
