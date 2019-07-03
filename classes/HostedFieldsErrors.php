@@ -45,9 +45,9 @@ class HostedFieldsErrors
     {
         //TODO: Complete with all error code possible - waiting response from paypal
         $errors = array(
-            'INVALID_STRING_LENGTH' => $this->module->l('The value of a field is either too short or too long'),
-            'INVALID_EXPIRATION_YEAR' => $this->module->l('Expiration Year must be between current year and 2099'),
-            'INVALID_PARAMETER_SYNTAX' => $this->module->l('The value of a field does not conform to the expected format'),
+            'INVALID_STRING_LENGTH' => $this->module->l('Invalid format, check your bank details and try again'),
+            'INVALID_EXPIRATION_YEAR' => $this->module->l('Expiration year must be between now and 2099'),
+            'INVALID_PARAMETER_SYNTAX' => $this->module->l('Invalid format, check your bank details and try again'),
         );
 
         return json_encode($errors);
