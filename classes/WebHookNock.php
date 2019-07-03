@@ -40,7 +40,7 @@ class WebHookNock
 
         foreach ($headerDatas as $name => $value) {
             header($name . ': ' . $value);
-            \PrestaShopLoggerCore::addLog('[PSPwebhook] '.$name.': '.$value, 3);
+            \PrestaShopLoggerCore::addLog('[PSPwebhook] ' . $name . ': ' . $value, 3);
         }
 
         headers_list();
