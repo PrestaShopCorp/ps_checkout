@@ -26,6 +26,7 @@
 use PrestaShop\Module\PrestashopCheckout\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\MerchantDispatcher;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
+use PrestaShop\Module\PrestashopCheckout\WebHookNock;
 
 class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontController
 {
@@ -72,11 +73,12 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         $errors = $validationValues->validateHeaderDatas($headerValues);
 
         // If there is errors, return them
-        if (is_array($errors)) {
-            /*
-            * @TODO : Throw array exception
-            */
-            return false;
+        if (!empty($errors)) {
+            $headerNOCK = new WebHookNock();
+            $headerNOCK->returnHeader(
+                401,
+                $errors
+            );
         }
 
         $this->setAtributesValues($headerValues);
@@ -122,11 +124,23 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         $localMerchantId = $this->module->configurationList[self::PS_CHECKOUT_PAYPAL_ID_LABEL];
 
         if ($this->shopId !== $localShopId) {
-            return false;
+            $headerNOCK = new WebHookNock();
+            $headerNOCK->returnHeader(
+                401,
+                array(
+                    'permissions' => 'merchantId wrong',
+                )
+            );
         }
 
         if ($this->merchantId !== $localMerchantId) {
-            return false;
+            $headerNOCK = new WebHookNock();
+            $headerNOCK->returnHeader(
+                401,
+                array(
+                    'permissions' => 'merchantId wrong',
+                )
+            );
         }
 
         return true;

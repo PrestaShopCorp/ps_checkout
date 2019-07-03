@@ -72,9 +72,13 @@ class WebHookOrder
         $this->orderId = $paypalOrderRepository->getPsOrderIdByPaypalOrderId($orderId);
 
         if (false === $this->orderId) {
-            /*
-            * @TODO : Throw array exception
-            */
+            $headerNOCK = new WebHookNock();
+            $headerNOCK->returnHeader(
+                422,
+                array(
+                    'order' => 'order #' . $orderId . ' does not exist',
+                )
+            );
         }
 
         $this->amount = (float) $resource['amount']->value;
@@ -94,7 +98,13 @@ class WebHookOrder
         $expectiveTotalAmountToRefund = $amountAlreadyRefunded + $this->amount;
 
         if ($order->total_paid <= $expectiveTotalAmountToRefund) {
-            throw new \PrestaShopException('Can\'t refund more than the order amount');
+            $headerNOCK = new WebHookNock();
+            $headerNOCK->returnHeader(
+                406,
+                array(
+                    'order' => 'Can\'t refund more than the order amount',
+                )
+            );
         }
 
         $orderProductList = (array) $order->getProducts();
@@ -205,10 +215,13 @@ class WebHookOrder
         }
 
         if (true !== $refundOrder) {
-            /*
-            * @TODO : Throw array exception
-            */
-            return false;
+            $headerNOCK = new WebHookNock();
+            $headerNOCK->returnHeader(
+                422,
+                array(
+                    'order' => 'unable to refund',
+                )
+            );
         }
 
         $order = new \OrderHistory();
@@ -220,9 +233,13 @@ class WebHookOrder
         );
 
         if (true !== $order->save()) {
-            /*
-            * @TODO : Throw array exception
-            */
+            $headerNOCK = new WebHookNock();
+            $headerNOCK->returnHeader(
+                500,
+                array(
+                    'fatal' => 'unable to change the order state',
+                )
+            );
         }
 
         return true;

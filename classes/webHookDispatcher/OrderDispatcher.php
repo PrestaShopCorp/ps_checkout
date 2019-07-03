@@ -77,9 +77,8 @@ class OrderDispatcher
         );
 
         if (!empty($orderError)) {
-            /*
-            * @TODO : Throw array exception
-            */
+            $headerNOCK = new WebHookNock();
+            $headerNOCK->returnHeader(401, $orderError);
         }
 
         $initiateBy = 'Merchant';
@@ -104,19 +103,21 @@ class OrderDispatcher
         $orderError = $validationValues->validateRefundOrderIdValue($orderId);
 
         if (!empty($orderError)) {
-            /*
-            * @TODO : Throw array exception
-            */
+            $headerNOCK = new WebHookNock();
+            $headerNOCK->returnHeader(401, $orderError);
         }
 
         $paypalOrderRepository = new PaypalOrderRepository();
         $psOrderId = $paypalOrderRepository->getPsOrderIdByPaypalOrderId($orderId);
 
         if (false === $psOrderId) {
-            /*
-            * @TODO : Throw array exception
-            */
-            return false;
+            $headerNOCK = new WebHookNock();
+            $headerNOCK->returnHeader(
+                422,
+                array(
+                    'order' => 'order #' . $orderId . ' does not exist',
+                )
+            );
         }
 
         $order = new \OrderHistory();
@@ -128,9 +129,13 @@ class OrderDispatcher
         );
 
         if (true !== $order->save()) {
-            /*
-            * @TODO : Throw array exception
-            */
+            $headerNOCK = new WebHookNock();
+            $headerNOCK->returnHeader(
+                500,
+                array(
+                    'fatal' => 'unable to change the order state',
+                )
+            );
         }
     }
 }
