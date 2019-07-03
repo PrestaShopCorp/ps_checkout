@@ -259,7 +259,7 @@ class ps_checkout extends PaymentModule
     {
         $paypalPaymentOption = new PaymentOption();
         $paypalPaymentOption->setModuleName($this->name . '_paypal')
-                            ->setCallToActionText($this->l('and other payment methods'))
+                            ->setCallToActionText($this->l('Pay by PayPal or other payment methods'))
                             ->setAction($this->context->link->getModuleLink($this->name, 'CreateOrder', array(), true))
                             ->setAdditionalInformation($this->generatePaypalForm())
                             ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/paypal.png'));
@@ -286,7 +286,7 @@ class ps_checkout extends PaymentModule
     {
         $hostedFieldsPaymentOption = new PaymentOption();
         $hostedFieldsPaymentOption->setModuleName($this->name . '_hostedFields')
-                    ->setCallToActionText($this->l('100% secure payments'))
+                    ->setCallToActionText($this->l('Pay by Card'))
                     ->setAction($this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true))
                     ->setForm($this->generateHostedFieldsForm())
                     ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payement-cards.png'));

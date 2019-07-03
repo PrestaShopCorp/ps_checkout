@@ -6,23 +6,20 @@
       </h3>
       <div class="card-block row">
         <div class="card-text">
+          <div class="row mb-2">
+            <div class="col-12 col-sm-12 col-md-12 col-lg-12 pl-0">
+              <h1 class="text-muted font-weight-light">{{ $t('panel.account-list.activateAllPayment') }}</h1>
+            </div>
+          </div>
           <div class="row">
             <div class="col-12 col-sm-6 col-md-8 col-lg-8 pl-0">
               <h2>{{ $t('panel.account-list.essentialsAccount') }}</h2>
               <p class="text-muted mb-0">
-                <template v-if="$store.state.firebase.account.status === false">
-                  {{ $t('panel.account-list.activateAllPayment') }}
+                <template v-if="$store.state.firebase.account.status === true">
+                  {{ $t('panel.account-list.connectedWitdh') }} <b>{{ $store.state.firebase.account.email }}</b> {{ $t('panel.account-list.account') }}
                 </template>
                 <template v-else>
-                  {{ $t('panel.account-list.connectedWitdh') }}
-                </template>
-              </p>
-              <p class="text-muted mb-0">
-                <template v-if="$store.state.firebase.account.status === false">
                   {{ $t('panel.account-list.createNewAccount') }}
-                </template>
-                <template v-else>
-                  <b>{{ $store.state.firebase.account.email }}</b>
                 </template>
               </p>
             </div>
