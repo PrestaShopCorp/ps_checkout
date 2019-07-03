@@ -109,7 +109,7 @@ class WebHookValidation
         $errors = array();
 
         if (empty($orderId)) {
-            return $errors[] = 'orderId must not be empty';
+            $errors[] = 'orderId must not be empty';
         }
 
         return $errors;
