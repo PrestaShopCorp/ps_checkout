@@ -76,7 +76,7 @@ class OrderDispatcher
             $validationValues->validateRefundOrderIdValue($orderId)
         );
 
-        if (!is_array($orderError)) {
+        if (!empty($orderError)) {
             /*
             * @TODO : Throw array exception
             */
@@ -103,7 +103,7 @@ class OrderDispatcher
         $validationValues = new WebHookValidation();
         $orderError = $validationValues->validateRefundOrderIdValue($orderId);
 
-        if (!is_array($orderError)) {
+        if (!empty($orderError)) {
             /*
             * @TODO : Throw array exception
             */
