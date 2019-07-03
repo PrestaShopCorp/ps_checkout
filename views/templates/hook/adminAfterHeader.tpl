@@ -28,7 +28,7 @@
         <div class="col">
             <div class="card">
                 <h3 class="card-header">
-                    <i class="material-icons">extension</i> {l s='All-in-one payment module' mod='ps_checkout'}
+                    <i class="material-icons">extension</i> {l s='One module, all payments methods.' mod='ps_checkout'}
                 </h3>
                 <div class="card-block">
                     <div class="module-item-list">
@@ -40,14 +40,14 @@
                             <div class="row col-12 col-sm-6 col-md-7 col-lg-7 pl-0">
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-8 pl-0">
                                     <ul class="text-muted">
-                                        <li class="mb-1">{l s='All payment methods. Accept cards, PayPal and much more' mod='ps_checkout'}</li>
+                                        <li class="mb-1">{l s='Offer the widest range of payment methods: cards, PayPal, etc.' mod='ps_checkout'}</li>
                                         <li class="mb-1">{l s='Benefit from all PayPal expertise and advantages' mod='ps_checkout'}</li>
-                                        <li>{l s='Offer the most relevant Local Payment Methods to customers across the globe' mod='ps_checkout'}</li>
+                                        <li>{l s='Give access to relevant local payment methods for customers around the globe' mod='ps_checkout'}</li>
                                     </ul>
                                 </div>
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-4 pl-0">
                                     <label class="text-muted">
-                                        {l s='Included payment methods' mod='ps_checkout'}
+                                        {l s='Including' mod='ps_checkout'} :
                                     </label>
                                     <div>
                                         <img class="payment-icon" src="{$imgPath|escape:'htmlall':'UTF-8'}paypal.jpg" alt="">

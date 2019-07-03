@@ -3,12 +3,12 @@
     <div class="card">
       <div class="card-block row">
         <div class="card-text">
-          <h1>{{ $t('panel.fees.title') }}</h1>
+          <h1 class="text-center">{{ $t('panel.fees.title') }}</h1>
 
           <div class="row pt-4">
             <div class="col-12 col-sm-4 col-md-4 col-lg-4">
               <form class="form form-horizontal">
-                <p>{{ $t('panel.fees.calculateMuch') }}</p>
+                <p>{{ $t('panel.fees.calculateMuch') }}.</p>
                 <div class="form-group">
                   <label class="form-control-label">{{ $t('panel.fees.countryResidence') }}</label>
                   <select class="custom-select" v-model="country">

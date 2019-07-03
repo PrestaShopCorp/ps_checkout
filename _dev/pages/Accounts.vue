@@ -10,7 +10,7 @@
         </PSAlert>
         <PSAlert :alert-type="ALERT_TYPE_WARNING">
           <h2>{{ $t('pages.accounts.documentNeeded') }}</h2>
-          <p>{{ $t('pages.accounts.additionalDocumentsNeeded') }}:</p>
+          <p>{{ $t('pages.accounts.additionalDocumentsNeeded') }} :</p>
           <ul class="my-1">
             <li><b>{{ $t('pages.accounts.photoIds') }}</b></li>
           </ul>
@@ -20,7 +20,7 @@
           <h2>{{ $t('pages.accounts.undergoingCheck') }}</h2>
           <p>
             {{ $t('pages.accounts.severalDays') }}
-            {{ $t('pages.accounts.youCanProcess') }} <b>{{ $t('pages.accounts.upTo') }}</b> {{ $t('pages.accounts.transactionsUntil') }}
+            {{ $t('pages.accounts.youCanProcess') }} <b>{{ $t('pages.accounts.upTo') }}</b> {{ $t('pages.accounts.transactionsUntil') }}.
           </p>
           <div class="mt-3">
             <a href="#" target="_blank">
@@ -31,7 +31,7 @@
         <PSAlert :alert-type="ALERT_TYPE_DANGER">
           <h2>{{ $t('pages.accounts.accountDeclined') }}</h2>
           <p>
-            {{ $t('pages.accounts.cannotProcessCreditCard') }}
+            {{ $t('pages.accounts.cannotProcessCreditCard') }}.
           </p>
           <div class="mt-3">
             <a href="#" target="_blank">

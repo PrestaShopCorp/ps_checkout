@@ -35,21 +35,21 @@
         </div>
         <div class="condition-label">
             <label class="js-terms paypal-label" for="conditions_to_approve-paypal">
-            I agree to the <a href="" id="cta-terms-and-conditions-0">terms of service</a> and will adhere to them unconditionally.
+            {l s='I agree to the' mod='ps_checkout'} <a href="" id="cta-terms-and-conditions-checkout">{l s='terms of service' mod='ps_checkout'}</a> {l s='and will adhere to them unconditionally' mod='ps_checkout'}.
             </label>
         </div>
         </li>
     </ul>
 </form>
 
-<div class="paypal-tips">You will be temporarily redirected to the related payment service.</div>
+<div class="paypal-tips">{l s='You will be redirected to the related gateway to complete payment' mod='ps_checkout'}</div>
 
 <div id="paypal-button-container"></div>
 
 <div id="paypal-approve-error" class="hide-paypal-error">
     <article class="alert alert-danger" role="alert" data-alert="danger">
         <ul>
-            <li>Impossible de mettre à jour vos informations, veuillez vérifier vos données.</li>
+            <li>{l s='Please indicate that you have read Terms & Conditions and accept all terms' mod='ps_checkout'}</li>.
         </ul>
     </article>
 </div>

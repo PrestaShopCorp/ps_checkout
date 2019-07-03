@@ -19,7 +19,7 @@
             </div>
           </div>
           <PSAlert :alert-type="ALERT_TYPE_INFO">
-            <p>{{ $t('panel.payment-mode.infoAlertText') }}</p>
+            <p>{{ $t('panel.payment-mode.infoAlertText') }}.</p>
           </PSAlert>
           <div class="form-group row">
             <label class="form-control-label">
@@ -33,7 +33,7 @@
                   {{ $t('panel.payment-mode.tipProductionMode') }}
                 </template>
                 <template v-else>
-                  {{ $t('panel.payment-mode.tipSandboxMode') }}
+                  {{ $t('panel.payment-mode.tipSandboxMode') }}.
                 </template>
               </small>
               <a href="#" @click.prevent="updatePaymentMode()">
