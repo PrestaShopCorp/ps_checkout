@@ -80,7 +80,7 @@ class OrderDispatcher
      */
     private function getPrestashopOrderId($orderId)
     {
-        $validationValues = (new WebHookValidation())->validateRefundOrderIdValue($orderId);
+        $orderError = (new WebHookValidation())->validateRefundOrderIdValue($orderId);
 
         if (!empty($orderError)) {
             (new WebHookNock())->setHeader(401, $orderError);
