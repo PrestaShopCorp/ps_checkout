@@ -69,14 +69,7 @@ class WebHookOrder
         $paypalOrderRepository = new PaypalOrderRepository();
 
         $this->initiateBy = (string) $initiateBy;
-        $this->orderId = $paypalOrderRepository->getPsOrderIdByPaypalOrderId($orderId);
-
-        if (false === $this->orderId) {
-            /*
-            * @TODO : Throw array exception
-            */
-        }
-
+        $this->orderId = (int) $orderId;
         $this->amount = (float) $resource['amount']->value;
         $this->currencyId = (string) \Currency::getIdByIsoCode($resource['amount']->currency_code);
     }
@@ -94,7 +87,14 @@ class WebHookOrder
         $expectiveTotalAmountToRefund = $amountAlreadyRefunded + $this->amount;
 
         if ($order->total_paid <= $expectiveTotalAmountToRefund) {
-            throw new \PrestaShopException('Can\'t refund more than the order amount');
+            (new WebHookNock())->setHeader(
+                406,
+                array(
+                    'order' => 'Can\'t refund more than the order amount',
+                )
+            );
+
+            return false;
         }
 
         $orderProductList = (array) $order->getProducts();
@@ -205,9 +205,13 @@ class WebHookOrder
         }
 
         if (true !== $refundOrder) {
-            /*
-            * @TODO : Throw array exception
-            */
+            (new WebHookNock())->setHeader(
+                422,
+                array(
+                    'order' => 'unable to refund',
+                )
+            );
+
             return false;
         }
 
@@ -220,9 +224,14 @@ class WebHookOrder
         );
 
         if (true !== $order->save()) {
-            /*
-            * @TODO : Throw array exception
-            */
+            (new WebHookNock())->setHeader(
+                500,
+                array(
+                    'fatal' => 'unable to change the order state',
+                )
+            );
+
+            return false;
         }
 
         return true;

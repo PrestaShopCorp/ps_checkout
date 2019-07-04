@@ -26,6 +26,7 @@
 use PrestaShop\Module\PrestashopCheckout\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\MerchantDispatcher;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
+use PrestaShop\Module\PrestashopCheckout\WebHookNock;
 
 class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontController
 {
@@ -64,6 +65,8 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
     /**
      * Initialize the webhook script
+     *
+     * @return bool
      */
     public function initContent()
     {
@@ -72,10 +75,9 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         $errors = $validationValues->validateHeaderDatas($headerValues);
 
         // If there is errors, return them
-        if (is_array($errors)) {
-            /*
-            * @TODO : Throw array exception
-            */
+        if (!empty($errors)) {
+            (new WebHookNock())->setHeader(401, $errors);
+
             return false;
         }
 
@@ -86,7 +88,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
             return false;
         }
 
-        $this->dispatchWebHook();
+        return $this->dispatchWebHook();
     }
 
     /**
@@ -122,10 +124,24 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         $localMerchantId = $this->module->configurationList[self::PS_CHECKOUT_PAYPAL_ID_LABEL];
 
         if ($this->shopId !== $localShopId) {
+            (new WebHookNock())->setHeader(
+                401,
+                array(
+                    'permissions' => 'merchantId wrong',
+                )
+            );
+
             return false;
         }
 
         if ($this->merchantId !== $localMerchantId) {
+            (new WebHookNock())->setHeader(
+                401,
+                array(
+                    'permissions' => 'merchantId wrong',
+                )
+            );
+
             return false;
         }
 
@@ -134,21 +150,27 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
     /**
      * Dispatch the web Hook according to the category
+     *
+     * @return bool
      */
     private function dispatchWebHook()
     {
         if ('ShopNotificationMerchantAccount' === $this->payload['category']) {
             $merchantManager = new MerchantDispatcher();
-            $merchantManager->dispatchEventType(
+
+            return $merchantManager->dispatchEventType(
                 $this->payload['eventType']
             );
         }
 
         if ('ShopNotificationOrderChange' === $this->payload['category']) {
             $orderManager = new OrderDispatcher();
-            $orderManager->dispatchEventType(
+
+            return $orderManager->dispatchEventType(
                 $this->payload
             );
         }
+
+        return true;
     }
 }
