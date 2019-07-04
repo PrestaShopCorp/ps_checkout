@@ -182,7 +182,7 @@ class GenerateJsonPaypalOrder
         }
 
         // Add optional birthdate if provided
-        if (!empty($params['customer']->birthday)) {
+        if (!empty($params['customer']->birthday) && $params['customer']->birthday !== '0000-00-00') {
             $payload['payer']['birth_date'] = $params['customer']->birthday;
         }
 
