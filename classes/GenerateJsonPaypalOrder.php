@@ -108,7 +108,7 @@ class GenerateJsonPaypalOrder
             $items[] = $item;
         }
 
-        $payload = json_encode([
+        $payload = [
             'intent' => \Configuration::get('PS_CHECKOUT_INTENT'), // capture or authorize
             'custom_id' => (string) $params['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
@@ -152,13 +152,6 @@ class GenerateJsonPaypalOrder
                     'surname' => $params['customer']->firstname,
                 ],
                 'email_address' => $params['customer']->email,
-                'phone' => [
-                    'phone_number' => [
-                        'national_number' => $params['addresses']['invoice']->phone,
-                    ],
-                    'phone_type' => 'MOBILE', // TODO - Function to determine if phone is mobile or not
-                ],
-                'birth_date' => $params['customer']->birthday,
                 'address' => [
                     'address_line_1' => $params['addresses']['invoice']->address1,
                     'address_line_2' => $params['addresses']['invoice']->address2,
@@ -176,9 +169,24 @@ class GenerateJsonPaypalOrder
                 'locale' => $params['language']->locale,
                 'shipping_preference' => 'SET_PROVIDED_ADDRESS',
             ],
-        ]);
+        ];
 
-        return $payload;
+        // Add optional phone number if provided
+        if (!empty($params['addresses']['invoice']->phone)) {
+            $payload['payer']['phone'] = [
+                'phone_number' => [
+                    'national_number' => $params['addresses']['invoice']->phone,
+                ],
+                'phone_type' => 'MOBILE', // TODO - Function to determine if phone is mobile or not
+            ];
+        }
+
+        // Add optional birthdate if provided
+        if (!empty($params['customer']->birthday)) {
+            $payload['payer']['birth_date'] = $params['customer']->birthday;
+        }
+
+        return json_encode($payload);
     }
 
     /**
