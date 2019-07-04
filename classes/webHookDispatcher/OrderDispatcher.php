@@ -45,20 +45,63 @@ class OrderDispatcher
      * Dispatch the Event Type to manage the merchant status
      *
      * @param array $payload
+     *
+     * @return bool
      */
     public function dispatchEventType($payload)
     {
+        $psOrderId = $this->getPrestashopOrderId($payload['orderId']);
+
+        if (false === $psOrderId) {
+            return false;
+        }
+
         if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REFUNED
         || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REVERSED) {
-            $this->dispatchPaymentAction($payload['eventType'], $payload['resource'], $payload['orderId']);
+            return $this->dispatchPaymentAction($payload['eventType'], $payload['resource'], $psOrderId);
         }
 
         if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_PENDING
         || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_COMPLETED
         || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_DENIED
         || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED) {
-            $this->dispatchPaymentStatus($payload['eventType'], $payload['orderId']);
+            return $this->dispatchPaymentStatus($payload['eventType'], $psOrderId);
         }
+
+        return true;
+    }
+
+    /**
+     * Check the PSL orderId value and transform it into a Prestashop OrderId
+     *
+     * @param int $orderId
+     *
+     * @return bool|int
+     */
+    private function getPrestashopOrderId($orderId)
+    {
+        $validationValues = (new WebHookValidation())->validateRefundOrderIdValue($orderId);
+
+        if (!empty($orderError)) {
+            (new WebHookNock())->setHeader(401, $orderError);
+
+            return false;
+        }
+
+        $psOrderId = (new PaypalOrderRepository())->getPsOrderIdByPaypalOrderId($orderId);
+
+        if (false === $psOrderId) {
+            (new WebHookNock())->setHeader(
+                422,
+                array(
+                    'order' => 'order #' . $orderId . ' does not exist',
+                )
+            );
+
+            return false;
+        }
+
+        return $psOrderId;
     }
 
     /**
@@ -67,18 +110,17 @@ class OrderDispatcher
      * @param string $eventType
      * @param array $resource
      * @param int $orderId
+     *
+     * @return bool
      */
     private function dispatchPaymentAction($eventType, $resource, $orderId)
     {
-        $validationValues = new WebHookValidation();
-        $orderError = array_merge(
-            $validationValues->validateRefundResourceValues($resource),
-            $validationValues->validateRefundOrderIdValue($orderId)
-        );
+        $orderError = (new WebHookValidation())->validateRefundResourceValues($resource);
 
         if (!empty($orderError)) {
-            $headerNOCK = new WebHookNock();
-            $headerNOCK->returnHeader(401, $orderError);
+            (new WebHookNock())->setHeader(401, $orderError);
+
+            return false;
         }
 
         $initiateBy = 'Merchant';
@@ -87,8 +129,7 @@ class OrderDispatcher
             $initiateBy = 'Paypal';
         }
 
-        $order = new WebHookOrder($initiateBy, $resource, $orderId);
-        $order->updateOrder();
+        return (new WebHookOrder($initiateBy, $resource, $orderId))->updateOrder();
     }
 
     /**
@@ -96,46 +137,38 @@ class OrderDispatcher
      *
      * @param string $eventType
      * @param int $orderIdgst
+     *
+     * @return bool
      */
     private function dispatchPaymentStatus($eventType, $orderId)
     {
-        $validationValues = new WebHookValidation();
-        $orderError = $validationValues->validateRefundOrderIdValue($orderId);
+        $orderError = (new WebHookValidation())->validateRefundOrderIdValue($orderId);
 
         if (!empty($orderError)) {
-            $headerNOCK = new WebHookNock();
-            $headerNOCK->returnHeader(401, $orderError);
-        }
+            (new WebHookNock())->setHeader(401, $orderError);
 
-        $paypalOrderRepository = new PaypalOrderRepository();
-        $psOrderId = $paypalOrderRepository->getPsOrderIdByPaypalOrderId($orderId);
-
-        if (false === $psOrderId) {
-            $headerNOCK = new WebHookNock();
-            $headerNOCK->returnHeader(
-                422,
-                array(
-                    'order' => 'order #' . $orderId . ' does not exist',
-                )
-            );
+            return false;
         }
 
         $order = new \OrderHistory();
-        $order->id_order = $psOrderId;
+        $order->id_order = $orderId;
 
         $order->changeIdOrderState(
             self::PS_EVENTTYPE_TO_PS_STATE_ID[$eventType],
-            $psOrderId
+            $orderId
         );
 
         if (true !== $order->save()) {
-            $headerNOCK = new WebHookNock();
-            $headerNOCK->returnHeader(
+            (new WebHookNock())->setHeader(
                 500,
                 array(
                     'fatal' => 'unable to change the order state',
                 )
             );
+
+            return false;
         }
+
+        return true;
     }
 }

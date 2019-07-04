@@ -34,7 +34,7 @@ class WebHookNock
      * @param int $headerCode
      * @param array $headerDatas
      */
-    public function returnHeader($headerCode, array $headerDatas)
+    public function setHeader($headerCode, array $headerDatas)
     {
         http_response_code($headerCode);
 
@@ -44,7 +44,5 @@ class WebHookNock
         }
 
         headers_list();
-
-        die;
     }
 }
