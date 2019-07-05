@@ -254,6 +254,7 @@ class ps_checkout extends PaymentModule
             }
 
             $refund->cancelPsRefund($params['order']->id);
+
             return false;
         }
 
