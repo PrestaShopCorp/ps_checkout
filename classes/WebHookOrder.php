@@ -28,7 +28,6 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 class WebHookOrder
 {
-    const REFUND_STATE = 'PS_CHECKOUT_STATE_PARTIAL_REFUND';
     /**
      * Tell if refund is initiate by Paypal or Merchant
      *
@@ -99,11 +98,13 @@ class WebHookOrder
 
         $orderProductList = (array) $order->getProducts();
 
-        if ((float) $order->total_paid !== $this->amount) {
-            return (bool) $this->doPartialRefund($order, $orderProductList);
+        $refund = new Refund($this->amount);
+
+        if ($order->total_paid !== $this->amount) {
+            return (bool) $refund->doPartialRefund($order, $orderProductList);
         }
 
-        return (bool) $this->doTotalRefund($order, $orderProductList);
+        return (bool) $refund->doTotalRefund($order, $orderProductList);
     }
 
     /**
@@ -126,114 +127,5 @@ class WebHookOrder
         }
 
         return (float) $value;
-    }
-
-    /**
-     * Prepare the datas to fully refund the order
-     *
-     * @param object $order
-     * @param array $orderProductList
-     *
-     * @return bool
-     */
-    private function doTotalRefund(\Order $order, $orderProductList)
-    {
-        $shippingCost = $order->total_shipping;
-
-        foreach ($orderProductList as $key => $value) {
-            $orderProductList[$key]['quantity'] = $value['product_quantity'];
-            $orderProductList[$key]['unit_price'] = $value['product_price'];
-        }
-
-        return $this->refundOrder($order, $orderProductList);
-    }
-
-    /**
-     * Prepare the orderDetailList to do a partial refund on the order
-     *
-     * @param object $order
-     * @param array $orderProductList
-     *
-     * @return bool
-     */
-    private function doPartialRefund(\Order $order, $orderProductList)
-    {
-        $orderDetailList = array();
-        $refundPercent = $this->amount / $order->total_products_wt;
-
-        foreach ($orderProductList as $key => $value) {
-            $refundAmountDetail = $value['price'] * $refundPercent;
-            $quantityFloor = floor($refundAmountDetail / $value['price']);
-            $quantityToRefund = ($quantityFloor == 0) ? 1 : $quantityFloor;
-
-            $orderDetailList[$key]['id_order_detail'] = $value['id_order_detail'];
-            $orderDetailList[$key]['quantity'] = $quantityToRefund;
-            $orderDetailList[$key]['amount'] = $refundAmountDetail;
-            $orderDetailList[$key]['unit_price'] = $orderDetailList[$key]['amount'] / $quantityToRefund;
-        }
-
-        return $this->refundOrder($order, $orderDetailList);
-    }
-
-    /**
-     * Refund the order
-     *
-     * @param object $order
-     * @param array $orderProductList
-     *
-     * @return bool
-     */
-    private function refundOrder(\Order $order, $orderProductList)
-    {
-        $refundVoucher = 0;
-        $refundShipping = 0;
-        $refundAddTax = true;
-        $refundVoucherChoosen = false;
-
-        // If all products have already been refunded, that catch
-        try {
-            $refundOrder = (bool) \OrderSlip::create(
-                $order,
-                $orderProductList,
-                $refundShipping,
-                $refundVoucher,
-                $refundVoucherChoosen,
-                $refundAddTax
-            );
-        } catch (\Exception $e) {
-            $refundOrder = false;
-        }
-
-        if (true !== $refundOrder) {
-            (new WebHookNock())->setHeader(
-                422,
-                array(
-                    'order' => 'unable to refund',
-                )
-            );
-
-            return false;
-        }
-
-        $order = new \OrderHistory();
-        $order->id_order = $this->orderId;
-
-        $order->changeIdOrderState(
-            \Configuration::get(self::REFUND_STATE),
-            $this->orderId
-        );
-
-        if (true !== $order->save()) {
-            (new WebHookNock())->setHeader(
-                500,
-                array(
-                    'fatal' => 'unable to change the order state',
-                )
-            );
-
-            return false;
-        }
-
-        return true;
     }
 }
