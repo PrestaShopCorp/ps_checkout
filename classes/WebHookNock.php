@@ -37,12 +37,12 @@ class WebHookNock
     public function setHeader($headerCode, array $headerDatas)
     {
         http_response_code($headerCode);
-
-        foreach ($headerDatas as $name => $value) {
-            header($name . ': ' . $value);
-            \PrestaShopLoggerCore::addLog('[PSPwebhook] ' . $name . ': ' . $value, 3);
-        }
-
+        header('Content-Type: application/json');
         headers_list();
+
+        $bodyReturn = json_encode($headerDatas);
+        \PrestaShopLoggerCore::addLog('[PSPwebhook] ' . $bodyReturn, 3);
+
+        echo $bodyReturn;
     }
 }
