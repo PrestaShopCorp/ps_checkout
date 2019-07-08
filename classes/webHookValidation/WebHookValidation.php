@@ -66,7 +66,7 @@ class WebHookValidation
     /**
      * Validates the webHook body datas
      *
-     * @param  array $payload
+     * @param array $payload
      *
      * @return array
      */
