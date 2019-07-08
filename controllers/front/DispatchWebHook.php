@@ -83,6 +83,15 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
         $this->setAtributesValues($headerValues);
 
+        $errors = $validationValues->validateBodyDatas($this->payload);
+
+        // If there is errors, return them
+        if (!empty($errors)) {
+            (new WebHookNock())->setHeader(401, $errors);
+
+            return false;
+        }
+
         // Check if have execution permissions
         if (false === $this->checkExecutionPermissions()) {
             return false;
