@@ -90,8 +90,8 @@ class WebHookValidation
             $errors[] = 'summary can\'t be empty';
         }
 
-        if (!is_array($payload['resource'])) {
-            $errors[] = 'Resource must be an array';
+        if (empty($payload['resource'])) {
+            $errors[] = 'Resource can\'t be empty';
         }
 
         return $errors;
