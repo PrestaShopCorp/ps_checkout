@@ -86,7 +86,7 @@ class WebHookOrder
         $amountAlreadyRefunded = $this->getOrderSlipAmount($order);
         $expectiveTotalAmountToRefund = $amountAlreadyRefunded + $this->amount;
 
-        if ($order->total_paid <= $expectiveTotalAmountToRefund) {
+        if ($order->total_paid < $expectiveTotalAmountToRefund) {
             (new WebHookNock())->setHeader(
                 406,
                 array(
@@ -99,7 +99,7 @@ class WebHookOrder
 
         $orderProductList = (array) $order->getProducts();
 
-        if ($order->total_paid !== $this->amount) {
+        if ((float) $order->total_paid !== $this->amount) {
             return (bool) $this->doPartialRefund($order, $orderProductList);
         }
 

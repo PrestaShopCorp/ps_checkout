@@ -68,7 +68,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      *
      * @return bool
      */
-    public function initContent()
+    public function display()
     {
         $headerValues = getallheaders();
         $validationValues = new WebHookValidation();
@@ -98,9 +98,9 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     private function setAtributesValues(array $headerValues)
     {
-        $this->shopId = (int) $headerValues['shop-id'];
-        $this->merchantId = (int) $headerValues['merchant-id'];
-        $this->firebaseId = (int) $headerValues['psx-id'];
+        $this->shopId = $headerValues['Shop-Id'];
+        $this->merchantId = $headerValues['Merchant-Id'];
+        $this->firebaseId = $headerValues['Psx-Id'];
         $this->payload = array(
             'resource' => (array) \Tools::jsonDecode(\Tools::getValue('resource')),
             'eventType' => (string) \Tools::getValue('eventType'),
@@ -120,14 +120,14 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         /*
         *   @TODO : Get payload hash to confirm that it's not modified
         */
-        $localShopId = $this->module->configurationList[self::PS_CHECKOUT_SHOP_UID_LABEL];
-        $localMerchantId = $this->module->configurationList[self::PS_CHECKOUT_PAYPAL_ID_LABEL];
+        $localShopId = \Configuration::get(self::PS_CHECKOUT_SHOP_UID_LABEL);
+        $localMerchantId = \Configuration::get(self::PS_CHECKOUT_PAYPAL_ID_LABEL);
 
         if ($this->shopId !== $localShopId) {
             (new WebHookNock())->setHeader(
                 401,
                 array(
-                    'permissions' => 'merchantId wrong',
+                    'permissions' => 'shopId wrong',
                 )
             );
 

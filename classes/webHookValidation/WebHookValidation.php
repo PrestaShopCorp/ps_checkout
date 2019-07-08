@@ -48,15 +48,15 @@ class WebHookValidation
             return $errors[] = 'Header can\'t be empty';
         }
 
-        if (empty($headerValues['shop-id'])) {
+        if (empty($headerValues['Shop-Id'])) {
             $errors[] = 'Shop-Id can\'t be empty';
         }
 
-        if (empty($headerValues['merchant-id'])) {
+        if (empty($headerValues['Merchant-Id'])) {
             $errors[] = 'Merchant-Id can\'t be empty';
         }
 
-        if (empty($headerValues['psx-id'])) {
+        if (empty($headerValues['Psx-Id'])) {
             $errors[] = 'Psx-Id can\'t be empty';
         }
 
@@ -90,7 +90,7 @@ class WebHookValidation
             $errors[] = 'Amount value must be higher than 0';
         }
 
-        if (empty($resource['amount']->currency)) {
+        if (empty($resource['amount']->currency_code)) {
             $errors[] = 'Amount currency can\'t be empty';
         }
 
