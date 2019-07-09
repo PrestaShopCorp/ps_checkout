@@ -41,15 +41,26 @@ class Refund
 
     const REFUND_STATE = 'PS_CHECKOUT_STATE_PARTIAL_REFUND'; // TODO: make a class to get the different state
 
-    public $paypalOrderId = null;
-    public $currencyCode = null;
-    public $amount = null;
+    /**
+     * @var float
+     */
+    private $amount;
 
-    public function __construct($amount, $paypalOrderId = false, $currencyCode = false)
+    /**
+     * @var string
+     */
+    private $paypalOrderId;
+
+    /**
+     * @var string
+     */
+    private $currencyCode;
+
+    public function __construct($amount, $paypalOrderId = null, $currencyCode = null)
     {
-        $this->paypalOrderId = $paypalOrderId;
-        $this->currencyCode = $currencyCode;
-        $this->amount = $amount;
+        $this->setAmount($amount);
+        $this->setPaypalOrderId($paypalOrderId);
+        $this->setCurrencyCode($currencyCode);
     }
 
     /**
@@ -78,7 +89,7 @@ class Refund
      */
     public function getCaptureId()
     {
-        $paypalOrder = (new PaypalOrder($this->paypalOrderId))->getOrder();
+        $paypalOrder = (new PaypalOrder($this->getPaypalOrderId()))->getOrder();
 
         if (null === $paypalOrder) {
             return false;
@@ -103,14 +114,14 @@ class Refund
     public function getPayload()
     {
         $payload = [
-            'orderId' => $this->paypalOrderId,
+            'orderId' => $this->getPaypalOrderId(),
             'captureId' => $this->getCaptureId(),
             'payee' => [
                 'merchant_id' => \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT'),
             ],
             'amount' => [
-                'currency_code' => $this->currencyCode,
-                'value' => $this->amount,
+                'currency_code' => $this->getCurrencyCode(),
+                'value' => $this->getAmount(),
             ],
             'note_to_payer' => 'Refund by ' . \Configuration::get('PS_SHOP_NAME'),
         ];
@@ -147,7 +158,7 @@ class Refund
     public function doPartialRefund(\Order $order, $orderProductList)
     {
         $orderDetailList = array();
-        $refundPercent = $this->amount / $order->total_products_wt;
+        $refundPercent = $this->getAmount() / $order->total_products_wt;
 
         foreach ($orderProductList as $key => $value) {
             $refundAmountDetail = $value['price'] * $refundPercent;
@@ -309,5 +320,59 @@ class Refund
         $sql->where('od.id_order_slip = ' . (int) $orderSlipId);
 
         return \Db::getInstance()->executeS($sql);
+    }
+
+    /**
+     * setter for the amount
+     *
+     * @param float $amount
+     */
+    public function setAmount($amount)
+    {
+        $this->amount = $amount;
+    }
+
+    /**
+     * setter for the paypal order id
+     *
+     * @param string $paypalOrderId
+     */
+    public function setPaypalOrderId($id)
+    {
+        $this->paypalOrderId = $id;
+    }
+
+    /**
+     * setter for the currency code
+     *
+     * @param string $isoCode
+     */
+    public function setCurrencyCode($isoCode)
+    {
+        $this->currencyCode = $isoCode;
+    }
+
+    /**
+     * getter for the amount
+     */
+    public function getAmount()
+    {
+        return $this->amount;
+    }
+
+    /**
+     * getter for the paypalOrderId
+     */
+    public function getPaypalOrderId()
+    {
+        return $this->paypalOrderId;
+    }
+
+    /**
+     * getter for the currencyCode
+     */
+    public function getCurrencyCode()
+    {
+        return $this->currencyCode;
     }
 }

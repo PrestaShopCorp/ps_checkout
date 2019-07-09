@@ -249,10 +249,7 @@ class ps_checkout extends PaymentModule
         $refundResponse = $refund->refundPaypalOrder();
 
         if (true === $refundResponse['error']) {
-            foreach ($refundResponse['messages'] as $message) {
-                $this->context->controller->errors[] = $message;
-            }
-
+            $this->context->controller->errors = array_merge($this->context->controller->errors, $refundResponse['messages']);
             $refund->cancelPsRefund($params['order']->id);
 
             return false;
@@ -295,9 +292,7 @@ class ps_checkout extends PaymentModule
         $refundResponse = $refund->refundPaypalOrder();
 
         if (true === $refundResponse['error']) {
-            foreach ($refundResponse['messages'] as $message) {
-                $this->context->controller->errors[] = $message;
-            }
+            $this->context->controller->errors = array_merge($this->context->controller->errors, $refundResponse['messages']);
 
             return false;
         }
