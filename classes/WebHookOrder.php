@@ -162,9 +162,9 @@ class WebHookOrder
         $refundPercent = $this->amount / $order->total_products_wt;
 
         foreach ($orderProductList as $key => $value) {
-            $refundAmountDetail = $value['price'] * $refundPercent;
-            $quantityFloor = floor($refundAmountDetail / $value['price']);
-            $quantityToRefund = ($quantityFloor == 0) ? 1 : $quantityFloor;
+            $refundAmountDetail = (float) $value['total_price_tax_incl'] * $refundPercent;
+            $quantityFloor = (float) $refundAmountDetail / $value['unit_price_tax_incl'];
+            $quantityToRefund = ($quantityFloor < 1) ? 1 : floor($quantityFloor);
 
             $orderDetailList[$key]['id_order_detail'] = $value['id_order_detail'];
             $orderDetailList[$key]['quantity'] = $quantityToRefund;
@@ -187,7 +187,7 @@ class WebHookOrder
     {
         $refundVoucher = 0;
         $refundShipping = 0;
-        $refundAddTax = true;
+        $refundAddTax = false;
         $refundVoucherChoosen = false;
 
         // If all products have already been refunded, that catch
