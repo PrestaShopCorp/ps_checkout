@@ -70,9 +70,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     public function display()
     {
-        // $localShopId = \Configuration::updateValue(self::PS_CHECKOUT_SHOP_UID_LABEL, '9a053ac6-9e7c-4c75-b57d-5487ac74f75e');
-        // $localMerchantId = \Configuration::updateValue(self::PS_CHECKOUT_PAYPAL_ID_LABEL, 'MJCQE5F6XVQAU');
-
         $headerValues = getallheaders();
         $validationValues = new WebHookValidation();
         $errors = $validationValues->validateHeaderDatas($headerValues);
