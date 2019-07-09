@@ -262,7 +262,7 @@ class ps_checkout extends PaymentModule
         $orderHistory = new \OrderHistory();
         $orderHistory->id_order = $params['order']->id;
 
-        $orderHistory->changeIdOrderState(Configuration::get('PS_CHECKOUT_STATE_PARTIAL_REFUND'), $orderId);
+        $orderHistory->changeIdOrderState(Configuration::get('PS_CHECKOUT_STATE_PARTIAL_REFUND'), $params['order']->id);
 
         return $orderHistory->save();
     }
