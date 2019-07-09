@@ -38,7 +38,7 @@ class WebHookValidation
      *
      * @param array $headerValues
      *
-     * @return array|bool Error lists, bool if ok
+     * @return array
      */
     public function validateHeaderDatas(array $headerValues)
     {
@@ -58,6 +58,40 @@ class WebHookValidation
 
         if (empty($headerValues['Psx-Id'])) {
             $errors[] = 'Psx-Id can\'t be empty';
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Validates the webHook body datas
+     *
+     * @param array $payload
+     *
+     * @return array
+     */
+    public function validateBodyDatas(array $payload)
+    {
+        $errors = array();
+
+        if (empty($payload)) {
+            return $errors[] = 'Body can\'t be empty';
+        }
+
+        if (empty($payload['eventType'])) {
+            $errors[] = 'eventType can\'t be empty';
+        }
+
+        if (empty($payload['category'])) {
+            $errors[] = 'category can\'t be empty';
+        }
+
+        if (empty($payload['summary'])) {
+            $errors[] = 'summary can\'t be empty';
+        }
+
+        if (empty($payload['resource'])) {
+            $errors[] = 'Resource can\'t be empty';
         }
 
         return $errors;

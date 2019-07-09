@@ -81,7 +81,19 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
             return false;
         }
 
-        $this->setAtributesValues($headerValues);
+        $this->setAtributesHeaderValues($headerValues);
+
+        $bodyValues = \Tools::jsonDecode(file_get_contents('php://input'), true);
+        $errors = $validationValues->validateBodyDatas($bodyValues);
+
+        // If there is errors, return them
+        if (!empty($errors)) {
+            (new WebHookNock())->setHeader(401, $errors);
+
+            return false;
+        }
+
+        $this->setAtributesBodyValues($bodyValues);
 
         // Check if have execution permissions
         if (false === $this->checkExecutionPermissions()) {
@@ -92,21 +104,30 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     }
 
     /**
-     * Set Attributes values from the payload
+     * Set Header Attributes values from the HTTP request
      *
      * @param array $headerValues
      */
-    private function setAtributesValues(array $headerValues)
+    private function setAtributesHeaderValues(array $headerValues)
     {
         $this->shopId = $headerValues['Shop-Id'];
         $this->merchantId = $headerValues['Merchant-Id'];
         $this->firebaseId = $headerValues['Psx-Id'];
+    }
+
+    /**
+     * Set Body Attributes values from the payload
+     *
+     * @param array $bodyValues
+     */
+    private function setAtributesBodyValues(array $bodyValues)
+    {
         $this->payload = array(
-            'resource' => (array) \Tools::jsonDecode(\Tools::getValue('resource')),
-            'eventType' => (string) \Tools::getValue('eventType'),
-            'category' => (string) \Tools::getValue('category'),
-            'summary' => (string) \Tools::getValue('summary'),
-            'orderId' => (string) \Tools::getValue('orderId'),
+            'resource' => (array) \Tools::jsonDecode($bodyValues['resource']),
+            'eventType' => (string) $bodyValues['eventType'],
+            'category' => (string) $bodyValues['category'],
+            'summary' => (string) $bodyValues['summary'],
+            'orderId' => (string) $bodyValues['orderId'],
         );
     }
 
