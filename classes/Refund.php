@@ -39,15 +39,28 @@ class Refund
     const REFUND_NOT_ALLOWED = 'REFUND_NOT_ALLOWED';
     const REFUND_TIME_LIMIT_EXCEEDED = 'REFUND_TIME_LIMIT_EXCEEDED';
 
-    public $paypalOrderId = null;
-    public $currencyCode = null;
-    public $amount = null;
+    const REFUND_STATE = 'PS_CHECKOUT_STATE_PARTIAL_REFUND'; // TODO: make a class to get the different state
 
-    public function __construct($paypalOrderId, $currencyCode, $amount)
+    /**
+     * @var float
+     */
+    private $amount;
+
+    /**
+     * @var string
+     */
+    private $paypalOrderId;
+
+    /**
+     * @var string
+     */
+    private $currencyCode;
+
+    public function __construct($amount, $paypalOrderId = null, $currencyCode = null)
     {
-        $this->paypalOrderId = $paypalOrderId;
-        $this->currencyCode = $currencyCode;
-        $this->amount = $amount;
+        $this->setAmount($amount);
+        $this->setPaypalOrderId($paypalOrderId);
+        $this->setCurrencyCode($currencyCode);
     }
 
     /**
@@ -58,7 +71,7 @@ class Refund
      *
      * @return bool
      */
-    public function refundOrder()
+    public function refundPaypalOrder()
     {
         $refund = (new Maasland(\Context::getContext()->link))->refundOrder($this->getPayload());
 
@@ -76,7 +89,7 @@ class Refund
      */
     public function getCaptureId()
     {
-        $paypalOrder = (new PaypalOrder($this->paypalOrderId))->getOrder();
+        $paypalOrder = (new PaypalOrder($this->getPaypalOrderId()))->getOrder();
 
         if (null === $paypalOrder) {
             return false;
@@ -101,19 +114,108 @@ class Refund
     public function getPayload()
     {
         $payload = [
-            'orderId' => $this->paypalOrderId,
+            'orderId' => $this->getPaypalOrderId(),
             'captureId' => $this->getCaptureId(),
             'payee' => [
                 'merchant_id' => \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT'),
             ],
             'amount' => [
-                'currency_code' => $this->currencyCode,
-                'value' => $this->amount,
+                'currency_code' => $this->getCurrencyCode(),
+                'value' => $this->getAmount(),
             ],
             'note_to_payer' => 'Refund by ' . \Configuration::get('PS_SHOP_NAME'),
         ];
 
         return $payload;
+    }
+
+    /**
+     * Prepare the datas to fully refund the order
+     *
+     * @param object $order
+     * @param array $orderProductList
+     *
+     * @return bool
+     */
+    public function doTotalRefund(\Order $order, $orderProductList)
+    {
+        foreach ($orderProductList as $key => $value) {
+            $orderProductList[$key]['quantity'] = $value['product_quantity'];
+            $orderProductList[$key]['unit_price'] = $value['product_price'];
+        }
+
+        return $this->refundPrestashopOrder($order, $orderProductList);
+    }
+
+    /**
+     * Prepare the orderDetailList to do a partial refund on the order
+     *
+     * @param object $order
+     * @param array $orderProductList
+     *
+     * @return bool
+     */
+    public function doPartialRefund(\Order $order, $orderProductList)
+    {
+        $orderDetailList = array();
+        $refundPercent = $this->getAmount() / $order->total_products_wt;
+
+        foreach ($orderProductList as $key => $value) {
+            $refundAmountDetail = $value['price'] * $refundPercent;
+            $quantityFloor = floor($refundAmountDetail / $value['price']);
+            $quantityToRefund = ($quantityFloor == 0) ? 1 : $quantityFloor;
+
+            $orderDetailList[$key]['id_order_detail'] = $value['id_order_detail'];
+            $orderDetailList[$key]['quantity'] = $quantityToRefund;
+            $orderDetailList[$key]['amount'] = $refundAmountDetail;
+            $orderDetailList[$key]['unit_price'] = $orderDetailList[$key]['amount'] / $quantityToRefund;
+        }
+
+        return $this->refundPrestashopOrder($order, $orderDetailList);
+    }
+
+    /**
+     * Refund the order
+     *
+     * @param object $order
+     * @param array $orderProductList
+     *
+     * @return bool
+     */
+    private function refundPrestashopOrder(\Order $order, $orderProductList)
+    {
+        $refundVoucher = 0;
+        $refundShipping = 0;
+        $refundAddTax = true;
+        $refundVoucherChoosen = false;
+
+        // If all products have already been refunded, that catch
+        try {
+            $refundOrder = (bool) \OrderSlip::create(
+                $order,
+                $orderProductList,
+                $refundShipping,
+                $refundVoucher,
+                $refundVoucherChoosen,
+                $refundAddTax
+            );
+        } catch (\Exception $e) {
+            $refundOrder = false;
+        }
+
+        if (true !== $refundOrder) {
+            return false;
+        }
+
+        $orderHistory = new \OrderHistory();
+        $orderHistory->id_order = $order->id;
+
+        $orderHistory->changeIdOrderState(
+            \Configuration::get(self::REFUND_STATE),
+            $order->id
+        );
+
+        return $orderHistory->save();
     }
 
     /**
@@ -162,10 +264,115 @@ class Refund
     /**
      * Cancel the refund in prestashop if the refund cannot be processed from paypal
      *
+     * @param int $orderId
+     *
      * @return bool
      */
-    public function cancelPsRefund()
+    public function cancelPsRefund($orderId)
     {
-        // TODO: REVERT ORDER SLIP
+        $orderSlip = $this->getOrderSlip($orderId);
+
+        $orderSlipDetails = $this->getOrderSlipDetail($orderSlip->id);
+
+        // foreach order slip detail - revert the quantity refunded in the order detail
+        if (!empty($orderSlipDetails)) {
+            foreach ($orderSlipDetails as $orderSlipDetail) {
+                $orderDetail = new \OrderDetail($orderSlipDetail['id_order_detail']);
+                $orderDetail->product_quantity_refunded = $orderDetail->product_quantity_refunded - $orderSlipDetail['product_quantity'];
+                $orderDetail->save();
+
+                // delete the order slip detail
+                \Db::getInstance()->delete('order_slip_detail', 'id_order_detail = ' . (int) $orderSlipDetail['id_order_detail']);
+            }
+        }
+
+        return $orderSlip->delete();
+    }
+
+    /**
+     * Get the last order slip ceated (the one which we want to cancel)
+     *
+     * @param int $orderId
+     *
+     * @return object OrderSlip
+     */
+    private function getOrderSlip($orderId)
+    {
+        $orderSlip = new \PrestaShopCollection('OrderSlip');
+        $orderSlip->where('id_order', '=', $orderId);
+        $orderSlip->orderBy('date_add', 'desc');
+
+        return $orderSlip->getFirst();
+    }
+
+    /**
+     * Retrieve all order slip detail for the given order slip
+     *
+     * @param int $orderSlipId
+     *
+     * @return array list of order slip detail associated to the order slip
+     */
+    private function getOrderSlipDetail($orderSlipId)
+    {
+        $sql = new \DbQuery();
+        $sql->select('id_order_detail, product_quantity');
+        $sql->from('order_slip_detail', 'od');
+        $sql->where('od.id_order_slip = ' . (int) $orderSlipId);
+
+        return \Db::getInstance()->executeS($sql);
+    }
+
+    /**
+     * setter for the amount
+     *
+     * @param float $amount
+     */
+    public function setAmount($amount)
+    {
+        $this->amount = $amount;
+    }
+
+    /**
+     * setter for the paypal order id
+     *
+     * @param string $paypalOrderId
+     */
+    public function setPaypalOrderId($id)
+    {
+        $this->paypalOrderId = $id;
+    }
+
+    /**
+     * setter for the currency code
+     *
+     * @param string $isoCode
+     */
+    public function setCurrencyCode($isoCode)
+    {
+        $this->currencyCode = $isoCode;
+    }
+
+    /**
+     * getter for the amount
+     */
+    public function getAmount()
+    {
+        return $this->amount;
+    }
+
+    /**
+     * getter for the paypalOrderId
+     */
+    public function getPaypalOrderId()
+    {
+        return $this->paypalOrderId;
+    }
+
+    /**
+     * getter for the currencyCode
+     */
+    public function getCurrencyCode()
+    {
+        return $this->currencyCode;
     }
 }

@@ -52,6 +52,7 @@ class ps_checkout extends PaymentModule
         'orderConfirmation',
         'displayAdminAfterHeader',
         'ActionAdminControllerSetMedia',
+        'actionOrderStatusUpdate',
     ];
 
     public $configurationList = array(
@@ -168,7 +169,6 @@ class ps_checkout extends PaymentModule
             'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true),
             'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT')),
             'currencyIsoCode' => $this->context->currency->iso_code,
-            // 'idMerchant' => Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT') // ask by paypal team -> waiting confirmation
         ));
 
         $paymentMethods = \Configuration::get('PS_CHECKOUT_PAYMENT_METHODS_ORDER');
@@ -199,6 +199,13 @@ class ps_checkout extends PaymentModule
     /**
      * Hook executed when a slip order is created
      * Used when a partial refund is made in order to refund the patpal order
+     *
+     * Info : We are not using the hook actionObjectOrderSlipAddBefore due to some limitation
+     * If we use this hook we will not be able to assign errors in the context->>controller to display
+     * the potentially errors returned by the api. Moreover, there is also some changes triggered in other table
+     * like ps_order_detail to set the quantity refunded. So even if we stop the creation of an order slip, these
+     * changes will be applied.
+     * Solution for now: see methods cancelPsRefund() from refund class
      *
      * @param array params return by the hook
      */
@@ -238,16 +245,59 @@ class ps_checkout extends PaymentModule
         $currency = Currency::getCurrency($params['order']->id_currency);
         $currencyIsoCode = $currency['iso_code'];
 
-        $refund = new Refund($paypalOrderId, $currencyIsoCode, $totalRefund);
-        $refund = $refund->refundOrder();
+        $refund = new Refund($totalRefund, $paypalOrderId, $currencyIsoCode);
+        $refundResponse = $refund->refundPaypalOrder();
 
-        if (true === $refund['error']) {
-            foreach ($refund['messages'] as $message) {
-                $this->context->controller->errors[] = $message;
-            }
+        if (true === $refundResponse['error']) {
+            $this->context->controller->errors = array_merge($this->context->controller->errors, $refundResponse['messages']);
+            $refund->cancelPsRefund($params['order']->id);
 
             return false;
         }
+
+        // change the order state to partial refund
+        $orderHistory = new \OrderHistory();
+        $orderHistory->id_order = $params['order']->id;
+
+        $orderHistory->changeIdOrderState(Configuration::get('PS_CHECKOUT_STATE_PARTIAL_REFUND'), $params['order']->id);
+
+        return $orderHistory->save();
+    }
+
+    public function hookActionOrderStatusUpdate($params)
+    {
+        $order = new PrestaShopCollection('Order');
+        $order->where('id_order', '=', $params['id_order']);
+        $order = $order->getFirst();
+
+        $paypalOrder = new PaypalOrderRepository();
+        $paypalOrderId = $paypalOrder->getPaypalOrderIdByPsOrderRef($order->reference);
+
+        // if the order is not an order pay with paypal stop the process
+        if (false === $paypalOrderId) {
+            return false;
+        }
+
+        // if the new order state is not "Refunded" stop the refund process
+        if ($params['newOrderStatus']->id !== (int) _PS_OS_REFUND_) {
+            return false;
+        }
+
+        $currency = Currency::getCurrency($order->id_currency);
+        $currencyIsoCode = $currency['iso_code'];
+
+        $totalRefund = $order->getTotalPaid();
+
+        $refund = new Refund($totalRefund, $paypalOrderId, $currencyIsoCode);
+        $refundResponse = $refund->refundPaypalOrder();
+
+        if (true === $refundResponse['error']) {
+            $this->context->controller->errors = array_merge($this->context->controller->errors, $refundResponse['messages']);
+
+            return false;
+        }
+
+        return $refund->doTotalRefund($order, $order->getProducts());
     }
 
     /**
