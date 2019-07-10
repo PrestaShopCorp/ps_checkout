@@ -170,7 +170,7 @@ class Refund
             $orderDetailList[$key]['amount'] = $refundAmountDetail;
             $orderDetailList[$key]['unit_price'] = $orderDetailList[$key]['amount'] / $quantityToRefund;
         }
-        
+
         return $this->refundPrestashopOrder($order, $orderDetailList);
     }
 
