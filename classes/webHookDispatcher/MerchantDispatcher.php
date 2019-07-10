@@ -41,11 +41,13 @@ class MerchantDispatcher
         $merchant = new Merchant();
 
         if ($eventType === self::PS_CHECKOUT_MERCHANT_REVOKED) {
-            $merchant->setMerchantRevoked();
+            return $merchant->setMerchantRevoked();
         }
 
         if ($eventType === self::PS_CHECKOUT_MERCHANT_COMPLETED) {
-            $merchant->setMerchantCompleted();
+            return $merchant->setMerchantCompleted();
         }
+
+        return false;
     }
 }
