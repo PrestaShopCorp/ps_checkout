@@ -113,6 +113,8 @@ class WebHookOrder
                     'order' => $e->getMessage(),
                 )
             );
+
+            return false;
         }
     }
 
