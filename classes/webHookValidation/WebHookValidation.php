@@ -86,10 +86,6 @@ class WebHookValidation
             $errors[] = 'category can\'t be empty';
         }
 
-        if (empty($payload['summary'])) {
-            $errors[] = 'summary can\'t be empty';
-        }
-
         if (empty($payload['resource'])) {
             $errors[] = 'Resource can\'t be empty';
         }

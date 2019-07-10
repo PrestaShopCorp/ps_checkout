@@ -100,11 +100,22 @@ class WebHookOrder
 
         $refund = new Refund($this->amount);
 
-        if ($order->total_paid !== $this->amount) {
-            return (bool) $refund->doPartialRefund($order, $orderProductList);
-        }
+        try {
+            if ($order->total_paid !== $this->amount) {
+                return (bool) $refund->doPartialRefund($order, $orderProductList);
+            }
 
-        return (bool) $refund->doTotalRefund($order, $orderProductList);
+            return (bool) $refund->doTotalRefund($order, $orderProductList);
+        } catch (\Exception $e) {
+            (new WebHookNock())->setHeader(
+                406,
+                array(
+                    'order' => $e->getMessage(),
+                )
+            );
+
+            return false;
+        }
     }
 
     /**

@@ -35,17 +35,21 @@ class MerchantDispatcher
      * Dispatch the Event Type to manage the merchant status
      *
      * @param string $eventType
+     *
+     * @return bool
      */
     public function dispatchEventType($eventType)
     {
         $merchant = new Merchant();
 
         if ($eventType === self::PS_CHECKOUT_MERCHANT_REVOKED) {
-            $merchant->setMerchantRevoked();
+            return $merchant->setMerchantRevoked();
         }
 
         if ($eventType === self::PS_CHECKOUT_MERCHANT_COMPLETED) {
-            $merchant->setMerchantCompleted();
+            return $merchant->setMerchantCompleted();
         }
+
+        return false;
     }
 }
