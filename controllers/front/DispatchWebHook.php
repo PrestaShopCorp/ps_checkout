@@ -157,7 +157,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
         if ($this->merchantId !== $localMerchantId) {
             (new WebHookNock())->setHeader(
-                401,
+                403,
                 array(
                     'permissions' => 'merchantId wrong',
                 )
