@@ -162,7 +162,7 @@ class Refund
 
         foreach ($orderProductList as $key => $value) {
             if ($this->refundProductLimitReached($value)) {
-                return false;
+                throw new \Exception('Can\'t refund more products than possible');
             }
 
             $refundAmountDetail = (float) $value['total_price_tax_incl'] * $refundPercent;
@@ -191,13 +191,6 @@ class Refund
             return false;
         }
 
-        (new WebHookNock())->setHeader(
-            406,
-            array(
-                'order' => 'Can\'t refund more products than possible',
-            )
-        );
-
         return true;
     }
 
@@ -213,7 +206,7 @@ class Refund
     {
         $refundVoucher = 0;
         $refundShipping = 0;
-        $refundAddTax = true;
+        $refundAddTax = false;
         $refundVoucherChoosen = false;
 
         // If all products have already been refunded, that catch
