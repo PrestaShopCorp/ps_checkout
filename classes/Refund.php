@@ -141,7 +141,7 @@ class Refund
     {
         foreach ($orderProductList as $key => $value) {
             $orderProductList[$key]['quantity'] = $value['product_quantity'];
-            $orderProductList[$key]['unit_price'] = $value['product_price'];
+            $orderProductList[$key]['unit_price'] = $value['unit_price_tax_incl'];
         }
 
         return $this->refundPrestashopOrder($order, $orderProductList);
@@ -161,6 +161,10 @@ class Refund
         $refundPercent = $this->getAmount() / $order->total_products_wt;
 
         foreach ($orderProductList as $key => $value) {
+            if ($this->refundProductLimitReached($value)) {
+                return false;
+            }
+
             $refundAmountDetail = (float) $value['total_price_tax_incl'] * $refundPercent;
             $quantityFloor = (float) $refundAmountDetail / $value['unit_price_tax_incl'];
             $quantityToRefund = ($quantityFloor < 1) ? 1 : floor($quantityFloor);
@@ -172,6 +176,29 @@ class Refund
         }
 
         return $this->refundPrestashopOrder($order, $orderDetailList);
+    }
+
+    /**
+     * Check if the limit has been reached. Set header HTTP if reached
+     *
+     * @param array $productOrder
+     *
+     * @return bool
+     */
+    private function refundProductLimitReached(array $productOrder)
+    {
+        if ($productOrder['product_quantity'] > $productOrder['product_quantity_refunded']) {
+            return false;
+        }
+
+        (new WebHookNock())->setHeader(
+            406,
+            array(
+                'order' => 'Can\'t refund more products than possible',
+            )
+        );
+
+        return true;
     }
 
     /**
