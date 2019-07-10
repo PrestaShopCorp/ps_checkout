@@ -43,7 +43,7 @@ class Merchant
      *
      * @return bool
      */
-    public function setMerchantCompleted($resource)
+    public function setMerchantCompleted()
     {
         return \Configuration::updateValue('PS_CHECKOUT_MERCHANT_COMPLETED', 1);
     }
