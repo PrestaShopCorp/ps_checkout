@@ -53,7 +53,6 @@ class Translations
                 'customizeCheckout' => $this->module->l('Customize checkout experience'),
                 'manageActivity' => $this->module->l('Manage Activity'),
                 'advancedSettings' => $this->module->l('Advanced settings'),
-                'fees' => $this->module->l('Fees'),
                 'help' => $this->module->l('Help'),
             ),
             'general' => array(
@@ -124,20 +123,6 @@ class Translations
                     'productionMode' => $this->module->l('Production mode'),
                     'useProductionMode' => $this->module->l('Use production mode'),
                     'tipProductionMode' => $this->module->l('Production mode enables you to collect your payments.'),
-                ),
-                'fees' => array(
-                    'title' => $this->module->l('How fees are calculated for each sale?'),
-                    'calculateMuch' => $this->module->l('The processing service provider will keep a comission on every sale you accept'),
-                    'additionalFees' => $this->module->l('Additional fees are applied to cross border transactions made outside your country of residence. See details below'),
-                    'eurozone' => $this->module->l('Eurozone includes...'),
-                    'countryResidence' => $this->module->l('Your country of residence'),
-                    'estimatedSales' => $this->module->l('Your estimated monthly sales'),
-                    'paymentMethod' => $this->module->l('Payment method'),
-                    'fees' => $this->module->l('Fees'),
-                    'paypal' => $this->module->l('PayPal'),
-                    'cardList' => $this->module->l('Visa, Mastercard, Discover'),
-                    'amex' => $this->module->l('American Express'),
-                    'lpm' => $this->module->l('Local Payment Methods'),
                 ),
                 'help' => array(
                     'title' => $this->module->l('Help for'),
