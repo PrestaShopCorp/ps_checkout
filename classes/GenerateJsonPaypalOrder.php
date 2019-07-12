@@ -165,7 +165,7 @@ class GenerateJsonPaypalOrder
                 'merchant_id' => \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT'),
             ],
             'application_context' => [
-                'brand_name' => 'PrestaShop Checkout',
+                'brand_name' => \Configuration::get('PS_SHOP_NAME'),
                 'locale' => $params['language']->locale,
                 'shipping_preference' => 'SET_PROVIDED_ADDRESS',
             ],
