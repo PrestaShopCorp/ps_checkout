@@ -31,6 +31,11 @@ namespace PrestaShop\Module\PrestashopCheckout;
  */
 class MerchantRepository
 {
+    /**
+     * Check if the merchant is valid
+     *
+     * @return bool true if the merchant email is confirmed + if psx/paypal onboarding is completed
+     */
     public function merchantIsValid()
     {
         return $this->onbardingPsxIsCompleted()
@@ -38,6 +43,11 @@ class MerchantRepository
             && $this->paypalEmailIsValid();
     }
 
+    /**
+     * Get the status of the psx onboarding
+     *
+     * @return bool
+     */
     public function onbardingPsxIsCompleted()
     {
         $idToken = (new FirebaseClient())->getToken();
@@ -45,6 +55,11 @@ class MerchantRepository
         return !empty($idToken);
     }
 
+    /**
+     * Get the status of the paypal onboarding
+     *
+     * @return bool
+     */
     public function onbardingPaypalIsCompleted()
     {
         $idMerchant = \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT');
@@ -52,11 +67,21 @@ class MerchantRepository
         return !empty($idMerchant);
     }
 
+    /**
+     * Check if the paypal email was confirmed or not
+     *
+     * @return bool
+     */
     public function paypalEmailIsValid()
     {
         return (bool) \Configuration::get('PS_CHECKOUT_PAYPAL_EMAIL_STATUS');
     }
 
+    /**
+     * Get if the payment method by hosted fields is enabled for the current merchant
+     *
+     * @return bool
+     */
     public function cardPaymentMethodIsValid()
     {
         $cardStatus = \Configuration::get('PS_CHECKOUT_CARD_PAYMENT_STATUS');
@@ -69,6 +94,11 @@ class MerchantRepository
         return false;
     }
 
+    /**
+     * Get if the payment method by paypal is enabled for the current merchant
+     *
+     * @return bool
+     */
     public function paypalPaymentMethodIsValid()
     {
         return (bool) \Configuration::get('PS_CHECKOUT_PAYPAL_PAYMENT_STATUS');
