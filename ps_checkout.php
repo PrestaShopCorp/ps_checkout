@@ -249,8 +249,8 @@ class ps_checkout extends PaymentModule
             return false;
         }
 
-        if (false === (new MerchantRepository)->merchantIsValid()) {
-            $this->context->controller->errors[] = $this-l('You are not connected to PrestaShop Checkout. Cannot process to a refund.');
+        if (false === (new MerchantRepository())->merchantIsValid()) {
+            $this->context->controller->errors[] = $this - l('You are not connected to PrestaShop Checkout. Cannot process to a refund.');
             $refund->cancelPsRefund($params['order']->id);
 
             return false;
@@ -308,8 +308,8 @@ class ps_checkout extends PaymentModule
             return false;
         }
 
-        if (false === (new MerchantRepository)->merchantIsValid()) {
-            $this->context->controller->errors[] = $this-l('You are not connected to PrestaShop Checkout. Cannot process to a refund.');
+        if (false === (new MerchantRepository())->merchantIsValid()) {
+            $this->context->controller->errors[] = $this - l('You are not connected to PrestaShop Checkout. Cannot process to a refund.');
             $refund->cancelPsRefund($params['order']->id);
 
             return false;
@@ -442,7 +442,7 @@ class ps_checkout extends PaymentModule
     {
         $currentController = $this->context->controller->controller_name;
 
-        if (false === (new MerchantRepository)->merchantIsValid()) {
+        if (false === (new MerchantRepository())->merchantIsValid()) {
             return false;
         }
 
