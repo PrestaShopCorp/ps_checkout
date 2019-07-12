@@ -28,9 +28,6 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 class MerchantDispatcher
 {
-    const PS_CHECKOUT_MERCHANT_REVOKED = 'PARTNER.CONSENT.REVOKED';
-    const PS_CHECKOUT_MERCHANT_COMPLETED = 'PRESTASHOP.MERCHANT.INTEGRATIONS';
-
     /**
      * Dispatch the Event Type to manage the merchant status
      *
@@ -38,18 +35,9 @@ class MerchantDispatcher
      *
      * @return bool
      */
-    public function dispatchEventType($eventType)
+    public function dispatchEventType()
     {
         $merchant = new Merchant();
-
-        if ($eventType === self::PS_CHECKOUT_MERCHANT_REVOKED) {
-            return $merchant->setMerchantRevoked();
-        }
-
-        if ($eventType === self::PS_CHECKOUT_MERCHANT_COMPLETED) {
-            return $merchant->setMerchantCompleted();
-        }
-
-        return false;
+        $merchant->update();
     }
 }
