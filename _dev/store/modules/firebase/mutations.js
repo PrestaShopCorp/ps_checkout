@@ -9,6 +9,6 @@ export default {
     state.account.localId = '';
     state.account.idToken = '';
     state.account.refreshToken = '';
-    state.account.status = false;
+    state.account.onboardingCompleted = false;
   },
 };

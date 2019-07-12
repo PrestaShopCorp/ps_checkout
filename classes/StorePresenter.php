@@ -76,53 +76,6 @@ class StorePresenter
                 'paymentMethods' => $this->getPaymentsMethods(),
                 'captureMode' => \Configuration::get('PS_CHECKOUT_INTENT'),
                 'paymentMode' => \Configuration::get('PS_CHECKOUT_MODE'),
-                'fees' => array(
-                    'fr' => array(
-                        'name' => $this->module->l('France'),
-                        'paypalWallet' => '2.90% + 0.35€',
-                        'card' => '1.20% + 0.35€',
-                        'lpm' => '1.20% + 0.35€',
-                        'amex' => '3.50% + 0.35€',
-                    ),
-                    'es' => array(
-                        'name' => $this->module->l('Spain'),
-                        'paypalWallet' => array(
-                            '< 2.500€' => '3.4% + 0.35€',
-                            '2.500€ - 10.000€' => '2.9% + 0.35€',
-                            '10.000€ - 50.000€' => '2.7% + 0.35€',
-                            '50.000€ - 100.000€' => '2.4% + 0.35€',
-                            '> €100.000€' => '1.9% + 0.35€',
-                        ),
-                        'card' => '1.20% + 0.35€',
-                        'lpm' => '1.20% + 0.35€',
-                        'amex' => '3.50% + 0.35€',
-                    ),
-                    'it' => array(
-                        'name' => $this->module->l('Italy'),
-                        'paypalWallet' => array(
-                            '< 2.500€' => '3.4% + 0.35€',
-                            '2.500€ - 10.000€' => '2.7% + 0.35€',
-                            '10.000€ - 100.000€' => '2.2% + 0.35€',
-                            '> 100.000€' => '1.8% + 0.35€',
-                        ),
-                        'card' => '1.20% + 0.35€',
-                        'lpm' => '1.20% + 0.35€',
-                        'amex' => '3.50% + 0.35€',
-                    ),
-                    'uk' => array(
-                        'name' => $this->module->l('United kingdom'),
-                        'paypalWallet' => array(
-                            '< £1.500' => '3.4% + £0.20',
-                            '£1.500 - £6.000' => '2.9% + £0.20',
-                            '£6.000 - £15.000' => '2.4% + £0.20',
-                            '£15.000 - £55.000' => '1.9% + £0.20',
-                            '> £55.000' => 'Call for dedicated rate',
-                        ),
-                        'card' => '1.20% + £0.30',
-                        'lpm' => '1.20% + £0.30',
-                        'amex' => '3.50% + £0.30',
-                    ),
-                ),
             ),
         );
 
@@ -188,7 +141,7 @@ class StorePresenter
                 'idToken' => $idToken,
                 'localId' => \Configuration::get('PS_CHECKOUT_FIREBASE_LOCAL_ID'),
                 'refreshToken' => \Configuration::get('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN'),
-                'status' => true === empty($idToken) ? false : true,
+                'onboardingCompleted' => !empty($idToken),
             ),
         );
 
@@ -208,7 +161,11 @@ class StorePresenter
             'account' => array(
                 'idMerchant' => $idMerchant,
                 'paypalOnboardingLink' => $this->getPaypalOnboardingLink(),
-                'status' => !empty($idMerchant),
+                'onboardingCompleted' => !empty($idMerchant),
+                'emailMerchant' => \Configuration::get('PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT'),
+                'emailIsValid' => \Configuration::get('PS_CHECKOUT_PAYPAL_EMAIL_STATUS'),
+                'cardIsActive' => \Configuration::get('PS_CHECKOUT_CARD_PAYMENT_STATUS'),
+                'paypalIsActive' => \Configuration::get('PS_CHECKOUT_PAYPAL_PAYMENT_STATUS'),
             ),
         );
 

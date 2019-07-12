@@ -7,7 +7,6 @@ import Customize from '@/pages/Customize.vue';
 import Accounts from '@/pages/Accounts.vue';
 import Activity from '@/pages/Activity.vue';
 import Advanced from '@/pages/Advanced.vue';
-import Fees from '@/pages/Fees.vue';
 import Help from '@/pages/Help.vue';
 
 Vue.use(Router);
@@ -47,11 +46,6 @@ export default new Router({
       path: '/advanced',
       name: 'Advanced',
       component: Advanced,
-    },
-    {
-      path: '/fees',
-      name: 'Fees',
-      component: Fees,
     },
     {
       path: '/help',

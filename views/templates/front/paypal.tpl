@@ -23,6 +23,9 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 
+<script id="paypalSdk" src="https://www.paypal.com/sdk/js?components=hosted-fields,buttons&amp;client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&amp;intent={$intent|escape:'htmlall':'UTF-8'}&amp;currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}"
+    data-client-token="{$clientToken|escape:'htmlall':'UTF-8'}">
+</script>
 
 <form id="conditions-to-approve-paypal" method="GET">
     <ul>
@@ -53,3 +56,12 @@
         </ul>
     </article>
 </div>
+
+{literal}
+<script type="text/javascript">
+    let paypalOrderId = "{/literal}{$paypalOrderId|escape:'htmlall':'UTF-8'}{literal}";
+    let orderValidationLink = "{/literal}{$orderValidationLink|escape:'htmlall':'UTF-8'}{literal}";
+    let cardIsActive = "{/literal}{$cardIsActive|escape:'htmlall':'UTF-8'}{literal}";
+    let paypalIsActive = "{/literal}{$paypalIsActive|escape:'htmlall':'UTF-8'}{literal}";
+</script>
+{/literal}

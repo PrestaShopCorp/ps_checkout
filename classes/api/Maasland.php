@@ -115,9 +115,7 @@ class Maasland
 
             return false;
         } catch (ClientException $e) {
-            $response = json_decode($e->getResponse()->getBody()->getContents());
-
-            return $response;
+            $response = $e->getResponse();
         }
 
         $data = json_decode($response->getBody(), true);
@@ -157,9 +155,7 @@ class Maasland
 
             return false;
         } catch (ClientException $e) {
-            $response = json_decode($e->getResponse()->getBody()->getContents());
-
-            return $response;
+            $response = $e->getResponse();
         }
 
         $data = json_decode($response->getBody(), true);
@@ -228,9 +224,7 @@ class Maasland
 
             return false;
         } catch (ClientException $e) {
-            $response = json_decode($e->getResponse()->getBody()->getContents(), true);
-
-            return $response;
+            $response = $e->getResponse();
         }
 
         $data = json_decode($response->getBody(), true);
@@ -266,9 +260,7 @@ class Maasland
 
             return false;
         } catch (ClientException $e) {
-            $response = json_decode($e->getResponse()->getBody()->getContents());
-
-            return $response;
+            $response = $e->getResponse();
         }
 
         $data = json_decode($response->getBody(), true);
@@ -309,9 +301,7 @@ class Maasland
 
             return false;
         } catch (ClientException $e) {
-            $response = json_decode($e->getResponse()->getBody()->getContents());
-
-            return $response;
+            $response = $e->getResponse();
         }
 
         $data = json_decode($response->getBody(), true);
@@ -343,9 +333,7 @@ class Maasland
 
             return false;
         } catch (ClientException $e) {
-            $response = json_decode($e->getResponse()->getBody()->getContents());
-
-            return $response;
+            $response = $e->getResponse();
         }
 
         $data = json_decode($response->getBody(), true);
