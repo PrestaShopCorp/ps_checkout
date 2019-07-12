@@ -35,9 +35,9 @@ class MerchantDispatcher
      *
      * @return bool
      */
-    public function dispatchEventType()
+    public function dispatchEventType($merchantId)
     {
-        $merchant = new Merchant();
+        $merchant = new Merchant($merchantId);
         $merchant->update();
     }
 }
