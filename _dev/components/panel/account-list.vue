@@ -15,7 +15,7 @@
             <div class="col-12 col-sm-6 col-md-8 col-lg-8 pl-0">
               <h2>{{ $t('panel.account-list.essentialsAccount') }}</h2>
               <p class="text-muted mb-0">
-                <template v-if="$store.state.firebase.account.status === true">
+                <template v-if="firebaseStatusAccount === true">
                   {{ $t('panel.account-list.connectedWitdh') }} <b>{{ $store.state.firebase.account.email }}</b> {{ $t('panel.account-list.account') }}
                 </template>
                 <template v-else>
@@ -24,7 +24,7 @@
               </p>
             </div>
             <div class="col-12 col-sm-4 col-md-3 col-lg-3 m-auto">
-              <div class="text-center float-right" v-if="$store.state.firebase.account.status === false">
+              <div class="text-center float-right" v-if="firebaseStatusAccount === false">
                 <a href="#" class="btn btn-primary-reverse btn-outline-primary light-button mb-1">
                   {{ $t('panel.account-list.createAccount') }}
                 </a>
@@ -46,7 +46,7 @@
             <div class="col-12 col-sm-6 col-md-8 col-lg-8 pl-0">
               <h2>{{ $t('panel.account-list.paypalAccount') }}</h2>
               <p class="text-muted">
-                <template v-if="$store.state.paypal.account.status === false">
+                <template v-if="paypalStatusAccount === false">
                   {{ $t('panel.account-list.activatePayment') }}
                 </template>
                 <template v-else>
@@ -55,7 +55,7 @@
               </p>
             </div>
             <div class="col-12 col-sm-4 col-md-3 col-lg-3 m-auto">
-              <div class="text-center float-right" v-if="$store.state.paypal.account.status === false">
+              <div class="text-center float-right" v-if="paypalStatusAccount === false">
                 <a
                   v-show="paypalIsLoaded"
                   class="btn btn-primary-reverse btn-outline-primary light-button"
@@ -89,6 +89,14 @@
       return {
         paypalIsLoaded: false,
       };
+    },
+    computed: {
+      firebaseStatusAccount() {
+        return this.$store.state.firebase.account.onboardingCompleted;
+      },
+      paypalStatusAccount() {
+        return this.$store.state.paypal.account.onboardingCompleted;
+      },
     },
     methods: {
       firebaseLogout() {

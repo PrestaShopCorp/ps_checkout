@@ -53,7 +53,6 @@
                                         <img class="payment-icon" src="{$imgPath|escape:'htmlall':'UTF-8'}paypal.jpg" alt="">
                                         <img class="payment-icon" src="{$imgPath|escape:'htmlall':'UTF-8'}visa.jpg" alt="">
                                         <img class="payment-icon" src="{$imgPath|escape:'htmlall':'UTF-8'}mastercard.jpg" alt="">
-                                        <img class="payment-icon" src="{$imgPath|escape:'htmlall':'UTF-8'}discover.jpg" alt="">
                                     </div>
                                 </div>
                             </div>

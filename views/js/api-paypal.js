@@ -35,8 +35,12 @@ $(document).ready(() => {
 
   hideDefaultPaymentButtonIfPaypalIsChecked();
 
-  initHostedFields();
-  initSmartButtons();
+  if (Boolean(cardIsActive)) {
+    initHostedFields();
+  }
+  if (Boolean(paypalIsActive)) {
+    initSmartButtons();
+  }
 });
 
 function initSmartButtons() {

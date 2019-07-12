@@ -33,6 +33,8 @@ use PrestaShop\Module\PrestashopCheckout\PaypalOrderRepository;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\Module\PrestashopCheckout\StorePresenter;
 use PrestaShop\Module\PrestashopCheckout\Environment;
+use PrestaShop\Module\PrestashopCheckout\Merchant;
+use PrestaShop\Module\PrestashopCheckout\MerchantRepository;
 use Ramsey\Uuid\Uuid;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -60,6 +62,10 @@ class ps_checkout extends PaymentModule
         'PS_CHECKOUT_MODE' => 'LIVE',
         'PS_CHECKOUT_PAYMENT_METHODS_ORDER' => '',
         'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => '',
+        'PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT' => '',
+        'PS_CHECKOUT_PAYPAL_EMAIL_STATUS' => '',
+        'PS_CHECKOUT_PAYPAL_PAYMENT_STATUS' => '',
+        'PS_CHECKOUT_CARD_PAYMENT_STATUS' => '',
         'PS_CHECKOUT_FIREBASE_EMAIL' => '',
         'PS_CHECKOUT_FIREBASE_ID_TOKEN' => '',
         'PS_CHECKOUT_FIREBASE_LOCAL_ID' => '',
@@ -124,6 +130,10 @@ class ps_checkout extends PaymentModule
 
     public function getContent()
     {
+        // update merchant status
+        $merchant = (new Merchant(Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT')));
+        $merchant->update();
+
         $translations = (new Translations($this))->getTranslations();
 
         Media::addJsDef(array(
@@ -151,6 +161,11 @@ class ps_checkout extends PaymentModule
             return false;
         }
 
+        $merchantRepository = new MerchantRepository();
+        if (false === $merchantRepository->merchantIsValid()) {
+            return false;
+        }
+
         if (false === $this->checkCurrency($params['cart'])) {
             return false;
         }
@@ -167,28 +182,36 @@ class ps_checkout extends PaymentModule
             'clientToken' => $paypalOrder['client_token'],
             'paypalOrderId' => $paypalOrder['id'],
             'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true),
+            'cardIsActive' => $merchantRepository->cardPaymentMethodIsValid(),
+            'paypalIsActive' => $merchantRepository->paypalPaymentMethodIsValid(),
             'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT')),
             'currencyIsoCode' => $this->context->currency->iso_code,
         ));
 
         $paymentMethods = \Configuration::get('PS_CHECKOUT_PAYMENT_METHODS_ORDER');
 
-        // if no paymentMethods position is set, by default put credit card (hostedFields) as first position
-        if (true === empty($paymentMethods)) {
-            $payment_options = array(
-                $this->getHostedFieldsPaymentOption(),
-                $this->getPaypalPaymentOption(),
-            );
-        } else {
-            $payment_options = array();
+        $payment_options = array();
 
+        // if no paymentMethods position is set, by default put credit card (hostedFields) as first position
+        if (empty($paymentMethods)) {
+            if (true === $merchantRepository->cardPaymentMethodIsValid()) {
+                array_push($payment_options, $this->getHostedFieldsPaymentOption());
+            }
+            if (true === $merchantRepository->paypalPaymentMethodIsValid()) {
+                array_push($payment_options, $this->getPaypalPaymentOption());
+            }
+        } else {
             $paymentMethods = json_decode($paymentMethods, true);
 
             foreach ($paymentMethods as $position => $paymentMethod) {
                 if ($paymentMethod['name'] === 'card') {
-                    array_push($payment_options, $this->getHostedFieldsPaymentOption());
+                    if (true === $merchantRepository->cardPaymentMethodIsValid()) {
+                        array_push($payment_options, $this->getHostedFieldsPaymentOption());
+                    }
                 } else {
-                    array_push($payment_options, $this->getPaypalPaymentOption());
+                    if (true === $merchantRepository->paypalPaymentMethodIsValid()) {
+                        array_push($payment_options, $this->getPaypalPaymentOption());
+                    }
                 }
             }
         }
@@ -223,6 +246,13 @@ class ps_checkout extends PaymentModule
 
         // Stop the paypal refund if the merchant want to generate a discount
         if (true === Tools::isSubmit('generateDiscountRefund')) {
+            return false;
+        }
+
+        if (false === (new MerchantRepository())->merchantIsValid()) {
+            $this->context->controller->errors[] = $this->l('You are not connected to PrestaShop Checkout. Cannot process to a refund.');
+            //TODO: cancel refund ?
+
             return false;
         }
 
@@ -275,6 +305,13 @@ class ps_checkout extends PaymentModule
 
         // if the order is not an order pay with paypal stop the process
         if (false === $paypalOrderId) {
+            return false;
+        }
+
+        if (false === (new MerchantRepository())->merchantIsValid()) {
+            $this->context->controller->errors[] = $this->l('You are not connected to PrestaShop Checkout. Cannot process to a refund.');
+            //TODO: cancel refund ?
+
             return false;
         }
 
@@ -404,6 +441,10 @@ class ps_checkout extends PaymentModule
     public function hookDisplayAdminAfterHeader()
     {
         $currentController = $this->context->controller->controller_name;
+
+        if (false === (new MerchantRepository())->merchantIsValid()) {
+            return false;
+        }
 
         if ('AdminPayment' !== $currentController) {
             return false;

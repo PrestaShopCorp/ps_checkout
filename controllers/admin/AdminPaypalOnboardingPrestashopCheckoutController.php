@@ -23,6 +23,8 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
+use PrestaShop\Module\PrestashopCheckout\Merchant;
+
 class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminController
 {
     public function init()
@@ -38,6 +40,9 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
         }
 
         Configuration::updateValue('PS_CHECKOUT_PAYPAL_ID_MERCHANT', $idMerchant);
+
+        $merchant = new Merchant($idMerchant);
+        $merchant->update();
 
         Tools::redirect(
             $this->context->link->getAdminLink(
