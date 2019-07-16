@@ -8,7 +8,7 @@
         <div class="card-text">
           <div class="row">
             <div class="pl-0">
-              <h2>PayPal</h2>
+              <img class="mb-3" src="@/assets/images/paypal-logo.png" width="100">
               <p class="text-muted">
                 {{ $t('panel.payment-acceptance.paypalLabel1') }}<br>
                 {{ $t('panel.payment-acceptance.paypalLabel2') }}
