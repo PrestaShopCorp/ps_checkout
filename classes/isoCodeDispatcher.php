@@ -71,7 +71,7 @@ class IsoCodeDispatcher
         'KY' => 'KY',
         'TD' => 'TD',
         'CL' => 'CL',
-        'CH' => 'C2',
+        'CN' => 'C2',
         'CO' => 'CO',
         'KM' => 'KM',
         'CG' => 'CG',
