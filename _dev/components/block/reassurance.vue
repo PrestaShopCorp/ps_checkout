@@ -42,7 +42,7 @@
       url: {
         type: String,
         required: false,
-        default: 'https:://www.prestashop.com',
+        default: 'https://www.prestashop.com/prestashop-checkout',
       },
     },
   };
