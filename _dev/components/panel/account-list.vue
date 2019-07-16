@@ -76,7 +76,7 @@
                   v-show="!paypalIsLoaded"
                   href="#"
                 >
-                  <b>{{ $t('panel.account-list.linkToPaypal') }} ...</b>
+                  <b>{{ $t('panel.account-list.loading') }} ...</b>
                 </a>
               </div>
               <div class="text-right" v-else>

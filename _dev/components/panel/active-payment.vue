@@ -94,6 +94,15 @@
           dragClass: 'move',
         };
       },
+      cardIsActive() {
+        return this.$store.state.paypal.account.cardIsActive;
+      },
+      paypalIsActive() {
+        return this.$store.state.paypal.account.paypalIsActive;
+      },
+      emailIsValid() {
+        return this.$store.state.paypal.account.emailIsValid;
+      },
     },
   };
 </script>
