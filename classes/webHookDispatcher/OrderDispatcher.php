@@ -83,22 +83,13 @@ class OrderDispatcher
         $orderError = (new WebHookValidation())->validateRefundOrderIdValue($orderId);
 
         if (!empty($orderError)) {
-            (new WebHookNock())->setHeader(401, $orderError);
-
-            return false;
+            throw new UnauthorizedException($orderError);
         }
 
         $psOrderId = (new PaypalOrderRepository())->getPsOrderIdByPaypalOrderId($orderId);
 
         if (false === $psOrderId) {
-            (new WebHookNock())->setHeader(
-                422,
-                array(
-                    'order' => 'order #' . $orderId . ' does not exist',
-                )
-            );
-
-            return false;
+            throw new UnprocessableException('order #' . $orderId . ' does not exist');
         }
 
         return $psOrderId;
@@ -118,9 +109,7 @@ class OrderDispatcher
         $orderError = (new WebHookValidation())->validateRefundResourceValues($resource);
 
         if (!empty($orderError)) {
-            (new WebHookNock())->setHeader(401, $orderError);
-
-            return false;
+            throw new UnauthorizedException($orderError);
         }
 
         $initiateBy = 'Merchant';
@@ -145,9 +134,7 @@ class OrderDispatcher
         $orderError = (new WebHookValidation())->validateRefundOrderIdValue($orderId);
 
         if (!empty($orderError)) {
-            (new WebHookNock())->setHeader(401, $orderError);
-
-            return false;
+            throw new UnauthorizedException($orderError);
         }
 
         $order = new \OrderHistory();
@@ -159,14 +146,7 @@ class OrderDispatcher
         );
 
         if (true !== $order->save()) {
-            (new WebHookNock())->setHeader(
-                500,
-                array(
-                    'fatal' => 'unable to change the order state',
-                )
-            );
-
-            return false;
+            throw new UnauthorizedException('unable to change the order state');
         }
 
         return true;
