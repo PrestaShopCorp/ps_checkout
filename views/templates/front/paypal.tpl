@@ -43,7 +43,7 @@
             </div>
             <div class="condition-label">
                 <label class="js-terms paypal-label" for="conditions_to_approve-paypal">
-                    {l s='I agree to the' mod='ps_checkout'} <a href="" id="cta-terms-and-conditions-checkout">{l s='terms of service' mod='ps_checkout'}</a> {l s='and will adhere to them unconditionally' mod='ps_checkout'}.
+                    {l s='I agree to the' mod='ps_checkout'} <a href="{$link->getCMSLink('3')}" id="cta-terms-and-conditions-checkout">{l s='terms of service' mod='ps_checkout'}</a> {l s='and will adhere to them unconditionally' mod='ps_checkout'}.
                 </label>
             </div>
             </li>
