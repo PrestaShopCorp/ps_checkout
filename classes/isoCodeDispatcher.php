@@ -240,7 +240,7 @@ class IsoCodeDispatcher
     /**
      * Get the PayPal ISO code from PrestaShop ISO Code
      *
-     * @param  string $isoCode
+     * @param string $isoCode
      *
      * @return string|bool
      */
@@ -250,18 +250,18 @@ class IsoCodeDispatcher
             return false;
         }
 
-        return self::MATCH_ISO_CODE[$isoCode]; 
+        return self::MATCH_ISO_CODE[$isoCode];
     }
 
     /**
      * Get the PrestaShop ISO code from PayPal ISO Code
      *
-     * @param  string $isoCode
+     * @param string $isoCode
      *
      * @return string|bool
      */
     public function getPrestashopIsoCode($isoCode)
     {
-       return array_search($isoCode, self::MATCH_ISO_CODE); 
+        return array_search($isoCode, self::MATCH_ISO_CODE);
     }
 }
