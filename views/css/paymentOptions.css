@@ -38,6 +38,7 @@
 .paypal-tips {
     color: #535252;
     font-size: 12px;
+    margin-bottom: 15px;
 }
 
 #paypal-approve-error ul {
@@ -70,11 +71,14 @@
     to { transform: rotate(360deg); }
 }
 
+#conditions-to-approve-paypal {
+    max-width: 300px;
+    margin: auto;
+}
+
 #paypal-button-container {
-    width: 300px;
-    padding: 10px;
-    margin-left: auto;
-    margin-right: auto;
+    width: 250px;
+    margin: auto;
 }
 
 #card-number {
