@@ -102,13 +102,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
             }
 
             return $this->dispatchWebHook();
-        } catch (NotAcceptableException $e) {
-            (new WebHookNock())->setHeader($e->getHTTPCode(), $e->getArrayMessages());
-        } catch (UnauthorizedException $e) {
-            (new WebHookNock())->setHeader($e->getHTTPCode(), $e->getArrayMessages());
-        } catch (UnprocessableException $e) {
-            (new WebHookNock())->setHeader($e->getHTTPCode(), $e->getArrayMessages());
-        } catch (FatalException $e) {
+        } catch (\Exception $e) {
             (new WebHookNock())->setHeader($e->getHTTPCode(), $e->getArrayMessages());
         }
 
