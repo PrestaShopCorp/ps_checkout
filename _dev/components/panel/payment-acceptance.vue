@@ -13,12 +13,7 @@
                 {{ $t('panel.payment-acceptance.paypalLabel1') }}<br>
                 {{ $t('panel.payment-acceptance.paypalLabel2') }}
               </p>
-              <label v-if="paypalIsActive" class="text-success">
-                <i class="material-icons">check</i> {{ $t('panel.payment-acceptance.live') }}
-              </label>
-              <label v-else class="text-warning">
-                <i class="material-icons">error_outline</i> {{ $t('panel.payment-acceptance.approvalPending') }}
-              </label>
+              <PaypalStatus />
             </div>
           </div>
           <div class="row d-block">
@@ -30,18 +25,7 @@
               <p class="text-muted">
                 {{ $t('panel.payment-acceptance.creditCardLabel') }}
               </p>
-              <label v-if="cardIsActive === 'SUBSCRIBED'" class="text-success">
-                <i class="material-icons">check</i> {{ $t('panel.payment-acceptance.live') }}
-              </label>
-              <label v-else-if="cardIsActive === 'LIMITED'" class="text-warning">
-                <i class="material-icons">error_outline</i> {{ $t('panel.payment-acceptance.limited') }}
-              </label>
-              <label v-else-if="cardIsActive === 'IN_REVIEW' || cardIsActive === 'NEED_MORE_DATA'" class="text-warning">
-                <i class="material-icons">error_outline</i> {{ $t('panel.payment-acceptance.approvalPending') }}
-              </label>
-              <label v-else-if="cardIsActive === 'DENIED'" class="text-danger">
-                <i class="material-icons">error_outline</i> {{ $t('panel.payment-acceptance.denied') }}
-              </label>
+              <CardStatus />
             </div>
           </div>
           <div class="row mt-2">
@@ -57,23 +41,18 @@
 </template>
 
 <script>
+  import CardStatus from '@/components/block/card-status';
+  import PaypalStatus from '@/components/block/paypal-status';
   import PSAlert from '@/components/form/alert';
   import {ALERT_TYPE_INFO} from '@/lib/alert';
 
   export default {
     components: {
+      CardStatus,
+      PaypalStatus,
       PSAlert,
     },
     computed: {
-      cardIsActive() {
-        return this.$store.state.paypal.account.cardIsActive;
-      },
-      paypalIsActive() {
-        return this.$store.state.paypal.account.paypalIsActive;
-      },
-      emailIsValid() {
-        return this.$store.state.paypal.account.emailIsValid;
-      },
       ALERT_TYPE_INFO: () => ALERT_TYPE_INFO,
     },
   };

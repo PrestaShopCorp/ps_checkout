@@ -118,10 +118,6 @@ class Translations
                     'creditCardLabel' => $this->module->l('You can process a limited amount in card transactions.'),
                     'tips' => $this->module->l('Tips'),
                     'alertInfo' => $this->module->l('To test your payment method you can make a real transaction (prefer small amount), and once you have observed the money on your account, make a refund on the corresponding order page. Warning, you will not recover the fees.'),
-                    'live' => $this->module->l('Live'),
-                    'approvalPending' => $this->module->l('Approval pending'),
-                    'limited' => $this->module->l('Limited to $500'),
-                    'denied' => $this->module->l('Account declined'),
                 ),
                 'payment-mode' => array(
                     'title' => $this->module->l('Payment methods activation'),
@@ -168,6 +164,13 @@ class Translations
                 'dispute' => array(
                     'pendingDispute' => $this->module->l('pending dispute(s)'),
                     'goToDispute' => $this->module->l('Go to the dispute management platform'),
+                ),
+                'payment-status' => array(
+                    'live' => $this->module->l('Live'),
+                    'approvalPending' => $this->module->l('Approval pending'),
+                    'limited' => $this->module->l('Limited to $500'),
+                    'denied' => $this->module->l('Account declined'),
+                    'disabled' => $this->module->l('Disabled'),
                 ),
             ),
         );
