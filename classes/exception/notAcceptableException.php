@@ -34,6 +34,8 @@ class NotAcceptableException extends \PrestaShopExceptionCore implements Interfa
 
     public function __construct($messages)
     {
+        parent::__construct();
+
         $this->messages = $messages;
     }
 

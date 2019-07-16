@@ -81,7 +81,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
             // If there is errors, return them
             if (!empty($errors)) {
-                throw new UnauthorizedException($orderError);
+                throw new UnauthorizedException($errors);
             }
 
             $this->setAtributesHeaderValues($headerValues);
@@ -91,7 +91,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
             // If there is errors, return them
             if (!empty($errors)) {
-                throw new UnauthorizedException($orderError);
+                throw new UnauthorizedException($errors);
             }
 
             $this->setAtributesBodyValues($bodyValues);

@@ -32,9 +32,9 @@ class UnauthorizedException extends \PrestaShopExceptionCore implements Interfac
 
     private $messages;
 
-    public function __construct($messages, $code = 0, Exception $previous = null)
+    public function __construct($messages)
     {
-        parent::__construct($code, $previous);
+        parent::__construct();
 
         $this->messages = $messages;
     }

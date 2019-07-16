@@ -34,6 +34,8 @@ class FatalException extends \PrestaShopExceptionCore implements InterfaceExcept
 
     public function __construct($messages)
     {
+        parent::__construct();
+
         $this->messages = $messages;
     }
 
