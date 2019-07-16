@@ -26,19 +26,36 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-interface InterfaceException
+class PsCheckoutException extends \PrestaShopExceptionCore
 {
+    const HTTP_CODE = 400;
+
+    private $messages;
+
+    public function __construct($messages)
+    {
+        parent::__construct();
+
+        $this->messages = $messages;
+    }
+
     /**
      * Get the array or string message and return an array
      *
      * @return array
      */
-    public function getArrayMessages();
+    public function getArrayMessages()
+    {
+        return (array) $this->messages;
+    }
 
     /**
      * Get the HTTP error Code
      *
      * @return int
      */
-    public function getHTTPCode();
+    public function getHTTPCode()
+    {
+        return $this::HTTP_CODE;
+    }
 }

@@ -26,36 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-class NotAcceptableException extends \PrestaShopExceptionCore implements InterfaceException
+class NotAcceptableException extends PsCheckoutException
 {
     const HTTP_CODE = 406;
-
-    private $messages;
-
-    public function __construct($messages)
-    {
-        parent::__construct();
-
-        $this->messages = $messages;
-    }
-
-    /**
-     * Get the array or string message and return an array
-     *
-     * @return array
-     */
-    public function getArrayMessages()
-    {
-        return (array) $this->messages;
-    }
-
-    /**
-     * Get the HTTP error Code
-     *
-     * @return int
-     */
-    public function getHTTPCode()
-    {
-        return self::HTTP_CODE;
-    }
 }
