@@ -51,6 +51,7 @@
                 </template>
                 <template v-else>
                   {{ $t('panel.account-list.accountIsLinked') }}
+                  <b>{{ paypalEmail }}</b>
                 </template>
               </p>
             </div>
@@ -98,6 +99,9 @@
       };
     },
     computed: {
+      paypalEmail() {
+        return this.$store.state.paypal.account.emailMerchant;
+      },
       firebaseStatusAccount() {
         return this.$store.state.firebase.account.onboardingCompleted;
       },
@@ -113,6 +117,7 @@
         this.$store.dispatch('logout');
       },
       paypalUnlink() {
+        this.paypalIsLoaded = true;
         this.$store.dispatch('unlink');
       },
     },
