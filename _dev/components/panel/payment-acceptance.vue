@@ -64,11 +64,6 @@
     components: {
       PSAlert,
     },
-    data() {
-      return {
-        paypalIsLoaded: false,
-      };
-    },
     computed: {
       cardIsActive() {
         return this.$store.state.paypal.account.cardIsActive;
@@ -80,14 +75,6 @@
         return this.$store.state.paypal.account.emailIsValid;
       },
       ALERT_TYPE_INFO: () => ALERT_TYPE_INFO,
-    },
-    methods: {
-      firebaseLogout() {
-        this.$store.dispatch('logout');
-      },
-      paypalUnlink() {
-        this.$store.dispatch('unlink');
-      },
     },
   };
 </script>
