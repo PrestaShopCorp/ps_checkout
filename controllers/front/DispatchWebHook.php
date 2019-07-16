@@ -27,10 +27,8 @@ use PrestaShop\Module\PrestashopCheckout\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\MerchantDispatcher;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 use PrestaShop\Module\PrestashopCheckout\WebHookNock;
-use PrestaShop\Module\PrestashopCheckout\NotAcceptableException;
+use PrestaShop\Module\PrestashopCheckout\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\UnauthorizedException;
-use PrestaShop\Module\PrestashopCheckout\UnprocessableException;
-use PrestaShop\Module\PrestashopCheckout\FatalException;
 
 class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontController
 {
@@ -102,7 +100,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
             }
 
             return $this->dispatchWebHook();
-        } catch (\Exception $e) {
+        } catch (PsCheckoutException $e) {
             (new WebHookNock())->setHeader($e->getHTTPCode(), $e->getArrayMessages());
         }
 
