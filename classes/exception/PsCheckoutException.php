@@ -28,8 +28,18 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 class PsCheckoutException extends \PrestaShopExceptionCore
 {
+    /**
+     * Set the HTTP code returned
+     *
+     * @var int
+     */
     const HTTP_CODE = 400;
 
+    /**
+     * Contain the error message or messages
+     *
+     * @var string|array
+     */
     private $messages;
 
     public function __construct($messages)

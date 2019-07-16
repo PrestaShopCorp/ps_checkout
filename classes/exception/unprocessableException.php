@@ -28,5 +28,10 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 class UnprocessableException extends PsCheckoutException
 {
+    /**
+     * Set the HTTP code returned
+     *
+     * @var int
+     */
     const HTTP_CODE = 422;
 }
