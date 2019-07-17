@@ -242,7 +242,7 @@ class IsoCodeDispatcher
      *
      * @param string $isoCode
      *
-     * @return string|bool
+     * @return string|false
      */
     public function getPaypalIsoCode($isoCode)
     {
