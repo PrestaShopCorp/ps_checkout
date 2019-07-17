@@ -162,7 +162,7 @@ class Refund
 
         foreach ($orderProductList as $key => $value) {
             if ($this->refundProductLimitReached($value)) {
-                throw new \Exception('Can\'t refund more products than possible');
+                throw new NotAcceptableException('Can\'t refund more products than possible');
             }
 
             $refundAmountDetail = (float) $value['total_price_tax_incl'] * $refundPercent;

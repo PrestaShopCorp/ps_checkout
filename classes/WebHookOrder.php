@@ -86,36 +86,18 @@ class WebHookOrder
         $expectiveTotalAmountToRefund = $amountAlreadyRefunded + $this->amount;
 
         if ($order->total_paid < $expectiveTotalAmountToRefund) {
-            (new WebHookNock())->setHeader(
-                406,
-                array(
-                    'order' => 'Can\'t refund more than the order amount',
-                )
-            );
-
-            return false;
+            throw new NotAcceptableException('Can\'t refund more than the order amount');
         }
 
         $orderProductList = (array) $order->getProducts();
 
         $refund = new Refund($this->amount);
 
-        try {
-            if ($order->total_paid !== $this->amount) {
-                return (bool) $refund->doPartialRefund($order, $orderProductList);
-            }
-
-            return (bool) $refund->doTotalRefund($order, $orderProductList);
-        } catch (\Exception $e) {
-            (new WebHookNock())->setHeader(
-                406,
-                array(
-                    'order' => $e->getMessage(),
-                )
-            );
-
-            return false;
+        if ($order->total_paid !== $this->amount) {
+            return (bool) $refund->doPartialRefund($order, $orderProductList);
         }
+
+        return (bool) $refund->doTotalRefund($order, $orderProductList);
     }
 
     /**

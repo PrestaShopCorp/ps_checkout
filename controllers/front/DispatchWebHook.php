@@ -27,6 +27,8 @@ use PrestaShop\Module\PrestashopCheckout\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\MerchantDispatcher;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 use PrestaShop\Module\PrestashopCheckout\WebHookNock;
+use PrestaShop\Module\PrestashopCheckout\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\UnauthorizedException;
 
 class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontController
 {
@@ -70,37 +72,39 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     public function display()
     {
-        $headerValues = getallheaders();
-        $validationValues = new WebHookValidation();
-        $errors = $validationValues->validateHeaderDatas($headerValues);
+        try {
+            $headerValues = getallheaders();
+            $validationValues = new WebHookValidation();
+            $errors = $validationValues->validateHeaderDatas($headerValues);
 
-        // If there is errors, return them
-        if (!empty($errors)) {
-            (new WebHookNock())->setHeader(401, $errors);
+            // If there is errors, return them
+            if (!empty($errors)) {
+                throw new UnauthorizedException($errors);
+            }
 
-            return false;
+            $this->setAtributesHeaderValues($headerValues);
+
+            $bodyValues = \Tools::jsonDecode(file_get_contents('php://input'), true);
+            $errors = $validationValues->validateBodyDatas($bodyValues);
+
+            // If there is errors, return them
+            if (!empty($errors)) {
+                throw new UnauthorizedException($errors);
+            }
+
+            $this->setAtributesBodyValues($bodyValues);
+
+            // Check if have execution permissions
+            if (false === $this->checkExecutionPermissions()) {
+                return false;
+            }
+
+            return $this->dispatchWebHook();
+        } catch (PsCheckoutException $e) {
+            (new WebHookNock())->setHeader($e->getHTTPCode(), $e->getArrayMessages());
         }
 
-        $this->setAtributesHeaderValues($headerValues);
-
-        $bodyValues = \Tools::jsonDecode(file_get_contents('php://input'), true);
-        $errors = $validationValues->validateBodyDatas($bodyValues);
-
-        // If there is errors, return them
-        if (!empty($errors)) {
-            (new WebHookNock())->setHeader(401, $errors);
-
-            return false;
-        }
-
-        $this->setAtributesBodyValues($bodyValues);
-
-        // Check if have execution permissions
-        if (false === $this->checkExecutionPermissions()) {
-            return false;
-        }
-
-        return $this->dispatchWebHook();
+        return false;
     }
 
     /**
@@ -145,25 +149,11 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         $localMerchantId = \Configuration::get(self::PS_CHECKOUT_PAYPAL_ID_LABEL);
 
         if ($this->shopId !== $localShopId) {
-            (new WebHookNock())->setHeader(
-                401,
-                array(
-                    'permissions' => 'shopId wrong',
-                )
-            );
-
-            return false;
+            throw new UnauthorizedException('shopId wrong');
         }
 
         if ($this->merchantId !== $localMerchantId) {
-            (new WebHookNock())->setHeader(
-                403,
-                array(
-                    'permissions' => 'merchantId wrong',
-                )
-            );
-
-            return false;
+            throw new UnauthorizedException('merchantId wrong');
         }
 
         return true;
@@ -177,17 +167,11 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     private function dispatchWebHook()
     {
         if ('ShopNotificationMerchantAccount' === $this->payload['category']) {
-            $merchantManager = new MerchantDispatcher();
-
-            return $merchantManager->dispatchEventType($this->merchantId);
+            return (new MerchantDispatcher())->dispatchEventType($this->merchantId);
         }
 
         if ('ShopNotificationOrderChange' === $this->payload['category']) {
-            $orderManager = new OrderDispatcher();
-
-            return $orderManager->dispatchEventType(
-                $this->payload
-            );
+            return (new OrderDispatcher())->dispatchEventType($this->payload);
         }
 
         return true;
