@@ -43,6 +43,13 @@ class Link
     }
 }
 
+class PrestaShopLogger
+{
+    public static function addLog()
+    {
+    }
+}
+
 class MaaslandCreateOrderTest extends TestCase
 {
     public function testCreateOrderDefaultScenario()

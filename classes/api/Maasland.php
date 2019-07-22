@@ -27,8 +27,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ServerException;
-use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
 use PrestaShop\Module\PrestashopCheckout\Environment;
 
@@ -110,11 +109,12 @@ class Maasland
             $response = $this->client->post($route, [
                 'json' => json_encode($payload),
             ]);
-        } catch (ServerException $e) {
+        } catch (RequestException $e) {
             \PrestaShopLogger::addLog($e->getMessage());
 
-            return false;
-        } catch (ClientException $e) {
+            if (!$e->hasResponse()) {
+                return false;
+            }
             $response = $e->getResponse();
         }
 
@@ -150,11 +150,12 @@ class Maasland
             $response = $this->client->post($route, [
                 'json' => json_encode($payload),
             ]);
-        } catch (ServerException $e) {
+        } catch (RequestException $e) {
             \PrestaShopLogger::addLog($e->getMessage());
 
-            return false;
-        } catch (ClientException $e) {
+            if (!$e->hasResponse()) {
+                return false;
+            }
             $response = $e->getResponse();
         }
 
@@ -182,11 +183,12 @@ class Maasland
             $response = $this->client->post($route, [
                 'json' => $payload,
             ]);
-        } catch (ServerException $e) {
+        } catch (RequestException $e) {
             \PrestaShopLogger::addLog($e->getMessage());
 
-            return false;
-        } catch (ClientException $e) {
+            if (!$e->hasResponse()) {
+                return false;
+            }
             $response = $e->getResponse();
         }
 
@@ -219,11 +221,12 @@ class Maasland
             $response = $this->client->post($route, [
                 'json' => json_encode($payload),
             ]);
-        } catch (ServerException $e) {
+        } catch (RequestException $e) {
             \PrestaShopLogger::addLog($e->getMessage());
 
-            return false;
-        } catch (ClientException $e) {
+            if (!$e->hasResponse()) {
+                return false;
+            }
             $response = $e->getResponse();
         }
 
@@ -255,11 +258,12 @@ class Maasland
             $response = $this->client->post($route, [
                 'json' => json_encode($payload),
             ]);
-        } catch (ServerException $e) {
+        } catch (RequestException $e) {
             \PrestaShopLogger::addLog($e->getMessage());
 
-            return false;
-        } catch (ClientException $e) {
+            if (!$e->hasResponse()) {
+                return false;
+            }
             $response = $e->getResponse();
         }
 
@@ -296,11 +300,12 @@ class Maasland
             $response = $this->client->post($route, [
                 'json' => json_encode($payload),
             ]);
-        } catch (ServerException $e) {
+        } catch (RequestException $e) {
             \PrestaShopLogger::addLog($e->getMessage());
 
-            return false;
-        } catch (ClientException $e) {
+            if (!$e->hasResponse()) {
+                return false;
+            }
             $response = $e->getResponse();
         }
 
@@ -328,11 +333,12 @@ class Maasland
             $response = $this->client->post($route, [
                 'json' => json_encode($payload),
             ]);
-        } catch (ServerException $e) {
+        } catch (RequestException $e) {
             \PrestaShopLogger::addLog($e->getMessage());
 
-            return false;
-        } catch (ClientException $e) {
+            if (!$e->hasResponse()) {
+                return false;
+            }
             $response = $e->getResponse();
         }
 
