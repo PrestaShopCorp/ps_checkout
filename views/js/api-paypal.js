@@ -165,7 +165,8 @@ function initHostedFields() {
             console.log('error');
           }
         }).catch((err) => {
-          displayCardError(err);
+          displayCardError(err); // display alert danger with errors
+          $('#payment-confirmation :button').removeAttr('disabled'); // if errors keep the button enabled
           toggleLoader(false);
           console.log(err);
         });

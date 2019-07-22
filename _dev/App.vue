@@ -39,3 +39,12 @@
     },
   };
 </script>
+
+<style lang="scss">
+#app {
+  /**
+    * TODO: Import prestaskit and try to make it work
+    */
+  // @import '~prestakit/scss/application';
+}
+</style>

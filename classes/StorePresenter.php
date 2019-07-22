@@ -115,6 +115,12 @@ class StorePresenter
      */
     private function getPaypalOnboardingLink()
     {
+        $merchant = new MerchantRepository();
+
+        if (true === $merchant->onbardingPaypalIsCompleted()) {
+            return false;
+        }
+
         $context = \Context::getContext();
 
         $email = $context->employee->email;

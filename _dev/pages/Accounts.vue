@@ -48,7 +48,12 @@
         <AccountList />
       </div>
     </div>
-    <div v-if="firebaseStatusAccount === false || paypalStatusAccount === false" class="row">
+    <div v-if="firebaseStatusAccount !== false && paypalStatusAccount !== false" class="row">
+      <div class="container">
+        <PaymentAcceptance />
+      </div>
+    </div>
+    <div v-else class="row">
       <div class="container">
         <Reassurance />
       </div>
@@ -58,6 +63,7 @@
 
 <script>
   import AccountList from '@/components/panel/account-list';
+  import PaymentAcceptance from '@/components/panel/payment-acceptance';
   import Reassurance from '@/components/block/reassurance';
   import PSAlert from '@/components/form/alert';
   import {ALERT_TYPE_DANGER, ALERT_TYPE_WARNING} from '@/lib/alert';
@@ -66,6 +72,7 @@
     name: 'Accounts',
     components: {
       AccountList,
+      PaymentAcceptance,
       Reassurance,
       PSAlert,
     },

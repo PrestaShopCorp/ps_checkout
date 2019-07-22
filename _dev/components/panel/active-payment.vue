@@ -42,7 +42,8 @@
                       <label v-else class="mb-0"><i class="material-icons">account_balance</i> {{ $t('panel.active-payment.paypal') }}</label>
                     </div>
                     <div class="status">
-                      {{ $t('panel.active-payment.enabled') }}
+                      <template v-if="element.name === 'card'"><CardStatus /></template>
+                      <template v-else><PaypalStatus /></template>
                     </div>
                   </div>
                   <div v-if="element.name === 'paypal'" class="d-flex payment-method-content separator">
@@ -50,7 +51,7 @@
                       <label class="mb-0"><i class="material-icons">public</i> {{ $t('panel.active-payment.localPaymentMethods') }}</label>
                     </div>
                     <div class="status">
-                      {{ $t('panel.active-payment.disabled') }}
+                      <LpmStatus />
                     </div>
                   </div>
                 </div>
@@ -65,9 +66,15 @@
 
 <script>
   import draggable from 'vuedraggable';
+  import CardStatus from '@/components/block/card-status';
+  import PaypalStatus from '@/components/block/paypal-status';
+  import LpmStatus from '@/components/block/lpm-status';
 
   export default {
     components: {
+      CardStatus,
+      PaypalStatus,
+      LpmStatus,
       draggable,
     },
     data() {

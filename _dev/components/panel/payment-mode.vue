@@ -5,7 +5,7 @@
     </h3>
     <div class="card-block">
       <form class="form container form-horizontal py-4">
-        <div class="card-text">
+        <div class="card-text m-auto">
           <div class="form-group row">
             <label class="form-control-label">
               {{ $t('panel.payment-mode.paymentAction') }}

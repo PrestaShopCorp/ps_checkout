@@ -89,7 +89,6 @@ class Translations
                     'account' => $this->module->l('account'),
                     'createNewAccount' => $this->module->l('Sign in or login to provide every payment method to your customer.'),
                     'createAccount' => $this->module->l('Sign up'),
-                    'or' => $this->module->l('or'),
                     'logIn' => $this->module->l('Log in'),
                     'logOut' => $this->module->l('Log out'),
                     'paypalAccount' => $this->module->l('PayPal account'),
@@ -109,6 +108,15 @@ class Translations
                     'creditCard' => $this->module->l('Credit card'),
                     'paypal' => $this->module->l('PayPal'),
                     'localPaymentMethods' => $this->module->l('Local payment methods'),
+                ),
+                'payment-acceptance' => array(
+                    'paymentAcceptanceTitle' => $this->module->l('Payment methods acceptance'),
+                    'creditCardsLabel' => $this->module->l('Credit and Debit Cards'),
+                    'paypalLabel1' => $this->module->l('Accept payments through PayPal buttons on your checkout page.'),
+                    'paypalLabel2' => $this->module->l('Your customers can pay you with PayPal or other PayPal supported options.'),
+                    'creditCardLabel' => $this->module->l('You can process a limited amount in card transactions.'),
+                    'tips' => $this->module->l('Tips'),
+                    'alertInfo' => $this->module->l('To test your payment method you can make a real transaction (prefer small amount), and once you have observed the money on your account, make a refund on the corresponding order page. Warning, you will not recover the fees.'),
                 ),
                 'payment-mode' => array(
                     'title' => $this->module->l('Payment methods activation'),
@@ -155,6 +163,13 @@ class Translations
                 'dispute' => array(
                     'pendingDispute' => $this->module->l('pending dispute(s)'),
                     'goToDispute' => $this->module->l('Go to the dispute management platform'),
+                ),
+                'payment-status' => array(
+                    'live' => $this->module->l('Live'),
+                    'approvalPending' => $this->module->l('Approval pending'),
+                    'limited' => $this->module->l('Limited to $500'),
+                    'denied' => $this->module->l('Account declined'),
+                    'disabled' => $this->module->l('Disabled'),
                 ),
             ),
         );

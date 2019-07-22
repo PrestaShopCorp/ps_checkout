@@ -25,14 +25,12 @@
             </div>
             <div class="col-12 col-sm-4 col-md-3 col-lg-3 m-auto">
               <div class="text-center float-right" v-if="firebaseStatusAccount === false">
+                <router-link to="/authentication/login" class="mr-4">
+                  <b>{{ $t('panel.account-list.logIn') }}</b>
+                </router-link>
                 <a href="#" class="btn btn-primary-reverse btn-outline-primary light-button mb-1">
                   {{ $t('panel.account-list.createAccount') }}
                 </a>
-                <br>
-                {{ $t('panel.account-list.or') }}
-                <router-link to="/authentication/login">
-                  <b>{{ $t('panel.account-list.logIn') }}</b>
-                </router-link>
               </div>
               <div class="text-right" v-else>
                 <a href="#" class="text-muted" @click.prevent="firebaseLogout()">{{ $t('panel.account-list.logOut') }}</a>
@@ -50,7 +48,8 @@
                   {{ $t('panel.account-list.activatePayment') }}
                 </template>
                 <template v-else>
-                  {{ $t('panel.account-list.accountIsLinked') }}
+                  {{ $t('panel.account-list.accountIsLinked') }}<br>
+                  <b>{{ paypalEmail }}</b>
                 </template>
               </p>
             </div>
@@ -76,7 +75,7 @@
                   v-show="!paypalIsLoaded"
                   href="#"
                 >
-                  <b>{{ $t('panel.account-list.linkToPaypal') }} ...</b>
+                  <b>{{ $t('panel.account-list.loading') }} ...</b>
                 </a>
               </div>
               <div class="text-right" v-else>
@@ -98,6 +97,9 @@
       };
     },
     computed: {
+      paypalEmail() {
+        return this.$store.state.paypal.account.emailMerchant;
+      },
       firebaseStatusAccount() {
         return this.$store.state.firebase.account.onboardingCompleted;
       },
@@ -113,6 +115,7 @@
         this.$store.dispatch('logout');
       },
       paypalUnlink() {
+        this.paypalIsLoaded = true;
         this.$store.dispatch('unlink');
       },
     },
