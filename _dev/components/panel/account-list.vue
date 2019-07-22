@@ -30,9 +30,9 @@
                 </a>
                 <br>
                 {{ $t('panel.account-list.or') }}
-                <a href="#">
+                <router-link to="/authentication/login">
                   <b>{{ $t('panel.account-list.logIn') }}</b>
-                </a>
+                </router-link>
               </div>
               <div class="text-right" v-else>
                 <a href="#" class="text-muted" @click.prevent="firebaseLogout()">{{ $t('panel.account-list.logOut') }}</a>

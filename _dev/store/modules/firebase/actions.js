@@ -28,6 +28,7 @@ export default {
         idToken: user.idToken,
         localId: user.localId,
         refreshToken: user.refreshToken,
+        onboardingCompleted: true,
       });
 
       return Promise.resolve(user);
@@ -51,6 +52,7 @@ export default {
         idToken: user.idToken,
         localId: user.localId,
         refreshToken: user.refreshToken,
+        onboardingCompleted: true,
       });
 
       return Promise.resolve(user);
