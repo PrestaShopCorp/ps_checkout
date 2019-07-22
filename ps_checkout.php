@@ -291,7 +291,13 @@ class ps_checkout extends PaymentModule
 
         $orderHistory->changeIdOrderState(Configuration::get('PS_CHECKOUT_STATE_PARTIAL_REFUND'), $params['order']->id);
 
-        return $orderHistory->save();
+        if (false === $orderHistory->save()) {
+            return false;
+        }
+
+        $refund->addOrderPayment($params['order']);
+
+        return true;
     }
 
     public function hookActionOrderStatusUpdate($params)
@@ -310,7 +316,6 @@ class ps_checkout extends PaymentModule
 
         if (false === (new MerchantRepository())->merchantIsValid()) {
             $this->context->controller->errors[] = $this->l('You are not connected to PrestaShop Checkout. Cannot process to a refund.');
-            //TODO: cancel refund ?
 
             return false;
         }

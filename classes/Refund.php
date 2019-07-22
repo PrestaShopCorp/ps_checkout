@@ -235,7 +235,29 @@ class Refund
             $order->id
         );
 
-        return $orderHistory->save();
+        if (false === $orderHistory->save()) {
+            return false;
+        }
+
+        $this->addOrderPayment($order);
+
+        return true;
+    }
+
+    /**
+     * Add an order payment in order to keep a history of transactions
+     *
+     * @param \Order $order
+     *
+     * @return bool
+     */
+    public function addOrderPayment(\Order $order)
+    {
+        return $order->addOrderPayment(
+            -$this->getAmount(),
+            'PrestaShop Checkout',
+            (new PaypalOrderRepository())->getPaypalOrderIdByPsOrderRef($order->reference)
+        );
     }
 
     /**
