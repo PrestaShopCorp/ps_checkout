@@ -76,12 +76,13 @@
     },
     methods: {
       logIn() {
+        this.hasError = false;
         this.$store.dispatch({
           type: 'login',
           email: this.email,
           password: this.password,
         }).then(() => {
-          this.$router.push('/authentication/paypal');
+          this.$router.push('/authentication');
         }).catch((err) => {
           this.hasError = true;
           switch (err.error.message) {
