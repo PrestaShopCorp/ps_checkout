@@ -1,4 +1,5 @@
 <?php
+
 global $_MODULE;
 $_MODULE = array();
 $_MODULE['<{ps_checkout-feature-display-payment-status}prestashop>hostedfieldserrors_0fdfcaa100b861173fa706fed28ff9f8'] = 'Formato non valido, verifica le tue informazioni bancarie e riprova';

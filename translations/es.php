@@ -1,4 +1,5 @@
 <?php
+
 global $_MODULE;
 $_MODULE = array();
 $_MODULE['<{ps_checkout-feature-display-payment-status}prestashop>hostedfieldserrors_0fdfcaa100b861173fa706fed28ff9f8'] = 'Formato no válido; comprueba tus datos bancarios y vuelve a intentarlo';
@@ -20,7 +21,7 @@ $_MODULE['<{ps_checkout-feature-display-payment-status}prestashop>translations_1
 $_MODULE['<{ps_checkout-feature-display-payment-status}prestashop>translations_8d3d326e52dae2640dc2e2143062e078'] = 'Se está realizando una comprobación adicional de antecedentes.';
 $_MODULE['<{ps_checkout-feature-display-payment-status}prestashop>translations_6f981ef2b97ddcaff1e8bf31891a7fc4'] = 'Puede tardar varios días. Si necesitamos más información, recibirás una notificación.';
 $_MODULE['<{ps_checkout-feature-display-payment-status}prestashop>translations_8215900bbe4e4ddcac7968eefb28256d'] = 'Puedes hacer operaciones';
-$_MODULE['<{ps_checkout-feature-display-payment-status}prestashop>translations_3d808624c7b26cfee0b74ee3b4afc38b'] = 'por un total de hasta 500 $';
+$_MODULE['<{ps_checkout-feature-display-payment-status}prestashop>translations_3d808624c7b26cfee0b74ee3b4afc38b'] = 'por un total de hasta 500 $';
 $_MODULE['<{ps_checkout-feature-display-payment-status}prestashop>translations_0eb1f8746fd4f892627727adf4a1a35c'] = 'en transacciones mediante tu tarjeta hasta que la cuenta esté totalmente aprobada';
 $_MODULE['<{ps_checkout-feature-display-payment-status}prestashop>translations_77eea2967221027ae8d08b951183a075'] = 'Preguntas frecuentas sobre la validación de la cuenta';
 $_MODULE['<{ps_checkout-feature-display-payment-status}prestashop>translations_600cfb552b7349e76153e10b4604a651'] = 'Cuenta rechazada';
