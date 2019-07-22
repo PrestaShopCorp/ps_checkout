@@ -346,4 +346,28 @@ class Maasland
 
         return isset($data) ? $data : false;
     }
+
+    /**
+     * Retrive the sum of disputes
+     *
+     * @return array|bool
+     */
+    public function countDispute()
+    {
+        $route = '/payments/dispute/count';
+
+        try {
+            $response = $this->client->post($route);
+        } catch (ServerException $e) {
+            \PrestaShopLogger::addLog($e->getMessage());
+
+            return false;
+        } catch (ClientException $e) {
+            $response = $e->getResponse();
+        }
+
+        $data = json_decode($response->getBody(), true);
+
+        return isset($data) ? $data : false;
+    }
 }
