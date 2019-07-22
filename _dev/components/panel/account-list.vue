@@ -25,14 +25,12 @@
             </div>
             <div class="col-12 col-sm-4 col-md-3 col-lg-3 m-auto">
               <div class="text-center float-right" v-if="firebaseStatusAccount === false">
+                <router-link to="/authentication/login" class="mr-4">
+                  <b>{{ $t('panel.account-list.logIn') }}</b>
+                </router-link>
                 <a href="#" class="btn btn-primary-reverse btn-outline-primary light-button mb-1">
                   {{ $t('panel.account-list.createAccount') }}
                 </a>
-                <br>
-                {{ $t('panel.account-list.or') }}
-                <router-link to="/authentication/login">
-                  <b>{{ $t('panel.account-list.logIn') }}</b>
-                </router-link>
               </div>
               <div class="text-right" v-else>
                 <a href="#" class="text-muted" @click.prevent="firebaseLogout()">{{ $t('panel.account-list.logOut') }}</a>
@@ -50,7 +48,7 @@
                   {{ $t('panel.account-list.activatePayment') }}
                 </template>
                 <template v-else>
-                  {{ $t('panel.account-list.accountIsLinked') }}
+                  {{ $t('panel.account-list.accountIsLinked') }}<br>
                   <b>{{ paypalEmail }}</b>
                 </template>
               </p>
