@@ -43,7 +43,7 @@
             </div>
             <div class="condition-label">
                 <label class="js-terms paypal-label" for="conditions_to_approve-paypal">
-                    {l s='I agree to the' mod='ps_checkout'} <a href="{$link->getCMSLink('3')}" id="cta-terms-and-conditions-checkout">{l s='terms of service' mod='ps_checkout'}</a> {l s='and will adhere to them unconditionally' mod='ps_checkout'}.
+                    {l s='I agree to the [1]terms of service[/1] and will adhere to them unconditionally.' mod='ps_checkout' sprintf=['[1]' => "<a href='{$link->getCMSLink('3')}' id='cta-terms-and-conditions-checkout'>", '[/1]' => '</a>']}
                 </label>
             </div>
             </li>
