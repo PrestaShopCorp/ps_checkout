@@ -358,11 +358,12 @@ class Maasland
 
         try {
             $response = $this->client->post($route);
-        } catch (ServerException $e) {
+        } catch (RequestException $e) {
             \PrestaShopLogger::addLog($e->getMessage());
 
-            return false;
-        } catch (ClientException $e) {
+            if (!$e->hasResponse()) {
+                return false;
+            }
             $response = $e->getResponse();
         }
 
