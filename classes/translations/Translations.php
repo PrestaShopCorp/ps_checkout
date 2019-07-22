@@ -89,7 +89,6 @@ class Translations
                     'account' => $this->module->l('account'),
                     'createNewAccount' => $this->module->l('Sign in or login to provide every payment method to your customer.'),
                     'createAccount' => $this->module->l('Sign up'),
-                    'or' => $this->module->l('or'),
                     'logIn' => $this->module->l('Log in'),
                     'logOut' => $this->module->l('Log out'),
                     'paypalAccount' => $this->module->l('PayPal account'),
