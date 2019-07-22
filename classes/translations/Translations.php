@@ -96,6 +96,7 @@ class Translations
                     'activatePayment' => $this->module->l('Log in or sign up to PayPal'),
                     'accountIsLinked' => $this->module->l('Your PrestaShop Checkout account is linked to your PayPal account'),
                     'linkToPaypal' => $this->module->l('Link to PayPal account'),
+                    'linkToPsCheckoutFirst' => $this->module->l('Link to PrestaShop Checkout first'),
                     'loading' => $this->module->l('Loading'),
                     'useAnotherAccount' => $this->module->l('Use another account'),
                 ),

@@ -57,14 +57,21 @@
             <div class="col-12 col-sm-4 col-md-3 col-lg-3 m-auto">
               <div class="text-center float-right" v-if="paypalStatusAccount === false">
                 <a
-                  v-show="paypalIsLoaded"
+                  v-show="paypalIsLoaded && paypalOnboardingLink"
                   class="btn btn-primary-reverse btn-outline-primary light-button"
                   data-paypal-button="true"
-                  :href="$store.state.paypal.account.paypalOnboardingLink+'&displayMode=minibrowser'"
+                  :href="paypalOnboardingLink+'&displayMode=minibrowser'"
                   target="PPFrame"
                 >
                   {{ $t('panel.account-list.linkToPaypal') }}
                 </a>
+                <button
+                  v-show="!paypalOnboardingLink"
+                  class="btn btn-primary-reverse btn-outline-primary light-button"
+                  disabled
+                >
+                  {{ $t('panel.account-list.linkToPsCheckoutFirst') }}
+                </button>
                 <a
                   v-show="!paypalIsLoaded"
                   href="#"
@@ -96,6 +103,9 @@
       },
       paypalStatusAccount() {
         return this.$store.state.paypal.account.onboardingCompleted;
+      },
+      paypalOnboardingLink() {
+        return this.$store.state.paypal.account.paypalOnboardingLink;
       },
     },
     methods: {
