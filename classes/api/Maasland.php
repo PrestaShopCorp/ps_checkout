@@ -112,8 +112,9 @@ class Maasland
         } catch (RequestException $e) {
             \PrestaShopLogger::addLog($e->getMessage());
 
-            return false;
-        } catch (ClientException $e) {
+            if (!$e->hasResponse()) {
+                return false;
+            }
             $response = $e->getResponse();
         }
 
