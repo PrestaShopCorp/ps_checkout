@@ -28,12 +28,12 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 class OrderDispatcher
 {
-    const PS_CHECKOUT_PAYMENT_REVERSED = 'PAYMENT.CAPTURE.REVERSED';
-    const PS_CHECKOUT_PAYMENT_REFUNED = 'PAYMENT.CAPTURE.REFUNDED';
+    const PS_CHECKOUT_PAYMENT_REVERSED = 'PaymentCaptureReversed';
+    const PS_CHECKOUT_PAYMENT_REFUNED = 'PaymentCaptureRefunded';
     const PS_CHECKOUT_PAYMENT_AUTH_VOIDED = 'PAYMENT.AUTHORIZATION.VOIDED';
-    const PS_CHECKOUT_PAYMENT_PENDING = 'PAYMENT.CAPTURE.PENDING';
-    const PS_CHECKOUT_PAYMENT_COMPLETED = 'PAYMENT.CAPTURE.COMPLETED';
-    const PS_CHECKOUT_PAYMENT_DENIED = 'PAYMENT.CAPTURE.DENIED';
+    const PS_CHECKOUT_PAYMENT_PENDING = 'PaymentCapturePending';
+    const PS_CHECKOUT_PAYMENT_COMPLETED = 'PaymentCaptureCompleted';
+    const PS_CHECKOUT_PAYMENT_DENIED = 'PaymentCaptureDenied';
     const PS_EVENTTYPE_TO_PS_STATE_ID = array(
         self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED => 6, // Canceled
         self::PS_CHECKOUT_PAYMENT_PENDING => 3, // Processing in progress
