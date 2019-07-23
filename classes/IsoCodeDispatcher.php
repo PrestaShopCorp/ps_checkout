@@ -249,7 +249,7 @@ class IsoCodeDispatcher
         if (!is_string($isoCode)) {
             return false;
         }
-        
+
         if (false === array_key_exists($isoCode, self::MATCH_ISO_CODE)) {
             return false;
         }

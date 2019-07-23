@@ -23,7 +23,6 @@
  *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *  International Registered Trademark & Property of PrestaShop SA
  **/
-
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\IsoCodeDispatcher;
 
@@ -35,7 +34,7 @@ class IsoCodeDispatcherTest extends TestCase
     public function testgetPaypalIsoCode($resultExpect, $dataToValidate)
     {
         $this->assertSame(
-            $resultExpect, 
+            $resultExpect,
             (new IsoCodeDispatcher())->getPaypalIsoCode($dataToValidate)
         );
     }
@@ -46,7 +45,7 @@ class IsoCodeDispatcherTest extends TestCase
     public function testgetPrestashopIsoCode($resultExpect, $dataToValidate)
     {
         $this->assertSame(
-            $resultExpect, 
+            $resultExpect,
             (new IsoCodeDispatcher())->getPrestashopIsoCode($dataToValidate)
         );
     }
