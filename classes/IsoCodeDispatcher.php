@@ -246,6 +246,10 @@ class IsoCodeDispatcher
      */
     public function getPaypalIsoCode($isoCode)
     {
+        if (!is_string($isoCode)) {
+            return false;
+        }
+        
         if (false === array_key_exists($isoCode, self::MATCH_ISO_CODE)) {
             return false;
         }
@@ -262,6 +266,10 @@ class IsoCodeDispatcher
      */
     public function getPrestashopIsoCode($isoCode)
     {
+        if (!is_string($isoCode)) {
+            return false;
+        }
+
         return array_search($isoCode, self::MATCH_ISO_CODE);
     }
 }
