@@ -34,7 +34,7 @@ class IsoCodeDispatcher
      * @var array
      */
     const MATCH_ISO_CODE = array(
-        'CN' => 'C2'
+        'CN' => 'C2',
     );
 
     /**
