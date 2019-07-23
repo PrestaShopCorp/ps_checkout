@@ -29,7 +29,7 @@ use PrestaShop\Module\PrestashopCheckout\IsoCodeDispatcher;
 class IsoCodeDispatcherTest extends TestCase
 {
     /**
-     * @dataProvider isoCodeDataProvider
+     * @dataProvider isoCodeDataProviderPaypal
      */
     public function testgetPaypalIsoCode($resultExpect, $dataToValidate)
     {
@@ -39,8 +39,32 @@ class IsoCodeDispatcherTest extends TestCase
         );
     }
 
+    public function isoCodeDataProviderPaypal()
+    {
+        return array(
+            array(
+                'AL',
+                'AL',
+            ),
+            array(
+                'C2',
+                'CN',
+            ),
+            array(
+                false,
+                1,
+            ),
+            array(
+                false,
+                array(
+                    'FR',
+                ),
+            ),
+        );
+    }
+
     /**
-     * @dataProvider isoCodeDataProvider
+     * @dataProvider isoCodeDataProviderPrestashopl
      */
     public function testgetPrestashopIsoCode($resultExpect, $dataToValidate)
     {
@@ -50,7 +74,7 @@ class IsoCodeDispatcherTest extends TestCase
         );
     }
 
-    public function isoCodeDataProvider()
+    public function isoCodeDataProviderPrestashopl()
     {
         return array(
             array(
@@ -58,8 +82,8 @@ class IsoCodeDispatcherTest extends TestCase
                 'AL',
             ),
             array(
-                false,
-                'JPN',
+                'CN',
+                'C2',
             ),
             array(
                 false,
