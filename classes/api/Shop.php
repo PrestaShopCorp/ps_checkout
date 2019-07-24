@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api;
+namespace PrestaShop\Module\PrestashopCheckout\api;
 
 use PrestaShop\Module\PrestashopCheckout\api\Client\MaaslandClient;
 

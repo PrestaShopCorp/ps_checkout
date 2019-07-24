@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use PrestaShop\Module\PrestashopCheckout\Api\Order;
+use PrestaShop\Module\PrestashopCheckout\api\Order;
 use PrestaShop\Module\PrestashopCheckout\GenerateJsonPaypalOrder;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
