@@ -30,7 +30,7 @@ class OrderDispatcher
 {
     const PS_CHECKOUT_PAYMENT_REVERSED = 'PaymentCaptureReversed';
     const PS_CHECKOUT_PAYMENT_REFUNED = 'PaymentCaptureRefunded';
-    const PS_CHECKOUT_PAYMENT_AUTH_VOIDED = 'PAYMENT.AUTHORIZATION.VOIDED';
+    const PS_CHECKOUT_PAYMENT_AUTH_VOIDED = 'PaymentAuthorizationVoided';
     const PS_CHECKOUT_PAYMENT_PENDING = 'PaymentCapturePending';
     const PS_CHECKOUT_PAYMENT_COMPLETED = 'PaymentCaptureCompleted';
     const PS_CHECKOUT_PAYMENT_DENIED = 'PaymentCaptureDenied';
