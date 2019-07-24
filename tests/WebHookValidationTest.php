@@ -207,18 +207,17 @@ class WebHookValidationTest extends TestCase
 
     public function resourceDataProvider()
     {
-        $allWrongDatas = new \stdClass;
+        $allWrongDatas = new \stdClass();
         $allWrongDatas->value = null;
         $allWrongDatas->currency_code = null;
 
-        $valueZeroError = new \stdClass;
+        $valueZeroError = new \stdClass();
         $valueZeroError->value = -1;
         $valueZeroError->currency_code = 'FR';
 
-        $currencyError = new \stdClass;
+        $currencyError = new \stdClass();
         $currencyError->value = 10;
         $currencyError->currency_code = null;
-
 
         return array(
             array(
