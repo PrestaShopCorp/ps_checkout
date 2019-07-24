@@ -24,24 +24,17 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout;
+namespace PrestaShop\Module\PrestashopCheckout\Store\Modules;
 
 /**
- * Handle store update
+ * Interface StoreModuleInterface defines methods for module store
  */
-class StoreManager
+interface StoreModuleInterface
 {
-    public function firebaseLogout()
-    {
-        \Configuration::updateValue('PS_CHECKOUT_FIREBASE_EMAIL', '');
-        \Configuration::updateValue('PS_CHECKOUT_FIREBASE_ID_TOKEN', '');
-        \Configuration::updateValue('PS_CHECKOUT_FIREBASE_LOCAL_ID', '');
-        \Configuration::updateValue('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN', '');
-    }
-
-    public function unlinkPaypal()
-    {
-        \Configuration::updateValue('PS_CHECKOUT_PAYPAL_ID_MERCHANT', '');
-        \Configuration::updateValue('PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT', '');
-    }
+    /**
+     * Present module
+     *
+     * @return array
+     */
+    public function present();
 }

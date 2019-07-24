@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
-use PrestaShop\Module\PrestashopCheckout\StoreManager;
+use PrestaShop\Module\PrestashopCheckout\Store\StoreManager;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {

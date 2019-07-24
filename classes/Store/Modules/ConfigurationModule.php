@@ -1,0 +1,79 @@
+<?php
+/**
+* 2007-2019 PrestaShop
+*
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Academic Free License (AFL 3.0)
+* that is bundled with this package in the file LICENSE.txt.
+* It is also available through the world-wide-web at this URL:
+* http://opensource.org/licenses/afl-3.0.php
+* If you did not receive a copy of the license and are unable to
+* obtain it through the world-wide-web, please send an email
+* to license@prestashop.com so we can send you a copy immediately.
+*
+* DISCLAIMER
+*
+* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+* versions in the future. If you wish to customize PrestaShop for your
+* needs please refer to http://www.prestashop.com for more information.
+*
+*  @author    PrestaShop SA <contact@prestashop.com>
+*  @copyright 2007-2019 PrestaShop SA
+*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+*  International Registered Trademark & Property of PrestaShop SA
+*/
+
+namespace PrestaShop\Module\PrestashopCheckout\Store\Modules;
+
+/**
+ * Construct the configuration module
+ */
+class ConfigurationModule implements StoreModuleInterface
+{
+    /**
+     * Present the paypal module (vuex)
+     *
+     * @return array
+     */
+    public function present()
+    {
+        $configurationModule = array(
+            'config' => array(
+                'module' => array(
+                    'paymentMethods' => $this->getPaymentsMethods(),
+                    'captureMode' => \Configuration::get('PS_CHECKOUT_INTENT'),
+                    'paymentMode' => \Configuration::get('PS_CHECKOUT_MODE'),
+                ),
+            ),
+        );
+
+        return $configurationModule;
+    }
+
+    /**
+     * Get payment methods order
+     *
+     * @return array payment method
+     */
+    private function getPaymentsMethods()
+    {
+        $paymentMethods = \Configuration::get('PS_CHECKOUT_PAYMENT_METHODS_ORDER');
+
+        if (true === empty($paymentMethods)) {
+            $paymentMethods = array();
+
+            array_push($paymentMethods, array(
+                'name' => 'card',
+            ));
+
+            array_push($paymentMethods, array(
+                'name' => 'paypal',
+            ));
+        } else {
+            $paymentMethods = json_decode($paymentMethods, true);
+        }
+
+        return $paymentMethods;
+    }
+}
