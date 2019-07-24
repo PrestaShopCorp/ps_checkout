@@ -28,7 +28,7 @@ use GuzzleHttp\Message\Response;
 use GuzzleHttp\Stream\Stream;
 use GuzzleHttp\Subscriber\Mock;
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\PrestashopCheckout\api\Order;
+use PrestaShop\Module\PrestashopCheckout\Api\Order;
 
 class Link
 {

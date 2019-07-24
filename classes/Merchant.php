@@ -26,7 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\api\Shop;
+use PrestaShop\Module\PrestashopCheckout\Api\Shop;
 
 /**
  * Check and set the merchant status

@@ -26,7 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\api\Order;
+use PrestaShop\Module\PrestashopCheckout\Api\Order;
 
 /**
  * Handle the refund of a paypal order

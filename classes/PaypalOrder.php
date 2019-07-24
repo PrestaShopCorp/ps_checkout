@@ -26,7 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\api\Order;
+use PrestaShop\Module\PrestashopCheckout\Api\Order;
 
 /**
  * Allow to instantiate a paypal order

@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\api\Client;
+namespace PrestaShop\Module\PrestashopCheckout\Api\Client;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;

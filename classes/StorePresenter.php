@@ -26,7 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\api\Onboarding;
+use PrestaShop\Module\PrestashopCheckout\Api\Onboarding;
 
 /**
  * Present the store to the vuejs app (vuex)
