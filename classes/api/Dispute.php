@@ -26,11 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use PrestaShop\Module\PrestashopCheckout\api\Client\MaaslandClient;
-use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
-use PrestaShop\Module\PrestashopCheckout\Environment;
 
 /**
  * Handle dispute calls

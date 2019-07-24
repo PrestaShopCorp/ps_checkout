@@ -36,7 +36,6 @@ use PrestaShop\Module\PrestashopCheckout\Environment;
 use PrestaShop\Module\PrestashopCheckout\Merchant;
 use PrestaShop\Module\PrestashopCheckout\MerchantRepository;
 use Ramsey\Uuid\Uuid;
-use PrestaShop\Module\PrestashopCheckout\api\Shop;
 
 require_once __DIR__ . '/vendor/autoload.php';
 

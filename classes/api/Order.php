@@ -26,11 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use PrestaShop\Module\PrestashopCheckout\api\Client\MaaslandClient;
-use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
-use PrestaShop\Module\PrestashopCheckout\Environment;
 
 /**
  * Handle order requests
@@ -125,7 +121,7 @@ class Order extends MaaslandClient
         $this->setRoute('/payments/order/refund');
 
         return $this->post([
-            'json' => json_encode($payload)
+            'json' => json_encode($payload),
         ]);
     }
 
