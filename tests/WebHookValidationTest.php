@@ -195,6 +195,66 @@ class WebHookValidationTest extends TestCase
     }
 
     /**
+     * @dataProvider resourceDataProvider
+     */
+    public function testResourceDatas($resultExpect, $dataToValidate)
+    {
+        $this->assertSame(
+            $resultExpect,
+            (new WebHookValidation())->validateRefundResourceValues($dataToValidate)
+        );
+    }
+
+    public function resourceDataProvider()
+    {
+        $allWrongDatas = new \stdClass;
+        $allWrongDatas->value = null;
+        $allWrongDatas->currency_code = null;
+
+        $valueZeroError = new \stdClass;
+        $valueZeroError->value = -1;
+        $valueZeroError->currency_code = 'FR';
+
+        $currencyError = new \stdClass;
+        $currencyError->value = 10;
+        $currencyError->currency_code = null;
+
+
+        return array(
+            array(
+                WebHookValidation::RESOURCE_DATA_ERROR,
+                array(),
+            ),
+            array(
+                array(
+                    WebHookValidation::RESOURCE_VALUE_EMPTY_ERROR,
+                    WebHookValidation::RESOURCE_VALUE_ZERO_ERROR,
+                    WebHookValidation::RESOURCE_CURRENCY_ERROR,
+                ),
+                array(
+                    'amount' => $allWrongDatas,
+                ),
+            ),
+            array(
+                array(
+                    WebHookValidation::RESOURCE_VALUE_ZERO_ERROR,
+                ),
+                array(
+                    'amount' => $valueZeroError,
+                ),
+            ),
+            array(
+                array(
+                    WebHookValidation::RESOURCE_CURRENCY_ERROR,
+                ),
+                array(
+                    'amount' => $currencyError,
+                ),
+            ),
+        );
+    }
+
+    /**
      * @dataProvider orderDataProvider
      */
     public function testOrderDatas($resultExpect, $dataToValidate)

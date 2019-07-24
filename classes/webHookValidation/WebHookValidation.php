@@ -37,7 +37,6 @@ class WebHookValidation
     const BODY_CATEGORY_ERROR = 'category can\'t be empty';
     const BODY_RESOURCE_ERROR = 'Resource can\'t be empty';
     const RESOURCE_DATA_ERROR = 'Resource can\'t be empty';
-    const RESOURCE_AMOUNT_ERROR = 'Amount can\'t be empty';
     const RESOURCE_VALUE_EMPTY_ERROR = 'Amount value can\'t be empty';
     const RESOURCE_VALUE_ZERO_ERROR = 'Amount value must be higher than 0';
     const RESOURCE_CURRENCY_ERROR = 'Amount currency can\'t be empty';
@@ -118,15 +117,11 @@ class WebHookValidation
             return $errors[] = self::RESOURCE_DATA_ERROR;
         }
 
-        if (empty($resource['amount'])) {
-            $errors[] = self::RESOURCE_AMOUNT_ERROR;
-        }
-
         if (empty($resource['amount']->value)) {
             $errors[] = self::RESOURCE_VALUE_EMPTY_ERROR;
         }
 
-        if (0 >= (float) $resource['amount']->value) {
+        if (0 >= $resource['amount']->value) {
             $errors[] = self::RESOURCE_VALUE_ZERO_ERROR;
         }
 
