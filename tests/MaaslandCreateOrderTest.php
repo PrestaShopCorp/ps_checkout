@@ -28,7 +28,7 @@ use GuzzleHttp\Message\Response;
 use GuzzleHttp\Stream\Stream;
 use GuzzleHttp\Subscriber\Mock;
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
+use PrestaShop\Module\PrestashopCheckout\Api\Order;
 
 class Link
 {
@@ -67,9 +67,9 @@ class MaaslandCreateOrderTest extends TestCase
         // Add the mock subscriber to the client.
         $client->getEmitter()->attach($mock);
 
-        $maasland = new Maasland(new Link(), $client);
+        $order = new Order(new Link(), $client);
 
-        $this->assertSame($result, $maasland->createOrder([]));
+        $this->assertSame($result, $order->create([]));
     }
 
     public function testCreateOrderUnauthorized()
@@ -81,9 +81,9 @@ class MaaslandCreateOrderTest extends TestCase
         ]);
         $client->getEmitter()->attach($mock);
 
-        $maasland = new Maasland(new Link(), $client);
+        $order = new Order(new Link(), $client);
 
-        $this->assertSame(false, $maasland->createOrder([]));
+        $this->assertSame(false, $order->create([]));
     }
 
     public function testCreateOrderInvalidResponse()
@@ -96,8 +96,8 @@ class MaaslandCreateOrderTest extends TestCase
         ]);
         $client->getEmitter()->attach($mock);
 
-        $maasland = new Maasland(new Link(), $client);
+        $order = new Order(new Link(), $client);
 
-        $this->assertSame(false, $maasland->createOrder([]));
+        $this->assertSame(false, $order->create([]));
     }
 }

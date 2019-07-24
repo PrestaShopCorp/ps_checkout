@@ -26,7 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
+use PrestaShop\Module\PrestashopCheckout\Api\Shop;
 
 /**
  * Check and set the merchant status
@@ -163,7 +163,7 @@ class Merchant
      */
     public function getMerchantIntegration()
     {
-        $merchantIntegration = (new Maasland(\Context::getContext()->link))->getMerchantIntegration($this->merchantId);
+        $merchantIntegration = (new Shop(\Context::getContext()->link))->getMerchantIntegration($this->merchantId);
 
         if (false === $merchantIntegration
             || !isset($merchantIntegration['merchant_integrations'])

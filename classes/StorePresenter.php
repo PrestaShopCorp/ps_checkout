@@ -26,7 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
+use PrestaShop\Module\PrestashopCheckout\Api\Onboarding;
 
 /**
  * Present the store to the vuejs app (vuex)
@@ -127,7 +127,7 @@ class StorePresenter
         $language = \Language::getLanguage($context->employee->id_lang);
         $locale = $language['locale'];
 
-        $paypalOnboardingLink = (new Maasland($context->link))->getPaypalOnboardingLink($email, $locale);
+        $paypalOnboardingLink = (new Onboarding($context->link))->getOnboardingLink($email, $locale);
 
         return $paypalOnboardingLink;
     }

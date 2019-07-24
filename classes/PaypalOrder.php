@@ -26,7 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
+use PrestaShop\Module\PrestashopCheckout\Api\Order;
 
 /**
  * Allow to instantiate a paypal order
@@ -48,7 +48,7 @@ class PaypalOrder
      */
     private function loadOrder($id)
     {
-        $order = (new Maasland(\Context::getContext()->link))->fetchOrder($id);
+        $order = (new Order(\Context::getContext()->link))->fetch($id);
 
         if (false === $order) {
             return false;

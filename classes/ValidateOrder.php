@@ -26,7 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
+use PrestaShop\Module\PrestashopCheckout\Api\Order;
 
 /**
  * Class that allow to validate an order
@@ -84,14 +84,14 @@ class ValidateOrder
 
         $paypalOrder = new PaypalOrder($this->paypalOrderId);
         $order = $paypalOrder->getOrder();
-        $maasland = new Maasland(\Context::getContext()->link);
+        $apiOrder = new Order(\Context::getContext()->link);
 
         switch ($paypalOrder->getOrderIntent()) {
             case self::INTENT_CAPTURE:
-                $responseStatus = $maasland->captureOrder($order['id'], $this->merchantId);
+                $responseStatus = $apiOrder->capture($order['id'], $this->merchantId);
                 break;
             case self::INTENT_AUTHORIZE:
-                $responseStatus = $maasland->authorizeOrder($order['id'], $this->merchantId);
+                $responseStatus = $apiOrder->authorize($order['id'], $this->merchantId);
                 break;
             default:
                 throw new \Exception(sprintf('Unknown Intent type %s', $paypalOrder->getOrderIntent()));
