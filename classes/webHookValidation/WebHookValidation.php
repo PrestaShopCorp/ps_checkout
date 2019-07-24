@@ -28,10 +28,6 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 class WebHookValidation
 {
-    const ALLOWED_CATEGORIES = array(
-        'ShopNotificationMerchantAccount',
-        'ShopNotificationOrderChange',
-    );
     const HEADER_DATA_ERROR = 'Header can\'t be empty';
     const HEADER_SHOPID_ERROR = 'Shop-Id can\'t be empty';
     const HEADER_MERCHANTID_ERROR = 'Merchant-Id can\'t be empty';
