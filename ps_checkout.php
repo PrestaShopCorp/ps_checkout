@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
+use PrestaShop\Module\PrestashopCheckout\Api\Order;
 use PrestaShop\Module\PrestashopCheckout\GenerateJsonPaypalOrder;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
@@ -36,6 +36,7 @@ use PrestaShop\Module\PrestashopCheckout\Environment;
 use PrestaShop\Module\PrestashopCheckout\Merchant;
 use PrestaShop\Module\PrestashopCheckout\MerchantRepository;
 use Ramsey\Uuid\Uuid;
+use PrestaShop\Module\PrestashopCheckout\api\Shop;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -171,7 +172,7 @@ class ps_checkout extends PaymentModule
         }
 
         $payload = (new GenerateJsonPaypalOrder())->create($this->context);
-        $paypalOrder = (new Maasland($this->context->link))->createOrder($payload);
+        $paypalOrder = (new Order($this->context->link))->create($payload);
 
         if (false === $paypalOrder) {
             return false;

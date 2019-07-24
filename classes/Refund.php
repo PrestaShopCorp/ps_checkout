@@ -26,7 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
+use PrestaShop\Module\PrestashopCheckout\Api\Order;
 
 /**
  * Handle the refund of a paypal order
@@ -73,7 +73,7 @@ class Refund
      */
     public function refundPaypalOrder()
     {
-        $refund = (new Maasland(\Context::getContext()->link))->refundOrder($this->getPayload());
+        $refund = (new Order(\Context::getContext()->link))->refund($this->getPayload());
 
         if (isset($refund->statusCode) && $refund->statusCode === 422) {
             return $this->handleCallbackErrors($refund->message);
