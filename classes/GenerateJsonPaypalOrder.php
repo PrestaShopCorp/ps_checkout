@@ -108,6 +108,10 @@ class GenerateJsonPaypalOrder
             $items[] = $item;
         }
 
+        $isoCodeDispatcher = new IsoCodeDispatcher();
+        $shippingCountryIsoCode = $this->getCountryIsoCodeById($params['addresses']['shipping']->id_country);
+        $payerCountryIsoCode = $this->getCountryIsoCodeById($params['addresses']['invoice']->id_country);
+
         $payload = [
             'intent' => \Configuration::get('PS_CHECKOUT_INTENT'), // capture or authorize
             'custom_id' => (string) $params['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
@@ -142,7 +146,7 @@ class GenerateJsonPaypalOrder
                     'address_line_2' => $params['addresses']['shipping']->address2,
                     'admin_area_1' => (string) $this->getStateNameById($params['addresses']['shipping']->id_state),
                     'admin_area_2' => $params['addresses']['shipping']->city,
-                    'country_code' => $this->getCountryIsoCodeById($params['addresses']['shipping']->id_country),
+                    'country_code' => $isoCodeDispatcher->getPaypalIsoCode($shippingCountryIsoCode),
                     'postal_code' => $params['addresses']['shipping']->postcode,
                 ],
             ],
@@ -157,7 +161,7 @@ class GenerateJsonPaypalOrder
                     'address_line_2' => $params['addresses']['invoice']->address2,
                     'admin_area_1' => (string) $this->getStateNameById($params['addresses']['invoice']->id_state), //The highest level sub-division in a country, which is usually a province, state, or ISO-3166-2 subdivision.
                     'admin_area_2' => $params['addresses']['invoice']->city, // A city, town, or village. Smaller than admin_area_level_1
-                    'country_code' => $this->getCountryIsoCodeById($params['addresses']['invoice']->id_country),
+                    'country_code' => $isoCodeDispatcher->getPaypalIsoCode($payerCountryIsoCode),
                     'postal_code' => $params['addresses']['invoice']->postcode,
                 ],
             ],
