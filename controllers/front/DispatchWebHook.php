@@ -115,7 +115,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     /**
      * Check if the Webhook comes from the PSL
      *
-     * @param  array $bodyValues
+     * @param array $bodyValues
      *
      * @return bool
      */
