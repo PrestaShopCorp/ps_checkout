@@ -24,15 +24,16 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Store\Modules;
+namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
 use PrestaShop\Module\PrestashopCheckout\MerchantRepository;
+use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface;
 
 /**
  * Construct the paypal module
  */
-class PaypalModule implements StoreModuleInterface
+class PaypalModule implements StorePresenterInterface
 {
     /**
      * Present the paypal module (vuex)

@@ -24,14 +24,14 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Store\Modules;
+namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules;
 
-use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
+use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface;
 
 /**
- * Construct the firebase module
+ * Construct the configuration module
  */
-class FirebaseModule implements StoreModuleInterface
+class ConfigurationModule implements StorePresenterInterface
 {
     /**
      * Present the paypal module (vuex)
@@ -40,20 +40,37 @@ class FirebaseModule implements StoreModuleInterface
      */
     public function present()
     {
-        $idToken = (new FirebaseClient())->getToken();
-
-        $firebaseModule = array(
-            'firebase' => array(
-                'account' => array(
-                    'email' => \Configuration::get('PS_CHECKOUT_FIREBASE_EMAIL'),
-                    'idToken' => $idToken,
-                    'localId' => \Configuration::get('PS_CHECKOUT_FIREBASE_LOCAL_ID'),
-                    'refreshToken' => \Configuration::get('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN'),
-                    'onboardingCompleted' => !empty($idToken),
+        $configurationModule = array(
+            'config' => array(
+                'module' => array(
+                    'paymentMethods' => $this->getPaymentMethods(),
+                    'captureMode' => \Configuration::get('PS_CHECKOUT_INTENT'),
+                    'paymentMode' => \Configuration::get('PS_CHECKOUT_MODE'),
                 ),
             ),
         );
 
-        return $firebaseModule;
+        return $configurationModule;
+    }
+
+    /**
+     * Get payment methods order
+     *
+     * @return array payment method
+     */
+    private function getPaymentMethods()
+    {
+        $paymentMethods = \Configuration::get('PS_CHECKOUT_PAYMENT_METHODS_ORDER');
+
+        if (empty($paymentMethods)) {
+            $paymentMethods = [
+                ['name' => 'card'],
+                ['name' => 'paypal'],
+            ];
+        } else {
+            $paymentMethods = json_decode($paymentMethods, true);
+        }
+
+        return $paymentMethods;
     }
 }

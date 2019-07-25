@@ -24,17 +24,37 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Store\Modules;
+namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules;
+
+use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
+use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface;
 
 /**
- * Interface StoreModuleInterface defines methods for module store
+ * Construct the firebase module
  */
-interface StoreModuleInterface
+class FirebaseModule implements StorePresenterInterface
 {
     /**
-     * Present module
+     * Present the paypal module (vuex)
      *
      * @return array
      */
-    public function present();
+    public function present()
+    {
+        $idToken = (new FirebaseClient())->getToken();
+
+        $firebaseModule = array(
+            'firebase' => array(
+                'account' => array(
+                    'email' => \Configuration::get('PS_CHECKOUT_FIREBASE_EMAIL'),
+                    'idToken' => $idToken,
+                    'localId' => \Configuration::get('PS_CHECKOUT_FIREBASE_LOCAL_ID'),
+                    'refreshToken' => \Configuration::get('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN'),
+                    'onboardingCompleted' => !empty($idToken),
+                ),
+            ),
+        );
+
+        return $firebaseModule;
+    }
 }
