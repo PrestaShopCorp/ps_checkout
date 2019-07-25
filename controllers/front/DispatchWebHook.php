@@ -29,6 +29,7 @@ use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 use PrestaShop\Module\PrestashopCheckout\WebHookNock;
 use PrestaShop\Module\PrestashopCheckout\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\UnauthorizedException;
+use PrestaShop\Module\PrestashopCheckout\Api\Webhook;
 
 class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontController
 {
@@ -92,6 +93,10 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
                 throw new UnauthorizedException($errors);
             }
 
+            if (!$this->checkPslSignature($bodyValues)) {
+                throw new UnauthorizedException('Invalid PSL signature');
+            }
+
             $this->setAtributesBodyValues($bodyValues);
 
             // Check if have execution permissions
@@ -105,6 +110,20 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         }
 
         return false;
+    }
+
+    /**
+     * Check if the Webhook comes from the PSL
+     *
+     * @param array $bodyValues
+     *
+     * @return bool
+     */
+    private function checkPSLSignature(array $bodyValues)
+    {
+        $context = \Context::getContext();
+
+        return (new Webhook($context->link))->getShopSignature($bodyValues);
     }
 
     /**
