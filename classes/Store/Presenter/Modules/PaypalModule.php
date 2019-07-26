@@ -26,7 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Maasland;
+use PrestaShop\Module\PrestashopCheckout\Api\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\MerchantRepository;
 use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface;
 
@@ -80,7 +80,7 @@ class PaypalModule implements StorePresenterInterface
         $language = \Language::getLanguage($context->employee->id_lang);
         $locale = $language['locale'];
 
-        $paypalOnboardingLink = (new Maasland($context->link))->getPaypalOnboardingLink($email, $locale);
+        $paypalOnboardingLink = (new Onboarding($context->link))->getOnboardingLink($email, $locale);
 
         return $paypalOnboardingLink;
     }
