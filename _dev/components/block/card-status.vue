@@ -1,6 +1,9 @@
 <template>
   <div>
-    <label v-if="cardIsInReview" class="text-warning">
+    <label v-if="!onboardingIsCompleted" class="text-muted">
+      {{ $t('block.payment-status.disabled') }}
+    </label>
+    <label v-else-if="cardIsInReview" class="text-warning">
       <i class="material-icons">error_outline</i> {{ $t('block.payment-status.approvalPending') }}
     </label>
     <label v-else-if="cardStatus === 'SUBSCRIBED'" class="text-success">
@@ -19,6 +22,10 @@
   export default {
     name: 'CardStatus',
     computed: {
+      onboardingIsCompleted() {
+        return this.$store.state.paypal.account.onboardingCompleted
+          && this.$store.state.firebase.account.onboardingCompleted;
+      },
       cardIsInReview() {
         const {cardIsActive} = this.$store.state.paypal.account;
         if (cardIsActive === 'IN_REVIEW'
