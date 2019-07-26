@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout;
+namespace PrestaShop\Module\PrestashopCheckout\Store;
 
 /**
  * Handle store update

@@ -31,7 +31,7 @@ use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 use PrestaShop\Module\PrestashopCheckout\Refund;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrderRepository;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
-use PrestaShop\Module\PrestashopCheckout\StorePresenter;
+use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenter;
 use PrestaShop\Module\PrestashopCheckout\Environment;
 use PrestaShop\Module\PrestashopCheckout\Merchant;
 use PrestaShop\Module\PrestashopCheckout\MerchantRepository;
@@ -140,7 +140,7 @@ class ps_checkout extends PaymentModule
             'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
             'contextLocale' => $this->context->language->locale,
             'translations' => json_encode($translations),
-            'store' => json_encode((new StorePresenter($this))->present()),
+            'store' => json_encode((new StorePresenter())->present()),
         ));
 
         $this->context->controller->addCss($this->_path . 'views/css/index.css');
