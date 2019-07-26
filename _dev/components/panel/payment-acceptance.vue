@@ -9,11 +9,7 @@
           <div class="row">
             <div class="pl-0">
               <img class="mb-3" src="@/assets/images/paypal-logo.png" width="100">
-              <p class="text-muted">
-                {{ $t('panel.payment-acceptance.paypalLabel1') }}<br>
-                {{ $t('panel.payment-acceptance.paypalLabel2') }}
-              </p>
-              <PaypalStatus />
+              <PaypalStatus :display-labels="true" />
             </div>
           </div>
           <div class="row d-block">
@@ -22,10 +18,7 @@
           <div class="row">
             <div class="pl-0">
               <h2>{{ $t('panel.payment-acceptance.creditCardsLabel') }}</h2>
-              <p class="text-muted">
-                {{ $t('panel.payment-acceptance.creditCardLabel') }}
-              </p>
-              <CardStatus />
+              <CardStatus :display-labels="true" />
             </div>
           </div>
           <div class="row mt-2">

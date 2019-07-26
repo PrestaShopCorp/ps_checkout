@@ -112,9 +112,6 @@ class Translations
                 'payment-acceptance' => array(
                     'paymentAcceptanceTitle' => $this->module->l('Payment methods acceptance'),
                     'creditCardsLabel' => $this->module->l('Credit and Debit Cards'),
-                    'paypalLabel1' => $this->module->l('Accept payments through PayPal buttons on your checkout page.'),
-                    'paypalLabel2' => $this->module->l('Your customers can pay you with PayPal or other PayPal supported options.'),
-                    'creditCardLabel' => $this->module->l('You can process a limited amount in card transactions.'),
                     'tips' => $this->module->l('Tips'),
                     'alertInfo' => $this->module->l('To test your payment method you can make a real transaction (prefer small amount), and once you have observed the money on your account, make a refund on the corresponding order page. Warning, you will not recover the fees.'),
                 ),
@@ -170,6 +167,12 @@ class Translations
                     'limited' => $this->module->l('Limited to $500'),
                     'denied' => $this->module->l('Account declined'),
                     'disabled' => $this->module->l('Disabled'),
+                    'paypalLabel' => $this->module->l('Accept payments through PayPal buttons on your checkout page.'),
+                    'paypalLabelEmailNotValid' => $this->module->l('Your account needs to be validated to accept PayPal payments. Please check your inbox for any email confirmation.'),
+                    'creditCardLabelLimited' => $this->module->l('You can process a limited amount in card transactions.'),
+                    'creditCardLabelDenied' => $this->module->l('We cannot process credit card payments for you at the moment.'),
+                    'creditCardLabelLive' => $this->module->l('Process unlimited card payments. You can accept either credit or debit card.'),
+                    'creditCardLabelPending' => $this->module->l('Your account needs further checks to accept Credit and Debit Cards payment.'),
                 ),
             ),
         );
