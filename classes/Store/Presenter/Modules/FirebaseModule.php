@@ -45,13 +45,11 @@ class FirebaseModule implements StorePresenterInterface
 
         $firebaseModule = array(
             'firebase' => array(
-                'account' => array(
-                    'email' => \Configuration::get('PS_CHECKOUT_FIREBASE_EMAIL'),
-                    'idToken' => $idToken,
-                    'localId' => \Configuration::get('PS_CHECKOUT_FIREBASE_LOCAL_ID'),
-                    'refreshToken' => \Configuration::get('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN'),
-                    'onboardingCompleted' => !empty($idToken),
-                ),
+                'email' => \Configuration::get('PS_CHECKOUT_FIREBASE_EMAIL'),
+                'idToken' => $idToken,
+                'localId' => \Configuration::get('PS_CHECKOUT_FIREBASE_LOCAL_ID'),
+                'refreshToken' => \Configuration::get('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN'),
+                'onboardingCompleted' => !empty($idToken),
             ),
         );
 

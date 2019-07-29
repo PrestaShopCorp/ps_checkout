@@ -2,13 +2,13 @@ import * as types from './mutation-types';
 
 export default {
   [types.UPDATE_ACCOUNT](state, payload) {
-    Object.assign(state.account, payload);
+    Object.assign(state, payload);
   },
   [types.LOGOUT_ACCOUNT](state) {
-    state.account.email = '';
-    state.account.localId = '';
-    state.account.idToken = '';
-    state.account.refreshToken = '';
-    state.account.onboardingCompleted = false;
+    state.email = '';
+    state.localId = '';
+    state.idToken = '';
+    state.refreshToken = '';
+    state.onboardingCompleted = false;
   },
 };

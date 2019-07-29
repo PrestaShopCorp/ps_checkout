@@ -16,7 +16,7 @@
               <h2>{{ $t('panel.account-list.essentialsAccount') }}</h2>
               <p class="text-muted mb-0">
                 <template v-if="firebaseStatusAccount === true">
-                  {{ $t('panel.account-list.connectedWitdh') }} <b>{{ $store.state.firebase.account.email }}</b> {{ $t('panel.account-list.account') }}
+                  {{ $t('panel.account-list.connectedWitdh') }} <b>{{ $store.state.firebase.email }}</b> {{ $t('panel.account-list.account') }}
                 </template>
                 <template v-else>
                   {{ $t('panel.account-list.createNewAccount') }}
@@ -80,16 +80,16 @@
         return this.$store.state.context.isReady;
       },
       paypalEmail() {
-        return this.$store.state.paypal.account.emailMerchant;
+        return this.$store.state.paypal.emailMerchant;
       },
       firebaseStatusAccount() {
-        return this.$store.state.firebase.account.onboardingCompleted;
+        return this.$store.state.firebase.onboardingCompleted;
       },
       paypalStatusAccount() {
-        return this.$store.state.paypal.account.onboardingCompleted;
+        return this.$store.state.paypal.onboardingCompleted;
       },
       paypalOnboardingLink() {
-        return this.$store.state.paypal.account.paypalOnboardingLink;
+        return this.$store.state.paypal.paypalOnboardingLink;
       },
     },
     methods: {

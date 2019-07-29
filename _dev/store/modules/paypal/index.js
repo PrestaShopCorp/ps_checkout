@@ -3,9 +3,7 @@ import mutations from './mutations';
 
 const store = JSON.parse(global.store);
 
-const state = {
-  account: store.paypal.account,
-};
+const state = store.paypal;
 
 export default {
   state,

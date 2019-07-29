@@ -79,7 +79,7 @@
     },
     data() {
       return {
-        list: this.$store.state.configuration.module.paymentMethods,
+        list: this.$store.state.configuration.paymentMethods,
         drag: false,
       };
     },

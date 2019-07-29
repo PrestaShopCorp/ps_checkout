@@ -78,19 +78,19 @@
     },
     computed: {
       firebaseStatusAccount() {
-        return this.$store.state.firebase.account.onboardingCompleted;
+        return this.$store.state.firebase.onboardingCompleted;
       },
       paypalStatusAccount() {
-        return this.$store.state.paypal.account.onboardingCompleted;
+        return this.$store.state.paypal.onboardingCompleted;
       },
       paypalPaymentIsActive() {
-        return this.$store.state.paypal.account.paypalIsActive;
+        return this.$store.state.paypal.paypalIsActive;
       },
       cardPaymentIsActive() {
-        return this.$store.state.paypal.account.cardIsActive;
+        return this.$store.state.paypal.cardIsActive;
       },
       merchantEmailIsValid() {
-        return this.$store.state.paypal.account.emailIsValid;
+        return this.$store.state.paypal.emailIsValid;
       },
       ALERT_TYPE_DANGER: () => ALERT_TYPE_DANGER,
       ALERT_TYPE_WARNING: () => ALERT_TYPE_WARNING,

@@ -46,15 +46,13 @@ class PaypalModule implements StorePresenterInterface
 
         $paypalModule = array(
             'paypal' => array(
-                'account' => array(
-                    'idMerchant' => $idMerchant,
-                    'paypalOnboardingLink' => $this->getPaypalOnboardingLink(),
-                    'onboardingCompleted' => !empty($idMerchant),
-                    'emailMerchant' => \Configuration::get('PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT'),
-                    'emailIsValid' => \Configuration::get('PS_CHECKOUT_PAYPAL_EMAIL_STATUS'),
-                    'cardIsActive' => \Configuration::get('PS_CHECKOUT_CARD_PAYMENT_STATUS'),
-                    'paypalIsActive' => \Configuration::get('PS_CHECKOUT_PAYPAL_PAYMENT_STATUS'),
-                ),
+                'idMerchant' => $idMerchant,
+                'paypalOnboardingLink' => $this->getPaypalOnboardingLink(),
+                'onboardingCompleted' => !empty($idMerchant),
+                'emailMerchant' => \Configuration::get('PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT'),
+                'emailIsValid' => \Configuration::get('PS_CHECKOUT_PAYPAL_EMAIL_STATUS'),
+                'cardIsActive' => \Configuration::get('PS_CHECKOUT_CARD_PAYMENT_STATUS'),
+                'paypalIsActive' => \Configuration::get('PS_CHECKOUT_PAYPAL_PAYMENT_STATUS'),
             ),
         );
 

@@ -38,10 +38,10 @@
     },
     computed: {
       paypalOnboardingLink() {
-        return this.$store.state.paypal.account.paypalOnboardingLink;
+        return this.$store.state.paypal.paypalOnboardingLink;
       },
       firebaseStatusAccount() {
-        return this.$store.state.firebase.account.onboardingCompleted;
+        return this.$store.state.firebase.onboardingCompleted;
       },
     },
     destroyed() {
