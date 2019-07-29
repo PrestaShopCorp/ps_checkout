@@ -116,7 +116,9 @@
       },
       paypalUnlink() {
         this.paypalIsLoaded = true;
-        this.$store.dispatch('unlink');
+        this.$store.dispatch('unlink').then(() => {
+          this.$store.dispatch('getOnboardingLink');
+        });
       },
     },
     destroyed() {

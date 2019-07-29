@@ -41,6 +41,7 @@ class StoreManager
 
     public function unlinkPaypal()
     {
+        // Erase existing paypal merchant
         \Configuration::updateValue('PS_CHECKOUT_PAYPAL_ID_MERCHANT', '');
         \Configuration::updateValue('PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT', '');
     }

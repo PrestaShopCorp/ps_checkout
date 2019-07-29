@@ -73,7 +73,9 @@
           mode = 'SANDBOX';
         }
 
-        this.$store.dispatch('updatePaymentMode', mode);
+        this.$store.dispatch('updatePaymentMode', mode).then(() => {
+          this.$store.dispatch('getOnboardingLink');
+        });
       },
     },
     computed: {

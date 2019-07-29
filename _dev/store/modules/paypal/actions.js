@@ -10,4 +10,12 @@ export default {
       return Promise.resolve(true);
     });
   },
+  getOnboardingLink({commit}) {
+    return ajax({
+      action: 'GetOnboardingLink',
+    }).then((onboardingLink) => {
+      commit(types.UPDATE_ONBOARDING_LINK, onboardingLink);
+      return Promise.resolve(true);
+    });
+  },
 };

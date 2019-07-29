@@ -6,4 +6,7 @@ export default {
     state.account.emailMerchant = '';
     state.account.onboardingCompleted = false;
   },
+  [types.UPDATE_ONBOARDING_LINK](state, onboardingLink) {
+    state.account.paypalOnboardingLink = onboardingLink;
+  },
 };
