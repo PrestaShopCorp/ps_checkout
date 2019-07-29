@@ -23,7 +23,7 @@
                 </template>
               </p>
             </div>
-            <div class="col-12 col-sm-4 col-md-3 col-lg-3 m-auto">
+            <div v-if="!isReady" class="col-12 col-sm-4 col-md-3 col-lg-3 m-auto">
               <div class="text-center float-right" v-if="firebaseStatusAccount === false">
                 <router-link to="/authentication/login" class="mr-4">
                   <b>{{ $t('panel.account-list.logIn') }}</b>
@@ -76,6 +76,9 @@
       Onboarding,
     },
     computed: {
+      isReady() {
+        return this.$store.state.context.isReady;
+      },
       paypalEmail() {
         return this.$store.state.paypal.account.emailMerchant;
       },
