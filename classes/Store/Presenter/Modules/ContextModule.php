@@ -26,33 +26,36 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules;
 
-use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
 use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface;
 
 /**
- * Construct the firebase module
+ * Construct the context module
  */
-class FirebaseModule implements StorePresenterInterface
+class ContextModule implements StorePresenterInterface
 {
     /**
-     * Present the paypal module (vuex)
+     * Present the context module (vuex)
      *
      * @return array
      */
     public function present()
     {
-        $idToken = (new FirebaseClient())->getToken();
-
-        $firebaseModule = array(
-            'firebase' => array(
-                'email' => \Configuration::get('PS_CHECKOUT_FIREBASE_EMAIL'),
-                'idToken' => $idToken,
-                'localId' => \Configuration::get('PS_CHECKOUT_FIREBASE_LOCAL_ID'),
-                'refreshToken' => \Configuration::get('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN'),
-                'onboardingCompleted' => !empty($idToken),
+        $contextModule = array(
+            'context' => array(
+                'isReady' => $this->isReady(),
             ),
         );
 
-        return $firebaseModule;
+        return $contextModule;
+    }
+
+    /**
+     * Check if the module is installed on ready or download
+     *
+     * @return bool true if on ready, false otherwise
+     */
+    private function isReady()
+    {
+        return getenv('PLATEFORM') === 'PSREADY';
     }
 }

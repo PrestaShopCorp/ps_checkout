@@ -34,7 +34,7 @@
     computed: {
       ALERT_TYPE_WARNING: () => ALERT_TYPE_WARNING,
       paymentMode() {
-        return this.$store.state.configuration.module.paymentMode;
+        return this.$store.state.configuration.paymentMode;
       },
     },
   };

@@ -81,10 +81,10 @@
     computed: {
       ALERT_TYPE_INFO: () => ALERT_TYPE_INFO,
       captureMode() {
-        return this.$store.state.configuration.module.captureMode;
+        return this.$store.state.configuration.captureMode;
       },
       paymentMode() {
-        return this.$store.state.configuration.module.paymentMode;
+        return this.$store.state.configuration.paymentMode;
       },
     },
   };

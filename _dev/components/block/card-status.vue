@@ -52,20 +52,20 @@
     },
     computed: {
       onboardingIsCompleted() {
-        return this.$store.state.paypal.account.onboardingCompleted
-          && this.$store.state.firebase.account.onboardingCompleted;
+        return this.$store.state.paypal.onboardingCompleted
+          && this.$store.state.firebase.onboardingCompleted;
       },
       cardIsInReview() {
-        const {cardIsActive} = this.$store.state.paypal.account;
+        const {cardIsActive} = this.$store.state.paypal;
         if (cardIsActive === 'IN_REVIEW'
           || cardIsActive === 'NEED_MORE_DATA'
-          || !this.$store.state.paypal.account.emailIsValid) {
+          || !this.$store.state.paypal.emailIsValid) {
           return true;
         }
         return false;
       },
       cardStatus() {
-        return this.$store.state.paypal.account.cardIsActive;
+        return this.$store.state.paypal.cardIsActive;
       },
     },
   };

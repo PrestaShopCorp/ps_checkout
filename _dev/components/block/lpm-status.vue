@@ -20,15 +20,15 @@
     name: 'PaypalStatus',
     computed: {
       onboardingIsCompleted() {
-        return this.$store.state.paypal.account.onboardingCompleted
-          && this.$store.state.firebase.account.onboardingCompleted;
+        return this.$store.state.paypal.onboardingCompleted
+          && this.$store.state.firebase.onboardingCompleted;
       },
       emailIsValid() {
-        return this.$store.state.paypal.account.emailIsValid;
+        return this.$store.state.paypal.emailIsValid;
       },
       lpmIsActive() {
-        return this.$store.state.configuration.module.captureMode === 'CAPTURE'
-          && this.$store.state.paypal.account.paypalIsActive;
+        return this.$store.state.configuration.captureMode === 'CAPTURE'
+          && this.$store.state.paypal.paypalIsActive;
       },
     },
   };

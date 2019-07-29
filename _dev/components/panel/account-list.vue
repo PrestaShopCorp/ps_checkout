@@ -16,14 +16,14 @@
               <h2>{{ $t('panel.account-list.essentialsAccount') }}</h2>
               <p class="text-muted mb-0">
                 <template v-if="firebaseStatusAccount === true">
-                  {{ $t('panel.account-list.connectedWitdh') }} <b>{{ $store.state.firebase.account.email }}</b> {{ $t('panel.account-list.account') }}
+                  {{ $t('panel.account-list.connectedWitdh') }} <b>{{ $store.state.firebase.email }}</b> {{ $t('panel.account-list.account') }}
                 </template>
                 <template v-else>
                   {{ $t('panel.account-list.createNewAccount') }}
                 </template>
               </p>
             </div>
-            <div class="col-12 col-sm-4 col-md-3 col-lg-3 m-auto">
+            <div v-if="!isReady" class="col-12 col-sm-4 col-md-3 col-lg-3 m-auto">
               <div class="text-center float-right" v-if="firebaseStatusAccount === false">
                 <router-link to="/authentication/login" class="mr-4">
                   <b>{{ $t('panel.account-list.logIn') }}</b>
@@ -76,17 +76,20 @@
       Onboarding,
     },
     computed: {
+      isReady() {
+        return this.$store.state.context.isReady;
+      },
       paypalEmail() {
-        return this.$store.state.paypal.account.emailMerchant;
+        return this.$store.state.paypal.emailMerchant;
       },
       firebaseStatusAccount() {
-        return this.$store.state.firebase.account.onboardingCompleted;
+        return this.$store.state.firebase.onboardingCompleted;
       },
       paypalStatusAccount() {
-        return this.$store.state.paypal.account.onboardingCompleted;
+        return this.$store.state.paypal.onboardingCompleted;
       },
       paypalOnboardingLink() {
-        return this.$store.state.paypal.account.paypalOnboardingLink;
+        return this.$store.state.paypal.paypalOnboardingLink;
       },
     },
     methods: {

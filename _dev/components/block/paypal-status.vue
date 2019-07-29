@@ -34,12 +34,12 @@
     },
     computed: {
       onboardingIsCompleted() {
-        return this.$store.state.paypal.account.onboardingCompleted
-          && this.$store.state.firebase.account.onboardingCompleted;
+        return this.$store.state.paypal.onboardingCompleted
+          && this.$store.state.firebase.onboardingCompleted;
       },
       paypalIsActive() {
-        return this.$store.state.paypal.account.paypalIsActive
-          && this.$store.state.paypal.account.emailIsValid;
+        return this.$store.state.paypal.paypalIsActive
+          && this.$store.state.paypal.emailIsValid;
       },
     },
   };

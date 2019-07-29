@@ -42,11 +42,9 @@ class ConfigurationModule implements StorePresenterInterface
     {
         $configurationModule = array(
             'config' => array(
-                'module' => array(
-                    'paymentMethods' => $this->getPaymentMethods(),
-                    'captureMode' => \Configuration::get('PS_CHECKOUT_INTENT'),
-                    'paymentMode' => \Configuration::get('PS_CHECKOUT_MODE'),
-                ),
+                'paymentMethods' => $this->getPaymentMethods(),
+                'captureMode' => \Configuration::get('PS_CHECKOUT_INTENT'),
+                'paymentMode' => \Configuration::get('PS_CHECKOUT_MODE'),
             ),
         );
 
