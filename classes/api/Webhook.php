@@ -38,7 +38,7 @@ class Webhook extends MaaslandClient
      *
      * @param array $payload
      *
-     * @return bool
+     * @return false|array false if good | array if errors returned
      */
     public function getShopSignature(array $payload)
     {
