@@ -45,9 +45,7 @@ class Webhook extends MaaslandClient
         $this->setRoute('/payments/shop/verify_webhook_signature');
 
         return $this->post([
-            'json' => json_encode([
-                $payload,
-            ]),
+            'json' => $payload,
         ]);
     }
 }

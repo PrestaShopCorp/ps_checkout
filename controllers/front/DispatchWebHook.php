@@ -123,7 +123,13 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     {
         $context = \Context::getContext();
 
-        return (new Webhook($context->link))->getShopSignature($bodyValues);
+        $dataReturned = (new Webhook($context->link))->getShopSignature($bodyValues);
+
+        if ($dataReturned['statusCode'] === '204') {
+            return true;
+        }
+
+        return false;
     }
 
     /**
