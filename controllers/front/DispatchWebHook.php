@@ -93,7 +93,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
                 throw new UnauthorizedException($errors);
             }
 
-            if ($this->checkPSLSignatureIsWrong($bodyValues)) {
+            if (false === $this->checkPSLSignature($bodyValues)) {
                 throw new UnauthorizedException('Invalid PSL signature');
             }
 
@@ -119,11 +119,17 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      *
      * @return bool
      */
-    private function checkPSLSignatureIsWrong(array $bodyValues)
+    private function checkPSLSignature(array $bodyValues)
     {
         $context = \Context::getContext();
+        $dataReturned = (new Webhook($context->link))->getShopSignature($bodyValues);
 
-        return (bool) (new Webhook($context->link))->getShopSignature($bodyValues);
+        // data return false if no error
+        if (false === $dataReturned) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
