@@ -6,7 +6,7 @@
         <p>
           {{ $t('block.fraud-tool.text') }}
         </p>
-        <a href="#" target="_blank">
+        <a href="https://www.paypal.com/fraud-protection" target="_blank">
           {{ $t('block.fraud-tool.discoverFraudTool') }} <i class="material-icons">arrow_right_alt</i>
         </a>
       </div>
