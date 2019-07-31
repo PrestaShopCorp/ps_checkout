@@ -37,7 +37,7 @@ class OrderStates
     const ORDER_STATE_TABLE = 'order_state';
     const ORDER_STATE_LANG_TABLE = 'order_state_lang';
     const BLUE_HEXA_COLOR = '#4169E1';
-    const YELLOW_HEXA_COLOR = '#C7BA19';
+    const YELLOW_HEXA_COLOR = '#ffff00';
     const ORDER_STATES = array(
         'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT' => self::BLUE_HEXA_COLOR,
         'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT' => self::BLUE_HEXA_COLOR,
