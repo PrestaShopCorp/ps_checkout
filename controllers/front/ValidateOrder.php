@@ -49,6 +49,10 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
             throw new \PrestaShopException('Paypal order id is missing.');
         }
 
+        if (false === $paymentMethod) {
+            throw new \PrestaShopException('Paypal payment method is missing.');
+        }
+
         $cart = $this->context->cart;
 
         $customer = new Customer($cart->id_customer);
@@ -64,10 +68,8 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
 
         $dataOrder = [
             'cartId' => (int) $cart->id,
-            'orderStateId' => Configuration::get('PS_OS_CHEQUE'),
             'amount' => $total,
             'paymentMethod' => $paymentMethod,
-            'message' => null,
             'extraVars' => array('transaction_id' => $paypalOrderId),
             'currencyId' => (int) $currency->id,
             'secureKey' => $customer->secure_key,
@@ -83,7 +85,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
      *
      * @return bool
      */
-    public function checkIfContextIsValid()
+    private function checkIfContextIsValid()
     {
         $cart = $this->context->cart;
 
@@ -106,7 +108,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
      *
      * @return bool
      */
-    public function checkIfPaymentOptionIsAvailable()
+    private function checkIfPaymentOptionIsAvailable()
     {
         foreach (Module::getPaymentModules() as $module) {
             if ($module['name'] == 'ps_checkout') {

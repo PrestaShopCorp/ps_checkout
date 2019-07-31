@@ -69,10 +69,10 @@ class ValidateOrder
 
         $module->validateOrder(
             $payload['cartId'],
-            $payload['orderStateId'],
+            $this->setOrderStatePending($payload['paymentMethod']),
             $payload['amount'],
-            $payload['paymentMethod'],
-            $this->getPaymentMessageTranslation($payload['message']),
+            $this->getPaymentMessageTranslation($payload['paymentMethod']),
+            null,
             $payload['extraVars'],
             $payload['currencyId'],
             false,
@@ -105,6 +105,20 @@ class ValidateOrder
     }
 
     /**
+     * Define the good pending status to use depending on the payment method
+     *
+     * @return int order state id
+     */
+    private function setOrderStatePending($paymentMethod)
+    {
+        if ('card' === $paymentMethod) {
+            return \Configuration::get('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
+        }
+
+        return \Configuration::get('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
+    }
+
+    /**
      * Get payment message
      *
      * @param string $paymentMethod can be 'paypal' or 'card'
@@ -113,6 +127,7 @@ class ValidateOrder
      */
     private function getPaymentMessageTranslation($paymentMethod)
     {
+        dump($paymentMethod);
         $paymentMessage = 'Payment by card';
 
         if ($paymentMethod === 'paypal') {
