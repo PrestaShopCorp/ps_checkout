@@ -127,7 +127,6 @@ class ValidateOrder
      */
     private function getPaymentMessageTranslation($paymentMethod)
     {
-        dump($paymentMethod);
         $paymentMessage = 'Payment by card';
 
         if ($paymentMethod === 'paypal') {
