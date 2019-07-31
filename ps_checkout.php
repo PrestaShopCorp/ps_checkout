@@ -261,7 +261,7 @@ class ps_checkout extends PaymentModule
         $totalRefund = 0;
 
         foreach ($refunds as $idOrderDetails => $amountDetail) {
-            $totalRefund = $totalRefund + $amountDetail['quantity'] * $amountDetail['amount'];
+            $totalRefund = $totalRefund + $amountDetail['amount'];
         }
 
         $paypalOrderId = (new PaypalOrderRepository())->getPaypalOrderIdByPsOrderRef($params['order']->reference);
