@@ -65,8 +65,6 @@ class WebHookOrder
      */
     public function __construct($initiateBy, $resource, $orderId)
     {
-        $paypalOrderRepository = new PaypalOrderRepository();
-
         $this->initiateBy = (string) $initiateBy;
         $this->orderId = (int) $orderId;
         $this->amount = (float) $resource['amount']->value;
