@@ -131,7 +131,7 @@ class ps_checkout extends PaymentModule
     public function getContent()
     {
         // update merchant status
-        $merchant = (new Merchant(Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT')));
+        $merchant = (new Merchant((new MerchantRepository())->getMerchantId()));
         $merchant->update();
 
         $translations = (new Translations($this))->getTranslations();
@@ -178,6 +178,7 @@ class ps_checkout extends PaymentModule
         }
 
         $this->context->smarty->assign(array(
+            'merchantId' => $merchantRepository->getMerchantId(),
             'paypalClientId' => (new Environment())->getPaypalClientId(),
             'clientToken' => $paypalOrder['client_token'],
             'paypalOrderId' => $paypalOrder['id'],

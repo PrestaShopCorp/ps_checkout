@@ -32,6 +32,16 @@ namespace PrestaShop\Module\PrestashopCheckout;
 class MerchantRepository
 {
     /**
+     * Get the merchant id for the current onboarded merchant
+     *
+     * @return string|bool paypal id merchant or false if empty
+     */
+    public function getMerchantId()
+    {
+        return \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT');
+    }
+
+    /**
      * Check if the merchant is valid
      *
      * @return bool true if the merchant email is confirmed + if psx/paypal onboarding is completed
@@ -62,9 +72,7 @@ class MerchantRepository
      */
     public function onbardingPaypalIsCompleted()
     {
-        $idMerchant = \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT');
-
-        return !empty($idMerchant);
+        return !empty($this->getMerchantId());
     }
 
     /**
