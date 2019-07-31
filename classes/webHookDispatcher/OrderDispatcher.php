@@ -145,7 +145,7 @@ class OrderDispatcher
         if (self::PS_EVENTTYPE_TO_PS_STATE_ID[$eventType] === $lastOrderState->id) {
             return false;
         }
-        
+
         $order->changeIdOrderState(
             self::PS_EVENTTYPE_TO_PS_STATE_ID[$eventType],
             $orderId
