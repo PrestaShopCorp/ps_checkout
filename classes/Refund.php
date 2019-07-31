@@ -38,8 +38,7 @@ class Refund
     const REFUND_FAILED_INSUFFICIENT_FUNDS = 'REFUND_FAILED_INSUFFICIENT_FUNDS';
     const REFUND_NOT_ALLOWED = 'REFUND_NOT_ALLOWED';
     const REFUND_TIME_LIMIT_EXCEEDED = 'REFUND_TIME_LIMIT_EXCEEDED';
-
-    const REFUND_STATE = 'PS_CHECKOUT_STATE_PARTIAL_REFUND'; // TODO: make a class to get the different state
+    const REFUND_STATE = 'PS_CHECKOUT_STATE_PARTIAL_REFUND';
 
     /**
      * @var float
@@ -144,7 +143,9 @@ class Refund
             $orderProductList[$key]['unit_price'] = $value['unit_price_tax_incl'];
         }
 
-        return $this->refundPrestashopOrder($order, $orderProductList);
+        $refundOrderStateId = 7;
+
+        return $this->refundPrestashopOrder($order, $orderProductList, $refundOrderStateId);
     }
 
     /**
@@ -175,7 +176,9 @@ class Refund
             $orderDetailList[$key]['unit_price'] = $orderDetailList[$key]['amount'] / $quantityToRefund;
         }
 
-        return $this->refundPrestashopOrder($order, $orderDetailList);
+        $partialRefundOrderStateId = \Configuration::get(self::REFUND_STATE);
+
+        return $this->refundPrestashopOrder($order, $orderDetailList, $partialRefundOrderStateId);
     }
 
     /**
@@ -202,7 +205,7 @@ class Refund
      *
      * @return bool
      */
-    private function refundPrestashopOrder(\Order $order, $orderProductList)
+    private function refundPrestashopOrder(\Order $order, $orderProductList, $orderStateId)
     {
         $refundVoucher = 0;
         $refundShipping = 0;
@@ -231,7 +234,7 @@ class Refund
         $orderHistory->id_order = $order->id;
 
         $orderHistory->changeIdOrderState(
-            \Configuration::get(self::REFUND_STATE),
+            $orderStateId,
             $order->id
         );
 
