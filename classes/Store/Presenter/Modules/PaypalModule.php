@@ -42,7 +42,7 @@ class PaypalModule implements StorePresenterInterface
      */
     public function present()
     {
-        $idMerchant = \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT');
+        $idMerchant = (new MerchantRepository())->getMerchantId();
 
         $paypalModule = array(
             'paypal' => array(

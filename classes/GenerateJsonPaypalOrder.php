@@ -161,7 +161,7 @@ class GenerateJsonPaypalOrder
                 ],
             ],
             'payee' => [
-                'merchant_id' => \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT'),
+                'merchant_id' => (new MerchantRepository())->getMerchantId(),
             ],
             'application_context' => [
                 'brand_name' => \Configuration::get('PS_SHOP_NAME'),
