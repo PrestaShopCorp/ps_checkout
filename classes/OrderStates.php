@@ -176,6 +176,8 @@ class OrderStates
      *
      * @param string $state
      * @param int $orderStateId
+     *
+     * @return false|void
      */
     private function setStateIcons($state, $orderStateId)
     {
