@@ -125,7 +125,7 @@ class OrderDispatcher
      * Dispatch the event Type the the payment status PENDING / COMPLETED / DENIED / AUTH_VOIDED
      *
      * @param string $eventType
-     * @param int $orderIdgst
+     * @param int $orderId
      *
      * @return bool
      */
@@ -139,7 +139,13 @@ class OrderDispatcher
 
         $order = new \OrderHistory();
         $order->id_order = $orderId;
+        $lastOrderState = $order->getLastOrderState($orderId);
 
+        // Prevent duplicate state entry
+        if (self::PS_EVENTTYPE_TO_PS_STATE_ID[$eventType] === $lastOrderState->id) {
+            return false;
+        }
+        
         $order->changeIdOrderState(
             self::PS_EVENTTYPE_TO_PS_STATE_ID[$eventType],
             $orderId
