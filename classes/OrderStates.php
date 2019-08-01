@@ -26,6 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use PrestaShop\Module\PrestashopCheckout\Refund;
 use PrestaShop\Module\PrestashopCheckout\Translations\OrderStatesTranslations;
 
 class OrderStates
@@ -182,7 +183,7 @@ class OrderStates
     private function setStateIcons($state, $orderStateId)
     {
         if (true !== is_writable(_PS_ORDER_STATE_IMG_DIR_)) {
-            \PrestaShopLogger::addLog('[PSPInstall] ' . _PS_ORDER_STATE_IMG_DIR_ . 'is not writable');
+            \PrestaShopLogger::addLog('[PSPInstall] ' . _PS_ORDER_STATE_IMG_DIR_ . ' is not writable');
 
             return false;
         }
@@ -190,7 +191,7 @@ class OrderStates
         $iconsFolderOrigin = _PS_MODULE_DIR_ . self::MODULE_NAME . '/views/img/OrderStatesIcons/';
         $iconExtension = '.gif';
 
-        if ($state === 'PS_CHECKOUT_STATE_PARTIAL_REFUND') {
+        if ($state === Refund::REFUND_STATE) {
             $iconName = 'refund';
         } else {
             $iconName = 'waiting';
