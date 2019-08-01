@@ -87,6 +87,9 @@ class GenerateJsonPaypalOrder
     {
         $items = [];
 
+        $totalProductsWithoutTax = 0;
+        $totalTax = 0;
+
         foreach ($params['products'] as $product => $value) {
             $item = [];
 
@@ -99,6 +102,9 @@ class GenerateJsonPaypalOrder
             $item['tax']['value'] = ($value['total_wt'] - $value['total']) / $value['quantity'];
             $item['quantity'] = $value['quantity'];
             $item['category'] = $value['is_virtual'] === '1' ? 'DIGITAL_GOODS' : 'PHYSICAL_GOODS';
+
+            $totalProductsWithoutTax += $item['unit_amount']['value'];
+            $totalTax += $item['tax']['value'];
 
             $items[] = $item;
         }
@@ -119,7 +125,7 @@ class GenerateJsonPaypalOrder
                 'breakdown' => [
                     'item_total' => [
                         'currency_code' => $params['currency']['iso_code'],
-                        'value' => $params['cart']['totals']['total_excluding_tax']['amount'],
+                        'value' => $totalProductsWithoutTax,
                     ],
                     'shipping' => [
                         'currency_code' => $params['currency']['iso_code'],
@@ -127,7 +133,11 @@ class GenerateJsonPaypalOrder
                     ],
                     'tax_total' => [
                         'currency_code' => $params['currency']['iso_code'],
-                        'value' => $params['cart']['totals']['total_including_tax']['amount'] - $params['cart']['totals']['total_excluding_tax']['amount'],
+                        'value' => $totalTax,
+                    ],
+                    'discount' => [
+                        'currency_code' => $params['currency']['iso_code'],
+                        'value' => $this->getDiscountValue($params['cart']),
                     ],
                 ],
             ],
@@ -186,6 +196,22 @@ class GenerateJsonPaypalOrder
         }
 
         return json_encode($payload);
+    }
+
+    /**
+     * Get the amount of discount applied to the cart
+     *
+     * @param array $cart
+     *
+     * @return float Amount of all discount (cart rule applied to the cart)
+     */
+    private function getDiscountValue($cart)
+    {
+        if (null === $cart['subtotals']['discounts']) {
+            return 0;
+        }
+
+        return $cart['subtotals']['discounts']['amount'];
     }
 
     /**
