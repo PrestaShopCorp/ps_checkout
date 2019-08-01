@@ -201,7 +201,7 @@ class GenerateJsonPaypalOrder
     /**
      * Get the amount of discount applied to the cart
      *
-     * @param cart $cart
+     * @param array $cart
      *
      * @return float Amount of all discount (cart rule applied to the cart)
      */
