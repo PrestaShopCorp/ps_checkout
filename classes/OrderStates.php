@@ -58,6 +58,7 @@ class OrderStates
         foreach (self::ORDER_STATES as $state => $color) {
             $orderStateId = $this->getPaypalStateId($state, $color);
             $this->createPaypalStateLangs($state, $orderStateId);
+            $this->setStateIcons($state, $orderStateId);
         }
 
         return true;
@@ -167,6 +168,39 @@ class OrderStates
 
         if (false === \Db::getInstance()->insert(self::ORDER_STATE_LANG_TABLE, $data)) {
             throw new \PrestaShopException('Not able to insert the new order state language');
+        }
+    }
+
+    /**
+     * Set an icon for the current State Id
+     *
+     * @param string $state
+     * @param int $orderStateId
+     *
+     * @return false|void
+     */
+    private function setStateIcons($state, $orderStateId)
+    {
+        if (true !== is_writable(_PS_ORDER_STATE_IMG_DIR_)) {
+            \PrestaShopLogger::addLog('[PSPInstall] ' . _PS_ORDER_STATE_IMG_DIR_ . ' is not writable');
+
+            return false;
+        }
+
+        $iconsFolderOrigin = _PS_MODULE_DIR_ . self::MODULE_NAME . '/views/img/OrderStatesIcons/';
+        $iconExtension = '.gif';
+
+        if ($state === Refund::REFUND_STATE) {
+            $iconName = 'refund';
+        } else {
+            $iconName = 'waiting';
+        }
+
+        $iconToCopy = $iconsFolderOrigin . $iconName . $iconExtension;
+        $iconToPast = _PS_ORDER_STATE_IMG_DIR_ . $orderStateId . $iconExtension;
+
+        if (false === copy($iconToCopy, $iconToPast)) {
+            \PrestaShopLogger::addLog('[PSPInstall] not able to copy ' . $iconName . ' for ID ' . $orderStateId);
         }
     }
 }
