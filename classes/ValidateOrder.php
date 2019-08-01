@@ -69,10 +69,10 @@ class ValidateOrder
 
         $module->validateOrder(
             $payload['cartId'],
-            $payload['orderStateId'],
+            $this->getPendingStatusId($payload['paymentMethod']),
             $payload['amount'],
-            $payload['paymentMethod'],
-            $this->getPaymentMessageTranslation($payload['message']),
+            $this->getPaymentMessageTranslation($payload['paymentMethod']),
+            null,
             $payload['extraVars'],
             $payload['currencyId'],
             false,
@@ -170,10 +170,10 @@ class ValidateOrder
                 $orderState = _PS_OS_ERROR_;
                 break;
             case self::CAPTURE_STATUS_PENDING:
-                $orderState = $this->setPendingStatus($paymentMethod);
+                $orderState = $this->getPendingStatusId($paymentMethod);
                 break;
             default:
-                $orderState = $this->setPendingStatus($paymentMethod);
+                $orderState = $this->getPendingStatusId($paymentMethod);
                 break;
         }
 
@@ -190,7 +190,7 @@ class ValidateOrder
      *
      * @return int id state
      */
-    private function setPendingStatus($paymentMethod)
+    private function getPendingStatusId($paymentMethod)
     {
         $stateId = \Configuration::get('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
 
