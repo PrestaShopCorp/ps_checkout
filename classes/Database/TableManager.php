@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Install;
+namespace PrestaShop\Module\PrestashopCheckout\Database;
 
 class TableManager
 {
