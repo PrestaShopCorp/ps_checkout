@@ -232,17 +232,16 @@ class Refund
 
         $orderHistory = new \OrderHistory();
         $orderHistory->id_order = $order->id;
-
         $orderHistory->changeIdOrderState(
             $orderStateId,
             $order->id
         );
 
+        $this->addOrderPayment($order);
+
         if (false === $orderHistory->save()) {
             return false;
         }
-
-        $this->addOrderPayment($order);
 
         return true;
     }
