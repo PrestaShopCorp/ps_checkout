@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout;
+namespace PrestaShop\Module\PrestashopCheckout\Entity;
 
 /**
  * Makes a matrice between Prestashop Order and Paypal Order
@@ -43,14 +43,14 @@ class OrderMatrice extends ObjectModel
         'fields' => array(
             'id_order_prestashop' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedInt', 'required' => true),
             'id_order_paypal' => array('type' => self::TYPE_STRING, 'validate' => 'isString', 'required' => true),
-        )
+        ),
     );
 
     /**
      * Save current object to database (add or update).
      *
-     * @param  bool $autoDate
-     * @param  bool $nullValues
+     * @param bool $autoDate
+     * @param bool $nullValues
      *
      * @return bool
      */
@@ -64,32 +64,31 @@ class OrderMatrice extends ObjectModel
     /**
      * Get the Prestashop Order Id from Paypal Order Id
      *
-     * @param  string $orderPaypal
+     * @param string $orderPaypal
      *
      * @return int
      */
     public function getOrderPrestashopFromPaypal($orderPaypal)
     {
         $query = 'SELECT id_order_prestashop
-                FROM `'._DB_PREFIX_.'pscheckout_order_matrice` pom
-                WHERE pom.id_order_paypal = '.pSQL($orderPaypal);
+                FROM `' . _DB_PREFIX_ . 'pscheckout_order_matrice` pom
+                WHERE pom.id_order_paypal = ' . pSQL($orderPaypal);
 
         return (int) Db::getInstance()->getValue($query);
-
     }
 
     /**
      * Get the Paypal Order Id from the Prestashop Order Id
      *
-     * @param  int $orderPrestashop
+     * @param int $orderPrestashop
      *
      * @return string
      */
     public function getOrderPaypalFromPrestashop($orderPrestashop)
     {
         $query = 'SELECT id_order_paypal
-                FROM `'._DB_PREFIX_.'pscheckout_order_matrice` pom
-                WHERE pom.id_order_prestashop = '.(int)$orderPrestashop;
+                FROM `' . _DB_PREFIX_ . 'pscheckout_order_matrice` pom
+                WHERE pom.id_order_prestashop = ' . (int) $orderPrestashop;
 
         return (string) Db::getInstance()->getValue($query);
     }
