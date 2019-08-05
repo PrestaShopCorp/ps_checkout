@@ -59,10 +59,8 @@ class OrderMatrice extends \ObjectModel
         if (true === $this->alreadyExist()) {
             return false;
         }
-
-        $return = parent::add($autoDate, $nullValues);
-
-        return $return;
+        
+        return parent::add($autoDate, $nullValues);
     }
 
     /**
