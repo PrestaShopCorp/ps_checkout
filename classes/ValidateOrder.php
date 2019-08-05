@@ -27,6 +27,7 @@
 namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Order;
+use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 
 /**
  * Class that allow to validate an order
