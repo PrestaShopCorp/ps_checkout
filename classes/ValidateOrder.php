@@ -100,7 +100,7 @@ class ValidateOrder
         $orderState = $this->setOrderState($module->currentOrder, $responseStatus, $payload['message']);
 
         if ($orderState === _PS_OS_PAYMENT_) {
-            $this->setTransactionId($module->currentOrderReference, $payload['extraVars']['transaction_id']);
+            $this->setTransactionId($module->currentOrder, $payload['extraVars']['transaction_id']);
         }
     }
 
@@ -125,26 +125,18 @@ class ValidateOrder
     /**
      * Set the transactionId (paypal order id) to the payment associated to the order
      *
-     * @param string $psOrderRef from prestashop
+     * @param int $orderPrestashopId from prestashop
      * @param string $transactionId paypal order id
      *
      * @return bool
      */
-    private function setTransactionId($psOrderRef, $transactionId)
+    private function setTransactionId($orderPrestashopId, $orderPaypalId)
     {
-        $orderPayments = new \PrestaShopCollection('OrderPayment');
-        $orderPayments->where('order_reference', '=', $psOrderRef);
+        $orderMatrice = new OrderMatrice();
+        $orderMatrice->id_order_prestashop = $orderPrestashopId;
+        $orderMatrice->id_order_paypal = $orderPaypalId;
 
-        $orderPayment = $orderPayments->getFirst();
-
-        if (true === empty($orderPayment)) {
-            return false;
-        }
-
-        $payment = new \OrderPayment($orderPayment->id);
-        $payment->transaction_id = $transactionId;
-
-        return $payment->save();
+        return $orderMatrice->add();
     }
 
     /**

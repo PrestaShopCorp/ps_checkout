@@ -29,7 +29,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Entity;
 /**
  * Makes a matrice between Prestashop Order and Paypal Order
  */
-class OrderMatrice extends ObjectModel
+class OrderMatrice extends \ObjectModel
 {
     public $id_order_prestashop;
     public $id_order_paypal;
@@ -56,9 +56,38 @@ class OrderMatrice extends ObjectModel
      */
     public function add($autoDate = true, $nullValues = false)
     {
+        if (true === $this->alreadyExist()) {
+            return false;
+        }
+
         $return = parent::add($autoDate, $nullValues);
 
         return $return;
+    }
+
+    /**
+     * Check if the Prestashop or Paypal Order Id already Exist to prevent duplicate ID entry
+     *
+     * @return bool
+     */
+    private function alreadyExist()
+    {
+        $wherePrestashopIdExist = '1';
+        $wherePaypalIdExist = '1';
+
+        if (null !== $this->id_order_prestashop) {
+            $wherePrestashopIdExist = 'pom.id_order_prestashop = "' . (int) $this->id_order_prestashop . '"';
+        }
+
+        if (null !== $this->id_order_paypal) {
+            $wherePaypalIdExist = 'pom.id_order_paypal = "' . pSQL($this->id_order_paypal) . '"';
+        }
+
+        $query = 'SELECT id_order_matrice
+                FROM `' . _DB_PREFIX_ . 'pscheckout_order_matrice` pom
+                WHERE ' . $wherePrestashopIdExist . ' OR ' . $wherePaypalIdExist;
+
+        return (bool) \Db::getInstance()->getValue($query);
     }
 
     /**
@@ -72,7 +101,7 @@ class OrderMatrice extends ObjectModel
     {
         $query = 'SELECT id_order_prestashop
                 FROM `' . _DB_PREFIX_ . 'pscheckout_order_matrice` pom
-                WHERE pom.id_order_paypal = ' . pSQL($orderPaypal);
+                WHERE pom.id_order_paypal = "' . pSQL($orderPaypal) . '"';
 
         return (int) Db::getInstance()->getValue($query);
     }
@@ -88,7 +117,7 @@ class OrderMatrice extends ObjectModel
     {
         $query = 'SELECT id_order_paypal
                 FROM `' . _DB_PREFIX_ . 'pscheckout_order_matrice` pom
-                WHERE pom.id_order_prestashop = ' . (int) $orderPrestashop;
+                WHERE pom.id_order_prestashop = "' . (int) $orderPrestashop . '"';
 
         return (string) Db::getInstance()->getValue($query);
     }
