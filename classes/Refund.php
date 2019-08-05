@@ -27,6 +27,7 @@
 namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Order;
+use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 
 /**
  * Handle the refund of a paypal order
@@ -258,7 +259,7 @@ class Refund
         return $order->addOrderPayment(
             -$this->getAmount(),
             'PrestaShop Checkout',
-            (new PaypalOrderRepository())->getPaypalOrderIdByPsOrderRef($order->id)
+            (new OrderMatrice())->getOrderPaypalFromPrestashop($order->id)
         );
     }
 

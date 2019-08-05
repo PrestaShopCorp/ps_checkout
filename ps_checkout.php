@@ -32,8 +32,8 @@ use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
 use PrestaShop\Module\PrestashopCheckout\MerchantRepository;
+use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 use PrestaShop\Module\PrestashopCheckout\Database\TableManager;
-use PrestaShop\Module\PrestashopCheckout\PaypalOrderRepository;
 use PrestaShop\Module\PrestashopCheckout\GenerateJsonPaypalOrder;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenter;
@@ -268,7 +268,7 @@ class ps_checkout extends PaymentModule
             $totalRefund = $totalRefund + $amountDetail['amount'];
         }
 
-        $paypalOrderId = (new PaypalOrderRepository())->getPaypalOrderIdByPsOrderRef($params['order']->id);
+        $paypalOrderId = (new OrderMatrice())->getOrderPaypalFromPrestashop($params['order']->id);
 
         if (false === $paypalOrderId) {
             $this->context->controller->errors[] = $this->l('Impossible to refund. Cannot find the PayPal Order associated to this order.');
@@ -310,8 +310,7 @@ class ps_checkout extends PaymentModule
         $order->where('id_order', '=', $params['id_order']);
         $order = $order->getFirst();
 
-        $paypalOrder = new PaypalOrderRepository();
-        $paypalOrderId = $paypalOrder->getPaypalOrderIdByPsOrderRef($order->id);
+        $paypalOrderId = (new OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
 
         // if the order is not an order pay with paypal stop the process
         if (false === $paypalOrderId) {

@@ -70,7 +70,7 @@ class ValidateOrder
         if (false === $this->setOrdersMatrice($module->currentOrder, $payload['extraVars']['transaction_id'])) {
             throw new \Exception(
                 sprintf(
-                    'Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : $s',
+                    'Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s',
                     $module->currentOrder,
                     $payload['extraVars']['transaction_id']
                 )
