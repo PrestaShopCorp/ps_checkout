@@ -27,7 +27,6 @@
 namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Order;
-use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 
 /**
  * Handle the refund of a paypal order
@@ -52,15 +51,21 @@ class Refund
     private $paypalOrderId;
 
     /**
+     * @var bool
+     */
+    private $refundFromWebhook;
+
+    /**
      * @var string
      */
     private $currencyCode;
 
-    public function __construct($amount, $paypalOrderId = null, $currencyCode = null)
+    public function __construct($refundFromWebhook, $amount, $paypalOrderId = null, $currencyCode = null)
     {
         $this->setAmount($amount);
         $this->setPaypalOrderId($paypalOrderId);
         $this->setCurrencyCode($currencyCode);
+        $this->setRefundFromWebhook($refundFromWebhook);
     }
 
     /**
@@ -75,8 +80,8 @@ class Refund
     {
         $refund = (new Order(\Context::getContext()->link))->refund($this->getPayload());
 
-        if (isset($refund->statusCode) && $refund->statusCode === 422) {
-            return $this->handleCallbackErrors($refund->message);
+        if (isset($refund['statusCode']) && $refund['statusCode'] === 422) {
+            return $this->handleCallbackErrors($refund['message']);
         }
 
         return $refund;
@@ -137,7 +142,7 @@ class Refund
      *
      * @return bool
      */
-    public function doTotalRefund(\Order $order, $orderProductList)
+    public function doTotalRefund(\Order $order, $orderProductList, $transactionId)
     {
         foreach ($orderProductList as $key => $value) {
             $orderProductList[$key]['quantity'] = $value['product_quantity'];
@@ -146,7 +151,7 @@ class Refund
 
         $refundOrderStateId = 7;
 
-        return $this->refundPrestashopOrder($order, $orderProductList, $refundOrderStateId);
+        return $this->refundPrestashopOrder($order, $orderProductList, $refundOrderStateId, $transactionId);
     }
 
     /**
@@ -157,7 +162,7 @@ class Refund
      *
      * @return bool
      */
-    public function doPartialRefund(\Order $order, $orderProductList)
+    public function doPartialRefund(\Order $order, $orderProductList, $transactionId)
     {
         $orderDetailList = array();
         $refundPercent = $this->getAmount() / $order->total_products_wt;
@@ -179,7 +184,7 @@ class Refund
 
         $partialRefundOrderStateId = \Configuration::get(self::REFUND_STATE);
 
-        return $this->refundPrestashopOrder($order, $orderDetailList, $partialRefundOrderStateId);
+        return $this->refundPrestashopOrder($order, $orderDetailList, $partialRefundOrderStateId, $transactionId);
     }
 
     /**
@@ -206,7 +211,7 @@ class Refund
      *
      * @return bool
      */
-    private function refundPrestashopOrder(\Order $order, $orderProductList, $orderStateId)
+    private function refundPrestashopOrder(\Order $order, $orderProductList, $orderStateId, $transactionId)
     {
         $refundVoucher = 0;
         $refundShipping = 0;
@@ -231,6 +236,11 @@ class Refund
             return false;
         }
 
+        // If refund from Prestashop, do not change Order History
+        if (false === $this->refundFromWebhook) {
+            return true;
+        }
+
         $orderHistory = new \OrderHistory();
         $orderHistory->id_order = $order->id;
         $orderHistory->changeIdOrderState(
@@ -238,7 +248,7 @@ class Refund
             $order->id
         );
 
-        $this->addOrderPayment($order);
+        $this->addOrderPayment($order, $transactionId);
 
         if (false === $orderHistory->save()) {
             return false;
@@ -251,15 +261,16 @@ class Refund
      * Add an order payment in order to keep a history of transactions
      *
      * @param \Order $order
+     * @param string $paypalTransactionId
      *
      * @return bool
      */
-    public function addOrderPayment(\Order $order)
+    public function addOrderPayment(\Order $order, $paypalTransactionId)
     {
         return $order->addOrderPayment(
             -$this->getAmount(),
             'PrestaShop Checkout',
-            (new OrderMatrice())->getOrderPaypalFromPrestashop($order->id)
+            $paypalTransactionId
         );
     }
 
@@ -395,6 +406,16 @@ class Refund
     public function setCurrencyCode($isoCode)
     {
         $this->currencyCode = $isoCode;
+    }
+
+    /**
+     * setter to set where the refund comes from
+     *
+     * @param bool $refundFromWebhook
+     */
+    public function setRefundFromWebhook($refundFromWebhook)
+    {
+        $this->refundFromWebhook = $refundFromWebhook;
     }
 
     /**

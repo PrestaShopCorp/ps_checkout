@@ -68,16 +68,6 @@ class ValidateOrder
     {
         $module = \Module::getInstanceByName('ps_checkout');
 
-        if (false === $this->setOrdersMatrice($module->currentOrder, $payload['extraVars']['transaction_id'])) {
-            throw new \Exception(
-                sprintf(
-                    'Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s',
-                    $module->currentOrder,
-                    $payload['extraVars']['transaction_id']
-                )
-            );
-        }
-
         $module->validateOrder(
             $payload['cartId'],
             $this->getPendingStatusId($payload['paymentMethod']),
@@ -89,6 +79,17 @@ class ValidateOrder
             false,
             $payload['secureKey']
         );
+
+        if (false === $this->setOrdersMatrice($module->currentOrder, $payload['extraVars']['transaction_id'])) {
+            $this->setOrderState($module->currentOrder, self::CAPTURE_STATUS_DECLINED, $payload['paymentMethod']);
+            throw new \Exception(
+                sprintf(
+                    'Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s',
+                    $module->currentOrder,
+                    $payload['extraVars']['transaction_id']
+                )
+            );
+        }
 
         // TODO : patch the order in order to update the order id with the order id
         // of the prestashop order
@@ -108,7 +109,7 @@ class ValidateOrder
                 throw new \Exception(sprintf('Unknown Intent type %s', $paypalOrder->getOrderIntent()));
         }
 
-        $orderState = $this->setOrderState($module->currentOrder, $response['status'], $payload['message']);
+        $orderState = $this->setOrderState($module->currentOrder, $response['status'], $payload['paymentMethod']);
 
         if ($orderState === _PS_OS_PAYMENT_) {
             $this->setTransactionId($module->currentOrderReference, $response['id']);

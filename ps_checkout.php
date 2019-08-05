@@ -279,7 +279,7 @@ class ps_checkout extends PaymentModule
         $currency = Currency::getCurrency($params['order']->id_currency);
         $currencyIsoCode = $currency['iso_code'];
 
-        $refund = new Refund($totalRefund, $paypalOrderId, $currencyIsoCode);
+        $refund = new Refund(false, $totalRefund, $paypalOrderId, $currencyIsoCode);
         $refundResponse = $refund->refundPaypalOrder();
 
         if (true === $refundResponse['error']) {
@@ -299,7 +299,7 @@ class ps_checkout extends PaymentModule
             return false;
         }
 
-        $refund->addOrderPayment($params['order']);
+        $refund->addOrderPayment($params['order'], $refundResponse['id']);
 
         return true;
     }
@@ -333,16 +333,20 @@ class ps_checkout extends PaymentModule
 
         $totalRefund = $order->getTotalPaid();
 
-        $refund = new Refund($totalRefund, $paypalOrderId, $currencyIsoCode);
+        $refund = new Refund(false, $totalRefund, $paypalOrderId, $currencyIsoCode);
         $refundResponse = $refund->refundPaypalOrder();
 
-        if (true === $refundResponse['error']) {
-            $this->context->controller->errors = array_merge($this->context->controller->errors, $refundResponse['messages']);
+        if (isset($refundResponse['error'])) {
+            if (isset($refundResponse['messages']) && is_array($refundResponse['messages'])) {
+                $this->context->controller->errors = array_merge($this->context->controller->errors, $refundResponse['messages']);
+            } else {
+                $this->context->controller->errors[] = $refundResponse['message'];
+            }
 
             return false;
         }
 
-        return $refund->doTotalRefund($order, $order->getProducts());
+        return $refund->doTotalRefund($order, $order->getProducts(), $refundResponse['id']);
     }
 
     /**
