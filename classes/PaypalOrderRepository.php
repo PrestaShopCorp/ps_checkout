@@ -26,6 +26,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
+
 /**
  * Retrieve paypal order data from database
  */
@@ -40,45 +42,18 @@ class PaypalOrderRepository
      */
     public function getPsOrderIdByPaypalOrderId($paypalOrderId)
     {
-        $orderPayments = new \PrestaShopCollection('OrderPayment');
-        $orderPayments->where('transaction_id', '=', $paypalOrderId);
-
-        $payment = $orderPayments->getFirst();
-
-        if (true === empty($payment)) {
-            return false;
-        }
-
-        $orders = new \PrestaShopCollection('Order');
-        $orders->where('reference', '=', $payment->order_reference);
-
-        $order = $orders->getFirst();
-
-        if (true === empty($order)) {
-            return false;
-        }
-
-        return $order->id;
+        return (new OrderMatrice())->getOrderPrestashopFromPaypal($paypalOrderId);
     }
 
     /**
      * Return Paypal order ID for the given PrestaShop order reference
      *
-     * @param string $psOrderRef Order reference prestashop
+     * @param string $prestashopOrderId
      *
      * @return string Order ID Paypal
      */
-    public function getPaypalOrderIdByPsOrderRef($psOrderRef)
+    public function getPaypalOrderIdByPsOrderRef($prestashopOrderId)
     {
-        $orderPayments = new \PrestaShopCollection('OrderPayment');
-        $orderPayments->where('order_reference', '=', $psOrderRef);
-
-        $orderPayment = $orderPayments->getFirst();
-
-        if (true === empty($orderPayment)) {
-            return false;
-        }
-
-        return $orderPayment->transaction_id;
+        return (new OrderMatrice())->getOrderPaypalFromPrestashop($prestashopOrderId);
     }
 }

@@ -258,7 +258,7 @@ class Refund
         return $order->addOrderPayment(
             -$this->getAmount(),
             'PrestaShop Checkout',
-            (new PaypalOrderRepository())->getPaypalOrderIdByPsOrderRef($order->reference)
+            (new PaypalOrderRepository())->getPaypalOrderIdByPsOrderRef($order->id)
         );
     }
 

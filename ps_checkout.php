@@ -268,7 +268,7 @@ class ps_checkout extends PaymentModule
             $totalRefund = $totalRefund + $amountDetail['amount'];
         }
 
-        $paypalOrderId = (new PaypalOrderRepository())->getPaypalOrderIdByPsOrderRef($params['order']->reference);
+        $paypalOrderId = (new PaypalOrderRepository())->getPaypalOrderIdByPsOrderRef($params['order']->id);
 
         if (false === $paypalOrderId) {
             $this->context->controller->errors[] = $this->l('Impossible to refund. Cannot find the PayPal Order associated to this order.');
@@ -311,7 +311,7 @@ class ps_checkout extends PaymentModule
         $order = $order->getFirst();
 
         $paypalOrder = new PaypalOrderRepository();
-        $paypalOrderId = $paypalOrder->getPaypalOrderIdByPsOrderRef($order->reference);
+        $paypalOrderId = $paypalOrder->getPaypalOrderIdByPsOrderRef($order->id);
 
         // if the order is not an order pay with paypal stop the process
         if (false === $paypalOrderId) {
