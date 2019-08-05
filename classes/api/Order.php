@@ -71,11 +71,11 @@ class Order extends MaaslandClient
             ]),
         ]);
 
-        if (false === isset($response['purchase_units'][0]['payments']['captures'][0]['status'])) {
+        if (false === isset($response['purchase_units'][0]['payments']['captures'][0])) {
             return false;
         }
 
-        return $response['purchase_units'][0]['payments']['captures'][0]['status'];
+        return $response['purchase_units'][0]['payments']['captures'][0];
     }
 
     /**

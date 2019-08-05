@@ -98,19 +98,19 @@ class ValidateOrder
 
         switch ($paypalOrder->getOrderIntent()) {
             case self::INTENT_CAPTURE:
-                $responseStatus = $apiOrder->capture($order['id'], $this->merchantId);
+                $response = $apiOrder->capture($order['id'], $this->merchantId);
                 break;
             case self::INTENT_AUTHORIZE:
-                $responseStatus = $apiOrder->authorize($order['id'], $this->merchantId);
+                $response = $apiOrder->authorize($order['id'], $this->merchantId);
                 break;
             default:
                 throw new \Exception(sprintf('Unknown Intent type %s', $paypalOrder->getOrderIntent()));
         }
 
-        $orderState = $this->setOrderState($module->currentOrder, $responseStatus, $payload['message']);
+        $orderState = $this->setOrderState($module->currentOrder, $response['status'], $payload['message']);
 
         if ($orderState === _PS_OS_PAYMENT_) {
-            $this->setTransactionId($module->currentOrderReference, $payload['extraVars']['transaction_id']);
+            $this->setTransactionId($module->currentOrderReference, $response['id']);
         }
     }
 
@@ -153,7 +153,7 @@ class ValidateOrder
      * Set the transactionId (paypal order id) to the payment associated to the order
      *
      * @param string $psOrderRef from prestashop
-     * @param string $transactionId paypal order id
+     * @param string $transactionId paypal transaction Id
      *
      * @return bool
      */
