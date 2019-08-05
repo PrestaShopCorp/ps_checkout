@@ -67,6 +67,16 @@ class ValidateOrder
     {
         $module = \Module::getInstanceByName('ps_checkout');
 
+        if (false === $this->setOrdersMatrice($module->currentOrder, $payload['extraVars']['transaction_id'])) {
+            throw new \Exception(
+                sprintf(
+                    'Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : $s',
+                    $module->currentOrder,
+                    $payload['extraVars']['transaction_id']
+                )
+            );
+        }
+
         $module->validateOrder(
             $payload['cartId'],
             $this->getPendingStatusId($payload['paymentMethod']),
@@ -100,7 +110,7 @@ class ValidateOrder
         $orderState = $this->setOrderState($module->currentOrder, $responseStatus, $payload['message']);
 
         if ($orderState === _PS_OS_PAYMENT_) {
-            $this->setTransactionId($module->currentOrder, $payload['extraVars']['transaction_id']);
+            $this->setTransactionId($module->currentOrderReference, $payload['extraVars']['transaction_id']);
         }
     }
 
@@ -123,20 +133,42 @@ class ValidateOrder
     }
 
     /**
-     * Set the transactionId (paypal order id) to the payment associated to the order
+     * Set the matrice order values
      *
      * @param int $orderPrestashopId from prestashop
-     * @param string $transactionId paypal order id
+     * @param string $orderPaypalId paypal order id
      *
      * @return bool
      */
-    private function setTransactionId($orderPrestashopId, $orderPaypalId)
+    private function setOrdersMatrice($orderPrestashopId, $orderPaypalId)
     {
         $orderMatrice = new OrderMatrice();
         $orderMatrice->id_order_prestashop = $orderPrestashopId;
         $orderMatrice->id_order_paypal = $orderPaypalId;
 
         return $orderMatrice->add();
+    }
+
+    /**
+     * Set the transactionId (paypal order id) to the payment associated to the order
+     *
+     * @param string $psOrderRef from prestashop
+     * @param string $transactionId paypal order id
+     *
+     * @return bool
+     */
+    private function setTransactionId($psOrderRef, $transactionId)
+    {
+        $orderPayments = new \PrestaShopCollection('OrderPayment');
+        $orderPayments->where('order_reference', '=', $psOrderRef);
+        $orderPayment = $orderPayments->getFirst();
+        if (true === empty($orderPayment)) {
+            return false;
+        }
+        $payment = new \OrderPayment($orderPayment->id);
+        $payment->transaction_id = $transactionId;
+
+        return $payment->save();
     }
 
     /**
