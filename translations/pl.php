@@ -1,4 +1,5 @@
 <?php
+
 global $_MODULE;
 $_MODULE = array();
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_0fdfcaa100b861173fa706fed28ff9f8'] = 'Nieprawidłowy format, sprawdź swoje dane bankowe i spróbuj ponownie';

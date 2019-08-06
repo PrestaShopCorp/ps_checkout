@@ -226,11 +226,11 @@ class ps_checkout extends PaymentModule
     /**
      * Get the translation from ps_checkout source
      *
-     * @param  string $sentence
+     * @param string $sentence
      *
      * @return string
      */
-    public function getModuleTranslation($sentence) 
+    public function getModuleTranslation($sentence)
     {
         return $this->l($sentence);
     }
