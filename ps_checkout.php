@@ -224,6 +224,18 @@ class ps_checkout extends PaymentModule
     }
 
     /**
+     * Get the translation from ps_checkout source
+     *
+     * @param  string $sentence
+     *
+     * @return string
+     */
+    public function getModuleTranslation($sentence) 
+    {
+        return $this->l($sentence);
+    }
+
+    /**
      * Hook executed when a slip order is created
      * Used when a partial refund is made in order to refund the patpal order
      *
