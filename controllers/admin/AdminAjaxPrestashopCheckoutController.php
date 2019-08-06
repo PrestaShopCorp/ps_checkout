@@ -126,10 +126,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     private function saveFirebaseAccountIfNoErrors($user)
     {
         if (false === isset($user['error'])) {
-            Configuration::updateValue('PS_CHECKOUT_FIREBASE_EMAIL', $user['email']);
-            Configuration::updateValue('PS_CHECKOUT_FIREBASE_ID_TOKEN', $user['idToken']);
-            Configuration::updateValue('PS_CHECKOUT_FIREBASE_LOCAL_ID', $user['localId']);
-            Configuration::updateValue('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN', $user['refreshToken']);
+            Configuration::updateValue('PS_PSX_FIREBASE_EMAIL', $user['email']);
+            Configuration::updateValue('PS_PSX_FIREBASE_ID_TOKEN', $user['idToken']);
+            Configuration::updateValue('PS_PSX_FIREBASE_LOCAL_ID', $user['localId']);
+            Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_TOKEN', $user['refreshToken']);
         }
     }
 }
