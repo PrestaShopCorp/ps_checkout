@@ -23,19 +23,20 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
-use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use PrestaShop\Module\PrestashopCheckout\Api\Order;
-use PrestaShop\Module\PrestashopCheckout\GenerateJsonPaypalOrder;
-use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
-use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
-use PrestaShop\Module\PrestashopCheckout\Refund;
-use PrestaShop\Module\PrestashopCheckout\PaypalOrderRepository;
-use PrestaShop\Module\PrestashopCheckout\OrderStates;
-use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenter;
-use PrestaShop\Module\PrestashopCheckout\Environment;
-use PrestaShop\Module\PrestashopCheckout\Merchant;
-use PrestaShop\Module\PrestashopCheckout\MerchantRepository;
 use Ramsey\Uuid\Uuid;
+use PrestaShop\Module\PrestashopCheckout\Refund;
+use PrestaShop\Module\PrestashopCheckout\Merchant;
+use PrestaShop\Module\PrestashopCheckout\Api\Order;
+use PrestaShop\Module\PrestashopCheckout\Environment;
+use PrestaShop\Module\PrestashopCheckout\OrderStates;
+use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
+use PrestaShop\Module\PrestashopCheckout\MerchantRepository;
+use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
+use PrestaShop\Module\PrestashopCheckout\Database\TableManager;
+use PrestaShop\Module\PrestashopCheckout\GenerateJsonPaypalOrder;
+use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
+use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenter;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -111,7 +112,8 @@ class ps_checkout extends PaymentModule
 
         return parent::install() &&
             $this->registerHook(self::HOOK_LIST) &&
-            (new OrderStates())->installPaypalStates();
+            (new OrderStates())->installPaypalStates() &&
+            (new TableManager())->createTable();
     }
 
     /**
@@ -125,7 +127,8 @@ class ps_checkout extends PaymentModule
             Configuration::deleteByName($name);
         }
 
-        return parent::uninstall();
+        return parent::uninstall() &&
+            (new TableManager())->dropTable();
     }
 
     public function getContent()
@@ -265,7 +268,7 @@ class ps_checkout extends PaymentModule
             $totalRefund = $totalRefund + $amountDetail['amount'];
         }
 
-        $paypalOrderId = (new PaypalOrderRepository())->getPaypalOrderIdByPsOrderRef($params['order']->reference);
+        $paypalOrderId = (new OrderMatrice())->getOrderPaypalFromPrestashop($params['order']->id);
 
         if (false === $paypalOrderId) {
             $this->context->controller->errors[] = $this->l('Impossible to refund. Cannot find the PayPal Order associated to this order.');
@@ -276,7 +279,7 @@ class ps_checkout extends PaymentModule
         $currency = Currency::getCurrency($params['order']->id_currency);
         $currencyIsoCode = $currency['iso_code'];
 
-        $refund = new Refund($totalRefund, $paypalOrderId, $currencyIsoCode);
+        $refund = new Refund(false, $totalRefund, $paypalOrderId, $currencyIsoCode);
         $refundResponse = $refund->refundPaypalOrder();
 
         if (true === $refundResponse['error']) {
@@ -296,7 +299,7 @@ class ps_checkout extends PaymentModule
             return false;
         }
 
-        $refund->addOrderPayment($params['order']);
+        $refund->addOrderPayment($params['order'], $refundResponse['id']);
 
         return true;
     }
@@ -307,8 +310,7 @@ class ps_checkout extends PaymentModule
         $order->where('id_order', '=', $params['id_order']);
         $order = $order->getFirst();
 
-        $paypalOrder = new PaypalOrderRepository();
-        $paypalOrderId = $paypalOrder->getPaypalOrderIdByPsOrderRef($order->reference);
+        $paypalOrderId = (new OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
 
         // if the order is not an order pay with paypal stop the process
         if (false === $paypalOrderId) {
@@ -331,16 +333,20 @@ class ps_checkout extends PaymentModule
 
         $totalRefund = $order->getTotalPaid();
 
-        $refund = new Refund($totalRefund, $paypalOrderId, $currencyIsoCode);
+        $refund = new Refund(false, $totalRefund, $paypalOrderId, $currencyIsoCode);
         $refundResponse = $refund->refundPaypalOrder();
 
-        if (true === $refundResponse['error']) {
-            $this->context->controller->errors = array_merge($this->context->controller->errors, $refundResponse['messages']);
+        if (isset($refundResponse['error'])) {
+            if (isset($refundResponse['messages']) && is_array($refundResponse['messages'])) {
+                $this->context->controller->errors = array_merge($this->context->controller->errors, $refundResponse['messages']);
+            } else {
+                $this->context->controller->errors[] = $refundResponse['message'];
+            }
 
             return false;
         }
 
-        return $refund->doTotalRefund($order, $order->getProducts());
+        return $refund->doTotalRefund($order, $order->getProducts(), $refundResponse['id']);
     }
 
     /**

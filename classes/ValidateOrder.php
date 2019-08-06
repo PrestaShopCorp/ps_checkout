@@ -27,6 +27,7 @@
 namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Order;
+use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 
 /**
  * Class that allow to validate an order
@@ -79,6 +80,17 @@ class ValidateOrder
             $payload['secureKey']
         );
 
+        if (false === $this->setOrdersMatrice($module->currentOrder, $payload['extraVars']['transaction_id'])) {
+            $this->setOrderState($module->currentOrder, self::CAPTURE_STATUS_DECLINED, $payload['paymentMethod']);
+            throw new \Exception(
+                sprintf(
+                    'Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s',
+                    $module->currentOrder,
+                    $payload['extraVars']['transaction_id']
+                )
+            );
+        }
+
         // TODO : patch the order in order to update the order id with the order id
         // of the prestashop order
 
@@ -88,19 +100,19 @@ class ValidateOrder
 
         switch ($paypalOrder->getOrderIntent()) {
             case self::INTENT_CAPTURE:
-                $responseStatus = $apiOrder->capture($order['id'], $this->merchantId);
+                $response = $apiOrder->capture($order['id'], $this->merchantId);
                 break;
             case self::INTENT_AUTHORIZE:
-                $responseStatus = $apiOrder->authorize($order['id'], $this->merchantId);
+                $response = $apiOrder->authorize($order['id'], $this->merchantId);
                 break;
             default:
                 throw new \Exception(sprintf('Unknown Intent type %s', $paypalOrder->getOrderIntent()));
         }
 
-        $orderState = $this->setOrderState($module->currentOrder, $responseStatus, $payload['message']);
+        $orderState = $this->setOrderState($module->currentOrder, $response['status'], $payload['paymentMethod']);
 
         if ($orderState === _PS_OS_PAYMENT_) {
-            $this->setTransactionId($module->currentOrderReference, $payload['extraVars']['transaction_id']);
+            $this->setTransactionId($module->currentOrderReference, $response['id']);
         }
     }
 
@@ -123,10 +135,27 @@ class ValidateOrder
     }
 
     /**
+     * Set the matrice order values
+     *
+     * @param int $orderPrestashopId from prestashop
+     * @param string $orderPaypalId paypal order id
+     *
+     * @return bool
+     */
+    private function setOrdersMatrice($orderPrestashopId, $orderPaypalId)
+    {
+        $orderMatrice = new OrderMatrice();
+        $orderMatrice->id_order_prestashop = $orderPrestashopId;
+        $orderMatrice->id_order_paypal = $orderPaypalId;
+
+        return $orderMatrice->add();
+    }
+
+    /**
      * Set the transactionId (paypal order id) to the payment associated to the order
      *
      * @param string $psOrderRef from prestashop
-     * @param string $transactionId paypal order id
+     * @param string $transactionId paypal transaction Id
      *
      * @return bool
      */
@@ -134,13 +163,10 @@ class ValidateOrder
     {
         $orderPayments = new \PrestaShopCollection('OrderPayment');
         $orderPayments->where('order_reference', '=', $psOrderRef);
-
         $orderPayment = $orderPayments->getFirst();
-
         if (true === empty($orderPayment)) {
             return false;
         }
-
         $payment = new \OrderPayment($orderPayment->id);
         $payment->transaction_id = $transactionId;
 

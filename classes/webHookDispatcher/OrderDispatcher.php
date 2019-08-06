@@ -26,6 +26,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
+
 class OrderDispatcher
 {
     const PS_CHECKOUT_PAYMENT_REVERSED = 'PaymentCaptureReversed';
@@ -86,7 +88,7 @@ class OrderDispatcher
             throw new UnauthorizedException($orderError);
         }
 
-        $psOrderId = (new PaypalOrderRepository())->getPsOrderIdByPaypalOrderId($orderId);
+        $psOrderId = (new OrderMatrice())->getOrderPrestashopFromPaypal($orderId);
 
         if (false === $psOrderId) {
             throw new UnprocessableException('order #' . $orderId . ' does not exist');

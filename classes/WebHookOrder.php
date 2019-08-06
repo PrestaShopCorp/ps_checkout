@@ -57,6 +57,13 @@ class WebHookOrder
     private $currencyId;
 
     /**
+     * Paypal Transaction Id from Resource
+     *
+     * @var string
+     */
+    private $paypalTransactionId;
+
+    /**
      * __construct
      *
      * @param string $initiateBy
@@ -68,6 +75,7 @@ class WebHookOrder
         $this->initiateBy = (string) $initiateBy;
         $this->orderId = (int) $orderId;
         $this->amount = (float) $resource['amount']->value;
+        $this->paypalTransactionId = (string) $resource['id'];
         $this->currencyId = (string) \Currency::getIdByIsoCode($resource['amount']->currency_code);
     }
 
@@ -89,13 +97,13 @@ class WebHookOrder
 
         $orderProductList = (array) $order->getProducts();
 
-        $refund = new Refund($this->amount);
+        $refund = new Refund(true, $this->amount);
 
         if ($order->total_paid !== $this->amount) {
-            return (bool) $refund->doPartialRefund($order, $orderProductList);
+            return (bool) $refund->doPartialRefund($order, $orderProductList, $this->paypalTransactionId);
         }
 
-        return (bool) $refund->doTotalRefund($order, $orderProductList);
+        return (bool) $refund->doTotalRefund($order, $orderProductList, $this->paypalTransactionId);
     }
 
     /**
