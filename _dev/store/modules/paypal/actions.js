@@ -1,5 +1,5 @@
 import * as types from './mutation-types';
-import {ajax} from '@/requests/ajax.js';
+import ajax from '@/requests/ajax.js';
 
 export default {
   unlink({commit}) {

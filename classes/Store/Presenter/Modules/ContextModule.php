@@ -26,6 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules;
 
+use PrestaShop\Module\PrestashopCheckout\Faq\Faq;
 use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface;
 
 /**
@@ -43,10 +44,21 @@ class ContextModule implements StorePresenterInterface
         $contextModule = array(
             'context' => array(
                 'isReady' => $this->isReady(),
+                'faq' => $this->getFaq(),
             ),
         );
 
         return $contextModule;
+    }
+
+    private function getFaq()
+    {
+        $faq = new Faq();
+        $faq->setModuleKey('bab535c26e031e9d224c0d128e063283');
+        $faq->setPsVersion(_PS_VERSION_);
+        $faq->setIsoCode('en');
+
+        return $faq->getFaq();
     }
 
     /**
