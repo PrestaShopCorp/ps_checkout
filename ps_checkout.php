@@ -67,10 +67,10 @@ class ps_checkout extends PaymentModule
         'PS_CHECKOUT_PAYPAL_EMAIL_STATUS' => '',
         'PS_CHECKOUT_PAYPAL_PAYMENT_STATUS' => '',
         'PS_CHECKOUT_CARD_PAYMENT_STATUS' => '',
-        'PS_CHECKOUT_FIREBASE_EMAIL' => '',
-        'PS_CHECKOUT_FIREBASE_ID_TOKEN' => '',
-        'PS_CHECKOUT_FIREBASE_LOCAL_ID' => '',
-        'PS_CHECKOUT_FIREBASE_REFRESH_TOKEN' => '',
+        'PS_PSX_FIREBASE_EMAIL' => '',
+        'PS_PSX_FIREBASE_ID_TOKEN' => '',
+        'PS_PSX_FIREBASE_LOCAL_ID' => '',
+        'PS_PSX_FIREBASE_REFRESH_TOKEN' => '',
         'PS_CHECKOUT_SHOP_UUID_V4' => '',
     );
 

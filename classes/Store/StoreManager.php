@@ -33,10 +33,10 @@ class StoreManager
 {
     public function firebaseLogout()
     {
-        \Configuration::updateValue('PS_CHECKOUT_FIREBASE_EMAIL', '');
-        \Configuration::updateValue('PS_CHECKOUT_FIREBASE_ID_TOKEN', '');
-        \Configuration::updateValue('PS_CHECKOUT_FIREBASE_LOCAL_ID', '');
-        \Configuration::updateValue('PS_CHECKOUT_FIREBASE_REFRESH_TOKEN', '');
+        \Configuration::updateValue('PS_PSX_FIREBASE_EMAIL', '');
+        \Configuration::updateValue('PS_PSX_FIREBASE_ID_TOKEN', '');
+        \Configuration::updateValue('PS_PSX_FIREBASE_LOCAL_ID', '');
+        \Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_TOKEN', '');
     }
 
     public function unlinkPaypal()
