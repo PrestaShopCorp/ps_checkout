@@ -12,52 +12,49 @@
                 <img src="@/assets/images/logo.png" width="75" height="75" alt="">
               </div>
               <div>
-                <b>This module allows you to:</b>
+                <b>{{ $t('panel.help.allowsYou') }}</b>
                 <ul class="mt-3">
-                  <li>fqfdqdfqf qdf dsqfqsdf dfqf qdf</li>
-                  <li>sqfsqdfqdf sqdfqsdf</li>
+                  <li>{{ $t('panel.help.tip1') }}</li>
+                  <li>{{ $t('panel.help.tip2') }}</li>
+                  <li>{{ $t('panel.help.tip3') }}</li>
+                  <li>{{ $t('panel.help.tip4') }}</li>
                 </ul>
               </div>
-
-              <v-collapse-wrapper :active="false">
-                <div class="header" v-collapse-toggle>
-                  <b class="text-muted">test</b>
-                </div>
-                <div class="my-content" v-collapse-content>
-                  qksdjfks jfjsq dfkj sldjf ksqjdlf jqsljdf lsqjdflk j
-                </div>
-              </v-collapse-wrapper>
-
             </div>
             <div class="faq">
               <h1>FAQ</h1>
               <div class="separator my-3" />
               <template v-if="faq && faq.categories.lenfth != 0">
-                <v-collapse-group v-for="(categorie, index) in faq.categories" :key="index" :only-one-active="false">
-                  <h2 class="categorie-title">{{ categorie.title }}</h2>
-                  <v-collapse-wrapper v-for="(item, i) in categorie.blocks" :key="i">
-                    <div class="header" v-collapse-toggle>
-                      <b class="text-muted">{{ item.question }}</b>
+                <v-collapse-group class="my-3" v-for="(categorie, index) in faq.categories" :key="index" :only-one-active="true">
+                  <h3 class="categorie-title">{{ categorie.title }}</h3>
+                  <v-collapse-wrapper :ref="index+'_'+i" v-for="(item, i) in categorie.blocks" :key="i">
+                    <div class="my-3 question" v-collapse-toggle>
+                      <a href="#" @click.prevent><i class="material-icons">keyboard_arrow_right</i> {{ item.question }}</a>
                     </div>
-                    <div class="my-content" v-collapse-content>
+                    <div class="answer" v-collapse-content>
                       {{ item.answer }}
                     </div>
                   </v-collapse-wrapper>
                 </v-collapse-group>
               </template>
+              <template v-else>
+                <PSAlert :alert-type="ALERT_TYPE_WARNING">
+                  <p>{{ $t('panel.help.noFaqAvailable') }}</p>
+                </PSAlert>
+              </template>
             </div>
           </div>
           <div class="right-block">
             <div class="doc">
-              <b class="text-muted">sqfd fkqsdkf qjsdlkfj qskdjf lsqkfqlkj ljfsqlk jdflqskjf</b>
+              <b class="text-muted">{{ $t('panel.help.needHelp') }}</b>
               <br>
-              <a href="#" class="btn btn-primary mt-3">test</a>
+              <a :href="readmeUrl" target="_blank" class="btn btn-primary mt-3">{{ $t('panel.help.downloadDoc') }}</a>
             </div>
             <div class="contact mt-4">
-              <div>Couldn't find any answer to your question?</div>
+              <div>{{ $t('panel.help.couldntFindAnswer') }}</div>
               <div class="mt-2">
-                <a href="https://www.paypal.com/dashboard" target="_blank">
-                  Contact us on PrestaShop Addons <i class="material-icons">arrow_right_alt</i>
+                <a href="https://support.prestashop.com/hc/requests/new?ticket_form_id=" target="_blank">
+                  {{ $t('panel.help.contactUs') }} <i class="material-icons">arrow_right_alt</i>
                 </a>
               </div>
             </div>
@@ -69,10 +66,25 @@
 </template>
 
 <script>
+  import PSAlert from '@/components/form/alert';
+  import {ALERT_TYPE_WARNING} from '@/lib/alert';
+
   export default {
+    components: {
+      PSAlert,
+    },
     computed: {
+      ALERT_TYPE_WARNING: () => ALERT_TYPE_WARNING,
       faq() {
         return this.$store.state.context.faq;
+      },
+      readmeUrl() {
+        return this.$store.state.context.readmeUrl;
+      },
+    },
+    methods: {
+      getElementUpdated(payload, index) {
+        return this.$refs[index][0].status;
       },
     },
   };
@@ -85,6 +97,9 @@
   background:#6B868F;
   border-bottom: 2px solid #6B868F;
 }
+.left-block {
+  flex-grow: 1;
+}
 .right-block {
   padding: 15px;
   min-width: 350px;
@@ -93,5 +108,20 @@
 .doc {
   padding: 20px;
   background-color: #F7F7F7;
+}
+.answer {
+  margin: 0px 15px 10px 15px;
+  padding: 15px;
+  background-color: #F7F7F7;
+}
+.icon-expand {
+  transform: rotate(90deg);
+  transition: all 0.3s;
+}
+.v-collapse-content {
+  display: none;
+}
+.v-collapse-content-end {
+  display: block;
 }
 </style>

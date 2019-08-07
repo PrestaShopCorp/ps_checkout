@@ -89,9 +89,14 @@ class Faq
 
         $data = json_decode($response->getBody(), true);
 
-        return isset($data) ? $data : false;
+        return isset($data['categories']) && !empty($data['categories']) ? $data : false;
     }
 
+    /**
+     * Generate the route to retrieve the faq
+     *
+     * @return string route
+     */
     public function generateRoute()
     {
         return $this->getModuleKey().'/'.$this->getPsVersion().'/'.$this->getIsoCode();
