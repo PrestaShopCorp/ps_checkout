@@ -202,7 +202,10 @@ function hideDefaultPaymentButtonIfPaypalIsChecked() {
   const conditionsToApproveId = document.getElementById('conditions-to-approve');
   const paymentDefaultButton = document.getElementById('payment-confirmation');
 
-  document.getElementsByName('payment-option').forEach((item) => {
+  let paypalOptions = document.getElementsByName('payment-option');
+  
+  for (let i = 0; i < paypalOptions.length; i++) {
+    let item = paypalOptions[i];
     item.addEventListener('input', () => {
       if (item.checked && item.dataset.moduleName === paypalPaymentOption) {
         paymentDefaultButton.classList.add('paypal-hide-default');
@@ -212,7 +215,7 @@ function hideDefaultPaymentButtonIfPaypalIsChecked() {
         conditionsToApproveId.classList.remove('paypal-hide-default');
       }
     });
-  });
+  }
 }
 
 function toggleLoader(enable) {
