@@ -108,7 +108,7 @@ class ContextModule implements StorePresenterInterface
             $isoCode = 'en';
         }
 
-        return '/modules/' . $this->module->name . '/docs/readme_' . $isoCode . '.pdf';
+        return _MODULE_DIR_ . $this->module->name . '/docs/readme_' . $isoCode . '.pdf';
     }
 
     /**
