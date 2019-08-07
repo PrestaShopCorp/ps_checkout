@@ -4,7 +4,7 @@
       <MenuItem route="/authentication">{{ $t('menu.authentication') }}</MenuItem>
       <MenuItem route="/customize">{{ $t('menu.customizeCheckout') }}</MenuItem>
       <MenuItem route="/activity">{{ $t('menu.manageActivity') }}</MenuItem>
-      <MenuItem route="/advanced">{{ $t('menu.advancedSettings') }}</MenuItem>
+      <!-- <MenuItem route="/advanced">{{ $t('menu.advancedSettings') }}</MenuItem> -->
       <MenuItem route="/help">{{ $t('menu.help') }}</MenuItem>
     </Menu>
     <div v-if="paymentMode === 'SANDBOX'" class="row">
