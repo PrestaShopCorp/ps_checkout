@@ -203,10 +203,11 @@ function hideDefaultPaymentButtonIfPaypalIsChecked() {
   const paymentDefaultButton = document.getElementById('payment-confirmation');
 
   let paypalOptions = document.getElementsByName('payment-option');
-  
+
   for (let i = 0; i < paypalOptions.length; i++) {
     let item = paypalOptions[i];
-    item.addEventListener('input', () => {
+
+    item.addEventListener('click', function() {
       if (item.checked && item.dataset.moduleName === paypalPaymentOption) {
         paymentDefaultButton.classList.add('paypal-hide-default');
         conditionsToApproveId.classList.add('paypal-hide-default');
