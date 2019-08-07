@@ -1,29 +1,18 @@
 import axios from 'axios';
 import {forEach} from 'lodash';
 
-const api = axios.create({
-  baseURL: window.prestashopCheckoutAjax,
-});
-
-export function ajax(params) {
+export default function ajax(params) {
   const form = new FormData();
   form.append('ajax', true);
   form.append('action', params.action);
+
   form.append('controller', 'AdminAjaxPrestashopCheckout');
 
   forEach(params.data, (value, key) => {
     form.append(key, value);
   });
 
-  return api.post('', form)
-    .then(res => res.data)
-    .catch((error) => {
-      console.log(error);
-    });
-}
-
-export function getFaq(moduleKey, psVersion, isoCode) {
-  return api.post(`http://api.addons.prestashop.com/request/faq/${moduleKey}/${psVersion}/${isoCode}`)
+  return axios.post(params.url, form)
     .then(res => res.data)
     .catch((error) => {
       console.log(error);

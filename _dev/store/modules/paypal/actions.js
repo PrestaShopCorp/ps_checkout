@@ -1,17 +1,19 @@
 import * as types from './mutation-types';
-import {ajax} from '@/requests/ajax.js';
+import ajax from '@/requests/ajax.js';
 
 export default {
-  unlink({commit}) {
+  unlink({commit, getters}) {
     return ajax({
+      url: getters.adminController,
       action: 'UnlinkPaypal',
     }).then(() => {
       commit(types.UNLINK_ACCOUNT);
       return Promise.resolve(true);
     });
   },
-  getOnboardingLink({commit}) {
+  getOnboardingLink({commit, getters}) {
     return ajax({
+      url: getters.adminController,
       action: 'GetOnboardingLink',
     }).then((onboardingLink) => {
       commit(types.UPDATE_ONBOARDING_LINK, onboardingLink);

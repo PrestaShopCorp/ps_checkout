@@ -1,9 +1,10 @@
 import * as types from './mutation-types';
-import {ajax} from '@/requests/ajax.js';
+import ajax from '@/requests/ajax.js';
 
 export default {
-  logout({commit}) {
+  logout({commit, getters}) {
     return ajax({
+      url: getters.adminController,
       action: 'FirebaseLogout',
     }).then(() => {
       commit(types.LOGOUT_ACCOUNT);
@@ -11,8 +12,9 @@ export default {
     });
   },
 
-  login({commit}, payload) {
+  login({commit, getters}, payload) {
     return ajax({
+      url: getters.adminController,
       action: 'SignIn',
       data: {
         email: payload.email,
@@ -35,8 +37,9 @@ export default {
     });
   },
 
-  signup({commit}, payload) {
+  signup({commit, getters}, payload) {
     ajax({
+      url: getters.adminController,
       action: 'SignUp',
       data: {
         email: payload.email,

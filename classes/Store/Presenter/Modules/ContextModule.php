@@ -26,6 +26,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules;
 
+use PrestaShop\Module\PrestashopCheckout\Faq\Faq;
+use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface;
 
 /**
@@ -33,6 +35,22 @@ use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface
  */
 class ContextModule implements StorePresenterInterface
 {
+    /**
+     * @var \Module
+     */
+    private $module;
+
+    /**
+     * @var \Context
+     */
+    private $context;
+
+    public function __construct(\Module $module, \Context $context)
+    {
+        $this->module = $module;
+        $this->context = $context;
+    }
+
     /**
      * Present the context module (vuex)
      *
@@ -43,10 +61,54 @@ class ContextModule implements StorePresenterInterface
         $contextModule = array(
             'context' => array(
                 'isReady' => $this->isReady(),
+                'faq' => $this->getFaq(),
+                'language' => $this->context->language,
+                'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
+                'translations' => (new Translations($this->module))->getTranslations(),
+                'readmeUrl' => $this->getReadme(),
             ),
         );
 
         return $contextModule;
+    }
+
+    /**
+     * Retrieve the faq
+     *
+     * @return array|bool faq or false if no faq associated to the module
+     */
+    private function getFaq()
+    {
+        $faq = new Faq();
+        $faq->setModuleKey($this->module->module_key);
+        $faq->setPsVersion(_PS_VERSION_);
+        $faq->setIsoCode($this->context->language->iso_code);
+
+        $response = $faq->getFaq();
+
+        // If no response in the selected language, retrieve the faq in the default language (english)
+        if (false === $response && $faq->getIsoCode() !== 'en') {
+            $faq->setIsoCode('en');
+            $response = $faq->getFaq();
+        }
+
+        return $response;
+    }
+
+    /**
+     * Get the documentation url depending on the current language
+     *
+     * @return string path of the doc
+     */
+    private function getReadme()
+    {
+        $isoCode = $this->context->language->iso_code;
+
+        if ('fr' !== $isoCode) {
+            $isoCode = 'en';
+        }
+
+        return _MODULE_DIR_ . $this->module->name . '/docs/readme_' . $isoCode . '.pdf';
     }
 
     /**

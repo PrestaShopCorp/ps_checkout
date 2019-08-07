@@ -37,16 +37,29 @@ use PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules\ContextModule;
 class StorePresenter implements StorePresenterInterface
 {
     /**
+     * @var \Module
+     */
+    private $module;
+
+    /**
+     * @var \Context
+     */
+    private $context;
+
+    /**
      * @var array
      */
     private $store;
 
-    public function __construct(array $store = null)
+    public function __construct(\Module $module, \Context $context, array $store = null)
     {
         // Allow to set a custom store for tests purpose
         if (null !== $store) {
             $this->store = $store;
         }
+
+        $this->module = $module;
+        $this->context = $context;
     }
 
     /**
@@ -61,7 +74,7 @@ class StorePresenter implements StorePresenterInterface
         }
 
         $this->store = array_merge(
-            (new ContextModule())->present(),
+            (new ContextModule($this->module, $this->context))->present(),
             (new FirebaseModule())->present(),
             (new PaypalModule())->present(),
             (new ConfigurationModule())->present()

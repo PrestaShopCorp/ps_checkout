@@ -35,7 +35,6 @@ use PrestaShop\Module\PrestashopCheckout\MerchantRepository;
 use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 use PrestaShop\Module\PrestashopCheckout\Database\TableManager;
 use PrestaShop\Module\PrestashopCheckout\GenerateJsonPaypalOrder;
-use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenter;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -82,7 +81,7 @@ class ps_checkout extends PaymentModule
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
 
-        $this->module_key = '95646b26789fa27cde178690e033f9ef';
+        $this->module_key = '';
 
         $this->bootstrap = true;
 
@@ -137,13 +136,8 @@ class ps_checkout extends PaymentModule
         $merchant = (new Merchant((new MerchantRepository())->getMerchantId()));
         $merchant->update();
 
-        $translations = (new Translations($this))->getTranslations();
-
         Media::addJsDef(array(
-            'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
-            'contextLocale' => $this->context->language->locale,
-            'translations' => json_encode($translations),
-            'store' => json_encode((new StorePresenter())->present()),
+            'store' => json_encode((new StorePresenter($this, $this->context))->present()),
         ));
 
         $this->context->controller->addCss($this->_path . 'views/css/index.css');
