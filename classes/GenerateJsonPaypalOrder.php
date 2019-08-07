@@ -103,8 +103,8 @@ class GenerateJsonPaypalOrder
             $item['quantity'] = $value['quantity'];
             $item['category'] = $value['is_virtual'] === '1' ? 'DIGITAL_GOODS' : 'PHYSICAL_GOODS';
 
-            $totalProductsWithoutTax += $item['unit_amount']['value'];
-            $totalTax += $item['tax']['value'];
+            $totalProductsWithoutTax += $item['unit_amount']['value'] * $value['quantity'];
+            $totalTax += $item['tax']['value'] * $value['quantity'];
 
             $items[] = $item;
         }
