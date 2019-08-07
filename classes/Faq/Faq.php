@@ -99,7 +99,7 @@ class Faq
      */
     public function generateRoute()
     {
-        return $this->getModuleKey().'/'.$this->getPsVersion().'/'.$this->getIsoCode();
+        return $this->getModuleKey() . '/' . $this->getPsVersion() . '/' . $this->getIsoCode();
     }
 
     /**
