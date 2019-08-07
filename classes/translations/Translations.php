@@ -131,7 +131,17 @@ class Translations
                     'tipProductionMode' => $this->module->getModuleTranslation('Production mode enables you to collect your payments.'),
                 ),
                 'help' => array(
-                    'title' => $this->module->getModuleTranslation('Help for'),
+                    'title' => $this->module->l('Help for PrestaShop Checkout'),
+                    'allowsYou' => $this->module->l('This module allows you to:'),
+                    'tip1' => $this->module->l('Connect your PrestaShop Checkout account and link your PayPal Account or create one if needed'),
+                    'tip2' => $this->module->l('Offer the widest range of payment methods: cards, PayPal, etc...'),
+                    'tip3' => $this->module->l('Benefit from all PayPal expertise and advantages'),
+                    'tip4' => $this->module->l('Give access to relevant local payment methods for customers around the globe'),
+                    'couldntFindAnswer' => $this->module->l('Couldn\'t find any answer to your question?'),
+                    'contactUs' => $this->module->l('Contact us'),
+                    'needHelp' => $this->module->l('Need help? Find here the documentation of this module'),
+                    'downloadDoc' => $this->module->l('Download PDF'),
+                    'noFaqAvailable' => $this->module->l('No faq available. Try later.'),
                 ),
             ),
             'block' => array(
