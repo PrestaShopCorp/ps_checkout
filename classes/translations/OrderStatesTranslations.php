@@ -31,21 +31,27 @@ class OrderStatesTranslations
     const STANDARD_ISO_CODE = 'en';
     const PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT = array(
         'en' => 'Waiting for PayPal payment',
+        'fr' => 'En attente de paiement par PayPal',
     );
     const PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT = array(
         'en' => 'Waiting for Credit Card Payment',
+        'fr' => 'En attente de paiement par Carte de Crédit',
     );
     const PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT = array(
-        'en' => 'Waiting for Local Payment Method Payment ',
+        'en' => 'Waiting for Local Payment Method Payment',
+        'fr' => 'En attente de paiement par moyen de paiement local',
     );
     const PS_CHECKOUT_STATE_AUTHORIZED = array(
         'en' => 'Authorized. To be captured by merchant',
+        'fr' => 'Autorisation. A capturer par le marchand',
     );
     const PS_CHECKOUT_STATE_PARTIAL_REFUND = array(
         'en' => 'Partial refund',
+        'fr' => 'Remboursement partiel',
     );
     const PS_CHECKOUT_STATE_WAITING_CAPTURE = array(
         'en' => 'Waiting capture',
+        'fr' => 'En attente de capture',
     );
 
     /**
