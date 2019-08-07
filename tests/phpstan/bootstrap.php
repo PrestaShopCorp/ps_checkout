@@ -49,6 +49,7 @@ $constantsToDefine = [
   '_THEME_COL_DIR_',
   '_PARENT_THEME_NAME_',
   '__PS_BASE_URI__',
+  '_MODULE_DIR_',
   '_PS_PRICE_DISPLAY_PRECISION_',
   '_PS_PRICE_COMPUTE_PRECISION_',
   '_PS_OS_CHEQUE_',
