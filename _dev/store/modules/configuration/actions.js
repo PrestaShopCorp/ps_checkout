@@ -2,8 +2,9 @@ import * as types from './mutation-types';
 import ajax from '@/requests/ajax.js';
 
 export default {
-  updatePaymentMethods({commit}, payload) {
+  updatePaymentMethods({commit, getters}, payload) {
     return ajax({
+      url: getters.adminController,
       action: 'UpdatePaymentMethodsOrder',
       data: {
         paymentMethods: JSON.stringify(payload.paymentMethods),
@@ -14,8 +15,9 @@ export default {
     });
   },
 
-  updatePaymentMode({commit}, payload) {
+  updatePaymentMode({commit, getters}, payload) {
     return ajax({
+      url: getters.adminController,
       action: 'UpdatePaymentMode',
       data: {
         paymentMode: payload,
@@ -26,8 +28,9 @@ export default {
     });
   },
 
-  updateCaptureMode({commit}, payload) {
+  updateCaptureMode({commit, getters}, payload) {
     return ajax({
+      url: getters.adminController,
       action: 'UpdateCaptureMode',
       data: {
         captureMode: payload,
