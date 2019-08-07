@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import store from './store';
 
 import Signup from '@/pages/Signup.vue';
 import Login from '@/pages/Login.vue';
@@ -11,7 +12,7 @@ import Help from '@/pages/Help.vue';
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
@@ -43,7 +44,7 @@ export default new Router({
       component: Activity,
     },
     {
-      path: '/advanced',
+      path: '/debugDoNotTouch',
       name: 'Advanced',
       component: Advanced,
     },
@@ -54,3 +55,10 @@ export default new Router({
     },
   ],
 });
+
+// TODO: Make a navigation guard to limit the user to the authentification tab if he does not
+// complete the paypal and firebase onboarding
+// router.beforeEach((to, from, next) => {
+// });
+
+export default router;
