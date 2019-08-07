@@ -34,8 +34,8 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_1ffc4d4c8714b66db4296d2c9c25ef81'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_8af703b2bf59cc9742883ae7f4cb0e5b'] = 'Impostazioni del conto';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_4826f26ca366291a89abd1f29680202d'] = 'Conto PrestaShop Checkout';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_cea7c7f7bec10295a93d10bd879b95c7'] = 'Devi collegarti a entrambi i conti PrestaShop Checkout e PayPal per attivare tutti i metodi di pagamento';
-$_MODULE['<{ps_checkout}prestashop>ps_checkout_9a2e255d065b9445b1a6f56ab54b5ae5'] = 'Ora hai effettuato l\'accesso con il tuo ';
-$_MODULE['<{ps_checkout}prestashop>ps_checkout_e268443e43d93dab7ebef303bbe9642f'] = 'conto';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_9a2e255d065b9445b1a6f56ab54b5ae5'] = 'Ora hai effettuato l\'accesso con il tuo conto ';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_e268443e43d93dab7ebef303bbe9642f'] = ' ';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_829cfbd41011647bf986de5c30a808d3'] = 'Effettua l\'accesso per offrire tutti i metodi di pagamento al tuo cliente.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_d9776f0775997b2e698c6975420b5c5d'] = 'Registrati';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_bffe9a3c9a7e00ba00a11749e022d911'] = 'Accedi';

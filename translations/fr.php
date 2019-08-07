@@ -30,8 +30,8 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_1ffc4d4c8714b66db4296d2c9c25ef81'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_8af703b2bf59cc9742883ae7f4cb0e5b'] = 'Configurations de compte';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_4826f26ca366291a89abd1f29680202d'] = 'Compte PrestaShop Checkout';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_cea7c7f7bec10295a93d10bd879b95c7'] = 'Vous devez connecter des comptes PrestaShop Checkout et PayPal pour activer tous les moyens de paiement';
-$_MODULE['<{ps_checkout}prestashop>ps_checkout_9a2e255d065b9445b1a6f56ab54b5ae5'] = 'Vous êtes maintenant connectés avec votre ';
-$_MODULE['<{ps_checkout}prestashop>ps_checkout_e268443e43d93dab7ebef303bbe9642f'] = 'compte';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_9a2e255d065b9445b1a6f56ab54b5ae5'] = 'Vous êtes maintenant connectés avec votre compte ';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_e268443e43d93dab7ebef303bbe9642f'] = ' ';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_829cfbd41011647bf986de5c30a808d3'] = 'Connectez-vous ou créez un compte pour fournir tous les moyens de paiement à vos clients.  ';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_d9776f0775997b2e698c6975420b5c5d'] = 'Créer un compte';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_e81c4e4f2b7b93b481e13a8553c2ae1b'] = 'ou';
