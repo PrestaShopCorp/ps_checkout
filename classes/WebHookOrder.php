@@ -107,7 +107,7 @@ class WebHookOrder
     }
 
     /**
-     * Get Order slip already refunded value
+     * Get Order slip already refunded value 
      *
      * @param object $order
      *
