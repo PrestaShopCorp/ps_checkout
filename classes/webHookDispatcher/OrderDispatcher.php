@@ -63,11 +63,15 @@ class OrderDispatcher
             return $this->dispatchPaymentAction($payload['eventType'], $payload['resource'], $psOrderId);
         }
 
-        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_PENDING
-        || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_COMPLETED
+        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_COMPLETED
         || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_DENIED
         || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED) {
             return $this->dispatchPaymentStatus($payload['eventType'], $psOrderId);
+        }
+
+        // For now, if pending, do not change anything
+        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_PENDING) {
+            return true;
         }
 
         return true;
