@@ -149,7 +149,7 @@ class Refund
             $orderProductList[$key]['unit_price'] = $value['unit_price_tax_incl'];
         }
 
-        $refundOrderStateId = 7;
+        $refundOrderStateId = _PS_OS_REFUND_;
 
         return $this->refundPrestashopOrder($order, $orderProductList, $refundOrderStateId, $transactionId);
     }

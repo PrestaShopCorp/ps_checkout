@@ -37,10 +37,10 @@ class OrderDispatcher
     const PS_CHECKOUT_PAYMENT_COMPLETED = 'PaymentCaptureCompleted';
     const PS_CHECKOUT_PAYMENT_DENIED = 'PaymentCaptureDenied';
     const PS_EVENTTYPE_TO_PS_STATE_ID = array(
-        self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED => 6, // Canceled
+        self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED => _PS_OS_CANCELED_, // Canceled
         self::PS_CHECKOUT_PAYMENT_PENDING => 3, // Processing in progress
-        self::PS_CHECKOUT_PAYMENT_COMPLETED => 2, // Payment accepted
-        self::PS_CHECKOUT_PAYMENT_DENIED => 8, // Payment error
+        self::PS_CHECKOUT_PAYMENT_COMPLETED => _PS_OS_PAYMENT_, // Payment accepted
+        self::PS_CHECKOUT_PAYMENT_DENIED => _PS_OS_ERROR_, // Payment error
     );
 
     /**
@@ -63,11 +63,15 @@ class OrderDispatcher
             return $this->dispatchPaymentAction($payload['eventType'], $payload['resource'], $psOrderId);
         }
 
-        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_PENDING
-        || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_COMPLETED
+        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_COMPLETED
         || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_DENIED
         || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED) {
             return $this->dispatchPaymentStatus($payload['eventType'], $psOrderId);
+        }
+
+        // For now, if pending, do not change anything
+        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_PENDING) {
+            return true;
         }
 
         return true;
