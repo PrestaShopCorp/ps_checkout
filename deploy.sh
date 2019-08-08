@@ -21,7 +21,8 @@ function deploy() {
 }
 
 if [[ "$ENV" == "prod" ]]; then
-    deploy $(kubectl get pods --namespace=$ENV-shops -l shop=dep-mugshot -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+  # todo : reactivate
+#    deploy $(kubectl get pods --namespace=$ENV-shops -l shop=dep-mugshot -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
     deploy $(kubectl get pods --namespace=$ENV-shops -l shop=dep-kjffkjjhjgklgjh -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
 
     # customer shops
