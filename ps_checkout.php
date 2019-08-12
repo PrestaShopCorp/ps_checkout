@@ -137,8 +137,7 @@ class ps_checkout extends PaymentModule
         // update merchant status only if the merchant onboarding is completed
         if ($merchantRepository->onbardingPaypalIsCompleted()
             && $merchantRepository->onbardingPsxIsCompleted()) {
-            $merchant = (new Merchant($merchantRepository->getMerchantId()));
-            $merchant->update();
+            (new Merchant($merchantRepository->getMerchantId()))->update();
         }
 
         Media::addJsDef(array(
