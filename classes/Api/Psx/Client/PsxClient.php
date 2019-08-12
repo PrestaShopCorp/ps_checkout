@@ -27,8 +27,9 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Client;
 
 use GuzzleHttp\Client;
-use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
 use PrestaShop\Module\PrestashopCheckout\Environment;
+use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
+use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 
 class PsxClient extends GenericClient
 {

@@ -71,12 +71,6 @@ class GenericClient
      */
     protected $route;
 
-    public function __construct(\Link $link, Client $client)
-    {
-        $this->setLink($link);
-        $this->setClient($client);
-    }
-
     /**
      * Wrapper of method post from guzzle client
      *
