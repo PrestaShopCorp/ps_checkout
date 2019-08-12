@@ -111,7 +111,7 @@ class MaaslandClient
         try {
             $response = $this->client->post($this->route, $options);
         } catch (RequestException $e) {
-            \PrestaShopLogger::addLog($e->getMessage());
+            \PrestaShopLogger::addLog($e->getMessage(), 3, null, null, null, true);
 
             if (!$e->hasResponse()) {
                 return false;
