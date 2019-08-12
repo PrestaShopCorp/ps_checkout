@@ -132,9 +132,13 @@ class ps_checkout extends PaymentModule
 
     public function getContent()
     {
-        // update merchant status
-        $merchant = (new Merchant((new MerchantRepository())->getMerchantId()));
-        $merchant->update();
+        $merchantRepository = new MerchantRepository();
+
+        // update merchant status only if the merchant onboarding is completed
+        if ($merchantRepository->onbardingPaypalIsCompleted()
+            && $merchantRepository->onbardingPsxIsCompleted()) {
+            (new Merchant($merchantRepository->getMerchantId()))->update();
+        }
 
         Media::addJsDef(array(
             'store' => json_encode((new StorePresenter($this, $this->context))->present()),
