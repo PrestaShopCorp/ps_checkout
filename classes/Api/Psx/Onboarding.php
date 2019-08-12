@@ -24,24 +24,25 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api;
+namespace PrestaShop\Module\PrestashopCheckout\Api\Psx;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Client\MaaslandClient;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PsxClient;
 
-/**
- * Handle dispute calls
- */
-class Dispute extends MaaslandClient
+class Onboarding extends PsxClient
 {
     /**
-     * Retrive the sum of disputes
+     * Collect merchant data during PSX onboarding process. These data are intended to be shared across PSX services.
      *
-     * @return array|bool
+     * @param array $data
+     *
+     * @return false|array false if good | array if errors returned
      */
-    public function countDispute()
+    public function setOnboardingMerchant(array $data)
     {
-        $this->setRoute('/payments/dispute/count');
+        $this->setRoute('/psx/onboarding/merchant');
 
-        return $this->post();
+        return $this->post([
+            'json' => $data,
+        ]);
     }
 }

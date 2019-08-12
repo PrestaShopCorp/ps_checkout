@@ -24,14 +24,12 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\MaaslandData;
-
-use PrestaShop\Module\PrestashopCheckout\MaaslandDatas\MaaslandDataValidation;
+namespace PrestaShop\Module\PrestashopCheckout\PsxData;
 
 /**
  * Check and set the merchant status
  */
-class MaaslandData
+class PsxData
 {
     const MAASLAND_DATA_ROW_NAME = 'massland_client_data';
 
@@ -66,7 +64,7 @@ class MaaslandData
             return true;
         }
 
-        $errors = (new MaaslandDataValidation())->validateData($dataToSave);
+        $errors = (new PsxDataValidation())->validateData($dataToSave);
 
         if (!empty($errors)) {
             return $errors;

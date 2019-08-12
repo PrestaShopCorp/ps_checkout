@@ -25,7 +25,7 @@
 */
 use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
 use PrestaShop\Module\PrestashopCheckout\Store\StoreManager;
-use PrestaShop\Module\PrestashopCheckout\Api\Onboarding;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {

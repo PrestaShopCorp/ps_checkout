@@ -24,30 +24,24 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api;
+namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Client\MaaslandClient;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
 
 /**
- * Handle request to maasland regarding the shop/merchant status
+ * Handle dispute calls
  */
-class Shop extends MaaslandClient
+class Dispute extends PaymentClient
 {
     /**
-     * Generate the paypal link to onboard merchant
+     * Retrive the sum of disputes
      *
-     * @param string $merchantId
-     *
-     * @return string|bool onboarding link
+     * @return array|bool
      */
-    public function getMerchantIntegration($merchantId)
+    public function countDispute()
     {
-        $this->setRoute('/payments/shop/get_merchant_integrations');
+        $this->setRoute('/payments/dispute/count');
 
-        return $this->post([
-            'json' => json_encode([
-                'merchant_id' => $merchantId,
-            ]),
-        ]);
+        return $this->post();
     }
 }

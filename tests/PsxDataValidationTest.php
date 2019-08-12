@@ -24,9 +24,9 @@
  *  International Registered Trademark & Property of PrestaShop SA
  **/
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\PrestashopCheckout\MaaslandDatas\MaaslandDataValidation;
+use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
 
-class MaaslandDataValidationTest extends TestCase
+class PsxDataValidationTest extends TestCase
 {
     /**
      * @dataProvider dataProvider
@@ -35,7 +35,7 @@ class MaaslandDataValidationTest extends TestCase
     {
         $this->assertSame(
             $resultExpect,
-            (new MaaslandDataValidation())->validateData($dataToValidate)
+            (new PsxDataValidation())->validateData($dataToValidate)
         );
     }
 
@@ -43,26 +43,26 @@ class MaaslandDataValidationTest extends TestCase
     {
         return array(
             array(
-                MaaslandDataValidation::DATA_ERROR,
+                PsxDataValidation::DATA_ERROR,
                 array(),
             ),
             array(
                 array(
-                    MaaslandDataValidation::FIRST_NAME,
-                    MaaslandDataValidation::LAST_NAME,
-                    MaaslandDataValidation::NATIONNALITY,
-                    MaaslandDataValidation::STREET,
-                    MaaslandDataValidation::CITY,
-                    MaaslandDataValidation::COUNTRY,
-                    MaaslandDataValidation::ZIPCODE,
-                    MaaslandDataValidation::TYPE,
-                    MaaslandDataValidation::PHONE,
-                    MaaslandDataValidation::WEBSITE,
-                    MaaslandDataValidation::GENDER,
-                    MaaslandDataValidation::SHOP_NAME,
-                    MaaslandDataValidation::COMPANY_SIZE,
-                    MaaslandDataValidation::CATEGORY,
-                    MaaslandDataValidation::SUB_CATEGORY,
+                    PsxDataValidation::FIRST_NAME,
+                    PsxDataValidation::LAST_NAME,
+                    PsxDataValidation::NATIONNALITY,
+                    PsxDataValidation::STREET,
+                    PsxDataValidation::CITY,
+                    PsxDataValidation::COUNTRY,
+                    PsxDataValidation::ZIPCODE,
+                    PsxDataValidation::TYPE,
+                    PsxDataValidation::PHONE,
+                    PsxDataValidation::WEBSITE,
+                    PsxDataValidation::GENDER,
+                    PsxDataValidation::SHOP_NAME,
+                    PsxDataValidation::COMPANY_SIZE,
+                    PsxDataValidation::CATEGORY,
+                    PsxDataValidation::SUB_CATEGORY,
                 ),
                 array(
                     'business_contact_first_name' => '',
@@ -84,7 +84,7 @@ class MaaslandDataValidationTest extends TestCase
             ),
             array(
                 array(
-                    MaaslandDataValidation::FIRST_NAME,
+                    PsxDataValidation::FIRST_NAME,
                 ),
                 array(
                     'business_contact_first_name' => '2ckKzzAH5F68FWWKQ9wieF1dW85bgTCQuer6OEpMtrJCTOLOnDk8gOESC7TjximRhZkOTPTWLL6Va0AwX3eTOSL8HJduJtsuH3qnxuq9Kedbl8xBt9rxm87v5x63GD6f',
@@ -106,7 +106,7 @@ class MaaslandDataValidationTest extends TestCase
             ),
             array(
                 array(
-                    MaaslandDataValidation::LAST_NAME,
+                    PsxDataValidation::LAST_NAME,
                 ),
                 array(
                     'business_contact_first_name' => 'Sue',
@@ -128,7 +128,7 @@ class MaaslandDataValidationTest extends TestCase
             ),
             array(
                 array(
-                    MaaslandDataValidation::NATIONNALITY,
+                    PsxDataValidation::NATIONNALITY,
                 ),
                 array(
                     'business_contact_first_name' => 'Sue',
@@ -150,7 +150,7 @@ class MaaslandDataValidationTest extends TestCase
             ),
             array(
                 array(
-                    MaaslandDataValidation::STREET,
+                    PsxDataValidation::STREET,
                 ),
                 array(
                     'business_contact_first_name' => 'Sue',
@@ -172,7 +172,7 @@ class MaaslandDataValidationTest extends TestCase
             ),
             array(
                 array(
-                    MaaslandDataValidation::CITY,
+                    PsxDataValidation::CITY,
                 ),
                 array(
                     'business_contact_first_name' => 'Sue',
@@ -194,7 +194,7 @@ class MaaslandDataValidationTest extends TestCase
             ),
             array(
                 array(
-                    MaaslandDataValidation::COUNTRY,
+                    PsxDataValidation::COUNTRY,
                 ),
                 array(
                     'business_contact_first_name' => 'Sue',
@@ -216,7 +216,7 @@ class MaaslandDataValidationTest extends TestCase
             ),
             array(
                 array(
-                    MaaslandDataValidation::ZIPCODE,
+                    PsxDataValidation::ZIPCODE,
                 ),
                 array(
                     'business_contact_first_name' => 'Sue',
@@ -238,7 +238,7 @@ class MaaslandDataValidationTest extends TestCase
             ),
             array(
                 array(
-                    MaaslandDataValidation::TYPE,
+                    PsxDataValidation::TYPE,
                 ),
                 array(
                     'business_contact_first_name' => 'Sue',
@@ -260,7 +260,7 @@ class MaaslandDataValidationTest extends TestCase
             ),
             array(
                 array(
-                    MaaslandDataValidation::PHONE,
+                    PsxDataValidation::PHONE,
                 ),
                 array(
                     'business_contact_first_name' => 'Sue',
@@ -282,7 +282,7 @@ class MaaslandDataValidationTest extends TestCase
             ),
             array(
                 array(
-                    MaaslandDataValidation::WEBSITE,
+                    PsxDataValidation::WEBSITE,
                 ),
                 array(
                     'business_contact_first_name' => 'Sue',
@@ -304,7 +304,7 @@ class MaaslandDataValidationTest extends TestCase
             ),
             array(
                 array(
-                    MaaslandDataValidation::GENDER,
+                    PsxDataValidation::GENDER,
                 ),
                 array(
                     'business_contact_first_name' => 'Sue',
@@ -326,7 +326,7 @@ class MaaslandDataValidationTest extends TestCase
             ),
             array(
                 array(
-                    MaaslandDataValidation::SHOP_NAME,
+                    PsxDataValidation::SHOP_NAME,
                 ),
                 array(
                     'business_contact_first_name' => 'Sue',
@@ -348,7 +348,7 @@ class MaaslandDataValidationTest extends TestCase
             ),
             array(
                 array(
-                    MaaslandDataValidation::COMPANY_SIZE,
+                    PsxDataValidation::COMPANY_SIZE,
                 ),
                 array(
                     'business_contact_first_name' => 'Sue',
@@ -370,7 +370,7 @@ class MaaslandDataValidationTest extends TestCase
             ),
             array(
                 array(
-                    MaaslandDataValidation::CATEGORY,
+                    PsxDataValidation::CATEGORY,
                 ),
                 array(
                     'business_contact_first_name' => 'Sue',
@@ -392,7 +392,7 @@ class MaaslandDataValidationTest extends TestCase
             ),
             array(
                 array(
-                    MaaslandDataValidation::SUB_CATEGORY,
+                    PsxDataValidation::SUB_CATEGORY,
                 ),
                 array(
                     'business_contact_first_name' => 'Sue',

@@ -28,7 +28,7 @@ use GuzzleHttp\Message\Response;
 use GuzzleHttp\Stream\Stream;
 use GuzzleHttp\Subscriber\Mock;
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\PrestashopCheckout\Api\Order;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 
 class Link
 {
@@ -50,7 +50,7 @@ class PrestaShopLogger
     }
 }
 
-class MaaslandCreateOrderTest extends TestCase
+class PaymentCreateOrderTest extends TestCase
 {
     public function testCreateOrderDefaultScenario()
     {

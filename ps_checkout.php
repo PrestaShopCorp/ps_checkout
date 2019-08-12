@@ -26,7 +26,7 @@
 use Ramsey\Uuid\Uuid;
 use PrestaShop\Module\PrestashopCheckout\Refund;
 use PrestaShop\Module\PrestashopCheckout\Merchant;
-use PrestaShop\Module\PrestashopCheckout\Api\Order;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Environment;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;

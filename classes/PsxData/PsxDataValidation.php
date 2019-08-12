@@ -24,12 +24,12 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\MaaslandDatas;
+namespace PrestaShop\Module\PrestashopCheckout\PsxData;
 
 /**
  * Check and set the merchant status
  */
-class MaaslandDataValidation
+class PsxDataValidation
 {
     const NOT_CORRECT = 'is not correct';
     const DATA_ERROR = 'Data can\'t be empty';
@@ -103,8 +103,8 @@ class MaaslandDataValidation
             $errors[] = self::PHONE;
         }
 
-        if (!filter_var($data['business_website'], FILTER_VALIDATE_URL) 
-            || strlen($data['business_website']) < 1 
+        if (!filter_var($data['business_website'], FILTER_VALIDATE_URL)
+            || strlen($data['business_website']) < 1
             || strlen($data['business_website']) > 255
         ) {
             $errors[] = self::WEBSITE;

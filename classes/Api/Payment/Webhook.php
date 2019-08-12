@@ -24,14 +24,14 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api;
+namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Client\MaaslandClient;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
 
 /**
  * Handle Webhook requests
  */
-class Webhook extends MaaslandClient
+class Webhook extends PaymentClient
 {
     /**
      * Tells if the webhook came from the PSL
