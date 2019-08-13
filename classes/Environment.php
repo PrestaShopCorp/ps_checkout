@@ -52,6 +52,13 @@ class Environment
      */
     private $maaslandUrl = 'https://api-live-checkout.psessentials.net/';
 
+    /**
+     * Url api Psx (production live by default)
+     *
+     * @var string
+     */
+    private $psxUrl = 'https://api-psx.psessentials.net/';
+
     public function __construct()
     {
         // if there is a custom config
@@ -98,6 +105,7 @@ class Environment
     {
         $this->setPaypalClientId('AWZMaFOTMPjG2oXFw1GqSp1hlrlFUTupuNqX0A0NJA_df0rcGQbyD9VwNAudXiRcAbSaePPPJ4FvgTqi');
         $this->setMaaslandUrl('https://api-sandbox-checkout.psessentials.net/');
+        $this->setPsxUrl('https://api-psx.psessentials-integration.net/');
     }
 
     /**
@@ -110,12 +118,21 @@ class Environment
         $this->setFirebaseApiKey($conf->integration->firebaseIntegrationApiKey);
         $this->setPaypalClientId('AXjYFXWyb4xJCErTUDiFkzL0Ulnn-bMm4fal4G-1nQXQ1ZQxp06fOuE7naKUXGkq2TZpYSiI9xXbs4eo');
         $this->setMaaslandUrl($conf->integration->maaslandLiveUrl);
+        $this->setPsxUrl($conf->integration->psxSandboxUrl);
 
         if (false === $this->isLive()) {
             $this->setFirebaseApiKey($conf->integration->firebaseIntegrationApiKey);
             $this->setPaypalClientId($conf->integration->paypalClientIdIntegrationSandbox);
             $this->setMaaslandUrl($conf->integration->maaslandSandboxUrl);
         }
+    }
+
+    /**
+     * getter for psxUrl
+     */
+    public function getPsXUrl()
+    {
+        return $this->psxUrl;
     }
 
     /**
@@ -140,6 +157,16 @@ class Environment
     public function getMaaslandUrl()
     {
         return $this->maaslandUrl;
+    }
+
+    /**
+     * setter for psxUrl
+     *
+     * @param string $psxUrl
+     */
+    private function setPsxUrl($psxUrl)
+    {
+        $this->psxUrl = $psxUrl;
     }
 
     /**

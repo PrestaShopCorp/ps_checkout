@@ -26,7 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Onboarding;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\MerchantRepository;
 use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface;
 

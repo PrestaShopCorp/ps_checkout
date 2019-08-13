@@ -24,66 +24,52 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout;
-
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
+namespace PrestaShop\Module\PrestashopCheckout\PsxData;
 
 /**
- * Allow to instantiate a paypal order
+ * Check and set the merchant status
  */
-class PaypalOrder
+class PsxData
 {
-    /**
-     * @var array
-     */
-    private $order = null;
-
-    public function __construct(string $id)
-    {
-        $this->loadOrder($id);
-    }
+    const MAASLAND_DATA_ROW_NAME = 'massland_client_data';
 
     /**
-     * Load paypal order data
+     * Get the MAASLAND_DATA_ROW_NAME data and return an array
+     *
+     * @return array|false false when doesn't exist
      */
-    private function loadOrder($id)
+    public function get()
     {
-        $order = (new Order(\Context::getContext()->link))->fetch($id);
+        $data = \Configuration::get(self::MAASLAND_DATA_ROW_NAME);
 
-        if (false === $order) {
+        if (false === $data) {
             return false;
         }
 
-        $this->setOrder($order);
+        return json_decode($data, true);
     }
 
     /**
-     * Getter the intent of an order (CAPTURE or AUTHORIZE)
+     * Save the datas by updating or inserting the data to save
      *
-     * @return string intent of the order
+     * @param array $dataToSave
+     *
+     * @return bool|array array if data errors
      */
-    public function getOrderIntent()
+    public function save($dataToSave)
     {
-        return $this->order['intent'];
-    }
+        $existingData = $this->get();
 
-    /**
-     * getter for the order
-     *
-     * @return array
-     */
-    public function getOrder()
-    {
-        return $this->order;
-    }
+        if ($existingData === $dataToSave) {
+            return true;
+        }
 
-    /**
-     * setter for order
-     *
-     * @param array $order
-     */
-    public function setOrder($order)
-    {
-        $this->order = $order;
+        $errors = (new PsxDataValidation())->validateData($dataToSave);
+
+        if (!empty($errors)) {
+            return $errors;
+        }
+
+        return (bool) \Configuration::updateValue(self::MAASLAND_DATA_ROW_NAME, json_encode($dataToSave));
     }
 }

@@ -24,55 +24,18 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api\Client;
+namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
 use PrestaShop\Module\PrestashopCheckout\Environment;
+use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
+use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 
 /**
  * Construct the client used to make call to maasland
  */
-class MaaslandClient
+class PaymentClient extends GenericClient
 {
-    /**
-     * Guzzle Client
-     *
-     * @var Client
-     */
-    protected $client;
-
-    /**
-     * Class Link in order to generate module link
-     *
-     * @var \Link
-     */
-    protected $link;
-
-    /**
-     * Enable or disable the catch of Maasland 400 error
-     * If set to false, you will not be able to catch the error of maasland
-     * guzzle will show a different error message.
-     *
-     * @var bool
-     */
-    protected $catchExceptions = true;
-
-    /**
-     * Set how long guzzle will wait a response before end it up
-     *
-     * @var int
-     */
-    protected $timeout = 10;
-
-    /**
-     * Api route
-     *
-     * @var string
-     */
-    protected $route;
-
     public function __construct(\Link $link, Client $client = null)
     {
         $this->setLink($link);
@@ -100,31 +63,6 @@ class MaaslandClient
     }
 
     /**
-     * Wrapper of method post from guzzle client
-     *
-     * @param array $options payload
-     *
-     * @return array|bool return response or false if no response
-     */
-    protected function post(array $options = [])
-    {
-        try {
-            $response = $this->client->post($this->route, $options);
-        } catch (RequestException $e) {
-            \PrestaShopLogger::addLog($e->getMessage(), 3, null, null, null, true);
-
-            if (!$e->hasResponse()) {
-                return false;
-            }
-            $response = $e->getResponse();
-        }
-
-        $data = json_decode($response->getBody(), true);
-
-        return isset($data) ? $data : false;
-    }
-
-    /**
      * Retrieve the bn code - if on ready send an empty bn code
      * maasland will replace it with the bn code for ready
      *
@@ -139,55 +77,5 @@ class MaaslandClient
         }
 
         return $bnCode;
-    }
-
-    /**
-     * Setter for route
-     *
-     * @param string $route
-     */
-    protected function setRoute($route)
-    {
-        $this->route = $route;
-    }
-
-    /**
-     * Setter for link
-     *
-     * @param \Link $link
-     */
-    protected function setLink(\Link $link)
-    {
-        $this->link = $link;
-    }
-
-    /**
-     * Setter for client
-     *
-     * @param Client $client
-     */
-    protected function setClient(Client $client)
-    {
-        $this->client = $client;
-    }
-
-    /**
-     * Setter for timeout
-     *
-     * @param int $timeout
-     */
-    protected function setTimeout($timeout)
-    {
-        $this->timeout = $timeout;
-    }
-
-    /**
-     * Setter for exceptions mode
-     *
-     * @param bool $bool
-     */
-    protected function setExceptionsMode($bool)
-    {
-        $this->catchExceptions = $bool;
     }
 }

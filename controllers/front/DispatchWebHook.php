@@ -29,7 +29,7 @@ use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 use PrestaShop\Module\PrestashopCheckout\WebHookNock;
 use PrestaShop\Module\PrestashopCheckout\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\UnauthorizedException;
-use PrestaShop\Module\PrestashopCheckout\Api\Webhook;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook;
 
 class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontController
 {

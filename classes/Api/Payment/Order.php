@@ -24,14 +24,14 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api;
+namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Client\MaaslandClient;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
 
 /**
  * Handle order requests
  */
-class Order extends MaaslandClient
+class Order extends PaymentClient
 {
     /**
      * Create order to paypal api

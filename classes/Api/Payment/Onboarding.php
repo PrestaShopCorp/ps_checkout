@@ -24,14 +24,14 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api;
+namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Client\MaaslandClient;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
 
 /**
  * Handle onbarding request
  */
-class Onboarding extends MaaslandClient
+class Onboarding extends PaymentClient
 {
     /**
      * Generate the paypal link to onboard merchant
