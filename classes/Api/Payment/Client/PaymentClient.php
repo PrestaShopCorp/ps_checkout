@@ -27,7 +27,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
 use GuzzleHttp\Client;
-use PrestaShop\Module\PrestashopCheckout\Environment;
+use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 
@@ -43,7 +43,7 @@ class PaymentClient extends GenericClient
         // Client can be provided for tests
         if (null === $client) {
             $client = new Client(array(
-                'base_url' => (new Environment())->getMaaslandUrl(),
+                'base_url' => (new PaymentEnv())->getPaymentApiUrl(),
                 'defaults' => array(
                     'timeout' => $this->timeout,
                     'exceptions' => $this->catchExceptions,

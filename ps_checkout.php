@@ -27,7 +27,6 @@ use Ramsey\Uuid\Uuid;
 use PrestaShop\Module\PrestashopCheckout\Refund;
 use PrestaShop\Module\PrestashopCheckout\Merchant;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
-use PrestaShop\Module\PrestashopCheckout\Environment;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
@@ -36,6 +35,7 @@ use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 use PrestaShop\Module\PrestashopCheckout\Database\TableManager;
 use PrestaShop\Module\PrestashopCheckout\GenerateJsonPaypalOrder;
 use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenter;
+use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -180,7 +180,7 @@ class ps_checkout extends PaymentModule
 
         $this->context->smarty->assign(array(
             'merchantId' => $merchantRepository->getMerchantId(),
-            'paypalClientId' => (new Environment())->getPaypalClientId(),
+            'paypalClientId' => (new PaypalEnv())->getPaypalClientId(),
             'clientToken' => $paypalOrder['client_token'],
             'paypalOrderId' => $paypalOrder['id'],
             'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true),

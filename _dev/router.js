@@ -2,8 +2,6 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import store from './store';
 
-import Signup from '@/pages/Signup.vue';
-import Login from '@/pages/Login.vue';
 import Customize from '@/pages/Customize.vue';
 import Accounts from '@/pages/Accounts.vue';
 import Activity from '@/pages/Activity.vue';
@@ -22,16 +20,6 @@ const router = new Router({
       path: '/authentication',
       name: 'Authentication',
       component: Accounts,
-    },
-    {
-      path: '/authentication/login',
-      name: 'Login',
-      component: Login,
-    },
-    {
-      path: '/authentication/signup',
-      name: 'Signup',
-      component: Signup,
     },
     {
       path: '/customize',

@@ -28,12 +28,23 @@ namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
 use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\Environment\SsoEnv;
 
 /**
  * Construct the firebase module
  */
 class FirebaseModule implements StorePresenterInterface
 {
+    /**
+     * @var \Context
+     */
+    private $context;
+
+    public function __construct(\Context $context)
+    {
+        $this->context = $context;
+    }
+
     /**
      * Present the paypal module (vuex)
      *
@@ -49,10 +60,26 @@ class FirebaseModule implements StorePresenterInterface
                 'idToken' => $idToken,
                 'localId' => \Configuration::get('PS_PSX_FIREBASE_LOCAL_ID'),
                 'refreshToken' => \Configuration::get('PS_PSX_FIREBASE_REFRESH_TOKEN'),
+                'onboardingLinkSignIn' => $this->getOnboardingLink('login'),
+                'onboardingLinkCreateAccount' => $this->getOnboardingLink('createaccount'),
                 'onboardingCompleted' => !empty($idToken),
             ),
         );
 
         return $firebaseModule;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param string $mode can be signin or createaccount
+     *
+     * @return string SSO url to onboard the merchant on psx
+     */
+    private function getOnboardingLink($mode)
+    {
+        $callbackUrl = $this->context->link->getAdminLink('AdminPsxOnboardingPrestashopCheckout');
+
+        return (new SsoEnv())->getSsoUrl().'en/'.$mode.'?continue='.$callbackUrl;
     }
 }

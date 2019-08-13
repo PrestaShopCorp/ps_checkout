@@ -23,34 +23,38 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
-
-namespace PrestaShop\Module\PrestashopCheckout\Api\Client;
-
-use GuzzleHttp\Client;
-use PrestaShop\Module\PrestashopCheckout\PsxEnv;
+use PrestaShop\Module\PrestashopCheckout\Merchant;
 use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
-use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 
-class PsxClient extends GenericClient
+class AdminPsxOnboardingPrestashopCheckoutController extends ModuleAdminController
 {
-    public function __construct(\Link $link, Client $client)
+    public function init()
     {
-        $this->setLink($link);
+        $idToken = Tools::getValue('idToken');
+        $refreshToken = Tools::getValue('refreshToken');
 
-        $client = new Client(array(
-            'base_url' => (new PsxEnv())->getPsxApiUrl(),
-            'defaults' => array(
-                'timeout' => $this->getTimeout(),
-                'exceptions' => $this->getExceptionsMode(),
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                    'Authorization' => 'Bearer ' . (new FirebaseClient())->getToken(),
-                    'Shop-Id' => \Configuration::get('PS_CHECKOUT_SHOP_UUID_V4'),
-                ],
-            ),
-        ));
+        if (empty($idToken)) {
+            throw new PrestaShopException('idToken cannot be empty');
+        }
 
-        $this->setClient($client);
+        if (empty($refreshToken)) {
+            throw new PrestaShopException('refreshToken cannot be empty');
+        }
+
+        // TODO: Save Firebase token and refreshToken
+        // waiting SSO to add parameter in the callback like the refresh token
+        $firebase = new FirebaseClient();
+        $user = $firebase->signInWithToken($idToken);
+
+        Tools::redirect(
+            $this->context->link->getAdminLink(
+                'AdminModules',
+                true,
+                array(),
+                array(
+                    'configure' => 'ps_checkout',
+                )
+            )
+        );
     }
 }

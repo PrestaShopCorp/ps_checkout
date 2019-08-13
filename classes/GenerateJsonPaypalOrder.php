@@ -94,7 +94,7 @@ class GenerateJsonPaypalOrder
             $item = [];
 
             $item['name'] = $value['name'];
-            $item['description'] = strip_tags($value['description_short']);
+            $item['description'] = substr(strip_tags($value['description_short']), 0, 127);
             $item['sku'] = $value['unity'];
             $item['unit_amount']['currency_code'] = $params['currency']['iso_code'];
             $item['unit_amount']['value'] = $value['total'] / $value['quantity'];
