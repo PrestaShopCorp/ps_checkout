@@ -64,7 +64,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         try {
             $signIn = $firebase->signInWithEmailAndPassword($email, $password);
         } catch (\Exception $e) {
-            PrestaShopLogger::addLog(sprintf($this->l('Failed login with Firebase: %s'), $e->getMessage()), 1);
+            PrestaShopLogger::addLog(sprintf($this->l('Failed login with Firebase: %s'), $e->getMessage()), 1, null, null, null, true);
             $this->ajaxDie(
                 json_encode(
                     array(
@@ -92,7 +92,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         try {
             $signUp = $firebase->signUpWithEmailAndPassword($email, $password);
         } catch (\Exception $e) {
-            PrestaShopLogger::addLog(sprintf($this->l('Failed signup with Firebase: %s'), $e->getMessage()), 1);
+            PrestaShopLogger::addLog(sprintf($this->l('Failed signup with Firebase: %s'), $e->getMessage()), 1, null, null, null, true);
             $this->ajaxDie(
                 json_encode(
                     array(
