@@ -2,6 +2,7 @@
 
 FILEPATH=$1
 ENV=$2
+SHOP=$3
 
 gcloud container clusters get-credentials --project="prestashop-ready-$ENV" --zone="europe-west1-d" "prestashop-ready-cluster"
 
@@ -21,23 +22,4 @@ function deploy() {
     fi
 }
 
-if [[ "$ENV" == "prod" ]]; then
-  echo "On prod"
-#    deploy $(kubectl get pods --namespace=$ENV-shops -l shop=dep-mugshot -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
-#    deploy $(kubectl get pods --namespace=$ENV-shops -l shop=dep-kjffkjjhjgklgjh -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
-#
-#    # customer shops
-#    deploy $(kubectl get pods --namespace=$ENV-shops -l shop=dep-art-et-signaletique -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
-#    deploy $(kubectl get pods --namespace=$ENV-shops -l shop=dep-la-vie-tout-en-bio -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
-#    deploy $(kubectl get pods --namespace=$ENV-shops -l shop=dep-britneystore -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
-#    deploy $(kubectl get pods --namespace=$ENV-shops -l shop=dep-ah5-sailing -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
-#    deploy $(kubectl get pods --namespace=$ENV-shops -l shop=dep-sweetaxo -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
-#    deploy $(kubectl get pods --namespace=$ENV-shops -l shop=dep-leeroycustomshop -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
-elif [[ "$ENV" == "qa" ]]; then
-    deploy $(kubectl get pods --namespace=$ENV-shops -l shop=dep-checkout -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
-else
-    echo "BAD ENVIRONMENT"
-    exit 1
-fi
-
-
+deploy $(kubectl get pods --namespace=$ENV-shops -l shop=dep-$SHOP -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')

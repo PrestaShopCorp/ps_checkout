@@ -12,27 +12,27 @@ steps:
 
 - name: gcr.io/cloud-builders/gsutil
   args: ['cp', 'gs://ps_checkout_${_ENVIRONMENT}/maaslandConf.json', '.']
-  
+
 - name: 'gcr.io/$PROJECT_ID/zip-tool'
   entrypoint: sh
-  args: 
+  args:
     - '-c'
     - 'mkdir -p /ps_checkout;
        cp -r /workspace/* /ps_checkout;
        zip ${_RELEASE_NAME}_${SHORT_SHA}_ps_checkout.zip -r /ps_checkout/ > /dev/null 2>&1;'
-  
+
 - name: gcr.io/cloud-builders/gsutil
   args:
     - 'cp'
     - '-r'
     - '/workspace/${_RELEASE_NAME}_${SHORT_SHA}_ps_checkout.zip'
     - 'gs://ps_checkout_${_ENVIRONMENT}/'
-    
+
 - name: 'gcr.io/cloud-builders/kubectl'
   entrypoint: sh
-  args: 
+  args:
     - '-c'
-    - 'bash deploy.sh ${_RELEASE_NAME}_${SHORT_SHA}_ps_checkout.zip ${_ENVIRONMENT}'
+    - 'bash deploy.sh ${_RELEASE_NAME}_${SHORT_SHA}_ps_checkout.zip ${_ENVIRONMENT} ${_SHOP}'
   env:
     - 'CLOUDSDK_COMPUTE_ZONE=europe-west1-d'
     - 'CLOUDSDK_CONTAINER_CLUSTER=prestashop-ready-cluster'
