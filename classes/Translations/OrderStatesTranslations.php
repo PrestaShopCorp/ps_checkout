@@ -32,28 +32,64 @@ class OrderStatesTranslations
     const PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT = array(
         'en' => 'Waiting for PayPal payment',
         'fr' => 'En attente de paiement par PayPal',
+        'es' => 'Esperando el pago con PayPal',
+        'it' => 'In attesa di pagamento con PayPal',
+        'nl' => 'Wachten op PayPal-betaling',
+        'de' => 'Warten auf PayPal-Zahlung',
+        'pl' => 'Oczekiwanie na płatność PayPal',
+        'pt' => 'Aguardando pagamento pelo PayPal',
     );
     const PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT = array(
         'en' => 'Waiting for Credit Card Payment',
         'fr' => 'En attente de paiement par Carte de Crédit',
+        'es' => 'Esperando el pago con tarjeta de crédito',
+        'it' => 'In attesa di pagamento con carta di credito',
+        'nl' => 'Wachten op creditcard-betaling',
+        'de' => 'Warten auf Kreditkartenzahlung',
+        'pl' => 'Oczekiwanie na płatność kartą kredytową',
+        'pt' => 'Aguardando pagamento por cartão de crédito',
     );
     const PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT = array(
         'en' => 'Waiting for Local Payment Method Payment',
         'fr' => 'En attente de paiement par moyen de paiement local',
+        'es' => 'Esperando el pago con un método de pago local',
+        'it' => 'In attesa di pagamento con metodo di pagamento locale',
+        'nl' => 'Wachten op nlaatselijke betaling',
+        'de' => 'Warten auf Zahlung per lokaler Zahlungsmethode',
+        'pl' => 'Oczekiwanie na płatność lokalnym środkiem płatności',
+        'pt' => 'Aguardando pagamento pelo método de pagamento local',
     );
     const PS_CHECKOUT_STATE_AUTHORIZED = array(
         'en' => 'Authorized. To be captured by merchant',
         'fr' => 'Autorisation. A capturer par le marchand',
+        'es' => 'Autorizado. El vendedor lo capturará',
+        'it' => 'Autorizzato. Sarà acquisito dal commerciante',
+        'nl' => 'Goedgekeurd. Door retailer te registreren.',
+        'de' => 'Autorisiert. Wird von Händler erfasst.',
+        'pl' => 'Pomyślna autoryzacja. Transfer do przeprowadzenia przez sklep',
+        'pt' => 'Autorizado. A ser capturado pelo comerciante',
     );
     const PS_CHECKOUT_STATE_PARTIAL_REFUND = array(
         'en' => 'Partial refund',
         'fr' => 'Remboursement partiel',
+        'es' => 'Reembolso parcial',
+        'it' => 'Rimborso parziale',
+        'nl' => 'Gedeeltelijke terugbetaling',
+        'de' => 'Teilweise Rückerstattung',
+        'pl' => 'Częściowy zwrot',
+        'pt' => 'Reembolso parcial',
     );
     const PS_CHECKOUT_STATE_WAITING_CAPTURE = array(
         'en' => 'Waiting capture',
         'fr' => 'En attente de capture',
+        'es' => 'Esperando la captura',
+        'it' => 'In attesa di essere acquisito',
+        'nl' => 'Wachten op registratie',
+        'de' => 'Warten auf Erfassung',
+        'pl' => 'Oczekiwanie na transfer',
+        'pt' => 'Aguardando a captura',
     );
-
+    
     /**
      * Get the States Translations for the table order_state_lang
      *
