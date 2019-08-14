@@ -4,8 +4,8 @@
 ### PrestaShop Module ###
 config.xml
 
-### Temporary config ###
-/maaslandConf.json
+### Ignore integration settings ###
+.env.test
 
 ### Vuejs ignore build files ###
 /views/js/index.js

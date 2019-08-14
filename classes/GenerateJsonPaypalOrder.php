@@ -93,9 +93,9 @@ class GenerateJsonPaypalOrder
         foreach ($params['products'] as $product => $value) {
             $item = [];
 
-            $item['name'] = $value['name'];
-            $item['description'] = strip_tags($value['description_short']);
-            $item['sku'] = $value['unity'];
+            $item['name'] = substr($value['name'], 0, 127); // truncate due to paypal limitations
+            $item['description'] = substr(strip_tags($value['description_short']), 0, 127); // truncate due to paypal limitations
+            $item['sku'] = substr($value['unity'], 0, 127); // truncate due to paypal limitations
             $item['unit_amount']['currency_code'] = $params['currency']['iso_code'];
             $item['unit_amount']['value'] = $value['total'] / $value['quantity'];
             $item['tax']['currency_code'] = $params['currency']['iso_code'];
@@ -137,7 +137,7 @@ class GenerateJsonPaypalOrder
                     ],
                     'discount' => [
                         'currency_code' => $params['currency']['iso_code'],
-                        'value' => $this->getDiscountValue($params['cart']),
+                        'value' => abs($params['cart']['totals']['total']['amount'] - $totalProductsWithoutTax - $totalTax - $params['cart']['subtotals']['shipping']['amount']),
                     ],
                 ],
             ],
@@ -200,6 +200,8 @@ class GenerateJsonPaypalOrder
 
     /**
      * Get the amount of discount applied to the cart
+     * Not used anymore - Keep it just in case if there is an another rounding issue (from prestashop)
+     * Bad discount value if amount is like 0,35 or 0,45 and if there is a 10% discount
      *
      * @param array $cart
      *

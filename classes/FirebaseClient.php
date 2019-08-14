@@ -28,6 +28,7 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use PrestaShop\Module\PrestashopCheckout\Environment\FirebaseEnv;
 
 /**
  * Handle firebase signIn/signUp
@@ -74,7 +75,7 @@ class FirebaseClient
         if (isset($params['api_key'])) {
             $this->apiKey = $params['api_key'];
         } else {
-            $this->apiKey = (new Environment())->getFirebaseApiKey();
+            $this->apiKey = (new FirebaseEnv())->getFirebaseApiKey();
         }
 
         $this->client = new Client(
@@ -95,48 +96,6 @@ class FirebaseClient
     }
 
     /**
-     * Auth user with email & password
-     *
-     * @see https://firebase.google.com/docs/reference/rest/auth/#section-sign-in-email-password Firebase documentation
-     *
-     * @param string $email
-     * @param string $password
-     *
-     * @return object
-     */
-    public function signInWithEmailAndPassword($email, $password)
-    {
-        return $this->post('verifyPassword', array(
-            'json' => array(
-                'email' => $email,
-                'password' => $password,
-                'returnSecureToken' => true,
-            ),
-        ));
-    }
-
-    /**
-     * Create user with email & password
-     *
-     * @see https://firebase.google.com/docs/reference/rest/auth#section-create-email-password Firebase documentation
-     *
-     * @param string $email
-     * @param string $password
-     *
-     * @return object
-     */
-    public function signUpWithEmailAndPassword($email, $password)
-    {
-        return $this->post('signupNewUser', array(
-            'json' => array(
-                'email' => $email,
-                'password' => $password,
-                'returnSecureToken' => true,
-            ),
-        ));
-    }
-
-    /**
      * Get user details related to API token in order to authentify him
      *
      * @see https://firebase.google.com/docs/reference/rest/auth/#section-get-account-info Firebase documentation
@@ -153,7 +112,7 @@ class FirebaseClient
             ),
         ));
 
-        return $response->users;
+        return current($response['users']);
     }
 
     /**

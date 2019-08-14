@@ -23,7 +23,6 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
-use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
 use PrestaShop\Module\PrestashopCheckout\Store\StoreManager;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 
@@ -52,62 +51,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessUpdatePaymentMode()
     {
         Configuration::updateValue('PS_CHECKOUT_MODE', Tools::getValue('paymentMode'));
-    }
-
-    public function ajaxProcessSignIn()
-    {
-        $email = Tools::getValue('email');
-        $password = Tools::getValue('password');
-
-        $firebase = new FirebaseClient();
-
-        try {
-            $signIn = $firebase->signInWithEmailAndPassword($email, $password);
-        } catch (\Exception $e) {
-            PrestaShopLogger::addLog(sprintf($this->l('Failed login with Firebase: %s'), $e->getMessage()), 1, null, null, null, true);
-            $this->ajaxDie(
-                json_encode(
-                    array(
-                        'error' => true,
-                        'message' => $e->getMessage(),
-                    )
-                )
-            );
-
-            return false;
-        }
-
-        $this->saveFirebaseAccountIfNoErrors($signIn);
-
-        $this->ajaxDie(json_encode($signIn));
-    }
-
-    public function ajaxProcessSignUp()
-    {
-        $email = Tools::getValue('email');
-        $password = Tools::getValue('password');
-
-        $firebase = new FirebaseClient();
-
-        try {
-            $signUp = $firebase->signUpWithEmailAndPassword($email, $password);
-        } catch (\Exception $e) {
-            PrestaShopLogger::addLog(sprintf($this->l('Failed signup with Firebase: %s'), $e->getMessage()), 1, null, null, null, true);
-            $this->ajaxDie(
-                json_encode(
-                    array(
-                        'error' => true,
-                        'message' => $e->getMessage(),
-                    )
-                )
-            );
-
-            return false;
-        }
-
-        $this->saveFirebaseAccountIfNoErrors($signUp);
-
-        $this->ajaxDie(json_encode($signUp));
     }
 
     public function ajaxProcessGetOnboardingLink()

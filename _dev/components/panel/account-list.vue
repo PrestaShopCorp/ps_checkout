@@ -25,10 +25,8 @@
             </div>
             <div v-if="!isReady" class="col-12 col-sm-4 col-md-3 col-lg-3 m-auto">
               <div class="text-center float-right" v-if="firebaseStatusAccount === false">
-                <router-link to="/authentication/login" class="mr-4">
-                  <b>{{ $t('panel.account-list.logIn') }}</b>
-                </router-link>
-                <a href="#" class="btn btn-primary-reverse btn-outline-primary light-button mb-1">
+                <a :href="ssoOnboardingLinkSignin" class="mr-4"><b>{{ $t('panel.account-list.logIn') }}</b></a>
+                <a :href="ssoOnboardingLinkCreateAccount" class="btn btn-primary-reverse btn-outline-primary light-button mb-1">
                   {{ $t('panel.account-list.createAccount') }}
                 </a>
               </div>
@@ -88,8 +86,11 @@
       paypalStatusAccount() {
         return this.$store.state.paypal.onboardingCompleted;
       },
-      paypalOnboardingLink() {
-        return this.$store.state.paypal.paypalOnboardingLink;
+      ssoOnboardingLinkSignin() {
+        return this.$store.state.firebase.onboardingLinkSignIn;
+      },
+      ssoOnboardingLinkCreateAccount() {
+        return this.$store.state.firebase.onboardingLinkCreateAccount;
       },
     },
     methods: {
