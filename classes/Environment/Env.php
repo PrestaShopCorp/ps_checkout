@@ -52,10 +52,10 @@ class Env
         $dotenv = new Dotenv();
 
         try {
-            $dotenv->load(_PS_MODULE_DIR_.'ps_checkout/.env.test');
+            $dotenv->load(_PS_MODULE_DIR_ . 'ps_checkout/.env.test');
             $this->setName('test');
         } catch (\Throwable $th) {
-            $dotenv->load(_PS_MODULE_DIR_.'ps_checkout/.env');
+            $dotenv->load(_PS_MODULE_DIR_ . 'ps_checkout/.env');
             $this->setName('prod');
         }
 

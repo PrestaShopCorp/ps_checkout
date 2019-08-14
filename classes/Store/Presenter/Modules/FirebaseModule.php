@@ -80,6 +80,6 @@ class FirebaseModule implements StorePresenterInterface
     {
         $callbackUrl = $this->context->link->getAdminLink('AdminPsxOnboardingPrestashopCheckout');
 
-        return (new SsoEnv())->getSsoUrl().'en/'.$mode.'?continue='.$callbackUrl;
+        return (new SsoEnv())->getSsoUrl() . 'en/' . $mode . '?continue=' . $callbackUrl;
     }
 }
