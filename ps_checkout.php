@@ -81,7 +81,7 @@ class ps_checkout extends PaymentModule
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
 
-        $this->module_key = '';
+        $this->module_key = '82bc76354cfef947e06f1cc78f5efe2e';
 
         $this->bootstrap = true;
 
