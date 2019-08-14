@@ -89,7 +89,7 @@ class OrderStatesTranslations
         'pl' => 'Oczekiwanie na transfer',
         'pt' => 'Aguardando a captura',
     );
-    
+
     /**
      * Get the States Translations for the table order_state_lang
      *
