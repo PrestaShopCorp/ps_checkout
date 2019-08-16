@@ -26,7 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Environment;
 
-use Symfony\Component\Dotenv\Dotenv;
+use Dotenv\Dotenv;
 
 /**
  * Get the current environment used: prod or test // sandbox or live
@@ -49,13 +49,13 @@ class Env
 
     public function __construct()
     {
-        $dotenv = new Dotenv();
-
-        try {
-            $dotenv->load(_PS_MODULE_DIR_ . 'ps_checkout/.env.test');
+        try { // try to load test environment
+            $dotenv = Dotenv::create(_PS_MODULE_DIR_ . 'ps_checkout/', '.env.test');
+            $dotenv->load();
             $this->setName('test');
-        } catch (\Throwable $th) {
-            $dotenv->load(_PS_MODULE_DIR_ . 'ps_checkout/.env');
+        } catch (\Throwable $th) { // if no test environment available, use production env
+            $dotenv = Dotenv::create(_PS_MODULE_DIR_ . 'ps_checkout/', '.env');
+            $dotenv->load();
             $this->setName('prod');
         }
 
