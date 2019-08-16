@@ -11,7 +11,7 @@ steps:
   args: ['install']
 
 - name: gcr.io/cloud-builders/gsutil
-  args: ['cp', 'gs://ps_checkout_${_ENVIRONMENT}/maaslandConf.json', '.']
+  args: ['cp', 'gs://ps_checkout_${_ENVIRONMENT}/.env.test', '.']
 
 - name: 'gcr.io/$PROJECT_ID/zip-tool'
   entrypoint: sh
@@ -19,7 +19,7 @@ steps:
     - '-c'
     - 'mkdir -p /ps_checkout;
        cp -r /workspace/* /ps_checkout;
-       zip ${_RELEASE_NAME}_${SHORT_SHA}_ps_checkout.zip -r /ps_checkout/ /ps_checkout/.* > /dev/null 2>&1;'
+       zip ${_RELEASE_NAME}_${SHORT_SHA}_ps_checkout.zip -r /ps_checkout/ /ps_checkout/.en* > /dev/null 2>&1;'
 
 - name: gcr.io/cloud-builders/gsutil
   args:
