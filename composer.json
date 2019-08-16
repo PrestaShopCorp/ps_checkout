@@ -24,6 +24,6 @@
     },
     "require": {
         "ramsey/uuid": "^3.8",
-        "symfony/dotenv": "^3.4"
+        "vlucas/phpdotenv": "^3.4"
     }
 }
