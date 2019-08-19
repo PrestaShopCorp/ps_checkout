@@ -34,6 +34,19 @@ use Dotenv\Dotenv;
 class Env
 {
     /**
+     * Const that define all environment possible to use.
+     * Top of the list are taken in first if they exist in the project.
+     * eg: If .env.test is present in the module it will be loaded, if not present
+     * we try to load the next one etc ...
+     *
+     * @var array
+     */
+    const FILE_ENV_LIST = [
+        'test' => '.env.test',
+        'prod' => '.env',
+    ];
+
+    /**
      * Environment name: can be 'prod' or 'test'
      *
      * @var string
@@ -49,14 +62,17 @@ class Env
 
     public function __construct()
     {
-        try { // try to load test environment
-            $dotenv = Dotenv::create(_PS_MODULE_DIR_ . 'ps_checkout/', '.env.test');
+        foreach (self::FILE_ENV_LIST as $env => $fileName) {
+            if (!file_exists(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName)) {
+                continue;
+            }
+
+            $dotenv = Dotenv::create(_PS_MODULE_DIR_ . 'ps_checkout/', $fileName);
             $dotenv->load();
-            $this->setName('test');
-        } catch (\Throwable $th) { // if no test environment available, use production env
-            $dotenv = Dotenv::create(_PS_MODULE_DIR_ . 'ps_checkout/', '.env');
-            $dotenv->load();
-            $this->setName('prod');
+
+            $this->setName($env);
+
+            break;
         }
 
         if (true === $this->isLive()) {
