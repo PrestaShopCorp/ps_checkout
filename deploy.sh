@@ -16,10 +16,6 @@ function deploy() {
         rm -f /${FILEPATH};
         sudo -u presthost --preserve-env -H bash -c '/presthost/core/bin/console  prestashop:module install ps_checkout';
         "
-
-    if [[ "$ENV" == "prod" ]]; then
-        kubectl exec -t --namespace=$ENV-shops $1 -- bash -c "sudo -u presthost -H bash -c 'rm -rf /presthost/core/modules/ps_checkout/maaslandConf.json';"
-    fi
 }
 
 deploy $(kubectl get pods --namespace=$ENV-shops -l shop=dep-$SHOP -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
