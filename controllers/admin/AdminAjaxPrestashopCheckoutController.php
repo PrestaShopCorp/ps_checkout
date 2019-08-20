@@ -25,6 +25,7 @@
 */
 use PrestaShop\Module\PrestashopCheckout\Store\StoreManager;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
+use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {
@@ -51,6 +52,30 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessUpdatePaymentMode()
     {
         Configuration::updateValue('PS_CHECKOUT_MODE', Tools::getValue('paymentMode'));
+    }
+
+    public function ajaxProcessPsxOnboarding()
+    {
+        $payload = (bool) \Tools::getValue('payload');
+
+        $this->ajaxDie(
+            json_encode(
+                Configuration::updateValue('PS_PSX_ONBOARDING_COMPLETED', $payload)
+            )
+        );
+    }
+
+    public function ajaxProcessPsxSendData()
+    {
+        $payload = json_decode(\Tools::getValue('payload'), true);
+
+        $errors = (new PsxDataValidation())->validateData($payload);
+
+        if (!empty($errors)) {
+            $this->ajaxDie(json_encode($errors));
+        }
+
+        $this->ajaxDie(json_encode(true));
     }
 
     public function ajaxProcessGetOnboardingLink()

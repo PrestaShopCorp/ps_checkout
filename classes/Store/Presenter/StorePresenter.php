@@ -26,10 +26,11 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter;
 
-use PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules\ConfigurationModule;
+use PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules\PsxModule;
 use PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules\PaypalModule;
-use PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules\FirebaseModule;
 use PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules\ContextModule;
+use PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules\FirebaseModule;
+use PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules\ConfigurationModule;
 
 /**
  * Present the store to the vuejs app (vuex)
@@ -77,6 +78,7 @@ class StorePresenter implements StorePresenterInterface
             (new ContextModule($this->module, $this->context))->present(),
             (new FirebaseModule($this->context))->present(),
             (new PaypalModule())->present(),
+            (new PsxModule())->present(),
             (new ConfigurationModule())->present()
         );
 

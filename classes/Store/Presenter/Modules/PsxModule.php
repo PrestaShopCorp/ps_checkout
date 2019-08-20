@@ -24,30 +24,27 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Store;
+namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules;
+
+use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface;
 
 /**
- * Handle store update
+ * Construct the Psx module
  */
-class StoreManager
+class PsxModule implements StorePresenterInterface
 {
-    public function psxLogout()
+    /**
+     * Present the Psx module (vuex)
+     *
+     * @return array
+     */
+    public function present()
     {
-        \Configuration::updateValue('PS_PSX_ONBOARDING_COMPLETED', '');
-    }
-
-    public function firebaseLogout()
-    {
-        \Configuration::updateValue('PS_PSX_FIREBASE_EMAIL', '');
-        \Configuration::updateValue('PS_PSX_FIREBASE_ID_TOKEN', '');
-        \Configuration::updateValue('PS_PSX_FIREBASE_LOCAL_ID', '');
-        \Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_TOKEN', '');
-    }
-
-    public function unlinkPaypal()
-    {
-        // Erase existing paypal merchant
-        \Configuration::updateValue('PS_CHECKOUT_PAYPAL_ID_MERCHANT', '');
-        \Configuration::updateValue('PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT', '');
+        return array(
+            'psx' => array(
+                'onboardingCompleted' => \Configuration::get('PS_PSX_ONBOARDING_COMPLETED'),
+                'psxFormData' => json_decode(\Configuration::get('PS_PSX_FORM_DATA'), true),
+            ),
+        );
     }
 }
