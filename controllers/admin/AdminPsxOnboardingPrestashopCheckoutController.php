@@ -31,7 +31,7 @@ class AdminPsxOnboardingPrestashopCheckoutController extends ModuleAdminControll
 
         // when logout
         if ($isLogout === 1) {
-            $this->logoutPsxAccount(); // erase psx data and redirect
+            $this->updatePsxAccount('', '', '', ''); // erase psx data and redirect
         }
 
         $idToken = Tools::getValue('idToken');
@@ -55,35 +55,25 @@ class AdminPsxOnboardingPrestashopCheckoutController extends ModuleAdminControll
             throw new PrestaShopException('email cannot be empty');
         }
 
-        $this->registerPsxAccount($idToken, $refreshToken, $localId, $email);
+        $this->updatePsxAccount($idToken, $refreshToken, $localId, $email);
     }
 
     /**
-     * Register the psx account in database
+     * Update the psx account in database
      */
-    private function registerPsxAccount($idToken, $refreshToken, $localId, $email)
+    private function updatePsxAccount($idToken, $refreshToken, $localId, $email)
     {
         Configuration::updateValue('PS_PSX_FIREBASE_EMAIL', $email);
         Configuration::updateValue('PS_PSX_FIREBASE_ID_TOKEN', $idToken);
         Configuration::updateValue('PS_PSX_FIREBASE_LOCAL_ID', $localId);
         Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_TOKEN', $refreshToken);
 
-        $this->redirectToModuleConfiguration();
+        return $this->redirectToModuleConfiguration();
     }
 
     /**
-     * Erase the psx account in database
+     * Redirect to the module configuration page
      */
-    private function logoutPsxAccount()
-    {
-        Configuration::updateValue('PS_PSX_FIREBASE_EMAIL', '');
-        Configuration::updateValue('PS_PSX_FIREBASE_ID_TOKEN', '');
-        Configuration::updateValue('PS_PSX_FIREBASE_LOCAL_ID', '');
-        Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_TOKEN', '');
-
-        $this->redirectToModuleConfiguration();
-    }
-
     private function redirectToModuleConfiguration()
     {
         return Tools::redirect(
