@@ -50,13 +50,6 @@ class FirebaseClient
     protected $apiKey;
 
     /**
-     * API url used for calls to Firebase like auth/create user
-     *
-     * @var string
-     */
-    protected $baseUrl = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/';
-
-    /**
      * API url used for calls to Firebase in order to get refresh the token
      *
      * @var string
@@ -80,7 +73,7 @@ class FirebaseClient
 
         $this->client = new Client(
             array(
-                'base_url' => $this->baseUrl,
+                'base_url' => $this->baseUrlSecureToken,
                 'defaults' => array(
                     'timeout' => $this->timeOut,
                     'allow_redirects' => false,
@@ -93,26 +86,6 @@ class FirebaseClient
                 ),
             )
         );
-    }
-
-    /**
-     * Get user details related to API token in order to authentify him
-     *
-     * @see https://firebase.google.com/docs/reference/rest/auth/#section-get-account-info Firebase documentation
-     *
-     * @param string $token
-     *
-     * @return array
-     */
-    public function signInWithToken($token)
-    {
-        $response = $this->post('getAccountInfo', array(
-            'json' => array(
-                'idToken' => $token,
-            ),
-        ));
-
-        return current($response['users']);
     }
 
     /**
@@ -140,7 +113,7 @@ class FirebaseClient
      */
     public function refreshToken()
     {
-        $response = $this->post($this->baseUrlSecureToken . 'token', array(
+        $response = $this->post('token', array(
             'json' => array(
                 'grant_type' => 'refresh_token',
                 'refresh_token' => \Configuration::get('PS_PSX_FIREBASE_REFRESH_TOKEN'),
