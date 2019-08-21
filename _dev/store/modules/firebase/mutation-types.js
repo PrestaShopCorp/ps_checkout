@@ -1,1 +1,0 @@
-export const LOGOUT_ACCOUNT = 'LOGOUT_ACCOUNT';

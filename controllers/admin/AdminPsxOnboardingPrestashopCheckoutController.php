@@ -23,14 +23,21 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
-use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
-
 class AdminPsxOnboardingPrestashopCheckoutController extends ModuleAdminController
 {
     public function init()
     {
+        $isLogout = (int) Tools::getValue('logout');
+
+        // when logout
+        if ($isLogout === 1) {
+            $this->updatePsxAccount('', '', '', ''); // erase psx data and redirect
+        }
+
         $idToken = Tools::getValue('idToken');
         $refreshToken = Tools::getValue('refreshToken');
+        $localId = Tools::getValue('localId');
+        $email = Tools::getValue('email');
 
         if (empty($idToken)) {
             throw new PrestaShopException('idToken cannot be empty');
@@ -40,12 +47,36 @@ class AdminPsxOnboardingPrestashopCheckoutController extends ModuleAdminControll
             throw new PrestaShopException('refreshToken cannot be empty');
         }
 
-        // TODO: Save Firebase token and refreshToken
-        // waiting SSO to add parameter in the callback like the refresh token
-        $firebase = new FirebaseClient();
-        $user = $firebase->signInWithToken($idToken);
+        if (empty($localId)) {
+            throw new PrestaShopException('localId cannot be empty');
+        }
 
-        Tools::redirect(
+        if (empty($email)) {
+            throw new PrestaShopException('email cannot be empty');
+        }
+
+        $this->updatePsxAccount($idToken, $refreshToken, $localId, $email);
+    }
+
+    /**
+     * Update the psx account in database
+     */
+    private function updatePsxAccount($idToken, $refreshToken, $localId, $email)
+    {
+        Configuration::updateValue('PS_PSX_FIREBASE_EMAIL', $email);
+        Configuration::updateValue('PS_PSX_FIREBASE_ID_TOKEN', $idToken);
+        Configuration::updateValue('PS_PSX_FIREBASE_LOCAL_ID', $localId);
+        Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_TOKEN', $refreshToken);
+
+        return $this->redirectToModuleConfiguration();
+    }
+
+    /**
+     * Redirect to the module configuration page
+     */
+    private function redirectToModuleConfiguration()
+    {
+        return Tools::redirect(
             $this->context->link->getAdminLink(
                 'AdminModules',
                 true,

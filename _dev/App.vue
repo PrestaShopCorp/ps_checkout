@@ -2,8 +2,10 @@
   <div id="app">
     <Menu>
       <MenuItem route="/authentication">{{ $t('menu.authentication') }}</MenuItem>
-      <MenuItem route="/customize">{{ $t('menu.customizeCheckout') }}</MenuItem>
-      <MenuItem route="/activity">{{ $t('menu.manageActivity') }}</MenuItem>
+      <template v-if="onboardingPaypalIsCompleted && onboardingFirebaseIsCompleted">
+        <MenuItem route="/customize">{{ $t('menu.customizeCheckout') }}</MenuItem>
+        <MenuItem route="/activity">{{ $t('menu.manageActivity') }}</MenuItem>
+      </template>
       <!-- <MenuItem route="/advanced">{{ $t('menu.advancedSettings') }}</MenuItem> -->
       <MenuItem route="/help">{{ $t('menu.help') }}</MenuItem>
     </Menu>
@@ -33,6 +35,12 @@
     },
     computed: {
       ALERT_TYPE_WARNING: () => ALERT_TYPE_WARNING,
+      onboardingPaypalIsCompleted() {
+        return this.$store.state.paypal.onboardingCompleted;
+      },
+      onboardingFirebaseIsCompleted() {
+        return this.$store.state.firebase.onboardingCompleted;
+      },
       paymentMode() {
         return this.$store.state.configuration.paymentMode;
       },

@@ -62,6 +62,7 @@ class FirebaseModule implements StorePresenterInterface
                 'refreshToken' => \Configuration::get('PS_PSX_FIREBASE_REFRESH_TOKEN'),
                 'onboardingLinkSignIn' => $this->getOnboardingLink('login'),
                 'onboardingLinkCreateAccount' => $this->getOnboardingLink('createaccount'),
+                'onboardingLinkLogout' => $this->getOnboardingLink('logout'),
                 'onboardingCompleted' => !empty($idToken),
             ),
         );
@@ -80,6 +81,25 @@ class FirebaseModule implements StorePresenterInterface
     {
         $callbackUrl = $this->context->link->getAdminLink('AdminPsxOnboardingPrestashopCheckout');
 
-        return (new SsoEnv())->getSsoUrl() . 'en/' . $mode . '?continue=' . $callbackUrl;
+        return (new SsoEnv())->getSsoUrl() . $this->getSsoIsoCode() . '/' . $mode . '?continue=' . $callbackUrl;
+    }
+
+    /**
+     * Temporary method until SSO check automatically locale of the browser to set the language.
+     * It allows to get the iso code to use in the sso url
+     *
+     * @return string iso code
+     */
+    private function getSsoIsoCode()
+    {
+        $availableSsoLanguages = ['de', 'en', 'es', 'fr', 'it', 'nl', 'pl', 'pt', 'ru'];
+
+        $currentLanguageIsoCode = $this->context->language->iso_code;
+
+        if (in_array($currentLanguageIsoCode, $availableSsoLanguages)) {
+            return $currentLanguageIsoCode;
+        }
+
+        return 'en';
     }
 }

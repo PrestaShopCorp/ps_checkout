@@ -1,5 +1,4 @@
-import actions from './actions';
-import mutations from './mutations';
+import getters from './getters';
 
 const store = JSON.parse(global.store);
 
@@ -7,6 +6,5 @@ const state = store.firebase;
 
 export default {
   state,
-  mutations,
-  actions,
+  getters,
 };

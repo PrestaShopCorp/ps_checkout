@@ -44,9 +44,21 @@ const router = new Router({
   ],
 });
 
-// TODO: Make a navigation guard to limit the user to the authentification tab if he does not
-// complete the paypal and firebase onboarding
-// router.beforeEach((to, from, next) => {
-// });
+// Page list accesible by guest customer
+const guestPages = ['Authentication', 'Help', 'Advanced'];
+
+// Navigation guard
+router.beforeEach((to, from, next) => {
+  // if the merchant is onboarded, redirect to the next page
+  if (store.getters.merchantIsFullyOnboarded) {
+    next();
+  } else if (guestPages.indexOf(to.name) !== -1) {
+    // if the merchant is not onboarded: only autorize to navigate to authentication tab or help tab
+    next();
+  } else {
+    // redirect always on the previous tab if the merchant is trying to acces to an another tab
+    next(from);
+  }
+});
 
 export default router;
