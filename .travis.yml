@@ -43,6 +43,7 @@ before_deploy:
   - rm -f deploy.sh
   - rm -f vue.config.js
   - rm -f yarn.lock
+  - rm -f .eslintrc.js
   - rm -rf .git
   - rm -rf _dev
   - rm -rf tests
