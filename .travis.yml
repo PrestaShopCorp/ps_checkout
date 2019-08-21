@@ -24,3 +24,41 @@ script:
       docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop;
       docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module phpstan/phpstan analyse --configuration=/web/module/tests/phpstan/phpstan.neon;
     fi
+
+before_deploy:
+  # NodeJs installation & js compilation
+  - sudo rm -rf ~/.nvm
+  - curl -sL "https://deb.nodesource.com/setup_10.x" | sudo -E bash -
+  - sudo apt-get install -y nodejs
+  - yarn install
+  - yarn build
+  # Comoser
+  - composer install --no-dev -o
+  # Cleanup
+  - rm -f .php_cs.*
+  - rm -f .travis.yml
+  - rm -f cloudbuild.yaml
+  - rm -f composer.*
+  - rm -f .gitignore
+  - rm -f deploy.sh
+  - rm -f vue.config.js
+  - rm -f yarn.lock
+  - rm -f .eslintrc.js
+  - rm -rf .git
+  - rm -rf _dev
+  - rm -rf tests
+  - rm -rf node_modules
+  - mkdir -p /tmp/build/ps_checkout
+  - mv * /tmp/build/ps_checkout
+  - pushd /tmp/build
+  - zip /tmp/build/ps_checkout.zip -r ps_checkout/ ps_checkout/.en*
+  - popd
+
+deploy:
+  provider: releases
+  api_key: ${travis_api_key}
+  file: "/tmp/build/ps_checkout.zip"
+  skip_cleanup: true
+  on:
+    all_branches: true
+    tags: true
