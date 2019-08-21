@@ -44,17 +44,19 @@ const router = new Router({
   ],
 });
 
+// Page list accesible by guest customer
+const guestPages = ['Authentication', 'Help', 'Advanced'];
+
 // Navigation guard
 router.beforeEach((to, from, next) => {
   // if the merchant is onboarded, redirect to the next page
-  if (store.state.firebase.onboardingCompleted
-    && store.state.paypal.onboardingCompleted) {
+  if (store.getters.merchantIsFullyOnboarded) {
     next();
-  } else if (to.name === 'Authentication' // if the merchant is not onboarded: only autorize to navigate to authentication tab or help tab
-    || to.name === 'Help'
-    || to.name === 'Advanced') {
+  } else if (guestPages.indexOf(to.name) !== -1) {
+    // if the merchant is not onboarded: only autorize to navigate to authentication tab or help tab
     next();
-  } else { // redirect always on authentication tab if the merchant is trying to acces to an another tab
+  } else {
+    // redirect always on the previous tab if the merchant is trying to acces to an another tab
     next(from);
   }
 });
