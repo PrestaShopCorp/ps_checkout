@@ -23,7 +23,7 @@
                 </template>
               </p>
             </div>
-            <div v-if="!isReady" class="col-12 col-sm-4 col-md-3 col-lg-3 m-auto">
+            <div class="col-12 col-sm-4 col-md-3 col-lg-4 m-auto">
               <div class="text-center float-right" v-if="firebaseStatusAccount === false">
                 <a :href="ssoOnboardingLinkSignin" class="mr-4"><b>{{ $t('panel.account-list.logIn') }}</b></a>
                 <a :href="ssoOnboardingLinkCreateAccount" class="btn btn-primary-reverse btn-outline-primary light-button mb-1">
@@ -31,7 +31,7 @@
                 </a>
               </div>
               <div class="text-right" v-else>
-                <a href="#" class="text-muted" @click.prevent="firebaseLogout()">{{ $t('panel.account-list.logOut') }}</a>
+                <a v-if="!isReady" :href="ssoOnboardingLinkLogout" class="text-muted">{{ $t('panel.account-list.logOut') }}</a>
               </div>
             </div>
           </div>
@@ -51,7 +51,7 @@
                 </template>
               </p>
             </div>
-            <div class="col-12 col-sm-4 col-md-3 col-lg-3 m-auto">
+            <div class="col-12 col-sm-4 col-md-3 col-lg-4 m-auto">
               <div class="text-center float-right" v-if="paypalStatusAccount === false">
                 <Onboarding />
               </div>
@@ -92,11 +92,11 @@
       ssoOnboardingLinkCreateAccount() {
         return this.$store.state.firebase.onboardingLinkCreateAccount;
       },
+      ssoOnboardingLinkLogout() {
+        return this.$store.state.firebase.onboardingLinkLogout;
+      },
     },
     methods: {
-      firebaseLogout() {
-        this.$store.dispatch('logout');
-      },
       paypalUnlink() {
         this.$store.dispatch('unlink').then(() => {
           this.$store.dispatch('getOnboardingLink');
