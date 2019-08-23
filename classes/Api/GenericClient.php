@@ -91,6 +91,11 @@ class GenericClient
             $response = $e->getResponse();
         }
 
+        // In case of a 204 status code, there is no body waitted so return true
+        if (204 === $response->getStatusCode()) {
+            return true;
+        }
+
         $data = json_decode($response->getBody(), true);
 
         return isset($data) ? $data : false;

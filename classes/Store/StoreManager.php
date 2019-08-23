@@ -31,19 +31,33 @@ namespace PrestaShop\Module\PrestashopCheckout\Store;
  */
 class StoreManager
 {
+    /**
+     * Erase PSX form data
+     */
     public function psxLogout()
     {
-        \Configuration::updateValue('PS_PSX_ONBOARDING_COMPLETED', '');
+        \Configuration::updateValue('PS_CHECKOUT_PSX_FORM', '');
     }
 
-    public function firebaseLogout()
+    /**
+     * Update the psx account in database
+     *
+     * @param string $idToken
+     * @param string $refreshToken
+     * @param string $localId
+     * @param string $email
+     */
+    public function updatePsxAccount($idToken, $refreshToken, $localId, $email)
     {
-        \Configuration::updateValue('PS_PSX_FIREBASE_EMAIL', '');
-        \Configuration::updateValue('PS_PSX_FIREBASE_ID_TOKEN', '');
-        \Configuration::updateValue('PS_PSX_FIREBASE_LOCAL_ID', '');
-        \Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_TOKEN', '');
+        \Configuration::updateValue('PS_PSX_FIREBASE_EMAIL', $email);
+        \Configuration::updateValue('PS_PSX_FIREBASE_ID_TOKEN', $idToken);
+        \Configuration::updateValue('PS_PSX_FIREBASE_LOCAL_ID', $localId);
+        \Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_TOKEN', $refreshToken);
     }
 
+    /**
+     * Erase Paypal data
+     */
     public function unlinkPaypal()
     {
         // Erase existing paypal merchant

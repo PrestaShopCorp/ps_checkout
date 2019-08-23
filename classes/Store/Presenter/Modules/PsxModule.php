@@ -27,6 +27,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\MerchantRepository;
 
 /**
  * Construct the Psx module
@@ -42,8 +43,8 @@ class PsxModule implements StorePresenterInterface
     {
         return array(
             'psx' => array(
-                'onboardingCompleted' => \Configuration::get('PS_PSX_ONBOARDING_COMPLETED'),
-                'psxFormData' => json_decode(\Configuration::get('PS_PSX_FORM_DATA'), true),
+                'onboardingCompleted' => (new MerchantRepository())->onbardingPsxIsCompleted(),
+                'psxFormData' => json_decode(\Configuration::get('PS_CHECKOUT_PSX_FORM'), true),
             ),
         );
     }

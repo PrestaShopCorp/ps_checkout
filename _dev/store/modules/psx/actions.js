@@ -9,21 +9,13 @@ export default {
       data: {
         payload: JSON.stringify(payload),
       },
-    }).then(() => {
+    }).then((response) => {
       commit(types.UPDATE_FORM_DATA, payload);
-      return Promise.resolve(true);
+      return Promise.resolve(response);
     });
   },
-  psxOnboarding({commit, getters}, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'PsxOnboarding',
-      data: {
-        status: payload,
-      },
-    }).then((data) => {
-      commit(types.UPDATE_ONBOARDING_STATUS, data);
-      return Promise.resolve(true);
-    });
+  psxOnboarding({commit}, payload) {
+    console.log(payload);
+    commit(types.UPDATE_ONBOARDING_STATUS, payload);
   },
 };

@@ -48,11 +48,6 @@
         <AccountList />
       </div>
     </div>
-     <div class="row">
-      <div class="container">
-        <PsxForm />
-      </div>
-    </div>
     <div v-if="firebaseStatusAccount !== false && paypalStatusAccount !== false" class="row">
       <div class="container">
         <PaymentAcceptance />
@@ -69,7 +64,6 @@
 <script>
   import AccountList from '@/components/panel/account-list';
   import PaymentAcceptance from '@/components/panel/payment-acceptance';
-  import PsxForm from '@/components/panel/psx-form';
   import Reassurance from '@/components/block/reassurance';
   import PSAlert from '@/components/form/alert';
   import {ALERT_TYPE_DANGER, ALERT_TYPE_WARNING} from '@/lib/alert';
@@ -80,7 +74,6 @@
       AccountList,
       PaymentAcceptance,
       Reassurance,
-      PsxForm,
       PSAlert,
     },
     computed: {

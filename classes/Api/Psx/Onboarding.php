@@ -42,7 +42,7 @@ class Onboarding extends PsxClient
         $this->setRoute('/psx/onboarding/merchant');
 
         return $this->post([
-            'json' => $data,
+            'json' => json_encode($data),
         ]);
     }
 }
