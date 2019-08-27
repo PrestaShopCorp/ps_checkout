@@ -26,14 +26,28 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules;
 
-use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\MerchantRepository;
+use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface;
 
 /**
  * Construct the Psx module
  */
 class PsxModule implements StorePresenterInterface
 {
+    const ALL_LANGUAGES_FILE = _PS_ROOT_DIR_ . '/app/Resources/all_languages.json';
+    const ALL_COUNTRIES_FILE = _PS_MODULE_DIR_ . 'ps_checkout/src/all_countries.json';
+    const ALL_BUSINESS_FILE = _PS_MODULE_DIR_ . 'ps_checkout/src/i18n/business-information-';
+
+    /**
+     * @var \Context
+     */
+    private $context;
+
+    public function __construct(\Context $context)
+    {
+        $this->context = $context;
+    }
+
     /**
      * Present the Psx module (vuex)
      *
@@ -45,7 +59,48 @@ class PsxModule implements StorePresenterInterface
             'psx' => array(
                 'onboardingCompleted' => (new MerchantRepository())->onbardingPsxIsCompleted(),
                 'psxFormData' => json_decode(\Configuration::get('PS_CHECKOUT_PSX_FORM'), true),
+                'languagesDetails' => $this->getJsonData(self::ALL_LANGUAGES_FILE),
+                'countriesDetails' => $this->getJsonData(self::ALL_COUNTRIES_FILE),
+                'businessDetails' => $this->getJsonData($this->getBusinessFileName()),
             ),
         );
+    }
+
+    /**
+     * getJsonData
+     *
+     * @param mixed $dir
+     */
+    private function getJsonData($dir)
+    {
+        $data = json_decode(
+            file_get_contents($dir),
+            true
+        );
+
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw new \Exception(
+                sprintf(
+                    'The legacy to standard locales JSON could not be decoded %s',
+                    json_last_error_msg()
+                )
+            );
+        }
+
+        return $data;
+    }
+
+    /**
+     * getBusinessFileName
+     */
+    private function getBusinessFileName()
+    {
+        $employeeLanguageIsoCode = $this->context->language->iso_code;
+
+        if (file_exists(self::ALL_BUSINESS_FILE . $employeeLanguageIsoCode . '.json')) {
+            return self::ALL_BUSINESS_FILE . $employeeLanguageIsoCode . '.json';
+        }
+
+        return self::ALL_BUSINESS_FILE . 'en.json';
     }
 }

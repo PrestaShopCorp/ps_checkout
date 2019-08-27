@@ -61,6 +61,11 @@ class Onboarding extends PaymentClient
         return $response['links']['1']['href'];
     }
 
+    /**
+     * Generate an array to be used on the Paypal Link
+     *
+     * @return array
+     */
     private function getNameObject()
     {
         $psxFormData = json_decode(\Configuration::get('PS_CHECKOUT_PSX_FORM'), true);

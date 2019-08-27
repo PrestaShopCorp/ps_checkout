@@ -122,6 +122,7 @@ class Translations
                     'businessCategory' => $this->module->l('Business category', 'translations'),
                     'businessSubCategory' => $this->module->l('Business subcategory', 'translations'),
                     'continue' => $this->module->l('Continue', 'translations'),
+                    'errors' => $this->module->l('Errors', 'translations'),
                 ),
                 'active-payment' => array(
                     'activePaymentMethods' => $this->module->l('Activate payment methods', 'translations'),

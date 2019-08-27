@@ -78,7 +78,7 @@ class StorePresenter implements StorePresenterInterface
             (new ContextModule($this->module, $this->context))->present(),
             (new FirebaseModule($this->context))->present(),
             (new PaypalModule())->present(),
-            (new PsxModule())->present(),
+            (new PsxModule($this->context))->present(),
             (new ConfigurationModule())->present()
         );
 

@@ -50,16 +50,17 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         Configuration::updateValue('PS_CHECKOUT_MODE', Tools::getValue('paymentMode'));
     }
 
+    /**
+     * Get the form Payload for PSX. Check the data and send it to PSL
+     */
     public function ajaxProcessPsxSendData()
     {
         $payload = json_decode(\Tools::getValue('payload'), true);
+        $errors = (new PsxDataValidation())->validateData($payload);
 
-        // INFO: For audit, disable temporary the validation of the form
-        // $errors = (new PsxDataValidation())->validateData($payload);
-
-        // if (!empty($errors)) {
-        //     $this->ajaxDie(json_encode($errors));
-        // }
+        if (!empty($errors)) {
+            $this->ajaxDie(json_encode($errors));
+        }
 
         // Save form in database
         if (false === $this->savePsxForm($payload)) {
