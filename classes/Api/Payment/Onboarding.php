@@ -47,6 +47,7 @@ class Onboarding extends PaymentClient
                 'url' => $this->getCallBackUrl(),
                 'person_details' => [
                     'email_address' => $email,
+                    'name' => $this->getNameObject(),
                 ],
                 'preferred_language_code' => str_replace('-', '_', $locale),
                 'primary_currency_code' => $this->getCurrencyIsoCode(),
@@ -58,6 +59,24 @@ class Onboarding extends PaymentClient
         }
 
         return $response['links']['1']['href'];
+    }
+
+    /**
+     * Generate an array to be used on the Paypal Link
+     *
+     * @return array
+     */
+    private function getNameObject()
+    {
+        $psxFormData = json_decode(\Configuration::get('PS_CHECKOUT_PSX_FORM'), true);
+
+        $nameObj = [
+            'given_name' => $psxFormData['business_contact_first_name'],
+            'middle_name' => $psxFormData['business_contact_last_name'],
+            'prefix' => $psxFormData['business_contact_gender'] === 'male' ? 'Mr' : 'Ms',
+        ];
+
+        return array_filter($nameObj);
     }
 
     /**

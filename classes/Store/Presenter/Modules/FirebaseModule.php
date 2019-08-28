@@ -46,7 +46,7 @@ class FirebaseModule implements StorePresenterInterface
     }
 
     /**
-     * Present the paypal module (vuex)
+     * Present the Firebase module (vuex)
      *
      * @return array
      */

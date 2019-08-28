@@ -23,26 +23,12 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-namespace PrestaShop\Module\PrestashopCheckout\Api\Psx;
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
-use PrestaShop\Module\PrestashopCheckout\Api\Client\PsxClient;
-
-class Onboarding extends PsxClient
-{
-    /**
-     * Collect merchant data during PSX onboarding process. These data are intended to be shared across PSX services.
-     *
-     * @param array $data
-     *
-     * @return false|array false if good | array if errors returned
-     */
-    public function setOnboardingMerchant(array $data)
-    {
-        $this->setRoute('/psx/onboarding/merchant');
-
-        return $this->post([
-            'json' => json_encode($data),
-        ]);
-    }
-}
+header('Location: ../');
+exit;

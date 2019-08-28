@@ -25,14 +25,11 @@
 */
 use PrestaShop\Module\PrestashopCheckout\Store\StoreManager;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
+use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
+use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {
-    public function ajaxProcessFirebaseLogout()
-    {
-        (new StoreManager())->firebaseLogout();
-    }
-
     public function ajaxProcessUnlinkPaypal()
     {
         (new StoreManager())->unlinkPaypal();
@@ -51,6 +48,37 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessUpdatePaymentMode()
     {
         Configuration::updateValue('PS_CHECKOUT_MODE', Tools::getValue('paymentMode'));
+    }
+
+    /**
+     * Get the form Payload for PSX. Check the data and send it to PSL
+     */
+    public function ajaxProcessPsxSendData()
+    {
+        $payload = json_decode(\Tools::getValue('payload'), true);
+        $errors = (new PsxDataValidation())->validateData($payload);
+
+        if (!empty($errors)) {
+            $this->ajaxDie(json_encode($errors));
+        }
+
+        // Save form in database
+        if (false === $this->savePsxForm($payload)) {
+            $this->ajaxDie(json_encode(false));
+        }
+
+        $response = (new PsxOnboarding())->setOnboardingMerchant(array_filter($payload));
+
+        if ($response) {
+            $this->ajaxDie(json_encode(true));
+        }
+
+        $this->ajaxDie(json_encode(false));
+    }
+
+    private function savePsxForm($form)
+    {
+        return Configuration::updateValue('PS_CHECKOUT_PSX_FORM', json_encode($form));
     }
 
     public function ajaxProcessGetOnboardingLink()

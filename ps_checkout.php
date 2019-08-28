@@ -70,6 +70,7 @@ class ps_checkout extends PaymentModule
         'PS_PSX_FIREBASE_ID_TOKEN' => '',
         'PS_PSX_FIREBASE_LOCAL_ID' => '',
         'PS_PSX_FIREBASE_REFRESH_TOKEN' => '',
+        'PS_CHECKOUT_PSX_FORM' => '',
         'PS_CHECKOUT_SHOP_UUID_V4' => '',
     );
 
@@ -77,7 +78,7 @@ class ps_checkout extends PaymentModule
     {
         $this->name = 'ps_checkout';
         $this->tab = 'payments_gateways';
-        $this->version = '1.0.9';
+        $this->version = '1.1.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
 
@@ -136,7 +137,7 @@ class ps_checkout extends PaymentModule
 
         // update merchant status only if the merchant onboarding is completed
         if ($merchantRepository->onbardingPaypalIsCompleted()
-            && $merchantRepository->onbardingPsxIsCompleted()) {
+            && $merchantRepository->onbardingFirebaseIsCompleted()) {
             (new Merchant($merchantRepository->getMerchantId()))->update();
         }
 

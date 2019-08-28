@@ -33,10 +33,8 @@ use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 
 class PsxClient extends GenericClient
 {
-    public function __construct(\Link $link, Client $client)
+    public function __construct()
     {
-        $this->setLink($link);
-
         $client = new Client(array(
             'base_url' => (new PsxEnv())->getPsxApiUrl(),
             'defaults' => array(

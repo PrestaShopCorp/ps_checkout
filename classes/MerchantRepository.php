@@ -60,6 +60,16 @@ class MerchantRepository
      */
     public function onbardingPsxIsCompleted()
     {
+        return !empty(\Configuration::get('PS_CHECKOUT_PSX_FORM'));
+    }
+
+    /**
+     * Get the status of the firebase onboarding
+     *
+     * @return bool
+     */
+    public function onbardingFirebaseIsCompleted()
+    {
         $idToken = (new FirebaseClient())->getToken();
 
         return !empty($idToken);

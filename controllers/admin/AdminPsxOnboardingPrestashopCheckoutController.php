@@ -23,15 +23,23 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
+use PrestaShop\Module\PrestashopCheckout\Store\StoreManager;
+
 class AdminPsxOnboardingPrestashopCheckoutController extends ModuleAdminController
 {
     public function init()
     {
+        $storeManager = new StoreManager();
+
         $isLogout = (int) Tools::getValue('logout');
 
         // when logout
         if ($isLogout === 1) {
-            $this->updatePsxAccount('', '', '', ''); // erase psx data and redirect
+            $storeManager->unlinkPaypal();
+            $storeManager->psxLogout();
+            $storeManager->updatePsxAccount('', '', '', '');
+
+            $this->redirectToModuleConfiguration();
         }
 
         $idToken = Tools::getValue('idToken');
@@ -55,20 +63,9 @@ class AdminPsxOnboardingPrestashopCheckoutController extends ModuleAdminControll
             throw new PrestaShopException('email cannot be empty');
         }
 
-        $this->updatePsxAccount($idToken, $refreshToken, $localId, $email);
-    }
+        $storeManager->updatePsxAccount($idToken, $refreshToken, $localId, $email);
 
-    /**
-     * Update the psx account in database
-     */
-    private function updatePsxAccount($idToken, $refreshToken, $localId, $email)
-    {
-        Configuration::updateValue('PS_PSX_FIREBASE_EMAIL', $email);
-        Configuration::updateValue('PS_PSX_FIREBASE_ID_TOKEN', $idToken);
-        Configuration::updateValue('PS_PSX_FIREBASE_LOCAL_ID', $localId);
-        Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_TOKEN', $refreshToken);
-
-        return $this->redirectToModuleConfiguration();
+        $this->redirectToModuleConfiguration();
     }
 
     /**
