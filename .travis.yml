@@ -14,7 +14,7 @@ install:
 
 script:
   # PHP syntax check
-  - bash -c '! (find . -name "*.php" ! -path "./vendor/*" -print0 | xargs -0 -n1 -P4 php -l | grep "Parse error")'
+  - find . -type f -name '*.php' ! -path "./vendor/*" ! -path "./tests/*" -exec php -l -n {} \; | (! grep -v "No syntax errors detected")
   # PHP cs fixer
   - vendor/bin/php-cs-fixer fix --no-interaction --dry-run --diff
   # PHP Unit
