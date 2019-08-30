@@ -42,13 +42,13 @@ class Onboarding extends PaymentClient
     {
         $this->setRoute('/payments/onboarding/onboard');
 
+        $psxFormData = json_decode(\Configuration::get('PS_CHECKOUT_PSX_FORM'), true);
+
         $response = $this->post([
             'json' => json_encode([
                 'url' => $this->getCallBackUrl(),
-                'person_details' => [
-                    'email_address' => $email,
-                    'name' => $this->getNameObject(),
-                ],
+                'person_details' => $this->getPersonDetails($email, $psxFormData),
+                'business_details' => $this->getBusinessDetails($psxFormData),
                 'preferred_language_code' => str_replace('-', '_', $locale),
                 'primary_currency_code' => $this->getCurrencyIsoCode(),
             ]),
@@ -64,16 +64,52 @@ class Onboarding extends PaymentClient
     /**
      * Generate an array to be used on the Paypal Link
      *
+     * @param string $email
+     * @param array $psxFormData
+     *
      * @return array
      */
-    private function getNameObject()
+    private function getPersonDetails($email, $psxFormData)
     {
-        $psxFormData = json_decode(\Configuration::get('PS_CHECKOUT_PSX_FORM'), true);
-
         $nameObj = [
-            'given_name' => $psxFormData['business_contact_first_name'],
-            'middle_name' => $psxFormData['business_contact_last_name'],
-            'prefix' => $psxFormData['business_contact_gender'] === 'male' ? 'Mr' : 'Ms',
+            'email_address' => $email,
+            'name' => [
+                'given_name' => $psxFormData['business_contact_first_name'],
+                'middle_name' => $psxFormData['business_contact_last_name'],
+                'prefix' => $psxFormData['business_contact_gender'],
+            ],
+        ];
+
+        return array_filter($nameObj);
+    }
+
+    /**
+     * Generate an array to be used on the Paypal Link
+     *
+     * @param array $psxFormData
+     *
+     * @return array
+     */
+    private function getBusinessDetails($psxFormData)
+    {
+        $nameObj = [
+            'business_address' => [
+                'city' => $psxFormData['business_address_city'],
+                'country_code' => strtoupper($psxFormData['business_address_country']),
+                'line1' => $psxFormData['business_address_street'],
+                'postal_code' => $psxFormData['business_address_zip'],
+                'state' => 'TX',
+            ],
+            'phone_contacts' => [
+                0 => [
+                'phone_number_details' => [
+                        'country_code' => '33',
+                        'national_number' => '6606060',
+                    ],
+                    'phone_type' => 'HOME',
+                ],
+            ],
+            'business_type' => 'INDIVIDUAL',
         ];
 
         return array_filter($nameObj);

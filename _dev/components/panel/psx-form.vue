@@ -35,7 +35,7 @@
                     <div class="col-lg-2 col-md-2 col-sm-2">
                       <div class="md-radio">
                         <label>
-                          <input name="gender" type="radio" value="male" v-model="form.business_contact_gender">
+                          <input name="gender" type="radio" value="Mr" v-model="form.business_contact_gender">
                           <i class="md-radio-control" /> {{ $t('panel.psx-form.genderMr') }}
                         </label>
                       </div>
@@ -43,7 +43,7 @@
                     <div class="col-lg-6 col-md-6 col-sm-6">
                       <div class="md-radio">
                         <label>
-                          <input name="gender" type="radio" value="female" v-model="form.business_contact_gender">
+                          <input name="gender" type="radio" value="Ms" v-model="form.business_contact_gender">
                           <i class="md-radio-control" /> {{ $t('panel.psx-form.genderMrs') }}
                         </label>
                       </div>
@@ -245,7 +245,7 @@
         subCategory: null,
         errorForm: null,
         form: {
-          business_contact_gender: 'male',
+          business_contact_gender: 'Mr',
           business_contact_first_name: null,
           business_contact_last_name: null,
           business_contact_nationality: null,
