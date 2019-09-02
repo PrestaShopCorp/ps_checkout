@@ -41,6 +41,7 @@ class PsxDataValidation
     const COUNTRY = 'Country name ' . self::NOT_CORRECT;
     const ZIPCODE = 'Zip code ' . self::NOT_CORRECT;
     const TYPE = 'Type ' . self::NOT_CORRECT;
+    const PHONE_COUNTRY = 'Phone country code ' . self::NOT_CORRECT;
     const PHONE = 'Phone ' . self::NOT_CORRECT;
     const WEBSITE = 'Website ' . self::NOT_CORRECT;
     const GENDER = 'Gender ' . self::NOT_CORRECT;
@@ -59,6 +60,19 @@ class PsxDataValidation
     public function validateData($data)
     {
         $errors = array();
+
+        $businessTypeValuesNeeded = array(
+            'INDIVIDUAL',
+            'PROPRIETORSHIP',
+            'NONPROFIT',
+            'GOVERNMENT',
+            'GENERAL_PARTNERSHIP',
+            'LIMITED_PARTNERSHIP',
+            'LIMITED_LIABILITY_PARTNERSHIP',
+            'LIMITED_LIABILITY_PROPRIETORS',
+            'PRIVATE_CORPORATION',
+            'PUBLIC_CORPORATION',
+        );
 
         if (empty($data)) {
             return $errors[] = self::DATA_ERROR;
@@ -92,8 +106,15 @@ class PsxDataValidation
             $errors[] = self::ZIPCODE;
         }
 
-        if ($data['business_type'] < 1 || $data['business_type'] > 7) {
+        if (!in_array($data['business_type'], $businessTypeValuesNeeded)) {
             $errors[] = self::TYPE;
+        }
+
+        if (!preg_match('/^[0-9]{1,3}?$/', $data['business_phone_country'])
+            || strlen($data['business_phone_country']) < 1
+            || strlen($data['business_phone_country']) > 3
+        ) {
+            $errors[] = self::PHONE_COUNTRY;
         }
 
         if (!preg_match('/^[0-9\-\(\)\/\+\s]*$/', $data['business_phone'])
@@ -103,7 +124,7 @@ class PsxDataValidation
             $errors[] = self::PHONE;
         }
 
-        if (!filter_var($data['business_website'], FILTER_VALIDATE_URL)
+        if (!preg_match('/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/', $data['business_website'])
             || strlen($data['business_website']) < 1
             || strlen($data['business_website']) > 255
         ) {

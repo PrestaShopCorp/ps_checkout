@@ -75,7 +75,7 @@ class Onboarding extends PaymentClient
             'email_address' => $email,
             'name' => [
                 'given_name' => $psxFormData['business_contact_first_name'],
-                'middle_name' => $psxFormData['business_contact_last_name'],
+                'surname' => $psxFormData['business_contact_last_name'],
                 'prefix' => $psxFormData['business_contact_gender'],
             ],
         ];
@@ -95,7 +95,7 @@ class Onboarding extends PaymentClient
         $nameObj = [
             'business_address' => [
                 'city' => $psxFormData['business_address_city'],
-                'country_code' => strtoupper($psxFormData['business_address_country']),
+                'country_code' => $psxFormData['business_address_country'],
                 'line1' => $psxFormData['business_address_street'],
                 'postal_code' => $psxFormData['business_address_zip'],
                 'state' => 'TX',
@@ -103,13 +103,24 @@ class Onboarding extends PaymentClient
             'phone_contacts' => [
                 0 => [
                 'phone_number_details' => [
-                        'country_code' => '33',
-                        'national_number' => '6606060',
+                        'country_code' => $psxFormData['business_phone_country'],
+                        'national_number' => $psxFormData['business_phone'],
                     ],
                     'phone_type' => 'HOME',
                 ],
             ],
-            'business_type' => 'INDIVIDUAL',
+            'names' => [
+                0 => [
+                    'name' => $psxFormData['shop_name'],
+                    'type' => 'LEGAL',
+                ],
+            ],
+            'business_type' => $psxFormData['business_type'],
+            'category' => $psxFormData['business_category'],
+            'sub_category' => $psxFormData['business_sub_category'],
+            'website_urls' => [
+                $psxFormData['business_website'],
+            ],
         ];
 
         return array_filter($nameObj);

@@ -7,13 +7,16 @@
         "gt500": "Plus de 500 employés"
     },
     "business_types": {
-        "1": "Personne physique",
-        "2": "Entreprise individuelle",
-        "3": "Société de personnes",
-        "4": "Société par actions non cotée",
-        "5": "Société à responsabilité limitée",
-        "6": "Organisme à but non lucratif",
-        "7": "Entité gouvernementale"
+        "INDIVIDUAL": "The individual.",
+        "PROPRIETORSHIP": "The proprietorship.",
+        "NONPROFIT": "The nonprofit.",
+        "GOVERNMENT": "The government.",
+        "GENERAL_PARTNERSHIP": "The general partnership.",
+        "LIMITED_PARTNERSHIP": "The limited partnership.",
+        "LIMITED_LIABILITY_PARTNERSHIP": "The limited liability partnership.",
+        "LIMITED_LIABILITY_PROPRIETORS": "The limited liability proprietors.",
+        "PRIVATE_CORPORATION": "The private corporation.",
+        "PUBLIC_CORPORATION": "The public corporation."
     },
     "business_categories": {
         "1000": {

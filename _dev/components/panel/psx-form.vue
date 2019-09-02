@@ -143,7 +143,7 @@
                         <label>{{ $t('panel.psx-form.businessPhone') }}</label>
                       </div>
                       <div class="col-lg-4 col-md-4 col-sm-4 pl-0">
-                        <select class="form-control custom-select">
+                        <select v-model="form.business_phone_country" class="form-control custom-select">
                           <option v-for="countryDetail in getPhoneCountryCode" v-bind:key="countryDetail.iso" v-bind:value="countryDetail.code">
                             + {{ countryDetail.code }}
                           </option>
@@ -254,6 +254,7 @@
           business_address_zip: null,
           business_address_city: null,
           business_address_country: null,
+          business_phone_country: '1',
           business_phone: null,
           business_type: null,
           business_website: null,

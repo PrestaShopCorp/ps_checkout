@@ -7,13 +7,16 @@
         "gt500": "More than 500 employees"
     },
     "business_types": {
-        "1": "Individual",
-        "2": "Sole trader",
-        "3": "Partnership",
-        "4": "Public company",
-        "5": "Private company",
-        "6": "Not-for-profit organisation",
-        "7": "Government entity"
+        "INDIVIDUAL": "The individual.",
+        "PROPRIETORSHIP": "The proprietorship.",
+        "NONPROFIT": "The nonprofit.",
+        "GOVERNMENT": "The government.",
+        "GENERAL_PARTNERSHIP": "The general partnership.",
+        "LIMITED_PARTNERSHIP": "The limited partnership.",
+        "LIMITED_LIABILITY_PARTNERSHIP": "The limited liability partnership.",
+        "LIMITED_LIABILITY_PROPRIETORS": "The limited liability proprietors.",
+        "PRIVATE_CORPORATION": "The private corporation.",
+        "PUBLIC_CORPORATION": "The public corporation."
     },
     "business_categories": {
         "1000": {
