@@ -43,7 +43,9 @@ class WebHookValidationTest extends TestCase
     {
         return array(
             array(
-                WebHookValidation::HEADER_DATA_ERROR,
+                array(
+                    WebHookValidation::HEADER_DATA_ERROR,
+                ),
                 array(),
             ),
             array(
@@ -123,7 +125,9 @@ class WebHookValidationTest extends TestCase
     {
         return array(
             array(
-                WebHookValidation::BODY_DATA_ERROR,
+                array(
+                    WebHookValidation::BODY_DATA_ERROR,
+                ),
                 array(),
             ),
             array(
@@ -221,7 +225,9 @@ class WebHookValidationTest extends TestCase
 
         return array(
             array(
-                WebHookValidation::RESOURCE_DATA_ERROR,
+                array(
+                    WebHookValidation::RESOURCE_DATA_ERROR,
+                ),
                 array(),
             ),
             array(
