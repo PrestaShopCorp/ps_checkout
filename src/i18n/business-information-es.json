@@ -8,15 +8,15 @@
     },
     "business_types": {
         "INDIVIDUAL": "The individual.",
-        "PROPRIETORSHIP": "The proprietorship.",
-        "NONPROFIT": "The nonprofit.",
-        "GOVERNMENT": "The government.",
-        "GENERAL_PARTNERSHIP": "The general partnership.",
-        "LIMITED_PARTNERSHIP": "The limited partnership.",
-        "LIMITED_LIABILITY_PARTNERSHIP": "The limited liability partnership.",
-        "LIMITED_LIABILITY_PROPRIETORS": "The limited liability proprietors.",
-        "PRIVATE_CORPORATION": "The private corporation.",
-        "PUBLIC_CORPORATION": "The public corporation."
+        "PROPRIETORSHIP": "The proprietorship",
+        "NONPROFIT": "The nonprofit",
+        "GOVERNMENT": "The government",
+        "GENERAL_PARTNERSHIP": "The general partnership",
+        "LIMITED_PARTNERSHIP": "The limited partnership",
+        "LIMITED_LIABILITY_PARTNERSHIP": "The limited liability partnership",
+        "LIMITED_LIABILITY_PROPRIETORS": "The limited liability proprietors",
+        "PRIVATE_CORPORATION": "The private corporation",
+        "PUBLIC_CORPORATION": "The public corporation"
     },
     "business_categories": {
         "1000": {

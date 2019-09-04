@@ -182,7 +182,8 @@
                         <label>{{ $t('panel.psx-form.website') }}</label>
                         <input type="text" class="form-control" id="website" 
                           v-model="form.business_website"
-                          v-bind:class="[form.business_website != '' ? '' : 'has-danger']">
+                          v-bind:class="[form.business_website != '' ? '' : 'has-danger']"
+                          placeholder="https://your_website.extension">
                       </div>
                     </div>
                   </div>
@@ -222,6 +223,17 @@
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+            <!-- privacy text -->
+            <div id="privacy" class="row mb-1 mt-4">
+              <div class="col-lg-10 offset-lg-1 col-md-10 offset-md-1 col-sm-10 offset-sm-1 pl-0">
+                <div class="col-lg-3 col-md-3 col-sm-3 pl-0 pr-0 text-right mt-3">
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-9">
+                  <p class="mb-0">{{ $t('panel.psx-form.privacyText1') }}</p>
+                  <p>{{ $t('panel.psx-form.privacyText2') }} <a href="https://www.prestashop.com/privacy-policy" target="_blank">{{ $t('panel.psx-form.privacyLink') }}</a></p>
                 </div>
               </div>
             </div>
@@ -351,5 +363,8 @@
   }
   #app .has-danger {
     border-color: #C45C67;
+  }
+  #privacy {
+    font-size: 12px;
   }
 </style>

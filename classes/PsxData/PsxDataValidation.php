@@ -124,7 +124,7 @@ class PsxDataValidation
             $errors[] = self::PHONE;
         }
 
-        if (!preg_match('/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/', $data['business_website'])
+        if (!filter_var($data['business_website'], FILTER_VALIDATE_URL)
             || strlen($data['business_website']) < 1
             || strlen($data['business_website']) > 255
         ) {

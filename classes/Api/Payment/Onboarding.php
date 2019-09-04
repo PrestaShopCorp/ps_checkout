@@ -103,7 +103,7 @@ class Onboarding extends PaymentClient
             'phone_contacts' => [
                 0 => [
                 'phone_number_details' => [
-                        'country_code' => $psxFormData['business_phone_country'],
+                        'country_code' => (string) $psxFormData['business_phone_country'],
                         'national_number' => $psxFormData['business_phone'],
                     ],
                     'phone_type' => 'HOME',
