@@ -76,6 +76,7 @@ class PsxDataValidation
 
         if (empty($data)) {
             $errors[] = self::DATA_ERROR;
+
             return $errors;
         }
 

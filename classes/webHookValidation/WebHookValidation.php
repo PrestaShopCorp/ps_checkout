@@ -55,6 +55,7 @@ class WebHookValidation
 
         if (empty($headerValues)) {
             $errors[] = self::HEADER_DATA_ERROR;
+
             return $errors;
         }
 
@@ -86,6 +87,7 @@ class WebHookValidation
 
         if (empty($payload)) {
             $errors[] = self::BODY_DATA_ERROR;
+
             return $errors;
         }
 
@@ -117,6 +119,7 @@ class WebHookValidation
 
         if (empty($resource)) {
             $errors[] = self::RESOURCE_DATA_ERROR;
+
             return $errors;
         }
 

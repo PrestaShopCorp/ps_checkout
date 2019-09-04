@@ -104,6 +104,7 @@ class FirebaseClient
 
     /**
      * Refresh the token
+     *
      * @see https://firebase.google.com/docs/reference/rest/auth#section-refresh-token Firebase documentation
      *
      * @return array
