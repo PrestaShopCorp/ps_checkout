@@ -35,7 +35,7 @@
                     <div class="col-lg-2 col-md-2 col-sm-2">
                       <div class="md-radio">
                         <label>
-                          <input name="gender" type="radio" value="male" v-model="form.business_contact_gender">
+                          <input name="gender" type="radio" value="Mr" v-model="form.business_contact_gender">
                           <i class="md-radio-control" /> {{ $t('panel.psx-form.genderMr') }}
                         </label>
                       </div>
@@ -43,7 +43,7 @@
                     <div class="col-lg-6 col-md-6 col-sm-6">
                       <div class="md-radio">
                         <label>
-                          <input name="gender" type="radio" value="female" v-model="form.business_contact_gender">
+                          <input name="gender" type="radio" value="Ms" v-model="form.business_contact_gender">
                           <i class="md-radio-control" /> {{ $t('panel.psx-form.genderMrs') }}
                         </label>
                       </div>
@@ -143,7 +143,7 @@
                         <label>{{ $t('panel.psx-form.businessPhone') }}</label>
                       </div>
                       <div class="col-lg-4 col-md-4 col-sm-4 pl-0">
-                        <select class="form-control custom-select">
+                        <select v-model="form.business_phone_country" class="form-control custom-select">
                           <option v-for="countryDetail in getPhoneCountryCode" v-bind:key="countryDetail.iso" v-bind:value="countryDetail.code">
                             + {{ countryDetail.code }}
                           </option>
@@ -182,7 +182,8 @@
                         <label>{{ $t('panel.psx-form.website') }}</label>
                         <input type="text" class="form-control" id="website" 
                           v-model="form.business_website"
-                          v-bind:class="[form.business_website != '' ? '' : 'has-danger']">
+                          v-bind:class="[form.business_website != '' ? '' : 'has-danger']"
+                          placeholder="https://your_website.extension">
                       </div>
                     </div>
                   </div>
@@ -225,6 +226,17 @@
                 </div>
               </div>
             </div>
+            <!-- privacy text -->
+            <div id="privacy" class="row mb-1 mt-4">
+              <div class="col-lg-10 offset-lg-1 col-md-10 offset-md-1 col-sm-10 offset-sm-1 pl-0">
+                <div class="col-lg-3 col-md-3 col-sm-3 pl-0 pr-0 text-right mt-3">
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-9">
+                  <p class="mb-0">{{ $t('panel.psx-form.privacyText1') }}</p>
+                  <p>{{ $t('panel.psx-form.privacyText2') }} <a href="https://www.prestashop.com/privacy-policy" target="_blank">{{ $t('panel.psx-form.privacyLink') }}</a></p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="card-footer text-right">
@@ -245,7 +257,7 @@
         subCategory: null,
         errorForm: null,
         form: {
-          business_contact_gender: 'male',
+          business_contact_gender: 'Mr',
           business_contact_first_name: null,
           business_contact_last_name: null,
           business_contact_nationality: null,
@@ -254,6 +266,7 @@
           business_address_zip: null,
           business_address_city: null,
           business_address_country: null,
+          business_phone_country: '1',
           business_phone: null,
           business_type: null,
           business_website: null,
@@ -350,5 +363,8 @@
   }
   #app .has-danger {
     border-color: #C45C67;
+  }
+  #privacy {
+    font-size: 12px;
   }
 </style>

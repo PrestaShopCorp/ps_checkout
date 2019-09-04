@@ -123,6 +123,9 @@ class Translations
                     'businessSubCategory' => $this->module->l('Business subcategory', 'translations'),
                     'continue' => $this->module->l('Continue', 'translations'),
                     'errors' => $this->module->l('Errors', 'translations'),
+                    'privacyText1' => $this->module->l('By submitting this form, I agree that the data provided may be collected by PrestaShop S.A and transferred to PayPal to allow (i) to create a PayPal account and (ii) to improve my customer experience.', 'translations'),
+                    'privacyText2' => $this->module->l('You have rights to your data that you can exercise at any time by writing to privacy@prestashop.com.', 'translations'),
+                    'privacyLink' => $this->module->l('Learn more about managing your data and rights.', 'translations'),
                 ),
                 'active-payment' => array(
                     'activePaymentMethods' => $this->module->l('Activate payment methods', 'translations'),
