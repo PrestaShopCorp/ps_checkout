@@ -66,6 +66,7 @@ class ValidateOrder
      */
     public function validateOrder($payload)
     {
+        /** @var \PaymentModule $module */
         $module = \Module::getInstanceByName('ps_checkout');
 
         $module->validateOrder(
@@ -181,7 +182,7 @@ class ValidateOrder
      * @param string $status
      * @param string $paymentMethod can be 'paypal' or 'card'
      *
-     * @return int order state id to set to the order depending on the status return by paypal
+     * @return string|bool order state id to set to the order depending on the status return by paypal
      */
     private function setOrderState($orderId, $status, $paymentMethod)
     {
@@ -214,7 +215,7 @@ class ValidateOrder
      *
      * @param string $paymentMethod can be 'paypal' or 'card'
      *
-     * @return int id state
+     * @return int|bool id state
      */
     private function getPendingStatusId($paymentMethod)
     {
@@ -224,7 +225,7 @@ class ValidateOrder
             $stateId = \Configuration::get('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
         }
 
-        return $stateId;
+        return intval($stateId);
     }
 
     /**

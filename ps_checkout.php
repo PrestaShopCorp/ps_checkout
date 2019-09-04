@@ -153,9 +153,9 @@ class ps_checkout extends PaymentModule
     /**
      * Add payment option at the checkout in the front office
      *
-     * @param array params return by the hook
+     * @param array $params return by the hook
      *
-     * @return array all payment option available
+     * @return array|false all payment option available
      */
     public function hookPaymentOptions($params)
     {
@@ -233,7 +233,7 @@ class ps_checkout extends PaymentModule
      * changes will be applied.
      * Solution for now: see methods cancelPsRefund() from refund class
      *
-     * @param array params return by the hook
+     * @param array $params return by the hook
      */
     public function hookActionOrderSlipAdd($params)
     {
@@ -292,7 +292,7 @@ class ps_checkout extends PaymentModule
         $orderHistory = new \OrderHistory();
         $orderHistory->id_order = $params['order']->id;
 
-        $orderHistory->changeIdOrderState(Configuration::get('PS_CHECKOUT_STATE_PARTIAL_REFUND'), $params['order']->id);
+        $orderHistory->changeIdOrderState(intval(Configuration::get('PS_CHECKOUT_STATE_PARTIAL_REFUND')), $params['order']->id);
 
         if (false === $orderHistory->save()) {
             return false;
@@ -307,6 +307,7 @@ class ps_checkout extends PaymentModule
     {
         $order = new PrestaShopCollection('Order');
         $order->where('id_order', '=', $params['id_order']);
+        /** @var \Order $order */
         $order = $order->getFirst();
 
         $paypalOrderId = (new OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
@@ -323,7 +324,7 @@ class ps_checkout extends PaymentModule
         }
 
         // if the new order state is not "Refunded" stop the refund process
-        if ($params['newOrderStatus']->id !== (int) _PS_OS_REFUND_) {
+        if ($params['newOrderStatus']->id !== intval(_PS_OS_REFUND_)) {
             return false;
         }
 

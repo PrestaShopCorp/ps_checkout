@@ -43,7 +43,9 @@ class PsxDataValidationTest extends TestCase
     {
         return array(
             array(
-                PsxDataValidation::DATA_ERROR,
+                array(
+                    PsxDataValidation::DATA_ERROR,
+                ),
                 array(),
             ),
             array(

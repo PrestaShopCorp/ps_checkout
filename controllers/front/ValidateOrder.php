@@ -78,7 +78,22 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
 
         $payment->validateOrder($dataOrder);
 
-        Tools::redirect('index.php?controller=order-confirmation&id_cart=' . (int) $cart->id . '&id_module=' . (int) $this->module->id . '&id_order=' . $this->module->currentOrder . '&key=' . $customer->secure_key);
+        /** @var PaymentModule $module */
+        $module = $this->module;
+
+        Tools::redirect(
+            $this->context->link->getPageLink(
+                'order-confirmation',
+                true,
+                $this->context->language->id,
+                [
+                    'id_cart' => $cart->id,
+                    'id_module' => $module->id,
+                    'id_order' => $module->currentOrder,
+                    'key' => $customer->secure_key,
+                ]
+            )
+        );
     }
 
     /**

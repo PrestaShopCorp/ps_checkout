@@ -75,7 +75,9 @@ class PsxDataValidation
         );
 
         if (empty($data)) {
-            return $errors[] = self::DATA_ERROR;
+            $errors[] = self::DATA_ERROR;
+
+            return $errors;
         }
 
         if (strlen($data['business_contact_first_name']) < 1 || strlen($data['business_contact_first_name']) > 127) {

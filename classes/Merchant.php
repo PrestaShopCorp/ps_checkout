@@ -159,7 +159,7 @@ class Merchant
     /**
      * Get the merchant integration
      *
-     * @param array|bool response or false
+     * @return array|bool response or false
      */
     public function getMerchantIntegration()
     {

@@ -36,7 +36,7 @@ class PaypalOrder
     /**
      * @var array
      */
-    private $order = null;
+    private $order;
 
     public function __construct(string $id)
     {

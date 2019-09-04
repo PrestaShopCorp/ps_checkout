@@ -164,7 +164,7 @@ class GenericClient
     /**
      * Getter for client
      *
-     * @param Client
+     * @return Client
      */
     protected function getClient()
     {

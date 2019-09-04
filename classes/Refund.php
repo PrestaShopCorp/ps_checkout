@@ -71,10 +71,7 @@ class Refund
     /**
      * Refund order
      *
-     * @param float $amount value to refund
-     * @param string $currenctCode
-     *
-     * @return bool
+     * @return array api response
      */
     public function refundPaypalOrder()
     {
@@ -96,7 +93,7 @@ class Refund
     {
         $paypalOrder = (new PaypalOrder($this->getPaypalOrderId()))->getOrder();
 
-        if (null === $paypalOrder) {
+        if (!$paypalOrder) {
             return false;
         }
 
@@ -137,8 +134,9 @@ class Refund
     /**
      * Prepare the datas to fully refund the order
      *
-     * @param object $order
+     * @param \Order $order
      * @param array $orderProductList
+     * @param string $transactionId
      *
      * @return bool
      */
@@ -149,7 +147,7 @@ class Refund
             $orderProductList[$key]['unit_price'] = $value['unit_price_tax_incl'];
         }
 
-        $refundOrderStateId = _PS_OS_REFUND_;
+        $refundOrderStateId = intval(_PS_OS_REFUND_);
 
         return $this->refundPrestashopOrder($order, $orderProductList, $refundOrderStateId, $transactionId);
     }
@@ -157,8 +155,9 @@ class Refund
     /**
      * Prepare the orderDetailList to do a partial refund on the order
      *
-     * @param object $order
+     * @param \Order $order
      * @param array $orderProductList
+     * @param string $transactionId
      *
      * @return bool
      */
@@ -182,7 +181,7 @@ class Refund
             $orderDetailList[$key]['unit_price'] = $orderDetailList[$key]['amount'] / $quantityToRefund;
         }
 
-        $partialRefundOrderStateId = \Configuration::get(self::REFUND_STATE);
+        $partialRefundOrderStateId = intval(\Configuration::get(self::REFUND_STATE));
 
         return $this->refundPrestashopOrder($order, $orderDetailList, $partialRefundOrderStateId, $transactionId);
     }
@@ -206,8 +205,10 @@ class Refund
     /**
      * Refund the order
      *
-     * @param object $order
+     * @param \Order $order
      * @param array $orderProductList
+     * @param int $orderStateId
+     * @param string $transactionId
      *
      * @return bool
      */
@@ -391,7 +392,7 @@ class Refund
     /**
      * setter for the paypal order id
      *
-     * @param string $paypalOrderId
+     * @param string $id
      */
     public function setPaypalOrderId($id)
     {

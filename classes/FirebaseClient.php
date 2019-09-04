@@ -107,8 +107,6 @@ class FirebaseClient
      *
      * @see https://firebase.google.com/docs/reference/rest/auth#section-refresh-token Firebase documentation
      *
-     * @param string $token
-     *
      * @return array
      */
     public function refreshToken()
