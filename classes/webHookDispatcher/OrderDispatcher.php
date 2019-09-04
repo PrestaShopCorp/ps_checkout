@@ -80,7 +80,7 @@ class OrderDispatcher
     /**
      * Check the PSL orderId value and transform it into a Prestashop OrderId
      *
-     * @param int $orderId
+     * @param string $orderId paypal order id
      *
      * @return bool|int
      */
@@ -94,7 +94,7 @@ class OrderDispatcher
 
         $psOrderId = (new OrderMatrice())->getOrderPrestashopFromPaypal($orderId);
 
-        if (false === $psOrderId) {
+        if (!$psOrderId) {
             throw new UnprocessableException('order #' . $orderId . ' does not exist');
         }
 

@@ -143,7 +143,7 @@ class Onboarding extends PaymentClient
      */
     private function getCurrencyIsoCode()
     {
-        $currency = \Currency::getCurrency(\Configuration::get('PS_CURRENCY_DEFAULT'));
+        $currency = \Currency::getCurrency((int) \Configuration::get('PS_CURRENCY_DEFAULT'));
 
         return $currency['iso_code'];
     }

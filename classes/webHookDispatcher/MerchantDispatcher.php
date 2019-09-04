@@ -31,7 +31,7 @@ class MerchantDispatcher
     /**
      * Dispatch the Event Type to manage the merchant status
      *
-     * @param string $eventType
+     * @param string $merchantId
      *
      * @return bool
      */

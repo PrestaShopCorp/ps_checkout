@@ -36,11 +36,11 @@ class Order extends PaymentClient
     /**
      * Create order to paypal api
      *
-     * @param array Cart details
+     * @param string $payload Cart details (json)
      *
      * @return array|bool data with paypal order id or false if error
      */
-    public function create($payload = array())
+    public function create($payload)
     {
         $this->setRoute('/payments/order/create');
 
@@ -52,8 +52,8 @@ class Order extends PaymentClient
     /**
      * Capture order funds
      *
-     * @param string orderId paypal
-     * @param string merchantId
+     * @param string $orderId paypal
+     * @param string $merchantId
      *
      * @return array|bool response from paypal if the payment is accepted or false if error occured
      */
@@ -81,7 +81,7 @@ class Order extends PaymentClient
     /**
      * Get paypal order details
      *
-     * @param string orderId paypal
+     * @param string $orderId paypal
      *
      * @return array|bool paypal order
      */
@@ -99,8 +99,8 @@ class Order extends PaymentClient
     /**
      * Authorize an order
      *
-     * @param string orderId paypal
-     * @param string merchantId
+     * @param string $orderId paypal
+     * @param string $merchantId
      *
      * @return array|bool paypal order
      */
@@ -112,7 +112,7 @@ class Order extends PaymentClient
     /**
      * Refund an order
      *
-     * @param string orderId paypal
+     * @param array $payload
      *
      * @return array|bool paypal order
      */
@@ -128,7 +128,7 @@ class Order extends PaymentClient
     /**
      * Patch paypal order
      *
-     * @param string orderId paypal
+     * @param string $orderId paypal
      *
      * @return array|bool response from paypal if the payment is accepted or false if error occured
      */

@@ -52,7 +52,7 @@ class WebHookOrder
     /**
      * Currency ID from ISO Code
      *
-     * @var int
+     * @var string
      */
     private $currencyId;
 
@@ -109,7 +109,7 @@ class WebHookOrder
     /**
      * Get Order slip already refunded value
      *
-     * @param object $order
+     * @param \Order $order
      *
      * @return float
      */

@@ -48,7 +48,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     /**
      * Id coming from Paypal
      *
-     * @var int
+     * @var string
      */
     private $merchantId;
 

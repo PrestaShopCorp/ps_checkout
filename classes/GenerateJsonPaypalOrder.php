@@ -41,9 +41,9 @@ class GenerateJsonPaypalOrder
     }
 
     /**
-     * @param \Cart Current cart
-     * @param \Customer Current customer
-     * @param \Language Current language
+     * @param \Cart $cart Current cart
+     * @param \Customer $customer Current customer
+     * @param \Language $language Current language
      *
      * @return array Data to be added in the Paypal payload
      */
@@ -79,7 +79,7 @@ class GenerateJsonPaypalOrder
     /**
      * Create payload required by paypal api for creating order
      *
-     * @param array fetchDataFromCart()
+     * @param array $params fetchDataFromCart()
      *
      * @return string paypal order data
      */
@@ -239,7 +239,7 @@ class GenerateJsonPaypalOrder
     /**
      * Adapter method retrieving a state name from an ID
      *
-     * @param int State ID
+     * @param int $stateId State ID
      *
      * @return string State name
      */
@@ -251,7 +251,7 @@ class GenerateJsonPaypalOrder
     /**
      * Use the core to retrieve a country ISO code from its ID
      *
-     * @param int Country ID
+     * @param int $countryId Country ID
      *
      * @return string Country ISO code
      */

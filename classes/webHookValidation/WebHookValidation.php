@@ -54,7 +54,8 @@ class WebHookValidation
         $errors = array();
 
         if (empty($headerValues)) {
-            return $errors[] = self::HEADER_DATA_ERROR;
+            $errors[] = self::HEADER_DATA_ERROR;
+            return $errors;
         }
 
         if (empty($headerValues['Shop-Id'])) {
@@ -84,7 +85,8 @@ class WebHookValidation
         $errors = array();
 
         if (empty($payload)) {
-            return $errors[] = self::BODY_DATA_ERROR;
+            $errors[] = self::BODY_DATA_ERROR;
+            return $errors;
         }
 
         if (empty($payload['eventType'])) {
@@ -114,7 +116,8 @@ class WebHookValidation
         $errors = array();
 
         if (empty($resource)) {
-            return $errors[] = self::RESOURCE_DATA_ERROR;
+            $errors[] = self::RESOURCE_DATA_ERROR;
+            return $errors;
         }
 
         if (empty($resource['amount']->value)) {
@@ -135,7 +138,7 @@ class WebHookValidation
     /**
      * Validates the webHook orderId
      *
-     * @param int $orderId
+     * @param int|string $orderId can be paypal order id (string) or ps order id (int)
      *
      * @return array|bool Error lists, bool if ok
      */
