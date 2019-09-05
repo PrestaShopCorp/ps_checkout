@@ -454,10 +454,6 @@ class ps_checkout extends PaymentModule
     {
         $currentController = $this->context->controller->controller_name;
 
-        if (false === (new MerchantRepository())->merchantIsValid()) {
-            return false;
-        }
-
         if ('AdminPayment' !== $currentController) {
             return false;
         }
