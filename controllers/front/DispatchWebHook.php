@@ -125,7 +125,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         $dataReturned = (new Webhook($context->link))->getShopSignature($bodyValues);
 
         // data return false if no error
-        if (false === $dataReturned) {
+        if (200 == $dataReturned['statusCode'] && 'VERIFIED' === $dataReturned['message']) {
             return true;
         }
 
