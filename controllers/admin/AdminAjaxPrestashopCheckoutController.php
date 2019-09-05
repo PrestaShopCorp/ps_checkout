@@ -26,6 +26,7 @@
 use PrestaShop\Module\PrestashopCheckout\Store\StoreManager;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
+use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
@@ -48,6 +49,76 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessUpdatePaymentMode()
     {
         Configuration::updateValue('PS_CHECKOUT_MODE', Tools::getValue('paymentMode'));
+    }
+
+    /**
+     * Logout firebase account
+     */
+    public function ajaxProcessLogOut()
+    {
+        $storeManager = new StoreManager();
+
+        $storeManager->unlinkPaypal();
+        $storeManager->psxLogout();
+        $storeManager->updatePsxAccount('', '', '', '');
+
+        $this->ajaxDie(json_encode(true));
+    }
+
+    /**
+     * SignIn firebase account
+     *
+     * @param string $email
+     * @param string $password
+     */
+    public function ajaxProcessSignIn($email, $password)
+    {
+        $email = Tools::getValue('email');
+        $password = Tools::getValue('password');
+
+        $firebase = new Auth();
+        $response = $firebase->signInWithEmailAndPassword($email, $password);
+
+        // if there is no error, save the account tokens in database
+        if (!isset($response['error'])) {
+            $storeManager = new StoreManager();
+            $storeManager->updatePsxAccount(
+                $response['idToken'],
+                $response['refreshToken'],
+                $response['localId'],
+                $response['email']
+            );
+        }
+
+        $this->ajaxDie(json_encode($response));
+    }
+
+    /**
+     * SignUp firebase account
+     *
+     * @param string $email
+     * @param string $password
+     */
+    public function ajaxProcessSignUp($email, $password)
+    {
+        $email = Tools::getValue('email');
+        $password = Tools::getValue('password');
+
+        $firebase = new Auth();
+        $response = $firebase->signUpWithEmailAndPassword($email, $password);
+
+        // if there is no error, save the account tokens in database
+        if (!isset($response['error'])) {
+            $storeManager = new StoreManager();
+            $storeManager->updatePsxAccount(
+                $response['idToken'],
+                $response['refreshToken'],
+                $response['localId'],
+                $response['email']
+            );
+        }
+
+        $this->ajaxDie(json_encode($response));
     }
 
     /**

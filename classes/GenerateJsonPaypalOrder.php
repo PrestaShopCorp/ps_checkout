@@ -117,8 +117,8 @@ class GenerateJsonPaypalOrder
             'intent' => \Configuration::get('PS_CHECKOUT_INTENT'), // capture or authorize
             'custom_id' => (string) $params['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
-            'description' => 'Checking out with your cart from ' . \Configuration::get('PS_SHOP_NAME'),
-            'soft_descriptor' => \Configuration::get('PS_SHOP_NAME'),
+            'description' => substr('Checking out with your cart from ' . \Configuration::get('PS_SHOP_NAME'), 0, 127),
+            'soft_descriptor' => substr(\Configuration::get('PS_SHOP_NAME'), 0, 22),
             'amount' => [
                 'currency_code' => $params['currency']['iso_code'],
                 'value' => $params['cart']['totals']['total']['amount'],
@@ -180,15 +180,16 @@ class GenerateJsonPaypalOrder
             ],
         ];
 
+        // TODO: Disabled temporary: Need to handle country indicator
         // Add optional phone number if provided
-        if (!empty($params['addresses']['invoice']->phone)) {
-            $payload['payer']['phone'] = [
-                'phone_number' => [
-                    'national_number' => $params['addresses']['invoice']->phone,
-                ],
-                'phone_type' => 'MOBILE', // TODO - Function to determine if phone is mobile or not
-            ];
-        }
+        // if (!empty($params['addresses']['invoice']->phone)) {
+        //     $payload['payer']['phone'] = [
+        //         'phone_number' => [
+        //             'national_number' => $params['addresses']['invoice']->phone,
+        //         ],
+        //         'phone_type' => 'MOBILE', // TODO - Function to determine if phone is mobile or not
+        //     ];
+        // }
 
         // Add optional birthdate if provided
         if (!empty($params['customer']->birthday) && $params['customer']->birthday !== '0000-00-00') {

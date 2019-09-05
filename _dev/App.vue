@@ -6,6 +6,7 @@
         <MenuItem route="/customize">{{ $t('menu.customizeCheckout') }}</MenuItem>
         <MenuItem route="/activity">{{ $t('menu.manageActivity') }}</MenuItem>
       </template>
+
       <!-- <MenuItem route="/advanced">{{ $t('menu.advancedSettings') }}</MenuItem> -->
       <MenuItem route="/help">{{ $t('menu.help') }}</MenuItem>
     </Menu>

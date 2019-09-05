@@ -25,8 +25,8 @@
             </div>
             <div class="col-12 col-sm-4 col-md-3 col-lg-4 m-auto">
               <div class="text-center float-right" v-if="firebaseStatusAccount === false">
-                <a :href="ssoOnboardingLinkSignin" class="mr-4"><b>{{ $t('panel.account-list.logIn') }}</b></a>
-                <a :href="ssoOnboardingLinkCreateAccount" class="btn btn-primary-reverse btn-outline-primary light-button mb-1">
+                <a href="#" @click.prevent="goToSignIn()" class="mr-4"><b>{{ $t('panel.account-list.logIn') }}</b></a>
+                <a href="#" @click.prevent="goToSignUp()" class="btn btn-primary-reverse btn-outline-primary light-button mb-1">
                   {{ $t('panel.account-list.createAccount') }}
                 </a>
               </div>
@@ -86,17 +86,14 @@
       paypalStatusAccount() {
         return this.$store.state.paypal.onboardingCompleted;
       },
-      ssoOnboardingLinkSignin() {
-        return this.$store.state.firebase.onboardingLinkSignIn;
-      },
-      ssoOnboardingLinkCreateAccount() {
-        return this.$store.state.firebase.onboardingLinkCreateAccount;
-      },
-      ssoOnboardingLinkLogout() {
-        return this.$store.state.firebase.onboardingLinkLogout;
-      },
     },
     methods: {
+      goToSignIn() {
+        this.$router.push('/authentication/signin');
+      },
+      goToSignUp() {
+        this.$router.push('/authentication/signup');
+      },
       paypalUnlink() {
         this.$store.dispatch('unlink').then(() => {
           this.$store.dispatch('getOnboardingLink');

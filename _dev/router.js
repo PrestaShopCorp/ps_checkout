@@ -2,12 +2,14 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import store from './store';
 
-import Customize from '@/pages/Customize.vue';
-import Accounts from '@/pages/Accounts.vue';
-import PsxAdditionalDetails from '@/pages/PsxAdditionalDetails.vue';
-import Activity from '@/pages/Activity.vue';
-import Advanced from '@/pages/Advanced.vue';
-import Help from '@/pages/Help.vue';
+import Customize from '@/pages/Customize';
+import Accounts from '@/pages/Accounts';
+import Signin from '@/pages/Signin';
+import Signup from '@/pages/Signup';
+import PsxAdditionalDetails from '@/pages/PsxAdditionalDetails';
+import Activity from '@/pages/Activity';
+import Advanced from '@/pages/Advanced';
+import Help from '@/pages/Help';
 
 Vue.use(Router);
 
@@ -26,6 +28,30 @@ const router = new Router({
           && !store.getters.paypalOnboardingIsCompleted
           && !store.getters.psxOnboardingIsCompleted) {
           next('/authentication/additional');
+        } else {
+          next();
+        }
+      },
+    },
+    {
+      path: '/authentication/signin',
+      name: 'Signin',
+      component: Signin,
+      beforeEnter: (to, from, next) => {
+        if (store.getters.firebaseOnboardingIsCompleted) {
+          next(from);
+        } else {
+          next();
+        }
+      },
+    },
+    {
+      path: '/authentication/signup',
+      name: 'Signup',
+      component: Signup,
+      beforeEnter: (to, from, next) => {
+        if (store.getters.firebaseOnboardingIsCompleted) {
+          next(from);
         } else {
           next();
         }
@@ -68,7 +94,14 @@ const router = new Router({
 });
 
 // Page list accesible by guest customer
-const guestPages = ['Authentication', 'PsxAdditionalDetails', 'Help', 'Advanced'];
+const guestPages = [
+  'Authentication',
+  'PsxAdditionalDetails',
+  'Signin',
+  'Signup',
+  'Help',
+  'Advanced',
+];
 
 // Global navigation guard
 router.beforeEach((to, from, next) => {

@@ -28,7 +28,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Api\Client;
 
 use GuzzleHttp\Client;
 use PrestaShop\Module\PrestashopCheckout\Environment\PsxEnv;
-use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
+use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 
 class PsxClient extends GenericClient
@@ -43,7 +43,7 @@ class PsxClient extends GenericClient
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json',
-                    'Authorization' => 'Bearer ' . (new FirebaseClient())->getToken(),
+                    'Authorization' => 'Bearer ' . (new Token())->getToken(),
                     'Shop-Id' => \Configuration::get('PS_CHECKOUT_SHOP_UUID_V4'),
                 ],
             ),

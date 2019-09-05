@@ -28,7 +28,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
 use GuzzleHttp\Client;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
-use PrestaShop\Module\PrestashopCheckout\FirebaseClient;
+use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 
 /**
@@ -50,7 +50,7 @@ class PaymentClient extends GenericClient
                     'headers' => [
                         'Content-Type' => 'application/json',
                         'Accept' => 'application/json',
-                        'Authorization' => 'Bearer ' . (new FirebaseClient())->getToken(),
+                        'Authorization' => 'Bearer ' . (new Token())->getToken(),
                         'Shop-Id' => \Configuration::get('PS_CHECKOUT_SHOP_UUID_V4'),
                         'Hook-Url' => $this->link->getModuleLink('ps_checkout', 'DispatchWebHook', array(), true),
                         'Bn-Code' => $this->getBnCode(),
