@@ -67,11 +67,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
     /**
      * SignIn firebase account
-     *
-     * @param string $email
-     * @param string $password
      */
-    public function ajaxProcessSignIn($email, $password)
+    public function ajaxProcessSignIn()
     {
         $email = Tools::getValue('email');
         $password = Tools::getValue('password');
