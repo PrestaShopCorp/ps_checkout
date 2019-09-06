@@ -181,14 +181,14 @@ class OrderStates
      */
     private function setStateIcons($state, $orderStateId)
     {
-        if (true !== is_writable(_PS_ORDER_STATE_IMG_DIR_)) {
-            \PrestaShopLogger::addLog('[PSPInstall] ' . _PS_ORDER_STATE_IMG_DIR_ . ' is not writable', 2, null, null, null, true);
+        $iconExtension = '.gif';
+        $iconToPast = _PS_ORDER_STATE_IMG_DIR_ . $orderStateId . $iconExtension;
+        
+        if (true !== is_writable($iconToPast)) {
+            \PrestaShopLogger::addLog('[PSPInstall] ' . $iconToPast . ' is not writable', 2, null, null, null, true);
 
             return false;
         }
-
-        $iconsFolderOrigin = _PS_MODULE_DIR_ . self::MODULE_NAME . '/views/img/OrderStatesIcons/';
-        $iconExtension = '.gif';
 
         if ($state === Refund::REFUND_STATE) {
             $iconName = 'refund';
@@ -196,8 +196,8 @@ class OrderStates
             $iconName = 'waiting';
         }
 
-        $iconToCopy = $iconsFolderOrigin . $iconName . $iconExtension;
-        $iconToPast = _PS_ORDER_STATE_IMG_DIR_ . $orderStateId . $iconExtension;
+        $iconsFolderOrigin = _PS_MODULE_DIR_ . self::MODULE_NAME . '/views/img/OrderStatesIcons/';
+        $iconToCopy = $iconsFolderOrigin . $iconName . $iconExtension;       
 
         if (false === copy($iconToCopy, $iconToPast)) {
             \PrestaShopLogger::addLog('[PSPInstall] not able to copy ' . $iconName . ' for ID ' . $orderStateId, 2, null, null, null, true);
