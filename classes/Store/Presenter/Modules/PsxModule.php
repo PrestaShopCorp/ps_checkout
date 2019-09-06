@@ -69,7 +69,9 @@ class PsxModule implements StorePresenterInterface
     /**
      * getJsonData
      *
-     * @param mixed $dir
+     * @param string $dir
+     *
+     * @return array $data
      */
     private function getJsonData($dir)
     {

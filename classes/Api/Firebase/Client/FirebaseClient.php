@@ -24,35 +24,40 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules;
+namespace PrestaShop\Module\PrestashopCheckout\Api\Firebase\Client;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
-use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface;
+use GuzzleHttp\Client;
+use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
+use PrestaShop\Module\PrestashopCheckout\Environment\FirebaseEnv;
 
 /**
- * Construct the firebase module
+ * Handle firebase signIn/signUp
  */
-class FirebaseModule implements StorePresenterInterface
+class FirebaseClient extends GenericClient
 {
-    /**
-     * Present the Firebase module (vuex)
-     *
-     * @return array
-     */
-    public function present()
+    public function __construct(array $params = array())
     {
-        $idToken = (new Token())->getToken();
+        if (isset($params['api_key'])) {
+            $apiKey = $params['api_key'];
+        } else {
+            $apiKey = (new FirebaseEnv())->getFirebaseApiKey();
+        }
 
-        $firebaseModule = array(
-            'firebase' => array(
-                'email' => \Configuration::get('PS_PSX_FIREBASE_EMAIL'),
-                'idToken' => $idToken,
-                'localId' => \Configuration::get('PS_PSX_FIREBASE_LOCAL_ID'),
-                'refreshToken' => \Configuration::get('PS_PSX_FIREBASE_REFRESH_TOKEN'),
-                'onboardingCompleted' => !empty($idToken),
-            ),
+        $client = new Client(
+            array(
+                'defaults' => array(
+                    'timeout' => $this->timeout,
+                    'allow_redirects' => false,
+                    'query' => array(
+                        'key' => $apiKey,
+                    ),
+                    'headers' => array(
+                        'Content-Type' => 'application/json',
+                    ),
+                ),
+            )
         );
 
-        return $firebaseModule;
+        $this->setClient($client);
     }
 }

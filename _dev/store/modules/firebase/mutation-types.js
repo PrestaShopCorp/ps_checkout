@@ -1,0 +1,2 @@
+export const UPDATE_ACCOUNT = 'UPDATE_ACCOUNT';
+export const LOGOUT_ACCOUNT = 'LOGOUT_ACCOUNT';

@@ -76,7 +76,7 @@ class StorePresenter implements StorePresenterInterface
 
         $this->store = array_merge(
             (new ContextModule($this->module, $this->context))->present(),
-            (new FirebaseModule($this->context))->present(),
+            (new FirebaseModule())->present(),
             (new PaypalModule())->present(),
             (new PsxModule($this->context))->present(),
             (new ConfigurationModule())->present()

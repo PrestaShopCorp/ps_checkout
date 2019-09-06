@@ -104,7 +104,9 @@ class ContextModule implements StorePresenterInterface
     {
         $isoCode = $this->context->language->iso_code;
 
-        if ('fr' !== $isoCode) {
+        $availableReadme = ['fr', 'en', 'it', 'es'];
+
+        if (!in_array($isoCode, $availableReadme)) {
             $isoCode = 'en';
         }
 

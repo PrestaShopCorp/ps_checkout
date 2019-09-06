@@ -26,6 +26,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
+
 /**
  * Get some info about the merchant
  */
@@ -70,7 +72,7 @@ class MerchantRepository
      */
     public function onbardingFirebaseIsCompleted()
     {
-        $idToken = (new FirebaseClient())->getToken();
+        $idToken = (new Token())->getToken();
 
         return !empty($idToken);
     }
