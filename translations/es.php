@@ -118,7 +118,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_33b0504f0b776f2c13381c543bf2017c
 $_MODULE['<{ps_checkout}prestashop>translations_c12fb9a7b1d63237624c3a069891e7f4'] = 'Personalización de la experiencia de compra, lista de transacciones, gestión de litigios... ¡y próximamente mucho más!';
 $_MODULE['<{ps_checkout}prestashop>translations_44106d67db6b915eab67e4293f70a926'] = 'pending dispute(s)	';
 $_MODULE['<{ps_checkout}prestashop>translations_c7b5d73ffc406b56966f030ac1b1da10'] = 'Ir a la plataforma de gestión de litigios';
-$_MODULE['<{ps_checkout}prestashop>translations_baac076f6be8697a69d8dbb5cce5b2e8'] = 'Limitado a 500 $';
+$_MODULE['<{ps_checkout}prestashop>translations_baac076f6be8697a69d8dbb5cce5b2e8'] = 'Limitado a 500 $';
 $_MODULE['<{ps_checkout}prestashop>translations_0010d7e47c9ef468ccad1dde3b4536c5'] = 'Acepta los pagos a través del botón PayPal en tu página de pago';
 $_MODULE['<{ps_checkout}prestashop>translations_1d8881f50fe101293c99242fbaab59fe'] = 'Tu cuenta necesita estar confirmada para aceptar los pagos a través de PayPal. Comprueba si has recibido un correo de confirmación en tu bandeja de entrada.';
 $_MODULE['<{ps_checkout}prestashop>translations_a6192b5f0d39b96622f52bceba16da10'] = 'Puedes aceptar una cantidad total limitada en las transacciones con tarjeta bancaria.';
