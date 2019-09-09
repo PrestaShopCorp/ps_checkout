@@ -1,3 +1,5 @@
+![alt text][logo]
+
 # PrestaShop Checkout
 
 ## About
@@ -5,6 +7,10 @@
 PrestaShop official payment module in partnership with PayPal.
 
 ## Building the module
+
+### Direct download
+
+If you want to get a zip ready to install on your shop. You can directly download it by clicking [here][direct-download].
 
 ### Production
 
@@ -70,6 +76,8 @@ This module is released under the [Academic Free License 3.0][AFL-3.0]
 
 [vuejs]: https://vuejs.org/
 [vuejs-devtools]: https://github.com/vuejs/vue-devtools
+[logo]: /views/img/prestashop_brand.png "PrestaShop Checkout"
+[direct-download]: https://github.com/PrestaShop/ps_checkout/releases/latest/download/ps_checkout.zip
 [1]: https://devdocs.prestashop.com/1.7/development/coding-standards/
 [2]: https://devdocs.prestashop.com/1.7/contribute/contribution-guidelines/
 [3]: https://help.github.com/articles/using-pull-requests
