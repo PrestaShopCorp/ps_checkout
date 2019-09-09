@@ -31,7 +31,7 @@
                 </a>
               </div>
               <div class="text-right" v-else>
-                <a v-if="!isReady" :href="ssoOnboardingLinkLogout" class="text-muted">{{ $t('panel.account-list.logOut') }}</a>
+                <a v-if="!isReady" href="#" @click.prevent="logOut()" class="text-muted">{{ $t('panel.account-list.logOut') }}</a>
               </div>
             </div>
           </div>
@@ -94,11 +94,21 @@
       goToSignUp() {
         this.$router.push('/authentication/signup');
       },
+      logOut() {
+        this.$store.dispatch('logOut').then(() => {
+          this.$store.dispatch('psxOnboarding', false);
+        });
+      },
       paypalUnlink() {
         this.$store.dispatch('unlink').then(() => {
           this.$store.dispatch('getOnboardingLink');
         });
       },
+    },
+    created() {
+      if (this.firebaseStatusAccount) {
+        this.$store.dispatch('getOnboardingLink');
+      }
     },
   };
 </script>
