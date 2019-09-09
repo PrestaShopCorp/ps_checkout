@@ -1,4 +1,4 @@
-<h1 align="center"><img src="/views/img/prestashop_brand.png" alt="PrestaShop Checkout" style="width: 500px;"></h1>
+<h1 align="center"><img src="/views/img/prestashop_brand.png" alt="PrestaShop Checkout" width="500"></h1>
 
 # PrestaShop Checkout
 
