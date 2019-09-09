@@ -61,9 +61,9 @@
 
 {literal}
 <script type="text/javascript">
-    let paypalOrderId = "{/literal}{$paypalOrderId|escape:'htmlall':'UTF-8'}{literal}";
-    let orderValidationLink = "{/literal}{$orderValidationLink|escape:'htmlall':'UTF-8'}{literal}";
-    let cardIsActive = "{/literal}{$cardIsActive|escape:'htmlall':'UTF-8'}{literal}";
-    let paypalIsActive = "{/literal}{$paypalIsActive|escape:'htmlall':'UTF-8'}{literal}";
+    let paypalOrderId = "{/literal}{$paypalOrderId|escape:'javascript':'UTF-8'}{literal}";
+    let orderValidationLink = "{/literal}{$orderValidationLink|escape:'javascript':'UTF-8'}{literal}";
+    let cardIsActive = "{/literal}{$cardIsActive|escape:'javascript':'UTF-8'}{literal}";
+    let paypalIsActive = "{/literal}{$paypalIsActive|escape:'javascript':'UTF-8'}{literal}";
 </script>
 {/literal}
