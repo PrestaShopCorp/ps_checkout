@@ -33,7 +33,7 @@
                 <div class="card-block">
                     <div class="module-item-list">
                         <div class="row module-item-wrapper-list py-3">
-                            <div class="col-12 col-sm-2 col-md-2 col-lg-3 m-auto">
+                            <div class="col-12 col-sm-2 col-md-2 col-lg-3">
                                 <div class="img m-auto">
                                 </div>
                             </div>
