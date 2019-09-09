@@ -14,7 +14,7 @@ install:
 
 script:
   # PHP syntax check
-  - bash -c '! (find . -name "*.php" ! -path "./vendor/*" -print0 | xargs -0 -n1 -P4 php -l | grep "Parse error")'
+  - find . -type f -name '*.php' ! -path "./vendor/*" ! -path "./tests/*" -exec php -l -n {} \; | (! grep -v "No syntax errors detected")
   # PHP cs fixer
   - vendor/bin/php-cs-fixer fix --no-interaction --dry-run --diff
   # PHP Unit
@@ -48,10 +48,9 @@ before_deploy:
   - rm -rf _dev
   - rm -rf tests
   - rm -rf node_modules
-  - mkdir -p /tmp/build/ps_checkout
-  - mv * /tmp/build/ps_checkout
-  - pushd /tmp/build
-  - zip /tmp/build/ps_checkout.zip -r ps_checkout/ ps_checkout/.en*
+  - pushd $TRAVIS_BUILD_DIR/..
+  - mkdir /tmp/build
+  - zip /tmp/build/$(ls | head -1).zip -r $(ls | head -1)/ 
   - popd
 
 deploy:
