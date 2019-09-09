@@ -15,7 +15,6 @@ export default {
     });
   },
   psxOnboarding({commit}, payload) {
-    console.log(payload);
     commit(types.UPDATE_ONBOARDING_STATUS, payload);
   },
 };

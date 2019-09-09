@@ -78,6 +78,9 @@
     },
     computed: {
       ALERT_TYPE_WARNING: () => ALERT_TYPE_WARNING,
+      isReady() {
+        return this.$store.state.context.isReady;
+      },
       faq() {
         return this.$store.state.context.faq;
       },
