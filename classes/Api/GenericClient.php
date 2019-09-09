@@ -83,7 +83,7 @@ class GenericClient
         try {
             $response = $this->getClient()->post($this->getRoute(), $options);
         } catch (RequestException $e) {
-            \PrestaShopLogger::addLog($e->getMessage(), 3, null, null, null, true);
+            \PrestaShopLogger::addLog(date('Ymd') . $e->getMessage(), 3);
 
             if (!$e->hasResponse()) {
                 return false;
