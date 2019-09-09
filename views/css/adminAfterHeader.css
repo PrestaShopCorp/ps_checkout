@@ -27,10 +27,11 @@
 */
 
 .img {
-    width: 174px;
-    height: 63px;
+    width: 100%;
+    height: 100%;
     background-image: url('../img/prestashop_brand.png');
     background-repeat: no-repeat;
+    background-size: contain;
 }
 @media screen and (max-width: 768px) {
     .img {
