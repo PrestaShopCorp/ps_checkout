@@ -1,4 +1,4 @@
-![alt text][logo]
+<h1 align="center"><img src="/views/img/prestashop_brand.png" alt="PrestaShop Checkout"></h1>
 
 # PrestaShop Checkout
 
@@ -76,7 +76,6 @@ This module is released under the [Academic Free License 3.0][AFL-3.0]
 
 [vuejs]: https://vuejs.org/
 [vuejs-devtools]: https://github.com/vuejs/vue-devtools
-[logo]: /views/img/prestashop_brand.png "PrestaShop Checkout"
 [direct-download]: https://github.com/PrestaShop/ps_checkout/releases/latest/download/ps_checkout.zip
 [1]: https://devdocs.prestashop.com/1.7/development/coding-standards/
 [2]: https://devdocs.prestashop.com/1.7/contribute/contribution-guidelines/
