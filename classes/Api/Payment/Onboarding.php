@@ -42,14 +42,19 @@ class Onboarding extends PaymentClient
     {
         $this->setRoute('/payments/onboarding/onboard');
 
+        $psxFormData = json_decode(\Configuration::get('PS_CHECKOUT_PSX_FORM'), true);
+
         $payload = [
             'url' => $this->getCallBackUrl(),
+            'person_details' => $this->getPersonDetails($email, $psxFormData),
+            'business_details' => $this->getBusinessDetails($psxFormData),
             'preferred_language_code' => str_replace('-', '_', $locale),
             'primary_currency_code' => $this->getCurrencyIsoCode(),
         ];
 
-        if (getenv('PLATEFORM') !== 'PSREADY') { // if on ready, do not send psx data on the payload
-            $payload = array_merge($payload, $this->presentPsxData($email));
+        if (getenv('PLATEFORM') === 'PSREADY') { // if on ready, do not send psx data on the payload
+            unset($payload['person_details']);
+            unset($payload['business_details']);
         }
 
         $response = $this->post([
@@ -61,23 +66,6 @@ class Onboarding extends PaymentClient
         }
 
         return $response['links']['1']['href'];
-    }
-
-    /**
-     * Retrieve psx data from database
-     *
-     * @param string $email
-     *
-     * @return array
-     */
-    public function presentPsxData($email)
-    {
-        $psxFormData = json_decode(\Configuration::get('PS_CHECKOUT_PSX_FORM'), true);
-
-        return [
-            'person_details' => $this->getPersonDetails($email, $psxFormData),
-            'business_details' => $this->getBusinessDetails($psxFormData),
-        ];
     }
 
     /**
