@@ -182,10 +182,10 @@ class OrderStates
     private function setStateIcons($state, $orderStateId)
     {
         $iconExtension = '.gif';
-        $iconToPast = _PS_ORDER_STATE_IMG_DIR_ . $orderStateId . $iconExtension;
+        $iconToPaste = _PS_ORDER_STATE_IMG_DIR_ . $orderStateId . $iconExtension;
 
-        if (true !== is_writable($iconToPast)) {
-            \PrestaShopLogger::addLog('[PSPInstall] ' . $iconToPast . ' is not writable', 2, null, null, null, true);
+        if (true !== is_writable($iconToPaste)) {
+            \PrestaShopLogger::addLog('[PSPInstall] ' . $iconToPaste . ' is not writable', 2, null, null, null, true);
 
             return false;
         }
@@ -199,7 +199,7 @@ class OrderStates
         $iconsFolderOrigin = _PS_MODULE_DIR_ . self::MODULE_NAME . '/views/img/OrderStatesIcons/';
         $iconToCopy = $iconsFolderOrigin . $iconName . $iconExtension;
 
-        if (false === copy($iconToCopy, $iconToPast)) {
+        if (false === copy($iconToCopy, $iconToPaste)) {
             \PrestaShopLogger::addLog('[PSPInstall] not able to copy ' . $iconName . ' for ID ' . $orderStateId, 2, null, null, null, true);
         }
     }
