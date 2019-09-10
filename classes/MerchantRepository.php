@@ -62,6 +62,10 @@ class MerchantRepository
      */
     public function onbardingPsxIsCompleted()
     {
+        if (getenv('PLATEFORM') === 'PSREADY') { // if on ready, the user is already onboarded
+            return true;
+        }
+
         return !empty(\Configuration::get('PS_CHECKOUT_PSX_FORM'));
     }
 
