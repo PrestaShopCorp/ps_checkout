@@ -48,7 +48,7 @@ class Onboarding extends PaymentClient
             'primary_currency_code' => $this->getCurrencyIsoCode(),
         ];
 
-        if (getenv('PLATEFORM') !== 'PSREADY') { // if not on ready, do not send psx data on the payload
+        if (getenv('PLATEFORM') !== 'PSREADY') { // if on ready, do not send psx data on the payload
             $payload = array_merge($payload, $this->presentPsxData($email));
         }
 
