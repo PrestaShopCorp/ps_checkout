@@ -44,14 +44,21 @@ class Onboarding extends PaymentClient
 
         $psxFormData = json_decode(\Configuration::get('PS_CHECKOUT_PSX_FORM'), true);
 
+        $payload = [
+            'url' => $this->getCallBackUrl(),
+            'person_details' => $this->getPersonDetails($email, $psxFormData),
+            'business_details' => $this->getBusinessDetails($psxFormData),
+            'preferred_language_code' => str_replace('-', '_', $locale),
+            'primary_currency_code' => $this->getCurrencyIsoCode(),
+        ];
+
+        if (getenv('PLATEFORM') === 'PSREADY') { // if on ready, do not send psx data on the payload
+            unset($payload['person_details']);
+            unset($payload['business_details']);
+        }
+
         $response = $this->post([
-            'json' => json_encode([
-                'url' => $this->getCallBackUrl(),
-                'person_details' => $this->getPersonDetails($email, $psxFormData),
-                'business_details' => $this->getBusinessDetails($psxFormData),
-                'preferred_language_code' => str_replace('-', '_', $locale),
-                'primary_currency_code' => $this->getCurrencyIsoCode(),
-            ]),
+            'json' => json_encode($payload),
         ]);
 
         if (false === isset($response['links']['1']['href'])) {
