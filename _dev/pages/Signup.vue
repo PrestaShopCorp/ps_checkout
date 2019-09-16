@@ -6,14 +6,14 @@
           <div class="card-block row pb-0">
             <div class="card-text header">
               <div class="title mb-3">
-                <h1>Create your PrestaShop Checkout account</h1>
+                <h1>{{ $t('pages.signup.createYourPsAccount') }}</h1>
               </div>
             </div>
           </div>
           <div class="card-block row pb-0">
             <div class="card-text">
               <div class="form-group row">
-                <label class="form-control-label">Email</label>
+                <label class="form-control-label">{{ $t('pages.signup.email') }}</label>
                 <div class="col-6">
                   <div class="form-group mb-0" :class="{ 'has-warning' : email.hasError }">
                     <input v-model="email.value" type="text" class="form-control" :class="{ 'is-warning' : email.hasError }">
@@ -22,7 +22,7 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label class="form-control-label">Password</label>
+                <label class="form-control-label">{{ $t('pages.signup.password') }}</label>
                 <div class="col-6">
                   <div class="form-group mb-0" :class="{ 'has-warning' : password.hasError }">
                     <input v-model="password.value" type="password" class="form-control" :class="{ 'is-warning' : password.hasError }">
@@ -33,7 +33,7 @@
               <div class="form-group row">
                 <label class="form-control-label">&nbsp;</label>
                 <div class="col-6">
-                  <PSCheckbox id="terms" v-model="terms.value">I accept the terms of use</PSCheckbox>
+                  <PSCheckbox id="terms" v-model="terms.value">{{ $t('pages.signup.termsOfUse') }}</PSCheckbox>
                   <div v-if="terms.hasError" class="warning-feedback">{{ terms.errorMessage }}</div>
                 </div>
               </div>
@@ -41,11 +41,11 @@
           </div>
           <div class="card-footer d-flex">
             <div class="container-fluid pl-0">
-              <PSButton @click="previous()">Back</PSButton>
+              <PSButton @click="previous()">{{ $t('pages.signup.back') }}</PSButton>
             </div>
             <div class="d-flex">
-              <PSButton class="mr-3" ghost @click="goToSignIn()">Sign in</PSButton>
-              <PSButton primary type="submit">Create account</PSButton>
+              <PSButton class="mr-3" ghost @click="goToSignIn()">{{ $t('pages.signup.signIn') }}</PSButton>
+              <PSButton primary type="submit">{{ $t('pages.signup.createAccount') }}</PSButton>
             </div>
           </div>
         </div>
@@ -116,24 +116,24 @@
       handleResponseError(err) {
         switch (err) {
         case error.EMAIL_EXISTS:
-          this.setEmailError(true, 'Email already exist.');
+          this.setEmailError(true, this.$t('firebase.error.emailExists'));
           this.resetPasswordError();
           break;
         case error.MISSING_PASSWORD:
-          this.setPasswordError(true, 'The password is missing.');
+          this.setPasswordError(true, this.$t('firebase.error.missingPassword'));
           this.resetEmailError();
           break;
         case error.INVALID_EMAIL:
-          this.setEmailError(true, 'The email address is badly formatted.');
+          this.setEmailError(true, this.$t('firebase.error.invalidEmail'));
           this.resetPasswordError();
           break;
         case error.MISSING_EMAIL:
-          this.setEmailError(true, 'The email is missing.');
+          this.setEmailError(true, this.$t('firebase.error.missingEmail'));
           this.resetPasswordError();
           break;
         default:
-          this.setPasswordError(true, 'There is an error.');
-          this.setEmailError(true, 'There is an error.');
+          this.setPasswordError(true, this.$t('firebase.error.defaultError'));
+          this.setEmailError(true, this.$t('firebase.error.defaultError'));
           break;
         }
       },

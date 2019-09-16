@@ -4,13 +4,13 @@
       <form class="form form-horizontal container" @submit.prevent="resetPassword()">
         <div class="card">
           <h3 class="card-header">
-            <i class="material-icons">settings</i> Reset password
+            <i class="material-icons">settings</i> {{ $t('pages.resetPassword.resetPassword') }}
           </h3>
           <template v-if="emailSent">
             <div class="card-block row pb-0">
               <div class="card-text header text-left my-4">
-                <h1>You’ve got an email.</h1>
-                <h2>We sent you an email with instructions to reset your password. Please check your inbox.</h2>
+                <h1>{{ $t('pages.resetPassword.youGotEmail') }}</h1>
+                <h2>{{ $t('pages.resetPassword.sendEmail') }}</h2>
               </div>
             </div>
           </template>
@@ -18,14 +18,14 @@
             <div class="card-block row pb-0">
               <div class="card-text header">
                 <div class="title mb-3">
-                  <h1>We will send you a link to reset your password.</h1>
+                  <h1>{{ $t('pages.resetPassword.sendLink') }}</h1>
                 </div>
               </div>
             </div>
             <div class="card-block row pb-0">
               <div class="card-text">
                 <div class="form-group row">
-                  <label class="form-control-label">Email</label>
+                  <label class="form-control-label">{{ $t('pages.resetPassword.email') }}</label>
                   <div class="col-6">
                     <div class="form-group mb-0" :class="{ 'has-warning' : email.hasError }">
                       <input v-model="email.value" type="text" class="form-control" :class="{ 'is-warning' : email.hasError }">
@@ -37,8 +37,8 @@
             </div>
           </template>
           <div class="card-footer d-flex justify-content-end">
-            <PSButton class="mr-3" ghost @click="goToSignIn()">Go back to login</PSButton>
-            <PSButton v-if="!emailSent" primary type="submit">Reset</PSButton>
+            <PSButton class="mr-3" ghost @click="goToSignIn()">{{ $t('pages.resetPassword.goBackToLogin') }}</PSButton>
+            <PSButton v-if="!emailSent" primary type="submit">{{ $t('pages.resetPassword.reset') }}</PSButton>
           </div>
         </div>
       </form>
@@ -93,16 +93,16 @@
       handleResponseError(err) {
         switch (err) {
         case error.INVALID_EMAIL:
-          this.setEmailError(true, 'The email address is badly formatted');
+          this.setEmailError(true, this.$t('firebase.error.invalidEmail'));
           break;
         case error.MISSING_EMAIL:
-          this.setEmailError(true, 'The email is missing');
+          this.setEmailError(true, this.$t('firebase.error.missingEmail'));
           break;
         case error.EMAIL_NOT_FOUND:
-          this.setEmailError(true, 'The email is not found');
+          this.setEmailError(true, this.$t('firebase.error.emailNotFound'));
           break;
         default:
-          this.setEmailError(true, 'There is an error.');
+          this.setEmailError(true, this.$t('firebase.error.defaultError'));
           break;
         }
       },

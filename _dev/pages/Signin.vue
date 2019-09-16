@@ -6,14 +6,14 @@
           <div class="card-block row pb-0">
             <div class="card-text header">
               <div class="title mb-3">
-                <h1>Log in with your PrestaShop Checkout account</h1>
+                <h1>{{ $t('pages.signin.logInWithYourPsAccount') }}</h1>
               </div>
             </div>
           </div>
           <div class="card-block row pb-0">
             <div class="card-text">
               <div class="form-group row">
-                <label class="form-control-label">Email</label>
+                <label class="form-control-label">{{ $t('pages.signin.email') }}</label>
                 <div class="col-6">
                   <div class="form-group mb-0" :class="{ 'has-warning' : email.hasError }">
                     <input v-model="email.value" type="text" class="form-control" :class="{ 'is-warning' : email.hasError }">
@@ -22,7 +22,7 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label class="form-control-label">Password</label>
+                <label class="form-control-label">{{ $t('pages.signin.password') }}</label>
                 <div class="col-6">
                   <div class="form-group mb-0" :class="{ 'has-warning' : password.hasError }">
                     <input v-model="password.value" type="password" class="form-control" :class="{ 'is-warning' : password.hasError }">
@@ -33,18 +33,18 @@
               <div class="form-group row">
                 <label class="form-control-label">&nbsp;</label>
                 <div class="col-6">
-                  <a href="#" @click.prevent="goToResetPassword()">Forgot password?</a>
+                  <a href="#" @click.prevent="goToResetPassword()">{{ $t('pages.signin.forgotPassword') }}</a>
                 </div>
               </div>
             </div>
           </div>
           <div class="card-footer d-flex">
             <div class="container-fluid pl-0">
-              <PSButton @click="previous()">Back</PSButton>
+              <PSButton @click="previous()">{{ $t('pages.signin.back') }}</PSButton>
             </div>
             <div class="d-flex">
-              <PSButton class="mr-3" ghost @click="goToSignUp()">Sign up</PSButton>
-              <PSButton primary type="submit">Log in</PSButton>
+              <PSButton class="mr-3" ghost @click="goToSignUp()">{{ $t('pages.signin.signup') }}</PSButton>
+              <PSButton primary type="submit">{{ $t('pages.signin.login') }}</PSButton>
             </div>
           </div>
         </div>
@@ -104,24 +104,24 @@
       handleResponseError(err) {
         switch (err) {
         case error.EMAIL_NOT_FOUND:
-          this.setEmailError(true, 'There is no user record corresponding to this email.');
+          this.setEmailError(true, this.$t('firebase.error.emailNotFound'));
           this.resetPasswordError();
           break;
         case error.INVALID_EMAIL:
-          this.setEmailError(true, 'The email address is badly formatted.');
+          this.setEmailError(true, this.$t('firebase.error.invalidEmail'));
           this.resetPasswordError();
           break;
         case error.INVALID_PASSWORD:
-          this.setPasswordError(true, 'The password is invalid.');
+          this.setPasswordError(true, this.$t('firebase.error.invalidPassword'));
           this.resetEmailError();
           break;
         case error.MISSING_PASSWORD:
-          this.setPasswordError(true, 'The password is missing.');
+          this.setPasswordError(true, this.$t('firebase.error.missingPassword'));
           this.resetEmailError();
           break;
         default:
-          this.setPasswordError(true, 'There is an error.');
-          this.setEmailError(true, 'There is an error.');
+          this.setPasswordError(true, this.$t('firebase.error.defaultError'));
+          this.setEmailError(true, this.$t('firebase.error.defaultError'));
           break;
         }
       },
