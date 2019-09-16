@@ -71,7 +71,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
             'cartId' => (int) $cart->id,
             'amount' => $total,
             'paymentMethod' => $paymentMethod,
-            'extraVars' => array('transaction_id' => $paypalOrderId),
+            'extraVars' => ['transaction_id' => $paypalOrderId],
             'currencyId' => (int) $currency->id,
             'secureKey' => $customer->secure_key,
         ];

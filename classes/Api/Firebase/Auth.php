@@ -48,11 +48,11 @@ class Auth extends FirebaseClient
         $this->setRoute('https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword');
 
         return $this->post([
-            'json' => array(
+            'json' => [
                 'email' => $email,
                 'password' => $password,
                 'returnSecureToken' => true,
-            ),
+            ],
         ]);
     }
 
@@ -71,11 +71,32 @@ class Auth extends FirebaseClient
         $this->setRoute('https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser');
 
         return $this->post([
-            'json' => array(
+            'json' => [
                 'email' => $email,
                 'password' => $password,
                 'returnSecureToken' => true,
-            ),
+            ],
+        ]);
+    }
+
+    /**
+     * Trigger email in order to reset password
+     *
+     * @see https://firebase.google.com/docs/reference/rest/auth#section-send-password-reset-email Firebase documentation
+     *
+     * @param string $email
+     *
+     * @return array|bool
+     */
+    public function sendPasswordResetEmail($email)
+    {
+        $this->setRoute('https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=' . $this->apiKey);
+
+        return $this->post([
+            'json' => [
+                'email' => $email,
+                'requestType' => 'PASSWORD_RESET',
+            ],
         ]);
     }
 }

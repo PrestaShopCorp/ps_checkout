@@ -35,28 +35,33 @@ use PrestaShop\Module\PrestashopCheckout\Environment\FirebaseEnv;
  */
 class FirebaseClient extends GenericClient
 {
-    public function __construct(array $params = array())
+    /**
+     * Firebase api key
+     *
+     * @var string
+     */
+    protected $apiKey;
+
+    public function __construct(array $params = [])
     {
         if (isset($params['api_key'])) {
-            $apiKey = $params['api_key'];
+            $this->apiKey = $params['api_key'];
         } else {
-            $apiKey = (new FirebaseEnv())->getFirebaseApiKey();
+            $this->apiKey = (new FirebaseEnv())->getFirebaseApiKey();
         }
 
-        $client = new Client(
-            array(
-                'defaults' => array(
-                    'timeout' => $this->timeout,
-                    'allow_redirects' => false,
-                    'query' => array(
-                        'key' => $apiKey,
-                    ),
-                    'headers' => array(
-                        'Content-Type' => 'application/json',
-                    ),
-                ),
-            )
-        );
+        $client = new Client([
+            'defaults' => [
+                'timeout' => $this->timeout,
+                'allow_redirects' => false,
+                'query' => [
+                    'key' => $this->apiKey,
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
+            ],
+        ]);
 
         $this->setClient($client);
     }

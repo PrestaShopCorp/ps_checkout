@@ -47,20 +47,20 @@ class Translations
     {
         $locale = \Context::getContext()->language->locale;
 
-        $translations[$locale] = array(
-            'menu' => array(
+        $translations[$locale] = [
+            'menu' => [
                 'authentication' => $this->module->l('Authentication', 'translations'),
                 'customizeCheckout' => $this->module->l('Customize checkout experience', 'translations'),
                 'manageActivity' => $this->module->l('Manage Activity', 'translations'),
                 'advancedSettings' => $this->module->l('Advanced settings', 'translations'),
                 'help' => $this->module->l('Help', 'translations'),
-            ),
-            'general' => array(
+            ],
+            'general' => [
                 'save' => $this->module->l('Save', 'translations'),
                 'testModeOn' => $this->module->l('Test mode is turned on', 'translations'),
-            ),
-            'pages' => array(
-                'accounts' => array(
+            ],
+            'pages' => [
+                'accounts' => [
                     'approvalPending' => $this->module->l('Approval pending', 'translations'),
                     'waitingEmail' => $this->module->l('A confirmation email has been sent. Check your inbox and click on the link to activate your account.', 'translations'),
                     'didntReceiveEmail' => $this->module->l('No confirmation email?', 'translations'),
@@ -78,10 +78,49 @@ class Translations
                     'accountDeclined' => $this->module->l('Account declined', 'translations'),
                     'cannotProcessCreditCard' => $this->module->l('Unfortunately, credit card payments cannot be processed for you at the moment. You will be able to reapply after 90 days. In the meantime, you can still receive payments via PayPal', 'translations'),
                     'accountDeclinedLink' => $this->module->l('Account declined FAQs', 'translations'),
-                ),
-            ),
-            'panel' => array(
-                'account-list' => array(
+                ],
+                'signin' => [
+                    'logInWithYourPsAccount' => $this->module->l('Log in with your PrestaShop Checkout account', 'translations'),
+                    'email' => $this->module->l('Email', 'translations'),
+                    'password' => $this->module->l('Password', 'translations'),
+                    'forgotPassword' => $this->module->l('Forgot password?', 'translations'),
+                    'back' => $this->module->l('Back', 'translations'),
+                    'signup' => $this->module->l('Sign up', 'translations'),
+                    'login' => $this->module->l('Log in', 'translations'),
+                ],
+                'signup' => [
+                    'createYourPsAccount' => $this->module->l('Create your PrestaShop Checkout account', 'translations'),
+                    'email' => $this->module->l('Email', 'translations'),
+                    'password' => $this->module->l('Password', 'translations'),
+                    'termsOfUse' => $this->module->l('I accept the terms of use', 'translations'),
+                    'termsOfUseError' => $this->module->l('I accept the terms of use', 'translations'),
+                    'back' => $this->module->l('Back', 'translations'),
+                    'signIn' => $this->module->l('Sign in', 'translations'),
+                    'createAccount' => $this->module->l('Create account', 'translations'),
+                ],
+                'resetPassword' => [
+                    'resetPassword' => $this->module->l('Reset password', 'translations'),
+                    'youGotEmail' => $this->module->l('You’ve got an email.', 'translations'),
+                    'sendEmail' => $this->module->l('We sent you an email with instructions to reset your password. Please check your inbox.', 'translations'),
+                    'sendLink' => $this->module->l('We will send you a link to reset your password.', 'translations'),
+                    'email' => $this->module->l('Email', 'translations'),
+                    'goBackToLogin' => $this->module->l('Go back to login', 'translations'),
+                    'reset' => $this->module->l('Reset', 'translations'),
+                ],
+            ],
+            'firebase' => [
+                'error' => [
+                    'emailExists' => $this->module->l('Email already exist.', 'translations'),
+                    'missingEmail' => $this->module->l('The email is missing.', 'translations'),
+                    'missingPassword' => $this->module->l('The password is missing.', 'translations'),
+                    'invalidEmail' => $this->module->l('The email address is badly formatted.', 'translations'),
+                    'invalidPassword' => $this->module->l('The password is invalid.', 'translations'),
+                    'emailNotFound' => $this->module->l('The email is not found.', 'translations'),
+                    'defaultError' => $this->module->l('Error, try later.', 'translations'),
+                ],
+            ],
+            'panel' => [
+                'account-list' => [
                     'accountSettings' => $this->module->l('Account settings', 'translations'),
                     'essentialsAccount' => $this->module->l('PrestaShop Checkout account', 'translations'),
                     'activateAllPayment' => $this->module->l('You need to connect to both PrestaShop Checkout and PayPal accounts to activate all payment methods', 'translations'),
@@ -98,8 +137,8 @@ class Translations
                     'linkToPsCheckoutFirst' => $this->module->l('Link to PrestaShop Checkout first', 'translations'),
                     'loading' => $this->module->l('Loading', 'translations'),
                     'useAnotherAccount' => $this->module->l('Use another account', 'translations'),
-                ),
-                'psx-form' => array(
+                ],
+                'psx-form' => [
                     'additionalDetails' => $this->module->l('Additional Details', 'translations'),
                     'fillUp' => $this->module->l('Please fill up the following form to complete your PrestaShop Checkout account creation.', 'translations'),
                     'personalInformation' => $this->module->l('Personal information', 'translations'),
@@ -126,8 +165,8 @@ class Translations
                     'privacyText1' => $this->module->l('By submitting this form, I agree that the data provided may be collected by PrestaShop S.A and transferred to PayPal to allow (i) to create a PayPal account and (ii) to improve my customer experience.', 'translations'),
                     'privacyText2' => $this->module->l('You have rights to your data that you can exercise at any time by writing to privacy@prestashop.com.', 'translations'),
                     'privacyLink' => $this->module->l('Learn more about managing your data and rights.', 'translations'),
-                ),
-                'active-payment' => array(
+                ],
+                'active-payment' => [
                     'activePaymentMethods' => $this->module->l('Activate payment methods', 'translations'),
                     'paymentMethods' => $this->module->l('Payment methods', 'translations'),
                     'changeOrder' => $this->module->l('Change order', 'translations'),
@@ -136,14 +175,14 @@ class Translations
                     'creditCard' => $this->module->l('Credit card', 'translations'),
                     'paypal' => $this->module->l('PayPal', 'translations'),
                     'localPaymentMethods' => $this->module->l('Local payment methods', 'translations'),
-                ),
-                'payment-acceptance' => array(
+                ],
+                'payment-acceptance' => [
                     'paymentAcceptanceTitle' => $this->module->l('Payment methods acceptance', 'translations'),
                     'creditCardsLabel' => $this->module->l('Credit and Debit Cards', 'translations'),
                     'tips' => $this->module->l('Tips', 'translations'),
                     'alertInfo' => $this->module->l('To test your payment method you can make a real transaction (prefer small amount), and once you have observed the money on your account, make a refund on the corresponding order page. Warning, you will not recover the fees.', 'translations'),
-                ),
-                'payment-mode' => array(
+                ],
+                'payment-mode' => [
                     'title' => $this->module->l('Payment methods activation', 'translations'),
                     'paymentAction' => $this->module->l('Transaction type', 'translations'),
                     'capture' => $this->module->l('Direct Sale', 'translations'),
@@ -157,8 +196,8 @@ class Translations
                     'productionMode' => $this->module->l('Production mode', 'translations'),
                     'useProductionMode' => $this->module->l('Use production mode', 'translations'),
                     'tipProductionMode' => $this->module->l('Production mode enables you to collect your payments.', 'translations'),
-                ),
-                'help' => array(
+                ],
+                'help' => [
                     'title' => $this->module->l('Help for PrestaShop Checkout', 'translations'),
                     'allowsYou' => $this->module->l('This module allows you to:', 'translations'),
                     'tip1' => $this->module->l('Connect your PrestaShop Checkout account and link your PayPal Account or create one if needed', 'translations'),
@@ -170,10 +209,10 @@ class Translations
                     'needHelp' => $this->module->l('Need help? Find here the documentation of this module', 'translations'),
                     'downloadDoc' => $this->module->l('Download PDF', 'translations'),
                     'noFaqAvailable' => $this->module->l('No faq available. Try later.', 'translations'),
-                ),
-            ),
-            'block' => array(
-                'reassurance' => array(
+                ],
+            ],
+            'block' => [
+                'reassurance' => [
                     'title' => $this->module->l('PrestaShop Checkout, all-in-one module for your payment options', 'translations'),
                     'firstTip1' => $this->module->l('All payment methods', 'translations'),
                     'firstTip2' => $this->module->l('accept cards, PayPal and much more.', 'translations'),
@@ -184,22 +223,22 @@ class Translations
                     'thirdTip2' => $this->module->l('Local Payment Methods', 'translations'),
                     'thirdTip3' => $this->module->l('to customers across the globe.', 'translations'),
                     'learnMore' => $this->module->l('Learn more', 'translations'),
-                ),
-                'fraud-tool' => array(
+                ],
+                'fraud-tool' => [
                     'title' => $this->module->l('Fraud tool', 'translations'),
                     'text' => $this->module->l('PayPal algorithms automatically limit your fraud rate.
                     If you want to go further in Fraud Management, there is a complete tool on the PayPal platform
                     to set specific rules and drive your performance concerning fraud and chargeback costs.', 'translations'),
                     'discoverFraudTool' => $this->module->l('Go further', 'translations'),
-                ),
-                'feature-incoming' => array(
+                ],
+                'feature-incoming' => [
                     'text' => $this->module->l('Checkout customization, transactions list, dispute management ... and more to come!', 'translations'),
-                ),
-                'dispute' => array(
+                ],
+                'dispute' => [
                     'pendingDispute' => $this->module->l('pending dispute(s)', 'translations'),
                     'goToDispute' => $this->module->l('Go to the dispute management platform', 'translations'),
-                ),
-                'payment-status' => array(
+                ],
+                'payment-status' => [
                     'live' => $this->module->l('Live', 'translations'),
                     'approvalPending' => $this->module->l('Approval pending', 'translations'),
                     'limited' => $this->module->l('Limited to $500', 'translations'),
@@ -211,9 +250,9 @@ class Translations
                     'creditCardLabelDenied' => $this->module->l('We cannot process credit card payments for you at the moment.', 'translations'),
                     'creditCardLabelLive' => $this->module->l('Process unlimited card payments. You can accept either credit or debit card.', 'translations'),
                     'creditCardLabelPending' => $this->module->l('Your account needs further checks to accept Credit and Debit Cards payment.', 'translations'),
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         return $translations;
     }
