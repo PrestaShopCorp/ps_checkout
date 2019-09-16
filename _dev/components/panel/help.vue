@@ -56,7 +56,7 @@
                 <a v-if="isReady" href="https://support.prestashop.com/hc/requests/new?ticket_form_id=" target="_blank">
                   {{ $t('panel.help.contactUs') }} <i class="material-icons">arrow_right_alt</i>
                 </a>
-                <a v-else href="mailto:support-checkout-ready@prestashop.com" target="_blank">
+                <a v-else href="mailto:support-checkout-download@prestashop.com" target="_blank">
                   {{ $t('panel.help.contactUs') }} <i class="material-icons">arrow_right_alt</i>
                 </a>
               </div>
