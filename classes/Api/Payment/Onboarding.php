@@ -57,9 +57,7 @@ class Onboarding extends PaymentClient
             unset($payload['person_details']);
             unset($payload['business_details']);
         }
-
-        dump($payload);
-
+        
         $response = $this->post([
             'json' => json_encode($payload),
         ]);
