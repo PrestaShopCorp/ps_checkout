@@ -87,18 +87,18 @@
         terms: {
           value: false,
           hasError: false,
-          errorMessage: 'You need to accept our terms and conditions to continue',
+          errorMessage: this.$t('firebase.error.termsOfUseError'),
         },
       };
     },
     methods: {
       signUp() {
-        if (this.terms.value) {
-          this.terms.hasError = false;
-        } else {
+        if (!this.terms.value) {
           this.terms.hasError = true;
           return;
         }
+
+        this.terms.hasError = false;
 
         this.$store.dispatch({
           type: 'signUp',

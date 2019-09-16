@@ -42,7 +42,7 @@ class FirebaseClient extends GenericClient
      */
     protected $apiKey;
 
-    public function __construct(array $params = array())
+    public function __construct(array $params = [])
     {
         if (isset($params['api_key'])) {
             $this->apiKey = $params['api_key'];
@@ -50,20 +50,18 @@ class FirebaseClient extends GenericClient
             $this->apiKey = (new FirebaseEnv())->getFirebaseApiKey();
         }
 
-        $client = new Client(
-            array(
-                'defaults' => array(
-                    'timeout' => $this->timeout,
-                    'allow_redirects' => false,
-                    'query' => array(
-                        'key' => $this->apiKey,
-                    ),
-                    'headers' => array(
-                        'Content-Type' => 'application/json',
-                    ),
-                ),
-            )
-        );
+        $client = new Client([
+            'defaults' => [
+                'timeout' => $this->timeout,
+                'allow_redirects' => false,
+                'query' => [
+                    'key' => $this->apiKey,
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
+            ],
+        ]);
 
         $this->setClient($client);
     }
