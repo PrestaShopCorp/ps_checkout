@@ -1,50 +1,50 @@
 <template>
   <div>
     <div class="d-flex">
-      <form class="form form-horizontal container">
+      <form class="form form-horizontal container" @submit.prevent="logIn()">
         <div class="card">
           <div class="card-block row pb-0">
             <div class="card-text header">
               <div class="title mb-3">
-                <h3>Connect to your PrestaShop Services account</h3>
-              </div>
-              <div class="text">
-                <p class="mb-0">Please enter your information below to proceed to the next step.</p>
-                <p>So we can build your account and connect to PayPal.</p>
+                <h1>Log in with your PrestaShop Checkout account</h1>
               </div>
             </div>
           </div>
           <div class="card-block row pb-0">
-            <div class="card-text max-size">
-              <div class="form-group">
+            <div class="card-text">
+              <div class="form-group row">
                 <label class="form-control-label">Email</label>
-                <input v-model="email" type="text" class="form-control">
+                <div class="col-6">
+                  <div class="form-group mb-0" :class="{ 'has-warning' : email.hasError }">
+                    <input v-model="email.value" type="text" class="form-control" :class="{ 'is-warning' : email.hasError }">
+                    <div v-if="email.hasError" class="warning-feedback">{{ email.errorMessage }}</div>
+                  </div>
+                </div>
               </div>
-              <div class="form-group">
+              <div class="form-group row">
                 <label class="form-control-label">Password</label>
-                <input v-model="password" type="password" class="form-control">
+                <div class="col-6">
+                  <div class="form-group mb-0" :class="{ 'has-warning' : password.hasError }">
+                    <input v-model="password.value" type="password" class="form-control" :class="{ 'is-warning' : password.hasError }">
+                    <div v-if="password.hasError" class="warning-feedback">{{ password.errorMessage }}</div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <div v-if="hasError" class="card-block row py-0">
-            <div class="card-text max-size">
-              <div class="form-group">
-                <PSAlert
-                  :alert-type="ALERT_TYPE_DANGER"
-                  :has-close="true"
-                  @closeAlert="hasError = false"
-                >
-                  {{ errorMessage }}
-                </PSAlert>
+              <div class="form-group row">
+                <label class="form-control-label">&nbsp;</label>
+                <div class="col-6">
+                  <a href="#" @click.prevent="goToResetPassword()">Forgot password?</a>
+                </div>
               </div>
             </div>
           </div>
           <div class="card-footer d-flex">
             <div class="container-fluid pl-0">
-              <PSButton ghost @click="previous()">Back</PSButton>
+              <PSButton @click="previous()">Back</PSButton>
             </div>
-            <div>
-              <PSButton primary @click="logIn()">Log in</PSButton>
+            <div class="d-flex">
+              <PSButton class="mr-3" ghost @click="goToSignUp()">Sign up</PSButton>
+              <PSButton primary type="submit">Log in</PSButton>
             </div>
           </div>
         </div>
@@ -60,55 +60,86 @@
 
 <script>
   import PSButton from '@/components/form/button';
-  import PSAlert from '@/components/form/alert';
-  import {EMAIL_NOT_FOUND, INVALID_EMAIL, INVALID_PASSWORD} from '@/lib/auth';
-  import {ALERT_TYPE_DANGER} from '@/lib/alert';
+  import * as error from '@/lib/auth';
   import Reassurance from '@/components/block/reassurance';
 
   export default {
     name: 'Signin',
     components: {
       PSButton,
-      PSAlert,
       Reassurance,
     },
     data() {
       return {
-        email: '',
-        password: '',
-        hasError: false,
-        errorMessage: '',
+        email: {
+          value: '',
+          hasError: false,
+          errorMessage: '',
+        },
+        password: {
+          value: '',
+          hasError: false,
+          errorMessage: '',
+        },
       };
-    },
-    computed: {
-      ALERT_TYPE_DANGER: () => ALERT_TYPE_DANGER,
     },
     methods: {
       logIn() {
-        this.hasError = false;
         this.$store.dispatch({
           type: 'signIn',
-          email: this.email,
-          password: this.password,
+          email: this.email.value,
+          password: this.password.value,
         }).then(() => {
           this.$router.push('/authentication');
         }).catch((err) => {
-          this.hasError = true;
-          switch (err.error.message) {
-          case EMAIL_NOT_FOUND:
-            this.errorMessage = 'There is no user record corresponding to this identifier. The user may have been deleted.';
-            break;
-          case INVALID_EMAIL:
-            this.errorMessage = 'The email address is badly formatted.';
-            break;
-          case INVALID_PASSWORD:
-            this.errorMessage = 'The password is invalid.';
-            break;
-          default:
-            this.errorMessage = 'There is an error. Please try later or contact the support.';
-            break;
-          }
+          this.handleResponseError(err.error.message);
         });
+      },
+      goToSignUp() {
+        this.$router.push('/authentication/signup');
+      },
+      goToResetPassword() {
+        this.$router.push('/authentication/reset');
+      },
+      handleResponseError(err) {
+        switch (err) {
+        case error.EMAIL_NOT_FOUND:
+          this.setEmailError(true, 'There is no user record corresponding to this email.');
+          this.resetPasswordError();
+          break;
+        case error.INVALID_EMAIL:
+          this.setEmailError(true, 'The email address is badly formatted.');
+          this.resetPasswordError();
+          break;
+        case error.INVALID_PASSWORD:
+          this.setPasswordError(true, 'The password is invalid.');
+          this.resetEmailError();
+          break;
+        case error.MISSING_PASSWORD:
+          this.setPasswordError(true, 'The password is missing.');
+          this.resetEmailError();
+          break;
+        default:
+          this.setPasswordError(true, 'There is an error.');
+          this.setEmailError(true, 'There is an error.');
+          break;
+        }
+      },
+      setPasswordError(hasError, message) {
+        this.password.hasError = hasError;
+        this.password.errorMessage = message;
+      },
+      setEmailError(hasError, message) {
+        this.email.hasError = hasError;
+        this.email.errorMessage = message;
+      },
+      resetEmailError() {
+        this.email.hasError = false;
+        this.email.errorMessage = '';
+      },
+      resetPasswordError() {
+        this.password.hasError = false;
+        this.password.errorMessage = '';
       },
       previous() {
         this.$router.push('/authentication');
