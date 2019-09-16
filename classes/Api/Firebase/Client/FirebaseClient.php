@@ -38,7 +38,7 @@ class FirebaseClient extends GenericClient
     /**
      * Firebase api key
      *
-     * @var string $apiKey
+     * @var string
      */
     protected $apiKey;
 

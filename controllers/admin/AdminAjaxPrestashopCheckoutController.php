@@ -128,8 +128,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $this->ajaxDie(json_encode($response));
     }
 
-
-
     /**
      * Get the form Payload for PSX. Check the data and send it to PSL
      */
