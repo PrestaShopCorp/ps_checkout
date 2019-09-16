@@ -116,6 +116,21 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
+     * Send email to reset firebase password
+     */
+    public function ajaxProcessSendPasswordResetEmail()
+    {
+        $email = Tools::getValue('email');
+
+        $firebase = new Auth();
+        $response = $firebase->sendPasswordResetEmail($email);
+
+        $this->ajaxDie(json_encode($response));
+    }
+
+
+
+    /**
      * Get the form Payload for PSX. Check the data and send it to PSL
      */
     public function ajaxProcessPsxSendData()
