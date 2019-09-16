@@ -53,7 +53,7 @@ class Onboarding extends PaymentClient
         ];
 
         if (getenv('PLATEFORM') === 'PSREADY') { // if on ready, do not send psx data on the payload
-            unset($payload['person_details']);
+            unset($payload['person_details']['name']);
             unset($payload['business_details']);
         }
 
