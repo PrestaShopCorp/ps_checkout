@@ -6,6 +6,7 @@ import Customize from '@/pages/Customize';
 import Accounts from '@/pages/Accounts';
 import Signin from '@/pages/Signin';
 import Signup from '@/pages/Signup';
+import ResetPassword from '@/pages/ResetPassword';
 import PsxAdditionalDetails from '@/pages/PsxAdditionalDetails';
 import Activity from '@/pages/Activity';
 import Advanced from '@/pages/Advanced';
@@ -58,6 +59,18 @@ const router = new Router({
       },
     },
     {
+      path: '/authentication/reset',
+      name: 'ResetPassword',
+      component: ResetPassword,
+      beforeEnter: (to, from, next) => {
+        if (store.getters.firebaseOnboardingIsCompleted) {
+          next(from);
+        } else {
+          next();
+        }
+      },
+    },
+    {
       path: '/authentication/additional',
       name: 'PsxAdditionalDetails',
       component: PsxAdditionalDetails,
@@ -99,6 +112,7 @@ const guestPages = [
   'PsxAdditionalDetails',
   'Signin',
   'Signup',
+  'ResetPassword',
   'Help',
   'Advanced',
 ];
