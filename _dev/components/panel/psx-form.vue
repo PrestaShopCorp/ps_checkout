@@ -71,11 +71,23 @@
                     <div class="col-lg-6 col-md-6 col-sm-6">
                       <label>{{ $t('panel.psx-form.nationality') }}</label>
                       <select class="form-control custom-select" 
-                        v-model="form.business_contact_nationality"
-                        v-bind:class="[form.business_contact_nationality != '' ? '' : 'has-danger']">
+                        v-model="form.business_contact_language"
+                        v-bind:class="[form.business_contact_language != '' ? '' : 'has-danger']">
                         <option v-for="languageDetail in getLanguagesDetails" v-bind:key="languageDetail.iso_code" v-bind:value="languageDetail.iso_code">
                           {{ languageDetail.name }}
                         </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                      <label>{{ $t('panel.psx-form.qualification') }}</label>
+                      <select class="form-control custom-select" 
+                        v-model="form.qualification">
+                        <option value="">--</option>
+                        <option value="merchant">{{ $t('panel.psx-form.merchant') }}</option>
+                        <option value="agency">{{ $t('panel.psx-form.agency') }}</option>
+                        <option value="freelancer">{{ $t('panel.psx-form.freelancer') }}</option>
                       </select>
                     </div>
                   </div>
@@ -156,16 +168,6 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row mt-3">
-                    <div class="col-lg-12 col-md-12 col-sm-12">
-                      <label>{{ $t('panel.psx-form.businessType') }}</label>
-                      <select v-model="form.business_type" class="form-control custom-select">
-                          <option v-for="(value, key) in getBusinessTypes" v-bind:key="key" v-bind:value="key">
-                            {{ value }}
-                          </option>
-                      </select>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -190,9 +192,10 @@
                   <div class="row mt-3">
                     <div class="col-lg-12 col-md-12 col-sm-12">
                       <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
-                        <label>{{ $t('panel.psx-form.companySize') }}</label>
-                        <select v-model="form.business_company_size" class="form-control custom-select">
-                          <option v-for="(value, key) in getCompanySizes" v-bind:key="key" v-bind:value="key">
+                        <label>{{ $t('panel.psx-form.companyTurnover') }}</label>
+                        <select v-model="form.business_company_emr" class="form-control custom-select">
+                          <option value="">--</option>
+                          <option v-for="(value, key) in getCompanyMonthyAverages" v-bind:key="key" v-bind:value="key">
                             {{ value }}
                           </option>
                         </select>
@@ -216,6 +219,7 @@
                       <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
                         <label>{{ $t('panel.psx-form.businessSubCategory') }}</label>
                         <select v-model="form.business_sub_category" class="form-control custom-select">
+                          <option value="">--</option>
                           <option v-for="(value, key) in subCategory" v-bind:key="key" v-bind:value="key">
                             {{ value }}
                           </option>
@@ -240,7 +244,7 @@
           </div>
         </div>
         <div class="card-footer text-right">
-          <a class="btn btn-primary text-capitalize" href="#" @click.prevent="submitForm()">{{ $t('panel.psx-form.continue') }}</a>
+          <a class="btn btn-primary text-capitalize" href="#" @click.prevent="submitForm()" target="_blank">{{ $t('panel.psx-form.continue') }}</a>
         </div>
       </div>
     </form>
@@ -260,7 +264,8 @@
           business_contact_gender: 'Mr',
           business_contact_first_name: null,
           business_contact_last_name: null,
-          business_contact_nationality: null,
+          business_contact_language: null,
+          qualification: "",
           shop_name: null,
           business_address_street: null,
           business_address_zip: null,
@@ -268,11 +273,10 @@
           business_address_country: null,
           business_phone_country: '1',
           business_phone: null,
-          business_type: null,
           business_website: null,
-          business_company_size: null,
+          business_company_emr: "",
           business_category: null,
-          business_sub_category: null,
+          business_sub_category: "",
         },
       };
     },
@@ -286,11 +290,8 @@
       getPhoneCountryCode() {
         return _.uniqBy(_.orderBy(this.$store.state.psx.countriesDetails, 'code'), 'code');
       },
-      getBusinessTypes() {
-        return this.$store.state.psx.businessDetails.business_types;
-      },
-      getCompanySizes() {
-        return this.$store.state.psx.businessDetails.company_sizes;
+      getCompanyMonthyAverages() {
+        return this.$store.state.psx.businessDetails.business_company_emr;
       },
       getCompanyCategories() {
         return this.$store.state.psx.businessDetails.business_categories;

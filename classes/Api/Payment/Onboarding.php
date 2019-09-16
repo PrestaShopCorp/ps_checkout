@@ -26,6 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
+use PrestaShop\Module\PrestashopCheckout\PsxDataMatrice\PsxDataMatrice;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
 
 /**
@@ -121,12 +122,13 @@ class Onboarding extends PaymentClient
                     'type' => 'LEGAL',
                 ],
             ],
-            'business_type' => $psxFormData['business_type'],
             'category' => $psxFormData['business_category'],
             'sub_category' => $psxFormData['business_sub_category'],
             'website_urls' => [
                 $psxFormData['business_website'],
             ],
+            'business_type' => 'INDIVIDUAL',
+            'average_monthly_volume_range' => (new PsxDataMatrice())->getCompanyEmrToAverageMonthlyVolumeRange($psxFormData['business_company_emr']),
         ];
 
         return array_filter($nameObj);

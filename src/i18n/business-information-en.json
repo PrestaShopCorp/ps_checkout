@@ -1,4 +1,14 @@
 {
+    "business_company_emr" : {
+        "lt5000": "Up 5000€ EUR",
+        "lt25000": "5000€ EUR - 24 999€ EUR",
+        "lt50000": "25 000€ EUR - 49 99€ EUR",
+        "lt100000": "50 000€ EUR - 99 999€ EUR",
+        "lt250000": "100 000€ EUR - 249 999€ EUR",
+        "lt500000": "250 000€ EUR - 499 999€ EUR",
+        "lt1000000": "500 000€ EUR - 999 999€ EUR",
+        "gt1000000": "More than 1 000 000€ EUR"
+    },
     "company_sizes": {
         "lt5": "Less than 5 employees",
         "lt19": "5 to 19 employees",
