@@ -74,11 +74,10 @@ class PaypalModule implements StorePresenterInterface
 
         $context = \Context::getContext();
 
-        $email = $context->employee->email;
         $language = \Language::getLanguage($context->employee->id_lang);
         $locale = $language['locale'];
 
-        $paypalOnboardingLink = (new Onboarding($context->link))->getOnboardingLink($email, $locale);
+        $paypalOnboardingLink = (new Onboarding($context->link))->getOnboardingLink($locale);
 
         return $paypalOnboardingLink;
     }
