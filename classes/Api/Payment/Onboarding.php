@@ -38,7 +38,7 @@ class Onboarding extends PaymentClient
      *
      * @return string|bool onboarding link
      */
-    public function getOnboardingLink($email, $locale)
+    public function getOnboardingLink($locale)
     {
         $this->setRoute('/payments/onboarding/onboard');
 
@@ -46,7 +46,7 @@ class Onboarding extends PaymentClient
 
         $payload = [
             'url' => $this->getCallBackUrl(),
-            'person_details' => $this->getPersonDetails($email, $psxFormData),
+            'person_details' => $this->getPersonDetails($psxFormData),
             'business_details' => $this->getBusinessDetails($psxFormData),
             'preferred_language_code' => str_replace('-', '_', $locale),
             'primary_currency_code' => $this->getCurrencyIsoCode(),
@@ -71,15 +71,14 @@ class Onboarding extends PaymentClient
     /**
      * Generate an array to be used on the Paypal Link
      *
-     * @param string $email
      * @param array $psxFormData
      *
      * @return array
      */
-    private function getPersonDetails($email, $psxFormData)
+    private function getPersonDetails($psxFormData)
     {
         $nameObj = [
-            'email_address' => $email,
+            'email_address' => \Configuration::get('PS_PSX_FIREBASE_EMAIL'),
             'name' => [
                 'given_name' => $psxFormData['business_contact_first_name'],
                 'surname' => $psxFormData['business_contact_last_name'],
