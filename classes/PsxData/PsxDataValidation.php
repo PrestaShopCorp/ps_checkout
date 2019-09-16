@@ -35,7 +35,8 @@ class PsxDataValidation
     const DATA_ERROR = 'Data can\'t be empty';
     const FIRST_NAME = 'First name ' . self::NOT_CORRECT;
     const LAST_NAME = 'Last name ' . self::NOT_CORRECT;
-    const NATIONNALITY = 'Nationnality ' . self::NOT_CORRECT;
+    const LANGUAGE = 'Language ' . self::NOT_CORRECT;
+    const QUALIFICATION = 'Peronnal information ' . self::NOT_CORRECT;
     const STREET = 'Street name ' . self::NOT_CORRECT;
     const CITY = 'City name ' . self::NOT_CORRECT;
     const COUNTRY = 'Country name ' . self::NOT_CORRECT;
@@ -46,7 +47,7 @@ class PsxDataValidation
     const WEBSITE = 'Website ' . self::NOT_CORRECT;
     const GENDER = 'Gender ' . self::NOT_CORRECT;
     const SHOP_NAME = 'Shop name ' . self::NOT_CORRECT;
-    const COMPANY_SIZE = 'Company size ' . self::NOT_CORRECT;
+    const COMPANY_EMR = 'Company monthly average ' . self::NOT_CORRECT;
     const CATEGORY = 'Company category ' . self::NOT_CORRECT;
     const SUB_CATEGORY = 'Company sub-category ' . self::NOT_CORRECT;
 
@@ -60,19 +61,6 @@ class PsxDataValidation
     public function validateData($data)
     {
         $errors = array();
-
-        $businessTypeValuesNeeded = array(
-            'INDIVIDUAL',
-            'PROPRIETORSHIP',
-            'NONPROFIT',
-            'GOVERNMENT',
-            'GENERAL_PARTNERSHIP',
-            'LIMITED_PARTNERSHIP',
-            'LIMITED_LIABILITY_PARTNERSHIP',
-            'LIMITED_LIABILITY_PROPRIETORS',
-            'PRIVATE_CORPORATION',
-            'PUBLIC_CORPORATION',
-        );
 
         if (empty($data)) {
             $errors[] = self::DATA_ERROR;
@@ -88,8 +76,13 @@ class PsxDataValidation
             $errors[] = self::LAST_NAME;
         }
 
-        if (strlen($data['business_contact_nationality']) < 1 || strlen($data['business_contact_nationality']) > 4) {
-            $errors[] = self::NATIONNALITY;
+        if (strlen($data['business_contact_language']) < 1 || strlen($data['business_contact_language']) > 4) {
+            $errors[] = self::LANGUAGE;
+        }
+
+        /* Is no mandatory */
+        if (!empty($data['qualification']) && strlen($data['qualification']) > 127) {
+            $errors[] = self::QUALIFICATION;
         }
 
         if (strlen($data['business_address_street']) < 1 || strlen($data['business_address_street']) > 255) {
@@ -106,10 +99,6 @@ class PsxDataValidation
 
         if (strlen($data['business_address_zip']) < 1 || strlen($data['business_address_zip']) > 31) {
             $errors[] = self::ZIPCODE;
-        }
-
-        if (!in_array($data['business_type'], $businessTypeValuesNeeded)) {
-            $errors[] = self::TYPE;
         }
 
         if (!preg_match('/^[0-9]{1,3}?$/', $data['business_phone_country'])
@@ -141,15 +130,20 @@ class PsxDataValidation
             $errors[] = self::SHOP_NAME;
         }
 
-        if (!in_array($data['business_company_size'], array('lt5', 'lt19', 'lt99', 'lt500', 'gt500'))) {
-            $errors[] = self::COMPANY_SIZE;
+        if (!in_array(
+            $data['business_company_emr'],
+            array('', 'lt5000', 'lt25000', 'lt50000', 'lt100000', 'lt250000', 'lt500000', 'lt1000000', 'gt1000000')
+        )) {
+            $errors[] = self::COMPANY_EMR;
         }
 
         if ($data['business_category'] < 1000 || $data['business_category'] > 1025) {
             $errors[] = self::CATEGORY;
         }
 
-        if ($data['business_sub_category'] < 2000 || $data['business_sub_category'] > 2297) {
+        if (!empty($data['business_sub_category'])
+            && ($data['business_sub_category'] < 2000 || $data['business_sub_category'] > 2297)
+        ) {
             $errors[] = self::SUB_CATEGORY;
         }
 
