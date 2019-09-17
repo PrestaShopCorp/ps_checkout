@@ -164,6 +164,7 @@ class Translations
                     'companyTurnover' => $this->module->l('Company estimated monthly turnover', 'translations'),
                     'businessCategory' => $this->module->l('Business category', 'translations'),
                     'businessSubCategory' => $this->module->l('Business subcategory', 'translations'),
+                    'optional' => $this->module->l('Optional', 'translations'),
                     'continue' => $this->module->l('Continue', 'translations'),
                     'errors' => $this->module->l('Errors', 'translations'),
                     'privacyText1' => $this->module->l('By submitting this form, I agree that the data provided may be collected by PrestaShop S.A and transferred to PayPal to allow (i) to create a PayPal account and (ii) to improve my customer experience.', 'translations'),

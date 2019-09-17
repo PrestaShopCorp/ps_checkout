@@ -19,6 +19,9 @@ config.xml
 /views/img/brush.png
 /views/img/ps-services-account.png
 
+### VueJs ignore dev conf ###
+/views/templates/admin/configuration.tpl
+
 ### Composer ###
 composer.phar
 /vendor/
