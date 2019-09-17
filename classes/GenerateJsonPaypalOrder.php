@@ -26,7 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\PrestaShop\Adapter\Presenter\Cart\CartPresenter;
+use PrestaShop\PrestaShop\Adapter\Cart\CartPresenter;
 
 /**
  * Generate the payload waited by paypal to create an order (paypal order)
@@ -93,9 +93,9 @@ class GenerateJsonPaypalOrder
         foreach ($params['products'] as $product => $value) {
             $item = [];
 
-            $item['name'] = substr($value['name'], 0, 127); // truncate due to paypal limitations
-            $item['description'] = substr(strip_tags($value['description_short']), 0, 127); // truncate due to paypal limitations
-            $item['sku'] = substr($value['unity'], 0, 127); // truncate due to paypal limitations
+            $item['name'] = $this->truncate($value['name'], 127);
+            $item['description'] = $this->truncate(strip_tags($value['description_short']), 127);
+            $item['sku'] = $this->truncate($value['unity'], 127);
             $item['unit_amount']['currency_code'] = $params['currency']['iso_code'];
             $item['unit_amount']['value'] = $value['total'] / $value['quantity'];
             $item['tax']['currency_code'] = $params['currency']['iso_code'];
@@ -117,8 +117,8 @@ class GenerateJsonPaypalOrder
             'intent' => \Configuration::get('PS_CHECKOUT_INTENT'), // capture or authorize
             'custom_id' => (string) $params['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
-            'description' => substr('Checking out with your cart from ' . \Configuration::get('PS_SHOP_NAME'), 0, 127),
-            'soft_descriptor' => substr(\Configuration::get('PS_SHOP_NAME'), 0, 22),
+            'description' => $this->truncate('Checking out with your cart from ' . \Configuration::get('PS_SHOP_NAME'), 127),
+            'soft_descriptor' => $this->truncate(\Configuration::get('PS_SHOP_NAME'), 22),
             'amount' => [
                 'currency_code' => $params['currency']['iso_code'],
                 'value' => $params['cart']['totals']['total']['amount'],
@@ -215,6 +215,24 @@ class GenerateJsonPaypalOrder
         }
 
         return $cart['subtotals']['discounts']['amount'];
+    }
+
+    /**
+     * Function that allow to truncate fields to match the
+     * paypal api requirements
+     *
+     * @param string $str
+     * @param int $limit
+     *
+     * @return string
+     */
+    private function truncate($str, $limit)
+    {
+        if (empty($str)) {
+            return $str;
+        }
+
+        return substr($str, 0, $limit);
     }
 
     /**
