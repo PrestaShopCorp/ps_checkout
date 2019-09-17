@@ -10,6 +10,9 @@
       <!-- <MenuItem route="/advanced">{{ $t('menu.advancedSettings') }}</MenuItem> -->
       <MenuItem route="/help">{{ $t('menu.help') }}</MenuItem>
     </Menu>
+
+    <div class="pt-5" />
+
     <div v-if="paymentMode === 'SANDBOX'" class="row">
       <div class="container">
         <PSAlert :alert-type="ALERT_TYPE_WARNING">
