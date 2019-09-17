@@ -1,11 +1,9 @@
 <template>
-  <div id="addons-menu" class="bootstrap">
-    <div class="page-head custom-tab">
-      <div class="page-head-tabs" id="head_tabs">
-        <ul class="nav nav-pills">
-          <slot />
-        </ul>
-      </div>
+  <div id="addons-menu" class="row bootstrap">
+    <div class="page-head-tabs w-100">
+      <ul class="nav nav-pills">
+        <slot />
+      </ul>
     </div>
   </div>
 </template>
@@ -16,21 +14,15 @@
   };
 </script>
 
-<style scoped lang="scss">
+<style scoped>
+  #addons-menu {
+    width: 100%;
+    position: fixed;
+    margin-top: -22px;
+    border-bottom: 1px solid #dfdfdf;
+    z-index: 499;
+  }
   .nav {
     height: 55px !important;
-  }
-  #content.bootstrap {
-    padding-top: 160px;
-  }
-  #addons-menu {
-    margin-bottom: 45px;
-  }
-  #addons-menu.bootstrap .page-head.custom-tab {
-    height: auto !important;
-    top: 8rem !important;
-  }
-  .mobile #addons-menu.bootstrap .page-head.custom-tab {
-    top: 9rem !important;
   }
 </style>
