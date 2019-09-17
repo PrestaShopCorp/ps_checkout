@@ -76,7 +76,7 @@ class PsxDataValidationTest extends TestCase
                     'business_address_zip' => '',
                     'business_phone_country' => '',
                     'business_phone' => '',
-                    'business_website' => '',
+                    'business_website' => ' ',
                     'business_contact_gender' => '',
                     'shop_name' => '',
                     'business_company_emr' => ' ',
