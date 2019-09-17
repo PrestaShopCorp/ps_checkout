@@ -145,7 +145,7 @@ class Translations
                     'genderMr' => $this->module->l('Mr', 'translations'),
                     'genderMrs' => $this->module->l('Mrs', 'translations'),
                     'firstName' => $this->module->l('First name', 'translations'),
-                    'nationality' => $this->module->l('Nationnality', 'translations'),
+                    'language' => $this->module->l('Language', 'translations'),
                     'lastName' => $this->module->l('Last name', 'translations'),
                     'qualification' => $this->module->l('Are you', 'translations'),
                     'merchant' => $this->module->l('A merchant', 'translations'),

@@ -115,9 +115,8 @@ class PsxDataValidation
             $errors[] = self::PHONE;
         }
 
-        if (!filter_var($data['business_website'], FILTER_VALIDATE_URL)
-            || strlen($data['business_website']) < 1
-            || strlen($data['business_website']) > 255
+        if (!empty($data['business_website'])
+            && (!filter_var($data['business_website'], FILTER_VALIDATE_URL) || strlen($data['business_website']) > 255)
         ) {
             $errors[] = self::WEBSITE;
         }
@@ -132,7 +131,7 @@ class PsxDataValidation
 
         if (!in_array(
             $data['business_company_emr'],
-            array('', 'lt5000', 'lt25000', 'lt50000', 'lt100000', 'lt250000', 'lt500000', 'lt1000000', 'gt1000000')
+            array('lt5000', 'lt25000', 'lt50000', 'lt100000', 'lt250000', 'lt500000', 'lt1000000', 'gt1000000')
         )) {
             $errors[] = self::COMPANY_EMR;
         }

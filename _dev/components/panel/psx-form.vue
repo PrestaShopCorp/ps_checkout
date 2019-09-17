@@ -9,7 +9,7 @@
             {{ text }}
           </li>
         </ul>
-      </div> 
+      </div>
     </div>
     <form class="form form-horizontal">
       <div class="card">
@@ -53,15 +53,15 @@
                     <div class="col-lg-6 col-md-6 col-sm-6">
                       <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
                         <label>{{ $t('panel.psx-form.firstName') }}</label>
-                        <input type="text" class="form-control" id="firstName" 
-                          v-model="form.business_contact_first_name" 
+                        <input type="text" class="form-control" id="firstName"
+                          v-model="form.business_contact_first_name"
                           v-bind:class="[form.business_contact_first_name != '' ? '' : 'has-danger']">
                       </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6">
                       <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
                         <label>{{ $t('panel.psx-form.lastName') }}</label>
-                        <input type="text" class="form-control" id="lastName" 
+                        <input type="text" class="form-control" id="lastName"
                           v-model="form.business_contact_last_name"
                           v-bind:class="[form.business_contact_last_name != '' ? '' : 'has-danger']">
                       </div>
@@ -69,8 +69,8 @@
                   </div>
                   <div class="row mt-3">
                     <div class="col-lg-6 col-md-6 col-sm-6">
-                      <label>{{ $t('panel.psx-form.nationality') }}</label>
-                      <select class="form-control custom-select" 
+                      <label>{{ $t('panel.psx-form.language') }}</label>
+                      <select class="form-control custom-select"
                         v-model="form.business_contact_language"
                         v-bind:class="[form.business_contact_language != '' ? '' : 'has-danger']">
                         <option v-for="languageDetail in getLanguagesDetails" v-bind:key="languageDetail.iso_code" v-bind:value="languageDetail.iso_code">
@@ -82,7 +82,7 @@
                   <div class="row mt-3">
                     <div class="col-lg-6 col-md-6 col-sm-6">
                       <label>{{ $t('panel.psx-form.qualification') }}</label>
-                      <select class="form-control custom-select" 
+                      <select class="form-control custom-select"
                         v-model="form.qualification">
                         <option value="">--</option>
                         <option value="merchant">{{ $t('panel.psx-form.merchant') }}</option>
@@ -105,8 +105,8 @@
                     <div class="col-lg-12 col-md-12 col-sm-12">
                       <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
                         <label>{{ $t('panel.psx-form.storeName') }}</label>
-                        <input type="text" class="form-control" id="storeName" 
-                          v-model="form.shop_name" 
+                        <input type="text" class="form-control" id="storeName"
+                          v-model="form.shop_name"
                           v-bind:class="[form.shop_name != '' ? '' : 'has-danger']">
                       </div>
                     </div>
@@ -115,8 +115,8 @@
                     <div class="col-lg-12 col-md-12 col-sm-12">
                       <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
                         <label>{{ $t('panel.psx-form.address') }}</label>
-                        <input type="text" class="form-control" id="address" 
-                          v-model="form.business_address_street" 
+                        <input type="text" class="form-control" id="address"
+                          v-model="form.business_address_street"
                           v-bind:class="[form.business_address_street != '' ? '' : 'has-danger']">
                       </div>
                     </div>
@@ -125,16 +125,16 @@
                     <div class="col-lg-6 col-md-6 col-sm-6">
                       <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
                         <label>{{ $t('panel.psx-form.postCode') }}</label>
-                        <input type="text" class="form-control" id="postCode" 
-                          v-model="form.business_address_zip" 
+                        <input type="text" class="form-control" id="postCode"
+                          v-model="form.business_address_zip"
                           v-bind:class="[form.business_address_zip != '' ? '' : 'has-danger']">
                       </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6">
                       <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
                         <label>{{ $t('panel.psx-form.town') }}</label>
-                        <input type="text" class="form-control" id="town" 
-                          v-model="form.business_address_city" 
+                        <input type="text" class="form-control" id="town"
+                          v-model="form.business_address_city"
                           v-bind:class="[form.business_address_city != '' ? '' : 'has-danger']">
                       </div>
                     </div>
@@ -162,7 +162,7 @@
                         </select>
                       </div>
                       <div class="col-lg-8 col-md-8 col-sm-8 pl-0 pr-0">
-                        <input type="text" class="form-control" id="phone" 
+                        <input type="text" class="form-control" id="phone"
                           v-model="form.business_phone"
                           v-bind:class="[form.business_phone != '' ? '' : 'has-danger']">
                       </div>
@@ -182,7 +182,7 @@
                     <div class="col-lg-12 col-md-12 col-sm-12">
                       <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
                         <label>{{ $t('panel.psx-form.website') }}</label>
-                        <input type="text" class="form-control" id="website" 
+                        <input type="text" class="form-control" id="website"
                           v-model="form.business_website"
                           v-bind:class="[form.business_website != '' ? '' : 'has-danger']"
                           placeholder="https://your_website.extension">
@@ -194,7 +194,6 @@
                       <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
                         <label>{{ $t('panel.psx-form.companyTurnover') }}</label>
                         <select v-model="form.business_company_emr" class="form-control custom-select">
-                          <option value="">--</option>
                           <option v-for="(value, key) in getCompanyMonthyAverages" v-bind:key="key" v-bind:value="key">
                             {{ value }}
                           </option>
@@ -206,7 +205,10 @@
                     <div class="col-lg-12 col-md-12 col-sm-12">
                       <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
                         <label>{{ $t('panel.psx-form.businessCategory') }}</label>
-                        <select v-model="form.business_category" @change="onChangeCategory(form.business_category)" class="form-control custom-select">
+                        <select v-model="form.business_category"
+                          @change="onChangeCategory(form.business_category)"
+                          class="form-control custom-select"
+                          v-bind:class="[form.business_website != '' ? '' : 'has-danger']">
                           <option v-for="(value, key) in getCompanyCategories" v-bind:key="key" v-bind:value="key">
                             {{ value.title }}
                           </option>
@@ -274,7 +276,7 @@
           business_phone_country: '1',
           business_phone: null,
           business_website: null,
-          business_company_emr: "",
+          business_company_emr: null,
           business_category: null,
           business_sub_category: "",
         },
@@ -285,7 +287,7 @@
         return _.orderBy(this.$store.state.psx.languagesDetails, 'name');
       },
       getCountriesDetails() {
-        return _.orderBy(this.$store.state.psx.countriesDetails, 'name'); 
+        return _.orderBy(this.$store.state.psx.countriesDetails, 'name');
       },
       getPhoneCountryCode() {
         return _.uniqBy(_.orderBy(this.$store.state.psx.countriesDetails, 'code'), 'code');
@@ -305,6 +307,11 @@
             this.$router.push('/authentication');
           }
           this.errorForm = response;
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+          });
         });
       },
       onChangeCategory(categoryId) {

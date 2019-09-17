@@ -1,8 +1,8 @@
 {
-    "business_company_emr" : {
-        "lt5000": "Up 5000€ EUR",
-        "lt25000": "5000€ EUR - 24 999€ EUR",
-        "lt50000": "25 000€ EUR - 49 99€ EUR",
+   "business_company_emr" : {
+        "lt5000": "Up 5 000€ EUR",
+        "lt25000": "5 000€ EUR - 24 999€ EUR",
+        "lt50000": "25 000€ EUR - 49 999€ EUR",
         "lt100000": "50 000€ EUR - 99 999€ EUR",
         "lt250000": "100 000€ EUR - 249 999€ EUR",
         "lt500000": "250 000€ EUR - 499 999€ EUR",
