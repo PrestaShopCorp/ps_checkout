@@ -87,7 +87,7 @@
         terms: {
           value: false,
           hasError: false,
-          errorMessage: this.$t('firebase.error.termsOfUseError'),
+          errorMessage: this.$t('pages.signup.termsOfUseError'),
         },
       };
     },
