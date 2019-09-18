@@ -172,6 +172,10 @@ class ps_checkout extends PaymentModule
             return false;
         }
 
+        if (false === $this->isPaymentStep()) {
+            return false;
+        }
+
         $payload = (new GenerateJsonPaypalOrder())->create($this->context);
         $paypalOrder = (new Order($this->context->link))->create($payload);
 
@@ -220,6 +224,27 @@ class ps_checkout extends PaymentModule
         }
 
         return $payment_options;
+    }
+
+    /**
+     * Tells if we are in the Payment step from the order tunnel.
+     * We use the ReflectionObject because it only exists from Prestashop 1.7.7
+     *
+     * @return bool
+     */
+    private function isPaymentStep()
+    {
+        $checkoutPaymentKey = 3;
+
+        /* Reflect checkoutProcess object */
+        $reflectedObject = (new ReflectionObject($this->context->controller))->getProperty('checkoutProcess');
+        $reflectedObject->setAccessible(true);
+
+        /* Get Checkout steps data */
+        $checkoutProcessClass = $reflectedObject->getValue($this->context->controller);
+        $checkoutSteps = $checkoutProcessClass->getSteps();
+
+        return (bool) $checkoutSteps[$checkoutPaymentKey]->isCurrent();
     }
 
     /**
