@@ -58,7 +58,7 @@ class TableManager
      */
     public function dropTable()
     {
-        $query = 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . self::TABLE_ORDER_MATRICE;
+        $query = 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . self::TABLE_ORDER_MATRICE . '`';
 
         if (\Db::getInstance()->execute($query) == false) {
             return false;
