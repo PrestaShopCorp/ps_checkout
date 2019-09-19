@@ -204,14 +204,15 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
     /**
      * Override displayMaintenancePage to prevent the maintenance page to be displayed
-     *
      */
-    protected function displayMaintenancePage() {}
+    protected function displayMaintenancePage()
+    {
+    }
 
     /**
      * Override geolocationManagement to prevent country GEOIP blocking
      *
-     * @param  Country $defaultCountry
+     * @param Country $defaultCountry
      *
      * @return false
      */
