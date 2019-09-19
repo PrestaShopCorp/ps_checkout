@@ -234,17 +234,22 @@ class ps_checkout extends PaymentModule
      */
     private function isPaymentStep()
     {
-        $checkoutPaymentKey = 3;
-
         /* Reflect checkoutProcess object */
         $reflectedObject = (new ReflectionObject($this->context->controller))->getProperty('checkoutProcess');
         $reflectedObject->setAccessible(true);
 
         /* Get Checkout steps data */
         $checkoutProcessClass = $reflectedObject->getValue($this->context->controller);
-        $checkoutSteps = $checkoutProcessClass->getSteps();
+        $checkoutSteps = array_reverse($checkoutProcessClass->getSteps());
 
-        return (bool) $checkoutSteps[$checkoutPaymentKey]->isCurrent();
+        /* Get the checkoutPaymentKey from the $checkoutSteps array */
+        foreach ($checkoutSteps as $stepObject) {
+            if ('CheckoutPaymentStep' === get_class($stepObject)) {
+                return (bool) $stepObject->isCurrent();
+            }
+        }
+
+        return false;
     }
 
     /**
