@@ -201,4 +201,22 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
         return true;
     }
+
+    /**
+     * Override displayMaintenancePage to prevent the maintenance page to be displayed
+     *
+     */
+    protected function displayMaintenancePage() {}
+
+    /**
+     * Override geolocationManagement to prevent country GEOIP blocking
+     *
+     * @param  Country $defaultCountry
+     *
+     * @return false
+     */
+    protected function geolocationManagement($defaultCountry)
+    {
+        return false;
+    }
 }
