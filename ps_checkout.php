@@ -93,7 +93,6 @@ class ps_checkout extends PaymentModule
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
-        $this->isPrestashop177 = version_compare(_PS_VERSION_, '1.7.7.0', '>=');
     }
 
     /**
@@ -239,7 +238,7 @@ class ps_checkout extends PaymentModule
 
         /* Get the checkoutPaymentKey from the $checkoutSteps array */
         foreach ($checkoutSteps as $stepObject) {
-            if ('CheckoutPaymentStep' === get_class($stepObject)) {
+            if ($stepObject instanceof CheckoutPaymentStep) {
                 return (bool) $stepObject->isCurrent();
             }
         }
@@ -256,8 +255,10 @@ class ps_checkout extends PaymentModule
      */
     private function getAllOrderSteps()
     {
-        if (true === $this->isPrestashop177) {
-            return array_reverse($this->context->controller->checkoutProcess->getSteps());
+        $isPrestashop177 = version_compare(_PS_VERSION_, '1.7.7.0', '>=');
+
+        if (true === $isPrestashop177) {
+            return $this->context->controller->checkoutProcess->getSteps();
         }
 
         /* Reflect checkoutProcess object */
@@ -267,7 +268,7 @@ class ps_checkout extends PaymentModule
         /* Get Checkout steps data */
         $checkoutProcessClass = $reflectedObject->getValue($this->context->controller);
 
-        return array_reverse($checkoutProcessClass->getSteps());
+        return $checkoutProcessClass->getSteps();
     }
 
     /**
