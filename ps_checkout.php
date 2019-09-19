@@ -93,6 +93,7 @@ class ps_checkout extends PaymentModule
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
+        $this->isPrestashop177 = version_compare(_PS_VERSION_, '1.7.7.0', '>=');
     }
 
     /**
@@ -234,13 +235,7 @@ class ps_checkout extends PaymentModule
      */
     private function isPaymentStep()
     {
-        /* Reflect checkoutProcess object */
-        $reflectedObject = (new ReflectionObject($this->context->controller))->getProperty('checkoutProcess');
-        $reflectedObject->setAccessible(true);
-
-        /* Get Checkout steps data */
-        $checkoutProcessClass = $reflectedObject->getValue($this->context->controller);
-        $checkoutSteps = array_reverse($checkoutProcessClass->getSteps());
+        $checkoutSteps = $this->getAllOrderSteps();
 
         /* Get the checkoutPaymentKey from the $checkoutSteps array */
         foreach ($checkoutSteps as $stepObject) {
@@ -250,6 +245,29 @@ class ps_checkout extends PaymentModule
         }
 
         return false;
+    }
+
+    /**
+     * Get all existing Payment Steps from front office.
+     * Use ReflectionObject before Prestashop 1.7.7
+     * From Prestashop 1.7.7 object checkoutProcess is now public
+     *
+     * @return array
+     */
+    private function getAllOrderSteps()
+    {
+        if (true === $this->isPrestashop177) {
+            return array_reverse($this->context->controller->checkoutProcess->getSteps());
+        }
+
+        /* Reflect checkoutProcess object */
+        $reflectedObject = (new ReflectionObject($this->context->controller))->getProperty('checkoutProcess');
+        $reflectedObject->setAccessible(true);
+
+        /* Get Checkout steps data */
+        $checkoutProcessClass = $reflectedObject->getValue($this->context->controller);
+
+        return array_reverse($checkoutProcessClass->getSteps());
     }
 
     /**
