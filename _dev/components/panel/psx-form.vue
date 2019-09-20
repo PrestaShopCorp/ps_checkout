@@ -283,7 +283,7 @@
           business_address_country: null,
           business_phone_country: '1',
           business_phone: null,
-          business_website: "",
+          business_website: null,
           business_company_emr: null,
           business_category: null,
           business_sub_category: "",

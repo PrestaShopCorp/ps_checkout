@@ -124,9 +124,9 @@ class Onboarding extends PaymentClient
             ],
             'category' => $psxFormData['business_category'],
             'sub_category' => $psxFormData['business_sub_category'],
-            'website_urls' => [
+            'website_urls' => array_filter([
                 $psxFormData['business_website'],
-            ],
+            ]),
             'business_type' => 'INDIVIDUAL',
             'average_monthly_volume_range' => (new PsxDataMatrice())->getCompanyEmrToAverageMonthlyVolumeRange($psxFormData['business_company_emr']),
         ];
