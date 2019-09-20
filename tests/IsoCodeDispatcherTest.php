@@ -24,9 +24,9 @@
  *  International Registered Trademark & Property of PrestaShop SA
  **/
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\PrestashopCheckout\IsoCodeDispatcher;
+use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
 
-class IsoCodeDispatcherTest extends TestCase
+class PaypalCountryCodeMatriceTest extends TestCase
 {
     /**
      * @dataProvider isoCodeDataProviderPaypal
@@ -35,7 +35,7 @@ class IsoCodeDispatcherTest extends TestCase
     {
         $this->assertSame(
             $resultExpect,
-            (new IsoCodeDispatcher())->getPaypalIsoCode($dataToValidate)
+            (new PaypalCountryCodeMatrice())->getPaypalIsoCode($dataToValidate)
         );
     }
 
@@ -70,7 +70,7 @@ class IsoCodeDispatcherTest extends TestCase
     {
         $this->assertSame(
             $resultExpect,
-            (new IsoCodeDispatcher())->getPrestashopIsoCode($dataToValidate)
+            (new PaypalCountryCodeMatrice())->getPrestashopIsoCode($dataToValidate)
         );
     }
 
