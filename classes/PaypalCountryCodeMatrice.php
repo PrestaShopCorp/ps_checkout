@@ -26,7 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-class IsoCodeDispatcher
+class PaypalCountryCodeMatrice
 {
     /**
      * PrestaShop ISO code to PayPal ISO code
