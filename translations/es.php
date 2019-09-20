@@ -120,7 +120,7 @@ $_MODULE['<{ps_checkout}prestashop>orderconfirmation_30163d8fc3068e8297e7ab5bf32
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_0db71da7150c27142eef9d22b843b4a9'] = 'Para más información o cualquier pregunta, ponte en contacto con nuestro';
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_5fe1b3ec207723be1a7a92934307e323'] = 'Hemos detectado un problema en tu pedido. Si crees que se trata de un error, ponte en contacto con nuestro servicio de atención al cliente';
 $_MODULE['<{ps_checkout}prestashop>paypal_41f7fd5ea9b453e2148bb7bccef861c2'] = 'Se te redirigirá a la pasarela correspondiente para completar el pago';
-$_MODULE['<{ps_checkout}prestashop>paypal_ba0de86d723de2c4dd08e8b88702c492'] = 'J\'accepte les conditions générales d\'utilisation et j\'y adhère sans conditions';
+$_MODULE['<{ps_checkout}prestashop>paypal_ba0de86d723de2c4dd08e8b88702c492'] = 'Acepto las condiciones del servicio y las respetaré sin excepciones';
 $_MODULE['<{ps_checkout}prestashop>paypal_90e21e03117b6ad940cf3d3075f9a852'] = 'Indica que has leído y aceptas las condiciones generales.';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_a44217022190f5734b2f72ba1e4f8a79'] = 'Número de tarjeta';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_95b16127e70e8a90220404fb48343182'] = 'Fecha de caducidad';

@@ -106,9 +106,7 @@ $_MODULE['<{ps_checkout}prestashop>hosted-fields_a44217022190f5734b2f72ba1e4f8a7
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_95b16127e70e8a90220404fb48343182'] = 'Data ważności';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_5ea7f231296949070013bc43715aae01'] = 'Kod CVC';
 $_MODULE['<{ps_checkout}prestashop>paypal_41f7fd5ea9b453e2148bb7bccef861c2'] = 'Za chwilę nastąpi przekierowanie do powiązanej bramki w celu dokończenia płatności';
-$_MODULE['<{ps_checkout}prestashop>paypal_3abbd962f6751baf05a19c4ebbc8d0e7'] = 'Akceptuję';
-$_MODULE['<{ps_checkout}prestashop>paypal_99b0a9110ebd2fa6dcd57f7daa5b5d42'] = 'warunki świadczenia usługi';
-$_MODULE['<{ps_checkout}prestashop>paypal_b2d3226f1779a5ae17d9c8c1c6df9001'] = 'i będę się do nich bezwarunkowo stosować';
+$_MODULE['<{ps_checkout}prestashop>paypal_ba0de86d723de2c4dd08e8b88702c492'] = 'Akceptuję warunki świadczenia usługi i będę się do nich bezwarunkowo stosować ';
 $_MODULE['<{ps_checkout}prestashop>paypal_90e21e03117b6ad940cf3d3075f9a852'] = 'Potwierdź, że przeczytano warunki i postanowienia, i zaakceptuj wszystkie.';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_565c23511bb8643ac5552fbd5e4ba358'] = 'Jeden moduł, wszystkie metody płatności.';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_83c6cac8e2ac2ca242a4c1b7e3062bf8'] = 'Zaoferuj swoim klientom najszerszy wybór metod płatności: kartą, przez PayPal itd.';

@@ -106,9 +106,7 @@ $_MODULE['<{ps_checkout}prestashop>hosted-fields_a44217022190f5734b2f72ba1e4f8a7
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_95b16127e70e8a90220404fb48343182'] = 'Vervaldatum';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_5ea7f231296949070013bc43715aae01'] = 'CVC';
 $_MODULE['<{ps_checkout}prestashop>paypal_41f7fd5ea9b453e2148bb7bccef861c2'] = 'U wordt doorgestuurd naar de gateway om de betaling af te ronden';
-$_MODULE['<{ps_checkout}prestashop>paypal_3abbd962f6751baf05a19c4ebbc8d0e7'] = 'Ik ga akkoord met de';
-$_MODULE['<{ps_checkout}prestashop>paypal_99b0a9110ebd2fa6dcd57f7daa5b5d42'] = 'servicevoorwaarden';
-$_MODULE['<{ps_checkout}prestashop>paypal_b2d3226f1779a5ae17d9c8c1c6df9001'] = 'en zal ze onvoorwaardelijk naleven';
+$_MODULE['<{ps_checkout}prestashop>paypal_ba0de86d723de2c4dd08e8b88702c492'] = 'Ik ga akkoord met de servicevoorwaarden en zal ze onvoorwaardelijk naleven';
 $_MODULE['<{ps_checkout}prestashop>paypal_90e21e03117b6ad940cf3d3075f9a852'] = 'Geef aan dat u de Algemene voorwaarden hebt gelezen en accepteert.';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_565c23511bb8643ac5552fbd5e4ba358'] = 'Eén module, alle betaalmethoden.';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_83c6cac8e2ac2ca242a4c1b7e3062bf8'] = 'Zorg voor een ruim aanbod van betaalmogelijkheden: kaarten, PayPal enz.';
