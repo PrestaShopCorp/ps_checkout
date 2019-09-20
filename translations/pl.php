@@ -30,8 +30,8 @@ $_MODULE['<{ps_checkout}prestashop>translations_1ffc4d4c8714b66db4296d2c9c25ef81
 $_MODULE['<{ps_checkout}prestashop>translations_8af703b2bf59cc9742883ae7f4cb0e5b'] = 'Ustawienia konta';
 $_MODULE['<{ps_checkout}prestashop>translations_4826f26ca366291a89abd1f29680202d'] = 'Konto PrestaShop Checkout';
 $_MODULE['<{ps_checkout}prestashop>translations_cea7c7f7bec10295a93d10bd879b95c7'] = 'Musisz zalogować się do obu kont, PrestaShop Checkout i PayPal, aby aktywować wszystkie metody płatności';
-$_MODULE['<{ps_checkout}prestashop>translations_9a2e255d065b9445b1a6f56ab54b5ae5'] = 'Jesteś teraz zalogowany do';
-$_MODULE['<{ps_checkout}prestashop>translations_e268443e43d93dab7ebef303bbe9642f'] = 'konta';
+$_MODULE['<{ps_checkout}prestashop>translations_9a2e255d065b9445b1a6f56ab54b5ae5'] = 'Jesteś teraz zalogowany do konta ';
+$_MODULE['<{ps_checkout}prestashop>translations_e268443e43d93dab7ebef303bbe9642f'] = ' ';
 $_MODULE['<{ps_checkout}prestashop>translations_829cfbd41011647bf986de5c30a808d3'] = 'Zarejestruj się lub zaloguj, aby zaoferować swoim klientom wszystkie metody płatności.';
 $_MODULE['<{ps_checkout}prestashop>translations_d9776f0775997b2e698c6975420b5c5d'] = 'Zarejestruj się';
 $_MODULE['<{ps_checkout}prestashop>translations_e81c4e4f2b7b93b481e13a8553c2ae1b'] = 'lub';
