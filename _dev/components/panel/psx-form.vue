@@ -190,7 +190,6 @@
                         </label>
                         <input type="text" class="form-control" id="website"
                           v-model="form.business_website"
-                          v-bind:class="[form.business_website != '' ? '' : 'has-danger']"
                           placeholder="https://your_website.extension">
                       </div>
                     </div>
