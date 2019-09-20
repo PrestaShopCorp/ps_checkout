@@ -258,7 +258,7 @@ class ps_checkout extends PaymentModule
         $isPrestashop177 = version_compare(_PS_VERSION_, '1.7.7.0', '>=');
 
         if (true === $isPrestashop177) {
-            return $this->context->controller->checkoutProcess->getSteps();
+            return $this->context->controller->getCheckoutProcess()->getSteps();
         }
 
         /* Reflect checkoutProcess object */
