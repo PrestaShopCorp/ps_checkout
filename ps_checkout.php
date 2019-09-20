@@ -74,6 +74,9 @@ class ps_checkout extends PaymentModule
         'PS_CHECKOUT_SHOP_UUID_V4' => '',
     );
 
+    public $confirmUninstall;
+    public $bootstrap;
+
     public function __construct()
     {
         $this->name = 'ps_checkout';
@@ -172,6 +175,10 @@ class ps_checkout extends PaymentModule
             return false;
         }
 
+        if (false === $this->isPaymentStep()) {
+            return false;
+        }
+
         $payload = (new GenerateJsonPaypalOrder())->create($this->context);
         $paypalOrder = (new Order($this->context->link))->create($payload);
 
@@ -220,6 +227,51 @@ class ps_checkout extends PaymentModule
         }
 
         return $payment_options;
+    }
+
+    /**
+     * Tells if we are in the Payment step from the order tunnel.
+     * We use the ReflectionObject because it only exists from Prestashop 1.7.7
+     *
+     * @return bool
+     */
+    private function isPaymentStep()
+    {
+        $checkoutSteps = $this->getAllOrderSteps();
+
+        /* Get the checkoutPaymentKey from the $checkoutSteps array */
+        foreach ($checkoutSteps as $stepObject) {
+            if ($stepObject instanceof CheckoutPaymentStep) {
+                return (bool) $stepObject->isCurrent();
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get all existing Payment Steps from front office.
+     * Use ReflectionObject before Prestashop 1.7.7
+     * From Prestashop 1.7.7 object checkoutProcess is now public
+     *
+     * @return array
+     */
+    private function getAllOrderSteps()
+    {
+        $isPrestashop177 = version_compare(_PS_VERSION_, '1.7.7.0', '>=');
+
+        if (true === $isPrestashop177) {
+            return $this->context->controller->getCheckoutProcess()->getSteps();
+        }
+
+        /* Reflect checkoutProcess object */
+        $reflectedObject = (new ReflectionObject($this->context->controller))->getProperty('checkoutProcess');
+        $reflectedObject->setAccessible(true);
+
+        /* Get Checkout steps data */
+        $checkoutProcessClass = $reflectedObject->getValue($this->context->controller);
+
+        return $checkoutProcessClass->getSteps();
     }
 
     /**
