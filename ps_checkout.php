@@ -74,6 +74,9 @@ class ps_checkout extends PaymentModule
         'PS_CHECKOUT_SHOP_UUID_V4' => '',
     );
 
+    public $confirmUninstall;
+    public $bootstrap;
+
     public function __construct()
     {
         $this->name = 'ps_checkout';
