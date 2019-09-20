@@ -54,7 +54,7 @@
 <div id="paypal-approve-error" class="hide-paypal-error">
     <article class="alert alert-danger" role="alert" data-alert="danger">
         <ul>
-            <li>{l s='Please indicate that you have read Terms & Conditions and accept all terms' mod='ps_checkout'}.</li>
+            <li>{l s='Please indicate that you have read Terms & Conditions and accept all terms.' mod='ps_checkout'}</li>
         </ul>
     </article>
 </div>

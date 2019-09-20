@@ -21,7 +21,7 @@ $_MODULE['<{ps_checkout}prestashop>orderconfirmation_0db71da7150c27142eef9d22b84
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_5fe1b3ec207723be1a7a92934307e323'] = 'Abbiamo riscontrato un problema con il tuo ordine. Se pensi che ci sia un errore, puoi contattare il nostro servizio clienti';
 $_MODULE['<{ps_checkout}prestashop>paypal_41f7fd5ea9b453e2148bb7bccef861c2'] = 'Verrai reindirizzato al gateway corrispondente per completare il pagamento';
 $_MODULE['<{ps_checkout}prestashop>paypal_ba0de86d723de2c4dd08e8b88702c492'] = 'J\'accepte les conditions générales d\'utilisation et j\'y adhère sans conditions';
-$_MODULE['<{ps_checkout}prestashop>paypal_e393708b311fdee88c0ca900bb1728e6'] = 'Conferma di avere letto e accettato tutti i nostri termini e condizioni';
+$_MODULE['<{ps_checkout}prestashop>paypal_90e21e03117b6ad940cf3d3075f9a852'] = 'Conferma di avere letto e accettato tutti i nostri termini e condizioni.';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_a44217022190f5734b2f72ba1e4f8a79'] = 'Numero carta';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_95b16127e70e8a90220404fb48343182'] = 'Data di scadenza';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_5ea7f231296949070013bc43715aae01'] = 'CVC';
