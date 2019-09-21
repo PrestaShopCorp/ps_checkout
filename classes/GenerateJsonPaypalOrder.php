@@ -34,6 +34,11 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
  */
 class GenerateJsonPaypalOrder
 {
+    /**
+     * @param \Context $context
+     *
+     * @return string
+     */
     public function create(\Context $context)
     {
         return $this->createJsonFromData(
@@ -207,6 +212,8 @@ class GenerateJsonPaypalOrder
      * @param array $cart
      *
      * @return float Amount of all discount (cart rule applied to the cart)
+     *
+     * @todo: this function seems unused ?
      */
     private function getDiscountValue($cart)
     {
@@ -285,6 +292,8 @@ class GenerateJsonPaypalOrder
      * @param int $productId
      *
      * @return string Product Url
+     *
+     * @todo: this function seems unused ?
      */
     private function getProductUrlById($productId)
     {

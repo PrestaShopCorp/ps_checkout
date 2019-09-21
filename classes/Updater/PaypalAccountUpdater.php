@@ -41,6 +41,8 @@ class PaypalAccountUpdater
     const DENIED = 'DENIED';
     const LIMITED = 'LIMITED';
 
+    const MIN_ID_LENGTH = 13;
+
     /**
      * @var PaypalAccount
      */

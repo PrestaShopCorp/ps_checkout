@@ -38,6 +38,11 @@ class PaypalOrder
      */
     private $order;
 
+    /**
+     * @param string $id
+     *
+     * @todo: type-hinting is only possible with php7+, no issue here ?
+     */
     public function __construct(string $id)
     {
         $this->loadOrder($id);

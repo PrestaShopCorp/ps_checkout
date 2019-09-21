@@ -28,8 +28,14 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 class HostedFieldsErrors
 {
+    /**
+     * @var \Module
+     */
     private $module = null;
 
+    /**
+     * @param \Module $module
+     */
     public function __construct(\Module $module)
     {
         $this->module = $module;

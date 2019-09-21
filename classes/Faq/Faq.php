@@ -30,12 +30,12 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
 /**
- * Retrieve the faq if the module
+ * Retrieve the faq of the module
  */
 class Faq
 {
     /**
-     * Module key to identifiate on which module we will retrieve the faq
+     * Module key to identify on which module we will retrieve the faq
      *
      * @var string
      */
@@ -49,7 +49,7 @@ class Faq
     private $psVersion;
 
     /**
-     * In which language the faq will be retrieve
+     * In which language the faq will be retrieved
      *
      * @var string
      */
@@ -60,7 +60,7 @@ class Faq
     public function __construct()
     {
         $client = new Client(array(
-            'base_url' => 'http://api.addons.prestashop.com/request/faq/',
+            'base_url' => 'https://api.addons.prestashop.com/request/faq/',
             'defaults' => array(
                 'timeout' => 10,
             ),

@@ -42,6 +42,9 @@ class PsCheckoutException extends \PrestaShopExceptionCore
      */
     private $messages;
 
+    /**
+     * @param string|array $messages
+     */
     public function __construct($messages)
     {
         parent::__construct();

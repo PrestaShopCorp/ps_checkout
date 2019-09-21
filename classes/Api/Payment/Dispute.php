@@ -34,7 +34,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
 class Dispute extends PaymentClient
 {
     /**
-     * Retrive the sum of disputes
+     * Retrieve the total of disputes
      *
      * @return array|bool
      */

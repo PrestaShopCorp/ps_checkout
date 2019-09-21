@@ -61,6 +61,12 @@ class Refund
      */
     private $currencyCode;
 
+    /**
+     * @param bool $refundFromWebhook
+     * @param float $amount
+     * @param string $paypalOrderId
+     * @param string $currencyCode
+     */
     public function __construct($refundFromWebhook, $amount, $paypalOrderId = null, $currencyCode = null)
     {
         $this->setAmount($amount);
@@ -133,7 +139,7 @@ class Refund
     }
 
     /**
-     * Prepare the datas to fully refund the order
+     * Prepare the data to fully refund the order
      *
      * @param \Order $order
      * @param array $orderProductList
@@ -188,7 +194,7 @@ class Refund
     }
 
     /**
-     * Check if the limit has been reached. Set header HTTP if reached
+     * Check if the limit has been reached. Muust set header HTTP if reached
      *
      * @param array $productOrder
      *
@@ -277,12 +283,12 @@ class Refund
     }
 
     /**
-     * Handle the differents error that can be thrown by paypal
+     * Handle different errors that can be thrown by paypal
      *
      * @param string $responseErrors Errors returned by paypal(PSL).
      *                               In case of multiple error, errors are delimited with semicolon
      *
-     * @return array List of error meassages
+     * @return array List of error messages
      */
     public function handleCallbackErrors($responseErrors)
     {
@@ -348,7 +354,7 @@ class Refund
     }
 
     /**
-     * Get the last order slip ceated (the one which we want to cancel)
+     * Get the last order slip created (the one which we want to cancel)
      *
      * @param int $orderId
      *

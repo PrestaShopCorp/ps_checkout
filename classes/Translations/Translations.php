@@ -33,13 +33,16 @@ class Translations
      */
     private $module = null;
 
+    /**
+     * @param \Module $module
+     */
     public function __construct(\Module $module)
     {
         $this->module = $module;
     }
 
     /**
-     * Create all tranlations (backoffice)
+     * Create all translations (backoffice)
      *
      * @return array translation list
      */
