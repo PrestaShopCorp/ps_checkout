@@ -24,13 +24,13 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter;
+namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store;
 
-use PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules\PsxModule;
-use PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules\PaypalModule;
-use PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules\ContextModule;
-use PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules\FirebaseModule;
-use PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules\ConfigurationModule;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\FirebaseModule;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule;
 
 /**
  * Present the store to the vuejs app (vuex)

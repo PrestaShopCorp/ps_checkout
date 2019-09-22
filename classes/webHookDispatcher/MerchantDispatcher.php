@@ -26,6 +26,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
+use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
+
 class MerchantDispatcher
 {
     /**
@@ -37,7 +40,8 @@ class MerchantDispatcher
      */
     public function dispatchEventType($merchantId)
     {
-        $merchant = new Merchant($merchantId);
-        $merchant->update();
+        $paypalAccount = new PaypalAccount($merchantId);
+
+        return (new PaypalAccountUpdater($paypalAccount))->update();
     }
 }

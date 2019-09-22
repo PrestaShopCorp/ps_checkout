@@ -23,7 +23,8 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
-use PrestaShop\Module\PrestashopCheckout\Merchant;
+use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
+use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
 
 class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminController
 {
@@ -39,10 +40,12 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
             throw new PrestaShopException('merchantId length must be at least 13 characters long');
         }
 
-        Configuration::updateValue('PS_CHECKOUT_PAYPAL_ID_MERCHANT', $idMerchant);
+        $paypalAccount = new PaypalAccount($idMerchant);
+        $paypalAccount = (new PaypalAccountUpdater($paypalAccount))->update();
 
-        $merchant = new Merchant($idMerchant);
-        $merchant->update();
+        if (false === $paypalAccount) {
+            throw new PrestaShopException('A problem occured when updating the paypal account');
+        }
 
         Tools::redirect(
             $this->context->link->getAdminLink(

@@ -24,11 +24,11 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules;
+namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
-use PrestaShop\Module\PrestashopCheckout\MerchantRepository;
-use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenterInterface;
 
 /**
  * Construct the paypal module
@@ -42,7 +42,7 @@ class PaypalModule implements StorePresenterInterface
      */
     public function present()
     {
-        $idMerchant = (new MerchantRepository())->getMerchantId();
+        $idMerchant = (new PaypalAccountRepository())->getMerchantId();
 
         $paypalModule = array(
             'paypal' => array(
@@ -66,9 +66,9 @@ class PaypalModule implements StorePresenterInterface
      */
     private function getPaypalOnboardingLink()
     {
-        $merchant = new MerchantRepository();
+        $paypalAccount = new PaypalAccountRepository();
 
-        if (true === $merchant->onbardingPaypalIsCompleted()) {
+        if (true === $paypalAccount->onbardingIsCompleted()) {
             return false;
         }
 

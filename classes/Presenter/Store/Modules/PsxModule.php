@@ -24,10 +24,10 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules;
+namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
-use PrestaShop\Module\PrestashopCheckout\MerchantRepository;
-use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenterInterface;
 
 /**
  * Construct the Psx module
@@ -57,7 +57,7 @@ class PsxModule implements StorePresenterInterface
     {
         return array(
             'psx' => array(
-                'onboardingCompleted' => (new MerchantRepository())->onbardingPsxIsCompleted(),
+                'onboardingCompleted' => (new PsAccountRepository())->psxFormIsCompleted(),
                 'psxFormData' => json_decode(\Configuration::get('PS_CHECKOUT_PSX_FORM'), true),
                 'languagesDetails' => $this->getJsonData(self::ALL_LANGUAGES_FILE),
                 'countriesDetails' => $this->getJsonData(self::ALL_COUNTRIES_FILE),

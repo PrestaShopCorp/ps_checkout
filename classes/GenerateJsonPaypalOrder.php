@@ -27,6 +27,7 @@
 namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\PrestaShop\Adapter\Cart\CartPresenter;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
  * Generate the payload waited by paypal to create an order (paypal order)
@@ -171,7 +172,7 @@ class GenerateJsonPaypalOrder
                 ],
             ],
             'payee' => [
-                'merchant_id' => (new MerchantRepository())->getMerchantId(),
+                'merchant_id' => (new PaypalAccountRepository())->getMerchantId(),
             ],
             'application_context' => [
                 'brand_name' => \Configuration::get('PS_SHOP_NAME'),

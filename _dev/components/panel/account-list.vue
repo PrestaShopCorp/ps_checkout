@@ -96,6 +96,7 @@
       },
       logOut() {
         this.$store.dispatch('logOut').then(() => {
+          this.$store.dispatch('unlink');
           this.$store.dispatch('psxOnboarding', false);
         });
       },

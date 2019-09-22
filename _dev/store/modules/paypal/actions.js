@@ -5,7 +5,7 @@ export default {
   unlink({commit, getters}) {
     return ajax({
       url: getters.adminController,
-      action: 'UnlinkPaypal',
+      action: 'LogOutPaypalAccount',
     }).then(() => {
       commit(types.UNLINK_ACCOUNT);
       return Promise.resolve(true);

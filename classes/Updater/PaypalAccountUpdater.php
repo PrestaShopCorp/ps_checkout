@@ -24,14 +24,15 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout;
+namespace PrestaShop\Module\PrestashopCheckout\Updater;
 
+use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop;
 
 /**
  * Check and set the merchant status
  */
-class Merchant
+class PaypalAccountUpdater
 {
     const SUBSCRIBED = 'SUBSCRIBED';
     const NEED_MORE_DATA = 'NEED_MORE_DATA';
@@ -40,17 +41,23 @@ class Merchant
     const LIMITED = 'LIMITED';
 
     /**
-     * @var string
+     * @var PaypalAccount
      */
-    private $merchantId;
+    private $account;
 
-    public function __construct($merchantId)
+    public function __construct(PaypalAccount $account)
     {
-        $this->setMerchantId($merchantId);
+        $merchantId = $account->getMerchantId();
+
+        if (null === $merchantId || empty($merchantId)) {
+            throw new \PrestaShopException('MerchantId cannot be empty');
+        }
+
+        $this->setAccount($account);
     }
 
     /**
-     * Update the merchant status
+     * Update the merchant
      */
     public function update()
     {
@@ -60,9 +67,12 @@ class Merchant
             return false;
         }
 
-        $this->setEmail($response['primary_email'], $response['primary_email_confirmed']);
-        $this->setPaypalStatus($response['payments_receivable']);
-        $this->setCardStatus($this->getCardStatus($response));
+        $this->account->setEmail($response['primary_email']);
+        $this->account->setEmailIsVerified($response['primary_email_confirmed']);
+        $this->account->setPaypalPaymentStatus($response['payments_receivable']);
+        $this->account->setCardPaymentStatus($this->getCardStatus($response));
+
+        return $this->account->save();
     }
 
     /**
@@ -72,7 +82,7 @@ class Merchant
      *
      * @return string $status status to set in database
      */
-    public function getCardStatus($response)
+    private function getCardStatus($response)
     {
         // PPCP_CUSTOM = product pay by card (hosted fields)
         $cardProductIndex = array_search('PPCP_CUSTOM', array_column($response['products'], 'name'));
@@ -112,7 +122,7 @@ class Merchant
      *
      * @return string $status
      */
-    public function cardIsLimited($response)
+    private function cardIsLimited($response)
     {
         $findCapability = array_search('CUSTOM_CARD_PROCESSING', array_column($response['capabilities'], 'name'));
         $capability = $response['capabilities'][$findCapability];
@@ -125,45 +135,13 @@ class Merchant
     }
 
     /**
-     * Save in database the email merchant and his status
-     *
-     * @param string $email email of the merchant
-     * @param bool $status if the email has been validated or not
-     */
-    public function setEmail($email, $status)
-    {
-        \Configuration::updateValue('PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT', $email);
-        \Configuration::updateValue('PS_CHECKOUT_PAYPAL_EMAIL_STATUS', $status ? 1 : 0);
-    }
-
-    /**
-     * Save the status of payment with paypal
-     *
-     * @param bool $paymentReceivable
-     */
-    public function setPaypalStatus($paymentReceivable)
-    {
-        \Configuration::updateValue('PS_CHECKOUT_PAYPAL_PAYMENT_STATUS', $paymentReceivable ? 1 : 0);
-    }
-
-    /**
-     * Save the status of payment with card (hosted fields)
-     *
-     * @param string $status
-     */
-    public function setCardStatus($status)
-    {
-        \Configuration::updateValue('PS_CHECKOUT_CARD_PAYMENT_STATUS', $status);
-    }
-
-    /**
      * Get the merchant integration
      *
      * @return array|bool response or false
      */
-    public function getMerchantIntegration()
+    private function getMerchantIntegration()
     {
-        $merchantIntegration = (new Shop(\Context::getContext()->link))->getMerchantIntegration($this->merchantId);
+        $merchantIntegration = (new Shop(\Context::getContext()->link))->getMerchantIntegration($this->account->getMerchantId());
 
         if (false === $merchantIntegration
             || !isset($merchantIntegration['merchant_integrations'])
@@ -175,12 +153,22 @@ class Merchant
     }
 
     /**
-     * Setter for merchantId
+     * Setter for account
      *
-     * @param string $merchantId
+     * @param PaypalAccount $account
      */
-    public function setMerchantId($merchantId)
+    public function setAccount($account)
     {
-        $this->merchantId = $merchantId;
+        $this->account = $account;
+    }
+
+    /**
+     * Getter for account
+     *
+     * @return PaypalAccount
+     */
+    public function getAccount()
+    {
+        return $this->account;
     }
 }
