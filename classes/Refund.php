@@ -194,7 +194,7 @@ class Refund
     }
 
     /**
-     * Check if the limit has been reached. Muust set header HTTP if reached
+     * Check if the limit has been reached. Must set header HTTP if reached
      *
      * @param array $productOrder
      *
