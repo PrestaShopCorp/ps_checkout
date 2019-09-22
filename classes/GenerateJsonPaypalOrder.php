@@ -205,26 +205,6 @@ class GenerateJsonPaypalOrder
     }
 
     /**
-     * Get the amount of discount applied to the cart
-     * Not used anymore - Keep it just in case if there is an another rounding issue (from prestashop)
-     * Bad discount value if amount is like 0,35 or 0,45 and if there is a 10% discount
-     *
-     * @param array $cart
-     *
-     * @return float Amount of all discount (cart rule applied to the cart)
-     *
-     * @todo: this function seems unused ?
-     */
-    private function getDiscountValue($cart)
-    {
-        if (null === $cart['subtotals']['discounts']) {
-            return 0;
-        }
-
-        return $cart['subtotals']['discounts']['amount'];
-    }
-
-    /**
      * Function that allow to truncate fields to match the
      * paypal api requirements
      *
@@ -284,20 +264,6 @@ class GenerateJsonPaypalOrder
     private function getCountryIsoCodeById($countryId)
     {
         return \Country::getIsoById($countryId);
-    }
-
-    /**
-     * Adapter method for getting the product url for the given id product
-     *
-     * @param int $productId
-     *
-     * @return string Product Url
-     *
-     * @todo: this function seems unused ?
-     */
-    private function getProductUrlById($productId)
-    {
-        return \Context::getContext()->link->getProductLink(new \Product($productId));
     }
 
     /**
