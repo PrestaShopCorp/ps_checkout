@@ -96,6 +96,10 @@ class PsAccount
         if (null !== $email) {
             $this->setEmail($email);
         }
+
+        if (null !== $psxForm) {
+            $this->setPsxForm($psxForm);
+        }
     }
 
     public function save()

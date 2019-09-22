@@ -49,7 +49,7 @@ class PaypalAccountUpdater
     {
         $merchantId = $account->getMerchantId();
 
-        if (null === $merchantId || empty($merchantId)) {
+        if (empty($merchantId)) {
             throw new \PrestaShopException('MerchantId cannot be empty');
         }
 

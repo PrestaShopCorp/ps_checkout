@@ -149,8 +149,6 @@ class PaypalAccount
 
     /**
      * Getter for cardPaymentStatus
-     *
-     * @return string
      */
     public function getCardPaymentStatus()
     {
@@ -160,7 +158,7 @@ class PaypalAccount
     /**
      * Setter for merchantId
      *
-     * @param string
+     * @param string $merchantId
      */
     public function setMerchantId($merchantId)
     {
@@ -170,7 +168,7 @@ class PaypalAccount
     /**
      * Setter for email
      *
-     * @param string
+     * @param string $email
      */
     public function setEmail($email)
     {
@@ -180,7 +178,7 @@ class PaypalAccount
     /**
      * Setter for emailVerified
      *
-     * @param int
+     * @param int|string $status
      */
     public function setEmailIsVerified($status)
     {
@@ -190,7 +188,7 @@ class PaypalAccount
     /**
      * Setter for paypalPaymentStatus
      *
-     * @return int
+     * @return int|string $status
      */
     public function setPaypalPaymentStatus($status)
     {
@@ -200,7 +198,7 @@ class PaypalAccount
     /**
      * Setter for cardPaymentStatus
      *
-     * @return string
+     * @return string $status
      */
     public function setCardPaymentStatus($status)
     {
