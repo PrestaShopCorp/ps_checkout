@@ -26,7 +26,6 @@
 use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
-
 class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontController
 {
     public function initContent()

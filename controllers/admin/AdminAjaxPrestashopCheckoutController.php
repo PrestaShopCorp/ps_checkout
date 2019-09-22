@@ -28,7 +28,6 @@ use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
-use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
 
@@ -64,7 +63,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessLogOutPsAccount()
     {
         // logout ps account
-        $psAccount = (new PsAccountRepository)->getOnboardedAccount();
+        $psAccount = (new PsAccountRepository())->getOnboardedAccount();
         $psAccount->delete();
 
         $this->ajaxDie(json_encode(true));
@@ -75,7 +74,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessLogOutPaypalAccount()
     {
-        $paypalAccount = (new PaypalAccountRepository)->getOnboardedAccount();
+        $paypalAccount = (new PaypalAccountRepository())->getOnboardedAccount();
         $paypalAccount->delete();
 
         $this->ajaxDie(json_encode(true));
@@ -172,7 +171,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $this->ajaxDie(json_encode(false));
     }
 
-     /**
+    /**
      * AJAX: Retrieve the onboarding paypal link
      */
     public function ajaxProcessGetOnboardingLink()
@@ -195,7 +194,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     private function savePsxForm($form)
     {
-        $psAccount = (new PsAccountRepository)->getOnboardedAccount();
+        $psAccount = (new PsAccountRepository())->getOnboardedAccount();
         $psAccount->setPsxForm(json_encode($form));
 
         return $psAccount->save();

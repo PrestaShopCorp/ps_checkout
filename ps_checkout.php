@@ -500,9 +500,9 @@ class ps_checkout extends PaymentModule
      */
     private function merchantIsValid()
     {
-        return (new PaypalAccountRepository)->onbardingIsCompleted()
-            && (new PaypalAccountRepository)->paypalEmailIsValid()
-            && (new PsAccountRepository)->onbardingIsCompleted();
+        return (new PaypalAccountRepository())->onbardingIsCompleted()
+            && (new PaypalAccountRepository())->paypalEmailIsValid()
+            && (new PsAccountRepository())->onbardingIsCompleted();
     }
 
     /**
