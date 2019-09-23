@@ -34,25 +34,27 @@
                 <a v-if="!isReady" href="#" @click.prevent="showModal()" class="text-muted">{{ $t('panel.account-list.logOut') }}</a>
               </div>
               <!-- modal -->
-              <div v-if="modalLogout" class="modal fade show" id="modalLogout" tabindex="-1" role="dialog" aria-labelledby="psxModalLogout" style="padding-right: 15px; display: block;">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title" id="psxModalLogout">{{ $t('panel.account-list.titleLogout') }}</h5>
-                          <button @click.prevent="hideModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">×</span>
-                          </button>
-                        </div>
-                        <div class="modal-body">
-                            <p>{{ $t('panel.account-list.descriptionLogout') }}</p>
-                        </div>
-                        <div class="modal-footer">
-                          <button @click.prevent="hideModal()" type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{ $t('panel.account-list.close') }}</button>
-                          <button @click.prevent="logOut()" type="button" class="btn btn-primary">{{ $t('panel.account-list.logOut') }}</button>
+              <transition name="fade">
+                <div v-if="modalLogout" class="modal show" id="modalLogout" tabindex="-1" role="dialog" aria-labelledby="psxModalLogout" style="padding-right: 15px; display: block;">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="psxModalLogout">{{ $t('panel.account-list.titleLogout') }}</h5>
+                              <button @click.prevent="hideModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">×</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>{{ $t('panel.account-list.descriptionLogout') }}</p>
+                            </div>
+                            <div class="modal-footer">
+                              <button @click.prevent="hideModal()" type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{ $t('panel.account-list.close') }}</button>
+                              <button @click.prevent="logOut()" type="button" class="btn btn-primary">{{ $t('panel.account-list.logOut') }}</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+              </transition>
             </div>
           </div>
           <div class="row d-block">
@@ -158,5 +160,11 @@
 }
 #app #modalLogout .modal-dialog{
   top: 35%;
+}
+.fade-enter-active, .fade-leave-active {
+ transition: opacity .2s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+ opacity: 0;
 }
 </style>
