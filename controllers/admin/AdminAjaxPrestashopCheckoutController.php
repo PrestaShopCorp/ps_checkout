@@ -30,6 +30,7 @@ use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
+use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {
@@ -64,7 +65,14 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         // logout ps account
         $psAccount = (new PsAccountRepository())->getOnboardedAccount();
-        $psAccount->delete();
+
+        $psAccount->setEmail('');
+        $psAccount->setIdToken('');
+        $psAccount->setLocalId('');
+        $psAccount->setRefreshToken('');
+        $psAccount->setPsxForm('');
+
+        (new PersistentConfiguration())->savePsAccount($psAccount);
 
         $this->ajaxDie(json_encode(true));
     }
@@ -75,7 +83,14 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessLogOutPaypalAccount()
     {
         $paypalAccount = (new PaypalAccountRepository())->getOnboardedAccount();
-        $paypalAccount->delete();
+
+        $paypalAccount->setMerchantId('');
+        $paypalAccount->setEmail('');
+        $paypalAccount->setEmailIsVerified('');
+        $paypalAccount->setPaypalPaymentStatus('');
+        $paypalAccount->setCardPaymentStatus('');
+
+        (new PersistentConfiguration())->savePaypalAccount($paypalAccount);
 
         $this->ajaxDie(json_encode(true));
     }
@@ -100,7 +115,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 $response['localId']
             );
 
-            $psAccount->save();
+            (new PersistentConfiguration())->savePsAccount($psAccount);
         }
 
         $this->ajaxDie(json_encode($response));
@@ -126,7 +141,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 $response['localId']
             );
 
-            $psAccount->save();
+            (new PersistentConfiguration())->savePsAccount($psAccount);
         }
 
         $this->ajaxDie(json_encode($response));
@@ -197,6 +212,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $psAccount = (new PsAccountRepository())->getOnboardedAccount();
         $psAccount->setPsxForm(json_encode($form));
 
-        return $psAccount->save();
+        return (new PersistentConfiguration())->savePsAccount($psAccount);
     }
 }

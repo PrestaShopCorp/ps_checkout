@@ -103,36 +103,6 @@ class PsAccount
     }
 
     /**
-     * Save / update ps account in database
-     *
-     * @return bool
-     */
-    public function save()
-    {
-        return \Configuration::updateValue(self::PS_PSX_FIREBASE_EMAIL, $this->getEmail())
-            && \Configuration::updateValue(self::PS_PSX_FIREBASE_ID_TOKEN, $this->getIdToken())
-            && \Configuration::updateValue(self::PS_PSX_FIREBASE_LOCAL_ID, $this->getLocalId())
-            && \Configuration::updateValue(self::PS_PSX_FIREBASE_REFRESH_TOKEN, $this->getRefreshToken())
-            && \Configuration::updateValue(self::PS_CHECKOUT_PSX_FORM, $this->getPsxForm());
-    }
-
-    /**
-     * Delete ps account from database
-     *
-     * @return bool
-     */
-    public function delete()
-    {
-        $this->setEmail('');
-        $this->setIdToken('');
-        $this->setLocalId('');
-        $this->setRefreshToken('');
-        $this->setPsxForm('');
-
-        return $this->save();
-    }
-
-    /**
      * setter $email
      */
     public function setEmail($email)

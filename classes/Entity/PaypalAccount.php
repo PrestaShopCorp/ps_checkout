@@ -88,36 +88,6 @@ class PaypalAccount
     }
 
     /**
-     * Save / update paypal account in database
-     *
-     * @return bool
-     */
-    public function save()
-    {
-        return \Configuration::updateValue(self::PS_CHECKOUT_PAYPAL_ID_MERCHANT, $this->getMerchantId())
-            && \Configuration::updateValue(self::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT, $this->getEmail())
-            && \Configuration::updateValue(self::PS_CHECKOUT_PAYPAL_EMAIL_STATUS, $this->getEmailIsVerified())
-            && \Configuration::updateValue(self::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS, $this->getPaypalPaymentStatus())
-            && \Configuration::updateValue(self::PS_CHECKOUT_CARD_PAYMENT_STATUS, $this->getCardPaymentStatus());
-    }
-
-    /**
-     * Delete paypal account from database
-     *
-     * @return bool
-     */
-    public function delete()
-    {
-        $this->setMerchantId('');
-        $this->setEmail('');
-        $this->setEmailIsVerified('');
-        $this->setPaypalPaymentStatus('');
-        $this->setCardPaymentStatus('');
-
-        return $this->save();
-    }
-
-    /**
      * Getter for merchantId
      *
      * @return string

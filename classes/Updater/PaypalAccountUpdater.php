@@ -28,6 +28,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Updater;
 
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop;
+use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 
 /**
  * Check and set the merchant status
@@ -72,7 +73,7 @@ class PaypalAccountUpdater
         $this->account->setPaypalPaymentStatus($response['payments_receivable']);
         $this->account->setCardPaymentStatus($this->getCardStatus($response));
 
-        return $this->account->save();
+        return (new PersistentConfiguration())->savePaypalAccount($this->account);
     }
 
     /**
