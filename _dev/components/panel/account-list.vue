@@ -1,5 +1,5 @@
 <template>
-  <form class="form form-horizontal" v-bind:class="[modalLogout ? 'modal-open' : '']">
+  <form class="form form-horizontal" :class="[modalLogout ? 'modal-open' : '']">
     <div class="card">
       <h3 class="card-header">
         <i class="material-icons">settings</i> {{ $t('panel.account-list.accountSettings') }}

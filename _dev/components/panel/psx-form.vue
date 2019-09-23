@@ -5,7 +5,7 @@
       <div id="errors" class="ps-alert alert alert-danger" role="alert">
         <p>{{ errorForm.length }} {{ $t('panel.psx-form.errors') }}</p>
         <ul>
-          <li v-for="(text, key) in errorForm" v-bind:key="key" class="alert-text">
+          <li v-for="(text, key) in errorForm" :key="key" class="alert-text">
             {{ text }}
           </li>
         </ul>
@@ -55,7 +55,7 @@
                         <label>{{ $t('panel.psx-form.firstName') }}</label>
                         <input type="text" class="form-control" id="firstName"
                           v-model="form.business_contact_first_name"
-                          v-bind:class="[form.business_contact_first_name != '' ? '' : 'has-danger']">
+                          :class="[form.business_contact_first_name != '' ? '' : 'has-danger']">
                       </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6">
@@ -63,7 +63,7 @@
                         <label>{{ $t('panel.psx-form.lastName') }}</label>
                         <input type="text" class="form-control" id="lastName"
                           v-model="form.business_contact_last_name"
-                          v-bind:class="[form.business_contact_last_name != '' ? '' : 'has-danger']">
+                          :class="[form.business_contact_last_name != '' ? '' : 'has-danger']">
                       </div>
                     </div>
                   </div>
@@ -72,8 +72,8 @@
                       <label>{{ $t('panel.psx-form.language') }}</label>
                       <select class="form-control custom-select"
                         v-model="form.business_contact_language"
-                        v-bind:class="[form.business_contact_language != '' ? '' : 'has-danger']">
-                        <option v-for="languageDetail in getLanguagesDetails" v-bind:key="languageDetail.iso_code" v-bind:value="languageDetail.iso_code">
+                        :class="[form.business_contact_language != '' ? '' : 'has-danger']">
+                        <option v-for="languageDetail in getLanguagesDetails" :key="languageDetail.iso_code" :value="languageDetail.iso_code">
                           {{ languageDetail.name }}
                         </option>
                       </select>
@@ -110,7 +110,7 @@
                         <label>{{ $t('panel.psx-form.storeName') }}</label>
                         <input type="text" class="form-control" id="storeName"
                           v-model="form.shop_name"
-                          v-bind:class="[form.shop_name != '' ? '' : 'has-danger']">
+                          :class="[form.shop_name != '' ? '' : 'has-danger']">
                       </div>
                     </div>
                   </div>
@@ -120,7 +120,7 @@
                         <label>{{ $t('panel.psx-form.address') }}</label>
                         <input type="text" class="form-control" id="address"
                           v-model="form.business_address_street"
-                          v-bind:class="[form.business_address_street != '' ? '' : 'has-danger']">
+                          :class="[form.business_address_street != '' ? '' : 'has-danger']">
                       </div>
                     </div>
                   </div>
@@ -130,7 +130,7 @@
                         <label>{{ $t('panel.psx-form.postCode') }}</label>
                         <input type="text" class="form-control" id="postCode"
                           v-model="form.business_address_zip"
-                          v-bind:class="[form.business_address_zip != '' ? '' : 'has-danger']">
+                          :class="[form.business_address_zip != '' ? '' : 'has-danger']">
                       </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6">
@@ -138,7 +138,7 @@
                         <label>{{ $t('panel.psx-form.town') }}</label>
                         <input type="text" class="form-control" id="town"
                           v-model="form.business_address_city"
-                          v-bind:class="[form.business_address_city != '' ? '' : 'has-danger']">
+                          :class="[form.business_address_city != '' ? '' : 'has-danger']">
                       </div>
                     </div>
                   </div>
@@ -146,7 +146,7 @@
                     <div class="col-lg-6 col-md-6 col-sm-6">
                       <label>{{ $t('panel.psx-form.country') }}</label>
                       <select v-model="form.business_address_country" class="form-control custom-select">
-                        <option v-for="countryDetail in getCountriesDetails" v-bind:key="countryDetail.iso" v-bind:value="countryDetail.iso">
+                        <option v-for="countryDetail in getCountriesDetails" :key="countryDetail.iso" :value="countryDetail.iso">
                           {{ countryDetail.name }}
                         </option>
                       </select>
@@ -159,7 +159,7 @@
                       </div>
                       <div class="col-lg-4 col-md-4 col-sm-4 pl-0">
                         <select v-model="form.business_phone_country" class="form-control custom-select">
-                          <option v-for="countryDetail in getPhoneCountryCode" v-bind:key="countryDetail.iso" v-bind:value="countryDetail.code">
+                          <option v-for="countryDetail in getPhoneCountryCode" :key="countryDetail.iso" :value="countryDetail.code">
                             + {{ countryDetail.code }}
                           </option>
                         </select>
@@ -167,7 +167,7 @@
                       <div class="col-lg-8 col-md-8 col-sm-8 pl-0 pr-0">
                         <input type="text" class="form-control" id="phone"
                           v-model="form.business_phone"
-                          v-bind:class="[form.business_phone != '' ? '' : 'has-danger']">
+                          :class="[form.business_phone != '' ? '' : 'has-danger']">
                       </div>
                     </div>
                   </div>
@@ -199,7 +199,7 @@
                       <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
                         <label>{{ $t('panel.psx-form.companyTurnover') }}</label>
                         <select v-model="form.business_company_emr" class="form-control custom-select">
-                          <option v-for="(value, key) in getCompanyMonthyAverages" v-bind:key="key" v-bind:value="key">
+                          <option v-for="(value, key) in getCompanyMonthyAverages" :key="key" :value="key">
                             {{ value }}
                           </option>
                         </select>
@@ -213,8 +213,8 @@
                         <select v-model="form.business_category"
                           @change="onChangeCategory(form.business_category)"
                           class="form-control custom-select"
-                          v-bind:class="[form.business_website != '' ? '' : 'has-danger']">
-                          <option v-for="(value, key) in getCompanyCategories" v-bind:key="key" v-bind:value="key">
+                          :class="[form.business_website != '' ? '' : 'has-danger']">
+                          <option v-for="(value, key) in getCompanyCategories" :key="key" :value="key">
                             {{ value.title }}
                           </option>
                         </select>
@@ -230,7 +230,7 @@
                         </label>
                         <select v-model="form.business_sub_category" class="form-control custom-select">
                           <option value="">--</option>
-                          <option v-for="(value, key) in subCategory" v-bind:key="key" v-bind:value="key">
+                          <option v-for="(value, key) in subCategory" :key="key" :value="key">
                             {{ value }}
                           </option>
                         </select>
