@@ -24,7 +24,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
-use PrestaShop\Module\PrestashopCheckout\MerchantRepository;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontController
 {
@@ -65,7 +65,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
         $currency = $this->context->currency;
         $total = (float) $cart->getOrderTotal(true, Cart::BOTH);
 
-        $payment = new ValidateOrder($paypalOrderId, (new MerchantRepository())->getMerchantId());
+        $payment = new ValidateOrder($paypalOrderId, (new PaypalAccountRepository())->getMerchantId());
 
         $dataOrder = [
             'cartId' => (int) $cart->id,

@@ -24,11 +24,11 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Store\Presenter\Modules;
+namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Faq\Faq;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
-use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenterInterface;
 
 /**
  * Construct the context module

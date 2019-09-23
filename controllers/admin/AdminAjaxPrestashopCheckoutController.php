@@ -23,50 +23,80 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
-use PrestaShop\Module\PrestashopCheckout\Store\StoreManager;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth;
+use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
+use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {
-    public function ajaxProcessUnlinkPaypal()
-    {
-        (new StoreManager())->unlinkPaypal();
-    }
-
+    /**
+     * AJAX: Update payment method order
+     */
     public function ajaxProcessUpdatePaymentMethodsOrder()
     {
         Configuration::updateValue('PS_CHECKOUT_PAYMENT_METHODS_ORDER', Tools::getValue('paymentMethods'));
     }
 
+    /**
+     * AJAX: Update the capture mode (CAPTURE or AUTHORIZE)
+     */
     public function ajaxProcessUpdateCaptureMode()
     {
         Configuration::updateValue('PS_CHECKOUT_INTENT', Tools::getValue('captureMode'));
     }
 
+    /**
+     * AJAX: Update payment mode (LIVE or SANDBOX)
+     */
     public function ajaxProcessUpdatePaymentMode()
     {
         Configuration::updateValue('PS_CHECKOUT_MODE', Tools::getValue('paymentMode'));
     }
 
     /**
-     * Logout firebase account
+     * AJAX: Logout ps account
      */
-    public function ajaxProcessLogOut()
+    public function ajaxProcessLogOutPsAccount()
     {
-        $storeManager = new StoreManager();
+        // logout ps account
+        $psAccount = (new PsAccountRepository())->getOnboardedAccount();
 
-        $storeManager->unlinkPaypal();
-        $storeManager->psxLogout();
-        $storeManager->updatePsxAccount('', '', '', '');
+        $psAccount->setEmail('');
+        $psAccount->setIdToken('');
+        $psAccount->setLocalId('');
+        $psAccount->setRefreshToken('');
+        $psAccount->setPsxForm('');
+
+        (new PersistentConfiguration())->savePsAccount($psAccount);
 
         $this->ajaxDie(json_encode(true));
     }
 
     /**
-     * SignIn firebase account
+     * AJAX: Logout Paypal account
+     */
+    public function ajaxProcessLogOutPaypalAccount()
+    {
+        $paypalAccount = (new PaypalAccountRepository())->getOnboardedAccount();
+
+        $paypalAccount->setMerchantId('');
+        $paypalAccount->setEmail('');
+        $paypalAccount->setEmailIsVerified('');
+        $paypalAccount->setPaypalPaymentStatus('');
+        $paypalAccount->setCardPaymentStatus('');
+
+        (new PersistentConfiguration())->savePaypalAccount($paypalAccount);
+
+        $this->ajaxDie(json_encode(true));
+    }
+
+    /**
+     * AJAX: SignIn firebase account
      */
     public function ajaxProcessSignIn()
     {
@@ -78,20 +108,21 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         // if there is no error, save the account tokens in database
         if (!isset($response['error'])) {
-            $storeManager = new StoreManager();
-            $storeManager->updatePsxAccount(
+            $psAccount = new PsAccount(
                 $response['idToken'],
                 $response['refreshToken'],
-                $response['localId'],
-                $response['email']
+                $response['email'],
+                $response['localId']
             );
+
+            (new PersistentConfiguration())->savePsAccount($psAccount);
         }
 
         $this->ajaxDie(json_encode($response));
     }
 
     /**
-     * SignUp firebase account
+     * AJAX: SignUp firebase account
      */
     public function ajaxProcessSignUp()
     {
@@ -103,20 +134,21 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         // if there is no error, save the account tokens in database
         if (!isset($response['error'])) {
-            $storeManager = new StoreManager();
-            $storeManager->updatePsxAccount(
+            $psAccount = new PsAccount(
                 $response['idToken'],
                 $response['refreshToken'],
-                $response['localId'],
-                $response['email']
+                $response['email'],
+                $response['localId']
             );
+
+            (new PersistentConfiguration())->savePsAccount($psAccount);
         }
 
         $this->ajaxDie(json_encode($response));
     }
 
     /**
-     * Send email to reset firebase password
+     * AJAX: Send email to reset firebase password
      */
     public function ajaxProcessSendPasswordResetEmail()
     {
@@ -129,7 +161,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * Get the form Payload for PSX. Check the data and send it to PSL
+     * AJAX: Get the form Payload for PSX. Check the data and send it to PSL
      */
     public function ajaxProcessPsxSendData()
     {
@@ -154,11 +186,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $this->ajaxDie(json_encode(false));
     }
 
-    private function savePsxForm($form)
-    {
-        return Configuration::updateValue('PS_CHECKOUT_PSX_FORM', json_encode($form));
-    }
-
+    /**
+     * AJAX: Retrieve the onboarding paypal link
+     */
     public function ajaxProcessGetOnboardingLink()
     {
         $language = \Language::getLanguage($this->context->employee->id_lang);
@@ -170,14 +200,18 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         );
     }
 
-    // TODO: replace save action by StoreManager.php class
-    private function saveFirebaseAccountIfNoErrors($user)
+    /**
+     * Update the psx form
+     *
+     * @param array $form
+     *
+     * @return bool
+     */
+    private function savePsxForm($form)
     {
-        if (false === isset($user['error'])) {
-            Configuration::updateValue('PS_PSX_FIREBASE_EMAIL', $user['email']);
-            Configuration::updateValue('PS_PSX_FIREBASE_ID_TOKEN', $user['idToken']);
-            Configuration::updateValue('PS_PSX_FIREBASE_LOCAL_ID', $user['localId']);
-            Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_TOKEN', $user['refreshToken']);
-        }
+        $psAccount = (new PsAccountRepository())->getOnboardedAccount();
+        $psAccount->setPsxForm(json_encode($form));
+
+        return (new PersistentConfiguration())->savePsAccount($psAccount);
     }
 }

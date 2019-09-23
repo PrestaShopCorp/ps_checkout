@@ -5,7 +5,7 @@ export default {
   logOut({commit, getters}) {
     return ajax({
       url: getters.adminController,
-      action: 'LogOut',
+      action: 'LogOutPsAccount',
     }).then(() => {
       commit(types.LOGOUT_ACCOUNT);
       return Promise.resolve(true);

@@ -27,6 +27,7 @@
 namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
  * Handle the refund of a paypal order
@@ -119,7 +120,7 @@ class Refund
             'orderId' => $this->getPaypalOrderId(),
             'captureId' => $this->getCaptureId(),
             'payee' => [
-                'merchant_id' => (new MerchantRepository())->getMerchantId(),
+                'merchant_id' => (new PaypalAccountRepository())->getMerchantId(),
             ],
             'amount' => [
                 'currency_code' => $this->getCurrencyCode(),

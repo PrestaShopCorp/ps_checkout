@@ -25,17 +25,18 @@
 */
 use Ramsey\Uuid\Uuid;
 use PrestaShop\Module\PrestashopCheckout\Refund;
-use PrestaShop\Module\PrestashopCheckout\Merchant;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
-use PrestaShop\Module\PrestashopCheckout\MerchantRepository;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 use PrestaShop\Module\PrestashopCheckout\Database\TableManager;
 use PrestaShop\Module\PrestashopCheckout\GenerateJsonPaypalOrder;
-use PrestaShop\Module\PrestashopCheckout\Store\Presenter\StorePresenter;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
+use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -136,12 +137,14 @@ class ps_checkout extends PaymentModule
 
     public function getContent()
     {
-        $merchantRepository = new MerchantRepository();
+        $paypalAccount = new PaypalAccountRepository();
+        $psAccount = new PsAccountRepository();
 
         // update merchant status only if the merchant onboarding is completed
-        if ($merchantRepository->onbardingPaypalIsCompleted()
-            && $merchantRepository->onbardingFirebaseIsCompleted()) {
-            (new Merchant($merchantRepository->getMerchantId()))->update();
+        if ($paypalAccount->onbardingIsCompleted()
+            && $psAccount->onbardingIsCompleted()) {
+            $paypalAccount = $paypalAccount->getOnboardedAccount();
+            (new PaypalAccountUpdater($paypalAccount))->update();
         }
 
         Media::addJsDef(array(
@@ -166,8 +169,7 @@ class ps_checkout extends PaymentModule
             return false;
         }
 
-        $merchantRepository = new MerchantRepository();
-        if (false === $merchantRepository->merchantIsValid()) {
+        if (false === $this->merchantIsValid()) {
             return false;
         }
 
@@ -186,14 +188,16 @@ class ps_checkout extends PaymentModule
             return false;
         }
 
+        $paypalAccountRepository = new PaypalAccountRepository();
+
         $this->context->smarty->assign(array(
-            'merchantId' => $merchantRepository->getMerchantId(),
+            'merchantId' => $paypalAccountRepository->getMerchantId(),
             'paypalClientId' => (new PaypalEnv())->getPaypalClientId(),
             'clientToken' => $paypalOrder['client_token'],
             'paypalOrderId' => $paypalOrder['id'],
             'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true),
-            'cardIsActive' => $merchantRepository->cardPaymentMethodIsValid(),
-            'paypalIsActive' => $merchantRepository->paypalPaymentMethodIsValid(),
+            'cardIsActive' => $paypalAccountRepository->cardPaymentMethodIsValid(),
+            'paypalIsActive' => $paypalAccountRepository->paypalPaymentMethodIsValid(),
             'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT')),
             'currencyIsoCode' => $this->context->currency->iso_code,
         ));
@@ -204,10 +208,10 @@ class ps_checkout extends PaymentModule
 
         // if no paymentMethods position is set, by default put credit card (hostedFields) as first position
         if (empty($paymentMethods)) {
-            if (true === $merchantRepository->cardPaymentMethodIsValid()) {
+            if (true === $paypalAccountRepository->cardPaymentMethodIsValid()) {
                 array_push($payment_options, $this->getHostedFieldsPaymentOption());
             }
-            if (true === $merchantRepository->paypalPaymentMethodIsValid()) {
+            if (true === $paypalAccountRepository->paypalPaymentMethodIsValid()) {
                 array_push($payment_options, $this->getPaypalPaymentOption());
             }
         } else {
@@ -215,11 +219,11 @@ class ps_checkout extends PaymentModule
 
             foreach ($paymentMethods as $position => $paymentMethod) {
                 if ($paymentMethod['name'] === 'card') {
-                    if (true === $merchantRepository->cardPaymentMethodIsValid()) {
+                    if (true === $paypalAccountRepository->cardPaymentMethodIsValid()) {
                         array_push($payment_options, $this->getHostedFieldsPaymentOption());
                     }
                 } else {
-                    if (true === $merchantRepository->paypalPaymentMethodIsValid()) {
+                    if (true === $paypalAccountRepository->paypalPaymentMethodIsValid()) {
                         array_push($payment_options, $this->getPaypalPaymentOption());
                     }
                 }
@@ -304,7 +308,7 @@ class ps_checkout extends PaymentModule
             return false;
         }
 
-        if (false === (new MerchantRepository())->merchantIsValid()) {
+        if (false === $this->merchantIsValid()) {
             $this->context->controller->errors[] = $this->l('You are not connected to PrestaShop Checkout. Cannot process to a refund.');
             //TODO: cancel refund ?
 
@@ -369,7 +373,7 @@ class ps_checkout extends PaymentModule
             return false;
         }
 
-        if (false === (new MerchantRepository())->merchantIsValid()) {
+        if (false === $this->merchantIsValid()) {
             $this->context->controller->errors[] = $this->l('You are not connected to PrestaShop Checkout. Cannot process to a refund.');
 
             return false;
@@ -539,6 +543,18 @@ class ps_checkout extends PaymentModule
         }
 
         $this->context->controller->addCss($this->_path . 'views/css/adminAfterHeader.css');
+    }
+
+    /**
+     * Check if paypal and ps account are valid
+     *
+     * @return bool
+     */
+    private function merchantIsValid()
+    {
+        return (new PaypalAccountRepository())->onbardingIsCompleted()
+            && (new PaypalAccountRepository())->paypalEmailIsValid()
+            && (new PsAccountRepository())->onbardingIsCompleted();
     }
 
     /**
