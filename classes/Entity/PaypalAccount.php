@@ -87,6 +87,11 @@ class PaypalAccount
         $this->setCardPaymentStatus($cardPaymentStatus);
     }
 
+    /**
+     * Save / update paypal account in database
+     *
+     * @return bool
+     */
     public function save()
     {
         return \Configuration::updateValue(self::PS_CHECKOUT_PAYPAL_ID_MERCHANT, $this->getMerchantId())
@@ -96,6 +101,11 @@ class PaypalAccount
             && \Configuration::updateValue(self::PS_CHECKOUT_CARD_PAYMENT_STATUS, $this->getCardPaymentStatus());
     }
 
+    /**
+     * Delete paypal account from database
+     *
+     * @return bool
+     */
     public function delete()
     {
         $this->setMerchantId('');

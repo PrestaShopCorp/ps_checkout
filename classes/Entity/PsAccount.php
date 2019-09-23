@@ -102,6 +102,11 @@ class PsAccount
         }
     }
 
+    /**
+     * Save / update ps account in database
+     *
+     * @return bool
+     */
     public function save()
     {
         return \Configuration::updateValue(self::PS_PSX_FIREBASE_EMAIL, $this->getEmail())
@@ -111,6 +116,11 @@ class PsAccount
             && \Configuration::updateValue(self::PS_CHECKOUT_PSX_FORM, $this->getPsxForm());
     }
 
+    /**
+     * Delete ps account from database
+     *
+     * @return bool
+     */
     public function delete()
     {
         $this->setEmail('');
