@@ -440,7 +440,7 @@ class ps_checkout extends PaymentModule
                     ->setCallToActionText($this->l('Pay by Card'))
                     ->setAction($this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true))
                     ->setForm($this->generateHostedFieldsForm())
-                    ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payement-cards.png'));
+                    ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'));
 
         return $hostedFieldsPaymentOption;
     }
