@@ -28,7 +28,7 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 
-class OrderDispatcher
+class OrderDispatcher implements Dispatcher
 {
     const PS_CHECKOUT_PAYMENT_REVERSED = 'PaymentCaptureReversed';
     const PS_CHECKOUT_PAYMENT_REFUNED = 'PaymentCaptureRefunded';
@@ -46,9 +46,7 @@ class OrderDispatcher
     /**
      * Dispatch the Event Type to manage the merchant status
      *
-     * @param array $payload
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function dispatchEventType($payload)
     {
