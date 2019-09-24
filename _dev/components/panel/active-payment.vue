@@ -38,8 +38,8 @@
                 <div class="flex-grow-1 content">
                   <div class="d-flex payment-method-content">
                     <div class="flex-grow-1">
-                      <label v-if="element.name === 'card'" class="mb-0"><i class="material-icons">credit_card</i> {{ $t('panel.active-payment.creditCard') }}</label>
-                      <label v-else class="mb-0"><i class="material-icons">account_balance</i> {{ $t('panel.active-payment.paypal') }}</label>
+                      <label v-if="element.name === 'card'" class="mb-0"><i class="material-icons mr-3">credit_card</i> {{ $t('panel.active-payment.creditCard') }}</label>
+                      <label v-else class="mb-0"><img class="mr-3" src="@/assets/images/paypal-logo-thumbnail.png"/> {{ $t('panel.active-payment.paypal') }}</label>
                     </div>
                     <div class="status">
                       <template v-if="element.name === 'card'"><CardStatus /></template>
@@ -48,7 +48,7 @@
                   </div>
                   <div v-if="element.name === 'paypal'" class="d-flex payment-method-content separator">
                     <div class="flex-grow-1">
-                      <label class="mb-0"><i class="material-icons">public</i> {{ $t('panel.active-payment.localPaymentMethods') }}</label>
+                      <label class="mb-0"><i class="material-icons mr-3">public</i> {{ $t('panel.active-payment.localPaymentMethods') }}</label>
                     </div>
                     <div class="status">
                       <LpmStatus />
@@ -165,6 +165,12 @@
   }
   .payment-method-container {
     max-width: 500px;
+  }
+  .payment-method-container img {
+    width: 25px;
+  }
+  .payment-method-container .flex-grow-1.content i{
+    color: #25b9d7;
   }
   .payment-method {
     position: relative;

@@ -18,6 +18,7 @@ config.xml
 /views/img/paypal-logo.png
 /views/img/brush.png
 /views/img/ps-services-account.png
+/views/img/paypal-logo-thumbnail.png
 
 ### VueJs ignore dev conf ###
 /views/templates/admin/configuration.tpl
