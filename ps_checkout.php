@@ -25,18 +25,18 @@
 */
 use Ramsey\Uuid\Uuid;
 use PrestaShop\Module\PrestashopCheckout\Refund;
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
-use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 use PrestaShop\Module\PrestashopCheckout\Database\TableManager;
-use PrestaShop\Module\PrestashopCheckout\GenerateJsonPaypalOrder;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
+use PrestaShop\Module\PrestashopCheckout\GenerateJsonPaypalOrder;
 use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -117,7 +117,8 @@ class ps_checkout extends PaymentModule
         return parent::install() &&
             $this->registerHook(self::HOOK_LIST) &&
             (new OrderStates())->installPaypalStates() &&
-            (new TableManager())->createTable();
+            (new TableManager())->createTable() &&
+            $this->updatePosition(\Hook::getIdByName('paymentOptions'), 0, 1);
     }
 
     /**
