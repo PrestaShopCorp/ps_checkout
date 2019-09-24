@@ -13,6 +13,12 @@
 
     <div class="pt-5" />
 
+    <div class="row">
+      <div class="container">
+        <RoundingBanner />
+      </div>
+    </div>
+
     <div v-if="paymentMode === 'SANDBOX'" class="row">
       <div class="container">
         <PSAlert :alert-type="ALERT_TYPE_WARNING">
@@ -28,6 +34,7 @@
   import Menu from '@/components/menu/menu';
   import MenuItem from '@/components/menu/menu-item';
   import PSAlert from '@/components/form/alert';
+  import RoundingBanner from '@/components/block/rounding-banner';
   import {ALERT_TYPE_WARNING} from '@/lib/alert';
 
   export default {
@@ -36,6 +43,7 @@
       Menu,
       MenuItem,
       PSAlert,
+      RoundingBanner,
     },
     computed: {
       ALERT_TYPE_WARNING: () => ALERT_TYPE_WARNING,
