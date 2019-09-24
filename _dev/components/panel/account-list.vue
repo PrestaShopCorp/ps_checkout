@@ -1,5 +1,5 @@
 <template>
-  <form class="form form-horizontal" :class="[modalLogout ? 'modal-open' : '']">
+  <form class="form form-horizontal">
     <div class="card">
       <h3 class="card-header">
         <i class="material-icons">settings</i> {{ $t('panel.account-list.accountSettings') }}
@@ -31,30 +31,28 @@
                 </a>
               </div>
               <div class="text-right" v-else>
-                <a v-if="!isReady" href="#" @click.prevent="showModal()" class="text-muted">{{ $t('panel.account-list.logOut') }}</a>
+                <a v-if="!isReady" href="#" data-toggle="modal" data-target="#modalLogout" class="text-muted">{{ $t('panel.account-list.logOut') }}</a>
               </div>
               <!-- modal -->
-              <transition name="fade">
-                <div v-if="modalLogout" class="modal show" id="modalLogout" tabindex="-1" role="dialog" aria-labelledby="psxModalLogout" style="padding-right: 15px; display: block;">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="psxModalLogout">{{ $t('panel.account-list.titleLogout') }}</h5>
-                              <button @click.prevent="hideModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                  <span aria-hidden="true">×</span>
-                              </button>
-                            </div>
-                            <div class="modal-body">
-                                <p>{{ $t('panel.account-list.descriptionLogout') }}</p>
-                            </div>
-                            <div class="modal-footer">
-                              <button @click.prevent="hideModal()" type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{ $t('panel.account-list.close') }}</button>
-                              <button @click.prevent="logOut()" type="button" class="btn btn-primary">{{ $t('panel.account-list.logOut') }}</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-              </transition>
+              <div class="modal" id="modalLogout" tabindex="-1" role="dialog" aria-labelledby="psxModalLogout">
+                  <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="psxModalLogout">{{ $t('panel.account-list.titleLogout') }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                              <p>{{ $t('panel.account-list.descriptionLogout') }}</p>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{ $t('panel.account-list.cancel') }}</button>
+                            <button @click.prevent="logOut()" type="button" class="btn btn-primary" data-dismiss="modal">{{ $t('panel.account-list.logOut') }}</button>
+                          </div>
+                      </div>
+                  </div>
+              </div>
             </div>
           </div>
           <div class="row d-block">
@@ -95,11 +93,6 @@
     components: {
       Onboarding,
     },
-    data() {
-      return {
-        modalLogout: false,
-      };
-    },
     computed: {
       isReady() {
         return this.$store.state.context.isReady;
@@ -121,17 +114,10 @@
       goToSignUp() {
         this.$router.push('/authentication/signup');
       },
-      showModal() {
-        this.modalLogout = true;
-      },
-      hideModal() {
-        this.modalLogout = false;
-      },
       logOut() {
         this.$store.dispatch('logOut').then(() => {
           this.$store.dispatch('unlink');
           this.$store.dispatch('psxOnboarding', false);
-          this.hideModal();
         });
       },
       paypalUnlink() {

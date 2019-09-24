@@ -137,9 +137,9 @@ class Translations
                     'linkToPsCheckoutFirst' => $this->module->l('Link to PrestaShop Checkout first', 'translations'),
                     'loading' => $this->module->l('Loading', 'translations'),
                     'useAnotherAccount' => $this->module->l('Use another account', 'translations'),
-                    'close' => $this->module->l('Close', 'translations'),
-                    'titleLogout' => $this->module->l('Logout from PrestaShop Checkout', 'translations'),
-                    'descriptionLogout' => $this->module->l('Are you sure you want to logout ?', 'translations'),
+                    'cancel' => $this->module->l('Cancel', 'translations'),
+                    'titleLogout' => $this->module->l('Are you sure you want to logout ?', 'translations'),
+                    'descriptionLogout' => $this->module->l('Logging out will deactivate all payment methods. You will no longer be able to receive payments with PrestaShop Checkout.', 'translations'),
                 ],
                 'psx-form' => [
                     'additionalDetails' => $this->module->l('Additional Details', 'translations'),
