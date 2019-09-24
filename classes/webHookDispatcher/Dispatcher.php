@@ -26,20 +26,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
-use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
-
-class MerchantDispatcher implements Dispatcher
+interface Dispatcher
 {
     /**
-     * Dispatch the Event Type to manage the merchant status
+     * @param array $payload
      *
-     * {@inheritdoc}
+     * @return bool
      */
-    public function dispatchEventType($payload)
-    {
-        $paypalAccount = new PaypalAccount($payload['merchantId']);
-
-        return (new PaypalAccountUpdater($paypalAccount))->update();
-    }
+    public function dispatchEventType($payload);
 }

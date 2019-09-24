@@ -36,7 +36,7 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
             throw new PrestaShopException('merchantId cannot be empty');
         }
 
-        if (13 > strlen($idMerchant)) {
+        if (PaypalAccountUpdater::MIN_ID_LENGTH > strlen($idMerchant)) {
             throw new PrestaShopException('merchantId length must be at least 13 characters long');
         }
 

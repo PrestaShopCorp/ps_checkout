@@ -43,6 +43,8 @@ class ValidateOrder
     const CAPTURE_STATUS_COMPLETED = 'COMPLETED';
     const CAPTURE_STATUS_DECLINED = 'DECLINED';
 
+    const PAYMENT_METHOD_PAYPAL = 'paypal';
+
     /**
      * @var string
      */
@@ -53,6 +55,10 @@ class ValidateOrder
      */
     private $merchantId = null;
 
+    /**
+     * @param string $paypalOrderId
+     * @param string $merchantId
+     */
     public function __construct($paypalOrderId, $merchantId)
     {
         $this->setMerchantId($merchantId);
@@ -128,7 +134,7 @@ class ValidateOrder
     {
         $paymentMessage = 'Payment by card';
 
-        if ($paymentMethod === 'paypal') {
+        if ($paymentMethod === self::PAYMENT_METHOD_PAYPAL) {
             $paymentMessage = 'Payment by PayPal';
         }
 
@@ -221,7 +227,7 @@ class ValidateOrder
     {
         $stateId = \Configuration::get('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
 
-        if ($paymentMethod === 'paypal') {
+        if ($paymentMethod === self::PAYMENT_METHOD_PAYPAL) {
             $stateId = \Configuration::get('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
         }
 

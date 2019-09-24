@@ -29,7 +29,7 @@ namespace PrestaShop\Module\PrestashopCheckout;
 class WebHookOrder
 {
     /**
-     * Tell if refund is initiate by Paypal or Merchant
+     * Tell if refund has been initiated by Paypal or Merchant
      *
      * @var string
      */
@@ -64,8 +64,6 @@ class WebHookOrder
     private $paypalTransactionId;
 
     /**
-     * __construct
-     *
      * @param string $initiateBy
      * @param array $resource
      * @param int $orderId
@@ -80,8 +78,8 @@ class WebHookOrder
     }
 
     /**
-     * Check if we can refund the order
-     * Refund the order and update thresourcee status
+     * Check if we can refund the order, then
+     * refund the order and update the resource status
      *
      * @return bool
      */

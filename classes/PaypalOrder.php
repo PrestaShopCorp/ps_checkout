@@ -38,7 +38,10 @@ class PaypalOrder
      */
     private $order;
 
-    public function __construct(string $id)
+    /**
+     * @param string $id
+     */
+    public function __construct($id)
     {
         $this->loadOrder($id);
     }

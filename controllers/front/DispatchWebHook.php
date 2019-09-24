@@ -192,7 +192,9 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     private function dispatchWebHook()
     {
         if ('ShopNotificationMerchantAccount' === $this->payload['category']) {
-            return (new MerchantDispatcher())->dispatchEventType($this->merchantId);
+            return (new MerchantDispatcher())->dispatchEventType(
+                ['merchantId' => $this->merchantId]
+            );
         }
 
         if ('ShopNotificationOrderChange' === $this->payload['category']) {

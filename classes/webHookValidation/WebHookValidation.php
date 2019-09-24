@@ -43,7 +43,7 @@ class WebHookValidation
     const ORDER_ERROR = 'orderId must not be empty';
 
     /**
-     * Validates the webHook header datas
+     * Validates the webHook header data
      *
      * @param array $headerValues
      *
@@ -75,7 +75,7 @@ class WebHookValidation
     }
 
     /**
-     * Validates the webHook body datas
+     * Validates the webHook body data
      *
      * @param array $payload
      *
@@ -107,7 +107,7 @@ class WebHookValidation
     }
 
     /**
-     * Validates the webHook resource datas
+     * Validates the webHook resource data
      *
      * @param array $resource
      *
@@ -141,7 +141,7 @@ class WebHookValidation
     /**
      * Validates the webHook orderId
      *
-     * @param int|string $orderId can be paypal order id (string) or ps order id (int)
+     * @param int|string $orderId can be paypal order id (string) or prestashop order id (int)
      *
      * @return array|bool Error lists, bool if ok
      */

@@ -41,6 +41,9 @@ class PaypalAccountUpdater
     const DENIED = 'DENIED';
     const LIMITED = 'LIMITED';
 
+    /* Paypal requires Merchant ID to be 13-characters long at least */
+    const MIN_ID_LENGTH = 13;
+
     /**
      * @var PaypalAccount
      */
