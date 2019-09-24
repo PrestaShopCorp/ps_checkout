@@ -118,7 +118,7 @@ class ps_checkout extends PaymentModule
             $this->registerHook(self::HOOK_LIST) &&
             (new OrderStates())->installPaypalStates() &&
             (new TableManager())->createTable() &&
-            $this->updatePosition(\Hook::getIdByName('paymentOptions'), 0, 1);
+            $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1);
     }
 
     /**
