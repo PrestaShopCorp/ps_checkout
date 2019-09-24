@@ -117,8 +117,8 @@ class ContextModule implements StorePresenterInterface
     /**
      * Check if the rounding configuration if correctly set
      *
-     * PS_ROUND_TYPE need to be set to 2 (Round on each item)
-     * PS_PRICE_ROUND_MODE need to be set to 1 (Round up away from zero, when it is half way there)
+     * PS_ROUND_TYPE need to be set to 1 (Round on each item)
+     * PS_PRICE_ROUND_MODE need to be set to 2 (Round up away from zero, when it is half way there)
      *
      * @return bool
      */
