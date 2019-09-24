@@ -66,6 +66,7 @@ class ContextModule implements StorePresenterInterface
                 'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
                 'translations' => (new Translations($this->module))->getTranslations(),
                 'readmeUrl' => $this->getReadme(),
+                'roundingSettingsIsCorrect' => $this->roundingSettingsIsCorrect(),
             ),
         );
 
@@ -111,6 +112,20 @@ class ContextModule implements StorePresenterInterface
         }
 
         return _MODULE_DIR_ . $this->module->name . '/docs/readme_' . $isoCode . '.pdf';
+    }
+
+    /**
+     * Check if the rounding configuration if correctly set
+     *
+     * PS_ROUND_TYPE need to be set to 1 (Round on each item)
+     * PS_PRICE_ROUND_MODE need to be set to 2 (Round up away from zero, when it is half way there)
+     *
+     * @return bool
+     */
+    private function roundingSettingsIsCorrect()
+    {
+        return \Configuration::get('PS_ROUND_TYPE') === '1'
+            && \Configuration::get('PS_PRICE_ROUND_MODE') === '2';
     }
 
     /**
