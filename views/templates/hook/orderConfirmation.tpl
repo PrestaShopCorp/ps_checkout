@@ -31,7 +31,7 @@
         {l s='For any questions or for further information, please contact our' mod='ps_checkout'}
     </div> *}
 {elseif $status === 'failed'}
-    <div class="alert alert-danger">
+    <div class="alert alert-warning">
         {l s='We noticed a problem with your order. If you think this is an error, you can contact our customer service' mod='ps_checkout'}
     </div>
 {/if}
