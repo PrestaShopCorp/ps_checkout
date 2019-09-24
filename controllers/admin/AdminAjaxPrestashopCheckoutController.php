@@ -60,6 +60,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
     /**
      * AJAX: Change prestashop rounding settings
+     *
+     * PS_ROUND_TYPE need to be set to 1 (Round on each item)
+     * PS_PRICE_ROUND_MODE need to be set to 2 (Round up away from zero, wh
      */
     public function ajaxProcessEditRoundingSettings()
     {
