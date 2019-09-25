@@ -181,7 +181,7 @@ class GenerateJsonPaypalOrder
 
         // set handling cost id needed -> principally used in case of gift_wrapping
         if (isset($params['cart']['subtotals']['gift_wrapping'])) {
-            $handlingValue = $params['cart']['subtotals']['gift_wrapping']['amount'];
+            $handlingValue += $params['cart']['subtotals']['gift_wrapping']['amount'];
 
             $payload['amount']['breakdown']['handling'] = [
                 'currency_code' => $params['currency']['iso_code'],
