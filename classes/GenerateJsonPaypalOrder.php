@@ -141,10 +141,6 @@ class GenerateJsonPaypalOrder
                         'currency_code' => $params['currency']['iso_code'],
                         'value' => $totalTax,
                     ],
-                    'discount' => [
-                        'currency_code' => $params['currency']['iso_code'],
-                        'value' => abs($params['cart']['totals']['total']['amount'] - $totalProductsWithoutTax - $totalTax - $params['cart']['subtotals']['shipping']['amount']),
-                    ],
                 ],
             ],
             'items' => $items,
@@ -183,6 +179,25 @@ class GenerateJsonPaypalOrder
                 'brand_name' => \Configuration::get('PS_SHOP_NAME'),
                 'shipping_preference' => 'SET_PROVIDED_ADDRESS',
             ],
+        ];
+
+        // define by default the handling at 0
+        $handlingValue = 0;
+
+        // set handling cost id needed -> principally used in case of gift_wrapping
+        if (isset($params['cart']['subtotals']['gift_wrapping'])) {
+            $handlingValue += $params['cart']['subtotals']['gift_wrapping']['amount'];
+
+            $payload['amount']['breakdown']['handling'] = [
+                'currency_code' => $params['currency']['iso_code'],
+                'value' => $handlingValue,
+            ];
+        }
+
+        // set discount value
+        $payload['amount']['breakdown']['discount'] = [
+            'currency_code' => $params['currency']['iso_code'],
+            'value' => abs($params['cart']['totals']['total']['amount'] - $totalProductsWithoutTax - $totalTax - $params['cart']['subtotals']['shipping']['amount'] - $handlingValue),
         ];
 
         // TODO: Disabled temporary: Need to handle country indicator
