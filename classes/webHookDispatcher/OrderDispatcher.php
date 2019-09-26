@@ -146,7 +146,7 @@ class OrderDispatcher implements Dispatcher
         $lastOrderState = $order->getLastOrderState($orderId);
 
         // Prevent duplicate state entry
-        if (self::PS_EVENTTYPE_TO_PS_STATE_ID[$eventType] === $lastOrderState->id) {
+        if ((int) self::PS_EVENTTYPE_TO_PS_STATE_ID[$eventType] === $lastOrderState->id) {
             return false;
         }
 

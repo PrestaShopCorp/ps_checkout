@@ -345,17 +345,21 @@ class ps_checkout extends PaymentModule
             return false;
         }
 
+        $addOrderPayment = $refund->addOrderPayment($params['order'], $refundResponse['id']);
+
+        if (false === $addOrderPayment) {
+            return false;
+        }
+
         // change the order state to partial refund
         $orderHistory = new \OrderHistory();
         $orderHistory->id_order = $params['order']->id;
 
-        $orderHistory->changeIdOrderState(intval(Configuration::get('PS_CHECKOUT_STATE_PARTIAL_REFUND')), $params['order']->id);
+        $orderHistory->changeIdOrderState(intval(\Configuration::get('PS_CHECKOUT_STATE_PARTIAL_REFUND')), $params['order']->id);
 
         if (false === $orderHistory->save()) {
             return false;
         }
-
-        $refund->addOrderPayment($params['order'], $refundResponse['id']);
 
         return true;
     }
