@@ -15,7 +15,7 @@
             <ul class="my-1">
               <li><b>{{ $t('pages.accounts.photoIds') }}</b></li>
             </ul>
-            <a href="http://www.paypal.com/policy/hub/kyc" target="_blank" class="btn btn-outline-secondary mt-1">{{ $t('pages.accounts.knowMoreAboutAccount') }}</a>
+            <a href="https://www.paypal.com/policy/hub/kyc" target="_blank" class="btn btn-outline-secondary mt-1">{{ $t('pages.accounts.knowMoreAboutAccount') }}</a>
           </PSAlert>
           <PSAlert v-if="cardPaymentIsActive === 'IN_REVIEW' || cardPaymentIsActive === 'LIMITED'" :alert-type="ALERT_TYPE_WARNING">
             <h2>{{ $t('pages.accounts.undergoingCheck') }}</h2>
@@ -24,7 +24,7 @@
               {{ $t('pages.accounts.youCanProcess') }} <b>{{ $t('pages.accounts.upTo') }}</b> {{ $t('pages.accounts.transactionsUntil') }}.
             </p>
             <div class="mt-3">
-              <a href="http://www.paypal.com/policy/hub/kyc" target="_blank">
+              <a href="https://www.paypal.com/policy/hub/kyc" target="_blank">
                 {{ $t('pages.accounts.knowMoreAboutAccount') }} <i class="material-icons">arrow_right_alt</i>
               </a>
             </div>
