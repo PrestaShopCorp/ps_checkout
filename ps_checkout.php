@@ -201,6 +201,7 @@ class ps_checkout extends PaymentModule
             'paypalIsActive' => $paypalAccountRepository->paypalPaymentMethodIsValid(),
             'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT')),
             'currencyIsoCode' => $this->context->currency->iso_code,
+            'isCardPaymentError' => (bool) Tools::getValue('hferror'),
         ));
 
         $paymentMethods = \Configuration::get('PS_CHECKOUT_PAYMENT_METHODS_ORDER');

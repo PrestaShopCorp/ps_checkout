@@ -51,6 +51,14 @@
             </div>
         </div>
 
+        {if $isCardPaymentError}
+        <div class="alert alert-danger" role="alert" data-alert="danger">
+          <p>
+            {l s='There was an error during the payment. Please try again or contact the support.' mod='ps_checkout'}
+          </p>
+        </div>
+        {/if}
+
     </form>
 
     <div id="hostedFieldsErrors" class="hide-paypal-error">
