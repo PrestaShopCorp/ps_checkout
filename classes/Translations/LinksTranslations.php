@@ -31,6 +31,13 @@ class LinksTranslations
     const PRESTASHOP_DOTCOM_URL = 'https://www.prestashop.com';
 
     /**
+     * Locale
+     *
+     * @var string
+     */
+    private $locale;
+
+    /**
      * __construct
      *
      * @param string $locale

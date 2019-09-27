@@ -12,6 +12,5 @@ parameters:
 		- '#Parameter \#1 \$id of class Customer constructor expects null, int given.#'
 		- '#Parameter \#1 \$hook_name of method ModuleCore::registerHook\(\) expects string, array<int, string> given.#'
 		- '#Call to an undefined method\(\) AdminController|FrontController::getCheckoutProcess\(\).#'
-		- '#Parameter \#1 \$id_hook of method ModuleCore::updatePosition\(\) expects bool, int given.#'
 
 	level: 5
