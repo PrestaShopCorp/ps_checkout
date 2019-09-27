@@ -39,8 +39,8 @@
                   </PSCheckbox>
                   <div v-if="terms.hasError" class="warning-feedback">{{ terms.errorMessage }}</div>
                   <div id="privacy" class="mt-4">
-                    <p>{{ $t('pages.signup.mentionsTermsText') }} (<a href="mailto:privacy@prestashop.com" target="_blank">{{ $t('pages.signup.mentionsTermsLinkText1') }}</a>)</p>
-                    <p><a :href="$t('pages.signup.mentionsTermsLink2')" target="_blank">{{ $t('pages.signup.mentionsTermsLinkText2') }}</a></p>
+                    <p>{{ $t('pages.signup.mentionsTermsText') }} (<a href="mailto:privacy@prestashop.com" target="_blank">{{ $t('pages.signup.mentionsTermsLinkTextPart1') }}</a>)</p>
+                    <p><a :href="$t('pages.signup.mentionsTermsLinkPart2')" target="_blank">{{ $t('pages.signup.mentionsTermsLinkTextPart2') }}</a></p>
                   </div>
                 </div>
               </div>

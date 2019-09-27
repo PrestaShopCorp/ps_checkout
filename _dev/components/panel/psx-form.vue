@@ -246,8 +246,8 @@
                 <div class="col-lg-3 col-md-3 col-sm-3 pl-0 pr-0 text-right mt-3">
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-9">
-                  <p class="mb-0">{{ $t('panel.psx-form.privacyText1') }}</p>
-                  <p><a :href="$t('panel.psx-form.privacyLink')" target="_blank">{{ $t('panel.psx-form.privacyText2') }}</a></p>
+                  <p class="mb-0">{{ $t('panel.psx-form.privacyTextPart1') }}</p>
+                  <p><a :href="$t('panel.psx-form.privacyLink')" target="_blank">{{ $t('panel.psx-form.privacyTextPart2') }}</a></p>
                 </div>
               </div>
             </div>
