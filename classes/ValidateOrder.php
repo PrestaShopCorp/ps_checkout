@@ -69,9 +69,30 @@ class ValidateOrder
      * Process the validation for an order
      *
      * @param array $payload array with all information required by PaymentModule->validateOrder()
+     *
+     * @return bool
      */
     public function validateOrder($payload)
     {
+        $paypalOrder = new PaypalOrder($this->paypalOrderId);
+        $order = $paypalOrder->getOrder();
+        $apiOrder = new Order(\Context::getContext()->link);
+
+        switch ($paypalOrder->getOrderIntent()) {
+            case self::INTENT_CAPTURE:
+                $response = $apiOrder->capture($order['id'], $this->merchantId);
+                break;
+            case self::INTENT_AUTHORIZE:
+                $response = $apiOrder->authorize($order['id'], $this->merchantId);
+                break;
+            default:
+                throw new \Exception(sprintf('Unknown Intent type %s', $paypalOrder->getOrderIntent()));
+        }
+
+        if (false === $response) {
+            return false;
+        }
+
         /** @var \PaymentModule $module */
         $module = \Module::getInstanceByName('ps_checkout');
 
@@ -101,26 +122,13 @@ class ValidateOrder
         // TODO : patch the order in order to update the order id with the order id
         // of the prestashop order
 
-        $paypalOrder = new PaypalOrder($this->paypalOrderId);
-        $order = $paypalOrder->getOrder();
-        $apiOrder = new Order(\Context::getContext()->link);
-
-        switch ($paypalOrder->getOrderIntent()) {
-            case self::INTENT_CAPTURE:
-                $response = $apiOrder->capture($order['id'], $this->merchantId);
-                break;
-            case self::INTENT_AUTHORIZE:
-                $response = $apiOrder->authorize($order['id'], $this->merchantId);
-                break;
-            default:
-                throw new \Exception(sprintf('Unknown Intent type %s', $paypalOrder->getOrderIntent()));
-        }
-
         $orderState = $this->setOrderState($module->currentOrder, $response['status'], $payload['paymentMethod']);
 
         if ($orderState === _PS_OS_PAYMENT_) {
             $this->setTransactionId($module->currentOrderReference, $response['id']);
         }
+
+        return true;
     }
 
     /**

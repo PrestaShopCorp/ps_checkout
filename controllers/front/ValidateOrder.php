@@ -76,7 +76,19 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
             'secureKey' => $customer->secure_key,
         ];
 
-        $payment->validateOrder($dataOrder);
+        // If the payment is rejected redirect the client to the last checkout step (422 error)
+        if (false === $payment->validateOrder($dataOrder)) {
+            Tools::redirect(
+                $this->context->link->getPageLink(
+                    'order',
+                    true,
+                    $this->context->language->id,
+                    [
+                        'hferror' => 1, // hosted field (card) error
+                    ]
+                )
+            );
+        }
 
         /** @var PaymentModule $module */
         $module = $this->module;

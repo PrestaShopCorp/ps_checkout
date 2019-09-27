@@ -40,6 +40,13 @@ $(document).ready(() => {
   }
   if (Boolean(paypalIsActive)) {
     initSmartButtons();
+
+    // pre select payment by card if there was an error previously
+    const urlParams = new URLSearchParams(location.search);
+
+    if (urlParams.has('hferror') && urlParams.get('hferror') === '1') {
+      document.querySelectorAll('[data-module-name="ps_checkout_hostedFields"]')[0].click();
+    }
   }
 });
 
