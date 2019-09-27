@@ -253,8 +253,14 @@
             </div>
           </div>
         </div>
-        <div class="card-footer text-right">
-          <a class="btn btn-primary text-capitalize" href="#" @click.prevent="submitForm()" target="_blank">{{ $t('panel.psx-form.continue') }}</a>
+
+        <div class="card-footer d-flex">
+          <div class="container-fluid pl-0">
+            <PSButton @click="back()">{{ $t('panel.psx-form.back') }}</PSButton>
+          </div>
+          <div class="d-flex">
+            <PSButton primary @click="submitForm()">{{ $t('panel.psx-form.continue') }}</PSButton>
+          </div>
         </div>
       </div>
     </form>
@@ -262,10 +268,14 @@
 </template>
 
 <script>
-  import { orderBy, uniqBy } from 'lodash';
+  import {orderBy, uniqBy} from 'lodash';
+  import PSButton from '@/components/form/button';
 
   export default {
     name: 'PsxForm',
+    components: {
+      PSButton,
+    },
     data() {
       return {
         subCategory: null,
@@ -275,7 +285,7 @@
           business_contact_first_name: null,
           business_contact_last_name: null,
           business_contact_language: null,
-          qualification: "",
+          qualification: '',
           shop_name: null,
           business_address_street: null,
           business_address_zip: null,
@@ -286,19 +296,19 @@
           business_website: null,
           business_company_emr: null,
           business_category: null,
-          business_sub_category: "",
+          business_sub_category: '',
         },
       };
     },
     computed: {
       getLanguagesDetails() {
-        return _.orderBy(this.$store.state.psx.languagesDetails, 'name');
+        return orderBy(this.$store.state.psx.languagesDetails, 'name');
       },
       getCountriesDetails() {
-        return _.orderBy(this.$store.state.psx.countriesDetails, 'name');
+        return orderBy(this.$store.state.psx.countriesDetails, 'name');
       },
       getPhoneCountryCode() {
-        return _.uniqBy(_.orderBy(this.$store.state.psx.countriesDetails, 'code'), 'code');
+        return uniqBy(orderBy(this.$store.state.psx.countriesDetails, 'code'), 'code');
       },
       getCompanyMonthyAverages() {
         return this.$store.state.psx.businessDetails.business_company_emr;
@@ -318,8 +328,13 @@
           window.scrollTo({
             top: 0,
             left: 0,
-            behavior: 'smooth'
+            behavior: 'smooth',
           });
+        });
+      },
+      back() {
+        this.$store.dispatch('logOut').then(() => {
+          this.$router.push('/authentication');
         });
       },
       onChangeCategory(categoryId) {
@@ -330,6 +345,9 @@
 </script>
 
 <style scoped>
+  .d-flex {
+    align-items: flex-start;
+  }
   label.text-muted {
     font-size: 18px;
   }

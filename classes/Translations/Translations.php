@@ -178,6 +178,7 @@ class Translations
                     'businessSubCategory' => $this->module->l('Business subcategory', 'translations'),
                     'optional' => $this->module->l('Optional', 'translations'),
                     'continue' => $this->module->l('Continue', 'translations'),
+                    'back' => $this->module->l('Back', 'translations'),
                     'errors' => $this->module->l('Errors', 'translations'),
                     'privacyTextPart1' => $this->module->l('By submitting this form, I agree that the data provided may be collected by PrestaShop S.A to permit (i) the use of our services (ii) to improve your customer experience. Your data can be transmitted to our partner Paypal if you do not already have an account.', 'translations'),
                     'privacyTextPart2' => $this->module->l('Learn more about managing your data and rights.', 'translations'),
