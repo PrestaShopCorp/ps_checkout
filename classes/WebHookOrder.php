@@ -97,7 +97,7 @@ class WebHookOrder
 
         $refund = new Refund(true, $this->amount);
 
-        if ($order->total_paid !== $this->amount) {
+        if ($order->total_paid != $this->amount) {
             return (bool) $refund->doPartialRefund($order, $orderProductList, $this->paypalTransactionId);
         }
 
