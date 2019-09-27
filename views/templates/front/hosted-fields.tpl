@@ -51,6 +51,14 @@
             </div>
         </div>
 
+        {* Error when a payment has been refused by paypal
+        eg : - CVV invalid
+            - card not accepted
+            - insufficient fund
+        Acutally we cannot identify the error, paypal only return a 422.
+        They are working on a new system that allow us to get a pertinant return error.
+        For now -> just return a generic error messages
+        *}
         {if $isCardPaymentError}
         <div class="alert alert-danger" role="alert" data-alert="danger">
           <p>
@@ -61,6 +69,9 @@
 
     </form>
 
+
+    {* Error returned by the paypal SDK
+    The sdk make a first check on the card before trying to process the payment *}
     <div id="hostedFieldsErrors" class="hide-paypal-error">
         <div class="alert alert-danger" role="alert" data-alert="danger">
             <ul id="hostedFieldsErrorList">

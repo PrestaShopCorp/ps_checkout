@@ -69,6 +69,8 @@ class ValidateOrder
      * Process the validation for an order
      *
      * @param array $payload array with all information required by PaymentModule->validateOrder()
+     *
+     * @return bool
      */
     public function validateOrder($payload)
     {
@@ -125,6 +127,8 @@ class ValidateOrder
         if ($orderState === _PS_OS_PAYMENT_) {
             $this->setTransactionId($module->currentOrderReference, $response['id']);
         }
+
+        return true;
     }
 
     /**
