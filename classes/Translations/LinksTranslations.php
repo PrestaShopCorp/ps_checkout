@@ -33,7 +33,7 @@ class LinksTranslations
     /**
      * __construct
      *
-     * @param  string $locale
+     * @param string $locale
      */
     public function __construct($locale)
     {
@@ -81,7 +81,7 @@ class LinksTranslations
     /**
      * setLocale
      *
-     * @param  string $locale
+     * @param string $locale
      */
     public function setLocale($locale)
     {

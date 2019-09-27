@@ -26,8 +26,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Translations;
 
-use PrestaShop\Module\PrestashopCheckout\Translations\LinksTranslations;
-
 class Translations
 {
     /**
