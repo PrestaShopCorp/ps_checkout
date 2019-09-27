@@ -56,7 +56,7 @@
             - card not accepted
             - insufficient fund
         Acutally we cannot identify the error, paypal only return a 422.
-        They are working on a new system that allow us to get a pertinant return error.
+        They are working on a new system that allow us to get relevant error message.
         For now -> just return a generic error messages
         *}
         {if $isCardPaymentError}
