@@ -33,8 +33,15 @@
               <div class="form-group row">
                 <label class="form-control-label">&nbsp;</label>
                 <div class="col-6">
-                  <PSCheckbox id="terms" v-model="terms.value">{{ $t('pages.signup.termsOfUse') }}</PSCheckbox>
+                  <PSCheckbox id="terms" v-model="terms.value">
+                    {{ $t('pages.signup.termsOfUse') }}
+                    <a :href="$t('pages.signup.termsOfUseLink')" target="_blank">{{ $t('pages.signup.termsOfUseLinkText') }}</a>
+                  </PSCheckbox>
                   <div v-if="terms.hasError" class="warning-feedback">{{ terms.errorMessage }}</div>
+                  <div id="privacy" class="mt-4">
+                    <p>{{ $t('pages.signup.mentionsTermsText') }} (<a href="mailto:privacy@prestashop.com" target="_blank">{{ $t('pages.signup.mentionsTermsLinkTextPart1') }}</a>)</p>
+                    <p><a :href="$t('pages.signup.mentionsTermsLinkPart2')" target="_blank">{{ $t('pages.signup.mentionsTermsLinkTextPart2') }}</a></p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -179,5 +186,9 @@
   }
   .max-size {
     max-width: 480px !important;
+  }
+  #privacy {
+    font-size: 12px;
+    text-align: justify;
   }
 </style>
