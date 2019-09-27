@@ -106,7 +106,7 @@ $_MODULE['<{ps_checkout}prestashop>hosted-fields_a44217022190f5734b2f72ba1e4f8a7
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_95b16127e70e8a90220404fb48343182'] = 'Data de vencimento';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_5ea7f231296949070013bc43715aae01'] = 'Código de segurança';
 $_MODULE['<{ps_checkout}prestashop>paypal_41f7fd5ea9b453e2148bb7bccef861c2'] = 'Você será redirecionado para o gateway relacionado para concluir o pagamento';
-$_MODULE['<{ps_checkout}prestashop>paypal_ba0de86d723de2c4dd08e8b88702c492'] = 'Concordo com os termos de serviço e os respeitarei incondicionalmente';
+$_MODULE['<{ps_checkout}prestashop>paypal_ba0de86d723de2c4dd08e8b88702c492'] = 'Concordo com os [1]termos de serviço[/1] e os respeitarei incondicionalmente';
 $_MODULE['<{ps_checkout}prestashop>paypal_90e21e03117b6ad940cf3d3075f9a852'] = 'Indique que leu os termos e condições e aceite-os.';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_565c23511bb8643ac5552fbd5e4ba358'] = 'Um módulo, todas as formas de pagamento';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_83c6cac8e2ac2ca242a4c1b7e3062bf8'] = 'Ofereça a mais ampla variedade de formas de pagamento: cartões, PayPal, entre outros.';
