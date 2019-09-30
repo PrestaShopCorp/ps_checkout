@@ -196,7 +196,7 @@ class ps_checkout extends PaymentModule
             'paypalClientId' => (new PaypalEnv())->getPaypalClientId(),
             'clientToken' => $paypalOrder['client_token'],
             'paypalOrderId' => $paypalOrder['id'],
-            'orderValidationLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true),
+            'validateOrderLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array('orderId' => $paypalOrder['id']), true),
             'cardIsActive' => $paypalAccountRepository->cardPaymentMethodIsValid(),
             'paypalIsActive' => $paypalAccountRepository->paypalPaymentMethodIsValid(),
             'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT')),
