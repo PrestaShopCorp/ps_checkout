@@ -89,7 +89,7 @@ class GenericClient
             if (!$e->hasResponse()) {
                 return [
                     'checkoutError' => true,
-                    'message' => $e->getMessage()
+                    'message' => $e->getMessage(),
                 ];
             }
             $response = $e->getResponse();

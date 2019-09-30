@@ -124,7 +124,7 @@ class ValidateOrder
 
         $orderState = $this->setOrderState(
             $module->currentOrder,
-            isset($response['status']) ? $data : self::CAPTURE_STATUS_PENDING,
+            isset($response['status']) ? $response['status'] : self::CAPTURE_STATUS_PENDING,
             $payload['paymentMethod']
         );
 
