@@ -26,6 +26,10 @@
 * to avoid any conflicts with others containers.
 */
 
+// remove "amp;" from the url
+const orderValidationLinkByCard = validateOrderLinkByCard.replace(/\amp;/g, '');
+const orderValidationLinkByPaypal = validateOrderLinkByPaypal.replace(/\amp;/g, '');
+
 $(document).ready(() => {
   if (typeof paypalOrderId === 'undefined') {
     return;
@@ -79,8 +83,8 @@ function initSmartButtons() {
     createOrder() {
       return paypalOrderId;
     },
-    onApprove(payload) {
-      window.location.replace(`${orderValidationLink}?orderId=${payload.orderID}&paymentMethod=paypal`);
+    onApprove() {
+      window.location.replace(orderValidationLinkByCard);
     },
   }).render('#paypal-button-container');
 }
@@ -158,17 +162,17 @@ function initHostedFields() {
           contingencies: ['3D_SECURE'], // only necessary if using 3D Secure verification
         }).then((payload) => {
           if (payload.liabilityShifted === undefined) { // No 3DS Contingency Passed or card not enrolled to 3ds
-            window.location.replace(`${orderValidationLink}?orderId=${payload.orderId}&paymentMethod=card`);
+            window.location.replace(orderValidationLinkByPaypal);
             console.log('undefined');
           }
 
           if (payload.liabilityShifted) { // 3DS Contingency Passed - Buyer confirmed Successfully
-            window.location.replace(`${orderValidationLink}?orderId=${payload.orderId}&paymentMethod=card`);
+            window.location.replace(orderValidationLinkByPaypal);
             console.log('success');
           }
 
           if (payload.liabilityShifted === false) { // 3DS Contingency Passed, but Buyer skipped 3DS
-            // window.location.replace(orderValidationLink + '?orderId=' + payload.orderId);
+            // window.location.replace(orderValidationLinkByPaypal);
             console.log('error');
           }
         }).catch((err) => {
