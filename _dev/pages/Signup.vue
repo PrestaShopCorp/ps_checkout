@@ -35,7 +35,7 @@
                 <div class="col-6">
                   <PSCheckbox id="terms" v-model="terms.value">
                     {{ $t('pages.signup.termsOfUse') }}
-                    <a :href="$t('pages.signup.termsOfUseLink')" target="_blank">{{ $t('pages.signup.termsOfUseLinkText') }}</a>
+                    <a :href="readmeCgu" target="_blank">{{ $t('pages.signup.termsOfUseLinkText') }}</a>
                   </PSCheckbox>
                   <div v-if="terms.hasError" class="warning-feedback">{{ terms.errorMessage }}</div>
                   <div id="privacy" class="mt-4">
@@ -97,6 +97,11 @@
           errorMessage: this.$t('pages.signup.termsOfUseError'),
         },
       };
+    },
+    computed: {
+      readmeCgu() {
+        return this.$store.state.context.cguUrl;
+      },
     },
     methods: {
       signUp() {
