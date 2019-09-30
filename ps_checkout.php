@@ -196,7 +196,8 @@ class ps_checkout extends PaymentModule
             'paypalClientId' => (new PaypalEnv())->getPaypalClientId(),
             'clientToken' => $paypalOrder['client_token'],
             'paypalOrderId' => $paypalOrder['id'],
-            'validateOrderLink' => $this->context->link->getModuleLink($this->name, 'ValidateOrder', array('orderId' => $paypalOrder['id']), true),
+            'validateOrderLinkByCard' => $this->getValidateOrderLink($paypalOrder['id'], 'card'),
+            'validateOrderLinkByPaypal' => $this->getValidateOrderLink($paypalOrder['id'], 'paypal'),
             'cardIsActive' => $paypalAccountRepository->cardPaymentMethodIsValid(),
             'paypalIsActive' => $paypalAccountRepository->paypalPaymentMethodIsValid(),
             'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT')),
@@ -549,6 +550,27 @@ class ps_checkout extends PaymentModule
         }
 
         $this->context->controller->addCss($this->_path . 'views/css/adminAfterHeader.css');
+    }
+
+    /**
+     * Generate the url to the order validation controller
+     *
+     * @param string $orderId order id paypal
+     * @param string $paymentMethod can be 'card' or 'paypal'
+     *
+     * @return string
+     */
+    private function getValidateOrderLink($orderId, $paymentMethod)
+    {
+        return $this->context->link->getModuleLink(
+            $this->name,
+            'ValidateOrder',
+            [
+                'orderId' => $orderId,
+                'paymentMethod' => $paymentMethod,
+            ],
+            true
+        );
     }
 
     /**
