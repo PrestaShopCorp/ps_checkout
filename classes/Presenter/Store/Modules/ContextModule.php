@@ -66,6 +66,7 @@ class ContextModule implements StorePresenterInterface
                 'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
                 'translations' => (new Translations($this->module))->getTranslations(),
                 'readmeUrl' => $this->getReadme(),
+                'cguUrl' => $this->getCgu(),
                 'roundingSettingsIsCorrect' => $this->roundingSettingsIsCorrect(),
             ),
         );
@@ -112,6 +113,16 @@ class ContextModule implements StorePresenterInterface
         }
 
         return _MODULE_DIR_ . $this->module->name . '/docs/readme_' . $isoCode . '.pdf';
+    }
+
+    /**
+     * Get the CGU url
+     *
+     * @return string path of the doc
+     */
+    private function getCgu()
+    {
+        return _MODULE_DIR_ . $this->module->name . '/docs/cgu_fr.pdf';
     }
 
     /**
