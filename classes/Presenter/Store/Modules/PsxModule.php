@@ -35,8 +35,8 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenterInterface
 class PsxModule implements StorePresenterInterface
 {
     const ALL_LANGUAGES_FILE = _PS_ROOT_DIR_ . '/app/Resources/all_languages.json';
-    const ALL_COUNTRIES_FILE = _PS_MODULE_DIR_ . 'ps_checkout/src/all_countries.json';
-    const ALL_BUSINESS_FILE = _PS_MODULE_DIR_ . 'ps_checkout/src/i18n/business-information-';
+    const ALL_COUNTRIES_FILE = _PS_MODULE_DIR_ . 'ps_checkout/views/json/all_countries.json';
+    const ALL_BUSINESS_FILE = _PS_MODULE_DIR_ . 'ps_checkout/views/json/i18n/business-information-';
 
     /**
      * @var \Context
