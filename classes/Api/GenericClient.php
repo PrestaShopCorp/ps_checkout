@@ -62,7 +62,7 @@ class GenericClient
      *
      * @var int
      */
-    protected $timeout = 30;
+    protected $timeout = 10;
 
     /**
      * Api route
