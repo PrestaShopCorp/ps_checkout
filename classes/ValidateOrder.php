@@ -122,7 +122,15 @@ class ValidateOrder
         // TODO : patch the order in order to update the order id with the order id
         // of the prestashop order
 
-        $orderState = $this->setOrderState($module->currentOrder, $response['status'], $payload['paymentMethod']);
+        if (!isset($response['status'])) {
+            return true;
+        }
+
+        $orderState = $this->setOrderState(
+            $module->currentOrder,
+            $response['status'],
+            $payload['paymentMethod']
+        );
 
         if ($orderState === _PS_OS_PAYMENT_) {
             $this->setTransactionId($module->currentOrderReference, $response['id']);

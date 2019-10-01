@@ -32,6 +32,6 @@
     </div> *}
 {elseif $status === 'failed'}
     <div class="alert alert-warning">
-        {l s='We noticed a problem with your order. If you think this is an error, you can contact our customer service' mod='ps_checkout'}
+        {l s='Your order hasn\'t been validated yet, only created. There can be an issue with your payment or it can be captured later, please contact our customer service to have more details about it.' mod='ps_checkout'}
     </div>
 {/if}

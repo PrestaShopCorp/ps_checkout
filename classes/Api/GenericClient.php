@@ -85,8 +85,12 @@ class GenericClient
         } catch (RequestException $e) {
             \PrestaShopLogger::addLog(date('[Ymd] ') . $e->getMessage(), 3);
 
+            // TODO: hotfix -> improve error management system
             if (!$e->hasResponse()) {
-                return false;
+                return [
+                    'checkoutError' => true,
+                    'message' => $e->getMessage(),
+                ];
             }
             $response = $e->getResponse();
         }
