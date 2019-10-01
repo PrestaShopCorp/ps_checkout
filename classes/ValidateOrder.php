@@ -122,9 +122,13 @@ class ValidateOrder
         // TODO : patch the order in order to update the order id with the order id
         // of the prestashop order
 
+        if (!isset($response['status'])) {
+            return true;
+        }
+
         $orderState = $this->setOrderState(
             $module->currentOrder,
-            isset($response['status']) ? $response['status'] : self::CAPTURE_STATUS_PENDING,
+            $response['status'],
             $payload['paymentMethod']
         );
 
