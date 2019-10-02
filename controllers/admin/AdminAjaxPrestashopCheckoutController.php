@@ -180,18 +180,19 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessPsxSendData()
     {
         $payload = json_decode(\Tools::getValue('payload'), true);
-        $errors = (new PsxDataValidation())->validateData($payload);
+        $psxForm = (new PsxDataPrepare($payload))->prepareData();
+        $errors = (new PsxDataValidation())->validateData($psxForm);
 
         if (!empty($errors)) {
             $this->ajaxDie(json_encode($errors));
         }
 
         // Save form in database
-        if (false === $this->savePsxForm($payload)) {
+        if (false === $this->savePsxForm($psxForm)) {
             $this->ajaxDie(json_encode(false));
         }
 
-        $response = (new PsxOnboarding())->setOnboardingMerchant(array_filter($payload));
+        $response = (new PsxOnboarding())->setOnboardingMerchant(array_filter($psxForm));
 
         if ($response) {
             $this->ajaxDie(json_encode(true));

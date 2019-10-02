@@ -117,9 +117,9 @@ class PsxDataValidation
             $errors[] = self::PHONE_COUNTRY;
         }
 
-        if (!preg_match('/^[0-9\-\(\)\/\+\s]*$/', $data['business_phone'])
+        if (!preg_match('/^^[0-9]{1,14}$/', $data['business_phone'])
             || strlen($data['business_phone']) < 1
-            || strlen($data['business_phone']) > 63
+            || strlen($data['business_phone']) > 14
         ) {
             $errors[] = self::PHONE;
         }
@@ -130,10 +130,10 @@ class PsxDataValidation
             $errors[] = self::WEBSITE;
         }
 
-        if (!is_array(
+        if (!in_array(
             $data['business_contact_gender'],
-            array('Mr, Ms'))
-        ) {
+            array('Mr', 'Ms')
+        )) {
             $errors[] = self::GENDER;
         }
 
