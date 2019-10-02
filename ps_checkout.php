@@ -590,6 +590,10 @@ class ps_checkout extends PaymentModule
      */
     public function hookActionFrontControllerSetMedia()
     {
+        if (false === $this->merchantIsValid()) {
+            return false;
+        }
+
         $currentPage = $this->context->controller->php_self;
 
         if ($currentPage != 'order') {

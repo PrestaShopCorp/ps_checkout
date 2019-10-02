@@ -26,10 +26,6 @@
 * to avoid any conflicts with others containers.
 */
 
-// remove "amp;" from the url
-const orderValidationLinkByCard = validateOrderLinkByCard.replace(/\amp;/g, '');
-const orderValidationLinkByPaypal = validateOrderLinkByPaypal.replace(/\amp;/g, '');
-
 $(document).ready(() => {
   if (typeof paypalOrderId === 'undefined') {
     return;
@@ -55,6 +51,9 @@ $(document).ready(() => {
 });
 
 function initSmartButtons() {
+  // remove "amp;" from the url
+  const orderValidationLinkByPaypal = validateOrderLinkByPaypal.replace(/\amp;/g, '');
+
   paypal.Buttons({
     style: {
       shape: 'pill',
@@ -84,12 +83,15 @@ function initSmartButtons() {
       return paypalOrderId;
     },
     onApprove() {
-      window.location.replace(orderValidationLinkByCard);
+      window.location.replace(orderValidationLinkByPaypal);
     },
   }).render('#paypal-button-container');
 }
 
 function initHostedFields() {
+  // remove "amp;" from the url
+  const orderValidationLinkByCard = validateOrderLinkByCard.replace(/\amp;/g, '');
+
   // check whether hosted fields is eligible for that Partner Account
   if (paypal.HostedFields.isEligible()) {
     // render hosted fields
@@ -162,17 +164,17 @@ function initHostedFields() {
           contingencies: ['3D_SECURE'], // only necessary if using 3D Secure verification
         }).then((payload) => {
           if (payload.liabilityShifted === undefined) { // No 3DS Contingency Passed or card not enrolled to 3ds
-            window.location.replace(orderValidationLinkByPaypal);
+            window.location.replace(orderValidationLinkByCard);
             console.log('undefined');
           }
 
           if (payload.liabilityShifted) { // 3DS Contingency Passed - Buyer confirmed Successfully
-            window.location.replace(orderValidationLinkByPaypal);
+            window.location.replace(orderValidationLinkByCard);
             console.log('success');
           }
 
           if (payload.liabilityShifted === false) { // 3DS Contingency Passed, but Buyer skipped 3DS
-            // window.location.replace(orderValidationLinkByPaypal);
+            // window.location.replace(orderValidationLinkByCard);
             console.log('error');
           }
         }).catch((err) => {
