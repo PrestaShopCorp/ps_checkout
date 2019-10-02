@@ -104,8 +104,8 @@ class Onboarding extends PaymentClient
                 'city' => $psxFormData['business_address_city'],
                 'country_code' => $psxFormData['business_address_country'],
                 'line1' => $psxFormData['business_address_street'],
-                'postal_code' => $psxFormData['business_address_zip'],
-                'state' => 'TX',
+                'postal_code' => $psxFormData['business_address_state'],
+                'state' => $psxFormData['business_address_state'],
             ],
             'phone_contacts' => [
                 0 => [

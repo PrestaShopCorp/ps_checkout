@@ -36,6 +36,7 @@ class PsxModule implements StorePresenterInterface
 {
     const ALL_LANGUAGES_FILE = _PS_ROOT_DIR_ . '/app/Resources/all_languages.json';
     const ALL_COUNTRIES_FILE = _PS_MODULE_DIR_ . 'ps_checkout/views/json/all_countries.json';
+    const ALL_COUNTRIES_STATES_FILE = _PS_MODULE_DIR_ . 'ps_checkout/views/json/countries_states.json';
     const ALL_BUSINESS_FILE = _PS_MODULE_DIR_ . 'ps_checkout/views/json/i18n/business-information-';
 
     /**
@@ -61,6 +62,7 @@ class PsxModule implements StorePresenterInterface
                 'psxFormData' => json_decode(\Configuration::get('PS_CHECKOUT_PSX_FORM'), true),
                 'languagesDetails' => $this->getJsonData(self::ALL_LANGUAGES_FILE),
                 'countriesDetails' => $this->getJsonData(self::ALL_COUNTRIES_FILE),
+                'countriesStatesDetails' => $this->getJsonData(self::ALL_COUNTRIES_STATES_FILE),
                 'businessDetails' => $this->getJsonData($this->getBusinessFileName()),
             ),
         );
