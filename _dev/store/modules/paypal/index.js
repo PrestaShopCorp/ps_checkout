@@ -2,7 +2,7 @@ import actions from './actions';
 import mutations from './mutations';
 import getters from './getters';
 
-const store = JSON.parse(global.store);
+const {store} = global;
 
 const state = store.paypal;
 
