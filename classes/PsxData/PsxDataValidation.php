@@ -130,7 +130,10 @@ class PsxDataValidation
             $errors[] = self::WEBSITE;
         }
 
-        if (strlen($data['business_contact_gender']) < 1 || strlen($data['business_contact_gender']) > 7) {
+        if (!is_array(
+            $data['business_contact_gender'],
+            array('Mr, Ms'))
+        ) {
             $errors[] = self::GENDER;
         }
 
