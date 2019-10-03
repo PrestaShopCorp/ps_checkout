@@ -30,6 +30,7 @@ use GuzzleHttp\Client;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
+use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 /**
  * Construct the client used to make call to maasland
@@ -53,29 +54,12 @@ class PaymentClient extends GenericClient
                         'Authorization' => 'Bearer ' . (new Token())->getToken(),
                         'Shop-Id' => \Configuration::get('PS_CHECKOUT_SHOP_UUID_V4'),
                         'Hook-Url' => $this->link->getModuleLink('ps_checkout', 'DispatchWebHook', array(), true),
-                        'Bn-Code' => $this->getBnCode(),
+                        'Bn-Code' => (new ShopContext())->getBnCode(),
                     ],
                 ),
             ));
         }
 
         $this->setClient($client);
-    }
-
-    /**
-     * Retrieve the bn code - if on ready send an empty bn code
-     * maasland will replace it with the bn code for ready
-     *
-     * @return string
-     */
-    private function getBnCode()
-    {
-        $bnCode = 'PrestaShop_Cart_PSXO_PSDownload';
-
-        if (getenv('PLATEFORM') === 'PSREADY') { // if on ready send an empty bn-code
-            $bnCode = '';
-        }
-
-        return $bnCode;
     }
 }
