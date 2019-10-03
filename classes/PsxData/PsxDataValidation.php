@@ -125,7 +125,7 @@ class PsxDataValidation
         }
 
         if (!empty($data['business_website'])
-            && (!filter_var($data['business_website'], FILTER_VALIDATE_URL) || strlen($data['business_website']) > 255)
+            && (!preg_match('/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\d?(\/)]$/m', $data['business_website']) || strlen($data['business_website']) > 255)
         ) {
             $errors[] = self::WEBSITE;
         }
