@@ -355,9 +355,7 @@
       },
       onChangeCountry(countryCode) {
         this.statesList = this.$store.state.psx.countriesStatesDetails[countryCode];
-        if (!this.statesList) {
-          this.form.business_address_state = null;
-        }
+        this.form.business_address_state = null;
       },
     },
   };
