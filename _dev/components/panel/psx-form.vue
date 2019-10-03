@@ -154,10 +154,10 @@
                         </option>
                       </select>
                     </div>
-                    <div v-if="stateDetail != null" class="col-lg-6 col-md-6 col-sm-6">
+                    <div v-if="statesList != null" class="col-lg-6 col-md-6 col-sm-6">
                       <label>{{ $t('panel.psx-form.state') }}</label>
                       <select v-model="form.business_address_state" class="form-control custom-select">
-                        <option v-for="(value, key) in stateDetail" :key="key" :value="value">
+                        <option v-for="(value, key) in statesList" :key="key" :value="key">
                             {{ value }}
                         </option>
                       </select>
@@ -290,7 +290,7 @@
     data() {
       return {
         subCategory: null,
-        stateDetail: null,
+        statesList: null,
         errorForm: null,
         form: {
           business_contact_gender: 'Mr',
@@ -354,8 +354,8 @@
         this.subCategory = this.$store.state.psx.businessDetails.business_categories[categoryId].business_subcategories;
       },
       onChangeCountry(countryCode) {
-        this.stateDetail = this.$store.state.psx.countriesStatesDetails[countryCode];
-        if (!this.stateDetail) {
+        this.statesList = this.$store.state.psx.countriesStatesDetails[countryCode];
+        if (!this.statesList) {
           this.form.business_address_state = null;
         }
       },
