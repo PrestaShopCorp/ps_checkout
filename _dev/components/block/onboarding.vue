@@ -1,12 +1,15 @@
 <template>
   <div>
     <template v-if="firebaseStatusAccount">
+      <button v-show="paypalIsLoaded" @click.prevent="getOnboardingLink()" class="btn btn-primary-reverse btn-outline-primary light-button">
+        {{ $t('panel.account-list.linkToPaypal') }}
+      </button>
       <a
-        v-show="paypalIsLoaded && paypalOnboardingLink"
-        class="btn btn-primary-reverse btn-outline-primary light-button"
+        class="btn btn-primary-reverse btn-outline-primary light-button d-none"
         data-paypal-button="true"
         :href="paypalOnboardingLink+'&displayMode=minibrowser'"
         target="PPFrame"
+        ref="paypalButton"
       >
         {{ $t('panel.account-list.linkToPaypal') }}
       </a>
@@ -42,6 +45,21 @@
       },
       firebaseStatusAccount() {
         return this.$store.state.firebase.onboardingCompleted;
+      },
+    },
+    methods: {
+      getOnboardingLink() {
+        if (this.paypalOnboardingLink !== false) {
+          this.$refs.paypalButton.click();
+          return;
+        }
+
+        this.paypalIsLoaded = false;
+
+        this.$store.dispatch('getOnboardingLink').then(() => {
+          this.paypalIsLoaded = true;
+          this.$refs.paypalButton.click();
+        });
       },
     },
     destroyed() {

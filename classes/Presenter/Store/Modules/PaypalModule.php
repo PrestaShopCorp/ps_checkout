@@ -47,7 +47,7 @@ class PaypalModule implements StorePresenterInterface
         $paypalModule = array(
             'paypal' => array(
                 'idMerchant' => $idMerchant,
-                'paypalOnboardingLink' => $this->getPaypalOnboardingLink(),
+                'paypalOnboardingLink' => false,
                 'onboardingCompleted' => !empty($idMerchant),
                 'emailMerchant' => \Configuration::get('PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT'),
                 'emailIsValid' => \Configuration::get('PS_CHECKOUT_PAYPAL_EMAIL_STATUS'),
@@ -57,28 +57,5 @@ class PaypalModule implements StorePresenterInterface
         );
 
         return $paypalModule;
-    }
-
-    /**
-     * Generate the paypal onboarding link
-     *
-     * @return string|bool paypal onboarding link
-     */
-    private function getPaypalOnboardingLink()
-    {
-        $paypalAccount = new PaypalAccountRepository();
-
-        if (true === $paypalAccount->onbardingIsCompleted()) {
-            return false;
-        }
-
-        $context = \Context::getContext();
-
-        $language = \Language::getLanguage($context->employee->id_lang);
-        $locale = $language['locale'];
-
-        $paypalOnboardingLink = (new Onboarding($context->link))->getOnboardingLink($locale);
-
-        return $paypalOnboardingLink;
     }
 }
