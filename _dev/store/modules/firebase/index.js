@@ -2,7 +2,7 @@ import getters from './getters';
 import actions from './actions';
 import mutations from './mutations';
 
-const store = JSON.parse(global.store);
+const {store} = global;
 
 const state = store.firebase;
 
