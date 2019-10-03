@@ -26,50 +26,46 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PsxData;
 
-/**
- * Check and set the merchant status
- */
-class PsxData
+class PsxDataPrepare
 {
-    const MAASLAND_DATA_ROW_NAME = 'massland_client_data';
+    private $dataForm;
 
-    /**
-     * Get the MAASLAND_DATA_ROW_NAME data and return an array
-     *
-     * @return array|false false when doesn't exist
-     */
-    public function get()
+    public function __construct(array $dataForm)
     {
-        $data = \Configuration::get(self::MAASLAND_DATA_ROW_NAME);
-
-        if (false === $data) {
-            return false;
-        }
-
-        return json_decode($data, true);
+        $this->setDataForm($dataForm);
     }
 
     /**
-     * Save the datas by updating or inserting the data to save
+     * Prepare the Data to send to the PSL
      *
-     * @param array $dataToSave
-     *
-     * @return bool|array array if data errors
+     * @return array $data
      */
-    public function save($dataToSave)
+    public function prepareData()
     {
-        $existingData = $this->get();
+        $data = $this->getDataForm();
 
-        if ($existingData === $dataToSave) {
-            return true;
-        }
+        $data['business_phone'] = str_replace(' ', '', $data['business_phone']);
 
-        $errors = (new PsxDataValidation())->validateData($dataToSave);
+        return $data;
+    }
 
-        if (!empty($errors)) {
-            return $errors;
-        }
+    /**
+     * setDataForm
+     *
+     * @param array $dataForm
+     */
+    public function setDataForm(array $dataForm)
+    {
+        $this->dataForm = $dataForm;
+    }
 
-        return (bool) \Configuration::updateValue(self::MAASLAND_DATA_ROW_NAME, json_encode($dataToSave));
+    /**
+     * getDataForm
+     *
+     * @return array
+     */
+    public function getDataForm()
+    {
+        return $this->dataForm;
     }
 }

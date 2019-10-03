@@ -23,14 +23,15 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
-use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
+use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
+use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
+use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
+use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
-use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
-use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {
@@ -180,18 +181,19 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessPsxSendData()
     {
         $payload = json_decode(\Tools::getValue('payload'), true);
-        $errors = (new PsxDataValidation())->validateData($payload);
+        $psxForm = (new PsxDataPrepare($payload))->prepareData();
+        $errors = (new PsxDataValidation())->validateData($psxForm);
 
         if (!empty($errors)) {
             $this->ajaxDie(json_encode($errors));
         }
 
         // Save form in database
-        if (false === $this->savePsxForm($payload)) {
+        if (false === $this->savePsxForm($psxForm)) {
             $this->ajaxDie(json_encode(false));
         }
 
-        $response = (new PsxOnboarding())->setOnboardingMerchant(array_filter($payload));
+        $response = (new PsxOnboarding())->setOnboardingMerchant(array_filter($psxForm));
 
         if ($response) {
             $this->ajaxDie(json_encode(true));

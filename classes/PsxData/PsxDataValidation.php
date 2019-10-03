@@ -117,20 +117,23 @@ class PsxDataValidation
             $errors[] = self::PHONE_COUNTRY;
         }
 
-        if (!preg_match('/^[0-9\-\(\)\/\+\s]*$/', $data['business_phone'])
+        if (!preg_match('/^^[0-9]{1,14}$/', $data['business_phone'])
             || strlen($data['business_phone']) < 1
-            || strlen($data['business_phone']) > 63
+            || strlen($data['business_phone']) > 14
         ) {
             $errors[] = self::PHONE;
         }
 
         if (!empty($data['business_website'])
-            && (!filter_var($data['business_website'], FILTER_VALIDATE_URL) || strlen($data['business_website']) > 255)
+            && (!preg_match('/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\d?(\/)]$/m', $data['business_website']) || strlen($data['business_website']) > 255)
         ) {
             $errors[] = self::WEBSITE;
         }
 
-        if (strlen($data['business_contact_gender']) < 1 || strlen($data['business_contact_gender']) > 7) {
+        if (!in_array(
+            $data['business_contact_gender'],
+            array('Mr', 'Ms')
+        )) {
             $errors[] = self::GENDER;
         }
 
