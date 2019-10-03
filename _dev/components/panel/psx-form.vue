@@ -145,9 +145,20 @@
                   <div class="row mt-3">
                     <div class="col-lg-6 col-md-6 col-sm-6">
                       <label>{{ $t('panel.psx-form.country') }}</label>
-                      <select v-model="form.business_address_country" class="form-control custom-select">
+                      <select
+                        @change="onChangeCountry(form.business_address_country)"
+                        v-model="form.business_address_country"
+                        class="form-control custom-select">
                         <option v-for="countryDetail in getCountriesDetails" :key="countryDetail.iso" :value="countryDetail.iso">
                           {{ countryDetail.name }}
+                        </option>
+                      </select>
+                    </div>
+                    <div v-if="statesList != null" class="col-lg-6 col-md-6 col-sm-6">
+                      <label>{{ $t('panel.psx-form.state') }}</label>
+                      <select v-model="form.business_address_state" class="form-control custom-select">
+                        <option v-for="(value, key) in statesList" :key="key" :value="key">
+                            {{ value }}
                         </option>
                       </select>
                     </div>
@@ -279,6 +290,7 @@
     data() {
       return {
         subCategory: null,
+        statesList: null,
         errorForm: null,
         form: {
           business_contact_gender: 'Mr',
@@ -291,6 +303,7 @@
           business_address_zip: null,
           business_address_city: null,
           business_address_country: null,
+          business_address_state: null,
           business_phone_country: '1',
           business_phone: null,
           business_website: null,
@@ -339,6 +352,10 @@
       },
       onChangeCategory(categoryId) {
         this.subCategory = this.$store.state.psx.businessDetails.business_categories[categoryId].business_subcategories;
+      },
+      onChangeCountry(countryCode) {
+        this.statesList = this.$store.state.psx.countriesStatesDetails[countryCode];
+        this.form.business_address_state = null;
       },
     },
   };

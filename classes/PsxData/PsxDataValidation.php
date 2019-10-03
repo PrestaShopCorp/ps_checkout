@@ -40,6 +40,7 @@ class PsxDataValidation
     const STREET = 'Street name ' . self::NOT_CORRECT;
     const CITY = 'City name ' . self::NOT_CORRECT;
     const COUNTRY = 'Country name ' . self::NOT_CORRECT;
+    const STATE = 'State ' . self::NOT_CORRECT;
     const ZIPCODE = 'Zip code ' . self::NOT_CORRECT;
     const TYPE = 'Type ' . self::NOT_CORRECT;
     const PHONE_COUNTRY = 'Phone country code ' . self::NOT_CORRECT;
@@ -95,6 +96,14 @@ class PsxDataValidation
 
         if (strlen($data['business_address_country']) < 1 || strlen($data['business_address_country']) > 4) {
             $errors[] = self::COUNTRY;
+        }
+
+        if (in_array(
+            $data['business_address_country'],
+            array('AR', 'BR', 'CA', 'CN', 'IN', 'ID', 'IT', 'JP', 'MX', 'TH', 'US'))
+            && strlen($data['business_address_state']) < 1
+        ) {
+            $errors[] = self::STATE;
         }
 
         if (strlen($data['business_address_zip']) < 1 || strlen($data['business_address_zip']) > 31) {

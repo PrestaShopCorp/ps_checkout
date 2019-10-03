@@ -169,6 +169,7 @@ class Translations
                     'postCode' => $this->module->l('Postcode', 'translations'),
                     'town' => $this->module->l('Town', 'translations'),
                     'country' => $this->module->l('Country', 'translations'),
+                    'state' => $this->module->l('State', 'translations'),
                     'businessPhone' => $this->module->l('Business phone', 'translations'),
                     'businessType' => $this->module->l('Business type', 'translations'),
                     'businessInformation' => $this->module->l('Business information', 'translations'),
