@@ -29,6 +29,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 use PrestaShop\Module\PrestashopCheckout\Faq\Faq;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 /**
  * Construct the context module
@@ -60,7 +61,7 @@ class ContextModule implements StorePresenterInterface
     {
         $contextModule = array(
             'context' => array(
-                'isReady' => $this->isReady(),
+                'isReady' => (new ShopContext())->isReady(),
                 'faq' => $this->getFaq(),
                 'language' => $this->context->language,
                 'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
@@ -137,15 +138,5 @@ class ContextModule implements StorePresenterInterface
     {
         return \Configuration::get('PS_ROUND_TYPE') === '1'
             && \Configuration::get('PS_PRICE_ROUND_MODE') === '2';
-    }
-
-    /**
-     * Check if the module is installed on ready or download
-     *
-     * @return bool true if on ready, false otherwise
-     */
-    private function isReady()
-    {
-        return getenv('PLATEFORM') === 'PSREADY';
     }
 }
