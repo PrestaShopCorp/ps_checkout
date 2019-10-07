@@ -100,13 +100,13 @@ class Onboarding extends PaymentClient
     private function getBusinessDetails($psxFormData)
     {
         $nameObj = [
-            'business_address' => [
+            'business_address' => array_filter([
                 'city' => $psxFormData['business_address_city'],
                 'country_code' => $psxFormData['business_address_country'],
                 'line1' => $psxFormData['business_address_street'],
-                'postal_code' => $psxFormData['business_address_state'],
+                'postal_code' => $psxFormData['business_address_zip'],
                 'state' => $psxFormData['business_address_state'],
-            ],
+            ]),
             'phone_contacts' => [
                 0 => [
                 'phone_number_details' => [
