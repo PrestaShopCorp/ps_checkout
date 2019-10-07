@@ -1,7 +1,7 @@
 import actions from './actions';
 import mutations from './mutations';
 
-const {store} = global;
+const store = JSON.parse(global.store);
 
 const state = store.config;
 

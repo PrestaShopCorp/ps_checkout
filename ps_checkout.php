@@ -149,7 +149,7 @@ class ps_checkout extends PaymentModule
         }
 
         Media::addJsDef(array(
-            'store' => (new StorePresenter($this, $this->context))->present(),
+            'store' => json_encode((new StorePresenter($this, $this->context))->present()),
         ));
 
         $this->context->controller->addCss($this->_path . 'views/css/index.css');
