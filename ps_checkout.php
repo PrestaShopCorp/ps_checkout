@@ -97,7 +97,7 @@ class ps_checkout extends PaymentModule
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
-     }
+    }
 
     /**
      * Function executed at the install of the module
