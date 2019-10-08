@@ -97,7 +97,7 @@ class ps_checkout extends PaymentModule
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
-    }
+     }
 
     /**
      * Function executed at the install of the module
@@ -618,7 +618,7 @@ class ps_checkout extends PaymentModule
     }
 
     /**
-     * Override method for addind "IGNORE" in the SQL Request to prevent duplicate entry
+     * Override method for addind "IGNORE" in the SQL Request to prevent duplicate entry and for getting All Carriers installed
      * Add checkbox carrier restrictions for a new module.
      *
      * @param array $shopsList
@@ -631,7 +631,7 @@ class ps_checkout extends PaymentModule
             $shopsList = Shop::getShops(true, null, true);
         }
 
-        $carriersList = Carrier::getCarriers((int) Context::getContext()->language->id);
+        $carriersList = Carrier::getCarriers((int) Context::getContext()->language->id, false, false, false, null, Carrier::ALL_CARRIERS);
         $allCarriers = array();
 
         foreach ($carriersList as $carrier) {
