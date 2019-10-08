@@ -118,7 +118,8 @@ class ps_checkout extends PaymentModule
             $this->registerHook(self::HOOK_LIST) &&
             (new OrderStates())->installPaypalStates() &&
             (new TableManager())->createTable() &&
-            $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1);
+            $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1) &&
+            $this->addCheckboxCarrierRestrictionsForModule();
     }
 
     /**
@@ -614,5 +615,41 @@ class ps_checkout extends PaymentModule
             'ps-checkout-css-paymentOptions',
             'modules/' . $this->name . '/views/css/paymentOptions.css'
         );
+    }
+
+    /**
+     * Override method for addind "IGNORE" in the SQL Request to prevent duplicate entry and for getting All Carriers installed
+     * Add checkbox carrier restrictions for a new module.
+     *
+     * @param array $shopsList
+     *
+     * @return bool
+     */
+    public function addCheckboxCarrierRestrictionsForModule(array $shopsList = array())
+    {
+        if (!$shopsList) {
+            $shopsList = Shop::getShops(true, null, true);
+        }
+
+        $carriersList = Carrier::getCarriers((int) Context::getContext()->language->id, false, false, false, null, Carrier::ALL_CARRIERS);
+        $allCarriers = array();
+
+        foreach ($carriersList as $carrier) {
+            $allCarriers[] = $carrier['id_reference'];
+        }
+
+        foreach ($shopsList as $idShop) {
+            foreach ($allCarriers as $idCarrier) {
+                $addModuleInCarrier = Db::getInstance()->execute('INSERT IGNORE
+                    INTO `' . _DB_PREFIX_ . 'module_carrier` (`id_module`, `id_shop`, `id_reference`)
+                    VALUES (' . (int) $this->id . ', "' . (int) $idShop . '", ' . (int) $idCarrier . ')');
+
+                if (!$addModuleInCarrier) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
