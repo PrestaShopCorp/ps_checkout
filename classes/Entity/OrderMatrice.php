@@ -109,7 +109,7 @@ class OrderMatrice extends \ObjectModel
      *
      * @param int $orderPrestashop
      *
-     * @return string
+     * @return string|false
      */
     public function getOrderPaypalFromPrestashop($orderPrestashop)
     {
@@ -117,6 +117,6 @@ class OrderMatrice extends \ObjectModel
                 FROM `' . _DB_PREFIX_ . 'pscheckout_order_matrice` pom
                 WHERE pom.id_order_prestashop = "' . (int) $orderPrestashop . '"';
 
-        return (string) \Db::getInstance()->getValue($query);
+        return \Db::getInstance()->getValue($query);
     }
 }
