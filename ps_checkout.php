@@ -144,7 +144,7 @@ class ps_checkout extends PaymentModule
             }
 
             $tab->class_name = $controllerName;
-            $tab->active = 1;
+            $tab->active = true;
             $tab->name = array();
             foreach (Language::getLanguages(true) as $lang) {
                 $tab->name[$lang['id_lang']] = $this->name;
