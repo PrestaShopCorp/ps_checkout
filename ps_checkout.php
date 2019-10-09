@@ -77,6 +77,7 @@ class ps_checkout extends PaymentModule
 
     public $confirmUninstall;
     public $bootstrap;
+    public $controllers;
 
     public function __construct()
     {
@@ -96,7 +97,11 @@ class ps_checkout extends PaymentModule
         $this->description = $this->l('Provide every payment method to your customer with one module, and manage every sale where your business happens.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
-        $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
+        $this->controllers = [
+            'AdminAjaxPrestashopCheckout',
+            'AdminPaypalOnboardingPrestashopCheckout',
+        ];
     }
 
     /**
@@ -119,7 +124,37 @@ class ps_checkout extends PaymentModule
             (new OrderStates())->installPaypalStates() &&
             (new TableManager())->createTable() &&
             $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1) &&
-            $this->addCheckboxCarrierRestrictionsForModule();
+            $this->addCheckboxCarrierRestrictionsForModule() &&
+            $this->installTabs();
+    }
+
+    /**
+     * This method is often use to create an ajax controller
+     *
+     * @return bool
+     */
+    public function installTabs()
+    {
+        $installTabCompleted = true;
+        $tab = new Tab();
+
+        foreach ($this->controllers as $controllerName) {
+            if (Tab::getIdFromClassName($controllerName)) {
+                continue;
+            }
+
+            $tab->class_name = $controllerName;
+            $tab->active = true;
+            $tab->name = array();
+            foreach (Language::getLanguages(true) as $lang) {
+                $tab->name[$lang['id_lang']] = $this->name;
+            }
+            $tab->id_parent = -1;
+            $tab->module = $this->name;
+            $installTabCompleted = $installTabCompleted && $tab->add();
+        }
+
+        return $installTabCompleted;
     }
 
     /**
@@ -134,7 +169,28 @@ class ps_checkout extends PaymentModule
         }
 
         return parent::uninstall() &&
-            (new TableManager())->dropTable();
+            (new TableManager())->dropTable() &&
+            $this->uninstallTabs();
+    }
+
+    /**
+     * uninstall tabs
+     *
+     * @return bool
+     */
+    public function uninstallTabs()
+    {
+        $uninstallTabCompleted = true;
+
+        foreach ($this->controllers as $controllerName) {
+            $id_tab = (int) Tab::getIdFromClassName($controllerName);
+            $tab = new Tab($id_tab);
+            if (Validate::isLoadedObject($tab)) {
+                $uninstallTabCompleted = $uninstallTabCompleted && $tab->delete();
+            }
+        }
+
+        return $uninstallTabCompleted;
     }
 
     public function getContent()
