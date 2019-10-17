@@ -127,7 +127,7 @@ class GenerateJsonPaypalOrder
             'soft_descriptor' => $this->truncate(\Configuration::get('PS_SHOP_NAME'), 22),
             'amount' => [
                 'currency_code' => $params['currency']['iso_code'],
-                'value' => $params['cart']['totals']['total']['amount'],
+                'value' => $params['cart']['totals']['total_including_tax']['amount'],
                 'breakdown' => [
                     'item_total' => [
                         'currency_code' => $params['currency']['iso_code'],
@@ -197,7 +197,7 @@ class GenerateJsonPaypalOrder
         // set discount value
         $payload['amount']['breakdown']['discount'] = [
             'currency_code' => $params['currency']['iso_code'],
-            'value' => abs($params['cart']['totals']['total']['amount'] - $totalProductsWithoutTax - $totalTax - $params['cart']['subtotals']['shipping']['amount'] - $handlingValue),
+            'value' => abs($params['cart']['totals']['total_including_tax']['amount'] - $totalProductsWithoutTax - $totalTax - $params['cart']['subtotals']['shipping']['amount'] - $handlingValue),
         ];
 
         // TODO: Disabled temporary: Need to handle country indicator
