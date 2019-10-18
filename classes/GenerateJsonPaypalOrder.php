@@ -231,7 +231,7 @@ class GenerateJsonPaypalOrder
     private function truncate($str, $limit)
     {
         if (empty($str)) {
-            return $str;
+            return (string) $str;
         }
 
         return substr($str, 0, $limit);

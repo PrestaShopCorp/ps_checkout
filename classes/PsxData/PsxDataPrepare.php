@@ -45,6 +45,8 @@ class PsxDataPrepare
         $data = $this->getDataForm();
 
         $data['business_phone'] = str_replace(' ', '', $data['business_phone']);
+        $data['business_phone_country'] = (string) $data['business_phone_country'];
+        $data['business_address_state'] = (string) $data['business_address_state'];
 
         return $data;
     }
