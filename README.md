@@ -6,6 +6,11 @@
 
 PrestaShop official payment module in partnership with PayPal.
 
+## Reporting issues
+
+In order to contact the team, please use the link available in the
+back-office once logged to your PrestaShop account.
+
 ## Building the module
 
 ### Direct download
@@ -42,6 +47,13 @@ Then comment lines:
 ```
 
 I also recommend you to install the [vuejs-devtools][vuejs-devtools].
+
+#### Switch on sanbox (Advanced)
+
+PayPal offers a sandbox mode in which an order can be created without
+involving actual money.
+
+To enable it, reach the module configuration page, then replace `#...` at the end of the URL with `#/debugDoNotTouch`.
 
 ## Contributing
 
