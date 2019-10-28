@@ -31,22 +31,11 @@
     <div id="paypal-button-container"></div>
 
     <form id="conditions-to-approve-paypal" method="GET">
-        <ul>
-            <li>
-            <div class="float-xs-left">
-                <span class="custom-checkbox">
-                <input id="conditions_to_approve-paypal" name="conditions_to_approve" required="" type="checkbox" value="1" class="ps-shown-by-js buttons-approve">
-                <span><i class="material-icons rtl-no-flip checkbox-checked"></i></span>
-                </span>
-            </div>
-            <div class="condition-label">
-                <label class="js-terms paypal-label" for="conditions_to_approve-paypal">
-                    {assign var="link_url" value=$link->getCMSLink('3')}
-                    {l s='I agree to the [1]terms of service[/1] and will adhere to them unconditionally.' mod='ps_checkout' tags=["<a href=\"$link_url\" id=\"cta-terms-and-conditions-checkout\">"]}
-                </label>
-            </div>
-            </li>
-        </ul>
+      <label for="conditions_to_approve">
+        <input id="conditions_to_approve" type="checkbox" name="conditions_to_approve" class="buttons-approve">
+        {assign var="link_url" value=$link->getCMSLink('3')}
+        {l s='I agree to the [1]terms of service[/1] and will adhere to them unconditionally.' mod='ps_checkout' tags=["<a href=\"$link_url\" id=\"cta-terms-and-conditions-checkout\">"]}
+      </label>
     </form>
 </div>
 
