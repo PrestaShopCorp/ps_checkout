@@ -23,9 +23,7 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 
-<script id="paypalSdk" src="https://www.paypal.com/sdk/js?components=hosted-fields,buttons&amp;client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&amp;merchant-id={$merchantId|escape:'htmlall':'UTF-8'}&amp;intent={$intent|escape:'htmlall':'UTF-8'}&amp;currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}"
-    data-client-token="{$clientToken|escape:'htmlall':'UTF-8'}">
-</script>
+<link rel="prefetch" href="https://www.paypal.com/sdk/js?components=hosted-fields,buttons&amp;client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&amp;merchant-id={$merchantId|escape:'htmlall':'UTF-8'}&amp;intent={$intent|escape:'htmlall':'UTF-8'}&amp;currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}" as="script">
 
 <div class="paypal-tips">{l s='You will be redirected to the related gateway to complete payment' mod='ps_checkout'}</div>
 
@@ -59,6 +57,31 @@
         </ul>
     </article>
 </div>
+
+<script>
+/**
+ * Create paypal script
+ */
+function initPaypalScript() {
+  if (typeof paypal !== 'undefined') {
+    return;
+  }
+
+  var psCheckoutScript = document.getElementById('paypalSdkPsCheckout');
+
+  if (psCheckoutScript !== null) {
+    return;
+  }
+
+  const paypalScript = document.createElement('script');
+  paypalScript.setAttribute('src', "https://www.paypal.com/sdk/js?components=hosted-fields,buttons&client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&merchant-id={$merchantId|escape:'htmlall':'UTF-8'}&intent={$intent|escape:'htmlall':'UTF-8'}&currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}");
+  paypalScript.setAttribute('data-client-token', "{$clientToken|escape:'htmlall':'UTF-8'}");
+  paypalScript.setAttribute('id', 'paypalSdkPsCheckout');
+  document.head.appendChild(paypalScript);
+}
+
+initPaypalScript();
+</script>
 
 {literal}
 <script type="text/javascript">

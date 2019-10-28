@@ -27,8 +27,17 @@
 */
 
 $(document).ready(() => {
+  const interval = setInterval(() => {
+    if (window.paypal !== undefined) {
+      initPsCheckout();
+      clearInterval(interval);
+    }
+  }, 200);
+});
+
+function initPsCheckout() {
   if (typeof paypalOrderId === 'undefined') {
-    return;
+    throw new Error('No paypal order id');
   }
 
   hostedFieldsErrors = JSON.parse(hostedFieldsErrors);
@@ -48,7 +57,7 @@ $(document).ready(() => {
       document.querySelectorAll('[data-module-name="ps_checkout_hostedFields"]')[0].click();
     }
   }
-});
+}
 
 function initSmartButtons() {
   // remove "amp;" from the url
