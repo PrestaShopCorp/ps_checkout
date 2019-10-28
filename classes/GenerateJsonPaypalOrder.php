@@ -235,7 +235,7 @@ class GenerateJsonPaypalOrder
             return (string) $str;
         }
 
-        return substr($str, 0, $limit);
+        return mb_substr($str, 0, $limit);
     }
 
     /**
