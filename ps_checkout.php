@@ -44,8 +44,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ps_checkout extends PaymentModule
+class Ps_checkout extends PaymentModule
 {
+    const VERSION = '1.2.4';
+
     // hook list used by the module
     const HOOK_LIST = [
         'paymentOptions',
@@ -83,7 +85,7 @@ class ps_checkout extends PaymentModule
     {
         $this->name = 'ps_checkout';
         $this->tab = 'payments_gateways';
-        $this->version = '1.2.4';
+        $this->version = self::VERSION;
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
 
