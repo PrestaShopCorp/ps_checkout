@@ -179,6 +179,7 @@ class GenerateJsonPaypalOrder
                 'brand_name' => \Configuration::get('PS_SHOP_NAME'),
                 'shipping_preference' => 'SET_PROVIDED_ADDRESS',
             ],
+            'roundingConfig' => (string) \Configuration::get('PS_ROUND_TYPE') . '-' . (string) \Configuration::get('PS_PRICE_ROUND_MODE'),
         ];
 
         // define by default the handling at 0
