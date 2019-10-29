@@ -46,7 +46,7 @@ if (!defined('_PS_VERSION_')) {
 
 class Ps_checkout extends PaymentModule
 {
-    const VERSION = '1.2.4';
+    const VERSION = '1.2.5';
 
     // hook list used by the module
     const HOOK_LIST = [
