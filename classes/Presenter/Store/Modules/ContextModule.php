@@ -61,6 +61,9 @@ class ContextModule implements StorePresenterInterface
     {
         $contextModule = array(
             'context' => array(
+                'moduleVersion' => \Ps_checkout::VERSION,
+                'psVersion' => _PS_VERSION_,
+                'shopId' => \Configuration::get('PS_CHECKOUT_SHOP_UUID_V4'),
                 'isReady' => (new ShopContext())->isReady(),
                 'faq' => $this->getFaq(),
                 'language' => $this->context->language,

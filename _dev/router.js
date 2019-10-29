@@ -10,6 +10,8 @@ import ResetPassword from '@/pages/ResetPassword';
 import PsxAdditionalDetails from '@/pages/PsxAdditionalDetails';
 import Activity from '@/pages/Activity';
 import Advanced from '@/pages/Advanced';
+import Experimental from '@/pages/Experimental';
+import Debug from '@/pages/Debug';
 import Help from '@/pages/Help';
 
 Vue.use(Router);
@@ -94,7 +96,17 @@ const router = new Router({
       component: Activity,
     },
     {
-      path: '/debugDoNotTouch',
+      path: '/debug',
+      name: 'Debug',
+      component: Debug,
+    },
+    {
+      path: '/experimental',
+      name: 'Experimental',
+      component: Experimental,
+    },
+    {
+      path: '/advanced',
       name: 'Advanced',
       component: Advanced,
     },
@@ -113,8 +125,10 @@ const guestPages = [
   'Signin',
   'Signup',
   'ResetPassword',
-  'Help',
+  'Experimental',
   'Advanced',
+  'Debug',
+  'Help',
 ];
 
 // Global navigation guard
