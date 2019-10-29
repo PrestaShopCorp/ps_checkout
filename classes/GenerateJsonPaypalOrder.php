@@ -67,7 +67,8 @@ class GenerateJsonPaypalOrder
         return [
             'cart' => array_merge(
                 $cartPresenter,
-                ['id' => $cart->id]
+                ['id' => $cart->id],
+                ['shipping_cost' => $cart->getTotalShippingCost(null, true)]
             ),
             'customer' => $customer,
             'language' => $language,
@@ -135,7 +136,7 @@ class GenerateJsonPaypalOrder
                     ],
                     'shipping' => [
                         'currency_code' => $params['currency']['iso_code'],
-                        'value' => $params['cart']['subtotals']['shipping']['amount'],
+                        'value' => $params['cart']['shipping_cost'],
                     ],
                     'tax_total' => [
                         'currency_code' => $params['currency']['iso_code'],
@@ -198,7 +199,7 @@ class GenerateJsonPaypalOrder
         // set discount value
         $payload['amount']['breakdown']['discount'] = [
             'currency_code' => $params['currency']['iso_code'],
-            'value' => abs($params['cart']['totals']['total_including_tax']['amount'] - $totalProductsWithoutTax - $totalTax - $params['cart']['subtotals']['shipping']['amount'] - $handlingValue),
+            'value' => abs($params['cart']['totals']['total_including_tax']['amount'] - $totalProductsWithoutTax - $totalTax - $params['cart']['shipping_cost'] - $handlingValue),
         ];
 
         // TODO: Disabled temporary: Need to handle country indicator
