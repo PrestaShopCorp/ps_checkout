@@ -26,6 +26,10 @@
 * to avoid any conflicts with others containers.
 */
 
+.buttons-approve {
+  margin-right: 10px;
+}
+
 .paypal-hide-default {
     display: none !important;
     visibility: hidden !important;
@@ -74,6 +78,7 @@
 #conditions-to-approve-paypal {
     max-width: 300px;
     margin: auto;
+    margin-bottom: 10px;
 }
 
 #paypal-button-container {
