@@ -75,6 +75,9 @@ initPaypalScript();
 
 {literal}
 <script type="text/javascript">
+  const cardNumberPlaceholder = "{/literal}{l s='Card number' mod='ps_checkout'}{literal}";
+  const expDatePlaceholder = "{/literal}{l s='MM/YY' mod='ps_checkout'}{literal}";
+  const cvvPlaceholder = "{/literal}{l s='XXX' mod='ps_checkout'}{literal}";
   const paypalOrderId = "{/literal}{$paypalOrderId|escape:'javascript':'UTF-8'}{literal}";
   const validateOrderLinkByCard = "{/literal}{$validateOrderLinkByCard|escape:'javascript':'UTF-8'}{literal}";
   const validateOrderLinkByPaypal = "{/literal}{$validateOrderLinkByPaypal|escape:'javascript':'UTF-8'}{literal}";
