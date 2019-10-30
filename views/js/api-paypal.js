@@ -123,16 +123,16 @@ function initHostedFields() {
       fields: {
         number: {
           selector: '#card-number',
-          placeholder: 'Card number',
+          placeholder: cardNumberPlaceholder,
           class: 'form-control',
         },
         cvv: {
           selector: '#cvv',
-          placeholder: 'XXX',
+          placeholder: cvvPlaceholder,
         },
         expirationDate: {
           selector: '#expiration-date',
-          placeholder: 'MM/YYYY',
+          placeholder: expDatePlaceholder,
         },
       },
     }).then((hf) => {
