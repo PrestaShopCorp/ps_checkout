@@ -53,7 +53,9 @@ I also recommend you to install the [vuejs-devtools][vuejs-devtools].
 PayPal offers a sandbox mode in which an order can be created without
 involving actual money.
 
-To enable it, reach the module configuration page, then replace `#...` at the end of the URL with `#/debugDoNotTouch`.
+To enable it, reach the module configuration page, then replace `#...` at the end of the URL with `#/experimental`.
+
+This route allow you to acces to some experimental features (like paypal sandbox). Don't use them in a production environment until these features are officially released.
 
 ## Contributing
 
