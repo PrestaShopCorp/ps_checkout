@@ -126,7 +126,6 @@ const guestPages = [
   'Signup',
   'ResetPassword',
   'Experimental',
-  'Advanced',
   'Debug',
   'Help',
 ];
