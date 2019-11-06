@@ -67,7 +67,8 @@ class GenerateJsonPaypalOrder
         return [
             'cart' => array_merge(
                 $cartPresenter,
-                ['id' => $cart->id]
+                ['id' => $cart->id],
+                ['shipping_cost' => $cart->getTotalShippingCost(null, true)]
             ),
             'customer' => $customer,
             'language' => $language,
@@ -127,7 +128,7 @@ class GenerateJsonPaypalOrder
             'soft_descriptor' => $this->truncate(\Configuration::get('PS_SHOP_NAME'), 22),
             'amount' => [
                 'currency_code' => $params['currency']['iso_code'],
-                'value' => $params['cart']['totals']['total']['amount'],
+                'value' => $params['cart']['totals']['total_including_tax']['amount'],
                 'breakdown' => [
                     'item_total' => [
                         'currency_code' => $params['currency']['iso_code'],
@@ -135,7 +136,7 @@ class GenerateJsonPaypalOrder
                     ],
                     'shipping' => [
                         'currency_code' => $params['currency']['iso_code'],
-                        'value' => $params['cart']['subtotals']['shipping']['amount'],
+                        'value' => $params['cart']['shipping_cost'],
                     ],
                     'tax_total' => [
                         'currency_code' => $params['currency']['iso_code'],
@@ -179,6 +180,7 @@ class GenerateJsonPaypalOrder
                 'brand_name' => \Configuration::get('PS_SHOP_NAME'),
                 'shipping_preference' => 'SET_PROVIDED_ADDRESS',
             ],
+            'roundingConfig' => (string) \Configuration::get('PS_ROUND_TYPE') . '-' . (string) \Configuration::get('PS_PRICE_ROUND_MODE'),
         ];
 
         // define by default the handling at 0
@@ -194,10 +196,14 @@ class GenerateJsonPaypalOrder
             ];
         }
 
-        // set discount value
+        // Calc the discount value. Dicount value can also be used in case of a rounding issue.
+        // PrestaShop and PayPal doesn't handle rounding in the same way. In some cases (eg: amount ended with .35, .55 etc ... with a 10% discount),
+        // the amount value of PrestaShop is different of the value calc by PayPal (paypal always has .1 or .2 more than prestashop).
+        // In order to avoid this difference, we put it into the discount field in order to get the correct value.
+        // (the surplus value (calc by paypal) is deducts from the total amount in order to get the same amount of prestashop)
         $payload['amount']['breakdown']['discount'] = [
             'currency_code' => $params['currency']['iso_code'],
-            'value' => abs($params['cart']['totals']['total']['amount'] - $totalProductsWithoutTax - $totalTax - $params['cart']['subtotals']['shipping']['amount'] - $handlingValue),
+            'value' => abs($params['cart']['totals']['total_including_tax']['amount'] - $totalProductsWithoutTax - $totalTax - $params['cart']['shipping_cost'] - $handlingValue),
         ];
 
         // TODO: Disabled temporary: Need to handle country indicator
@@ -231,10 +237,10 @@ class GenerateJsonPaypalOrder
     private function truncate($str, $limit)
     {
         if (empty($str)) {
-            return $str;
+            return (string) $str;
         }
 
-        return substr($str, 0, $limit);
+        return mb_substr($str, 0, $limit);
     }
 
     /**
