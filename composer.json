@@ -25,5 +25,7 @@
     "require": {
         "ramsey/uuid": "^3.8",
         "vlucas/phpdotenv": "^3.4"
-    }
+    },
+    "author": "PrestaShop",
+    "license": "AFL-3.0"
 }

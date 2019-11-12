@@ -1,42 +1,36 @@
 <?php
 /**
-* 2007-2019 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/afl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or ad dto this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-*  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2019 PrestaShop SA
-*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
-*/
-use Ramsey\Uuid\Uuid;
-use PrestaShop\Module\PrestashopCheckout\Refund;
-use PrestaShop\Module\PrestashopCheckout\OrderStates;
-use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+ * 2007-2019 PrestaShop and Contributors
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA <contact@prestashop.com>
+ * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ * International Registered Trademark & Property of PrestaShop SA
+ */
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
-use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
-use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 use PrestaShop\Module\PrestashopCheckout\Database\TableManager;
+use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
 use PrestaShop\Module\PrestashopCheckout\GenerateJsonPaypalOrder;
-use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
+use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
+use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter;
-use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Refund;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
+use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+use Ramsey\Uuid\Uuid;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -58,7 +52,7 @@ class Ps_checkout extends PaymentModule
         'actionOrderStatusUpdate',
     ];
 
-    public $configurationList = array(
+    public $configurationList = [
         'PS_CHECKOUT_INTENT' => 'CAPTURE',
         'PS_CHECKOUT_MODE' => 'LIVE',
         'PS_CHECKOUT_PAYMENT_METHODS_ORDER' => '',
@@ -73,7 +67,7 @@ class Ps_checkout extends PaymentModule
         'PS_PSX_FIREBASE_REFRESH_TOKEN' => '',
         'PS_CHECKOUT_PSX_FORM' => '',
         'PS_CHECKOUT_SHOP_UUID_V4' => '',
-    );
+    ];
 
     public $confirmUninstall;
     public $bootstrap;
@@ -152,7 +146,7 @@ class Ps_checkout extends PaymentModule
 
             $tab->class_name = $controllerName;
             $tab->active = true;
-            $tab->name = array();
+            $tab->name = [];
             foreach (Language::getLanguages(true) as $lang) {
                 $tab->name[$lang['id_lang']] = $this->name;
             }
@@ -212,9 +206,9 @@ class Ps_checkout extends PaymentModule
             (new PaypalAccountUpdater($paypalAccount))->update();
         }
 
-        Media::addJsDef(array(
+        Media::addJsDef([
             'store' => json_encode((new StorePresenter($this, $this->context))->present()),
-        ));
+        ]);
 
         $this->context->controller->addCss($this->_path . 'views/css/index.css');
 
@@ -255,7 +249,7 @@ class Ps_checkout extends PaymentModule
 
         $paypalAccountRepository = new PaypalAccountRepository();
 
-        $this->context->smarty->assign(array(
+        $this->context->smarty->assign([
             'merchantId' => $paypalAccountRepository->getMerchantId(),
             'paypalClientId' => (new PaypalEnv())->getPaypalClientId(),
             'clientToken' => $paypalOrder['client_token'],
@@ -267,11 +261,11 @@ class Ps_checkout extends PaymentModule
             'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT')),
             'currencyIsoCode' => $this->context->currency->iso_code,
             'isCardPaymentError' => (bool) Tools::getValue('hferror'),
-        ));
+        ]);
 
         $paymentMethods = \Configuration::get('PS_CHECKOUT_PAYMENT_METHODS_ORDER');
 
-        $payment_options = array();
+        $payment_options = [];
 
         // if no paymentMethods position is set, by default put credit card (hostedFields) as first position
         if (empty($paymentMethods)) {
@@ -486,7 +480,7 @@ class Ps_checkout extends PaymentModule
         $paypalPaymentOption = new PaymentOption();
         $paypalPaymentOption->setModuleName($this->name . '_paypal')
                             ->setCallToActionText($this->l('Pay by PayPal or other payment methods'))
-                            ->setAction($this->context->link->getModuleLink($this->name, 'CreateOrder', array(), true))
+                            ->setAction($this->context->link->getModuleLink($this->name, 'CreateOrder', [], true))
                             ->setAdditionalInformation($this->generatePaypalForm())
                             ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/paypal.png'));
 
@@ -513,7 +507,7 @@ class Ps_checkout extends PaymentModule
         $hostedFieldsPaymentOption = new PaymentOption();
         $hostedFieldsPaymentOption->setModuleName($this->name . '_hostedFields')
                     ->setCallToActionText($this->l('Pay by Card'))
-                    ->setAction($this->context->link->getModuleLink($this->name, 'ValidateOrder', array(), true))
+                    ->setAction($this->context->link->getModuleLink($this->name, 'ValidateOrder', [], true))
                     ->setForm($this->generateHostedFieldsForm())
                     ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'));
 
@@ -540,9 +534,9 @@ class Ps_checkout extends PaymentModule
         }
 
         if ($params['order']->valid) {
-            $this->context->smarty->assign(array(
+            $this->context->smarty->assign([
                 'status' => 'ok', 'id_order' => $params['order']->id,
-            ));
+            ]);
         } else {
             $this->context->smarty->assign('status', 'failed');
         }
@@ -588,16 +582,16 @@ class Ps_checkout extends PaymentModule
         $link = $this->context->link->getAdminLink(
             'AdminModules',
             true,
-            array(),
-            array(
+            [],
+            [
                 'configure' => 'ps_checkout',
-            )
+            ]
         );
 
-        $this->context->smarty->assign(array(
+        $this->context->smarty->assign([
             'imgPath' => $this->_path . 'views/img/',
             'configureLink' => $link,
-        ));
+        ]);
 
         return $this->display(__FILE__, '/views/templates/hook/adminAfterHeader.tpl');
     }
@@ -664,10 +658,10 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
-        Media::addJsDef(array(
+        Media::addJsDef([
             'paypalPaymentOption' => $this->name . '_paypal',
             'hostedFieldsErrors' => (new HostedFieldsErrors($this))->getHostedFieldsErrors(),
-        ));
+        ]);
 
         $this->context->controller->registerJavascript(
             'ps-checkout-paypal-api',
@@ -688,14 +682,14 @@ class Ps_checkout extends PaymentModule
      *
      * @return bool
      */
-    public function addCheckboxCarrierRestrictionsForModule(array $shopsList = array())
+    public function addCheckboxCarrierRestrictionsForModule(array $shopsList = [])
     {
         if (!$shopsList) {
             $shopsList = Shop::getShops(true, null, true);
         }
 
         $carriersList = Carrier::getCarriers((int) Context::getContext()->language->id, false, false, false, null, Carrier::ALL_CARRIERS);
-        $allCarriers = array();
+        $allCarriers = [];
 
         foreach ($carriersList as $carrier) {
             $allCarriers[] = $carrier['id_reference'];
