@@ -244,7 +244,7 @@ class Ps_checkout extends PaymentModule
         $payload = (new GenerateJsonPaypalOrder())->create($this->context);
         $paypalOrder = (new Order($this->context->link))->create($payload);
 
-        if (false === $paypalOrder) {
+        if (false === $paypalOrder['status']) {
             return false;
         }
 
@@ -253,10 +253,10 @@ class Ps_checkout extends PaymentModule
         $this->context->smarty->assign([
             'merchantId' => $paypalAccountRepository->getMerchantId(),
             'paypalClientId' => (new PaypalEnv())->getPaypalClientId(),
-            'clientToken' => $paypalOrder['client_token'],
-            'paypalOrderId' => $paypalOrder['id'],
-            'validateOrderLinkByCard' => $this->getValidateOrderLink($paypalOrder['id'], 'card'),
-            'validateOrderLinkByPaypal' => $this->getValidateOrderLink($paypalOrder['id'], 'paypal'),
+            'clientToken' => $paypalOrder['body']['client_token'],
+            'paypalOrderId' => $paypalOrder['body']['id'],
+            'validateOrderLinkByCard' => $this->getValidateOrderLink($paypalOrder['body']['id'], 'card'),
+            'validateOrderLinkByPaypal' => $this->getValidateOrderLink($paypalOrder['body']['id'], 'paypal'),
             'cardIsActive' => $paypalAccountRepository->cardPaymentMethodIsValid(),
             'paypalIsActive' => $paypalAccountRepository->paypalPaymentMethodIsValid(),
             'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT')),
@@ -406,7 +406,7 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
-        $addOrderPayment = $refund->addOrderPayment($params['order'], $refundResponse['id']);
+        $addOrderPayment = $refund->addOrderPayment($params['order'], $refundResponse['body']['id']);
 
         if (false === $addOrderPayment) {
             return false;
@@ -468,7 +468,7 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
-        return $refund->doTotalRefund($order, $order->getProducts(), $refundResponse['id']);
+        return $refund->doTotalRefund($order, $order->getProducts(), $refundResponse['body']['id']);
     }
 
     /**

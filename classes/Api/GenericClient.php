@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
+use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
 
 /**
  * Construct the client used to make call to maasland
@@ -49,7 +49,7 @@ class GenericClient
      *
      * @var bool
      */
-    protected $catchExceptions = true;
+    protected $catchExceptions = false;
 
     /**
      * Set how long guzzle will wait a response before end it up
@@ -70,33 +70,15 @@ class GenericClient
      *
      * @param array $options payload
      *
-     * @return array|bool return response or false if no response
+     * @return array return response or false if no response
      */
     protected function post(array $options = [])
     {
-        try {
-            $response = $this->getClient()->post($this->getRoute(), $options);
-        } catch (RequestException $e) {
-            \PrestaShopLogger::addLog(date('[Ymd] ') . $e->getMessage(), 3);
+        $response = $this->getClient()->post($this->getRoute(), $options);
 
-            // TODO: hotfix -> improve error management system
-            if (!$e->hasResponse()) {
-                return [
-                    'checkoutError' => true,
-                    'message' => $e->getMessage(),
-                ];
-            }
-            $response = $e->getResponse();
-        }
+        $responseHandler = new ResponseApiHandler();
 
-        // In case of a 204 status code, there is no body waitted so return true
-        if (204 === $response->getStatusCode()) {
-            return true;
-        }
-
-        $data = json_decode($response->getBody(), true);
-
-        return isset($data) ? $data : false;
+        return $responseHandler->handleResponse($response);
     }
 
     /**

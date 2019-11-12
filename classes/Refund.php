@@ -76,13 +76,13 @@ class Refund
      */
     public function refundPaypalOrder()
     {
-        $refund = (new Order(\Context::getContext()->link))->refund($this->getPayload());
+        $response = (new Order(\Context::getContext()->link))->refund($this->getPayload());
 
-        if (isset($refund['statusCode']) && $refund['statusCode'] === 422) {
-            return $this->handleCallbackErrors($refund['message']);
+        if (422 === $response['httpCode']) {
+            return $this->handleCallbackErrors($response['body']['message']);
         }
 
-        return $refund;
+        return $response;
     }
 
     /**
@@ -92,13 +92,13 @@ class Refund
      */
     public function getCaptureId()
     {
-        $paypalOrder = (new PaypalOrder($this->getPaypalOrderId()))->getOrder();
+        $response = (new PaypalOrder($this->getPaypalOrderId()))->getOrder();
 
-        if (!$paypalOrder) {
+        if (false === $response['status']) {
             return false;
         }
 
-        $purchaseUnits = current($paypalOrder['purchase_units']);
+        $purchaseUnits = current($response['purchase_units']);
         $capture = current($purchaseUnits['payments']['captures']);
         $captureId = $capture['id'];
 

@@ -35,7 +35,7 @@ class Auth extends FirebaseClient
      * @param string $email
      * @param string $password
      *
-     * @return array|bool
+     * @return array
      */
     public function signInWithEmailAndPassword($email, $password)
     {
@@ -58,7 +58,7 @@ class Auth extends FirebaseClient
      * @param string $email
      * @param string $password
      *
-     * @return array|bool
+     * @return array
      */
     public function signUpWithEmailAndPassword($email, $password)
     {
@@ -80,7 +80,7 @@ class Auth extends FirebaseClient
      *
      * @param string $email
      *
-     * @return array|bool
+     * @return array
      */
     public function sendPasswordResetEmail($email)
     {

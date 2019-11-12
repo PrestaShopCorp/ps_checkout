@@ -32,7 +32,7 @@ class Webhook extends PaymentClient
      *
      * @param array $payload
      *
-     * @return false|array false if good | array if errors returned
+     * @return array
      */
     public function getShopSignature(array $payload)
     {

@@ -31,7 +31,7 @@ class Onboarding extends PaymentClient
     /**
      * Generate the paypal link to onboard merchant
      *
-     * @return string|bool onboarding link
+     * @return array onboarding link
      */
     public function getOnboardingLink($locale)
     {
@@ -56,11 +56,11 @@ class Onboarding extends PaymentClient
             'json' => json_encode($payload),
         ]);
 
-        if (false === isset($response['links']['1']['href'])) {
-            return false;
+        if (false === $response['status']) {
+            return $response;
         }
 
-        return $response['links']['1']['href'];
+        return $response['body']['links']['1']['href'];
     }
 
     /**

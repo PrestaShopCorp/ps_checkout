@@ -116,12 +116,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $response = $firebase->signInWithEmailAndPassword($email, $password);
 
         // if there is no error, save the account tokens in database
-        if (!isset($response['error'])) {
+        if (true === $response['status']) {
             $psAccount = new PsAccount(
-                $response['idToken'],
-                $response['refreshToken'],
-                $response['email'],
-                $response['localId']
+                $response['body']['idToken'],
+                $response['body']['refreshToken'],
+                $response['body']['email'],
+                $response['body']['localId']
             );
 
             (new PersistentConfiguration())->savePsAccount($psAccount);
@@ -142,12 +142,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $response = $firebase->signUpWithEmailAndPassword($email, $password);
 
         // if there is no error, save the account tokens in database
-        if (!isset($response['error'])) {
+        if (true === $response['status']) {
             $psAccount = new PsAccount(
-                $response['idToken'],
-                $response['refreshToken'],
-                $response['email'],
-                $response['localId']
+                $response['body']['idToken'],
+                $response['body']['refreshToken'],
+                $response['body']['email'],
+                $response['body']['localId']
             );
 
             (new PersistentConfiguration())->savePsAccount($psAccount);

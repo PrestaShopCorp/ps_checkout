@@ -47,6 +47,7 @@ class FirebaseClient extends GenericClient
         $client = new Client([
             'defaults' => [
                 'timeout' => $this->timeout,
+                'exceptions' => $this->catchExceptions,
                 'allow_redirects' => false,
                 'query' => [
                     'key' => $this->apiKey,

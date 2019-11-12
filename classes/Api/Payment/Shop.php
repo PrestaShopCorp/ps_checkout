@@ -32,7 +32,7 @@ class Shop extends PaymentClient
      *
      * @param string $merchantId
      *
-     * @return string|bool onboarding link
+     * @return array onboarding link
      */
     public function getMerchantIntegration($merchantId)
     {

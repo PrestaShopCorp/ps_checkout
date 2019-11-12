@@ -38,20 +38,20 @@ export default {
         email: payload.email,
         password: payload.password,
       },
-    }).then((user) => {
-      if (user.error) {
-        return Promise.reject(user);
+    }).then((resp) => {
+      if (resp.status === false) {
+        return Promise.reject(resp);
       }
 
       commit(types.UPDATE_ACCOUNT, {
-        email: user.email,
-        idToken: user.idToken,
-        localId: user.localId,
-        refreshToken: user.refreshToken,
+        email: resp.body.email,
+        idToken: resp.body.idToken,
+        localId: resp.body.localId,
+        refreshToken: resp.body.refreshToken,
         onboardingCompleted: true,
       });
 
-      return Promise.resolve(user);
+      return Promise.resolve(resp);
     });
   },
 
@@ -63,20 +63,20 @@ export default {
         email: payload.email,
         password: payload.password,
       },
-    }).then((user) => {
-      if (user.error) {
-        return Promise.reject(user);
+    }).then((resp) => {
+      if (resp.status === false) {
+        return Promise.reject(resp);
       }
 
       commit(types.UPDATE_ACCOUNT, {
-        email: user.email,
-        idToken: user.idToken,
-        localId: user.localId,
-        refreshToken: user.refreshToken,
+        email: resp.body.email,
+        idToken: resp.body.idToken,
+        localId: resp.body.localId,
+        refreshToken: resp.body.refreshToken,
         onboardingCompleted: true,
       });
 
-      return Promise.resolve(user);
+      return Promise.resolve(resp);
     });
   },
 };

@@ -45,13 +45,13 @@ class PaypalOrder
      */
     private function loadOrder($id)
     {
-        $order = (new Order(\Context::getContext()->link))->fetch($id);
+        $response = (new Order(\Context::getContext()->link))->fetch($id);
 
-        if (false === $order) {
-            return false;
+        if (false === $response['status']) {
+            return $response;
         }
 
-        $this->setOrder($order);
+        $this->setOrder($response['body']);
     }
 
     /**

@@ -83,7 +83,7 @@ class ValidateOrder
                 throw new \Exception(sprintf('Unknown Intent type %s', $paypalOrder->getOrderIntent()));
         }
 
-        if (false === $response) {
+        if (false === $response['status']) {
             return false;
         }
 
@@ -109,10 +109,6 @@ class ValidateOrder
 
         // TODO : patch the order in order to update the order id with the order id
         // of the prestashop order
-
-        if (!isset($response['status'])) {
-            return true;
-        }
 
         $orderState = $this->setOrderState(
             $module->currentOrder,

@@ -29,7 +29,7 @@ class Onboarding extends PsxClient
      *
      * @param array $data
      *
-     * @return false|array false if good | array if errors returned
+     * @return array false if good | array if errors returned
      */
     public function setOnboardingMerchant(array $data)
     {
