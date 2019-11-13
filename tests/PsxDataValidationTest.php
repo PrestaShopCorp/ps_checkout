@@ -1,28 +1,22 @@
 <?php
 /**
- * 2007-2019 PrestaShop
+ * 2007-2019 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Open Software License (OSL 3.0)
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/osl-3.0.php
+ * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
  *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
- *
- *  @author PrestaShop SA <contact@prestashop.com>
- *  @copyright  2007-2019 PrestaShop SA
- *  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
- *  International Registered Trademark & Property of PrestaShop SA
- **/
+ * @author    PrestaShop SA <contact@prestashop.com>
+ * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ * International Registered Trademark & Property of PrestaShop SA
+ */
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
 
@@ -41,15 +35,15 @@ class PsxDataValidationTest extends TestCase
 
     public function dataProvider()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     PsxDataValidation::DATA_ERROR,
-                ),
-                array(),
-            ),
-            array(
-                array(
+                ],
+                [],
+            ],
+            [
+                [
                     PsxDataValidation::FIRST_NAME,
                     PsxDataValidation::LAST_NAME,
                     PsxDataValidation::LANGUAGE,
@@ -65,8 +59,8 @@ class PsxDataValidationTest extends TestCase
                     PsxDataValidation::COMPANY_EMR,
                     PsxDataValidation::CATEGORY,
                     PsxDataValidation::SUB_CATEGORY,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => '',
                     'business_contact_last_name' => '',
                     'business_contact_language' => '',
@@ -84,13 +78,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => ' ',
                     'business_category' => '',
                     'business_sub_category' => ' ',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::FIRST_NAME,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => '2ckKzzAH5F68FWWKQ9wieF1dW85bgTCQuer6OEpMtrJCTOLOnDk8gOESC7TjximRhZkOTPTWLL6Va0AwX3eTOSL8HJduJtsuH3qnxuq9Kedbl8xBt9rxm87v5x63GD6f',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -107,13 +101,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::LAST_NAME,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => '2ckKzzAH5F68FWWKQ9wieF1dW85bgTCQuer6OEpMtrJCTOLOnDk8gOESC7TjximRhZkOTPTWLL6Va0AwX3eTOSL8HJduJtsuH3qnxuq9Kedbl8xBt9rxm87v5x63GD6f',
                     'business_contact_language' => 'US',
@@ -130,13 +124,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::LANGUAGE,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'FR FROM FR',
@@ -153,13 +147,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::QUALIFICATION,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -177,13 +171,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::STREET,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -200,13 +194,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::CITY,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -223,13 +217,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::COUNTRY,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -246,13 +240,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::STATE,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -269,13 +263,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::ZIPCODE,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -292,13 +286,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::PHONE_COUNTRY,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -315,13 +309,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::PHONE,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -338,13 +332,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::PHONE,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -360,13 +354,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::WEBSITE,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -383,13 +377,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::WEBSITE,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -406,13 +400,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::WEBSITE,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -429,13 +423,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::WEBSITE,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -452,13 +446,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::WEBSITE,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -475,13 +469,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::WEBSITE,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -498,13 +492,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::WEBSITE,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -521,13 +515,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::GENDER,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -544,13 +538,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::SHOP_NAME,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -567,13 +561,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::WEBSITE,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -590,13 +584,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::COMPANY_EMR,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -613,13 +607,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt50000000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::CATEGORY,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -636,13 +630,13 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '999',
                     'business_sub_category' => '2001',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     PsxDataValidation::SUB_CATEGORY,
-                ),
-                array(
+                ],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -659,11 +653,11 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '1999',
-                ),
-            ),
-            array(
-                array(),
-                array(
+                ],
+            ],
+            [
+                [],
+                [
                     'business_contact_first_name' => 'Sue',
                     'business_contact_last_name' => 'Pachooz',
                     'business_contact_language' => 'US',
@@ -680,8 +674,8 @@ class PsxDataValidationTest extends TestCase
                     'business_company_emr' => 'lt5000',
                     'business_category' => '1001',
                     'business_sub_category' => '2001',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

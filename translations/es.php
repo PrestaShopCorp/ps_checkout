@@ -1,7 +1,24 @@
 <?php
-
+/**
+ * 2007-2019 PrestaShop and Contributors
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA <contact@prestashop.com>
+ * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ * International Registered Trademark & Property of PrestaShop SA
+ */
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_cee265b3c694942c4cc7e4d21ff9aab4'] = 'Ofrece todos los métodos de pago a tus clientes con un solo módulo y gestiona cada venta en todos los lugares en los que operes.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_bb8956c67b82c7444a80c6b2433dd8b4'] = '¿Seguro que quieres desinstalar este módulo?';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_8216c54d546d4ba794c3aa5622cd3119'] = 'You are not connected to PrestaShop Checkout. Cannot process to a refund.	';
