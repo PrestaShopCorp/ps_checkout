@@ -20,13 +20,13 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
  * Construct the paypal module
  */
-class PaypalModule implements StorePresenterInterface
+class PaypalModule implements PresenterInterface
 {
     /**
      * Present the paypal module (vuex)

@@ -201,12 +201,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessGetOnboardingLink()
     {
-        $language = \Language::getLanguage($this->context->employee->id_lang);
-        $locale = $language['locale'];
-
         // Generate a new onboarding link to lin a new merchant
         $this->ajaxDie(
-            json_encode((new Onboarding($this->context->link))->getOnboardingLink($locale))
+            json_encode((new Onboarding($this->context->link))->getOnboardingLink())
         );
     }
 

@@ -39,7 +39,7 @@ class PsAccountRepository
             $this->getRefreshToken(),
             $this->getEmail(),
             $this->getLocalId(),
-            $this->getGetPsxForm()
+            $this->getPsxForm()
         );
 
         return $psAccount;
@@ -58,7 +58,7 @@ class PsAccountRepository
             return true;
         }
 
-        return !empty($this->getGetPsxForm());
+        return !empty($this->getPsxForm());
     }
 
     /**
@@ -115,10 +115,16 @@ class PsAccountRepository
     /**
      * Get psx form from database
      *
-     * @return string|bool
+     * @param bool $toArray
+     *
+     * @return string|bool|array
      */
-    public function getGetPsxForm()
+    public function getPsxForm($toArray = false)
     {
+        if ($toArray) {
+            return json_decode(\Configuration::get('PS_CHECKOUT_PSX_FORM'), true);
+        }
+
         return \Configuration::get(PsAccount::PS_CHECKOUT_PSX_FORM);
     }
 }

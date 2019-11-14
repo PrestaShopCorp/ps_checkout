@@ -18,12 +18,12 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store;
+namespace PrestaShop\Module\PrestashopCheckout\Presenter;
 
 /**
  * Interface StorePresenter defines methods for store presenter.
  */
-interface StorePresenterInterface
+interface PresenterInterface
 {
     /**
      * Present store

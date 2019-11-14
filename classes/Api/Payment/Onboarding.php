@@ -20,8 +20,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
+use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
-use PrestaShop\Module\PrestashopCheckout\PsxDataMatrice\PsxDataMatrice;
+use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder;
 
 /**
  * Handle onbarding request
@@ -33,120 +34,28 @@ class Onboarding extends PaymentClient
      *
      * @return array onboarding link
      */
-    public function getOnboardingLink($locale)
+    public function getOnboardingLink()
     {
         $this->setRoute('/payments/onboarding/onboard');
 
-        $psxFormData = json_decode(\Configuration::get('PS_CHECKOUT_PSX_FORM'), true);
+        $builder = new OnboardingPayloadBuilder();
 
-        $payload = [
-            'url' => $this->getCallBackUrl(),
-            'person_details' => $this->getPersonDetails($psxFormData),
-            'business_details' => $this->getBusinessDetails($psxFormData),
-            'preferred_language_code' => str_replace('-', '_', $locale),
-            'primary_currency_code' => $this->getCurrencyIsoCode(),
-        ];
+        $builder->buildFullPayload();
 
-        if (getenv('PLATEFORM') === 'PSREADY') { // if on ready, do not send psx data on the payload
-            unset($payload['person_details']['name']);
-            unset($payload['business_details']);
+        if ((new ShopContext())->isReady()) {
+            $builder->buildMinimalPayload();
         }
 
         $response = $this->post([
-            'json' => json_encode($payload),
+            'json' => $builder->getPayload()->getJson(),
         ]);
+
+        //TODO: If the response is 400 with fullPayload retry the call with the minimal payload
 
         if (false === $response['status']) {
             return $response;
         }
 
         return $response['body']['links']['1']['href'];
-    }
-
-    /**
-     * Generate an array to be used on the Paypal Link
-     *
-     * @param array $psxFormData
-     *
-     * @return array
-     */
-    private function getPersonDetails($psxFormData)
-    {
-        $nameObj = [
-            'email_address' => \Configuration::get('PS_PSX_FIREBASE_EMAIL'),
-            'name' => [
-                'given_name' => $psxFormData['business_contact_first_name'],
-                'surname' => $psxFormData['business_contact_last_name'],
-                'prefix' => $psxFormData['business_contact_gender'],
-            ],
-        ];
-
-        return array_filter($nameObj);
-    }
-
-    /**
-     * Generate an array to be used on the Paypal Link
-     *
-     * @param array $psxFormData
-     *
-     * @return array
-     */
-    private function getBusinessDetails($psxFormData)
-    {
-        $nameObj = [
-            'business_address' => array_filter([
-                'city' => $psxFormData['business_address_city'],
-                'country_code' => $psxFormData['business_address_country'],
-                'line1' => $psxFormData['business_address_street'],
-                'postal_code' => $psxFormData['business_address_zip'],
-                'state' => $psxFormData['business_address_state'],
-            ]),
-            'phone_contacts' => [
-                0 => [
-                'phone_number_details' => [
-                        'country_code' => (string) $psxFormData['business_phone_country'],
-                        'national_number' => $psxFormData['business_phone'],
-                    ],
-                    'phone_type' => 'HOME',
-                ],
-            ],
-            'names' => [
-                0 => [
-                    'name' => $psxFormData['shop_name'],
-                    'type' => 'LEGAL',
-                ],
-            ],
-            'category' => $psxFormData['business_category'],
-            'sub_category' => $psxFormData['business_sub_category'],
-            'website_urls' => array_filter([
-                $psxFormData['business_website'],
-            ]),
-            'business_type' => 'INDIVIDUAL',
-            'average_monthly_volume_range' => (new PsxDataMatrice())->getCompanyEmrToAverageMonthlyVolumeRange($psxFormData['business_company_emr']),
-        ];
-
-        return array_filter($nameObj);
-    }
-
-    /**
-     * Generate the callback url used by the paypal button
-     *
-     * @return string callback link
-     */
-    private function getCallBackUrl()
-    {
-        return $this->link->getAdminLink('AdminPaypalOnboardingPrestashopCheckout');
-    }
-
-    /**
-     * Get the iso code of the default currency for the shop
-     *
-     * @return string iso code
-     */
-    private function getCurrencyIsoCode()
-    {
-        $currency = \Currency::getCurrency((int) \Configuration::get('PS_CURRENCY_DEFAULT'));
-
-        return $currency['iso_code'];
     }
 }

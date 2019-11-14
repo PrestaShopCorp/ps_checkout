@@ -21,11 +21,19 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Database\TableManager;
 use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
+<<<<<<< HEAD
 use PrestaShop\Module\PrestashopCheckout\GenerateJsonPaypalOrder;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter;
 use PrestaShop\Module\PrestashopCheckout\Refund;
+=======
+use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
+use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
+>>>>>>> Improve the way to build paypal api payload
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
@@ -241,8 +249,19 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
-        $payload = (new GenerateJsonPaypalOrder())->create($this->context);
+        // Present an improved cart in order to create the payload
+        $cartPresenter = new CartPresenter($this->context);
+        $cartPresenter = $cartPresenter->present();
+
+        // Create the payload
+        $builder = new OrderPayloadBuilder($cartPresenter);
+        $builder->buildFullPayload();
+        $payload = $builder->getPayload()->getJson();
+
+        // Create the paypal order
         $paypalOrder = (new Order($this->context->link))->create($payload);
+
+        //TODO: If the response is 400 with fullPayload retry the call with the minimal payload
 
         if (false === $paypalOrder['status']) {
             return false;
