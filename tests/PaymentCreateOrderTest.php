@@ -63,12 +63,18 @@ class PaymentCreateOrderTest extends TestCase
 
         $order = new Order(new Link(), $client);
 
-        $this->assertSame($result, $order->create([]));
+        $response = $order->create([]);
+
+        $this->assertSame($result, $response['body']);
     }
 
     public function testCreateOrderUnauthorized()
     {
-        $client = new Client();
+        $client = new Client([
+            'defaults' => [
+                'exceptions' => false,
+            ]
+        ]);
 
         $mock = new Mock([
             new Response(401, [], Stream::factory('')),
@@ -77,7 +83,9 @@ class PaymentCreateOrderTest extends TestCase
 
         $order = new Order(new Link(), $client);
 
-        $this->assertSame(false, $order->create([]));
+        $response = $order->create([]);
+
+        $this->assertSame(false, $response['status']);
     }
 
     public function testCreateOrderInvalidResponse()
@@ -92,6 +100,8 @@ class PaymentCreateOrderTest extends TestCase
 
         $order = new Order(new Link(), $client);
 
-        $this->assertSame(false, $order->create([]));
+        $response = $order->create([]);
+
+        $this->assertSame(false, $response['status']);
     }
 }

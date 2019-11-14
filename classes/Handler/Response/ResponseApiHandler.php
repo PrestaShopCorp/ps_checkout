@@ -44,22 +44,25 @@ class ResponseApiHandler
      */
     public function handleResponse(ResponseInterface $response)
     {
+        $responseContents = json_decode($response->getBody()->getContents(), true);
+
         return [
-            'status' => $this->responseIsSuccessful($response->getStatusCode()),
+            'status' => $this->responseIsSuccessful($responseContents, $response->getStatusCode()),
             'httpCode' => $response->getStatusCode(),
-            'body' => json_decode($response->getBody()->getContents(), true),
+            'body' => $responseContents,
         ];
     }
 
     /**
      * Check if the response is successful or not (response code 200 to 299)
      *
+     * @param array $responseContents
      * @param int $httpStatusCode
      *
      * @return bool
      */
-    private function responseIsSuccessful($httpStatusCode)
+    private function responseIsSuccessful($responseContents, $httpStatusCode)
     {
-        return in_array($httpStatusCode, range(200, 299));
+        return in_array($httpStatusCode, range(200, 299)) && $responseContents !== null;
     }
 }
