@@ -21,9 +21,9 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Faq\Faq;
+use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
-use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
  * Construct the context module

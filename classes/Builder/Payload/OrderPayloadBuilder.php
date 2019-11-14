@@ -278,7 +278,7 @@ class OrderPayloadBuilder implements PayloadBuilderInterface
      */
     private function getNbDecimalToRound($currencyIsoCode)
     {
-        $currency_wt_decimal = array('HUF', 'JPY', 'TWD');
+        $currency_wt_decimal = ['HUF', 'JPY', 'TWD'];
 
         if (in_array($currencyIsoCode, $currency_wt_decimal)) {
             return 0;

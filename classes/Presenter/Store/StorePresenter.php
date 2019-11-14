@@ -21,11 +21,11 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store;
 
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\FirebaseModule;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule;
 
 /**
  * Present the store to the vuejs app (vuex)

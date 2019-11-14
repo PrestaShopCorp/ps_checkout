@@ -73,7 +73,7 @@ class PaymentCreateOrderTest extends TestCase
         $client = new Client([
             'defaults' => [
                 'exceptions' => false,
-            ]
+            ],
         ]);
 
         $mock = new Mock([

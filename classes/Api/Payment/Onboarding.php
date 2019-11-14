@@ -20,9 +20,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
-use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder;
+use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 /**
  * Handle onbarding request
