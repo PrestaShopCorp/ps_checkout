@@ -35,6 +35,19 @@
             </div>
           </div>
         </div>
+
+        <div class="card">
+          <h3 class="card-header">
+            <i class="material-icons">extension</i> Hooks
+          </h3>
+          <div class="card-block">
+            <div class="card-text m-auto">
+              <ul v-for="hook in hooks" v-bind:key="hook.name">
+                <li>{{ hook.name }} : {{ hook.isRegistered }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -52,6 +65,9 @@
       },
       shopId() {
         return this.$store.state.context.shopId;
+      },
+      hooks() {
+        return this.$store.state.context.hooks;
       },
       roundingSettingsIsCorrect() {
         return this.$store.getters.roundingSettingsIsCorrect;
