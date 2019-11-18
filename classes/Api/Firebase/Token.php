@@ -73,7 +73,7 @@ class Token extends FirebaseClient
     {
         $refresh_token = \Configuration::get('PS_PSX_FIREBASE_REFRESH_TOKEN');
 
-        return ! empty($refresh_token);
+        return !empty($refresh_token);
     }
 
     /**
