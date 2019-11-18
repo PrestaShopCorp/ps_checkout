@@ -66,7 +66,7 @@ class ContextModule implements StorePresenterInterface
                 'readmeUrl' => $this->getReadme(),
                 'cguUrl' => $this->getCgu(),
                 'roundingSettingsIsCorrect' => $this->roundingSettingsIsCorrect(),
-                'hooks' => $this->getHooks()
+                'hooks' => $this->getHooks(),
             ],
         ];
 
@@ -139,7 +139,7 @@ class ContextModule implements StorePresenterInterface
     }
 
     /**
-     * Check if hooks has been registered
+     * Check if hooks has been registeredgit
      *
      * @return array
      */
@@ -150,7 +150,11 @@ class ContextModule implements StorePresenterInterface
         foreach ($this->module->hooks as $hook) {
             $hooks[] = [
                 'name' => $hook,
-                'isRegistered' => $this->module->isRegisteredInHook($hook),
+                'isRegistered' => \Hook::isModuleRegisteredOnHook(
+                    $this->module,
+                    $hook,
+                    $this->context->shop->id
+                ),
             ];
         }
 

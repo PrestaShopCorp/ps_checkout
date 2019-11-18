@@ -42,9 +42,20 @@
           </h3>
           <div class="card-block">
             <div class="card-text m-auto">
-              <ul v-for="hook in hooks" v-bind:key="hook.name">
-                <li>{{ hook.name }} : {{ hook.isRegistered }}</li>
-              </ul>
+              <table>
+                <tr v-for="hook in hooks" v-bind:key="hook.name">
+                  <td v-if="hook.isRegistered">
+                    <span class="text-success">
+                      <i class="material-icons">check</i></span>
+                  </td>
+                  <td v-else>
+                    <span class="text-danger">
+                      <i class="material-icons">error_outline</i>
+                    </span>
+                  </td>
+                  <td>{{ hook.name }}</td>
+                </tr>
+              </table>
             </div>
           </div>
         </div>
