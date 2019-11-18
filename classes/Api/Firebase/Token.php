@@ -48,9 +48,32 @@ class Token extends FirebaseClient
         if (isset($response['id_token']) && isset($response['refresh_token'])) {
             \Configuration::updateValue('PS_PSX_FIREBASE_ID_TOKEN', $response['id_token']);
             \Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_TOKEN', $response['refresh_token']);
+            \Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_DATE', date('Y-m-d H:i:s'));
         }
 
         return $response;
+    }
+
+    /**
+     * Check we can request an other token.
+     *
+     * @return bool
+     */
+    public function shouldRefreshToken()
+    {
+        return $this->hasRefreshToken() && $this->isExpired();
+    }
+
+    /**
+     * Check if we have a refresh token
+     *
+     * @return bool
+     */
+    public function hasRefreshToken()
+    {
+        $refresh_token = \Configuration::get('PS_PSX_FIREBASE_REFRESH_TOKEN');
+
+        return ! empty($refresh_token);
     }
 
     /**
@@ -58,20 +81,15 @@ class Token extends FirebaseClient
      *
      * @return bool
      */
-    public function checkIfTokenIsValid()
+    public function isExpired()
     {
-        $query = 'SELECT date_upd
-                FROM ' . _DB_PREFIX_ . 'configuration
-                WHERE name="PS_PSX_FIREBASE_ID_TOKEN"
-                AND date_upd > NOW() + INTERVAL 1 HOUR';
+        $refresh_date = \Configuration::get('PS_PSX_FIREBASE_REFRESH_DATE');
 
-        $dateUpd = \Db::getInstance()->getValue($query);
-
-        if (false === $dateUpd) {
-            return false;
+        if (empty($refresh_date)) {
+            return true;
         }
 
-        return true;
+        return strtotime($refresh_date) + 3600 < time();
     }
 
     /**
@@ -81,7 +99,7 @@ class Token extends FirebaseClient
      */
     public function getToken()
     {
-        if (false === $this->checkIfTokenIsValid()) {
+        if ($this->shouldRefreshToken()) {
             $this->refresh();
         }
 
