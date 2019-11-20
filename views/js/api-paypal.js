@@ -17,7 +17,7 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-$(document).ready(() => {
+document.addEventListener('DOMContentLoaded', () => {
   const interval = setInterval(() => {
     if (window.paypal !== undefined) {
       initPsCheckout();
@@ -31,14 +31,14 @@ function initPsCheckout() {
     throw new Error('No paypal order id');
   }
 
-  hostedFieldsErrors = JSON.parse(hostedFieldsErrors);
+  hostedFieldsErrors = JSON.parse(hostedFieldsErrors.replace(/&quot;/g, '"'));
 
   hideDefaultPaymentButtonIfPaypalIsChecked();
 
-  if (Boolean(cardIsActive)) {
+  if (cardIsActive) {
     initHostedFields();
   }
-  if (Boolean(paypalIsActive)) {
+  if (paypalIsActive) {
     initSmartButtons();
 
     // pre select payment by card if there was an error previously
@@ -130,10 +130,13 @@ function initHostedFields() {
       hf.on('cardTypeChange', (event) => {
         // Change card bg depending on card type
         if (event.cards.length === 1) {
-          // $(form).removeClass().addClass(event.cards[0].type);
-          $('.defautl-credit-card').hide();
-          $('#card-image').removeClass().addClass(event.cards[0].type);
-          $('header').addClass('header-slide');
+          document.querySelector('.defautl-credit-card').style.display = 'none';
+
+          const cardImage = document.getElementById('card-image');
+          cardImage.className = '';
+          cardImage.classList.add(event.cards[0].type);
+
+          document.querySelector('header').classList.add('header-slide');
 
           // Change the CVV length for AmericanExpress cards
           if (event.cards[0].code.size === 4) {
@@ -144,8 +147,10 @@ function initHostedFields() {
             });
           }
         } else {
-          $('.defautl-credit-card').show();
-          $('#card-image').removeClass();
+          document.querySelector('.defautl-credit-card').style.display = 'block';
+          const cardImage = document.getElementById('card-image');
+          cardImage.className = '';
+
           hf.setAttribute({
             field: 'cvv',
             attribute: 'placeholder',
@@ -154,7 +159,7 @@ function initHostedFields() {
         }
       });
 
-      $('#hosted-fields-form').submit((event) => {
+      document.querySelector('#hosted-fields-form').addEventListener('submit', (event) => {
         event.preventDefault();
         toggleLoader(true);
 
@@ -179,7 +184,7 @@ function initHostedFields() {
           }
         }).catch((err) => {
           displayCardError(err); // display alert danger with errors
-          $('#payment-confirmation :button').removeAttr('disabled'); // if errors keep the button enabled
+          document.querySelector('#payment-confirmation button').removeAttribute('disabled'); // if errors keep the button enabled
           toggleLoader(false);
           console.log(err);
         });
@@ -215,12 +220,12 @@ function hideDefaultPaymentButtonIfPaypalIsChecked() {
   const conditionsToApproveId = document.getElementById('conditions-to-approve');
   const paymentDefaultButton = document.getElementById('payment-confirmation');
 
-  let paypalOptions = document.getElementsByName('payment-option');
+  const paypalOptions = document.getElementsByName('payment-option');
 
   for (let i = 0; i < paypalOptions.length; i++) {
-    let item = paypalOptions[i];
+    const item = paypalOptions[i];
 
-    item.addEventListener('click', function() {
+    item.addEventListener('click', () => {
       if (item.checked && item.dataset.moduleName === paypalPaymentOption) {
         paymentDefaultButton.classList.add('paypal-hide-default');
         conditionsToApproveId.classList.add('paypal-hide-default');
@@ -232,10 +237,17 @@ function hideDefaultPaymentButtonIfPaypalIsChecked() {
   }
 }
 
+function test(event) {
+  event.preventDefault();
+  document.querySelector('#hosted-fields-form button').click();
+}
+
 function toggleLoader(enable) {
   if (enable === true) {
-    $('#payment-confirmation :button').prepend('<span class="spinner-hosted-fields"></span>');
+    const span = document.createElement('span');
+    span.classList.add('spinner-hosted-fields');
+    document.querySelector('#payment-confirmation button').prepend(span);
   } else {
-    $('.spinner-hosted-fields').remove();
+    document.querySelector('.spinner-hosted-fields').remove();
   }
 }

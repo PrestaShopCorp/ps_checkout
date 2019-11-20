@@ -134,14 +134,12 @@ class Order extends PaymentClient
      *
      * @return array response from paypal if the payment is accepted or false if error occured
      */
-    public function patch($orderId)
+    public function patch($payload)
     {
         $this->setRoute('/payments/order/update');
 
         return $this->post([
-            'json' => json_encode([
-                'orderId' => (string) $orderId,
-            ]),
+            'json' => $payload,
         ]);
     }
 }
