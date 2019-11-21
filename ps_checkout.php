@@ -65,6 +65,7 @@ class Ps_checkout extends PaymentModule
         'PS_PSX_FIREBASE_ID_TOKEN' => '',
         'PS_PSX_FIREBASE_LOCAL_ID' => '',
         'PS_PSX_FIREBASE_REFRESH_TOKEN' => '',
+        'PS_PSX_FIREBASE_REFRESH_DATE' => '',
         'PS_CHECKOUT_PSX_FORM' => '',
         'PS_CHECKOUT_SHOP_UUID_V4' => '',
     ];
