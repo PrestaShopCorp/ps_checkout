@@ -249,7 +249,7 @@ class Ps_checkout extends PaymentModule
         // Create the payload
         $builder = new OrderPayloadBuilder($cartPresenter);
         $builder->buildFullPayload();
-        $payload = $builder->getPayload()->getJson();
+        $payload = $builder->presentPayload()->getJson();
 
         // Create the paypal order
         $paypalOrder = (new Order($this->context->link))->create($payload);

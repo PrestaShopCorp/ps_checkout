@@ -27,39 +27,75 @@
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
 /**
- * Payload object - use to construct some complex payload
+ * Base builder for others Payload Builder
  */
-class Payload
+abstract class Builder implements PayloadBuilderInterface
 {
     /**
-     * Payload content
-     *
-     * @var array
+     * @var Payload
      */
-    private $items = [];
+    private $payload;
 
-    public function setItems($array)
+    public function __construct()
     {
-        $this->items = array_replace_recursive($this->items, $array);
+        $this->reset();
     }
 
     /**
-     * Get payload content as json
-     *
-     * @return string
+     * Clean the payload
      */
-    public function getJson()
+    public function reset()
     {
-        return json_encode($this->items);
+        $this->payload = new Payload();
     }
 
     /**
-     * Get payload content as array
+     * Return the result of the payload and
+     * clean the builder to be ready to producing a new payload
      *
-     * @return array
+     * @return Payload
      */
-    public function getArray()
+    public function presentPayload()
     {
-        return $this->items;
+        $payload = $this->payload;
+        $this->reset();
+
+        return $payload;
+    }
+
+    /**
+     * Before build, reset the payload
+     */
+    public function buildFullPayload()
+    {
+        $this->reset();
+    }
+
+    /**
+     * Before build, reset the payload
+     */
+    public function buildMinimalPayload()
+    {
+        $this->reset();
+    }
+
+    /**
+     * Getter
+     *
+     * @return Payload
+     */
+    public function getPayload()
+    {
+        return $this->payload;
+    }
+
+    /**
+     * Setter
+     *
+     * @param Payload $array
+     */
+    public function setPayload($payload)
+    {
+        $this->payload = $payload;
     }
 }

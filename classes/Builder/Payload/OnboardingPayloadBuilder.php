@@ -32,43 +32,14 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 /**
  * Build the payload for getting paypal onboarding link
  */
-class OnboardingPayloadBuilder implements PayloadBuilderInterface
+class OnboardingPayloadBuilder extends Builder
 {
-    /**
-     * @var Payload
-     */
-    private $payload;
-
-    public function __construct()
-    {
-        $this->reset();
-    }
-
-    public function reset()
-    {
-        $this->payload = new Payload();
-    }
-
-    /**
-     * Return the result of the payload
-     * Clean the builder to be ready to producing a new payload
-     *
-     * @return Payload
-     */
-    public function getPayload()
-    {
-        $payload = $this->payload;
-        $this->reset();
-
-        return $payload;
-    }
-
     /**
      * Build the full payload with customer details
      */
     public function buildFullPayload()
     {
-        $this->reset();
+        parent::buildFullPayload();
 
         $this->buildBaseNode();
         $this->buildFullPersonDetailsNode();
@@ -80,7 +51,7 @@ class OnboardingPayloadBuilder implements PayloadBuilderInterface
      */
     public function buildMinimalPayload()
     {
-        $this->reset();
+        parent::buildMinimalPayload();
 
         $this->buildBaseNode();
         $this->buildMinimalPersonDetailsNode();
@@ -94,11 +65,13 @@ class OnboardingPayloadBuilder implements PayloadBuilderInterface
         $language = \Language::getLanguage(\Context::getContext()->employee->id_lang);
         $locale = $language['locale'];
 
-        $this->payload->items += [
+        $node = [
             'url' => $this->getCallBackUrl(),
             'preferred_language_code' => str_replace('-', '_', $locale),
             'primary_currency_code' => $this->getCurrencyIsoCode(),
         ];
+
+        $this->getPayload()->setItems($node);
     }
 
     /**
@@ -109,7 +82,7 @@ class OnboardingPayloadBuilder implements PayloadBuilderInterface
         $psAccount = new PsAccountRepository();
         $psxFormData = $psAccount->getPsxForm(true);
 
-        $this->payload->items['person_details'] = array_filter([
+        $node['person_details'] = array_filter([
             'email_address' => $psAccount->getOnboardedAccount()->getEmail(),
             'name' => [
                 'given_name' => $psxFormData['business_contact_first_name'],
@@ -117,6 +90,8 @@ class OnboardingPayloadBuilder implements PayloadBuilderInterface
                 'prefix' => $psxFormData['business_contact_gender'],
             ],
         ]);
+
+        $this->getPayload()->setItems($node);
     }
 
     /**
@@ -127,9 +102,11 @@ class OnboardingPayloadBuilder implements PayloadBuilderInterface
         $psAccount = new PsAccountRepository();
         $psxFormData = $psAccount->getPsxForm(true);
 
-        $this->payload->items['person_details'] = array_filter([
+        $node['person_details'] = array_filter([
             'email_address' => $psAccount->getOnboardedAccount()->getEmail(),
         ]);
+
+        $this->getPayload()->setItems($node);
     }
 
     /**
@@ -140,7 +117,7 @@ class OnboardingPayloadBuilder implements PayloadBuilderInterface
         $psAccount = new PsAccountRepository();
         $psxFormData = $psAccount->getPsxForm(true);
 
-        $this->payload->items['business_details'] = array_filter([
+        $node['business_details'] = array_filter([
             'business_address' => array_filter([
                 'city' => $psxFormData['business_address_city'],
                 'country_code' => $psxFormData['business_address_country'],
@@ -171,6 +148,8 @@ class OnboardingPayloadBuilder implements PayloadBuilderInterface
             'business_type' => 'INDIVIDUAL',
             'average_monthly_volume_range' => (new PsxDataMatrice())->getCompanyEmrToAverageMonthlyVolumeRange($psxFormData['business_company_emr']),
         ]);
+
+        $this->getPayload()->setItems($node);
     }
 
     /**

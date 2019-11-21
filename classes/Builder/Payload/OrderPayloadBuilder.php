@@ -32,13 +32,8 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 /**
  * Build the payload for creating paypal order
  */
-class OrderPayloadBuilder implements PayloadBuilderInterface
+class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 {
-    /**
-     * @var Payload
-     */
-    private $payload;
-
     /**
      * @var array
      */
@@ -46,27 +41,9 @@ class OrderPayloadBuilder implements PayloadBuilderInterface
 
     public function __construct(array $cart)
     {
-        $this->reset();
         $this->cart = $cart;
-    }
 
-    public function reset()
-    {
-        $this->payload = new Payload();
-    }
-
-    /**
-     * Return the result of the payload
-     * Clean the builder to be ready to producing a new payload
-     *
-     * @return Payload
-     */
-    public function getPayload()
-    {
-        $payload = $this->payload;
-        $this->reset();
-
-        return $payload;
+        parent::__construct();
     }
 
     /**
@@ -74,7 +51,7 @@ class OrderPayloadBuilder implements PayloadBuilderInterface
      */
     public function buildFullPayload()
     {
-        $this->reset();
+        parent::buildFullPayload();
 
         $this->buildBaseNode();
         $this->buildAmountBreakdownNode();
@@ -85,7 +62,7 @@ class OrderPayloadBuilder implements PayloadBuilderInterface
      */
     public function buildMinimalPayload()
     {
-        $this->reset();
+        parent::buildMinimalPayload();
 
         $this->buildBaseNode();
     }
@@ -99,7 +76,7 @@ class OrderPayloadBuilder implements PayloadBuilderInterface
         $shippingCountryIsoCode = $this->getCountryIsoCodeById($this->cart['addresses']['shipping']->id_country);
         $payerCountryIsoCode = $this->getCountryIsoCodeById($this->cart['addresses']['invoice']->id_country);
 
-        $this->payload->items += [
+        $node = [
             'intent' => \Configuration::get('PS_CHECKOUT_INTENT'), // capture or authorize
             'custom_id' => (string) $this->cart['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
@@ -147,6 +124,8 @@ class OrderPayloadBuilder implements PayloadBuilderInterface
             'roundingConfig' => (string) \Configuration::get('PS_ROUND_TYPE') . '-' . (string) \Configuration::get('PS_PRICE_ROUND_MODE'),
         ];
 
+        $this->getPayload()->setItems($node);
+
         // TODO: Disabled temporary: Need to handle country indicator
         // Add optional phone number if provided
         // if (!empty($params['addresses']['invoice']->phone)) {
@@ -160,7 +139,8 @@ class OrderPayloadBuilder implements PayloadBuilderInterface
 
         // Add optional birthdate if provided
         if (!empty($this->cart['customer']->birthday) && $this->cart['customer']->birthday !== '0000-00-00') {
-            $this->payload->items['payer']['birth_date'] = $this->cart['customer']->birthday;
+            $node['payer']['birth_date'] = $this->cart['customer']->birthday;
+            $this->getPayload()->setItems($node);
         }
     }
 
@@ -171,7 +151,7 @@ class OrderPayloadBuilder implements PayloadBuilderInterface
      */
     public function buildItemsNode()
     {
-        $paypalItems = [];
+        $node = [];
 
         $totalProductsWithoutTax = 0;
         $totalTax = 0;
@@ -192,10 +172,10 @@ class OrderPayloadBuilder implements PayloadBuilderInterface
             $totalProductsWithoutTax += $paypalItem['unit_amount']['value'] * $value['quantity'];
             $totalTax += $paypalItem['tax']['value'] * $value['quantity'];
 
-            $paypalItems[] = $paypalItem;
+            $node['items'][] = $paypalItem;
         }
 
-        $this->payload->items['items'] = $paypalItems;
+        $this->getPayload()->setItems($node);
 
         return [
             'totalProductsWithTax' => $totalProductsWithoutTax,
@@ -210,7 +190,7 @@ class OrderPayloadBuilder implements PayloadBuilderInterface
     {
         $totals = $this->buildItemsNode();
 
-        $this->payload->items['amount']['breakdown'] = [
+        $node['amount']['breakdown'] = [
             'item_total' => [
                 'currency_code' => $this->cart['currency']['iso_code'],
                 'value' => $totals['totalProductsWithTax'],
@@ -225,6 +205,8 @@ class OrderPayloadBuilder implements PayloadBuilderInterface
             ],
         ];
 
+        $this->getPayload()->setItems($node);
+
         // define by default the handling at 0
         $handlingValue = 0;
 
@@ -232,10 +214,12 @@ class OrderPayloadBuilder implements PayloadBuilderInterface
         if (isset($this->cart['cart']['subtotals']['gift_wrapping'])) {
             $handlingValue += $this->cart['cart']['subtotals']['gift_wrapping']['amount'];
 
-            $this->payload->items['amount']['breakdown']['handling'] = [
+            $node['amount']['breakdown']['handling'] = [
                 'currency_code' => $this->cart['currency']['iso_code'],
                 'value' => $handlingValue,
             ];
+
+            $this->getPayload()->setItems($node);
         }
 
         // Calc the discount value. Dicount value can also be used in case of a rounding issue.
@@ -243,10 +227,12 @@ class OrderPayloadBuilder implements PayloadBuilderInterface
         // the amount value of PrestaShop is different of the value calc by PayPal (paypal always has .1 or .2 more than prestashop).
         // In order to avoid this difference, we put it into the discount field in order to get the correct value.
         // (the surplus value (calc by paypal) is deducts from the total amount in order to get the same amount of prestashop)
-        $this->payload->items['amount']['breakdown']['discount'] = [
+        $node['amount']['breakdown']['discount'] = [
             'currency_code' => $this->cart['currency']['iso_code'],
             'value' => abs($this->cart['cart']['totals']['total_including_tax']['amount'] - $totals['totalProductsWithTax'] - $totals['totalTax'] - $this->cart['cart']['shipping_cost'] - $handlingValue),
         ];
+
+        $this->getPayload()->setItems($node);
     }
 
     /**

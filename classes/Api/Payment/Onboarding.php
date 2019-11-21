@@ -47,7 +47,7 @@ class Onboarding extends PaymentClient
         }
 
         $response = $this->post([
-            'json' => $builder->getPayload()->getJson(),
+            'json' => $builder->presentPayload()->getJson(),
         ]);
 
         //TODO: If the response is 400 with fullPayload retry the call with the minimal payload
