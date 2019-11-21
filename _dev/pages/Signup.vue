@@ -136,8 +136,8 @@
           password: this.password.value,
         }).then(() => {
           this.$router.push('/authentication');
-        }).catch((err) => {
-          this.handleResponseError(err.error.message);
+        }).catch((response) => {
+          this.handleResponseError(response.body.error.message);
         });
       },
       goToSignIn() {
