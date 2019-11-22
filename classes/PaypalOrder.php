@@ -48,7 +48,7 @@ class PaypalOrder
         $response = (new Order(\Context::getContext()->link))->fetch($id);
 
         if (false === $response['status']) {
-            return $response;
+            return;
         }
 
         $this->setOrder($response['body']);

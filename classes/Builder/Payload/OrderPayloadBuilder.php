@@ -76,6 +76,9 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         $shippingCountryIsoCode = $this->getCountryIsoCodeById($this->cart['addresses']['shipping']->id_country);
         $payerCountryIsoCode = $this->getCountryIsoCodeById($this->cart['addresses']['invoice']->id_country);
 
+        $gender = new \Gender($this->cart['customer']->id_gender, $this->cart['language']->id);
+        $genderName = $gender->name;
+
         $node = [
             'intent' => \Configuration::get('PS_CHECKOUT_INTENT'), // capture or authorize
             'custom_id' => (string) $this->cart['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
@@ -88,7 +91,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             ],
             'shipping' => [
                 'name' => [
-                    'full_name' => 'Mr ' . $this->cart['addresses']['shipping']->lastname . ' ' . $this->cart['addresses']['shipping']->firstname,
+                    'full_name' => $genderName . ' ' . $this->cart['addresses']['shipping']->lastname . ' ' . $this->cart['addresses']['shipping']->firstname,
                 ],
                 'address' => [
                     'address_line_1' => $this->cart['addresses']['shipping']->address1,
@@ -124,8 +127,6 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             'roundingConfig' => (string) \Configuration::get('PS_ROUND_TYPE') . '-' . (string) \Configuration::get('PS_PRICE_ROUND_MODE'),
         ];
 
-        $this->getPayload()->setItems($node);
-
         // TODO: Disabled temporary: Need to handle country indicator
         // Add optional phone number if provided
         // if (!empty($params['addresses']['invoice']->phone)) {
@@ -140,8 +141,9 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         // Add optional birthdate if provided
         if (!empty($this->cart['customer']->birthday) && $this->cart['customer']->birthday !== '0000-00-00') {
             $node['payer']['birth_date'] = $this->cart['customer']->birthday;
-            $this->getPayload()->setItems($node);
         }
+
+        $this->getPayload()->setItems($node);
     }
 
     /**
@@ -218,8 +220,6 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 'currency_code' => $this->cart['currency']['iso_code'],
                 'value' => $handlingValue,
             ];
-
-            $this->getPayload()->setItems($node);
         }
 
         // Calc the discount value. Dicount value can also be used in case of a rounding issue.
