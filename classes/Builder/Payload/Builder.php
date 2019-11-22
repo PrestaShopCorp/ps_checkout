@@ -92,7 +92,7 @@ abstract class Builder implements PayloadBuilderInterface
     /**
      * Setter
      *
-     * @param Payload $array
+     * @param Payload $payload
      */
     public function setPayload($payload)
     {

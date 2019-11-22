@@ -71,7 +71,7 @@ class OnboardingPayloadBuilder extends Builder
             'primary_currency_code' => $this->getCurrencyIsoCode(),
         ];
 
-        $this->getPayload()->setItems($node);
+        $this->getPayload()->addAndMergeItems($node);
     }
 
     /**
@@ -91,7 +91,7 @@ class OnboardingPayloadBuilder extends Builder
             ],
         ]);
 
-        $this->getPayload()->setItems($node);
+        $this->getPayload()->addAndMergeItems($node);
     }
 
     /**
@@ -106,7 +106,7 @@ class OnboardingPayloadBuilder extends Builder
             'email_address' => $psAccount->getOnboardedAccount()->getEmail(),
         ]);
 
-        $this->getPayload()->setItems($node);
+        $this->getPayload()->addAndMergeItems($node);
     }
 
     /**
@@ -149,7 +149,7 @@ class OnboardingPayloadBuilder extends Builder
             'average_monthly_volume_range' => (new PsxDataMatrice())->getCompanyEmrToAverageMonthlyVolumeRange($psxFormData['business_company_emr']),
         ]);
 
-        $this->getPayload()->setItems($node);
+        $this->getPayload()->addAndMergeItems($node);
     }
 
     /**

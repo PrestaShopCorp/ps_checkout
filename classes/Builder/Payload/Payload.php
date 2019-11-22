@@ -45,7 +45,7 @@ class Payload
      *
      * @param array $array
      */
-    public function setItems(array $array)
+    public function addAndMergeItems(array $array)
     {
         $this->items = array_replace_recursive($this->items, $array);
     }

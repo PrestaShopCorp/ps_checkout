@@ -144,7 +144,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             $node['payer']['birth_date'] = $this->cart['customer']->birthday;
         }
 
-        $this->getPayload()->setItems($node);
+        $this->getPayload()->addAndMergeItems($node);
     }
 
     /**
@@ -172,7 +172,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             $node['items'][] = $paypalItem;
         }
 
-        $this->getPayload()->setItems($node);
+        $this->getPayload()->addAndMergeItems($node);
     }
 
     /**
@@ -221,7 +221,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             'value' => abs($this->cart['cart']['totals']['total_including_tax']['amount'] - $totalProductWithoutTax - $totalTax - $this->cart['cart']['shipping_cost'] - $handlingValue),
         ];
 
-        $this->getPayload()->setItems($node);
+        $this->getPayload()->addAndMergeItems($node);
     }
 
     /**
