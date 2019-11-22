@@ -55,6 +55,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
         $this->buildBaseNode();
         $this->buildAmountBreakdownNode();
+        $this->buildItemsNode();
     }
 
     /**
@@ -155,9 +156,6 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     {
         $node = [];
 
-        $totalProductsWithoutTax = 0;
-        $totalTax = 0;
-
         foreach ($this->cart['products'] as $product => $value) {
             $paypalItem = [];
 
@@ -171,18 +169,10 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             $paypalItem['quantity'] = $value['quantity'];
             $paypalItem['category'] = $value['is_virtual'] === '1' ? 'DIGITAL_GOODS' : 'PHYSICAL_GOODS';
 
-            $totalProductsWithoutTax += $paypalItem['unit_amount']['value'] * $value['quantity'];
-            $totalTax += $paypalItem['tax']['value'] * $value['quantity'];
-
             $node['items'][] = $paypalItem;
         }
 
         $this->getPayload()->setItems($node);
-
-        return [
-            'totalProductsWithTax' => $totalProductsWithoutTax,
-            'totalTax' => $totalTax,
-        ];
     }
 
     /**
@@ -190,12 +180,13 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      */
     public function buildAmountBreakdownNode()
     {
-        $totals = $this->buildItemsNode();
+        $totalProductWithoutTax = $this->calcTotalProductWithoutTax();
+        $totalTax = $this->calcTotalTax();
 
         $node['amount']['breakdown'] = [
             'item_total' => [
                 'currency_code' => $this->cart['currency']['iso_code'],
-                'value' => $totals['totalProductsWithTax'],
+                'value' => $totalProductWithoutTax,
             ],
             'shipping' => [
                 'currency_code' => $this->cart['currency']['iso_code'],
@@ -203,11 +194,9 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             ],
             'tax_total' => [
                 'currency_code' => $this->cart['currency']['iso_code'],
-                'value' => $totals['totalTax'],
+                'value' => $totalTax,
             ],
         ];
-
-        $this->getPayload()->setItems($node);
 
         // define by default the handling at 0
         $handlingValue = 0;
@@ -229,10 +218,52 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         // (the surplus value (calc by paypal) is deducts from the total amount in order to get the same amount of prestashop)
         $node['amount']['breakdown']['discount'] = [
             'currency_code' => $this->cart['currency']['iso_code'],
-            'value' => abs($this->cart['cart']['totals']['total_including_tax']['amount'] - $totals['totalProductsWithTax'] - $totals['totalTax'] - $this->cart['cart']['shipping_cost'] - $handlingValue),
+            'value' => abs($this->cart['cart']['totals']['total_including_tax']['amount'] - $totalProductWithoutTax - $totalTax - $this->cart['cart']['shipping_cost'] - $handlingValue),
         ];
 
         $this->getPayload()->setItems($node);
+    }
+
+    /**
+     * Calc products total amount without tax
+     *
+     * @return float
+     */
+    private function calcTotalProductWithoutTax()
+    {
+        $totalProductsWithoutTax = 0;
+
+        foreach ($this->cart['products'] as $product) {
+            // calc total for the current product in the loop
+            $unitProductPriceWithoutTax = $product['total'] / $product['quantity'];
+            $productsPriceWithoutTax = $unitProductPriceWithoutTax * $product['quantity'];
+
+            // adding the amount for the current product to the total amount
+            $totalProductsWithoutTax += $productsPriceWithoutTax;
+        }
+
+        return $totalProductsWithoutTax;
+    }
+
+    /**
+     * Calc the total tax
+     *
+     * @return float
+     */
+    private function calcTotalTax()
+    {
+        $totalTax = 0;
+
+        foreach ($this->cart['products'] as $product) {
+            // calc total tax for the current product in the loop
+            $unitTaxAmount = ($product['total_wt'] - $product['total']) / $product['quantity'];
+            $totalTaxAmount = $unitTaxAmount * $product['quantity'];
+
+            // adding the amount tax for the current product to the total tax amount
+            $totalTax += $totalTaxAmount;
+        }
+
+        return $totalTax;
     }
 
     /**
