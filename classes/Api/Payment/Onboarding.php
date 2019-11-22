@@ -58,6 +58,7 @@ class Onboarding extends PaymentClient
 
         if (false === isset($response['body']['links']['1']['href'])) {
             return $response['status'] = false;
+
             return $response;
         }
 

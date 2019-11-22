@@ -71,6 +71,7 @@ class Order extends PaymentClient
 
         if (false === isset($response['purchase_units'][0]['payments']['captures'][0])) {
             $response['status'] = false;
+
             return $response;
         }
 
