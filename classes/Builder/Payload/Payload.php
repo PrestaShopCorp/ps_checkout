@@ -38,7 +38,14 @@ class Payload
      */
     private $items = [];
 
-    public function setItems($array)
+    /**
+     * Setter for items
+     * Use array_replace_recursive in order to merge the new
+     * content with the previous one.
+     *
+     * @param array $array
+     */
+    public function setItems(array $array)
     {
         $this->items = array_replace_recursive($this->items, $array);
     }
