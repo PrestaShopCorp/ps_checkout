@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api;
 
 use GuzzleHttp\Client;
+use PrestaShop\Module\PrestashopCheckout\Factory\CheckoutLogger;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
 
 /**
@@ -76,9 +77,15 @@ class GenericClient
     {
         $response = $this->getClient()->post($this->getRoute(), $options);
 
+        //$logger = CheckoutLogger::create();
+        //$logger->debug('options ' . var_export($options, true));
+        
         $responseHandler = new ResponseApiHandler();
+        
+        //$response = $responseHandler->handleResponse($response);
+        //$logger->debug('response'. var_export($response, true));
 
-        return $responseHandler->handleResponse($response);
+        return $response;
     }
 
     /**
