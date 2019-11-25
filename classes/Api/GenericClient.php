@@ -77,13 +77,14 @@ class GenericClient
     {
         $response = $this->getClient()->post($this->getRoute(), $options);
 
-        //$logger = CheckoutLogger::create();
-        //$logger->debug('options ' . var_export($options, true));
+        $logger = CheckoutLogger::create();
+        $logger->debug('route ' . $this->getRoute());
+        $logger->debug('options ' . var_export($options, true));
         
         $responseHandler = new ResponseApiHandler();
         
-        //$response = $responseHandler->handleResponse($response);
-        //$logger->debug('response'. var_export($response, true));
+        $response = $responseHandler->handleResponse($response);
+        $logger->debug('response ' . var_export($response, true));
 
         return $response;
     }

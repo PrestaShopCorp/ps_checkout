@@ -24,11 +24,13 @@ use Monolog\Handler\RotatingFileHandler;
 
 class CheckoutLogger
 {
+    const MAX_FILES = 7;
+    
     public static function create()
     {
         $rotatingFileHandler = new RotatingFileHandler(
-            _PS_MODULE_DIR_ . 'ps_checkout/logs/ps_checkout',
-            7
+            _PS_ROOT_DIR_ . '/var/logs/' . _PS_MODE_DEV_ . '/ps_checkout',
+            static::MAX_FILES
         );
 
         $logger = new Logger('global');
