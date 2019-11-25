@@ -29,8 +29,9 @@ class CheckoutLogger
 
     public static function create()
     {
+        $env = _PS_MODE_DEV_ ? 'dev' : 'prod';
         $rotatingFileHandler = new RotatingFileHandler(
-            _PS_ROOT_DIR_ . '/var/logs/' . _PS_MODE_DEV_ . '/ps_checkout',
+            _PS_ROOT_DIR_ . '/var/logs/' . $env . '/ps_checkout',
             static::MAX_FILES
         );
 
