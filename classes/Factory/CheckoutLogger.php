@@ -17,15 +17,16 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+
 namespace PrestaShop\Module\PrestashopCheckout\Factory;
 
-use Monolog\Logger;
 use Monolog\Handler\RotatingFileHandler;
+use Monolog\Logger;
 
 class CheckoutLogger
 {
     const MAX_FILES = 7;
-    
+
     public static function create()
     {
         $rotatingFileHandler = new RotatingFileHandler(

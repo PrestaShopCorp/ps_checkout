@@ -80,9 +80,9 @@ class GenericClient
         $logger = CheckoutLogger::create();
         $logger->debug('route ' . $this->getRoute());
         $logger->debug('options ' . var_export($options, true));
-        
+
         $responseHandler = new ResponseApiHandler();
-        
+
         $response = $responseHandler->handleResponse($response);
         $logger->debug('response ' . var_export($response, true));
 

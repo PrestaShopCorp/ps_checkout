@@ -198,7 +198,6 @@ class Ps_checkout extends PaymentModule
 
     public function getContent()
     {
-        
         $paypalAccount = new PaypalAccountRepository();
         $psAccount = new PsAccountRepository();
 
@@ -252,13 +251,13 @@ class Ps_checkout extends PaymentModule
         $builder->buildFullPayload();
         $payload = $builder->presentPayload()->getJson();
         $paypalOrder = (new Order($this->context->link))->create($payload);
-        
+
         // Try the minimal payload if the full has failed
         if ($paypalOrder['httpCode'] === 400) {
             $builder->buildMinimalPayload();
             $payload = $builder->presentPayload()->getJson();
             $paypalOrder = (new Order($this->context->link))->create($payload);
-        };
+        }
 
         if (false === $paypalOrder['status']) {
             return false;
