@@ -143,6 +143,7 @@ class Translations
                     'cancel' => $this->module->l('Cancel', 'translations'),
                     'titleLogout' => $this->module->l('Are you sure you want to logout ?', 'translations'),
                     'descriptionLogout' => $this->module->l('Logging out will deactivate all payment methods. You will no longer be able to receive payments with PrestaShop Checkout.', 'translations'),
+                    'onboardingLinkError' => $this->module->l('An error occured, the PayPal sign up or login window can\'t be opened. Please wait a bit and click again.', 'translations'),
                 ],
                 'psx-form' => [
                     'additionalDetails' => $this->module->l('Additional Details', 'translations'),

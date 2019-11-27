@@ -97,6 +97,7 @@
                 <a href="#" class="text-muted" @click.prevent="paypalUnlink()">{{ $t('panel.account-list.useAnotherAccount') }}</a>
               </div>
             </div>
+            <PSAlert v-if="onboardingLinkError" class="col-12" :alert-type="ALERT_TYPE_DANGER">{{ $t('panel.account-list.onboardingLinkError') }}</PSAlert>
           </div>
         </div>
       </div>
@@ -106,12 +107,19 @@
 
 <script>
   import Onboarding from '@/components/block/onboarding';
+  import PSAlert from '@/components/form/alert';
+  import {ALERT_TYPE_DANGER} from '@/lib/alert';
 
   export default {
     components: {
       Onboarding,
+      PSAlert,
     },
     computed: {
+      ALERT_TYPE_DANGER: () => ALERT_TYPE_DANGER,
+      onboardingLinkError() {
+        return this.$store.state.paypal.paypalOnboardingLink === false;
+      },
       isReady() {
         return this.$store.state.context.isReady;
       },

@@ -40,7 +40,7 @@ class PaypalModule implements PresenterInterface
         $paypalModule = [
             'paypal' => [
                 'idMerchant' => $idMerchant,
-                'paypalOnboardingLink' => false,
+                'paypalOnboardingLink' => '',
                 'onboardingCompleted' => !empty($idMerchant),
                 'emailMerchant' => \Configuration::get('PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT'),
                 'emailIsValid' => \Configuration::get('PS_CHECKOUT_PAYPAL_EMAIL_STATUS'),

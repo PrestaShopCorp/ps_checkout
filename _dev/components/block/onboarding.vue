@@ -67,7 +67,7 @@
     },
     methods: {
       getOnboardingLink() {
-        if (this.paypalOnboardingLink !== false) {
+        if (this.paypalOnboardingLink !== false && this.paypalOnboardingLink.length > 0) {
           this.$refs.paypalButton.click();
           return;
         }
@@ -75,9 +75,12 @@
         this.paypalIsLoaded = false;
 
         this.$store.dispatch('getOnboardingLink').then(() => {
-          this.paypalIsLoaded = true;
           this.$refs.paypalButton.click();
+        }).catch(() => {
+          console.error('Cannot generate paypal onboarding link');
         });
+
+        this.paypalIsLoaded = true;
       },
     },
     destroyed() {
