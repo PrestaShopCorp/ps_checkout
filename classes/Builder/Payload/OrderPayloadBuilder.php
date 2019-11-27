@@ -39,6 +39,12 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      */
     private $cart;
 
+    /**
+     * @var bool Allow to build the payload with more or less content depending if
+     * the customer use express checkout or not
+     */
+    private $expressCheckout = false;
+
     public function __construct(array $cart)
     {
         $this->cart = $cart;
@@ -48,11 +54,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
     /**
      * Build payload with cart details
-     *
-     * @param bool $expressCheckout Allow to build the payload with more or less content depending if
-     *                              the customer use express checkout or not
      */
-    public function buildFullPayload($expressCheckout = false)
+    public function buildFullPayload()
     {
         parent::buildFullPayload();
 
@@ -60,27 +63,24 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         $this->buildAmountBreakdownNode();
         $this->buildItemsNode();
 
-        if (!$expressCheckout) {
+        if (false === $this->expressCheckout) {
             $this->buildShippingNode();
             $this->buildPayerNode();
         }
 
-        $this->buildApplicationContextNode($expressCheckout);
+        $this->buildApplicationContextNode($this->expressCheckout);
     }
 
     /**
      * Build payload without cart details
-     *
-     * @param bool $expressCheckout Allow to build the payload with more or less content depending if
-     *                              the customer use express checkout or not
      */
-    public function buildMinimalPayload($expressCheckout = false)
+    public function buildMinimalPayload()
     {
         parent::buildMinimalPayload();
 
         $this->buildBaseNode();
 
-        if (!$expressCheckout) {
+        if (false === $this->expressCheckout) {
             $this->buildShippingNode();
             $this->buildPayerNode();
         }
@@ -366,5 +366,23 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     private function getCountryIsoCodeById($countryId)
     {
         return \Country::getIsoById($countryId);
+    }
+
+    /**
+     * Setter $expressCheckout
+     *
+     * @param bool $expressCheckout
+     */
+    public function setExpressCheckout($expressCheckout)
+    {
+        $this->expressCheckout = $expressCheckout;
+    }
+
+    /**
+     * Getter $expressCheckout
+     */
+    public function getExpressCheckout()
+    {
+        return $this->expressCheckout;
     }
 }

@@ -65,20 +65,16 @@ abstract class Builder implements PayloadBuilderInterface
 
     /**
      * Before build, reset the payload
-     *
-     * @param bool $expressCheckout Customer context -> if using express checkout or not
      */
-    public function buildFullPayload($expressCheckout = false)
+    public function buildFullPayload()
     {
         $this->reset();
     }
 
     /**
      * Before build, reset the payload
-     *
-     * @param bool $expressCheckout Customer context -> if using express checkout or not
      */
-    public function buildMinimalPayload($expressCheckout = false)
+    public function buildMinimalPayload()
     {
         $this->reset();
     }

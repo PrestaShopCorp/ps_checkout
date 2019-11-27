@@ -39,7 +39,7 @@ class OnboardingPayloadBuilder extends Builder
      *
      * @param bool $expressCheckout Customer context -> if using express checkout or not
      */
-    public function buildFullPayload($expressCheckout = false)
+    public function buildFullPayload()
     {
         parent::buildFullPayload();
 
@@ -53,7 +53,7 @@ class OnboardingPayloadBuilder extends Builder
      *
      * @param bool $expressCheckout Customer context -> if using express checkout or not
      */
-    public function buildMinimalPayload($expressCheckout = false)
+    public function buildMinimalPayload()
     {
         parent::buildMinimalPayload();
 
