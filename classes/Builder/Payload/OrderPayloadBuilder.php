@@ -85,7 +85,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             $this->buildPayerNode();
         }
 
-        $this->buildApplicationContextNode($expressCheckout);
+        $this->buildApplicationContextNode();
     }
 
     /**

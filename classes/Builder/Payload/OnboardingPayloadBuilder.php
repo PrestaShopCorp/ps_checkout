@@ -36,8 +36,6 @@ class OnboardingPayloadBuilder extends Builder
 {
     /**
      * Build the full payload with customer details
-     *
-     * @param bool $expressCheckout Customer context -> if using express checkout or not
      */
     public function buildFullPayload()
     {
@@ -50,8 +48,6 @@ class OnboardingPayloadBuilder extends Builder
 
     /**
      * Build payload without customer details
-     *
-     * @param bool $expressCheckout Customer context -> if using express checkout or not
      */
     public function buildMinimalPayload()
     {
