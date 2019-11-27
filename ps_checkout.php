@@ -41,15 +41,17 @@ if (!defined('_PS_VERSION_')) {
 
 class Ps_checkout extends PaymentModule
 {
-    // hook list used by the module
-    const HOOK_LIST = [
+    /**
+     * @var array Hooks used
+     */
+    public $hooks = [
         'paymentOptions',
-        'paymentReturn',
+        'displayPaymentReturn',
         'actionFrontControllerSetMedia',
         'actionOrderSlipAdd',
-        'orderConfirmation',
+        'displayOrderConfirmation',
         'displayAdminAfterHeader',
-        'ActionAdminControllerSetMedia',
+        'actionAdminControllerSetMedia',
         'actionOrderStatusUpdate',
     ];
 
@@ -123,7 +125,7 @@ class Ps_checkout extends PaymentModule
         }
 
         return parent::install() &&
-            $this->registerHook(self::HOOK_LIST) &&
+            $this->registerHook($this->hooks) &&
             (new OrderStates())->installPaypalStates() &&
             (new TableManager())->createTable() &&
             $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1) &&

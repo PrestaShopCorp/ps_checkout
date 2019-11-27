@@ -66,6 +66,7 @@ class ContextModule implements PresenterInterface
                 'readmeUrl' => $this->getReadme(),
                 'cguUrl' => $this->getCgu(),
                 'roundingSettingsIsCorrect' => $this->roundingSettingsIsCorrect(),
+                'hooks' => $this->getHooks(),
             ],
         ];
 
@@ -135,5 +136,27 @@ class ContextModule implements PresenterInterface
     {
         return \Configuration::get('PS_ROUND_TYPE') === '1'
             && \Configuration::get('PS_PRICE_ROUND_MODE') === '2';
+    }
+
+    /**
+     * Check if hooks has been registered
+     *
+     * @return array
+     */
+    private function getHooks()
+    {
+        $hooks = [];
+        foreach ($this->module->hooks as $hook) {
+            $hooks[] = [
+                'name' => $hook,
+                'isRegistered' => \Hook::isModuleRegisteredOnHook(
+                    $this->module,
+                    $hook,
+                    $this->context->shop->id
+                ),
+            ];
+        }
+
+        return $hooks;
     }
 }

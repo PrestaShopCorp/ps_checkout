@@ -35,6 +35,30 @@
             </div>
           </div>
         </div>
+
+        <div class="card">
+          <h3 class="card-header">
+            <i class="material-icons">extension</i> Hooks
+          </h3>
+          <div class="card-block">
+            <div class="card-text m-auto">
+              <table>
+                <tr v-for="hook in hooks" v-bind:key="hook.name">
+                  <td v-if="hook.isRegistered">
+                    <span class="text-success">
+                      <i class="material-icons">check</i></span>
+                  </td>
+                  <td v-else>
+                    <span class="text-danger">
+                      <i class="material-icons">error_outline</i>
+                    </span>
+                  </td>
+                  <td>{{ hook.name }}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -46,6 +70,9 @@
     computed: {
       moduleVersion() {
         return this.$store.state.context.moduleVersion;
+      },
+      hooks() {
+        return this.$store.state.context.hooks;
       },
       psVersion() {
         return this.$store.state.context.psVersion;
