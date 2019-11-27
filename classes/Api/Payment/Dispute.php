@@ -30,7 +30,7 @@ class Dispute extends PaymentClient
     /**
      * Retrieve the total of disputes
      *
-     * @return array|bool
+     * @return array
      */
     public function countDispute()
     {

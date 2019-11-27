@@ -20,13 +20,13 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
 /**
  * Construct the Psx module
  */
-class PsxModule implements StorePresenterInterface
+class PsxModule implements PresenterInterface
 {
     const ALL_LANGUAGES_FILE = _PS_ROOT_DIR_ . '/app/Resources/all_languages.json';
     const ALL_COUNTRIES_FILE = _PS_MODULE_DIR_ . 'ps_checkout/views/json/all_countries.json';

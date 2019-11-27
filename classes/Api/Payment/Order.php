@@ -32,7 +32,7 @@ class Order extends PaymentClient
      *
      * @param string $payload Cart details (json)
      *
-     * @return array|bool data with paypal order id or false if error
+     * @return array data with paypal order id or false if error
      */
     public function create($payload)
     {
@@ -49,7 +49,7 @@ class Order extends PaymentClient
      * @param string $orderId paypal
      * @param string $merchantId
      *
-     * @return array|bool response from paypal if the payment is accepted or false if error occured
+     * @return array response from paypal if the payment is accepted or false if error occured
      */
     public function capture($orderId, $merchantId)
     {
@@ -65,15 +65,17 @@ class Order extends PaymentClient
             ]),
         ]);
 
-        if (isset($response['checkoutError']) && $response['checkoutError'] === true) {
+        if (false === $response['status']) {
             return $response;
         }
 
         if (false === isset($response['purchase_units'][0]['payments']['captures'][0])) {
-            return false;
+            $response['status'] = false;
+
+            return $response;
         }
 
-        return $response['purchase_units'][0]['payments']['captures'][0];
+        return $response['body']['purchase_units'][0]['payments']['captures'][0];
     }
 
     /**
@@ -81,7 +83,7 @@ class Order extends PaymentClient
      *
      * @param string $orderId paypal
      *
-     * @return array|bool paypal order
+     * @return array paypal order
      */
     public function fetch($orderId)
     {
@@ -100,7 +102,7 @@ class Order extends PaymentClient
      * @param string $orderId paypal
      * @param string $merchantId
      *
-     * @return array|bool paypal order
+     * @return array paypal order
      */
     public function authorize($orderId, $merchantId)
     {
@@ -112,7 +114,7 @@ class Order extends PaymentClient
      *
      * @param array $payload
      *
-     * @return array|bool paypal order
+     * @return array paypal order
      */
     public function refund($payload)
     {
@@ -128,7 +130,7 @@ class Order extends PaymentClient
      *
      * @param string $orderId paypal
      *
-     * @return array|bool response from paypal if the payment is accepted or false if error occured
+     * @return array response from paypal if the payment is accepted or false if error occured
      */
     public function patch($orderId)
     {

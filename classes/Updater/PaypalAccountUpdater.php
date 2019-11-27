@@ -59,16 +59,16 @@ class PaypalAccountUpdater
      */
     public function update()
     {
-        $response = $this->getMerchantIntegration();
+        $merchantIntegration = $this->getMerchantIntegration();
 
-        if (false === $response) {
+        if (false === $merchantIntegration) {
             return false;
         }
 
-        $this->account->setEmail($response['primary_email']);
-        $this->account->setEmailIsVerified($response['primary_email_confirmed']);
-        $this->account->setPaypalPaymentStatus($response['payments_receivable']);
-        $this->account->setCardPaymentStatus($this->getCardStatus($response));
+        $this->account->setEmail($merchantIntegration['primary_email']);
+        $this->account->setEmailIsVerified($merchantIntegration['primary_email_confirmed']);
+        $this->account->setPaypalPaymentStatus($merchantIntegration['payments_receivable']);
+        $this->account->setCardPaymentStatus($this->getCardStatus($merchantIntegration));
 
         return (new PersistentConfiguration())->savePaypalAccount($this->account);
     }
@@ -139,15 +139,13 @@ class PaypalAccountUpdater
      */
     private function getMerchantIntegration()
     {
-        $merchantIntegration = (new Shop(\Context::getContext()->link))->getMerchantIntegration($this->account->getMerchantId());
+        $response = (new Shop(\Context::getContext()->link))->getMerchantIntegration($this->account->getMerchantId());
 
-        if (false === $merchantIntegration
-            || !isset($merchantIntegration['merchant_integrations'])
-        ) {
+        if (false === $response['status']) {
             return false;
         }
 
-        return $merchantIntegration['merchant_integrations'];
+        return $response['body']['merchant_integrations'];
     }
 
     /**

@@ -18,12 +18,13 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
+use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Database\TableManager;
 use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
-use PrestaShop\Module\PrestashopCheckout\GenerateJsonPaypalOrder;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter;
 use PrestaShop\Module\PrestashopCheckout\Refund;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
@@ -241,10 +242,21 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
-        $payload = (new GenerateJsonPaypalOrder())->create($this->context);
+        // Present an improved cart in order to create the payload
+        $cartPresenter = new CartPresenter($this->context);
+        $cartPresenter = $cartPresenter->present();
+
+        // Create the payload
+        $builder = new OrderPayloadBuilder($cartPresenter);
+        $builder->buildFullPayload();
+        $payload = $builder->presentPayload()->getJson();
+
+        // Create the paypal order
         $paypalOrder = (new Order($this->context->link))->create($payload);
 
-        if (false === $paypalOrder) {
+        //TODO: If the response is 400 with fullPayload retry the call with the minimal payload
+
+        if (false === $paypalOrder['status']) {
             return false;
         }
 
@@ -253,10 +265,10 @@ class Ps_checkout extends PaymentModule
         $this->context->smarty->assign([
             'merchantId' => $paypalAccountRepository->getMerchantId(),
             'paypalClientId' => (new PaypalEnv())->getPaypalClientId(),
-            'clientToken' => $paypalOrder['client_token'],
-            'paypalOrderId' => $paypalOrder['id'],
-            'validateOrderLinkByCard' => $this->getValidateOrderLink($paypalOrder['id'], 'card'),
-            'validateOrderLinkByPaypal' => $this->getValidateOrderLink($paypalOrder['id'], 'paypal'),
+            'clientToken' => $paypalOrder['body']['client_token'],
+            'paypalOrderId' => $paypalOrder['body']['id'],
+            'validateOrderLinkByCard' => $this->getValidateOrderLink($paypalOrder['body']['id'], 'card'),
+            'validateOrderLinkByPaypal' => $this->getValidateOrderLink($paypalOrder['body']['id'], 'paypal'),
             'cardIsActive' => $paypalAccountRepository->cardPaymentMethodIsValid(),
             'paypalIsActive' => $paypalAccountRepository->paypalPaymentMethodIsValid(),
             'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT')),
@@ -406,7 +418,7 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
-        $addOrderPayment = $refund->addOrderPayment($params['order'], $refundResponse['id']);
+        $addOrderPayment = $refund->addOrderPayment($params['order'], $refundResponse['body']['id']);
 
         if (false === $addOrderPayment) {
             return false;
@@ -468,7 +480,7 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
-        return $refund->doTotalRefund($order, $order->getProducts(), $refundResponse['id']);
+        return $refund->doTotalRefund($order, $order->getProducts(), $refundResponse['body']['id']);
     }
 
     /**

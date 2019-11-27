@@ -45,9 +45,9 @@ class Token extends FirebaseClient
             ],
         ]);
 
-        if (isset($response['id_token']) && isset($response['refresh_token'])) {
-            \Configuration::updateValue('PS_PSX_FIREBASE_ID_TOKEN', $response['id_token']);
-            \Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_TOKEN', $response['refresh_token']);
+        if (true === $response['status']) {
+            \Configuration::updateValue('PS_PSX_FIREBASE_ID_TOKEN', $response['body']['id_token']);
+            \Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_TOKEN', $response['body']['refresh_token']);
             \Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_DATE', date('Y-m-d H:i:s'));
         }
 

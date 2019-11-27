@@ -33,9 +33,14 @@ export default {
     return ajax({
       url: getters.adminController,
       action: 'GetOnboardingLink',
-    }).then((onboardingLink) => {
-      commit(types.UPDATE_ONBOARDING_LINK, onboardingLink);
-      return Promise.resolve(true);
+    }).then((response) => {
+      if (response.status === false) {
+        commit(types.UPDATE_ONBOARDING_LINK, false);
+        return Promise.reject();
+      }
+
+      commit(types.UPDATE_ONBOARDING_LINK, response.onboardingLink);
+      return Promise.resolve();
     });
   },
 };

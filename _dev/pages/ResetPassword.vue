@@ -100,8 +100,8 @@
             email: this.email.value,
           },
         }).then((response) => {
-          if (response.error) {
-            this.handleResponseError(response.error.message);
+          if (response.body.error) {
+            this.handleResponseError(response.body.error.message);
             return;
           }
           this.resetEmailError();

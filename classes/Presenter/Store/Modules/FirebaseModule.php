@@ -21,12 +21,12 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
  * Construct the firebase module
  */
-class FirebaseModule implements StorePresenterInterface
+class FirebaseModule implements PresenterInterface
 {
     /**
      * Present the Firebase module (vuex)
