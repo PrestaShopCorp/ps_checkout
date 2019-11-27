@@ -48,24 +48,44 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
     /**
      * Build payload with cart details
+     *
+     * @param bool $expressCheckout Allow to build the payload with more or less content depending if
+     * the customer use expresse checkout or not
      */
-    public function buildFullPayload()
+    public function buildFullPayload($expressCheckout = false)
     {
         parent::buildFullPayload();
 
         $this->buildBaseNode();
         $this->buildAmountBreakdownNode();
         $this->buildItemsNode();
+
+        if (!$expressCheckout) {
+            $this->buildShippingNode();
+            $this->buildPayerNode();
+        }
+
+        $this->buildApplicationContextNode($expressCheckout);
     }
 
     /**
      * Build payload without cart details
+     *
+     * @param bool $expressCheckout Allow to build the payload with more or less content depending if
+     * the customer use expresse checkout or not
      */
-    public function buildMinimalPayload()
+    public function buildMinimalPayload($expressCheckout = false)
     {
         parent::buildMinimalPayload();
 
         $this->buildBaseNode();
+
+        if (!$expressCheckout) {
+            $this->buildShippingNode();
+            $this->buildPayerNode();
+        }
+
+        $this->buildApplicationContextNode($expressCheckout);
     }
 
     /**
@@ -73,13 +93,6 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      */
     public function buildBaseNode()
     {
-        $countryCodeMatrice = new PaypalCountryCodeMatrice();
-        $shippingCountryIsoCode = $this->getCountryIsoCodeById($this->cart['addresses']['shipping']->id_country);
-        $payerCountryIsoCode = $this->getCountryIsoCodeById($this->cart['addresses']['invoice']->id_country);
-
-        $gender = new \Gender($this->cart['customer']->id_gender, $this->cart['language']->id);
-        $genderName = $gender->name;
-
         $node = [
             'intent' => \Configuration::get('PS_CHECKOUT_INTENT'), // capture or authorize
             'custom_id' => (string) $this->cart['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
@@ -90,40 +103,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 'currency_code' => $this->cart['currency']['iso_code'],
                 'value' => $this->cart['cart']['totals']['total_including_tax']['amount'],
             ],
-            'shipping' => [
-                'name' => [
-                    'full_name' => $genderName . ' ' . $this->cart['addresses']['shipping']->lastname . ' ' . $this->cart['addresses']['shipping']->firstname,
-                ],
-                'address' => [
-                    'address_line_1' => $this->cart['addresses']['shipping']->address1,
-                    'address_line_2' => $this->cart['addresses']['shipping']->address2,
-                    'admin_area_1' => (string) $this->getStateNameById($this->cart['addresses']['shipping']->id_state),
-                    'admin_area_2' => $this->cart['addresses']['shipping']->city,
-                    'country_code' => $countryCodeMatrice->getPaypalIsoCode($shippingCountryIsoCode),
-                    'postal_code' => $this->cart['addresses']['shipping']->postcode,
-                ],
-            ],
-            'payer' => [
-                'name' => [
-                    'given_name' => $this->cart['customer']->lastname,
-                    'surname' => $this->cart['customer']->firstname,
-                ],
-                'email_address' => $this->cart['customer']->email,
-                'address' => [
-                    'address_line_1' => $this->cart['addresses']['invoice']->address1,
-                    'address_line_2' => $this->cart['addresses']['invoice']->address2,
-                    'admin_area_1' => (string) $this->getStateNameById($this->cart['addresses']['invoice']->id_state), //The highest level sub-division in a country, which is usually a province, state, or ISO-3166-2 subdivision.
-                    'admin_area_2' => $this->cart['addresses']['invoice']->city, // A city, town, or village. Smaller than admin_area_level_1
-                    'country_code' => $countryCodeMatrice->getPaypalIsoCode($payerCountryIsoCode),
-                    'postal_code' => $this->cart['addresses']['invoice']->postcode,
-                ],
-            ],
             'payee' => [
                 'merchant_id' => (new PaypalAccountRepository())->getMerchantId(),
-            ],
-            'application_context' => [
-                'brand_name' => \Configuration::get('PS_SHOP_NAME'),
-                'shipping_preference' => 'SET_PROVIDED_ADDRESS',
             ],
             'roundingConfig' => (string) \Configuration::get('PS_ROUND_TYPE') . '-' . (string) \Configuration::get('PS_PRICE_ROUND_MODE'),
         ];
@@ -139,10 +120,69 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         //     ];
         // }
 
+        $this->getPayload()->addAndMergeItems($node);
+    }
+
+    public function buildShippingNode()
+    {
+        $countryCodeMatrice = new PaypalCountryCodeMatrice();
+        $shippingCountryIsoCode = $this->getCountryIsoCodeById($this->cart['addresses']['shipping']->id_country);
+
+        $gender = new \Gender($this->cart['customer']->id_gender, $this->cart['language']->id);
+        $genderName = $gender->name;
+
+        $node['shipping'] = [
+            'name' => [
+                'full_name' => $genderName . ' ' . $this->cart['addresses']['shipping']->lastname . ' ' . $this->cart['addresses']['shipping']->firstname,
+            ],
+            'address' => [
+                'address_line_1' => $this->cart['addresses']['shipping']->address1,
+                'address_line_2' => $this->cart['addresses']['shipping']->address2,
+                'admin_area_1' => (string) $this->getStateNameById($this->cart['addresses']['shipping']->id_state),
+                'admin_area_2' => $this->cart['addresses']['shipping']->city,
+                'country_code' => $countryCodeMatrice->getPaypalIsoCode($shippingCountryIsoCode),
+                'postal_code' => $this->cart['addresses']['shipping']->postcode,
+            ],
+        ];
+
+        $this->getPayload()->addAndMergeItems($node);
+    }
+
+    public function buildPayerNode()
+    {
+        $countryCodeMatrice = new PaypalCountryCodeMatrice();
+        $payerCountryIsoCode = $this->getCountryIsoCodeById($this->cart['addresses']['invoice']->id_country);
+
+        $node['payer'] = [
+            'name' => [
+                'given_name' => $this->cart['customer']->lastname,
+                'surname' => $this->cart['customer']->firstname,
+            ],
+            'email_address' => $this->cart['customer']->email,
+            'address' => [
+                'address_line_1' => $this->cart['addresses']['invoice']->address1,
+                'address_line_2' => $this->cart['addresses']['invoice']->address2,
+                'admin_area_1' => (string) $this->getStateNameById($this->cart['addresses']['invoice']->id_state), //The highest level sub-division in a country, which is usually a province, state, or ISO-3166-2 subdivision.
+                'admin_area_2' => $this->cart['addresses']['invoice']->city, // A city, town, or village. Smaller than admin_area_level_1
+                'country_code' => $countryCodeMatrice->getPaypalIsoCode($payerCountryIsoCode),
+                'postal_code' => $this->cart['addresses']['invoice']->postcode,
+            ],
+        ];
+
         // Add optional birthdate if provided
         if (!empty($this->cart['customer']->birthday) && $this->cart['customer']->birthday !== '0000-00-00') {
             $node['payer']['birth_date'] = $this->cart['customer']->birthday;
         }
+
+        $this->getPayload()->addAndMergeItems($node);
+    }
+
+    public function buildApplicationContextNode($expressCheckout = false)
+    {
+        $node['application_context'] = [
+            'brand_name' => \Configuration::get('PS_SHOP_NAME'),
+            'shipping_preference' => $expressCheckout ? 'NO_SHIPPING' : 'SET_PROVIDED_ADDRESS',
+        ];
 
         $this->getPayload()->addAndMergeItems($node);
     }
