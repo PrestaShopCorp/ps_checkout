@@ -254,7 +254,12 @@ class Ps_checkout extends PaymentModule
         // Create the paypal order
         $paypalOrder = (new Order($this->context->link))->create($payload);
 
-        //TODO: If the response is 400 with fullPayload retry the call with the minimal payload
+        // Retry with minimal payload when full payload failed
+        if ($paypalOrder['httpCode'] === 400) {
+            $builder->buildMinimalPayload();
+            $payload = $builder->presentPayload()->getJson();
+            $paypalOrder = (new Order($this->context->link))->create($payload);
+        }
 
         if (false === $paypalOrder['status']) {
             return false;
