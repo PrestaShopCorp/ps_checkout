@@ -22,6 +22,7 @@ use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Database\TableManager;
 use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
+use PrestaShop\Module\PrestashopCheckout\Factory\CheckoutLogger;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
@@ -79,6 +80,11 @@ class Ps_checkout extends PaymentModule
     // the module each time to get the version
     const VERSION = '1.2.8';
 
+    /**
+     * @var \Monolog\Logger
+     */
+    private $logger;
+
     public function __construct()
     {
         $this->name = 'ps_checkout';
@@ -105,6 +111,7 @@ class Ps_checkout extends PaymentModule
             'AdminAjaxPrestashopCheckout',
             'AdminPaypalOnboardingPrestashopCheckout',
         ];
+        $this->logger = CheckoutLogger::create();
     }
 
     /**
@@ -763,5 +770,13 @@ class Ps_checkout extends PaymentModule
         }
 
         return $db->insert('module_country', $toInsertCountryIDS);
+    }
+
+    /**
+     * @return \Monolog\Logger
+     */
+    public function getLogger()
+    {
+        return $this->logger;
     }
 }

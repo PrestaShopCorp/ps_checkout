@@ -44,6 +44,33 @@ class PrestaShopLogger
     }
 }
 
+class Module
+{
+    private $logger;
+
+    public function __construct()
+    {
+        $this->logger = new Logger();
+    }
+
+    public static function getInstanceByName($name)
+    {
+        return new self();
+    }
+
+    public function getLogger()
+    {
+        return $this->logger;
+    }
+}
+
+class Logger
+{
+    public function debug($msg)
+    {
+    }
+}
+
 class PaymentCreateOrderTest extends TestCase
 {
     public function testCreateOrderDefaultScenario()

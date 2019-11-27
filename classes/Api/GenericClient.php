@@ -76,9 +76,20 @@ class GenericClient
     {
         $response = $this->getClient()->post($this->getRoute(), $options);
 
+        /**
+         * @var \Ps_checkout
+         */
+        $module = \Module::getInstanceByName('ps_checkout');
+        $logger = $module->getLogger();
+        $logger->debug('route ' . $this->getRoute());
+        $logger->debug('options ' . var_export($options, true));
+
         $responseHandler = new ResponseApiHandler();
 
-        return $responseHandler->handleResponse($response);
+        $response = $responseHandler->handleResponse($response);
+        $logger->debug('response ' . var_export($response, true));
+
+        return $response;
     }
 
     /**
