@@ -41,7 +41,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
     /**
      * @var bool Allow to build the payload with more or less content depending if
-     * the customer use express checkout or not
+     *           the customer use express checkout or not
      */
     private $expressCheckout = false;
 
