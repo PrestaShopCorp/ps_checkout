@@ -68,7 +68,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             $this->buildPayerNode();
         }
 
-        $this->buildApplicationContextNode($this->expressCheckout);
+        $this->buildApplicationContextNode();
     }
 
     /**
@@ -123,6 +123,9 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         $this->getPayload()->addAndMergeItems($node);
     }
 
+    /**
+     * Build shipping node
+     */
     public function buildShippingNode()
     {
         $countryCodeMatrice = new PaypalCountryCodeMatrice();
@@ -148,6 +151,9 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         $this->getPayload()->addAndMergeItems($node);
     }
 
+    /**
+     * Build payer node
+     */
     public function buildPayerNode()
     {
         $countryCodeMatrice = new PaypalCountryCodeMatrice();
@@ -177,11 +183,18 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         $this->getPayload()->addAndMergeItems($node);
     }
 
-    public function buildApplicationContextNode($expressCheckout = false)
+    /**
+     * Build application context node
+     *
+     * NO_SHIPPING: The client can customize his address int the paypal pop-up (used in express checkout mode)
+     * SET_PROVIDED_ADDRESS: The address is provided by prestashop and the client
+     * cannot change/edit his address in the paypal pop-up
+     */
+    public function buildApplicationContextNode()
     {
         $node['application_context'] = [
             'brand_name' => \Configuration::get('PS_SHOP_NAME'),
-            'shipping_preference' => $expressCheckout ? 'NO_SHIPPING' : 'SET_PROVIDED_ADDRESS',
+            'shipping_preference' => $this->expressCheckout ? 'NO_SHIPPING' : 'SET_PROVIDED_ADDRESS',
         ];
 
         $this->getPayload()->addAndMergeItems($node);
