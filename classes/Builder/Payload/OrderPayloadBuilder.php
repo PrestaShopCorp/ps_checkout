@@ -50,7 +50,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      * Build payload with cart details
      *
      * @param bool $expressCheckout Allow to build the payload with more or less content depending if
-     * the customer use expresse checkout or not
+     *                              the customer use express checkout or not
      */
     public function buildFullPayload($expressCheckout = false)
     {
@@ -72,7 +72,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      * Build payload without cart details
      *
      * @param bool $expressCheckout Allow to build the payload with more or less content depending if
-     * the customer use expresse checkout or not
+     *                              the customer use express checkout or not
      */
     public function buildMinimalPayload($expressCheckout = false)
     {
