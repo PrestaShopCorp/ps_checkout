@@ -146,7 +146,7 @@ class ContextModule implements PresenterInterface
     private function getHooks()
     {
         $hooks = [];
-        foreach ($this->module->hooks as $hook) {
+        foreach (\Ps_checkout::HOOK_LIST as $hook) {
             $hooks[] = [
                 'name' => $hook,
                 'isRegistered' => \Hook::isModuleRegisteredOnHook(
