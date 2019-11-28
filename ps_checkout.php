@@ -123,7 +123,7 @@ class Ps_checkout extends PaymentModule
         }
 
         return parent::install() &&
-            $this->registerHook(static::HOOK_LIST) &&
+            $this->registerHook(self::HOOK_LIST) &&
             (new OrderStates())->installPaypalStates() &&
             (new TableManager())->createTable() &&
             $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1) &&
