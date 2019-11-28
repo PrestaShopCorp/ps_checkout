@@ -44,7 +44,6 @@ class Ps_checkout extends PaymentModule
     // hook list used by the module
     const HOOK_LIST = [
         'paymentOptions',
-        'displayPaymentReturn',
         'actionFrontControllerSetMedia',
         'actionOrderSlipAdd',
         'displayOrderConfirmation',
@@ -540,7 +539,7 @@ class Ps_checkout extends PaymentModule
     /**
      * Hook executed at the order confirmation
      */
-    public function hookOrderConfirmation($params)
+    public function hookDisplayOrderConfirmation($params)
     {
         if ($params['order']->module !== $this->name) {
             return false;
