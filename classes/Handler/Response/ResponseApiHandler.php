@@ -63,6 +63,6 @@ class ResponseApiHandler
      */
     private function responseIsSuccessful($responseContents, $httpStatusCode)
     {
-        return in_array($httpStatusCode, range(200, 299)) && $responseContents !== null;
+        return substr($httpStatusCode, 0, 1) !== 2 && $responseContents !== null;
     }
 }

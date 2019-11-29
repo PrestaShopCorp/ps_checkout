@@ -69,13 +69,15 @@ class Order extends PaymentClient
             return $response;
         }
 
-        if (false === isset($response['purchase_units'][0]['payments']['captures'][0])) {
+        if (false === isset($response['body']['purchase_units'][0]['payments']['captures'][0])) {
             $response['status'] = false;
 
             return $response;
         }
 
-        return $response['body']['purchase_units'][0]['payments']['captures'][0];
+        $response['body'] = $response['body']['purchase_units'][0]['payments']['captures'][0];
+
+        return $response;
     }
 
     /**
