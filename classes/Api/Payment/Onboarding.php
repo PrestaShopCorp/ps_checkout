@@ -51,7 +51,7 @@ class Onboarding extends PaymentClient
         ]);
 
         // Retry with minimal payload when full payload failed
-        if (substr($paypalOrder['httpCode'], 0, 1) === 4) {
+        if (substr((string) $response['httpCode'], 0, 1) === '4') {
             $builder->buildMinimalPayload();
             $response = $this->post([
                 'json' => $builder->presentPayload()->getJson(),
