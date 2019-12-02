@@ -116,10 +116,10 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     private function checkPSLSignature(array $bodyValues)
     {
         $context = \Context::getContext();
-        $dataReturned = (new Webhook($context->link))->getShopSignature($bodyValues);
+        $response = (new Webhook($context->link))->getShopSignature($bodyValues);
 
         // data return false if no error
-        if (200 === $dataReturned['statusCode'] && 'VERIFIED' === $dataReturned['message']) {
+        if (200 === $response['httpCode'] && 'VERIFIED' === $response['body']['message']) {
             return true;
         }
 

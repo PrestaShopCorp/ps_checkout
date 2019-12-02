@@ -112,12 +112,12 @@ class ValidateOrder
 
         $orderState = $this->setOrderState(
             $module->currentOrder,
-            $response['status'],
+            $response['body']['status'],
             $payload['paymentMethod']
         );
 
         if ($orderState === _PS_OS_PAYMENT_) {
-            $this->setTransactionId($module->currentOrderReference, $response['id']);
+            $this->setTransactionId($module->currentOrderReference, $response['body']['id']);
         }
 
         return true;
