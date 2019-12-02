@@ -1,7 +1,24 @@
 <?php
-
+/**
+ * 2007-2019 PrestaShop and Contributors
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA <contact@prestashop.com>
+ * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ * International Registered Trademark & Property of PrestaShop SA
+ */
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_cee265b3c694942c4cc7e4d21ff9aab4'] = 'Przy użyciu jednego modułu oferuj swoim klientom wszystkie metody płatności i zarządzaj sprzedażą wszędzie, gdzie prowadzisz działalność.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_bb8956c67b82c7444a80c6b2433dd8b4'] = 'Czy na pewno chcesz odinstalować ten moduł?';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_b1542a725d4c532b6480611e8094ab62'] = 'Nie można zwrócić kosztów. Nie znaleziono zamówienia PayPal powiązanego z tym zamówieniem.';

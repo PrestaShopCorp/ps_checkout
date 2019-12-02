@@ -1,28 +1,22 @@
 <?php
 /**
-* 2007-2019 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/afl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-*  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2019 PrestaShop SA
-*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
-*/
+ * 2007-2019 PrestaShop and Contributors
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA <contact@prestashop.com>
+ * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ * International Registered Trademark & Property of PrestaShop SA
+ */
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Firebase;
 
@@ -51,12 +45,35 @@ class Token extends FirebaseClient
             ],
         ]);
 
-        if (isset($response['id_token']) && isset($response['refresh_token'])) {
-            \Configuration::updateValue('PS_PSX_FIREBASE_ID_TOKEN', $response['id_token']);
-            \Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_TOKEN', $response['refresh_token']);
+        if (true === $response['status']) {
+            \Configuration::updateValue('PS_PSX_FIREBASE_ID_TOKEN', $response['body']['id_token']);
+            \Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_TOKEN', $response['body']['refresh_token']);
+            \Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_DATE', date('Y-m-d H:i:s'));
         }
 
         return $response;
+    }
+
+    /**
+     * Check we can request an other token.
+     *
+     * @return bool
+     */
+    public function shouldRefreshToken()
+    {
+        return $this->hasRefreshToken() && $this->isExpired();
+    }
+
+    /**
+     * Check if we have a refresh token
+     *
+     * @return bool
+     */
+    public function hasRefreshToken()
+    {
+        $refresh_token = \Configuration::get('PS_PSX_FIREBASE_REFRESH_TOKEN');
+
+        return !empty($refresh_token);
     }
 
     /**
@@ -64,20 +81,15 @@ class Token extends FirebaseClient
      *
      * @return bool
      */
-    public function checkIfTokenIsValid()
+    public function isExpired()
     {
-        $query = 'SELECT date_upd
-                FROM ' . _DB_PREFIX_ . 'configuration
-                WHERE name="PS_PSX_FIREBASE_ID_TOKEN"
-                AND date_upd > NOW() + INTERVAL 1 HOUR';
+        $refresh_date = \Configuration::get('PS_PSX_FIREBASE_REFRESH_DATE');
 
-        $dateUpd = \Db::getInstance()->getValue($query);
-
-        if (false === $dateUpd) {
-            return false;
+        if (empty($refresh_date)) {
+            return true;
         }
 
-        return true;
+        return strtotime($refresh_date) + 3600 < time();
     }
 
     /**
@@ -87,7 +99,7 @@ class Token extends FirebaseClient
      */
     public function getToken()
     {
-        if (false === $this->checkIfTokenIsValid()) {
+        if ($this->shouldRefreshToken()) {
             $this->refresh();
         }
 

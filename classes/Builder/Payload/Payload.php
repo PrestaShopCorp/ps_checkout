@@ -24,17 +24,49 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store;
+namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
 /**
- * Interface StorePresenter defines methods for store presenter.
+ * Payload object - use to construct some complex payload
  */
-interface StorePresenterInterface
+class Payload
 {
     /**
-     * Present store
+     * Payload content
+     *
+     * @var array
+     */
+    private $items = [];
+
+    /**
+     * Setter for items
+     * Use array_replace_recursive in order to merge the new
+     * content with the previous one.
+     *
+     * @param array $array
+     */
+    public function addAndMergeItems(array $array)
+    {
+        $this->items = array_replace_recursive($this->items, $array);
+    }
+
+    /**
+     * Get payload content as json
+     *
+     * @return string
+     */
+    public function getJson()
+    {
+        return json_encode($this->items);
+    }
+
+    /**
+     * Get payload content as array
      *
      * @return array
      */
-    public function present();
+    public function getArray()
+    {
+        return $this->items;
+    }
 }

@@ -1,35 +1,29 @@
 <?php
 /**
-* 2007-2019 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/afl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-*  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2019 PrestaShop SA
-*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
-*/
+ * 2007-2019 PrestaShop and Contributors
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA <contact@prestashop.com>
+ * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ * International Registered Trademark & Property of PrestaShop SA
+ */
 
 namespace PrestaShop\Module\PrestashopCheckout\Translations;
 
 class OrderStatesTranslations
 {
     const STANDARD_ISO_CODE = 'en';
-    const PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT = array(
+    const PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT = [
         'en' => 'Waiting for PayPal payment',
         'fr' => 'En attente de paiement par PayPal',
         'es' => 'Esperando el pago con PayPal',
@@ -38,8 +32,8 @@ class OrderStatesTranslations
         'de' => 'Warten auf PayPal-Zahlung',
         'pl' => 'Oczekiwanie na płatność PayPal',
         'pt' => 'Aguardando pagamento pelo PayPal',
-    );
-    const PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT = array(
+    ];
+    const PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT = [
         'en' => 'Waiting for Credit Card Payment',
         'fr' => 'En attente de paiement par Carte de Crédit',
         'es' => 'Esperando el pago con tarjeta de crédito',
@@ -48,8 +42,8 @@ class OrderStatesTranslations
         'de' => 'Warten auf Kreditkartenzahlung',
         'pl' => 'Oczekiwanie na płatność kartą kredytową',
         'pt' => 'Aguardando pagamento por cartão de crédito',
-    );
-    const PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT = array(
+    ];
+    const PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT = [
         'en' => 'Waiting for Local Payment Method Payment',
         'fr' => 'En attente de paiement par moyen de paiement local',
         'es' => 'Esperando el pago con un método de pago local',
@@ -58,8 +52,8 @@ class OrderStatesTranslations
         'de' => 'Warten auf Zahlung per lokaler Zahlungsmethode',
         'pl' => 'Oczekiwanie na płatność lokalnym środkiem płatności',
         'pt' => 'Aguardando pagamento pelo método de pagamento local',
-    );
-    const PS_CHECKOUT_STATE_AUTHORIZED = array(
+    ];
+    const PS_CHECKOUT_STATE_AUTHORIZED = [
         'en' => 'Authorized. To be captured by merchant',
         'fr' => 'Autorisation. A capturer par le marchand',
         'es' => 'Autorizado. El vendedor lo capturará',
@@ -68,8 +62,8 @@ class OrderStatesTranslations
         'de' => 'Autorisiert. Wird von Händler erfasst.',
         'pl' => 'Pomyślna autoryzacja. Transfer do przeprowadzenia przez sklep',
         'pt' => 'Autorizado. A ser capturado pelo comerciante',
-    );
-    const PS_CHECKOUT_STATE_PARTIAL_REFUND = array(
+    ];
+    const PS_CHECKOUT_STATE_PARTIAL_REFUND = [
         'en' => 'Partial refund',
         'fr' => 'Remboursement partiel',
         'es' => 'Reembolso parcial',
@@ -78,8 +72,8 @@ class OrderStatesTranslations
         'de' => 'Teilweise Rückerstattung',
         'pl' => 'Częściowy zwrot',
         'pt' => 'Reembolso parcial',
-    );
-    const PS_CHECKOUT_STATE_WAITING_CAPTURE = array(
+    ];
+    const PS_CHECKOUT_STATE_WAITING_CAPTURE = [
         'en' => 'Waiting capture',
         'fr' => 'En attente de capture',
         'es' => 'Esperando la captura',
@@ -88,7 +82,7 @@ class OrderStatesTranslations
         'de' => 'Warten auf Erfassung',
         'pl' => 'Oczekiwanie na transfer',
         'pt' => 'Aguardando a captura',
-    );
+    ];
 
     /**
      * Get the States Translations for the table order_state_lang
@@ -99,14 +93,14 @@ class OrderStatesTranslations
     {
         $isoCode = $this->confirmIsoCode($isoCode);
 
-        return array(
+        return [
             'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT[$isoCode],
             'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT[$isoCode],
             'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT[$isoCode],
             'PS_CHECKOUT_STATE_AUTHORIZED' => self::PS_CHECKOUT_STATE_AUTHORIZED[$isoCode],
             'PS_CHECKOUT_STATE_PARTIAL_REFUND' => self::PS_CHECKOUT_STATE_PARTIAL_REFUND[$isoCode],
             'PS_CHECKOUT_STATE_WAITING_CAPTURE' => self::PS_CHECKOUT_STATE_WAITING_CAPTURE[$isoCode],
-        );
+        ];
     }
 
     /**

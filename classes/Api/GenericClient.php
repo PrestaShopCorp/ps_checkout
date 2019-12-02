@@ -1,33 +1,27 @@
 <?php
 /**
-* 2007-2019 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/afl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-*  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2019 PrestaShop SA
-*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
-*/
+ * 2007-2019 PrestaShop and Contributors
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA <contact@prestashop.com>
+ * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ * International Registered Trademark & Property of PrestaShop SA
+ */
 
 namespace PrestaShop\Module\PrestashopCheckout\Api;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
+use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
 
 /**
  * Construct the client used to make call to maasland
@@ -55,7 +49,7 @@ class GenericClient
      *
      * @var bool
      */
-    protected $catchExceptions = true;
+    protected $catchExceptions = false;
 
     /**
      * Set how long guzzle will wait a response before end it up
@@ -76,33 +70,15 @@ class GenericClient
      *
      * @param array $options payload
      *
-     * @return array|bool return response or false if no response
+     * @return array return response or false if no response
      */
     protected function post(array $options = [])
     {
-        try {
-            $response = $this->getClient()->post($this->getRoute(), $options);
-        } catch (RequestException $e) {
-            \PrestaShopLogger::addLog(date('[Ymd] ') . $e->getMessage(), 3);
+        $response = $this->getClient()->post($this->getRoute(), $options);
 
-            // TODO: hotfix -> improve error management system
-            if (!$e->hasResponse()) {
-                return [
-                    'checkoutError' => true,
-                    'message' => $e->getMessage(),
-                ];
-            }
-            $response = $e->getResponse();
-        }
+        $responseHandler = new ResponseApiHandler();
 
-        // In case of a 204 status code, there is no body waitted so return true
-        if (204 === $response->getStatusCode()) {
-            return true;
-        }
-
-        $data = json_decode($response->getBody(), true);
-
-        return isset($data) ? $data : false;
+        return $responseHandler->handleResponse($response);
     }
 
     /**

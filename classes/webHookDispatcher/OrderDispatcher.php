@@ -1,28 +1,22 @@
 <?php
 /**
-* 2007-2019 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Open Software License (OSL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/osl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-* @author PrestaShop SA <contact@prestashop.com>
-* @copyright 2007-2019 PrestaShop SA
-* @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
-* International Registered Trademark & Property of PrestaShop SA
-**/
+ * 2007-2019 PrestaShop and Contributors
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA <contact@prestashop.com>
+ * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ * International Registered Trademark & Property of PrestaShop SA
+ */
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
@@ -36,12 +30,12 @@ class OrderDispatcher implements Dispatcher
     const PS_CHECKOUT_PAYMENT_PENDING = 'PaymentCapturePending';
     const PS_CHECKOUT_PAYMENT_COMPLETED = 'PaymentCaptureCompleted';
     const PS_CHECKOUT_PAYMENT_DENIED = 'PaymentCaptureDenied';
-    const PS_EVENTTYPE_TO_PS_STATE_ID = array(
+    const PS_EVENTTYPE_TO_PS_STATE_ID = [
         self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED => _PS_OS_CANCELED_, // Canceled
         self::PS_CHECKOUT_PAYMENT_PENDING => 3, // Processing in progress
         self::PS_CHECKOUT_PAYMENT_COMPLETED => _PS_OS_PAYMENT_, // Payment accepted
         self::PS_CHECKOUT_PAYMENT_DENIED => _PS_OS_ERROR_, // Payment error
-    );
+    ];
 
     /**
      * Dispatch the Event Type to manage the merchant status

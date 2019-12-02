@@ -1,28 +1,22 @@
 <?php
 /**
-* 2007-2019 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/afl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-*  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2019 PrestaShop SA
-*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
-*/
+ * 2007-2019 PrestaShop and Contributors
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA <contact@prestashop.com>
+ * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ * International Registered Trademark & Property of PrestaShop SA
+ */
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
@@ -38,7 +32,7 @@ class Order extends PaymentClient
      *
      * @param string $payload Cart details (json)
      *
-     * @return array|bool data with paypal order id or false if error
+     * @return array data with paypal order id or false if error
      */
     public function create($payload)
     {
@@ -55,7 +49,7 @@ class Order extends PaymentClient
      * @param string $orderId paypal
      * @param string $merchantId
      *
-     * @return array|bool response from paypal if the payment is accepted or false if error occured
+     * @return array response from paypal if the payment is accepted or false if error occured
      */
     public function capture($orderId, $merchantId)
     {
@@ -71,15 +65,19 @@ class Order extends PaymentClient
             ]),
         ]);
 
-        if (isset($response['checkoutError']) && $response['checkoutError'] === true) {
+        if (false === $response['status']) {
             return $response;
         }
 
-        if (false === isset($response['purchase_units'][0]['payments']['captures'][0])) {
-            return false;
+        if (false === isset($response['body']['purchase_units'][0]['payments']['captures'][0])) {
+            $response['status'] = false;
+
+            return $response;
         }
 
-        return $response['purchase_units'][0]['payments']['captures'][0];
+        $response['body'] = $response['body']['purchase_units'][0]['payments']['captures'][0];
+
+        return $response;
     }
 
     /**
@@ -87,7 +85,7 @@ class Order extends PaymentClient
      *
      * @param string $orderId paypal
      *
-     * @return array|bool paypal order
+     * @return array paypal order
      */
     public function fetch($orderId)
     {
@@ -106,7 +104,7 @@ class Order extends PaymentClient
      * @param string $orderId paypal
      * @param string $merchantId
      *
-     * @return array|bool paypal order
+     * @return array paypal order
      */
     public function authorize($orderId, $merchantId)
     {
@@ -118,7 +116,7 @@ class Order extends PaymentClient
      *
      * @param array $payload
      *
-     * @return array|bool paypal order
+     * @return array paypal order
      */
     public function refund($payload)
     {
@@ -134,7 +132,7 @@ class Order extends PaymentClient
      *
      * @param string $orderId paypal
      *
-     * @return array|bool response from paypal if the payment is accepted or false if error occured
+     * @return array response from paypal if the payment is accepted or false if error occured
      */
     public function patch($orderId)
     {
