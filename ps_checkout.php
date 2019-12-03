@@ -128,6 +128,7 @@ class Ps_checkout extends PaymentModule
             (new TableManager())->createTable() &&
             $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1) &&
             $this->addCheckboxCarrierRestrictionsForModule() &&
+            $this->addCheckoutPaymentForAllActivatedCountries() &&
             $this->installTabs();
     }
 
@@ -726,5 +727,40 @@ class Ps_checkout extends PaymentModule
         }
 
         return true;
+    }
+
+    /**
+     * Add Checkout for all activated countries of the shop.
+     *
+     * @param array $shopsList
+     *
+     * @return bool
+     */
+    public function addCheckoutPaymentForAllActivatedCountries()
+    {
+        $db = \Db::getInstance();
+        $activeCountries = \Configuration::get('PS_ALLOWED_COUNTRIES');
+        $explodedCountries = explode(';', $activeCountries);
+        $alreadySelectedCountries = $db->executeS('SELECT id_country FROM ' . _DB_PREFIX_. 'module_country WHERE id_module = "' . $this->id . '";');
+        $flattenedArray = array();
+        $toInsertCountryIDS = array();
+
+        foreach ($alreadySelectedCountries as $value) {
+            $flattenedArray[] = $value['id_country'];
+        };
+
+        foreach ($explodedCountries as $isoCodeCountry) {
+            $idCountry = $db->executeS('SELECT id_country FROM ps_country WHERE iso_code = "' . $isoCodeCountry . '";');
+
+            if (!in_array($idCountry[0]['id_country'], $flattenedArray)) {
+                $toInsertCountryIDS[] = array(
+                    'id_country' => $idCountry[0]['id_country'],
+                    'id_shop' => $this->context->shop->id,
+                    'id_module' => $this->id,
+                );
+            }
+        };
+
+        return $db->insert('module_country', $toInsertCountryIDS);
     }
 }
