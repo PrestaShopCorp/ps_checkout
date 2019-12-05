@@ -5,6 +5,14 @@ php:
   - 5.6
   - 7.2
 
+env:
+  - PRESTASHOP_VERSION=latest
+
+matrix:
+  include:
+    - php: 7.2
+      env: PRESTASHOP_VERSION=1.7.3.0
+
 cache:
   directories:
     - $HOME/.composer/cache
@@ -21,7 +29,7 @@ script:
   - vendor/bin/phpunit tests
   # PHP Stan
   - if [ ${TRAVIS_PHP_VERSION:0:2} == "7." ]; then
-      docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop;
+      docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop:${PRESTASHOP_VERSION};
       docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module phpstan/phpstan:0.11.19 analyse --configuration=/web/module/tests/phpstan/phpstan.neon;
     fi
 

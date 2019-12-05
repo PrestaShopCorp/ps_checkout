@@ -4,6 +4,7 @@ parameters:
 		- classes
 		- controllers
 		- ps_checkout.php
+	reportUnmatchedIgnoredErrors: false
 	ignoreErrors:
 		- '#Cannot assign offset "merchant…" to string|true.#'
 		- '#Property ModuleCore::\$version \(float\) does not accept string.#'
@@ -14,5 +15,6 @@ parameters:
 		- '#Call to an undefined method\(\) AdminController|FrontController::getCheckoutProcess\(\).#'
 		- '#Parameter \#1 \$id_hook of method ModuleCore::updatePosition\(\) expects bool, int given.#'
 		- '#Property TabCore::\$name \(string\) does not accept array.#'
+		- '#Access to an undefined property PaymentModule::\$currentOrderReference.#'
 
 	level: 5
