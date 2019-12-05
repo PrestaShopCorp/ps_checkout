@@ -27,7 +27,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Cart;
 
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
-use PrestaShop\PrestaShop\Adapter\Cart\CartPresenter as PsCartPresenter;
+use PrestaShop\PrestaShop\Adapter\Presenter\Cart\CartPresenter as PsCartPresenter;
 
 /**
  * Present the cart waiting by the create order paypal builder
