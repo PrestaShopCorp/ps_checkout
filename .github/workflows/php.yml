@@ -1,18 +1,18 @@
 name: PHP tests
-on: [pull_request]
+on: [push, pull_request]
 jobs:
   php-cs-fixer:
-    name: PHP-CS-FIXER
+    name: PHP-CS-Fixer
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v1
         with:
           fetch-depth: 0
-      - name: php-cs-fixer default
+      - name: Run PHP-CS-Fixer
         uses: prestashopcorp/github-action-php-cs-fixer@master
   phpstan:
-    name: PHPSTAN
+    name: PHPStan
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -20,5 +20,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+      - name: Cache vendor folder test
+        uses: actions/cache@v1
+        with:
+          path: vendor
+          key: php-${{ hashFiles('composer.lock') }}
       - run: composer install
-      - run: docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop:${{ matrix.presta-versions }} && docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module phpstan/phpstan:0.11.19 analyse --configuration=/web/module/tests/phpstan/phpstan.neon
+      - run: docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop:${{ matrix.presta-versions }}
+      - run: docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module phpstan/phpstan:0.11.19 analyse --configuration=/web/module/tests/phpstan/phpstan.neon
