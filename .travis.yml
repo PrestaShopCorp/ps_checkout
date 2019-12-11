@@ -41,7 +41,7 @@ before_deploy:
   - sudo apt-get install -y nodejs
   - yarn install
   - yarn build
-  # Comoser
+  # Composer
   - composer install --no-dev -o
   # Cleanup
   - rm -f .php_cs.*
