@@ -1,6 +1,21 @@
 name: PHP tests
 on: [push, pull_request]
 jobs:
+  php-linter:
+    name: PHP LINTER ${{ matrix.php-versions }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-versions: ['5.6', '7.2', '7.3']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 0
+      - name: PHP syntax checker ${{ matrix.php-versions }}
+        uses: prestashop/github-action-php-lint/${{ matrix.php-versions }}@master
+        with:
+          folder-to-exclude: "! -path \"./vendor/*\" ! -path \"./files/modules/generator/*\""
   php-cs-fixer:
     name: PHP-CS-Fixer
     runs-on: ubuntu-latest
