@@ -239,10 +239,12 @@
                     <div class="col-lg-12 col-md-12 col-sm-12">
                       <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
                         <label>{{ $t('panel.psx-form.businessCategory') }}</label>
-                        <select v-model="form.business_category"
+                        <select
+                          v-model="form.business_category"
                           @change="onChangeCategory(form.business_category)"
                           class="form-control custom-select"
-                          :class="[form.business_website != '' ? '' : 'has-danger']">
+                          :class="[form.business_website != '' ? '' : 'has-danger']"
+                        >
                           <option v-for="(value, key) in getCompanyCategories" :key="key" :value="key">
                             {{ value.title }}
                           </option>
