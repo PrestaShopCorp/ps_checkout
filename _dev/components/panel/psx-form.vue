@@ -73,7 +73,8 @@
                         <label>{{ $t('panel.psx-form.firstName') }}</label>
                         <input type="text" class="form-control" id="firstName"
                           v-model="form.business_contact_first_name"
-                          :class="[form.business_contact_first_name != '' ? '' : 'has-danger']">
+                          :class="[form.business_contact_first_name != '' ? '' : 'has-danger']"
+                        >
                       </div>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-6">
@@ -91,7 +92,10 @@
                       <select class="form-control custom-select"
                         v-model="form.business_contact_language"
                         :class="[form.business_contact_language != '' ? '' : 'has-danger']">
-                        <option v-for="languageDetail in getLanguagesDetails" :key="languageDetail.iso_code" :value="languageDetail.iso_code">
+                        <option v-for="languageDetail in getLanguagesDetails"
+                          :key="languageDetail.iso_code"
+                          :value="languageDetail.iso_code"
+                        >
                           {{ languageDetail.name }}
                         </option>
                       </select>
