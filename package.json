@@ -5,7 +5,8 @@
     "scripts": {
         "serve": "vue-cli-service serve --no-clean --port 8080",
         "build": "NODE_ENV=production vue-cli-service build --no-clean",
-        "lint": "vue-cli-service lint"
+        "lint": "vue-cli-service lint",
+        "test": "vue-cli-service lint _dev --no-fix"
     },
     "dependencies": {
         "@vue/cli": "^3.7.0",
