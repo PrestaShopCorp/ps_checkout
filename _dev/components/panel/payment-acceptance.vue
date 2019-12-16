@@ -20,7 +20,8 @@
   <form class="form form-horizontal">
     <div class="card">
       <h3 class="card-header">
-        <i class="material-icons">credit_card</i> {{ $t('panel.payment-acceptance.paymentAcceptanceTitle') }}
+        <i class="material-icons">credit_card</i>
+        {{ $t('panel.payment-acceptance.paymentAcceptanceTitle') }}
       </h3>
       <div class="card-block row">
         <div class="card-text">

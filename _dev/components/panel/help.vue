@@ -43,7 +43,8 @@
               <h1>FAQ</h1>
               <div class="separator my-3" />
               <template v-if="faq && faq.categories.lenfth != 0">
-                <v-collapse-group class="my-3"
+                <v-collapse-group
+                  class="my-3"
                   v-for="(categorie, index) in faq.categories"
                   :key="index"
                   :only-one-active="true"
@@ -82,7 +83,9 @@
             <div class="contact mt-4">
               <div>{{ $t('panel.help.couldntFindAnswer') }}</div>
               <div class="mt-2">
-                <a href="https://support.prestashop.com/hc/requests/new?ticket_form_id=" target="_blank"
+                <a
+                  href="https://support.prestashop.com/hc/requests/new?ticket_form_id="
+                  target="_blank"
                   v-if="isReady"
                 >
                   {{ $t('panel.help.contactUs') }} <i class="material-icons">arrow_right_alt</i>

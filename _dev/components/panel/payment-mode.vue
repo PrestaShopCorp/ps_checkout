@@ -27,12 +27,31 @@
           <div class="form-group row">
             <label class="form-control-label">
               {{ $t('panel.payment-mode.paymentAction') }}
-              <span class="help-box" data-toggle="popover" :data-content="$t('panel.payment-mode.helpBoxPaymentMode')" data-original-title="" title=""/>
+              <span
+                class="help-box"
+                data-toggle="popover"
+                :data-content="$t('panel.payment-mode.helpBoxPaymentMode')"
+                data-original-title="" title=""
+              />
             </label>
             <div class="col-sm">
               <div class="btn-group" role="group" aria-label="First group">
-                <button type="button" @click="setCaptureMode('CAPTURE')" :class="{active : captureMode === 'CAPTURE'}" class="btn btn-primary-reverse btn-outline-primary">{{ $t('panel.payment-mode.capture') }}</button>
-                <button type="button" @click="setCaptureMode('AUTHORIZE')" :class="{active : captureMode === 'AUTHORIZE'}" class="btn btn-primary-reverse btn-outline-primary">{{ $t('panel.payment-mode.authorize') }}</button>
+                <button
+                  type="button"
+                  @click="setCaptureMode('CAPTURE')"
+                  :class="{active : captureMode === 'CAPTURE'}"
+                  class="btn btn-primary-reverse btn-outline-primary"
+                >
+                  {{ $t('panel.payment-mode.capture') }}
+                </button>
+                <button
+                  type="button"
+                  @click="setCaptureMode('AUTHORIZE')"
+                  :class="{active : captureMode === 'AUTHORIZE'}"
+                  class="btn btn-primary-reverse btn-outline-primary"
+                >
+                  {{ $t('panel.payment-mode.authorize') }}
+                </button>
               </div>
             </div>
           </div>
@@ -44,8 +63,20 @@
               {{ $t('panel.payment-mode.environment') }}
             </label>
             <div class="col-sm">
-              <input v-if="paymentMode === 'LIVE'" class="form-control" type="text" readonly :value="$t('panel.payment-mode.productionMode')">
-              <input v-else class="form-control" type="text" readonly :value="$t('panel.payment-mode.sandboxMode')">
+              <input
+                v-if="paymentMode === 'LIVE'"
+                class="form-control"
+                type="text"
+                readonly
+                :value="$t('panel.payment-mode.productionMode')"
+              >
+              <input
+                v-else
+                class="form-control"
+                type="text"
+                readonly
+                :value="$t('panel.payment-mode.sandboxMode')"
+              >
               <small class="form-text mb-3">
                 <template v-if="paymentMode === 'LIVE'">
                   {{ $t('panel.payment-mode.tipProductionMode') }}

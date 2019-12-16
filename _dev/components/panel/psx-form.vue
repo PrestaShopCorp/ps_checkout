@@ -46,14 +46,21 @@
             <div id="personal_informations" class="row mb-4">
               <div class="col-lg-10 offset-lg-1 col-md-10 offset-md-1 col-sm-10 offset-sm-1 pl-0">
                 <div class="col-lg-3 col-md-3 col-sm-3 pl-0 pr-0 text-right mt-3">
-                  <label class="mr-3 text-muted">{{ $t('panel.psx-form.personalInformation') }}</label>
+                  <label class="mr-3 text-muted">
+                    {{ $t('panel.psx-form.personalInformation') }}
+                  </label>
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-9">
                   <div class="row mt-3">
                     <div class="col-lg-2 col-md-2 col-sm-2">
                       <div class="md-radio">
                         <label>
-                          <input name="gender" type="radio" value="Mr" v-model="form.business_contact_gender">
+                          <input
+                            name="gender"
+                            type="radio"
+                            value="Mr"
+                            v-model="form.business_contact_gender"
+                          >
                           <i class="md-radio-control" /> {{ $t('panel.psx-form.genderMr') }}
                         </label>
                       </div>
@@ -61,7 +68,12 @@
                     <div class="col-lg-6 col-md-6 col-sm-6">
                       <div class="md-radio">
                         <label>
-                          <input name="gender" type="radio" value="Ms" v-model="form.business_contact_gender">
+                          <input
+                            name="gender"
+                            type="radio"
+                            value="Ms"
+                            v-model="form.business_contact_gender"
+                          >
                           <i class="md-radio-control" /> {{ $t('panel.psx-form.genderMrs') }}
                         </label>
                       </div>
@@ -71,7 +83,10 @@
                     <div class="col-lg-6 col-md-6 col-sm-6">
                       <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
                         <label>{{ $t('panel.psx-form.firstName') }}</label>
-                        <input type="text" class="form-control" id="firstName"
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="firstName"
                           v-model="form.business_contact_first_name"
                           :class="[form.business_contact_first_name != '' ? '' : 'has-danger']"
                         >
@@ -107,8 +122,12 @@
                   <div class="row mt-3">
                     <div class="col-lg-6 col-md-6 col-sm-6">
                       <label class="row">
-                        <span class="col-lg-7 col-md-7 col-sm-7">{{ $t('panel.psx-form.qualification') }}</span>
-                        <span class="col-lg-5 col-md-5 col-sm-5 font-italic text-secondary text-right">{{ $t('panel.psx-form.optional') }}</span>
+                        <span class="col-lg-7 col-md-7 col-sm-7">
+                          {{ $t('panel.psx-form.qualification') }}
+                        </span>
+                        <span class="col-lg-5 col-md-5 col-sm-5 font-italic text-secondary text-right">
+                          {{ $t('panel.psx-form.optional') }}
+                        </span>
                       </label>
                       <select
                         class="form-control custom-select"

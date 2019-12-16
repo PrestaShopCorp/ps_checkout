@@ -59,7 +59,11 @@
                 </a>
               </div>
               <div class="text-right" v-else>
-                <a href="#" data-toggle="modal" data-target="#modalLogout" class="text-muted"
+                <a
+                  href="#"
+                  data-toggle="modal"
+                  data-target="#modalLogout"
+                  class="text-muted"
                   v-if="!isReady"
                 >
                   {{ $t('panel.account-list.logOut') }}

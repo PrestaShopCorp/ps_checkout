@@ -62,7 +62,7 @@
                         {{ $t('panel.active-payment.creditCard') }}
                       </label>
                       <label v-else class="mb-0">
-                        <img class="mr-3" src="@/assets/images/paypal-logo-thumbnail.png" >
+                        <img class="mr-3" src="@/assets/images/paypal-logo-thumbnail.png">
                         {{ $t('panel.active-payment.paypal') }}
                       </label>
                     </div>
@@ -71,7 +71,8 @@
                       <template v-else><PaypalStatus /></template>
                     </div>
                   </div>
-                  <div v-if="element.name === 'paypal'"
+                  <div
+                    v-if="element.name === 'paypal'"
                     class="d-flex payment-method-content separator"
                   >
                     <div class="flex-grow-1">
