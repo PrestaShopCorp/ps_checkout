@@ -25,7 +25,8 @@
           <img src="@/assets/images/card.png" alt="">
         </div>
         <div class="text-muted">
-          <b>{{ $t('block.reassurance.firstTip1') }}</b> {{ $t('block.reassurance.firstTip2') }}
+          <b>{{ $t('block.reassurance.firstTip1') }}</b>
+          {{ $t('block.reassurance.firstTip2') }}
         </div>
       </div>
       <div class="tip">

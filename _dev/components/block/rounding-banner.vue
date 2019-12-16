@@ -21,7 +21,9 @@
     <PSAlert :alert-type="ALERT_TYPE_WARNING">
       <h2>{{ $t('block.rounding-banner.title') }}</h2>
       <p class="mb-3">{{ $t('block.rounding-banner.content') }}</p>
-      <PSButton ghost @click="updateRoundingSettings()">{{ $t('block.rounding-banner.button') }}</PSButton>
+      <PSButton ghost @click="updateRoundingSettings()">
+        {{ $t('block.rounding-banner.button') }}
+      </PSButton>
     </PSAlert>
   </div>
 </template>

@@ -26,7 +26,9 @@
         <div class="card-text">
           <div class="row mb-2">
             <div class="col-12 col-sm-12 col-md-12 col-lg-12 pl-0">
-              <h1 class="text-muted font-weight-light">{{ $t('panel.account-list.activateAllPayment') }}</h1>
+              <h1 class="text-muted font-weight-light">
+                {{ $t('panel.account-list.activateAllPayment') }}
+              </h1>
             </div>
           </div>
           <div class="row">
@@ -34,7 +36,9 @@
               <h2>{{ $t('panel.account-list.essentialsAccount') }}</h2>
               <p class="text-muted mb-0">
                 <template v-if="firebaseStatusAccount === true">
-                  {{ $t('panel.account-list.connectedWitdh') }} <b>{{ $store.state.firebase.email }}</b> {{ $t('panel.account-list.account') }}
+                  {{ $t('panel.account-list.connectedWitdh') }}
+                  <b>{{ $store.state.firebase.email }}</b>
+                  {{ $t('panel.account-list.account') }}
                 </template>
                 <template v-else>
                   {{ $t('panel.account-list.createNewAccount') }}
@@ -43,20 +47,39 @@
             </div>
             <div class="col-12 col-sm-4 col-md-3 col-lg-4 m-auto">
               <div class="text-center float-right" v-if="firebaseStatusAccount === false">
-                <a href="#" @click.prevent="goToSignIn()" class="mr-4"><b>{{ $t('panel.account-list.logIn') }}</b></a>
-                <a href="#" @click.prevent="goToSignUp()" class="btn btn-primary-reverse btn-outline-primary light-button mb-1">
+                <a href="#" @click.prevent="goToSignIn()" class="mr-4">
+                  <b>{{ $t('panel.account-list.logIn') }}</b>
+                </a>
+                <a href="#"
+                  @click.prevent="goToSignUp()"
+                  class="btn btn-primary-reverse btn-outline-primary light-button mb-1"
+                >
                   {{ $t('panel.account-list.createAccount') }}
                 </a>
               </div>
               <div class="text-right" v-else>
-                <a v-if="!isReady" href="#" data-toggle="modal" data-target="#modalLogout" class="text-muted">{{ $t('panel.account-list.logOut') }}</a>
+                <a v-if="!isReady"
+                  href="#"
+                  data-toggle="modal"
+                  data-target="#modalLogout"
+                  class="text-muted">
+                  {{ $t('panel.account-list.logOut') }}
+                </a>
               </div>
               <!-- modal -->
-              <div class="modal" id="modalLogout" tabindex="-1" role="dialog" aria-labelledby="psxModalLogout">
+              <div
+                class="modal"
+                id="modalLogout"
+                tabindex="-1"
+                role="dialog"
+                aria-labelledby="psxModalLogout"
+              >
                 <div class="modal-dialog" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="psxModalLogout">{{ $t('panel.account-list.titleLogout') }}</h5>
+                      <h5 class="modal-title" id="psxModalLogout">
+                        {{ $t('panel.account-list.titleLogout') }}
+                      </h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                       </button>
@@ -65,8 +88,17 @@
                       <p>{{ $t('panel.account-list.descriptionLogout') }}</p>
                     </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{ $t('panel.account-list.cancel') }}</button>
-                      <button @click.prevent="logOut()" type="button" class="btn btn-primary" data-dismiss="modal">{{ $t('panel.account-list.logOut') }}</button>
+                      <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+                        {{ $t('panel.account-list.cancel') }}
+                      </button>
+                      <button
+                        @click.prevent="logOut()"
+                        type="button"
+                        class="btn btn-primary"
+                        data-dismiss="modal"
+                      >
+                        {{ $t('panel.account-list.logOut') }}
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -94,10 +126,14 @@
                 <Onboarding />
               </div>
               <div class="text-right" v-else>
-                <a href="#" class="text-muted" @click.prevent="paypalUnlink()">{{ $t('panel.account-list.useAnotherAccount') }}</a>
+                <a href="#" class="text-muted" @click.prevent="paypalUnlink()">
+                  {{ $t('panel.account-list.useAnotherAccount') }}
+                </a>
               </div>
             </div>
-            <PSAlert v-if="onboardingLinkError" class="col-12" :alert-type="ALERT_TYPE_DANGER">{{ $t('panel.account-list.onboardingLinkError') }}</PSAlert>
+            <PSAlert v-if="onboardingLinkError" class="col-12" :alert-type="ALERT_TYPE_DANGER">
+              {{ $t('panel.account-list.onboardingLinkError') }}
+            </PSAlert>
           </div>
         </div>
       </div>

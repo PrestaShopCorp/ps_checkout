@@ -19,7 +19,11 @@
 <template>
   <div>
     <template v-if="firebaseStatusAccount">
-      <button v-show="paypalIsLoaded" @click.prevent="getOnboardingLink()" class="btn btn-primary-reverse btn-outline-primary light-button">
+      <button
+        v-show="paypalIsLoaded"
+        @click.prevent="getOnboardingLink()"
+        class="btn btn-primary-reverse btn-outline-primary light-button"
+      >
         {{ $t('panel.account-list.linkToPaypal') }}
       </button>
       <a
