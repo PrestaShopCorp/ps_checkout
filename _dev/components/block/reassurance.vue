@@ -43,7 +43,9 @@
           <img src="@/assets/images/globe.png" alt="">
         </div>
         <div class="text-muted">
-          {{ $t('block.reassurance.thirdTip1') }} <b>{{ $t('block.reassurance.thirdTip2') }}</b> {{ $t('block.reassurance.thirdTip3') }}
+          {{ $t('block.reassurance.thirdTip1') }}
+          <b>{{ $t('block.reassurance.thirdTip2') }}</b>
+          {{ $t('block.reassurance.thirdTip3') }}
         </div>
       </div>
     </div>

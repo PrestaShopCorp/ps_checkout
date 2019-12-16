@@ -1,0 +1,16 @@
+name: NodeJS tests
+on: [push, pull_request]
+jobs:
+  nodejs-linter:
+    name: NodeJS Linter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - run: npm install
+      - run: npm test

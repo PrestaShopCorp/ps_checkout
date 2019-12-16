@@ -50,19 +50,16 @@
                 <a href="#" @click.prevent="goToSignIn()" class="mr-4">
                   <b>{{ $t('panel.account-list.logIn') }}</b>
                 </a>
-                <a href="#"
+                <a href="#" class="btn btn-primary-reverse btn-outline-primary light-button mb-1"
                   @click.prevent="goToSignUp()"
-                  class="btn btn-primary-reverse btn-outline-primary light-button mb-1"
                 >
                   {{ $t('panel.account-list.createAccount') }}
                 </a>
               </div>
               <div class="text-right" v-else>
-                <a v-if="!isReady"
-                  href="#"
-                  data-toggle="modal"
-                  data-target="#modalLogout"
-                  class="text-muted">
+                <a href="#" data-toggle="modal" data-target="#modalLogout" class="text-muted"
+                  v-if="!isReady"
+                >
                   {{ $t('panel.account-list.logOut') }}
                 </a>
               </div>

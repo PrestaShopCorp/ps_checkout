@@ -23,7 +23,8 @@
     </h3>
     <div class="card-block">
       <div class="container-fluid py-3 col-10">
-        <label class="title mr-4">{{ $t('panel.active-payment.paymentMethods') }}</label> <label class="text-muted">{{ $t('panel.active-payment.changeOrder') }}</label>
+        <label class="title mr-4">{{ $t('panel.active-payment.paymentMethods') }}</label>
+        <label class="text-muted">{{ $t('panel.active-payment.changeOrder') }}</label>
       </div>
       <div class="m-auto payment-method-container pb-3">
         <draggable
@@ -56,8 +57,14 @@
                 <div class="flex-grow-1 content">
                   <div class="d-flex payment-method-content">
                     <div class="flex-grow-1">
-                      <label v-if="element.name === 'card'" class="mb-0"><i class="material-icons mr-3">credit_card</i> {{ $t('panel.active-payment.creditCard') }}</label>
-                      <label v-else class="mb-0"><img class="mr-3" src="@/assets/images/paypal-logo-thumbnail.png"/> {{ $t('panel.active-payment.paypal') }}</label>
+                      <label v-if="element.name === 'card'" class="mb-0">
+                        <i class="material-icons mr-3">credit_card</i>
+                        {{ $t('panel.active-payment.creditCard') }}
+                      </label>
+                      <label v-else class="mb-0">
+                        <img class="mr-3" src="@/assets/images/paypal-logo-thumbnail.png"/>
+                        {{ $t('panel.active-payment.paypal') }}
+                      </label>
                     </div>
                     <div class="status">
                       <template v-if="element.name === 'card'"><CardStatus /></template>
@@ -66,7 +73,10 @@
                   </div>
                   <div v-if="element.name === 'paypal'" class="d-flex payment-method-content separator">
                     <div class="flex-grow-1">
-                      <label class="mb-0"><i class="material-icons mr-3">public</i> {{ $t('panel.active-payment.localPaymentMethods') }}</label>
+                      <label class="mb-0">
+                        <i class="material-icons mr-3">public</i>
+                        {{ $t('panel.active-payment.localPaymentMethods') }}
+                      </label>
                     </div>
                     <div class="status">
                       <LpmStatus />
