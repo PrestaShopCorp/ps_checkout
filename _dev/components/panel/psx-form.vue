@@ -89,10 +89,13 @@
                   <div class="row mt-3">
                     <div class="col-lg-6 col-md-6 col-sm-6">
                       <label>{{ $t('panel.psx-form.language') }}</label>
-                      <select class="form-control custom-select"
+                      <select
+                        class="form-control custom-select"
                         v-model="form.business_contact_language"
-                        :class="[form.business_contact_language != '' ? '' : 'has-danger']">
-                        <option v-for="languageDetail in getLanguagesDetails"
+                        :class="[form.business_contact_language != '' ? '' : 'has-danger']"
+                      >
+                        <option
+                          v-for="languageDetail in getLanguagesDetails"
                           :key="languageDetail.iso_code"
                           :value="languageDetail.iso_code"
                         >
@@ -107,8 +110,10 @@
                         <span class="col-lg-7 col-md-7 col-sm-7">{{ $t('panel.psx-form.qualification') }}</span>
                         <span class="col-lg-5 col-md-5 col-sm-5 font-italic text-secondary text-right">{{ $t('panel.psx-form.optional') }}</span>
                       </label>
-                      <select class="form-control custom-select"
-                        v-model="form.qualification">
+                      <select
+                        class="form-control custom-select"
+                        v-model="form.qualification"
+                      >
                         <option value="">--</option>
                         <option value="merchant">{{ $t('panel.psx-form.merchant') }}</option>
                         <option value="agency">{{ $t('panel.psx-form.agency') }}</option>

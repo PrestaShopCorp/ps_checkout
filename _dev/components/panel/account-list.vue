@@ -50,7 +50,9 @@
                 <a href="#" @click.prevent="goToSignIn()" class="mr-4">
                   <b>{{ $t('panel.account-list.logIn') }}</b>
                 </a>
-                <a href="#" class="btn btn-primary-reverse btn-outline-primary light-button mb-1"
+                <a
+                  href="#"
+                  class="btn btn-primary-reverse btn-outline-primary light-button mb-1"
                   @click.prevent="goToSignUp()"
                 >
                   {{ $t('panel.account-list.createAccount') }}
