@@ -28,7 +28,7 @@
                 <label for="card-number" class="form-control-label required">{l s='Card number' mod='ps_checkout'}</label>
                 <div id="card-number" class="form-control">
                     <div id="card-image">
-                        <i class="material-icons defautl-credit-card">credit_card</i>
+                        <img class="defautl-credit-card" src="{$modulePath}views/img/credit_card.png" alt="">
                     </div>
                 </div>
             </div>
