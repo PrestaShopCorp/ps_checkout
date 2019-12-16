@@ -43,11 +43,20 @@
               <h1>FAQ</h1>
               <div class="separator my-3" />
               <template v-if="faq && faq.categories.lenfth != 0">
-                <v-collapse-group class="my-3" v-for="(categorie, index) in faq.categories" :key="index" :only-one-active="true">
+                <v-collapse-group class="my-3"
+                  v-for="(categorie, index) in faq.categories"
+                  :key="index"
+                  :only-one-active="true"
+                >
                   <h3 class="categorie-title">{{ categorie.title }}</h3>
-                  <v-collapse-wrapper :ref="index+'_'+i" v-for="(item, i) in categorie.blocks" :key="i">
+                  <v-collapse-wrapper
+                    :ref="index+'_'+i" v-for="(item, i) in categorie.blocks"
+                    :key="i"
+                  >
                     <div class="my-3 question" v-collapse-toggle>
-                      <a href="#" @click.prevent><i class="material-icons">keyboard_arrow_right</i> {{ item.question }}</a>
+                      <a href="#" @click.prevent>
+                        <i class="material-icons">keyboard_arrow_right</i> {{ item.question }}
+                      </a>
                     </div>
                     <div class="answer" v-collapse-content>
                       {{ item.answer }}
@@ -66,12 +75,16 @@
             <div class="doc">
               <b class="text-muted">{{ $t('panel.help.needHelp') }}</b>
               <br>
-              <a :href="readmeUrl" target="_blank" class="btn btn-primary mt-3">{{ $t('panel.help.downloadDoc') }}</a>
+              <a :href="readmeUrl" target="_blank" class="btn btn-primary mt-3">
+                {{ $t('panel.help.downloadDoc') }}
+              </a>
             </div>
             <div class="contact mt-4">
               <div>{{ $t('panel.help.couldntFindAnswer') }}</div>
               <div class="mt-2">
-                <a v-if="isReady" href="https://support.prestashop.com/hc/requests/new?ticket_form_id=" target="_blank">
+                <a href="https://support.prestashop.com/hc/requests/new?ticket_form_id=" target="_blank"
+                  v-if="isReady"
+                >
                   {{ $t('panel.help.contactUs') }} <i class="material-icons">arrow_right_alt</i>
                 </a>
                 <a v-else href="mailto:support-checkout-download@prestashop.com" target="_blank">
