@@ -18,4 +18,4 @@ jobs:
           path: node_modules
           key: php-${{ hashFiles('yarn.lock') }}
       - run: npm install
-      # - run: npm test
+      - run: npm test
