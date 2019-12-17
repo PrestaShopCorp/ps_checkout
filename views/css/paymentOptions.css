@@ -145,6 +145,8 @@
     position: absolute;
     top: 2px;
     right: 10px;
+    width: 25px;
+    height: 25px;
 }
 
 @keyframes shake {
