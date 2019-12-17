@@ -63,6 +63,7 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_PAYPAL_EMAIL_STATUS' => '',
         'PS_CHECKOUT_PAYPAL_PAYMENT_STATUS' => '',
         'PS_CHECKOUT_CARD_PAYMENT_STATUS' => '',
+        'PS_CHECKOUT_CARD_PAYMENT_ENABLED' => true,
         'PS_PSX_FIREBASE_EMAIL' => '',
         'PS_PSX_FIREBASE_ID_TOKEN' => '',
         'PS_PSX_FIREBASE_LOCAL_ID' => '',
@@ -292,35 +293,42 @@ class Ps_checkout extends PaymentModule
             'modulePath' => $this->getPathUri(),
         ]);
 
-        $paymentMethods = \Configuration::get('PS_CHECKOUT_PAYMENT_METHODS_ORDER');
+        $paymentMethods = $this->getPaymentMethods();
 
         $payment_options = [];
 
-        // if no paymentMethods position is set, by default put credit card (hostedFields) as first position
-        if (empty($paymentMethods)) {
-            if (true === $paypalAccountRepository->cardPaymentMethodIsValid()) {
-                array_push($payment_options, $this->getHostedFieldsPaymentOption());
-            }
-            if (true === $paypalAccountRepository->paypalPaymentMethodIsValid()) {
-                array_push($payment_options, $this->getPaypalPaymentOption());
-            }
-        } else {
-            $paymentMethods = json_decode($paymentMethods, true);
-
-            foreach ($paymentMethods as $position => $paymentMethod) {
-                if ($paymentMethod['name'] === 'card') {
-                    if (true === $paypalAccountRepository->cardPaymentMethodIsValid()) {
-                        array_push($payment_options, $this->getHostedFieldsPaymentOption());
-                    }
-                } else {
-                    if (true === $paypalAccountRepository->paypalPaymentMethodIsValid()) {
-                        array_push($payment_options, $this->getPaypalPaymentOption());
-                    }
-                }
+        foreach ($paymentMethods as $position => $paymentMethod) {
+            if ($paymentMethod['name'] === 'card'
+                && true === $paypalAccountRepository->cardPaymentMethodIsAvailable()
+            ) {
+                $payment_options[] = $this->getHostedFieldsPaymentOption();
+            } elseif ($paymentMethod['name'] === 'paypal'
+                && true === $paypalAccountRepository->paypalPaymentMethodIsValid()) {
+                $payment_options[] = $this->getPaypalPaymentOption();
             }
         }
 
         return $payment_options;
+    }
+
+    /**
+     * Get payment methods order
+     *
+     * @return array
+     */
+    public function getPaymentMethods()
+    {
+        $paymentMethods = \Configuration::get('PS_CHECKOUT_PAYMENT_METHODS_ORDER');
+
+        // if no paymentMethods position is set, by default put credit card (hostedFields) as first position
+        if (empty($paymentMethods)) {
+            return [
+                ['name' => 'card'],
+                ['name' => 'paypal'],
+            ];
+        }
+
+        return json_decode($paymentMethods, true);
     }
 
     /**

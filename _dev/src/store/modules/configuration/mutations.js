@@ -28,4 +28,7 @@ export default {
   [types.UPDATE_CAPTURE_MODE](state, payload) {
     state.captureMode = payload;
   },
+  [types.UPDATE_PAYMENT_CARD_AVAILABILITY](state, payload) {
+    state.cardIsEnabled = payload;
+  },
 };

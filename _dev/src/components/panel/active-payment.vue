@@ -77,13 +77,19 @@
                         src="@/assets/images/paypal-logo-thumbnail.png"
                       > {{ $t('panel.active-payment.paypal') }}</label>
                     </div>
-                    <div class="status">
-                      <template v-if="element.name === 'card'">
-                        <CardStatus />
-                      </template>
-                      <template v-else>
-                        <PaypalStatus />
-                      </template>
+                    <div class="status" v-if="element.name === 'card'">
+                      <CardStatus v-if="cardIsAvailable === false" />
+                      <PSCheckbox
+                        id="hostedFieldsAvailability"
+                        v-model="cardIsEnabled"
+                      >
+                        <template v-if="cardIsEnabled">
+                          {{ $t('panel.active-payment.enabled') }}
+                        </template>
+                        <template v-else>
+                          {{ $t('panel.active-payment.disabled') }}
+                        </template>
+                      </PSCheckbox>
                     </div>
                   </div>
                   <div
@@ -92,9 +98,6 @@
                   >
                     <div class="flex-grow-1">
                       <label class="mb-0"><i class="material-icons mr-3">public</i> {{ $t('panel.active-payment.localPaymentMethods') }}</label>
-                    </div>
-                    <div class="status">
-                      <LpmStatus />
                     </div>
                   </div>
                 </div>
@@ -123,14 +126,12 @@
 <script>
   import draggable from 'vuedraggable';
   import CardStatus from '@/components/block/card-status';
-  import PaypalStatus from '@/components/block/paypal-status';
-  import LpmStatus from '@/components/block/lpm-status';
+  import PSCheckbox from '@/components/form/checkbox';
 
   export default {
     components: {
       CardStatus,
-      PaypalStatus,
-      LpmStatus,
+      PSCheckbox,
       draggable,
     },
     data() {
@@ -156,6 +157,18 @@
           ghostClass: 'ghost',
           dragClass: 'move',
         };
+      },
+      cardIsEnabled: {
+        get() {
+          return this.$store.state.configuration.cardIsEnabled;
+        },
+        set(payload) {
+          this.$store.dispatch('toggleHostedFields', payload);
+        },
+      },
+      cardIsAvailable() {
+        return this.$store.state.paypal.cardIsActive === 'SUBSCRIBED'
+          || this.$store.state.paypal.cardIsActive === 'LIMITED';
       },
     },
   };

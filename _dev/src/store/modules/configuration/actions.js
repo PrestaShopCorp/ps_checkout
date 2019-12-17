@@ -58,4 +58,17 @@ export default {
       return Promise.resolve(true);
     });
   },
+
+  toggleHostedFields({commit, getters}, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'ToggleCardPaymentAvailability',
+      data: {
+        status: payload ? 1 : 0,
+      },
+    }).then(() => {
+      commit(types.UPDATE_PAYMENT_CARD_AVAILABILITY, payload);
+      return Promise.resolve(payload);
+    });
+  },
 };
