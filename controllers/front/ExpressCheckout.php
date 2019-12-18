@@ -63,11 +63,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         $this->redirectToCheckout();
     }
 
-    private function createCart()
-    {
-        dump($this->context->cart);
-    }
-
     /**
      * Handle creation and customer login
      *
