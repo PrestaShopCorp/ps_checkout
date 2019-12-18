@@ -147,6 +147,14 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         $this->context->cart->save();
     }
 
+    /**
+     * Check if address already exist, if yes return the id_address
+     *
+     * @param string $alias
+     * @param int $id_customer
+     *
+     * @return int
+     */
     private function addressAlreadyExist($alias, $id_customer)
     {
         $query = new DbQuery();
@@ -159,7 +167,12 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         return Db::getInstance()->getValue($query);
     }
 
-    public function displayAjaxTest()
+    /**
+     * Ajax: Create and return paypal order
+     *
+     * @return string $paypalOrder
+     */
+    public function displayAjaxCreatePaypalOrder()
     {
         $product = \Tools::getValue('product');
 
@@ -194,20 +207,20 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         $payload = $builder->presentPayload()->getJson();
 
         // Create the paypal order
-        $paypalOrder = (new Order($this->context->link))->create($payload);
+        $response = (new Order($this->context->link))->create($payload);
 
         // Retry with minimal payload when full payload failed
-        if ($paypalOrder['httpCode'] === 400) {
+        if (substr((string) $response['httpCode'], 0, 1) === '4') {
             $builder->buildMinimalPayload();
             $payload = $builder->presentPayload()->getJson();
-            $paypalOrder = (new Order($this->context->link))->create($payload);
+            $response = (new Order($this->context->link))->create($payload);
         }
 
-        if (false === $paypalOrder['status']) {
+        if (false === $response['status']) {
             return false;
         }
 
-        echo json_encode($paypalOrder);
+        echo json_encode($response);
     }
 
     private function redirectToCheckout()

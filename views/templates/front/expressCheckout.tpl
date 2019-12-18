@@ -64,7 +64,7 @@ loadPaypalScript();
 <script type="text/javascript">
   var checkoutLink = "{/literal}{$checkoutLink|escape:'javascript':'UTF-8'}{literal}";
   var displayMode = "{/literal}{$displayMode|escape:'javascript':'UTF-8'}{literal}";
-  var tptp = "{/literal}{$tptp|escape:'javascript':'UTF-8'}{literal}";
+  var expressCheckoutController = "{/literal}{$expressCheckoutController|escape:'javascript':'UTF-8'}{literal}";
   var paypalIsActive = "{/literal}{$paypalIsActive|escape:'javascript':'UTF-8'}{literal}";
 </script>
 {/literal}

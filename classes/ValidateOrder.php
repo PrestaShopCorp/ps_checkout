@@ -83,8 +83,6 @@ class ValidateOrder
                 throw new \Exception(sprintf('Unknown Intent type %s', $paypalOrder->getOrderIntent()));
         }
 
-        dump($response);
-        die('-');
         if (false === $response['status']) {
             return false;
         }

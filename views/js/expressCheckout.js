@@ -48,8 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * @param {int} paypalOrder
  */
 function initPaypalSmartButtons() {
-  // const checkoutLinkd = checkoutLink.replace(/\amp;/g, '');
-  const testt = tptp.replace(/\amp;/g, '');
+  const controllerLink = expressCheckoutController.replace(/\amp;/g, '');
 
   window.paypal.Buttons({
     style: {
@@ -73,7 +72,7 @@ function initPaypalSmartButtons() {
     },
     onApprove(paypal, actions) {
       actions.order.get().then((order) => {
-        redirect(order, testt);
+        redirect(order, controllerLink);
       });
     },
   }).render('#paypal-button-container');
@@ -83,18 +82,20 @@ function initPaypalSmartButtons() {
  * Ajax request to create and retrieve paypal order
  */
 async function createPaypalOrder() {
+  const controllerLink = expressCheckoutController.replace(/\amp;/g, '');
+
   return new Promise((resolve, reject) => {
     // construct form data
     const form = new FormData();
     form.append('ajax', true);
-    form.append('action', 'Test');
+    form.append('action', 'CreatePaypalOrder');
 
     if (displayMode === 'product') {
       const productDetails = document.getElementById('product-details').dataset.product;
       form.append('product', productDetails);
     }
 
-    fetch(tptp, {
+    fetch(controllerLink, {
       body: form,
       method: 'post',
     }).then((response) => {
