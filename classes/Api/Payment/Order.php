@@ -130,7 +130,7 @@ class Order extends PaymentClient
     /**
      * Patch paypal order
      *
-     * @param string $orderId paypal
+     * @param string $payload
      *
      * @return array response from paypal if the payment is accepted or false if error occured
      */

@@ -418,7 +418,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     private function checkPaypalOrderIdWhenUpdate()
     {
         if (true === $this->isUpdate && empty($this->paypalOrderId)) {
-            throw new PrestaShopException('PayPal order ID is required when building payload for update an order');
+            throw new \PrestaShopException('PayPal order ID is required when building payload for update an order');
         }
     }
 
@@ -445,7 +445,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     /**
      * Setter $paypalOrderId
      *
-     * @param bool $id
+     * @param string $id
      */
     public function setPaypalOrderId($id)
     {

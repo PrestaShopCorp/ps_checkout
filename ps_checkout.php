@@ -213,29 +213,38 @@ class Ps_checkout extends PaymentModule
         return $uninstallTabCompleted;
     }
 
+    /**
+     * Express checkout on the first step of the checkout
+     */
     public function hookDisplayPersonalInformationTop()
     {
         if (true === $this->isPaymentStep()) {
             return false;
         }
 
-        $expressCheckout = new ExpressCheckout($this->context);
+        $expressCheckout = new ExpressCheckout($this, $this->context);
         $expressCheckout->setDisplayMode(ExpressCheckout::CHECKOUT_MODE);
 
         return $expressCheckout->render();
     }
 
+    /**
+     * Express checkout on the cart page
+     */
     public function hookDisplayExpressCheckout()
     {
-        $expressCheckout = new ExpressCheckout($this->context);
+        $expressCheckout = new ExpressCheckout($this, $this->context);
         $expressCheckout->setDisplayMode(ExpressCheckout::CART_MODE);
 
         return $expressCheckout->render();
     }
 
+    /**
+     * Express checkout on the product page
+     */
     public function hookDisplayFooterProduct($params)
     {
-        $expressCheckout = new ExpressCheckout($this->context);
+        $expressCheckout = new ExpressCheckout($this, $this->context);
         $expressCheckout->setDisplayMode(ExpressCheckout::PRODUCT_MODE);
 
         return $expressCheckout->render();
@@ -634,7 +643,7 @@ class Ps_checkout extends PaymentModule
                         $this->name,
                         'ValidateOrder',
                         [
-                            'orderId' => $this->context->cookie->paypalOrderId,
+                            'orderId' => $this->context->cookie->__get('paypalOrderId'),
                             'paymentMethod' => 'paypal',
                             'isExpressCheckout' => true,
                         ],
@@ -648,7 +657,7 @@ class Ps_checkout extends PaymentModule
     public function generateExpressCheckoutForm()
     {
         $this->context->smarty->assign([
-            'paypalEmail' => $this->context->cookie->paypalEmail,
+            'paypalEmail' => $this->context->cookie->__get('paypalEmail'),
             'jsHideOtherPaymentOptions' => $this->_path . 'views/js/hideOtherPaymentOptions.js',
         ]);
 

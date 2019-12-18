@@ -33,14 +33,20 @@ class ExpressCheckout
     const CHECKOUT_MODE = 'checkout';
 
     /**
+     * @var \Ps_checkout
+     */
+    private $module;
+
+    /**
      * @var \Context
      */
     private $context;
 
     private $displayMode = self::PRODUCT_MODE;
 
-    public function __construct(\Context $context)
+    public function __construct(\Ps_checkout $module, \Context $context)
     {
+        $this->module = $module;
         $this->context = $context;
     }
 
@@ -51,20 +57,7 @@ class ExpressCheckout
 
     public function render()
     {
-        // dump($params);
-        // dump($params['product']);
-        // dump($params['product']->getId());
-        // dump($params['product']->getAttributes());
-
-        // dump($paypalOrder);
-        // die()
-
-        // if (false === $paypalOrder) {
-        //     return false;
-        // }
-        $module = \Module::getInstanceByName('ps_checkout');
-
-        if (false === $module->merchantIsValid()) {
+        if (false === $this->module->merchantIsValid()) {
             return false;
         }
 
@@ -74,15 +67,15 @@ class ExpressCheckout
             'displayMode' => $this->displayMode,
             'merchantId' => $paypalAccountRepository->getMerchantId(),
             'paypalClientId' => (new PaypalEnv())->getPaypalClientId(),
-            'jsExpressCheckoutPath' => \Tools::getShopDomain(true) . __PS_BASE_URI__ . 'modules/' . $module->name . '/views/js/expressCheckout.js',
+            'jsExpressCheckoutPath' => \Tools::getShopDomain(true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/views/js/expressCheckout.js',
             'checkoutLink' => $this->context->link->getPageLink('order', true, $this->context->language->id, ['paymentMethod' => 'paypal']),
-            'tptp' => $this->context->link->getModuleLink($module->name, 'ExpressCheckout'),
+            'tptp' => $this->context->link->getModuleLink($this->module->name, 'ExpressCheckout'),
             'paypalIsActive' => $paypalAccountRepository->paypalPaymentMethodIsValid(),
             'intent' => strtolower(\Configuration::get('PS_CHECKOUT_INTENT')),
             'currencyIsoCode' => $this->context->currency->iso_code,
             'isCardPaymentError' => (bool) \Tools::getValue('hferror'),
         ]);
 
-        return $module->display($module->getPathUri(), '/views/templates/front/expressCheckout.tpl');
+        return $this->module->display($this->module->getPathUri(), '/views/templates/front/expressCheckout.tpl');
     }
 }

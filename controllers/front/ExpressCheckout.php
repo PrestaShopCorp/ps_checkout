@@ -71,7 +71,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
     /**
      * Handle creation and customer login
      *
-     * @param array $payer
+     * @param object $payer
      */
     private function createAndLoginCustomer($payer)
     {
@@ -80,7 +80,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         if (0 === $idCustomerExists) {
             $customer = $this->createCustomer($payer);
         } else {
-            $customer = new \Customer($idCustomerExists);
+            $customer = new \Customer((int) $idCustomerExists);
         }
 
         $this->context->updateCustomer($customer);
@@ -89,7 +89,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
     /**
      * Create a customer
      *
-     * @param array $payerNode
+     * @param object $payerNode
      *
      * @return \Customer
      */
@@ -108,7 +108,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
     /**
      * Create address
      *
-     * @param array $shipping
+     * @param object $shipping
      */
     private function createAddress($shipping)
     {
@@ -119,7 +119,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
 
         $country = new \Country($idCountry);
 
-        if ('0' === $country->active) {
+        if ('0' == (string) $country->active) {
             return false;
         }
 
@@ -161,7 +161,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         $query->where('id_customer = ' . (int) $id_customer);
         $query->where('deleted = 0');
 
-        return Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($query);
+        return Db::getInstance()->getValue($query);
     }
 
     public function displayAjaxTest()
@@ -185,7 +185,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
             $cart->update();
 
             $this->context->cart = $cart;
-            $this->context->cookie->id_cart = $cart->id;
+            $this->context->cookie->__set('id_cart', $cart->id);
         }
 
         // Present an improved cart in order to create the payload
