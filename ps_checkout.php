@@ -17,23 +17,23 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-use Ramsey\Uuid\Uuid;
-use PrestaShop\Module\PrestashopCheckout\Refund;
-use PrestaShop\Module\PrestashopCheckout\OrderStates;
-use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use PrestaShop\Module\PrestashopCheckout\ExpressCheckout;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
-use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
-use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
+use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Database\TableManager;
+use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
 use PrestaShop\Module\PrestashopCheckout\Factory\CheckoutLogger;
+use PrestaShop\Module\PrestashopCheckout\ExpressCheckout;
+use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
+use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
-use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter;
-use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Refund;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
-use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
+use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+use Ramsey\Uuid\Uuid;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
