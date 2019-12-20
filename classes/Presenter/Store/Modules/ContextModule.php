@@ -132,9 +132,6 @@ class ContextModule implements PresenterInterface
             case 'it':
                 return 'https://www.prestashop.com/it/prestashop-checkout-condizioni-generali-utilizzo';
                 break;
-            case 'en':
-                return 'https://www.prestashop.com/en/prestashop-checkout-general-terms-use';
-                break;
             default:
                 return 'https://www.prestashop.com/en/prestashop-checkout-general-terms-use';
                 break;
