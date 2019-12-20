@@ -120,7 +120,22 @@ class ContextModule implements PresenterInterface
      */
     private function getCgu()
     {
-        return _MODULE_DIR_ . $this->module->name . '/docs/cgu_fr.pdf';
+        $isoCode = $this->context->language->iso_code;
+
+        switch ($isoCode) {
+            case 'fr':
+                return 'https://www.prestashop.com/fr/prestashop-checkout-conditions-generales-utilisation';
+                break;
+            case 'es':
+                return 'https://www.prestashop.com/es/prestashop-checkout-condiciones-generales-uso';
+                break;
+            case 'it':
+                return 'https://www.prestashop.com/it/prestashop-checkout-condizioni-generali-utilizzo';
+                break;
+            default:
+                return 'https://www.prestashop.com/en/prestashop-checkout-general-terms-use';
+                break;
+        }
     }
 
     /**
