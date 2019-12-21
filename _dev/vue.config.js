@@ -17,9 +17,14 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
+var path = require('path');
+
 module.exports = {
   chainWebpack: config => {
-    config.optimization.delete('splitChunks')
+    config.optimization.delete('splitChunks');
+    config.plugins.delete('html');
+    config.plugins.delete('preload');
+    config.plugins.delete('prefetch');
   },
   css: {
     extract: false
@@ -28,5 +33,5 @@ module.exports = {
   filenameHashing: false,
   outputDir: '../views/',
   assetsDir: '',
-  publicPath: '../modules/ps_checkout/views/',
+  publicPath: path.resolve(__dirname, '../views/'),
 };
