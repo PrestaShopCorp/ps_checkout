@@ -1,4 +1,4 @@
-{**
+<!--**
  * 2007-2019 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,8 +15,35 @@
  * @copyright 2007-2019 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ *-->
+<template>
+  <div
+    id="addons-menu"
+    class="row bootstrap"
+  >
+    <div class="page-head-tabs w-100">
+      <ul class="nav nav-pills">
+        <slot />
+      </ul>
+    </div>
+  </div>
+</template>
 
-<div id="app"></div>
+<script>
+  export default {
+    name: 'Menu',
+  };
+</script>
 
-<script src="{$pathApp|escape:'htmlall':'UTF-8'}"></script>
+<style scoped>
+  #addons-menu {
+    width: 100%;
+    position: fixed;
+    margin-top: -22px;
+    border-bottom: 1px solid #dfdfdf;
+    z-index: 499;
+  }
+  .nav {
+    height: 55px !important;
+  }
+</style>

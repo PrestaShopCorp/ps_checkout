@@ -8,12 +8,7 @@ config.xml
 .env.test
 
 ### Vuejs ignore build files ###
-/views/js/index.js
-/views/js/index.js.map
-/views/js/chunk-vendors.js
-/views/js/chunk-vendors.js.map
-/views/css/index.css
-/views/css/chunk-vendors.css
+/views/js/app.js
 /views/img/almost-ready.png
 /views/img/paypal-logo.png
 /views/img/brush.png

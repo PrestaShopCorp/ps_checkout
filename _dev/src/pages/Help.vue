@@ -1,4 +1,4 @@
-{**
+<!--**
  * 2007-2019 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,8 +15,28 @@
  * @copyright 2007-2019 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ *-->
+<template>
+  <div>
+    <div class="row">
+      <div class="container">
+        <HelpPanel
+          module-key="bab535c26e031e9d224c0d128e063283"
+          ps-version="1.6"
+          iso-code="en"
+        />
+      </div>
+    </div>
+  </div>
+</template>
 
-<div id="app"></div>
+<script>
+  import HelpPanel from '@/components/panel/help';
 
-<script src="{$pathApp|escape:'htmlall':'UTF-8'}"></script>
+  export default {
+    name: 'Help',
+    components: {
+      HelpPanel,
+    },
+  };
+</script>

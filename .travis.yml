@@ -39,8 +39,8 @@ before_deploy:
   - sudo rm -rf ~/.nvm
   - curl -sL "https://deb.nodesource.com/setup_10.x" | sudo -E bash -
   - sudo apt-get install -y nodejs
-  - yarn install
-  - yarn build
+  - yarn --cwd _dev/ install
+  - yarn --cwd _dev/ build
   # Composer
   - composer install --no-dev -o
   # Cleanup
@@ -50,15 +50,10 @@ before_deploy:
   - rm -f composer.*
   - rm -f .gitignore
   - rm -f deploy.sh
-  - rm -f vue.config.js
-  - rm -f yarn.lock
-  - rm -f .eslintrc.js
-  - rm -f .prettyci.composer.json
   - rm -f .editorconfig
   - rm -rf .git
   - rm -rf _dev
   - rm -rf tests
-  - rm -rf node_modules
   - pushd $TRAVIS_BUILD_DIR/..
   - mkdir /tmp/build
   - zip /tmp/build/$(ls | head -1).zip -r $(ls | head -1)/

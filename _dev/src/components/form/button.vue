@@ -1,4 +1,4 @@
-{**
+<!--**
  * 2007-2019 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,8 +15,48 @@
  * @copyright 2007-2019 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ *-->
+<template>
+  <button
+    type="button"
+    class="btn"
+    :class="classObject"
+    @click="onClick"
+  >
+    <slot />
+  </button>
+</template>
 
-<div id="app"></div>
+<script>
+  export default {
+    name: 'PsButton',
+    props: {
+      primary: {
+        type: Boolean,
+      },
+      ghost: {
+        type: Boolean,
+      },
+    },
+    computed: {
+      classObject() {
+        if (this.ghost) {
+          return {
+            'btn-outline-primary': this.primary,
+            'btn-outline-secondary': !this.primary,
+          };
+        }
 
-<script src="{$pathApp|escape:'htmlall':'UTF-8'}"></script>
+        return {
+          'btn-primary': this.primary,
+          'btn-secondary': !this.primary,
+        };
+      },
+    },
+    methods: {
+      onClick() {
+        this.$emit('click');
+      },
+    },
+  };
+</script>

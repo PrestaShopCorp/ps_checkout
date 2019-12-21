@@ -1,4 +1,4 @@
-{**
+<!--**
  * 2007-2019 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,8 +15,29 @@
  * @copyright 2007-2019 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ *-->
+<template>
+  <div class="card">
+    <div class="card-block text-center py-4 px-5">
+      <h1>0 {{ $t('block.dispute.pendingDispute') }}</h1>
+      <a
+        href="https://www.paypal.com/disputes/"
+        target="_blank"
+      >
+        {{ $t('block.dispute.goToDispute') }} <i class="material-icons">arrow_right_alt</i>
+      </a>
+    </div>
+  </div>
+</template>
 
-<div id="app"></div>
+<script>
+  export default {
+    name: 'Dispute',
+  };
+</script>
 
-<script src="{$pathApp|escape:'htmlall':'UTF-8'}"></script>
+<style scoped>
+.card {
+  width: fit-content;
+}
+</style>

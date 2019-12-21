@@ -1,4 +1,4 @@
-{**
+<!--**
  * 2007-2019 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,8 +15,36 @@
  * @copyright 2007-2019 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ *-->
+<template>
+  <li class="nav-item">
+    <router-link
+      active-class="active"
+      class="nav-link"
+      :to="route"
+    >
+      <slot />
+    </router-link>
+  </li>
+</template>
 
-<div id="app"></div>
+<script>
+  export default {
+    name: 'MenuItem',
+    props: {
+      route: {
+        type: String,
+        default: '',
+      },
+    },
+    methods: {
 
-<script src="{$pathApp|escape:'htmlall':'UTF-8'}"></script>
+    },
+  };
+</script>
+
+<style scoped>
+  a {
+    border-radius: unset !important;
+  }
+</style>
