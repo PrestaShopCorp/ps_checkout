@@ -44,7 +44,5 @@
 </script>
 
 <style scoped>
-  a {
-    border-radius: unset !important;
-  }
+
 </style>

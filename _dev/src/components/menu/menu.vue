@@ -17,16 +17,9 @@
  * International Registered Trademark & Property of PrestaShop SA
  *-->
 <template>
-  <div
-    id="addons-menu"
-    class="row bootstrap"
-  >
-    <div class="page-head-tabs w-100">
-      <ul class="nav nav-pills">
-        <slot />
-      </ul>
-    </div>
-  </div>
+  <ul class="nav nav-pills">
+    <slot />
+  </ul>
 </template>
 
 <script>
@@ -36,14 +29,11 @@
 </script>
 
 <style scoped>
-  #addons-menu {
+  .nav {
     width: 100%;
     position: fixed;
     margin-top: -22px;
-    border-bottom: 1px solid #dfdfdf;
     z-index: 499;
-  }
-  .nav {
-    height: 55px !important;
+    background-color: #fff;
   }
 </style>
