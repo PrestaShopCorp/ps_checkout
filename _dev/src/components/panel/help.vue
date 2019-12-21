@@ -81,9 +81,12 @@
                 </v-collapse-group>
               </template>
               <template v-else>
-                <PSAlert :alert-type="ALERT_TYPE_WARNING">
+                <b-alert
+                  variant="warning"
+                  show
+                >
                   <p>{{ $t('panel.help.noFaqAvailable') }}</p>
-                </PSAlert>
+                </b-alert>
               </template>
             </div>
           </div>
@@ -124,15 +127,8 @@
 </template>
 
 <script>
-  import PSAlert from '@/components/form/alert';
-  import {ALERT_TYPE_WARNING} from '@/lib/alert';
-
   export default {
-    components: {
-      PSAlert,
-    },
     computed: {
-      ALERT_TYPE_WARNING: () => ALERT_TYPE_WARNING,
       isReady() {
         return this.$store.state.context.isReady;
       },

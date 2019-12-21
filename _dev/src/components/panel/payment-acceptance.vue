@@ -44,10 +44,13 @@
             </div>
           </div>
           <div class="row mt-2">
-            <PSAlert :alert-type="ALERT_TYPE_INFO">
+            <b-alert
+                variant="info"
+                show
+              >
               <h2>{{ $t('panel.payment-acceptance.tips') }}</h2>
               <p>{{ $t('panel.payment-acceptance.alertInfo') }}</p>
-            </PSAlert>
+            </b-alert>
           </div>
         </div>
       </div>
@@ -58,17 +61,11 @@
 <script>
   import CardStatus from '@/components/block/card-status';
   import PaypalStatus from '@/components/block/paypal-status';
-  import PSAlert from '@/components/form/alert';
-  import {ALERT_TYPE_INFO} from '@/lib/alert';
 
   export default {
     components: {
       CardStatus,
       PaypalStatus,
-      PSAlert,
-    },
-    computed: {
-      ALERT_TYPE_INFO: () => ALERT_TYPE_INFO,
     },
   };
 </script>

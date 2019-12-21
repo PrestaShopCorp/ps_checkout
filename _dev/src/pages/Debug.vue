@@ -34,13 +34,6 @@
               </ul>
             </div>
           </div>
-          <p>toto </p>
-          <b-alert
-            variant="danger"
-            show
-          >
-            <p>test</p>
-          </b-alert>
         </div>
       </div>
     </div>

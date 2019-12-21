@@ -60,9 +60,12 @@
               </div>
             </div>
           </div>
-          <PSAlert :alert-type="ALERT_TYPE_INFO">
+          <b-alert
+            variant="info"
+            show
+          >
             <p>{{ $t('panel.payment-mode.infoAlertText') }}.</p>
-          </PSAlert>
+          </b-alert>
           <div class="form-group row">
             <label class="form-control-label">
               {{ $t('panel.payment-mode.environment') }}
@@ -110,13 +113,7 @@
 </template>
 
 <script>
-  import PSAlert from '@/components/form/alert';
-  import {ALERT_TYPE_INFO} from '@/lib/alert';
-
   export default {
-    components: {
-      PSAlert,
-    },
     methods: {
       setCaptureMode(captureMode) {
         if (this.captureMode === captureMode) {
@@ -136,7 +133,6 @@
       },
     },
     computed: {
-      ALERT_TYPE_INFO: () => ALERT_TYPE_INFO,
       captureMode() {
         return this.$store.state.configuration.captureMode;
       },

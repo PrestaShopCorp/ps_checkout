@@ -23,9 +23,10 @@
         v-if="firebaseStatusAccount && paypalStatusAccount"
         class="container"
       >
-        <PSAlert
+        <b-alert
           v-if="!merchantEmailIsValid"
-          :alert-type="ALERT_TYPE_WARNING"
+          variant="warning"
+          show
         >
           <h2>{{ $t('pages.accounts.approvalPending') }}</h2>
           <p>{{ $t('pages.accounts.waitingEmail') }}</p>
@@ -37,11 +38,12 @@
             target="_blank"
             class="btn btn-outline-secondary mt-1"
           >{{ $t('pages.accounts.sendEmailAgain') }}</a>
-        </PSAlert>
+        </b-alert>
         <template v-else>
-          <PSAlert
+          <b-alert
             v-if="cardPaymentIsActive === 'NEED_MORE_DATA'"
-            :alert-type="ALERT_TYPE_WARNING"
+            variant="warning"
+            show
           >
             <h2>{{ $t('pages.accounts.documentNeeded') }}</h2>
             <p>{{ $t('pages.accounts.additionalDocumentsNeeded') }}</p>
@@ -53,10 +55,11 @@
               target="_blank"
               class="btn btn-outline-secondary mt-1"
             >{{ $t('pages.accounts.knowMoreAboutAccount') }}</a>
-          </PSAlert>
-          <PSAlert
+          </b-alert>
+          <b-alert
             v-if="cardPaymentIsActive === 'IN_REVIEW' || cardPaymentIsActive === 'LIMITED'"
-            :alert-type="ALERT_TYPE_WARNING"
+            variant="warning"
+            show
           >
             <h2>{{ $t('pages.accounts.undergoingCheck') }}</h2>
             <p>
@@ -71,10 +74,11 @@
                 {{ $t('pages.accounts.knowMoreAboutAccount') }} <i class="material-icons">arrow_right_alt</i>
               </a>
             </div>
-          </PSAlert>
-          <PSAlert
+          </b-alert>
+          <b-alert
             v-if="cardPaymentIsActive === 'DENIED'"
-            :alert-type="ALERT_TYPE_DANGER"
+            variant="danger"
+            show
           >
             <h2>{{ $t('pages.accounts.accountDeclined') }}</h2>
             <p>
@@ -88,7 +92,7 @@
                 {{ $t('pages.accounts.accountDeclinedLink') }} <i class="material-icons">arrow_right_alt</i>
               </a>
             </div>
-          </PSAlert>
+          </b-alert>
         </template>
       </div>
     </div>
@@ -120,8 +124,6 @@
   import AccountList from '@/components/panel/account-list';
   import PaymentAcceptance from '@/components/panel/payment-acceptance';
   import Reassurance from '@/components/block/reassurance';
-  import PSAlert from '@/components/form/alert';
-  import {ALERT_TYPE_DANGER, ALERT_TYPE_WARNING} from '@/lib/alert';
 
   export default {
     name: 'Accounts',
@@ -129,7 +131,6 @@
       AccountList,
       PaymentAcceptance,
       Reassurance,
-      PSAlert,
     },
     computed: {
       firebaseStatusAccount() {
@@ -147,8 +148,6 @@
       merchantEmailIsValid() {
         return this.$store.state.paypal.emailIsValid;
       },
-      ALERT_TYPE_DANGER: () => ALERT_TYPE_DANGER,
-      ALERT_TYPE_WARNING: () => ALERT_TYPE_WARNING,
     },
   };
 </script>

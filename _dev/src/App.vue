@@ -39,6 +39,7 @@
     </Menu>
 
     <div class="pt-5" />
+    <div class="pt-3" />
 
     <div class="row">
       <div class="container">
@@ -51,9 +52,12 @@
       class="row"
     >
       <div class="container">
-        <PSAlert :alert-type="ALERT_TYPE_WARNING">
+        <b-alert
+          variant="warning"
+          show
+        >
           <p>{{ $t('general.testModeOn') }}</p>
-        </PSAlert>
+        </b-alert>
       </div>
     </div>
     <router-view />
@@ -63,20 +67,16 @@
 <script>
   import Menu from '@/components/menu/menu';
   import MenuItem from '@/components/menu/menu-item';
-  import PSAlert from '@/components/form/alert';
   import RoundingBanner from '@/components/block/rounding-banner';
-  import {ALERT_TYPE_WARNING} from '@/lib/alert';
 
   export default {
     name: 'Home',
     components: {
       Menu,
       MenuItem,
-      PSAlert,
       RoundingBanner,
     },
     computed: {
-      ALERT_TYPE_WARNING: () => ALERT_TYPE_WARNING,
       onboardingPaypalIsCompleted() {
         return this.$store.state.paypal.onboardingCompleted;
       },
@@ -96,8 +96,24 @@
     @import '~prestakit/dist/css/bootstrap-prestashop-ui-kit';
   }
 
+  #app {
+    margin: 0;
+    font-family: Open Sans,Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #363a41;
+    text-align: left;
+  }
+
   .nobootstrap {
     background-color: unset !important;
+    padding: 100px 10px 100px;
+  }
+
+  .page-sidebar-closed:not(.mobile) #content.nobootstrap {
+    padding-left: 50px;
   }
 
   .material-icons.js-mobile-menu {

@@ -161,13 +161,14 @@
                 >{{ $t('panel.account-list.useAnotherAccount') }}</a>
               </div>
             </div>
-            <PSAlert
+            <b-alert
               v-if="onboardingLinkError"
               class="col-12"
-              :alert-type="ALERT_TYPE_DANGER"
+              variant="danger"
+              show
             >
               {{ $t('panel.account-list.onboardingLinkError') }}
-            </PSAlert>
+            </b-alert>
           </div>
         </div>
       </div>
@@ -177,16 +178,12 @@
 
 <script>
   import Onboarding from '@/components/block/onboarding';
-  import PSAlert from '@/components/form/alert';
-  import {ALERT_TYPE_DANGER} from '@/lib/alert';
 
   export default {
     components: {
       Onboarding,
-      PSAlert,
     },
     computed: {
-      ALERT_TYPE_DANGER: () => ALERT_TYPE_DANGER,
       onboardingLinkError() {
         return this.$store.state.paypal.paypalOnboardingLink === false;
       },

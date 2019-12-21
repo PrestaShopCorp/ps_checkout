@@ -18,7 +18,10 @@
  *-->
 <template>
   <div v-if="!roundingSettingsIsCorrect && !isReady">
-    <PSAlert :alert-type="ALERT_TYPE_WARNING">
+    <b-alert
+      variant="warning"
+      show
+    >
       <h2>{{ $t('block.rounding-banner.title') }}</h2>
       <p class="mb-3">
         {{ $t('block.rounding-banner.content') }}
@@ -29,20 +32,17 @@
       >
         {{ $t('block.rounding-banner.button') }}
       </PSButton>
-    </PSAlert>
+    </b-alert>
   </div>
 </template>
 
 <script>
   import PSButton from '@/components/form/button';
-  import {ALERT_TYPE_WARNING} from '@/lib/alert';
-  import PSAlert from '@/components/form/alert';
 
   export default {
     name: 'RoundingBanner',
     components: {
       PSButton,
-      PSAlert,
     },
     methods: {
       updateRoundingSettings() {
@@ -56,7 +56,6 @@
       roundingSettingsIsCorrect() {
         return this.$store.getters.roundingSettingsIsCorrect;
       },
-      ALERT_TYPE_WARNING: () => ALERT_TYPE_WARNING,
     },
   };
 </script>
