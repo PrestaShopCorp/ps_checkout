@@ -133,13 +133,11 @@ class ValidateOrder
      */
     private function getPaymentMessageTranslation($paymentMethod, $module)
     {
-        $paymentMessage = 'Payment by card';
+        $paymentMessage = $module->l('Payment by card');
 
         if ($paymentMethod === self::PAYMENT_METHOD_PAYPAL) {
-            $paymentMessage = 'Payment by PayPal';
+            $paymentMessage = $module->l('Payment by PayPal');
         }
-
-        $paymentMessage = $module->l($paymentMessage);
 
         return $paymentMessage;
     }
