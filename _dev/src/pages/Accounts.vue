@@ -18,10 +18,7 @@
  *-->
 <template>
   <div>
-    <div
-      v-if="firebaseStatusAccount && paypalStatusAccount"
-      class="container"
-    >
+    <b-container v-if="firebaseStatusAccount && paypalStatusAccount">
       <b-alert
         v-if="!merchantEmailIsValid"
         variant="warning"
@@ -94,21 +91,19 @@
           </div>
         </b-alert>
       </template>
-    </div>
+    </b-container>
 
-    <div class="container mb-4">
+    <b-container class="mb-4">
       <AccountList />
-    </div>
+    </b-container>
 
-    <div class="container"
-      v-if="firebaseStatusAccount !== false && paypalStatusAccount !== false"
-    >
+    <b-container v-if="firebaseStatusAccount !== false && paypalStatusAccount !== false">
       <PaymentAcceptance />
-    </div>
+    </b-container>
 
-    <div v-else class="container">
+    <b-container v-else>
       <Reassurance />
-    </div>
+    </b-container>
   </div>
 </template>
 

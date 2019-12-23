@@ -17,110 +17,85 @@
  * International Registered Trademark & Property of PrestaShop SA
  *-->
 <template>
-  <div class="card">
-    <h3 class="card-header">
+  <b-card no-body>
+    <template v-slot:header>
       <i class="material-icons">toggle_on</i> {{ $t('panel.payment-mode.title') }}
-    </h3>
-    <div class="card-block">
-      <form class="form container form-horizontal py-4">
-        <div class="card-text m-auto">
-          <div class="form-group row">
-            <label class="form-control-label">
-              {{ $t('panel.payment-mode.paymentAction') }}
-              <span
-                class="help-box"
-                data-toggle="popover"
-                :data-content="$t('panel.payment-mode.helpBoxPaymentMode')"
-                data-original-title=""
-                title=""
-              />
-            </label>
-            <div class="col-sm">
-              <div
-                class="btn-group"
-                role="group"
-                aria-label="First group"
-              >
-                <button
-                  type="button"
-                  @click="setCaptureMode('CAPTURE')"
-                  :class="{active : captureMode === 'CAPTURE'}"
-                  class="btn btn-primary-reverse btn-outline-primary"
-                >
-                  {{ $t('panel.payment-mode.capture') }}
-                </button>
-                <button
-                  type="button"
-                  @click="setCaptureMode('AUTHORIZE')"
-                  :class="{active : captureMode === 'AUTHORIZE'}"
-                  class="btn btn-primary-reverse btn-outline-primary"
-                >
-                  {{ $t('panel.payment-mode.authorize') }}
-                </button>
-              </div>
-            </div>
-          </div>
-          <b-alert
-            variant="info"
-            show
-          >
-            <p>{{ $t('panel.payment-mode.infoAlertText') }}.</p>
-          </b-alert>
-          <div class="form-group row">
-            <label class="form-control-label">
-              {{ $t('panel.payment-mode.environment') }}
-            </label>
-            <div class="col-sm">
-              <input
-                v-if="paymentMode === 'LIVE'"
-                class="form-control"
-                type="text"
-                readonly
-                :value="$t('panel.payment-mode.productionMode')"
-              >
-              <input
-                v-else
-                class="form-control"
-                type="text"
-                readonly
-                :value="$t('panel.payment-mode.sandboxMode')"
-              >
-              <small class="form-text mb-3">
-                <template v-if="paymentMode === 'LIVE'">
-                  {{ $t('panel.payment-mode.tipProductionMode') }}
-                </template>
-                <template v-else>
-                  {{ $t('panel.payment-mode.tipSandboxMode') }}.
-                </template>
-              </small>
-              <a
-                href="#"
-                @click.prevent="updatePaymentMode()"
-              >
-                <template v-if="paymentMode === 'LIVE'">
-                  {{ $t('panel.payment-mode.useSandboxMode') }}
-                </template>
-                <template v-else>
-                  {{ $t('panel.payment-mode.useProductionMode') }}
-                </template>
-              </a>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
+    </template>
+    <b-card-body>
+      <b-form>
+        <b-form-group
+          label-cols="4"
+          label-align="right"
+          :label="$t('panel.payment-mode.paymentAction')"
+          label-for="intent-mode"
+        >
+          <b-form-radio-group
+            id="intent-mode"
+            v-model="captureMode"
+            :options="intentOptions"
+            buttons
+            button-variant="outline-primary"
+            name="radio-btn-outline"
+          ></b-form-radio-group>
+        </b-form-group>
+
+        <b-alert
+          class="d-inline-block w-100"
+          variant="info"
+          show
+        >
+          <p>{{ $t('panel.payment-mode.infoAlertText') }}.</p>
+        </b-alert>
+
+        <b-form-group v-if="paymentMode === 'LIVE'"
+          label-cols="4"
+          label-align="right"
+          :description="$t('panel.payment-mode.tipProductionMode')"
+          :label="$t('panel.payment-mode.environment')"
+          label-for="production-input"
+        >
+          <b-form-input id="production-input" :value="$t('panel.payment-mode.productionMode')" disabled></b-form-input>
+        </b-form-group>
+
+        <b-form-group v-else
+          label-cols="4"
+          label-align="right"
+          :description="$t('panel.payment-mode.tipSandboxMode')"
+          :label="$t('panel.payment-mode.environment')"
+          label-for="sandbox-input"
+        >
+          <b-form-input id="sandbox-input" :value="$t('panel.payment-mode.sandboxMode')" disabled></b-form-input>
+        </b-form-group>
+
+        <b-form-group
+          label-cols="4"
+          label-for="update-mode"
+        >
+          <b-button id="update-mode" @click="updatePaymentMode()" variant="link" class="px-0">
+            <template v-if="paymentMode === 'LIVE'">
+              {{ $t('panel.payment-mode.useSandboxMode') }}
+            </template>
+            <template v-else>
+              {{ $t('panel.payment-mode.useProductionMode') }}
+            </template>
+          </b-button>
+        </b-form-group>
+      </b-form>
+    </b-card-body>
+  </b-card>
 </template>
 
 <script>
   export default {
+    data() {
+      return {
+        intentOptions: [
+          { text: this.$t('panel.payment-mode.capture'), value: 'CAPTURE' },
+          { text: this.$t('panel.payment-mode.authorize'), value: 'AUTHORIZE' },
+        ]
+      };
+    },
     methods: {
-      setCaptureMode(captureMode) {
-        if (this.captureMode === captureMode) {
-          return;
-        }
-        this.$store.dispatch('updateCaptureMode', captureMode);
-      },
       updatePaymentMode() {
         let mode = 'LIVE';
         if (this.paymentMode === 'LIVE') {
@@ -133,8 +108,16 @@
       },
     },
     computed: {
-      captureMode() {
-        return this.$store.state.configuration.captureMode;
+      captureMode: {
+        get() {
+          return this.$store.state.configuration.captureMode;
+        },
+        set(value) {
+          if (this.captureMode === value) {
+            return;
+          }
+          this.$store.dispatch('updateCaptureMode', value);
+        }
       },
       paymentMode() {
         return this.$store.state.configuration.paymentMode;

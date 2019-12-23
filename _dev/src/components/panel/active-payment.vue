@@ -17,14 +17,14 @@
  * International Registered Trademark & Property of PrestaShop SA
  *-->
 <template>
-  <div class="card">
-    <h3 class="card-header">
+  <b-card no-body>
+    <template v-slot:header>
       <i class="material-icons">toggle_on</i> {{ $t('panel.active-payment.activePaymentMethods') }}
-    </h3>
-    <div class="card-block">
-      <div class="container-fluid py-3 col-10">
-        <label class="title mr-4">{{ $t('panel.active-payment.paymentMethods') }}</label> <label class="text-muted">{{ $t('panel.active-payment.changeOrder') }}</label>
-      </div>
+    </template>
+
+    <b-card-body class="w-75 m-auto">
+      <b-card-title>{{ $t('panel.active-payment.changeOrder') }}</b-card-title>
+
       <div class="m-auto payment-method-container pb-3">
         <draggable
           tag="div"
@@ -103,8 +103,21 @@
           </transition-group>
         </draggable>
       </div>
-    </div>
-  </div>
+
+      <b-alert
+        variant="info"
+        show
+      >
+        <h4 class="alert-heading">
+          {{ $t('panel.active-payment.tipsTitle') }}
+        </h4>
+        <p>
+          {{ $t('panel.active-payment.tipsContent') }}
+        </p>
+      </b-alert>
+
+    </b-card-body>
+  </b-card>
 </template>
 
 <script>
@@ -149,9 +162,6 @@
 </script>
 
 <style scoped>
-  .title {
-    font-weight: 600 !important;
-  }
   .handle {
     cursor: grab;
     margin-top: 20px;
@@ -207,7 +217,7 @@
     display: none;
   }
   .payment-method-container {
-    max-width: 500px;
+    /* max-width: 500px; */
   }
   .payment-method-container img {
     width: 25px;
@@ -223,7 +233,7 @@
     background-color: #fff;
     border: 1px solid #dddddd;
     border-radius: 3px;
-    max-width: 475px;
+    /* max-width: 475px; */
   }
   .position {
     position: absolute;

@@ -68,15 +68,16 @@
           <CardStatus :display-labels="true" />
         </div>
 
-        <div class="mt-2">
-          <b-alert
-              variant="info"
-              show
-            >
-            <h2>{{ $t('panel.payment-acceptance.tips') }}</h2>
-            <p>{{ $t('panel.payment-acceptance.alertInfo') }}</p>
-          </b-alert>
-        </div>
+        <b-alert
+          class="mt-2"
+          variant="info"
+          show
+        >
+          <h4 class="alert-heading">
+            {{ $t('panel.payment-acceptance.tips') }}
+          </h4>
+          <p>{{ $t('panel.payment-acceptance.alertInfo') }}</p>
+        </b-alert>
       </div>
     </div>
   </form>

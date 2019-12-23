@@ -17,22 +17,19 @@
  * International Registered Trademark & Property of PrestaShop SA
  *-->
 <template>
-  <div class="card container">
-    <div class="card-block text-left py-4 px-5">
+  <b-card no-body>
+    <b-card-body>
       <div class="m-auto max-width">
         <h1>{{ $t('block.fraud-tool.title') }}</h1>
         <p>
           {{ $t('block.fraud-tool.text') }}
         </p>
-        <a
-          href="https://www.paypal.com/fraud-protection"
-          target="_blank"
-        >
+        <b-button variant="link" href="https://www.paypal.com/fraud-protection" target="_blank">
           {{ $t('block.fraud-tool.discoverFraudTool') }} <i class="material-icons">arrow_right_alt</i>
-        </a>
+        </b-button>
       </div>
-    </div>
-  </div>
+    </b-card-body>
+  </b-card>
 </template>
 
 <script>
@@ -42,9 +39,6 @@
 </script>
 
 <style scoped>
-.card {
-  width: fit-content;
-}
 .max-width {
   max-width: 500px !important;
 }

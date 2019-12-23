@@ -18,11 +18,9 @@
  *-->
 <template>
   <div>
-    <div class="row">
-      <div class="container">
-        <PsxFrom />
-      </div>
-    </div>
+    <b-container>
+      <PsxFrom />
+    </b-container>
   </div>
 </template>
 

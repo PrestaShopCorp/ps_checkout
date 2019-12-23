@@ -18,16 +18,13 @@
  *-->
 <template>
   <div>
-    <div class="row">
-      <div class="container">
-        <Dispute />
-      </div>
-    </div>
-    <div class="row">
-      <div class="container">
-        <FeatureIncoming />
-      </div>
-    </div>
+    <b-container class="mb-4">
+      <Dispute />
+    </b-container>
+
+    <b-container>
+      <FeatureIncoming />
+    </b-container>
   </div>
 </template>
 

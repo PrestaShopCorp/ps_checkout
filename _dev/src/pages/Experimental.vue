@@ -18,11 +18,9 @@
  *-->
 <template>
   <div>
-    <div class="row">
-      <div class="container">
-        <PaymentMode />
-      </div>
-    </div>
+    <b-container>
+      <PaymentMode />
+    </b-container>
   </div>
 </template>
 

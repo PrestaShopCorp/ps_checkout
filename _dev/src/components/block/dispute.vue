@@ -17,17 +17,23 @@
  * International Registered Trademark & Property of PrestaShop SA
  *-->
 <template>
-  <div class="card">
-    <div class="card-block text-center py-4 px-5">
-      <h1>0 {{ $t('block.dispute.pendingDispute') }}</h1>
-      <a
-        href="https://www.paypal.com/disputes/"
-        target="_blank"
-      >
-        {{ $t('block.dispute.goToDispute') }} <i class="material-icons">arrow_right_alt</i>
-      </a>
-    </div>
-  </div>
+  <b-card no-body>
+    <b-card-body class="py-2">
+      <b-row>
+        <b-col>
+          <b-button variant="text" size="lg">
+            <i class="material-icons">school</i>
+            0 {{ $t('block.dispute.pendingDispute') }}
+          </b-button>
+        </b-col>
+        <b-col cols="12" md="auto" class="m-auto">
+          <b-button variant="link" href="https://www.paypal.com/disputes/" target="_blank">
+            {{ $t('block.dispute.goToDispute') }} <i class="material-icons">arrow_right_alt</i>
+          </b-button>
+        </b-col>
+      </b-row>
+    </b-card-body>
+  </b-card>
 </template>
 
 <script>
@@ -35,9 +41,3 @@
     name: 'Dispute',
   };
 </script>
-
-<style scoped>
-.card {
-  width: fit-content;
-}
-</style>

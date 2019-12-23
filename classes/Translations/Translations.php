@@ -182,13 +182,14 @@ class Translations
                 ],
                 'active-payment' => [
                     'activePaymentMethods' => $this->module->l('Activate payment methods', 'translations'),
-                    'paymentMethods' => $this->module->l('Payment methods', 'translations'),
-                    'changeOrder' => $this->module->l('Change order', 'translations'),
+                    'changeOrder' => $this->module->l('Change payment methods order', 'translations'),
                     'enabled' => $this->module->l('Enabled', 'translations'),
                     'disabled' => $this->module->l('Disabled', 'translations'),
                     'creditCard' => $this->module->l('Credit card', 'translations'),
                     'paypal' => $this->module->l('PayPal', 'translations'),
                     'localPaymentMethods' => $this->module->l('Local payment methods', 'translations'),
+                    'tipsTitle' => $this->module->l('TIPS', 'translations'),
+                    'tipsContent' => $this->module->l('Boost your conversion rate by displaying PayPal as the first choice in the list of payment methods', 'translations'),
                 ],
                 'payment-acceptance' => [
                     'paymentAcceptanceTitle' => $this->module->l('Payment methods acceptance', 'translations'),

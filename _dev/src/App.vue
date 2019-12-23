@@ -107,7 +107,6 @@
   }
 
   #app .card-header .main-header #header-search-container .input-group:before, .card-header .material-icons, .card-header .ps-tree-items .tree-name button:before, .main-header #header-search-container .card-header .input-group:before, .ps-tree-items .tree-name .card-header button:before {
-    vertical-align: text-bottom !important;
     color: #6c868e;
     margin-right: 5px;
   }
@@ -116,6 +115,16 @@
     background-color: unset !important;
     padding: 100px 10px 100px;
     min-width: unset !important;
+  }
+
+  .nobootstrap label {
+    color: unset;
+    float: unset;
+    font-weight: unset;
+    padding: unset;
+    text-align: unset;
+    text-shadow: unset;
+    width: unset;
   }
 
   .page-sidebar.mobile #content.nobootstrap {

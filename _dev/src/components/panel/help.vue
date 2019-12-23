@@ -17,113 +17,102 @@
  * International Registered Trademark & Property of PrestaShop SA
  *-->
 <template>
-  <form class="form form-horizontal">
-    <div class="card">
-      <h3 class="card-header">
-        <i class="material-icons">help</i> {{ $t('panel.help.title') }}
-      </h3>
-      <div class="card-body">
-        <div class="d-flex">
-          <div class="left-block">
-            <div class="module-desc d-flex mb-4">
-              <div class="module-img mr-3">
-                <img
-                  src="@/assets/images/logo.png"
-                  width="75"
-                  height="75"
-                  alt=""
-                >
-              </div>
-              <div>
-                <b>{{ $t('panel.help.allowsYou') }}</b>
-                <ul class="mt-3">
-                  <li>{{ $t('panel.help.tip1') }}</li>
-                  <li>{{ $t('panel.help.tip2') }}</li>
-                  <li>{{ $t('panel.help.tip3') }}</li>
-                  <li>{{ $t('panel.help.tip4') }}</li>
-                </ul>
-              </div>
+  <b-card no-body>
+    <template v-slot:header>
+      <i class="material-icons">help</i> {{ $t('panel.help.title') }}
+    </template>
+
+    <b-card-body>
+      <div class="d-flex">
+        <div class="left-block">
+          <div class="module-desc d-flex mb-4">
+            <div class="module-img mr-3">
+              <img
+                src="@/assets/images/logo.png"
+                width="75"
+                height="75"
+                alt=""
+              >
             </div>
-            <div class="faq">
-              <h1>FAQ</h1>
-              <div class="separator my-3" />
-              <template v-if="faq && faq.categories.lenfth != 0">
-                <v-collapse-group
-                  class="my-3"
-                  v-for="(categorie, index) in faq.categories"
-                  :key="index"
-                  :only-one-active="true"
-                >
-                  <h3 class="categorie-title">
-                    {{ categorie.title }}
-                  </h3>
-                  <v-collapse-wrapper
-                    :ref="index+'_'+i"
-                    v-for="(item, i) in categorie.blocks"
-                    :key="i"
-                  >
-                    <div
-                      class="my-3 question"
-                      v-collapse-toggle
-                    >
-                      <a
-                        href="#"
-                        @click.prevent
-                      ><i class="material-icons">keyboard_arrow_right</i> {{ item.question }}</a>
-                    </div>
-                    <div
-                      class="answer"
-                      v-collapse-content
-                    >
-                      {{ item.answer }}
-                    </div>
-                  </v-collapse-wrapper>
-                </v-collapse-group>
-              </template>
-              <template v-else>
-                <b-alert
-                  variant="warning"
-                  show
-                >
-                  <p>{{ $t('panel.help.noFaqAvailable') }}</p>
-                </b-alert>
-              </template>
+            <div>
+              <b>{{ $t('panel.help.allowsYou') }}</b>
+              <ul class="mt-3">
+                <li>{{ $t('panel.help.tip1') }}</li>
+                <li>{{ $t('panel.help.tip2') }}</li>
+                <li>{{ $t('panel.help.tip3') }}</li>
+                <li>{{ $t('panel.help.tip4') }}</li>
+              </ul>
             </div>
           </div>
-          <div class="right-block">
-            <div class="doc">
-              <b class="text-muted">{{ $t('panel.help.needHelp') }}</b>
-              <br>
-              <a
-                :href="readmeUrl"
-                target="_blank"
-                class="btn btn-primary mt-3"
-              >{{ $t('panel.help.downloadDoc') }}</a>
-            </div>
-            <div class="contact mt-4">
-              <div>{{ $t('panel.help.couldntFindAnswer') }}</div>
-              <div class="mt-2">
-                <a
-                  v-if="isReady"
-                  href="https://support.prestashop.com/hc/requests/new?ticket_form_id="
-                  target="_blank"
+          <div class="faq">
+            <h1>FAQ</h1>
+            <div class="separator my-3" />
+            <template v-if="faq && faq.categories.lenfth != 0">
+              <v-collapse-group
+                class="my-3"
+                v-for="(categorie, index) in faq.categories"
+                :key="index"
+                :only-one-active="true"
+              >
+                <h3 class="categorie-title">
+                  {{ categorie.title }}
+                </h3>
+                <v-collapse-wrapper
+                  :ref="index+'_'+i"
+                  v-for="(item, i) in categorie.blocks"
+                  :key="i"
                 >
-                  {{ $t('panel.help.contactUs') }} <i class="material-icons">arrow_right_alt</i>
-                </a>
-                <a
-                  v-else
-                  href="mailto:support-checkout-download@prestashop.com"
-                  target="_blank"
-                >
-                  {{ $t('panel.help.contactUs') }} <i class="material-icons">arrow_right_alt</i>
-                </a>
-              </div>
+                  <div
+                    class="my-3 question"
+                    v-collapse-toggle
+                  >
+                    <a
+                      href="#"
+                      @click.prevent
+                    ><i class="material-icons">keyboard_arrow_right</i> {{ item.question }}</a>
+                  </div>
+                  <div
+                    class="answer"
+                    v-collapse-content
+                  >
+                    {{ item.answer }}
+                  </div>
+                </v-collapse-wrapper>
+              </v-collapse-group>
+            </template>
+            <template v-else>
+              <b-alert
+                variant="warning"
+                show
+              >
+                <p>{{ $t('panel.help.noFaqAvailable') }}</p>
+              </b-alert>
+            </template>
+          </div>
+        </div>
+        <div class="right-block">
+          <div class="doc">
+            <b class="text-muted">{{ $t('panel.help.needHelp') }}</b>
+            <br>
+            <b-button class="mt-3" :href="readmeUrl" target="_blank" variant="primary">
+              {{ $t('panel.help.downloadDoc') }}
+            </b-button>
+          </div>
+          <div class="contact mt-4">
+            <div>{{ $t('panel.help.couldntFindAnswer') }}</div>
+            <div class="mt-2">
+              <b-button v-if="isReady" variant="link" href="https://support.prestashop.com/hc/requests/new?ticket_form_id=" target="_blank">
+                {{ $t('panel.help.contactUs') }} <i class="material-icons">arrow_right_alt</i>
+              </b-button>
+              <b-button v-else variant="link" href="mailto:support-checkout-download@prestashop.com" target="_blank">
+                {{ $t('panel.help.contactUs') }} <i class="material-icons">arrow_right_alt</i>
+              </b-button>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </form>
+    </b-card-body>
+  </b-card>
 </template>
 
 <script>
