@@ -22,154 +22,183 @@
       <h3 class="card-header">
         <i class="material-icons">settings</i> {{ $t('panel.account-list.accountSettings') }}
       </h3>
-      <div class="card-block row">
-        <div class="card-text">
-          <div class="row mb-2">
-            <div class="col-12 col-sm-12 col-md-12 col-lg-12 pl-0">
-              <h1 class="text-muted font-weight-light">
-                {{ $t('panel.account-list.activateAllPayment') }}
-              </h1>
-            </div>
+      <div class="card-body m-auto">
+
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-4">
+          <h2 class="text-muted font-weight-light">
+            {{ $t('panel.account-list.activateAllPayment') }}
+          </h2>
+        </div>
+
+        <div class="d-flex">
+
+          <div class="col-12 col-sm-6 col-md-8 col-lg-1">
+            <img
+              src="@/assets/images/paypal-logo.png"
+            >
+            <img
+              src="@/assets/images/paypal-logo-thumbnail.png"
+            >
           </div>
-          <div class="row">
-            <div class="col-12 col-sm-6 col-md-8 col-lg-8 pl-0">
-              <h2>{{ $t('panel.account-list.essentialsAccount') }}</h2>
-              <p class="text-muted mb-0">
-                <template v-if="firebaseStatusAccount === true">
-                  {{ $t('panel.account-list.connectedWitdh') }} <b>{{ $store.state.firebase.email }}</b> {{ $t('panel.account-list.account') }}
-                </template>
-                <template v-else>
-                  {{ $t('panel.account-list.createNewAccount') }}
-                </template>
-              </p>
+
+          <div class="col-12 col-sm-6 col-md-8 col-lg-5 pl-0">
+            <h2>{{ $t('panel.account-list.essentialsAccount') }}</h2>
+            <p class="text-muted mb-0">
+              <template v-if="firebaseStatusAccount === true">
+                {{ $t('panel.account-list.connectedWitdh') }} <b>{{ $store.state.firebase.email }}</b> {{ $t('panel.account-list.account') }}
+              </template>
+              <template v-else>
+                {{ $t('panel.account-list.createNewAccount') }}
+              </template>
+            </p>
+          </div>
+
+          <div v-if="firebaseStatusAccount === true" class="col-12 col-sm-6 col-md-8 col-lg-3 m-auto text-center">
+            <b-badge variant="success">Approved</b-badge>
+          </div>
+
+          <div class="col-12 col-sm-4 col-md-3 col-lg-auto m-auto">
+            <div
+              class="text-center float-right"
+              v-if="firebaseStatusAccount === false"
+            >
+              <a
+                href="#"
+                @click.prevent="goToSignIn()"
+                class="mr-4"
+              ><b>{{ $t('panel.account-list.logIn') }}</b></a>
+              <a
+                href="#"
+                @click.prevent="goToSignUp()"
+                class="btn btn-primary-reverse btn-outline-primary light-button mb-1"
+              >
+                {{ $t('panel.account-list.createAccount') }}
+              </a>
             </div>
-            <div class="col-12 col-sm-4 col-md-3 col-lg-4 m-auto">
+            <div
+              class="text-right"
+              v-else
+            >
+              <a
+                v-if="!isReady"
+                href="#"
+                data-toggle="modal"
+                data-target="#modalLogout"
+                class="text-muted"
+              >{{ $t('panel.account-list.logOut') }}</a>
+            </div>
+            <!-- modal -->
+            <div
+              class="modal"
+              id="modalLogout"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="psxModalLogout"
+            >
               <div
-                class="text-center float-right"
-                v-if="firebaseStatusAccount === false"
+                class="modal-dialog"
+                role="document"
               >
-                <a
-                  href="#"
-                  @click.prevent="goToSignIn()"
-                  class="mr-4"
-                ><b>{{ $t('panel.account-list.logIn') }}</b></a>
-                <a
-                  href="#"
-                  @click.prevent="goToSignUp()"
-                  class="btn btn-primary-reverse btn-outline-primary light-button mb-1"
-                >
-                  {{ $t('panel.account-list.createAccount') }}
-                </a>
-              </div>
-              <div
-                class="text-right"
-                v-else
-              >
-                <a
-                  v-if="!isReady"
-                  href="#"
-                  data-toggle="modal"
-                  data-target="#modalLogout"
-                  class="text-muted"
-                >{{ $t('panel.account-list.logOut') }}</a>
-              </div>
-              <!-- modal -->
-              <div
-                class="modal"
-                id="modalLogout"
-                tabindex="-1"
-                role="dialog"
-                aria-labelledby="psxModalLogout"
-              >
-                <div
-                  class="modal-dialog"
-                  role="document"
-                >
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5
-                        class="modal-title"
-                        id="psxModalLogout"
-                      >
-                        {{ $t('panel.account-list.titleLogout') }}
-                      </h5>
-                      <button
-                        type="button"
-                        class="close"
-                        data-dismiss="modal"
-                        aria-label="Close"
-                      >
-                        <span aria-hidden="true">×</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <p>{{ $t('panel.account-list.descriptionLogout') }}</p>
-                    </div>
-                    <div class="modal-footer">
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary"
-                        data-dismiss="modal"
-                      >
-                        {{ $t('panel.account-list.cancel') }}
-                      </button>
-                      <button
-                        @click.prevent="logOut()"
-                        type="button"
-                        class="btn btn-primary"
-                        data-dismiss="modal"
-                      >
-                        {{ $t('panel.account-list.logOut') }}
-                      </button>
-                    </div>
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5
+                      class="modal-title"
+                      id="psxModalLogout"
+                    >
+                      {{ $t('panel.account-list.titleLogout') }}
+                    </h5>
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">×</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p>{{ $t('panel.account-list.descriptionLogout') }}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      data-dismiss="modal"
+                    >
+                      {{ $t('panel.account-list.cancel') }}
+                    </button>
+                    <button
+                      @click.prevent="logOut()"
+                      type="button"
+                      class="btn btn-primary"
+                      data-dismiss="modal"
+                    >
+                      {{ $t('panel.account-list.logOut') }}
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="row d-block">
-            <div class="line-separator my-4" />
-          </div>
-          <div class="row">
-            <div class="col-12 col-sm-6 col-md-8 col-lg-8 pl-0">
-              <h2>{{ $t('panel.account-list.paypalAccount') }}</h2>
-              <p class="text-muted">
-                <template v-if="paypalStatusAccount === false">
-                  {{ $t('panel.account-list.activatePayment') }}
-                </template>
-                <template v-else>
-                  {{ $t('panel.account-list.accountIsLinked') }}<br>
-                  <b>{{ paypalEmail }}</b>
-                </template>
-              </p>
-            </div>
-            <div class="col-12 col-sm-4 col-md-3 col-lg-4 m-auto">
-              <div
-                class="text-center float-right"
-                v-if="paypalStatusAccount === false"
-              >
-                <Onboarding />
-              </div>
-              <div
-                class="text-right"
-                v-else
-              >
-                <a
-                  href="#"
-                  class="text-muted"
-                  @click.prevent="paypalUnlink()"
-                >{{ $t('panel.account-list.useAnotherAccount') }}</a>
-              </div>
-            </div>
-            <b-alert
-              v-if="onboardingLinkError"
-              class="col-12"
-              variant="danger"
-              show
+
+        </div>
+
+        <div class="d-block">
+          <div class="line-separator my-4" />
+        </div>
+
+        <div class="d-flex">
+
+          <div class="col-12 col-sm-6 col-md-8 col-lg-1">
+            <img
+              src="@/assets/images/paypal-logo-thumbnail.png"
             >
-              {{ $t('panel.account-list.onboardingLinkError') }}
-            </b-alert>
           </div>
+
+          <div class="col-12 col-sm-6 col-md-8 col-lg-5 pl-0">
+            <h2>{{ $t('panel.account-list.paypalAccount') }}</h2>
+            <p class="text-muted">
+              <template v-if="paypalStatusAccount === false">
+                {{ $t('panel.account-list.activatePayment') }}
+              </template>
+              <template v-else>
+                {{ $t('panel.account-list.accountIsLinked') }}<br>
+                <b>{{ paypalEmail }}</b>
+              </template>
+            </p>
+          </div>
+
+          <div v-if="paypalStatusAccount === true" class="col-12 col-sm-6 col-md-8 col-lg-3 m-auto text-center">
+            <b-badge variant="success">Approved</b-badge>
+          </div>
+
+          <div class="col-12 col-sm-4 col-md-3 col-lg-auto m-auto">
+            <div
+              class="text-center float-right"
+              v-if="paypalStatusAccount === false"
+            >
+              <Onboarding />
+            </div>
+            <div
+              class="text-right"
+              v-else
+            >
+              <a
+                href="#"
+                class="text-muted"
+                @click.prevent="paypalUnlink()"
+              >{{ $t('panel.account-list.useAnotherAccount') }}</a>
+            </div>
+          </div>
+
+          <b-alert
+            v-if="onboardingLinkError"
+            class="col-12"
+            variant="danger"
+            show
+          >
+            {{ $t('panel.account-list.onboardingLinkError') }}
+          </b-alert>
         </div>
       </div>
     </div>

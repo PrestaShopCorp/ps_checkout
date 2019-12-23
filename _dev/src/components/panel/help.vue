@@ -22,8 +22,8 @@
       <h3 class="card-header">
         <i class="material-icons">help</i> {{ $t('panel.help.title') }}
       </h3>
-      <div class="card-block row">
-        <div class="card-text d-flex">
+      <div class="card-body">
+        <div class="d-flex">
           <div class="left-block">
             <div class="module-desc d-flex mb-4">
               <div class="module-img mr-3">

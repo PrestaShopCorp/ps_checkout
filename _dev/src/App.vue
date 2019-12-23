@@ -41,24 +41,17 @@
     <div class="pt-5" />
     <div class="pt-3" />
 
-    <div class="row">
-      <div class="container">
-        <RoundingBanner />
-      </div>
+    <div class="container">
+      <RoundingBanner />
     </div>
 
-    <div
-      v-if="paymentMode === 'SANDBOX'"
-      class="row"
-    >
-      <div class="container">
-        <b-alert
-          variant="warning"
-          show
-        >
-          <p>{{ $t('general.testModeOn') }}</p>
-        </b-alert>
-      </div>
+    <div class="container" v-if="paymentMode === 'SANDBOX'">
+      <b-alert
+        variant="warning"
+        show
+      >
+        <p>{{ $t('general.testModeOn') }}</p>
+      </b-alert>
     </div>
     <router-view />
   </div>
@@ -107,9 +100,26 @@
     text-align: left;
   }
 
+  #app .card-header, .card-header .card-header-title {
+    font-weight: 600;
+    line-height: 24px;
+    line-height: 1.5rem;
+  }
+
+  #app .card-header .main-header #header-search-container .input-group:before, .card-header .material-icons, .card-header .ps-tree-items .tree-name button:before, .main-header #header-search-container .card-header .input-group:before, .ps-tree-items .tree-name .card-header button:before {
+    vertical-align: text-bottom !important;
+    color: #6c868e;
+    margin-right: 5px;
+  }
+
   .nobootstrap {
     background-color: unset !important;
     padding: 100px 10px 100px;
+    min-width: unset !important;
+  }
+
+  .page-sidebar.mobile #content.nobootstrap {
+    margin-left: unset;
   }
 
   .page-sidebar-closed:not(.mobile) #content.nobootstrap {

@@ -19,39 +19,63 @@
 <template>
   <form class="form form-horizontal">
     <div class="card">
+
       <h3 class="card-header">
         <i class="material-icons">credit_card</i> {{ $t('panel.payment-acceptance.paymentAcceptanceTitle') }}
       </h3>
-      <div class="card-block row">
-        <div class="card-text">
-          <div class="row">
-            <div class="pl-0">
-              <img
-                class="mb-3"
-                src="@/assets/images/paypal-logo.png"
-                width="100"
-              >
-              <PaypalStatus :display-labels="true" />
-            </div>
-          </div>
-          <div class="row d-block">
-            <div class="line-separator my-3" />
-          </div>
-          <div class="row">
-            <div class="pl-0">
-              <h2>{{ $t('panel.payment-acceptance.creditCardsLabel') }}</h2>
-              <CardStatus :display-labels="true" />
-            </div>
-          </div>
-          <div class="row mt-2">
-            <b-alert
-                variant="info"
-                show
-              >
-              <h2>{{ $t('panel.payment-acceptance.tips') }}</h2>
-              <p>{{ $t('panel.payment-acceptance.alertInfo') }}</p>
-            </b-alert>
-          </div>
+
+      <div class="card-body m-auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Payment method</th>
+              <th>Availability</th>
+              <th>Activation status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+
+              </td>
+              <td>test</td>
+              <td>test</td>
+            </tr>
+
+            <tr>
+              <td>test</td>
+              <td>test</td>
+              <td>test</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pl-0">
+          <img
+            class="mb-3"
+            src="@/assets/images/paypal-logo.png"
+            width="100"
+          >
+          <PaypalStatus :display-labels="true" />
+        </div>
+
+        <div class="d-block">
+          <div class="line-separator my-3" />
+        </div>
+
+        <div class="pl-0">
+          <h2>{{ $t('panel.payment-acceptance.creditCardsLabel') }}</h2>
+          <CardStatus :display-labels="true" />
+        </div>
+
+        <div class="mt-2">
+          <b-alert
+              variant="info"
+              show
+            >
+            <h2>{{ $t('panel.payment-acceptance.tips') }}</h2>
+            <p>{{ $t('panel.payment-acceptance.alertInfo') }}</p>
+          </b-alert>
         </div>
       </div>
     </div>
@@ -71,6 +95,15 @@
 </script>
 
 <style scoped>
+.nobootstrap .table {
+    border: unset;
+    border-radius: unset;
+}
+
+.nobootstrap .table tr th {
+    background-color: white;
+}
+
 .line-separator {
   height:1px;
   opacity: 0.2;
