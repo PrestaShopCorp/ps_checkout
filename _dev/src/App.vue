@@ -111,6 +111,10 @@
     margin-right: 5px;
   }
 
+  #app .form-group.has-danger:after, #app .form-group.has-success:after, #app .form-group.has-warning:after {
+    right: 10px;
+  }
+
   .nobootstrap {
     background-color: unset !important;
     padding: 100px 10px 100px;

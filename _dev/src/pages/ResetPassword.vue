@@ -16,89 +16,65 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  *-->
-<template>
+ <template>
   <div>
-    <div class="d-flex">
-      <form
-        class="form form-horizontal container"
-        @submit.prevent="resetPassword()"
+    <b-container>
+      <b-card
+        no-body
+        footer-class="d-flex justify-content-end"
       >
-        <div class="card">
-          <h3 class="card-header">
-            <i class="material-icons">settings</i> {{ $t('pages.resetPassword.resetPassword') }}
-          </h3>
+        <template v-slot:header>
+          <i class="material-icons">settings</i> {{ $t('pages.resetPassword.resetPassword') }}
+        </template>
+        <b-card-body>
           <template v-if="emailSent">
-            <div class="card-block row pb-0">
-              <div class="card-text header text-left my-4">
-                <h1>{{ $t('pages.resetPassword.youGotEmail') }}</h1>
-                <h2>{{ $t('pages.resetPassword.sendEmail') }}</h2>
-              </div>
-            </div>
+            <b-alert variant="success" show>
+              <h4 class="alert-heading">
+                {{ $t('pages.resetPassword.youGotEmail') }}
+              </h4>
+              <p>
+                {{ $t('pages.resetPassword.sendEmail') }}
+              </p>
+            </b-alert>
           </template>
           <template v-else>
-            <div class="card-block row pb-0">
-              <div class="card-text header">
-                <div class="title mb-3">
-                  <h1>{{ $t('pages.resetPassword.sendLink') }}</h1>
-                </div>
-              </div>
-            </div>
-            <div class="card-block row pb-0">
-              <div class="card-text">
-                <div class="form-group row">
-                  <label class="form-control-label">{{ $t('pages.resetPassword.email') }}</label>
-                  <div class="col-6">
-                    <div
-                      class="form-group mb-0"
-                      :class="{ 'has-warning' : email.hasError }"
-                    >
-                      <input
-                        v-model="email.value"
-                        type="text"
-                        class="form-control"
-                        :class="{ 'is-warning' : email.hasError }"
-                      >
-                      <div
-                        v-if="email.hasError"
-                        class="warning-feedback"
-                      >
-                        {{ email.errorMessage }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <h1 class="text-center mb-4">{{ $t('pages.resetPassword.sendLink') }}</h1>
           </template>
-          <div class="card-footer d-flex justify-content-end">
-            <PSButton
-              class="mr-3"
-              ghost
-              @click="goToSignIn()"
+
+          <b-form v-if="!emailSent">
+            <b-form-group
+              label-cols="4"
+              label-align="right"
+              :label="$t('pages.resetPassword.email')"
+              label-for="email-input"
+              :invalid-feedback="invalidEmail"
+              :class="{ 'has-danger': email.state === false}"
             >
+              <b-form-input id="email-input" v-model="email.value" :state="email.state"></b-form-input>
+            </b-form-group>
+          </b-form>
+        </b-card-body>
+
+        <template v-slot:footer>
+          <div class="d-flex">
+            <b-button class="mr-3" variant="outline-secondary" @click="goToSignIn()">
               {{ $t('pages.resetPassword.goBackToLogin') }}
-            </PSButton>
-            <PSButton
-              v-if="!emailSent"
-              primary
-              type="submit"
-            >
+            </b-button>
+            <b-button v-if="!emailSent" variant="primary" @click="resetPassword()">
               {{ $t('pages.resetPassword.reset') }}
-            </PSButton>
+            </b-button>
           </div>
-        </div>
-      </form>
-    </div>
-    <div class="row">
-      <div class="container">
-        <Reassurance />
-      </div>
-    </div>
+        </template>
+      </b-card>
+    </b-container>
+
+    <b-container>
+      <Reassurance />
+    </b-container>
   </div>
 </template>
 
 <script>
-  import PSButton from '@/components/form/button';
   import * as error from '@/lib/auth';
   import Reassurance from '@/components/block/reassurance';
   import ajax from '@/requests/ajax.js';
@@ -106,18 +82,25 @@
   export default {
     name: 'ResetPassword',
     components: {
-      PSButton,
       Reassurance,
     },
     data() {
       return {
         email: {
           value: '',
-          hasError: false,
+          state: null,
           errorMessage: '',
         },
         emailSent: false,
       };
+    },
+    computed: {
+      invalidEmail() {
+        if (this.email.state === false) {
+          return this.email.errorMessage;
+        }
+        return '';
+      },
     },
     methods: {
       resetPassword() {
@@ -139,25 +122,25 @@
       handleResponseError(err) {
         switch (err) {
           case error.INVALID_EMAIL:
-            this.setEmailError(true, this.$t('firebase.error.invalidEmail'));
+            this.setEmailError(false, this.$t('firebase.error.invalidEmail'));
             break;
           case error.MISSING_EMAIL:
-            this.setEmailError(true, this.$t('firebase.error.missingEmail'));
+            this.setEmailError(false, this.$t('firebase.error.missingEmail'));
             break;
           case error.EMAIL_NOT_FOUND:
-            this.setEmailError(true, this.$t('firebase.error.emailNotFound'));
+            this.setEmailError(false, this.$t('firebase.error.emailNotFound'));
             break;
           default:
-            this.setEmailError(true, this.$t('firebase.error.defaultError'));
+            this.setEmailError(false, this.$t('firebase.error.defaultError'));
             break;
         }
       },
       setEmailError(hasError, message) {
-        this.email.hasError = hasError;
+        this.email.state = hasError;
         this.email.errorMessage = message;
       },
       resetEmailError() {
-        this.email.hasError = false;
+        this.email.state = null;
         this.email.errorMessage = '';
       },
       goToSignIn() {

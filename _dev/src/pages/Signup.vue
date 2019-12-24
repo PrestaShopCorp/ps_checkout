@@ -16,142 +16,110 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  *-->
+
 <template>
   <div>
-    <div class="d-flex">
-      <form
-        class="form form-horizontal container"
-        @submit.prevent="signUp()"
+    <b-container>
+      <b-card
+        no-body
+        footer-class="d-flex"
       >
-        <div class="card">
-          <div class="card-block row pb-0">
-            <div class="card-text header">
-              <div class="title mb-3">
-                <h1>{{ $t('pages.signup.createYourPsAccount') }}</h1>
-              </div>
-            </div>
-          </div>
-          <div class="card-block row pb-0">
-            <div class="card-text">
-              <div class="form-group row">
-                <label class="form-control-label">{{ $t('pages.signup.email') }}</label>
-                <div class="col-6">
-                  <div
-                    class="form-group mb-0"
-                    :class="{ 'has-warning' : email.hasError }"
-                  >
-                    <input
-                      v-model="email.value"
-                      type="text"
-                      class="form-control"
-                      :class="{ 'is-warning' : email.hasError }"
-                    >
-                    <div
-                      v-if="email.hasError"
-                      class="warning-feedback"
-                    >
-                      {{ email.errorMessage }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="form-control-label">{{ $t('pages.signup.password') }}</label>
-                <div class="col-6">
-                  <div
-                    class="form-group mb-0"
-                    :class="{ 'has-warning' : password.hasError }"
-                  >
-                    <input
-                      v-model="password.value"
-                      type="password"
-                      class="form-control"
-                      :class="{ 'is-warning' : password.hasError }"
-                    >
-                    <div
-                      v-if="password.hasError"
-                      class="warning-feedback"
-                    >
-                      {{ password.errorMessage }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="form-control-label">&nbsp;</label>
-                <div class="col-6">
-                  <PSCheckbox
-                    id="terms"
-                    v-model="terms.value"
-                  >
-                    {{ $t('pages.signup.termsOfUse') }}
-                    <a
-                      :href="readmeCgu"
-                      target="_blank"
-                    >{{ $t('pages.signup.termsOfUseLinkText') }}</a>
-                  </PSCheckbox>
-                  <div
-                    v-if="terms.hasError"
-                    class="warning-feedback"
-                  >
-                    {{ terms.errorMessage }}
-                  </div>
-                  <div
-                    id="privacy"
-                    class="mt-4"
-                  >
-                    <p>
-                      {{ $t('pages.signup.mentionsTermsText') }} (<a
-                        href="mailto:privacy@prestashop.com"
-                        target="_blank"
-                      >{{ $t('pages.signup.mentionsTermsLinkTextPart1') }}</a>)
-                    </p>
-                    <p>
-                      <a
-                        :href="$t('pages.signup.mentionsTermsLinkPart2')"
-                        target="_blank"
-                      >{{ $t('pages.signup.mentionsTermsLinkTextPart2') }}</a>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="card-footer d-flex">
-            <div class="container-fluid pl-0">
-              <PSButton @click="previous()">
-                {{ $t('pages.signup.back') }}
-              </PSButton>
-            </div>
-            <div class="d-flex">
-              <PSButton
-                class="mr-3"
-                ghost
-                @click="goToSignIn()"
+        <b-card-body>
+          <h1 class="text-center mb-4">{{ $t('pages.signup.createYourPsAccount') }}</h1>
+
+          <b-form>
+            <b-form-group
+              label-cols="4"
+              label-align="right"
+              :label="$t('pages.signup.email')"
+              label-for="email-input"
+              :invalid-feedback="invalidEmail"
+              :class="{ 'has-danger': email.state === false}"
+            >
+              <b-form-input id="email-input" v-model="email.value" :state="email.state"></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+              label-cols="4"
+              label-align="right"
+              :label="$t('pages.signup.password')"
+              label-for="password-input"
+              :invalid-feedback="invalidPassword"
+              :class="{ 'has-danger': password.state === false}"
+            >
+              <b-form-input id="password-input" v-model="password.value" type="password" :state="password.state"></b-form-input>
+            </b-form-group>
+
+            <b-form-group
+              label-cols="4"
+              label-align="right"
+              label-for="terms"
+              :invalid-feedback="invalidTerms"
+              :state="terms.state"
+            >
+              <PSCheckbox
+                id="terms"
+                v-model="terms.value"
               >
-                {{ $t('pages.signup.signIn') }}
-              </PSButton>
-              <PSButton
-                primary
-                type="submit"
+                {{ $t('pages.signup.termsOfUse') }}
+                <b-link :href="readmeCgu" target="_blank">
+                  {{ $t('pages.signup.termsOfUseLinkText') }}
+                </b-link>
+              </PSCheckbox>
+            </b-form-group>
+
+            <b-form-group
+              label-cols="4"
+              label-align="right"
+              label-for="privacy"
+            >
+              <div
+                id="privacy"
+                class="mt-4"
               >
-                {{ $t('pages.signup.createAccount') }}
-              </PSButton>
-            </div>
+                <p>
+                  {{ $t('pages.signup.mentionsTermsText') }}
+                  (
+                  <b-link href="mailto:privacy@prestashop.com" target="_blank">
+                    {{ $t('pages.signup.mentionsTermsLinkTextPart1') }}
+                  </b-link>
+                  )
+                </p>
+                <p>
+                  <b-link :href="$t('pages.signup.mentionsTermsLinkPart2')" target="_blank">
+                    {{ $t('pages.signup.mentionsTermsLinkTextPart2') }}
+                  </b-link>
+                </p>
+              </div>
+            </b-form-group>
+          </b-form>
+        </b-card-body>
+
+        <template v-slot:footer>
+          <div class="container-fluid pl-0">
+            <b-button variant="secondary" @click="previous()">
+              {{ $t('pages.signup.back') }}
+            </b-button>
           </div>
-        </div>
-      </form>
-    </div>
-    <div class="row">
-      <div class="container">
-        <Reassurance />
-      </div>
-    </div>
+          <div class="d-flex">
+            <b-button class="mr-3" variant="outline-secondary" @click="goToSignIn()">
+              {{ $t('pages.signup.signIn') }}
+            </b-button>
+            <b-button variant="primary" @click="signUp()">
+              {{ $t('pages.signup.createAccount') }}
+            </b-button>
+          </div>
+        </template>
+      </b-card>
+    </b-container>
+
+    <b-container>
+      <Reassurance />
+    </b-container>
   </div>
 </template>
 
 <script>
-  import PSButton from '@/components/form/button';
   import * as error from '@/lib/auth';
   import Reassurance from '@/components/block/reassurance';
   import PSCheckbox from '@/components/form/checkbox';
@@ -159,7 +127,6 @@
   export default {
     name: 'Signup',
     components: {
-      PSButton,
       Reassurance,
       PSCheckbox,
     },
@@ -167,17 +134,17 @@
       return {
         email: {
           value: '',
-          hasError: false,
+          state: null,
           errorMessage: '',
         },
         password: {
           value: '',
-          hasError: false,
+          state: null,
           errorMessage: '',
         },
         terms: {
           value: false,
-          hasError: false,
+          state: null,
           errorMessage: this.$t('pages.signup.termsOfUseError'),
         },
       };
@@ -186,15 +153,33 @@
       readmeCgu() {
         return this.$store.state.context.cguUrl;
       },
+      invalidEmail() {
+        if (this.email.state === false) {
+          return this.email.errorMessage;
+        }
+        return '';
+      },
+      invalidPassword() {
+        if (this.password.state === false) {
+          return this.password.errorMessage;
+        }
+        return '';
+      },
+      invalidTerms() {
+        if (this.terms.state === false) {
+          return this.terms.errorMessage;
+        }
+        return '';
+      },
     },
     methods: {
       signUp() {
         if (!this.terms.value) {
-          this.terms.hasError = true;
+          this.terms.state = false;
           return;
         }
 
-        this.terms.hasError = false;
+        this.terms.state = null;
 
         this.$store.dispatch({
           type: 'signUp',
@@ -212,41 +197,41 @@
       handleResponseError(err) {
         switch (err) {
           case error.EMAIL_EXISTS:
-            this.setEmailError(true, this.$t('firebase.error.emailExists'));
+            this.setEmailError(false, this.$t('firebase.error.emailExists'));
             this.resetPasswordError();
             break;
           case error.MISSING_PASSWORD:
-            this.setPasswordError(true, this.$t('firebase.error.missingPassword'));
+            this.setPasswordError(false, this.$t('firebase.error.missingPassword'));
             this.resetEmailError();
             break;
           case error.INVALID_EMAIL:
-            this.setEmailError(true, this.$t('firebase.error.invalidEmail'));
+            this.setEmailError(false, this.$t('firebase.error.invalidEmail'));
             this.resetPasswordError();
             break;
           case error.MISSING_EMAIL:
-            this.setEmailError(true, this.$t('firebase.error.missingEmail'));
+            this.setEmailError(false, this.$t('firebase.error.missingEmail'));
             this.resetPasswordError();
             break;
           default:
-            this.setPasswordError(true, this.$t('firebase.error.defaultError'));
-            this.setEmailError(true, this.$t('firebase.error.defaultError'));
+            this.setPasswordError(false, this.$t('firebase.error.defaultError'));
+            this.setEmailError(false, this.$t('firebase.error.defaultError'));
             break;
         }
       },
       setPasswordError(hasError, message) {
-        this.password.hasError = hasError;
+        this.password.state = hasError;
         this.password.errorMessage = message;
       },
       setEmailError(hasError, message) {
-        this.email.hasError = hasError;
+        this.email.state = hasError;
         this.email.errorMessage = message;
       },
       resetEmailError() {
-        this.email.hasError = false;
+        this.email.state = null;
         this.email.errorMessage = '';
       },
       resetPasswordError() {
-        this.password.hasError = false;
+        this.password.state = null;
         this.password.errorMessage = '';
       },
       previous() {
