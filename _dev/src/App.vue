@@ -121,6 +121,18 @@
     min-width: unset !important;
   }
 
+  .nobootstrap .form-group>div {
+    float: unset;
+  }
+
+  .nobootstrap fieldset {
+    background-color: unset;
+    border: unset;
+    color: unset;
+    margin: unset;
+    padding: unset;
+  }
+
   .nobootstrap label {
     color: unset;
     float: unset;

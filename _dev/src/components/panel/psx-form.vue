@@ -18,430 +18,381 @@
  *-->
 <template>
   <div>
-    <!-- errors -->
-    <div v-if="errorForm != null">
-      <div
-        id="errors"
-        class="ps-alert alert alert-danger"
-        role="alert"
-      >
-        <p>{{ errorForm.length }} {{ $t('panel.psx-form.errors') }}</p>
-        <ul>
-          <li
-            v-for="(text, key) in errorForm"
-            :key="key"
-            class="alert-text"
-          >
-            {{ text }}
-          </li>
-        </ul>
-      </div>
-    </div>
-    <form class="form form-horizontal">
-      <div class="card">
-        <h3 class="card-header">
-          <i class="material-icons">settings</i> {{ $t('panel.psx-form.additionalDetails') }}
-        </h3>
-        <div class="card-block row">
-          <div class="card-text">
-            <div class="row mb-5">
-              <div class="col-lg-12 col-md-12 col-sm-12 text-center">
-                <h1 class="text-muted font-weight-light">
-                  {{ $t('panel.psx-form.fillUp') }}
-                </h1>
-              </div>
-            </div>
+    <b-alert
+      v-if="errorForm != null"
+      variant="danger"
+      show
+    >
+      <h4 class="alert-heading">
+        {{ errorForm.length }} {{ $t('panel.psx-form.errors') }}
+      </h4>
+      <ul>
+        <li
+          v-for="(text, key) in errorForm"
+          :key="key"
+          class="alert-text"
+        >
+          {{ text }}
+        </li>
+      </ul>
+    </b-alert>
 
-            <!-- personal_informations -->
-            <div
-              id="personal_informations"
-              class="row mb-4"
-            >
-              <div class="col-lg-10 offset-lg-1 col-md-10 offset-md-1 col-sm-10 offset-sm-1 pl-0">
-                <div class="col-lg-3 col-md-3 col-sm-3 pl-0 pr-0 text-right mt-3">
-                  <label class="mr-3 text-muted">{{ $t('panel.psx-form.personalInformation') }}</label>
-                </div>
-                <div class="col-lg-9 col-md-9 col-sm-9">
-                  <div class="row mt-3">
-                    <div class="col-lg-2 col-md-2 col-sm-2">
-                      <div class="md-radio">
-                        <label>
-                          <input
-                            name="gender"
-                            type="radio"
-                            value="Mr"
-                            v-model="form.business_contact_gender"
-                          >
-                          <i class="md-radio-control" /> {{ $t('panel.psx-form.genderMr') }}
-                        </label>
-                      </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                      <div class="md-radio">
-                        <label>
-                          <input
-                            name="gender"
-                            type="radio"
-                            value="Ms"
-                            v-model="form.business_contact_gender"
-                          >
-                          <i class="md-radio-control" /> {{ $t('panel.psx-form.genderMrs') }}
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mt-3">
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                      <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
-                        <label>{{ $t('panel.psx-form.firstName') }}</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="firstName"
-                          v-model="form.business_contact_first_name"
-                          :class="[form.business_contact_first_name != '' ? '' : 'has-danger']"
-                        >
-                      </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                      <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
-                        <label>{{ $t('panel.psx-form.lastName') }}</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="lastName"
-                          v-model="form.business_contact_last_name"
-                          :class="[form.business_contact_last_name != '' ? '' : 'has-danger']"
-                        >
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mt-3">
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                      <label>{{ $t('panel.psx-form.language') }}</label>
-                      <select
-                        class="form-control custom-select"
-                        v-model="form.business_contact_language"
-                        :class="[form.business_contact_language != '' ? '' : 'has-danger']"
-                      >
-                        <option
-                          v-for="languageDetail in getLanguagesDetails"
-                          :key="languageDetail.iso_code"
-                          :value="languageDetail.iso_code"
-                        >
-                          {{ languageDetail.name }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="row mt-3">
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                      <label class="row">
-                        <span class="col-lg-7 col-md-7 col-sm-7">{{ $t('panel.psx-form.qualification') }}</span>
-                        <span class="col-lg-5 col-md-5 col-sm-5 font-italic text-secondary text-right">{{ $t('panel.psx-form.optional') }}</span>
-                      </label>
-                      <select
-                        class="form-control custom-select"
-                        v-model="form.qualification"
-                      >
-                        <option value="">
-                          --
-                        </option>
-                        <option value="merchant">
-                          {{ $t('panel.psx-form.merchant') }}
-                        </option>
-                        <option value="agency">
-                          {{ $t('panel.psx-form.agency') }}
-                        </option>
-                        <option value="freelancer">
-                          {{ $t('panel.psx-form.freelancer') }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- billing_address -->
-            <div
-              id="billing_address"
-              class="row mb-4"
-            >
-              <div class="col-lg-10 offset-lg-1 col-md-10 offset-md-1 col-sm-10 offset-sm-1 pl-0">
-                <div class="col-lg-3 col-md-3 col-sm-3 pl-0 pr-0 text-right mt-3">
-                  <label class="mr-3 text-muted">{{ $t('panel.psx-form.billingAddress') }}</label>
-                </div>
-                <div class="col-lg-9 col-md-9 col-sm-9">
-                  <div class="row mt-3">
-                    <div class="col-lg-12 col-md-12 col-sm-12">
-                      <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
-                        <label>{{ $t('panel.psx-form.storeName') }}</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="storeName"
-                          v-model="form.shop_name"
-                          :class="[form.shop_name != '' ? '' : 'has-danger']"
-                        >
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mt-3">
-                    <div class="col-lg-12 col-md-12 col-sm-12">
-                      <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
-                        <label>{{ $t('panel.psx-form.address') }}</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="address"
-                          v-model="form.business_address_street"
-                          :class="[form.business_address_street != '' ? '' : 'has-danger']"
-                        >
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mt-3">
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                      <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
-                        <label>{{ $t('panel.psx-form.postCode') }}</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="postCode"
-                          v-model="form.business_address_zip"
-                          :class="[form.business_address_zip != '' ? '' : 'has-danger']"
-                        >
-                      </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                      <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
-                        <label>{{ $t('panel.psx-form.town') }}</label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="town"
-                          v-model="form.business_address_city"
-                          :class="[form.business_address_city != '' ? '' : 'has-danger']"
-                        >
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mt-3">
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                      <label>{{ $t('panel.psx-form.country') }}</label>
-                      <select
-                        @change="onChangeCountry(form.business_address_country)"
-                        v-model="form.business_address_country"
-                        class="form-control custom-select"
-                      >
-                        <option
-                          v-for="countryDetail in getCountriesDetails"
-                          :key="countryDetail.iso"
-                          :value="countryDetail.iso"
-                        >
-                          {{ countryDetail.name }}
-                        </option>
-                      </select>
-                    </div>
-                    <div
-                      v-if="statesList != null"
-                      class="col-lg-6 col-md-6 col-sm-6"
+    <b-card no-body
+      footer-class="d-flex"
+    >
+      <template v-slot:header>
+        <i class="material-icons">account_box</i> {{ $t('panel.psx-form.additionalDetails') }}
+      </template>
+
+      <b-card-body>
+        <h1 class="text-muted font-weight-light text-center">
+          {{ $t('panel.psx-form.fillUp') }}
+        </h1>
+
+        <b-form>
+          <b-col sm="12" md="10" lg="8" class="m-auto">
+
+            <b-card-title class="py-4">
+              {{ $t('panel.psx-form.personalInformation') }}
+            </b-card-title>
+
+            <b-row>
+              <b-col sm="12" md="12" lg="12">
+                <b-form-group>
+                  <b-form-radio-group v-model="form.business_contact_gender" name="gender">
+                    <b-form-radio value="Mr">{{ $t('panel.psx-form.genderMr') }}</b-form-radio>
+                    <b-form-radio value="Ms">{{ $t('panel.psx-form.genderMrs') }}</b-form-radio>
+                  </b-form-radio-group>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col sm="6" md="6" lg="6">
+                <b-form-group
+                  :label="$t('panel.psx-form.firstName')"
+                  label-for="firstName"
+                >
+                  <b-form-input
+                    id="firstName"
+                    v-model="form.business_contact_first_name"
+                    :class="[form.business_contact_first_name != '' ? '' : 'has-danger']"
+                  ></b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-col sm="6" md="6" lg="6">
+                <b-form-group
+                  :label="$t('panel.psx-form.lastName')"
+                  label-for="lastName"
+                >
+                  <b-form-input
+                    id="lastName"
+                    v-model="form.business_contact_last_name"
+                    :class="[form.business_contact_last_name != '' ? '' : 'has-danger']"
+                  ></b-form-input>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col sm="6" md="6" lg="6">
+                <b-form-group
+                  :label="$t('panel.psx-form.language')"
+                  label-for="language"
+                >
+                  <b-form-select
+                    id="language"
+                    v-model="form.business_contact_language"
+                    :class="[form.business_contact_language != '' ? '' : 'has-danger']">
+                    <option
+                      v-for="languageDetail in getLanguagesDetails"
+                      :key="languageDetail.iso_code"
+                      :value="languageDetail.iso_code"
                     >
-                      <label>{{ $t('panel.psx-form.state') }}</label>
-                      <select
-                        v-model="form.business_address_state"
-                        class="form-control custom-select"
-                      >
-                        <option
-                          v-for="(value, key) in statesList"
-                          :key="key"
-                          :value="key"
-                        >
-                          {{ value }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="row mt-3">
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                      <div class="col-lg-12 col-md-12 col-sm-12 pl-0">
-                        <label>{{ $t('panel.psx-form.businessPhone') }}</label>
-                      </div>
-                      <div class="col-lg-4 col-md-4 col-sm-4 pl-0">
-                        <select
-                          v-model="form.business_phone_country"
-                          class="form-control custom-select"
-                        >
-                          <option
-                            v-for="countryDetail in getPhoneCountryCode"
-                            :key="countryDetail.iso"
-                            :value="countryDetail.code"
-                          >
-                            + {{ countryDetail.code }}
-                          </option>
-                        </select>
-                      </div>
-                      <div class="col-lg-8 col-md-8 col-sm-8 pl-0 pr-0">
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="phone"
-                          v-model="form.business_phone"
-                          :class="[form.business_phone != '' ? '' : 'has-danger']"
-                        >
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- billing_information -->
-            <div
-              id="billing_information"
-              class="row mb-5"
-            >
-              <div class="col-lg-10 offset-lg-1 col-md-10 offset-md-1 col-sm-10 offset-sm-1 pl-0">
-                <div class="col-lg-3 col-md-3 col-sm-3 pl-0 pr-0 text-right mt-3">
-                  <label class="mr-3 text-muted">{{ $t('panel.psx-form.businessInformation') }}</label>
-                </div>
-                <div class="col-lg-9 col-md-9 col-sm-9">
-                  <div class="row mt-3">
-                    <div class="col-lg-12 col-md-12 col-sm-12">
-                      <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
-                        <label class="row">
-                          <span class="col-lg-7 col-md-7 col-sm-7">{{ $t('panel.psx-form.website') }}</span>
-                          <span class="col-lg-5 col-md-5 col-sm-5 font-italic text-secondary text-right">{{ $t('panel.psx-form.optional') }}</span>
-                        </label>
-                        <input
-                          type="text"
-                          class="form-control"
-                          id="website"
-                          v-model="form.business_website"
-                          placeholder="https://your_website.extension"
-                        >
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mt-3">
-                    <div class="col-lg-12 col-md-12 col-sm-12">
-                      <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
-                        <label>{{ $t('panel.psx-form.companyTurnover') }}</label>
-                        <select
-                          v-model="form.business_company_emr"
-                          class="form-control custom-select"
-                        >
-                          <option
-                            v-for="(value, key) in getCompanyMonthyAverages"
-                            :key="key"
-                            :value="key"
-                          >
-                            {{ value }}
-                          </option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mt-3">
-                    <div class="col-lg-12 col-md-12 col-sm-12">
-                      <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
-                        <label>{{ $t('panel.psx-form.businessCategory') }}</label>
-                        <select
-                          v-model="form.business_category"
-                          @change="onChangeCategory(form.business_category)"
-                          class="form-control custom-select"
-                          :class="[form.business_website != '' ? '' : 'has-danger']"
-                        >
-                          <option
-                            v-for="(value, key) in getCompanyCategories"
-                            :key="key"
-                            :value="key"
-                          >
-                            {{ value.title }}
-                          </option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mt-3">
-                    <div class="col-lg-12 col-md-12 col-sm-12">
-                      <div class="col-lg-12 col-md-12 col-sm-12 pl-0 pr-0">
-                        <label class="row">
-                          <span class="col-lg-7 col-md-7 col-sm-7">{{ $t('panel.psx-form.businessSubCategory') }}</span>
-                          <span class="col-lg-5 col-md-5 col-sm-5 font-italic text-secondary text-right">{{ $t('panel.psx-form.optional') }}</span>
-                        </label>
-                        <select
-                          v-model="form.business_sub_category"
-                          class="form-control custom-select"
-                        >
-                          <option value="">
-                            --
-                          </option>
-                          <option
-                            v-for="(value, key) in subCategory"
-                            :key="key"
-                            :value="key"
-                          >
-                            {{ value }}
-                          </option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- privacy text -->
-            <div
-              id="privacy"
-              class="row mb-1 mt-4"
-            >
-              <div class="col-lg-10 offset-lg-1 col-md-10 offset-md-1 col-sm-10 offset-sm-1 pl-0">
-                <div class="col-lg-3 col-md-3 col-sm-3 pl-0 pr-0 text-right mt-3" />
-                <div class="col-lg-9 col-md-9 col-sm-9">
-                  <p class="mb-0">
-                    {{ $t('panel.psx-form.privacyTextPart1') }}
-                  </p>
-                  <p>
-                    <a
-                      :href="$t('panel.psx-form.privacyLink')"
-                      target="_blank"
-                    >{{ $t('panel.psx-form.privacyTextPart2') }}</a>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+                      {{ languageDetail.name }}
+                    </option>
+                  </b-form-select>
+                </b-form-group>
+              </b-col>
+              <b-col sm="6" md="6" lg="6">
+                <b-form-group
+                  :label="$t('panel.psx-form.qualification')"
+                  label-for="qualification"
+                >
+                  <b-form-select
+                    id="qualification"
+                    v-model="form.qualification">
+                    <option value="">
+                      --
+                    </option>
+                    <option value="merchant">
+                      {{ $t('panel.psx-form.merchant') }}
+                    </option>
+                    <option value="agency">
+                      {{ $t('panel.psx-form.agency') }}
+                    </option>
+                    <option value="freelancer">
+                      {{ $t('panel.psx-form.freelancer') }}
+                    </option>
+                  </b-form-select>
+                </b-form-group>
+              </b-col>
+            </b-row>
 
-        <div class="card-footer d-flex">
-          <div class="container-fluid pl-0">
-            <PSButton @click="back()">
-              {{ $t('panel.psx-form.back') }}
-            </PSButton>
-          </div>
-          <div class="d-flex">
-            <PSButton
-              primary
-              @click="submitForm()"
-            >
-              {{ $t('panel.psx-form.continue') }}
-            </PSButton>
-          </div>
+            <b-card-title class="py-4">
+              {{ $t('panel.psx-form.billingAddress') }}
+            </b-card-title>
+
+            <b-row>
+              <b-col sm="12" md="12" lg="12">
+                <b-form-group
+                  :label="$t('panel.psx-form.storeName')"
+                  label-for="storeName"
+                >
+                  <b-form-input
+                    id="storeName"
+                    v-model="form.shop_name"
+                    :class="[form.shop_name != '' ? '' : 'has-danger']"
+                  ></b-form-input>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col sm="12" md="12" lg="12">
+                <b-form-group
+                  :label="$t('panel.psx-form.address')"
+                  label-for="address"
+                >
+                  <b-form-input
+                    id="address"
+                    v-model="form.business_address_street"
+                    :class="[form.business_address_street != '' ? '' : 'has-danger']"
+                  ></b-form-input>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col sm="6" md="6" lg="6">
+                <b-form-group
+                  :label="$t('panel.psx-form.postCode')"
+                  label-for="postCode"
+                >
+                  <b-form-input
+                    id="postCode"
+                    v-model="form.business_address_zip"
+                    :class="[form.business_address_zip != '' ? '' : 'has-danger']"
+                  ></b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-col sm="6" md="6" lg="6">
+                <b-form-group
+                  :label="$t('panel.psx-form.town')"
+                  label-for="town"
+                >
+                  <b-form-input
+                    id="town"
+                    v-model="form.business_address_city"
+                    :class="[form.business_address_city != '' ? '' : 'has-danger']"
+                  ></b-form-input>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col sm="6" md="6" lg="6">
+                <b-form-group
+                  :label="$t('panel.psx-form.country')"
+                  label-for="country"
+                >
+                  <b-form-select
+                    id="country"
+                    v-model="form.business_address_country"
+                    @change="onChangeCountry(form.business_address_country)">
+                    <option
+                      v-for="countryDetail in getCountriesDetails"
+                      :key="countryDetail.iso"
+                      :value="countryDetail.iso"
+                    >
+                      {{ countryDetail.name }}
+                    </option>
+                  </b-form-select>
+                </b-form-group>
+              </b-col>
+              <b-col v-if="statesList != null" sm="6" md="6" lg="6">
+                <b-form-group
+                  :label="$t('panel.psx-form.state')"
+                  label-for="state"
+                >
+                  <b-form-select
+                    id="state"
+                    v-model="form.business_address_state">
+                    <option
+                      v-for="(value, key) in statesList"
+                      :key="key"
+                      :value="key"
+                    >
+                      {{ value }}
+                    </option>
+                  </b-form-select>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col sm="6" md="6" lg="6">
+                <b-form-group
+                  :label="$t('panel.psx-form.businessPhone')"
+                  label-for="phone-country"
+                >
+                  <b-input-group>
+                    <b-col sm="4" md="4" lg="4" class="px-0">
+                      <b-form-select
+                        id="phone-country"
+                        v-model="form.business_phone_country">
+                        <option
+                          v-for="countryDetail in getPhoneCountryCode"
+                          :key="countryDetail.iso"
+                          :value="countryDetail.code"
+                        >
+                          + {{ countryDetail.code }}
+                        </option>
+                      </b-form-select>
+                    </b-col>
+                    <b-col sm="8" md="8" lg="8" class="px-0">
+                      <b-form-input
+                        v-model="form.business_phone"
+                        :class="[form.business_phone != '' ? '' : 'has-danger']"
+                      ></b-form-input>
+                    </b-col>
+                  </b-input-group>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-card-title class="py-4">
+              {{ $t('panel.psx-form.businessInformation') }}
+            </b-card-title>
+
+            <b-row>
+              <b-col sm="12" md="12" lg="12">
+                <b-form-group
+                  :label="$t('panel.psx-form.website')"
+                  label-for="website"
+                >
+                  <b-form-input
+                    id="website"
+                    v-model="form.business_website"
+                    placeholder="https://your_website.extension"
+                    :class="[form.business_website != '' ? '' : 'has-danger']"
+                  ></b-form-input>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col sm="12" md="12" lg="12">
+                <b-form-group
+                  :label="$t('panel.psx-form.companyTurnover')"
+                  label-for="company-turnover"
+                >
+                  <b-form-select
+                    id="company-turnover"
+                    v-model="form.business_company_emr">
+                    <option
+                      v-for="(value, key) in getCompanyMonthyAverages"
+                      :key="key"
+                      :value="key"
+                    >
+                      {{ value }}
+                    </option>
+                  </b-form-select>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col sm="12" md="12" lg="12">
+                <b-form-group
+                  :label="$t('panel.psx-form.businessCategory')"
+                  label-for="business-category"
+                >
+                  <b-form-select
+                    id="business-category"
+                    v-model="form.business_category"
+                    @change="onChangeCategory(form.business_category)">
+                    <option
+                      v-for="(value, key) in getCompanyCategories"
+                      :key="key"
+                      :value="key"
+                    >
+                      {{ value.title }}
+                    </option>
+                  </b-form-select>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col sm="12" md="12" lg="12">
+                <b-form-group
+                  :label="$t('panel.psx-form.businessSubCategory')"
+                  label-for="business-subcategory"
+                >
+                  <b-form-select
+                    id="business-subcategory"
+                    v-model="form.business_sub_category">
+                    <option value="">
+                      --
+                    </option>
+                    <option
+                      v-for="(value, key) in subCategory"
+                      :key="key"
+                      :value="key"
+                    >
+                      {{ value }}
+                    </option>
+                  </b-form-select>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+          </b-col>
+        </b-form>
+
+        <b-col sm="12" md="10" lg="8" class="m-auto pt-5">
+          <p class="mb-0">
+            {{ $t('panel.psx-form.privacyTextPart1') }}
+          </p>
+          <p>
+            <b-link :href="$t('panel.psx-form.privacyLink')" target="_blank">
+              {{ $t('panel.psx-form.privacyTextPart2') }}
+            </b-link>
+          </p>
+        </b-col>
+      </b-card-body>
+
+      <template v-slot:footer>
+        <div class="container-fluid pl-0">
+          <b-button variant="secondary" @click="back()">
+            {{ $t('panel.psx-form.back') }}
+          </b-button>
         </div>
-      </div>
-    </form>
+        <b-button variant="primary" @click="submitForm()">
+          {{ $t('panel.psx-form.continue') }}
+        </b-button>
+      </template>
+    </b-card>
+
   </div>
 </template>
 
 <script>
   import {orderBy, uniqBy} from 'lodash';
-  import PSButton from '@/components/form/button';
 
   export default {
     name: 'PsxForm',
-    components: {
-      PSButton,
-    },
     data() {
       return {
         subCategory: null,
