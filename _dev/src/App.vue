@@ -144,7 +144,6 @@
   .card-header .material-icons, .card-header .ps-tree-items .tree-name button:before,
   .main-header #header-search-container .card-header .input-group:before,
   .ps-tree-items .tree-name .card-header button:before {
-    vertical-align: text-bottom !important;
     color: #6c868e;
     margin-right: 5px;
   }

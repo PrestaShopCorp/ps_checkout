@@ -23,6 +23,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPresenter;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
@@ -215,6 +216,29 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         // Generate a new onboarding link to lin a new merchant
         $this->ajaxDie(
             json_encode((new Onboarding($this->context->link))->getOnboardingLink())
+        );
+    }
+
+    /**
+     * AJAX: Retrieve Reporting informations
+     */
+    public function ajaxProcessGetReportingDatas()
+    {
+        $sql = 'SELECT COUNT(id_order) FROM `' . _DB_PREFIX_ . 'orders` o WHERE o.module = "ps_checkout"';
+        /** @var array $result */
+        $result = \Db::getInstance()->executeS($sql);
+
+        $countAllCheckoutOrders = 0;
+
+        if (isset($result[0])) {
+            $countAllCheckoutOrders = $countAllCheckoutOrders[0]['COUNT(id_order)'];
+        }
+
+        $this->ajaxDie(
+            json_encode([
+                'orders' => (new OrderPresenter())->presentPendingOrders(),
+                'countAllCheckoutOrders' => $countAllCheckoutOrders,
+            ])
         );
     }
 

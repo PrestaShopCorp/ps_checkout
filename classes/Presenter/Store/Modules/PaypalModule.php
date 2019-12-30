@@ -41,12 +41,20 @@ class PaypalModule implements PresenterInterface
             'paypal' => [
                 'idMerchant' => $paypalAccount->getMerchantId(),
                 'paypalOnboardingLink' => '',
+<<<<<<< HEAD
                 'onboardingCompleted' => !empty($paypalAccount->getMerchantId()),
                 'accountIslinked' => !empty($paypalAccount->getEmail()) && !empty($paypalAccount->getMerchantId()),
                 'emailMerchant' => $paypalAccount->getEmail(),
                 'emailIsValid' => $paypalAccount->getEmailIsVerified(),
                 'cardIsActive' => $paypalAccount->getCardPaymentStatus(),
                 'paypalIsActive' => $paypalAccount->getPaypalPaymentStatus(),
+=======
+                'onboardingCompleted' => true,
+                'emailMerchant' => \Configuration::get('PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT'),
+                'emailIsValid' => \Configuration::get('PS_CHECKOUT_PAYPAL_EMAIL_STATUS'),
+                'cardIsActive' => \Configuration::get('PS_CHECKOUT_CARD_PAYMENT_STATUS'),
+                'paypalIsActive' => \Configuration::get('PS_CHECKOUT_PAYPAL_PAYMENT_STATUS'),
+>>>>>>> add reporting page and logic
             ],
         ];
 
