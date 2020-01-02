@@ -25,48 +25,38 @@
       </h3>
 
       <div class="card-body m-auto">
-        <table class="table">
+        <table class="table text-center">
           <thead>
             <tr>
-              <th>Payment method</th>
-              <th>Availability</th>
-              <th>Activation status</th>
+              <th class="text-left">{{ $t('panel.payment-acceptance.paymentMethod') }}</th>
+              <th>{{ $t('panel.payment-acceptance.availability') }}</th>
+              <!-- <th>Activation status</th> -->
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>
-
+              <td class="text-left">
+                <h3>PayPal</h3>
+                <PaypalStatus :display-labels="true" />
               </td>
-              <td>test</td>
-              <td>test</td>
+              <td>
+                <PaypalStatus :display-labels="false" />
+              </td>
+              <!-- <td>test</td> -->
             </tr>
 
             <tr>
-              <td>test</td>
-              <td>test</td>
-              <td>test</td>
+              <td class="text-left">
+                <h3>{{ $t('panel.payment-acceptance.creditCardsLabel') }}</h3>
+                <CardStatus :display-labels="true" />
+              </td>
+              <td>
+                <CardStatus :display-labels="false" />
+              </td>
+              <!-- <td>test</td> -->
             </tr>
           </tbody>
         </table>
-
-        <div class="pl-0">
-          <img
-            class="mb-3"
-            src="@/assets/images/paypal-logo.png"
-            width="100"
-          >
-          <PaypalStatus :display-labels="true" />
-        </div>
-
-        <div class="d-block">
-          <div class="line-separator my-3" />
-        </div>
-
-        <div class="pl-0">
-          <h2>{{ $t('panel.payment-acceptance.creditCardsLabel') }}</h2>
-          <CardStatus :display-labels="true" />
-        </div>
 
         <b-alert
           class="mt-2"

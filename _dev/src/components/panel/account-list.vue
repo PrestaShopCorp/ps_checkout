@@ -168,9 +168,9 @@
             </p>
           </div>
 
-          <div v-if="paypalStatusAccount === true" class="col-12 col-sm-6 col-md-8 col-lg-3 m-auto text-center">
+          <!-- <div v-if="paypalStatusAccount === true" class="col-12 col-sm-6 col-md-8 col-lg-3 m-auto text-center">
             <b-badge variant="success">Approved</b-badge>
-          </div>
+          </div> -->
 
           <div class="col-12 col-sm-4 col-md-3 col-lg-auto m-auto">
             <div

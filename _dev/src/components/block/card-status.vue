@@ -24,46 +24,34 @@
       </label>
     </template>
     <template v-else-if="cardIsInReview">
-      <p
-        v-if="displayLabels"
-        class="text-muted"
-      >
+      <p v-if="displayLabels">
         {{ $t('block.payment-status.creditCardLabelPending') }}
       </p>
-      <label class="text-warning">
+      <label v-else class="text-warning">
         <i class="material-icons">error_outline</i> {{ $t('block.payment-status.approvalPending') }}
       </label>
     </template>
     <template v-else-if="cardStatus === 'SUBSCRIBED'">
-      <p
-        v-if="displayLabels"
-        class="text-muted"
-      >
+      <p v-if="displayLabels">
         {{ $t('block.payment-status.creditCardLabelLive') }}
       </p>
-      <label class="text-success">
+      <label v-else class="text-success">
         <i class="material-icons">check</i> {{ $t('block.payment-status.live') }}
       </label>
     </template>
     <template v-else-if="cardStatus === 'LIMITED'">
-      <p
-        v-if="displayLabels"
-        class="text-muted"
-      >
+      <p v-if="displayLabels">
         {{ $t('block.payment-status.creditCardLabelLimited') }}
       </p>
-      <label class="text-warning">
+      <label v-else class="text-warning">
         <i class="material-icons">error_outline</i> {{ $t('block.payment-status.limited') }}
       </label>
     </template>
     <template v-else-if="cardStatus === 'DENIED'">
-      <p
-        v-if="displayLabels"
-        class="text-muted"
-      >
+      <p v-if="displayLabels">
         {{ $t('block.payment-status.creditCardLabelDenied') }}
       </p>
-      <label class="text-danger">
+      <label v-else class="text-danger">
         <i class="material-icons">error_outline</i> {{ $t('block.payment-status.denied') }}
       </label>
     </template>
