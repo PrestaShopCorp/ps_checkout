@@ -57,6 +57,7 @@ class ContextModule implements PresenterInterface
             'context' => [
                 'moduleVersion' => \Ps_checkout::VERSION,
                 'psVersion' => _PS_VERSION_,
+                'moduleKey' => $this->module->module_key,
                 'shopId' => \Configuration::get('PS_CHECKOUT_SHOP_UUID_V4'),
                 'isReady' => (new ShopContext())->isReady(),
                 'faq' => $this->getFaq(),

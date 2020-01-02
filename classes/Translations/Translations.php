@@ -182,15 +182,18 @@ class Translations
                 ],
                 'active-payment' => [
                     'activePaymentMethods' => $this->module->l('Activate payment methods', 'translations'),
-                    'paymentMethods' => $this->module->l('Payment methods', 'translations'),
-                    'changeOrder' => $this->module->l('Change order', 'translations'),
+                    'changeOrder' => $this->module->l('Change payment methods order', 'translations'),
                     'enabled' => $this->module->l('Enabled', 'translations'),
                     'disabled' => $this->module->l('Disabled', 'translations'),
                     'creditCard' => $this->module->l('Credit card', 'translations'),
                     'paypal' => $this->module->l('PayPal', 'translations'),
                     'localPaymentMethods' => $this->module->l('Local payment methods', 'translations'),
+                    'tipsTitle' => $this->module->l('TIPS', 'translations'),
+                    'tipsContent' => $this->module->l('Boost your conversion rate by displaying PayPal as the first choice in the list of payment methods', 'translations'),
                 ],
                 'payment-acceptance' => [
+                    'paymentMethod' => $this->module->l('Payment method'),
+                    'availability' => $this->module->l('Availability'),
                     'paymentAcceptanceTitle' => $this->module->l('Payment methods acceptance', 'translations'),
                     'creditCardsLabel' => $this->module->l('Credit and Debit Cards', 'translations'),
                     'tips' => $this->module->l('Tips', 'translations'),
@@ -212,6 +215,7 @@ class Translations
                     'tipProductionMode' => $this->module->l('Production mode enables you to collect your payments.', 'translations'),
                 ],
                 'help' => [
+                    'faq' => $this->module->l('FAQ', 'translations'),
                     'title' => $this->module->l('Help for PrestaShop Checkout', 'translations'),
                     'allowsYou' => $this->module->l('This module allows you to:', 'translations'),
                     'tip1' => $this->module->l('Connect your PrestaShop Checkout account and link your PayPal Account or create one if needed', 'translations'),
@@ -249,7 +253,7 @@ class Translations
                     'text' => $this->module->l('Checkout customization, transactions list, dispute management ... and more to come!', 'translations'),
                 ],
                 'dispute' => [
-                    'pendingDispute' => $this->module->l('pending dispute(s)', 'translations'),
+                    'pendingDispute' => '{disputeCount}' . ' ' . $this->module->l('pending dispute(s)', 'translations'),
                     'goToDispute' => $this->module->l('Go to the dispute management platform', 'translations'),
                 ],
                 'payment-status' => [

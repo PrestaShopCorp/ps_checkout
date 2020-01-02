@@ -1,4 +1,4 @@
-{**
+/**
  * 2007-2019 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,10 +15,23 @@
  * @copyright 2007-2019 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ */
+import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
+import VueCollapse from 'vue2-collapse';
+import i18n from './lib/i18n';
+import App from './App.vue';
+import router from './router';
+import store from './store';
 
-<link href="{$pathApp|escape:'htmlall':'UTF-8'}" rel=preload as=script>
+Vue.use(BootstrapVue);
+Vue.use(VueCollapse);
 
-<div id="app"></div>
+Vue.config.productionTip = process.env.NODE_ENV === 'production';
 
-<script src="{$pathApp|escape:'htmlall':'UTF-8'}"></script>
+new Vue({
+  router,
+  store,
+  i18n,
+  render: (h) => h(App),
+}).$mount('#app');

@@ -98,7 +98,7 @@ class Ps_checkout extends PaymentModule
 
         $this->module_key = '82bc76354cfef947e06f1cc78f5efe2e';
 
-        $this->bootstrap = true;
+        $this->bootstrap = false;
 
         parent::__construct();
 
@@ -216,11 +216,13 @@ class Ps_checkout extends PaymentModule
             (new PaypalAccountUpdater($paypalAccount))->update();
         }
 
+        $this->context->smarty->assign([
+            'pathApp' => $this->_path . 'views/js/app.js',
+        ]);
+
         Media::addJsDef([
             'store' => json_encode((new StorePresenter($this, $this->context))->present()),
         ]);
-
-        $this->context->controller->addCss($this->_path . 'views/css/index.css');
 
         return $this->display(__FILE__, '/views/templates/admin/configuration.tpl');
     }

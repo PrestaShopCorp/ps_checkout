@@ -1,4 +1,4 @@
-{**
+<!--**
  * 2007-2019 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,10 +15,28 @@
  * @copyright 2007-2019 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ *-->
+<template>
+  <div>
+    <b-container class="mb-4">
+      <FraudTool />
+    </b-container>
 
-<link href="{$pathApp|escape:'htmlall':'UTF-8'}" rel=preload as=script>
+    <b-container>
+      <FeatureIncoming />
+    </b-container>
+  </div>
+</template>
 
-<div id="app"></div>
+<script>
+  import FraudTool from '@/components/block/fraud-tool';
+  import FeatureIncoming from '@/components/block/feature-incoming';
 
-<script src="{$pathApp|escape:'htmlall':'UTF-8'}"></script>
+  export default {
+    name: 'Advanced',
+    components: {
+      FraudTool,
+      FeatureIncoming,
+    },
+  };
+</script>

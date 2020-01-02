@@ -1,4 +1,4 @@
-{**
+/**
  * 2007-2019 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,10 +15,14 @@
  * @copyright 2007-2019 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ */
+import * as types from './mutation-types';
 
-<link href="{$pathApp|escape:'htmlall':'UTF-8'}" rel=preload as=script>
-
-<div id="app"></div>
-
-<script src="{$pathApp|escape:'htmlall':'UTF-8'}"></script>
+export default {
+  [types.UPDATE_ONBOARDING_STATUS](state, payload) {
+    state.onboardingCompleted = payload;
+  },
+  [types.UPDATE_FORM_DATA](state, payload) {
+    state.psxFormData = payload;
+  },
+};

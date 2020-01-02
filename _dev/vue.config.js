@@ -1,4 +1,4 @@
-{**
+/**
  * 2007-2019 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,10 +15,23 @@
  * @copyright 2007-2019 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ */
 
-<link href="{$pathApp|escape:'htmlall':'UTF-8'}" rel=preload as=script>
+var path = require('path');
 
-<div id="app"></div>
-
-<script src="{$pathApp|escape:'htmlall':'UTF-8'}"></script>
+module.exports = {
+  chainWebpack: config => {
+    config.optimization.delete('splitChunks');
+    config.plugins.delete('html');
+    config.plugins.delete('preload');
+    config.plugins.delete('prefetch');
+  },
+  css: {
+    extract: false
+  },
+  productionSourceMap: false,
+  filenameHashing: false,
+  outputDir: '../views/',
+  assetsDir: '',
+  publicPath: path.resolve(__dirname, '../views/'),
+};
