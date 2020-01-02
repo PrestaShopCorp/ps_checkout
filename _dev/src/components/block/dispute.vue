@@ -23,7 +23,7 @@
         <b-col>
           <b-button variant="text" size="lg">
             <i class="material-icons">school</i>
-            0 {{ $t('block.dispute.pendingDispute') }}
+            {{ $t('block.dispute.pendingDispute', { disputeCount: 0}) }}
           </b-button>
         </b-col>
         <b-col cols="12" md="auto" class="m-auto">

@@ -19,11 +19,7 @@
 <template>
   <div>
     <b-container>
-      <HelpPanel
-        module-key="bab535c26e031e9d224c0d128e063283"
-        ps-version="1.6"
-        iso-code="en"
-      />
+      <HelpPanel />
     </b-container>
   </div>
 </template>

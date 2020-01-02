@@ -216,9 +216,6 @@
   .move .number {
     display: none;
   }
-  .payment-method-container {
-    /* max-width: 500px; */
-  }
   .payment-method-container img {
     width: 25px;
   }
@@ -233,7 +230,6 @@
     background-color: #fff;
     border: 1px solid #dddddd;
     border-radius: 3px;
-    /* max-width: 475px; */
   }
   .position {
     position: absolute;

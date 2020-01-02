@@ -45,7 +45,7 @@
             </div>
           </div>
           <div class="faq">
-            <h1>FAQ</h1>
+            <h1>{{ $t('panel.help.faq') }}</h1>
             <div class="separator my-3" />
             <template v-if="faq && faq.categories.lenfth != 0">
               <v-collapse-group

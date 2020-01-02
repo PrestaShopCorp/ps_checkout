@@ -215,6 +215,7 @@ class Translations
                     'tipProductionMode' => $this->module->l('Production mode enables you to collect your payments.', 'translations'),
                 ],
                 'help' => [
+                    'faq' => $this->module->l('FAQ', 'translations'),
                     'title' => $this->module->l('Help for PrestaShop Checkout', 'translations'),
                     'allowsYou' => $this->module->l('This module allows you to:', 'translations'),
                     'tip1' => $this->module->l('Connect your PrestaShop Checkout account and link your PayPal Account or create one if needed', 'translations'),
@@ -252,7 +253,7 @@ class Translations
                     'text' => $this->module->l('Checkout customization, transactions list, dispute management ... and more to come!', 'translations'),
                 ],
                 'dispute' => [
-                    'pendingDispute' => $this->module->l('pending dispute(s)', 'translations'),
+                    'pendingDispute' => '{disputeCount}' . ' ' . $this->module->l('pending dispute(s)', 'translations'),
                     'goToDispute' => $this->module->l('Go to the dispute management platform', 'translations'),
                 ],
                 'payment-status' => [
