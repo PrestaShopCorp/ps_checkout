@@ -31,4 +31,13 @@ export default {
   [types.UPDATE_PAYMENT_CARD_AVAILABILITY](state, payload) {
     state.cardIsEnabled = payload;
   },
+  [types.UPDATE_EC_ORDER_PAGE](state, payload) {
+    state.expressCheckout.orderPage = payload;
+  },
+  [types.UPDATE_EC_CHECKOUT_PAGE](state, payload) {
+    state.expressCheckout.checkoutPage = payload;
+  },
+  [types.UPDATE_EC_PRODUCT_PAGE](state, payload) {
+    state.expressCheckout.productPage = payload;
+  },
 };

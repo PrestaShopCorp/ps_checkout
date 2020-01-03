@@ -71,4 +71,43 @@ export default {
       return Promise.resolve(payload);
     });
   },
+
+  toggleECOrderPage({commit, getters}, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'ToggleECOrderPage',
+      data: {
+        status: payload ? 1 : 0,
+      },
+    }).then(() => {
+      commit(types.UPDATE_EC_ORDER_PAGE, payload);
+      return Promise.resolve(payload);
+    });
+  },
+
+  toggleECCheckoutPage({commit, getters}, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'ToggleECCheckoutPage',
+      data: {
+        status: payload ? 1 : 0,
+      },
+    }).then(() => {
+      commit(types.UPDATE_EC_CHECKOUT_PAGE, payload);
+      return Promise.resolve(payload);
+    });
+  },
+
+  toggleECProductPage({commit, getters}, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'ToggleECProductPage',
+      data: {
+        status: payload ? 1 : 0,
+      },
+    }).then(() => {
+      commit(types.UPDATE_EC_PRODUCT_PAGE, payload);
+      return Promise.resolve(payload);
+    });
+  },
 };

@@ -22,103 +22,106 @@
       <i class="material-icons">toggle_on</i> {{ $t('panel.active-payment.activePaymentMethods') }}
     </template>
 
-    <b-card-body class="w-75 m-auto">
-      <b-card-title>{{ $t('panel.active-payment.changeOrder') }}</b-card-title>
+    <b-card-body>
+      <b-col sm="10" md="10" lg="10" class="m-auto">
 
-      <div class="m-auto payment-method-container pb-3">
-        <draggable
-          tag="div"
-          v-model="list"
-          v-bind="dragOptions"
-          handle=".handle"
-          @start="drag = true"
-          @end="drag = false"
-        >
-          <transition-group
-            type="transition"
-            :name="!drag ? 'flip-list' : null"
+        <b-card-title>{{ $t('panel.active-payment.changeOrder') }}</b-card-title>
+
+        <div class="m-auto payment-method-container pb-3">
+          <draggable
+            tag="div"
+            v-model="list"
+            v-bind="dragOptions"
+            handle=".handle"
+            @start="drag = true"
+            @end="drag = false"
           >
-            <div
-              v-for="(element, index) in list"
-              :key="index"
-              class="d-flex"
+            <transition-group
+              type="transition"
+              :name="!drag ? 'flip-list' : null"
             >
-              <div class="payment-method text-muted d-flex flex-grow-1">
-                <div class="position">
-                  {{ index + 1 }}
-                </div>
-                <div class="icon">
-                  <i class="material-icons handle ml-2 mr-2">drag_indicator</i>
-                </div>
-                <div
-                  v-if="element.name === 'card'"
-                  class="ghost-replace-card"
-                >
-                  <i class="material-icons text-center">save_alt</i>
-                </div>
-                <div
-                  v-if="element.name === 'paypal'"
-                  class="ghost-replace-paypal"
-                >
-                  <i class="material-icons">save_alt</i>
-                </div>
-                <div class="flex-grow-1 content">
-                  <div class="d-flex payment-method-content">
-                    <div class="flex-grow-1">
-                      <label
-                        v-if="element.name === 'card'"
-                        class="mb-0"
-                      ><i class="material-icons mr-3">credit_card</i> {{ $t('panel.active-payment.creditCard') }}</label>
-                      <label
-                        v-else
-                        class="mb-0"
-                      ><img
-                        class="mr-3"
-                        src="@/assets/images/paypal-logo-thumbnail.png"
-                      > {{ $t('panel.active-payment.paypal') }}</label>
-                    </div>
-                    <div class="status" v-if="element.name === 'card'">
-                      <CardStatus v-if="cardIsAvailable === false" />
-                      <PSCheckbox
-                        id="hostedFieldsAvailability"
-                        v-model="cardIsEnabled"
-                      >
-                        <template v-if="cardIsEnabled">
-                          {{ $t('panel.active-payment.enabled') }}
-                        </template>
-                        <template v-else>
-                          {{ $t('panel.active-payment.disabled') }}
-                        </template>
-                      </PSCheckbox>
-                    </div>
+              <div
+                v-for="(element, index) in list"
+                :key="index"
+                class="d-flex"
+              >
+                <div class="payment-method text-muted d-flex flex-grow-1">
+                  <div class="position">
+                    {{ index + 1 }}
+                  </div>
+                  <div class="icon">
+                    <i class="material-icons handle ml-2 mr-2">drag_indicator</i>
+                  </div>
+                  <div
+                    v-if="element.name === 'card'"
+                    class="ghost-replace-card"
+                  >
+                    <i class="material-icons text-center">save_alt</i>
                   </div>
                   <div
                     v-if="element.name === 'paypal'"
-                    class="d-flex payment-method-content separator"
+                    class="ghost-replace-paypal"
                   >
-                    <div class="flex-grow-1">
-                      <label class="mb-0"><i class="material-icons mr-3">public</i> {{ $t('panel.active-payment.localPaymentMethods') }}</label>
+                    <i class="material-icons">save_alt</i>
+                  </div>
+                  <div class="flex-grow-1 content">
+                    <div class="d-flex payment-method-content">
+                      <div class="flex-grow-1">
+                        <label
+                          v-if="element.name === 'card'"
+                          class="mb-0"
+                        ><i class="material-icons mr-3">credit_card</i> {{ $t('panel.active-payment.creditCard') }}</label>
+                        <label
+                          v-else
+                          class="mb-0"
+                        ><img
+                          class="mr-3"
+                          src="@/assets/images/paypal-logo-thumbnail.png"
+                        > {{ $t('panel.active-payment.paypal') }}</label>
+                      </div>
+                      <div class="status" v-if="element.name === 'card'">
+                        <CardStatus v-if="cardIsAvailable === false" />
+                        <PSCheckbox
+                          id="hostedFieldsAvailability"
+                          v-model="cardIsEnabled"
+                        >
+                          <template v-if="cardIsEnabled">
+                            {{ $t('panel.active-payment.enabled') }}
+                          </template>
+                          <template v-else>
+                            {{ $t('panel.active-payment.disabled') }}
+                          </template>
+                        </PSCheckbox>
+                      </div>
+                    </div>
+                    <div
+                      v-if="element.name === 'paypal'"
+                      class="d-flex payment-method-content separator"
+                    >
+                      <div class="flex-grow-1">
+                        <label class="mb-0"><i class="material-icons mr-3">public</i> {{ $t('panel.active-payment.localPaymentMethods') }}</label>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </transition-group>
-        </draggable>
-      </div>
+            </transition-group>
+          </draggable>
+        </div>
 
-      <b-alert
-        variant="info"
-        show
-      >
-        <h4 class="alert-heading">
-          {{ $t('panel.active-payment.tipsTitle') }}
-        </h4>
-        <p>
-          {{ $t('panel.active-payment.tipsContent') }}
-        </p>
-      </b-alert>
+        <b-alert
+          variant="info"
+          show
+        >
+          <h4 class="alert-heading">
+            {{ $t('panel.active-payment.tipsTitle') }}
+          </h4>
+          <p>
+            {{ $t('panel.active-payment.tipsContent') }}
+          </p>
+        </b-alert>
 
+      </b-col>
     </b-card-body>
   </b-card>
 </template>

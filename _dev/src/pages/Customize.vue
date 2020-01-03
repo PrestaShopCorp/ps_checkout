@@ -22,6 +22,10 @@
       <ActivePayment />
     </b-container>
 
+    <b-container class="mb-4">
+      <ExpressCheckout />
+    </b-container>
+
     <b-container class="container">
       <FeatureIncoming />
     </b-container>
@@ -30,12 +34,14 @@
 
 <script>
   import ActivePayment from '@/components/panel/active-payment';
+  import ExpressCheckout from '@/components/panel/express-checkout';
   import FeatureIncoming from '@/components/block/feature-incoming';
 
   export default {
     name: 'Customize',
     components: {
       ActivePayment,
+      ExpressCheckout,
       FeatureIncoming,
     },
   };
