@@ -218,6 +218,10 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayPersonalInformationTop()
     {
+        if (!(bool) Configuration::get('PS_CHECKOUT_EC_CHECKOUT_PAGE')) {
+            return false;
+        }
+
         if (true === $this->isPaymentStep()) {
             return false;
         }
@@ -233,6 +237,10 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayExpressCheckout()
     {
+        if (!(bool) Configuration::get('PS_CHECKOUT_EC_ORDER_PAGE')) {
+            return false;
+        }
+
         $expressCheckout = new ExpressCheckout($this, $this->context);
         $expressCheckout->setDisplayMode(ExpressCheckout::CART_MODE);
 
@@ -244,6 +252,10 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayFooterProduct($params)
     {
+        if (!(bool) Configuration::get('PS_CHECKOUT_EC_PRODUCT_PAGE')) {
+            return false;
+        }
+
         $expressCheckout = new ExpressCheckout($this, $this->context);
         $expressCheckout->setDisplayMode(ExpressCheckout::PRODUCT_MODE);
 
