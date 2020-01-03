@@ -40,6 +40,11 @@ class ConfigurationModule implements PresenterInterface
                 'captureMode' => \Configuration::get('PS_CHECKOUT_INTENT'),
                 'paymentMode' => \Configuration::get('PS_CHECKOUT_MODE'),
                 'cardIsEnabled' => (bool) \Configuration::get('PS_CHECKOUT_CARD_PAYMENT_ENABLED'),
+                'expressCheckout' => [
+                    'orderPage' => (bool) \Configuration::get('PS_CHECKOUT_EC_ORDER_PAGE'),
+                    'checkoutPage' => (bool) \Configuration::get('PS_CHECKOUT_EC_CHECKOUT_PAGE'),
+                    'productPage' => (bool) \Configuration::get('PS_CHECKOUT_EC_PRODUCT_PAGE'),
+                ],
             ],
         ];
 

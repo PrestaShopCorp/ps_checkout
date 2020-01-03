@@ -232,4 +232,37 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             Tools::getValue('status') ? 1 : 0
         );
     }
+
+    /**
+     * AJAX: Toggle express checkout on order page
+     */
+    public function ajaxProcessToggleECOrderPage()
+    {
+        Configuration::updateValue(
+            'PS_CHECKOUT_EC_ORDER_PAGE',
+            Tools::getValue('status') ? 1 : 0
+        );
+    }
+
+    /**
+     * AJAX: Toggle express checkout on checkout page
+     */
+    public function ajaxProcessToggleECCheckoutPage()
+    {
+        Configuration::updateValue(
+            'PS_CHECKOUT_EC_CHECKOUT_PAGE',
+            Tools::getValue('status') ? 1 : 0
+        );
+    }
+
+    /**
+     * AJAX: Toggle express checkout on product page
+     */
+    public function ajaxProcessToggleECProductPage()
+    {
+        Configuration::updateValue(
+            'PS_CHECKOUT_EC_PRODUCT_PAGE',
+            Tools::getValue('status') ? 1 : 0
+        );
+    }
 }

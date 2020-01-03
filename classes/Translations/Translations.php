@@ -214,6 +214,17 @@ class Translations
                     'useProductionMode' => $this->module->l('Use production mode', 'translations'),
                     'tipProductionMode' => $this->module->l('Production mode enables you to collect your payments.', 'translations'),
                 ],
+                'express-checkout' => [
+                    'title' => $this->module->l('Define PayPal express checkout flow', 'translations'),
+                    'pageLocation' => $this->module->l('Choose page location', 'translations'),
+                    'orderPage' => $this->module->l('Order summary page', 'translations'),
+                    'checkoutPage' => $this->module->l('Checkout method page', 'translations'),
+                    'productPage' => $this->module->l('Product page', 'translations'),
+                    'recommended' => $this->module->l('Recommended', 'translations'),
+                    'shippingCost' => $this->module->l('Shipping costs, if any, will be estimated in basket total. Delivery method selected by default will be the one set in first position on Carriers page.', 'translations'),
+                    'alertTitle' => $this->module->l('TIPS', 'translations'),
+                    'alertContent' => $this->module->l('Express checkout shortcut enables to merge account creation and payment into a single step, which reduces UX frictions.', 'translations'),
+                ],
                 'help' => [
                     'faq' => $this->module->l('FAQ', 'translations'),
                     'title' => $this->module->l('Help for PrestaShop Checkout', 'translations'),
