@@ -81,17 +81,15 @@
                       </div>
                       <div class="status" v-if="element.name === 'card'">
                         <CardStatus v-if="cardIsAvailable === false" />
-                        <PSCheckbox
-                          id="hostedFieldsAvailability"
-                          v-model="cardIsEnabled"
-                        >
+
+                        <PSSwitch id="hostedFieldsAvailability" v-model="cardIsEnabled">
                           <template v-if="cardIsEnabled">
                             {{ $t('panel.active-payment.enabled') }}
                           </template>
                           <template v-else>
                             {{ $t('panel.active-payment.disabled') }}
                           </template>
-                        </PSCheckbox>
+                        </PSSwitch>
                       </div>
                     </div>
                     <div
@@ -129,12 +127,12 @@
 <script>
   import draggable from 'vuedraggable';
   import CardStatus from '@/components/block/card-status';
-  import PSCheckbox from '@/components/form/checkbox';
+  import PSSwitch from '@/components/form/switch';
 
   export default {
     components: {
       CardStatus,
-      PSCheckbox,
+      PSSwitch,
       draggable,
     },
     data() {
