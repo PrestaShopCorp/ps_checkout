@@ -51,7 +51,7 @@ function removeFromFsDuringUpgrade(array $files)
  *
  * @return bool
  */
-function upgrade_module_1_2_9()
+function upgrade_module_1_2_9($module)
 {
     /*
      * PHPUNIT REMOVAL
@@ -66,6 +66,23 @@ function upgrade_module_1_2_9()
             return false;
         }
     }
+
+    \Configuration::updateValue('PS_CHECKOUT_CARD_PAYMENT_ENABLED', true);
+
+    // New configurations for express checkout feature
+    \Configuration::updateValue('PS_CHECKOUT_EC_ORDER_PAGE', false);
+    \Configuration::updateValue('PS_CHECKOUT_EC_CHECKOUT_PAGE', false);
+    \Configuration::updateValue('PS_CHECKOUT_EC_PRODUCT_PAGE', false);
+
+    // register new hooks for express checkout
+    $hooks = [
+        'displayExpressCheckout',
+        'DisplayFooterProduct',
+        'displayPersonalInformationTop',
+        'actionBeforeCartUpdateQty',
+    ];
+
+    $module->registerHook($hooks);
 
     return true;
 }
