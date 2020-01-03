@@ -221,4 +221,15 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         return (new PersistentConfiguration())->savePsAccount($psAccount);
     }
+
+    /**
+     * AJAX: Toggle card hosted fields availability
+     */
+    public function ajaxProcessToggleCardPaymentAvailability()
+    {
+        Configuration::updateValue(
+            'PS_CHECKOUT_CARD_PAYMENT_ENABLED',
+            Tools::getValue('status') ? 1 : 0
+        );
+    }
 }

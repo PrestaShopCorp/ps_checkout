@@ -1,3 +1,4 @@
+
 <!--**
  * 2007-2019 PrestaShop and Contributors
  *
@@ -21,7 +22,8 @@
     <label>
       <input
         :id="id"
-        v-model="checked"
+        :checked="value"
+        @input="$emit('input', $event.target.checked)"
         type="checkbox"
         :class="{'indeterminate' : isIndeterminate }"
       >
@@ -30,7 +32,7 @@
     </label>
   </div>
 </template>
-
+​
 <script>
   export default {
     props: {
@@ -43,13 +45,10 @@
         required: false,
         default: false,
       },
-    },
-    data: () => ({
-      checked: false,
-    }),
-    watch: {
-      checked(val) {
-        this.$emit('input', val);
+      value: {
+        type: Boolean,
+        required: false,
+        default: false,
       },
     },
   };

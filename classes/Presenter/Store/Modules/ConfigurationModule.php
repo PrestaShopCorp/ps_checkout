@@ -39,6 +39,7 @@ class ConfigurationModule implements PresenterInterface
                 'paymentMethods' => $this->getPaymentMethods(),
                 'captureMode' => \Configuration::get('PS_CHECKOUT_INTENT'),
                 'paymentMode' => \Configuration::get('PS_CHECKOUT_MODE'),
+                'cardIsEnabled' => (bool) \Configuration::get('PS_CHECKOUT_CARD_PAYMENT_ENABLED'),
             ],
         ];
 

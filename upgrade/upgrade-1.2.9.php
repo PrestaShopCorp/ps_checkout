@@ -44,5 +44,7 @@ function upgrade_module_1_2_9()
         }
     }
 
+    \Configuration::updateValue('PS_CHECKOUT_CARD_PAYMENT_ENABLED', true);
+
     return true;
 }
