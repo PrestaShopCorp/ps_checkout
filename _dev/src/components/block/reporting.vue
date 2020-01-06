@@ -21,7 +21,10 @@
     <b-card-body>
       <div class="m-auto max-width">
         <h1 class="title">{{ $t('block.reporting.title') }}</h1>
-        <p class="subtitle">{{ $t('block.reporting.subtitle') }}</p>
+        <p class="subtitle">
+          {{ $t('block.reporting.subtitle') }}.
+          <a href="">{{ $t('block.reporting.subtitleLinkLabel') }}</a>
+        </p>
 
         <b-table
           show-empty
@@ -44,7 +47,7 @@
             </b-badge>
           </template>
           <template v-slot:cell(actions)="row">
-            <a href="https://www.paypal.com/signin" target="_blank">
+            <a href="https://www.paypal.com/listing/transactions" target="_blank">
               {{ $t('block.reporting.gotopaypal') }}
             </a>
           </template>
@@ -98,6 +101,8 @@
           {key: 'id_order', label: 'Order ID', sortable: true},
           {key: 'user', label: 'Customer', sortable: true},
           {key: 'current_state', label: 'State', sortable: true},
+          {key: 'before_commission', label: 'Before Commission', sortable: true},
+          {key: 'commission', label: 'Commission', sortable: true},
           {key: 'total_paid', label: 'Total', sortable: true},
           {key: 'actions', label: 'Actions'},
         ],

@@ -91,7 +91,10 @@ class OrderPresenter implements PresenterInterface
             $order['username'] = $this->getUsername($order['id_customer']);
             $order['userProfileLink'] = \Tools::getShopDomainSsl(true) . $link->getAdminLink('AdminCustomers', $order['id_customer']);
             $order['state'] = $orderStates[$order['current_state']];
-            $order['total_paid'] = \Tools::displayPrice($order['total_paid']);
+            $order['before_commission'] = \Tools::displayPrice($order['total_paid']);
+            // TODO: Waiting for paypal infos (reporting lot 2)
+            $order['commission'] = '-';
+            $order['total_paid'] = '-';
         }
 
         return $orders;
