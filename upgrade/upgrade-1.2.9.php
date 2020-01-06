@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2019 PrestaShop and Contributors
+ * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -13,14 +13,37 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-use PrestaShop\Module\PrestashopCheckout\OrderStates;
-
 if (!defined('_PS_VERSION_')) {
     exit;
+}
+
+/**
+ * Removes files or directories.
+ *
+ * @param array $files An array of files to remove
+ *
+ * @return true|string True if everything goes fine, error details otherwise
+ */
+function removeFromFsDuringUpgrade(array $files)
+{
+    $files = array_reverse($files);
+    foreach ($files as $file) {
+        if (is_dir($file)) {
+            $iterator = new FilesystemIterator($file, FilesystemIterator::CURRENT_AS_PATHNAME | FilesystemIterator::SKIP_DOTS);
+            removeFromFsDuringUpgrade(iterator_to_array($iterator));
+            if (!rmdir($file) && file_exists($file)) {
+                return 'Deletion of directory ' . $file . 'failed';
+            }
+        } elseif (!unlink($file) && file_exists($file)) {
+            return 'Deletion of file ' . $file . 'failed';
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -30,26 +53,19 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_2_9()
 {
-    foreach (OrderStates::ORDER_STATES as $key => $value) {
-        $idState = \Configuration::get($key);
+    /*
+     * PHPUNIT REMOVAL
+     * This step removes the folder vendor/phpunit, when added from a previous release installed on the shop.
+     */
+    $path = __DIR__ . '/../vendor/phpunit';
+    if (file_exists($path)) {
+        $result = removeFromFsDuringUpgrade([$path]);
+        if ($result !== true) {
+            PrestaShopLogger::addLog('Could not delete PHPUnit from module. ' . $result, 3);
 
-        $update = \Db::getInstance()->update(
-            OrderStates::ORDER_STATE_TABLE,
-            ['color' => $value],
-            'module_name = "ps_checkout" AND id_order_state = ' . (int) $idState
-        );
-
-        if ($update !== true) {
             return false;
         }
     }
-
-    \Configuration::updateValue('PS_CHECKOUT_CARD_PAYMENT_ENABLED', true);
-
-    // New configurations for express checkout feature
-    \Configuration::updateValue('PS_CHECKOUT_EC_ORDER_PAGE', false);
-    \Configuration::updateValue('PS_CHECKOUT_EC_CHECKOUT_PAGE', false);
-    \Configuration::updateValue('PS_CHECKOUT_EC_PRODUCT_PAGE', false);
 
     return true;
 }

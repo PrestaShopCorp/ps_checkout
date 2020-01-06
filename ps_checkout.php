@@ -82,7 +82,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '1.2.8';
+    const VERSION = '1.2.9';
 
     /**
      * @var \Monolog\Logger
@@ -96,7 +96,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '1.2.8';
+        $this->version = '1.2.9';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
 
