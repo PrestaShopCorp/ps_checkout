@@ -17,8 +17,6 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-use PrestaShop\Module\PrestashopCheckout\OrderStates;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -27,7 +25,7 @@ if (!defined('_PS_VERSION_')) {
  * Removes files or directories.
  *
  * @param array $files An array of files to remove
- * 
+ *
  * @return true|string True if everything goes fine, error details otherwise
  */
 function removeFromFsDuringUpgrade(array $files)
@@ -44,6 +42,7 @@ function removeFromFsDuringUpgrade(array $files)
             return 'Deletion of file ' . $file . 'failed';
         }
     }
+
     return true;
 }
 
@@ -60,9 +59,10 @@ function upgrade_module_1_2_9()
      */
     $path = __DIR__ . '/../vendor/phpunit';
     if (file_exists($path)) {
-        $result = removeFromFsDuringUpgrade(array($path));
+        $result = removeFromFsDuringUpgrade([$path]);
         if ($result !== true) {
             PrestaShopLogger::addLog('Could not delete PHPUnit from module. ' . $result, 3);
+
             return false;
         }
     }
