@@ -1,9 +1,6 @@
 # Created by https://www.gitignore.io/api/vim,vuejs,emacs,linux,macos,windows,phpstorm,composer,sublimetext,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=vim,vuejs,emacs,linux,macos,windows,phpstorm,composer,sublimetext,visualstudiocode
 
-### PrestaShop Module ###
-config.xml
-
 ### Ignore integration settings ###
 .env.test
 
