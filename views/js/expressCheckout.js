@@ -20,10 +20,10 @@
 /**
  * Waiting that the dom is loaded
  */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function () {
   // if express checkout is used on cart page (expressCheckout hook)
   if (displayMode === 'cart') {
-    window.prestashop.on('updatedCart', () => {
+    window.prestashop.on('updatedCart', function () {
       initPaypalSmartButtons();
     });
   }
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // wait paypal sdk to be fully loaded
-  const interval = setInterval(() => {
+  const interval = setInterval(function () {
     if (window.paypal !== undefined) {
       initPaypalSmartButtons();
       clearInterval(interval);
@@ -62,6 +62,16 @@ function initPaypalSmartButtons() {
     },
     createOrder(data, actions) {
       return createPaypalOrder().then((result) => {
+        if (result.status === false) {
+          return;
+        }
+
+        if (displayMode === 'product') {
+          prestashop.emit('updateCart', {
+            reason: 'update',
+          });
+        }
+
         const paypalScript = document.getElementById('paypalSdkPsCheckout');
         paypalScript.setAttribute('data-client-token', result.body.client_token);
 
@@ -84,7 +94,7 @@ function initPaypalSmartButtons() {
 async function createPaypalOrder() {
   const controllerLink = expressCheckoutController.replace(/\amp;/g, '');
 
-  return new Promise((resolve, reject) => {
+  return new Promise(function (resolve, reject) {
     // construct form data
     const form = new FormData();
     form.append('ajax', true);
@@ -99,11 +109,6 @@ async function createPaypalOrder() {
       body: form,
       method: 'post',
     }).then((response) => {
-      if (displayMode === 'product') {
-        prestashop.emit('updateCart', {
-          reason: 'update',
-        });
-      }
       resolve(response.json());
     }).catch((err) => {
       reject(err);

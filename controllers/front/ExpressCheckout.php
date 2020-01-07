@@ -112,7 +112,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
 
         $country = new \Country($idCountry);
 
-        if ('0' == (string) $country->active) {
+        if (0 === (int) $country->active) {
             return false;
         }
 
@@ -212,10 +212,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
             $builder->buildMinimalPayload();
             $payload = $builder->presentPayload()->getJson();
             $response = (new Order($this->context->link))->create($payload);
-        }
-
-        if (false === $response['status']) {
-            return false;
         }
 
         echo json_encode($response);

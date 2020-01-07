@@ -19,21 +19,32 @@
 
 <script type='text/javascript' src='{$jsExpressCheckoutPath|escape:'javascript':'UTF-8'}'></script>
 
-<link rel="preload" href="https://www.paypal.com/sdk/js?components=buttons&amp;client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&amp;merchant-id={$merchantId|escape:'htmlall':'UTF-8'}&amp;intent={$intent|escape:'htmlall':'UTF-8'}&amp;currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}&amp;commit=false&amp;disable-funding=credit,card" as="script">
+<link rel="preload" href="https://www.paypal.com/sdk/js?components=buttons&;client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&merchant-id={$merchantId|escape:'htmlall':'UTF-8'}&intent={$intent|escape:'htmlall':'UTF-8'}&currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}&commit=false&disable-funding=credit,card" as="script">
 
 <div id="pscheckout-express-checkout" style="display:none;">
   {if $displayMode eq 'cart'}
-  <div style="margin-top:15px;margin-bottom:15px">{l s='or' mod='ps_checkout'}</div>
+  <div class="cart">{l s='or' mod='ps_checkout'}</div>
   {/if}
 
   {if $displayMode eq 'checkout'}
-  <div style="margin-top:15px;margin-bottom:15px">
+  <div class="checkout">
     <b>{l s='Fast checkout' mod='ps_checkout'}</b>
   </div>
   {/if}
 
   <div id="paypal-button-container" class="" style="max-width:300px;"></div>
 </div>
+
+<style>
+#pscheckout-express-checkout .cart {
+  margin-top:15px;
+  margin-bottom:15px
+}
+#pscheckout-express-checkout .checkout {
+  margin-top:15px;
+  margin-bottom:15px
+}
+</style>
 
 <script>
 /**

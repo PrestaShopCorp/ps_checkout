@@ -140,7 +140,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
      *
      * @param array $params
      */
-    private function redirectToCheckout($params = [])
+    private function redirectToCheckout(array $params = [])
     {
         Tools::redirect(
             $this->context->link->getPageLink(
