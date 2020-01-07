@@ -222,6 +222,11 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
+        // Check if we are already in an express checkout
+        if (isset($this->context->cookie->paypalOrderId)) {
+            return false;
+        }
+
         if (true === $this->isPaymentStep()) {
             return false;
         }
