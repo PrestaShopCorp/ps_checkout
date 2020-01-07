@@ -21,7 +21,7 @@
 
     <div id="payments-sdk__contingency-lightbox"></div>
 
-    <form id="hosted-fields-form">
+    <form id="hosted-fields-form" onsubmit="test(event)">
 
         <div class="form-group row">
             <div class="col-md-8">

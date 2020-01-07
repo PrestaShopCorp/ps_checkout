@@ -45,6 +45,21 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      */
     private $expressCheckout = false;
 
+    /**
+     * Define if we build the payload to create
+     * or update a paypal order
+     *
+     * @var bool
+     */
+    private $isUpdate = false;
+
+    /**
+     * PayPal order id
+     *
+     * @var string
+     */
+    private $paypalOrderId;
+
     public function __construct(array $cart)
     {
         $this->cart = $cart;
@@ -59,16 +74,23 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     {
         parent::buildFullPayload();
 
+        $this->checkPaypalOrderIdWhenUpdate();
+
         $this->buildBaseNode();
         $this->buildAmountBreakdownNode();
         $this->buildItemsNode();
 
         if (false === $this->expressCheckout) {
             $this->buildShippingNode();
-            $this->buildPayerNode();
+
+            if (false === $this->isUpdate) {
+                $this->buildPayerNode();
+            }
         }
 
-        $this->buildApplicationContextNode();
+        if (false === $this->isUpdate) {
+            $this->buildApplicationContextNode();
+        }
     }
 
     /**
@@ -78,14 +100,21 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     {
         parent::buildMinimalPayload();
 
+        $this->checkPaypalOrderIdWhenUpdate();
+
         $this->buildBaseNode();
 
         if (false === $this->expressCheckout) {
             $this->buildShippingNode();
-            $this->buildPayerNode();
+
+            if (false === $this->isUpdate) {
+                $this->buildPayerNode();
+            }
         }
 
-        $this->buildApplicationContextNode();
+        if (false === $this->isUpdate) {
+            $this->buildApplicationContextNode();
+        }
     }
 
     /**
@@ -106,8 +135,13 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             'payee' => [
                 'merchant_id' => (new PaypalAccountRepository())->getMerchantId(),
             ],
-            'roundingConfig' => (string) \Configuration::get('PS_ROUND_TYPE') . '-' . (string) \Configuration::get('PS_PRICE_ROUND_MODE'),
         ];
+
+        if (true === $this->isUpdate) {
+            $node['id'] = $this->paypalOrderId;
+        } else {
+            $node['roundingConfig'] = (string) \Configuration::get('PS_ROUND_TYPE') . '-' . (string) \Configuration::get('PS_PRICE_ROUND_MODE');
+        }
 
         // TODO: Disabled temporary: Need to handle country indicator
         // Add optional phone number if provided
@@ -194,7 +228,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     {
         $node['application_context'] = [
             'brand_name' => \Configuration::get('PS_SHOP_NAME'),
-            'shipping_preference' => $this->expressCheckout ? 'NO_SHIPPING' : 'SET_PROVIDED_ADDRESS',
+            'shipping_preference' => $this->expressCheckout ? 'GET_FROM_FILE' : 'SET_PROVIDED_ADDRESS',
         ];
 
         $this->getPayload()->addAndMergeItems($node);
@@ -381,6 +415,13 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         return \Country::getIsoById($countryId);
     }
 
+    private function checkPaypalOrderIdWhenUpdate()
+    {
+        if (true === $this->isUpdate && empty($this->paypalOrderId)) {
+            throw new \PrestaShopException('PayPal order ID is required when building payload for update an order');
+        }
+    }
+
     /**
      * Setter $expressCheckout
      *
@@ -389,6 +430,34 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     public function setExpressCheckout($expressCheckout)
     {
         $this->expressCheckout = $expressCheckout;
+    }
+
+    /**
+     * Setter $isUpdate
+     *
+     * @param bool $bool
+     */
+    public function setIsUpdate($bool)
+    {
+        $this->isUpdate = $bool;
+    }
+
+    /**
+     * Setter $paypalOrderId
+     *
+     * @param string $id
+     */
+    public function setPaypalOrderId($id)
+    {
+        $this->paypalOrderId = $id;
+    }
+
+    /**
+     * Getter $paypalOrderId
+     */
+    public function getPaypalOrderId()
+    {
+        return $this->paypalOrderId;
     }
 
     /**

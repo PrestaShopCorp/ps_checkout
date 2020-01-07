@@ -51,7 +51,7 @@ function removeFromFsDuringUpgrade(array $files)
  *
  * @return bool
  */
-function upgrade_module_1_2_9()
+function upgrade_module_1_2_9($module)
 {
     /*
      * PHPUNIT REMOVAL

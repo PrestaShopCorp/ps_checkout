@@ -17,21 +17,20 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-.img {
-    width: 100%;
-    height: 100%;
-    background-image: url('../img/prestashop_brand.png');
-    background-repeat: no-repeat;
-    background-size: contain;
-}
-@media screen and (max-width: 768px) {
-    .img {
-        width: 34px;
-        height: 34px;
-        background-image: url('../img/logo.png');
-    }
-}
-.payment-icon {
-    border-radius: 2px;
-    border: 1px solid #DDDCDC;
-}
+/**
+ * When in express checkout context, hide all payment methods
+ */
+document.addEventListener('DOMContentLoaded', () => {
+  const expressCheckoutPaymentOption = document.querySelector('[data-module-name="ps_checkout_expressCheckout"]');
+  const paymentOptionEl = document.getElementById('checkout-payment-step').querySelector('.payment-options');
+  paymentOptionEl.style.display = 'none';
+
+  expressCheckoutPaymentOption.click();
+
+  const expressCheckoutLabel = document.createElement('p');
+
+  const label = document.createTextNode(expressCheckoutLabelPaymentOption);
+  expressCheckoutLabel.appendChild(label);
+
+  paymentOptionEl.parentNode.insertBefore(expressCheckoutLabel, paymentOptionEl.nextSibling);
+});

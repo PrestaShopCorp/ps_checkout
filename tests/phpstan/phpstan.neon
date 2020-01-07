@@ -16,5 +16,6 @@ parameters:
 		- '#Parameter \#1 \$id_hook of method ModuleCore::updatePosition\(\) expects bool, int given.#'
 		- '#Property TabCore::\$name \(string\) does not accept array.#'
 		- '#Access to an undefined property PaymentModule::\$currentOrderReference.#'
+		- '#Property CustomerCore::\$passwd \(int\) does not accept bool|string.#'
 
 	level: 5

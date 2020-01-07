@@ -51,5 +51,15 @@ function upgrade_module_1_2_10()
     \Configuration::updateValue('PS_CHECKOUT_EC_CHECKOUT_PAGE', false);
     \Configuration::updateValue('PS_CHECKOUT_EC_PRODUCT_PAGE', false);
 
+    // register new hooks for express checkout
+    $hooks = [
+        'displayExpressCheckout',
+        'DisplayFooterProduct',
+        'displayPersonalInformationTop',
+        'actionBeforeCartUpdateQty',
+    ];
+
+    $module->registerHook($hooks);
+
     return true;
 }

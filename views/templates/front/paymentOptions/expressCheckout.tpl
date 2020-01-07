@@ -1,4 +1,4 @@
-/**
+{**
  * 2007-2019 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,23 +15,13 @@
  * @copyright 2007-2019 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- */
+ *}
 
-.img {
-    width: 100%;
-    height: 100%;
-    background-image: url('../img/prestashop_brand.png');
-    background-repeat: no-repeat;
-    background-size: contain;
-}
-@media screen and (max-width: 768px) {
-    .img {
-        width: 34px;
-        height: 34px;
-        background-image: url('../img/logo.png');
-    }
-}
-.payment-icon {
-    border-radius: 2px;
-    border: 1px solid #DDDCDC;
-}
+{literal}
+<script type="text/javascript">
+  var paypalEmail = "{/literal}{$paypalEmail|escape:'javascript':'UTF-8'}{literal}";
+  var expressCheckoutLabelPaymentOption = '{/literal}{l s='You have selected your %s PayPal account to proceed to the payment.' sprintf=[$paypalEmail] mod='ps_checkout'}{literal}';
+</script>
+{/literal}
+
+<script type='text/javascript' src='{$jsHideOtherPaymentOptions|escape:'javascript':'UTF-8'}'></script>
