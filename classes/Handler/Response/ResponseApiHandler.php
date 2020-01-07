@@ -63,10 +63,6 @@ class ResponseApiHandler
      */
     private function responseIsSuccessful($responseContents, $httpStatusCode)
     {
-        if ($httpStatusCode === 204) {
-            return true;
-        }
-
         return substr((string) $httpStatusCode, 0, 1) === '2' && $responseContents !== null;
     }
 }
