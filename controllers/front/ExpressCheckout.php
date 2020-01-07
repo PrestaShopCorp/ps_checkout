@@ -127,8 +127,8 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
 
         $address->alias = 'PayPal';
         $address->id_customer = $this->context->customer->id;
-        $address->firstname = $shipping->name->full_name;
-        $address->lastname = $shipping->name->full_name;
+        $address->firstname = strstr($shipping->name->full_name, ' ', true);
+        $address->lastname = strstr($shipping->name->full_name, ' ');
         $address->address1 = $shipping->address->address_line_1;
 
         if (isset($shipping->address->address_line_2) && !empty($shipping->address->address_line_2)) {
