@@ -25,35 +25,40 @@
       </h3>
 
       <div class="card-body m-auto">
+        <b-col sm="12" md="10" lg="10" class="m-auto">
         <table class="table text-center">
           <thead>
             <tr>
               <th class="text-left">{{ $t('panel.payment-acceptance.paymentMethod') }}</th>
               <th>{{ $t('panel.payment-acceptance.availability') }}</th>
-              <!-- <th>Activation status</th> -->
+              <th>{{ $t('panel.payment-acceptance.activationStatus') }}</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td class="text-left">
-                <h3>PayPal</h3>
+                <h3 class="mt-2">PayPal</h3>
                 <PaypalStatus :display-labels="true" />
               </td>
               <td>
-                <PaypalStatus :display-labels="false" />
+                <PayPalPaymentAvailability />
               </td>
-              <!-- <td>test</td> -->
+              <td>
+                <PayPalPaymentActivation />
+              </td>
             </tr>
 
             <tr>
               <td class="text-left">
-                <h3>{{ $t('panel.payment-acceptance.creditCardsLabel') }}</h3>
+                <h3 class="mt-2">{{ $t('panel.payment-acceptance.creditCardsLabel') }}</h3>
                 <CardStatus :display-labels="true" />
               </td>
               <td>
-                <CardStatus :display-labels="false" />
+                <CardPaymentAvailability />
               </td>
-              <!-- <td>test</td> -->
+              <td>
+                <CardPaymentActivation />
+              </td>
             </tr>
           </tbody>
         </table>
@@ -68,18 +73,27 @@
           </h4>
           <p>{{ $t('panel.payment-acceptance.alertInfo') }}</p>
         </b-alert>
+        </b-col>
       </div>
     </div>
   </form>
 </template>
 
 <script>
+  import CardPaymentActivation from '@/components/block/card-payment-activation.vue';
+  import CardPaymentAvailability from '@/components/block/card-payment-availability.vue';
   import CardStatus from '@/components/block/card-status';
+  import PayPalPaymentActivation from '@/components/block/paypal-payment-activation.vue';
+  import PayPalPaymentAvailability from '@/components/block/paypal-payment-availability.vue';
   import PaypalStatus from '@/components/block/paypal-status';
 
   export default {
     components: {
+      CardPaymentActivation,
+      CardPaymentAvailability,
       CardStatus,
+      PayPalPaymentActivation,
+      PayPalPaymentAvailability,
       PaypalStatus,
     },
   };
