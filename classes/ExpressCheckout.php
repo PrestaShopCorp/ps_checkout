@@ -64,7 +64,7 @@ class ExpressCheckout
             'displayMode' => $this->displayMode,
             'merchantId' => $paypalAccountRepository->getMerchantId(),
             'paypalClientId' => (new PaypalEnv())->getPaypalClientId(),
-            'jsExpressCheckoutPath' => \Tools::getShopDomain(true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/views/js/expressCheckout.js',
+            'jsExpressCheckoutPath' => \Tools::getShopDomain(true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/views/js/initExpressCheckout.js',
             'checkoutLink' => $this->context->link->getPageLink('order', true, $this->context->language->id, ['paymentMethod' => 'paypal']),
             'expressCheckoutController' => $this->context->link->getModuleLink($this->module->name, 'ExpressCheckout'),
             'paypalIsActive' => $paypalAccountRepository->paypalPaymentMethodIsValid(),

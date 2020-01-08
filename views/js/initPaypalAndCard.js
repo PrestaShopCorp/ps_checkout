@@ -19,7 +19,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const interval = setInterval(() => {
-    if (window.paypal !== undefined) {
+    if (window.paypalSdkPsCheckout !== undefined) {
       initPsCheckout();
       clearInterval(interval);
     }
@@ -54,7 +54,7 @@ function initSmartButtons() {
   // remove "amp;" from the url
   const orderValidationLinkByPaypal = validateOrderLinkByPaypal.replace(/\amp;/g, '');
 
-  paypal.Buttons({
+  paypalSdkPsCheckout.Buttons({
     style: {
       shape: 'pill',
       size: 'small',
@@ -93,9 +93,9 @@ function initHostedFields() {
   const orderValidationLinkByCard = validateOrderLinkByCard.replace(/\amp;/g, '');
 
   // check whether hosted fields is eligible for that Partner Account
-  if (paypal.HostedFields.isEligible()) {
+  if (paypalSdkPsCheckout.HostedFields.isEligible()) {
     // render hosted fields
-    paypal.HostedFields.render({
+    paypalSdkPsCheckout.HostedFields.render({
       createOrder() {
         return paypalOrderId;
       },

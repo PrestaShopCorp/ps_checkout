@@ -370,7 +370,7 @@ class Ps_checkout extends PaymentModule
             'modulePath' => $this->getPathUri(),
             'paypalPaymentOption' => $this->name . '_paypal',
             'hostedFieldsErrors' => (new HostedFieldsErrors($this))->getHostedFieldsErrors(),
-            'jsPathInitPaypalSdk' => $this->_path . 'views/js/api-paypal.js',
+            'jsPathInitPaypalSdk' => $this->_path . 'views/js/initPaypalAndCard.js',
         ]);
 
         $paymentMethods = $this->getPaymentMethods();
@@ -819,7 +819,7 @@ class Ps_checkout extends PaymentModule
 
         $this->context->controller->registerStylesheet(
             'ps-checkout-css-paymentOptions',
-            'modules/' . $this->name . '/views/css/paymentOptions.css'
+            'modules/' . $this->name . '/views/css/payments.css'
         );
     }
 

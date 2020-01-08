@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // wait paypal sdk to be fully loaded
   const interval = setInterval(function () {
-    if (window.paypal !== undefined) {
+    if (window.paypalSdkPsCheckoutEC !== undefined) {
       initPaypalSmartButtons();
       clearInterval(interval);
     }
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function initPaypalSmartButtons() {
   const controllerLink = expressCheckoutController.replace(/\amp;/g, '');
 
-  window.paypal.Buttons({
+  window.paypalSdkPsCheckoutEC.Buttons({
     style: {
       size: 'responsive',
       shape: 'pill',
@@ -72,7 +72,7 @@ function initPaypalSmartButtons() {
           });
         }
 
-        const paypalScript = document.getElementById('paypalSdkPsCheckout');
+        const paypalScript = document.getElementById('psCheckoutPaypalSdk');
         paypalScript.setAttribute('data-client-token', result.body.client_token);
 
         return result.body.id;
@@ -85,6 +85,9 @@ function initPaypalSmartButtons() {
         redirect(order, controllerLink);
       });
     },
+    onError(err) {
+      console.log(err);
+    }
   }).render('#paypal-button-container');
 }
 
