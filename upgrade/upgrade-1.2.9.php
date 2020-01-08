@@ -49,6 +49,8 @@ function removeFromFsDuringUpgrade(array $files)
 /**
  * Update main function for module Version 1.2.9
  *
+ * @param Module $module
+ *
  * @return bool
  */
 function upgrade_module_1_2_9($module)

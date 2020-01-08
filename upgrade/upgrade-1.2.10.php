@@ -26,9 +26,11 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Update main function for module Version 1.2.10
  *
+ * @param Module $module
+ *
  * @return bool
  */
-function upgrade_module_1_2_10()
+function upgrade_module_1_2_10($module)
 {
     foreach (OrderStates::ORDER_STATES as $key => $value) {
         $idState = \Configuration::get($key);
