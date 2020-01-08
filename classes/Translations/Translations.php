@@ -59,7 +59,9 @@ class Translations
             ],
             'pages' => [
                 'accounts' => [
+                    'approved' => $this->module->l('Approved', 'translations'),
                     'approvalPending' => $this->module->l('Approval pending', 'translations'),
+                    'emailValidationNeeded' => $this->module->l('Email validation needed', 'translations'),
                     'waitingEmail' => $this->module->l('A confirmation email has been sent. Check your inbox and click on the link to activate your account.', 'translations'),
                     'didntReceiveEmail' => $this->module->l('No confirmation email?', 'translations'),
                     'sendEmailAgain' => $this->module->l('Send it again', 'translations'),
@@ -185,6 +187,9 @@ class Translations
                     'changeOrder' => $this->module->l('Change payment methods order', 'translations'),
                     'enabled' => $this->module->l('Enabled', 'translations'),
                     'disabled' => $this->module->l('Disabled', 'translations'),
+                    'available' => $this->module->l('Available', 'translations'),
+                    'notAvailable' => $this->module->l('Not available', 'translations'),
+                    'restricted' => $this->module->l('Restricted', 'translations'),
                     'creditCard' => $this->module->l('Credit card', 'translations'),
                     'paypal' => $this->module->l('PayPal', 'translations'),
                     'localPaymentMethods' => $this->module->l('Local payment methods', 'translations'),
@@ -194,6 +199,7 @@ class Translations
                 'payment-acceptance' => [
                     'paymentMethod' => $this->module->l('Payment method'),
                     'availability' => $this->module->l('Availability'),
+                    'activationStatus' => $this->module->l('Activation status'),
                     'paymentAcceptanceTitle' => $this->module->l('Payment methods acceptance', 'translations'),
                     'creditCardsLabel' => $this->module->l('Credit and Debit Cards', 'translations'),
                     'tips' => $this->module->l('Tips', 'translations'),
