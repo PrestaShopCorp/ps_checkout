@@ -19,7 +19,7 @@
 
 <script type='text/javascript' src='{$jsExpressCheckoutPath|escape:'javascript':'UTF-8'}'></script>
 
-<link rel="preload" href="https://www.paypal.com/sdk/js?components=buttons&;client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&merchant-id={$merchantId|escape:'htmlall':'UTF-8'}&intent={$intent|escape:'htmlall':'UTF-8'}&currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}&commit=false&disable-funding=credit,card" as="script">
+<link rel="preload" href="https://www.paypal.com/sdk/js?components=buttons&client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&merchant-id={$merchantId|escape:'htmlall':'UTF-8'}&intent={$intent|escape:'htmlall':'UTF-8'}&currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}&commit=false&disable-funding=credit,card" as="script">
 
 <div id="pscheckout-express-checkout" style="display:none;">
   {if $displayMode eq 'cart'}
@@ -51,11 +51,11 @@
  * Load paypal script
  */
 function loadPaypalScript() {
-  if (typeof paypal !== 'undefined') {
+  if (typeof paypalSdkPsCheckout !== 'undefined') {
     return;
   }
 
-  let psCheckoutScript = document.getElementById('paypalSdkPsCheckout');
+  let psCheckoutScript = document.getElementById('psCheckoutPaypalSdk');
 
   if (psCheckoutScript !== null) {
     return;
@@ -63,7 +63,8 @@ function loadPaypalScript() {
 
   const paypalScript = document.createElement('script');
   paypalScript.setAttribute('src', "https://www.paypal.com/sdk/js?components=buttons&client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&merchant-id={$merchantId|escape:'htmlall':'UTF-8'}&intent={$intent|escape:'htmlall':'UTF-8'}&currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}&commit=false&disable-funding=credit,card");
-  paypalScript.setAttribute('id', 'paypalSdkPsCheckout');
+  paypalScript.setAttribute('id', 'psCheckoutPaypalSdk');
+  paypalScript.setAttribute('data-namespace', 'paypalSdkPsCheckoutEC');
   paypalScript.setAttribute('async', '');
   document.head.appendChild(paypalScript);
 }
