@@ -19,13 +19,19 @@
 <template>
   <div>
     <template v-if="emailValidationNeeded">
-      <b-badge variant="warning">{{ $t('pages.accounts.emailValidationNeeded') }}</b-badge>
+      <b-badge variant="warning">
+        {{ $t('pages.accounts.emailValidationNeeded') }}
+      </b-badge>
     </template>
     <template v-else-if="approvalPending">
-      <b-badge variant="warning">{{ $t('pages.accounts.approvalPending') }}</b-badge>
+      <b-badge variant="warning">
+        {{ $t('pages.accounts.approvalPending') }}
+      </b-badge>
     </template>
     <template v-else>
-      <b-badge variant="success">{{ $t('pages.accounts.approved') }}</b-badge>
+      <b-badge variant="success">
+        {{ $t('pages.accounts.approved') }}
+      </b-badge>
     </template>
   </div>
 </template>

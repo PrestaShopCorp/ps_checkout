@@ -24,7 +24,9 @@
         footer-class="d-flex"
       >
         <b-card-body>
-          <h1 class="text-center mb-4">{{ $t('pages.signin.logInWithYourPsAccount') }}</h1>
+          <h1 class="text-center mb-4">
+            {{ $t('pages.signin.logInWithYourPsAccount') }}
+          </h1>
 
           <b-form>
             <b-form-group
@@ -35,7 +37,11 @@
               :invalid-feedback="invalidEmail"
               :class="{ 'has-danger': email.state === false}"
             >
-              <b-form-input id="email-input" v-model="email.value" :state="email.state"></b-form-input>
+              <b-form-input
+                id="email-input"
+                v-model="email.value"
+                :state="email.state"
+              />
             </b-form-group>
 
             <b-form-group
@@ -46,7 +52,12 @@
               :invalid-feedback="invalidPassword"
               :class="{ 'has-danger': password.state === false}"
             >
-              <b-form-input id="password-input" v-model="password.value" type="password" :state="password.state"></b-form-input>
+              <b-form-input
+                id="password-input"
+                v-model="password.value"
+                type="password"
+                :state="password.state"
+              />
             </b-form-group>
 
             <b-form-group
@@ -54,7 +65,11 @@
               label-align="right"
               label-for="reset-password"
             >
-              <b-button variant="link" @click="goToResetPassword()" class="px-0">
+              <b-button
+                variant="link"
+                @click="goToResetPassword()"
+                class="px-0"
+              >
                 {{ $t('pages.signin.forgotPassword') }}
               </b-button>
             </b-form-group>
@@ -63,15 +78,25 @@
 
         <template v-slot:footer>
           <div class="container-fluid pl-0">
-            <b-button variant="secondary" @click="previous()">
+            <b-button
+              variant="secondary"
+              @click="previous()"
+            >
               {{ $t('pages.signin.back') }}
             </b-button>
           </div>
           <div class="d-flex">
-            <b-button class="mr-3" variant="outline-secondary" @click="goToSignUp()">
+            <b-button
+              class="mr-3"
+              variant="outline-secondary"
+              @click="goToSignUp()"
+            >
               {{ $t('pages.signin.signup') }}
             </b-button>
-            <b-button variant="primary" @click="logIn()">
+            <b-button
+              variant="primary"
+              @click="logIn()"
+            >
               {{ $t('pages.signin.login') }}
             </b-button>
           </div>
@@ -120,7 +145,7 @@
           return this.password.errorMessage;
         }
         return '';
-      }
+      },
     },
     methods: {
       logIn() {

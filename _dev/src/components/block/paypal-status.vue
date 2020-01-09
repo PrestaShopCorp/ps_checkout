@@ -28,15 +28,21 @@
       <p v-if="displayLabels">
         {{ $t('block.payment-status.paypalLabel') }}
       </p>
-      <label v-else class="text-success">
+      <label
+        v-else
+        class="text-success"
+      >
         <i class="material-icons">check</i> {{ $t('block.payment-status.live') }}
       </label>
     </template>
     <template v-else>
-      <p v-if="displayLabels" >
+      <p v-if="displayLabels">
         {{ $t('block.payment-status.paypalLabelEmailNotValid') }}
       </p>
-      <label v-else class="text-warning">
+      <label
+        v-else
+        class="text-warning"
+      >
         <i class="material-icons">error_outline</i> {{ $t('block.payment-status.approvalPending') }}
       </label>
     </template>

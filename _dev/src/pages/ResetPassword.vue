@@ -16,7 +16,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  *-->
- <template>
+<template>
   <div>
     <b-container>
       <b-card
@@ -28,7 +28,10 @@
         </template>
         <b-card-body>
           <template v-if="emailSent">
-            <b-alert variant="success" show>
+            <b-alert
+              variant="success"
+              show
+            >
               <h4 class="alert-heading">
                 {{ $t('pages.resetPassword.youGotEmail') }}
               </h4>
@@ -38,7 +41,9 @@
             </b-alert>
           </template>
           <template v-else>
-            <h1 class="text-center mb-4">{{ $t('pages.resetPassword.sendLink') }}</h1>
+            <h1 class="text-center mb-4">
+              {{ $t('pages.resetPassword.sendLink') }}
+            </h1>
           </template>
 
           <b-form v-if="!emailSent">
@@ -50,17 +55,29 @@
               :invalid-feedback="invalidEmail"
               :class="{ 'has-danger': email.state === false}"
             >
-              <b-form-input id="email-input" v-model="email.value" :state="email.state"></b-form-input>
+              <b-form-input
+                id="email-input"
+                v-model="email.value"
+                :state="email.state"
+              />
             </b-form-group>
           </b-form>
         </b-card-body>
 
         <template v-slot:footer>
           <div class="d-flex">
-            <b-button class="mr-3" variant="outline-secondary" @click="goToSignIn()">
+            <b-button
+              class="mr-3"
+              variant="outline-secondary"
+              @click="goToSignIn()"
+            >
               {{ $t('pages.resetPassword.goBackToLogin') }}
             </b-button>
-            <b-button v-if="!emailSent" variant="primary" @click="resetPassword()">
+            <b-button
+              v-if="!emailSent"
+              variant="primary"
+              @click="resetPassword()"
+            >
               {{ $t('pages.resetPassword.reset') }}
             </b-button>
           </div>

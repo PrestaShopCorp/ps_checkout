@@ -19,60 +19,71 @@
 <template>
   <form class="form form-horizontal">
     <div class="card">
-
       <h3 class="card-header">
-        <i class="material-icons">credit_card</i> {{ $t('panel.payment-acceptance.paymentAcceptanceTitle') }}
+        <i class="material-icons">credit_card</i>
+        {{ $t('panel.payment-acceptance.paymentAcceptanceTitle') }}
       </h3>
 
       <div class="card-body m-auto">
-        <b-col sm="12" md="10" lg="10" class="m-auto">
-        <table class="table text-center">
-          <thead>
-            <tr>
-              <th class="text-left">{{ $t('panel.payment-acceptance.paymentMethod') }}</th>
-              <th>{{ $t('panel.payment-acceptance.availability') }}</th>
-              <th>{{ $t('panel.payment-acceptance.activationStatus') }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="text-left">
-                <h3 class="mt-2">PayPal</h3>
-                <PaypalStatus :display-labels="true" />
-              </td>
-              <td>
-                <PayPalPaymentAvailability />
-              </td>
-              <td>
-                <PayPalPaymentActivation />
-              </td>
-            </tr>
-
-            <tr>
-              <td class="text-left">
-                <h3 class="mt-2">{{ $t('panel.payment-acceptance.creditCardsLabel') }}</h3>
-                <CardStatus :display-labels="true" />
-              </td>
-              <td>
-                <CardPaymentAvailability />
-              </td>
-              <td>
-                <CardPaymentActivation />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <b-alert
-          class="mt-2"
-          variant="info"
-          show
+        <b-col
+          sm="12"
+          md="10"
+          lg="10"
+          class="m-auto"
         >
-          <h4 class="alert-heading">
-            {{ $t('panel.payment-acceptance.tips') }}
-          </h4>
-          <p>{{ $t('panel.payment-acceptance.alertInfo') }}</p>
-        </b-alert>
+          <table class="table text-center">
+            <thead>
+              <tr>
+                <th class="text-left">
+                  {{ $t('panel.payment-acceptance.paymentMethod') }}
+                </th>
+                <th>{{ $t('panel.payment-acceptance.availability') }}</th>
+                <th>{{ $t('panel.payment-acceptance.activationStatus') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-left">
+                  <h3 class="mt-2">
+                    PayPal
+                  </h3>
+                  <PaypalStatus :display-labels="true" />
+                </td>
+                <td>
+                  <PayPalPaymentAvailability />
+                </td>
+                <td>
+                  <PayPalPaymentActivation />
+                </td>
+              </tr>
+
+              <tr>
+                <td class="text-left">
+                  <h3 class="mt-2">
+                    {{ $t('panel.payment-acceptance.creditCardsLabel') }}
+                  </h3>
+                  <CardStatus :display-labels="true" />
+                </td>
+                <td>
+                  <CardPaymentAvailability />
+                </td>
+                <td>
+                  <CardPaymentActivation />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <b-alert
+            class="mt-2"
+            variant="info"
+            show
+          >
+            <h4 class="alert-heading">
+              {{ $t('panel.payment-acceptance.tips') }}
+            </h4>
+            <p>{{ $t('panel.payment-acceptance.alertInfo') }}</p>
+          </b-alert>
         </b-col>
       </div>
     </div>

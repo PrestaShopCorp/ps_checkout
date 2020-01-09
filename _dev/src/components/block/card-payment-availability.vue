@@ -19,13 +19,19 @@
 <template>
   <div>
     <template v-if="available">
-      <b-badge variant="success">{{ $t('panel.active-payment.available') }}</b-badge>
+      <b-badge variant="success">
+        {{ $t('panel.active-payment.available') }}
+      </b-badge>
     </template>
     <template v-else-if="restricted">
-      <b-badge variant="warning">{{ $t('panel.active-payment.restricted') }}</b-badge>
+      <b-badge variant="warning">
+        {{ $t('panel.active-payment.restricted') }}
+      </b-badge>
     </template>
     <template v-else>
-      <b-badge variant="danger">{{ $t('panel.active-payment.notAvailable') }}</b-badge>
+      <b-badge variant="danger">
+        {{ $t('panel.active-payment.notAvailable') }}
+      </b-badge>
     </template>
   </div>
 </template>

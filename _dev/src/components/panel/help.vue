@@ -94,17 +94,32 @@
           <div class="doc">
             <b class="text-muted">{{ $t('panel.help.needHelp') }}</b>
             <br>
-            <b-button class="mt-3" :href="readmeUrl" target="_blank" variant="primary">
+            <b-button
+              class="mt-3"
+              :href="readmeUrl"
+              target="_blank"
+              variant="primary"
+            >
               {{ $t('panel.help.downloadDoc') }}
             </b-button>
           </div>
           <div class="contact mt-4">
             <div>{{ $t('panel.help.couldntFindAnswer') }}</div>
             <div class="mt-2">
-              <b-button v-if="isReady" variant="link" href="https://support.prestashop.com/hc/requests/new?ticket_form_id=" target="_blank">
+              <b-button
+                v-if="isReady"
+                variant="link"
+                href="https://support.prestashop.com/hc/requests/new?ticket_form_id="
+                target="_blank"
+              >
                 {{ $t('panel.help.contactUs') }} <i class="material-icons">arrow_right_alt</i>
               </b-button>
-              <b-button v-else variant="link" href="mailto:support-checkout-download@prestashop.com" target="_blank">
+              <b-button
+                v-else
+                variant="link"
+                href="mailto:support-checkout-download@prestashop.com"
+                target="_blank"
+              >
                 {{ $t('panel.help.contactUs') }} <i class="material-icons">arrow_right_alt</i>
               </b-button>
             </div>

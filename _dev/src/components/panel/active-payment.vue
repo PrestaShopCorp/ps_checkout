@@ -23,8 +23,12 @@
     </template>
 
     <b-card-body>
-      <b-col sm="10" md="10" lg="10" class="m-auto">
-
+      <b-col
+        sm="10"
+        md="10"
+        lg="10"
+        class="m-auto"
+      >
         <b-card-title>{{ $t('panel.active-payment.changeOrder') }}</b-card-title>
 
         <div class="m-auto payment-method-container pb-3">
@@ -70,7 +74,9 @@
                         <label
                           v-if="element.name === 'card'"
                           class="mb-0"
-                        ><i class="material-icons mr-3">credit_card</i> {{ $t('panel.active-payment.creditCard') }}</label>
+                        >
+                          <i class="material-icons mr-3">credit_card</i>
+                          {{ $t('panel.active-payment.creditCard') }}</label>
                         <label
                           v-else
                           class="mb-0"
@@ -79,10 +85,16 @@
                           src="@/assets/images/paypal-logo-thumbnail.png"
                         > {{ $t('panel.active-payment.paypal') }}</label>
                       </div>
-                      <div class="status" v-if="element.name === 'card'">
+                      <div
+                        class="status"
+                        v-if="element.name === 'card'"
+                      >
                         <CardStatus v-if="cardIsAvailable === false" />
 
-                        <PSSwitch id="hostedFieldsAvailability" v-model="cardIsEnabled">
+                        <PSSwitch
+                          id="hostedFieldsAvailability"
+                          v-model="cardIsEnabled"
+                        >
                           <template v-if="cardIsEnabled">
                             {{ $t('panel.active-payment.enabled') }}
                           </template>
@@ -97,7 +109,8 @@
                       class="d-flex payment-method-content separator"
                     >
                       <div class="flex-grow-1">
-                        <label class="mb-0"><i class="material-icons mr-3">public</i> {{ $t('panel.active-payment.localPaymentMethods') }}</label>
+                        <label class="mb-0"><i class="material-icons mr-3">public</i>
+                          {{ $t('panel.active-payment.localPaymentMethods') }}</label>
                       </div>
                     </div>
                   </div>
@@ -118,7 +131,6 @@
             {{ $t('panel.active-payment.tipsContent') }}
           </p>
         </b-alert>
-
       </b-col>
     </b-card-body>
   </b-card>

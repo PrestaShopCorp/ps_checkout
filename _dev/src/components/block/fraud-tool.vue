@@ -24,8 +24,13 @@
         <p>
           {{ $t('block.fraud-tool.text') }}
         </p>
-        <b-button variant="link" href="https://www.paypal.com/fraud-protection" target="_blank">
-          {{ $t('block.fraud-tool.discoverFraudTool') }} <i class="material-icons">arrow_right_alt</i>
+        <b-button
+          variant="link"
+          href="https://www.paypal.com/fraud-protection"
+          target="_blank"
+        >
+          {{ $t('block.fraud-tool.discoverFraudTool') }}
+          <i class="material-icons">arrow_right_alt</i>
         </b-button>
       </div>
     </b-card-body>

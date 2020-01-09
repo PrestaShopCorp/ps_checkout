@@ -25,7 +25,9 @@
         footer-class="d-flex"
       >
         <b-card-body>
-          <h1 class="text-center mb-4">{{ $t('pages.signup.createYourPsAccount') }}</h1>
+          <h1 class="text-center mb-4">
+            {{ $t('pages.signup.createYourPsAccount') }}
+          </h1>
 
           <b-form>
             <b-form-group
@@ -36,7 +38,11 @@
               :invalid-feedback="invalidEmail"
               :class="{ 'has-danger': email.state === false}"
             >
-              <b-form-input id="email-input" v-model="email.value" :state="email.state"></b-form-input>
+              <b-form-input
+                id="email-input"
+                v-model="email.value"
+                :state="email.state"
+              />
             </b-form-group>
 
             <b-form-group
@@ -47,7 +53,12 @@
               :invalid-feedback="invalidPassword"
               :class="{ 'has-danger': password.state === false}"
             >
-              <b-form-input id="password-input" v-model="password.value" type="password" :state="password.state"></b-form-input>
+              <b-form-input
+                id="password-input"
+                v-model="password.value"
+                type="password"
+                :state="password.state"
+              />
             </b-form-group>
 
             <b-form-group
@@ -62,7 +73,10 @@
                 v-model="terms.value"
               >
                 {{ $t('pages.signup.termsOfUse') }}
-                <b-link :href="readmeCgu" target="_blank">
+                <b-link
+                  :href="readmeCgu"
+                  target="_blank"
+                >
                   {{ $t('pages.signup.termsOfUseLinkText') }}
                 </b-link>
               </PSCheckbox>
@@ -80,13 +94,19 @@
                 <p>
                   {{ $t('pages.signup.mentionsTermsText') }}
                   (
-                  <b-link href="mailto:privacy@prestashop.com" target="_blank">
+                  <b-link
+                    href="mailto:privacy@prestashop.com"
+                    target="_blank"
+                  >
                     {{ $t('pages.signup.mentionsTermsLinkTextPart1') }}
                   </b-link>
                   )
                 </p>
                 <p>
-                  <b-link :href="$t('pages.signup.mentionsTermsLinkPart2')" target="_blank">
+                  <b-link
+                    :href="$t('pages.signup.mentionsTermsLinkPart2')"
+                    target="_blank"
+                  >
                     {{ $t('pages.signup.mentionsTermsLinkTextPart2') }}
                   </b-link>
                 </p>
@@ -97,15 +117,25 @@
 
         <template v-slot:footer>
           <div class="container-fluid pl-0">
-            <b-button variant="secondary" @click="previous()">
+            <b-button
+              variant="secondary"
+              @click="previous()"
+            >
               {{ $t('pages.signup.back') }}
             </b-button>
           </div>
           <div class="d-flex">
-            <b-button class="mr-3" variant="outline-secondary" @click="goToSignIn()">
+            <b-button
+              class="mr-3"
+              variant="outline-secondary"
+              @click="goToSignIn()"
+            >
               {{ $t('pages.signup.signIn') }}
             </b-button>
-            <b-button variant="primary" @click="signUp()">
+            <b-button
+              variant="primary"
+              @click="signUp()"
+            >
               {{ $t('pages.signup.createAccount') }}
             </b-button>
           </div>

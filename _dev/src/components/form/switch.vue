@@ -18,12 +18,18 @@
  *-->
 <template>
   <label :for="id">
-    <label class="mr-2" v-if="textPosition === 'left'">
+    <label
+      class="mr-2"
+      v-if="textPosition === 'left'"
+    >
       <slot />
     </label>
     <div
       class="switch-input"
-      :class="{'-checked' : value, 'switch-input-lg' : size === 'lg', 'switch-input-sm' : size === 'sm'}">
+      :class="{'-checked' : value,
+               'switch-input-lg' : size === 'lg',
+               'switch-input-sm' : size === 'sm'}"
+    >
       <input
         :id="id"
         @input="$emit('input', $event.target.checked)"
@@ -34,7 +40,10 @@
         :name="name"
       >
     </div>
-    <label class="ml-1" v-if="textPosition === 'right'">
+    <label
+      class="ml-1"
+      v-if="textPosition === 'right'"
+    >
       <slot />
     </label>
   </label>
@@ -56,6 +65,7 @@
       name: {
         type: String,
         required: false,
+        default: '',
       },
       textPosition: {
         type: String,

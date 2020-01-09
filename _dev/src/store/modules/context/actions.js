@@ -16,7 +16,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-import * as types from './mutation-types';
+import mutation from './mutation-types';
 import ajax from '@/requests/ajax.js';
 
 export default {
@@ -26,7 +26,7 @@ export default {
       action: 'EditRoundingSettings',
     }).then((resp) => {
       if (resp) {
-        commit(types.UPDATE_ROUNDING_SETTINGS_STATUS);
+        commit(mutation.UPDATE_ROUNDING_SETTINGS_STATUS);
         return Promise.resolve(true);
       }
 

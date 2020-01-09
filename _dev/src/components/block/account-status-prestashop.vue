@@ -19,10 +19,14 @@
 <template>
   <div>
     <template v-if="prestashopAccountIsActive">
-      <b-badge variant="success">{{ $t('pages.accounts.approved') }}</b-badge>
+      <b-badge variant="success">
+        {{ $t('pages.accounts.approved') }}
+      </b-badge>
     </template>
     <template v-else>
-      <b-badge variant="warning">{{ $t('pages.accounts.approvalPending') }}</b-badge>
+      <b-badge variant="warning">
+        {{ $t('pages.accounts.approvalPending') }}
+      </b-badge>
     </template>
   </div>
 </template>

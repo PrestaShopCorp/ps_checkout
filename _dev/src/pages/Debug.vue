@@ -29,7 +29,10 @@
           <li>Shop ID: <b>{{ shopId }}</b></li>
           <li>Rounding config: <b>{{ roundingSettingsIsCorrect }}</b></li>
         </ul>
-        <PSSwitch id="hostedFieldsAvailability" v-model="debugLogsEnabled">
+        <PSSwitch
+          id="hostedFieldsAvailability"
+          v-model="debugLogsEnabled"
+        >
           <template v-if="debugLogsEnabled">
             Logs enabled
           </template>

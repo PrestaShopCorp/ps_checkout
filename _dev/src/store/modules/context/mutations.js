@@ -16,10 +16,10 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-import * as types from './mutation-types';
+import mutation from './mutation-types';
 
 export default {
-  [types.UPDATE_ROUNDING_SETTINGS_STATUS](state) {
+  [mutation.UPDATE_ROUNDING_SETTINGS_STATUS](state) {
     state.roundingSettingsIsCorrect = true;
   },
 };
