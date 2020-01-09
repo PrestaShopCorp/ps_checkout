@@ -5,6 +5,16 @@ php:
   - 5.6
   - 7.2
 
+jobs:
+  include:
+    - stage: "JS"
+      language: node_js
+      node_js: 10
+      install:
+        - yarn --cwd _dev/ install
+      script:
+        - yarn --cwd _dev/ lint
+
 env:
   - PRESTASHOP_VERSION=latest
 
