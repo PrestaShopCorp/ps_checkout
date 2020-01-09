@@ -36,6 +36,7 @@
             <td>
               <img
                 src="@/assets/images/logo.png"
+                width="50"
               >
             </td>
             <td>
@@ -143,7 +144,7 @@
               >
             </td>
             <td>
-              <h2>{{ $t('panel.account-list.paypalAccount') }}</h2>
+              <h2 class="mt-2">{{ $t('panel.account-list.paypalAccount') }}</h2>
               <p class="text-muted">
                 <template v-if="paypalStatusAccount === false">
                   {{ $t('panel.account-list.activatePayment') }}
