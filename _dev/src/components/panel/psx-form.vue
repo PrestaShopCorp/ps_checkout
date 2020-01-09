@@ -37,7 +37,8 @@
       </ul>
     </b-alert>
 
-    <b-card no-body
+    <b-card
+      no-body
       footer-class="d-flex"
     >
       <template v-slot:header>
@@ -50,25 +51,44 @@
         </h1>
 
         <b-form>
-          <b-col sm="12" md="10" lg="8" class="m-auto">
-
+          <b-col
+            sm="12"
+            md="10"
+            lg="8"
+            class="m-auto"
+          >
             <b-card-title class="py-4">
               {{ $t('panel.psx-form.personalInformation') }}
             </b-card-title>
 
             <b-row>
-              <b-col sm="12" md="12" lg="12">
+              <b-col
+                sm="12"
+                md="12"
+                lg="12"
+              >
                 <b-form-group>
-                  <b-form-radio-group v-model="form.business_contact_gender" name="gender">
-                    <b-form-radio value="Mr">{{ $t('panel.psx-form.genderMr') }}</b-form-radio>
-                    <b-form-radio value="Ms">{{ $t('panel.psx-form.genderMrs') }}</b-form-radio>
+                  <b-form-radio-group
+                    v-model="form.business_contact_gender"
+                    name="gender"
+                  >
+                    <b-form-radio value="Mr">
+                      {{ $t('panel.psx-form.genderMr') }}
+                    </b-form-radio>
+                    <b-form-radio value="Ms">
+                      {{ $t('panel.psx-form.genderMrs') }}
+                    </b-form-radio>
                   </b-form-radio-group>
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
-              <b-col sm="6" md="6" lg="6">
+              <b-col
+                sm="6"
+                md="6"
+                lg="6"
+              >
                 <b-form-group
                   :label="$t('panel.psx-form.firstName')"
                   label-for="firstName"
@@ -77,10 +97,14 @@
                     id="firstName"
                     v-model="form.business_contact_first_name"
                     :class="[form.business_contact_first_name != '' ? '' : 'has-danger']"
-                  ></b-form-input>
+                  />
                 </b-form-group>
               </b-col>
-              <b-col sm="6" md="6" lg="6">
+              <b-col
+                sm="6"
+                md="6"
+                lg="6"
+              >
                 <b-form-group
                   :label="$t('panel.psx-form.lastName')"
                   label-for="lastName"
@@ -89,13 +113,17 @@
                     id="lastName"
                     v-model="form.business_contact_last_name"
                     :class="[form.business_contact_last_name != '' ? '' : 'has-danger']"
-                  ></b-form-input>
+                  />
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
-              <b-col sm="6" md="6" lg="6">
+              <b-col
+                sm="6"
+                md="6"
+                lg="6"
+              >
                 <b-form-group
                   :label="$t('panel.psx-form.language')"
                   label-for="language"
@@ -103,7 +131,8 @@
                   <b-form-select
                     id="language"
                     v-model="form.business_contact_language"
-                    :class="[form.business_contact_language != '' ? '' : 'has-danger']">
+                    :class="[form.business_contact_language != '' ? '' : 'has-danger']"
+                  >
                     <option
                       v-for="languageDetail in getLanguagesDetails"
                       :key="languageDetail.iso_code"
@@ -114,14 +143,19 @@
                   </b-form-select>
                 </b-form-group>
               </b-col>
-              <b-col sm="6" md="6" lg="6">
+              <b-col
+                sm="6"
+                md="6"
+                lg="6"
+              >
                 <b-form-group
                   :label="$t('panel.psx-form.qualification')"
                   label-for="qualification"
                 >
                   <b-form-select
                     id="qualification"
-                    v-model="form.qualification">
+                    v-model="form.qualification"
+                  >
                     <option value="">
                       --
                     </option>
@@ -144,7 +178,11 @@
             </b-card-title>
 
             <b-row>
-              <b-col sm="12" md="12" lg="12">
+              <b-col
+                sm="12"
+                md="12"
+                lg="12"
+              >
                 <b-form-group
                   :label="$t('panel.psx-form.storeName')"
                   label-for="storeName"
@@ -153,13 +191,17 @@
                     id="storeName"
                     v-model="form.shop_name"
                     :class="[form.shop_name != '' ? '' : 'has-danger']"
-                  ></b-form-input>
+                  />
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
-              <b-col sm="12" md="12" lg="12">
+              <b-col
+                sm="12"
+                md="12"
+                lg="12"
+              >
                 <b-form-group
                   :label="$t('panel.psx-form.address')"
                   label-for="address"
@@ -168,13 +210,17 @@
                     id="address"
                     v-model="form.business_address_street"
                     :class="[form.business_address_street != '' ? '' : 'has-danger']"
-                  ></b-form-input>
+                  />
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
-              <b-col sm="6" md="6" lg="6">
+              <b-col
+                sm="6"
+                md="6"
+                lg="6"
+              >
                 <b-form-group
                   :label="$t('panel.psx-form.postCode')"
                   label-for="postCode"
@@ -183,10 +229,14 @@
                     id="postCode"
                     v-model="form.business_address_zip"
                     :class="[form.business_address_zip != '' ? '' : 'has-danger']"
-                  ></b-form-input>
+                  />
                 </b-form-group>
               </b-col>
-              <b-col sm="6" md="6" lg="6">
+              <b-col
+                sm="6"
+                md="6"
+                lg="6"
+              >
                 <b-form-group
                   :label="$t('panel.psx-form.town')"
                   label-for="town"
@@ -195,13 +245,17 @@
                     id="town"
                     v-model="form.business_address_city"
                     :class="[form.business_address_city != '' ? '' : 'has-danger']"
-                  ></b-form-input>
+                  />
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
-              <b-col sm="6" md="6" lg="6">
+              <b-col
+                sm="6"
+                md="6"
+                lg="6"
+              >
                 <b-form-group
                   :label="$t('panel.psx-form.country')"
                   label-for="country"
@@ -209,7 +263,8 @@
                   <b-form-select
                     id="country"
                     v-model="form.business_address_country"
-                    @change="onChangeCountry(form.business_address_country)">
+                    @change="onChangeCountry(form.business_address_country)"
+                  >
                     <option
                       v-for="countryDetail in getCountriesDetails"
                       :key="countryDetail.iso"
@@ -220,14 +275,20 @@
                   </b-form-select>
                 </b-form-group>
               </b-col>
-              <b-col v-if="statesList != null" sm="6" md="6" lg="6">
+              <b-col
+                v-if="statesList != null"
+                sm="6"
+                md="6"
+                lg="6"
+              >
                 <b-form-group
                   :label="$t('panel.psx-form.state')"
                   label-for="state"
                 >
                   <b-form-select
                     id="state"
-                    v-model="form.business_address_state">
+                    v-model="form.business_address_state"
+                  >
                     <option
                       v-for="(value, key) in statesList"
                       :key="key"
@@ -241,16 +302,26 @@
             </b-row>
 
             <b-row>
-              <b-col sm="6" md="6" lg="6">
+              <b-col
+                sm="6"
+                md="6"
+                lg="6"
+              >
                 <b-form-group
                   :label="$t('panel.psx-form.businessPhone')"
                   label-for="phone-country"
                 >
                   <b-input-group>
-                    <b-col sm="4" md="4" lg="4" class="px-0">
+                    <b-col
+                      sm="4"
+                      md="4"
+                      lg="4"
+                      class="px-0"
+                    >
                       <b-form-select
                         id="phone-country"
-                        v-model="form.business_phone_country">
+                        v-model="form.business_phone_country"
+                      >
                         <option
                           v-for="countryDetail in getPhoneCountryCode"
                           :key="countryDetail.iso"
@@ -260,11 +331,16 @@
                         </option>
                       </b-form-select>
                     </b-col>
-                    <b-col sm="8" md="8" lg="8" class="px-0">
+                    <b-col
+                      sm="8"
+                      md="8"
+                      lg="8"
+                      class="px-0"
+                    >
                       <b-form-input
                         v-model="form.business_phone"
                         :class="[form.business_phone != '' ? '' : 'has-danger']"
-                      ></b-form-input>
+                      />
                     </b-col>
                   </b-input-group>
                 </b-form-group>
@@ -276,7 +352,11 @@
             </b-card-title>
 
             <b-row>
-              <b-col sm="12" md="12" lg="12">
+              <b-col
+                sm="12"
+                md="12"
+                lg="12"
+              >
                 <b-form-group
                   :label="$t('panel.psx-form.website')"
                   label-for="website"
@@ -286,20 +366,25 @@
                     v-model="form.business_website"
                     placeholder="https://your_website.extension"
                     :class="[form.business_website != '' ? '' : 'has-danger']"
-                  ></b-form-input>
+                  />
                 </b-form-group>
               </b-col>
             </b-row>
 
             <b-row>
-              <b-col sm="12" md="12" lg="12">
+              <b-col
+                sm="12"
+                md="12"
+                lg="12"
+              >
                 <b-form-group
                   :label="$t('panel.psx-form.companyTurnover')"
                   label-for="company-turnover"
                 >
                   <b-form-select
                     id="company-turnover"
-                    v-model="form.business_company_emr">
+                    v-model="form.business_company_emr"
+                  >
                     <option
                       v-for="(value, key) in getCompanyMonthyAverages"
                       :key="key"
@@ -313,7 +398,11 @@
             </b-row>
 
             <b-row>
-              <b-col sm="12" md="12" lg="12">
+              <b-col
+                sm="12"
+                md="12"
+                lg="12"
+              >
                 <b-form-group
                   :label="$t('panel.psx-form.businessCategory')"
                   label-for="business-category"
@@ -321,7 +410,8 @@
                   <b-form-select
                     id="business-category"
                     v-model="form.business_category"
-                    @change="onChangeCategory(form.business_category)">
+                    @change="onChangeCategory(form.business_category)"
+                  >
                     <option
                       v-for="(value, key) in getCompanyCategories"
                       :key="key"
@@ -335,14 +425,19 @@
             </b-row>
 
             <b-row>
-              <b-col sm="12" md="12" lg="12">
+              <b-col
+                sm="12"
+                md="12"
+                lg="12"
+              >
                 <b-form-group
                   :label="$t('panel.psx-form.businessSubCategory')"
                   label-for="business-subcategory"
                 >
                   <b-form-select
                     id="business-subcategory"
-                    v-model="form.business_sub_category">
+                    v-model="form.business_sub_category"
+                  >
                     <option value="">
                       --
                     </option>
@@ -357,16 +452,23 @@
                 </b-form-group>
               </b-col>
             </b-row>
-
           </b-col>
         </b-form>
 
-        <b-col sm="12" md="10" lg="8" class="m-auto pt-5">
+        <b-col
+          sm="12"
+          md="10"
+          lg="8"
+          class="m-auto pt-5"
+        >
           <p class="mb-0">
             {{ $t('panel.psx-form.privacyTextPart1') }}
           </p>
           <p>
-            <b-link :href="$t('panel.psx-form.privacyLink')" target="_blank">
+            <b-link
+              :href="$t('panel.psx-form.privacyLink')"
+              target="_blank"
+            >
               {{ $t('panel.psx-form.privacyTextPart2') }}
             </b-link>
           </p>
@@ -375,16 +477,21 @@
 
       <template v-slot:footer>
         <div class="container-fluid pl-0">
-          <b-button variant="secondary" @click="back()">
+          <b-button
+            variant="secondary"
+            @click="back()"
+          >
             {{ $t('panel.psx-form.back') }}
           </b-button>
         </div>
-        <b-button variant="primary" @click="submitForm()">
+        <b-button
+          variant="primary"
+          @click="submitForm()"
+        >
           {{ $t('panel.psx-form.continue') }}
         </b-button>
       </template>
     </b-card>
-
   </div>
 </template>
 
@@ -457,7 +564,8 @@
         });
       },
       onChangeCategory(categoryId) {
-        this.subCategory = this.$store.state.psx.businessDetails.business_categories[categoryId].business_subcategories;
+        const subCat = this.$store.getters.getBusinessCategories[categoryId].business_subcategories;
+        this.subCategory = subCat;
       },
       onChangeCountry(countryCode) {
         this.statesList = this.$store.state.psx.countriesStatesDetails[countryCode];

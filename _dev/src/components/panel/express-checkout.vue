@@ -23,8 +23,12 @@
     </template>
 
     <b-card-body>
-      <b-col sm="12" md="10" lg="10" class="m-auto">
-
+      <b-col
+        sm="12"
+        md="10"
+        lg="10"
+        class="m-auto"
+      >
         <b-form>
           <b-form-group
             id="fieldset-1"
@@ -33,22 +37,66 @@
           >
             <b-form-row class="mr-0 ml-0">
               <b-col>
-                <PSCheckbox id="order-page" v-model="orderPageIsActive" class="mb-2"></PSCheckbox>
-                <img @click="toggleOrderPage()" v-if="orderPageIsActive" class="active-img mb-2" src="@/assets/images/preview_cart-page_active.png">
-                <img @click="toggleOrderPage()" v-else class="mb-2" src="@/assets/images/preview_cart-page_inactive.png">
+                <PSCheckbox
+                  id="order-page"
+                  v-model="orderPageIsActive"
+                  class="mb-2"
+                />
+                <img
+                  @click="toggleOrderPage()"
+                  v-if="orderPageIsActive"
+                  class="active-img mb-2"
+                  src="@/assets/images/preview_cart-page_active.png"
+                >
+                <img
+                  @click="toggleOrderPage()"
+                  v-else
+                  class="mb-2"
+                  src="@/assets/images/preview_cart-page_inactive.png"
+                >
                 <div>{{ $t('panel.express-checkout.orderPage') }}</div>
-                <div class="text-muted">({{ $t('panel.express-checkout.recommended') }})</div>
+                <div class="text-muted">
+                  ({{ $t('panel.express-checkout.recommended') }})
+                </div>
               </b-col>
               <b-col>
-                <PSCheckbox id="checkout-page" v-model="checkoutPageIsActive" class="mb-2"></PSCheckbox>
-                <img @click="toggleCheckoutPage()" v-if="checkoutPageIsActive" class="active-img mb-2" src="@/assets/images/preview_checkout-page_active.png">
-                <img @click="toggleCheckoutPage()" v-else class="mb-2" src="@/assets/images/preview_checkout-page_inactive.png">
+                <PSCheckbox
+                  id="checkout-page"
+                  v-model="checkoutPageIsActive"
+                  class="mb-2"
+                />
+                <img
+                  @click="toggleCheckoutPage()"
+                  v-if="checkoutPageIsActive"
+                  class="active-img mb-2"
+                  src="@/assets/images/preview_checkout-page_active.png"
+                >
+                <img
+                  @click="toggleCheckoutPage()"
+                  v-else
+                  class="mb-2"
+                  src="@/assets/images/preview_checkout-page_inactive.png"
+                >
                 <div>{{ $t('panel.express-checkout.checkoutPage') }}</div>
               </b-col>
               <b-col>
-                <PSCheckbox id="product-page" v-model="productPageIsActive" class="mb-2"></PSCheckbox>
-                <img @click="toggleProductPage()" v-if="productPageIsActive" class="active-img mb-2" src="@/assets/images/preview_product-page_active.png">
-                <img @click="toggleProductPage()" v-else class="mb-2" src="@/assets/images/preview_product-page_inactive.png">
+                <PSCheckbox
+                  id="product-page"
+                  v-model="productPageIsActive"
+                  class="mb-2"
+                />
+                <img
+                  @click="toggleProductPage()"
+                  v-if="productPageIsActive"
+                  class="active-img mb-2"
+                  src="@/assets/images/preview_product-page_active.png"
+                >
+                <img
+                  @click="toggleProductPage()"
+                  v-else
+                  class="mb-2"
+                  src="@/assets/images/preview_product-page_inactive.png"
+                >
                 <div>{{ $t('panel.express-checkout.productPage') }}</div>
               </b-col>
             </b-form-row>
@@ -57,16 +105,21 @@
           <div class="text-muted small">
             {{ $t('panel.express-checkout.shippingCost') }}
           </div>
-
         </b-form>
-
       </b-col>
     </b-card-body>
 
     <b-card-body>
-      <b-col sm="12" md="10" lg="10" class="m-auto">
-
-        <b-alert variant="info" show>
+      <b-col
+        sm="12"
+        md="10"
+        lg="10"
+        class="m-auto"
+      >
+        <b-alert
+          variant="info"
+          show
+        >
           <h4 class="alert-heading">
             {{ $t('panel.express-checkout.alertTitle') }}
           </h4>
@@ -74,7 +127,6 @@
             {{ $t('panel.express-checkout.alertContent') }}
           </p>
         </b-alert>
-
       </b-col>
     </b-card-body>
   </b-card>
@@ -113,7 +165,7 @@
         },
       },
     },
-    methods: {
+    methods: {
       toggleOrderPage() {
         this.$store.dispatch('toggleECOrderPage', !this.orderPageIsActive);
       },

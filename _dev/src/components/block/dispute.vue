@@ -21,13 +21,24 @@
     <b-card-body class="py-2">
       <b-row>
         <b-col>
-          <b-button variant="text" size="lg">
+          <b-button
+            variant="text"
+            size="lg"
+          >
             <i class="material-icons">school</i>
             {{ $t('block.dispute.pendingDispute', { disputeCount: 0}) }}
           </b-button>
         </b-col>
-        <b-col cols="12" md="auto" class="m-auto">
-          <b-button variant="link" href="https://www.paypal.com/disputes/" target="_blank">
+        <b-col
+          cols="12"
+          md="auto"
+          class="m-auto"
+        >
+          <b-button
+            variant="link"
+            href="https://www.paypal.com/disputes/"
+            target="_blank"
+          >
             {{ $t('block.dispute.goToDispute') }} <i class="material-icons">arrow_right_alt</i>
           </b-button>
         </b-col>

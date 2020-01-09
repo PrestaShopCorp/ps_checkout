@@ -18,4 +18,5 @@
  */
 export default {
   psxOnboardingIsCompleted: (state) => state.onboardingCompleted,
+  getBusinessCategories: (state) => state.businessDetails.business_categories,
 };

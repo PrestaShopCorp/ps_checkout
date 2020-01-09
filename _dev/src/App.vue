@@ -45,7 +45,10 @@
       <RoundingBanner />
     </div>
 
-    <div class="container" v-if="paymentMode === 'SANDBOX'">
+    <div
+      class="container"
+      v-if="paymentMode === 'SANDBOX'"
+    >
       <b-alert
         variant="warning"
         show
@@ -106,12 +109,16 @@
     line-height: 1.5rem;
   }
 
-  #app .card-header .main-header #header-search-container .input-group:before, .card-header .material-icons, .card-header .ps-tree-items .tree-name button:before, .main-header #header-search-container .card-header .input-group:before, .ps-tree-items .tree-name .card-header button:before {
+  #app .card-header .main-header #header-search-container .input-group:before,
+  .card-header .material-icons, .card-header .ps-tree-items .tree-name button:before,
+  .main-header #header-search-container .card-header .input-group:before,
+  .ps-tree-items .tree-name .card-header button:before {
     color: #6c868e;
     margin-right: 5px;
   }
 
-  #app .form-group.has-danger:after, #app .form-group.has-success:after, #app .form-group.has-warning:after {
+  #app .form-group.has-danger:after, #app .form-group.has-success:after,
+  #app .form-group.has-warning:after {
     right: 10px;
   }
 

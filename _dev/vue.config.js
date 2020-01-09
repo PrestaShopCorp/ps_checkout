@@ -18,14 +18,14 @@
  */
 
 module.exports = {
-  chainWebpack: config => {
+  chainWebpack: (config) => {
     config.optimization.delete('splitChunks');
     config.plugins.delete('html');
     config.plugins.delete('preload');
     config.plugins.delete('prefetch');
   },
   css: {
-    extract: false
+    extract: false,
   },
   productionSourceMap: false,
   filenameHashing: false,

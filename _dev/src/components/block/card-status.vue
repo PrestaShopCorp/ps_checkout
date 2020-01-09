@@ -27,7 +27,10 @@
       <p v-if="displayLabels">
         {{ $t('block.payment-status.creditCardLabelPending') }}
       </p>
-      <label v-else class="text-warning">
+      <label
+        v-else
+        class="text-warning"
+      >
         <i class="material-icons">error_outline</i> {{ $t('block.payment-status.approvalPending') }}
       </label>
     </template>
@@ -35,7 +38,10 @@
       <p v-if="displayLabels">
         {{ $t('block.payment-status.creditCardLabelLive') }}
       </p>
-      <label v-else class="text-success">
+      <label
+        v-else
+        class="text-success"
+      >
         <i class="material-icons">check</i> {{ $t('block.payment-status.live') }}
       </label>
     </template>
@@ -43,7 +49,10 @@
       <p v-if="displayLabels">
         {{ $t('block.payment-status.creditCardLabelLimited') }}
       </p>
-      <label v-else class="text-warning">
+      <label
+        v-else
+        class="text-warning"
+      >
         <i class="material-icons">error_outline</i> {{ $t('block.payment-status.limited') }}
       </label>
     </template>
@@ -51,7 +60,10 @@
       <p v-if="displayLabels">
         {{ $t('block.payment-status.creditCardLabelDenied') }}
       </p>
-      <label v-else class="text-danger">
+      <label
+        v-else
+        class="text-danger"
+      >
         <i class="material-icons">error_outline</i> {{ $t('block.payment-status.denied') }}
       </label>
     </template>

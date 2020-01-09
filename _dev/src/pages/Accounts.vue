@@ -29,7 +29,8 @@
         <p class="text-muted my-1">
           {{ $t('pages.accounts.didntReceiveEmail') }}
         </p>
-        <b-button href="https://www.paypal.com/businessprofile/settings"
+        <b-button
+          href="https://www.paypal.com/businessprofile/settings"
           target="_blank"
           variant="outline-secondary"
         >
@@ -61,14 +62,17 @@
           <h2>{{ $t('pages.accounts.undergoingCheck') }}</h2>
           <p>
             {{ $t('pages.accounts.severalDays') }}
-            {{ $t('pages.accounts.youCanProcess') }} <b>{{ $t('pages.accounts.upTo') }}</b> {{ $t('pages.accounts.transactionsUntil') }}.
+            {{ $t('pages.accounts.youCanProcess') }}
+            <b>{{ $t('pages.accounts.upTo') }}</b>
+            {{ $t('pages.accounts.transactionsUntil') }}.
           </p>
           <div class="mt-3">
             <a
               href="https://www.paypal.com/policy/hub/kyc"
               target="_blank"
             >
-              {{ $t('pages.accounts.knowMoreAboutAccount') }} <i class="material-icons">arrow_right_alt</i>
+              {{ $t('pages.accounts.knowMoreAboutAccount') }}
+              <i class="material-icons">arrow_right_alt</i>
             </a>
           </div>
         </b-alert>
@@ -86,7 +90,8 @@
               href="https://www.paypal.com/mep/dashboard"
               target="_blank"
             >
-              {{ $t('pages.accounts.accountDeclinedLink') }} <i class="material-icons">arrow_right_alt</i>
+              {{ $t('pages.accounts.accountDeclinedLink') }}
+              <i class="material-icons">arrow_right_alt</i>
             </a>
           </div>
         </b-alert>

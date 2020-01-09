@@ -19,10 +19,14 @@
 <template>
   <div>
     <template v-if="paypalIsActive">
-      <b-badge variant="success">{{ $t('panel.active-payment.available') }}</b-badge>
+      <b-badge variant="success">
+        {{ $t('panel.active-payment.available') }}
+      </b-badge>
     </template>
     <template v-else>
-      <b-badge variant="danger">{{ $t('panel.active-payment.notAvailable') }}</b-badge>
+      <b-badge variant="danger">
+        {{ $t('panel.active-payment.notAvailable') }}
+      </b-badge>
     </template>
   </div>
 </template>
