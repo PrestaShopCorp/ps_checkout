@@ -265,4 +265,15 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             Tools::getValue('status') ? 1 : 0
         );
     }
+
+    /**
+     * AJAX: Toggle logs for debug
+     */
+    public function ajaxProcessToggleDebugLogs()
+    {
+        Configuration::updateValue(
+            'PS_CHECKOUT_DEBUG_LOGS_ENABLED',
+            Tools::getValue('status') ? 1 : 0
+        );
+    }
 }

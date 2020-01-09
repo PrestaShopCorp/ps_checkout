@@ -120,7 +120,6 @@ class Ps_checkout extends PaymentModule
             'AdminAjaxPrestashopCheckout',
             'AdminPaypalOnboardingPrestashopCheckout',
         ];
-        $this->logger = CheckoutLogger::create();
     }
 
     /**
@@ -899,6 +898,12 @@ class Ps_checkout extends PaymentModule
      */
     public function getLogger()
     {
+        if (null !== $this->logger) {
+            return $this->logger;
+        }
+
+        $this->logger = CheckoutLogger::create();
+
         return $this->logger;
     }
 }

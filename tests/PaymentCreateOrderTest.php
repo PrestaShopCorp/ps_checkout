@@ -71,6 +71,14 @@ class Logger
     }
 }
 
+class Configuration
+{
+    public static function get($key)
+    {
+        return $key;
+    }
+}
+
 class PaymentCreateOrderTest extends TestCase
 {
     public function testCreateOrderDefaultScenario()

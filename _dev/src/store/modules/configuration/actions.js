@@ -110,4 +110,17 @@ export default {
       return Promise.resolve(payload);
     });
   },
+
+  toggleDebugLogs({commit, getters}, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'ToggleDebugLogs',
+      data: {
+        status: payload ? 1 : 0,
+      },
+    }).then(() => {
+      commit(types.UPDATE_DEBUG_LOGS, payload);
+      return Promise.resolve(payload);
+    });
+  },
 };

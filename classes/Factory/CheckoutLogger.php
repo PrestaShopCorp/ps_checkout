@@ -25,12 +25,16 @@ use Monolog\Logger;
 
 class CheckoutLogger
 {
-    const MAX_FILES = 30;
+    const MAX_FILES = 15;
 
     public static function create()
     {
+        $path = version_compare(_PS_VERSION_, '1.7.4', '>=')
+            ? _PS_ROOT_DIR_ . '/var/logs/ps_checkout'
+            : _PS_ROOT_DIR_ . '/app/logs/ps_checkout'
+        ;
         $rotatingFileHandler = new RotatingFileHandler(
-            _PS_ROOT_DIR_ . '/var/logs/ps_checkout',
+            $path,
             static::MAX_FILES
         );
         $logger = new Logger('ps_checkout');
