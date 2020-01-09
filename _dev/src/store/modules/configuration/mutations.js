@@ -40,4 +40,7 @@ export default {
   [types.UPDATE_EC_PRODUCT_PAGE](state, payload) {
     state.expressCheckout.productPage = payload;
   },
+  [types.UPDATE_DEBUG_LOGS](state, payload) {
+    state.debugLogsEnabled = payload;
+  },
 };

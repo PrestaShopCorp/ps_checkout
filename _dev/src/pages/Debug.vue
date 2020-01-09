@@ -29,13 +29,26 @@
           <li>Shop ID: <b>{{ shopId }}</b></li>
           <li>Rounding config: <b>{{ roundingSettingsIsCorrect }}</b></li>
         </ul>
+        <PSSwitch id="hostedFieldsAvailability" v-model="debugLogsEnabled">
+          <template v-if="debugLogsEnabled">
+            Logs enabled
+          </template>
+          <template v-else>
+            Logs disabled
+          </template>
+        </PSSwitch>
       </b-card-body>
     </b-card>
   </b-container>
 </template>
 
 <script>
+  import PSSwitch from '@/components/form/switch';
+
   export default {
+    components: {
+      PSSwitch,
+    },
     name: 'Debug',
     computed: {
       moduleVersion() {
@@ -49,6 +62,14 @@
       },
       roundingSettingsIsCorrect() {
         return this.$store.getters.roundingSettingsIsCorrect;
+      },
+      debugLogsEnabled: {
+        get() {
+          return this.$store.state.configuration.debugLogsEnabled;
+        },
+        set(payload) {
+          this.$store.dispatch('toggleDebugLogs', payload);
+        },
       },
     },
   };

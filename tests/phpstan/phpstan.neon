@@ -4,6 +4,8 @@ parameters:
 		- classes
 		- controllers
 		- ps_checkout.php
+	dynamicConstantNames:
+		- _PS_VERSION_
 	reportUnmatchedIgnoredErrors: false
 	ignoreErrors:
 		- '#Cannot assign offset "merchant…" to string|true.#'
