@@ -248,15 +248,10 @@ class Translations
             ],
             'block' => [
                 'reassurance' => [
-                    'title' => $this->module->l('PrestaShop Checkout, all-in-one module for your payment options', 'translations'),
-                    'firstTip1' => $this->module->l('All payment methods', 'translations'),
-                    'firstTip2' => $this->module->l('accept cards, PayPal and much more.', 'translations'),
-                    'secondTip1' => $this->module->l('Benefit from all', 'translations'),
-                    'secondTip2' => $this->module->l('PayPal expertise and advantages', 'translations'),
-                    'secondTip3' => $this->module->l('(fraud prevention, secure technology, dispute resolution, …)', 'translations'),
-                    'thirdTip1' => $this->module->l('Offer the most relevant', 'translations'),
-                    'thirdTip2' => $this->module->l('Local Payment Methods', 'translations'),
-                    'thirdTip3' => $this->module->l('to customers across the globe.', 'translations'),
+                    'title' => $this->module->l('One module, all payments methods.', 'translations'),
+                    'label1' => $this->module->l('Offer the widest range of payment methods: cards, PayPal, etc.', 'translations'),
+                    'label2' => $this->module->l('Benefit from all PayPal expertise and advantages', 'translations'),
+                    'label3' => $this->module->l('Give access to relevant local payment methods for customers around the globe', 'translations'),
                     'learnMore' => $this->module->l('Learn more', 'translations'),
                 ],
                 'fraud-tool' => [
