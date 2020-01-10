@@ -49,7 +49,10 @@
                 :key="index"
                 class="d-flex"
               >
-                <div class="payment-method text-muted d-flex flex-grow-1">
+                <div
+                  class="payment-method text-muted d-flex flex-grow-1"
+                  :class="{'disable' : !cardIsEnabled && element.name === 'card'}"
+                >
                   <div class="position">
                     {{ index + 1 }}
                   </div>
@@ -93,6 +96,7 @@
 
                         <PSSwitch
                           id="hostedFieldsAvailability"
+                          text-position="left"
                           v-model="cardIsEnabled"
                         >
                           <template v-if="cardIsEnabled">
@@ -256,6 +260,12 @@
     background-color: #fff;
     border: 1px solid #dddddd;
     border-radius: 3px;
+  }
+  .payment-method.disable {
+    background-color: #FAFBFC;
+  }
+  .payment-method.disable .material-icons {
+    color: #759299 !important;
   }
   .position {
     position: absolute;
