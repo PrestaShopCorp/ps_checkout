@@ -859,38 +859,45 @@ class Ps_checkout extends PaymentModule
     }
 
     /**
-     * Add Checkout for all activated countries of the shop.
+     * Associate with all countries allowed in geolocation management
      *
      * @return bool
      */
     public function addCheckoutPaymentForAllActivatedCountries()
     {
         $db = \Db::getInstance();
-        $activeCountries = \Configuration::get('PS_ALLOWED_COUNTRIES');
-        $explodedCountries = explode(';', $activeCountries);
-        /** @var array $alreadySelectedCountries */
-        $alreadySelectedCountries = $db->executeS('SELECT id_country FROM ' . _DB_PREFIX_ . 'module_country WHERE id_module = "' . $this->id . '";');
-        $flattenedArray = [];
-        $toInsertCountryIDS = [];
-
-        foreach ($alreadySelectedCountries as $value) {
-            $flattenedArray[] = $value['id_country'];
+        // Get active shop ids
+        $shopsList = Shop::getShops(true, null, true);
+        // Get countries
+        /** @var array $countries */
+        $countries = $db->executeS('SELECT `id_country`, `iso_code` FROM `' . _DB_PREFIX_ . 'country`');
+        $countryIdByIso = [];
+        foreach ($countries as $country) {
+            $countryIdByIso[$country['iso_code']] = $country['id_country'];
         }
+        $dataToInsert = [];
 
-        foreach ($explodedCountries as $isoCodeCountry) {
-            /** @var array $idCountry */
-            $idCountry = $db->executeS('SELECT id_country FROM ps_country WHERE iso_code = "' . $isoCodeCountry . '";');
-
-            if (!in_array($idCountry[0]['id_country'], $flattenedArray)) {
-                $toInsertCountryIDS[] = [
-                    'id_country' => $idCountry[0]['id_country'],
-                    'id_shop' => $this->context->shop->id,
-                    'id_module' => $this->id,
-                ];
+        foreach ($shopsList as $idShop) {
+            // Get countries allowed in geolocation management for this shop
+            $activeCountries = \Configuration::get('PS_ALLOWED_COUNTRIES', null, null, (int) $idShop);
+            $explodedCountries = explode(';', $activeCountries);
+            // Get countries already associated with module and shop
+            /** @var array $alreadySelectedCountries */
+            $alreadySelectedCountries = $db->executeS('SELECT `id_country` FROM `' . _DB_PREFIX_ . 'module_country` WHERE `id_module` = ' . (int) $this->id . ' AND `id_shop` = ' . (int) $idShop);
+            $alreadySelectedCountriesIds = array_column($alreadySelectedCountries, 'id_country');
+            foreach ($explodedCountries as $isoCodeCountry) {
+                // Check if country is not already associated
+                if (isset($countryIdByIso[$isoCodeCountry]) && !in_array($countryIdByIso[$isoCodeCountry], $alreadySelectedCountriesIds)) {
+                    $dataToInsert[] = [
+                        'id_country' => (int) $countryIdByIso[$isoCodeCountry],
+                        'id_shop' => (int) $idShop,
+                        'id_module' => (int) $this->id,
+                    ];
+                }
             }
         }
 
-        return $db->insert('module_country', $toInsertCountryIDS);
+        return $db->insert('module_country', $dataToInsert);
     }
 
     /**
