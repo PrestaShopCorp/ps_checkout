@@ -33,6 +33,11 @@ document.addEventListener('DOMContentLoaded', function () {
     addToCartButton[0].parentNode.insertBefore(document.getElementById('pscheckout-express-checkout'), addToCartButton[0].nextSibling);
   }
 
+  if (displayMode === 'checkout' && !isPs176) {
+    const personalInformationTop = document.querySelector('#checkout-personal-information-step .content')
+    personalInformationTop.insertBefore(document.getElementById('pscheckout-express-checkout'), personalInformationTop.firstChild);
+  }
+
   // wait paypal sdk to be fully loaded
   const interval = setInterval(function () {
     if (window.paypalSdkPsCheckoutEC !== undefined) {
