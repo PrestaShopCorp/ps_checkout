@@ -9,7 +9,7 @@ jobs:
   include:
     - stage: "JS"
       language: node_js
-      node_js: 10
+      node_js: 13
       install:
         - yarn --cwd _dev/ install
       script:
