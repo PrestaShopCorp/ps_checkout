@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+    node:
+      image: node:13.1
+      volumes:
+        - ./:/var/www/html/
+      working_dir: /var/www/html/
+      environment:
+        PATH: /var/www/html/_dev/node_modules/.bin/:$PATH
