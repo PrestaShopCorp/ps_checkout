@@ -62,6 +62,7 @@ class ExpressCheckout
 
         $this->context->smarty->assign([
             'displayMode' => $this->displayMode,
+            'isPs176' => version_compare(_PS_VERSION_, '1.7.6.0', '>='),
             'merchantId' => $paypalAccountRepository->getMerchantId(),
             'paypalClientId' => (new PaypalEnv())->getPaypalClientId(),
             'jsExpressCheckoutPath' => \Tools::getShopDomain(true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/views/js/initExpressCheckout.js',

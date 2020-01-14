@@ -57,6 +57,7 @@ class Ps_checkout extends PaymentModule
         'DisplayFooterProduct',
         'displayPersonalInformationTop',
         'actionBeforeCartUpdateQty',
+        'header',
     ];
 
     public $configurationList = [
@@ -214,8 +215,39 @@ class Ps_checkout extends PaymentModule
 
     /**
      * Express checkout on the first step of the checkout
+     * Used before 1.7.6 - hook DisplayPersonalInformationTop not available
+     */
+    public function hookHeader()
+    {
+        if (version_compare(_PS_VERSION_, '1.7.6.0', '>=')) {
+            return false;
+        }
+
+        $currentPage = $this->context->controller->php_self;
+
+        if ($currentPage != 'order') {
+            return false;
+        }
+
+        return $this->displayECOnCheckout();
+    }
+
+    /**
+     * Express checkout on the first step of the checkout
      */
     public function hookDisplayPersonalInformationTop()
+    {
+        if (!version_compare(_PS_VERSION_, '1.7.6.0', '>=')) {
+            return false;
+        }
+
+        return $this->displayECOnCheckout();
+    }
+
+    /**
+     * Render express checkout for checkout page
+     */
+    private function displayECOnCheckout()
     {
         if (!(bool) Configuration::get('PS_CHECKOUT_EC_CHECKOUT_PAGE')) {
             return false;

@@ -59,6 +59,7 @@ function upgrade_module_1_2_10($module)
         'DisplayFooterProduct',
         'displayPersonalInformationTop',
         'actionBeforeCartUpdateQty',
+        'header',
     ];
 
     $module->registerHook($hooks);
