@@ -229,23 +229,7 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
-        if (!(bool) Configuration::get('PS_CHECKOUT_EC_CHECKOUT_PAGE')) {
-            return false;
-        }
-
-        // Check if we are already in an express checkout
-        if (isset($this->context->cookie->paypalOrderId)) {
-            return false;
-        }
-
-        if (true === $this->isPaymentStep()) {
-            return false;
-        }
-
-        $expressCheckout = new ExpressCheckout($this, $this->context);
-        $expressCheckout->setDisplayMode(ExpressCheckout::CHECKOUT_MODE);
-
-        return $expressCheckout->render();
+        return $this->displayECOnCheckout();
     }
 
     /**
@@ -257,6 +241,14 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
+        return $this->displayECOnCheckout();
+    }
+
+    /**
+     * Render express checkout for checkout page
+     */
+    private function displayECOnCheckout()
+    {
         if (!(bool) Configuration::get('PS_CHECKOUT_EC_CHECKOUT_PAGE')) {
             return false;
         }
