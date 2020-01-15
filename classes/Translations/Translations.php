@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Translations;
 
+use PrestaShop\Module\PrestashopCheckout\ShopContext;
+
 class Translations
 {
     /**
@@ -42,7 +44,7 @@ class Translations
      */
     public function getTranslations()
     {
-        $locale = \Context::getContext()->language->locale;
+        $locale = \Context::getContext()->language->iso_code;
         $linkTranslations = new LinksTranslations($locale);
 
         $translations[$locale] = [

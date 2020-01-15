@@ -18,7 +18,7 @@
  */
 export default {
   adminController: (state) => state.prestashopCheckoutAjax,
-  locale: (state) => state.language.locale,
+  locale: (state) => state.language.iso_code,
   translations: (state) => state.translations,
   roundingSettingsIsCorrect: (state) => state.roundingSettingsIsCorrect,
   merchantIsFullyOnboarded: (state, getters) => getters.paypalOnboardingIsCompleted

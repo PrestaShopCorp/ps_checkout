@@ -26,24 +26,22 @@
       <p class="mb-3">
         {{ $t('block.rounding-banner.content') }}
       </p>
-      <PSButton
-        ghost
-        @click="updateRoundingSettings()"
-      >
-        {{ $t('block.rounding-banner.button') }}
-      </PSButton>
+      <p>
+        <b-button
+          target="_blank"
+          variant="outline-secondary"
+          @click="updateRoundingSettings()"
+        >
+          {{ $t('block.rounding-banner.button') }}
+        </b-button>
+      </p>
     </b-alert>
   </div>
 </template>
 
 <script>
-  import PSButton from '@/components/form/button';
-
   export default {
     name: 'RoundingBanner',
-    components: {
-      PSButton,
-    },
     methods: {
       updateRoundingSettings() {
         this.$store.dispatch('updateRoundingSettings');
