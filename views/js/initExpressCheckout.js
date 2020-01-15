@@ -109,8 +109,15 @@ async function createPaypalOrder() {
     form.append('action', 'CreatePaypalOrder');
 
     if (displayMode === 'product') {
-      const productDetails = document.getElementById('product-details').dataset.product;
-      form.append('product', productDetails);
+      const productDetails = JSON.parse(document.getElementById('product-details').dataset.product);
+      const product = {
+        'id_product': productDetails.id_product,
+        'id_product_attribute': productDetails.id_product_attribute,
+        'id_customization': productDetails.id_customization,
+        'quantity_wanted': productDetails.quantity_wanted,
+      }
+
+      form.append('product', JSON.stringify(product));
     }
 
     fetch(controllerLink, {
