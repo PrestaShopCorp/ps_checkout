@@ -31,41 +31,16 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Translations\OrderStatesTranslations;
 
 /**
- * Present the order for the reporting
+ * Present the pending orders for the reporting
  */
-class OrderPresenter implements PresenterInterface
+class OrderPendingPresenter implements PresenterInterface
 {
-    public function present()
-    {
-        $orders = $this->getOrders();
-        $link = new \Link();
-        $context = \Context::getContext();
-
-        $orderStates = [];
-        $orderTranslations = new OrderStatesTranslations();
-        $orderTranslations = $orderTranslations->getTranslations($context->language->iso_code);
-        foreach (OrderStates::ORDER_STATES as $key => $value) {
-            $idState = \Configuration::get($key);
-            $orderStates[$idState]['color'] = $value;
-            $orderStates[$idState]['name'] = $orderTranslations[$key];
-        }
-
-        foreach ($orders as &$order) {
-            $order['username'] = $this->getUsername($order['id_customer']);
-            $order['userProfileLink'] = \Tools::getShopDomainSsl(true) . $link->getAdminLink('AdminCustomers', $order['id_customer']);
-            $order['state'] = $orderStates[$order['current_state']];
-            $order['total_paid'] = \Tools::displayPrice($order['total_paid']);
-        }
-
-        return $orders;
-    }
-
     /**
-     * presentPendingOrders
+     * present pending orders
      *
      * @return array
      */
-    public function presentPendingOrders()
+    public function present()
     {
         $link = new \Link();
         $context = \Context::getContext();
@@ -100,6 +75,13 @@ class OrderPresenter implements PresenterInterface
         return $orders;
     }
 
+    /**
+     * getUsername
+     *
+     * @param string|int $userID
+     *
+     * @return string
+     */
     private function getUsername($userID)
     {
         $sql = 'SELECT firstname,lastname FROM `' . _DB_PREFIX_ . 'customer` o WHERE id_customer = ' . $userID;
@@ -109,25 +91,7 @@ class OrderPresenter implements PresenterInterface
     }
 
     /**
-     * get last 500 checkout orders
-     *
-     * @return mixed
-     */
-    private function getOrders()
-    {
-        $sql = 'SELECT id_order, current_state, total_paid, date_add, id_customer
-            FROM `' . _DB_PREFIX_ . 'orders` o
-            WHERE o.module = "ps_checkout"
-            ORDER BY date_add
-            LIMIT 500
-        ';
-        $result = \Db::getInstance()->executeS($sql);
-
-        return $result;
-    }
-
-    /**
-     * get last 500 checkout orders
+     * get last 500 pending checkout orders
      *
      * @param array $idStates
      *
@@ -140,9 +104,9 @@ class OrderPresenter implements PresenterInterface
             WHERE o.module = "ps_checkout"
             AND current_state IN (' . implode(',', array_keys($idStates)) . ')
             ORDER BY date_add
+            LIMIT 500
         ';
-        $result = \Db::getInstance()->executeS($sql);
 
-        return $result;
+        return \Db::getInstance()->executeS($sql);
     }
 }

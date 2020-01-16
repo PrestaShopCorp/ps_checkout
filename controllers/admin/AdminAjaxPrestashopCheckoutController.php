@@ -17,17 +17,19 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
-use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
-use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPresenter;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
+use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {
@@ -236,7 +238,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         $this->ajaxDie(
             json_encode([
-                'orders' => (new OrderPresenter())->presentPendingOrders(),
+                'orders' => (new OrderPendingPresenter())->present(),
+                'transactions' => (new TransactionPresenter())->present(),
                 'countAllCheckoutOrders' => $countAllCheckoutOrders,
             ])
         );

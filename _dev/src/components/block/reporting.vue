@@ -26,15 +26,16 @@
           <a href="">{{ $t('block.reporting.subtitleLinkLabel') }}</a>
         </p>
 
+        <!-- Orders table -->
         <b-table
           show-empty
           hover
           :items="orders"
-          :fields="fields"
-          :filter="filter"
-          :current-page="currentPage"
-          :per-page="perPage"
-          @filtered="onFiltered"
+          :fields="orderFields"
+          :filter="orderFilter"
+          :current-page="orderCurrentPage"
+          :per-page="orderPerPage"
+          @filtered="onOrderFiltered"
         >
           <template v-slot:cell(user)="data">
             <a :href="`${data.item.userProfileLink}`">
@@ -54,13 +55,32 @@
         </b-table>
 
         <b-pagination
-          v-model="currentPage"
-          :total-rows="totalRows"
-          :per-page="perPage"
+          v-model="orderCurrentPage"
+          :total-rows="orderTotalRows"
+          :per-page="orderPerPage"
           align="fill"
           size="sm"
           class="my-0"
         ></b-pagination>
+
+        <!-- Transactions table -->
+        <b-table
+          show-empty
+          hover
+          :items="transactions"
+          :fields="transactionFields"
+          :filter="transactionFilter"
+          :current-page="transactionCurrentPage"
+          :per-page="transactionPerPage"
+          @filtered="onTransactionFiltered"
+        >
+          <template v-slot:cell(user)="data">
+            <a :href="`${data.item.userProfileLink}`">
+              {{ data.item.username }}
+            </a>
+          </template>
+        </b-table>
+
       </div>
     </b-card-body>
   </b-card>
@@ -72,9 +92,13 @@
   export default {
     name: 'Reporting',
     methods: {
-      onFiltered(filteredItems) {
-        this.totalRows = filteredItems.length;
-        this.currentPage = 1;
+      onOrderFiltered(filteredItems) {
+        this.orderTotalRows = filteredItems.length;
+        this.orderCurrentPage = 1;
+      },
+      onTransactionFiltered(filteredItems) {
+        this.transactionTotalRows = filteredItems.length;
+        this.transactionCurrentPage = 1;
       },
       getReportingDatas() {
         ajax({
@@ -82,7 +106,9 @@
           action: 'GetReportingDatas',
         }).then((response) => {
           this.orders = response.orders;
-          this.totalRows = this.orders.length;
+          this.transactions = response.transactions;
+          this.orderTotalRows = this.orders.length;
+          this.transactionTotalRows = this.transactions.length;
         });
       },
       setBadgeColor(color) {
@@ -93,10 +119,7 @@
     },
     data() {
       return {
-        filter: null,
-        filterOn: [],
-        orders: [],
-        fields: [
+        orderFields: [
           {key: 'date_add', label: 'Date', sortable: true},
           {key: 'id_order', label: 'Order ID', sortable: true},
           {key: 'user', label: 'Customer', sortable: true},
@@ -106,10 +129,30 @@
           {key: 'total_paid', label: 'Total', sortable: true},
           {key: 'actions', label: 'Actions'},
         ],
-        totalRows: 1,
-        currentPage: 1,
-        perPage: 20,
-        pageOptions: [5, 10, 15],
+        orderFilter: null,
+        orderFilterOn: [],
+        orders: [],
+        orderTotalRows: 1,
+        orderCurrentPage: 1,
+        orderPerPage: 20,
+        orderPageOptions: [5, 10, 15],
+        transactionFields: [
+          {key: 'date_add', label: 'Date', sortable: true},
+          {key: 'order_reference', label: 'Order Reference', sortable: true},
+          {key: 'username', label: 'Customer', sortable: true},
+          {key: 'type', label: 'State', sortable: true},
+          {key: 'before_commission', label: 'Before Commission', sortable: true},
+          {key: 'commission', label: 'Commission', sortable: true},
+          {key: 'total_paid', label: 'Total', sortable: true},
+          {key: 'actions', label: 'Actions'},
+        ],
+        transactionFilter: null,
+        transactionFilterOn: [],
+        transactions: [],
+        transactionTotalRows: 1,
+        transactionCurrentPage: 1,
+        transactionPerPage: 20,
+        transactionPageOptions: [5, 10, 15],
       };
     },
     created() {

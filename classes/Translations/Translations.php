@@ -290,8 +290,8 @@ class Translations
                     'button' => $this->module->l('Make my roudings settings fully compatible!', 'translations'),
                 ],
                 'reporting' => [
-                    'title' => $this->module->l('All transactions', 'translations'),
-                    'subtitle' => $this->module->l('See bellow all the transactions processed with Prestashop Checkout', 'translations'),
+                    'title' => $this->module->l('Pending orders', 'translations'),
+                    'subtitle' => $this->module->l('See bellow all the pending orders processed with Prestashop Checkout', 'translations'),
                     'subtitleLinkLabel' => $this->module->l('See the full list of transactions on your PayPal account', 'translations'),
                     'gotopaypal' => $this->module->l('Go To Paypal', 'translations'),
                 ],
