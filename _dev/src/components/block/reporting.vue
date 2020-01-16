@@ -47,21 +47,15 @@
               {{ data.item.state.name }}
             </b-badge>
           </template>
-          <template v-slot:cell(actions)="row">
+          <template v-slot:cell(before_commission)="data">
+            {{ data.item.amount }}
+          </template>
+          <template v-slot:cell(actions)="">
             <a href="https://www.paypal.com/listing/transactions" target="_blank">
               {{ $t('block.reporting.gotopaypal') }}
             </a>
           </template>
         </b-table>
-
-        <b-pagination
-          v-model="orderCurrentPage"
-          :total-rows="orderTotalRows"
-          :per-page="orderPerPage"
-          align="fill"
-          size="sm"
-          class="my-0"
-        ></b-pagination>
 
         <!-- Transactions table -->
         <b-table
@@ -79,7 +73,21 @@
               {{ data.item.username }}
             </a>
           </template>
+          <template v-slot:cell(type)="data">
+            <b-badge class="label color_field " :style="setTransactionBadgeColor(data.item.type)">
+              {{ data.item.type }}
+            </b-badge>
+          </template>
         </b-table>
+
+        <b-pagination
+          v-model="transactionCurrentPage"
+          :total-rows="transactionTotalRows"
+          :per-page="transactionPerPage"
+          align="fill"
+          size="sm"
+          class="my-0"
+        ></b-pagination>
 
       </div>
     </b-card-body>
@@ -116,6 +124,17 @@
           'background-color': color,
         };
       },
+      setTransactionBadgeColor(type) {
+        let color = '#00B887';
+
+        if (type === 'Refund') {
+          color = '#34219E';
+        }
+
+        return {
+          'background-color': color,
+        };
+      },
     },
     data() {
       return {
@@ -140,7 +159,7 @@
           {key: 'date_add', label: 'Date', sortable: true},
           {key: 'order_reference', label: 'Order Reference', sortable: true},
           {key: 'username', label: 'Customer', sortable: true},
-          {key: 'type', label: 'State', sortable: true},
+          {key: 'type', label: 'Type', sortable: true},
           {key: 'before_commission', label: 'Before Commission', sortable: true},
           {key: 'commission', label: 'Commission', sortable: true},
           {key: 'total_paid', label: 'Total', sortable: true},

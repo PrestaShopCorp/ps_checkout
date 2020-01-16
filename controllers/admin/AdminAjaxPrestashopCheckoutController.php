@@ -226,21 +226,19 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessGetReportingDatas()
     {
-        $sql = 'SELECT COUNT(id_order) FROM `' . _DB_PREFIX_ . 'orders` o WHERE o.module = "ps_checkout"';
+        $sql = 'SELECT COUNT(id_order_payment) FROM `' . _DB_PREFIX_ . 'order_payment` o WHERE o.payment_method = "Prestashop Checkout"';
         /** @var array $result */
         $result = \Db::getInstance()->executeS($sql);
-
-        $countAllCheckoutOrders = 0;
-
+        $countAllCheckoutTransactions = 0;
         if (isset($result[0])) {
-            $countAllCheckoutOrders = $countAllCheckoutOrders[0]['COUNT(id_order)'];
+            $countAllCheckoutTransactions = $countAllCheckoutTransactions[0]['COUNT(id_order)'];
         }
 
         $this->ajaxDie(
             json_encode([
                 'orders' => (new OrderPendingPresenter())->present(),
                 'transactions' => (new TransactionPresenter())->present(),
-                'countAllCheckoutOrders' => $countAllCheckoutOrders,
+                'countAllCheckoutTransactions' => $countAllCheckoutTransactions,
             ])
         );
     }

@@ -46,6 +46,12 @@ class TransactionPresenter implements PresenterInterface
             $userInfos = $this->getUserInfos($transaction['order_reference']);
             $transaction['username'] = $userInfos['name'];
             $transaction['userProfileLink'] = $userInfos['link'];
+            $currency = new \Currency($transaction['id_currency']);
+            $transaction['before_commission'] = \Tools::displayPrice($transaction['amount'], $currency);
+            $transaction['type'] = strpos($transaction['amount'], '-') !== false ? 'Payment' : 'Refund';
+            $transaction['commission'] = '-';
+            $transaction['total_paid'] = '-';
+
         }
 
         return $transactions;
