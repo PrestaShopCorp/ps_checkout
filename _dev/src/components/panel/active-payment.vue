@@ -89,10 +89,13 @@
                         > {{ $t('panel.active-payment.paypal') }}</label>
                       </div>
                       <div
-                        class="status"
+                        class="status d-flex"
                         v-if="element.name === 'card'"
                       >
-                        <CardStatus v-if="cardIsAvailable === false" />
+                        <CardStatus
+                          class="mr-2"
+                          v-if="cardIsAvailable === false"
+                        />
 
                         <PSSwitch
                           id="hostedFieldsAvailability"
