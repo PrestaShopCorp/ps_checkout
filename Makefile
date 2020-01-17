@@ -12,3 +12,7 @@ build-front:
 # target: watch-front                   - Watcher for the vueJS files
 watch-front:
 	docker-compose run --rm node sh -c "yarn --cwd _dev/ dev"
+
+# target: test-front                   - Launch the front test suite
+test-front:
+	docker-compose run --rm node sh -c "yarn --cwd _dev/ lint"
