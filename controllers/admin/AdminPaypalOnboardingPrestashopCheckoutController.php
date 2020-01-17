@@ -35,7 +35,6 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
         }
 
         $paypalAccount = new PaypalAccount($idMerchant);
-        dump($paypalAccount);
         (new PaypalAccountUpdater($paypalAccount))->update();
 
         Tools::redirect(
