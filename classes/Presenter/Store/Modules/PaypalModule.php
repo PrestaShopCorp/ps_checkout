@@ -35,17 +35,18 @@ class PaypalModule implements PresenterInterface
      */
     public function present()
     {
-        $idMerchant = (new PaypalAccountRepository())->getMerchantId();
+        $paypalAccount = (new PaypalAccountRepository())->getOnboardedAccount();
 
         $paypalModule = [
             'paypal' => [
-                'idMerchant' => $idMerchant,
+                'idMerchant' => $paypalAccount->getMerchantId(),
                 'paypalOnboardingLink' => '',
-                'onboardingCompleted' => !empty($idMerchant),
-                'emailMerchant' => \Configuration::get('PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT'),
-                'emailIsValid' => \Configuration::get('PS_CHECKOUT_PAYPAL_EMAIL_STATUS'),
-                'cardIsActive' => \Configuration::get('PS_CHECKOUT_CARD_PAYMENT_STATUS'),
-                'paypalIsActive' => \Configuration::get('PS_CHECKOUT_PAYPAL_PAYMENT_STATUS'),
+                'onboardingCompleted' => !empty($paypalAccount->getMerchantId()),
+                'accountIslinked' => !empty($paypalAccount->getEmail()) && !empty($paypalAccount->getMerchantId()),
+                'emailMerchant' => $paypalAccount->getEmail(),
+                'emailIsValid' => $paypalAccount->getEmailIsVerified(),
+                'cardIsActive' => $paypalAccount->getCardPaymentStatus(),
+                'paypalIsActive' => $paypalAccount->getPaypalPaymentStatus(),
             ],
         ];
 

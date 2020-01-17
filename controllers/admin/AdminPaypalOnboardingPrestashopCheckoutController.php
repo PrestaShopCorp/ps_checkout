@@ -35,11 +35,8 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
         }
 
         $paypalAccount = new PaypalAccount($idMerchant);
-        $paypalAccount = (new PaypalAccountUpdater($paypalAccount))->update();
-
-        if (false === $paypalAccount) {
-            throw new PrestaShopException('A problem occured when updating the paypal account');
-        }
+        dump($paypalAccount);
+        (new PaypalAccountUpdater($paypalAccount))->update();
 
         Tools::redirect(
             $this->context->link->getAdminLink(

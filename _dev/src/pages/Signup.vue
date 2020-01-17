@@ -143,7 +143,7 @@
       </b-card>
     </b-container>
 
-    <b-container>
+    <b-container class="mt-4">
       <Reassurance />
     </b-container>
   </div>

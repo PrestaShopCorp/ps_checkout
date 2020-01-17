@@ -18,7 +18,12 @@
  *-->
 <template>
   <div>
-    <template v-if="emailValidationNeeded">
+    <template v-if="!accountIslinked">
+      <b-badge variant="info">
+        {{ $t('pages.accounts.accountLinkingInProgress') }}
+      </b-badge>
+    </template>
+    <template v-else-if="emailValidationNeeded">
       <b-badge variant="warning">
         {{ $t('pages.accounts.emailValidationNeeded') }}
       </b-badge>
@@ -40,6 +45,9 @@
   export default {
     name: 'AccountStatusPayPal',
     computed: {
+      accountIslinked() {
+        return this.$store.state.paypal.accountIslinked;
+      },
       emailValidationNeeded() {
         return !this.$store.state.paypal.emailIsValid;
       },

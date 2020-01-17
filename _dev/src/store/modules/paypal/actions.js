@@ -43,4 +43,13 @@ export default {
       return Promise.resolve();
     });
   },
+  updatePaypalStatus({commit, getters}) {
+    return ajax({
+      url: getters.adminController,
+      action: 'UpdatePaypalAccountStatus',
+    }).then((paypalModule) => {
+      commit(types.UPDATE_PAYPAL_ACCOUNT_STATUS, paypalModule);
+      return Promise.resolve();
+    });
+  },
 };
