@@ -112,11 +112,17 @@
       <AccountList />
     </b-container>
 
-    <b-container v-if="firebaseStatusAccount !== false && paypalStatusAccount !== false">
+    <b-container
+      class="mt-4"
+      v-if="firebaseStatusAccount !== false && paypalStatusAccount !== false"
+    >
       <PaymentAcceptance />
     </b-container>
 
-    <b-container class="mt-4" v-else>
+    <b-container
+      class="mt-4"
+      v-else
+    >
       <Reassurance />
     </b-container>
   </div>
