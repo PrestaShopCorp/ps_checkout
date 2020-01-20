@@ -1,6 +1,7 @@
 <?php
+
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_565c23511bb8643ac5552fbd5e4ba358'] = 'Eén module, alle betaalmethoden.';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_83c6cac8e2ac2ca242a4c1b7e3062bf8'] = 'Zorg voor een ruim aanbod van betaalmogelijkheden: kaarten, PayPal enz.';
@@ -195,7 +196,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_33b0504f0b776f2c13381c543bf2017c
 $_MODULE['<{ps_checkout}prestashop>translations_c12fb9a7b1d63237624c3a069891e7f4'] = 'Personalisering van de aankoopervaring, transactielijst, geschillenbeslechting... en nog veel meer!';
 $_MODULE['<{ps_checkout}prestashop>translations_c7b5d73ffc406b56966f030ac1b1da10'] = 'Naar het platform voor geschillenbeslechting gaan';
 $_MODULE['<{ps_checkout}prestashop>translations_955ad3298db330b5ee880c2c9e6f23a0'] = 'Live';
-$_MODULE['<{ps_checkout}prestashop>translations_baac076f6be8697a69d8dbb5cce5b2e8'] = 'Beperkt tot $ 500';
+$_MODULE['<{ps_checkout}prestashop>translations_baac076f6be8697a69d8dbb5cce5b2e8'] = 'Beperkt tot $ 500';
 $_MODULE['<{ps_checkout}prestashop>translations_0010d7e47c9ef468ccad1dde3b4536c5'] = 'Accepteer betalingen via PayPal-knoppen op uw Checkout-pagina.';
 $_MODULE['<{ps_checkout}prestashop>translations_1d8881f50fe101293c99242fbaab59fe'] = 'Uw account moet geverifieerd zijn voordat u PayPal-betalingen kunt aanvaarden. Raadpleeg uw inbox om te zien of u een bevestigingsmail hebt ontvangen.';
 $_MODULE['<{ps_checkout}prestashop>translations_a6192b5f0d39b96622f52bceba16da10'] = 'U kunt betaalkaarttransacties met een beperkt bedrag verwerken.';

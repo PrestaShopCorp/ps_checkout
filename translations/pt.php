@@ -1,6 +1,7 @@
 <?php
+
 global $_MODULE;
-$_MODULE = array();
+$_MODULE = [];
 
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_565c23511bb8643ac5552fbd5e4ba358'] = 'Um módulo, todas as formas de pagamento';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_83c6cac8e2ac2ca242a4c1b7e3062bf8'] = 'Ofereça a mais ampla variedade de formas de pagamento: cartões, PayPal, entre outros.';
