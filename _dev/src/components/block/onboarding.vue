@@ -93,9 +93,17 @@
       const signupScript = document.getElementById('signup-js');
       const bizScript = document.getElementById('biz-js');
 
-      paypalScript.parentNode.removeChild(paypalScript);
-      signupScript.parentNode.removeChild(signupScript);
-      bizScript.parentNode.removeChild(bizScript);
+      if (paypalScript !== null) {
+        paypalScript.parentNode.removeChild(paypalScript);
+      }
+
+      if (signupScript !== null) {
+        signupScript.parentNode.removeChild(signupScript);
+      }
+
+      if (bizScript !== null) {
+        bizScript.parentNode.removeChild(bizScript);
+      }
     },
     created() {
       const paypalScript = document.createElement('script');
