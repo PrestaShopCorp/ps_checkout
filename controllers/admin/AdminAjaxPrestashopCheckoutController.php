@@ -200,7 +200,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     /**
      * AJAX: Update paypal account status
      */
-    public function ajaxProcessUpdatePaypalAccountStatus()
+    public function ajaxProcessRefreshPaypalAccountStatus()
     {
         $this->ajaxDie(
             json_encode((new PaypalModule())->present())

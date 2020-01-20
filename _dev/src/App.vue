@@ -80,7 +80,7 @@
     methods: {
       updater() {
         this.paypalStatusUpdater = setInterval(() => {
-          this.$store.dispatch('updatePaypalStatus');
+          this.$store.dispatch('refreshPaypalStatus');
         }, 5000);
       },
     },
