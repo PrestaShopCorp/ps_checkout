@@ -59,7 +59,9 @@ class Translations
             ],
             'pages' => [
                 'accounts' => [
+                    'approved' => $this->module->l('Approved', 'translations'),
                     'approvalPending' => $this->module->l('Approval pending', 'translations'),
+                    'emailValidationNeeded' => $this->module->l('Email validation needed', 'translations'),
                     'waitingEmail' => $this->module->l('A confirmation email has been sent. Check your inbox and click on the link to activate your account.', 'translations'),
                     'didntReceiveEmail' => $this->module->l('No confirmation email?', 'translations'),
                     'sendEmailAgain' => $this->module->l('Send it again', 'translations'),
@@ -182,15 +184,22 @@ class Translations
                 ],
                 'active-payment' => [
                     'activePaymentMethods' => $this->module->l('Activate payment methods', 'translations'),
-                    'paymentMethods' => $this->module->l('Payment methods', 'translations'),
-                    'changeOrder' => $this->module->l('Change order', 'translations'),
+                    'changeOrder' => $this->module->l('Change payment methods order', 'translations'),
                     'enabled' => $this->module->l('Enabled', 'translations'),
                     'disabled' => $this->module->l('Disabled', 'translations'),
+                    'available' => $this->module->l('Available', 'translations'),
+                    'notAvailable' => $this->module->l('Not available', 'translations'),
+                    'restricted' => $this->module->l('Restricted', 'translations'),
                     'creditCard' => $this->module->l('Credit card', 'translations'),
                     'paypal' => $this->module->l('PayPal', 'translations'),
                     'localPaymentMethods' => $this->module->l('Local payment methods', 'translations'),
+                    'tipsTitle' => $this->module->l('TIPS', 'translations'),
+                    'tipsContent' => $this->module->l('Boost your conversion rate by displaying PayPal as the first choice in the list of payment methods', 'translations'),
                 ],
                 'payment-acceptance' => [
+                    'paymentMethod' => $this->module->l('Payment method'),
+                    'availability' => $this->module->l('Availability'),
+                    'activationStatus' => $this->module->l('Activation status'),
                     'paymentAcceptanceTitle' => $this->module->l('Payment methods acceptance', 'translations'),
                     'creditCardsLabel' => $this->module->l('Credit and Debit Cards', 'translations'),
                     'tips' => $this->module->l('Tips', 'translations'),
@@ -211,7 +220,19 @@ class Translations
                     'useProductionMode' => $this->module->l('Use production mode', 'translations'),
                     'tipProductionMode' => $this->module->l('Production mode enables you to collect your payments.', 'translations'),
                 ],
+                'express-checkout' => [
+                    'title' => $this->module->l('Define PayPal express checkout flow', 'translations'),
+                    'pageLocation' => $this->module->l('Choose page location', 'translations'),
+                    'orderPage' => $this->module->l('Order summary page', 'translations'),
+                    'checkoutPage' => $this->module->l('Checkout method page', 'translations'),
+                    'productPage' => $this->module->l('Product page', 'translations'),
+                    'recommended' => $this->module->l('Recommended', 'translations'),
+                    'shippingCost' => $this->module->l('Shipping costs, if any, will be estimated in basket total. Delivery method selected by default will be the one set in first position on Carriers page.', 'translations'),
+                    'alertTitle' => $this->module->l('TIPS', 'translations'),
+                    'alertContent' => $this->module->l('Express checkout shortcut enables to merge account creation and payment into a single step, which reduces UX frictions.', 'translations'),
+                ],
                 'help' => [
+                    'faq' => $this->module->l('FAQ', 'translations'),
                     'title' => $this->module->l('Help for PrestaShop Checkout', 'translations'),
                     'allowsYou' => $this->module->l('This module allows you to:', 'translations'),
                     'tip1' => $this->module->l('Connect your PrestaShop Checkout account and link your PayPal Account or create one if needed', 'translations'),
@@ -227,15 +248,10 @@ class Translations
             ],
             'block' => [
                 'reassurance' => [
-                    'title' => $this->module->l('PrestaShop Checkout, all-in-one module for your payment options', 'translations'),
-                    'firstTip1' => $this->module->l('All payment methods', 'translations'),
-                    'firstTip2' => $this->module->l('accept cards, PayPal and much more.', 'translations'),
-                    'secondTip1' => $this->module->l('Benefit from all', 'translations'),
-                    'secondTip2' => $this->module->l('PayPal expertise and advantages', 'translations'),
-                    'secondTip3' => $this->module->l('(fraud prevention, secure technology, dispute resolution, …)', 'translations'),
-                    'thirdTip1' => $this->module->l('Offer the most relevant', 'translations'),
-                    'thirdTip2' => $this->module->l('Local Payment Methods', 'translations'),
-                    'thirdTip3' => $this->module->l('to customers across the globe.', 'translations'),
+                    'title' => $this->module->l('One module, all payments methods.', 'translations'),
+                    'label1' => $this->module->l('Offer the widest range of payment methods: cards, PayPal, etc.', 'translations'),
+                    'label2' => $this->module->l('Benefit from all PayPal expertise and advantages', 'translations'),
+                    'label3' => $this->module->l('Give access to relevant local payment methods for customers around the globe', 'translations'),
                     'learnMore' => $this->module->l('Learn more', 'translations'),
                 ],
                 'fraud-tool' => [
@@ -249,7 +265,7 @@ class Translations
                     'text' => $this->module->l('Checkout customization, transactions list, dispute management ... and more to come!', 'translations'),
                 ],
                 'dispute' => [
-                    'pendingDispute' => $this->module->l('pending dispute(s)', 'translations'),
+                    'pendingDispute' => '{disputeCount}' . ' ' . $this->module->l('pending dispute(s)', 'translations'),
                     'goToDispute' => $this->module->l('Go to the dispute management platform', 'translations'),
                 ],
                 'payment-status' => [

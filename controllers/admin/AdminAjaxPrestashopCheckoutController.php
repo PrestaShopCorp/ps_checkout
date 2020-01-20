@@ -221,4 +221,59 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         return (new PersistentConfiguration())->savePsAccount($psAccount);
     }
+
+    /**
+     * AJAX: Toggle card hosted fields availability
+     */
+    public function ajaxProcessToggleCardPaymentAvailability()
+    {
+        Configuration::updateValue(
+            'PS_CHECKOUT_CARD_PAYMENT_ENABLED',
+            Tools::getValue('status') ? 1 : 0
+        );
+    }
+
+    /**
+     * AJAX: Toggle express checkout on order page
+     */
+    public function ajaxProcessToggleECOrderPage()
+    {
+        Configuration::updateValue(
+            'PS_CHECKOUT_EC_ORDER_PAGE',
+            Tools::getValue('status') ? 1 : 0
+        );
+    }
+
+    /**
+     * AJAX: Toggle express checkout on checkout page
+     */
+    public function ajaxProcessToggleECCheckoutPage()
+    {
+        Configuration::updateValue(
+            'PS_CHECKOUT_EC_CHECKOUT_PAGE',
+            Tools::getValue('status') ? 1 : 0
+        );
+    }
+
+    /**
+     * AJAX: Toggle express checkout on product page
+     */
+    public function ajaxProcessToggleECProductPage()
+    {
+        Configuration::updateValue(
+            'PS_CHECKOUT_EC_PRODUCT_PAGE',
+            Tools::getValue('status') ? 1 : 0
+        );
+    }
+
+    /**
+     * AJAX: Toggle logs for debug
+     */
+    public function ajaxProcessToggleDebugLogs()
+    {
+        Configuration::updateValue(
+            'PS_CHECKOUT_DEBUG_LOGS_ENABLED',
+            Tools::getValue('status') ? 1 : 0
+        );
+    }
 }

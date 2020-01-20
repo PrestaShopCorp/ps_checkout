@@ -5,17 +5,13 @@
 .env.test
 
 ### Vuejs ignore build files ###
-/views/js/index.js
-/views/js/index.js.map
-/views/js/chunk-vendors.js
-/views/js/chunk-vendors.js.map
-/views/css/index.css
-/views/css/chunk-vendors.css
+/views/js/app.js
 /views/img/almost-ready.png
 /views/img/paypal-logo.png
 /views/img/brush.png
 /views/img/ps-services-account.png
 /views/img/paypal-logo-thumbnail.png
+/views/img/pscheckout.png
 
 ### VueJs ignore dev conf ###
 /views/templates/admin/configuration.tpl

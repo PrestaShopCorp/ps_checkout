@@ -78,7 +78,21 @@ class GenericClient
 
         $responseHandler = new ResponseApiHandler();
 
-        return $responseHandler->handleResponse($response);
+        $response = $responseHandler->handleResponse($response);
+
+        // If response is not successful only
+        if (\Configuration::get('PS_CHECKOUT_DEBUG_LOGS_ENABLED') && !$response['status']) {
+            /**
+             * @var \Ps_checkout
+             */
+            $module = \Module::getInstanceByName('ps_checkout');
+            $logger = $module->getLogger();
+            $logger->debug('route ' . $this->getRoute());
+            $logger->debug('options ' . var_export($options, true));
+            $logger->debug('response ' . var_export($response, true));
+        }
+
+        return $response;
     }
 
     /**

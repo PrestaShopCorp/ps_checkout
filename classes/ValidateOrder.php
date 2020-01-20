@@ -94,7 +94,7 @@ class ValidateOrder
             $payload['cartId'],
             $this->getPendingStatusId($payload['paymentMethod']),
             $payload['amount'],
-            $this->getPaymentMessageTranslation($payload['paymentMethod']),
+            $this->getPaymentMessageTranslation($payload['paymentMethod'], $module),
             null,
             $payload['extraVars'],
             $payload['currencyId'],
@@ -127,15 +127,16 @@ class ValidateOrder
      * Get payment message
      *
      * @param string $paymentMethod can be 'paypal' or 'card'
+     * @param \PaymentModule $module
      *
      * @return string translation
      */
-    private function getPaymentMessageTranslation($paymentMethod)
+    private function getPaymentMessageTranslation($paymentMethod, $module)
     {
-        $paymentMessage = 'Payment by card';
+        $paymentMessage = $module->l('Payment by card');
 
         if ($paymentMethod === self::PAYMENT_METHOD_PAYPAL) {
-            $paymentMessage = 'Payment by PayPal';
+            $paymentMessage = $module->l('Payment by PayPal');
         }
 
         return $paymentMessage;

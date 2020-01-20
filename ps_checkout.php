@@ -22,6 +22,8 @@ use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Database\TableManager;
 use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
+use PrestaShop\Module\PrestashopCheckout\ExpressCheckout;
+use PrestaShop\Module\PrestashopCheckout\Factory\CheckoutLogger;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
@@ -51,6 +53,11 @@ class Ps_checkout extends PaymentModule
         'displayAdminAfterHeader',
         'ActionAdminControllerSetMedia',
         'actionOrderStatusUpdate',
+        'displayExpressCheckout',
+        'DisplayFooterProduct',
+        'displayPersonalInformationTop',
+        'actionBeforeCartUpdateQty',
+        'header',
     ];
 
     public $configurationList = [
@@ -62,6 +69,10 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_PAYPAL_EMAIL_STATUS' => '',
         'PS_CHECKOUT_PAYPAL_PAYMENT_STATUS' => '',
         'PS_CHECKOUT_CARD_PAYMENT_STATUS' => '',
+        'PS_CHECKOUT_CARD_PAYMENT_ENABLED' => true,
+        'PS_CHECKOUT_EC_ORDER_PAGE' => false,
+        'PS_CHECKOUT_EC_CHECKOUT_PAGE' => false,
+        'PS_CHECKOUT_EC_PRODUCT_PAGE' => false,
         'PS_PSX_FIREBASE_EMAIL' => '',
         'PS_PSX_FIREBASE_ID_TOKEN' => '',
         'PS_PSX_FIREBASE_LOCAL_ID' => '',
@@ -77,7 +88,12 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '1.2.9';
+    const VERSION = '1.2.10';
+
+    /**
+     * @var \Monolog\Logger
+     */
+    private $logger;
 
     public function __construct()
     {
@@ -86,13 +102,13 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '1.2.9';
+        $this->version = '1.2.10';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
 
         $this->module_key = '82bc76354cfef947e06f1cc78f5efe2e';
 
-        $this->bootstrap = true;
+        $this->bootstrap = false;
 
         parent::__construct();
 
@@ -128,6 +144,7 @@ class Ps_checkout extends PaymentModule
             (new TableManager())->createTable() &&
             $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1) &&
             $this->addCheckboxCarrierRestrictionsForModule() &&
+            $this->addCheckoutPaymentForAllActivatedCountries() &&
             $this->installTabs();
     }
 
@@ -196,6 +213,91 @@ class Ps_checkout extends PaymentModule
         return $uninstallTabCompleted;
     }
 
+    /**
+     * Express checkout on the first step of the checkout
+     * Used before 1.7.6 - hook DisplayPersonalInformationTop not available
+     */
+    public function hookHeader()
+    {
+        if (version_compare(_PS_VERSION_, '1.7.6.0', '>=')) {
+            return false;
+        }
+
+        $currentPage = $this->context->controller->php_self;
+
+        if ($currentPage != 'order') {
+            return false;
+        }
+
+        return $this->displayECOnCheckout();
+    }
+
+    /**
+     * Express checkout on the first step of the checkout
+     */
+    public function hookDisplayPersonalInformationTop()
+    {
+        if (!version_compare(_PS_VERSION_, '1.7.6.0', '>=')) {
+            return false;
+        }
+
+        return $this->displayECOnCheckout();
+    }
+
+    /**
+     * Render express checkout for checkout page
+     */
+    private function displayECOnCheckout()
+    {
+        if (!(bool) Configuration::get('PS_CHECKOUT_EC_CHECKOUT_PAGE')) {
+            return false;
+        }
+
+        // Check if we are already in an express checkout
+        if (isset($this->context->cookie->paypalOrderId)) {
+            return false;
+        }
+
+        if (true === $this->isPaymentStep()) {
+            return false;
+        }
+
+        $expressCheckout = new ExpressCheckout($this, $this->context);
+        $expressCheckout->setDisplayMode(ExpressCheckout::CHECKOUT_MODE);
+
+        return $expressCheckout->render();
+    }
+
+    /**
+     * Express checkout on the cart page
+     */
+    public function hookDisplayExpressCheckout()
+    {
+        if (!(bool) Configuration::get('PS_CHECKOUT_EC_ORDER_PAGE')) {
+            return false;
+        }
+
+        $expressCheckout = new ExpressCheckout($this, $this->context);
+        $expressCheckout->setDisplayMode(ExpressCheckout::CART_MODE);
+
+        return $expressCheckout->render();
+    }
+
+    /**
+     * Express checkout on the product page
+     */
+    public function hookDisplayFooterProduct($params)
+    {
+        if (!(bool) Configuration::get('PS_CHECKOUT_EC_PRODUCT_PAGE')) {
+            return false;
+        }
+
+        $expressCheckout = new ExpressCheckout($this, $this->context);
+        $expressCheckout->setDisplayMode(ExpressCheckout::PRODUCT_MODE);
+
+        return $expressCheckout->render();
+    }
+
     public function getContent()
     {
         $paypalAccount = new PaypalAccountRepository();
@@ -208,13 +310,23 @@ class Ps_checkout extends PaymentModule
             (new PaypalAccountUpdater($paypalAccount))->update();
         }
 
+        $this->context->smarty->assign([
+            'pathApp' => $this->_path . 'views/js/app.js',
+        ]);
+
         Media::addJsDef([
             'store' => json_encode((new StorePresenter($this, $this->context))->present()),
         ]);
 
-        $this->context->controller->addCss($this->_path . 'views/css/index.css');
-
         return $this->display(__FILE__, '/views/templates/admin/configuration.tpl');
+    }
+
+    public function hookActionBeforeCartUpdateQty()
+    {
+        if (isset($this->context->cookie->paypalOrderId)) {
+            $this->context->cookie->__unset('paypalOrderId');
+            $this->context->cookie->__unset('paypalEmail');
+        }
     }
 
     /**
@@ -240,6 +352,13 @@ class Ps_checkout extends PaymentModule
 
         if (false === $this->isPaymentStep()) {
             return false;
+        }
+
+        // Check if we are in an express checkout mode
+        if (isset($this->context->cookie->paypalOrderId)) {
+            $payment_options[] = $this->getExpressCheckoutPaymentOption();
+            // if yes, return only one payment option (express checkout)
+            return $payment_options;
         }
 
         // Present an improved cart in order to create the payload
@@ -279,37 +398,48 @@ class Ps_checkout extends PaymentModule
             'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT')),
             'currencyIsoCode' => $this->context->currency->iso_code,
             'isCardPaymentError' => (bool) Tools::getValue('hferror'),
+            'modulePath' => $this->getPathUri(),
+            'paypalPaymentOption' => $this->name . '_paypal',
+            'hostedFieldsErrors' => (new HostedFieldsErrors($this))->getHostedFieldsErrors(),
+            'jsPathInitPaypalSdk' => $this->_path . 'views/js/initPaypalAndCard.js',
         ]);
 
-        $paymentMethods = \Configuration::get('PS_CHECKOUT_PAYMENT_METHODS_ORDER');
+        $paymentMethods = $this->getPaymentMethods();
 
         $payment_options = [];
 
-        // if no paymentMethods position is set, by default put credit card (hostedFields) as first position
-        if (empty($paymentMethods)) {
-            if (true === $paypalAccountRepository->cardPaymentMethodIsValid()) {
-                array_push($payment_options, $this->getHostedFieldsPaymentOption());
-            }
-            if (true === $paypalAccountRepository->paypalPaymentMethodIsValid()) {
-                array_push($payment_options, $this->getPaypalPaymentOption());
-            }
-        } else {
-            $paymentMethods = json_decode($paymentMethods, true);
-
-            foreach ($paymentMethods as $position => $paymentMethod) {
-                if ($paymentMethod['name'] === 'card') {
-                    if (true === $paypalAccountRepository->cardPaymentMethodIsValid()) {
-                        array_push($payment_options, $this->getHostedFieldsPaymentOption());
-                    }
-                } else {
-                    if (true === $paypalAccountRepository->paypalPaymentMethodIsValid()) {
-                        array_push($payment_options, $this->getPaypalPaymentOption());
-                    }
-                }
+        foreach ($paymentMethods as $position => $paymentMethod) {
+            if ($paymentMethod['name'] === 'card'
+                && true === $paypalAccountRepository->cardPaymentMethodIsAvailable()
+            ) {
+                $payment_options[] = $this->getHostedFieldsPaymentOption();
+            } elseif ($paymentMethod['name'] === 'paypal'
+                && true === $paypalAccountRepository->paypalPaymentMethodIsValid()) {
+                $payment_options[] = $this->getPaypalPaymentOption();
             }
         }
 
         return $payment_options;
+    }
+
+    /**
+     * Get payment methods order
+     *
+     * @return array
+     */
+    public function getPaymentMethods()
+    {
+        $paymentMethods = \Configuration::get('PS_CHECKOUT_PAYMENT_METHODS_ORDER');
+
+        // if no paymentMethods position is set, by default put credit card (hostedFields) as first position
+        if (empty($paymentMethods)) {
+            return [
+                ['name' => 'card'],
+                ['name' => 'paypal'],
+            ];
+        }
+
+        return json_decode($paymentMethods, true);
     }
 
     /**
@@ -477,7 +607,10 @@ class Ps_checkout extends PaymentModule
 
         if (isset($refundResponse['error'])) {
             if (isset($refundResponse['messages']) && is_array($refundResponse['messages'])) {
-                $this->context->controller->errors = array_merge($this->context->controller->errors, $refundResponse['messages']);
+                $this->context->controller->errors = array_merge(
+                    $this->context->controller->errors,
+                    $refundResponse['messages']
+                );
             } else {
                 $this->context->controller->errors[] = $refundResponse['message'];
             }
@@ -512,7 +645,7 @@ class Ps_checkout extends PaymentModule
      */
     public function generatePaypalForm()
     {
-        return $this->context->smarty->fetch('module:ps_checkout/views/templates/front/paypal.tpl');
+        return $this->context->smarty->fetch('module:ps_checkout/views/templates/front/paymentOptions/paypal.tpl');
     }
 
     /**
@@ -539,7 +672,46 @@ class Ps_checkout extends PaymentModule
      */
     public function generateHostedFieldsForm()
     {
-        return $this->context->smarty->fetch('module:ps_checkout/views/templates/front/hosted-fields.tpl');
+        return $this->context->smarty->fetch(
+            'module:ps_checkout/views/templates/front/paymentOptions/hosted-fields.tpl'
+        );
+    }
+
+    /**
+     * Generate express checkout payment option
+     *
+     * @return object PaymentOption
+     */
+    public function getExpressCheckoutPaymentOption()
+    {
+        $expressCheckoutPaymentOption = new PaymentOption();
+        $expressCheckoutPaymentOption->setModuleName($this->name . '_expressCheckout')
+                    ->setCallToActionText($this->l('Pay by Paypal using express checkout'))
+                    ->setAction($this->context->link->getModuleLink(
+                        $this->name,
+                        'ValidateOrder',
+                        [
+                            'orderId' => $this->context->cookie->__get('paypalOrderId'),
+                            'paymentMethod' => 'paypal',
+                            'isExpressCheckout' => true,
+                        ],
+                        true
+                    ))
+                    ->setAdditionalInformation($this->generateExpressCheckoutForm());
+
+        return $expressCheckoutPaymentOption;
+    }
+
+    public function generateExpressCheckoutForm()
+    {
+        $this->context->smarty->assign([
+            'paypalEmail' => $this->context->cookie->__get('paypalEmail'),
+            'jsHideOtherPaymentOptions' => $this->_path . 'views/js/hideOtherPaymentOptions.js',
+        ]);
+
+        return $this->context->smarty->fetch(
+            'module:ps_checkout/views/templates/front/paymentOptions/expressCheckout.tpl'
+        );
     }
 
     /**
@@ -654,7 +826,7 @@ class Ps_checkout extends PaymentModule
      *
      * @return bool
      */
-    private function merchantIsValid()
+    public function merchantIsValid()
     {
         return (new PaypalAccountRepository())->onbardingIsCompleted()
             && (new PaypalAccountRepository())->paypalEmailIsValid()
@@ -676,19 +848,9 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
-        Media::addJsDef([
-            'paypalPaymentOption' => $this->name . '_paypal',
-            'hostedFieldsErrors' => (new HostedFieldsErrors($this))->getHostedFieldsErrors(),
-        ]);
-
-        $this->context->controller->registerJavascript(
-            'ps-checkout-paypal-api',
-            'modules/' . $this->name . '/views/js/api-paypal.js'
-        );
-
         $this->context->controller->registerStylesheet(
             'ps-checkout-css-paymentOptions',
-            'modules/' . $this->name . '/views/css/paymentOptions.css'
+            'modules/' . $this->name . '/views/css/payments.css'
         );
     }
 
@@ -726,5 +888,61 @@ class Ps_checkout extends PaymentModule
         }
 
         return true;
+    }
+
+    /**
+     * Associate with all countries allowed in geolocation management
+     *
+     * @return bool
+     */
+    public function addCheckoutPaymentForAllActivatedCountries()
+    {
+        $db = \Db::getInstance();
+        // Get active shop ids
+        $shopsList = Shop::getShops(true, null, true);
+        // Get countries
+        /** @var array $countries */
+        $countries = $db->executeS('SELECT `id_country`, `iso_code` FROM `' . _DB_PREFIX_ . 'country`');
+        $countryIdByIso = [];
+        foreach ($countries as $country) {
+            $countryIdByIso[$country['iso_code']] = $country['id_country'];
+        }
+        $dataToInsert = [];
+
+        foreach ($shopsList as $idShop) {
+            // Get countries allowed in geolocation management for this shop
+            $activeCountries = \Configuration::get('PS_ALLOWED_COUNTRIES', null, null, (int) $idShop);
+            $explodedCountries = explode(';', $activeCountries);
+            // Get countries already associated with module and shop
+            /** @var array $alreadySelectedCountries */
+            $alreadySelectedCountries = $db->executeS('SELECT `id_country` FROM `' . _DB_PREFIX_ . 'module_country` WHERE `id_module` = ' . (int) $this->id . ' AND `id_shop` = ' . (int) $idShop);
+            $alreadySelectedCountriesIds = array_column($alreadySelectedCountries, 'id_country');
+            foreach ($explodedCountries as $isoCodeCountry) {
+                // Check if country is not already associated
+                if (isset($countryIdByIso[$isoCodeCountry]) && !in_array($countryIdByIso[$isoCodeCountry], $alreadySelectedCountriesIds)) {
+                    $dataToInsert[] = [
+                        'id_country' => (int) $countryIdByIso[$isoCodeCountry],
+                        'id_shop' => (int) $idShop,
+                        'id_module' => (int) $this->id,
+                    ];
+                }
+            }
+        }
+
+        return $db->insert('module_country', $dataToInsert);
+    }
+
+    /**
+     * @return \Monolog\Logger
+     */
+    public function getLogger()
+    {
+        if (null !== $this->logger) {
+            return $this->logger;
+        }
+
+        $this->logger = CheckoutLogger::create();
+
+        return $this->logger;
     }
 }

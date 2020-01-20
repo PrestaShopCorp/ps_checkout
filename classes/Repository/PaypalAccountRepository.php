@@ -84,6 +84,27 @@ class PaypalAccountRepository
     }
 
     /**
+     * Merchant can disable hosted fields in module configuration
+     *
+     * @return bool
+     */
+    public function cardPaymentMethodIsEnabled()
+    {
+        return (bool) \Configuration::get(PaypalAccount::PS_CHECKOUT_CARD_PAYMENT_ENABLED);
+    }
+
+    /**
+     * Get if hosted fields are enabled by Paypal and merchant
+     *
+     * @return bool
+     */
+    public function cardPaymentMethodIsAvailable()
+    {
+        return $this->cardPaymentMethodIsEnabled()
+            && $this->cardPaymentMethodIsValid();
+    }
+
+    /**
      * Get if the payment method by paypal is enabled for the current merchant
      *
      * @return bool
