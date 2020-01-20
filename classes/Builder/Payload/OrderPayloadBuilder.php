@@ -174,7 +174,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             ],
             'address' => [
                 'address_line_1' => $this->cart['addresses']['shipping']->address1,
-                'address_line_2' => $this->cart['addresses']['shipping']->address2,
+                'address_line_2' => (string) $this->cart['addresses']['shipping']->address2,
                 'admin_area_1' => (string) $this->getStateNameById($this->cart['addresses']['shipping']->id_state),
                 'admin_area_2' => $this->cart['addresses']['shipping']->city,
                 'country_code' => $countryCodeMatrice->getPaypalIsoCode($shippingCountryIsoCode),
@@ -201,7 +201,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             'email_address' => $this->cart['customer']->email,
             'address' => [
                 'address_line_1' => $this->cart['addresses']['invoice']->address1,
-                'address_line_2' => $this->cart['addresses']['invoice']->address2,
+                'address_line_2' => (string) $this->cart['addresses']['invoice']->address2,
                 'admin_area_1' => (string) $this->getStateNameById($this->cart['addresses']['invoice']->id_state), //The highest level sub-division in a country, which is usually a province, state, or ISO-3166-2 subdivision.
                 'admin_area_2' => $this->cart['addresses']['invoice']->city, // A city, town, or village. Smaller than admin_area_level_1
                 'country_code' => $countryCodeMatrice->getPaypalIsoCode($payerCountryIsoCode),
