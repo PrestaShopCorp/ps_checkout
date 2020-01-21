@@ -68,6 +68,11 @@ class CartPresenter implements PresenterInterface
         $cartPresenter = new PsCartPresenter();
         $cartPresenter = $cartPresenter->present($this->getCart());
 
+        if (!isset($cartPresenter['totals']['total_including_tax']['amount'])) {
+            // Handle native CartPresenter before 1.7.2
+            $cartPresenter['totals']['total_including_tax']['amount'] = $this->getCart()->getOrderTotal(true);
+        }
+
         $shippingAddress = \Address::initialize($cartPresenter['id_address_delivery']);
         $invoiceAddress = \Address::initialize($cartPresenter['id_address_invoice']);
 
