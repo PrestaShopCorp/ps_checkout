@@ -17,6 +17,8 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
+const modulePath = __dirname.split('/');
+
 module.exports = {
   chainWebpack: (config) => {
     config.optimization.delete('splitChunks');
@@ -31,7 +33,5 @@ module.exports = {
   filenameHashing: false,
   outputDir: '../views/',
   assetsDir: '',
-  publicPath: process.env.NODE_ENV === 'production'
-    ? '../modules/ps_checkout/views/'
-    : './',
+  publicPath: modulePath[modulePath.length - 2],
 };
