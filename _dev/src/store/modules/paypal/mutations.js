@@ -27,4 +27,7 @@ export default {
   [types.UPDATE_ONBOARDING_LINK](state, onboardingLink) {
     state.paypalOnboardingLink = onboardingLink;
   },
+  [types.UPDATE_PAYPAL_ACCOUNT_STATUS](state, paypalAccount) {
+    Object.assign(state, paypalAccount.paypal);
+  },
 };

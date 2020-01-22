@@ -22,6 +22,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
@@ -194,6 +195,16 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         }
 
         $this->ajaxDie(json_encode(false));
+    }
+
+    /**
+     * AJAX: Update paypal account status
+     */
+    public function ajaxProcessRefreshPaypalAccountStatus()
+    {
+        $this->ajaxDie(
+            json_encode((new PaypalModule())->present())
+        );
     }
 
     /**

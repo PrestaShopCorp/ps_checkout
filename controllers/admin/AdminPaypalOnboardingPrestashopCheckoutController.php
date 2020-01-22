@@ -18,6 +18,7 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
+use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
 
 class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminController
@@ -35,11 +36,9 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
         }
 
         $paypalAccount = new PaypalAccount($idMerchant);
-        $paypalAccount = (new PaypalAccountUpdater($paypalAccount))->update();
+        (new PersistentConfiguration())->savePaypalAccount($paypalAccount);
 
-        if (false === $paypalAccount) {
-            throw new PrestaShopException('A problem occured when updating the paypal account');
-        }
+        (new PaypalAccountUpdater($paypalAccount))->update();
 
         Tools::redirect(
             $this->context->link->getAdminLink(

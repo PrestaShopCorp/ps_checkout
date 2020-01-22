@@ -62,7 +62,12 @@ class PaypalAccountUpdater
         $merchantIntegration = $this->getMerchantIntegration();
 
         if (false === $merchantIntegration) {
-            return false;
+            $this->account->setEmail('');
+            $this->account->setEmailIsVerified('');
+            $this->account->setPaypalPaymentStatus('');
+            $this->account->setCardPaymentStatus('');
+
+            return (new PersistentConfiguration())->savePaypalAccount($this->account);
         }
 
         $this->account->setEmail($merchantIntegration['primary_email']);

@@ -61,6 +61,9 @@ class Translations
                 'accounts' => [
                     'approved' => $this->module->l('Approved', 'translations'),
                     'approvalPending' => $this->module->l('Approval pending', 'translations'),
+                    'accountLinkingInProgress' => $this->module->l('Account Linking in progress', 'translations'),
+                    'waitingPaypalLinkingTitle' => $this->module->l('Onboarding almost done!', 'translations'),
+                    'waitingPaypalLinking' => $this->module->l('Synchronization between your store and your PayPal account is in progress. Please wait.', 'translations'),
                     'emailValidationNeeded' => $this->module->l('Email validation needed', 'translations'),
                     'waitingEmail' => $this->module->l('A confirmation email has been sent. Check your inbox and click on the link to activate your account.', 'translations'),
                     'didntReceiveEmail' => $this->module->l('No confirmation email?', 'translations'),

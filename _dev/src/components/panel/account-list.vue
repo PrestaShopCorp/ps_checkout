@@ -51,7 +51,7 @@
                   </template>
                 </p>
               </td>
-              <td>
+              <td class="text-center">
                 <AccountStatusPrestaShop v-if="firebaseStatusAccount" />
               </td>
               <td>
@@ -158,7 +158,7 @@
                   </template>
                 </p>
               </td>
-              <td>
+              <td class="text-center">
                 <AccountStatusPayPal v-if="paypalStatusAccount" />
               </td>
               <td>

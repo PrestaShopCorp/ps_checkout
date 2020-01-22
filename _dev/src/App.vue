@@ -72,6 +72,18 @@
       MenuItem,
       RoundingBanner,
     },
+    data() {
+      return {
+        paypalStatusUpdater: null,
+      };
+    },
+    methods: {
+      updater() {
+        this.paypalStatusUpdater = setInterval(() => {
+          this.$store.dispatch('refreshPaypalStatus');
+        }, 10000);
+      },
+    },
     computed: {
       onboardingPaypalIsCompleted() {
         return this.$store.state.paypal.onboardingCompleted;
@@ -82,6 +94,25 @@
       paymentMode() {
         return this.$store.state.configuration.paymentMode;
       },
+      accountIslinked() {
+        return this.$store.state.paypal.accountIslinked;
+      },
+    },
+    watch: {
+      accountIslinked(val) {
+        if (!val && this.onboardingPaypalIsCompleted) {
+          this.updater();
+        } else {
+          clearInterval(this.paypalStatusUpdater);
+        }
+      },
+    },
+    created() {
+      if (!this.onboardingPaypalIsCompleted || this.accountIslinked) {
+        return;
+      }
+
+      this.updater();
     },
   };
 </script>
