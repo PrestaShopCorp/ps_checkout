@@ -71,10 +71,6 @@ class PaypalAccount
 
     public function __construct($merchantId = null, $email = null, $emailIsVerified = null, $paypalPaymentStatus = null, $cardPaymentStatus = null)
     {
-        if (empty($merchantId)) {
-            throw new \PrestaShopException('merchantId cannot be empty');
-        }
-
         $this->setMerchantId($merchantId);
         $this->setEmail($email);
         $this->setEmailIsVerified($emailIsVerified);
