@@ -62,6 +62,7 @@ before_deploy:
   - rm -f deploy.sh
   - rm -f .editorconfig
   - rm -rf .git
+  - rm -rf .github
   - rm -rf _dev
   - rm -rf tests
   - rm -rf docker-compose.yml
