@@ -33,5 +33,5 @@ module.exports = {
   filenameHashing: false,
   outputDir: '../views/',
   assetsDir: '',
-  publicPath: modulePath[modulePath.length - 2],
+  publicPath: '../modules/' + modulePath[modulePath.length - 2] + '/views/',
 };
