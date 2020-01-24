@@ -24,6 +24,13 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
+namespace PrestaShop\Module\PrestashopCheckout\Handler;
+
+use PrestaShop\Module\PrestashopCheckout\ShopContext;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
+use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
+
 class CreatePaypalOrderHandler
 {
     /**
@@ -35,38 +42,60 @@ class CreatePaypalOrderHandler
 
     public function __construct(\Context $context)
     {
-        $this->setContext($context);
+        if (null === $context) {
+            $context = \Context::getContext();
+        }
+
+        $this->context = $context;
     }
 
-    public function handle(CreateEmptyCustomerCartCommand $command)
+    public function handle($expressCheckout = false, $updateOrder = false, $paypalOrderId = null)
     {
         // Present an improved cart in order to create the payload
         $cartPresenter = new CartPresenter($this->context);
         $cartPresenter = $cartPresenter->present();
 
-        // Create the payload
         $builder = new OrderPayloadBuilder($cartPresenter);
-        $builder->buildFullPayload();
+
+        // Build full payload in 1.7
+        if ((new ShopContext())->shopIs17()) {
+            // enable express checkout mode if in express checkout
+            if ($expressCheckout) {
+                $builder->setExpressCheckout(true);
+            }
+
+            // enable update mode if we build an order for update it
+            if ($updateOrder) {
+                $builder->setIsUpdate(true);
+                $builder->setPaypalOrderId($paypalOrderId);
+            }
+
+            $builder->buildFullPayload();
+        } else { // if on 1.6 always build minimal payload
+            $builder->buildMinimalPayload();
+        }
+
         $payload = $builder->presentPayload()->getJson();
 
-        // Create the paypal order
-        $paypalOrder = (new Order($this->context->link))->create($payload);
-
-        // Retry with minimal payload when full payload failed
-        if (substr((string) $paypalOrder['httpCode'], 0, 1) === '4') {
-            $builder->buildMinimalPayload();
-            $payload = $builder->presentPayload()->getJson();
+        // Create the paypal order or update it
+        if ($updateOrder) {
+            $paypalOrder = (new Order($this->context->link))->patch($payload);
+        } else {
             $paypalOrder = (new Order($this->context->link))->create($payload);
         }
-    }
 
-    /**
-     * Setter for context
-     *
-     * @param \Context $context
-     */
-    public function setContext(\Context $context)
-    {
-        $this->context = $context;
+        // Retry with minimal payload when full payload failed (only on 1.7)
+        if (substr((string) $paypalOrder['httpCode'], 0, 1) === '4' && (new ShopContext())->shopIs17()) {
+            $builder->buildMinimalPayload();
+            $payload = $builder->presentPayload()->getJson();
+
+            if ($updateOrder) {
+                $paypalOrder = (new Order($this->context->link))->patch($payload);
+            } else {
+                $paypalOrder = (new Order($this->context->link))->create($payload);
+            }
+        }
+
+        return $paypalOrder;
     }
 }

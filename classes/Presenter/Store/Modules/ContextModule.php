@@ -21,9 +21,10 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Faq\Faq;
-use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
+use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
+use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
  * Construct the context module
@@ -62,7 +63,7 @@ class ContextModule implements PresenterInterface
                 'isReady' => (new ShopContext())->isReady(),
                 'faq' => $this->getFaq(),
                 'language' => $this->context->language,
-                'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
+                'prestashopCheckoutAjax' => (new LinkAdapter($this->context->link))->getAdminLink('AdminAjaxPrestashopCheckout'),
                 'translations' => (new Translations($this->module))->getTranslations(),
                 'readmeUrl' => $this->getReadme(),
                 'cguUrl' => $this->getCgu(),

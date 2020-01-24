@@ -17,11 +17,9 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
-use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
-use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
+use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
+use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 
 class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontController
 {
@@ -194,27 +192,10 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
             $this->context->cookie->__set('id_cart', $cart->id);
         }
 
-        // Present an improved cart in order to create the payload
-        $cartPresenter = new CartPresenter($this->context);
-        $cartPresenter = $cartPresenter->present();
+        $paypalOrder = new CreatePaypalOrderHandler($this->context);
+        $paypalOrder = $paypalOrder->handle(true);
 
-        // Create the payload
-        $builder = new OrderPayloadBuilder($cartPresenter);
-        $builder->setExpressCheckout(true);
-        $builder->buildFullPayload();
-        $payload = $builder->presentPayload()->getJson();
-
-        // Create the paypal order
-        $response = (new Order($this->context->link))->create($payload);
-
-        // Retry with minimal payload when full payload failed
-        if (substr((string) $response['httpCode'], 0, 1) === '4') {
-            $builder->buildMinimalPayload();
-            $payload = $builder->presentPayload()->getJson();
-            $response = (new Order($this->context->link))->create($payload);
-        }
-
-        echo json_encode($response);
+        echo json_encode($paypalOrder);
     }
 
     private function redirectToCheckout()

@@ -26,6 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Cart;
 
+use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\PrestaShop\Adapter\Cart\CartPresenter as PsCartPresenter;
 
@@ -65,20 +66,24 @@ class CartPresenter implements PresenterInterface
     {
         $productList = $this->getCart()->getProducts();
 
-        $cartPresenter = new PsCartPresenter();
-        $cartPresenter = $cartPresenter->present($this->getCart());
+        $cart = (array) $this->getCart();
 
-        if (!isset($cartPresenter['totals']['total_including_tax']['amount'])) {
-            // Handle native CartPresenter before 1.7.2
-            $cartPresenter['totals']['total_including_tax']['amount'] = $this->getCart()->getOrderTotal(true);
+        if ((new ShopContext())->shopIs17()) {
+            $cart = new PsCartPresenter();
+            $cart = $cart->present($this->getCart());
         }
 
-        $shippingAddress = \Address::initialize($cartPresenter['id_address_delivery']);
-        $invoiceAddress = \Address::initialize($cartPresenter['id_address_invoice']);
+        if (!isset($cart['totals']['total_including_tax']['amount'])) {
+            // Handle native CartPresenter before 1.7.2
+            $cart['totals']['total_including_tax']['amount'] = $this->getCart()->getOrderTotal(true);
+        }
+
+        $shippingAddress = \Address::initialize($cart['id_address_delivery']);
+        $invoiceAddress = \Address::initialize($cart['id_address_invoice']);
 
         return [
             'cart' => array_merge(
-                $cartPresenter,
+                $cart,
                 ['id' => $this->getCart()->id],
                 ['shipping_cost' => $this->getCart()->getTotalShippingCost(null, true)]
             ),

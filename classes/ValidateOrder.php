@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
-use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 
 /**
  * Class that allow to validate an order
@@ -152,7 +151,7 @@ class ValidateOrder
      */
     private function setOrdersMatrice($orderPrestashopId, $orderPaypalId)
     {
-        $orderMatrice = new OrderMatrice();
+        $orderMatrice = new \OrderMatrice();
         $orderMatrice->id_order_prestashop = $orderPrestashopId;
         $orderMatrice->id_order_paypal = $orderPaypalId;
 

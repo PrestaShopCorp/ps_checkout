@@ -26,6 +26,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
+use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
+use PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter;
 use PrestaShop\Module\PrestashopCheckout\PsxDataMatrice\PsxDataMatrice;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
@@ -62,7 +64,8 @@ class OnboardingPayloadBuilder extends Builder
      */
     public function buildBaseNode()
     {
-        $language = \Language::getLanguage(\Context::getContext()->employee->id_lang);
+        $language = (new LanguageAdapter())->getLanguage(\Context::getContext()->employee->id_lang);
+
         $locale = $language['locale'];
 
         $node = [
@@ -159,9 +162,7 @@ class OnboardingPayloadBuilder extends Builder
      */
     private function getCallBackUrl()
     {
-        $link = new \Link();
-
-        return $link->getAdminLink('AdminPaypalOnboardingPrestashopCheckout');
+        return (new LinkAdapter())->getAdminLink('AdminPaypalOnboardingPrestashopCheckout');
     }
 
     /**

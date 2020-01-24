@@ -19,7 +19,8 @@
         },
         "classmap": [
             "ps_checkout.php",
-            "controllers/"
+            "controllers/",
+            "classes/ObjectModel/"
         ]
     },
     "require": {

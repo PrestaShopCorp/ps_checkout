@@ -163,7 +163,8 @@ class Ps_checkout extends PaymentModule
                 return false;
             }
         } else { // Install specific to prestashop 1.6
-            $install16 = $this->registerHook(self::HOOK_LIST_16);
+            $install16 = $this->registerHook(self::HOOK_LIST_16) &&
+                $this->updatePosition(\Hook::getIdByName('payment'), false, 1);
 
             if (!$install16) {
                 return false;
@@ -355,7 +356,42 @@ class Ps_checkout extends PaymentModule
     }
 
     /**
-     * Add payment option at the checkout in the front office
+     * Add payment option at the checkout in the front office (prestashop 1.7)
+     *
+     * @return void
+     */
+    public function hookPayment()
+    {
+        $cart = $this->context->cart;
+
+        if (false === $this->active) {
+            return false;
+        }
+
+        if (false === $this->merchantIsValid()) {
+            return false;
+        }
+
+        if (false === $this->checkCurrency($cart)) {
+            return false;
+        }
+
+        $paypalAccountRepository = new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository();
+
+        $this->context->smarty->assign([
+            'path' => $this->_path . 'views/img/',
+            'cardIsActive' => $paypalAccountRepository->cardPaymentMethodIsAvailable(),
+            'paypalIsActive' => $paypalAccountRepository->paypalPaymentMethodIsValid(),
+            'paymentOrder' => $this->getPaymentMethods(),
+        ]);
+
+        $this->context->controller->addCss($this->_path . 'views/css/payments16.css');
+
+        return $this->display(__FILE__, '/views/templates/hook/payment.tpl');
+    }
+
+    /**
+     * Add payment option at the checkout in the front office (prestashop 1.7)
      *
      * @param array $params return by the hook
      *
@@ -386,24 +422,8 @@ class Ps_checkout extends PaymentModule
             return $payment_options;
         }
 
-        // Present an improved cart in order to create the payload
-        $cartPresenter = new PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter($this->context);
-        $cartPresenter = $cartPresenter->present();
-
-        // Create the payload
-        $builder = new PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder($cartPresenter);
-        $builder->buildFullPayload();
-        $payload = $builder->presentPayload()->getJson();
-
-        // Create the paypal order
-        $paypalOrder = (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order($this->context->link))->create($payload);
-
-        // Retry with minimal payload when full payload failed
-        if (substr((string) $paypalOrder['httpCode'], 0, 1) === '4') {
-            $builder->buildMinimalPayload();
-            $payload = $builder->presentPayload()->getJson();
-            $paypalOrder = (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order($this->context->link))->create($payload);
-        }
+        $paypalOrder = new PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler($this->context);
+        $paypalOrder = $paypalOrder->handle();
 
         if (false === $paypalOrder['status']) {
             return false;
@@ -568,7 +588,7 @@ class Ps_checkout extends PaymentModule
             $totalRefund = $totalRefund + $amountDetail['amount'];
         }
 
-        $paypalOrderId = (new PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice())->getOrderPaypalFromPrestashop($params['order']->id);
+        $paypalOrderId = (new \OrderMatrice())->getOrderPaypalFromPrestashop($params['order']->id);
 
         if (false === $paypalOrderId) {
             $this->context->controller->errors[] = $this->l('Impossible to refund. Cannot find the PayPal Order associated to this order.');
@@ -615,7 +635,7 @@ class Ps_checkout extends PaymentModule
         /** @var \Order $order */
         $order = $order->getFirst();
 
-        $paypalOrderId = (new PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
+        $paypalOrderId = (new \OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
 
         // if the order is not an order pay with paypal stop the process
         if (false === $paypalOrderId) {
@@ -681,6 +701,10 @@ class Ps_checkout extends PaymentModule
      */
     public function generatePaypalForm()
     {
+        $this->smarty->assign([
+            'imgPath' => $this->_path . '/views/img/',
+        ]);
+
         return $this->context->smarty->fetch('module:ps_checkout/views/templates/front/paymentOptions/paypal.tpl');
     }
 
@@ -755,13 +779,21 @@ class Ps_checkout extends PaymentModule
      */
     public function hookOrderConfirmation($params)
     {
-        if ($params['order']->module !== $this->name) {
+        if ((new PrestaShop\Module\PrestashopCheckout\ShopContext())->shopIs17()) {
+            $order = $params['order'];
+        } else {
+            $order = $params['objOrder'];
+        }
+
+        if ($order->module !== $this->name) {
             return false;
         }
 
-        if ($params['order']->valid) {
+        if ($order->valid) {
             $this->context->smarty->assign([
-                'status' => 'ok', 'id_order' => $params['order']->id,
+                'status' => 'ok',
+                'id_order' => $order->id,
+                'shopIs17' => (new PrestaShop\Module\PrestashopCheckout\ShopContext())->shopIs17(),
             ]);
         } else {
             $this->context->smarty->assign('status', 'failed');
@@ -805,7 +837,7 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
-        $link = $this->context->link->getAdminLink(
+        $link = (new PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter($this->context->link))->getAdminLink(
             'AdminModules',
             true,
             [],
@@ -844,7 +876,7 @@ class Ps_checkout extends PaymentModule
      *
      * @return string
      */
-    private function getValidateOrderLink($orderId, $paymentMethod)
+    public function getValidateOrderLink($orderId, $paymentMethod)
     {
         return $this->context->link->getModuleLink(
             $this->name,
