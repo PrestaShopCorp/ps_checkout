@@ -51,7 +51,6 @@ class TransactionPresenter implements PresenterInterface
             $transaction['type'] = strpos($transaction['amount'], '-') !== false ? 'Payment' : 'Refund';
             $transaction['commission'] = '-';
             $transaction['total_paid'] = '-';
-
         }
 
         return $transactions;
@@ -85,7 +84,7 @@ class TransactionPresenter implements PresenterInterface
 
         return [
             'name' => substr($user['firstname'], 0, 1) . '. ' . $user['lastname'],
-            'link' => \Tools::getShopDomainSsl(true) . (new \Link)->getAdminLink('AdminCustomers', $userID)
+            'link' => \Tools::getShopDomainSsl(true) . (new \Link())->getAdminLink('AdminCustomers', $userID),
         ];
     }
 }

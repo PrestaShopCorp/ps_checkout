@@ -20,7 +20,9 @@
   <b-card no-body>
     <b-card-body>
       <div class="m-auto max-width">
-        <h1 class="title">{{ $t('block.reporting.title') }}</h1>
+        <h1 class="title">
+          {{ $t('block.reporting.title') }}
+        </h1>
         <p class="subtitle">
           {{ $t('block.reporting.subtitle') }}.
           <a href="">{{ $t('block.reporting.subtitleLinkLabel') }}</a>
@@ -43,7 +45,10 @@
             </a>
           </template>
           <template v-slot:cell(current_state)="data">
-            <b-badge class="label color_field " :style="setBadgeColor(data.item.state.color)">
+            <b-badge
+              class="label color_field "
+              :style="setBadgeColor(data.item.state.color)"
+            >
               {{ data.item.state.name }}
             </b-badge>
           </template>
@@ -51,7 +56,10 @@
             {{ data.item.amount }}
           </template>
           <template v-slot:cell(actions)="">
-            <a href="https://www.paypal.com/listing/transactions" target="_blank">
+            <a
+              href="https://www.paypal.com/listing/transactions"
+              target="_blank"
+            >
               {{ $t('block.reporting.gotopaypal') }}
             </a>
           </template>
@@ -74,7 +82,10 @@
             </a>
           </template>
           <template v-slot:cell(type)="data">
-            <b-badge class="label color_field " :style="setTransactionBadgeColor(data.item.type)">
+            <b-badge
+              class="label color_field "
+              :style="setTransactionBadgeColor(data.item.type)"
+            >
               {{ data.item.type }}
             </b-badge>
           </template>
@@ -87,8 +98,7 @@
           align="fill"
           size="sm"
           class="my-0"
-        ></b-pagination>
-
+        />
       </div>
     </b-card-body>
   </b-card>
