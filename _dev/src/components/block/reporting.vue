@@ -60,7 +60,7 @@
               href="https://www.paypal.com/listing/transactions"
               target="_blank"
             >
-              {{ $t('block.reporting.gotopaypal') }}
+              {{ $t('block.reporting.goToPaypal') }}
             </a>
           </template>
         </b-table>
@@ -88,6 +88,12 @@
             >
               {{ data.item.type }}
             </b-badge>
+          </template>
+
+          <template v-slot:cell(actions)="data">
+            <a :href="`https://www.paypal.com/activity/payment/${data.item.transactionID}`">
+              {{ $t('reporting.goToTransaction')}}
+            </a>
           </template>
         </b-table>
 

@@ -293,7 +293,8 @@ class Translations
                     'title' => $this->module->l('Pending orders', 'translations'),
                     'subtitle' => $this->module->l('See bellow all the pending orders processed with Prestashop Checkout', 'translations'),
                     'subtitleLinkLabel' => $this->module->l('See the full list of transactions on your PayPal account', 'translations'),
-                    'gotopaypal' => $this->module->l('Go To Paypal', 'translations'),
+                    'goToPaypal' => $this->module->l('Go To Paypal', 'translations'),
+                    'goToTransaction' => $this->module->l('Go To Paypal', 'translations'),
                 ],
             ],
         ];

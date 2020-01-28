@@ -44,6 +44,7 @@ class TransactionPresenter implements PresenterInterface
 
         foreach ($transactions as &$transaction) {
             $userInfos = $this->getUserInfos($transaction['order_reference']);
+            $transaction['transactionID'] = $transaction['transaction_id'];
             $transaction['username'] = $userInfos['name'];
             $transaction['userProfileLink'] = $userInfos['link'];
             $currency = new \Currency($transaction['id_currency']);
