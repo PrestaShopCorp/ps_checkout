@@ -33,7 +33,7 @@ class TableManager
     {
         $query = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . self::TABLE_ORDER_MATRICE . '` (
             `id_order_matrice` int(10) unsigned NOT NULL AUTO_INCREMENT,
-            `id_order_prestashop` tinyint(1) unsigned NOT NULL,
+            `id_order_prestashop` int(10) unsigned NOT NULL,
             `id_order_paypal` varchar(20) NOT NULL,
             PRIMARY KEY (`id_order_matrice`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;';
