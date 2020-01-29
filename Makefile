@@ -24,21 +24,24 @@ test-front:
 	docker-compose run --rm node sh -c "yarn --cwd _dev/ lint"
 
 build-zip:
-	cp -Ra $(PWD) $(PWD)/../buildedZIP
-	rm -rf $(PWD)/../buildedZIP/.php_cs.*
-	rm -rf $(PWD)/../buildedZIP/.travis.yml
-	rm -rf $(PWD)/../buildedZIP/cloudbuild.yaml
-	rm -rf $(PWD)/../buildedZIP/composer.*
-	rm -rf $(PWD)/../buildedZIP/.gitignore
-	rm -rf $(PWD)/../buildedZIP/deploy.sh
-	rm -rf $(PWD)/../buildedZIP/.editorconfig
-	rm -rf $(PWD)/../buildedZIP/.git
-	rm -rf $(PWD)/../buildedZIP/.github
-	rm -rf $(PWD)/../buildedZIP/_dev
-	rm -rf $(PWD)/../buildedZIP/tests
-	rm -rf $(PWD)/../buildedZIP/docker-compose.yml
-	rm -rf $(PWD)/../buildedZIP/Makefile
-	zip ps_checkout.zip $(PWD)/../buildedZIP
-	rm -rf $(PWD)/../buildedZIP
+	cp -Ra $(PWD) /tmp/ps_checkout
+	rm -rf /tmp/ps_checkout/.env.test
+	rm -rf /tmp/ps_checkout/.php_cs.*
+	rm -rf /tmp/ps_checkout/.travis.yml
+	rm -rf /tmp/ps_checkout/cloudbuild.yaml
+	rm -rf /tmp/ps_checkout/composer.*
+	rm -rf /tmp/ps_checkout/.gitignore
+	rm -rf /tmp/ps_checkout/deploy.sh
+	rm -rf /tmp/ps_checkout/.editorconfig
+	rm -rf /tmp/ps_checkout/.git
+	rm -rf /tmp/ps_checkout/.github
+	rm -rf /tmp/ps_checkout/_dev
+	rm -rf /tmp/ps_checkout/tests
+	rm -rf /tmp/ps_checkout/docker-compose.yml
+	rm -rf /tmp/ps_checkout/Makefile
+	mv -v /tmp/ps_checkout $(PWD)/ps_checkout
+	zip -r ps_checkout.zip ps_checkout
+	rm -rf $(PWD)/ps_checkout
 
-build-zip-prod: build-back-prod build-front test-front build-zip
+# target: build-zip-prod                   - Launch prod zip generation of the module (will not work on windows)
+build-zip-prod: build-back-prod test-front build-front build-zip
