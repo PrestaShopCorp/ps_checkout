@@ -58,6 +58,7 @@ class Ps_checkout extends PaymentModule
         'displayPersonalInformationTop',
         'actionBeforeCartUpdateQty',
         'header',
+        'displayInvoiceLegalFreeText',
     ];
 
     public $configurationList = [
@@ -944,5 +945,45 @@ class Ps_checkout extends PaymentModule
         $this->logger = CheckoutLogger::create();
 
         return $this->logger;
+    }
+
+    /**
+     * This hook allows to add PayPal OrderId and TransactionId on PDF invoice
+     *
+     * @param array $params
+     *
+     * @return string HTML is not allowed in this hook
+     */
+    public function hookDisplayInvoiceLegalFreeText(array $params)
+    {
+        /** @var \Order $order */
+        $order = $params['order'];
+
+        if (!Validate::isLoadedObject($order)) {
+            return '';
+        }
+
+        $paypalOrderId = (new OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
+
+        // This order has not been paid with this module
+        if (empty($paypalOrderId)) {
+            return '';
+        }
+
+        // Do not display wrong data to invoice
+        if (OrderMatrice::hasInconsistencies($order->id)) {
+            return '';
+        }
+
+        $legalFreeText = $this->l('PayPal Order Id : ', 'translations') . $paypalOrderId . PHP_EOL;
+
+        /** @var \OrderPayment[] $orderPayments */
+        $orderPayments = $order->getOrderPaymentCollection();
+
+        foreach ($orderPayments as $orderPayment) {
+            $legalFreeText .= $this->l('PayPal Transaction Id : ', 'translations') . $orderPayment->transaction_id . PHP_EOL;
+        }
+
+        return $legalFreeText;
     }
 }
