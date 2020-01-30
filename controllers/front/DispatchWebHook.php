@@ -68,7 +68,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     public function display()
     {
         try {
-            $headerValues = getallheaders();
+            $headerValues = $this->getHeaderValues();
             $validationValues = new WebHookValidation();
             $errors = $validationValues->validateHeaderDatas($headerValues);
 
@@ -124,6 +124,25 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         }
 
         return false;
+    }
+
+    /**
+     * Get HTTP Headers
+     *
+     * @return array
+     */
+    private function getHeaderValues()
+    {
+        // Not available on nginx
+        if (function_exists('getallheaders')) {
+            return getallheaders();
+        }
+
+        return [
+            'Shop-Id' => isset($_SERVER['HTTP_SHOP_ID']) ? $_SERVER['HTTP_SHOP_ID'] : null,
+            'Merchant-Id' => isset($_SERVER['HTTP_MERCHANT_ID']) ? $_SERVER['HTTP_MERCHANT_ID'] : null,
+            'Psx-Id' => isset($_SERVER['HTTP_PSX_ID']) ? $_SERVER['HTTP_PSX_ID'] : null,
+        ];
     }
 
     /**
