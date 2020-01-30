@@ -27,8 +27,7 @@
   <form id="conditions-to-approve-paypal" method="GET">
     <label for="conditions_to_approve">
       <input id="conditions_to_approve" type="checkbox" name="conditions_to_approve" class="buttons-approve">
-      {assign var="link_url" value=$link->getCMSLink('3')}
-      {l s='I agree to the [1]terms of service[/1] and will adhere to them unconditionally.' mod='ps_checkout' tags=["<a href=\"$link_url\" id=\"cta-terms-and-conditions-checkout\">"]}
+      {l s='I agree to the [1]terms of service[/1] and will adhere to them unconditionally.' mod='ps_checkout' tags=["<a href=\"$termsAndConditionsLink\" id=\"cta-terms-and-conditions-checkout\">"]}
     </label>
   </form>
 </div>

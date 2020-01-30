@@ -385,6 +385,15 @@ class Ps_checkout extends PaymentModule
         }
 
         $paypalAccountRepository = new PaypalAccountRepository();
+        $termsAndConditionsLinkCms = new \CMS(
+            (int) Configuration::get('PS_CONDITIONS_CMS_ID'),
+            (int) $this->context->language->id
+        );
+        $termsAndConditionsLink = $this->context->link->getCMSLink(
+            $termsAndConditionsLinkCms,
+            $termsAndConditionsLinkCms->link_rewrite,
+            (bool) Configuration::get('PS_SSL_ENABLED')
+        );
 
         $this->context->smarty->assign([
             'merchantId' => $paypalAccountRepository->getMerchantId(),
@@ -402,6 +411,7 @@ class Ps_checkout extends PaymentModule
             'paypalPaymentOption' => $this->name . '_paypal',
             'hostedFieldsErrors' => (new HostedFieldsErrors($this))->getHostedFieldsErrors(),
             'jsPathInitPaypalSdk' => $this->_path . 'views/js/initPaypalAndCard.js',
+            'termsAndConditionsLink' => $termsAndConditionsLink,
         ]);
 
         $paymentMethods = $this->getPaymentMethods();
