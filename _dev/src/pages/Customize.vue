@@ -22,7 +22,10 @@
       <ActivePayment />
     </b-container>
 
-    <b-container v-if="shopIs17" class="mb-4">
+    <b-container
+      v-if="shopIs17"
+      class="mb-4"
+    >
       <ExpressCheckout />
     </b-container>
 
