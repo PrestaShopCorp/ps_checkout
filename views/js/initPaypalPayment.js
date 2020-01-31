@@ -16,3 +16,41 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+
+document.addEventListener('DOMContentLoaded', () => {
+  const interval = setInterval(() => {
+    if (window.paypalSdkPsCheckout !== undefined) {
+      initPsCheckout();
+      clearInterval(interval);
+    }
+  }, 200);
+});
+
+function initPsCheckout() {
+  if (typeof paypalOrderId === 'undefined') {
+    throw new Error('No paypal order id');
+  }
+
+  initSmartButtons();
+
+  // if (urlParams.has('hferror') && urlParams.get('hferror') === '1') {
+  // }
+}
+
+function initSmartButtons() {
+  // remove "amp;" from the url
+  const orderValidationLinkByPaypal = validateOrderLinkByPaypal.replace(/\amp;/g, '');
+
+  paypalSdkPsCheckout.Buttons({
+    style: {
+      shape: 'pill',
+      size: 'small',
+    },
+    createOrder() {
+      return paypalOrderId;
+    },
+    onApprove() {
+      window.location.replace(orderValidationLinkByPaypal);
+    },
+  }).render('#paypal-button-container');
+}

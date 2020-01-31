@@ -35,12 +35,12 @@
   {l s='Your shopping cart is empty.' mod='ps_checkout'}
 </p>
 {else}
-<form action="{$link->getModuleLink('bankwire', 'validation', [], true)|escape:'html':'UTF-8'}" method="post">
+<form method="post">
   <div class="box">
     <h3 class="page-subheading">
       {l s='Card' mod='ps_checkout'}
     </h3>
-    <p class="cheque-indent">
+    <p>
       <strong class="dark">
         {l s='You have chosen to pay by Card.' mod='ps_checkout'} {l s='Here is a short summary of your order:' mod='ps_checkout'}
       </strong>
@@ -115,14 +115,16 @@
 
     </div>
   </div><!-- .cheque-box -->
-  <p class="cart_navigation clearfix" id="cart_navigation">
-    <a class="button-exclusive btn btn-default" href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html':'UTF-8'}">
-      <i class="icon-chevron-left"></i>{l s='Other payment methods' mod='ps_checkout'}
-    </a>
+  <div class="cart_navigation clearfix" id="cart_navigation">
+    <div class="flex-display">
+      <a class="button-exclusive btn btn-default" href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html':'UTF-8'}">
+        <i class="icon-chevron-left"></i>{l s='Other payment methods' mod='ps_checkout'}
+      </a>
+    </div>
     <button id="hosted-fields-validation" class="button btn btn-default button-medium" type="submit">
       <span>{l s='I confirm my order' mod='ps_checkout'}<i class="icon-chevron-right right"></i></span>
     </button>
-  </p>
+  </div>
 </form>
 {/if}
 

@@ -121,3 +121,16 @@ p.payment_module .pscheckout-paypal img, p.payment_module .pscheckout-card img {
 .confirmation-block {
   float: right;
 }
+
+#paypal-button-container {
+  min-width: 300px;
+}
+
+#cart_navigation {
+  display: flex;
+}
+
+#cart_navigation .flex-display {
+  flex-grow: 1;
+  text-align: left;
+}

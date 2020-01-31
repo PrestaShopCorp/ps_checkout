@@ -38,21 +38,21 @@ class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontControlle
         $cart = $this->context->cart;
 
         if (false === $this->module->active) {
-            return false;
+            $this->redirectToHomePage();
         }
 
         if (false === $this->module->merchantIsValid()) {
-            return false;
+            $this->redirectToHomePage();
         }
 
         if (false === $this->module->checkCurrency($cart)) {
-            return false;
+            $this->redirectToHomePage();
         }
 
         $paypalAccountRepository = new PaypalAccountRepository();
 
         if (false === $paypalAccountRepository->cardPaymentMethodIsValid()) {
-            return false;
+            $this->redirectToHomePage();
         }
 
         $paypalOrder = new CreatePaypalOrderHandler($this->context);
@@ -72,12 +72,25 @@ class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontControlle
             'modulePath' => $this->module->getPathUri(),
             'paypalPaymentOption' => $this->module->name . '_paypal',
             'hostedFieldsErrors' => (new HostedFieldsErrors($this->module))->getHostedFieldsErrors(),
-            'jsPathInitPaypalSdk' => $this->module->getPathUri() . 'views/js/initPaypalAndCard.js',
         ]);
 
         $this->context->controller->addJS($this->module->getPathUri() . 'views/js/initCardPayment.js');
         $this->context->controller->addCSS($this->module->getPathUri() . 'views/css/payments16.css');
 
         $this->setTemplate('paymentCardConfirmation.tpl');
+    }
+
+    /**
+     * Redirect to the home page
+     */
+    private function redirectToHomePage()
+    {
+        Tools::redirect(
+            $this->context->link->getPageLink(
+                'index',
+                true,
+                $this->context->language->id
+            )
+        );
     }
 }

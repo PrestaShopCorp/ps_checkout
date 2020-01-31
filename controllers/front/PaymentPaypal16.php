@@ -18,6 +18,11 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
+use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
+use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
+use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
+
 class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontController
 {
     public $ssl = true;
@@ -32,21 +37,60 @@ class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontControl
 
         $cart = $this->context->cart;
 
-        if (!$this->module->checkCurrency($cart))
-            Tools::redirect('index.php?controller=order');
+        if (false === $this->module->active) {
+            $this->redirectToHomePage();
+        }
+
+        if (false === $this->module->merchantIsValid()) {
+            $this->redirectToHomePage();
+        }
+
+        if (false === $this->module->checkCurrency($cart)) {
+            $this->redirectToHomePage();
+        }
 
         $paypalAccountRepository = new PaypalAccountRepository();
 
-        $this->context->smarty->assign(array(
+        if (false === $paypalAccountRepository->paypalPaymentMethodIsValid()) {
+            $this->redirectToHomePage();
+        }
+
+        $paypalOrder = new CreatePaypalOrderHandler($this->context);
+        $paypalOrder = $paypalOrder->handle();
+
+        $this->context->smarty->assign([
             'nbProducts' => $cart->nbProducts(),
-            'cust_currency' => $cart->id_currency,
-            'currencies' => $this->module->getCurrency((int)$cart->id_currency),
             'total' => $cart->getOrderTotal(true, Cart::BOTH),
-            'this_path' => $this->module->getPathUri(),
-            'this_path_bw' => $this->module->getPathUri(),
-            'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->module->name.'/'
-        ));
+            'merchantId' => $paypalAccountRepository->getMerchantId(),
+            'paypalClientId' => (new PaypalEnv())->getPaypalClientId(),
+            'clientToken' => $paypalOrder['body']['client_token'],
+            'paypalOrderId' => $paypalOrder['body']['id'],
+            'validateOrderLinkByPaypal' => $this->module->getValidateOrderLink($paypalOrder['body']['id'], 'paypal'),
+            'intent' => strtolower(\Configuration::get('PS_CHECKOUT_INTENT')),
+            'currencyIsoCode' => $this->context->currency->iso_code,
+            'isCardPaymentError' => (bool) Tools::getValue('hferror'),
+            'modulePath' => $this->module->getPathUri(),
+            'paypalPaymentOption' => $this->module->name . '_paypal',
+            'hostedFieldsErrors' => (new HostedFieldsErrors($this->module))->getHostedFieldsErrors(),
+        ]);
+
+        $this->context->controller->addJS($this->module->getPathUri() . 'views/js/initPaypalPayment.js');
+        $this->context->controller->addCSS($this->module->getPathUri() . 'views/css/payments16.css');
 
         $this->setTemplate('paymentPaypalConfirmation.tpl');
+    }
+
+    /**
+     * Redirect to the home page
+     */
+    private function redirectToHomePage()
+    {
+        Tools::redirect(
+            $this->context->link->getPageLink(
+                'index',
+                true,
+                $this->context->language->id
+            )
+        );
     }
 }
