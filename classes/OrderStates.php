@@ -179,10 +179,12 @@ class OrderStates
         $iconExtension = '.gif';
         $iconToPaste = _PS_ORDER_STATE_IMG_DIR_ . $orderStateId . $iconExtension;
 
-        if (true !== is_writable($iconToPaste)) {
-            \PrestaShopLogger::addLog('[PSPInstall] ' . $iconToPaste . ' is not writable', 2, null, null, null, true);
+        if (true === file_exists($iconToPaste)) {
+            if (true !== is_writable($iconToPaste)) {
+                \PrestaShopLogger::addLog('[PSPInstall] ' . $iconToPaste . ' is not writable', 2, null, null, null, true);
 
-            return false;
+                return false;
+            }
         }
 
         if ($state === Refund::REFUND_STATE) {
