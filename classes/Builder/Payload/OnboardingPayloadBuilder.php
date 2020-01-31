@@ -26,8 +26,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
-use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter;
+use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\PsxDataMatrice\PsxDataMatrice;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 

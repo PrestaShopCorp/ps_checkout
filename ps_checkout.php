@@ -57,6 +57,7 @@ class Ps_checkout extends PaymentModule
 
     /**
      * Hook to install for 1.6
+     *
      * @var array
      */
     const HOOK_LIST_16 = [

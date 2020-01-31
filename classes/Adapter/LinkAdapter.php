@@ -59,7 +59,7 @@ class LinkAdapter
      *
      * @return string
      */
-    public function getAdminLink($controller, $withToken = true, $sfRouteParams = array(), $params = array())
+    public function getAdminLink($controller, $withToken = true, $sfRouteParams = [], $params = [])
     {
         if ((new ShopContext())->shopIs17()) {
             return $this->link->getAdminLink($controller, $withToken, $sfRouteParams, $params);

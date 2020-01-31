@@ -26,8 +26,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Cart;
 
-use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\PrestaShop\Adapter\Cart\CartPresenter as PsCartPresenter;
 
 /**
