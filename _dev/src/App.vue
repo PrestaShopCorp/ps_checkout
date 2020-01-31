@@ -57,6 +57,10 @@
       </b-alert>
     </div>
     <router-view />
+
+    <div class="container">
+      <RateModule />
+    </div>
   </div>
 </template>
 
@@ -64,6 +68,7 @@
   import Menu from '@/components/menu/menu';
   import MenuItem from '@/components/menu/menu-item';
   import RoundingBanner from '@/components/block/rounding-banner';
+  import RateModule from '@/components/block/rate-module';
 
   export default {
     name: 'Home',
@@ -71,6 +76,7 @@
       Menu,
       MenuItem,
       RoundingBanner,
+      RateModule,
     },
     data() {
       return {

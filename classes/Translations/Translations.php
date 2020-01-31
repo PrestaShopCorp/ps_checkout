@@ -289,6 +289,10 @@ class Translations
                     'content' => $this->module->l('Be careful, your roundings settings are not fully compatible with PrestaShop Checkout transaction processing. Some of the transactions could fail. But it is easy, your setting Round mode and Round type should be set on « Round up away from zero, when it is half way there » and « Round on each item » or click on the button bellow to make it automatically !', 'translations'),
                     'button' => $this->module->l('Make my roudings settings fully compatible!', 'translations'),
                 ],
+                'rate' => [
+                    'firstSentence' => $this->module->l('Enjoy this module ?', 'translations'),
+                    'secondSentence' => $this->module->l('Leave a review on Addons Marketplace', 'translations'),
+                ],
             ],
         ];
 

@@ -67,6 +67,7 @@ class ContextModule implements PresenterInterface
                 'readmeUrl' => $this->getReadme(),
                 'cguUrl' => $this->getCgu(),
                 'roundingSettingsIsCorrect' => $this->roundingSettingsIsCorrect(),
+                'showModuleRate' => $this->getStatusOfRateModule(),
             ],
         ];
 
@@ -151,5 +152,48 @@ class ContextModule implements PresenterInterface
     {
         return \Configuration::get('PS_ROUND_TYPE') === '1'
             && \Configuration::get('PS_PRICE_ROUND_MODE') === '2';
+    }
+
+    /**
+     * Tells if we show the Rate Module's section
+     * We show the rate section only when the module has been installed for at least 8 days or less than 92 days
+     *
+     * @return bool
+     */
+    private function getStatusOfRateModule()
+    {
+        $now = new \DateTime('now');
+
+        if (false === \Configuration::get('PS_CHECKOUT_DATE_INSTALL')) {
+            $installedDate = $now->format('Y-m-d H:i:s');
+            $dateHistory = $this->getModuleDateAddHistory();
+
+            if (false !== $dateHistory) {
+                $installedDate = $dateHistory;
+            }
+
+            \Configuration::updateValue('PS_CHECKOUT_DATE_INSTALL', $installedDate);
+
+            return false;
+        }
+
+        $showRateModule = \DateTime::createFromFormat('Y-m-d H:i:s', \Configuration::get('PS_CHECKOUT_DATE_INSTALL'));
+        $numberOfDays = (int) $now->diff($showRateModule)->format('%a');
+
+        return $numberOfDays > 7 && $numberOfDays < 92;
+    }
+
+    /**
+     * Get the module date history if exists
+     *
+     * @return string|false
+     */
+    private function getModuleDateAddHistory()
+    {
+        return \Db::getInstance()->getValue(
+            'SELECT date_add
+            FROM `' . _DB_PREFIX_ . 'module_history`
+            WHERE id_module = ' . (int) $this->module->id
+        );
     }
 }
