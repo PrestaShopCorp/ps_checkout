@@ -225,10 +225,10 @@ class ValidateOrder
      */
     private function getPendingStatusId($paymentMethod)
     {
-        $stateId = \Configuration::get('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
+        $stateId = \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
 
         if ($paymentMethod === self::PAYMENT_METHOD_PAYPAL) {
-            $stateId = \Configuration::get('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
+            $stateId = \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
         }
 
         return intval($stateId);

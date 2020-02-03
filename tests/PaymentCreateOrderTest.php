@@ -73,9 +73,29 @@ class Logger
 
 class Configuration
 {
-    public static function get($key)
+    public static function get($key, $idLang = null, $idShopGroup = null, $idShop = null, $default = false)
     {
         return $key;
+    }
+}
+
+class Shop
+{
+    public $id;
+}
+
+class Context
+{
+    public $shop;
+
+    public function __construct()
+    {
+        $this->shop = new Shop();
+    }
+
+    public static function getContext()
+    {
+        return new self();
     }
 }
 

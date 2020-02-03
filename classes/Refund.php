@@ -126,7 +126,13 @@ class Refund
                 'currency_code' => $this->getCurrencyCode(),
                 'value' => $this->getAmount(),
             ],
-            'note_to_payer' => 'Refund by ' . \Configuration::get('PS_SHOP_NAME'),
+            'note_to_payer' => 'Refund by '
+                . \Configuration::get(
+                'PS_SHOP_NAME',
+                    null,
+                    null,
+                    (int) \Context::getContext()->shop->id
+                ),
         ];
 
         return $payload;
@@ -182,9 +188,12 @@ class Refund
             $orderDetailList[$key]['unit_price'] = $orderDetailList[$key]['amount'] / $quantityToRefund;
         }
 
-        $partialRefundOrderStateId = intval(\Configuration::get(self::REFUND_STATE));
-
-        return $this->refundPrestashopOrder($order, $orderDetailList, $partialRefundOrderStateId, $transactionId);
+        return $this->refundPrestashopOrder(
+            $order,
+            $orderDetailList,
+            (int) \Configuration::getGlobalValue(self::REFUND_STATE),
+            $transactionId
+        );
     }
 
     /**

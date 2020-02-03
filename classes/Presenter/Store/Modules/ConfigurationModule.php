@@ -37,14 +37,49 @@ class ConfigurationModule implements PresenterInterface
         $configurationModule = [
             'config' => [
                 'paymentMethods' => $this->getPaymentMethods(),
-                'captureMode' => \Configuration::get('PS_CHECKOUT_INTENT'),
-                'paymentMode' => \Configuration::get('PS_CHECKOUT_MODE'),
-                'cardIsEnabled' => (bool) \Configuration::get('PS_CHECKOUT_CARD_PAYMENT_ENABLED'),
-                'debugLogsEnabled' => (bool) \Configuration::get('PS_CHECKOUT_DEBUG_LOGS_ENABLED'),
+                'captureMode' => \Configuration::get(
+                    'PS_CHECKOUT_INTENT',
+                    null,
+                    null,
+                    (int) \Context::getContext()->shop->id
+                ),
+                'paymentMode' => \Configuration::get(
+                    'PS_CHECKOUT_MODE',
+                    null,
+                    null,
+                    (int) \Context::getContext()->shop->id
+                ),
+                'cardIsEnabled' => (bool) \Configuration::get(
+                    'PS_CHECKOUT_CARD_PAYMENT_ENABLED',
+                    null,
+                    null,
+                    (int) \Context::getContext()->shop->id
+                ),
+                'debugLogsEnabled' => (bool) \Configuration::get(
+                    'PS_CHECKOUT_DEBUG_LOGS_ENABLED',
+                    null,
+                    null,
+                    (int) \Context::getContext()->shop->id
+                ),
                 'expressCheckout' => [
-                    'orderPage' => (bool) \Configuration::get('PS_CHECKOUT_EC_ORDER_PAGE'),
-                    'checkoutPage' => (bool) \Configuration::get('PS_CHECKOUT_EC_CHECKOUT_PAGE'),
-                    'productPage' => (bool) \Configuration::get('PS_CHECKOUT_EC_PRODUCT_PAGE'),
+                    'orderPage' => (bool) \Configuration::get(
+                        'PS_CHECKOUT_EC_ORDER_PAGE',
+                        null,
+                        null,
+                        (int) \Context::getContext()->shop->id
+                    ),
+                    'checkoutPage' => (bool) \Configuration::get(
+                        'PS_CHECKOUT_EC_CHECKOUT_PAGE',
+                        null,
+                        null,
+                        (int) \Context::getContext()->shop->id
+                    ),
+                    'productPage' => (bool) \Configuration::get(
+                        'PS_CHECKOUT_EC_PRODUCT_PAGE',
+                        null,
+                        null,
+                        (int) \Context::getContext()->shop->id
+                    ),
                 ],
             ],
         ];
@@ -59,7 +94,12 @@ class ConfigurationModule implements PresenterInterface
      */
     private function getPaymentMethods()
     {
-        $paymentMethods = \Configuration::get('PS_CHECKOUT_PAYMENT_METHODS_ORDER');
+        $paymentMethods = \Configuration::get(
+            'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
 
         if (empty($paymentMethods)) {
             $paymentMethods = [

@@ -41,14 +41,37 @@ class Token extends FirebaseClient
         $response = $this->post([
             'json' => [
                 'grant_type' => 'refresh_token',
-                'refresh_token' => \Configuration::get('PS_PSX_FIREBASE_REFRESH_TOKEN'),
+                'refresh_token' => \Configuration::get(
+                    'PS_PSX_FIREBASE_REFRESH_TOKEN',
+                    null,
+                    null,
+                    (int) \Context::getContext()->shop->id
+                ),
             ],
         ]);
 
         if (true === $response['status']) {
-            \Configuration::updateValue('PS_PSX_FIREBASE_ID_TOKEN', $response['body']['id_token']);
-            \Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_TOKEN', $response['body']['refresh_token']);
-            \Configuration::updateValue('PS_PSX_FIREBASE_REFRESH_DATE', date('Y-m-d H:i:s'));
+            \Configuration::updateValue(
+                'PS_PSX_FIREBASE_ID_TOKEN',
+                $response['body']['id_token'],
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            );
+            \Configuration::updateValue(
+                'PS_PSX_FIREBASE_REFRESH_TOKEN',
+                $response['body']['refresh_token'],
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            );
+            \Configuration::updateValue(
+                'PS_PSX_FIREBASE_REFRESH_DATE',
+                date('Y-m-d H:i:s'),
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            );
         }
 
         return $response;
@@ -71,7 +94,12 @@ class Token extends FirebaseClient
      */
     public function hasRefreshToken()
     {
-        $refresh_token = \Configuration::get('PS_PSX_FIREBASE_REFRESH_TOKEN');
+        $refresh_token = \Configuration::get(
+            'PS_PSX_FIREBASE_REFRESH_TOKEN',
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
 
         return !empty($refresh_token);
     }
@@ -83,7 +111,12 @@ class Token extends FirebaseClient
      */
     public function isExpired()
     {
-        $refresh_date = \Configuration::get('PS_PSX_FIREBASE_REFRESH_DATE');
+        $refresh_date = \Configuration::get(
+            'PS_PSX_FIREBASE_REFRESH_DATE',
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
 
         if (empty($refresh_date)) {
             return true;
@@ -103,6 +136,11 @@ class Token extends FirebaseClient
             $this->refresh();
         }
 
-        return \Configuration::get('PS_PSX_FIREBASE_ID_TOKEN');
+        return \Configuration::get(
+            'PS_PSX_FIREBASE_ID_TOKEN',
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
     }
 }

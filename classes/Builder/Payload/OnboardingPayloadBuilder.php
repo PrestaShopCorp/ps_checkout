@@ -166,7 +166,13 @@ class OnboardingPayloadBuilder extends Builder
      */
     private function getCurrencyIsoCode()
     {
-        $currency = \Currency::getCurrency((int) \Configuration::get('PS_CURRENCY_DEFAULT'));
+        $currencyId = (int) \Configuration::get(
+            'PS_CURRENCY_DEFAULT',
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
+        $currency = \Currency::getCurrency($currencyId);
 
         return $currency['iso_code'];
     }

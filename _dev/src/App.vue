@@ -41,13 +41,16 @@
     <div class="pt-5" />
     <div class="pt-3" />
 
-    <div class="container">
+    <div
+      class="container"
+      v-if="isShopContext"
+    >
       <RoundingBanner />
     </div>
 
     <div
       class="container"
-      v-if="paymentMode === 'SANDBOX'"
+      v-if="isTestMode"
     >
       <b-alert
         variant="warning"
@@ -56,7 +59,37 @@
         <p>{{ $t('general.testModeOn') }}</p>
       </b-alert>
     </div>
-    <router-view />
+
+    <div
+      class="container"
+      v-if="!isShopContext"
+    >
+      <b-alert
+        variant="warning"
+        show
+      >
+        <h2>{{ $t('general.multiShop.title') }}</h2>
+        <p>{{ $t('general.multiShop.subtitle') }}</p>
+        <p>{{ $t('general.multiShop.chooseOne') }}</p>
+        <b-list-group
+          v-for="group in shopsTree"
+          :key="group.id"
+          class="mt-3 mb-3 col-4"
+        >
+          <p class="text-muted">{{ $t('general.multiShop.group') }} {{ group.name }}</p>
+          <b-list-group-item
+            v-for="shop in group.shops"
+            :key="shop.id"
+            :href="shop.url"
+          >
+            {{ $t('general.multiShop.configure') }} <b>{{ shop.name }}</b>
+          </b-list-group-item>
+        </b-list-group>
+        <p>{{ $t('general.multiShop.tips') }}</p>
+      </b-alert>
+    </div>
+
+    <router-view v-if="isShopContext" />
   </div>
 </template>
 
@@ -91,11 +124,18 @@
       onboardingFirebaseIsCompleted() {
         return this.$store.state.firebase.onboardingCompleted;
       },
-      paymentMode() {
-        return this.$store.state.configuration.paymentMode;
-      },
       accountIslinked() {
         return this.$store.state.paypal.accountIslinked;
+      },
+      isShopContext() {
+        return this.$store.state.context.isShopContext;
+      },
+      isTestMode() {
+        return this.$store.state.configuration.paymentMode === 'SANDBOX'
+          && this.$store.state.context.isShopContext;
+      },
+      shopsTree() {
+        return this.$store.state.context.shopsTree;
       },
     },
     watch: {
