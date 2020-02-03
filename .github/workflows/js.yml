@@ -11,4 +11,3 @@ jobs:
         uses: PrestaShopCorp/github-action-lint-js/12@dev
         with:
           cmd: yarn
-          path: ./_dev
