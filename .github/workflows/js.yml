@@ -12,3 +12,15 @@ jobs:
           node-version: '13.x'
       - run: yarn --cwd _dev/ install
       - run: yarn --cwd _dev/ lint
+      - name: build
+        uses: PrestaShopCorp/github-action-build-js/12.14.1@dev
+        with:
+          cmd: yarn
+          path: ./_dev
+      - name: clean dependencies
+        uses: PoulainMaxime/github-action-clean-before-deploy@master
+      - name: deploy artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: ps_checkout
+          path: .
