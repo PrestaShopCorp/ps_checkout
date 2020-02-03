@@ -40,7 +40,7 @@ class CreatePaypalOrderHandler
      */
     private $context;
 
-    public function __construct(\Context $context)
+    public function __construct(\Context $context = null)
     {
         if (null === $context) {
             $context = \Context::getContext();

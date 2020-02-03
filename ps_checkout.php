@@ -358,8 +358,6 @@ class Ps_checkout extends PaymentModule
 
     /**
      * Add payment option at the checkout in the front office (prestashop 1.7)
-     *
-     * @return void
      */
     public function hookPayment()
     {

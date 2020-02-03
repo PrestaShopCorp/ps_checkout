@@ -36,15 +36,18 @@ class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontControlle
 
         $cart = $this->context->cart;
 
-        if (false === $this->module->active) {
+        /** @var \Ps_checkout */
+        $module = $this->module;
+
+        if (false === $module->active) {
             $this->redirectToHomePage();
         }
 
-        if (false === $this->module->merchantIsValid()) {
+        if (false === $module->merchantIsValid()) {
             $this->redirectToHomePage();
         }
 
-        if (false === $this->module->checkCurrency($cart)) {
+        if (false === $module->checkCurrency($cart)) {
             $this->redirectToHomePage();
         }
 
@@ -64,17 +67,17 @@ class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontControlle
             'paypalClientId' => (new PaypalEnv())->getPaypalClientId(),
             'clientToken' => $paypalOrder['body']['client_token'],
             'paypalOrderId' => $paypalOrder['body']['id'],
-            'validateOrderLinkByCard' => $this->module->getValidateOrderLink($paypalOrder['body']['id'], 'card'),
+            'validateOrderLinkByCard' => $module->getValidateOrderLink($paypalOrder['body']['id'], 'card'),
             'intent' => strtolower(\Configuration::get('PS_CHECKOUT_INTENT')),
             'currencyIsoCode' => $this->context->currency->iso_code,
             'isCardPaymentError' => (bool) Tools::getValue('hferror'),
-            'modulePath' => $this->module->getPathUri(),
-            'paypalPaymentOption' => $this->module->name . '_paypal',
-            'hostedFieldsErrors' => (new HostedFieldsErrors($this->module))->getHostedFieldsErrors(),
+            'modulePath' => $module->getPathUri(),
+            'paypalPaymentOption' => $module->name . '_paypal',
+            'hostedFieldsErrors' => (new HostedFieldsErrors($module))->getHostedFieldsErrors(),
         ]);
 
-        $this->context->controller->addJS($this->module->getPathUri() . 'views/js/initCardPayment.js');
-        $this->context->controller->addCSS($this->module->getPathUri() . 'views/css/payments16.css');
+        $this->context->controller->addJS($module->getPathUri() . 'views/js/initCardPayment.js');
+        $this->context->controller->addCSS($module->getPathUri() . 'views/css/payments16.css');
 
         $this->setTemplate('paymentCardConfirmation.tpl');
     }
