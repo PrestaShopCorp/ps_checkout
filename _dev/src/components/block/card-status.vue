@@ -65,6 +65,28 @@
         <i class="material-icons">error_outline</i> {{ $t('block.payment-status.limited') }}
       </label>
     </template>
+    <template v-else-if="cardStatus === 'SUSPENDED'">
+      <p v-if="displayLabels">
+        {{ $t('block.payment-status.creditCardLabelSuspended') }}
+      </p>
+      <label
+        v-else
+        class="text-danger"
+      >
+        <i class="material-icons">error_outline</i> {{ $t('block.payment-status.suspended') }}
+      </label>
+    </template>
+    <template v-else-if="cardStatus === 'REVOKED'">
+      <p v-if="displayLabels">
+        {{ $t('block.payment-status.creditCardLabelRevoked') }}
+      </p>
+      <label
+        v-else
+        class="text-danger"
+      >
+        <i class="material-icons">error_outline</i> {{ $t('block.payment-status.revoked') }}
+      </label>
+    </template>
     <template v-else-if="cardStatus === 'DENIED'">
       <p
         v-if="displayLabels"
