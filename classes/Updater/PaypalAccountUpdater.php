@@ -34,6 +34,8 @@ class PaypalAccountUpdater
     const IN_REVIEW = 'IN_REVIEW';
     const DENIED = 'DENIED';
     const LIMITED = 'LIMITED';
+    const SUSPENDED = 'SUSPENDED';
+    const REVOKED = 'REVOKED';
 
     /* Paypal requires Merchant ID to be 13-characters long at least */
     const MIN_ID_LENGTH = 13;
@@ -104,9 +106,6 @@ class PaypalAccountUpdater
             case self::NEED_MORE_DATA:
                 $status = self::NEED_MORE_DATA;
                 break;
-            case self::DENIED:
-                $status = self::DENIED;
-                break;
             case self::IN_REVIEW:
                 $status = self::IN_REVIEW;
                 break;
@@ -129,6 +128,16 @@ class PaypalAccountUpdater
     {
         $findCapability = array_search('CUSTOM_CARD_PROCESSING', array_column($response['capabilities'], 'name'));
         $capability = $response['capabilities'][$findCapability];
+
+        // The capability can no longer be used, but there are remediation steps to regain access to the corresponding functionality.
+        if ($capability['status'] === 'SUSPENDED') {
+            return self::SUSPENDED;
+        }
+
+        // The capability can no longer be used and there are no remediation steps available to regain the functionality.
+        if ($capability['status'] === 'REVOKED') {
+            return self::REVOKED;
+        }
 
         if (isset($capability['limits'])) {
             return self::LIMITED;
