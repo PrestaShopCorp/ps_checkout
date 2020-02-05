@@ -74,8 +74,8 @@ function initHostedFields() {
           placeholder: expDatePlaceholder,
         },
       },
-    }).then((hf) => {
-      hf.on('cardTypeChange', (event) => {
+    }).then((hostedFields) => {
+      hostedFields.on('cardTypeChange', (event) => {
         // Change card bg depending on card type
         if (event.cards.length === 1) {
           document.querySelector('.defautl-credit-card').style.display = 'none';
@@ -88,7 +88,7 @@ function initHostedFields() {
 
           // Change the CVV length for AmericanExpress cards
           if (event.cards[0].code.size === 4) {
-            hf.setAttribute({
+            hostedFields.setAttribute({
               field: 'cvv',
               attribute: 'placeholder',
               value: 'XXXX',
@@ -99,7 +99,7 @@ function initHostedFields() {
           const cardImage = document.getElementById('card-image');
           cardImage.className = '';
 
-          hf.setAttribute({
+          hostedFields.setAttribute({
             field: 'cvv',
             attribute: 'placeholder',
             value: 'XXX',
@@ -111,9 +111,7 @@ function initHostedFields() {
         event.preventDefault();
         toggleLoader(true);
 
-        // TODO : Patch a first time the order to prevent any modifications of the cart
-
-        hf.submit({
+        hostedFields.submit({
           contingencies: ['3D_SECURE'], // only necessary if using 3D Secure verification
         }).then((payload) => {
           if (payload.liabilityShifted === undefined) { // No 3DS Contingency Passed or card not enrolled to 3ds
@@ -127,7 +125,6 @@ function initHostedFields() {
           }
 
           if (payload.liabilityShifted === false) { // 3DS Contingency Passed, but Buyer skipped 3DS
-            // window.location.replace(orderValidationLinkByCard);
             console.log('error');
           }
         }).catch((err) => {

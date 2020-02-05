@@ -52,7 +52,7 @@ class ShopContext
         return $bnCode;
     }
 
-    public function shopIs17()
+    public function isShop17()
     {
         return version_compare(_PS_VERSION_, '1.7.0.0', '>=');
     }

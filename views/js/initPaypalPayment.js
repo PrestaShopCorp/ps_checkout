@@ -32,9 +32,6 @@ function initPsCheckout() {
   }
 
   initSmartButtons();
-
-  // if (urlParams.has('hferror') && urlParams.get('hferror') === '1') {
-  // }
 }
 
 function initSmartButtons() {

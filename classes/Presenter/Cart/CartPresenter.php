@@ -68,7 +68,7 @@ class CartPresenter implements PresenterInterface
 
         $cart = (array) $this->getCart();
 
-        if ((new ShopContext())->shopIs17()) {
+        if ((new ShopContext())->isShop17()) {
             $cart = new PsCartPresenter();
             $cart = $cart->present($this->getCart());
         }

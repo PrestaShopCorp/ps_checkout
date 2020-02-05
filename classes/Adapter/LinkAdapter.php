@@ -67,7 +67,7 @@ class LinkAdapter
 
         $paramsAsString = '';
         foreach ($params as $key => $value) {
-            $paramsAsString .= '&' . $key . '=' . $value;
+            $paramsAsString .= "&$key=$value";
         }
 
         return $this->link->getBaseLink() . basename(_PS_ADMIN_DIR_) . '/' . $this->link->getAdminLink($controller, $withToken) . $paramsAsString;

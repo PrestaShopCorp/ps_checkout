@@ -155,21 +155,13 @@ class Ps_checkout extends PaymentModule
         }
 
         // Install specific to prestashop 1.7
-        if ((new PrestaShop\Module\PrestashopCheckout\ShopContext())->shopIs17()) {
-            $install17 = $this->registerHook(self::HOOK_LIST_17) &&
+        if ((new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17()) {
+            return $this->registerHook(self::HOOK_LIST_17) &&
                 $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1) &&
                 $this->addCheckboxCarrierRestrictionsForModule();
-
-            if (!$install17) {
-                return false;
-            }
         } else { // Install specific to prestashop 1.6
-            $install16 = $this->registerHook(self::HOOK_LIST_16) &&
+            return $this->registerHook(self::HOOK_LIST_16) &&
                 $this->updatePosition(\Hook::getIdByName('payment'), false, 1);
-
-            if (!$install16) {
-                return false;
-            }
         }
 
         return true;
@@ -778,7 +770,7 @@ class Ps_checkout extends PaymentModule
      */
     public function hookOrderConfirmation($params)
     {
-        if ((new PrestaShop\Module\PrestashopCheckout\ShopContext())->shopIs17()) {
+        if ((new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17()) {
             $order = $params['order'];
         } else {
             $order = $params['objOrder'];
@@ -792,7 +784,7 @@ class Ps_checkout extends PaymentModule
             $this->context->smarty->assign([
                 'status' => 'ok',
                 'id_order' => $order->id,
-                'shopIs17' => (new PrestaShop\Module\PrestashopCheckout\ShopContext())->shopIs17(),
+                'shopIs17' => (new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17(),
             ]);
         } else {
             $this->context->smarty->assign('status', 'failed');

@@ -52,20 +52,19 @@ class CreatePaypalOrderHandler
     public function handle($expressCheckout = false, $updateOrder = false, $paypalOrderId = null)
     {
         // Present an improved cart in order to create the payload
-        $cartPresenter = new CartPresenter($this->context);
-        $cartPresenter = $cartPresenter->present();
+        $cartPresenter = (new CartPresenter($this->context))->present();
 
         $builder = new OrderPayloadBuilder($cartPresenter);
 
         // Build full payload in 1.7
         if ((new ShopContext())->shopIs17()) {
             // enable express checkout mode if in express checkout
-            if ($expressCheckout) {
+            if (true === $expressCheckout) {
                 $builder->setExpressCheckout(true);
             }
 
             // enable update mode if we build an order for update it
-            if ($updateOrder) {
+            if (true === $updateOrder) {
                 $builder->setIsUpdate(true);
                 $builder->setPaypalOrderId($paypalOrderId);
             }
@@ -78,7 +77,7 @@ class CreatePaypalOrderHandler
         $payload = $builder->presentPayload()->getJson();
 
         // Create the paypal order or update it
-        if ($updateOrder) {
+        if (true === $updateOrder) {
             $paypalOrder = (new Order($this->context->link))->patch($payload);
         } else {
             $paypalOrder = (new Order($this->context->link))->create($payload);
@@ -89,7 +88,7 @@ class CreatePaypalOrderHandler
             $builder->buildMinimalPayload();
             $payload = $builder->presentPayload()->getJson();
 
-            if ($updateOrder) {
+            if (true === $updateOrder) {
                 $paypalOrder = (new Order($this->context->link))->patch($payload);
             } else {
                 $paypalOrder = (new Order($this->context->link))->create($payload);
