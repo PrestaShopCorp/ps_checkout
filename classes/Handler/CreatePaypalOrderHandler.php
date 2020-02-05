@@ -57,7 +57,7 @@ class CreatePaypalOrderHandler
         $builder = new OrderPayloadBuilder($cartPresenter);
 
         // Build full payload in 1.7
-        if ((new ShopContext())->shopIs17()) {
+        if ((new ShopContext())->isShop17()) {
             // enable express checkout mode if in express checkout
             if (true === $expressCheckout) {
                 $builder->setExpressCheckout(true);
@@ -84,7 +84,7 @@ class CreatePaypalOrderHandler
         }
 
         // Retry with minimal payload when full payload failed (only on 1.7)
-        if (substr((string) $paypalOrder['httpCode'], 0, 1) === '4' && (new ShopContext())->shopIs17()) {
+        if (substr((string) $paypalOrder['httpCode'], 0, 1) === '4' && (new ShopContext())->isShop17()) {
             $builder->buildMinimalPayload();
             $payload = $builder->presentPayload()->getJson();
 
