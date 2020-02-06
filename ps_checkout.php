@@ -608,15 +608,11 @@ class Ps_checkout extends PaymentModule
 
         // change the order state to partial refund
         $orderHistory = new \OrderHistory();
-        $orderHistory->id_order = $params['order']->id;
+        $orderHistory->id_order = (int) $params['order']->id;
 
         $orderHistory->changeIdOrderState(intval(\Configuration::get('PS_CHECKOUT_STATE_PARTIAL_REFUND')), $params['order']->id);
 
-        if (false === $orderHistory->save()) {
-            return false;
-        }
-
-        return true;
+        return $orderHistory->addWithemail();
     }
 
     public function hookActionOrderStatusUpdate($params)
