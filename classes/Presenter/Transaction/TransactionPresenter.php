@@ -49,7 +49,7 @@ class TransactionPresenter implements PresenterInterface
             $transaction['userProfileLink'] = $userInfos['link'];
             $currency = new \Currency($transaction['id_currency']);
             $transaction['before_commission'] = \Tools::displayPrice($transaction['amount'], $currency);
-            $transaction['type'] = strpos($transaction['amount'], '-') !== false ? 'Payment' : 'Refund';
+            $transaction['type'] = strpos($transaction['amount'], '-') !== false ? 'Refund' : 'Payment';
             $transaction['commission'] = '-';
             $transaction['total_paid'] = '-';
         }
