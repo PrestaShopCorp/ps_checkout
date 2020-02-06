@@ -17,6 +17,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+use PrestaShop\Module\PrestashopCheckout\Database\TableManager;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -30,5 +32,42 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_2_12($module)
 {
-    return $module->registerHook('displayInvoiceLegalFreeText');
+    foreach (PrestaShop\Module\PrestashopCheckout\OrderStates::ORDER_STATES as $state => $color) {
+        $orderStateId = (int) \Configuration::get($state);
+        setStateIcons($state, $orderStateId, $module->name);
+    }
+
+    return \Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . TableManager::TABLE_ORDER_MATRICE . '` CHANGE `id_order_prestashop` `id_order_prestashop` INT(10) UNSIGNED NOT NULL;')
+        && $module->registerHook('displayInvoiceLegalFreeText');
+}
+
+function setStateIcons($state, $orderStateId, $moduleName)
+{
+    $iconExtension = '.gif';
+    $iconToPaste = _PS_ORDER_STATE_IMG_DIR_ . $orderStateId . $iconExtension;
+
+    if (true === file_exists($iconToPaste)) {
+        if (true !== is_writable($iconToPaste)) {
+            \PrestaShopLogger::addLog('[PSPInstall] ' . $iconToPaste . ' is not writable', 2, null, null, null, true);
+
+            return false;
+        }
+    }
+
+    if ($state === PrestaShop\Module\PrestashopCheckout\Refund::REFUND_STATE) {
+        $iconName = 'refund';
+    } else {
+        $iconName = 'waiting';
+    }
+
+    $iconsFolderOrigin = _PS_MODULE_DIR_ . $moduleName . '/views/img/OrderStatesIcons/';
+    $iconToCopy = $iconsFolderOrigin . $iconName . $iconExtension;
+
+    if (false === copy($iconToCopy, $iconToPaste)) {
+        \PrestaShopLogger::addLog('[PSPInstall] not able to copy ' . $iconName . ' for ID ' . $orderStateId, 2, null, null, null, true);
+
+        return false;
+    }
+
+    return true;
 }
