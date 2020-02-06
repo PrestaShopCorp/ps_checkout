@@ -34,22 +34,6 @@ use PrestaShop\Module\PrestashopCheckout\ShopContext;
 class LanguageAdapter
 {
     /**
-     * Language object
-     *
-     * @var \Language
-     */
-    private $language;
-
-    public function __construct(\Language $language = null)
-    {
-        if (null === $language) {
-            $language = new \Language();
-        }
-
-        $this->language = $language;
-    }
-
-    /**
      * Adapter for getLanguage from prestashop language class
      * Add locale key to the returned array on 1.6
      *
