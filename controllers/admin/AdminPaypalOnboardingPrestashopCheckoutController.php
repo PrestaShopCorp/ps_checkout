@@ -17,6 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
 use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
@@ -41,7 +42,7 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
         (new PaypalAccountUpdater($paypalAccount))->update();
 
         Tools::redirect(
-            $this->context->link->getAdminLink(
+            (new LinkAdapter($this->context->link))->getAdminLink(
                 'AdminModules',
                 true,
                 [],

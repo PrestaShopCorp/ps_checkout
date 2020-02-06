@@ -1,4 +1,4 @@
-<!--**
+/**
  * 2007-2019 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,48 +15,39 @@
  * @copyright 2007-2019 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *-->
-<template>
-  <button
-    type="button"
-    class="btn"
-    :class="classObject"
-    @click="onClick"
-  >
-    <slot />
-  </button>
-</template>
+ */
 
-<script>
-  export default {
-    name: 'PsButton',
-    props: {
-      primary: {
-        type: Boolean,
-      },
-      ghost: {
-        type: Boolean,
-      },
-    },
-    computed: {
-      classObject() {
-        if (this.ghost) {
-          return {
-            'btn-outline-primary': this.primary,
-            'btn-outline-secondary': !this.primary,
-          };
-        }
+document.addEventListener('DOMContentLoaded', () => {
+  const interval = setInterval(() => {
+    if (window.paypalSdkPsCheckout !== undefined) {
+      initPsCheckout();
+      clearInterval(interval);
+    }
+  }, 200);
+});
 
-        return {
-          'btn-primary': this.primary,
-          'btn-secondary': !this.primary,
-        };
-      },
+function initPsCheckout() {
+  if (typeof paypalOrderId === 'undefined') {
+    throw new Error('No paypal order id');
+  }
+
+  initSmartButtons();
+}
+
+function initSmartButtons() {
+  // remove "amp;" from the url
+  const orderValidationLinkByPaypal = validateOrderLinkByPaypal.replace(/\amp;/g, '');
+
+  paypalSdkPsCheckout.Buttons({
+    style: {
+      shape: 'pill',
+      size: 'small',
     },
-    methods: {
-      onClick() {
-        this.$emit('click');
-      },
+    createOrder() {
+      return paypalOrderId;
     },
-  };
-</script>
+    onApprove() {
+      window.location.replace(orderValidationLinkByPaypal);
+    },
+  }).render('#paypal-button-container');
+}

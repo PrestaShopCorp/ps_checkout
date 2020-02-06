@@ -18,8 +18,6 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Entity;
-
 /**
  * Makes a matrice between Prestashop Order and Paypal Order
  */

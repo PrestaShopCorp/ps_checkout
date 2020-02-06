@@ -1,4 +1,5 @@
-{**
+<?php
+/**
  * 2007-2019 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,17 +16,13 @@
  * @copyright 2007-2019 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ */
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-{if $status === 'ok'}
-  {if $shopIs17 === false}
-    <p class="alert alert-success">{l s='Your order on %s is complete.' sprintf=$shop_name mod='ps_checkout'}</p>
-    <div class="box">
-      {l s='If you have questions, comments or concerns, please contact our' mod='ps_checkout'} <a href="{$link->getPageLink('contact', true)|escape:'html':'UTF-8'}">{l s='expert customer support team' mod='ps_checkout'}</a>.
-    </div>
-  {/if}
-{elseif $status === 'failed'}
-  <div class="alert alert-warning">
-    {l s='Your order hasn\'t been validated yet, only created. There can be an issue with your payment or it can be captured later, please contact our customer service to have more details about it.' mod='ps_checkout'}
-  </div>
-{/if}
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+
+header('Location: ../');
+exit;

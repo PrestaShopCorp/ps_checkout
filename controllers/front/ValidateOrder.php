@@ -18,8 +18,7 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
-use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
+use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 
@@ -111,24 +110,8 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
      */
     private function updatePaypalOrder($paypalOrderId)
     {
-        $cartPresenter = new CartPresenter($this->context);
-        $cartPresenter = $cartPresenter->present();
-
-        $builder = new OrderPayloadBuilder($cartPresenter);
-        $builder->setIsUpdate(true);
-        $builder->setPaypalOrderId($paypalOrderId);
-        $builder->buildFullPayload();
-        $payload = $builder->presentPayload()->getJson();
-
-        $response = (new Order($this->context->link))->patch($payload);
-
-        // Retry with minimal payload when full payload failed
-        if (substr((string) $response['httpCode'], 0, 1) === '4') {
-            $builder->buildMinimalPayload();
-            $payload = $builder->presentPayload()->getJson();
-
-            $response = (new Order($this->context->link))->patch($payload);
-        }
+        $paypalOrder = new CreatePaypalOrderHandler($this->context);
+        $response = $paypalOrder->handle(false, true, $paypalOrderId);
 
         if (false === $response['status']) {
             $this->redirectToCheckout();
