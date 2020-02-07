@@ -46,6 +46,8 @@ class OrderStates
      * Insert the new paypal states if it does not exists
      * Create a new order state for each ps_checkout new order states
      *
+     * FYI: this method is also used in the upgrade-1.2.14.php file
+     *
      * @return bool
      */
     public function installPaypalStates()

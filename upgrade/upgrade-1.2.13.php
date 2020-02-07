@@ -17,8 +17,6 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-use PrestaShop\Module\PrestashopCheckout\Database\TableManager;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -37,8 +35,7 @@ function upgrade_module_1_2_12($module)
         setStateIcons($state, $orderStateId, $module->name);
     }
 
-    return \Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . TableManager::TABLE_ORDER_MATRICE . '` CHANGE `id_order_prestashop` `id_order_prestashop` INT(10) UNSIGNED NOT NULL;')
-        && $module->registerHook('displayInvoiceLegalFreeText');
+    return $module->registerHook('displayInvoiceLegalFreeText');
 }
 
 function setStateIcons($state, $orderStateId, $moduleName)
