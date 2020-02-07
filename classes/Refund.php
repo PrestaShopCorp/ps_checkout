@@ -252,11 +252,7 @@ class Refund
 
         $this->addOrderPayment($order, $transactionId);
 
-        if (false === $orderHistory->save()) {
-            return false;
-        }
-
-        return true;
+        return $orderHistory->addWithemail();
     }
 
     /**
