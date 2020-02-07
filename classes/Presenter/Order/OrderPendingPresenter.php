@@ -91,7 +91,7 @@ class OrderPendingPresenter implements PresenterInterface
     }
 
     /**
-     * get last 500 pending checkout orders
+     * get last pending checkout orders
      *
      * @param array $idStates
      *
@@ -104,7 +104,6 @@ class OrderPendingPresenter implements PresenterInterface
             WHERE o.module = "ps_checkout"
             AND current_state IN (' . implode(',', array_keys($idStates)) . ')
             ORDER BY date_add
-            LIMIT 500
         ';
 
         return \Db::getInstance()->executeS($sql);

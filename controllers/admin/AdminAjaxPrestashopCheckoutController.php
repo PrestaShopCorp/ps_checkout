@@ -227,11 +227,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         $sql = 'SELECT COUNT(id_order_payment) FROM `' . _DB_PREFIX_ . 'order_payment` o WHERE o.payment_method = "Prestashop Checkout"';
         /** @var array $result */
-        $result = \Db::getInstance()->executeS($sql);
-        $countAllCheckoutTransactions = 0;
-        if (isset($result[0])) {
-            $countAllCheckoutTransactions = $countAllCheckoutTransactions[0]['COUNT(id_order)'];
-        }
+        $countAllCheckoutTransactions = \Db::getInstance()->getValue($sql);
 
         $this->ajaxDie(
             json_encode([

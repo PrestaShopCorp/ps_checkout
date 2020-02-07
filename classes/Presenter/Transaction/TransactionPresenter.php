@@ -45,6 +45,7 @@ class TransactionPresenter implements PresenterInterface
         foreach ($transactions as &$transaction) {
             $userInfos = $this->getUserInfos($transaction['order_reference']);
             $transaction['transactionID'] = $transaction['transaction_id'];
+            $transaction['order_id'] = $this->getOrderIDByOrderReference($transaction['order_reference']);
             $transaction['username'] = $userInfos['name'];
             $transaction['userProfileLink'] = $userInfos['link'];
             $currency = new \Currency($transaction['id_currency']);
@@ -66,6 +67,15 @@ class TransactionPresenter implements PresenterInterface
         ';
 
         return \Db::getInstance()->executeS($sql);
+    }
+
+    private function getOrderIDByOrderReference($reference)
+    {
+        $sql = 'SELECT id_order FROM `' . _DB_PREFIX_ . 'orders` o
+            WHERE reference = "' . $reference . '"
+        ';
+
+        return \Db::getInstance()->getValue($sql);
     }
 
     /**

@@ -25,10 +25,16 @@
         </h1>
         <p class="subtitle">
           {{ $t('block.reporting.subtitle') }}.
-          <a href="">{{ $t('block.reporting.subtitleLinkLabel') }}</a>
+          <a href="https://www.paypal.com/listing/transactions" target="_blank">
+            {{ $t('block.reporting.subtitleLinkLabel') }}
+          </a>
         </p>
 
-        <!-- Orders table -->
+        <p class="table_title">
+          {{ $t('block.reporting.orderPendingTableTitle') }} ({{ orders.length }})
+        </p>
+
+        <!-- Orders pending table -->
         <b-table
           show-empty
           hover
@@ -46,14 +52,11 @@
           </template>
           <template v-slot:cell(current_state)="data">
             <b-badge
-              class="label color_field "
-              :style="setBadgeColor(data.item.state.color)"
+              class="label color_field"
+              style="background-color:#3498DB"
             >
               {{ data.item.state.name }}
             </b-badge>
-          </template>
-          <template v-slot:cell(before_commission)="data">
-            {{ data.item.amount }}
           </template>
           <template v-slot:cell(actions)="">
             <a
@@ -65,6 +68,9 @@
           </template>
         </b-table>
 
+        <p class="subtitle">
+          {{ $t('block.reporting.transactionTableTitle') }} ({{ countAllCheckoutTransactions }})
+        </p>
         <!-- Transactions table -->
         <b-table
           show-empty
@@ -81,6 +87,7 @@
               {{ data.item.username }}
             </a>
           </template>
+
           <template v-slot:cell(type)="data">
             <b-badge
               class="label color_field "
@@ -92,7 +99,7 @@
 
           <template v-slot:cell(actions)="data">
             <a :href="`https://www.paypal.com/activity/payment/${data.item.transactionID}`">
-              {{ $t('reporting.goToTransaction')}}
+              {{ $t('block.reporting.goToTransaction')}}
             </a>
           </template>
         </b-table>
@@ -133,6 +140,7 @@
           this.transactions = response.transactions;
           this.orderTotalRows = this.orders.length;
           this.transactionTotalRows = this.transactions.length;
+          this.countAllCheckoutTransactions = response.countAllCheckoutTransactions;
         });
       },
       setBadgeColor(color) {
@@ -158,7 +166,7 @@
           {key: 'date_add', label: 'Date', sortable: true},
           {key: 'id_order', label: 'Order ID', sortable: true},
           {key: 'user', label: 'Customer', sortable: true},
-          {key: 'current_state', label: 'State', sortable: true},
+          {key: 'current_state', label: 'Type', sortable: true},
           {key: 'before_commission', label: 'Before Commission', sortable: true},
           {key: 'commission', label: 'Commission', sortable: true},
           {key: 'total_paid', label: 'Total', sortable: true},
@@ -173,8 +181,8 @@
         orderPageOptions: [5, 10, 15],
         transactionFields: [
           {key: 'date_add', label: 'Date', sortable: true},
-          {key: 'order_reference', label: 'Order Reference', sortable: true},
-          {key: 'username', label: 'Customer', sortable: true},
+          {key: 'order_id', label: 'Order ID', sortable: true},
+          {key: 'user', label: 'Customer', sortable: true},
           {key: 'type', label: 'Type', sortable: true},
           {key: 'before_commission', label: 'Before Commission', sortable: true},
           {key: 'commission', label: 'Commission', sortable: true},
@@ -188,6 +196,7 @@
         transactionCurrentPage: 1,
         transactionPerPage: 20,
         transactionPageOptions: [5, 10, 15],
+        countAllCheckoutTransactions: null,
       };
     },
     created() {

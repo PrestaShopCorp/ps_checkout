@@ -295,6 +295,8 @@ class Translations
                     'subtitleLinkLabel' => $this->module->l('See the full list of transactions on your PayPal account', 'translations'),
                     'goToPaypal' => $this->module->l('Go To Paypal', 'translations'),
                     'goToTransaction' => $this->module->l('Go To Paypal', 'translations'),
+                    'orderPendingTableTitle' => $this->module->l('Go To Paypal', 'Pending Transaction'),
+                    'transactionTableTitle' => $this->module->l('Go To Paypal', 'All transactions'),
                 ],
             ],
         ];
