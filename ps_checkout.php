@@ -311,7 +311,7 @@ class Ps_checkout extends PaymentModule
         }
 
         $this->context->smarty->assign([
-            'pathApp' => $this->_path . 'views/js/app.js?v='.$this->version,
+            'pathApp' => $this->_path . 'views/js/app.js?v=' . $this->version,
         ]);
 
         Media::addJsDef([
@@ -401,7 +401,7 @@ class Ps_checkout extends PaymentModule
             'modulePath' => $this->getPathUri(),
             'paypalPaymentOption' => $this->name . '_paypal',
             'hostedFieldsErrors' => (new HostedFieldsErrors($this))->getHostedFieldsErrors(),
-            'jsPathInitPaypalSdk' => $this->_path . 'views/js/initPaypalAndCard.js?v='.$this->version,
+            'jsPathInitPaypalSdk' => $this->_path . 'views/js/initPaypalAndCard.js?v=' . $this->version,
         ]);
 
         $paymentMethods = $this->getPaymentMethods();
@@ -706,7 +706,7 @@ class Ps_checkout extends PaymentModule
     {
         $this->context->smarty->assign([
             'paypalEmail' => $this->context->cookie->__get('paypalEmail'),
-            'jsHideOtherPaymentOptions' => $this->_path . 'views/js/hideOtherPaymentOptions.js?v='.$this->version,
+            'jsHideOtherPaymentOptions' => $this->_path . 'views/js/hideOtherPaymentOptions.js?v=' . $this->version,
         ]);
 
         return $this->context->smarty->fetch(
