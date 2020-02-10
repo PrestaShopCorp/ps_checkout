@@ -24,17 +24,15 @@
           {{ $t('block.reporting.title') }}
         </h1>
         <p class="subtitle">
-          {{ $t('block.reporting.subtitle') }}.
-          <a href="https://www.paypal.com/listing/transactions" target="_blank">
-            {{ $t('block.reporting.subtitleLinkLabel') }}
-          </a>
+          {{ $t('block.reporting.label') }}.
+          <a href="">{{ $t('block.reporting.subtitleLinkLabel') }}</a>
         </p>
 
-        <p class="table_title">
-          {{ $t('block.reporting.orderPendingTableTitle') }} ({{ orders.length }})
-        </p>
+        <h2 class="mt-4">
+          {{ this.orders.length }} {{ $t('block.reporting.subTitle1') }}
+        </h2>
 
-        <!-- Orders pending table -->
+        <!-- Orders table -->
         <b-table
           show-empty
           hover
@@ -68,9 +66,10 @@
           </template>
         </b-table>
 
-        <p class="subtitle">
-          {{ $t('block.reporting.transactionTableTitle') }} ({{ countAllCheckoutTransactions }})
-        </p>
+        <h2 class="mt-4">
+          {{ this.transactions.length }} {{ $t('block.reporting.subTitle2') }}
+        </h2>
+
         <!-- Transactions table -->
         <b-table
           show-empty
@@ -109,8 +108,7 @@
           :total-rows="transactionTotalRows"
           :per-page="transactionPerPage"
           align="fill"
-          size="sm"
-          class="my-0"
+          class="my-0 m-auto w-fit-content"
         />
       </div>
     </b-card-body>
@@ -205,7 +203,7 @@
   };
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .title {
   font-size: 26px;
 }
@@ -214,5 +212,8 @@
 }
 .label {
   border-radius: .25em;
+}
+.w-fit-content {
+  width: fit-content;
 }
 </style>
