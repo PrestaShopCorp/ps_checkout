@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
@@ -58,6 +59,8 @@ class ExpressCheckout
             return false;
         }
 
+        $language = (new LanguageAdapter())->getLanguage($this->context->language->id);
+
         $paypalAccountRepository = new PaypalAccountRepository();
 
         $this->context->smarty->assign([
@@ -72,6 +75,7 @@ class ExpressCheckout
             'intent' => strtolower(\Configuration::get('PS_CHECKOUT_INTENT')),
             'currencyIsoCode' => $this->context->currency->iso_code,
             'isCardPaymentError' => (bool) \Tools::getValue('hferror'),
+            'locale' => $language['locale'],
         ]);
 
         return $this->module->display($this->module->getPathUri(), '/views/templates/front/expressCheckout.tpl');

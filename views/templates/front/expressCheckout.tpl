@@ -19,7 +19,7 @@
 
 <script type='text/javascript' src='{$jsExpressCheckoutPath|escape:'javascript':'UTF-8'}'></script>
 
-<link rel="preload" href="https://www.paypal.com/sdk/js?components=buttons&client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&merchant-id={$merchantId|escape:'htmlall':'UTF-8'}&intent={$intent|escape:'htmlall':'UTF-8'}&currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}&commit=false&disable-funding=credit,card" as="script">
+<link rel="preload" href="https://www.paypal.com/sdk/js?components=buttons&client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&merchant-id={$merchantId|escape:'htmlall':'UTF-8'}&intent={$intent|escape:'htmlall':'UTF-8'}&currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}&commit=false&disable-funding=credit,card&locale={$locale|escape:'htmlall':'UTF-8'}" as="script">
 
 <div id="pscheckout-express-checkout" style="display:none;">
   {if $displayMode eq 'cart'}
@@ -62,7 +62,7 @@ function loadPaypalScript() {
   }
 
   const paypalScript = document.createElement('script');
-  paypalScript.setAttribute('src', "https://www.paypal.com/sdk/js?components=buttons&client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&merchant-id={$merchantId|escape:'htmlall':'UTF-8'}&intent={$intent|escape:'htmlall':'UTF-8'}&currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}&commit=false&disable-funding=credit,card");
+  paypalScript.setAttribute('src', "https://www.paypal.com/sdk/js?components=buttons&client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&merchant-id={$merchantId|escape:'htmlall':'UTF-8'}&intent={$intent|escape:'htmlall':'UTF-8'}&currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}&commit=false&disable-funding=credit,card&locale={$locale|escape:'htmlall':'UTF-8'}");
   paypalScript.setAttribute('id', 'psCheckoutPaypalSdk');
   paypalScript.setAttribute('data-namespace', 'paypalSdkPsCheckoutEC');
   paypalScript.setAttribute('async', '');
