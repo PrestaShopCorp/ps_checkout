@@ -79,7 +79,18 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
             $this->setAtributesHeaderValues($headerValues);
 
-            $bodyValues = \Tools::jsonDecode(file_get_contents('php://input'), true);
+            $bodyContent = file_get_contents('php://input');
+
+            if (empty($bodyContent)) {
+                throw new UnauthorizedException(WebHookValidation::BODY_DATA_ERROR);
+            }
+
+            $bodyValues = \Tools::jsonDecode($bodyContent, true);
+
+            if (empty($bodyValues)) {
+                throw new UnauthorizedException(WebHookValidation::BODY_DATA_ERROR);
+            }
+
             $errors = $validationValues->validateBodyDatas($bodyValues);
 
             // If there is errors, return them
