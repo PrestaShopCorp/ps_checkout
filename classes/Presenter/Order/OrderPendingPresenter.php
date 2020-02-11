@@ -26,6 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Order;
 
+use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Translations\OrderStatesTranslations;
@@ -42,7 +43,7 @@ class OrderPendingPresenter implements PresenterInterface
      */
     public function present()
     {
-        $link = new \Link();
+        $link = new LinkAdapter();
         $context = \Context::getContext();
 
         $orderStates = [];
@@ -64,7 +65,8 @@ class OrderPendingPresenter implements PresenterInterface
 
         foreach ($orders as &$order) {
             $order['username'] = $this->getUsername($order['id_customer']);
-            $order['userProfileLink'] = \Tools::getShopDomainSsl(true) . $link->getAdminLink('AdminCustomers', $order['id_customer']);
+            $order['userProfileLink'] = $link->getAdminLink('AdminCustomers', true, [], ['id_customer' => $order['id_customer'], 'viewcustomer' => 1]);
+            $order['orderLink'] = $link->getAdminLink('AdminOrders', true, [], ['id_order' => $order['id_order'], 'vieworder' => 1]);
             $order['state'] = $orderStates[$order['current_state']];
             $order['before_commission'] = \Tools::displayPrice($order['total_paid']);
             // TODO: Waiting for paypal infos (reporting lot 2)

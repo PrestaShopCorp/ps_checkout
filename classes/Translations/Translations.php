@@ -290,6 +290,7 @@ class Translations
                     'button' => $this->module->l('Make my roudings settings fully compatible!', 'translations'),
                 ],
                 'reporting' => [
+                    'pending' => $this->module->l('pending', 'translations'),
                     'title' => $this->module->l('All transactions', 'translations'),
                     'subTitle1' => $this->module->l('pending transaction(s)', 'translations'),
                     'subTitle2' => $this->module->l('transaction(s)', 'translations'),

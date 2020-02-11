@@ -26,6 +26,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Transaction;
 
+use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
@@ -40,14 +41,16 @@ class TransactionPresenter implements PresenterInterface
      */
     public function present()
     {
+        $link = new LinkAdapter();
         $transactions = $this->getTransactions();
 
         foreach ($transactions as &$transaction) {
             $userInfos = $this->getUserInfos($transaction['order_reference']);
             $transaction['transactionID'] = $transaction['transaction_id'];
             $transaction['order_id'] = $this->getOrderIDByOrderReference($transaction['order_reference']);
+            $transaction['orderLink'] = $link->getAdminLink('AdminOrders', true, [], ['id_order' => $transaction['order_id'], 'vieworder' => 1]);
             $transaction['username'] = $userInfos['name'];
-            $transaction['userProfileLink'] = $userInfos['link'];
+            $transaction['userProfileLink'] = $link->getAdminLink('AdminCustomers', true, [], ['id_customer' => $userInfos['userID'], 'viewcustomer' => 1]);
             $currency = new \Currency($transaction['id_currency']);
             $transaction['before_commission'] = \Tools::displayPrice($transaction['amount'], $currency);
             $transaction['type'] = strpos($transaction['amount'], '-') !== false ? 'Refund' : 'Payment';
@@ -87,6 +90,7 @@ class TransactionPresenter implements PresenterInterface
      */
     private function getUserInfos($orderReference)
     {
+        $link = new LinkAdapter();
         $sql = 'SELECT id_customer FROM `' . _DB_PREFIX_ . 'orders` WHERE reference = "' . $orderReference . '"';
         $userID = \Db::getInstance()->getRow($sql);
 
@@ -94,8 +98,9 @@ class TransactionPresenter implements PresenterInterface
         $user = \Db::getInstance()->getRow($sql);
 
         return [
+            'userID' => $userID['id_customer'],
             'name' => substr($user['firstname'], 0, 1) . '. ' . $user['lastname'],
-            'link' => \Tools::getShopDomainSsl(true) . (new \Link())->getAdminLink('AdminCustomers', $userID),
+            'link' => $link->getAdminLink('AdminCustomers', $userID),
         ];
     }
 }

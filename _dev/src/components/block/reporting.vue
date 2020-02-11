@@ -17,7 +17,10 @@
  * International Registered Trademark & Property of PrestaShop SA
  *-->
 <template>
-  <b-card no-body>
+  <b-card
+    id="reporting"
+    no-body
+  >
     <b-card-body>
       <div class="m-auto max-width">
         <h1 class="title">
@@ -25,7 +28,12 @@
         </h1>
         <p class="subtitle">
           {{ $t('block.reporting.label') }}.
-          <a href="">{{ $t('block.reporting.subtitleLinkLabel') }}</a>
+          <a
+            href="https://www.paypal.com/listing/transactions"
+            target="_blank"
+          >
+            {{ $t('block.reporting.subtitleLinkLabel') }}
+          </a>
         </p>
 
         <h2 class="mt-4">
@@ -42,6 +50,7 @@
           :current-page="orderCurrentPage"
           :per-page="orderPerPage"
           @filtered="onOrderFiltered"
+          @row-clicked="onRowClicked"
         >
           <template v-slot:cell(user)="data">
             <a :href="`${data.item.userProfileLink}`">
@@ -53,7 +62,7 @@
               class="label color_field"
               style="background-color:#3498DB"
             >
-              {{ data.item.state.name }}
+              {{ $t('block.reporting.pending') }}
             </b-badge>
           </template>
           <template v-slot:cell(actions)="">
@@ -80,9 +89,13 @@
           :current-page="transactionCurrentPage"
           :per-page="transactionPerPage"
           @filtered="onTransactionFiltered"
+          @row-clicked="onRowClicked"
         >
           <template v-slot:cell(user)="data">
-            <a :href="`${data.item.userProfileLink}`">
+            <a
+              :href="`${data.item.userProfileLink}`"
+              target="_blank"
+            >
               {{ data.item.username }}
             </a>
           </template>
@@ -97,8 +110,11 @@
           </template>
 
           <template v-slot:cell(actions)="data">
-            <a :href="`https://www.paypal.com/activity/payment/${data.item.transactionID}`">
-              {{ $t('block.reporting.goToTransaction')}}
+            <a
+              :href="`https://www.paypal.com/activity/payment/${data.item.transactionID}`"
+              target="_blank"
+            >
+              {{ $t('block.reporting.goToTransaction') }}
             </a>
           </template>
         </b-table>
@@ -121,6 +137,9 @@
   export default {
     name: 'Reporting',
     methods: {
+      onRowClicked(item) {
+        window.open(item.orderLink);
+      },
       onOrderFiltered(filteredItems) {
         this.orderTotalRows = filteredItems.length;
         this.orderCurrentPage = 1;
@@ -215,5 +234,11 @@
 }
 .w-fit-content {
   width: fit-content;
+}
+</style>
+
+<style>
+#app #reporting .table tr:focus {
+  outline: unset;
 }
 </style>
