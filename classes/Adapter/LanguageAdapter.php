@@ -42,8 +42,10 @@ class LanguageAdapter
         if (false === (new ShopContext())->isShop17()) {
             $locale = explode('-', $language['language_code']);
             $locale[1] = strtoupper($locale[1]);
-            $language['locale'] = implode('-', $locale);
+            $language['locale'] = implode('_', $locale);
         }
+
+        $language['locale'] = str_replace('-', '_', $language['locale']);
 
         return $language;
     }

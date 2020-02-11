@@ -64,7 +64,7 @@ class OnboardingPayloadBuilder extends Builder
 
         $node = [
             'url' => $this->getCallBackUrl(),
-            'preferred_language_code' => str_replace('-', '_', $locale),
+            'preferred_language_code' => $locale,
             'primary_currency_code' => $this->getCurrencyIsoCode(),
         ];
 
