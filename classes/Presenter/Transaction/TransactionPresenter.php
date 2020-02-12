@@ -100,7 +100,7 @@ class TransactionPresenter implements PresenterInterface
         return [
             'userID' => $userID['id_customer'],
             'name' => substr($user['firstname'], 0, 1) . '. ' . $user['lastname'],
-            'link' => $link->getAdminLink('AdminCustomers', $userID),
+            'link' => $link->getAdminLink('AdminCustomers', true, [], $userID),
         ];
     }
 }

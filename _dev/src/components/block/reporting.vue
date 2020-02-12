@@ -57,7 +57,7 @@
               {{ data.item.username }}
             </a>
           </template>
-          <template v-slot:cell(current_state)="data">
+          <template v-slot:cell(current_state)="">
             <b-badge
               class="label color_field"
               style="background-color:#3498DB"

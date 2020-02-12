@@ -294,7 +294,7 @@ class Translations
                     'title' => $this->module->l('All transactions', 'translations'),
                     'subTitle1' => $this->module->l('pending transaction(s)', 'translations'),
                     'subTitle2' => $this->module->l('transaction(s)', 'translations'),
-                    'label' => $this->module->l('See bellow all orders processed with Prestashop Checkout', 'translations'),
+                    'label' => $this->module->l('See below the transactions processed with PrestaShop Checkout, limited to the last 1000 to load them faster.', 'translations'),
                     'subtitleLinkLabel' => $this->module->l('See the full list of transactions on your PayPal account', 'translations'),
                     'goToPaypal' => $this->module->l('Go To Paypal', 'translations'),
                     'goToTransaction' => $this->module->l('Go To Paypal', 'translations'),
