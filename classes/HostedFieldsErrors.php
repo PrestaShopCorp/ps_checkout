@@ -45,10 +45,10 @@ class HostedFieldsErrors
     {
         //TODO: Complete with all error code possible - waiting response from paypal
         $errors = [
-            'INVALID_STRING_LENGTH' => $this->module->l('Invalid format, check your bank details and try again'),
-            'INVALID_EXPIRATION_YEAR' => $this->module->l('Expiration year must be between now and 2099'),
-            'INVALID_PARAMETER_SYNTAX' => $this->module->l('Invalid format, check your bank details and try again'),
-            'TRANSACTION_NOT_SUPPORTED' => $this->module->l('This transaction is currently not supported. Please contact customer service or your account manager for more information.'),
+            'INVALID_STRING_LENGTH' => $this->module->l('Invalid format, check your bank details and try again', 'hostedfieldserrors'),
+            'INVALID_EXPIRATION_YEAR' => $this->module->l('Expiration year must be between now and 2099', 'hostedfieldserrors'),
+            'INVALID_PARAMETER_SYNTAX' => $this->module->l('Invalid format, check your bank details and try again', 'hostedfieldserrors'),
+            'TRANSACTION_NOT_SUPPORTED' => $this->module->l('This transaction is currently not supported. Please contact customer service or your account manager for more information.', 'hostedfieldserrors'),
         ];
 
         return json_encode($errors);
