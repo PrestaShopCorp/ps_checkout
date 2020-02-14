@@ -1,3 +1,4 @@
+        return \Tools::getShopDomainSsl(true) . __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_) . '/' . $this->link->getAdminLink($controller, $withToken) . $paramsAsString;
 <?php
 /**
  * 2007-2020 PrestaShop and Contributors
@@ -64,6 +65,6 @@ class LinkAdapter
             $paramsAsString .= "&$key=$value";
         }
 
-        return $this->link->getBaseLink() . basename(_PS_ADMIN_DIR_) . '/' . $this->link->getAdminLink($controller, $withToken) . $paramsAsString;
+        return \Tools::getShopDomainSsl(true) . __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_) . '/' . $this->link->getAdminLink($controller, $withToken) . $paramsAsString;
     }
 }
