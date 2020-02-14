@@ -1,32 +1,27 @@
 <?php
 /**
-* 2007-2019 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/afl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-*  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2019 PrestaShop SA
-*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
-*/
+ * 2007-2020 PrestaShop and Contributors
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA <contact@prestashop.com>
+ * @copyright 2007-2020 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ * International Registered Trademark & Property of PrestaShop SA
+ */
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Cart;
 
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\PrestaShop\Adapter\Cart\CartPresenter as PsCartPresenter;
 
 /**
@@ -65,15 +60,24 @@ class CartPresenter implements PresenterInterface
     {
         $productList = $this->getCart()->getProducts();
 
-        $cartPresenter = new PsCartPresenter();
-        $cartPresenter = $cartPresenter->present($this->getCart());
+        $cart = (array) $this->getCart();
 
-        $shippingAddress = \Address::initialize($cartPresenter['id_address_delivery']);
-        $invoiceAddress = \Address::initialize($cartPresenter['id_address_invoice']);
+        if ((new ShopContext())->isShop17()) {
+            $cart = new PsCartPresenter();
+            $cart = $cart->present($this->getCart());
+        }
+
+        if (!isset($cart['totals']['total_including_tax']['amount'])) {
+            // Handle native CartPresenter before 1.7.2
+            $cart['totals']['total_including_tax']['amount'] = $this->getCart()->getOrderTotal(true);
+        }
+
+        $shippingAddress = \Address::initialize($cart['id_address_delivery']);
+        $invoiceAddress = \Address::initialize($cart['id_address_invoice']);
 
         return [
             'cart' => array_merge(
-                $cartPresenter,
+                $cart,
                 ['id' => $this->getCart()->id],
                 ['shipping_cost' => $this->getCart()->getTotalShippingCost(null, true)]
             ),

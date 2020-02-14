@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2019 PrestaShop and Contributors
+ * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -13,7 +13,7 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -179,10 +179,12 @@ class OrderStates
         $iconExtension = '.gif';
         $iconToPaste = _PS_ORDER_STATE_IMG_DIR_ . $orderStateId . $iconExtension;
 
-        if (true !== is_writable($iconToPaste)) {
-            \PrestaShopLogger::addLog('[PSPInstall] ' . $iconToPaste . ' is not writable', 2, null, null, null, true);
+        if (true === file_exists($iconToPaste)) {
+            if (true !== is_writable($iconToPaste)) {
+                \PrestaShopLogger::addLog('[PSPInstall] ' . $iconToPaste . ' is not writable', 2, null, null, null, true);
 
-            return false;
+                return false;
+            }
         }
 
         if ($state === Refund::REFUND_STATE) {

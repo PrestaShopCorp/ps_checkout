@@ -1,5 +1,5 @@
 <!--**
- * 2007-2019 PrestaShop and Contributors
+ * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -12,7 +12,7 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  *-->
@@ -20,7 +20,15 @@
   <div>
     <b-container v-if="firebaseStatusAccount && paypalStatusAccount">
       <b-alert
-        v-if="!merchantEmailIsValid"
+        v-if="!accountIslinked"
+        variant="info"
+        show
+      >
+        <h2>{{ $t('pages.accounts.waitingPaypalLinkingTitle') }}</h2>
+        <p>{{ $t('pages.accounts.waitingPaypalLinking') }}</p>
+      </b-alert>
+      <b-alert
+        v-else-if="!merchantEmailIsValid"
         variant="warning"
         show
       >
@@ -29,13 +37,15 @@
         <p class="text-muted my-1">
           {{ $t('pages.accounts.didntReceiveEmail') }}
         </p>
-        <b-button
-          href="https://www.paypal.com/businessprofile/settings"
-          target="_blank"
-          variant="outline-secondary"
-        >
-          {{ $t('pages.accounts.sendEmailAgain') }}
-        </b-button>
+        <p>
+          <b-button
+            href="https://www.paypal.com/businessprofile/settings"
+            target="_blank"
+            variant="outline-secondary"
+          >
+            {{ $t('pages.accounts.sendEmailAgain') }}
+          </b-button>
+        </p>
       </b-alert>
       <template v-else>
         <b-alert
@@ -98,15 +108,21 @@
       </template>
     </b-container>
 
-    <b-container class="mb-4">
+    <b-container>
       <AccountList />
     </b-container>
 
-    <b-container v-if="firebaseStatusAccount !== false && paypalStatusAccount !== false">
+    <b-container
+      class="mt-4"
+      v-if="firebaseStatusAccount !== false && paypalStatusAccount !== false"
+    >
       <PaymentAcceptance />
     </b-container>
 
-    <b-container v-else>
+    <b-container
+      class="mt-4"
+      v-else
+    >
       <Reassurance />
     </b-container>
   </div>
@@ -139,6 +155,9 @@
       },
       merchantEmailIsValid() {
         return this.$store.state.paypal.emailIsValid;
+      },
+      accountIslinked() {
+        return this.$store.state.paypal.accountIslinked;
       },
     },
   };

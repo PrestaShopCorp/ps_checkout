@@ -1,0 +1,136 @@
+/**
+ * 2007-2020 PrestaShop and Contributors
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA <contact@prestashop.com>
+ * @copyright 2007-2020 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ * International Registered Trademark & Property of PrestaShop SA
+ */
+
+ p.payment_module a.pscheckout-paypal:after, p.payment_module a.pscheckout-card:after {
+  display: block;
+  content: "\f054";
+  position: absolute;
+  right: 15px;
+  margin-top: -11px;
+  top: 50%;
+  font-family: "FontAwesome";
+  font-size: 25px;
+  height: 22px;
+  width: 14px;
+  color: #777;
+}
+
+p.payment_module .pscheckout-paypal, p.payment_module .pscheckout-card {
+  background-color: #fbfbfb;
+}
+
+p.payment_module a.pscheckout-paypal, p.payment_module a.pscheckout-card {
+  padding: 30px 40px 30px 20px;
+}
+
+p.payment_module .pscheckout-paypal img, p.payment_module .pscheckout-card img {
+  margin-right: 10px;
+}
+
+#hostedFieldsErrors.hide-paypal-error {
+  display: none;
+}
+
+.spinner-hosted-fields {
+  display: inline-block;
+  float: right;
+  width: 26px;
+  height: 26px;
+  margin-right: 60px;
+  border: 3px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  -webkit-animation: spinner-border .75s linear infinite;
+  animation: spinner-border .75s linear infinite;
+}
+
+@keyframes spinner-border {
+  to { transform: rotate(360deg); }
+}
+
+#card-image {
+  position: absolute;
+  top: 28px;
+  right: 1em;
+  width: 44px;
+  height: 28px;
+  background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/346994/card_sprite.png);
+  background-size: 86px 458px;
+  border-radius: 1px;
+  background-position: -100px 0;
+  background-repeat: no-repeat;
+  margin-bottom: 1em;
+}
+
+#card-image.visa {
+  background-position: 0 -398px;
+}
+#card-image.master-card {
+  background-position: 0 -281px;
+}
+#card-image.american-express {
+  background-position: 0 -370px;
+}
+#card-image.maestro {
+  background-position: 0 -251px;
+}
+#card-image.jcb {
+  background-position: 0 -221px;
+}
+#card-image.diners-club {
+  background-position: 0 -133px;
+}
+
+.braintree-hosted-fields-focused {
+  outline: .1875rem solid #2fb5d2;
+  border: unset;
+  background-color: #fff;
+  color: #232323;
+}
+
+.braintree-hosted-fields-invalid {
+  outline: .1875rem solid #e76d7a;
+  border: unset;
+  backface-visibility: hidden;
+}
+
+.defautl-credit-card {
+  position: absolute;
+  top: 2px;
+  right: 10px;
+  width: 25px;
+  height: 25px;
+}
+
+.confirmation-block {
+  float: right;
+}
+
+#paypal-button-container {
+  min-width: 300px;
+}
+
+#cart_navigation {
+  display: flex;
+}
+
+#cart_navigation .flex-display {
+  flex-grow: 1;
+  text-align: left;
+}

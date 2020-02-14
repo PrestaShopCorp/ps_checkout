@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2019 PrestaShop and Contributors
+ * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -13,7 +13,7 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -68,7 +68,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     public function display()
     {
         try {
-            $headerValues = getallheaders();
+            $headerValues = $this->getHeaderValues();
             $validationValues = new WebHookValidation();
             $errors = $validationValues->validateHeaderDatas($headerValues);
 
@@ -79,7 +79,18 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
             $this->setAtributesHeaderValues($headerValues);
 
-            $bodyValues = \Tools::jsonDecode(file_get_contents('php://input'), true);
+            $bodyContent = file_get_contents('php://input');
+
+            if (empty($bodyContent)) {
+                throw new UnauthorizedException(WebHookValidation::BODY_DATA_ERROR);
+            }
+
+            $bodyValues = \Tools::jsonDecode($bodyContent, true);
+
+            if (empty($bodyValues)) {
+                throw new UnauthorizedException(WebHookValidation::BODY_DATA_ERROR);
+            }
+
             $errors = $validationValues->validateBodyDatas($bodyValues);
 
             // If there is errors, return them
@@ -124,6 +135,25 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         }
 
         return false;
+    }
+
+    /**
+     * Get HTTP Headers
+     *
+     * @return array
+     */
+    private function getHeaderValues()
+    {
+        // Not available on nginx
+        if (function_exists('getallheaders')) {
+            return getallheaders();
+        }
+
+        return [
+            'Shop-Id' => isset($_SERVER['HTTP_SHOP_ID']) ? $_SERVER['HTTP_SHOP_ID'] : null,
+            'Merchant-Id' => isset($_SERVER['HTTP_MERCHANT_ID']) ? $_SERVER['HTTP_MERCHANT_ID'] : null,
+            'Psx-Id' => isset($_SERVER['HTTP_PSX_ID']) ? $_SERVER['HTTP_PSX_ID'] : null,
+        ];
     }
 
     /**

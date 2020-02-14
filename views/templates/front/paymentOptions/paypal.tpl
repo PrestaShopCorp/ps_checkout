@@ -1,5 +1,5 @@
 {**
- * 2007-2019 PrestaShop and Contributors
+ * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -12,7 +12,7 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  *}
@@ -27,8 +27,7 @@
   <form id="conditions-to-approve-paypal" method="GET">
     <label for="conditions_to_approve">
       <input id="conditions_to_approve" type="checkbox" name="conditions_to_approve" class="buttons-approve">
-      {assign var="link_url" value=$link->getCMSLink('3')}
-      {l s='I agree to the [1]terms of service[/1] and will adhere to them unconditionally.' mod='ps_checkout' tags=["<a href=\"$link_url\" id=\"cta-terms-and-conditions-checkout\">"]}
+      {l s='I agree to the [1]terms of service[/1] and will adhere to them unconditionally.' mod='ps_checkout' tags=["<a href=\"$termsAndConditionsLink\" id=\"cta-terms-and-conditions-checkout\">"]}
     </label>
   </form>
 </div>

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2019 PrestaShop and Contributors
+ * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -13,7 +13,7 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
-use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 
 /**
  * Class that allow to validate an order
@@ -152,7 +151,7 @@ class ValidateOrder
      */
     private function setOrdersMatrice($orderPrestashopId, $orderPaypalId)
     {
-        $orderMatrice = new OrderMatrice();
+        $orderMatrice = new \OrderMatrice();
         $orderMatrice->id_order_prestashop = $orderPrestashopId;
         $orderMatrice->id_order_paypal = $orderPaypalId;
 
@@ -193,8 +192,8 @@ class ValidateOrder
      */
     private function setOrderState($orderId, $status, $paymentMethod)
     {
-        $order = new \OrderHistory();
-        $order->id_order = $orderId;
+        $orderHistory = new \OrderHistory();
+        $orderHistory->id_order = $orderId;
 
         switch ($status) {
             case self::CAPTURE_STATUS_COMPLETED:
@@ -211,8 +210,8 @@ class ValidateOrder
                 break;
         }
 
-        $order->changeIdOrderState($orderState, $orderId);
-        $order->save();
+        $orderHistory->changeIdOrderState($orderState, $orderId);
+        $orderHistory->addWithemail();
 
         return $orderState;
     }
