@@ -447,7 +447,6 @@ class Ps_checkout extends PaymentModule
             'modulePath' => $this->getPathUri(),
             'paypalPaymentOption' => $this->name . '_paypal',
             'hostedFieldsErrors' => (new PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors($this))->getHostedFieldsErrors(),
-            'jsPathInitPaypalSdk' => $this->_path . 'views/js/initPaypalAndCard.js',
             'termsAndConditionsLink' => $termsAndConditionsLink,
             'jsPathInitPaypalSdk' => $this->_path . 'views/js/initPaypalAndCard.js?v=' . $this->version,
         ]);
