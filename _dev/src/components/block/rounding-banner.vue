@@ -1,5 +1,5 @@
 <!--**
- * 2007-2019 PrestaShop and Contributors
+ * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -12,7 +12,7 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  *-->
@@ -26,24 +26,22 @@
       <p class="mb-3">
         {{ $t('block.rounding-banner.content') }}
       </p>
-      <PSButton
-        ghost
-        @click="updateRoundingSettings()"
-      >
-        {{ $t('block.rounding-banner.button') }}
-      </PSButton>
+      <p>
+        <b-button
+          target="_blank"
+          variant="outline-secondary"
+          @click="updateRoundingSettings()"
+        >
+          {{ $t('block.rounding-banner.button') }}
+        </b-button>
+      </p>
     </b-alert>
   </div>
 </template>
 
 <script>
-  import PSButton from '@/components/form/button';
-
   export default {
     name: 'RoundingBanner',
-    components: {
-      PSButton,
-    },
     methods: {
       updateRoundingSettings() {
         this.$store.dispatch('updateRoundingSettings');

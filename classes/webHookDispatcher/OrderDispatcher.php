@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2019 PrestaShop and Contributors
+ * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -13,14 +13,12 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace PrestaShop\Module\PrestashopCheckout;
-
-use PrestaShop\Module\PrestashopCheckout\Entity\OrderMatrice;
 
 class OrderDispatcher implements Dispatcher
 {
@@ -84,7 +82,7 @@ class OrderDispatcher implements Dispatcher
             throw new UnauthorizedException($orderError);
         }
 
-        $psOrderId = (new OrderMatrice())->getOrderPrestashopFromPaypal($orderId);
+        $psOrderId = (new \OrderMatrice())->getOrderPrestashopFromPaypal($orderId);
 
         if (!$psOrderId) {
             throw new UnprocessableException('order #' . $orderId . ' does not exist');
@@ -135,21 +133,21 @@ class OrderDispatcher implements Dispatcher
             throw new UnauthorizedException($orderError);
         }
 
-        $order = new \OrderHistory();
-        $order->id_order = $orderId;
-        $lastOrderState = $order->getLastOrderState($orderId);
+        $orderHistory = new \OrderHistory();
+        $orderHistory->id_order = $orderId;
+        $lastOrderState = $orderHistory->getLastOrderState($orderId);
 
         // Prevent duplicate state entry
         if ((int) self::PS_EVENTTYPE_TO_PS_STATE_ID[$eventType] === $lastOrderState->id) {
             return false;
         }
 
-        $order->changeIdOrderState(
+        $orderHistory->changeIdOrderState(
             self::PS_EVENTTYPE_TO_PS_STATE_ID[$eventType],
             $orderId
         );
 
-        if (true !== $order->save()) {
+        if (true !== $orderHistory->addWithemail()) {
             throw new UnauthorizedException('unable to change the order state');
         }
 

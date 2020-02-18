@@ -1,0 +1,51 @@
+name: Build & Release draft
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: build dependencies & create artifact
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+      - name: Build JS dependencies
+        uses: PrestaShopCorp/github-action-build-js/12@v1.0
+        with:
+          cmd: yarn
+          path: ./_dev
+      - name: Install composer dependencies
+        run: composer install --no-dev -o
+      - name: Clean-up project
+        uses: PrestaShopCorp/github-action-clean-before-deploy@v1.0
+      - name: Create & upload artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ github.event.repository.name }}
+          path: ../
+  update_release_draft:
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if: github.event_name == 'push'
+    steps:
+      - name: Download build
+        uses: actions/download-artifact@v1
+        with:
+          name: ${{ github.event.repository.name }}
+      # Drafts your next Release notes as Pull Requests are merged into "master
+      - uses: toolmantim/release-drafter@v5.2.0
+        id: release_info
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish to GitHub Release
+        uses: actions/upload-release-asset@v1.0.1
+        with:
+          upload_url: ${{ steps.release_info.outputs.upload_url }}
+          asset_path: ./build/${{ github.event.repository.name }}.zip
+          asset_name: ${{ github.event.repository.name }}.zip
+          asset_content_type: application/zip
+

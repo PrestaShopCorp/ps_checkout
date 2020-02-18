@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2019 PrestaShop and Contributors
+ * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -13,13 +13,14 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
+use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Faq\Faq;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
@@ -57,12 +58,13 @@ class ContextModule implements PresenterInterface
             'context' => [
                 'moduleVersion' => \Ps_checkout::VERSION,
                 'psVersion' => _PS_VERSION_,
+                'shopIs17' => (new ShopContext())->isShop17(),
                 'moduleKey' => $this->module->module_key,
                 'shopId' => \Configuration::get('PS_CHECKOUT_SHOP_UUID_V4'),
                 'isReady' => (new ShopContext())->isReady(),
                 'faq' => $this->getFaq(),
                 'language' => $this->context->language,
-                'prestashopCheckoutAjax' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
+                'prestashopCheckoutAjax' => (new LinkAdapter($this->context->link))->getAdminLink('AdminAjaxPrestashopCheckout'),
                 'translations' => (new Translations($this->module))->getTranslations(),
                 'readmeUrl' => $this->getReadme(),
                 'cguUrl' => $this->getCgu(),

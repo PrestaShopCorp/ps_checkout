@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2019 PrestaShop and Contributors
+ * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -13,12 +13,10 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-
-namespace PrestaShop\Module\PrestashopCheckout\Entity;
 
 /**
  * Makes a matrice between Prestashop Order and Paypal Order
@@ -112,5 +110,26 @@ class OrderMatrice extends \ObjectModel
                 WHERE pom.id_order_prestashop = "' . (int) $orderPrestashop . '"';
 
         return \Db::getInstance()->getValue($query);
+    }
+
+    /**
+     * Check if this order has multiple entries associated due to bug before 1.2.11
+     *
+     * @param int $orderId
+     *
+     * @return bool
+     */
+    public static function hasInconsistencies($orderId)
+    {
+        // Before 1.2.11 id_order_prestashop field was limited to 255
+        if ((int) $orderId !== 255) {
+            return false;
+        }
+
+        // If more than one order found, there are inconsistencies for this order
+        return (bool) \Db::getInstance()->getValue('
+            SELECT COUNT(*)
+            FROM `' . _DB_PREFIX_ . 'pscheckout_order_matrice`
+            WHERE id_order_prestashop = ' . (int) $orderId);
     }
 }

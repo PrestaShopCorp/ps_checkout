@@ -1,5 +1,5 @@
 <!--**
- * 2007-2019 PrestaShop and Contributors
+ * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -12,7 +12,7 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  *-->
@@ -72,6 +72,18 @@
       MenuItem,
       RoundingBanner,
     },
+    data() {
+      return {
+        paypalStatusUpdater: null,
+      };
+    },
+    methods: {
+      updater() {
+        this.paypalStatusUpdater = setInterval(() => {
+          this.$store.dispatch('refreshPaypalStatus');
+        }, 10000);
+      },
+    },
     computed: {
       onboardingPaypalIsCompleted() {
         return this.$store.state.paypal.onboardingCompleted;
@@ -82,6 +94,25 @@
       paymentMode() {
         return this.$store.state.configuration.paymentMode;
       },
+      accountIslinked() {
+        return this.$store.state.paypal.accountIslinked;
+      },
+    },
+    watch: {
+      accountIslinked(val) {
+        if (!val && this.onboardingPaypalIsCompleted) {
+          this.updater();
+        } else {
+          clearInterval(this.paypalStatusUpdater);
+        }
+      },
+    },
+    created() {
+      if (!this.onboardingPaypalIsCompleted || this.accountIslinked) {
+        return;
+      }
+
+      this.updater();
     },
   };
 </script>

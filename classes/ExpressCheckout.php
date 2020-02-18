@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2019 PrestaShop and Contributors
+ * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -13,7 +13,7 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -65,7 +65,7 @@ class ExpressCheckout
             'isPs176' => version_compare(_PS_VERSION_, '1.7.6.0', '>='),
             'merchantId' => $paypalAccountRepository->getMerchantId(),
             'paypalClientId' => (new PaypalEnv())->getPaypalClientId(),
-            'jsExpressCheckoutPath' => \Tools::getShopDomain(true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/views/js/initExpressCheckout.js',
+            'jsExpressCheckoutPath' => $this->module->getPathUri() . 'views/js/initExpressCheckout.js',
             'checkoutLink' => $this->context->link->getPageLink('order', true, $this->context->language->id, ['paymentMethod' => 'paypal']),
             'expressCheckoutController' => $this->context->link->getModuleLink($this->module->name, 'ExpressCheckout'),
             'paypalIsActive' => $paypalAccountRepository->paypalPaymentMethodIsValid(),

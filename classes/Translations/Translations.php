@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2019 PrestaShop and Contributors
+ * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -13,7 +13,7 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -42,7 +42,7 @@ class Translations
      */
     public function getTranslations()
     {
-        $locale = \Context::getContext()->language->locale;
+        $locale = \Context::getContext()->language->iso_code;
         $linkTranslations = new LinksTranslations($locale);
 
         $translations[$locale] = [
@@ -61,6 +61,9 @@ class Translations
                 'accounts' => [
                     'approved' => $this->module->l('Approved', 'translations'),
                     'approvalPending' => $this->module->l('Approval pending', 'translations'),
+                    'accountLinkingInProgress' => $this->module->l('Account Linking in progress', 'translations'),
+                    'waitingPaypalLinkingTitle' => $this->module->l('Onboarding almost done!', 'translations'),
+                    'waitingPaypalLinking' => $this->module->l('Synchronization between your store and your PayPal account is in progress. Please wait.', 'translations'),
                     'emailValidationNeeded' => $this->module->l('Email validation needed', 'translations'),
                     'waitingEmail' => $this->module->l('A confirmation email has been sent. Check your inbox and click on the link to activate your account.', 'translations'),
                     'didntReceiveEmail' => $this->module->l('No confirmation email?', 'translations'),

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2019 PrestaShop and Contributors
+ * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -13,7 +13,7 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -28,7 +28,7 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
  */
 class PsxModule implements PresenterInterface
 {
-    const ALL_LANGUAGES_FILE = _PS_ROOT_DIR_ . '/app/Resources/all_languages.json';
+    const ALL_LANGUAGES_FILE = _PS_MODULE_DIR_ . 'ps_checkout/views/json/all_languages.json';
     const ALL_COUNTRIES_FILE = _PS_MODULE_DIR_ . 'ps_checkout/views/json/all_countries.json';
     const ALL_COUNTRIES_STATES_FILE = _PS_MODULE_DIR_ . 'ps_checkout/views/json/countries_states.json';
     const ALL_BUSINESS_FILE = _PS_MODULE_DIR_ . 'ps_checkout/views/json/i18n/business-information-';

@@ -20,31 +20,15 @@ If you want to get a zip ready to install on your shop. You can directly downloa
 ### Production
 
 1. Clone this repo `git clone git@github.com:PrestaShop/ps_checkout.git`
-2. `composer install --no-dev -o`
-3. `yarn install` (Or `npm install` if you are using npm as the package manager)
-4. `yarn build` (Or `npm run build` if you are using npm as the package manager)
+2. `make build-prod-zip`
 
-Don't forget to delete all unecessary files (if you want to deploy the module) like .git, node_modules/ etc ...
+The zip will be generated in the root directory of the module.
 
 ### Development
 
 1. Clone this repo
-2. `composer install`
-3. `yarn install`
-4. `yarn serve --watch` Add --watch parameter in order to get the assets automatically build when you modify files
-
-The module use [vuejs][vuejs] for all the backoffice interface. In development you will need to uncomment a line in the file `ps_checkout/views/templates/configuration.tpl`
-
-```html
-<script src="//localhost:8080/index.js"></script>
-```
-
-Then comment lines:
-
-```html
-<script src="../modules/ps_checkout/views/js/chunk-vendors.js"></script>
-<script src="../modules/ps_checkout/views/js/index.js"></script>
-```
+2. `make docker-build`
+3. `make watch-front`
 
 I also recommend you to install the [vuejs-devtools][vuejs-devtools].
 

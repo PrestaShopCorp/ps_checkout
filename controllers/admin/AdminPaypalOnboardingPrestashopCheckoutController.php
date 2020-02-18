@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2019 PrestaShop and Contributors
+ * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -13,11 +13,13 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
+use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
 
 class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminController
@@ -35,14 +37,12 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
         }
 
         $paypalAccount = new PaypalAccount($idMerchant);
-        $paypalAccount = (new PaypalAccountUpdater($paypalAccount))->update();
+        (new PersistentConfiguration())->savePaypalAccount($paypalAccount);
 
-        if (false === $paypalAccount) {
-            throw new PrestaShopException('A problem occured when updating the paypal account');
-        }
+        (new PaypalAccountUpdater($paypalAccount))->update();
 
         Tools::redirect(
-            $this->context->link->getAdminLink(
+            (new LinkAdapter($this->context->link))->getAdminLink(
                 'AdminModules',
                 true,
                 [],
