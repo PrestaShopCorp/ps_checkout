@@ -35,8 +35,7 @@ jobs:
       - name: Download build
         uses: actions/download-artifact@v1
         with:
-          name: ${{ github.event.repository.name }}
-          path: .
+          name: build
       # Drafts your next Release notes as Pull Requests are merged into "master
       - id: release_info
         uses: toolmantim/release-drafter@v5
