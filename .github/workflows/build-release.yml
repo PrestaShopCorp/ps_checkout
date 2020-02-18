@@ -41,6 +41,8 @@ jobs:
         uses: toolmantim/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: test
+        run: echo $PWD && ls -l
       - name: Publish to GitHub Release
         uses: actions/upload-release-asset@v1.0.1
         with:
