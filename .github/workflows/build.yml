@@ -28,11 +28,21 @@ jobs:
           path: ../
       - name: Publish to GitHub Release
         if: github.event_name == 'release' && github.event.action == 'published'
+      - id: release_info
+        run: |
+          ls
+          echo "::set-output name=upload_url::$(cat _uploadurl)"
+          changelog=`cat _changelog`
+          echo $changelog
+          changelog="${changelog//'%'/'%25'}"
+          changelog="${changelog//$'\n'/'%0A'}"
+          changelog="${changelog//$'\r'/'%0D'}"
+          echo "::set-output name=changelog::$changelog"
         uses: actions/upload-release-asset@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.release_info.outputs.upload_url }}
-          asset_path: ./build/ps_checkout.zip
-          asset_name: ps_checkout.zip
+          asset_path: ./build/${{ github.event.repository.name }}.zip
+          asset_name: ${{ github.event.repository.name }}.zip
           asset_content_type: application/zip
