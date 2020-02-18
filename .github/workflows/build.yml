@@ -1,5 +1,10 @@
 name: Deploy
-on: [push, pull_request]
+on:
+  pull_request:
+  release:
+    types:
+      - published
+
 jobs:
   deploy:
     name: build dependencies & create artifact
@@ -21,3 +26,13 @@ jobs:
         with:
           name: ps_checkout
           path: ../
+      - if: github.event_name == 'release' && github.event.action == 'published'
+        name: Publish to GitHub Release
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.release_info.outputs.upload_url }}
+          asset_path: ./build/ps_checkout.zip
+          asset_name: ps_checkout.zip
+          asset_content_type: application/zip
