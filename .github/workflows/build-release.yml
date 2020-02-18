@@ -32,7 +32,7 @@ jobs:
     needs: [deploy]
     if: github.event_name == 'push'
     steps:
-      - name: Download build
+      - name: Download artifact
         uses: actions/download-artifact@v1
         with:
           name: ${{ github.event.repository.name }}
@@ -41,13 +41,16 @@ jobs:
         uses: toolmantim/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: test
-        run: echo $PWD && ls -l
+      - name: Prepare for Release
+        run: |
+          cd ${{ github.event.repository.name }}
+          zip -r ${{ github.event.repository.name }}-${{ github.ref }}.zip ${{ github.event.repository.name }}
+          ls
       - name: Publish to GitHub Release
         uses: actions/upload-release-asset@v1.0.1
         with:
           upload_url: ${{ steps.release_info.outputs.upload_url }}
-          asset_path: ./${{ github.event.repository.name }}.zip
-          asset_name: ${{ github.event.repository.name }}.zip
+          asset_path: ./${{ github.event.repository.name }}/${{ github.event.repository.name }}-${{ github.ref }}.zip
+          asset_name: ${{ github.event.repository.name }}-${{ github.ref }}.zip
           asset_content_type: application/zip
 
