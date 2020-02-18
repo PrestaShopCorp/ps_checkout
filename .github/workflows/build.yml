@@ -8,14 +8,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.0.0
       - name: Build JS dependencies
-        uses: PrestaShopCorp/github-action-build-js/12@v1
+        uses: PrestaShopCorp/github-action-build-js/12@v1.0
         with:
           cmd: yarn
           path: ./_dev
       - name: Install composer dependencies
         run: composer install --no-dev -o
       - name: Clean-up project
-        uses: PrestaShopCorp/github-action-clean-before-deploy@v1
+        uses: PrestaShopCorp/github-action-clean-before-deploy@v1.0
       - name: Create & upload artifact
         uses: actions/upload-artifact@v1
         with:
