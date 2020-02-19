@@ -80,7 +80,7 @@ class OrderPendingPresenter implements PresenterInterface
      */
     private function getUsername($userID)
     {
-        $sql = 'SELECT firstname,lastname FROM `' . _DB_PREFIX_ . 'customer` o WHERE id_customer = ' . $userID;
+        $sql = 'SELECT firstname,lastname FROM `' . _DB_PREFIX_ . 'customer` o WHERE id_customer = ' . (int) $userID;
         $user = \Db::getInstance()->getRow($sql);
 
         return substr($user['firstname'], 0, 1) . '. ' . $user['lastname'];
