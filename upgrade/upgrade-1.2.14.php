@@ -28,5 +28,5 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_2_14()
 {
-    return (new PrestaShop\Module\PrestashopCheckout\OrderStates)->installPaypalStates();
+    return (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates();
 }
