@@ -48,7 +48,7 @@ jobs:
         shell: bash
         run: |
           curl -fsSL https://github.com/github/hub/raw/master/script/get | bash -s 2.14.1
-          assets=`bin/hub api -t repos/${{ github.event.repository }}/ps_checkout/releases/${{ steps.release_info.outputs.id }}/assets | awk '/\].url/ { print $2 }'`
+          assets=`bin/hub api -t repos/${{ github.repository }}/ps_checkout/releases/${{ steps.release_info.outputs.id }}/assets | awk '/\].url/ { print $2 }'`
           for asset in $assets
           do
             bin/hub api -X DELETE $asset
