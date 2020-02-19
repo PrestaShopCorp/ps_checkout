@@ -289,6 +289,18 @@ class Translations
                     'content' => $this->module->l('Be careful, your roundings settings are not fully compatible with PrestaShop Checkout transaction processing. Some of the transactions could fail. But it is easy, your setting Round mode and Round type should be set on « Round up away from zero, when it is half way there » and « Round on each item » or click on the button bellow to make it automatically !', 'translations'),
                     'button' => $this->module->l('Make my roudings settings fully compatible!', 'translations'),
                 ],
+                'reporting' => [
+                    'pending' => $this->module->l('pending', 'translations'),
+                    'title' => $this->module->l('All transactions', 'translations'),
+                    'subTitle1' => $this->module->l('pending transaction(s)', 'translations'),
+                    'subTitle2' => $this->module->l('transaction(s)', 'translations'),
+                    'label' => $this->module->l('See below the transactions processed with PrestaShop Checkout, limited to the last 1000 to load them faster.', 'translations'),
+                    'subtitleLinkLabel' => $this->module->l('See the full list of transactions on your PayPal account', 'translations'),
+                    'goToPaypal' => $this->module->l('Go To Paypal', 'translations'),
+                    'goToTransaction' => $this->module->l('Go To Paypal', 'translations'),
+                    'orderPendingTableTitle' => $this->module->l('Go To Paypal', 'Pending Transaction'),
+                    'transactionTableTitle' => $this->module->l('Go To Paypal', 'All transactions'),
+                ],
             ],
         ];
 

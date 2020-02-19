@@ -181,6 +181,32 @@
     width: unset;
   }
 
+  .nobootstrap .table tr th {
+    background-color: unset;
+    color: unset;
+    font-size: unset;
+  }
+
+  .nobootstrap .table.table-hover tbody tr:hover {
+      color: #fff;
+  }
+
+  .nobootstrap .table.table-hover tbody tr:hover a {
+      color: #fff !important;
+  }
+
+  .nobootstrap .table tr td {
+      border-bottom: unset;
+      color: unset;
+  }
+
+  .nobootstrap .table {
+    background-color: unset;
+    border: unset;
+    border-radius: unset;
+    padding: unset;
+  }
+
   .page-sidebar.mobile #content.nobootstrap {
     margin-left: unset;
   }
