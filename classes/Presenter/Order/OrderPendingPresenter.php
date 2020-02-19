@@ -95,7 +95,7 @@ class OrderPendingPresenter implements PresenterInterface
      */
     private function getPendingOrders($idStates)
     {
-        $idStates = array_map([$this, 'castToInt'], $idStates);
+        $idStates = array_map('intval', $idStates);
         $sql = 'SELECT id_order, current_state, total_paid, date_add, id_customer
             FROM `' . _DB_PREFIX_ . 'orders` o
             WHERE o.module = "ps_checkout"
