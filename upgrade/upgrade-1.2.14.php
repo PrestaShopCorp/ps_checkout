@@ -22,13 +22,11 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Update main function for module Version 1.2.12
- *
- * @param Module $module
+ * Update main function for module Version 1.2.14
  *
  * @return bool
  */
-function upgrade_module_1_2_12($module)
+function upgrade_module_1_2_14()
 {
-    return $module->registerHook('displayInvoiceLegalFreeText');
+    return (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates();
 }
