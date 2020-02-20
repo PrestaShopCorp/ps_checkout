@@ -7,7 +7,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
-      - name: lint js dependencies
+      - name:  Lint JS files
         uses: PrestaShopCorp/github-action-lint-js/12@v1.0
         with:
           cmd: yarn
