@@ -163,7 +163,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_e7f9e382dc50889098cbe56f2554c77b
 $_MODULE['<{ps_checkout}prestashop>translations_ad69e733ebae8d264bccaa38d68830e8'] = '';
 $_MODULE['<{ps_checkout}prestashop>translations_019d235906cab8dd39702ff1ed63b0ce'] = 'Moyens de paiement locaux';
 $_MODULE['<{ps_checkout}prestashop>translations_29ac026d29c538244f7b8a7505213750'] = 'CONSEIL';
-$_MODULE['<{ps_checkout}prestashop>translations_1ea2d7969cb7f07cff0433fcd96c8763'] = 'Optimiser votre taux de conversion en positionnant PayPal comme première option';
+$_MODULE['<{ps_checkout}prestashop>translations_1ea2d7969cb7f07cff0433fcd96c8763'] = 'Optimisez votre taux de conversion en positionnant PayPal comme première option';
 $_MODULE['<{ps_checkout}prestashop>translations_f0aaaae189e9c7711931a65ffcd22543'] = 'Moyen de paiement';
 $_MODULE['<{ps_checkout}prestashop>translations_faeaec9eda6bc4c8cb6e1a9156a858be'] = 'Disponibilité';
 $_MODULE['<{ps_checkout}prestashop>translations_8321d1c08ab8dba3b38901799df90e14'] = 'Statut d\'activation';

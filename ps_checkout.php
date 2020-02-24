@@ -117,7 +117,7 @@ class Ps_checkout extends PaymentModule
         parent::__construct();
 
         $this->displayName = $this->l('PrestaShop Checkout');
-        $this->description = $this->l('Provide every payment method to your customer with one module, and manage every sale where your business happens.');
+        $this->description = $this->l('Provide the most commonly used payment methods to your customers in this all-in-one module, and manage all your sales in a centralized interface.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = ['min' => '1.6.1', 'max' => _PS_VERSION_];
@@ -673,7 +673,7 @@ class Ps_checkout extends PaymentModule
     {
         $paypalPaymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paypalPaymentOption->setModuleName($this->name . '_paypal')
-                            ->setCallToActionText($this->l('Pay by PayPal or other payment methods'))
+                            ->setCallToActionText($this->l('Pay with a PayPal account or other payment methods'))
                             ->setAction($this->context->link->getModuleLink($this->name, 'CreateOrder', [], true))
                             ->setAdditionalInformation($this->generatePaypalForm())
                             ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/paypal.png'));

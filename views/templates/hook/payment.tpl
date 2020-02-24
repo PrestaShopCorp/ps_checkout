@@ -31,9 +31,9 @@
 {else}
   {if $paypalIsActive}
   <p class="payment_module">
-    <a href="{$link->getModuleLink('ps_checkout', 'PaymentPaypal16')|escape:'html'}" class="pscheckout-paypal" title="{l s='Pay by PayPal or other payment methods' mod='ps_checkout'}">
-      <img src="{$path}paypal.png" alt="{l s='Pay by PayPal or other payment methods' mod='ps_checkout'}"/>
-      {l s='Pay by PayPal or other payment methods' mod='ps_checkout'}
+    <a href="{$link->getModuleLink('ps_checkout', 'PaymentPaypal16')|escape:'html'}" class="pscheckout-paypal" title="{l s='Pay with a PayPal account or other payment methods' mod='ps_checkout'}">
+      <img src="{$path}paypal.png" alt="{l s='Pay with a PayPal account or other payment methods' mod='ps_checkout'}"/>
+      {l s='Pay with a PayPal account or other payment methods' mod='ps_checkout'}
     </a>
   </p>
   {/if}
