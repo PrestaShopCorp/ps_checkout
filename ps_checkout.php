@@ -480,12 +480,12 @@ class Ps_checkout extends PaymentModule
             'validateOrderLinkByPaypal' => $this->getValidateOrderLink($paypalOrder['body']['id'], 'paypal'),
             'cardIsActive' => $paypalAccountRepository->cardPaymentMethodIsAvailable(),
             'paypalIsActive' => $paypalAccountRepository->paypalPaymentMethodIsValid(),
-            'intent' => Configuration::get(
+            'intent' => strtolower(Configuration::get(
                 'PS_CHECKOUT_INTENT',
                 null,
                 null,
                 (int) \Context::getContext()->shop->id
-            ),
+            )),
             'currencyIsoCode' => $this->context->currency->iso_code,
             'isCardPaymentError' => (bool) Tools::getValue('hferror'),
             'modulePath' => $this->getPathUri(),
