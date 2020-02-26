@@ -71,7 +71,7 @@ class OrderStates
      */
     private function getPaypalStateId($state, $color)
     {
-        $stateId = \Configuration::get($state);
+        $stateId = \Configuration::getGlobalValue($state);
 
         // Is state ID already existing in the Configuration table ?
         if (false === $stateId) {
@@ -98,7 +98,7 @@ class OrderStates
 
         if (true === \Db::getInstance()->insert(self::ORDER_STATE_TABLE, $data)) {
             $insertedId = (int) \Db::getInstance()->Insert_ID();
-            \Configuration::updateValue($state, $insertedId);
+            \Configuration::updateGlobalValue($state, $insertedId);
 
             return $insertedId;
         }

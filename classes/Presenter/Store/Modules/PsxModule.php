@@ -53,7 +53,15 @@ class PsxModule implements PresenterInterface
         return [
             'psx' => [
                 'onboardingCompleted' => (new PsAccountRepository())->psxFormIsCompleted(),
-                'psxFormData' => json_decode(\Configuration::get('PS_CHECKOUT_PSX_FORM'), true),
+                'psxFormData' => json_decode(
+                    \Configuration::get(
+                        'PS_CHECKOUT_PSX_FORM',
+                        null,
+                        null,
+                        (int) \Context::getContext()->shop->id
+                    ),
+                    true
+                ),
                 'languagesDetails' => $this->getJsonData(self::ALL_LANGUAGES_FILE),
                 'countriesDetails' => $this->getJsonData(self::ALL_COUNTRIES_FILE),
                 'countriesStatesDetails' => $this->getJsonData(self::ALL_COUNTRIES_STATES_FILE),

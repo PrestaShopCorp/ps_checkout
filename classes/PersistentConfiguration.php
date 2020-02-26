@@ -38,11 +38,41 @@ class PersistentConfiguration
      */
     public function savePaypalAccount(PaypalAccount $paypalAccount)
     {
-        return \Configuration::updateValue(PaypalAccount::PS_CHECKOUT_PAYPAL_ID_MERCHANT, $paypalAccount->getMerchantId())
-            && \Configuration::updateValue(PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT, $paypalAccount->getEmail())
-            && \Configuration::updateValue(PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_STATUS, $paypalAccount->getEmailIsVerified())
-            && \Configuration::updateValue(PaypalAccount::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS, $paypalAccount->getPaypalPaymentStatus())
-            && \Configuration::updateValue(PaypalAccount::PS_CHECKOUT_CARD_PAYMENT_STATUS, $paypalAccount->getCardPaymentStatus());
+        return \Configuration::updateValue(
+                PaypalAccount::PS_CHECKOUT_PAYPAL_ID_MERCHANT,
+                $paypalAccount->getMerchantId(),
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            )
+            && \Configuration::updateValue(
+                PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT,
+                $paypalAccount->getEmail(),
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            )
+            && \Configuration::updateValue(
+                PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_STATUS,
+                $paypalAccount->getEmailIsVerified(),
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            )
+            && \Configuration::updateValue(
+                PaypalAccount::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS,
+                $paypalAccount->getPaypalPaymentStatus(),
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            )
+            && \Configuration::updateValue(
+                PaypalAccount::PS_CHECKOUT_CARD_PAYMENT_STATUS,
+                $paypalAccount->getCardPaymentStatus(),
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            );
     }
 
     /**
@@ -54,10 +84,40 @@ class PersistentConfiguration
      */
     public function savePsAccount(PsAccount $psAccount)
     {
-        return \Configuration::updateValue(PsAccount::PS_PSX_FIREBASE_EMAIL, $psAccount->getEmail())
-            && \Configuration::updateValue(PsAccount::PS_PSX_FIREBASE_ID_TOKEN, $psAccount->getIdToken())
-            && \Configuration::updateValue(PsAccount::PS_PSX_FIREBASE_LOCAL_ID, $psAccount->getLocalId())
-            && \Configuration::updateValue(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN, $psAccount->getRefreshToken())
-            && \Configuration::updateValue(PsAccount::PS_CHECKOUT_PSX_FORM, $psAccount->getPsxForm());
+        return \Configuration::updateValue(
+                PsAccount::PS_PSX_FIREBASE_EMAIL,
+                $psAccount->getEmail(),
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            )
+            && \Configuration::updateValue(
+                PsAccount::PS_PSX_FIREBASE_ID_TOKEN,
+                $psAccount->getIdToken(),
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            )
+            && \Configuration::updateValue(
+                PsAccount::PS_PSX_FIREBASE_LOCAL_ID,
+                $psAccount->getLocalId(),
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            )
+            && \Configuration::updateValue(
+                PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN,
+                $psAccount->getRefreshToken(),
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            )
+            && \Configuration::updateValue(
+                PsAccount::PS_CHECKOUT_PSX_FORM,
+                $psAccount->getPsxForm(),
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            );
     }
 }

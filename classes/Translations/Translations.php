@@ -56,6 +56,14 @@ class Translations
             'general' => [
                 'save' => $this->module->l('Save', 'translations'),
                 'testModeOn' => $this->module->l('Test mode is turned on', 'translations'),
+                'multiShop' => [
+                    'title' => $this->module->l('Multistore detected', 'translations'),
+                    'subtitle' => $this->module->l('Each shop must be configured separately, even if you configure the same account on all of them.', 'translations'),
+                    'chooseOne' => $this->module->l('Please select the first shop to configure from the list below :', 'translations'),
+                    'group' => 'Group:',
+                    'configure' => 'Configure',
+                    'tips' => $this->module->l('Once you are done with the first shop, you can configure the others: select them one by one with the shop selector, in the horizontal menu.', 'translations'),
+                ],
             ],
             'pages' => [
                 'accounts' => [

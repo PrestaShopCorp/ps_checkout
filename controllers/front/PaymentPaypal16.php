@@ -68,7 +68,12 @@ class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontControl
             'clientToken' => $paypalOrder['body']['client_token'],
             'paypalOrderId' => $paypalOrder['body']['id'],
             'validateOrderLinkByPaypal' => $module->getValidateOrderLink($paypalOrder['body']['id'], 'paypal'),
-            'intent' => strtolower(\Configuration::get('PS_CHECKOUT_INTENT')),
+            'intent' => Configuration::get(
+                'PS_CHECKOUT_INTENT',
+                null,
+                null,
+                (int) \Context::getContext()->shop->id
+            ),
             'currencyIsoCode' => $this->context->currency->iso_code,
             'isCardPaymentError' => (bool) Tools::getValue('hferror'),
             'modulePath' => $module->getPathUri(),

@@ -38,7 +38,12 @@ class PsxClient extends GenericClient
                     'Content-Type' => 'application/vnd.psx.v1+json', // api version to use (psl side)
                     'Accept' => 'application/json',
                     'Authorization' => 'Bearer ' . (new Token())->getToken(),
-                    'Shop-Id' => \Configuration::get('PS_CHECKOUT_SHOP_UUID_V4'),
+                    'Shop-Id' => \Configuration::get(
+                        'PS_CHECKOUT_SHOP_UUID_V4',
+                        null,
+                        null,
+                        (int) \Context::getContext()->shop->id
+                    ),
                     'Module-Version' => \Ps_checkout::VERSION, // version of the module
                     'Prestashop-Version' => _PS_VERSION_, // prestashop version
                 ],

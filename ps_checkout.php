@@ -134,16 +134,9 @@ class Ps_checkout extends PaymentModule
      */
     public function install()
     {
-        foreach ($this->configurationList as $name => $value) {
-            if ($name === 'PS_CHECKOUT_SHOP_UUID_V4') {
-                $uuid4 = Ramsey\Uuid\Uuid::uuid4();
-                $value = $uuid4->toString();
-            }
-            Configuration::updateValue($name, $value);
-        }
-
         // Install for both 1.7 and 1.6
         $defaultInstall = parent::install() &&
+            $this->installConfiguration() &&
             $this->registerHook(self::HOOK_LIST) &&
             (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
@@ -165,6 +158,27 @@ class Ps_checkout extends PaymentModule
         }
 
         return true;
+    }
+
+    public function installConfiguration()
+    {
+        $uuid4 = Ramsey\Uuid\Uuid::uuid4();
+        $shopsList = \Shop::getShops(false, null, true);
+
+        foreach ($shopsList as $shopId) {
+            foreach ($this->configurationList as $name => $value) {
+                if ($name === 'PS_CHECKOUT_SHOP_UUID_V4') {
+                    $value = $uuid4->toString();
+                }
+                Configuration::updateValue(
+                    $name,
+                    $value,
+                    false,
+                    null,
+                    (int) $shopId
+                );
+            }
+        }
     }
 
     /**
@@ -268,7 +282,14 @@ class Ps_checkout extends PaymentModule
      */
     private function displayECOnCheckout()
     {
-        if (!(bool) Configuration::get('PS_CHECKOUT_EC_CHECKOUT_PAGE')) {
+        $displayOnCheckout = (bool) Configuration::get(
+            'PS_CHECKOUT_EC_CHECKOUT_PAGE',
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
+
+        if (!$displayOnCheckout) {
             return false;
         }
 
@@ -292,7 +313,14 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayExpressCheckout()
     {
-        if (!(bool) Configuration::get('PS_CHECKOUT_EC_ORDER_PAGE')) {
+        $displayExpressCheckout = (bool) Configuration::get(
+            'PS_CHECKOUT_EC_ORDER_PAGE',
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
+
+        if (!$displayExpressCheckout) {
             return false;
         }
 
@@ -307,7 +335,14 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayFooterProduct($params)
     {
-        if (!(bool) Configuration::get('PS_CHECKOUT_EC_PRODUCT_PAGE')) {
+        $displayOnProductPage = (bool) Configuration::get(
+            'PS_CHECKOUT_EC_PRODUCT_PAGE',
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
+
+        if (!$displayOnProductPage) {
             return false;
         }
 
@@ -423,13 +458,17 @@ class Ps_checkout extends PaymentModule
         $paypalAccountRepository = new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository();
 
         $termsAndConditionsLinkCms = new \CMS(
-            (int) Configuration::get('PS_CONDITIONS_CMS_ID'),
+            (int) Configuration::get(
+                'PS_CONDITIONS_CMS_ID',
+                null,
+                null,
+                (int) \Context::getContext()->shop->id
+            ),
             (int) $this->context->language->id
         );
         $termsAndConditionsLink = $this->context->link->getCMSLink(
             $termsAndConditionsLinkCms,
-            $termsAndConditionsLinkCms->link_rewrite,
-            (bool) Configuration::get('PS_SSL_ENABLED')
+            $termsAndConditionsLinkCms->link_rewrite
         );
 
         $this->context->smarty->assign([
@@ -441,7 +480,12 @@ class Ps_checkout extends PaymentModule
             'validateOrderLinkByPaypal' => $this->getValidateOrderLink($paypalOrder['body']['id'], 'paypal'),
             'cardIsActive' => $paypalAccountRepository->cardPaymentMethodIsAvailable(),
             'paypalIsActive' => $paypalAccountRepository->paypalPaymentMethodIsValid(),
-            'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT')),
+            'intent' => Configuration::get(
+                'PS_CHECKOUT_INTENT',
+                null,
+                null,
+                (int) \Context::getContext()->shop->id
+            ),
             'currencyIsoCode' => $this->context->currency->iso_code,
             'isCardPaymentError' => (bool) Tools::getValue('hferror'),
             'modulePath' => $this->getPathUri(),
@@ -476,7 +520,12 @@ class Ps_checkout extends PaymentModule
      */
     public function getPaymentMethods()
     {
-        $paymentMethods = \Configuration::get('PS_CHECKOUT_PAYMENT_METHODS_ORDER');
+        $paymentMethods = \Configuration::get(
+            'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
 
         // if no paymentMethods position is set, by default put credit card (hostedFields) as first position
         if (empty($paymentMethods)) {
@@ -610,7 +659,10 @@ class Ps_checkout extends PaymentModule
         $orderHistory = new \OrderHistory();
         $orderHistory->id_order = (int) $params['order']->id;
 
-        $orderHistory->changeIdOrderState(intval(\Configuration::get('PS_CHECKOUT_STATE_PARTIAL_REFUND')), $params['order']->id);
+        $orderHistory->changeIdOrderState(
+            (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_PARTIAL_REFUND'),
+            (int) $params['order']->id
+        );
 
         return $orderHistory->addWithemail();
     }
@@ -872,7 +924,9 @@ class Ps_checkout extends PaymentModule
                 'orderId' => $orderId,
                 'paymentMethod' => $paymentMethod,
             ],
-            true
+            true,
+            null,
+            (int) $this->context->shop->id
         );
     }
 
@@ -966,7 +1020,12 @@ class Ps_checkout extends PaymentModule
 
         foreach ($shopsList as $idShop) {
             // Get countries allowed in geolocation management for this shop
-            $activeCountries = \Configuration::get('PS_ALLOWED_COUNTRIES', null, null, (int) $idShop);
+            $activeCountries = \Configuration::get(
+                'PS_ALLOWED_COUNTRIES',
+                null,
+                null,
+                (int) $idShop
+            );
             $explodedCountries = explode(';', $activeCountries);
             // Get countries already associated with module and shop
             /** @var array $alreadySelectedCountries */

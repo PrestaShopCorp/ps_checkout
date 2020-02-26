@@ -39,10 +39,22 @@ class FirebaseModule implements PresenterInterface
 
         $firebaseModule = [
             'firebase' => [
-                'email' => \Configuration::get('PS_PSX_FIREBASE_EMAIL'),
+                'email' => \Configuration::get(
+                    'PS_PSX_FIREBASE_EMAIL',
+                    null,
+                    null,
+                    (int) \Context::getContext()->shop->id),
                 'idToken' => $idToken,
-                'localId' => \Configuration::get('PS_PSX_FIREBASE_LOCAL_ID'),
-                'refreshToken' => \Configuration::get('PS_PSX_FIREBASE_REFRESH_TOKEN'),
+                'localId' => \Configuration::get(
+                    'PS_PSX_FIREBASE_LOCAL_ID',
+                    null,
+                    null,
+                    (int) \Context::getContext()->shop->id),
+                'refreshToken' => \Configuration::get(
+                    'PS_PSX_FIREBASE_REFRESH_TOKEN',
+                    null,
+                    null,
+                    (int) \Context::getContext()->shop->id),
                 'onboardingCompleted' => !empty($idToken),
             ],
         ];

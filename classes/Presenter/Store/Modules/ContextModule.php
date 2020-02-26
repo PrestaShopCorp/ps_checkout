@@ -60,8 +60,15 @@ class ContextModule implements PresenterInterface
                 'psVersion' => _PS_VERSION_,
                 'shopIs17' => (new ShopContext())->isShop17(),
                 'moduleKey' => $this->module->module_key,
-                'shopId' => \Configuration::get('PS_CHECKOUT_SHOP_UUID_V4'),
+                'shopId' => \Configuration::get(
+                    'PS_CHECKOUT_SHOP_UUID_V4',
+                    null,
+                    null,
+                    (int) \Context::getContext()->shop->id
+                ),
                 'isReady' => (new ShopContext())->isReady(),
+                'isShopContext' => $this->isShopContext(),
+                'shopsTree' => $this->getShopsTree(),
                 'faq' => $this->getFaq(),
                 'language' => $this->context->language,
                 'prestashopCheckoutAjax' => (new LinkAdapter($this->context->link))->getAdminLink('AdminAjaxPrestashopCheckout'),
@@ -73,6 +80,60 @@ class ContextModule implements PresenterInterface
         ];
 
         return $contextModule;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isShopContext()
+    {
+        if (\Shop::isFeatureActive() && \Shop::getContext() !== \Shop::CONTEXT_SHOP) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return array
+     */
+    private function getShopsTree()
+    {
+        $shopList = [];
+
+        if (true === $this->isShopContext()) {
+            return $shopList;
+        }
+
+        $linkAdapter = new LinkAdapter($this->context->link);
+
+        foreach (\Shop::getTree() as $groupId => $groupData) {
+            $shops = [];
+
+            foreach ($groupData['shops'] as $shopId => $shopData) {
+                $shops[] = [
+                    'id' => $shopId,
+                    'name' => $shopData['name'],
+                    'url' => $linkAdapter->getAdminLink(
+                        'AdminModules',
+                        true,
+                        [],
+                        [
+                            'configure' => $this->module->name,
+                            'setShopContext' => 's-' . $shopId,
+                        ]
+                    ),
+                ];
+            }
+
+            $shopList[] = [
+                'id' => $groupId,
+                'name' => $groupData['name'],
+                'shops' => $shops,
+            ];
+        }
+
+        return $shopList;
     }
 
     /**
@@ -151,7 +212,15 @@ class ContextModule implements PresenterInterface
      */
     private function roundingSettingsIsCorrect()
     {
-        return \Configuration::get('PS_ROUND_TYPE') === '1'
-            && \Configuration::get('PS_PRICE_ROUND_MODE') === '2';
+        return \Configuration::get(
+                'PS_ROUND_TYPE',
+                null,
+                null,
+                (int) \Context::getContext()->shop->id) === '1'
+            && \Configuration::get(
+                'PS_PRICE_ROUND_MODE',
+                null,
+                null,
+                (int) \Context::getContext()->shop->id) === '2';
     }
 }

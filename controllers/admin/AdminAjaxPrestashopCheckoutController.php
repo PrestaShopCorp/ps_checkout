@@ -37,7 +37,13 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessUpdatePaymentMethodsOrder()
     {
-        Configuration::updateValue('PS_CHECKOUT_PAYMENT_METHODS_ORDER', Tools::getValue('paymentMethods'));
+        Configuration::updateValue(
+            'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
+            Tools::getValue('paymentMethods'),
+            false,
+            null,
+            (int) Context::getContext()->shop->id
+        );
     }
 
     /**
@@ -45,7 +51,13 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessUpdateCaptureMode()
     {
-        Configuration::updateValue('PS_CHECKOUT_INTENT', Tools::getValue('captureMode'));
+        Configuration::updateValue(
+            'PS_CHECKOUT_INTENT',
+            Tools::getValue('captureMode'),
+            false,
+            null,
+            (int) Context::getContext()->shop->id
+        );
     }
 
     /**
@@ -53,7 +65,13 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessUpdatePaymentMode()
     {
-        Configuration::updateValue('PS_CHECKOUT_MODE', Tools::getValue('paymentMode'));
+        Configuration::updateValue(
+            'PS_CHECKOUT_MODE',
+            Tools::getValue('paymentMode'),
+            false,
+            null,
+            (int) Context::getContext()->shop->id
+        );
     }
 
     /**
@@ -64,8 +82,20 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessEditRoundingSettings()
     {
-        Configuration::updateValue('PS_ROUND_TYPE', '1');
-        Configuration::updateValue('PS_PRICE_ROUND_MODE', '2');
+        Configuration::updateValue(
+            'PS_ROUND_TYPE',
+            '1',
+            false,
+            null,
+            (int) Context::getContext()->shop->id
+        );
+        Configuration::updateValue(
+            'PS_PRICE_ROUND_MODE',
+            '2',
+            false,
+            null,
+            (int) Context::getContext()->shop->id
+        );
 
         $this->ajaxDie(json_encode(true));
     }
@@ -260,7 +290,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         Configuration::updateValue(
             'PS_CHECKOUT_CARD_PAYMENT_ENABLED',
-            Tools::getValue('status') ? 1 : 0
+            Tools::getValue('status') ? 1 : 0,
+            false,
+            null,
+            (int) Context::getContext()->shop->id
         );
     }
 
@@ -271,7 +304,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         Configuration::updateValue(
             'PS_CHECKOUT_EC_ORDER_PAGE',
-            Tools::getValue('status') ? 1 : 0
+            Tools::getValue('status') ? 1 : 0,
+            false,
+            null,
+            (int) Context::getContext()->shop->id
         );
     }
 
@@ -282,7 +318,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         Configuration::updateValue(
             'PS_CHECKOUT_EC_CHECKOUT_PAGE',
-            Tools::getValue('status') ? 1 : 0
+            Tools::getValue('status') ? 1 : 0,
+            false,
+            null,
+            (int) Context::getContext()->shop->id
         );
     }
 
@@ -293,7 +332,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         Configuration::updateValue(
             'PS_CHECKOUT_EC_PRODUCT_PAGE',
-            Tools::getValue('status') ? 1 : 0
+            Tools::getValue('status') ? 1 : 0,
+            false,
+            null,
+            (int) Context::getContext()->shop->id
         );
     }
 
@@ -304,7 +346,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         Configuration::updateValue(
             'PS_CHECKOUT_DEBUG_LOGS_ENABLED',
-            Tools::getValue('status') ? 1 : 0
+            Tools::getValue('status') ? 1 : 0,
+            false,
+            null,
+            (int) Context::getContext()->shop->id
         );
     }
 }

@@ -79,7 +79,12 @@ class PsAccountRepository
      */
     public function getEmail()
     {
-        return \Configuration::get(PsAccount::PS_PSX_FIREBASE_EMAIL);
+        return \Configuration::get(
+            PsAccount::PS_PSX_FIREBASE_EMAIL,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
     }
 
     /**
@@ -89,7 +94,12 @@ class PsAccountRepository
      */
     public function getIdToken()
     {
-        return \Configuration::get(PsAccount::PS_PSX_FIREBASE_ID_TOKEN);
+        return \Configuration::get(
+            PsAccount::PS_PSX_FIREBASE_ID_TOKEN,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
     }
 
     /**
@@ -99,7 +109,12 @@ class PsAccountRepository
      */
     public function getLocalId()
     {
-        return \Configuration::get(PsAccount::PS_PSX_FIREBASE_LOCAL_ID);
+        return \Configuration::get(
+            PsAccount::PS_PSX_FIREBASE_LOCAL_ID,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
     }
 
     /**
@@ -109,7 +124,12 @@ class PsAccountRepository
      */
     public function getRefreshToken()
     {
-        return \Configuration::get(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN);
+        return \Configuration::get(
+            PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
     }
 
     /**
@@ -122,9 +142,22 @@ class PsAccountRepository
     public function getPsxForm($toArray = false)
     {
         if ($toArray) {
-            return json_decode(\Configuration::get('PS_CHECKOUT_PSX_FORM'), true);
+            return json_decode(
+                \Configuration::get(
+                    'PS_CHECKOUT_PSX_FORM',
+                    null,
+                    null,
+                    (int) \Context::getContext()->shop->id
+                ),
+                true
+            );
         }
 
-        return \Configuration::get(PsAccount::PS_CHECKOUT_PSX_FORM);
+        return \Configuration::get(
+            PsAccount::PS_CHECKOUT_PSX_FORM,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
     }
 }
