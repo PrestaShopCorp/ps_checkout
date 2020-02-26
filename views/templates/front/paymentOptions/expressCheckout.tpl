@@ -20,8 +20,23 @@
 {literal}
 <script type="text/javascript">
   var paypalEmail = "{/literal}{$paypalEmail|escape:'javascript':'UTF-8'}{literal}";
+  var paypalLogoPath = "{/literal}{$paypalLogoPath|escape:'javascript':'UTF-8'}{literal}";
   var expressCheckoutLabelPaymentOption = '{/literal}{l s='You have selected your %s PayPal account to proceed to the payment.' sprintf=[$paypalEmail] mod='ps_checkout'}{literal}';
 </script>
 {/literal}
 
 <script type='text/javascript' src='{$jsHideOtherPaymentOptions|escape:'javascript':'UTF-8'}'></script>
+
+<style>
+.express-checkout-block {
+  background-color: #f1f1f1;
+  padding: 15px;
+}
+.express-checkout-img {
+  margin-bottom: 10px;
+  width: 80px;
+}
+.express-checkout-label {
+  color: inherit;
+}
+</style>
