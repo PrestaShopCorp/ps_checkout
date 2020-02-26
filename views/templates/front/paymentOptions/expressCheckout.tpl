@@ -20,6 +20,7 @@
 {literal}
 <script type="text/javascript">
   var paypalEmail = "{/literal}{$paypalEmail|escape:'javascript':'UTF-8'}{literal}";
+  var paypalLogoPath = "{/literal}{$paypalLogoPath|escape:'javascript':'UTF-8'}{literal}";
   var expressCheckoutLabelPaymentOption = '{/literal}{l s='You have selected your %s PayPal account to proceed to the payment.' sprintf=[$paypalEmail] mod='ps_checkout'}{literal}';
 </script>
 {/literal}

@@ -27,10 +27,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   expressCheckoutPaymentOption.click();
 
+  const expressCheckoutBlock = document.createElement('div');
+  expressCheckoutBlock.classList.add('express-checkout-block');
+
+  const expressCheckoutImg = document.createElement('img');
+  expressCheckoutImg.src = paypalLogoPath;
+  expressCheckoutImg.classList.add('express-checkout-img');
+
   const expressCheckoutLabel = document.createElement('p');
+  expressCheckoutLabel.classList.add('express-checkout-label');
 
   const label = document.createTextNode(expressCheckoutLabelPaymentOption);
   expressCheckoutLabel.appendChild(label);
+  expressCheckoutBlock.appendChild(expressCheckoutImg);
+  expressCheckoutBlock.appendChild(expressCheckoutLabel);
 
-  paymentOptionEl.parentNode.insertBefore(expressCheckoutLabel, paymentOptionEl.nextSibling);
+  paymentOptionEl.parentNode.insertBefore(expressCheckoutBlock, paymentOptionEl.nextSibling);
 });

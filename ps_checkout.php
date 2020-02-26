@@ -806,6 +806,7 @@ class Ps_checkout extends PaymentModule
         $this->context->smarty->assign([
             'paypalEmail' => $this->context->cookie->__get('paypalEmail'),
             'jsHideOtherPaymentOptions' => $this->_path . 'views/js/hideOtherPaymentOptions.js?v=' . $this->version,
+            'paypalLogoPath' => $this->_path . 'views/img/paypal-logo.png',
         ]);
 
         return $this->context->smarty->fetch(
