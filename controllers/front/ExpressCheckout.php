@@ -140,6 +140,12 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
 
         $this->context->cart->id_address_delivery = $address->id;
         $this->context->cart->id_address_invoice = $address->id;
+
+        $products = $this->context->cart->getProducts();
+        foreach ($products as $product) {
+            $this->context->cart->setProductAddressDelivery($product['id_product'], $product['id_product_attribute'], $product['id_address_delivery'], $address->id);
+        }
+
         $this->context->cart->save();
     }
 
