@@ -26,17 +26,3 @@
 {/literal}
 
 <script type='text/javascript' src='{$jsHideOtherPaymentOptions|escape:'javascript':'UTF-8'}'></script>
-
-<style>
-.express-checkout-block {
-  background-color: #f1f1f1;
-  padding: 15px;
-}
-.express-checkout-img {
-  margin-bottom: 10px;
-  width: 80px;
-}
-.express-checkout-label {
-  color: inherit;
-}
-</style>
