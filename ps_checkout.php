@@ -160,6 +160,11 @@ class Ps_checkout extends PaymentModule
         return true;
     }
 
+    /**
+     * Install configuration for each shop
+     *
+     * @return bool
+     */
     public function installConfiguration()
     {
         $uuid4 = Ramsey\Uuid\Uuid::uuid4();
@@ -179,6 +184,8 @@ class Ps_checkout extends PaymentModule
                 );
             }
         }
+
+        return true;
     }
 
     /**
