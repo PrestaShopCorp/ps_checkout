@@ -478,6 +478,8 @@ class Ps_checkout extends PaymentModule
             $termsAndConditionsLinkCms->link_rewrite
         );
 
+        $language = (new PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter())->getLanguage($this->context->language->id);
+
         $this->context->smarty->assign([
             'merchantId' => $paypalAccountRepository->getMerchantId(),
             'paypalClientId' => (new PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv())->getPaypalClientId(),
@@ -493,6 +495,7 @@ class Ps_checkout extends PaymentModule
                 null,
                 (int) \Context::getContext()->shop->id
             )),
+            'locale' => $language['locale'],
             'currencyIsoCode' => $this->context->currency->iso_code,
             'isCardPaymentError' => (bool) Tools::getValue('hferror'),
             'modulePath' => $this->getPathUri(),
