@@ -22,11 +22,11 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Update main function for module Version 1.2.14
+ * Update main function for module Version 1.3.0
  *
  * @return bool
  */
-function upgrade_module_1_2_14()
+function upgrade_module_1_3_0()
 {
     return (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates();
 }
