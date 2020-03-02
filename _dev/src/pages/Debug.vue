@@ -25,6 +25,7 @@
       <b-card-body>
         <ul>
           <li>PrestaShop version: <b>{{ psVersion }}</b></li>
+          <li>PHP version: <b>{{ phpVersion }}</b></li>
           <li>Module version: <b>{{ moduleVersion }}</b></li>
           <li>Shop ID: <b>{{ shopId }}</b></li>
           <li>Rounding config: <b>{{ roundingSettingsIsCorrect }}</b></li>
@@ -56,6 +57,9 @@
     computed: {
       moduleVersion() {
         return this.$store.state.context.moduleVersion;
+      },
+      phpVersion() {
+        return this.$store.state.context.phpVersion;
       },
       psVersion() {
         return this.$store.state.context.psVersion;

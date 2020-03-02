@@ -24,6 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Faq\Faq;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
+use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 
 /**
@@ -58,14 +59,10 @@ class ContextModule implements PresenterInterface
             'context' => [
                 'moduleVersion' => \Ps_checkout::VERSION,
                 'psVersion' => _PS_VERSION_,
+                'phpVersion' => phpversion(),
                 'shopIs17' => (new ShopContext())->isShop17(),
                 'moduleKey' => $this->module->module_key,
-                'shopId' => \Configuration::get(
-                    'PS_CHECKOUT_SHOP_UUID_V4',
-                    null,
-                    null,
-                    (int) \Context::getContext()->shop->id
-                ),
+                'shopId' => (new ShopUuidManager())->getForShop((int) \Context::getContext()->shop->id),
                 'isReady' => (new ShopContext())->isReady(),
                 'isShopContext' => $this->isShopContext(),
                 'shopsTree' => $this->getShopsTree(),
