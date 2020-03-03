@@ -358,7 +358,7 @@
                 lg="12"
               >
                 <b-form-group
-                  :label="$t('panel.psx-form.website')"
+                  :label="$t('panel.psx-form.website') + ' (' + $t('panel.psx-form.optional') + ')'"
                   label-for="website"
                 >
                   <b-form-input
@@ -431,7 +431,7 @@
                 lg="12"
               >
                 <b-form-group
-                  :label="$t('panel.psx-form.businessSubCategory')"
+                  :label="$t('panel.psx-form.businessSubCategory') + ' (' + $t('panel.psx-form.optional') + ')'"
                   label-for="business-subcategory"
                 >
                   <b-form-select

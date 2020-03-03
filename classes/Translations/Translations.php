@@ -192,6 +192,7 @@ class Translations
                     'privacyTextPart1' => $this->module->l('By submitting this form, I agree that the data provided may be collected by PrestaShop S.A to permit (i) the use of our services (ii) to improve your customer experience. Your data can be transmitted to our partner Paypal if you do not already have an account.', 'translations'),
                     'privacyTextPart2' => $this->module->l('Learn more about managing your data and rights.', 'translations'),
                     'privacyLink' => $linkTranslations->getCheckoutDataPolicyLink(),
+                    'optional' => $this->module->l('Optional'),
                 ],
                 'active-payment' => [
                     'activePaymentMethods' => $this->module->l('Activate payment methods', 'translations'),
