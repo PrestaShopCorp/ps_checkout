@@ -24,7 +24,8 @@
       </label>
     </template>
     <template v-else-if="cardIsInReview">
-      <p v-if="displayLabels">
+      <p v-if="displayLabels"
+        class="fs-14">
         {{ $t('block.payment-status.creditCardLabelPending') }}
       </p>
       <label
@@ -35,7 +36,8 @@
       </label>
     </template>
     <template v-else-if="cardStatus === 'SUBSCRIBED'">
-      <p v-if="displayLabels">
+      <p v-if="displayLabels"
+        class="fs-14">
         {{ $t('block.payment-status.creditCardLabelLive') }}
       </p>
       <label
@@ -46,7 +48,8 @@
       </label>
     </template>
     <template v-else-if="cardStatus === 'LIMITED'">
-      <p v-if="displayLabels">
+      <p v-if="displayLabels"
+        class="fs-14">
         {{ $t('block.payment-status.creditCardLabelLimited') }}
       </p>
       <label
@@ -57,7 +60,8 @@
       </label>
     </template>
     <template v-else-if="cardStatus === 'DENIED'">
-      <p v-if="displayLabels">
+      <p v-if="displayLabels"
+        class="fs-14">
         {{ $t('block.payment-status.creditCardLabelDenied') }}
       </p>
       <label
@@ -100,3 +104,9 @@
     },
   };
 </script>
+
+<style scoped>
+.fs-14 {
+  font-size: 14px;
+}
+</style>
