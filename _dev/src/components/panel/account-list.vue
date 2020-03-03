@@ -76,13 +76,15 @@
                   class="text-right"
                   v-else
                 >
-                  <a
+                  <b-button
                     v-if="!isReady"
                     href="#"
                     data-toggle="modal"
                     data-target="#modalLogout"
-                    class="text-muted"
-                  >{{ $t('panel.account-list.logOut') }}</a>
+                    variant="outline-secondary"
+                  >
+                    {{ $t('panel.account-list.logOut') }}
+                  </b-button>
                 </div>
                 <!-- modal -->
                 <div
@@ -172,11 +174,12 @@
                   class="text-right"
                   v-else
                 >
-                  <a
-                    href="#"
-                    class="text-muted"
+                  <b-button
+                    variant="outline-secondary"
                     @click.prevent="paypalUnlink()"
-                  >{{ $t('panel.account-list.useAnotherAccount') }}</a>
+                  >
+                    {{ $t('panel.account-list.useAnotherAccount') }}
+                  </b-button>
                 </div>
               </td>
             </tr>
