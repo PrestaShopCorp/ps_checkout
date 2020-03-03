@@ -270,10 +270,16 @@
   background:#6B868F;
   border-bottom: 2px solid #6B868F;
 }
-#app .modal{
+#app .modal {
   background: rgba(0,0,0,0.4);
 }
-#app #modalLogout .modal-dialog{
+#app .modal-content {
+  border-radius: unset;
+}
+#app .modal-body {
+  font-size: 14px;
+}
+#app #modalLogout .modal-dialog {
   top: 35%;
 }
 .fade-enter-active, .fade-leave-active {
