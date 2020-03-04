@@ -29,10 +29,14 @@ class CheckoutLogger
 
     public static function create()
     {
-        $path = version_compare(_PS_VERSION_, '1.7.4', '>=')
-            ? _PS_ROOT_DIR_ . '/var/logs/ps_checkout'
-            : _PS_ROOT_DIR_ . '/app/logs/ps_checkout'
-        ;
+        $path = _PS_ROOT_DIR_ . '/var/logs/ps_checkout';
+
+        if (version_compare(_PS_VERSION_, '1.7', '<')) {
+            $path = _PS_ROOT_DIR_ . '/log/ps_checkout';
+        } elseif (version_compare(_PS_VERSION_, '1.7.4', '<')) {
+            $path = _PS_ROOT_DIR_ . '/app/logs/ps_checkout';
+        }
+
         $rotatingFileHandler = new RotatingFileHandler(
             $path,
             static::MAX_FILES
