@@ -55,7 +55,7 @@ class MultiStoreFixer
             \Configuration::deleteByName($key);
 
             // Save current value associated to default shop
-            $result &= \Configuration::updateValue(
+            $result = $result && \Configuration::updateValue(
                 $key,
                 $value,
                 false,
@@ -64,7 +64,7 @@ class MultiStoreFixer
             );
         }
 
-        return (bool) $result;
+        return $result;
     }
 
     /**
@@ -130,7 +130,7 @@ class MultiStoreFixer
 
             // Save values for each shop
             foreach (\Shop::getShops(false, null, true) as $shopId) {
-                $result &= \Configuration::updateValue(
+                $result = $result && \Configuration::updateValue(
                     $key,
                     $currentValuesByShop[(int) $shopId][$key],
                     false,
@@ -140,7 +140,7 @@ class MultiStoreFixer
             }
         }
 
-        return (bool) $result;
+        return $result;
     }
 
     /**

@@ -53,7 +53,7 @@ class ShopUuidManager
 
         if (false === \Configuration::hasKey('PS_CHECKOUT_SHOP_UUID_V4', null, null, (int) $idShop) || !$this->getForShop($idShop)) {
             $uuid4 = \Ramsey\Uuid\Uuid::uuid4();
-            $result &= \Configuration::updateValue(
+            $result = $result && \Configuration::updateValue(
                 'PS_CHECKOUT_SHOP_UUID_V4',
                 $uuid4->toString(),
                 false,
@@ -62,7 +62,7 @@ class ShopUuidManager
             );
         }
 
-        return (bool) $result;
+        return $result;
     }
 
     /**
@@ -75,9 +75,9 @@ class ShopUuidManager
         $result = true;
 
         foreach (\Shop::getShops(false, null, true) as $shopId) {
-            $result &= $this->generateForShop($shopId);
+            $result = $result && $this->generateForShop($shopId);
         }
 
-        return (bool) $result;
+        return $result;
     }
 }

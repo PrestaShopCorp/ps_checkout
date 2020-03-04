@@ -173,7 +173,7 @@ class Ps_checkout extends PaymentModule
         foreach (\Shop::getShops(false, null, true) as $shopId) {
             foreach ($this->configurationList as $name => $value) {
                 if (false === Configuration::hasKey($name, null, null, (int) $shopId)) {
-                    $result &= Configuration::updateValue(
+                    $result = $result && Configuration::updateValue(
                         $name,
                         $value,
                         false,
@@ -184,7 +184,7 @@ class Ps_checkout extends PaymentModule
             }
         }
 
-        return (bool) $result;
+        return $result;
     }
 
     /**
