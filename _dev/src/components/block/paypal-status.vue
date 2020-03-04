@@ -25,8 +25,10 @@
       {{ $t('block.payment-status.disabled') }}
     </label>
     <template v-else-if="paypalIsActive">
-      <p v-if="displayLabels"
-        class="fs-14">
+      <p
+        v-if="displayLabels"
+        class="fs-14"
+      >
         {{ $t('block.payment-status.paypalLabel') }}
       </p>
       <label
@@ -37,8 +39,10 @@
       </label>
     </template>
     <template v-else>
-      <p v-if="displayLabels"
-        class="fs-14">
+      <p
+        v-if="displayLabels"
+        class="fs-14"
+      >
         {{ $t('block.payment-status.paypalLabelEmailNotValid') }}
       </p>
       <label

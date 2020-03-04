@@ -83,6 +83,6 @@
           this.confirmationAlert = false;
         }, 6000);
       },
-    }
+    },
   };
 </script>

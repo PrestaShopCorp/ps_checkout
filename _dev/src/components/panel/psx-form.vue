@@ -431,7 +431,7 @@
                 lg="12"
               >
                 <b-form-group
-                  :label="$t('panel.psx-form.businessSubCategory') + ' (' + $t('panel.psx-form.optional') + ')'"
+                  :label="subCategoryLabel"
                   label-for="business-subcategory"
                 >
                   <b-form-select
@@ -541,6 +541,9 @@
       },
       getCompanyCategories() {
         return this.$store.state.psx.businessDetails.business_categories;
+      },
+      subCategoryLabel() {
+        return `${this.$t('panel.psx-form.businessSubCategory')} (${this.$t('panel.psx-form.optional')})`;
       },
     },
     methods: {
