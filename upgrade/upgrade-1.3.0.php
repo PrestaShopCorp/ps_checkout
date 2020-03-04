@@ -24,9 +24,13 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Update main function for module Version 1.3.0
  *
+ * @param Module $module
+ *
  * @return bool
  */
-function upgrade_module_1_3_0()
+function upgrade_module_1_3_0($module)
 {
-    return (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates();
+    return (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates()
+        && $module->registerHook('actionObjectShopAddAfter')
+        && (new PrestaShop\Module\PrestashopCheckout\MultiStoreFixer())->run();
 }

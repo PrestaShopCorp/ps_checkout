@@ -35,6 +35,7 @@ class Ps_checkout extends PaymentModule
         'actionOrderSlipAdd',
         'orderConfirmation',
         'actionOrderStatusUpdate',
+        'actionObjectShopAddAfter',
     ];
 
     /**
@@ -83,7 +84,6 @@ class Ps_checkout extends PaymentModule
         'PS_PSX_FIREBASE_REFRESH_TOKEN' => '',
         'PS_PSX_FIREBASE_REFRESH_DATE' => '',
         'PS_CHECKOUT_PSX_FORM' => '',
-        'PS_CHECKOUT_SHOP_UUID_V4' => '',
     ];
 
     public $confirmUninstall;
@@ -136,6 +136,7 @@ class Ps_checkout extends PaymentModule
     {
         // Install for both 1.7 and 1.6
         $defaultInstall = parent::install() &&
+            (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops() &&
             $this->installConfiguration() &&
             $this->registerHook(self::HOOK_LIST) &&
             (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
@@ -167,25 +168,23 @@ class Ps_checkout extends PaymentModule
      */
     public function installConfiguration()
     {
-        $uuid4 = Ramsey\Uuid\Uuid::uuid4();
-        $shopsList = \Shop::getShops(false, null, true);
+        $result = true;
 
-        foreach ($shopsList as $shopId) {
+        foreach (\Shop::getShops(false, null, true) as $shopId) {
             foreach ($this->configurationList as $name => $value) {
-                if ($name === 'PS_CHECKOUT_SHOP_UUID_V4') {
-                    $value = $uuid4->toString();
+                if (false === Configuration::hasKey($name, null, null, (int) $shopId)) {
+                    $result = $result && Configuration::updateValue(
+                        $name,
+                        $value,
+                        false,
+                        null,
+                        (int) $shopId
+                    );
                 }
-                Configuration::updateValue(
-                    $name,
-                    $value,
-                    false,
-                    null,
-                    (int) $shopId
-                );
             }
         }
 
-        return true;
+        return $result;
     }
 
     /**
@@ -1106,5 +1105,18 @@ class Ps_checkout extends PaymentModule
         }
 
         return $legalFreeText;
+    }
+
+    /**
+     * This hook called after a new Shop is created
+     *
+     * @param array $params
+     */
+    public function hookActionObjectShopAddAfter(array $params)
+    {
+        /** @var Shop $shop */
+        $shop = $params['object'];
+
+        (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForShop((int) $shop->id);
     }
 }
