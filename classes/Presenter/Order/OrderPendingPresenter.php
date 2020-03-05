@@ -49,7 +49,7 @@ class OrderPendingPresenter implements PresenterInterface
                 $key == 'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT' ||
                 $key == 'PS_CHECKOUT_STATE_WAITING_CAPTURE'
             ) {
-                $idState = \Configuration::get($key);
+                $idState = (int) \Configuration::getGlobalValue($key);
                 $orderStates[$idState]['color'] = $value;
                 $orderStates[$idState]['name'] = $orderTranslations[$key];
             }
@@ -58,7 +58,7 @@ class OrderPendingPresenter implements PresenterInterface
         $orders = $this->getPendingOrders($orderStates);
 
         foreach ($orders as &$order) {
-            $order['username'] = $this->getUsername($order['id_customer']);
+            $order['username'] = substr($order['firstname'], 0, 1) . '. ' . $order['lastname'];
             $order['userProfileLink'] = $link->getAdminLink('AdminCustomers', true, [], ['id_customer' => $order['id_customer'], 'viewcustomer' => 1]);
             $order['orderLink'] = $link->getAdminLink('AdminOrders', true, [], ['id_order' => $order['id_order'], 'vieworder' => 1]);
             $order['state'] = $orderStates[$order['current_state']];
@@ -72,21 +72,6 @@ class OrderPendingPresenter implements PresenterInterface
     }
 
     /**
-     * getUsername
-     *
-     * @param string|int $userID
-     *
-     * @return string
-     */
-    private function getUsername($userID)
-    {
-        $sql = 'SELECT firstname,lastname FROM `' . _DB_PREFIX_ . 'customer` o WHERE id_customer = ' . (int) $userID;
-        $user = \Db::getInstance()->getRow($sql);
-
-        return substr($user['firstname'], 0, 1) . '. ' . $user['lastname'];
-    }
-
-    /**
      * get last 1000 pending checkout orders
      *
      * @param array $idStates
@@ -96,26 +81,16 @@ class OrderPendingPresenter implements PresenterInterface
     private function getPendingOrders($idStates)
     {
         $idStates = array_map('intval', $idStates);
-        $sql = 'SELECT id_order, current_state, total_paid, date_add, id_customer
+
+        return \Db::getInstance()->executeS('
+            SELECT o.id_order, o.current_state, o.total_paid, o.date_add, c.id_customer, c.firstname, c.lastname
             FROM `' . _DB_PREFIX_ . 'orders` o
+            INNER JOIN `' . _DB_PREFIX_ . 'customer` c ON (o.id_customer = c.id_customer)
             WHERE o.module = "ps_checkout"
-            AND current_state IN (' . implode(',', array_keys($idStates)) . ')
-            ORDER BY date_add DESC
+            AND o.id_shop = ' . (int) \Context::getContext()->shop->id . '
+            AND o.current_state IN (' . implode(',', array_keys($idStates)) . ')
+            ORDER BY o.date_add DESC
             LIMIT 1000
-        ';
-
-        return \Db::getInstance()->executeS($sql);
-    }
-
-    /**
-     * castToInt
-     *
-     * @param string $stringToCast
-     *
-     * @return int
-     */
-    private function castToInt($stringToCast)
-    {
-        return (int) $stringToCast;
+        ');
     }
 }
