@@ -76,7 +76,9 @@
           :key="group.id"
           class="mt-3 mb-3 col-4"
         >
-          <p class="text-muted">{{ $t('general.multiShop.group') }} {{ group.name }}</p>
+          <p class="text-muted">
+            {{ $t('general.multiShop.group') }} {{ group.name }}
+          </p>
           <b-list-group-item
             v-for="shop in group.shops"
             :key="shop.id"

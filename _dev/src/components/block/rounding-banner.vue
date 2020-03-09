@@ -17,8 +17,9 @@
  * International Registered Trademark & Property of PrestaShop SA
  *-->
 <template>
-  <div v-if="!roundingSettingsIsCorrect && !isReady">
+  <div>
     <b-alert
+      v-if="!roundingSettingsIsCorrect && !isReady"
       variant="warning"
       show
     >
@@ -36,15 +37,32 @@
         </b-button>
       </p>
     </b-alert>
+    <b-alert
+      v-if="confirmationAlert"
+      variant="success"
+      show
+    >
+      <h2>{{ $t('block.rounding-banner.confirmationTitle') }}</h2>
+      <p class="mb-3">
+        {{ $t('block.rounding-banner.confirmationLabel') }}
+      </p>
+    </b-alert>
   </div>
 </template>
 
 <script>
   export default {
     name: 'RoundingBanner',
+    data() {
+      return {
+        confirmationAlert: false,
+      };
+    },
     methods: {
       updateRoundingSettings() {
-        this.$store.dispatch('updateRoundingSettings');
+        this.$store.dispatch('updateRoundingSettings').then(() => {
+          this.confirmationAlert = true;
+        });
       },
     },
     computed: {
@@ -53,6 +71,17 @@
       },
       roundingSettingsIsCorrect() {
         return this.$store.getters.roundingSettingsIsCorrect;
+      },
+    },
+    watch: {
+      confirmationAlert(value) {
+        if (value === false) {
+          return;
+        }
+
+        setTimeout(() => {
+          this.confirmationAlert = false;
+        }, 6000);
       },
     },
   };

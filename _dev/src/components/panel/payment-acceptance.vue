@@ -43,11 +43,18 @@
             </thead>
             <tbody>
               <tr>
-                <td class="text-left">
-                  <h3 class="mt-2">
-                    PayPal
-                  </h3>
-                  <PaypalStatus :display-labels="true" />
+                <td class="text-left d-flex">
+                  <div class="paypal-icon">
+                    <img
+                      src="@/assets/images/paypal-logo-thumbnail.png"
+                    >
+                  </div>
+                  <div>
+                    <h3 class="mt-2">
+                      PayPal
+                    </h3>
+                    <PaypalStatus :display-labels="true" />
+                  </div>
                 </td>
                 <td>
                   <PayPalPaymentAvailability />
@@ -58,11 +65,16 @@
               </tr>
 
               <tr>
-                <td class="text-left">
-                  <h3 class="mt-2">
-                    {{ $t('panel.payment-acceptance.creditCardsLabel') }}
-                  </h3>
-                  <CardStatus :display-labels="true" />
+                <td class="text-left d-flex">
+                  <div class="card-icon">
+                    <i class="material-icons">credit_card</i>
+                  </div>
+                  <div>
+                    <h3 class="mt-2">
+                      {{ $t('panel.payment-acceptance.creditCardsLabel') }}
+                    </h3>
+                    <CardStatus :display-labels="true" />
+                  </div>
                 </td>
                 <td>
                   <CardPaymentAvailability />
@@ -125,5 +137,20 @@
   opacity: 0.2;
   background:#6B868F;
   border-bottom: 2px solid #6B868F;
+}
+
+.paypal-icon {
+  align-self: center;
+  padding: 15px;
+}
+
+.card-icon {
+  align-self: center;
+  padding: 15px;
+}
+
+.card-icon .material-icons {
+  font-size: 42px !important;
+  color: #6C868E;
 }
 </style>

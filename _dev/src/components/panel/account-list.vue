@@ -39,8 +39,8 @@
                 >
               </td>
               <td>
-                <h2>{{ $t('panel.account-list.essentialsAccount') }}</h2>
-                <p class="text-muted mb-0">
+                <h3>{{ $t('panel.account-list.essentialsAccount') }}</h3>
+                <p class="text-muted fs-14 mb-0">
                   <template v-if="firebaseStatusAccount === true">
                     {{ $t('panel.account-list.connectedWitdh') }}
                     <b>{{ $store.state.firebase.email }}</b>
@@ -76,13 +76,15 @@
                   class="text-right"
                   v-else
                 >
-                  <a
+                  <b-button
                     v-if="!isReady"
                     href="#"
                     data-toggle="modal"
                     data-target="#modalLogout"
-                    class="text-muted"
-                  >{{ $t('panel.account-list.logOut') }}</a>
+                    variant="outline-secondary"
+                  >
+                    {{ $t('panel.account-list.logOut') }}
+                  </b-button>
                 </div>
                 <!-- modal -->
                 <div
@@ -145,10 +147,10 @@
                 >
               </td>
               <td>
-                <h2 class="mt-2">
+                <h3 class="mt-2">
                   {{ $t('panel.account-list.paypalAccount') }}
-                </h2>
-                <p class="text-muted">
+                </h3>
+                <p class="text-muted fs-14">
                   <template v-if="paypalStatusAccount === false">
                     {{ $t('panel.account-list.activatePayment') }}
                   </template>
@@ -172,11 +174,12 @@
                   class="text-right"
                   v-else
                 >
-                  <a
-                    href="#"
-                    class="text-muted"
+                  <b-button
+                    variant="outline-secondary"
                     @click.prevent="paypalUnlink()"
-                  >{{ $t('panel.account-list.useAnotherAccount') }}</a>
+                  >
+                    {{ $t('panel.account-list.useAnotherAccount') }}
+                  </b-button>
                 </div>
               </td>
             </tr>
@@ -267,10 +270,16 @@
   background:#6B868F;
   border-bottom: 2px solid #6B868F;
 }
-#app .modal{
+#app .modal {
   background: rgba(0,0,0,0.4);
 }
-#app #modalLogout .modal-dialog{
+#app .modal-content {
+  border-radius: unset;
+}
+#app .modal-body {
+  font-size: 14px;
+}
+#app #modalLogout .modal-dialog {
   top: 35%;
 }
 .fade-enter-active, .fade-leave-active {
@@ -278,5 +287,8 @@
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
  opacity: 0;
+}
+.fs-14 {
+  font-size: 14px;
 }
 </style>

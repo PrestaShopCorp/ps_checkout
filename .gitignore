@@ -13,9 +13,6 @@
 /views/img/paypal-logo-thumbnail.png
 /views/img/pscheckout.png
 
-### VueJs ignore dev conf ###
-/views/templates/admin/configuration.tpl
-
 ### Composer ###
 composer.phar
 /vendor/
