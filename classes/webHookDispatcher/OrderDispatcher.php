@@ -41,7 +41,7 @@ class OrderDispatcher implements Dispatcher
     {
         $this->matriceEventAndOrderState = [
             self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED => \Configuration::get('PS_OS_CANCELED'),
-            self::PS_CHECKOUT_PAYMENT_PENDING => \Configuration::get('PS_OS_PREPARATION'), // Processing in progress
+            self::PS_CHECKOUT_PAYMENT_PENDING => \Configuration::get('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT'), // OS_PREPARATION should be used only before shipping !
             self::PS_CHECKOUT_PAYMENT_COMPLETED => \Configuration::get('PS_OS_PAYMENT'), // Payment accepted
             self::PS_CHECKOUT_PAYMENT_DENIED => \Configuration::get('PS_OS_ERROR'), // Payment error
         ];
@@ -150,7 +150,11 @@ class OrderDispatcher implements Dispatcher
         $newOrderStateId = (int) $this->matriceEventAndOrderState[$eventType];
 
         // Prevent duplicate state entry
-        if ($lastOrderStateId === $newOrderStateId) {
+        if ($lastOrderStateId === $newOrderStateId
+            || $order->hasBeenPaid()
+            || $order->hasBeenShipped()
+            || $order->hasBeenDelivered()
+            || $order->isInPreparation()) {
             return false;
         }
 
