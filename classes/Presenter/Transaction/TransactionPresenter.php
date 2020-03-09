@@ -39,12 +39,11 @@ class TransactionPresenter implements PresenterInterface
         $transactions = $this->getTransactions();
 
         foreach ($transactions as &$transaction) {
-            $userInfos = $this->getUserInfos($transaction['order_reference']);
             $transaction['transactionID'] = $transaction['transaction_id'];
-            $transaction['order_id'] = $this->getOrderIDByOrderReference($transaction['order_reference']);
-            $transaction['orderLink'] = $link->getAdminLink('AdminOrders', true, [], ['id_order' => $transaction['order_id'], 'vieworder' => 1]);
-            $transaction['username'] = $userInfos['name'];
-            $transaction['userProfileLink'] = $link->getAdminLink('AdminCustomers', true, [], ['id_customer' => $userInfos['userID'], 'viewcustomer' => 1]);
+            $transaction['order_id'] = $transaction['id_order'];
+            $transaction['orderLink'] = $link->getAdminLink('AdminOrders', true, [], ['id_order' => $transaction['id_order'], 'vieworder' => 1]);
+            $transaction['username'] = substr($transaction['firstname'], 0, 1) . '. ' . $transaction['lastname'];
+            $transaction['userProfileLink'] = $link->getAdminLink('AdminCustomers', true, [], ['id_customer' => $transaction['id_customer'], 'viewcustomer' => 1]);
             $currency = new \Currency($transaction['id_currency']);
             $transaction['before_commission'] = \Tools::displayPrice($transaction['amount'], $currency);
             $transaction['type'] = strpos($transaction['amount'], '-') !== false ? 'Refund' : 'Payment';
@@ -57,44 +56,15 @@ class TransactionPresenter implements PresenterInterface
 
     private function getTransactions()
     {
-        $sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'order_payment` o
-            WHERE payment_method = "Prestashop Checkout"
-            ORDER BY date_add DESC
+        return \Db::getInstance()->executeS('
+            SELECT op.*, o.id_order, c.id_customer, c.firstname, c.lastname
+            FROM `' . _DB_PREFIX_ . 'order_payment` op
+            INNER JOIN `' . _DB_PREFIX_ . 'orders` o ON (o.reference = op.order_reference)
+            INNER JOIN `' . _DB_PREFIX_ . 'customer` c ON (c.id_customer = o.id_customer)
+            WHERE op.payment_method = "Prestashop Checkout"
+            AND o.id_shop = ' . (int) \Context::getContext()->shop->id . '
+            ORDER BY op.date_add DESC
             LIMIT 1000
-        ';
-
-        return \Db::getInstance()->executeS($sql);
-    }
-
-    private function getOrderIDByOrderReference($reference)
-    {
-        $sql = 'SELECT id_order FROM `' . _DB_PREFIX_ . 'orders` o
-            WHERE reference = "' . pSQL($reference) . '"
-        ';
-
-        return \Db::getInstance()->getValue($sql);
-    }
-
-    /**
-     * getUserInfos
-     *
-     * @param string $orderReference
-     *
-     * @return string
-     */
-    private function getUserInfos($orderReference)
-    {
-        $link = new LinkAdapter();
-        $sql = 'SELECT id_customer FROM `' . _DB_PREFIX_ . 'orders` WHERE reference = "' . pSQL($orderReference) . '"';
-        $userID = \Db::getInstance()->getRow($sql);
-
-        $sql = 'SELECT firstname,lastname FROM `' . _DB_PREFIX_ . 'customer` WHERE id_customer = ' . (int) $userID['id_customer'];
-        $user = \Db::getInstance()->getRow($sql);
-
-        return [
-            'userID' => $userID['id_customer'],
-            'name' => substr($user['firstname'], 0, 1) . '. ' . $user['lastname'],
-            'link' => $link->getAdminLink('AdminCustomers', true, [], $userID),
-        ];
+        ');
     }
 }
