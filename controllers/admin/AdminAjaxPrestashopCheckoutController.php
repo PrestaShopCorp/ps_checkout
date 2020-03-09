@@ -295,6 +295,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             null,
             (int) Context::getContext()->shop->id
         );
+
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(\Context::getContext()->link))->updateSettings();
     }
 
     /**
@@ -309,6 +311,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             null,
             (int) Context::getContext()->shop->id
         );
+
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(\Context::getContext()->link))->updateSettings();
     }
 
     /**
@@ -323,6 +327,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             null,
             (int) Context::getContext()->shop->id
         );
+
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(\Context::getContext()->link))->updateSettings();
     }
 
     /**
@@ -337,6 +343,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             null,
             (int) Context::getContext()->shop->id
         );
+
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(\Context::getContext()->link))->updateSettings();
     }
 
     /**
