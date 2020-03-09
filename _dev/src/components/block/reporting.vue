@@ -105,7 +105,11 @@
               class="label color_field "
               :style="setTransactionBadgeColor(data.item.type)"
             >
-              {{ data.item.type }}
+              {{
+                data.item.type === 'Refund'
+                  ? $t('block.reporting.type.refund')
+                  : $t('block.reporting.type.payment')
+              }}
             </b-badge>
           </template>
 
@@ -180,14 +184,14 @@
     data() {
       return {
         orderFields: [
-          {key: 'date_add', label: 'Date', sortable: true},
-          {key: 'id_order', label: 'Order ID', sortable: true},
-          {key: 'user', label: 'Customer', sortable: true},
-          {key: 'current_state', label: 'Type', sortable: true},
-          {key: 'before_commission', label: 'Before Commission', sortable: true},
-          {key: 'commission', label: 'Commission', sortable: true},
-          {key: 'total_paid', label: 'Total', sortable: true},
-          {key: 'actions', label: 'Actions'},
+          {key: 'date_add', label: this.$i18n.t('block.reporting.column.date'), sortable: true},
+          {key: 'id_order', label: this.$i18n.t('block.reporting.column.orderId'), sortable: true},
+          {key: 'user', label: this.$i18n.t('block.reporting.column.customer'), sortable: true},
+          {key: 'current_state', label: this.$i18n.t('block.reporting.column.type'), sortable: true},
+          {key: 'before_commission', label: this.$i18n.t('block.reporting.column.beforeCommission'), sortable: true},
+          {key: 'commission', label: this.$i18n.t('block.reporting.column.commission'), sortable: true},
+          {key: 'total_paid', label: this.$i18n.t('block.reporting.column.total'), sortable: true},
+          {key: 'actions', label: this.$i18n.t('block.reporting.column.actions')},
         ],
         orderFilter: null,
         orderFilterOn: [],
@@ -197,14 +201,14 @@
         orderPerPage: 20,
         orderPageOptions: [5, 10, 15],
         transactionFields: [
-          {key: 'date_add', label: 'Date', sortable: true},
-          {key: 'order_id', label: 'Order ID', sortable: true},
-          {key: 'user', label: 'Customer', sortable: true},
-          {key: 'type', label: 'Type', sortable: true},
-          {key: 'before_commission', label: 'Before Commission', sortable: true},
-          {key: 'commission', label: 'Commission', sortable: true},
-          {key: 'total_paid', label: 'Total', sortable: true},
-          {key: 'actions', label: 'Actions'},
+          {key: 'date_add', label: this.$i18n.t('block.reporting.column.date'), sortable: true},
+          {key: 'order_id', label: this.$i18n.t('block.reporting.column.orderId'), sortable: true},
+          {key: 'user', label: this.$i18n.t('block.reporting.column.customer'), sortable: true},
+          {key: 'type', label: this.$i18n.t('block.reporting.column.type'), sortable: true},
+          {key: 'before_commission', label: this.$i18n.t('block.reporting.column.beforeCommission'), sortable: true},
+          {key: 'commission', label: this.$i18n.t('block.reporting.column.commission'), sortable: true},
+          {key: 'total_paid', label: this.$i18n.t('block.reporting.column.total'), sortable: true},
+          {key: 'actions', label: this.$i18n.t('block.reporting.column.actions')},
         ],
         transactionFilter: null,
         transactionFilterOn: [],
