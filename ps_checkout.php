@@ -980,30 +980,31 @@ class Ps_checkout extends PaymentModule
      */
     public function addCheckboxCarrierRestrictionsForModule(array $shopsList = [])
     {
-        if (!$shopsList) {
+        if (empty($shopsList)) {
             $shopsList = Shop::getShops(true, null, true);
         }
 
         $carriersList = Carrier::getCarriers((int) Context::getContext()->language->id, false, false, false, null, Carrier::ALL_CARRIERS);
-        $allCarriers = [];
-
-        foreach ($carriersList as $carrier) {
-            $allCarriers[] = $carrier['id_reference'];
-        }
+        $allCarriers = array_column($carriersList, 'id_reference');
+        $dataToInsert = [];
 
         foreach ($shopsList as $idShop) {
             foreach ($allCarriers as $idCarrier) {
-                $addModuleInCarrier = Db::getInstance()->execute('INSERT IGNORE
-                    INTO `' . _DB_PREFIX_ . 'module_carrier` (`id_module`, `id_shop`, `id_reference`)
-                    VALUES (' . (int) $this->id . ', "' . (int) $idShop . '", ' . (int) $idCarrier . ')');
-
-                if (!$addModuleInCarrier) {
-                    return false;
-                }
+                $dataToInsert[] = [
+                    'id_reference' => (int) $idCarrier,
+                    'id_shop' => (int) $idShop,
+                    'id_module' => (int) $this->id,
+                ];
             }
         }
 
-        return true;
+        return \Db::getInstance()->insert(
+            'module_carrier',
+            $dataToInsert,
+            false,
+            true,
+            Db::INSERT_IGNORE
+        );
     }
 
     /**
@@ -1034,13 +1035,9 @@ class Ps_checkout extends PaymentModule
                 (int) $idShop
             );
             $explodedCountries = explode(';', $activeCountries);
-            // Get countries already associated with module and shop
-            /** @var array $alreadySelectedCountries */
-            $alreadySelectedCountries = $db->executeS('SELECT `id_country` FROM `' . _DB_PREFIX_ . 'module_country` WHERE `id_module` = ' . (int) $this->id . ' AND `id_shop` = ' . (int) $idShop);
-            $alreadySelectedCountriesIds = array_column($alreadySelectedCountries, 'id_country');
+
             foreach ($explodedCountries as $isoCodeCountry) {
-                // Check if country is not already associated
-                if (isset($countryIdByIso[$isoCodeCountry]) && !in_array($countryIdByIso[$isoCodeCountry], $alreadySelectedCountriesIds)) {
+                if (isset($countryIdByIso[$isoCodeCountry])) {
                     $dataToInsert[] = [
                         'id_country' => (int) $countryIdByIso[$isoCodeCountry],
                         'id_shop' => (int) $idShop,
@@ -1050,7 +1047,13 @@ class Ps_checkout extends PaymentModule
             }
         }
 
-        return $db->insert('module_country', $dataToInsert);
+        return $db->insert(
+            'module_country',
+            $dataToInsert,
+            false,
+            true,
+            Db::INSERT_IGNORE
+        );
     }
 
     /**
