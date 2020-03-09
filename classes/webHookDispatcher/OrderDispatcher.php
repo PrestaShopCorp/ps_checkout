@@ -28,12 +28,24 @@ class OrderDispatcher implements Dispatcher
     const PS_CHECKOUT_PAYMENT_PENDING = 'PaymentCapturePending';
     const PS_CHECKOUT_PAYMENT_COMPLETED = 'PaymentCaptureCompleted';
     const PS_CHECKOUT_PAYMENT_DENIED = 'PaymentCaptureDenied';
-    const PS_EVENTTYPE_TO_PS_STATE_ID = [
-        self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED => _PS_OS_CANCELED_, // Canceled
-        self::PS_CHECKOUT_PAYMENT_PENDING => 3, // Processing in progress
-        self::PS_CHECKOUT_PAYMENT_COMPLETED => _PS_OS_PAYMENT_, // Payment accepted
-        self::PS_CHECKOUT_PAYMENT_DENIED => _PS_OS_ERROR_, // Payment error
-    ];
+
+    /**
+     * @var array
+     */
+    private $matriceEventAndOrderState;
+
+    /**
+     * OrderDispatcher constructor.
+     */
+    public function __construct()
+    {
+        $this->matriceEventAndOrderState = [
+            self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED => \Configuration::get('PS_OS_CANCELED'),
+            self::PS_CHECKOUT_PAYMENT_PENDING => \Configuration::get('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT'), // OS_PREPARATION should be used only before shipping !
+            self::PS_CHECKOUT_PAYMENT_COMPLETED => \Configuration::get('PS_OS_PAYMENT'), // Payment accepted
+            self::PS_CHECKOUT_PAYMENT_DENIED => \Configuration::get('PS_OS_ERROR'), // Payment error
+        ];
+    }
 
     /**
      * Dispatch the Event Type to manage the merchant status
@@ -133,17 +145,23 @@ class OrderDispatcher implements Dispatcher
             throw new UnauthorizedException($orderError);
         }
 
-        $orderHistory = new \OrderHistory();
-        $orderHistory->id_order = $orderId;
-        $lastOrderState = $orderHistory->getLastOrderState($orderId);
+        $order = new \Order($orderId);
+        $lastOrderStateId = (int) $order->getCurrentState();
+        $newOrderStateId = (int) $this->matriceEventAndOrderState[$eventType];
 
         // Prevent duplicate state entry
-        if ((int) self::PS_EVENTTYPE_TO_PS_STATE_ID[$eventType] === $lastOrderState->id) {
+        if ($lastOrderStateId === $newOrderStateId
+            || $order->hasBeenPaid()
+            || $order->hasBeenShipped()
+            || $order->hasBeenDelivered()
+            || $order->isInPreparation()) {
             return false;
         }
 
+        $orderHistory = new \OrderHistory();
+        $orderHistory->id_order = $orderId;
         $orderHistory->changeIdOrderState(
-            self::PS_EVENTTYPE_TO_PS_STATE_ID[$eventType],
+            $this->matriceEventAndOrderState[$eventType],
             $orderId
         );
 
