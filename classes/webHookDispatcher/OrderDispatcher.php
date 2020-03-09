@@ -133,15 +133,17 @@ class OrderDispatcher implements Dispatcher
             throw new UnauthorizedException($orderError);
         }
 
-        $orderHistory = new \OrderHistory();
-        $orderHistory->id_order = $orderId;
-        $lastOrderState = $orderHistory->getLastOrderState($orderId);
+        $order = new \Order($orderId);
+        $lastOrderStateId = (int) $order->getCurrentState();
+        $newOrderStateId = (int) self::PS_EVENTTYPE_TO_PS_STATE_ID[$eventType];
 
         // Prevent duplicate state entry
-        if ((int) self::PS_EVENTTYPE_TO_PS_STATE_ID[$eventType] === $lastOrderState->id) {
+        if ($lastOrderStateId === $newOrderStateId) {
             return false;
         }
 
+        $orderHistory = new \OrderHistory();
+        $orderHistory->id_order = $orderId;
         $orderHistory->changeIdOrderState(
             self::PS_EVENTTYPE_TO_PS_STATE_ID[$eventType],
             $orderId
