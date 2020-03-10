@@ -37,6 +37,7 @@ class TransactionPresenter implements PresenterInterface
     {
         $link = new LinkAdapter();
         $transactions = $this->getTransactions();
+        $module = \Module::getInstanceByName('ps_checkout');
 
         foreach ($transactions as &$transaction) {
             $transaction['transactionID'] = $transaction['transaction_id'];
@@ -47,6 +48,7 @@ class TransactionPresenter implements PresenterInterface
             $currency = new \Currency($transaction['id_currency']);
             $transaction['before_commission'] = \Tools::displayPrice($transaction['amount'], $currency);
             $transaction['type'] = strpos($transaction['amount'], '-') !== false ? 'Refund' : 'Payment';
+            $transaction['typeForDisplay'] = ($transaction['type'] === 'Refund') ? $module->l('Refund', 'translations') : $module->l('Payment', 'translations');
             $transaction['commission'] = '-';
             $transaction['total_paid'] = '-';
         }

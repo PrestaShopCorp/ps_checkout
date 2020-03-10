@@ -105,11 +105,7 @@
               class="label color_field "
               :style="setTransactionBadgeColor(data.item.type)"
             >
-              {{
-                data.item.type === 'Refund'
-                  ? $t('block.reporting.type.refund')
-                  : $t('block.reporting.type.payment')
-              }}
+              {{ data.item.typeForDisplay }}
             </b-badge>
           </template>
 

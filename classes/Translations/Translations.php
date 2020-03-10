@@ -311,8 +311,8 @@ class Translations
                     'orderPendingTableTitle' => $this->module->l('Pending transaction', 'translations'),
                     'transactionTableTitle' => $this->module->l('All transactions', 'translations'),
                     'type' => [
-                        'payment' => 'Payment',
-                        'refund' => 'Refund',
+                        'payment' => $this->module->l('Payment', 'translations'),
+                        'refund' => $this->module->l('Refund', 'translations'),
                     ],
                     'column' => [
                         'date' => $this->module->l('Date', 'translations'),
