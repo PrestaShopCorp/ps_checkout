@@ -310,6 +310,20 @@ class Translations
                     'goToTransaction' => $this->module->l('Go to PayPal', 'translations'),
                     'orderPendingTableTitle' => $this->module->l('Pending transaction', 'translations'),
                     'transactionTableTitle' => $this->module->l('All transactions', 'translations'),
+                    'type' => [
+                        'payment' => $this->module->l('Payment', 'translations'),
+                        'refund' => $this->module->l('Refund', 'translations'),
+                    ],
+                    'column' => [
+                        'date' => $this->module->l('Date', 'translations'),
+                        'orderId' => $this->module->l('Order Id', 'translations'),
+                        'customer' => $this->module->l('Customer', 'translations'),
+                        'type' => $this->module->l('Type', 'translations'),
+                        'beforeCommission' => $this->module->l('Before commission', 'translations'),
+                        'commission' => $this->module->l('Commission', 'translations'),
+                        'total' => $this->module->l('Total', 'translations'),
+                        'actions' => $this->module->l('Actions', 'translations'),
+                    ],
                 ],
             ],
         ];
