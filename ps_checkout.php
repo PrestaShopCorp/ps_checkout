@@ -658,6 +658,7 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
+        // @todo Add a new negative OrderPayment is wrong !
         $addOrderPayment = $refund->addOrderPayment($params['order'], $refundResponse['body']['id']);
 
         if (false === $addOrderPayment) {
@@ -676,12 +677,28 @@ class Ps_checkout extends PaymentModule
         return $orderHistory->addWithemail();
     }
 
-    public function hookActionOrderStatusUpdate($params)
+    /**
+     * Hook called on OrderState change
+     *
+     * @todo Do not perform Refund here !
+     *
+     * @param array $params
+     *
+     * @return bool
+     */
+    public function hookActionOrderStatusUpdate(array $params)
     {
-        $order = new PrestaShopCollection('Order');
-        $order->where('id_order', '=', $params['id_order']);
         /** @var \Order $order */
-        $order = $order->getFirst();
+        $order = new \Order((int) $params['id_order']);
+        /** @var \OrderState $newOrderState */
+        $newOrderState = $params['newOrderStatus'];
+        $newOrderStateId = (int) $newOrderState->id;
+        $refundOrderStateId = (int) \Configuration::get('PS_OS_REFUND');
+
+        // if the new order state is not "Refunded" stop the refund process
+        if ($newOrderStateId !== $refundOrderStateId) {
+            return false;
+        }
 
         $paypalOrderId = (new \OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
 
@@ -691,13 +708,9 @@ class Ps_checkout extends PaymentModule
         }
 
         if (false === $this->merchantIsValid()) {
+            // @todo This hook can be called outside of a controller...
             $this->context->controller->errors[] = $this->l('You are not connected to PrestaShop Checkout. Cannot process to a refund.');
 
-            return false;
-        }
-
-        // if the new order state is not "Refunded" stop the refund process
-        if ($params['newOrderStatus']->id !== intval(_PS_OS_REFUND_)) {
             return false;
         }
 
@@ -707,21 +720,25 @@ class Ps_checkout extends PaymentModule
         $totalRefund = $order->getTotalPaid();
 
         $refund = new PrestaShop\Module\PrestashopCheckout\Refund(false, $totalRefund, $paypalOrderId, $currencyIsoCode);
+        // @todo Do not perform Refund in this hook !
         $refundResponse = $refund->refundPaypalOrder();
 
         if (isset($refundResponse['error'])) {
             if (isset($refundResponse['messages']) && is_array($refundResponse['messages'])) {
+                // @todo This hook can be called outside of a controller...
                 $this->context->controller->errors = array_merge(
                     $this->context->controller->errors,
                     $refundResponse['messages']
                 );
             } else {
+                // @todo This hook can be called outside of a controller...
                 $this->context->controller->errors[] = $refundResponse['message'];
             }
 
             return false;
         }
 
+        // @todo Do not perform Refund in this hook !
         return $refund->doTotalRefund($order, $order->getProducts(), $refundResponse['body']['id']);
     }
 
