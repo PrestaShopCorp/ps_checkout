@@ -3,7 +3,7 @@ name: Module checkout CD
 on:
   push:
     branches:
-      - develop
+      - dev
 
 env:
   MODULE_NAME: ps_checkout
