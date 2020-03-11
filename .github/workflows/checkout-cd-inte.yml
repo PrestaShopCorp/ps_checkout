@@ -25,19 +25,18 @@ jobs:
           gcloud auth activate-service-account --key-file=$GCLOUD_TOKEN_PATH
           gcloud container clusters get-credentials $GCLOUD_CLUSTER \
           --zone europe-west1-c --project $GCLOUD_PROJECT
-#          gcloud beta secrets versions access latest --project=$GCLOUD_PROJECT --secret="accounts-module" > .env
-#          rm $GCLOUD_TOKEN_PATH
+          rm $GCLOUD_TOKEN_PATH
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_CREDENTIAL_INTEGRATION }}
           GCLOUD_TOKEN_PATH: ${{ env.GCLOUD_TOKEN_PATH }}
           GCLOUD_CLUSTER: ${{ secrets.GCLOUD_CLUSTER }}
           GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT_INTEGRATION }}
 
-#      - name: Build module
-#        run: |
-#          yarn
-#          yarn build
-#          composer install
+      - name: Build module
+        run: |
+          composer install
+          cd _dev
+          yarn
 
 #      - name: Delete old module
 #        uses: appleboy/ssh-action@master
