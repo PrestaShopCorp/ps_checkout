@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - develop
-      - feature/continuous-delivery
 
 env:
   MODULE_NAME: ps_checkout
@@ -12,8 +11,9 @@ env:
 
 jobs:
   checkout_cd:
-    name: Module Accounts continuous deployment
+    name: Module Checkout continuous deployment
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
       - name: Checkout the repository
