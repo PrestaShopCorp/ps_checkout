@@ -7,7 +7,7 @@ on:
       - feature/continuous-delivery
 
 env:
-  MODULE_NAME: ps_accounts
+  MODULE_NAME: ps_checkout
   GCLOUD_TOKEN_PATH: ./token.json
 
 jobs:
