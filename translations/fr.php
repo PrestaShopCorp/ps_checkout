@@ -188,8 +188,8 @@ $_MODULE['<{ps_checkout}prestashop>translations_56396cec5c858be914156d159a387592
 $_MODULE['<{ps_checkout}prestashop>translations_05a75ed73f5cbb95cd94d4aa1a4d4a2f'] = 'Informations d\'entreprise';
 $_MODULE['<{ps_checkout}prestashop>translations_15bbb9d0bbf25e8d2978de1168c749dc'] = 'Site';
 $_MODULE['<{ps_checkout}prestashop>translations_243e4f2f3bd512ca8a6cc83e7a19e103'] = 'Chiffre d\'affaires mensuel estimé de l\'entreprise';
-$_MODULE['<{ps_checkout}prestashop>translations_d6ca53a668b116991b7aa68ed33a29a7'] = 'Catégorie de l\'entrerpise';
-$_MODULE['<{ps_checkout}prestashop>translations_dbb2cf5e0c92b5bf2d47cd421ac60ae7'] = 'Sous-catégorie de l\'entrerpise';
+$_MODULE['<{ps_checkout}prestashop>translations_d6ca53a668b116991b7aa68ed33a29a7'] = 'Catégorie de l\'entreprise';
+$_MODULE['<{ps_checkout}prestashop>translations_dbb2cf5e0c92b5bf2d47cd421ac60ae7'] = 'Sous-catégorie de l\'entreprise';
 $_MODULE['<{ps_checkout}prestashop>translations_ebb061953c0454b2c8ee7b0ac615ebcd'] = 'Optionnel';
 $_MODULE['<{ps_checkout}prestashop>translations_a0bfb8e59e6c13fc8d990781f77694fe'] = 'Continuer';
 $_MODULE['<{ps_checkout}prestashop>translations_5ef0c737746fae2ca90e66c39333f8f6'] = 'Erreurs';
