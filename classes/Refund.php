@@ -76,6 +76,7 @@ class Refund
      */
     public function refundPaypalOrder()
     {
+        // API call here
         $payload = $this->getPayload();
 
         //@todo Quick fix before refactoring
@@ -88,6 +89,7 @@ class Refund
             ];
         }
 
+        // API call here
         $response = (new Order(\Context::getContext()->link))->refund($payload);
 
         if (422 === $response['httpCode']) {
@@ -104,6 +106,7 @@ class Refund
      */
     public function getCaptureId()
     {
+        // API call here
         $response = (new PaypalOrder($this->getPaypalOrderId()))->getOrder();
 
         if (false === $response['status']) {
@@ -130,6 +133,7 @@ class Refund
      */
     public function getPayload()
     {
+        // API call here
         $captureId = $this->getCaptureId();
 
         //@todo Quick fix before refactoring
@@ -268,6 +272,9 @@ class Refund
             return false;
         }
 
+        // @todo Add a new negative OrderPayment is wrong !
+        $this->addOrderPayment($order, $transactionId);
+
         // If refund from Prestashop, do not change Order History
         if (false === $this->refundFromWebhook) {
             return true;
@@ -279,9 +286,6 @@ class Refund
             $orderStateId,
             $order->id
         );
-
-        // @todo Add a new negative OrderPayment is wrong !
-        $this->addOrderPayment($order, $transactionId);
 
         return $orderHistory->addWithemail();
     }
