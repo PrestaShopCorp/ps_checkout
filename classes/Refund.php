@@ -76,7 +76,21 @@ class Refund
      */
     public function refundPaypalOrder()
     {
-        $response = (new Order(\Context::getContext()->link))->refund($this->getPayload());
+        // API call here
+        $payload = $this->getPayload();
+
+        //@todo Quick fix before refactoring
+        if (empty($payload)) {
+            return [
+                'error' => true,
+                'messages' => [
+                    'Unable to retrieve payload or unable to retrieve capture id of this order.',
+                ],
+            ];
+        }
+
+        // API call here
+        $response = (new Order(\Context::getContext()->link))->refund($payload);
 
         if (422 === $response['httpCode']) {
             return $this->handleCallbackErrors($response['body']['message']);
@@ -92,15 +106,18 @@ class Refund
      */
     public function getCaptureId()
     {
+        // API call here
         $response = (new PaypalOrder($this->getPaypalOrderId()))->getOrder();
 
         if (false === $response['status']) {
             return false;
         }
 
-        $purchaseUnits = current($response['purchase_units']);
-        $capture = current($purchaseUnits['payments']['captures']);
-        $captureId = $capture['id'];
+        //@todo Quick fix before refactoring
+        $purchaseUnits = isset($response['purchase_units']) ? current($response['purchase_units']) : null;
+        //@todo Quick fix before refactoring
+        $capture = isset($purchaseUnits['payments']['captures']) ? current($purchaseUnits['payments']['captures']) : null;
+        $captureId = isset($capture['id']) ? $capture['id'] : null;
 
         if (null === $captureId) {
             return false;
@@ -116,9 +133,17 @@ class Refund
      */
     public function getPayload()
     {
+        // API call here
+        $captureId = $this->getCaptureId();
+
+        //@todo Quick fix before refactoring
+        if (false === $captureId) {
+            return [];
+        }
+
         $payload = [
             'orderId' => $this->getPaypalOrderId(),
-            'captureId' => $this->getCaptureId(),
+            'captureId' => $captureId,
             'payee' => [
                 'merchant_id' => (new PaypalAccountRepository())->getMerchantId(),
             ],
@@ -154,7 +179,7 @@ class Refund
             $orderProductList[$key]['unit_price'] = $value['unit_price_tax_incl'];
         }
 
-        $refundOrderStateId = intval(_PS_OS_REFUND_);
+        $refundOrderStateId = (int) \Configuration::get('PS_OS_REFUND');
 
         return $this->refundPrestashopOrder($order, $orderProductList, $refundOrderStateId, $transactionId);
     }
@@ -247,6 +272,9 @@ class Refund
             return false;
         }
 
+        // @todo Add a new negative OrderPayment is wrong !
+        $this->addOrderPayment($order, $transactionId);
+
         // If refund from Prestashop, do not change Order History
         if (false === $this->refundFromWebhook) {
             return true;
@@ -258,8 +286,6 @@ class Refund
             $orderStateId,
             $order->id
         );
-
-        $this->addOrderPayment($order, $transactionId);
 
         return $orderHistory->addWithemail();
     }
@@ -274,6 +300,8 @@ class Refund
      */
     public function addOrderPayment(\Order $order, $paypalTransactionId)
     {
+        //@todo this is not correct to add a negative OrderPayment, it cause a Warning in Order page in BO
+        //Maybe its done to save paypalTransactionId
         return $order->addOrderPayment(
             -$this->getAmount(),
             'PrestaShop Checkout',
