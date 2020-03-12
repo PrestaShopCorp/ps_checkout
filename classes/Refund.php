@@ -117,7 +117,7 @@ class Refund
         $purchaseUnits = isset($response['purchase_units']) ? current($response['purchase_units']) : null;
         //@todo Quick fix before refactoring
         $capture = isset($purchaseUnits['payments']['captures']) ? current($purchaseUnits['payments']['captures']) : null;
-        $captureId = $capture['id'];
+        $captureId = isset($capture['id']) ? $capture['id'] : null;
 
         if (null === $captureId) {
             return false;
