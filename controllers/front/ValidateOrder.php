@@ -53,6 +53,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
         $isExpressCheckout = (bool) Tools::getValue('isExpressCheckout');
 
         if ($isExpressCheckout) {
+            // API call here
             $this->updatePaypalOrder($paypalOrderId);
         }
 
@@ -73,12 +74,12 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
             'cartId' => (int) $cart->id,
             'amount' => $total,
             'paymentMethod' => $paymentMethod,
-            'extraVars' => ['transaction_id' => $paypalOrderId],
             'currencyId' => (int) $currency->id,
             'secureKey' => $customer->secure_key,
         ];
 
         // If the payment is rejected redirect the client to the last checkout step (422 error)
+        // API call here
         if (false === $payment->validateOrder($dataOrder)) {
             $this->redirectToCheckout(['hferror' => 1]);
         }
