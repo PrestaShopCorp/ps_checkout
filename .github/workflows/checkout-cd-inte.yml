@@ -1,9 +1,9 @@
 name: Module checkout CD
 
 on:
-  push:
-    branches:
-      - dev
+  pull_request:
+    types: [opened,edited,reopened,synchronize]
+
 
 env:
   MODULE_NAME: ps_checkout
