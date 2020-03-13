@@ -80,6 +80,18 @@ class WebHookOrder
     public function updateOrder()
     {
         $order = new \Order($this->orderId);
+
+        //@todo Quickfix checking if this transaction is already saved
+        /** @var \OrderPayment[] $orderPayments */
+        $orderPayments = $order->getOrderPaymentCollection();
+        foreach ($orderPayments as $orderPayment) {
+            if ($orderPayment->transaction_id === $this->paypalTransactionId) {
+                $message = sprintf('This PayPal transaction is already saved : %s', $this->paypalTransactionId);
+                \PrestaShopLogger::addLog($message, 1, null, null, null, true);
+                throw new \PrestaShopException($message);
+            }
+        }
+
         $amountAlreadyRefunded = $this->getOrderSlipAmount($order);
         $expectiveTotalAmountToRefund = $amountAlreadyRefunded + $this->amount;
 
