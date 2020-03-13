@@ -103,7 +103,7 @@ class OrderStates
             return $insertedId;
         }
 
-        throw new \PrestaShopException('Not able to insert the new order state');
+        throw new PsCheckoutException('Not able to insert the new order state');
     }
 
     /**
@@ -164,7 +164,7 @@ class OrderStates
         ];
 
         if (false === \Db::getInstance()->insert(self::ORDER_STATE_LANG_TABLE, $data)) {
-            throw new \PrestaShopException('Not able to insert the new order state language');
+            throw new PsCheckoutException('Not able to insert the new order state language');
         }
     }
 

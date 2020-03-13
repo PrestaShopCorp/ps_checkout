@@ -300,6 +300,17 @@ class Refund
      */
     public function addOrderPayment(\Order $order, $paypalTransactionId)
     {
+        //@todo Quickfix to prevent duplicate OrderPayment
+        /** @var \OrderPayment[] $orderPayments */
+        $orderPayments = $order->getOrderPaymentCollection();
+        foreach ($orderPayments as $orderPayment) {
+            if ($orderPayment->transaction_id === $paypalTransactionId) {
+                $message = sprintf('This PayPal transaction is already saved : %s', $orderPayment->transaction_id);
+                \PrestaShopLogger::addLog($message, 1, null, null, null, true);
+                throw new PsCheckoutException($message);
+            }
+        }
+
         //@todo this is not correct to add a negative OrderPayment, it cause a Warning in Order page in BO
         //Maybe its done to save paypalTransactionId
         return $order->addOrderPayment(
