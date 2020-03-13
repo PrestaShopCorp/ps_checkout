@@ -88,7 +88,7 @@ class WebHookOrder
             if ($orderPayment->transaction_id === $this->paypalTransactionId) {
                 $message = sprintf('This PayPal transaction is already saved : %s', $this->paypalTransactionId);
                 \PrestaShopLogger::addLog($message, 1, null, null, null, true);
-                throw new \PrestaShopException($message);
+                throw new PsCheckoutException($message);
             }
         }
 

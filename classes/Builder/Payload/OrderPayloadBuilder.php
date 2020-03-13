@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
+use PrestaShop\Module\PrestashopCheckout\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
@@ -449,7 +450,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     private function checkPaypalOrderIdWhenUpdate()
     {
         if (true === $this->isUpdate && empty($this->paypalOrderId)) {
-            throw new \PrestaShopException('PayPal order ID is required when building payload for update an order');
+            throw new PsCheckoutException('PayPal order ID is required when building payload for update an order');
         }
     }
 

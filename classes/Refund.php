@@ -307,7 +307,7 @@ class Refund
             if ($orderPayment->transaction_id === $paypalTransactionId) {
                 $message = sprintf('This PayPal transaction is already saved : %s', $orderPayment->transaction_id);
                 \PrestaShopLogger::addLog($message, 1, null, null, null, true);
-                throw new \PrestaShopException($message);
+                throw new PsCheckoutException($message);
             }
         }
 

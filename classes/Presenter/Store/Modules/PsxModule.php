@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
 /**
@@ -85,7 +86,7 @@ class PsxModule implements PresenterInterface
         );
 
         if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \Exception(sprintf('The legacy to standard locales JSON could not be decoded %s', json_last_error_msg()));
+            throw new PsCheckoutException(sprintf('The legacy to standard locales JSON could not be decoded %s', json_last_error_msg()));
         }
 
         return $data;

@@ -75,7 +75,7 @@ class ValidateOrder
             // @todo quickfix : Call API return nothing or fail
             $message = sprintf('Unable to retrieve Paypal Order for %s', $this->paypalOrderId);
             \PrestaShopLogger::addLog($message, 1, null, null, null, true);
-            throw new \PrestaShopException($message);
+            throw new PsCheckoutException($message);
         }
 
         $apiOrder = new Order(\Context::getContext()->link);
@@ -93,7 +93,7 @@ class ValidateOrder
                 // @todo quickfix
                 $message = sprintf('Unknown Intent type %s, Paypal Order %s', $paypalOrder->getOrderIntent(), $this->paypalOrderId);
                 \PrestaShopLogger::addLog($message, 1, null, null, null, true);
-                throw new \PrestaShopException($message);
+                throw new PsCheckoutException($message);
         }
 
         if (false === $response['status']) {
@@ -125,7 +125,7 @@ class ValidateOrder
             $this->setOrderState($module->currentOrder, self::CAPTURE_STATUS_DECLINED, $payload['paymentMethod']);
             $message = sprintf('Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s', $module->currentOrder, $this->paypalOrderId);
             \PrestaShopLogger::addLog($message, 1, null, null, null, true);
-            throw new \PrestaShopException($message);
+            throw new PsCheckoutException($message);
         }
 
         // TODO : patch the order in order to update the order id with the order id
