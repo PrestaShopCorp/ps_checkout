@@ -17,6 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+use PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
@@ -60,6 +61,8 @@ class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontControl
         $paypalOrder = new CreatePaypalOrderHandler($this->context);
         $paypalOrder = $paypalOrder->handle();
 
+        $language = (new LanguageAdapter())->getLanguage($this->context->language->id);
+
         $this->context->smarty->assign([
             'nbProducts' => $cart->nbProducts(),
             'total' => $cart->getOrderTotal(true, Cart::BOTH),
@@ -68,7 +71,13 @@ class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontControl
             'clientToken' => $paypalOrder['body']['client_token'],
             'paypalOrderId' => $paypalOrder['body']['id'],
             'validateOrderLinkByPaypal' => $module->getValidateOrderLink($paypalOrder['body']['id'], 'paypal'),
-            'intent' => strtolower(\Configuration::get('PS_CHECKOUT_INTENT')),
+            'intent' => strtolower(Configuration::get(
+                'PS_CHECKOUT_INTENT',
+                null,
+                null,
+                (int) \Context::getContext()->shop->id
+            )),
+            'locale' => $language['locale'],
             'currencyIsoCode' => $this->context->currency->iso_code,
             'isCardPaymentError' => (bool) Tools::getValue('hferror'),
             'modulePath' => $module->getPathUri(),

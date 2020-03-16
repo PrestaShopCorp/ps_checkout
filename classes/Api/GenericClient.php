@@ -80,8 +80,15 @@ class GenericClient
 
         $response = $responseHandler->handleResponse($response);
 
+        $logsEnabled = (bool) \Configuration::get(
+            'PS_CHECKOUT_DEBUG_LOGS_ENABLED',
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
+
         // If response is not successful only
-        if (\Configuration::get('PS_CHECKOUT_DEBUG_LOGS_ENABLED') && !$response['status']) {
+        if ($logsEnabled && !$response['status']) {
             /**
              * @var \Ps_checkout
              */

@@ -90,7 +90,12 @@ class PaypalAccountRepository
      */
     public function cardPaymentMethodIsEnabled()
     {
-        return (bool) \Configuration::get(PaypalAccount::PS_CHECKOUT_CARD_PAYMENT_ENABLED);
+        return (bool) \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_CARD_PAYMENT_ENABLED,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
     }
 
     /**
@@ -121,7 +126,12 @@ class PaypalAccountRepository
      */
     public function getMerchantId()
     {
-        return \Configuration::get(PaypalAccount::PS_CHECKOUT_PAYPAL_ID_MERCHANT);
+        return \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_PAYPAL_ID_MERCHANT,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
     }
 
     /**
@@ -131,7 +141,12 @@ class PaypalAccountRepository
      */
     public function getMerchantEmail()
     {
-        return \Configuration::get(PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT);
+        return \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
     }
 
     /**
@@ -141,7 +156,12 @@ class PaypalAccountRepository
      */
     public function getMerchantEmailStatus()
     {
-        return \Configuration::get(PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_STATUS);
+        return \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_STATUS,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
     }
 
     /**
@@ -151,7 +171,12 @@ class PaypalAccountRepository
      */
     public function getPaypalPaymentStatus()
     {
-        return \Configuration::get(PaypalAccount::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS);
+        return \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
     }
 
     /**
@@ -161,6 +186,11 @@ class PaypalAccountRepository
      */
     public function getCardPaymentStatus()
     {
-        return \Configuration::get(PaypalAccount::PS_CHECKOUT_CARD_PAYMENT_STATUS);
+        return \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_CARD_PAYMENT_STATUS,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
     }
 }

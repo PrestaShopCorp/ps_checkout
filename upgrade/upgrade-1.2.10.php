@@ -33,7 +33,7 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_1_2_10($module)
 {
     foreach (OrderStates::ORDER_STATES as $key => $value) {
-        $idState = \Configuration::get($key);
+        $idState = \Configuration::getGlobalValue($key);
 
         $update = \Db::getInstance()->update(
             OrderStates::ORDER_STATE_TABLE,
@@ -46,12 +46,40 @@ function upgrade_module_1_2_10($module)
         }
     }
 
-    \Configuration::updateValue('PS_CHECKOUT_CARD_PAYMENT_ENABLED', true);
+    $shopsList = \Shop::getShops(false, null, true);
 
-    // New configurations for express checkout feature
-    \Configuration::updateValue('PS_CHECKOUT_EC_ORDER_PAGE', false);
-    \Configuration::updateValue('PS_CHECKOUT_EC_CHECKOUT_PAGE', false);
-    \Configuration::updateValue('PS_CHECKOUT_EC_PRODUCT_PAGE', false);
+    foreach ($shopsList as $shopId) {
+        \Configuration::updateValue(
+            'PS_CHECKOUT_CARD_PAYMENT_ENABLED',
+            true,
+            false,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
+
+        // New configurations for express checkout feature
+        \Configuration::updateValue(
+            'PS_CHECKOUT_EC_ORDER_PAGE',
+            false,
+            false,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
+        \Configuration::updateValue(
+            'PS_CHECKOUT_EC_CHECKOUT_PAGE',
+            false,
+            false,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
+        \Configuration::updateValue(
+            'PS_CHECKOUT_EC_PRODUCT_PAGE',
+            false,
+            false,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
+    }
 
     // register new hooks for express checkout
     $hooks = [

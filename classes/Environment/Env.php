@@ -83,7 +83,12 @@ class Env
      */
     private function isLive()
     {
-        $mode = \Configuration::get('PS_CHECKOUT_MODE');
+        $mode = \Configuration::get(
+            'PS_CHECKOUT_MODE',
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
 
         if ('LIVE' === $mode) {
             return true;

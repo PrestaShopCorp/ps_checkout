@@ -35,6 +35,7 @@ class Ps_checkout extends PaymentModule
         'actionOrderSlipAdd',
         'orderConfirmation',
         'actionOrderStatusUpdate',
+        'actionObjectShopAddAfter',
     ];
 
     /**
@@ -83,7 +84,6 @@ class Ps_checkout extends PaymentModule
         'PS_PSX_FIREBASE_REFRESH_TOKEN' => '',
         'PS_PSX_FIREBASE_REFRESH_DATE' => '',
         'PS_CHECKOUT_PSX_FORM' => '',
-        'PS_CHECKOUT_SHOP_UUID_V4' => '',
     ];
 
     public $confirmUninstall;
@@ -92,7 +92,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '1.2.13';
+    const VERSION = '1.3.0';
 
     /**
      * @var \Monolog\Logger
@@ -106,7 +106,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '1.2.13';
+        $this->version = '1.3.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
 
@@ -117,7 +117,7 @@ class Ps_checkout extends PaymentModule
         parent::__construct();
 
         $this->displayName = $this->l('PrestaShop Checkout');
-        $this->description = $this->l('Provide every payment method to your customer with one module, and manage every sale where your business happens.');
+        $this->description = $this->l('Provide the most commonly used payment methods to your customers in this all-in-one module, and manage all your sales in a centralized interface.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = ['min' => '1.6.1', 'max' => _PS_VERSION_];
@@ -134,16 +134,10 @@ class Ps_checkout extends PaymentModule
      */
     public function install()
     {
-        foreach ($this->configurationList as $name => $value) {
-            if ($name === 'PS_CHECKOUT_SHOP_UUID_V4') {
-                $uuid4 = Ramsey\Uuid\Uuid::uuid4();
-                $value = $uuid4->toString();
-            }
-            Configuration::updateValue($name, $value);
-        }
-
         // Install for both 1.7 and 1.6
         $defaultInstall = parent::install() &&
+            (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops() &&
+            $this->installConfiguration() &&
             $this->registerHook(self::HOOK_LIST) &&
             (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
@@ -165,6 +159,32 @@ class Ps_checkout extends PaymentModule
         }
 
         return true;
+    }
+
+    /**
+     * Install configuration for each shop
+     *
+     * @return bool
+     */
+    public function installConfiguration()
+    {
+        $result = true;
+
+        foreach (\Shop::getShops(false, null, true) as $shopId) {
+            foreach ($this->configurationList as $name => $value) {
+                if (false === Configuration::hasKey($name, null, null, (int) $shopId)) {
+                    $result = $result && Configuration::updateValue(
+                        $name,
+                        $value,
+                        false,
+                        null,
+                        (int) $shopId
+                    );
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -268,7 +288,14 @@ class Ps_checkout extends PaymentModule
      */
     private function displayECOnCheckout()
     {
-        if (!(bool) Configuration::get('PS_CHECKOUT_EC_CHECKOUT_PAGE')) {
+        $displayOnCheckout = (bool) Configuration::get(
+            'PS_CHECKOUT_EC_CHECKOUT_PAGE',
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
+
+        if (!$displayOnCheckout) {
             return false;
         }
 
@@ -292,7 +319,14 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayExpressCheckout()
     {
-        if (!(bool) Configuration::get('PS_CHECKOUT_EC_ORDER_PAGE')) {
+        $displayExpressCheckout = (bool) Configuration::get(
+            'PS_CHECKOUT_EC_ORDER_PAGE',
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
+
+        if (!$displayExpressCheckout) {
             return false;
         }
 
@@ -307,7 +341,14 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayFooterProduct($params)
     {
-        if (!(bool) Configuration::get('PS_CHECKOUT_EC_PRODUCT_PAGE')) {
+        $displayOnProductPage = (bool) Configuration::get(
+            'PS_CHECKOUT_EC_PRODUCT_PAGE',
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
+
+        if (!$displayOnProductPage) {
             return false;
         }
 
@@ -423,14 +464,20 @@ class Ps_checkout extends PaymentModule
         $paypalAccountRepository = new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository();
 
         $termsAndConditionsLinkCms = new \CMS(
-            (int) Configuration::get('PS_CONDITIONS_CMS_ID'),
+            (int) Configuration::get(
+                'PS_CONDITIONS_CMS_ID',
+                null,
+                null,
+                (int) \Context::getContext()->shop->id
+            ),
             (int) $this->context->language->id
         );
         $termsAndConditionsLink = $this->context->link->getCMSLink(
             $termsAndConditionsLinkCms,
-            $termsAndConditionsLinkCms->link_rewrite,
-            (bool) Configuration::get('PS_SSL_ENABLED')
+            $termsAndConditionsLinkCms->link_rewrite
         );
+
+        $language = (new PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter())->getLanguage($this->context->language->id);
 
         $this->context->smarty->assign([
             'merchantId' => $paypalAccountRepository->getMerchantId(),
@@ -441,7 +488,13 @@ class Ps_checkout extends PaymentModule
             'validateOrderLinkByPaypal' => $this->getValidateOrderLink($paypalOrder['body']['id'], 'paypal'),
             'cardIsActive' => $paypalAccountRepository->cardPaymentMethodIsAvailable(),
             'paypalIsActive' => $paypalAccountRepository->paypalPaymentMethodIsValid(),
-            'intent' => strtolower(Configuration::get('PS_CHECKOUT_INTENT')),
+            'intent' => strtolower(Configuration::get(
+                'PS_CHECKOUT_INTENT',
+                null,
+                null,
+                (int) \Context::getContext()->shop->id
+            )),
+            'locale' => $language['locale'],
             'currencyIsoCode' => $this->context->currency->iso_code,
             'isCardPaymentError' => (bool) Tools::getValue('hferror'),
             'modulePath' => $this->getPathUri(),
@@ -476,7 +529,12 @@ class Ps_checkout extends PaymentModule
      */
     public function getPaymentMethods()
     {
-        $paymentMethods = \Configuration::get('PS_CHECKOUT_PAYMENT_METHODS_ORDER');
+        $paymentMethods = \Configuration::get(
+            'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
 
         // if no paymentMethods position is set, by default put credit card (hostedFields) as first position
         if (empty($paymentMethods)) {
@@ -600,6 +658,7 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
+        // @todo Add a new negative OrderPayment is wrong !
         $addOrderPayment = $refund->addOrderPayment($params['order'], $refundResponse['body']['id']);
 
         if (false === $addOrderPayment) {
@@ -610,17 +669,36 @@ class Ps_checkout extends PaymentModule
         $orderHistory = new \OrderHistory();
         $orderHistory->id_order = (int) $params['order']->id;
 
-        $orderHistory->changeIdOrderState(intval(\Configuration::get('PS_CHECKOUT_STATE_PARTIAL_REFUND')), $params['order']->id);
+        $orderHistory->changeIdOrderState(
+            (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_PARTIAL_REFUND'),
+            (int) $params['order']->id
+        );
 
         return $orderHistory->addWithemail();
     }
 
-    public function hookActionOrderStatusUpdate($params)
+    /**
+     * Hook called on OrderState change
+     *
+     * @todo Do not perform Refund here !
+     *
+     * @param array $params
+     *
+     * @return bool
+     */
+    public function hookActionOrderStatusUpdate(array $params)
     {
-        $order = new PrestaShopCollection('Order');
-        $order->where('id_order', '=', $params['id_order']);
         /** @var \Order $order */
-        $order = $order->getFirst();
+        $order = new \Order((int) $params['id_order']);
+        /** @var \OrderState $newOrderState */
+        $newOrderState = $params['newOrderStatus'];
+        $newOrderStateId = (int) $newOrderState->id;
+        $refundOrderStateId = (int) \Configuration::get('PS_OS_REFUND');
+
+        // if the new order state is not "Refunded" stop the refund process
+        if ($newOrderStateId !== $refundOrderStateId) {
+            return false;
+        }
 
         $paypalOrderId = (new \OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
 
@@ -630,13 +708,9 @@ class Ps_checkout extends PaymentModule
         }
 
         if (false === $this->merchantIsValid()) {
+            // @todo This hook can be called outside of a controller...
             $this->context->controller->errors[] = $this->l('You are not connected to PrestaShop Checkout. Cannot process to a refund.');
 
-            return false;
-        }
-
-        // if the new order state is not "Refunded" stop the refund process
-        if ($params['newOrderStatus']->id !== intval(_PS_OS_REFUND_)) {
             return false;
         }
 
@@ -646,21 +720,25 @@ class Ps_checkout extends PaymentModule
         $totalRefund = $order->getTotalPaid();
 
         $refund = new PrestaShop\Module\PrestashopCheckout\Refund(false, $totalRefund, $paypalOrderId, $currencyIsoCode);
+        // @todo Do not perform Refund in this hook !
         $refundResponse = $refund->refundPaypalOrder();
 
         if (isset($refundResponse['error'])) {
             if (isset($refundResponse['messages']) && is_array($refundResponse['messages'])) {
+                // @todo This hook can be called outside of a controller...
                 $this->context->controller->errors = array_merge(
                     $this->context->controller->errors,
                     $refundResponse['messages']
                 );
             } else {
+                // @todo This hook can be called outside of a controller...
                 $this->context->controller->errors[] = $refundResponse['message'];
             }
 
             return false;
         }
 
+        // @todo Do not perform Refund in this hook !
         return $refund->doTotalRefund($order, $order->getProducts(), $refundResponse['body']['id']);
     }
 
@@ -673,7 +751,7 @@ class Ps_checkout extends PaymentModule
     {
         $paypalPaymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paypalPaymentOption->setModuleName($this->name . '_paypal')
-                            ->setCallToActionText($this->l('Pay by PayPal or other payment methods'))
+                            ->setCallToActionText($this->l('Pay with a PayPal account or other payment methods'))
                             ->setAction($this->context->link->getModuleLink($this->name, 'CreateOrder', [], true))
                             ->setAdditionalInformation($this->generatePaypalForm())
                             ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/paypal.png'));
@@ -754,6 +832,7 @@ class Ps_checkout extends PaymentModule
         $this->context->smarty->assign([
             'paypalEmail' => $this->context->cookie->__get('paypalEmail'),
             'jsHideOtherPaymentOptions' => $this->_path . 'views/js/hideOtherPaymentOptions.js?v=' . $this->version,
+            'paypalLogoPath' => $this->_path . 'views/img/paypal_express.png',
         ]);
 
         return $this->context->smarty->fetch(
@@ -872,7 +951,9 @@ class Ps_checkout extends PaymentModule
                 'orderId' => $orderId,
                 'paymentMethod' => $paymentMethod,
             ],
-            true
+            true,
+            null,
+            (int) $this->context->shop->id
         );
     }
 
@@ -919,30 +1000,31 @@ class Ps_checkout extends PaymentModule
      */
     public function addCheckboxCarrierRestrictionsForModule(array $shopsList = [])
     {
-        if (!$shopsList) {
+        if (empty($shopsList)) {
             $shopsList = Shop::getShops(true, null, true);
         }
 
         $carriersList = Carrier::getCarriers((int) Context::getContext()->language->id, false, false, false, null, Carrier::ALL_CARRIERS);
-        $allCarriers = [];
-
-        foreach ($carriersList as $carrier) {
-            $allCarriers[] = $carrier['id_reference'];
-        }
+        $allCarriers = array_column($carriersList, 'id_reference');
+        $dataToInsert = [];
 
         foreach ($shopsList as $idShop) {
             foreach ($allCarriers as $idCarrier) {
-                $addModuleInCarrier = Db::getInstance()->execute('INSERT IGNORE
-                    INTO `' . _DB_PREFIX_ . 'module_carrier` (`id_module`, `id_shop`, `id_reference`)
-                    VALUES (' . (int) $this->id . ', "' . (int) $idShop . '", ' . (int) $idCarrier . ')');
-
-                if (!$addModuleInCarrier) {
-                    return false;
-                }
+                $dataToInsert[] = [
+                    'id_reference' => (int) $idCarrier,
+                    'id_shop' => (int) $idShop,
+                    'id_module' => (int) $this->id,
+                ];
             }
         }
 
-        return true;
+        return \Db::getInstance()->insert(
+            'module_carrier',
+            $dataToInsert,
+            false,
+            true,
+            Db::INSERT_IGNORE
+        );
     }
 
     /**
@@ -966,15 +1048,16 @@ class Ps_checkout extends PaymentModule
 
         foreach ($shopsList as $idShop) {
             // Get countries allowed in geolocation management for this shop
-            $activeCountries = \Configuration::get('PS_ALLOWED_COUNTRIES', null, null, (int) $idShop);
+            $activeCountries = \Configuration::get(
+                'PS_ALLOWED_COUNTRIES',
+                null,
+                null,
+                (int) $idShop
+            );
             $explodedCountries = explode(';', $activeCountries);
-            // Get countries already associated with module and shop
-            /** @var array $alreadySelectedCountries */
-            $alreadySelectedCountries = $db->executeS('SELECT `id_country` FROM `' . _DB_PREFIX_ . 'module_country` WHERE `id_module` = ' . (int) $this->id . ' AND `id_shop` = ' . (int) $idShop);
-            $alreadySelectedCountriesIds = array_column($alreadySelectedCountries, 'id_country');
+
             foreach ($explodedCountries as $isoCodeCountry) {
-                // Check if country is not already associated
-                if (isset($countryIdByIso[$isoCodeCountry]) && !in_array($countryIdByIso[$isoCodeCountry], $alreadySelectedCountriesIds)) {
+                if (isset($countryIdByIso[$isoCodeCountry])) {
                     $dataToInsert[] = [
                         'id_country' => (int) $countryIdByIso[$isoCodeCountry],
                         'id_shop' => (int) $idShop,
@@ -984,7 +1067,13 @@ class Ps_checkout extends PaymentModule
             }
         }
 
-        return $db->insert('module_country', $dataToInsert);
+        return $db->insert(
+            'module_country',
+            $dataToInsert,
+            false,
+            true,
+            Db::INSERT_IGNORE
+        );
     }
 
     /**
@@ -1039,5 +1128,18 @@ class Ps_checkout extends PaymentModule
         }
 
         return $legalFreeText;
+    }
+
+    /**
+     * This hook called after a new Shop is created
+     *
+     * @param array $params
+     */
+    public function hookActionObjectShopAddAfter(array $params)
+    {
+        /** @var Shop $shop */
+        $shop = $params['object'];
+
+        (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForShop((int) $shop->id);
     }
 }

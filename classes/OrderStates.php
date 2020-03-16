@@ -30,9 +30,9 @@ class OrderStates
     const ORDER_HISTORY_TABLE = 'order_history';
     const ORDER_STATE_TABLE = 'order_state';
     const ORDER_STATE_LANG_TABLE = 'order_state_lang';
-    const DARK_BLUE_HEXA_COLOR = '#34219E';
+    const DARK_BLUE_HEXA_COLOR = '#34209E';
     const BLUE_HEXA_COLOR = '#3498D8';
-    const GREEN_HEXA_COLOR = '#2ECC71';
+    const GREEN_HEXA_COLOR = '#01B887';
     const ORDER_STATES = [
         'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT' => self::DARK_BLUE_HEXA_COLOR,
         'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT' => self::DARK_BLUE_HEXA_COLOR,
@@ -45,6 +45,8 @@ class OrderStates
     /**
      * Insert the new paypal states if it does not exists
      * Create a new order state for each ps_checkout new order states
+     *
+     * FYI: this method is also used in the upgrade-1.2.14.php file
      *
      * @return bool
      */
@@ -69,10 +71,10 @@ class OrderStates
      */
     private function getPaypalStateId($state, $color)
     {
-        $stateId = \Configuration::get($state);
+        $stateId = (int) \Configuration::getGlobalValue($state);
 
         // Is state ID already existing in the Configuration table ?
-        if (false === $stateId) {
+        if (0 === $stateId || false === \OrderState::existsInDatabase($stateId, self::ORDER_STATE_TABLE)) {
             return $this->createPaypalStateId($state, $color);
         }
 
@@ -96,12 +98,12 @@ class OrderStates
 
         if (true === \Db::getInstance()->insert(self::ORDER_STATE_TABLE, $data)) {
             $insertedId = (int) \Db::getInstance()->Insert_ID();
-            \Configuration::updateValue($state, $insertedId);
+            \Configuration::updateGlobalValue($state, $insertedId);
 
             return $insertedId;
         }
 
-        throw new \PrestaShopException('Not able to insert the new order state');
+        throw new PsCheckoutException('Not able to insert the new order state');
     }
 
     /**
@@ -162,7 +164,7 @@ class OrderStates
         ];
 
         if (false === \Db::getInstance()->insert(self::ORDER_STATE_LANG_TABLE, $data)) {
-            throw new \PrestaShopException('Not able to insert the new order state language');
+            throw new PsCheckoutException('Not able to insert the new order state language');
         }
     }
 

@@ -17,7 +17,7 @@
  * International Registered Trademark & Property of PrestaShop SA
  *}
 
-<link rel="preload" href="https://www.paypal.com/sdk/js?components=buttons&client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&merchant-id={$merchantId|escape:'htmlall':'UTF-8'}&intent={$intent|escape:'htmlall':'UTF-8'}&currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}" as="script">
+<link rel="preload" href="https://www.paypal.com/sdk/js?components=buttons&client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&merchant-id={$merchantId|escape:'htmlall':'UTF-8'}&intent={$intent|escape:'htmlall':'UTF-8'}&currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}&locale={$locale|escape:'htmlall':'UTF-8'}" as="script">
 
 {capture name=path}
 <a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html':'UTF-8'}" title="{l s='Go back to the Checkout' mod='ps_checkout'}">
@@ -92,7 +92,7 @@ function initPaypalScript() {
   }
 
   const paypalScript = document.createElement('script');
-  paypalScript.setAttribute('src', "https://www.paypal.com/sdk/js?components=buttons&client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&merchant-id={$merchantId|escape:'htmlall':'UTF-8'}&intent={$intent|escape:'htmlall':'UTF-8'}&currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}");
+  paypalScript.setAttribute('src', "https://www.paypal.com/sdk/js?components=buttons&client-id={$paypalClientId|escape:'htmlall':'UTF-8'}&merchant-id={$merchantId|escape:'htmlall':'UTF-8'}&intent={$intent|escape:'htmlall':'UTF-8'}&currency={$currencyIsoCode|escape:'htmlall':'UTF-8'}&locale={$locale|escape:'htmlall':'UTF-8'}");
   paypalScript.setAttribute('data-client-token', "{$clientToken|escape:'htmlall':'UTF-8'}");
   paypalScript.setAttribute('id', 'psCheckoutPaypalSdk');
   paypalScript.setAttribute('data-namespace', 'paypalSdkPsCheckout');

@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
 /**
@@ -53,7 +54,15 @@ class PsxModule implements PresenterInterface
         return [
             'psx' => [
                 'onboardingCompleted' => (new PsAccountRepository())->psxFormIsCompleted(),
-                'psxFormData' => json_decode(\Configuration::get('PS_CHECKOUT_PSX_FORM'), true),
+                'psxFormData' => json_decode(
+                    \Configuration::get(
+                        'PS_CHECKOUT_PSX_FORM',
+                        null,
+                        null,
+                        (int) \Context::getContext()->shop->id
+                    ),
+                    true
+                ),
                 'languagesDetails' => $this->getJsonData(self::ALL_LANGUAGES_FILE),
                 'countriesDetails' => $this->getJsonData(self::ALL_COUNTRIES_FILE),
                 'countriesStatesDetails' => $this->getJsonData(self::ALL_COUNTRIES_STATES_FILE),
@@ -77,7 +86,7 @@ class PsxModule implements PresenterInterface
         );
 
         if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \Exception(sprintf('The legacy to standard locales JSON could not be decoded %s', json_last_error_msg()));
+            throw new PsCheckoutException(sprintf('The legacy to standard locales JSON could not be decoded %s', json_last_error_msg()));
         }
 
         return $data;

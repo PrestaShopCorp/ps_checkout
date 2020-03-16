@@ -23,20 +23,20 @@
     </b-container>
 
     <b-container>
-      <FeatureIncoming />
+      <Reporting />
     </b-container>
   </div>
 </template>
 
 <script>
+  import Reporting from '@/components/block/reporting';
   import Dispute from '@/components/block/dispute';
-  import FeatureIncoming from '@/components/block/feature-incoming';
 
   export default {
     name: 'Activity',
     components: {
       Dispute,
-      FeatureIncoming,
+      Reporting,
     },
   };
 </script>

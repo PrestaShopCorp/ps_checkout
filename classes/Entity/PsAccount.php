@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Entity;
 
+use PrestaShop\Module\PrestashopCheckout\PsCheckoutException;
+
 /**
  * Not really an entity.
  * Allow to manage data regarding firebase account in database
@@ -73,11 +75,11 @@ class PsAccount
     public function __construct($idToken = null, $refreshToken = null, $email = null, $localId = null, $psxForm = null)
     {
         if (empty($idToken)) {
-            throw new \PrestaShopException('idToken cannot be empty');
+            throw new PsCheckoutException('idToken cannot be empty');
         }
 
         if (empty($refreshToken)) {
-            throw new \PrestaShopException('refreshToken cannot be empty');
+            throw new PsCheckoutException('refreshToken cannot be empty');
         }
 
         $this->setIdToken($idToken);

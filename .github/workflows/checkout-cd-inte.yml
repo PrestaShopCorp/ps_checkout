@@ -1,0 +1,86 @@
+name: Module checkout CD
+
+on:
+  pull_request:
+    types: [opened,edited,reopened,synchronize]
+
+
+env:
+  MODULE_NAME: ps_checkout
+  GCLOUD_TOKEN_PATH: ./token.json
+
+jobs:
+  checkout_cd:
+    name: Module Checkout continuous deployment
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: contains(github.event.pull_request.labels.*.name, 'quality insurance needed')
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Gcloud auth and write env file
+        run: |
+          echo $GOOGLE_APPLICATION_CREDENTIALS > $GCLOUD_TOKEN_PATH
+          gcloud auth activate-service-account --key-file=$GCLOUD_TOKEN_PATH
+          gcloud container clusters get-credentials $GCLOUD_CLUSTER \
+          --zone europe-west1-c --project $GCLOUD_PROJECT
+          rm $GCLOUD_TOKEN_PATH
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_CREDENTIAL_INTEGRATION }}
+          GCLOUD_TOKEN_PATH: ${{ env.GCLOUD_TOKEN_PATH }}
+          GCLOUD_CLUSTER: ${{ secrets.GCLOUD_CLUSTER }}
+          GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT_INTEGRATION }}
+
+      - name: Build module
+        run: |
+          composer install
+          cd _dev
+          yarn
+
+      - name: Delete old module
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_INTEGRATION }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: sudo su -c 'docker exec $(docker ps -aqf "name=${{ secrets.CONTAINER_NAME }}") rm -rf modules/${{ env.MODULE_NAME }}'
+
+      - name: Copy module
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_INTEGRATION }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "."
+          target: ${{ env.MODULE_NAME }}
+
+      - name: Move module
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_INTEGRATION }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            sudo su -c 'mv ${{ env.MODULE_NAME }} ${{ secrets.MODULE_PATH }}'
+            sudo su -c 'chown -R www-data:www-data ${{ secrets.MODULE_PATH }}/${{ env.MODULE_NAME }}'
+
+      - name: Install module
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_INTEGRATION }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            sudo su -c 'docker exec $(docker ps -aqf "name=${{ secrets.CONTAINER_NAME }}") bin/console prestashop:module install ${{ env.MODULE_NAME }}'
+
+      - name: Clear cache
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST_INTEGRATION }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            sudo su -c 'docker exec $(docker ps -aqf "name=${{ secrets.CONTAINER_NAME }}") bin/console cache:cl'
+            sudo su -c 'docker exec $(docker ps -aqf "name=${{ secrets.CONTAINER_NAME }}") chmod -R 777 var/cache var/logs'

@@ -18,7 +18,7 @@
  *-->
 <template>
   <b-card no-body>
-    <b-card-body class="py-2">
+    <b-card-body>
       <b-row>
         <b-col>
           <b-button

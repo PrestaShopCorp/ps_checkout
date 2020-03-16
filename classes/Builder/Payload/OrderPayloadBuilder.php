@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
+use PrestaShop\Module\PrestashopCheckout\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
@@ -116,12 +117,30 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      */
     public function buildBaseNode()
     {
+        $shopName = \Configuration::get(
+            'PS_SHOP_NAME',
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
+
         $node = [
-            'intent' => \Configuration::get('PS_CHECKOUT_INTENT'), // capture or authorize
+            'intent' => \Configuration::get(
+                'PS_CHECKOUT_INTENT',
+                null,
+                null,
+                (int) \Context::getContext()->shop->id
+            ), // capture or authorize
             'custom_id' => (string) $this->cart['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
-            'description' => $this->truncate('Checking out with your cart from ' . \Configuration::get('PS_SHOP_NAME'), 127),
-            'soft_descriptor' => $this->truncate(\Configuration::get('PS_SHOP_NAME'), 22),
+            'description' => $this->truncate(
+                'Checking out with your cart from ' . $shopName,
+                127
+            ),
+            'soft_descriptor' => $this->truncate(
+                $shopName,
+                22
+            ),
             'amount' => [
                 'currency_code' => $this->cart['currency']['iso_code'],
                 'value' => $this->cart['cart']['totals']['total_including_tax']['amount'],
@@ -134,7 +153,21 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         if (true === $this->isUpdate) {
             $node['id'] = $this->paypalOrderId;
         } else {
-            $node['roundingConfig'] = (string) \Configuration::get('PS_ROUND_TYPE') . '-' . (string) \Configuration::get('PS_PRICE_ROUND_MODE');
+            $roundType = (string) \Configuration::get(
+                'PS_ROUND_TYPE',
+                null,
+                null,
+                (int) \Context::getContext()->shop->id
+            );
+
+            $roundMode = (string) \Configuration::get(
+                'PS_PRICE_ROUND_MODE',
+                null,
+                null,
+                (int) \Context::getContext()->shop->id
+            );
+
+            $node['roundingConfig'] = $roundType . '-' . $roundMode;
         }
 
         // TODO: Disabled temporary: Need to handle country indicator
@@ -221,7 +254,12 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     public function buildApplicationContextNode()
     {
         $node['application_context'] = [
-            'brand_name' => \Configuration::get('PS_SHOP_NAME'),
+            'brand_name' => \Configuration::get(
+                'PS_SHOP_NAME',
+                null,
+                null,
+                (int) \Context::getContext()->shop->id
+            ),
             'shipping_preference' => $this->expressCheckout ? 'GET_FROM_FILE' : 'SET_PROVIDED_ADDRESS',
         ];
 
@@ -412,7 +450,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     private function checkPaypalOrderIdWhenUpdate()
     {
         if (true === $this->isUpdate && empty($this->paypalOrderId)) {
-            throw new \PrestaShopException('PayPal order ID is required when building payload for update an order');
+            throw new PsCheckoutException('PayPal order ID is required when building payload for update an order');
         }
     }
 

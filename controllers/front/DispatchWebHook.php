@@ -21,15 +21,13 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook;
 use PrestaShop\Module\PrestashopCheckout\MerchantDispatcher;
 use PrestaShop\Module\PrestashopCheckout\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use PrestaShop\Module\PrestashopCheckout\UnauthorizedException;
 use PrestaShop\Module\PrestashopCheckout\WebHookNock;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 
 class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontController
 {
-    const PSESSENTIALS_DEV_URL = 'out.psessentials-integration.net';
-    const PSESSENTIALS_PROD_URL = 'out.psessentials.net';
-    const PS_CHECKOUT_SHOP_UID_LABEL = 'PS_CHECKOUT_SHOP_UUID_V4';
     const PS_CHECKOUT_PAYPAL_ID_LABEL = 'PS_CHECKOUT_PAYPAL_ID_MERCHANT';
 
     /**
@@ -194,8 +192,13 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         /*
         *   @TODO : Get payload hash to confirm that it's not modified
         */
-        $localShopId = \Configuration::get(self::PS_CHECKOUT_SHOP_UID_LABEL);
-        $localMerchantId = \Configuration::get(self::PS_CHECKOUT_PAYPAL_ID_LABEL);
+        $localShopId = (new ShopUuidManager())->getForShop((int) \Context::getContext()->shop->id);
+        $localMerchantId = \Configuration::get(
+            self::PS_CHECKOUT_PAYPAL_ID_LABEL,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
 
         if ($this->shopId !== $localShopId) {
             throw new UnauthorizedException('shopId wrong');

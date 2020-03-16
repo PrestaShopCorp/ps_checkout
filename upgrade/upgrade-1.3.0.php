@@ -1,3 +1,4 @@
+<?php
 /**
  * 2007-2020 PrestaShop and Contributors
  *
@@ -16,20 +17,20 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-module.exports = {
-  chainWebpack: (config) => {
-    config.optimization.delete('splitChunks');
-    config.plugins.delete('html');
-    config.plugins.delete('preload');
-    config.plugins.delete('prefetch');
-  },
-  css: {
-    extract: false,
-  },
-  productionSourceMap: false,
-  filenameHashing: false,
-  outputDir: '../views/',
-  assetsDir: '',
-  publicPath: '../modules/ps_checkout/views/',
-};
+/**
+ * Update main function for module Version 1.3.0
+ *
+ * @param Module $module
+ *
+ * @return bool
+ */
+function upgrade_module_1_3_0($module)
+{
+    return (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates()
+        && $module->registerHook('actionObjectShopAddAfter')
+        && (new PrestaShop\Module\PrestashopCheckout\MultiStoreFixer())->run();
+}

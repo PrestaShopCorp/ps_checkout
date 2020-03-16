@@ -72,7 +72,12 @@ class ExpressCheckout
             'checkoutLink' => $this->context->link->getPageLink('order', true, $this->context->language->id, ['paymentMethod' => 'paypal']),
             'expressCheckoutController' => $this->context->link->getModuleLink($this->module->name, 'ExpressCheckout'),
             'paypalIsActive' => $paypalAccountRepository->paypalPaymentMethodIsValid(),
-            'intent' => strtolower(\Configuration::get('PS_CHECKOUT_INTENT')),
+            'intent' => strtolower(\Configuration::get(
+                'PS_CHECKOUT_INTENT',
+                null,
+                null,
+                (int) \Context::getContext()->shop->id
+            )),
             'currencyIsoCode' => $this->context->currency->iso_code,
             'isCardPaymentError' => (bool) \Tools::getValue('hferror'),
             'locale' => $language['locale'],

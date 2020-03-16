@@ -7,8 +7,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
-      - uses: actions/setup-node@v1
+      - name: lint js dependencies
+        uses: PrestaShopCorp/github-action-lint-js/12@v1.0
         with:
-          node-version: '13.x'
-      - run: yarn --cwd _dev/ install
-      - run: yarn --cwd _dev/ lint
+          cmd: yarn
+          path: ./_dev
