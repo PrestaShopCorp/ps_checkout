@@ -71,10 +71,10 @@ class OrderStates
      */
     private function getPaypalStateId($state, $color)
     {
-        $stateId = \Configuration::getGlobalValue($state);
+        $stateId = (int) \Configuration::getGlobalValue($state);
 
         // Is state ID already existing in the Configuration table ?
-        if (false === $stateId) {
+        if (0 === $stateId || false === \OrderState::existsInDatabase($stateId, self::ORDER_STATE_TABLE)) {
             return $this->createPaypalStateId($state, $color);
         }
 
