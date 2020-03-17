@@ -139,7 +139,7 @@ class ValidateOrder
 
         if ($orderState === _PS_OS_PAYMENT_) {
             // @todo this may be useless, previous $module->validateOrder() should save transaction id
-            $this->setTransactionId($module->currentOrderReference, $response['body']['id']);
+            $this->setTransactionId($module->currentOrder, $response['body']['id']);
         }
 
         return true;
@@ -184,23 +184,29 @@ class ValidateOrder
     /**
      * Set the transactionId (paypal order id) to the payment associated to the order
      *
-     * @param string $psOrderRef from prestashop
+     * @param int $orderId Order ID from prestashop
      * @param string $transactionId paypal transaction Id
      *
      * @return bool
      */
-    private function setTransactionId($psOrderRef, $transactionId)
+    private function setTransactionId($orderId, $transactionId)
     {
-        $orderPayments = new \PrestaShopCollection('OrderPayment');
-        $orderPayments->where('order_reference', '=', $psOrderRef);
-        $orderPayment = $orderPayments->getFirst();
+        $order = new \Order($orderId);
+        /** @var \OrderPayment $orderPayment */
+        $orderPayment = $order->getOrderPaymentCollection()->getFirst();
+
         if (true === empty($orderPayment)) {
             return false;
         }
-        $payment = new \OrderPayment($orderPayment->id);
-        $payment->transaction_id = $transactionId;
 
-        return $payment->save();
+        if ($orderPayment->transaction_id === $transactionId) {
+            // If transaction_id is already saved
+            return true;
+        }
+
+        $orderPayment->transaction_id = $transactionId;
+
+        return $orderPayment->save();
     }
 
     /**
