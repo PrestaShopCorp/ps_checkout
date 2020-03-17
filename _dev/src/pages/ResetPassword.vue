@@ -161,7 +161,8 @@
         this.email.errorMessage = '';
       },
       goToSignIn() {
-        this.$router.push('/authentication/signin');
+        // eslint-disable-next-line no-console
+        this.$router.push('/authentication/signin').catch((exception) => console.log(exception));
       },
     },
   };

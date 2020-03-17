@@ -216,13 +216,15 @@
           email: this.email.value,
           password: this.password.value,
         }).then(() => {
-          this.$router.push('/authentication');
+          // eslint-disable-next-line no-console
+          this.$router.push('/authentication').catch((exception) => console.log(exception));
         }).catch((response) => {
           this.handleResponseError(response.body.error.message);
         });
       },
       goToSignIn() {
-        this.$router.push('/authentication/signin');
+        // eslint-disable-next-line no-console
+        this.$router.push('/authentication/signin').catch((exception) => console.log(exception));
       },
       handleResponseError(err) {
         switch (err) {
@@ -265,7 +267,8 @@
         this.password.errorMessage = '';
       },
       previous() {
-        this.$router.push('/authentication');
+        // eslint-disable-next-line no-console
+        this.$router.push('/authentication').catch((exception) => console.log(exception));
       },
     },
   };

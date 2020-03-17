@@ -154,16 +154,19 @@
           email: this.email.value,
           password: this.password.value,
         }).then(() => {
-          this.$router.push('/authentication');
+          // eslint-disable-next-line no-console
+          this.$router.push('/authentication').catch((exception) => console.log(exception));
         }).catch((response) => {
           this.handleResponseError(response.body.error.message);
         });
       },
       goToSignUp() {
-        this.$router.push('/authentication/signup');
+        // eslint-disable-next-line no-console
+        this.$router.push('/authentication/signup').catch((exception) => console.log(exception));
       },
       goToResetPassword() {
-        this.$router.push('/authentication/reset');
+        // eslint-disable-next-line no-console
+        this.$router.push('/authentication/reset').catch((exception) => console.log(exception));
       },
       handleResponseError(err) {
         switch (err) {
@@ -206,7 +209,8 @@
         this.password.errorMessage = '';
       },
       previous() {
-        this.$router.push('/authentication');
+        // eslint-disable-next-line no-console
+        this.$router.push('/authentication').catch((exception) => console.log(exception));
       },
     },
   };
