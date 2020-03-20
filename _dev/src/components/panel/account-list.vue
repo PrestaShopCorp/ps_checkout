@@ -229,10 +229,12 @@
     },
     methods: {
       goToSignIn() {
-        this.$router.push('/authentication/signin');
+        // eslint-disable-next-line no-console
+        this.$router.push('/authentication/signin').catch((exception) => console.log(exception));
       },
       goToSignUp() {
-        this.$router.push('/authentication/signup');
+        // eslint-disable-next-line no-console
+        this.$router.push('/authentication/signup').catch((exception) => console.log(exception));
       },
       logOut() {
         this.$store.dispatch('logOut').then(() => {

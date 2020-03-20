@@ -551,7 +551,8 @@
         this.$store.dispatch('psxSendData', this.form).then((response) => {
           if (response === true) {
             this.$store.dispatch('psxOnboarding', response);
-            this.$router.push('/authentication');
+            // eslint-disable-next-line no-console
+            this.$router.push('/authentication').catch((exception) => console.log(exception));
           }
           this.errorForm = response;
           window.scrollTo({
@@ -563,7 +564,8 @@
       },
       back() {
         this.$store.dispatch('logOut').then(() => {
-          this.$router.push('/authentication');
+          // eslint-disable-next-line no-console
+          this.$router.push('/authentication').catch((exception) => console.log(exception));
         });
       },
       onChangeCategory(categoryId) {
