@@ -104,6 +104,11 @@ class ValidateOrder
             return false;
         }
 
+        if ($response['body']['status'] === self::CAPTURE_STATUS_DECLINED) {
+            // Avoid order with payment error
+            return false;
+        }
+
         /** @var \PaymentModule $module */
         $module = \Module::getInstanceByName('ps_checkout');
 
