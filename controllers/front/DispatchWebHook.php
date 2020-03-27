@@ -193,19 +193,9 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         *   @TODO : Get payload hash to confirm that it's not modified
         */
         $localShopId = (new ShopUuidManager())->getForShop((int) \Context::getContext()->shop->id);
-        $localMerchantId = \Configuration::get(
-            self::PS_CHECKOUT_PAYPAL_ID_LABEL,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
 
         if ($this->shopId !== $localShopId) {
             throw new UnauthorizedException('shopId wrong');
-        }
-
-        if ($this->merchantId !== $localMerchantId) {
-            throw new UnauthorizedException('merchantId wrong');
         }
 
         return true;
