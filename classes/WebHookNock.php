@@ -34,7 +34,7 @@ class WebHookNock
         header('Content-Type: application/json');
         headers_list();
 
-        $bodyReturn = \Tools::jsonEncode($headerDatas);
+        $bodyReturn = json_encode($headerDatas);
         \PrestaShopLoggerCore::addLog('[PSPwebhook] ' . $bodyReturn, 3, null, null, null, true);
 
         echo $bodyReturn;

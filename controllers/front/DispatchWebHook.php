@@ -88,7 +88,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
                 throw new UnauthorizedException(WebHookValidation::BODY_DATA_ERROR);
             }
 
-            $bodyValues = \Tools::jsonDecode($bodyContent, true);
+            $bodyValues = json_decode($bodyContent, true);
 
             if (empty($bodyValues)) {
                 throw new UnauthorizedException(WebHookValidation::BODY_DATA_ERROR);
@@ -179,7 +179,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     private function setAtributesBodyValues(array $bodyValues)
     {
         $this->payload = [
-            'resource' => (array) \Tools::jsonDecode($bodyValues['resource']),
+            'resource' => (array) json_decode($bodyValues['resource'], true),
             'eventType' => (string) $bodyValues['eventType'],
             'category' => (string) $bodyValues['category'],
             'summary' => (string) $bodyValues['summary'],
