@@ -141,7 +141,6 @@ class Ps_checkout extends PaymentModule
             $this->registerHook(self::HOOK_LIST) &&
             (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
-            $this->addCheckoutPaymentForAllActivatedCountries() &&
             $this->installTabs();
 
         if (!$defaultInstall) {
@@ -151,14 +150,12 @@ class Ps_checkout extends PaymentModule
         // Install specific to prestashop 1.7
         if ((new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17()) {
             return $this->registerHook(self::HOOK_LIST_17) &&
-                $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1) &&
-                $this->addCheckboxCarrierRestrictionsForModule();
-        } else { // Install specific to prestashop 1.6
-            return $this->registerHook(self::HOOK_LIST_16) &&
-                $this->updatePosition(\Hook::getIdByName('payment'), false, 1);
+                $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1);
         }
 
-        return true;
+        // Install specific to prestashop 1.6
+        return $this->registerHook(self::HOOK_LIST_16) &&
+            $this->updatePosition(\Hook::getIdByName('payment'), false, 1);
     }
 
     /**
@@ -991,19 +988,22 @@ class Ps_checkout extends PaymentModule
     }
 
     /**
-     * Override method for addind "IGNORE" in the SQL Request to prevent duplicate entry and for getting All Carriers installed
+     * Override method to add "IGNORE" in the SQL Request to prevent duplicate entry and for getting All Carriers installed
      * Add checkbox carrier restrictions for a new module.
      *
-     * @param array $shopsList
+     * @see PaymentModuleCore
+     *
+     * @param array $shopsList List of Shop identifier
      *
      * @return bool
      */
     public function addCheckboxCarrierRestrictionsForModule(array $shopsList = [])
     {
-        if (empty($shopsList)) {
-            $shopsList = Shop::getShops(true, null, true);
+        if (false === (new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17()) {
+            return true;
         }
 
+        $shopsList = empty($shopsList) ? Shop::getShops(true, null, true) : $shopsList;
         $carriersList = Carrier::getCarriers((int) Context::getContext()->language->id, false, false, false, null, Carrier::ALL_CARRIERS);
         $allCarriers = array_column($carriersList, 'id_reference');
         $dataToInsert = [];
@@ -1028,15 +1028,23 @@ class Ps_checkout extends PaymentModule
     }
 
     /**
+     * Override method to add "IGNORE" in the SQL Request to prevent duplicate entry.
+     * Add checkbox country restrictions for a new module.
      * Associate with all countries allowed in geolocation management
+     *
+     * @see PaymentModuleCore
+     *
+     * @param array $shopsList List of Shop identifier
      *
      * @return bool
      */
-    public function addCheckoutPaymentForAllActivatedCountries()
+    public function addCheckboxCountryRestrictionsForModule(array $shopsList = [])
     {
+        parent::addCheckboxCountryRestrictionsForModule($shopsList);
+        // Then add all countries allowed in geolocation management
         $db = \Db::getInstance();
         // Get active shop ids
-        $shopsList = Shop::getShops(true, null, true);
+        $shopsList = empty($shopsList) ? Shop::getShops(true, null, true) : $shopsList;
         // Get countries
         /** @var array $countries */
         $countries = $db->executeS('SELECT `id_country`, `iso_code` FROM `' . _DB_PREFIX_ . 'country`');
@@ -1141,5 +1149,12 @@ class Ps_checkout extends PaymentModule
         $shop = $params['object'];
 
         (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForShop((int) $shop->id);
+        $this->addCheckboxCarrierRestrictionsForModule([(int) $shop->id]);
+        $this->addCheckboxCountryRestrictionsForModule([(int) $shop->id]);
+        if ($this->currencies_mode === 'checkbox') {
+            $this->addCheckboxCurrencyRestrictionsForModule([(int) $shop->id]);
+        } elseif ($this->currencies_mode === 'radio') {
+            $this->addRadioCurrencyRestrictionsForModule([(int) $shop->id]);
+        }
     }
 }
