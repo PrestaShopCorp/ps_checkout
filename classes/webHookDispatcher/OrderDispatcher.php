@@ -68,7 +68,7 @@ class OrderDispatcher implements Dispatcher
         if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_COMPLETED
         || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_DENIED
         || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED) {
-            return $this->dispatchPaymentStatus($payload['eventType'], $psOrderId);
+            return $this->dispatchPaymentStatus($payload['eventType'], $payload['resource'], $psOrderId);
         }
 
         // For now, if pending, do not change anything
@@ -133,11 +133,12 @@ class OrderDispatcher implements Dispatcher
      * Dispatch the event Type the the payment status PENDING / COMPLETED / DENIED / AUTH_VOIDED
      *
      * @param string $eventType
+     * @param array $resource
      * @param int $orderId
      *
      * @return bool
      */
-    private function dispatchPaymentStatus($eventType, $orderId)
+    private function dispatchPaymentStatus($eventType, $resource, $orderId)
     {
         $orderError = (new WebHookValidation())->validateRefundOrderIdValue($orderId);
 
@@ -148,6 +149,25 @@ class OrderDispatcher implements Dispatcher
         $order = new \Order($orderId);
         $lastOrderStateId = (int) $order->getCurrentState();
         $newOrderStateId = (int) $this->matriceEventAndOrderState[$eventType];
+        $shouldAddOrderPayment = true;
+
+        /** @var \OrderPayment[] $orderPayments */
+        $orderPayments = $order->getOrderPaymentCollection();
+        foreach ($orderPayments as $orderPayment) {
+            if ($orderPayment->transaction_id === $resource['id']) {
+                $shouldAddOrderPayment = false;
+            }
+        }
+
+        if (true === $shouldAddOrderPayment) {
+            $order->addOrderPayment(
+                $resource['amount']['value'],
+                $order->payment,
+                $resource['id'],
+                \Currency::getCurrencyInstance(\Currency::getIdByIsoCode($resource['amount']['currency_code'])),
+                (new \DateTime($resource['create_time']))->format('Y-m-d H:i:s')
+            );
+        }
 
         // Prevent duplicate state entry
         if ($lastOrderStateId === $newOrderStateId
