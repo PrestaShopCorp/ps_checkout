@@ -34,6 +34,7 @@ class Ps_checkout extends PaymentModule
     const HOOK_LIST = [
         'actionOrderSlipAdd',
         'orderConfirmation',
+        'displayAdminOrderLeft',
         'actionOrderStatusUpdate',
         'actionObjectShopAddAfter',
     ];
@@ -1156,5 +1157,29 @@ class Ps_checkout extends PaymentModule
         } elseif ($this->currencies_mode === 'radio') {
             $this->addRadioCurrencyRestrictionsForModule([(int) $shop->id]);
         }
+    }
+
+    /**
+     * This hook called on BO Order view page
+     *
+     * @param array $params
+     *
+     * @return string
+     */
+    public function hookDisplayAdminOrderLeft(array $params)
+    {
+        $order = new Order((int) $params['id_order']);
+
+        if ($order->module !== $this->name) {
+            return '';
+        }
+
+        $this->context->smarty->assign([
+            'moduleLogoUri' => $this->getPathUri() . 'logo.png',
+            'moduleName' => $this->displayName,
+            'paypalOrderId' => (new \OrderMatrice())->getOrderPaypalFromPrestashop($order->id),
+        ]);
+
+        return $this->display(__FILE__, '/views/templates/hook/displayAdminOrderLeft.tpl');
     }
 }
