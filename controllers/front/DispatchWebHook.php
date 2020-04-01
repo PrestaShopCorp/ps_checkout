@@ -31,6 +31,11 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     const PS_CHECKOUT_PAYPAL_ID_LABEL = 'PS_CHECKOUT_PAYPAL_ID_MERCHANT';
 
     /**
+     * @var bool If set to true, will be redirected to authentication page
+     */
+    public $auth = false;
+
+    /**
      * Id coming from PSL
      *
      * @var int
@@ -233,13 +238,28 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
     /**
      * Override displayMaintenancePage to prevent the maintenance page to be displayed
+     *
+     * @see FrontController::displayMaintenancePage()
      */
     protected function displayMaintenancePage()
     {
+        return;
+    }
+
+    /**
+     * Override displayRestrictedCountryPage to prevent page country is not allowed
+     *
+     * @see FrontController::displayRestrictedCountryPage()
+     */
+    protected function displayRestrictedCountryPage()
+    {
+        return;
     }
 
     /**
      * Override geolocationManagement to prevent country GEOIP blocking
+     *
+     * @see FrontController::geolocationManagement()
      *
      * @param Country $defaultCountry
      *
@@ -248,5 +268,27 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     protected function geolocationManagement($defaultCountry)
     {
         return false;
+    }
+
+    /**
+     * Override sslRedirection to prevent redirection
+     *
+     * @see FrontController::sslRedirection()
+     */
+    protected function sslRedirection()
+    {
+        return;
+    }
+
+    /**
+     * Override canonicalRedirection to prevent redirection
+     *
+     * @see FrontController::canonicalRedirection()
+     *
+     * @param string $canonical_url
+     */
+    protected function canonicalRedirection($canonical_url = '')
+    {
+        return;
     }
 }
