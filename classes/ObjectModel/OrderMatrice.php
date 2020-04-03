@@ -39,48 +39,6 @@ class OrderMatrice extends \ObjectModel
     ];
 
     /**
-     * Save current object to database (add or update).
-     *
-     * @param bool $autoDate
-     * @param bool $nullValues
-     *
-     * @return bool
-     */
-    public function add($autoDate = true, $nullValues = false)
-    {
-        if (true === $this->alreadyExist()) {
-            return false;
-        }
-
-        return parent::add($autoDate, $nullValues);
-    }
-
-    /**
-     * Check if the Prestashop or Paypal Order Id already Exist to prevent duplicate ID entry
-     *
-     * @return bool
-     */
-    private function alreadyExist()
-    {
-        $wherePrestashopIdExist = '1';
-        $wherePaypalIdExist = '1';
-
-        if (null !== $this->id_order_prestashop) {
-            $wherePrestashopIdExist = 'pom.id_order_prestashop = "' . (int) $this->id_order_prestashop . '"';
-        }
-
-        if (null !== $this->id_order_paypal) {
-            $wherePaypalIdExist = 'pom.id_order_paypal = "' . pSQL($this->id_order_paypal) . '"';
-        }
-
-        $query = 'SELECT id_order_matrice
-                FROM `' . _DB_PREFIX_ . 'pscheckout_order_matrice` pom
-                WHERE ' . $wherePrestashopIdExist . ' OR ' . $wherePaypalIdExist;
-
-        return (bool) \Db::getInstance()->getValue($query);
-    }
-
-    /**
      * Get the Prestashop Order Id from Paypal Order Id
      *
      * @param string $orderPaypal
