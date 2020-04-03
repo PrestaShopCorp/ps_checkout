@@ -57,7 +57,7 @@ class OrderMatrice extends \ObjectModel
             return [];
         }
 
-        return $orderIds;
+        return array_column($orderIds, 'id_order_prestashop');
     }
 
     /**
