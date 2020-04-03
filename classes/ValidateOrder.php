@@ -112,6 +112,7 @@ class ValidateOrder
         /** @var \PaymentModule $module */
         $module = \Module::getInstanceByName('ps_checkout');
 
+        // PaymentModule::validateOrder() can create split order in case out of stock for same Cart and same Payment, all orders have same reference in this case
         $module->validateOrder(
             $payload['cartId'],
             $this->getPendingStatusId($payload['paymentMethod']),
@@ -126,26 +127,29 @@ class ValidateOrder
             $payload['secureKey']
         );
 
-        if (false === $this->setOrdersMatrice($module->currentOrder, $this->paypalOrderId)) {
-            $this->setOrderState($module->currentOrder, self::CAPTURE_STATUS_DECLINED, $payload['paymentMethod']);
-            $message = sprintf('Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s', $module->currentOrder, $this->paypalOrderId);
-            \PrestaShopLogger::addLog($message, 1, null, null, null, true);
-            throw new PsCheckoutException($message);
-        }
-
-        // TODO : patch the order in order to update the order id with the order id
-        // of the prestashop order
-
-        $orderState = $this->setOrderState(
-            $module->currentOrder,
+        // process current Order
+        $currentOrder = new \Order($module->currentOrder);
+        $this->setOrdersMatrice($currentOrder->id, $this->paypalOrderId);
+        $this->setOrderState(
+            $currentOrder,
             $response['body']['status'],
             $payload['paymentMethod']
         );
 
-        if ($orderState === _PS_OS_PAYMENT_) {
-            // @todo this may be useless, previous $module->validateOrder() should save transaction id
-            $this->setTransactionId($module->currentOrder, $response['body']['id']);
+        // process current Order children
+        /** @var \Order[] $currentOrderChildren */
+        $currentOrderChildren = $currentOrder->getBrother();
+        foreach ($currentOrderChildren as $order) {
+            $this->setOrdersMatrice($order->id, $this->paypalOrderId);
+            $this->setOrderState(
+                $order,
+                $response['body']['status'],
+                $payload['paymentMethod']
+            );
         }
+
+        // This step is same for all because is based on Order reference
+        $this->setTransactionId($module->currentOrder, $response['body']['id']);
 
         return true;
     }
@@ -201,6 +205,7 @@ class ValidateOrder
         $orderPayment = $order->getOrderPaymentCollection()->getFirst();
 
         if (true === empty($orderPayment)) {
+            // If OrderState used in PaymentModule::validateOrder() is not logable no OrderPayment exist, so it will be created by webhook
             return false;
         }
 
@@ -218,17 +223,14 @@ class ValidateOrder
      * Set the status of the prestashop order if the payment has been
      * successfully captured or not
      *
-     * @param int $orderId from prestashop
+     * @param \Order $order PrestaShop Order
      * @param string $status
      * @param string $paymentMethod can be 'paypal' or 'card'
      *
-     * @return string|bool order state id to set to the order depending on the status return by paypal
+     * @return bool Can return false if mail fail to be sent
      */
-    private function setOrderState($orderId, $status, $paymentMethod)
+    private function setOrderState(\Order $order, $status, $paymentMethod)
     {
-        $orderHistory = new \OrderHistory();
-        $orderHistory->id_order = $orderId;
-
         switch ($status) {
             case self::CAPTURE_STATUS_COMPLETED:
                 $orderState = _PS_OS_PAYMENT_;
@@ -236,18 +238,20 @@ class ValidateOrder
             case self::CAPTURE_STATUS_DECLINED:
                 $orderState = _PS_OS_ERROR_;
                 break;
-            case self::CAPTURE_STATUS_PENDING:
-                $orderState = $this->getPendingStatusId($paymentMethod);
-                break;
             default:
                 $orderState = $this->getPendingStatusId($paymentMethod);
                 break;
         }
 
-        $orderHistory->changeIdOrderState($orderState, $orderId);
-        $orderHistory->addWithemail();
+        if ($order->getCurrentState() == $orderState) {
+            return true;
+        }
 
-        return $orderState;
+        $orderHistory = new \OrderHistory();
+        $orderHistory->id_order = $order->id;
+        $orderHistory->changeIdOrderState($orderState, $order->id);
+
+        return $orderHistory->addWithemail();
     }
 
     /**
@@ -265,7 +269,7 @@ class ValidateOrder
             $stateId = \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
         }
 
-        return intval($stateId);
+        return (int) $stateId;
     }
 
     /**
