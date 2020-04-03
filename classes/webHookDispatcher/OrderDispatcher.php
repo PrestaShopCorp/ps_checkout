@@ -61,6 +61,10 @@ class OrderDispatcher implements Dispatcher
         $result = true;
         $orderIds = (new \OrderMatrice())->getPrestaShopOrdersByPayPalOrder($payload['orderId']);
 
+        if (empty($orderIds)) {
+            throw new UnprocessableException('order #' . $payload['orderId'] . ' does not exist');
+        }
+
         foreach ($orderIds as $orderId) {
             if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REFUNED
                 || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REVERSED) {
