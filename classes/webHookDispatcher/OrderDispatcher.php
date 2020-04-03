@@ -54,21 +54,24 @@ class OrderDispatcher implements Dispatcher
      */
     public function dispatchEventType($payload)
     {
-        $psOrderId = $this->getPrestashopOrderId($payload['orderId']);
-
-        if (false === $psOrderId) {
-            return false;
+        if (empty($payload['orderId'])) {
+            throw new UnauthorizedException(\PrestaShop\Module\PrestashopCheckout\WebHookValidation::ORDER_ERROR);
         }
 
-        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REFUNED
-            || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REVERSED) {
-            return $this->dispatchPaymentAction($payload['eventType'], $payload['resource'], $psOrderId);
-        }
+        $result = true;
+        $orderIds = (new \OrderMatrice())->getPrestaShopOrdersByPayPalOrder($payload['orderId']);
 
-        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_COMPLETED
-            || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_DENIED
-            || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED) {
-            return $this->dispatchPaymentStatus($payload['eventType'], $payload['resource'], $psOrderId);
+        foreach ($orderIds as $orderId) {
+            if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REFUNED
+                || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REVERSED) {
+                $result = $result && $this->dispatchPaymentAction($payload['eventType'], $payload['resource'], $orderId);
+            }
+
+            if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_COMPLETED
+                || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_DENIED
+                || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED) {
+                $result = $result && $this->dispatchPaymentStatus($payload['eventType'], $payload['resource'], $orderId);
+            }
         }
 
         // For now, if pending, do not change anything
@@ -76,31 +79,7 @@ class OrderDispatcher implements Dispatcher
             return true;
         }
 
-        return true;
-    }
-
-    /**
-     * Check the PSL orderId value and transform it into a Prestashop OrderId
-     *
-     * @param string $orderId paypal order id
-     *
-     * @return bool|int
-     */
-    private function getPrestashopOrderId($orderId)
-    {
-        $orderError = (new WebHookValidation())->validateRefundOrderIdValue($orderId);
-
-        if (!empty($orderError)) {
-            throw new UnauthorizedException($orderError);
-        }
-
-        $psOrderId = (new \OrderMatrice())->getOrderPrestashopFromPaypal($orderId);
-
-        if (!$psOrderId) {
-            throw new UnprocessableException('order #' . $orderId . ' does not exist');
-        }
-
-        return $psOrderId;
+        return $result;
     }
 
     /**

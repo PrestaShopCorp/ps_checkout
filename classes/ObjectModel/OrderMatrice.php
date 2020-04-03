@@ -39,35 +39,41 @@ class OrderMatrice extends \ObjectModel
     ];
 
     /**
-     * Get the Prestashop Order Id from Paypal Order Id
+     * Get PrestaShop Orders associated to PayPal Order
      *
-     * @param string $orderPaypal
+     * @param string $orderPayPal
      *
-     * @return int
+     * @return array
      */
-    public function getOrderPrestashopFromPaypal($orderPaypal)
+    public function getPrestaShopOrdersByPayPalOrder($orderPayPal)
     {
-        $query = 'SELECT id_order_prestashop
-                FROM `' . _DB_PREFIX_ . 'pscheckout_order_matrice` pom
-                WHERE pom.id_order_paypal = "' . pSQL($orderPaypal) . '"';
+        $orderIds = \Db::getInstance()->executeS('
+            SELECT `id_order_prestashop`
+            FROM `' . _DB_PREFIX_ . 'pscheckout_order_matrice`
+            WHERE `id_order_paypal` = "' . pSQL($orderPayPal) . '"'
+        );
 
-        return (int) \Db::getInstance()->getValue($query);
+        if (empty($orderIds)) {
+            return [];
+        }
+
+        return $orderIds;
     }
 
     /**
      * Get the Paypal Order Id from the Prestashop Order Id
      *
-     * @param int $orderPrestashop
+     * @param int $orderId
      *
      * @return string|false
      */
-    public function getOrderPaypalFromPrestashop($orderPrestashop)
+    public function getOrderPaypalFromPrestashop($orderId)
     {
-        $query = 'SELECT id_order_paypal
-                FROM `' . _DB_PREFIX_ . 'pscheckout_order_matrice` pom
-                WHERE pom.id_order_prestashop = "' . (int) $orderPrestashop . '"';
-
-        return \Db::getInstance()->getValue($query);
+        return \Db::getInstance()->getValue('
+            SELECT `id_order_paypal`
+            FROM `' . _DB_PREFIX_ . 'pscheckout_order_matrice`
+            WHERE `id_order_prestashop` = ' . (int) $orderId
+        );
     }
 
     /**
@@ -85,9 +91,12 @@ class OrderMatrice extends \ObjectModel
         }
 
         // If more than one order found, there are inconsistencies for this order
-        return (bool) \Db::getInstance()->getValue('
+        $total = (int) \Db::getInstance()->getValue('
             SELECT COUNT(*)
             FROM `' . _DB_PREFIX_ . 'pscheckout_order_matrice`
-            WHERE id_order_prestashop = ' . (int) $orderId);
+            WHERE `id_order_prestashop` = ' . (int) $orderId
+        );
+
+        return $total > 1;
     }
 }
