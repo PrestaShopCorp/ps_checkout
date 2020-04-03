@@ -117,15 +117,15 @@ class WebHookValidation
             return $errors;
         }
 
-        if (empty($resource['amount']->value)) {
+        if (empty($resource['amount']['value'])) {
             $errors[] = self::RESOURCE_VALUE_EMPTY_ERROR;
         }
 
-        if (0 >= $resource['amount']->value) {
+        if (0 >= $resource['amount']['value']) {
             $errors[] = self::RESOURCE_VALUE_ZERO_ERROR;
         }
 
-        if (empty($resource['amount']->currency_code)) {
+        if (empty($resource['amount']['currency_code'])) {
             $errors[] = self::RESOURCE_CURRENCY_ERROR;
         }
 
