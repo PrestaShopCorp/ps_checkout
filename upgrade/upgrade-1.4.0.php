@@ -30,5 +30,25 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_4_0($module)
 {
+    // Remove our ModuleAdminControllers from SEO & URLs page
+    foreach (Ps_checkout::MODULE_ADMIN_CONTROLLERS as $controller) {
+        $metaId = Db::getInstance()->getValue('
+            SELECT id_meta
+            FROM `' . _DB_PREFIX_ . 'meta`
+            WHERE page="' . pSQL('module-' . $module->name . '-' . $controller) . '"'
+        );
+
+        if ($metaId) {
+            Db::getInstance()->delete(
+                'meta_lang',
+                'id_meta = ' . (int) $metaId
+            );
+            Db::getInstance()->delete(
+                'meta',
+                'id_meta = ' . (int) $metaId
+            );
+        }
+    }
+
     return $module->registerHook('displayAdminOrderLeft');
 }

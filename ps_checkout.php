@@ -58,6 +58,14 @@ class Ps_checkout extends PaymentModule
     ];
 
     /**
+     * Names of ModuleAdminController used
+     */
+    const MODULE_ADMIN_CONTROLLERS = [
+        'AdminAjaxPrestashopCheckout',
+        'AdminPaypalOnboardingPrestashopCheckout',
+    ];
+
+    /**
      * Hook to install for 1.6
      *
      * @var array
@@ -89,7 +97,6 @@ class Ps_checkout extends PaymentModule
 
     public $confirmUninstall;
     public $bootstrap;
-    public $controllers;
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
@@ -122,10 +129,6 @@ class Ps_checkout extends PaymentModule
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = ['min' => '1.6.1', 'max' => _PS_VERSION_];
-        $this->controllers = [
-            'AdminAjaxPrestashopCheckout',
-            'AdminPaypalOnboardingPrestashopCheckout',
-        ];
     }
 
     /**
@@ -193,19 +196,19 @@ class Ps_checkout extends PaymentModule
     public function installTabs()
     {
         $installTabCompleted = true;
-        $tab = new Tab();
 
-        foreach ($this->controllers as $controllerName) {
+        foreach (static::MODULE_ADMIN_CONTROLLERS as $controllerName) {
             if (Tab::getIdFromClassName($controllerName)) {
                 continue;
             }
 
+            $tab = new Tab();
             $tab->class_name = $controllerName;
             $tab->active = true;
-            $tab->name = [];
-            foreach (Language::getLanguages(true) as $lang) {
-                $tab->name[$lang['id_lang']] = $this->name;
-            }
+            $tab->name = array_fill_keys(
+                Language::getIDs(false),
+                $this->displayName
+            );
             $tab->id_parent = -1;
             $tab->module = $this->name;
             $installTabCompleted = $installTabCompleted && $tab->add();
@@ -239,7 +242,7 @@ class Ps_checkout extends PaymentModule
     {
         $uninstallTabCompleted = true;
 
-        foreach ($this->controllers as $controllerName) {
+        foreach (static::MODULE_ADMIN_CONTROLLERS as $controllerName) {
             $id_tab = (int) Tab::getIdFromClassName($controllerName);
             $tab = new Tab($id_tab);
             if (Validate::isLoadedObject($tab)) {
