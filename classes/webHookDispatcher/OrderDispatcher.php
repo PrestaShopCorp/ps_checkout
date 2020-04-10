@@ -60,10 +60,10 @@ class OrderDispatcher implements Dispatcher
             return false;
         }
 
-        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REFUNED
-            || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REVERSED) {
-            return $this->dispatchPaymentAction($payload['eventType'], $payload['resource'], $psOrderId);
-        }
+//        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REFUNED
+//            || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REVERSED) {
+//            return $this->dispatchPaymentAction($payload['eventType'], $payload['resource'], $psOrderId);
+//        }
 
         if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_COMPLETED
             || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_DENIED
