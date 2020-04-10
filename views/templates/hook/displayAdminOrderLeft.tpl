@@ -97,7 +97,7 @@
 <script>
   $(document).ready(function() {
     $(document).on('submit', '.orderPayPalRefundForm', function () {
-      let isApproved = confirm("{l s='Refund request will be sent to PayPal, you have to change PrestaShop order status yourself.' mod='ps_checkout'}");
+      let isApproved = confirm("{l s='Refund request will be sent to PayPal, you have to apply refund on PrestaShop yourself.' mod='ps_checkout'}");
 
       if (isApproved) {
         $('button[name="orderPayPalRefundSubmit"]').html('<i class="process-icon-loading"></i>').prop('disabled', true);
