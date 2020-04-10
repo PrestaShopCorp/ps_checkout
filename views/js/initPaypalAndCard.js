@@ -237,7 +237,7 @@ function hideDefaultPaymentButtonIfPaypalIsChecked() {
   }
 }
 
-function test(event) {
+function testPsPayPalCard(event) {
   event.preventDefault();
   document.querySelector('#hosted-fields-form button').click();
 }
