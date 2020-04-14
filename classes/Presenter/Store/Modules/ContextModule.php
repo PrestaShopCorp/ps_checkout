@@ -171,7 +171,7 @@ class ContextModule implements PresenterInterface
             $isoCode = 'en';
         }
 
-        return _MODULE_DIR_ . $this->module->name . '/docs/readme_' . $isoCode . '.pdf';
+        return _PS_MODULE_DIR_ . $this->module->name . '/docs/readme_' . $isoCode . '.pdf';
     }
 
     /**
