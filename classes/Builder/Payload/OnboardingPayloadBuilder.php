@@ -58,7 +58,7 @@ class OnboardingPayloadBuilder extends Builder
      */
     public function buildBaseNode()
     {
-        $language = (new LanguageAdapter())->getLanguage(\Context::getContext()->employee->id_lang);
+        $language = (new LanguageAdapter())->getLanguage((int) \Context::getContext()->employee->id_lang);
 
         $locale = $language['locale'];
 
