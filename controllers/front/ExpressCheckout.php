@@ -166,9 +166,13 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         $query->where('deleted = 0');
 
         /**
+         * Sets $result to make php-cs-fixer and PHPStan happy
+         *
          * @var int|false
          */
-        return Db::getInstance()->getValue($query);
+        $result = Db::getInstance()->getValue($query);
+
+        return $result;
     }
 
     /**

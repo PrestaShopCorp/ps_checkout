@@ -721,7 +721,7 @@ class Ps_checkout extends PaymentModule
         /**
          * Fix missing type in @return statement
          * https://github.com/PrestaShop/PrestaShop/blob/075f1fc13f839135ab58744be4b8d9ec4c70ff4a/classes/PaymentModule.php#L791
-         * 
+         *
          * @var Currency|array|false
          */
         $currenciesModule = $this->getCurrency($cart->id_currency);
