@@ -19,7 +19,6 @@
  */
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
-use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
 
 class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontController
 {

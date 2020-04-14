@@ -32,7 +32,6 @@
           <li>{$orderPayPalRefundError|escape:'html':'UTF-8'}</li>
         {/foreach}
       </ul>
-      {$orderPayPalRefundSuccess|escape:'html':'UTF-8'}
     </div>
   {/if}
   <div class="row">
