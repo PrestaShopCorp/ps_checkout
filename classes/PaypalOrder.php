@@ -95,6 +95,8 @@ class PaypalOrder
     /**
      * Returns PayPal Order Id
      *
+     * @todo To be moved in PayPalOrderPresenter
+     *
      * @return string|null
      */
     public function getId()
@@ -104,6 +106,8 @@ class PaypalOrder
 
     /**
      * Returns PayPal Order intent
+     *
+     * @todo To be moved in PayPalOrderPresenter
      *
      * @return string|null
      */
@@ -115,6 +119,8 @@ class PaypalOrder
     /**
      * Returns PayPal Order status
      *
+     * @todo To be moved in PayPalOrderPresenter
+     *
      * @return string|null
      */
     public function getStatus()
@@ -123,6 +129,8 @@ class PaypalOrder
     }
 
     /**
+     * @todo To be moved in PayPalTransactionPresenter
+     *
      * @return array
      */
     public function getTransactions()
@@ -171,6 +179,12 @@ class PaypalOrder
                     ];
                 }
             }
+        }
+
+        if (!empty($transactions)) {
+            uasort($transactions, function (array $transactionA, array $transactionB) {
+                return strtotime($transactionB['date']) - strtotime($transactionA['date']);
+            });
         }
 
         return $transactions;
