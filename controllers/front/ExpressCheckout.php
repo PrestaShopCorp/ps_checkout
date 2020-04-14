@@ -253,7 +253,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
      */
     public function displayAjaxCreatePaypalOrder()
     {
-        $product = Tools::getValue('product');
+        $product = \Tools::getValue('product');
 
         if (!empty($product)) {
             $product = json_decode($product);

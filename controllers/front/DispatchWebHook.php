@@ -41,9 +41,9 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     public $auth = false;
 
     /**
-     * Id coming from PSL
+     * Id coming from PSL (CheckMe: Is it a UUID?)
      *
-     * @var int
+     * @var string
      */
     private $shopId;
 
