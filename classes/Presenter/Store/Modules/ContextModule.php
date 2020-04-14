@@ -171,7 +171,7 @@ class ContextModule implements PresenterInterface
             $isoCode = 'en';
         }
 
-        return _MODULE_DIR_ . $this->module->name . '/docs/readme_' . $isoCode . '.pdf';
+        return _PS_MODULE_DIR_ . $this->module->name . '/docs/readme_' . $isoCode . '.pdf';
     }
 
     /**
@@ -186,16 +186,12 @@ class ContextModule implements PresenterInterface
         switch ($isoCode) {
             case 'fr':
                 return 'https://www.prestashop.com/fr/prestashop-checkout-conditions-generales-utilisation';
-                break;
             case 'es':
                 return 'https://www.prestashop.com/es/prestashop-checkout-condiciones-generales-uso';
-                break;
             case 'it':
                 return 'https://www.prestashop.com/it/prestashop-checkout-condizioni-generali-utilizzo';
-                break;
             default:
                 return 'https://www.prestashop.com/en/prestashop-checkout-general-terms-use';
-                break;
         }
     }
 
