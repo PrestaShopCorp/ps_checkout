@@ -220,8 +220,10 @@ class OrderStates
 
         if (false === copy($iconToCopy, $iconToPaste)) {
             $module->getLogger()->error('[PSPInstall] not able to copy ' . $iconName . ' for ID ' . $orderStateId);
+
             return false;
         }
+
         return true;
     }
 }
