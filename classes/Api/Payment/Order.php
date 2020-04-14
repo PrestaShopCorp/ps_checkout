@@ -95,6 +95,7 @@ class Order extends PaymentClient
     public function authorize($orderId, $merchantId)
     {
         // TODO : waiting maasland integration
+        return [];
     }
 
     /**
