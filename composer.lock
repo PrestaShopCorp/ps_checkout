@@ -1812,16 +1812,16 @@
         },
         {
             "name": "prestashop/php-dev-tools",
-            "version": "v3.0",
+            "version": "v3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PrestaShop/php-dev-tools.git",
-                "reference": "9e57fb9a21f24679865050b7e471cc5b63278366"
+                "reference": "55442b1dc4593961fba88d4631644507d6e27075"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PrestaShop/php-dev-tools/zipball/9e57fb9a21f24679865050b7e471cc5b63278366",
-                "reference": "9e57fb9a21f24679865050b7e471cc5b63278366",
+                "url": "https://api.github.com/repos/PrestaShop/php-dev-tools/zipball/55442b1dc4593961fba88d4631644507d6e27075",
+                "reference": "55442b1dc4593961fba88d4631644507d6e27075",
                 "shasum": ""
             },
             "require": {
@@ -1846,7 +1846,7 @@
                 "MIT"
             ],
             "description": "PrestaShop coding standards",
-            "time": "2020-03-02T12:35:30+00:00"
+            "time": "2020-03-10T18:11:25+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
