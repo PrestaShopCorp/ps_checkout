@@ -50,5 +50,7 @@ function upgrade_module_1_4_0($module)
         }
     }
 
-    return $module->registerHook('displayAdminOrderLeft');
+    return $module->registerHook('displayAdminOrderLeft')
+        && $module->unregisterHook('actionOrderSlipAdd')
+        && $module->unregisterHook('actionOrderStatusUpdate');
 }

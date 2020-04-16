@@ -32,10 +32,8 @@ class Ps_checkout extends PaymentModule
      * @var array
      */
     const HOOK_LIST = [
-        'actionOrderSlipAdd',
-        'orderConfirmation',
+        'displayOrderConfirmation',
         'displayAdminOrderLeft',
-        'actionOrderStatusUpdate',
         'actionObjectShopAddAfter',
     ];
 
@@ -594,156 +592,6 @@ class Ps_checkout extends PaymentModule
     }
 
     /**
-     * Hook executed when a slip order is created
-     * Used when a partial refund is made in order to refund the patpal order
-     *
-     * Info : We are not using the hook actionObjectOrderSlipAddBefore due to some limitation
-     * If we use this hook we will not be able to assign errors in the context->>controller to display
-     * the potentially errors returned by the api. Moreover, there is also some changes triggered in other table
-     * like ps_order_detail to set the quantity refunded. So even if we stop the creation of an order slip, these
-     * changes will be applied.
-     * Solution for now: see methods cancelPsRefund() from refund class
-     *
-     * @param array $params return by the hook
-     */
-    public function hookActionOrderSlipAdd($params)
-    {
-        // Check if a partial refund is made
-        if (false === Tools::isSubmit('partialRefund')) {
-            return false;
-        }
-
-        // Check if the order was made with the ps_checkout module
-        if ($params['order']->module !== $this->name) {
-            return false;
-        }
-
-        // Stop the paypal refund if the merchant want to generate a discount
-        if (true === Tools::isSubmit('generateDiscountRefund')) {
-            return false;
-        }
-
-        if (false === $this->merchantIsValid()) {
-            $this->context->controller->errors[] = $this->l('You are not connected to PrestaShop Checkout. Cannot process to a refund.');
-            //TODO: cancel refund ?
-
-            return false;
-        }
-
-        $refunds = $params['productList'];
-
-        $totalRefund = 0;
-
-        foreach ($refunds as $idOrderDetails => $amountDetail) {
-            $totalRefund = $totalRefund + $amountDetail['amount'];
-        }
-
-        $paypalOrderId = (new \OrderMatrice())->getOrderPaypalFromPrestashop($params['order']->id);
-
-        if (false === $paypalOrderId) {
-            $this->context->controller->errors[] = $this->l('Impossible to refund. Cannot find the PayPal Order associated to this order.');
-
-            return false;
-        }
-
-        $currency = Currency::getCurrency($params['order']->id_currency);
-        $currencyIsoCode = $currency['iso_code'];
-
-        $refund = new PrestaShop\Module\PrestashopCheckout\Refund(false, $totalRefund, $paypalOrderId, $currencyIsoCode);
-        $refundResponse = $refund->refundPaypalOrder();
-
-        if (true === $refundResponse['error']) {
-            $this->context->controller->errors = array_merge($this->context->controller->errors, $refundResponse['messages']);
-            $refund->cancelPsRefund($params['order']->id);
-
-            return false;
-        }
-
-        // @todo Add a new negative OrderPayment is wrong !
-        $addOrderPayment = $refund->addOrderPayment($params['order'], $refundResponse['body']['id']);
-
-        if (false === $addOrderPayment) {
-            return false;
-        }
-
-        // change the order state to partial refund
-        $orderHistory = new \OrderHistory();
-        $orderHistory->id_order = (int) $params['order']->id;
-
-        $orderHistory->changeIdOrderState(
-            (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_PARTIAL_REFUND'),
-            (int) $params['order']->id
-        );
-
-        return $orderHistory->addWithemail();
-    }
-
-    /**
-     * Hook called on OrderState change
-     *
-     * @todo Do not perform Refund here !
-     *
-     * @param array $params
-     *
-     * @return bool
-     */
-    public function hookActionOrderStatusUpdate(array $params)
-    {
-        /** @var \Order $order */
-        $order = new \Order((int) $params['id_order']);
-        /** @var \OrderState $newOrderState */
-        $newOrderState = $params['newOrderStatus'];
-        $newOrderStateId = (int) $newOrderState->id;
-        $refundOrderStateId = (int) \Configuration::get('PS_OS_REFUND');
-
-        // if the new order state is not "Refunded" stop the refund process
-        if ($newOrderStateId !== $refundOrderStateId) {
-            return false;
-        }
-
-        $paypalOrderId = (new \OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
-
-        // if the order is not an order pay with paypal stop the process
-        if (false === $paypalOrderId) {
-            return false;
-        }
-
-        if (false === $this->merchantIsValid()) {
-            // @todo This hook can be called outside of a controller...
-            $this->context->controller->errors[] = $this->l('You are not connected to PrestaShop Checkout. Cannot process to a refund.');
-
-            return false;
-        }
-
-        $currency = Currency::getCurrency($order->id_currency);
-        $currencyIsoCode = $currency['iso_code'];
-
-        $totalRefund = $order->getTotalPaid();
-
-        $refund = new PrestaShop\Module\PrestashopCheckout\Refund(false, $totalRefund, $paypalOrderId, $currencyIsoCode);
-        // @todo Do not perform Refund in this hook !
-        $refundResponse = $refund->refundPaypalOrder();
-
-        if (isset($refundResponse['error'])) {
-            if (isset($refundResponse['messages']) && is_array($refundResponse['messages'])) {
-                // @todo This hook can be called outside of a controller...
-                $this->context->controller->errors = array_merge(
-                    $this->context->controller->errors,
-                    $refundResponse['messages']
-                );
-            } else {
-                // @todo This hook can be called outside of a controller...
-                $this->context->controller->errors[] = $refundResponse['message'];
-            }
-
-            return false;
-        }
-
-        // @todo Do not perform Refund in this hook !
-        return $refund->doTotalRefund($order, $order->getProducts(), $refundResponse['body']['id']);
-    }
-
-    /**
      * Generate paypal payment option
      *
      * @return object PaymentOption
@@ -843,28 +691,25 @@ class Ps_checkout extends PaymentModule
 
     /**
      * Hook executed at the order confirmation
+     *
+     * @param array $params
+     *
+     * @return string
      */
-    public function hookOrderConfirmation($params)
+    public function hookDisplayOrderConfirmation(array $params)
     {
-        if ((new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17()) {
-            $order = $params['order'];
-        } else {
-            $order = $params['objOrder'];
-        }
+        /** @var Order $order */
+        $order = (isset($params['objOrder'])) ? $params['objOrder'] : $params['order'];
 
         if ($order->module !== $this->name) {
-            return false;
+            return '';
         }
 
-        if ($order->valid) {
-            $this->context->smarty->assign([
-                'status' => 'ok',
-                'id_order' => $order->id,
-                'shopIs17' => (new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17(),
-            ]);
-        } else {
-            $this->context->smarty->assign('status', 'failed');
-        }
+        $this->context->smarty->assign([
+            'status' => $order->valid ? 'ok' : 'failed',
+            'id_order' => $order->id,
+            'shopIs17' => (new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17(),
+        ]);
 
         return $this->display(__FILE__, '/views/templates/hook/orderConfirmation.tpl');
     }
@@ -1172,15 +1017,83 @@ class Ps_checkout extends PaymentModule
     public function hookDisplayAdminOrderLeft(array $params)
     {
         $order = new Order((int) $params['id_order']);
+        $errors = [];
+        $success = '';
 
         if ($order->module !== $this->name) {
             return '';
         }
 
+        $paypalOrderId = (new \OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
+
+        if (empty($paypalOrderId)) {
+            return '';
+        }
+
+        $orderPayPal = new \PrestaShop\Module\PrestashopCheckout\PaypalOrder($paypalOrderId);
+
+        if (false === $orderPayPal->isLoaded()) {
+            return '';
+        }
+
+        // @todo Quickwin to be refactored with new Service Container
+        if (Tools::getIsset('orderPayPalRefundAmount')) {
+            $transactionId = Tools::getValue('orderPayPalRefundTransaction');
+            $amount = Tools::getValue('orderPayPalRefundAmount');
+            $currency = Tools::getValue('orderPayPalRefundCurrency');
+
+            if (empty($transactionId) || false === Validate::isGenericName($transactionId)) {
+                $errors[] = $this->l('PayPal Transaction is invalid.', 'translations');
+            }
+
+            if (empty($amount) || false === Validate::isPrice($amount) || $amount <= 0) {
+                $errors[] = $this->l('PayPal refund amount is invalid.', 'translations');
+            }
+
+            if (empty($currency) || false === in_array($currency, ['AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'INR', 'ILS', 'JPY', 'MYR', 'MXN', 'TWD', 'NZD', 'NOK', 'PHP', 'PLN', 'GBP', 'RUB', 'SGD', 'SEK', 'CHF', 'THB', 'USD'])) {
+                // https://developer.paypal.com/docs/api/reference/currency-codes/
+                $errors[] = $this->l('PayPal refund currency is invalid.', 'translations');
+            }
+
+            if (empty($errors)) {
+                $response = (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order($this->context->link))->refund([
+                    'orderId' => $paypalOrderId,
+                    'captureId' => $transactionId,
+                    'payee' => [
+                        'merchant_id' => (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->getMerchantId(),
+                    ],
+                    'amount' => [
+                        'currency_code' => $currency,
+                        'value' => $amount,
+                    ],
+                    'note_to_payer' => 'Refund by '
+                        . \Configuration::get(
+                            'PS_SHOP_NAME',
+                            null,
+                            null,
+                            (int) \Context::getContext()->shop->id
+                        ),
+                ]);
+
+                if (isset($response['httpCode']) && $response['httpCode'] === 200) {
+                    $success = $this->l('Refund has been processed by PayPal.', 'translations');
+                    // Reload PayPal order
+                    $orderPayPal = new \PrestaShop\Module\PrestashopCheckout\PaypalOrder($paypalOrderId);
+                } else {
+                    $errors[] = $this->l('Refund cannot be processed by PayPal.', 'translations');
+                }
+            }
+        }
+
         $this->context->smarty->assign([
             'moduleLogoUri' => $this->getPathUri() . 'logo.png',
             'moduleName' => $this->displayName,
-            'paypalOrderId' => (new \OrderMatrice())->getOrderPaypalFromPrestashop($order->id),
+            'orderPayPalRefundErrors' => $errors,
+            'orderPayPalRefundSuccess' => $success,
+            'orderPayPalId' => $orderPayPal->getId(),
+            'orderPayPalStatus' => $orderPayPal->getStatus(),
+            'orderPayPalTransactions' => $orderPayPal->getTransactions(),
+            'orderPayPalRefundUrl' => $this->context->link->getAdminLink('AdminOrders') . '&vieworder&id_order=' . (int) $order->id . '#formAddPaymentPanel',
         ]);
 
         return $this->display(__FILE__, '/views/templates/hook/displayAdminOrderLeft.tpl');
