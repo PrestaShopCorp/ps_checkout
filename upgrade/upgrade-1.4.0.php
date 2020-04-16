@@ -30,27 +30,19 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_4_0($module)
 {
-    // Remove our ModuleAdminControllers from SEO & URLs page
-    foreach (Ps_checkout::MODULE_ADMIN_CONTROLLERS as $controller) {
-        $metaId = Db::getInstance()->getValue('
-            SELECT id_meta
-            FROM `' . _DB_PREFIX_ . 'meta`
-            WHERE page="' . pSQL('module-' . $module->name . '-' . $controller) . '"'
-        );
+    $result = true;
 
-        if ($metaId) {
-            Db::getInstance()->delete(
-                'meta_lang',
-                'id_meta = ' . (int) $metaId
-            );
-            Db::getInstance()->delete(
-                'meta',
-                'id_meta = ' . (int) $metaId
-            );
-        }
+    // Remove our ModuleAdminControllers from SEO & URLs page
+    $metaCollection = new PrestaShopCollection('Meta');
+    $metaCollection->where('page', 'like', 'module-' . $module->name . '-Admin%');
+
+    foreach ($metaCollection->getAll() as $meta) {
+        /** @var Meta $meta */
+        $result = $result && (bool) $meta->delete();
     }
 
-    return $module->registerHook('displayAdminOrderLeft')
+    return $result
+        && $module->registerHook('displayAdminOrderLeft')
         && $module->unregisterHook('actionOrderSlipAdd')
         && $module->unregisterHook('actionOrderStatusUpdate');
 }
