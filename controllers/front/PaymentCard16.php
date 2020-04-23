@@ -54,7 +54,7 @@ class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontControlle
 
         $paypalAccountRepository = new PaypalAccountRepository();
 
-        if (false === $paypalAccountRepository->cardPaymentMethodIsValid()) {
+        if (false === $paypalAccountRepository->cardHostedFieldsIsAvailable()) {
             $this->redirectToHomePage();
         }
 
@@ -62,8 +62,11 @@ class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontControlle
         $paypalOrder = $paypalOrder->handle();
 
         $language = (new LanguageAdapter())->getLanguage($this->context->language->id);
+        $paypalSdkLink = new PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder();
+        $paypalSdkLink->displayOnlyHostedFields();
 
         $this->context->smarty->assign([
+            'paypalSdkLink' => $paypalSdkLink->buildLink(),
             'nbProducts' => $cart->nbProducts(),
             'total' => $cart->getOrderTotal(true, Cart::BOTH),
             'merchantId' => $paypalAccountRepository->getMerchantId(),

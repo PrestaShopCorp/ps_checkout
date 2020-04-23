@@ -40,7 +40,7 @@ class PaypalAccountRepository
             $this->getMerchantEmail(),
             $this->getMerchantEmailStatus(),
             $this->getPaypalPaymentStatus(),
-            $this->getCardPaymentStatus()
+            $this->getCardHostedFieldsStatus()
         );
 
         return $paypalAccount;
@@ -71,9 +71,9 @@ class PaypalAccountRepository
      *
      * @return bool
      */
-    public function cardPaymentMethodIsValid()
+    public function cardHostedFieldsIsAllowed()
     {
-        $cardStatus = $this->getCardPaymentStatus();
+        $cardStatus = $this->getCardHostedFieldsStatus();
 
         if ($cardStatus === PaypalAccountUpdater::SUBSCRIBED
         || $cardStatus === PaypalAccountUpdater::LIMITED) {
@@ -88,10 +88,10 @@ class PaypalAccountRepository
      *
      * @return bool
      */
-    public function cardPaymentMethodIsEnabled()
+    public function cardHostedFieldsIsEnabled()
     {
         return (bool) \Configuration::get(
-            PaypalAccount::PS_CHECKOUT_CARD_PAYMENT_ENABLED,
+            PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_ENABLED,
             null,
             null,
             (int) \Context::getContext()->shop->id
@@ -103,10 +103,10 @@ class PaypalAccountRepository
      *
      * @return bool
      */
-    public function cardPaymentMethodIsAvailable()
+    public function cardHostedFieldsIsAvailable()
     {
-        return $this->cardPaymentMethodIsEnabled()
-            && $this->cardPaymentMethodIsValid();
+        return $this->cardHostedFieldsIsEnabled()
+            && $this->cardHostedFieldsIsAllowed();
     }
 
     /**
@@ -184,10 +184,10 @@ class PaypalAccountRepository
      *
      * @return string|bool
      */
-    public function getCardPaymentStatus()
+    public function getCardHostedFieldsStatus()
     {
         return \Configuration::get(
-            PaypalAccount::PS_CHECKOUT_CARD_PAYMENT_STATUS,
+            PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS,
             null,
             null,
             (int) \Context::getContext()->shop->id
