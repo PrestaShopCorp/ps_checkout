@@ -18,6 +18,7 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 use PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter;
+use PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
@@ -62,7 +63,7 @@ class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontControl
         $paypalOrder = $paypalOrder->handle();
 
         $language = (new LanguageAdapter())->getLanguage($this->context->language->id);
-        $paypalSdkLink = new PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder();
+        $paypalSdkLink = new PayPalSdkLinkBuilder();
         $paypalSdkLink->displayOnlySmartButtons();
 
         $this->context->smarty->assign([

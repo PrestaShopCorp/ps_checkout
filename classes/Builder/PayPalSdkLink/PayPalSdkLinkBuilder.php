@@ -78,12 +78,6 @@ class PayPalSdkLinkBuilder
             $components[] = 'buttons';
         }
 
-        $disabledFundings = [];
-
-        if ($this->isSmartButtonsEnabled() && $this->isSmartButtonsCardFundingDisabled()) {
-            $disabledFundings[] = 'card';
-        }
-
         $params = [
             'components' => implode(',', $components),
             'client-id' => (new PaypalEnv())->getPaypalClientId(),
@@ -98,8 +92,10 @@ class PayPalSdkLinkBuilder
             )),
         ];
 
-        if (false === empty($disabledFundings)) {
-            $params['disable-funding'] = implode(',', $disabledFundings);
+        $fundingSourcesDisabled = $this->getFundingSourcesDisabled();
+
+        if ($this->isSmartButtonsEnabled() && false === empty($fundingSourcesDisabled)) {
+            $params['disable-funding'] = implode(',', $this->getFundingSourcesDisabled());
         }
 
         return self::BASE_LINK . '?' . urldecode(http_build_query($params));
@@ -147,5 +143,63 @@ class PayPalSdkLinkBuilder
         return false === $this->isDisplayOnlySmartButtons
             && false === $this->isExpressCheckout
             && $this->payPalAccountRepository->cardHostedFieldsIsAvailable();
+    }
+
+    /**
+     * @see https://developer.paypal.com/docs/checkout/reference/customize-sdk/#disable-funding
+     *
+     * @return array
+     */
+    private function getFundingSourcesDisabled()
+    {
+        $fundingSourcesDisabled = [];
+
+        if (false === $this->payPalAccountRepository->isCreditOrDebitCardsEnabled()
+            || true === $this->isSmartButtonsCardFundingDisabled()
+        ) {
+            $fundingSourcesDisabled[] = 'card';
+        }
+
+        if (false === $this->payPalAccountRepository->isPayPalCreditEnabled()) {
+            $fundingSourcesDisabled[] = 'credit';
+        }
+
+        if (false === $this->payPalAccountRepository->isVenmoEnabled()) {
+            $fundingSourcesDisabled[] = 'venmo';
+        }
+
+        if (false === $this->payPalAccountRepository->isSepaLastschriftEnabled()) {
+            $fundingSourcesDisabled[] = 'sepa';
+        }
+
+        if (false === $this->payPalAccountRepository->isBancontactEnabled()) {
+            $fundingSourcesDisabled[] = 'bancontact';
+        }
+
+        if (false === $this->payPalAccountRepository->isEpsEnabled()) {
+            $fundingSourcesDisabled[] = 'eps';
+        }
+
+        if (false === $this->payPalAccountRepository->isGiropayEnabled()) {
+            $fundingSourcesDisabled[] = 'giropay';
+        }
+
+        if (false === $this->payPalAccountRepository->isIdealEnabled()) {
+            $fundingSourcesDisabled[] = 'ideal';
+        }
+
+        if (false === $this->payPalAccountRepository->isMyBankEnabled()) {
+            $fundingSourcesDisabled[] = 'mybank';
+        }
+
+        if (false === $this->payPalAccountRepository->isPrzelewy24Enabled()) {
+            $fundingSourcesDisabled[] = 'p24';
+        }
+
+        if (false === $this->payPalAccountRepository->isSofortEnabled()) {
+            $fundingSourcesDisabled[] = 'sofort';
+        }
+
+        return $fundingSourcesDisabled;
     }
 }

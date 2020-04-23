@@ -193,4 +193,158 @@ class PaypalAccountRepository
             (int) \Context::getContext()->shop->id
         );
     }
+
+    /**
+     * @return bool
+     */
+    public function isCreditOrDebitCardsEnabled()
+    {
+        return (bool) \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_CARDS_ENABLED,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id,
+            true
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPayPalCreditEnabled()
+    {
+        return (bool) \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_PAYPAL_CREDIT_ENABLED,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id,
+            true
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVenmoEnabled()
+    {
+        return (bool) \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_VENMO_ENABLED,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id,
+            true
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSepaLastschriftEnabled()
+    {
+        return (bool) \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_SEPA_LASTSCHRIFT_CREDIT_ENABLED,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id,
+            true
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBancontactEnabled()
+    {
+        return (bool) \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_BANCONTACT_ENABLED,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id,
+            true
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEpsEnabled()
+    {
+        return (bool) \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_EPS_ENABLED,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id,
+            true
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isGiropayEnabled()
+    {
+        return (bool) \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_GIROPAY_ENABLED,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id,
+            true
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isIdealEnabled()
+    {
+        return (bool) \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_IDEAL_ENABLED,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id,
+            true
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMyBankEnabled()
+    {
+        return (bool) \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_MYBANK_ENABLED,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id,
+            true
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPrzelewy24Enabled()
+    {
+        return (bool) \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_PRZELEWY24_ENABLED,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id,
+            true
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSofortEnabled()
+    {
+        return (bool) \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_SOFORT_ENABLED,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id,
+            true
+        );
+    }
 }
