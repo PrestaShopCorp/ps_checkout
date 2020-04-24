@@ -101,17 +101,17 @@ class PayPalSdkLinkBuilder
         return self::BASE_LINK . '?' . urldecode(http_build_query($params));
     }
 
-    public function displayExpressCheckout()
+    public function enableDisplayExpressCheckout()
     {
         $this->isExpressCheckout = true;
     }
 
-    public function displayOnlyHostedFields()
+    public function enableDisplayOnlyHostedFields()
     {
         $this->isDisplayOnlyHostedFields = true;
     }
 
-    public function displayOnlySmartButtons()
+    public function enableDisplayOnlySmartButtons()
     {
         $this->isDisplayOnlySmartButtons = true;
     }

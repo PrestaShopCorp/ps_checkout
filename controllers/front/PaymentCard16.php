@@ -64,7 +64,7 @@ class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontControlle
 
         $language = (new LanguageAdapter())->getLanguage($this->context->language->id);
         $paypalSdkLink = new PayPalSdkLinkBuilder();
-        $paypalSdkLink->displayOnlyHostedFields();
+        $paypalSdkLink->enableDisplayOnlyHostedFields();
 
         $this->context->smarty->assign([
             'paypalSdkLink' => $paypalSdkLink->buildLink(),
