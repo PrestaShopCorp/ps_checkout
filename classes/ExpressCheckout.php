@@ -20,8 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter;
-use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
+use PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 class ExpressCheckout
@@ -59,30 +58,22 @@ class ExpressCheckout
             return false;
         }
 
-        $language = (new LanguageAdapter())->getLanguage($this->context->language->id);
-
         $paypalAccountRepository = new PaypalAccountRepository();
+        $paypalSdkLink = new PayPalSdkLinkBuilder();
+        $paypalSdkLink->enableDisplayExpressCheckout();
 
         $this->context->smarty->assign([
+            'paypalSdkLink' => $paypalSdkLink->buildLink(),
             'displayMode' => $this->displayMode,
             'isPs176' => version_compare(_PS_VERSION_, '1.7.6.0', '>='),
-            'merchantId' => $paypalAccountRepository->getMerchantId(),
-            'paypalClientId' => (new PaypalEnv())->getPaypalClientId(),
             'jsExpressCheckoutPath' => $this->module->getPathUri() . 'views/js/initExpressCheckout.js',
             'checkoutLink' => $this->context->link->getPageLink('order', true, $this->context->language->id, ['paymentMethod' => 'paypal']),
             'expressCheckoutController' => $this->context->link->getModuleLink($this->module->name, 'ExpressCheckout'),
             'paypalIsActive' => $paypalAccountRepository->paypalPaymentMethodIsValid(),
-            'intent' => strtolower(\Configuration::get(
-                'PS_CHECKOUT_INTENT',
-                null,
-                null,
-                (int) \Context::getContext()->shop->id
-            )),
             'currencyIsoCode' => $this->context->currency->iso_code,
             'isCardPaymentError' => (bool) \Tools::getValue('hferror'),
-            'locale' => $language['locale'],
         ]);
 
-        return $this->module->display($this->module->getPathUri(), '/views/templates/front/expressCheckout.tpl');
+        return $this->module->display($this->module->getLocalPath(), 'views/templates/front/expressCheckout.tpl');
     }
 }

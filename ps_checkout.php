@@ -411,7 +411,7 @@ class Ps_checkout extends PaymentModule
 
         $this->context->smarty->assign([
             'path' => $this->_path . 'views/img/',
-            'cardIsActive' => $paypalAccountRepository->cardPaymentMethodIsAvailable(),
+            'cardIsActive' => $paypalAccountRepository->cardHostedFieldsIsAvailable(),
             'paypalIsActive' => $paypalAccountRepository->paypalPaymentMethodIsValid(),
             'paymentOrder' => $this->getPaymentMethods(),
         ]);
@@ -476,25 +476,16 @@ class Ps_checkout extends PaymentModule
             $termsAndConditionsLinkCms->link_rewrite
         );
 
-        $language = (new PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter())->getLanguage($this->context->language->id);
+        $paypalSdkLink = new PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder();
 
         $this->context->smarty->assign([
-            'merchantId' => $paypalAccountRepository->getMerchantId(),
-            'paypalClientId' => (new PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv())->getPaypalClientId(),
+            'paypalSdkLink' => $paypalSdkLink->buildLink(),
             'clientToken' => $paypalOrder['body']['client_token'],
             'paypalOrderId' => $paypalOrder['body']['id'],
             'validateOrderLinkByCard' => $this->getValidateOrderLink($paypalOrder['body']['id'], 'card'),
             'validateOrderLinkByPaypal' => $this->getValidateOrderLink($paypalOrder['body']['id'], 'paypal'),
-            'cardIsActive' => $paypalAccountRepository->cardPaymentMethodIsAvailable(),
+            'cardIsActive' => $paypalAccountRepository->cardHostedFieldsIsAvailable(),
             'paypalIsActive' => $paypalAccountRepository->paypalPaymentMethodIsValid(),
-            'intent' => strtolower(Configuration::get(
-                'PS_CHECKOUT_INTENT',
-                null,
-                null,
-                (int) \Context::getContext()->shop->id
-            )),
-            'locale' => $language['locale'],
-            'currencyIsoCode' => $this->context->currency->iso_code,
             'isCardPaymentError' => (bool) Tools::getValue('hferror'),
             'modulePath' => $this->getPathUri(),
             'paypalPaymentOption' => $this->name . '_paypal',
@@ -509,7 +500,7 @@ class Ps_checkout extends PaymentModule
 
         foreach ($paymentMethods as $position => $paymentMethod) {
             if ($paymentMethod['name'] === 'card'
-                && true === $paypalAccountRepository->cardPaymentMethodIsAvailable()
+                && true === $paypalAccountRepository->cardHostedFieldsIsAvailable()
             ) {
                 $payment_options[] = $this->getHostedFieldsPaymentOption();
             } elseif ($paymentMethod['name'] === 'paypal'

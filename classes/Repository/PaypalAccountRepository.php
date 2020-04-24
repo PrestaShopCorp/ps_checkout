@@ -40,7 +40,7 @@ class PaypalAccountRepository
             $this->getMerchantEmail(),
             $this->getMerchantEmailStatus(),
             $this->getPaypalPaymentStatus(),
-            $this->getCardPaymentStatus()
+            $this->getCardHostedFieldsStatus()
         );
 
         return $paypalAccount;
@@ -71,9 +71,9 @@ class PaypalAccountRepository
      *
      * @return bool
      */
-    public function cardPaymentMethodIsValid()
+    public function cardHostedFieldsIsAllowed()
     {
-        $cardStatus = $this->getCardPaymentStatus();
+        $cardStatus = $this->getCardHostedFieldsStatus();
 
         if ($cardStatus === PaypalAccountUpdater::SUBSCRIBED
         || $cardStatus === PaypalAccountUpdater::LIMITED) {
@@ -88,10 +88,10 @@ class PaypalAccountRepository
      *
      * @return bool
      */
-    public function cardPaymentMethodIsEnabled()
+    public function cardHostedFieldsIsEnabled()
     {
         return (bool) \Configuration::get(
-            PaypalAccount::PS_CHECKOUT_CARD_PAYMENT_ENABLED,
+            PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_ENABLED,
             null,
             null,
             (int) \Context::getContext()->shop->id
@@ -103,10 +103,10 @@ class PaypalAccountRepository
      *
      * @return bool
      */
-    public function cardPaymentMethodIsAvailable()
+    public function cardHostedFieldsIsAvailable()
     {
-        return $this->cardPaymentMethodIsEnabled()
-            && $this->cardPaymentMethodIsValid();
+        return $this->cardHostedFieldsIsEnabled()
+            && $this->cardHostedFieldsIsAllowed();
     }
 
     /**
@@ -184,13 +184,112 @@ class PaypalAccountRepository
      *
      * @return string|bool
      */
-    public function getCardPaymentStatus()
+    public function getCardHostedFieldsStatus()
     {
-        return \Configuration::get(
-            PaypalAccount::PS_CHECKOUT_CARD_PAYMENT_STATUS,
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCreditOrDebitCardsEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_CARDS_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPayPalCreditEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_PAYPAL_CREDIT_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVenmoEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_VENMO_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSepaLastschriftEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_SEPA_LASTSCHRIFT_CREDIT_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBancontactEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_BANCONTACT_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEpsEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_EPS_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isGiropayEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_GIROPAY_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isIdealEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_IDEAL_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMyBankEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_MYBANK_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPrzelewy24Enabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_PRZELEWY24_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSofortEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_FUNDING_SOURCE_SOFORT_ENABLED);
+    }
+
+    /**
+     * @param string $paymentMethod
+     *
+     * @return bool
+     */
+    private function isPaymentMethodEnabled($paymentMethod)
+    {
+        return (bool) \Configuration::get(
+            $paymentMethod,
             null,
             null,
-            (int) \Context::getContext()->shop->id
+            (int) \Context::getContext()->shop->id,
+            true
         );
     }
 }
