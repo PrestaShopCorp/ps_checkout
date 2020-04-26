@@ -41,6 +41,125 @@ function upgrade_module_1_4_0($module)
         $result = $result && (bool) $meta->delete();
     }
 
+    // Fix multiple OrderState created in multishop before 1.3.0
+    $queryConfigurationResults = \Db::getInstance()->executeS('
+        SELECT c.id_configuration, c.name, c.value, c.id_shop, c.id_shop_group, os.id_order_state
+        FROM `' . _DB_PREFIX_ . 'configuration` AS c
+        LEFT JOIN `' . _DB_PREFIX_ . 'order_state` AS os ON (c.value = os.id_order_state)
+        WHERE c.name LIKE "PS_CHECKOUT_STATE_%"
+    ');
+
+    $orderStateRows = [];
+
+    if (false === empty($queryConfigurationResults)) {
+        foreach ($queryConfigurationResults as $queryConfigurationResult) {
+            if ($queryConfigurationResult['name'] === 'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT') {
+                $orderStateRows['PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT'][] = [
+                    'id_configuration' => $queryConfigurationResult['id_configuration'],
+                    'id_order_state' => $queryConfigurationResult['id_order_state'],
+                ];
+            }
+
+            if ($queryConfigurationResult['name'] === 'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT') {
+                $orderStateRows['PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT'][] = [
+                    'id_configuration' => $queryConfigurationResult['id_configuration'],
+                    'id_order_state' => $queryConfigurationResult['id_order_state'],
+                ];
+            }
+
+            if ($queryConfigurationResult['name'] === 'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT') {
+                $orderStateRows['PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT'][] = [
+                    'id_configuration' => $queryConfigurationResult['id_configuration'],
+                    'id_order_state' => $queryConfigurationResult['id_order_state'],
+                ];
+            }
+
+            if ($queryConfigurationResult['name'] === 'PS_CHECKOUT_STATE_AUTHORIZED') {
+                $orderStateRows['PS_CHECKOUT_STATE_AUTHORIZED'][] = [
+                    'id_configuration' => $queryConfigurationResult['id_configuration'],
+                    'id_order_state' => $queryConfigurationResult['id_order_state'],
+                ];
+            }
+
+            if ($queryConfigurationResult['name'] === 'PS_CHECKOUT_STATE_PARTIAL_REFUND') {
+                $orderStateRows['PS_CHECKOUT_STATE_PARTIAL_REFUND'][] = [
+                    'id_configuration' => $queryConfigurationResult['id_configuration'],
+                    'id_order_state' => $queryConfigurationResult['id_order_state'],
+                ];
+            }
+
+            if ($queryConfigurationResult['name'] === 'PS_CHECKOUT_STATE_WAITING_CAPTURE') {
+                $orderStateRows['PS_CHECKOUT_STATE_WAITING_CAPTURE'][] = [
+                    'id_configuration' => $queryConfigurationResult['id_configuration'],
+                    'id_order_state' => $queryConfigurationResult['id_order_state'],
+                ];
+            }
+        }
+    }
+
+    foreach ($orderStateRows as $orderStateRow) {
+        $isGlobalValueSaved = false;
+        foreach ($orderStateRow as $index => $data) {
+            if (false === empty($data['id_order_state'])) {
+                if (false === $isGlobalValueSaved) {
+                    // Set value global for all shops
+                    $result = $result && \Db::getInstance()->update(
+                        'configuration',
+                        [
+                            'id_shop' => null,
+                            'id_shop_group' => null,
+                        ],
+                        'id_configuration = ' . (int) $data['id_configuration'],
+                        0,
+                         true
+                    );
+
+                    if ($result) {
+                        $isGlobalValueSaved = true;
+                        // Skip deletion of this configuration
+                        continue;
+                    }
+                } else {
+                    // Mark this duplicated OrderState as deleted
+                    $result = $result && \Db::getInstance()->update(
+                        'order_state',
+                        [
+                            'deleted' => true,
+                        ],
+                        'id_order_state = ' . (int) $data['id_order_state']
+                    );
+                }
+            }
+
+            // Remove this OrderState identifier from Configuration
+            $result = $result && \Db::getInstance()->delete(
+                'configuration',
+                'id_configuration = ' . (int) $data['id_configuration']
+            );
+        }
+    }
+
+    // Mark OrderState created by older module installation who failed as deleted
+    $queryOrderStateResults = \Db::getInstance()->executeS('
+        SELECT `id_order_state`
+        FROM `' . _DB_PREFIX_ . 'order_state`
+        WHERE `module_name` = "' . $module->name . '"
+        AND `deleted` = 0
+        AND `id_order_state` NOT IN (' . implode(',', array_column($queryConfigurationResults, 'id_order_state')) . ')
+    ');
+
+    if (false === empty($queryOrderStateResults)) {
+        foreach ($queryOrderStateResults as $queryOrderStateResult) {
+            $result = $result && \Db::getInstance()->update(
+                    'order_state',
+                    [
+                        'deleted' => 1,
+                    ],
+                    'id_order_state = ' . (int) $queryOrderStateResult['id_order_state']
+                );
+        }
+    }
+
     return $result
         && $module->registerHook('displayAdminOrderLeft')
         && $module->unregisterHook('actionOrderSlipAdd')
