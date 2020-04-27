@@ -75,27 +75,7 @@ class PaypalAccountRepository
     {
         $cardStatus = $this->getCardHostedFieldsStatus();
 
-        if ($cardStatus === PaypalAccountUpdater::SUBSCRIBED
-        || $cardStatus === PaypalAccountUpdater::LIMITED) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Merchant can disable hosted fields in module configuration
-     *
-     * @return bool
-     */
-    public function cardHostedFieldsIsEnabled()
-    {
-        return (bool) \Configuration::get(
-            PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_ENABLED,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        return $cardStatus === PaypalAccountUpdater::SUBSCRIBED || $cardStatus === PaypalAccountUpdater::LIMITED;
     }
 
     /**
@@ -105,7 +85,7 @@ class PaypalAccountRepository
      */
     public function cardHostedFieldsIsAvailable()
     {
-        return $this->cardHostedFieldsIsEnabled()
+        return $this->isHostedFieldsEnabled()
             && $this->cardHostedFieldsIsAllowed();
     }
 
@@ -182,11 +162,26 @@ class PaypalAccountRepository
     /**
      * Get the card payment status for the current merchant
      *
-     * @return string|bool
+     * @return string
      */
     public function getCardHostedFieldsStatus()
     {
-        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS);
+        return \Configuration::get(
+            PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
+    }
+
+    /**
+     * Merchant can disable hosted fields in module configuration
+     *
+     * @return bool
+     */
+    public function isHostedFieldsEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_ENABLED);
     }
 
     /**

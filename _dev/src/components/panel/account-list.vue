@@ -235,11 +235,15 @@
               <ul class="my-1">
                 <li><b>{{ $t('pages.accounts.photoIds') }}</b></li>
               </ul>
-              <a
-                href="https://www.paypal.com/policy/hub/kyc"
-                target="_blank"
-                class="btn btn-outline-secondary mt-1"
-              >{{ $t('pages.accounts.knowMoreAboutAccount') }}</a>
+              <div class="mt-3">
+                <a
+                  href="https://www.paypal.com/policy/hub/kyc"
+                  target="_blank"
+                >
+                  {{ $t('pages.accounts.knowMoreAboutAccount') }}
+                  <i class="material-icons">arrow_right_alt</i>
+                </a>
+              </div>
             </b-alert>
             <b-alert
               v-if="cardPaymentIsActive === 'IN_REVIEW' || cardPaymentIsActive === 'LIMITED'"
