@@ -25,7 +25,7 @@
 
 <style>
   /** Hide native multistore module activation panel */
-  #content div.bootstrap.panel {
+  #content.nobootstrap div.bootstrap.panel {
     display: none;
   }
 </style>
