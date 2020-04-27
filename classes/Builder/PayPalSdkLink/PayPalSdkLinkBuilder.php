@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink;
 
-use PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
@@ -66,8 +65,6 @@ class PayPalSdkLinkBuilder
      */
     public function buildLink()
     {
-        $language = (new LanguageAdapter())->getLanguage(\Context::getContext()->language->id);
-
         $components = [];
 
         if ($this->isHostedFieldsEnabled()) {
@@ -82,7 +79,6 @@ class PayPalSdkLinkBuilder
             'components' => implode(',', $components),
             'client-id' => (new PaypalEnv())->getPaypalClientId(),
             'merchant-id' => (new PaypalAccountRepository())->getMerchantId(),
-            'locale' => $language['locale'],
             'currency' => \Context::getContext()->currency->iso_code,
             'intent' => strtolower(\Configuration::get(
                 'PS_CHECKOUT_INTENT',
