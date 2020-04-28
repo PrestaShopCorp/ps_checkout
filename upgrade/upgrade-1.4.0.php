@@ -42,7 +42,9 @@ function upgrade_module_1_4_0($module)
     }
 
     // Fix multiple OrderState created in multishop before 1.3.0
-    $queryConfigurationResults = \Db::getInstance()->executeS('
+    $db = \Db::getInstance();
+
+    $queryConfigurationResults = $db->executeS('
         SELECT c.id_configuration, c.name, c.value, c.id_shop, c.id_shop_group, os.id_order_state
         FROM `' . _DB_PREFIX_ . 'configuration` AS c
         LEFT JOIN `' . _DB_PREFIX_ . 'order_state` AS os ON (c.value = os.id_order_state)
@@ -103,7 +105,7 @@ function upgrade_module_1_4_0($module)
             if (false === empty($data['id_order_state'])) {
                 if (false === $isGlobalValueSaved) {
                     // Set value global for all shops
-                    $result = $result && \Db::getInstance()->update(
+                    $result = $result && $db->update(
                         'configuration',
                         [
                             'id_shop' => null,
@@ -121,7 +123,7 @@ function upgrade_module_1_4_0($module)
                     }
                 } else {
                     // Mark this duplicated OrderState as deleted
-                    $result = $result && \Db::getInstance()->update(
+                    $result = $result && $db->update(
                         'order_state',
                         [
                             'deleted' => true,
@@ -132,7 +134,7 @@ function upgrade_module_1_4_0($module)
             }
 
             // Remove this OrderState identifier from Configuration
-            $result = $result && \Db::getInstance()->delete(
+            $result = $result && $db->delete(
                 'configuration',
                 'id_configuration = ' . (int) $data['id_configuration']
             );
@@ -140,7 +142,7 @@ function upgrade_module_1_4_0($module)
     }
 
     // Mark OrderState created by older module installation who failed as deleted
-    $queryOrderStateResults = \Db::getInstance()->executeS('
+    $queryOrderStateResults = $db->executeS('
         SELECT `id_order_state`
         FROM `' . _DB_PREFIX_ . 'order_state`
         WHERE `module_name` = "' . $module->name . '"
@@ -150,7 +152,7 @@ function upgrade_module_1_4_0($module)
 
     if (false === empty($queryOrderStateResults)) {
         foreach ($queryOrderStateResults as $queryOrderStateResult) {
-            $result = $result && \Db::getInstance()->update(
+            $result = $result && $db->update(
                     'order_state',
                     [
                         'deleted' => 1,
