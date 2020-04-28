@@ -51,51 +51,26 @@ function upgrade_module_1_4_0($module)
         WHERE c.name LIKE "PS_CHECKOUT_STATE_%"
     ');
 
+    $orderStatesToClean = [
+        'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT',
+        'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT',
+        'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT',
+        'PS_CHECKOUT_STATE_AUTHORIZED',
+        'PS_CHECKOUT_STATE_PARTIAL_REFUND',
+        'PS_CHECKOUT_STATE_WAITING_CAPTURE',
+    ];
     $orderStateRows = [];
 
     if (false === empty($queryConfigurationResults)) {
         foreach ($queryConfigurationResults as $queryConfigurationResult) {
-            if ($queryConfigurationResult['name'] === 'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT') {
-                $orderStateRows['PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT'][] = [
-                    'id_configuration' => $queryConfigurationResult['id_configuration'],
-                    'id_order_state' => $queryConfigurationResult['id_order_state'],
-                ];
+            if (false === in_array($queryConfigurationResult['name'], $orderStatesToClean, true)) {
+                continue;
             }
 
-            if ($queryConfigurationResult['name'] === 'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT') {
-                $orderStateRows['PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT'][] = [
-                    'id_configuration' => $queryConfigurationResult['id_configuration'],
-                    'id_order_state' => $queryConfigurationResult['id_order_state'],
-                ];
-            }
-
-            if ($queryConfigurationResult['name'] === 'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT') {
-                $orderStateRows['PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT'][] = [
-                    'id_configuration' => $queryConfigurationResult['id_configuration'],
-                    'id_order_state' => $queryConfigurationResult['id_order_state'],
-                ];
-            }
-
-            if ($queryConfigurationResult['name'] === 'PS_CHECKOUT_STATE_AUTHORIZED') {
-                $orderStateRows['PS_CHECKOUT_STATE_AUTHORIZED'][] = [
-                    'id_configuration' => $queryConfigurationResult['id_configuration'],
-                    'id_order_state' => $queryConfigurationResult['id_order_state'],
-                ];
-            }
-
-            if ($queryConfigurationResult['name'] === 'PS_CHECKOUT_STATE_PARTIAL_REFUND') {
-                $orderStateRows['PS_CHECKOUT_STATE_PARTIAL_REFUND'][] = [
-                    'id_configuration' => $queryConfigurationResult['id_configuration'],
-                    'id_order_state' => $queryConfigurationResult['id_order_state'],
-                ];
-            }
-
-            if ($queryConfigurationResult['name'] === 'PS_CHECKOUT_STATE_WAITING_CAPTURE') {
-                $orderStateRows['PS_CHECKOUT_STATE_WAITING_CAPTURE'][] = [
-                    'id_configuration' => $queryConfigurationResult['id_configuration'],
-                    'id_order_state' => $queryConfigurationResult['id_order_state'],
-                ];
-            }
+            $orderStateRows[$queryConfigurationResult['name']][] = [
+                'id_configuration' => $queryConfigurationResult['id_configuration'],
+                'id_order_state' => $queryConfigurationResult['id_order_state'],
+            ];
         }
     }
 
