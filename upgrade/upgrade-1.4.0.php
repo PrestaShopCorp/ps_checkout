@@ -126,7 +126,7 @@ function upgrade_module_1_4_0($module)
                     $result = $result && $db->update(
                         'order_state',
                         [
-                            'deleted' => true,
+                            'deleted' => 1,
                         ],
                         'id_order_state = ' . (int) $data['id_order_state']
                     );
@@ -142,13 +142,17 @@ function upgrade_module_1_4_0($module)
     }
 
     // Mark OrderState created by older module installation who failed as deleted
-    $queryOrderStateResults = $db->executeS('
-        SELECT `id_order_state`
-        FROM `' . _DB_PREFIX_ . 'order_state`
-        WHERE `module_name` = "' . $module->name . '"
-        AND `deleted` = 0
-        AND `id_order_state` NOT IN (' . implode(',', array_column($queryConfigurationResults, 'id_order_state')) . ')
-    ');
+    $queryOrderState = new \DbQuery();
+    $queryOrderState->select('id_order_state');
+    $queryOrderState->from('order_state');
+    $queryOrderState->where('module_name = "' . $module->name . '"');
+    $queryOrderState->where('deleted = 0');
+
+    if (false === empty($queryConfigurationResults)) {
+        $queryOrderState->where('`id_order_state` NOT IN (' . implode(',', array_column($queryConfigurationResults, 'id_order_state')) . ')');
+    }
+
+    $queryOrderStateResults = $db->executeS($queryOrderState);
 
     if (false === empty($queryOrderStateResults)) {
         foreach ($queryOrderStateResults as $queryOrderStateResult) {
