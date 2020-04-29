@@ -42,15 +42,25 @@
       <strong>{l s='PayPal Order Status' mod='ps_checkout'}</strong>
       {* @todo To be moved in PayPalOrderPresenter *}
       {if $orderPayPalStatus == 'CREATED'}
+        <span class="span label label-info">
         {l s='Created' mod='ps_checkout'}
+      </span>
       {elseif $orderPayPalStatus == 'SAVED'}
+        <span class="span label label-info">
         {l s='Saved' mod='ps_checkout'}
+      </span>
       {elseif $orderPayPalStatus == 'APPROVED'}
+        <span class="span label label-info">
         {l s='Approved' mod='ps_checkout'}
+      </span>
       {elseif $orderPayPalStatus == 'VOIDED'}
+        <span class="span label label-warning">
         {l s='Voided' mod='ps_checkout'}
+      </span>
       {elseif $orderPayPalStatus == 'COMPLETED'}
+        <span class="span label label-success">
         {l s='Completed' mod='ps_checkout'}
+      </span>
       {/if}
     </div>
   </div>
@@ -62,8 +72,8 @@
         <thead>
         <tr>
           <th><span class="title_box">{l s='Date' mod='ps_checkout'}</span></th>
-          <th><span class="title_box">{l s='Transaction ID' mod='ps_checkout'}</span></th>
           <th><span class="title_box">{l s='Type' mod='ps_checkout'}</span></th>
+          <th><span class="title_box">{l s='Transaction ID' mod='ps_checkout'}</span></th>
           <th><span class="title_box">{l s='Status' mod='ps_checkout'}</span></th>
           <th><span class="title_box">{l s='Amount (Tax included)' mod='ps_checkout'}</span></th>
           <th></th>
@@ -73,7 +83,6 @@
         {foreach $orderPayPalTransactions as $orderPayPalTransaction}
           <tr>
             <td>{dateFormat date=$orderPayPalTransaction.date full=true}</td>
-            <td>{$orderPayPalTransaction.id|escape:'html':'UTF-8'}</td>
             <td>
               {* @todo To be moved in PayPalTransactionPresenter *}
               {if $orderPayPalTransaction.type == 'capture'}
@@ -86,18 +95,29 @@
                 </span>
               {/if}
             </td>
+            <td>{$orderPayPalTransaction.id|escape:'html':'UTF-8'}</td>
             <td>
               {* @todo To be moved in PayPalTransactionPresenter *}
               {if $orderPayPalTransaction.status == 'COMPLETED'}
-                  {l s='Completed' mod='ps_checkout'}
+                <span class="span label label-success">
+                {l s='Completed' mod='ps_checkout'}
+              </span>
               {elseif $orderPayPalTransaction.status == 'PENDING'}
-                  {l s='Pending' mod='ps_checkout'}
+                <span class="span label label-warning">
+                {l s='Pending' mod='ps_checkout'}
+              </span>
               {elseif $orderPayPalTransaction.status == 'DECLINED'}
-                  {l s='Declined' mod='ps_checkout'}
+                <span class="span label label-danger">
+                {l s='Declined' mod='ps_checkout'}
+              </span>
               {elseif $orderPayPalTransaction.status == 'PARTIALLY_REFUNDED'}
-                  {l s='Partially refunded' mod='ps_checkout'}
+                <span class="span label label-info">
+                {l s='Partially refunded' mod='ps_checkout'}
+              </span>
               {elseif $orderPayPalTransaction.status == 'REFUNDED'}
-                  {l s='Refunded' mod='ps_checkout'}
+                <span class="span label label-info">
+                {l s='Refunded' mod='ps_checkout'}
+              </span>
               {/if}
             </td>
             <td>{$orderPayPalTransaction.amount|escape:'html':'UTF-8'} {$orderPayPalTransaction.currency|escape:'html':'UTF-8'}</td>
