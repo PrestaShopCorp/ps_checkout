@@ -65,6 +65,9 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
      */
     private function createAndLoginCustomer($payer)
     {
+        /**
+         * @var bool|int $idCustomerExists
+         */
         $idCustomerExists = \Customer::customerExists($payer->email_address, true);
 
         if (0 === $idCustomerExists) {
@@ -73,7 +76,12 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
             $customer = new \Customer((int) $idCustomerExists);
         }
 
-        $this->context->updateCustomer($customer);
+        /*
+         * Context::updateCustomer() exist from PS 1.7
+         */
+        if (method_exists($this->context, 'updateCustomer')) {
+            $this->context->updateCustomer($customer);
+        }
     }
 
     /**
