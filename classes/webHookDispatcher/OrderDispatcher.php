@@ -30,24 +30,6 @@ class OrderDispatcher implements Dispatcher
     const PS_CHECKOUT_PAYMENT_DENIED = 'PaymentCaptureDenied';
 
     /**
-     * @var array
-     */
-    private $matriceEventAndOrderState;
-
-    /**
-     * OrderDispatcher constructor.
-     */
-    public function __construct()
-    {
-        $this->matriceEventAndOrderState = [
-            self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED => \Configuration::get('PS_OS_CANCELED'),
-            self::PS_CHECKOUT_PAYMENT_PENDING => \Configuration::get('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT'), // OS_PREPARATION should be used only before shipping !
-            self::PS_CHECKOUT_PAYMENT_COMPLETED => \Configuration::get('PS_OS_PAYMENT'), // Payment accepted
-            self::PS_CHECKOUT_PAYMENT_DENIED => \Configuration::get('PS_OS_ERROR'), // Payment error
-        ];
-    }
-
-    /**
      * Dispatch the Event Type to manage the merchant status
      *
      * {@inheritdoc}
@@ -147,8 +129,8 @@ class OrderDispatcher implements Dispatcher
         }
 
         $order = new \Order($orderId);
-        $lastOrderStateId = (int) $order->getCurrentState();
-        $newOrderStateId = (int) $this->matriceEventAndOrderState[$eventType];
+        $currentOrderStateId = (int) $order->getCurrentState();
+        $newOrderStateId = (int) $this->getNewState($eventType, $resource, $currentOrderStateId);
         $shouldAddOrderPayment = true;
 
         /** @var \OrderPayment[] $orderPayments */
@@ -170,18 +152,18 @@ class OrderDispatcher implements Dispatcher
         }
 
         // Prevent duplicate state entry
-        if ($lastOrderStateId === $newOrderStateId
+        if ($currentOrderStateId === $newOrderStateId
             || $order->hasBeenPaid()
             || $order->hasBeenShipped()
             || $order->hasBeenDelivered()
             || $order->isInPreparation()) {
-            return false;
+            return true;
         }
 
         $orderHistory = new \OrderHistory();
         $orderHistory->id_order = $orderId;
         $orderHistory->changeIdOrderState(
-            $this->matriceEventAndOrderState[$eventType],
+            $newOrderStateId,
             $orderId
         );
 
@@ -190,5 +172,57 @@ class OrderDispatcher implements Dispatcher
         }
 
         return true;
+    }
+
+    /**
+     * @param string $eventType
+     * @param array $resource
+     * @param int $currentOrderStateId
+     *
+     * @return int
+     */
+    private function getNewState($eventType, $resource, $currentOrderStateId)
+    {
+        if (static::PS_CHECKOUT_PAYMENT_AUTH_VOIDED === $eventType) {
+            return (int) \Configuration::getGlobalValue('PS_OS_CANCELED');
+        }
+
+        if (static::PS_CHECKOUT_PAYMENT_COMPLETED === $eventType) {
+            return $this->getPaidStatusId($currentOrderStateId);
+        }
+
+        if (static::PS_CHECKOUT_PAYMENT_DENIED === $eventType) {
+            return (int) \Configuration::getGlobalValue('PS_OS_ERROR');
+        }
+
+        return $this->getPendingStatusId($resource);
+    }
+
+    /**
+     * @param int $currentOrderStateId Current OrderState identifier
+     *
+     * @return int OrderState paid identifier
+     */
+    private function getPaidStatusId($currentOrderStateId)
+    {
+        if ($currentOrderStateId === (int) \Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_UNPAID')) {
+            return (int) \Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_PAID');
+        }
+
+        return (int) \Configuration::getGlobalValue('PS_OS_PAYMENT');
+    }
+
+    /**
+     * @param array $resource
+     *
+     * @return int OrderState identifier
+     */
+    private function getPendingStatusId($resource)
+    {
+        if (isset($resource['processor_response']['avs_code'])) {
+            return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
+        }
+
+        return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
     }
 }
