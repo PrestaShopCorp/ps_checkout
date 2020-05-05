@@ -133,19 +133,11 @@ class ValidateOrder
             throw new PsCheckoutException($message);
         }
 
-        // TODO : patch the order in order to update the order id with the order id
-        // of the prestashop order
-
-        $orderState = $this->setOrderState(
+        $this->setOrderState(
             $module->currentOrder,
             $response['body']['status'],
             $payload['paymentMethod']
         );
-
-        if ($orderState === _PS_OS_PAYMENT_) {
-            // @todo this may be useless, previous $module->validateOrder() should save transaction id
-            $this->setTransactionId($module->currentOrder, $response['body']['id']);
-        }
 
         return true;
     }
@@ -187,42 +179,12 @@ class ValidateOrder
     }
 
     /**
-     * Set the transactionId (paypal order id) to the payment associated to the order
-     *
-     * @param int $orderId Order ID from prestashop
-     * @param string $transactionId paypal transaction Id
-     *
-     * @return bool
-     */
-    private function setTransactionId($orderId, $transactionId)
-    {
-        $order = new \Order($orderId);
-        /** @var \OrderPayment $orderPayment */
-        $orderPayment = $order->getOrderPaymentCollection()->getFirst();
-
-        if (true === empty($orderPayment)) {
-            return false;
-        }
-
-        if ($orderPayment->transaction_id === $transactionId) {
-            // If transaction_id is already saved
-            return true;
-        }
-
-        $orderPayment->transaction_id = $transactionId;
-
-        return $orderPayment->save();
-    }
-
-    /**
      * Set the status of the prestashop order if the payment has been
      * successfully captured or not
      *
-     * @param int $orderId from prestashop
-     * @param string $status
+     * @param int $orderId Order identifier
+     * @param string $status Capture status
      * @param string $paymentMethod can be 'paypal' or 'card'
-     *
-     * @return string|bool order state id to set to the order depending on the status return by paypal
      */
     private function setOrderState($orderId, $status, $paymentMethod)
     {
@@ -230,14 +192,11 @@ class ValidateOrder
         $orderHistory->id_order = $orderId;
 
         switch ($status) {
-            case self::CAPTURE_STATUS_COMPLETED:
-                $orderState = _PS_OS_PAYMENT_;
+            case static::CAPTURE_STATUS_COMPLETED:
+                $orderState = $this->getPaidStatusId($orderId);
                 break;
-            case self::CAPTURE_STATUS_DECLINED:
-                $orderState = _PS_OS_ERROR_;
-                break;
-            case self::CAPTURE_STATUS_PENDING:
-                $orderState = $this->getPendingStatusId($paymentMethod);
+            case static::CAPTURE_STATUS_DECLINED:
+                $orderState = (int) \Configuration::getGlobalValue('PS_OS_ERROR');
                 break;
             default:
                 $orderState = $this->getPendingStatusId($paymentMethod);
@@ -246,26 +205,36 @@ class ValidateOrder
 
         $orderHistory->changeIdOrderState($orderState, $orderId);
         $orderHistory->addWithemail();
-
-        return $orderState;
     }
 
     /**
-     * Set pending status depending on the method used to make the payment
+     * @param int $orderId Order identifier
      *
+     * @return int OrderState identifier
+     */
+    private function getPaidStatusId($orderId)
+    {
+        $order = new \Order($orderId);
+
+        if (\Validate::isLoadedObject($order) && $order->getCurrentState() == \Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_UNPAID')) {
+            return (int) \Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_PAID');
+        }
+
+        return (int) \Configuration::getGlobalValue('PS_OS_PAYMENT');
+    }
+
+    /**
      * @param string $paymentMethod can be 'paypal' or 'card'
      *
-     * @return int|bool id state
+     * @return int OrderState identifier
      */
     private function getPendingStatusId($paymentMethod)
     {
-        $stateId = \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
-
-        if ($paymentMethod === self::PAYMENT_METHOD_PAYPAL) {
-            $stateId = \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
+        if ($paymentMethod === static::PAYMENT_METHOD_PAYPAL) {
+            return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
         }
 
-        return intval($stateId);
+        return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
     }
 
     /**
