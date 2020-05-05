@@ -143,6 +143,8 @@ function upgrade_module_1_4_0($module)
 
     return $result
         && $module->registerHook('displayAdminOrderLeft')
+        && $module->registerHook('displayAdminOrderMainBottom')
+        && $module->registerHook('actionAdminControllerSetMedia')
         && $module->unregisterHook('actionOrderSlipAdd')
         && $module->unregisterHook('actionOrderStatusUpdate');
 }

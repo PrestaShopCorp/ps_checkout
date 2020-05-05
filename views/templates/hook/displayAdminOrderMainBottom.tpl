@@ -17,18 +17,22 @@
  * International Registered Trademark & Property of PrestaShop SA
  *}
 
-<div id="ps_checkout" class="panel">
-  <div class="panel-heading">
-    <img src="{$moduleLogoUri|escape:'html':'UTF-8'}" alt="{$moduleName|escape:'html':'UTF-8'}" width="15" height="15">
-    {$moduleName|escape:'html':'UTF-8'}
+<div class="card mt-2" id="ps_checkout">
+  <div class="card-header">
+    <h3 class="card-header-title">
+      <img src="{$moduleLogoUri|escape:'html':'UTF-8'}" alt="{$moduleName|escape:'html':'UTF-8'}" width="20" height="20">
+      {$moduleName|escape:'html':'UTF-8'}
+    </h3>
   </div>
-  <div class="paypal-order-notifications">
-  </div>
-  <div class="paypal-order-container">
-  </div>
-  <div class="paypal-order-loader">
-    <i class="process-icon-loading"></i>
+  <div class="card-body">
+    <div class="paypal-order-notifications">
+    </div>
+    <div class="paypal-order-container">
+    </div>
+    <div class="paypal-order-loader text-center">
+      <button class="btn-primary-reverse onclick unbind spinner"></button>
+    </div>
   </div>
 </div>
 
-{include file='./partials/adminOrderView.tpl' legacy=true orderPrestaShopId=$orderPrestaShopId orderPayPalBaseUrl=$orderPayPalBaseUrl}
+{include file='./partials/adminOrderView.tpl' legacy=false orderPrestaShopId=$orderPrestaShopId orderPayPalBaseUrl=$orderPayPalBaseUrl}

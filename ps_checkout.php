@@ -34,7 +34,9 @@ class Ps_checkout extends PaymentModule
     const HOOK_LIST = [
         'displayOrderConfirmation',
         'displayAdminOrderLeft',
+        'displayAdminOrderMainBottom',
         'actionObjectShopAddAfter',
+        'actionAdminControllerSetMedia',
     ];
 
     /**
@@ -46,7 +48,6 @@ class Ps_checkout extends PaymentModule
         'paymentOptions',
         'actionFrontControllerSetMedia',
         'displayAdminAfterHeader',
-        'ActionAdminControllerSetMedia',
         'displayExpressCheckout',
         'DisplayFooterProduct',
         'displayPersonalInformationTop',
@@ -762,13 +763,13 @@ class Ps_checkout extends PaymentModule
      */
     public function hookActionAdminControllerSetMedia()
     {
-        $currentController = $this->context->controller->controller_name;
-
-        if ('AdminPayment' !== $currentController) {
-            return false;
+        if ('AdminPayment' === $this->context->controller->controller_name) {
+            $this->context->controller->addCss($this->_path . 'views/css/adminAfterHeader.css');
         }
 
-        $this->context->controller->addCss($this->_path . 'views/css/adminAfterHeader.css');
+        if ('AdminOrders' === $this->context->controller->controller_name) {
+            $this->context->controller->addJS($this->getPathUri() . 'views/js/adminOrderView.js?version=' . $this->version);
+        }
     }
 
     /**
@@ -999,7 +1000,7 @@ class Ps_checkout extends PaymentModule
     }
 
     /**
-     * This hook called on BO Order view page
+     * This hook called on BO Order view page before 1.7.7
      *
      * @param array $params
      *
@@ -1008,85 +1009,43 @@ class Ps_checkout extends PaymentModule
     public function hookDisplayAdminOrderLeft(array $params)
     {
         $order = new Order((int) $params['id_order']);
-        $errors = [];
-        $success = '';
 
         if ($order->module !== $this->name) {
             return '';
         }
 
-        $paypalOrderId = (new \OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
+        $this->context->smarty->assign([
+            'moduleLogoUri' => $this->getPathUri() . 'logo.png',
+            'moduleName' => $this->displayName,
+            'orderPrestaShopId' => $order->id,
+            'orderPayPalBaseUrl' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
+        ]);
 
-        if (empty($paypalOrderId)) {
+        return $this->display(__FILE__, '/views/templates/hook/displayAdminOrderLeft.tpl');
+    }
+
+    /**
+     * This hook called on BO Order view page after 1.7.7
+     *
+     * @param array $params
+     *
+     * @return string
+     */
+    public function hookDisplayAdminOrderMainBottom(array $params)
+    {
+        $order = new Order((int) $params['id_order']);
+
+        if ($order->module !== $this->name) {
             return '';
-        }
-
-        $orderPayPal = new \PrestaShop\Module\PrestashopCheckout\PaypalOrder($paypalOrderId);
-
-        if (false === $orderPayPal->isLoaded()) {
-            return '';
-        }
-
-        // @todo Quickwin to be refactored with new Service Container
-        if (Tools::getIsset('orderPayPalRefundAmount')) {
-            $transactionId = Tools::getValue('orderPayPalRefundTransaction');
-            $amount = Tools::getValue('orderPayPalRefundAmount');
-            $currency = Tools::getValue('orderPayPalRefundCurrency');
-
-            if (empty($transactionId) || false === Validate::isGenericName($transactionId)) {
-                $errors[] = $this->l('PayPal Transaction is invalid.', 'translations');
-            }
-
-            if (empty($amount) || false === Validate::isPrice($amount) || $amount <= 0) {
-                $errors[] = $this->l('PayPal refund amount is invalid.', 'translations');
-            }
-
-            if (empty($currency) || false === in_array($currency, ['AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'INR', 'ILS', 'JPY', 'MYR', 'MXN', 'TWD', 'NZD', 'NOK', 'PHP', 'PLN', 'GBP', 'RUB', 'SGD', 'SEK', 'CHF', 'THB', 'USD'])) {
-                // https://developer.paypal.com/docs/api/reference/currency-codes/
-                $errors[] = $this->l('PayPal refund currency is invalid.', 'translations');
-            }
-
-            if (empty($errors)) {
-                $response = (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order($this->context->link))->refund([
-                    'orderId' => $paypalOrderId,
-                    'captureId' => $transactionId,
-                    'payee' => [
-                        'merchant_id' => (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->getMerchantId(),
-                    ],
-                    'amount' => [
-                        'currency_code' => $currency,
-                        'value' => $amount,
-                    ],
-                    'note_to_payer' => 'Refund by '
-                        . \Configuration::get(
-                            'PS_SHOP_NAME',
-                            null,
-                            null,
-                            (int) \Context::getContext()->shop->id
-                        ),
-                ]);
-
-                if (isset($response['httpCode']) && $response['httpCode'] === 200) {
-                    $success = $this->l('Refund has been processed by PayPal.', 'translations');
-                    // Reload PayPal order
-                    $orderPayPal = new \PrestaShop\Module\PrestashopCheckout\PaypalOrder($paypalOrderId);
-                } else {
-                    $errors[] = $this->l('Refund cannot be processed by PayPal.', 'translations');
-                }
-            }
         }
 
         $this->context->smarty->assign([
             'moduleLogoUri' => $this->getPathUri() . 'logo.png',
             'moduleName' => $this->displayName,
-            'orderPayPalRefundErrors' => $errors,
-            'orderPayPalRefundSuccess' => $success,
-            'orderPayPalId' => $orderPayPal->getId(),
-            'orderPayPalStatus' => $orderPayPal->getStatus(),
-            'orderPayPalTransactions' => $orderPayPal->getTransactions(),
-            'orderPayPalRefundUrl' => $this->context->link->getAdminLink('AdminOrders') . '&vieworder&id_order=' . (int) $order->id . '#formAddPaymentPanel',
+            'orderPrestaShopId' => $order->id,
+            'orderPayPalBaseUrl' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
         ]);
 
-        return $this->display(__FILE__, '/views/templates/hook/displayAdminOrderLeft.tpl');
+        return $this->display(__FILE__, '/views/templates/hook/displayAdminOrderMainBottom.tpl');
     }
 }
