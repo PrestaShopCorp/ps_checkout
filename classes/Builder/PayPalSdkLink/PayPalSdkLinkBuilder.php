@@ -140,47 +140,47 @@ class PayPalSdkLinkBuilder
     {
         $fundingSourcesDisabled = [];
 
-        if (false === $this->payPalAccountRepository->isCreditOrDebitCardsEnabled()) {
+        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isCreditOrDebitCardsEnabled()) {
             $fundingSourcesDisabled[] = 'card';
         }
 
-        if (false === $this->payPalAccountRepository->isPayPalCreditEnabled()) {
+        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isPayPalCreditEnabled()) {
             $fundingSourcesDisabled[] = 'credit';
         }
 
-        if (false === $this->payPalAccountRepository->isVenmoEnabled()) {
+        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isVenmoEnabled()) {
             $fundingSourcesDisabled[] = 'venmo';
         }
 
-        if (false === $this->payPalAccountRepository->isSepaLastschriftEnabled()) {
+        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isSepaLastschriftEnabled()) {
             $fundingSourcesDisabled[] = 'sepa';
         }
 
-        if (false === $this->payPalAccountRepository->isBancontactEnabled()) {
+        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isBancontactEnabled()) {
             $fundingSourcesDisabled[] = 'bancontact';
         }
 
-        if (false === $this->payPalAccountRepository->isEpsEnabled()) {
+        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isEpsEnabled()) {
             $fundingSourcesDisabled[] = 'eps';
         }
 
-        if (false === $this->payPalAccountRepository->isGiropayEnabled()) {
+        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isGiropayEnabled()) {
             $fundingSourcesDisabled[] = 'giropay';
         }
 
-        if (false === $this->payPalAccountRepository->isIdealEnabled()) {
+        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isIdealEnabled()) {
             $fundingSourcesDisabled[] = 'ideal';
         }
 
-        if (false === $this->payPalAccountRepository->isMyBankEnabled()) {
+        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isMyBankEnabled()) {
             $fundingSourcesDisabled[] = 'mybank';
         }
 
-        if (false === $this->payPalAccountRepository->isPrzelewy24Enabled()) {
+        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isPrzelewy24Enabled()) {
             $fundingSourcesDisabled[] = 'p24';
         }
 
-        if (false === $this->payPalAccountRepository->isSofortEnabled()) {
+        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isSofortEnabled()) {
             $fundingSourcesDisabled[] = 'sofort';
         }
 
