@@ -35,22 +35,4 @@
   </div>
 </div>
 
-<script>
-  if (undefined !== ps_checkout) {
-    ps_checkout.initialize({
-      legacy: 0,
-      orderPrestaShopId: {$orderPrestaShopId|intval},
-      orderPayPalBaseUrl: '{$orderPayPalBaseUrl|escape:'javascript'}',
-      orderPayPalContainer: '.paypal-order-container',
-      orderPayPalLoaderContainer: '.paypal-order-loader',
-      orderPayPalNotificationsContainer: '.paypal-order-notifications',
-      orderPayPalRefundButton: '#ps_checkout button.refund',
-      orderPayPalModalContainerPrefix: '#ps-checkout-refund-',
-      orderPayPalModalContainer: '.ps-checkout-refund',
-      orderPayPalModalNotificationsContainer: '.modal-notifications',
-      orderPayPalModalContentContainer: '.modal-content-container',
-      orderPayPalModalLoaderContainer: '.modal-loader',
-      orderPayPalModalRefundForm: '.ps-checkout-refund-form',
-    });
-  }
-</script>
+{include file='./partials/adminOrderView.tpl' legacy=false orderPrestaShopId=$orderPrestaShopId orderPayPalBaseUrl=$orderPayPalBaseUrl}

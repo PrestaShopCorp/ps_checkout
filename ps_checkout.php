@@ -34,6 +34,7 @@ class Ps_checkout extends PaymentModule
     const HOOK_LIST = [
         'displayOrderConfirmation',
         'displayAdminOrderLeft',
+        'displayAdminOrderMainBottom',
         'actionObjectShopAddAfter',
         'actionAdminControllerSetMedia',
     ];
@@ -53,7 +54,6 @@ class Ps_checkout extends PaymentModule
         'actionBeforeCartUpdateQty',
         'header',
         'displayInvoiceLegalFreeText',
-        'displayAdminOrderMainBottom',
     ];
 
     /**
