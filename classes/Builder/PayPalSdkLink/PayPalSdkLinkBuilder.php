@@ -115,16 +115,6 @@ class PayPalSdkLinkBuilder
     /**
      * @return bool
      */
-    private function isSmartButtonsCardFundingDisabled()
-    {
-        return true === $this->isExpressCheckout
-            || true === $this->isDisplayOnlySmartButtons
-            || true === $this->payPalAccountRepository->cardHostedFieldsIsAvailable();
-    }
-
-    /**
-     * @return bool
-     */
     private function isSmartButtonsEnabled()
     {
         return false === $this->isDisplayOnlyHostedFields
@@ -150,9 +140,7 @@ class PayPalSdkLinkBuilder
     {
         $fundingSourcesDisabled = [];
 
-        if (false === $this->payPalAccountRepository->isCreditOrDebitCardsEnabled()
-            || true === $this->isSmartButtonsCardFundingDisabled()
-        ) {
+        if (false === $this->payPalAccountRepository->isCreditOrDebitCardsEnabled()) {
             $fundingSourcesDisabled[] = 'card';
         }
 
