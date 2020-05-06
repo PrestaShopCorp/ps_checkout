@@ -147,7 +147,7 @@ class OrderDispatcher implements Dispatcher
                 $order->payment,
                 $resource['id'],
                 \Currency::getCurrencyInstance(\Currency::getIdByIsoCode($resource['amount']['currency_code'])),
-                (new \DateTime($resource['create_time']))->format('Y-m-d H:i:s')
+                (new \DateTime($resource['create_time'], new \DateTimeZone(date_default_timezone_get())))->format('Y-m-d H:i:s')
             );
         }
 

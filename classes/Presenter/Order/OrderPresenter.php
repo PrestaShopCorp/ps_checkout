@@ -122,7 +122,7 @@ class OrderPresenter
                         'status' => $this->getTransactionStatus($refund['status']),
                         'amount' => $refund['amount']['value'],
                         'currency' => $refund['amount']['currency_code'],
-                        'date' => (new \DateTime($refund['create_time']))->format('Y-m-d H:i:s'),
+                        'date' => (new \DateTime($refund['create_time'], new \DateTimeZone(date_default_timezone_get())))->format('Y-m-d H:i:s'),
                         'isRefundable' => false,
                         'maxAmountRefundable' => 0,
                     ];
@@ -138,7 +138,7 @@ class OrderPresenter
                         'status' => $this->getTransactionStatus($payment['status']),
                         'amount' => $payment['amount']['value'],
                         'currency' => $payment['amount']['currency_code'],
-                        'date' => (new \DateTime($payment['create_time']))->format('Y-m-d H:i:s'),
+                        'date' => (new \DateTime($payment['create_time'], new \DateTimeZone(date_default_timezone_get())))->format('Y-m-d H:i:s'),
                         'isRefundable' => in_array($payment['status'], ['COMPLETED', 'PARTIALLY_REFUNDED']),
                         'maxAmountRefundable' => $maxAmountRefundable > 0 ? $maxAmountRefundable : 0,
                     ];
