@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use PrestaShop\Module\PrestashopCheckout\Presenter\Date\DatePresenter;
+
 class OrderDispatcher implements Dispatcher
 {
     const PS_CHECKOUT_PAYMENT_REVERSED = 'PaymentCaptureReversed';
@@ -147,7 +149,7 @@ class OrderDispatcher implements Dispatcher
                 $this->getPaymentMessageTranslation($resource),
                 $resource['id'],
                 \Currency::getCurrencyInstance(\Currency::getIdByIsoCode($resource['amount']['currency_code'])),
-                (new \DateTime($resource['create_time']))->format('Y-m-d H:i:s')
+                (new DatePresenter($resource['create_time'], 'Y-m-d H:i:s'))->present()
             );
         }
 
