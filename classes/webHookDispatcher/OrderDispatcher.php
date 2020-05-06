@@ -144,7 +144,7 @@ class OrderDispatcher implements Dispatcher
         if (true === $shouldAddOrderPayment) {
             $order->addOrderPayment(
                 $resource['amount']['value'],
-                $order->payment,
+                $this->getPaymentMessageTranslation($resource),
                 $resource['id'],
                 \Currency::getCurrencyInstance(\Currency::getIdByIsoCode($resource['amount']['currency_code'])),
                 (new \DateTime($resource['create_time']))->format('Y-m-d H:i:s')
@@ -224,5 +224,21 @@ class OrderDispatcher implements Dispatcher
         }
 
         return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
+    }
+
+    /**
+     * @param array $resource
+     *
+     * @return string
+     */
+    private function getPaymentMessageTranslation(array $resource)
+    {
+        $module = \Module::getInstanceByName('ps_checkout');
+
+        if (isset($resource['processor_response']['avs_code'])) {
+            return $module->l('Payment by card');
+        }
+
+        return $module->l('Payment by PayPal');
     }
 }
