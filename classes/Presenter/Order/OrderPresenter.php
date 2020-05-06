@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Order;
 
+use PrestaShop\Module\PrestashopCheckout\Presenter\Date\DatePresenter;
+
 class OrderPresenter
 {
     /**
@@ -122,7 +124,7 @@ class OrderPresenter
                         'status' => $this->getTransactionStatus($refund['status']),
                         'amount' => $refund['amount']['value'],
                         'currency' => $refund['amount']['currency_code'],
-                        'date' => (new \DateTime($refund['create_time'], new \DateTimeZone(\Configuration::get('PS_TIMEZONE'))))->format('Y-m-d H:i:s'),
+                        'date' => (new DatePresenter($refund['create_time'], 'Y-m-d H:i:s'))->present(),
                         'isRefundable' => false,
                         'maxAmountRefundable' => 0,
                     ];
@@ -138,7 +140,7 @@ class OrderPresenter
                         'status' => $this->getTransactionStatus($payment['status']),
                         'amount' => $payment['amount']['value'],
                         'currency' => $payment['amount']['currency_code'],
-                        'date' => (new \DateTime($payment['create_time'], new \DateTimeZone(\Configuration::get('PS_TIMEZONE'))))->format('Y-m-d H:i:s'),
+                        'date' => (new DatePresenter($payment['create_time'], 'Y-m-d H:i:s'))->present(),
                         'isRefundable' => in_array($payment['status'], ['COMPLETED', 'PARTIALLY_REFUNDED']),
                         'maxAmountRefundable' => $maxAmountRefundable > 0 ? $maxAmountRefundable : 0,
                     ];
