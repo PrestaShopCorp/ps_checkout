@@ -812,14 +812,12 @@ class Ps_checkout extends PaymentModule
      */
     public function hookActionFrontControllerSetMedia()
     {
-        if (false === $this->merchantIsValid()) {
-            return false;
+        if (Tools::getValue('controller') !== 'order') {
+            return;
         }
 
-        $currentPage = $this->context->controller->php_self;
-
-        if ($currentPage != 'order') {
-            return false;
+        if (false === $this->merchantIsValid()) {
+            return;
         }
 
         $this->context->controller->registerStylesheet(
