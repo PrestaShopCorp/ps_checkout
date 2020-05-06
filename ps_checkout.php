@@ -735,9 +735,7 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayAdminAfterHeader()
     {
-        $currentController = $this->context->controller->controller_name;
-
-        if ('AdminPayment' !== $currentController) {
+        if ('AdminPayment' !== Tools::getValue('controller')) {
             return false;
         }
 
@@ -763,11 +761,11 @@ class Ps_checkout extends PaymentModule
      */
     public function hookActionAdminControllerSetMedia()
     {
-        if ('AdminPayment' === $this->context->controller->controller_name) {
+        if ('AdminPayment' === Tools::getValue('controller')) {
             $this->context->controller->addCss($this->_path . 'views/css/adminAfterHeader.css');
         }
 
-        if ('AdminOrders' === $this->context->controller->controller_name) {
+        if ('AdminOrders' === Tools::getValue('controller')) {
             $this->context->controller->addJS($this->getPathUri() . 'views/js/adminOrderView.js?version=' . $this->version);
         }
     }
