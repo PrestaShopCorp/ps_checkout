@@ -17,13 +17,15 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 
 class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontController
 {
+    /** @var Ps_checkout */
+    public $module;
+
     public function initContent()
     {
         if ($this->checkIfContextIsValid()) {
@@ -51,6 +53,14 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
         }
 
         $isExpressCheckout = (bool) Tools::getValue('isExpressCheckout');
+
+        $this->module->getLogger()->info(sprintf(
+            'ValidateOrder PayPal Order Id : %s Payment Method : %s Express Checkout : %s Cart : %s',
+            $paypalOrderId,
+            $paymentMethod,
+            $isExpressCheckout ? 'true' : 'false',
+            Validate::isLoadedObject($this->context->cart) ? (int) $this->context->cart->id : 0
+        ));
 
         if ($isExpressCheckout) {
             // API call here

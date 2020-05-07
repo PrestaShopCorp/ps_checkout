@@ -37,9 +37,17 @@ class CheckoutLogger
             $path = _PS_ROOT_DIR_ . '/app/logs/ps_checkout';
         }
 
+        $isDebug = (bool) \Configuration::get(
+            'PS_CHECKOUT_DEBUG_LOGS_ENABLED',
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
+
         $rotatingFileHandler = new RotatingFileHandler(
             $path,
-            static::MAX_FILES
+            static::MAX_FILES,
+            $isDebug ? Logger::DEBUG : Logger::ERROR
         );
         $logger = new Logger('ps_checkout');
         $logger->pushHandler($rotatingFileHandler);

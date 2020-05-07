@@ -64,6 +64,9 @@ class ValidateOrder
      * @param array $payload array with all information required by PaymentModule->validateOrder()
      *
      * @return bool
+     *
+     * @throws PsCheckoutException
+     * @throws \PrestaShopException
      */
     public function validateOrder($payload)
     {
@@ -72,10 +75,7 @@ class ValidateOrder
         $order = $paypalOrder->getOrder();
 
         if (empty($order)) {
-            // @todo quickfix : Call API return nothing or fail
-            $message = sprintf('Unable to retrieve Paypal Order for %s', $this->paypalOrderId);
-            \PrestaShopLogger::addLog($message, 1, null, null, null, true);
-            throw new PsCheckoutException($message);
+            throw new PsCheckoutException(sprintf('Unable to retrieve Paypal Order for %s', $this->paypalOrderId));
         }
 
         $apiOrder = new Order(\Context::getContext()->link);
@@ -90,17 +90,10 @@ class ValidateOrder
                 $response = $apiOrder->authorize($order['id'], $this->merchantId);
                 break;
             default:
-                // @todo quickfix
-                $message = sprintf('Unknown Intent type %s, Paypal Order %s', $paypalOrder->getOrderIntent(), $this->paypalOrderId);
-                \PrestaShopLogger::addLog($message, 1, null, null, null, true);
-                throw new PsCheckoutException($message);
+                throw new PsCheckoutException(sprintf('Unknown Intent type %s, Paypal Order %s', $paypalOrder->getOrderIntent(), $this->paypalOrderId));
         }
 
         if (false === $response['status']) {
-            // @todo Quickfix
-            $message = sprintf('Unable to capture/authorize Paypal Order %s', $this->paypalOrderId);
-            \PrestaShopLogger::addLog($message, 1, null, null, null, true);
-
             return false;
         }
 
@@ -127,10 +120,7 @@ class ValidateOrder
         );
 
         if (false === $this->setOrdersMatrice($module->currentOrder, $this->paypalOrderId)) {
-            $this->setOrderState($module->currentOrder, self::CAPTURE_STATUS_DECLINED, $payload['paymentMethod']);
-            $message = sprintf('Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s', $module->currentOrder, $this->paypalOrderId);
-            \PrestaShopLogger::addLog($message, 1, null, null, null, true);
-            throw new PsCheckoutException($message);
+            throw new PsCheckoutException(sprintf('Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s', $module->currentOrder, $this->paypalOrderId));
         }
 
         $this->setOrderState(
