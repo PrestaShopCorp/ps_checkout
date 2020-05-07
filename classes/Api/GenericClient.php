@@ -21,6 +21,8 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
 
 /**
@@ -74,30 +76,32 @@ class GenericClient
      */
     protected function post(array $options = [])
     {
-        $response = $this->getClient()->post($this->getRoute(), $options);
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+
+        try {
+            $response = $this->getClient()->post($this->getRoute(), $options);
+        } catch (RequestException $exception) {
+            $module->getLogger()->error('route ' . $this->getRoute());
+            $module->getLogger()->error('options ' . var_export($options, true));
+            if ($exception->hasResponse()) {
+                $module->getLogger()->error('body ' . $exception->getResponse()->getBody());
+            }
+            $module->getLogger()->error('exception ' . $exception->getMessage());
+
+            return [
+                'status' => false,
+                'httpCode' => $exception->hasResponse() ? $exception->getResponse()->getStatusCode() : 500,
+                'body' => $exception->hasResponse() ? $exception->getResponse()->getBody() : '',
+            ];
+        }
 
         $responseHandler = new ResponseApiHandler();
-
         $response = $responseHandler->handleResponse($response);
 
-        $logsEnabled = (bool) \Configuration::get(
-            'PS_CHECKOUT_DEBUG_LOGS_ENABLED',
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
-
-        // If response is not successful only
-        if ($logsEnabled && !$response['status']) {
-            /**
-             * @var \Ps_checkout
-             */
-            $module = \Module::getInstanceByName('ps_checkout');
-            $logger = $module->getLogger();
-            $logger->debug('route ' . $this->getRoute());
-            $logger->debug('options ' . var_export($options, true));
-            $logger->debug('response ' . var_export($response, true));
-        }
+        $module->getLogger()->log(false === $response['status'] ? Logger::ERROR : Logger::INFO, 'route ' . $this->getRoute());
+        $module->getLogger()->log(false === $response['status'] ? Logger::ERROR : Logger::INFO, 'options ' . var_export($options, true));
+        $module->getLogger()->log(false === $response['status'] ? Logger::ERROR : Logger::INFO, 'response ' . var_export($response, true));
 
         return $response;
     }

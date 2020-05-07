@@ -49,7 +49,7 @@ function removeFromFsDuringUpgrade(array $files)
 /**
  * Update main function for module Version 1.2.9
  *
- * @param Module $module
+ * @param Ps_checkout $module
  *
  * @return bool
  */
@@ -63,7 +63,7 @@ function upgrade_module_1_2_9($module)
     if (file_exists($path)) {
         $result = removeFromFsDuringUpgrade([$path]);
         if ($result !== true) {
-            PrestaShopLogger::addLog('Could not delete PHPUnit from module. ' . $result, 3);
+            $module->getLogger()->error('Could not delete PHPUnit from module.');
 
             return false;
         }

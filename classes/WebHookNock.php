@@ -35,7 +35,10 @@ class WebHookNock
         headers_list();
 
         $bodyReturn = json_encode($headerDatas);
-        \PrestaShopLoggerCore::addLog('[PSPwebhook] ' . $bodyReturn, 3, null, null, null, true);
+
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        $module->getLogger()->error($bodyReturn);
 
         echo $bodyReturn;
     }

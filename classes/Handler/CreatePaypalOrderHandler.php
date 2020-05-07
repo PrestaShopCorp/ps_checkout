@@ -96,6 +96,14 @@ class CreatePaypalOrderHandler
             }
         }
 
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        $module->getLogger()->info(sprintf(
+            'Create PayPal Order %s from cart %s',
+            $paypalOrder['body']['id'],
+            $this->context->cart->id
+        ));
+
         return $paypalOrder;
     }
 }
