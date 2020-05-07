@@ -279,12 +279,15 @@ class PaypalAccountRepository
      */
     private function isPaymentMethodEnabled($paymentMethod)
     {
+        if (false === \Configuration::hasKey($paymentMethod)) {
+            return true;
+        }
+
         return (bool) \Configuration::get(
             $paymentMethod,
             null,
             null,
-            (int) \Context::getContext()->shop->id,
-            true
+            (int) \Context::getContext()->shop->id
         );
     }
 }
