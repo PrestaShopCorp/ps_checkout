@@ -133,12 +133,17 @@ class OrderDispatcher implements Dispatcher
         $order = new \Order($orderId);
         $currentOrderStateId = (int) $order->getCurrentState();
         $newOrderStateId = (int) $this->getNewState($eventType, $resource, $currentOrderStateId);
+        $orderPaymentCollection = $order->getOrderPaymentCollection();
+        $orderPaymentCollection->where('amount', '=', $resource['amount']['value']);
         $shouldAddOrderPayment = true;
 
         /** @var \OrderPayment[] $orderPayments */
-        $orderPayments = $order->getOrderPaymentCollection();
+        $orderPayments = $orderPaymentCollection->getAll();
         foreach ($orderPayments as $orderPayment) {
-            if ($orderPayment->transaction_id === $resource['id']) {
+            if (\Validate::isLoadedObject($orderPayment)) {
+                $orderPayment->transaction_id = $resource['id'];
+                $orderPayment->payment_method = $this->getPaymentMessageTranslation($resource);
+                $orderPayment->save();
                 $shouldAddOrderPayment = false;
             }
         }
