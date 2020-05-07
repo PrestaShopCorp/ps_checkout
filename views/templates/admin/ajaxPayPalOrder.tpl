@@ -17,30 +17,31 @@
  * International Registered Trademark & Property of PrestaShop SA
  *}
 
-<div class="row mt-3">
-  <div class="col-md-6">
-    <p class="mb-1">
-      <strong>
-        {l s='PayPal Order Id' mod='ps_checkout'}
-      </strong>
-    </p>
-    <p>
-      {$orderPayPal.id|escape:'html':'UTF-8'}
-    </p>
-  </div>
-  <div class="col-md-6">
-    <p class="mb-1">
-      <strong>{l s='PayPal Order Status' mod='ps_checkout'}</strong>
-    </p>
-    <p>
-      <span class="badge rounded badge-{$orderPayPal.status.class|escape:'html':'UTF-8'}" data-value="{$orderPayPal.status.value|escape:'html':'UTF-8'}">
-        {$orderPayPal.status.translated|escape:'html':'UTF-8'}
-      </span>
-    </p>
+<div class="info-block">
+  <div class="row mt-3">
+    <div class="col-md-6">
+      <p class="mb-1">
+        <strong>
+          {l s='PayPal Order Id' mod='ps_checkout'}
+        </strong>
+      </p>
+      <p>
+        {$orderPayPal.id|escape:'html':'UTF-8'}
+      </p>
+    </div>
+    <div class="col-md-6">
+      <p class="mb-1">
+        <strong>{l s='PayPal Order Status' mod='ps_checkout'}</strong>
+      </p>
+      <p>
+        <span class="badge rounded badge-{$orderPayPal.status.class|escape:'html':'UTF-8'}" data-value="{$orderPayPal.status.value|escape:'html':'UTF-8'}">
+          {$orderPayPal.status.translated|escape:'html':'UTF-8'}
+        </span>
+      </p>
+    </div>
   </div>
 </div>
 {if !empty($orderPayPal.transactions)}
-  <p>{l s='See here all transactions linked to that order. If needed, send a refund request by entering the corresponding amount in the form just below.' mod='ps_checkout'}</p>
   <table class="table">
     <thead>
     <tr>

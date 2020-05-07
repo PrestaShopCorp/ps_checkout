@@ -17,20 +17,31 @@
  * International Registered Trademark & Property of PrestaShop SA
  *}
 
-<div class="row" xmlns="http://www.w3.org/1999/html">
+<div class="well row" xmlns="http://www.w3.org/1999/html">
   <div class="col-xs-6">
-    <strong>{l s='PayPal Order Id' mod='ps_checkout'}</strong> {$orderPayPal.id|escape:'html':'UTF-8'}
+    <dl class="list-detail">
+      <dt>
+        {l s='PayPal Order Id:' mod='ps_checkout'}
+      </dt>
+      <dd>
+        {$orderPayPal.id|escape:'html':'UTF-8'}
+      </dd>
+    </dl>
   </div>
   <div class="col-xs-6">
-    <strong>{l s='PayPal Order Status' mod='ps_checkout'}</strong>
-    <span class="span label label-{$orderPayPal.status.class|escape:'html':'UTF-8'}" data-value="{$orderPayPal.status.value|escape:'html':'UTF-8'}">
-      {$orderPayPal.status.translated|escape:'html':'UTF-8'}
-    </span>
+    <dl class="list-detail">
+      <dt>
+        {l s='PayPal Order Status:' mod='ps_checkout'}
+      </dt>
+      <dd>
+        <span class="span label label-{$orderPayPal.status.class|escape:'html':'UTF-8'}" data-value="{$orderPayPal.status.value|escape:'html':'UTF-8'}">
+          {$orderPayPal.status.translated|escape:'html':'UTF-8'}
+        </span>
+      </dd>
+    </dl>
   </div>
 </div>
 {if !empty($orderPayPal.transactions)}
-  <hr>
-  <p>{l s='See here all transactions linked to that order. If needed, send a refund request by entering the corresponding amount in the form just below.' mod='ps_checkout'}</p>
   <div class="table-responsive">
     <table class="table">
       <thead>
@@ -153,6 +164,14 @@
 {/if}
 
 <style>
+  #ps_checkout dl.list-detail {
+    margin-bottom: 0;
+  }
+
+  #ps_checkout dl.list-detail dt {
+    margin-bottom: .3125rem;
+  }
+
   #ps_checkout .label.label-payment {
     background-color: #00B887;
   }
