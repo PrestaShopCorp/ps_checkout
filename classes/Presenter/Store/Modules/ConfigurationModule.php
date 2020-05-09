@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
+use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
@@ -55,12 +56,27 @@ class ConfigurationModule implements PresenterInterface
                     null,
                     (int) \Context::getContext()->shop->id
                 ),
-                'debugLogsEnabled' => (bool) \Configuration::get(
-                    'PS_CHECKOUT_DEBUG_LOGS_ENABLED',
-                    null,
-                    null,
-                    (int) \Context::getContext()->shop->id
-                ),
+                'logger' => [
+                    'levels' => [
+                        Logger::DEBUG => 'DEBUG : Detailed debug information',
+                        // Logger::INFO => 'INFO : Interesting events',
+                        // Logger::NOTICE => 'NOTICE : Normal but significant events',
+                        // Logger::WARNING => 'WARNING : Exceptional occurrences that are not errors',
+                        Logger::ERROR => 'ERROR : Runtime errors that do not require immediate action',
+                        // Logger::CRITICAL => 'CRITICAL : Critical conditions',
+                        // Logger::ALERT => 'ALERT : Action must be taken immediately',
+                        // Logger::EMERGENCY => 'EMERGENCY : system is unusable',
+                    ],
+                    'httpFormats' => [
+                        'CLF' => 'Apache Common Log Format',
+                        'DEBUG' => 'Debug format',
+                        'SHORT' => 'Short format',
+                    ],
+                    'level' => (int) \Configuration::getGlobalValue('PS_CHECKOUT_LOGGER_LEVEL'),
+                    'maxFiles' => (int) \Configuration::getGlobalValue('PS_CHECKOUT_LOGGER_MAX_FILES'),
+                    'http' => (int) \Configuration::getGlobalValue('PS_CHECKOUT_LOGGER_HTTP'),
+                    'httpFormat' => \Configuration::getGlobalValue('PS_CHECKOUT_LOGGER_HTTP_FORMAT'),
+                ],
                 'expressCheckout' => [
                     'orderPage' => (bool) \Configuration::get(
                         'PS_CHECKOUT_EC_ORDER_PAGE',

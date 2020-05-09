@@ -79,6 +79,12 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         $this->context->cookie->__set('paypalOrderId', $paypalOrder['id']);
         $this->context->cookie->__set('paypalEmail', $paypalOrder['payer']['email_address']);
 
+        $this->module->getLogger()->info(sprintf(
+            'Express checkout - token : %s PayPal Order : %s',
+            $token,
+            $paypalOrder->id
+        ));
+
         $this->redirectToCheckout();
     }
 
