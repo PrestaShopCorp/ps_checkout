@@ -32,119 +32,172 @@ function upgrade_module_1_4_0($module)
 {
     $result = true;
 
-    // Remove our ModuleAdminControllers from SEO & URLs page
-    $metaCollection = new PrestaShopCollection('Meta');
-    $metaCollection->where('page', 'like', 'module-' . $module->name . '-Admin%');
+    try {
+        $db = Db::getInstance();
 
-    foreach ($metaCollection->getAll() as $meta) {
-        /** @var Meta $meta */
-        $result = $result && (bool) $meta->delete();
-    }
+        // Remove our ModuleAdminControllers from SEO & URLs page
+        $queryMeta = new DbQuery();
+        $queryMeta->select('id_meta');
+        $queryMeta->from('meta');
+        $queryMeta->where('page LIKE "module-' . $module->name . '-Admin%"');
+        $queryMetaResults = $db->executeS($queryMeta);
 
-    // Fix multiple OrderState created in multishop before 1.3.0
-    $db = \Db::getInstance();
+        if (false === empty($queryMetaResults)) {
+            foreach ($queryMetaResults as $queryMetaResult) {
+                $result = $result && (bool) $db->delete(
+                    'meta',
+                    'id_meta = ' . (int) $queryMetaResult['id_meta']
+                );
 
-    $queryConfigurationResults = $db->executeS('
-        SELECT c.id_configuration, c.name, c.value, c.id_shop, c.id_shop_group, os.id_order_state
-        FROM `' . _DB_PREFIX_ . 'configuration` AS c
-        LEFT JOIN `' . _DB_PREFIX_ . 'order_state` AS os ON (c.value = os.id_order_state)
-        WHERE c.name LIKE "PS_CHECKOUT_STATE_%"
-    ');
+                if (false === $result) {
+                    $module->getLogger()->debug('Upgrade 1.4.0 - Failed to delete Meta ' . $queryMetaResult['id_meta']);
+                }
 
-    $orderStatesToClean = [
-        'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT',
-        'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT',
-        'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT',
-        'PS_CHECKOUT_STATE_AUTHORIZED',
-        'PS_CHECKOUT_STATE_PARTIAL_REFUND',
-        'PS_CHECKOUT_STATE_WAITING_CAPTURE',
-    ];
-    $orderStateRows = [];
+                $result = $result && (bool) $db->delete(
+                    'meta_lang',
+                    'id_meta = ' . (int) $queryMetaResult['id_meta']
+                );
 
-    if (false === empty($queryConfigurationResults)) {
-        foreach ($queryConfigurationResults as $queryConfigurationResult) {
-            if (false === in_array($queryConfigurationResult['name'], $orderStatesToClean, true)) {
-                continue;
-            }
-
-            $orderStateRows[$queryConfigurationResult['name']][] = [
-                'id_configuration' => $queryConfigurationResult['id_configuration'],
-                'id_order_state' => $queryConfigurationResult['id_order_state'],
-            ];
-        }
-    }
-
-    foreach ($orderStateRows as $orderStateRow) {
-        $isGlobalValueSaved = false;
-        foreach ($orderStateRow as $index => $data) {
-            if (false === empty($data['id_order_state'])) {
-                if (false === $isGlobalValueSaved) {
-                    // Set value global for all shops
-                    $result = $result && $db->update(
-                        'configuration',
-                        [
-                            'id_shop' => null,
-                            'id_shop_group' => null,
-                        ],
-                        'id_configuration = ' . (int) $data['id_configuration'],
-                        0,
-                         true
-                    );
-
-                    if ($result) {
-                        $isGlobalValueSaved = true;
-                        // Skip deletion of this configuration
-                        continue;
-                    }
-                } else {
-                    // Mark this duplicated OrderState as deleted
-                    $result = $result && $db->update(
-                        'order_state',
-                        [
-                            'deleted' => 1,
-                        ],
-                        'id_order_state = ' . (int) $data['id_order_state']
-                    );
+                if (false === $result) {
+                    $module->getLogger()->debug('Upgrade 1.4.0 - Failed to delete MetaLang ' . $queryMetaResult['id_meta']);
                 }
             }
-
-            // Remove this OrderState identifier from Configuration
-            $result = $result && $db->delete(
-                'configuration',
-                'id_configuration = ' . (int) $data['id_configuration']
-            );
         }
-    }
 
-    // Mark OrderState created by older module installation who failed as deleted
-    $queryOrderState = new \DbQuery();
-    $queryOrderState->select('id_order_state');
-    $queryOrderState->from('order_state');
-    $queryOrderState->where('module_name = "' . $module->name . '"');
-    $queryOrderState->where('deleted = 0');
+        // Fix multiple OrderState created in multishop before 1.3.0
+        $queryConfigurationResults = $db->executeS('
+            SELECT c.id_configuration, c.name, c.value, c.id_shop, c.id_shop_group, os.id_order_state
+            FROM `' . _DB_PREFIX_ . 'configuration` AS c
+            LEFT JOIN `' . _DB_PREFIX_ . 'order_state` AS os ON (c.value = os.id_order_state)
+            WHERE c.name LIKE "PS_CHECKOUT_STATE_%"
+        ');
 
-    if (false === empty($queryConfigurationResults)) {
-        $queryOrderState->where('`id_order_state` NOT IN (' . implode(',', array_column($queryConfigurationResults, 'id_order_state')) . ')');
-    }
+        $orderStatesToClean = [
+            'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT',
+            'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT',
+            'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT',
+            'PS_CHECKOUT_STATE_AUTHORIZED',
+            'PS_CHECKOUT_STATE_PARTIAL_REFUND',
+            'PS_CHECKOUT_STATE_WAITING_CAPTURE',
+        ];
+        $orderStateRows = [];
 
-    $queryOrderStateResults = $db->executeS($queryOrderState);
+        if (false === empty($queryConfigurationResults)) {
+            foreach ($queryConfigurationResults as $queryConfigurationResult) {
+                if (false === in_array($queryConfigurationResult['name'], $orderStatesToClean, true)) {
+                    continue;
+                }
 
-    if (false === empty($queryOrderStateResults)) {
-        foreach ($queryOrderStateResults as $queryOrderStateResult) {
-            $result = $result && $db->update(
+                $orderStateRows[$queryConfigurationResult['name']][] = [
+                    'id_configuration' => $queryConfigurationResult['id_configuration'],
+                    'id_order_state' => $queryConfigurationResult['id_order_state'],
+                ];
+            }
+        }
+
+        foreach ($orderStateRows as $orderStateRow) {
+            $isGlobalValueSaved = false;
+            foreach ($orderStateRow as $index => $data) {
+                if (false === empty($data['id_order_state'])) {
+                    if (false === $isGlobalValueSaved) {
+                        // Set value global for all shops
+                        $result = $result && (bool) $db->update(
+                            'configuration',
+                            [
+                                'id_shop' => null,
+                                'id_shop_group' => null,
+                            ],
+                            'id_configuration = ' . (int) $data['id_configuration'],
+                            0,
+                            true
+                        );
+
+                        if (false === $result) {
+                            $module->getLogger()->debug('Upgrade 1.4.0 - Failed to update Configuration ' . $data['id_configuration']);
+                        }
+
+                        if (true === $result) {
+                            $isGlobalValueSaved = true;
+                            // Skip deletion of this configuration
+                            continue;
+                        }
+                    } else {
+                        // Mark this duplicated OrderState as deleted
+                        $result = $result && (bool) $db->update(
+                            'order_state',
+                            [
+                                'deleted' => 1,
+                            ],
+                            'id_order_state = ' . (int) $data['id_order_state']
+                        );
+
+                        if (false === $result) {
+                            $module->getLogger()->debug('Upgrade 1.4.0 - Failed to update OrderState ' . $data['id_order_state']);
+                        }
+                    }
+                }
+
+                // Remove this OrderState identifier from Configuration
+                $result = $result && (bool) $db->delete(
+                    'configuration',
+                    'id_configuration = ' . (int) $data['id_configuration']
+                );
+
+                if (false === $result) {
+                    $module->getLogger()->debug('Upgrade 1.4.0 - Failed to delete Configuration ' . $data['id_configuration']);
+                }
+            }
+        }
+
+        // Mark OrderState created by older module installation who failed as deleted
+        $queryOrderState = new DbQuery();
+        $queryOrderState->select('id_order_state');
+        $queryOrderState->from('order_state');
+        $queryOrderState->where('module_name = "' . $module->name . '"');
+        $queryOrderState->where('deleted = 0');
+
+        if (false === empty($queryConfigurationResults)) {
+            $queryOrderState->where('`id_order_state` NOT IN (' . implode(',', array_column($queryConfigurationResults, 'id_order_state')) . ')');
+        }
+
+        $queryOrderStateResults = $db->executeS($queryOrderState);
+
+        if (false === empty($queryOrderStateResults)) {
+            foreach ($queryOrderStateResults as $queryOrderStateResult) {
+                $result = $result && (bool) $db->update(
                     'order_state',
                     [
                         'deleted' => 1,
                     ],
                     'id_order_state = ' . (int) $queryOrderStateResult['id_order_state']
                 );
+
+                if (false === $result) {
+                    $module->getLogger()->debug('Upgrade 1.4.0 - Failed to update OrderState ' . $queryOrderStateResult['id_order_state']);
+                }
+            }
         }
+    } catch (Exception $exception) {
+        $module->getLogger()->debug('Upgrade 1.4.0 - ' . $exception->getMessage());
+        $result = false;
     }
 
-    return $result
-        && $module->registerHook('displayAdminOrderLeft')
-        && $module->registerHook('displayAdminOrderMainBottom')
-        && $module->registerHook('actionAdminControllerSetMedia')
-        && $module->unregisterHook('actionOrderSlipAdd')
-        && $module->unregisterHook('actionOrderStatusUpdate');
+    $result = $result
+        && (bool) $module->registerHook('displayAdminOrderLeft')
+        && (bool) $module->registerHook('displayAdminOrderMainBottom')
+        && (bool) $module->registerHook('actionAdminControllerSetMedia');
+
+    if (false === $result) {
+        $module->getLogger()->debug('Upgrade 1.4.0 - Failed to register hooks');
+    }
+
+    $result = $result
+        && (bool) $module->unregisterHook('actionOrderSlipAdd')
+        && (bool) $module->unregisterHook('actionOrderStatusUpdate');
+
+    if (false === $result) {
+        $module->getLogger()->debug('Upgrade 1.4.0 - Failed to unregister hooks');
+    }
+
+    return $result;
 }
