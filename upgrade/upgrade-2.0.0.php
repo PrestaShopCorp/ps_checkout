@@ -1,3 +1,4 @@
+<?php
 /**
  * 2007-2020 PrestaShop and Contributors
  *
@@ -16,14 +17,21 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-export const UPDATE_PAYMENT_METHODS_ORDER = 'UPDATE_PAYMENT_METHODS_ORDER';
-export const UPDATE_PAYMENT_MODE = 'UPDATE_PAYMENT_MODE';
-export const UPDATE_CAPTURE_MODE = 'UPDATE_CAPTURE_MODE';
-export const UPDATE_PAYMENT_CARD_AVAILABILITY = 'UPDATE_PAYMENT_CARD_AVAILABILITY';
-export const UPDATE_EC_ORDER_PAGE = 'UPDATE_EC_ORDER_PAGE';
-export const UPDATE_EC_CHECKOUT_PAGE = 'UPDATE_EC_CHECKOUT_PAGE';
-export const UPDATE_EC_PRODUCT_PAGE = 'UPDATE_EC_PRODUCT_PAGE';
-export const UPDATE_LOGGER_LEVEL = 'UPDATE_LOGGER_LEVEL';
-export const UPDATE_LOGGER_MAX_FILES = 'UPDATE_LOGGER_MAX_FILES';
-export const UPDATE_LOGGER_HTTP = 'UPDATE_LOGGER_HTTP';
-export const UPDATE_LOGGER_HTTP_FORMAT = 'UPDATE_LOGGER_HTTP_FORMAT';
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Update main function for module version 2.0.0
+ *
+ * @param Module $module
+ *
+ * @return bool
+ */
+function upgrade_module_2_0_0($module)
+{
+    return (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_MAX_FILES', '15')
+        && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_LEVEL', \Monolog\Logger::ERROR)
+        && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP', '1')
+        && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP_FORMAT', 'DEBUG');
+}

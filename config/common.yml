@@ -9,9 +9,26 @@ services:
       - 'ps_checkout'
 
   ps_checkout.cache.directory:
-    lazy: true
     class: 'PrestaShop\Module\PrestashopCheckout\Cache\CacheDirectory'
     arguments:
       - !php/const _PS_VERSION_
       - !php/const _PS_ROOT_DIR_
       - !php/const _PS_MODE_DEV_
+
+  ps_checkout.logger.directory:
+    class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory'
+    arguments:
+      - !php/const _PS_VERSION_
+      - !php/const _PS_ROOT_DIR_
+
+  ps_checkout.logger.factory:
+    class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory'
+    arguments:
+      - '@ps_checkout.logger.directory'
+      - '@ps_checkout.module'
+
+  ps_checkout.logger:
+    class: 'Psr\Log\LoggerInterface'
+    factory: ['@ps_checkout.logger.factory', 'build']
+    arguments:
+      - '@ps_checkout.logger.directory'

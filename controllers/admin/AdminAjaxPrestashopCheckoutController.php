@@ -17,10 +17,14 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
+use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
+use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
+use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
 use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter;
@@ -34,6 +38,11 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {
+    /**
+     * @var Ps_checkout
+     */
+    public $module;
+
     /**
      * AJAX: Update payment method order
      */
@@ -358,20 +367,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Toggle logs for debug
-     */
-    public function ajaxProcessToggleDebugLogs()
-    {
-        Configuration::updateValue(
-            'PS_CHECKOUT_DEBUG_LOGS_ENABLED',
-            Tools::getValue('status') ? 1 : 0,
-            false,
-            null,
-            (int) Context::getContext()->shop->id
-        );
-    }
-
-    /**
      * @todo To be refactored with Service Container
      */
     public function ajaxProcessFetchOrder()
@@ -531,5 +526,206 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 ],
             ]));
         }
+    }
+
+    /**
+     * @todo To be improved in v2.0.0
+     */
+    public function ajaxProcessUpdateLoggerLevel()
+    {
+        $levels = [
+            Logger::DEBUG,
+            Logger::INFO,
+            Logger::NOTICE,
+            Logger::WARNING,
+            Logger::ERROR,
+            Logger::CRITICAL,
+            Logger::ALERT,
+            Logger::EMERGENCY,
+        ];
+        $level = (int) Tools::getValue('level');
+
+        if (false === in_array($level, $levels, true)) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    'Logger level is invalid',
+                ],
+            ]));
+        }
+
+        if (false === (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_LEVEL', $level)) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    'Unable to save logger level in PrestaShop Configuration',
+                ],
+            ]));
+        }
+
+        $this->ajaxDie(json_encode([
+            'status' => true,
+            'content' => [
+                'level' => $level,
+            ],
+        ]));
+    }
+
+    /**
+     * @todo To be improved in v2.0.0
+     */
+    public function ajaxProcessUpdateLoggerHttpFormat()
+    {
+        $formats = [
+            'CLF',
+            'DEBUG',
+            'SHORT',
+        ];
+        $format = Tools::getValue('httpFormat');
+
+        if (false === in_array($format, $formats, true)) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    'Logger http format is invalid',
+                ],
+            ]));
+        }
+
+        if (false === (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP_FORMAT', $format)) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    'Unable to save logger http format in PrestaShop Configuration',
+                ],
+            ]));
+        }
+
+        $this->ajaxDie(json_encode([
+            'status' => true,
+            'content' => [
+                'httpFormat' => $format,
+            ],
+        ]));
+    }
+
+    /**
+     * @todo To be improved in v2.0.0
+     */
+    public function ajaxProcessUpdateLoggerHttp()
+    {
+        $isEnabled = (bool) Tools::getValue('isEnabled');
+
+        if (false === (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP', (int) $isEnabled)) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    'Unable to save logger http in PrestaShop Configuration',
+                ],
+            ]));
+        }
+
+        $this->ajaxDie(json_encode([
+            'status' => true,
+            'content' => [
+                'isEnabled' => (int) $isEnabled,
+            ],
+        ]));
+    }
+
+    /**
+     * @todo To be improved in v2.0.0
+     */
+    public function ajaxProcessUpdateLoggerMaxFiles()
+    {
+        $maxFiles = (int) Tools::getValue('maxFiles');
+
+        if ($maxFiles < 0 || $maxFiles > 30) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    'Logger max files is invalid',
+                ],
+            ]));
+        }
+
+        if (false === (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_MAX_FILES', $maxFiles)) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    'Unable to save logger max files in PrestaShop Configuration',
+                ],
+            ]));
+        }
+
+        $this->ajaxDie(json_encode([
+            'status' => true,
+            'content' => [
+                'maxFiles' => $maxFiles,
+            ],
+        ]));
+    }
+
+    /**
+     * AJAX: Get logs files
+     */
+    public function ajaxProcessGetLogFiles()
+    {
+        /** @var LoggerFileFinder $loggerFileFinder */
+        $loggerFileFinder = $this->module->getService('ps_checkout.logger.file.finder');
+
+        header('Content-type: application/json');
+        $this->ajaxDie(json_encode($loggerFileFinder->getLogFileNames()));
+    }
+
+    /**
+     * AJAX: Read a log file
+     */
+    public function ajaxProcessGetLogs()
+    {
+        header('Content-type: application/json');
+
+        $filename = Tools::getValue('file');
+        $offset = (int) Tools::getValue('offset');
+        $limit = (int) Tools::getValue('limit');
+
+        if (empty($filename) || false === Validate::isFileName($filename)) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    'Filename is invalid.',
+                ],
+            ]));
+        }
+
+        /** @var LoggerDirectory $loggerDirectory */
+        $loggerDirectory = $this->module->getService('ps_checkout.logger.directory');
+        /** @var LoggerFileReader $loggerFileReader */
+        $loggerFileReader = $this->module->getService('ps_checkout.logger.file.reader');
+
+        try {
+            $fileData = $loggerFileReader->read(
+                new SplFileObject($loggerDirectory->getPath() . $filename),
+                $offset,
+                $limit
+            );
+        } catch (Exception $exception) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    $exception->getMessage(),
+                ],
+            ]));
+        }
+
+        $this->ajaxDie(json_encode([
+            'status' => true,
+            'file' => $fileData['filename'],
+            'offset' => $fileData['offset'],
+            'limit' => $fileData['limit'],
+            'currentOffset' => $fileData['currentOffset'],
+            'eof' => (int) $fileData['eof'],
+            'lines' => $fileData['lines'],
+        ]));
     }
 }

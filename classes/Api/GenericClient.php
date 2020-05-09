@@ -22,9 +22,10 @@ namespace PrestaShop\Module\PrestashopCheckout\Api;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Ring\Exception\RingException;
-use Monolog\Logger;
+use GuzzleHttp\Subscriber\Log\Formatter;
+use GuzzleHttp\Subscriber\Log\LogSubscriber;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
+use Psr\Log\LoggerInterface;
 
 /**
  * Construct the client used to make call to maasland
@@ -77,23 +78,37 @@ class GenericClient
      */
     protected function post(array $options = [])
     {
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
+        if (true === (bool) $this->getConfiguration('PS_CHECKOUT_LOGGER_HTTP', true)) {
+            /** @var \Ps_checkout $module */
+            $module = \Module::getInstanceByName('ps_checkout');
+            /** @var LoggerInterface $logger */
+            $logger = $module->getService('ps_checkout.logger');
 
-        try {
-            $response = $this->getClient()->post($this->getRoute(), $options);
-        } catch (RequestException $exception) {
-            return $this->handleException($module, $exception, $options);
-        } catch (RingException $exception) {
-            return $this->handleException($module, $exception, $options);
+            $subscriber = new LogSubscriber(
+                $logger,
+                $this->getLogFormatter()
+            );
+            $this->client->getEmitter()->attach($subscriber);
         }
 
-        $responseHandler = new ResponseApiHandler();
-        $response = $responseHandler->handleResponse($response);
-
-        $module->getLogger()->log(false === $response['status'] ? Logger::ERROR : Logger::INFO, 'route ' . $this->getRoute());
-        $module->getLogger()->log(false === $response['status'] ? Logger::ERROR : Logger::INFO, 'options ' . var_export($options, true));
-        $module->getLogger()->log(false === $response['status'] ? Logger::ERROR : Logger::INFO, 'response ' . var_export($response, true));
+        try {
+            $clientResponse = $this->client->post($this->getRoute(), $options);
+            $responseHandler = new ResponseApiHandler();
+            $response = $responseHandler->handleResponse($clientResponse);
+        } catch (RequestException $exception) {
+            $response = [
+                'status' => false,
+                'httpCode' => $exception->hasResponse() ? $exception->getResponse()->getStatusCode() : 500,
+                'body' => $exception->hasResponse() ? json_decode($exception->getResponse()->getBody(), true) : '',
+                'exception' => $exception->getMessage(),
+            ];
+        } catch (\Exception $exception) {
+            $response = [
+                'status' => false,
+                'httpCode' => 500,
+                'exception' => $exception->getMessage(),
+            ];
+        }
 
         return $response;
     }
@@ -198,32 +213,43 @@ class GenericClient
         return $this->catchExceptions;
     }
 
-    private function handleException(\Ps_checkout $module, \Exception $exception, $options = [])
+    /**
+     * @todo To be moved elsewhere
+     *
+     * @param string $key
+     * @param mixed $defaultValue
+     *
+     * @return mixed
+     */
+    private function getConfiguration($key, $defaultValue)
     {
-        $body = null;
-        $httpCode = 500;
-        $hasResponse = method_exists($exception, 'hasResponse') ? $exception->hasResponse() : false;
-
-        if (true === $hasResponse && method_exists($exception, 'getResponse')) {
-            $body = $exception->getResponse()->getBody();
-            $httpCode = $exception->getResponse()->getStatusCode();
+        if (false === \Configuration::hasKey($key)) {
+            return $defaultValue;
         }
 
-        $module->getLogger()->error('route ' . $this->getRoute());
-        $module->getLogger()->error('options ' . var_export($options, true));
+        return \Configuration::get(
+            $key,
+            null,
+            null,
+            (int) \Context::getContext()->shop->id
+        );
+    }
 
-        if ($hasResponse) {
-            $module->getLogger()->error('body ' . $body);
+    /**
+     * @return string
+     */
+    private function getLogFormatter()
+    {
+        $formatter = $this->getConfiguration('PS_CHECKOUT_LOGGER_HTTP_FORMAT', 'DEBUG');
+
+        if ('CLF' === $formatter) {
+            return Formatter::CLF;
         }
 
-        $module->getLogger()->error('exception ' . $exception->getMessage());
+        if ('SHORT' === $formatter) {
+            return Formatter::SHORT;
+        }
 
-        return [
-            'status' => false,
-            'httpCode' => $httpCode,
-            'body' => $body,
-            'exceptionCode' => $exception->getCode(),
-            'exceptionMessage' => $exception->getMessage(),
-        ];
+        return Formatter::DEBUG;
     }
 }
