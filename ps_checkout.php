@@ -99,7 +99,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '1.4.0';
+    const VERSION = '2.0.0';
 
     /** @var \Symfony\Component\DependencyInjection\ContainerInterface */
     private $container;
@@ -114,7 +114,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '1.4.0';
+        $this->version = '2.0.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
 
@@ -940,7 +940,8 @@ class Ps_checkout extends PaymentModule
             return $this->logger;
         }
 
-        $this->logger = PrestaShop\Module\PrestashopCheckout\Factory\CheckoutLogger::create();
+        /* @var \Psr\Log\LoggerInterface logger */
+        $this->logger = $this->getService('ps_checkout.logger');
 
         return $this->logger;
     }

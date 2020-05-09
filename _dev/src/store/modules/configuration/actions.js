@@ -111,16 +111,55 @@ export default {
     });
   },
 
-  toggleDebugLogs({commit, getters}, payload) {
+  changeLoggerLevel({commit, getters}, value) {
     return ajax({
       url: getters.adminController,
-      action: 'ToggleDebugLogs',
+      action: 'UpdateLoggerLevel',
       data: {
-        status: payload ? 1 : 0,
+        level: value,
       },
     }).then(() => {
-      commit(types.UPDATE_DEBUG_LOGS, payload);
-      return Promise.resolve(payload);
+      commit(types.UPDATE_LOGGER_LEVEL, value);
+      return Promise.resolve(value);
+    });
+  },
+
+  changeLoggerMaxFiles({commit, getters}, value) {
+    return ajax({
+      url: getters.adminController,
+      action: 'UpdateLoggerMaxFiles',
+      data: {
+        maxFiles: value,
+      },
+    }).then(() => {
+      commit(types.UPDATE_LOGGER_MAX_FILES, value);
+      return Promise.resolve(value);
+    });
+  },
+
+  changeLoggerHttp({commit, getters}, value) {
+    return ajax({
+      url: getters.adminController,
+      action: 'UpdateLoggerHttp',
+      data: {
+        isEnabled: value,
+      },
+    }).then(() => {
+      commit(types.UPDATE_LOGGER_HTTP, value);
+      return Promise.resolve(value);
+    });
+  },
+
+  changeLoggerHttpFormat({commit, getters}, value) {
+    return ajax({
+      url: getters.adminController,
+      action: 'UpdateLoggerHttpFormat',
+      data: {
+        httpFormat: value,
+      },
+    }).then(() => {
+      commit(types.UPDATE_LOGGER_HTTP_FORMAT, value);
+      return Promise.resolve(value);
     });
   },
 };

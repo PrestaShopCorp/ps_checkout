@@ -22,24 +22,33 @@ use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
 
 class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontController
 {
+    /**
+     * @var Ps_checkout
+     */
+    public $module;
+
+    /**
+     * @throws PrestaShopException
+     * @throws Exception
+     */
     public function postProcess()
     {
-        $isAjax = \Tools::getValue('ajax');
+        $isAjax = Tools::getValue('ajax');
 
         if ($isAjax) {
-            return false;
+            return;
         }
 
-        $token = \Tools::getValue('expressCheckoutToken');
+        $token = Tools::getValue('expressCheckoutToken');
 
-        if ($token !== \Tools::getToken()) {
-            throw new \PrestaShopException('Bad token');
+        if ($token !== Tools::getToken()) {
+            throw new PrestaShopException('Bad token');
         }
 
-        $paypalOrder = \Tools::getValue('paypalOrder');
+        $paypalOrder = Tools::getValue('paypalOrder');
 
         if (empty($paypalOrder)) {
-            throw new \PrestaShopException('Paypal order cannot be empty');
+            throw new PrestaShopException('Paypal order cannot be empty');
         }
 
         $paypalOrder = json_decode($paypalOrder);
@@ -55,6 +64,12 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         $this->context->cookie->__set('paypalOrderId', $paypalOrder->id);
         $this->context->cookie->__set('paypalEmail', $paypalOrder->payer->email_address);
 
+        $this->module->getLogger()->info(sprintf(
+            'Express checkout - token : %s PayPal Order : %s',
+            $token,
+            $paypalOrder->id
+        ));
+
         $this->redirectToCheckout();
     }
 
@@ -62,26 +77,20 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
      * Handle creation and customer login
      *
      * @param object $payer
+     *
+     * @throws PrestaShopException
      */
     private function createAndLoginCustomer($payer)
     {
-        /**
-         * @var bool|int $idCustomerExists
-         */
-        $idCustomerExists = \Customer::customerExists($payer->email_address, true);
+        $idCustomerExists = Customer::customerExists($payer->email_address, true);
 
         if (0 === $idCustomerExists) {
             $customer = $this->createCustomer($payer);
         } else {
-            $customer = new \Customer((int) $idCustomerExists);
+            $customer = new Customer((int) $idCustomerExists);
         }
 
-        /*
-         * Context::updateCustomer() exist from PS 1.7
-         */
-        if (method_exists($this->context, 'updateCustomer')) {
-            $this->context->updateCustomer($customer);
-        }
+        $this->context->updateCustomer($customer);
     }
 
     /**
@@ -89,15 +98,17 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
      *
      * @param object $payerNode
      *
-     * @return \Customer
+     * @return Customer
+     *
+     * @throws PrestaShopException
      */
     public function createCustomer($payerNode)
     {
-        $customer = new \Customer();
+        $customer = new Customer();
         $customer->email = $payerNode->email_address;
         $customer->firstname = $payerNode->name->given_name;
         $customer->lastname = $payerNode->name->surname;
-        $customer->passwd = \Tools::passwdGen();
+        $customer->passwd = Tools::passwdGen();
         $customer->save();
 
         return $customer;
@@ -107,27 +118,30 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
      * Create address
      *
      * @param object $shipping
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     private function createAddress($shipping)
     {
         // check if country is available for delivery
         $paypalIsoCode = $shipping->address->country_code;
         $psIsoCode = (new PaypalCountryCodeMatrice())->getPrestashopIsoCode($paypalIsoCode);
-        $idCountry = \Country::getByIso($psIsoCode);
+        $idCountry = Country::getByIso($psIsoCode);
 
-        $country = new \Country($idCountry);
+        $country = new Country($idCountry);
 
-        if (0 === (int) $country->active) {
-            return false;
+        if (false === (bool) $country->active) {
+            return;
         }
 
         // check if a paypal address already exist for the customer
         $paypalAddress = $this->addressAlreadyExist('PayPal', $this->context->customer->id);
 
         if (false !== $paypalAddress) {
-            $address = new \Address($paypalAddress); // if yes, update it with the new address
+            $address = new Address($paypalAddress); // if yes, update it with the new address
         } else {
-            $address = new \Address(); // otherwise create a new address
+            $address = new Address(); // otherwise create a new address
         }
 
         $address->alias = 'PayPal';
@@ -162,7 +176,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
      * @param string $alias
      * @param int $id_customer
      *
-     * @return int|false
+     * @return int
      */
     private function addressAlreadyExist($alias, $id_customer)
     {
@@ -173,22 +187,19 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         $query->where('id_customer = ' . (int) $id_customer);
         $query->where('deleted = 0');
 
-        /**
-         * Sets $result to make php-cs-fixer and PHPStan happy
-         *
-         * @var int|false
-         */
-        $result = Db::getInstance()->getValue($query);
-
-        return $result;
+        return (int) Db::getInstance()->getValue($query);
     }
 
     /**
      * Ajax: Create and return paypal order
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws Exception
      */
     public function displayAjaxCreatePaypalOrder()
     {
-        $product = \Tools::getValue('product');
+        $product = Tools::getValue('product');
 
         if (!empty($product)) {
             $product = json_decode($product);
@@ -205,6 +216,11 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
                 $operator = 'up'
             );
             $cart->update();
+
+            $this->module->getLogger()->info(sprintf(
+                'Express checkout : Create Cart %s',
+                (int) $cart->id
+            ));
 
             $this->context->cart = $cart;
             $this->context->cookie->__set('id_cart', $cart->id);

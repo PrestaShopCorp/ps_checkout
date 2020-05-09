@@ -31,6 +31,11 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     const PS_CHECKOUT_PAYPAL_ID_LABEL = 'PS_CHECKOUT_PAYPAL_ID_MERCHANT';
 
     /**
+     * @var Ps_checkout
+     */
+    public $module;
+
+    /**
      * @var bool If set to true, will be redirected to authentication page
      */
     public $auth = false;
@@ -214,14 +219,31 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     private function dispatchWebHook()
     {
         if ('ShopNotificationMerchantAccount' === $this->payload['category']) {
+            $this->module->getLogger()->info(sprintf(
+                'DispatchWebHook %s merchantId : %s',
+                $this->payload['category'],
+                $this->merchantId
+            ));
+
             return (new MerchantDispatcher())->dispatchEventType(
                 ['merchantId' => $this->merchantId]
             );
         }
 
         if ('ShopNotificationOrderChange' === $this->payload['category']) {
+            $this->module->getLogger()->info(sprintf(
+                'DispatchWebHook %s PayPal Order id : %s',
+                $this->payload['category'],
+                $this->payload['orderId']
+            ));
+
             return (new OrderDispatcher())->dispatchEventType($this->payload);
         }
+
+        $this->module->getLogger()->info(sprintf(
+            'DispatchWebHook %s : ignored',
+            $this->payload['category']
+        ));
 
         return true;
     }
