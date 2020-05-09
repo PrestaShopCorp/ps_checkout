@@ -87,6 +87,12 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
             ));
         }
 
+        $this->module->getLogger()->info(sprintf(
+            'Express checkout - token : %s PayPal Order : %s',
+            $token,
+            $paypalOrder->id
+        ));
+
         $this->redirectToCheckout();
     }
 

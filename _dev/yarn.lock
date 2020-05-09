@@ -710,6 +710,13 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
+"@femessage/log-viewer@^1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@femessage/log-viewer/-/log-viewer-1.4.1.tgz#70e68b2007212021d467af68cfbdeb66c220cbd8"
+  integrity sha512-MCulm/2VLJCWMHL9c6a32lIC8jbWTgkKgfkZ5kfPZsV3vw+L0v2FjEPQytGeJdv+nl9z4HzfqwM93nu+uvf1nQ==
+  dependencies:
+    vue-virtual-scroll-list "^1.4.1"
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
@@ -8517,6 +8524,11 @@ vue-template-es2015-compiler@^1.9.0:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
+
+vue-virtual-scroll-list@^1.4.1:
+  version "1.4.7"
+  resolved "https://registry.yarnpkg.com/vue-virtual-scroll-list/-/vue-virtual-scroll-list-1.4.7.tgz#12ee26833885f5bb4d37dc058085ccf3ce5b5a74"
+  integrity sha512-R8bk+k7WMGGoFQ9xF0krGCAlZhQjbJOkDUX+YZD2J+sHQWTzDtmTLS6kiIJToOHK1d/8QPGiD8fd9w0lDP4arg==
 
 vue2-collapse@^1.0.15:
   version "1.0.15"
