@@ -133,6 +133,23 @@ class OrderDispatcher implements Dispatcher
         $order = new \Order($orderId);
         $currentOrderStateId = (int) $order->getCurrentState();
         $newOrderStateId = (int) $this->getNewState($eventType, $resource, $currentOrderStateId);
+
+        // Prevent duplicate state entry
+        if ($currentOrderStateId !== $newOrderStateId
+            && false === (bool) $order->hasBeenPaid()
+            && false === (bool) $order->hasBeenShipped()
+            && false === (bool) $order->hasBeenDelivered()
+            && false === (bool) $order->isInPreparation()
+        ) {
+            $orderHistory = new \OrderHistory();
+            $orderHistory->id_order = $orderId;
+            $orderHistory->changeIdOrderState(
+                $newOrderStateId,
+                $orderId
+            );
+            $orderHistory->addWithemail();
+        }
+
         $orderPaymentCollection = $order->getOrderPaymentCollection();
         $orderPaymentCollection->where('amount', '=', $resource['amount']['value']);
         $shouldAddOrderPayment = true;
@@ -141,9 +158,11 @@ class OrderDispatcher implements Dispatcher
         $orderPayments = $orderPaymentCollection->getAll();
         foreach ($orderPayments as $orderPayment) {
             if (\Validate::isLoadedObject($orderPayment)) {
-                $orderPayment->transaction_id = $resource['id'];
-                $orderPayment->payment_method = $this->getPaymentMessageTranslation($resource);
-                $orderPayment->save();
+                if ($orderPayment->transaction_id !== $resource['id']) {
+                    $orderPayment->transaction_id = $resource['id'];
+                    $orderPayment->payment_method = $this->getPaymentMessageTranslation($resource);
+                    $orderPayment->save();
+                }
                 $shouldAddOrderPayment = false;
             }
         }
@@ -156,26 +175,6 @@ class OrderDispatcher implements Dispatcher
                 \Currency::getCurrencyInstance(\Currency::getIdByIsoCode($resource['amount']['currency_code'])),
                 (new DatePresenter($resource['create_time'], 'Y-m-d H:i:s'))->present()
             );
-        }
-
-        // Prevent duplicate state entry
-        if ($currentOrderStateId === $newOrderStateId
-            || $order->hasBeenPaid()
-            || $order->hasBeenShipped()
-            || $order->hasBeenDelivered()
-            || $order->isInPreparation()) {
-            return true;
-        }
-
-        $orderHistory = new \OrderHistory();
-        $orderHistory->id_order = $orderId;
-        $orderHistory->changeIdOrderState(
-            $newOrderStateId,
-            $orderId
-        );
-
-        if (true !== $orderHistory->addWithemail()) {
-            throw new UnauthorizedException('unable to change the order state');
         }
 
         return true;
