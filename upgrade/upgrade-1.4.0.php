@@ -31,19 +31,30 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_1_4_0($module)
 {
     $result = true;
+    $db = Db::getInstance();
 
     // Remove our ModuleAdminControllers from SEO & URLs page
-    $metaCollection = new PrestaShopCollection('Meta');
-    $metaCollection->where('page', 'like', 'module-' . $module->name . '-Admin%');
+    $queryMeta = new DbQuery();
+    $queryMeta->select('id_meta');
+    $queryMeta->from('meta');
+    $queryMeta->where('page LIKE "module-' . $module->name . '-Admin%"');
+    $queryMetaResults = $db->executeS($queryMeta);
 
-    foreach ($metaCollection->getAll() as $meta) {
-        /** @var Meta $meta */
-        $result = $result && (bool) $meta->delete();
+    if (false === empty($queryMetaResults)) {
+        foreach ($queryMetaResults as $queryMetaResult) {
+            $result = $result && (bool) $db->delete(
+                'meta',
+                'id_meta = ' . (int) $queryMetaResult['id_meta']
+            );
+
+            $result = $result && (bool) $db->delete(
+                'meta_lang',
+                'id_meta = ' . (int) $queryMetaResult['id_meta']
+            );
+        }
     }
 
     // Fix multiple OrderState created in multishop before 1.3.0
-    $db = \Db::getInstance();
-
     $queryConfigurationResults = $db->executeS('
         SELECT c.id_configuration, c.name, c.value, c.id_shop, c.id_shop_group, os.id_order_state
         FROM `' . _DB_PREFIX_ . 'configuration` AS c
@@ -132,19 +143,19 @@ function upgrade_module_1_4_0($module)
     if (false === empty($queryOrderStateResults)) {
         foreach ($queryOrderStateResults as $queryOrderStateResult) {
             $result = $result && $db->update(
-                    'order_state',
-                    [
-                        'deleted' => 1,
-                    ],
-                    'id_order_state = ' . (int) $queryOrderStateResult['id_order_state']
-                );
+                'order_state',
+                [
+                    'deleted' => 1,
+                ],
+                'id_order_state = ' . (int) $queryOrderStateResult['id_order_state']
+            );
         }
     }
 
     return $result
-        && $module->registerHook('displayAdminOrderLeft')
-        && $module->registerHook('displayAdminOrderMainBottom')
-        && $module->registerHook('actionAdminControllerSetMedia')
-        && $module->unregisterHook('actionOrderSlipAdd')
-        && $module->unregisterHook('actionOrderStatusUpdate');
+        && (bool) $module->registerHook('displayAdminOrderLeft')
+        && (bool) $module->registerHook('displayAdminOrderMainBottom')
+        && (bool) $module->registerHook('actionAdminControllerSetMedia')
+        && (bool) $module->unregisterHook('actionOrderSlipAdd')
+        && (bool) $module->unregisterHook('actionOrderStatusUpdate');
 }
