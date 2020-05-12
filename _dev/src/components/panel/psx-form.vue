@@ -558,8 +558,8 @@
     methods: {
       submitForm() {
         this.$store.dispatch('psxSendData', this.form).then((response) => {
-          if (response === true) {
-            this.$store.dispatch('psxOnboarding', response);
+          if (response.status === true) {
+            this.$store.dispatch('psxOnboarding', response.status);
             // eslint-disable-next-line no-console
             this.$router.push('/authentication').catch((exception) => console.log(exception));
           }
