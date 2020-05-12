@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Api;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Ring\Exception\RingException;
 use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
 
@@ -82,18 +83,9 @@ class GenericClient
         try {
             $response = $this->getClient()->post($this->getRoute(), $options);
         } catch (RequestException $exception) {
-            $module->getLogger()->error('route ' . $this->getRoute());
-            $module->getLogger()->error('options ' . var_export($options, true));
-            if ($exception->hasResponse()) {
-                $module->getLogger()->error('body ' . $exception->getResponse()->getBody());
-            }
-            $module->getLogger()->error('exception ' . $exception->getMessage());
-
-            return [
-                'status' => false,
-                'httpCode' => $exception->hasResponse() ? $exception->getResponse()->getStatusCode() : 500,
-                'body' => $exception->hasResponse() ? $exception->getResponse()->getBody() : '',
-            ];
+            return $this->handleException($module, $exception, $options);
+        } catch (RingException $exception) {
+            return $this->handleException($module, $exception, $options);
         }
 
         $responseHandler = new ResponseApiHandler();
@@ -204,5 +196,30 @@ class GenericClient
     protected function getExceptionsMode()
     {
         return $this->catchExceptions;
+    }
+
+    private function handleException(\Ps_checkout $module, \Exception $exception, $options = [])
+    {
+        $body = $exception->getMessage();
+        $httpCode = 500;
+        $hasResponse = method_exists($exception, 'hasResponse') ? $exception->hasResponse() : false;
+
+        if (method_exists($exception, 'getResponse')) {
+            $body = $exception->getResponse()->getBody();
+            $httpCode = $exception->getResponse()->getStatusCode();
+        }
+
+        $module->getLogger()->error('route ' . $this->getRoute());
+        $module->getLogger()->error('options ' . var_export($options, true));
+        if ($hasResponse) {
+            $module->getLogger()->error('body ' . $body);
+        }
+        $module->getLogger()->error('exception ' . $exception->getMessage());
+
+        return [
+            'status' => false,
+            'httpCode' => $httpCode,
+            'body' => $body,
+        ];
     }
 }

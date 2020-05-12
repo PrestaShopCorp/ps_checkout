@@ -46,6 +46,14 @@
             </h1>
           </template>
 
+          <b-alert
+            v-if="errorException.length"
+            variant="danger"
+            show
+          >
+            <p>{{ errorException }}</p>
+          </b-alert>
+
           <b-form v-if="!emailSent">
             <b-form-group
               label-cols="4"
@@ -103,6 +111,7 @@
     },
     data() {
       return {
+        errorException: '',
         email: {
           value: '',
           state: null,
@@ -128,8 +137,15 @@
             email: this.email.value,
           },
         }).then((response) => {
-          if (response.body.error) {
+          if (undefined !== response.body
+            && undefined !== response.body.error
+            && undefined !== response.body.message
+          ) {
             this.handleResponseError(response.body.error.message);
+            return;
+          }
+          if (undefined !== response.body) {
+            this.errorException = response.body;
             return;
           }
           this.resetEmailError();

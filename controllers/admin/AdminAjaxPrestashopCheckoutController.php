@@ -224,11 +224,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         $response = (new PsxOnboarding())->setOnboardingMerchant(array_filter($psxForm));
 
-        if ($response) {
-            $this->ajaxDie(json_encode(true));
-        }
-
-        $this->ajaxDie(json_encode(false));
+        $this->ajaxDie(json_encode($response));
     }
 
     /**
