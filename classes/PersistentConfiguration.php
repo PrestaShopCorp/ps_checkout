@@ -67,7 +67,7 @@ class PersistentConfiguration
                 (int) \Context::getContext()->shop->id
             )
             && \Configuration::updateValue(
-                PaypalAccount::PS_CHECKOUT_CARD_PAYMENT_STATUS,
+                PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS,
                 $paypalAccount->getCardPaymentStatus(),
                 false,
                 null,

@@ -73,7 +73,9 @@ class Faq
         try {
             $response = $this->client->post($this->generateRoute());
         } catch (RequestException $e) {
-            \PrestaShopLogger::addLog($e->getMessage(), 1, null, null, null, true);
+            /** @var \Ps_checkout $module */
+            $module = \Module::getInstanceByName('ps_checkout');
+            $module->getLogger()->error($e->getMessage());
 
             if (!$e->hasResponse()) {
                 return false;

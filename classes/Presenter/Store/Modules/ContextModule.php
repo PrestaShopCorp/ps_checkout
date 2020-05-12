@@ -165,7 +165,7 @@ class ContextModule implements PresenterInterface
     {
         $isoCode = $this->context->language->iso_code;
 
-        $availableReadme = ['fr', 'en', 'it', 'es'];
+        $availableReadme = ['fr', 'en', 'it', 'es', 'nl', 'pl', 'pt'];
 
         if (!in_array($isoCode, $availableReadme)) {
             $isoCode = 'en';

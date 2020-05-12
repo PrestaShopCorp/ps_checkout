@@ -76,6 +76,8 @@ class WebHookOrder
      * refund the order and update the resource status
      *
      * @return bool
+     *
+     * @throws PsCheckoutException
      */
     public function updateOrder()
     {
@@ -86,9 +88,7 @@ class WebHookOrder
         $orderPayments = $order->getOrderPaymentCollection();
         foreach ($orderPayments as $orderPayment) {
             if ($orderPayment->transaction_id === $this->paypalTransactionId) {
-                $message = sprintf('This PayPal transaction is already saved : %s', $this->paypalTransactionId);
-                \PrestaShopLogger::addLog($message, 1, null, null, null, true);
-                throw new PsCheckoutException($message);
+                throw new PsCheckoutException(sprintf('This PayPal transaction is already saved : %s', $this->paypalTransactionId));
             }
         }
 

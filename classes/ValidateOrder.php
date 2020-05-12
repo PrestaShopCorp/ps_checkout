@@ -64,6 +64,9 @@ class ValidateOrder
      * @param array $payload array with all information required by PaymentModule->validateOrder()
      *
      * @return bool
+     *
+     * @throws PsCheckoutException
+     * @throws \PrestaShopException
      */
     public function validateOrder($payload)
     {
@@ -72,10 +75,7 @@ class ValidateOrder
         $order = $paypalOrder->getOrder();
 
         if (empty($order)) {
-            // @todo quickfix : Call API return nothing or fail
-            $message = sprintf('Unable to retrieve Paypal Order for %s', $this->paypalOrderId);
-            \PrestaShopLogger::addLog($message, 1, null, null, null, true);
-            throw new PsCheckoutException($message);
+            throw new PsCheckoutException(sprintf('Unable to retrieve Paypal Order for %s', $this->paypalOrderId));
         }
 
         $apiOrder = new Order(\Context::getContext()->link);
@@ -90,17 +90,15 @@ class ValidateOrder
                 $response = $apiOrder->authorize($order['id'], $this->merchantId);
                 break;
             default:
-                // @todo quickfix
-                $message = sprintf('Unknown Intent type %s, Paypal Order %s', $paypalOrder->getOrderIntent(), $this->paypalOrderId);
-                \PrestaShopLogger::addLog($message, 1, null, null, null, true);
-                throw new PsCheckoutException($message);
+                throw new PsCheckoutException(sprintf('Unknown Intent type %s, Paypal Order %s', $paypalOrder->getOrderIntent(), $this->paypalOrderId));
         }
 
         if (false === $response['status']) {
-            // @todo Quickfix
-            $message = sprintf('Unable to capture/authorize Paypal Order %s', $this->paypalOrderId);
-            \PrestaShopLogger::addLog($message, 1, null, null, null, true);
+            return false;
+        }
 
+        if ($response['body']['status'] === self::CAPTURE_STATUS_DECLINED) {
+            // Avoid order with payment error
             return false;
         }
 
@@ -122,25 +120,14 @@ class ValidateOrder
         );
 
         if (false === $this->setOrdersMatrice($module->currentOrder, $this->paypalOrderId)) {
-            $this->setOrderState($module->currentOrder, self::CAPTURE_STATUS_DECLINED, $payload['paymentMethod']);
-            $message = sprintf('Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s', $module->currentOrder, $this->paypalOrderId);
-            \PrestaShopLogger::addLog($message, 1, null, null, null, true);
-            throw new PsCheckoutException($message);
+            throw new PsCheckoutException(sprintf('Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s', $module->currentOrder, $this->paypalOrderId));
         }
 
-        // TODO : patch the order in order to update the order id with the order id
-        // of the prestashop order
-
-        $orderState = $this->setOrderState(
+        $this->setOrderState(
             $module->currentOrder,
             $response['body']['status'],
             $payload['paymentMethod']
         );
-
-        if ($orderState === _PS_OS_PAYMENT_) {
-            // @todo this may be useless, previous $module->validateOrder() should save transaction id
-            $this->setTransactionId($module->currentOrderReference, $response['body']['id']);
-        }
 
         return true;
     }
@@ -182,36 +169,12 @@ class ValidateOrder
     }
 
     /**
-     * Set the transactionId (paypal order id) to the payment associated to the order
-     *
-     * @param string $psOrderRef from prestashop
-     * @param string $transactionId paypal transaction Id
-     *
-     * @return bool
-     */
-    private function setTransactionId($psOrderRef, $transactionId)
-    {
-        $orderPayments = new \PrestaShopCollection('OrderPayment');
-        $orderPayments->where('order_reference', '=', $psOrderRef);
-        $orderPayment = $orderPayments->getFirst();
-        if (true === empty($orderPayment)) {
-            return false;
-        }
-        $payment = new \OrderPayment($orderPayment->id);
-        $payment->transaction_id = $transactionId;
-
-        return $payment->save();
-    }
-
-    /**
      * Set the status of the prestashop order if the payment has been
      * successfully captured or not
      *
-     * @param int $orderId from prestashop
-     * @param string $status
+     * @param int $orderId Order identifier
+     * @param string $status Capture status
      * @param string $paymentMethod can be 'paypal' or 'card'
-     *
-     * @return string|bool order state id to set to the order depending on the status return by paypal
      */
     private function setOrderState($orderId, $status, $paymentMethod)
     {
@@ -219,14 +182,11 @@ class ValidateOrder
         $orderHistory->id_order = $orderId;
 
         switch ($status) {
-            case self::CAPTURE_STATUS_COMPLETED:
-                $orderState = _PS_OS_PAYMENT_;
+            case static::CAPTURE_STATUS_COMPLETED:
+                $orderState = $this->getPaidStatusId($orderId);
                 break;
-            case self::CAPTURE_STATUS_DECLINED:
-                $orderState = _PS_OS_ERROR_;
-                break;
-            case self::CAPTURE_STATUS_PENDING:
-                $orderState = $this->getPendingStatusId($paymentMethod);
+            case static::CAPTURE_STATUS_DECLINED:
+                $orderState = (int) \Configuration::getGlobalValue('PS_OS_ERROR');
                 break;
             default:
                 $orderState = $this->getPendingStatusId($paymentMethod);
@@ -235,26 +195,36 @@ class ValidateOrder
 
         $orderHistory->changeIdOrderState($orderState, $orderId);
         $orderHistory->addWithemail();
-
-        return $orderState;
     }
 
     /**
-     * Set pending status depending on the method used to make the payment
+     * @param int $orderId Order identifier
      *
+     * @return int OrderState identifier
+     */
+    private function getPaidStatusId($orderId)
+    {
+        $order = new \Order($orderId);
+
+        if (\Validate::isLoadedObject($order) && $order->getCurrentState() == \Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_UNPAID')) {
+            return (int) \Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_PAID');
+        }
+
+        return (int) \Configuration::getGlobalValue('PS_OS_PAYMENT');
+    }
+
+    /**
      * @param string $paymentMethod can be 'paypal' or 'card'
      *
-     * @return int|bool id state
+     * @return int OrderState identifier
      */
     private function getPendingStatusId($paymentMethod)
     {
-        $stateId = \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
-
-        if ($paymentMethod === self::PAYMENT_METHOD_PAYPAL) {
-            $stateId = \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
+        if ($paymentMethod === static::PAYMENT_METHOD_PAYPAL) {
+            return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
         }
 
-        return intval($stateId);
+        return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
     }
 
     /**

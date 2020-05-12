@@ -18,96 +18,6 @@
  *-->
 <template>
   <div>
-    <b-container v-if="firebaseStatusAccount && paypalStatusAccount">
-      <b-alert
-        v-if="!accountIslinked"
-        variant="info"
-        show
-      >
-        <h2>{{ $t('pages.accounts.waitingPaypalLinkingTitle') }}</h2>
-        <p>{{ $t('pages.accounts.waitingPaypalLinking') }}</p>
-      </b-alert>
-      <b-alert
-        v-else-if="!merchantEmailIsValid"
-        variant="warning"
-        show
-      >
-        <h2>{{ $t('pages.accounts.approvalPending') }}</h2>
-        <p>{{ $t('pages.accounts.waitingEmail') }}</p>
-        <p class="text-muted my-1">
-          {{ $t('pages.accounts.didntReceiveEmail') }}
-        </p>
-        <p>
-          <b-button
-            href="https://www.paypal.com/businessprofile/settings"
-            target="_blank"
-            variant="outline-secondary"
-          >
-            {{ $t('pages.accounts.sendEmailAgain') }}
-          </b-button>
-        </p>
-      </b-alert>
-      <template v-else>
-        <b-alert
-          v-if="cardPaymentIsActive === 'NEED_MORE_DATA'"
-          variant="warning"
-          show
-        >
-          <h2>{{ $t('pages.accounts.documentNeeded') }}</h2>
-          <p>{{ $t('pages.accounts.additionalDocumentsNeeded') }}</p>
-          <ul class="my-1">
-            <li><b>{{ $t('pages.accounts.photoIds') }}</b></li>
-          </ul>
-          <a
-            href="https://www.paypal.com/policy/hub/kyc"
-            target="_blank"
-            class="btn btn-outline-secondary mt-1"
-          >{{ $t('pages.accounts.knowMoreAboutAccount') }}</a>
-        </b-alert>
-        <b-alert
-          v-if="cardPaymentIsActive === 'IN_REVIEW' || cardPaymentIsActive === 'LIMITED'"
-          variant="warning"
-          show
-        >
-          <h2>{{ $t('pages.accounts.undergoingCheck') }}</h2>
-          <p>
-            {{ $t('pages.accounts.severalDays') }}
-            {{ $t('pages.accounts.youCanProcess') }}
-            <b>{{ $t('pages.accounts.upTo') }}</b>
-            {{ $t('pages.accounts.transactionsUntil') }}.
-          </p>
-          <div class="mt-3">
-            <a
-              href="https://www.paypal.com/policy/hub/kyc"
-              target="_blank"
-            >
-              {{ $t('pages.accounts.knowMoreAboutAccount') }}
-              <i class="material-icons">arrow_right_alt</i>
-            </a>
-          </div>
-        </b-alert>
-        <b-alert
-          v-if="cardPaymentIsActive === 'DENIED'"
-          variant="danger"
-          show
-        >
-          <h2>{{ $t('pages.accounts.accountDeclined') }}</h2>
-          <p>
-            {{ $t('pages.accounts.cannotProcessCreditCard') }}.
-          </p>
-          <div class="mt-3">
-            <a
-              href="https://www.paypal.com/mep/dashboard"
-              target="_blank"
-            >
-              {{ $t('pages.accounts.accountDeclinedLink') }}
-              <i class="material-icons">arrow_right_alt</i>
-            </a>
-          </div>
-        </b-alert>
-      </template>
-    </b-container>
-
     <b-container>
       <AccountList />
     </b-container>
@@ -146,18 +56,6 @@
       },
       paypalStatusAccount() {
         return this.$store.state.paypal.onboardingCompleted;
-      },
-      paypalPaymentIsActive() {
-        return this.$store.state.paypal.paypalIsActive;
-      },
-      cardPaymentIsActive() {
-        return this.$store.state.paypal.cardIsActive;
-      },
-      merchantEmailIsValid() {
-        return this.$store.state.paypal.emailIsValid;
-      },
-      accountIslinked() {
-        return this.$store.state.paypal.accountIslinked;
       },
     },
   };

@@ -83,4 +83,12 @@ class PaypalOrder
     {
         $this->order = $order;
     }
+
+    /**
+     * @return bool
+     */
+    public function isLoaded()
+    {
+        return false === empty($this->order);
+    }
 }

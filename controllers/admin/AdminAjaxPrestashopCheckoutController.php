@@ -21,8 +21,10 @@ use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
+use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
 use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPresenter;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
@@ -217,16 +219,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         // Save form in database
         if (false === $this->savePsxForm($psxForm)) {
-            $this->ajaxDie(json_encode(false));
+            $this->ajaxDie(json_encode(['Cannot save in database.']));
         }
 
         $response = (new PsxOnboarding())->setOnboardingMerchant(array_filter($psxForm));
 
-        if ($response) {
-            $this->ajaxDie(json_encode(true));
-        }
-
-        $this->ajaxDie(json_encode(false));
+        $this->ajaxDie(json_encode($response));
     }
 
     /**
@@ -361,5 +359,167 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             null,
             (int) Context::getContext()->shop->id
         );
+    }
+
+    /**
+     * @todo To be refactored with Service Container
+     */
+    public function ajaxProcessFetchOrder()
+    {
+        $isLegacy = (bool) Tools::getValue('legacy');
+        $id_order = (int) Tools::getValue('id_order');
+
+        if (empty($id_order)) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    $this->l('No PrestaShop Order identifier received'),
+                ],
+            ]));
+        }
+
+        $order = new Order($id_order);
+
+        if ($order->module !== $this->module->name) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    strtr(
+                        $this->l('This PrestaShop Order [PRESTASHOP_ORDER_ID] is not paid with PrestaShop Checkout'),
+                        [
+                            '[PRESTASHOP_ORDER_ID]' => $order->id,
+                        ]
+                    ),
+                ],
+            ]));
+        }
+
+        $paypalOrderId = (new \OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
+
+        if (empty($paypalOrderId)) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    strtr(
+                        $this->l('Unable to find PayPal Order associated to this PrestaShop Order [PRESTASHOP_ORDER_ID]'),
+                        [
+                            '[PRESTASHOP_ORDER_ID]' => $order->id,
+                        ]
+                    ),
+                ],
+            ]));
+        }
+
+        $orderPayPal = new PaypalOrder($paypalOrderId);
+
+        if (false === $orderPayPal->isLoaded()) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    strtr(
+                        $this->l('Unable to fetch PayPal Order [PAYPAL_ORDER_ID]'),
+                        [
+                            '[PAYPAL_ORDER_ID]' => $paypalOrderId,
+                        ]
+                    ),
+                ],
+            ]));
+        }
+
+        $presenter = new OrderPresenter($this->module, $orderPayPal->getOrder());
+
+        $this->context->smarty->assign([
+            'moduleName' => $this->module->displayName,
+            'orderPayPal' => $presenter->present(),
+            'orderPayPalBaseUrl' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
+        ]);
+
+        $this->ajaxDie(json_encode([
+            'status' => true,
+            'content' => $isLegacy
+                ? $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/ajaxPayPalOrderLegacy.tpl')
+                : $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/ajaxPayPalOrder.tpl'),
+        ]));
+    }
+
+    /**
+     * @todo To be refactored with Service Container
+     */
+    public function ajaxProcessRefundOrder()
+    {
+        $orderPayPalId = Tools::getValue('orderPayPalRefundOrder');
+        $transactionPayPalId = Tools::getValue('orderPayPalRefundTransaction');
+        $amount = Tools::getValue('orderPayPalRefundAmount');
+        $currency = Tools::getValue('orderPayPalRefundCurrency');
+
+        if (empty($orderPayPalId) || false === Validate::isGenericName($orderPayPalId)) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    $this->l('PayPal Order is invalid.', 'translations'),
+                ],
+            ]));
+        }
+
+        if (empty($transactionPayPalId) || false === Validate::isGenericName($transactionPayPalId)) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    $this->l('PayPal Transaction is invalid.', 'translations'),
+                ],
+            ]));
+        }
+
+        if (empty($amount) || false === Validate::isPrice($amount) || $amount <= 0) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    $this->l('PayPal refund amount is invalid.', 'translations'),
+                ],
+            ]));
+        }
+
+        if (empty($currency) || false === in_array($currency, ['AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'INR', 'ILS', 'JPY', 'MYR', 'MXN', 'TWD', 'NZD', 'NOK', 'PHP', 'PLN', 'GBP', 'RUB', 'SGD', 'SEK', 'CHF', 'THB', 'USD'])) {
+            // https://developer.paypal.com/docs/api/reference/currency-codes/
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    $this->l('PayPal refund currency is invalid.', 'translations'),
+                ],
+            ]));
+        }
+
+        $response = (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order($this->context->link))->refund([
+            'orderId' => $orderPayPalId,
+            'captureId' => $transactionPayPalId,
+            'payee' => [
+                'merchant_id' => (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->getMerchantId(),
+            ],
+            'amount' => [
+                'currency_code' => $currency,
+                'value' => $amount,
+            ],
+            'note_to_payer' => 'Refund by '
+                . \Configuration::get(
+                    'PS_SHOP_NAME',
+                    null,
+                    null,
+                    (int) \Context::getContext()->shop->id
+                ),
+        ]);
+
+        if (isset($response['httpCode']) && $response['httpCode'] === 200) {
+            $this->ajaxDie(json_encode([
+                'status' => true,
+                'content' => $this->l('Refund has been processed by PayPal.', 'translations'),
+            ]));
+        } else {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    $this->l('Refund cannot be processed by PayPal.', 'translations'),
+                ],
+            ]));
+        }
     }
 }

@@ -18,6 +18,7 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 use PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter;
+use PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
@@ -54,7 +55,7 @@ class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontControlle
 
         $paypalAccountRepository = new PaypalAccountRepository();
 
-        if (false === $paypalAccountRepository->cardPaymentMethodIsValid()) {
+        if (false === $paypalAccountRepository->cardHostedFieldsIsAvailable()) {
             $this->redirectToHomePage();
         }
 
@@ -62,8 +63,11 @@ class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontControlle
         $paypalOrder = $paypalOrder->handle();
 
         $language = (new LanguageAdapter())->getLanguage($this->context->language->id);
+        $paypalSdkLink = new PayPalSdkLinkBuilder();
+        $paypalSdkLink->enableDisplayOnlyHostedFields();
 
         $this->context->smarty->assign([
+            'paypalSdkLink' => $paypalSdkLink->buildLink(),
             'nbProducts' => $cart->nbProducts(),
             'total' => $cart->getOrderTotal(true, Cart::BOTH),
             'merchantId' => $paypalAccountRepository->getMerchantId(),

@@ -36,11 +36,14 @@ export default {
     }).then((response) => {
       if (response.status === false) {
         commit(types.UPDATE_ONBOARDING_LINK, false);
-        return Promise.reject();
+        return Promise.reject(response);
       }
 
-      commit(types.UPDATE_ONBOARDING_LINK, response.onboardingLink);
-      return Promise.resolve();
+      if (undefined !== response.onboardingLink) {
+        commit(types.UPDATE_ONBOARDING_LINK, response.onboardingLink);
+      }
+
+      return Promise.resolve(response);
     });
   },
   refreshPaypalStatus({commit, getters}) {

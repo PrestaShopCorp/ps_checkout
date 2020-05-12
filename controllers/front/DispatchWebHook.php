@@ -31,6 +31,11 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     const PS_CHECKOUT_PAYPAL_ID_LABEL = 'PS_CHECKOUT_PAYPAL_ID_MERCHANT';
 
     /**
+     * @var bool If set to true, will be redirected to authentication page
+     */
+    public $auth = false;
+
+    /**
      * Id coming from PSL
      *
      * @var int
@@ -83,7 +88,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
                 throw new UnauthorizedException(WebHookValidation::BODY_DATA_ERROR);
             }
 
-            $bodyValues = \Tools::jsonDecode($bodyContent, true);
+            $bodyValues = json_decode($bodyContent, true);
 
             if (empty($bodyValues)) {
                 throw new UnauthorizedException(WebHookValidation::BODY_DATA_ERROR);
@@ -174,7 +179,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     private function setAtributesBodyValues(array $bodyValues)
     {
         $this->payload = [
-            'resource' => (array) \Tools::jsonDecode($bodyValues['resource']),
+            'resource' => (array) json_decode($bodyValues['resource'], true),
             'eventType' => (string) $bodyValues['eventType'],
             'category' => (string) $bodyValues['category'],
             'summary' => (string) $bodyValues['summary'],
@@ -193,19 +198,9 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         *   @TODO : Get payload hash to confirm that it's not modified
         */
         $localShopId = (new ShopUuidManager())->getForShop((int) \Context::getContext()->shop->id);
-        $localMerchantId = \Configuration::get(
-            self::PS_CHECKOUT_PAYPAL_ID_LABEL,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
 
         if ($this->shopId !== $localShopId) {
             throw new UnauthorizedException('shopId wrong');
-        }
-
-        if ($this->merchantId !== $localMerchantId) {
-            throw new UnauthorizedException('merchantId wrong');
         }
 
         return true;
@@ -233,13 +228,28 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
     /**
      * Override displayMaintenancePage to prevent the maintenance page to be displayed
+     *
+     * @see FrontController::displayMaintenancePage()
      */
     protected function displayMaintenancePage()
     {
+        return;
+    }
+
+    /**
+     * Override displayRestrictedCountryPage to prevent page country is not allowed
+     *
+     * @see FrontController::displayRestrictedCountryPage()
+     */
+    protected function displayRestrictedCountryPage()
+    {
+        return;
     }
 
     /**
      * Override geolocationManagement to prevent country GEOIP blocking
+     *
+     * @see FrontController::geolocationManagement()
      *
      * @param Country $defaultCountry
      *
@@ -248,5 +258,27 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     protected function geolocationManagement($defaultCountry)
     {
         return false;
+    }
+
+    /**
+     * Override sslRedirection to prevent redirection
+     *
+     * @see FrontController::sslRedirection()
+     */
+    protected function sslRedirection()
+    {
+        return;
+    }
+
+    /**
+     * Override canonicalRedirection to prevent redirection
+     *
+     * @see FrontController::canonicalRedirection()
+     *
+     * @param string $canonical_url
+     */
+    protected function canonicalRedirection($canonical_url = '')
+    {
+        return;
     }
 }

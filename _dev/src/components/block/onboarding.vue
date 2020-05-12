@@ -80,9 +80,9 @@
 
         this.$store.dispatch('getOnboardingLink').then(() => {
           this.$refs.paypalButton.click();
-        }).catch(() => {
+        }).catch((response) => {
           // eslint-disable-next-line no-console
-          console.error('Cannot generate paypal onboarding link');
+          console.log(response);
         });
 
         this.paypalIsLoaded = true;

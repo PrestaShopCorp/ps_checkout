@@ -17,15 +17,18 @@
  * International Registered Trademark & Property of PrestaShop SA
  *}
 
-<link href="{$pathApp|escape:'htmlall':'UTF-8'}" rel=preload as=script>
+<div id="ps_checkout" class="panel">
+  <div class="panel-heading">
+    <img src="{$moduleLogoUri|escape:'html':'UTF-8'}" alt="{$moduleName|escape:'html':'UTF-8'}" width="15" height="15">
+    {$moduleName|escape:'html':'UTF-8'}
+  </div>
+  <div class="paypal-order-notifications">
+  </div>
+  <div class="paypal-order-container">
+  </div>
+  <div class="paypal-order-loader">
+    <i class="process-icon-loading"></i>
+  </div>
+</div>
 
-<div id="app"></div>
-
-<script src="{$pathApp|escape:'htmlall':'UTF-8'}"></script>
-
-<style>
-  /** Hide native multistore module activation panel, because of visual regressions on non-bootstrap content */
-  #content.nobootstrap div.bootstrap.panel {
-    display: none;
-  }
-</style>
+{include file='./partials/adminOrderView.tpl' legacy=true orderPrestaShopId=$orderPrestaShopId orderPayPalBaseUrl=$orderPayPalBaseUrl}

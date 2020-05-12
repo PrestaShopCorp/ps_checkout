@@ -192,8 +192,142 @@
           variant="danger"
           show
         >
-          {{ $t('panel.account-list.onboardingLinkError') }}
+          <p>{{ $t('panel.account-list.onboardingLinkError') }}</p>
         </b-alert>
+
+        <b-container v-if="firebaseStatusAccount && paypalStatusAccount">
+          <b-alert
+            v-if="!accountIslinked"
+            variant="info"
+            show
+          >
+            <h2>{{ $t('pages.accounts.waitingPaypalLinkingTitle') }}</h2>
+            <p>{{ $t('pages.accounts.waitingPaypalLinking') }}</p>
+          </b-alert>
+          <b-alert
+            v-else-if="!merchantEmailIsValid"
+            variant="warning"
+            show
+          >
+            <h2>{{ $t('pages.accounts.approvalPending') }}</h2>
+            <p>{{ $t('pages.accounts.waitingEmail') }}</p>
+            <p class="text-muted my-1">
+              {{ $t('pages.accounts.didntReceiveEmail') }}
+            </p>
+            <p>
+              <b-button
+                href="https://www.paypal.com/businessprofile/settings"
+                target="_blank"
+                variant="outline-secondary"
+              >
+                {{ $t('pages.accounts.sendEmailAgain') }}
+              </b-button>
+            </p>
+          </b-alert>
+          <template v-else>
+            <b-alert
+              v-if="cardPaymentIsActive === 'NEED_MORE_DATA'"
+              variant="warning"
+              show
+            >
+              <h2>{{ $t('pages.accounts.documentNeeded') }}</h2>
+              <p>{{ $t('pages.accounts.additionalDocumentsNeeded') }}</p>
+              <ul class="my-1">
+                <li><b>{{ $t('pages.accounts.photoIds') }}</b></li>
+              </ul>
+              <div class="mt-3">
+                <a
+                  href="https://www.paypal.com/policy/hub/kyc"
+                  target="_blank"
+                >
+                  {{ $t('pages.accounts.knowMoreAboutAccount') }}
+                  <i class="material-icons">arrow_right_alt</i>
+                </a>
+              </div>
+            </b-alert>
+            <b-alert
+              v-if="cardPaymentIsActive === 'IN_REVIEW' || cardPaymentIsActive === 'LIMITED'"
+              variant="warning"
+              show
+            >
+              <h2>{{ $t('pages.accounts.undergoingCheck') }}</h2>
+              <p>
+                {{ $t('pages.accounts.severalDays') }}
+                {{ $t('pages.accounts.youCanProcess') }}
+                <b>{{ $t('pages.accounts.upTo') }}</b>
+                {{ $t('pages.accounts.transactionsUntil') }}.
+              </p>
+              <div class="mt-3">
+                <a
+                  href="https://www.paypal.com/policy/hub/kyc"
+                  target="_blank"
+                >
+                  {{ $t('pages.accounts.knowMoreAboutAccount') }}
+                  <i class="material-icons">arrow_right_alt</i>
+                </a>
+              </div>
+            </b-alert>
+            <b-alert
+              v-if="cardPaymentIsActive === 'DENIED'"
+              variant="danger"
+              show
+            >
+              <h2>{{ $t('pages.accounts.accountDeclined') }}</h2>
+              <p>
+                {{ $t('pages.accounts.cannotProcessCreditCard') }}.
+              </p>
+              <div class="mt-3">
+                <a
+                  href="https://www.paypal.com/mep/dashboard"
+                  target="_blank"
+                >
+                  {{ $t('pages.accounts.accountDeclinedLink') }}
+                  <i class="material-icons">arrow_right_alt</i>
+                </a>
+              </div>
+            </b-alert>
+
+            <b-alert
+              v-if="cardPaymentIsActive === 'SUSPENDED'"
+              variant="danger"
+              show
+            >
+              <h2>{{ $t('pages.accounts.suspendedAlertTitle') }}</h2>
+              <p>
+                {{ $t('pages.accounts.suspendedAlertLabel') }}
+              </p>
+              <div class="mt-3">
+                <a
+                  href="https://www.paypal.com/uk/smarthelp/article/how-do-i-remove-the-limitation-from-my-account-faq2189"
+                  target="_blank"
+                >
+                  {{ $t('pages.accounts.suspendedButton') }}
+                  <i class="material-icons">arrow_right_alt</i>
+                </a>
+              </div>
+            </b-alert>
+
+            <b-alert
+              v-if="cardPaymentIsActive === 'REVOKED'"
+              variant="danger"
+              show
+            >
+              <h2>{{ $t('pages.accounts.revokedAlertTitle') }}</h2>
+              <p>
+                {{ $t('pages.accounts.revokedAlertLabel') }}
+              </p>
+              <div class="mt-3">
+                <a
+                  href="https://www.paypal.com/businessmanage/account/accountAccess"
+                  target="_blank"
+                >
+                  {{ $t('pages.accounts.revokedButton') }}
+                  <i class="material-icons">arrow_right_alt</i>
+                </a>
+              </div>
+            </b-alert>
+          </template>
+        </b-container>
       </div>
     </div>
   </form>
@@ -226,13 +360,27 @@
       paypalStatusAccount() {
         return this.$store.state.paypal.onboardingCompleted;
       },
+      paypalPaymentIsActive() {
+        return this.$store.state.paypal.paypalIsActive;
+      },
+      cardPaymentIsActive() {
+        return this.$store.state.paypal.cardIsActive;
+      },
+      merchantEmailIsValid() {
+        return this.$store.state.paypal.emailIsValid;
+      },
+      accountIslinked() {
+        return this.$store.state.paypal.accountIslinked;
+      },
     },
     methods: {
       goToSignIn() {
-        this.$router.push('/authentication/signin');
+        // eslint-disable-next-line no-console
+        this.$router.push('/authentication/signin').catch((exception) => console.log(exception));
       },
       goToSignUp() {
-        this.$router.push('/authentication/signup');
+        // eslint-disable-next-line no-console
+        this.$router.push('/authentication/signup').catch((exception) => console.log(exception));
       },
       logOut() {
         this.$store.dispatch('logOut').then(() => {

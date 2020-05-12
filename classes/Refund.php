@@ -246,6 +246,8 @@ class Refund
      * @param string $transactionId
      *
      * @return bool
+     *
+     * @throws PsCheckoutException
      */
     private function refundPrestashopOrder(\Order $order, $orderProductList, $orderStateId, $transactionId)
     {
@@ -297,6 +299,8 @@ class Refund
      * @param string $paypalTransactionId
      *
      * @return bool
+     *
+     * @throws PsCheckoutException
      */
     public function addOrderPayment(\Order $order, $paypalTransactionId)
     {
@@ -305,9 +309,7 @@ class Refund
         $orderPayments = $order->getOrderPaymentCollection();
         foreach ($orderPayments as $orderPayment) {
             if ($orderPayment->transaction_id === $paypalTransactionId) {
-                $message = sprintf('This PayPal transaction is already saved : %s', $orderPayment->transaction_id);
-                \PrestaShopLogger::addLog($message, 1, null, null, null, true);
-                throw new PsCheckoutException($message);
+                throw new PsCheckoutException(sprintf('This PayPal transaction is already saved : %s', $orderPayment->transaction_id));
             }
         }
 

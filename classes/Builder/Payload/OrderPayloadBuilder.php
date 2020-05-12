@@ -222,8 +222,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
         $node['payer'] = [
             'name' => [
-                'given_name' => $this->cart['customer']->lastname,
-                'surname' => $this->cart['customer']->firstname,
+                'given_name' => $this->cart['addresses']['invoice']->firstname,
+                'surname' => $this->cart['addresses']['invoice']->lastname,
             ],
             'email_address' => $this->cart['customer']->email,
             'address' => [
