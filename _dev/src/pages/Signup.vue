@@ -29,6 +29,14 @@
             {{ $t('pages.signup.createYourPsAccount') }}
           </h1>
 
+          <b-alert
+            v-if="errorException.length"
+            variant="danger"
+            show
+          >
+            <p>{{ errorException }}</p>
+          </b-alert>
+
           <b-form>
             <b-form-group
               label-cols="4"
@@ -162,6 +170,7 @@
     },
     data() {
       return {
+        errorException: '',
         email: {
           value: '',
           state: null,
@@ -219,35 +228,44 @@
           // eslint-disable-next-line no-console
           this.$router.push('/authentication').catch((exception) => console.log(exception));
         }).catch((response) => {
-          this.handleResponseError(response.body.error.message);
+          this.handleResponseError(response);
         });
       },
       goToSignIn() {
         // eslint-disable-next-line no-console
         this.$router.push('/authentication/signin').catch((exception) => console.log(exception));
       },
-      handleResponseError(err) {
-        switch (err) {
-          case error.EMAIL_EXISTS:
-            this.setEmailError(false, this.$t('firebase.error.emailExists'));
-            this.resetPasswordError();
-            break;
-          case error.MISSING_PASSWORD:
-            this.setPasswordError(false, this.$t('firebase.error.missingPassword'));
-            this.resetEmailError();
-            break;
-          case error.INVALID_EMAIL:
-            this.setEmailError(false, this.$t('firebase.error.invalidEmail'));
-            this.resetPasswordError();
-            break;
-          case error.MISSING_EMAIL:
-            this.setEmailError(false, this.$t('firebase.error.missingEmail'));
-            this.resetPasswordError();
-            break;
-          default:
-            this.setPasswordError(false, this.$t('firebase.error.defaultError'));
-            this.setEmailError(false, this.$t('firebase.error.defaultError'));
-            break;
+      handleResponseError(response) {
+        if (undefined !== response.body
+          && undefined !== response.body.error
+          && undefined !== response.body.message
+        ) {
+          switch (response.body.error.message) {
+            case error.EMAIL_EXISTS:
+              this.setEmailError(false, this.$t('firebase.error.emailExists'));
+              this.resetPasswordError();
+              break;
+            case error.MISSING_PASSWORD:
+              this.setPasswordError(false, this.$t('firebase.error.missingPassword'));
+              this.resetEmailError();
+              break;
+            case error.INVALID_EMAIL:
+              this.setEmailError(false, this.$t('firebase.error.invalidEmail'));
+              this.resetPasswordError();
+              break;
+            case error.MISSING_EMAIL:
+              this.setEmailError(false, this.$t('firebase.error.missingEmail'));
+              this.resetPasswordError();
+              break;
+            default:
+              this.setPasswordError(false, this.$t('firebase.error.defaultError'));
+              this.setEmailError(false, this.$t('firebase.error.defaultError'));
+              break;
+          }
+        }
+
+        if (undefined !== response.body) {
+          this.errorException = response.body;
         }
       },
       setPasswordError(hasError, message) {

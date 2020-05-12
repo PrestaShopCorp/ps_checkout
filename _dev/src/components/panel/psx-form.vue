@@ -37,6 +37,14 @@
       </ul>
     </b-alert>
 
+    <b-alert
+      v-if="errorException.length"
+      variant="danger"
+      show
+    >
+      <p>{{ errorException }}</p>
+    </b-alert>
+
     <b-card
       no-body
       footer-class="d-flex"
@@ -502,6 +510,7 @@
     name: 'PsxForm',
     data() {
       return {
+        errorException: '',
         subCategory: null,
         statesList: null,
         errorForm: null,
@@ -555,12 +564,26 @@
             this.$router.push('/authentication').catch((exception) => console.log(exception));
           }
           this.errorForm = response;
+          this.errorException = '';
           window.scrollTo({
             top: 0,
             left: 0,
             behavior: 'smooth',
           });
+        }).catch((response) => {
+          this.handleResponseError(response);
         });
+      },
+      handleResponseError(response) {
+        if (undefined !== response.body) {
+          this.errorException = response.body;
+          this.errorForm = null;
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth',
+          });
+        }
       },
       back() {
         this.$store.dispatch('logOut').then(() => {

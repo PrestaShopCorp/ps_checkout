@@ -192,7 +192,7 @@
           variant="danger"
           show
         >
-          {{ $t('panel.account-list.onboardingLinkError') }}
+          <p>{{ $t('panel.account-list.onboardingLinkError') }}</p>
         </b-alert>
 
         <b-container v-if="firebaseStatusAccount && paypalStatusAccount">
