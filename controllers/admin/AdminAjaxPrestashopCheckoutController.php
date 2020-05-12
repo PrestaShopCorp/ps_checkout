@@ -219,7 +219,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         // Save form in database
         if (false === $this->savePsxForm($psxForm)) {
-            $this->ajaxDie(json_encode(false));
+            $this->ajaxDie(json_encode(['Cannot save in database.']));
         }
 
         $response = (new PsxOnboarding())->setOnboardingMerchant(array_filter($psxForm));
