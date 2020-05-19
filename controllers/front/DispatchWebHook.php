@@ -149,7 +149,19 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     {
         // Not available on nginx
         if (function_exists('getallheaders')) {
-            return getallheaders();
+            $headers = getallheaders();
+
+            // Ensure we will not return empty values if Request is FORWARDED
+            if (false === empty($headers['Shop-Id'])
+                && false === empty($headers['Merchant-Id'])
+                && false === empty($headers['Psx-Id'])
+            ) {
+                return [
+                    'Shop-Id' => $headers['Shop-Id'],
+                    'Merchant-Id' => $headers['Merchant-Id'],
+                    'Psx-Id' => $headers['Psx-Id'],
+                ];
+            }
         }
 
         return [
