@@ -34,7 +34,7 @@ function removePsCheckoutPhpUnitFromFsDuringUpgrade(array $files)
     foreach ($files as $file) {
         if (is_dir($file)) {
             $iterator = new FilesystemIterator($file, FilesystemIterator::CURRENT_AS_PATHNAME | FilesystemIterator::SKIP_DOTS);
-            removeFromFsDuringUpgrade(iterator_to_array($iterator));
+            removePsCheckoutPhpUnitFromFsDuringUpgrade(iterator_to_array($iterator));
             if (!rmdir($file) && file_exists($file)) {
                 return 'Deletion of directory ' . $file . 'failed';
             }
