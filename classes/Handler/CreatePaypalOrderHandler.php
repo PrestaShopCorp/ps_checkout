@@ -53,7 +53,7 @@ class CreatePaypalOrderHandler
     public function handle($expressCheckout = false, $updateOrder = false, $paypalOrderId = null)
     {
         // Present an improved cart in order to create the payload
-        $cartPresenter = (new CartPresenter($this->context))->present();
+        $cartPresenter = (new CartPresenter())->present();
 
         $builder = new OrderPayloadBuilder($cartPresenter);
 
