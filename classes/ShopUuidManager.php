@@ -53,7 +53,7 @@ class ShopUuidManager
 
         if (false === \Configuration::hasKey('PS_CHECKOUT_SHOP_UUID_V4', null, null, (int) $idShop) || !$this->getForShop($idShop)) {
             $uuid4 = \Ramsey\Uuid\Uuid::uuid4();
-            $result = $result && \Configuration::updateValue(
+            $result = \Configuration::updateValue(
                 'PS_CHECKOUT_SHOP_UUID_V4',
                 $uuid4->toString(),
                 false,

@@ -154,7 +154,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
      * @param string $alias
      * @param int $id_customer
      *
-     * @return int
+     * @return int|false
      */
     private function addressAlreadyExist($alias, $id_customer)
     {
@@ -165,13 +165,18 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         $query->where('id_customer = ' . (int) $id_customer);
         $query->where('deleted = 0');
 
-        return Db::getInstance()->getValue($query);
+        /**
+         * Sets $result to make php-cs-fixer and PHPStan happy
+         *
+         * @var int|false
+         */
+        $result = Db::getInstance()->getValue($query);
+
+        return $result;
     }
 
     /**
      * Ajax: Create and return paypal order
-     *
-     * @return string $paypalOrder
      */
     public function displayAjaxCreatePaypalOrder()
     {
