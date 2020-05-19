@@ -36,7 +36,7 @@ class CacheDirectory
     private $psPath;
 
     /**
-     * @var string PrestaShop Debug Mode
+     * @var bool PrestaShop Debug Mode
      */
     private $psIsDebugMode;
 
