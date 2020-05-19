@@ -16,7 +16,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  *}
-
+<div id="ps_checkout_paypal_container">
 <link rel="preload" href="{$paypalSdkLink|escape:'htmlall':'UTF-8'}" as="script">
 
 <div class="paypal-tips">{l s='You will be redirected to the related gateway to complete payment' mod='ps_checkout'}</div>
@@ -38,6 +38,7 @@
       <li>{l s='Please indicate that you have read Terms & Conditions and accept all terms.' mod='ps_checkout'}</li>
     </ul>
   </article>
+</div>
 </div>
 
 <script type='text/javascript' src='{$jsPathInitPaypalSdk|escape:'javascript':'UTF-8'}'></script>

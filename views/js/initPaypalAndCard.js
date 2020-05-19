@@ -32,8 +32,10 @@ function initPsCheckout() {
   }
 
   hostedFieldsErrors = JSON.parse(hostedFieldsErrors.replace(/&quot;/g, '"'));
-
-  hideDefaultPaymentButtonIfPaypalIsChecked();
+  
+  if (typeof OnePageCheckoutPS !== typeof undefined) {
+    hideDefaultPaymentButtonIfPaypalIsChecked();
+  }
 
   if (cardIsActive) {
     initHostedFields();
