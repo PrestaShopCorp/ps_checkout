@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "17f46ed4e44b40d4414d7ea7ddd88332",
+    "content-hash": "0bc941949bce3e7d8b6009c711a660af",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -1812,16 +1812,16 @@
         },
         {
             "name": "prestashop/php-dev-tools",
-            "version": "v3.2",
+            "version": "v3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PrestaShop/php-dev-tools.git",
-                "reference": "55442b1dc4593961fba88d4631644507d6e27075"
+                "reference": "837eeb0518fddb7978445170673a44af5b2a2fb2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PrestaShop/php-dev-tools/zipball/55442b1dc4593961fba88d4631644507d6e27075",
-                "reference": "55442b1dc4593961fba88d4631644507d6e27075",
+                "url": "https://api.github.com/repos/PrestaShop/php-dev-tools/zipball/837eeb0518fddb7978445170673a44af5b2a2fb2",
+                "reference": "837eeb0518fddb7978445170673a44af5b2a2fb2",
                 "shasum": ""
             },
             "require": {
@@ -1846,7 +1846,7 @@
                 "MIT"
             ],
             "description": "PrestaShop coding standards",
-            "time": "2020-03-10T18:11:25+00:00"
+            "time": "2020-05-04T08:19:03+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -3146,5 +3146,6 @@
     },
     "platform-overrides": {
         "php": "5.6"
-    }
+    },
+    "plugin-api-version": "1.1.0"
 }
