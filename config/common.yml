@@ -1,0 +1,17 @@
+services:
+  _defaults:
+    public: true
+
+  ps_checkout.module:
+    class: 'Ps_checkout'
+    factory: ['Module', 'getInstanceByName']
+    arguments:
+      - 'ps_checkout'
+
+  ps_checkout.cache.directory:
+    lazy: true
+    class: 'PrestaShop\Module\PrestashopCheckout\Cache\CacheDirectory'
+    arguments:
+      - !php/const _PS_VERSION_
+      - !php/const _PS_ROOT_DIR_
+      - !php/const _PS_MODE_DEV_

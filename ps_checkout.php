@@ -101,9 +101,10 @@ class Ps_checkout extends PaymentModule
     // the module each time to get the version
     const VERSION = '1.4.0';
 
-    /**
-     * @var \Monolog\Logger
-     */
+    /** @var \Symfony\Component\DependencyInjection\ContainerInterface */
+    private $container;
+
+    /** @var \Psr\Log\LoggerInterface */
     private $logger;
 
     public function __construct()
@@ -929,7 +930,9 @@ class Ps_checkout extends PaymentModule
     }
 
     /**
-     * @return \Monolog\Logger
+     * @todo to be removed
+     *
+     * @return \Psr\Log\LoggerInterface
      */
     public function getLogger()
     {
@@ -1050,5 +1053,31 @@ class Ps_checkout extends PaymentModule
         ]);
 
         return $this->display(__FILE__, '/views/templates/hook/displayAdminOrderMainBottom.tpl');
+    }
+
+    /**
+     * @param string $serviceName
+     *
+     * @return mixed
+     */
+    public function getService($serviceName)
+    {
+        if (method_exists($this, 'get')) {
+            // Use Core container introduced in 1.7.3.0
+            return $this->get($serviceName);
+        }
+
+        if (null === $this->container) {
+            $cacheDirectory = new \PrestaShop\Module\PrestashopCheckout\Cache\CacheDirectory(
+                _PS_VERSION_,
+                _PS_ROOT_DIR_,
+                _PS_MODE_DEV_
+            );
+            $containerProvider = new \PrestaShop\Module\PrestashopCheckout\DependencyInjection\ContainerProvider($this, $cacheDirectory);
+
+            $this->container = $containerProvider->get(defined('_PS_ADMIN_DIR_') ? 'admin' : 'front');
+        }
+
+        return $this->container->get($serviceName);
     }
 }
