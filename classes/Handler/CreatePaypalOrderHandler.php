@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Handler;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
@@ -49,6 +50,8 @@ class CreatePaypalOrderHandler
      * @param string|null $paypalOrderId
      *
      * @return array
+     *
+     * @throws PsCheckoutException
      */
     public function handle($expressCheckout = false, $updateOrder = false, $paypalOrderId = null)
     {

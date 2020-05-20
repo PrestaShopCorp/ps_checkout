@@ -17,6 +17,15 @@
  * International Registered Trademark & Property of PrestaShop SA
  *}
 
+{if $paymentError}
+  <div class="alert alert-danger">
+    <p><strong>{l s='Processing payment error' mod='ps_checkout'}</strong></p>
+    <p>{l s='Payment failed, you have not been charged.' mod='ps_checkout'}</p>
+    <p>{$paymentErrorMessage|escape:'htmlall':'UTF-8'}</p>
+  </div>
+{/if}
+
+{if $isExpressCheckout}
 <div class="express-checkout-block mb-2">
   <img src="{$paypalLogoPath|escape:'htmlall':'UTF-8'}" class="express-checkout-img" alt="PayPal">
   <p class="express-checkout-label">
@@ -41,3 +50,4 @@
     });
   });
 </script>
+{/if}

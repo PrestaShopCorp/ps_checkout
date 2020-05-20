@@ -32,6 +32,8 @@ class MultiStoreFixer
 
     /**
      * @return bool
+     *
+     * @throws \PrestaShopDatabaseException
      */
     public function run()
     {
@@ -72,6 +74,8 @@ class MultiStoreFixer
      * Please note Configuration::get return value for all shops or for group if no value for shop is found
      *
      * @return bool
+     *
+     * @throws \PrestaShopDatabaseException
      */
     private function fixMultiStore()
     {
@@ -147,6 +151,8 @@ class MultiStoreFixer
      * Get id_shop of shops with order placed using ps_checkout
      *
      * @return array
+     *
+     * @throws \PrestaShopDatabaseException
      */
     private function getShopListUsedByOrder()
     {
