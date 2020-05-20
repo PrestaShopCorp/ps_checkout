@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
 /**
  * Class that allow to validate an order
@@ -41,12 +42,12 @@ class ValidateOrder
     /**
      * @var string
      */
-    private $paypalOrderId = null;
+    private $paypalOrderId;
 
     /**
      * @var string
      */
-    private $merchantId = null;
+    private $merchantId;
 
     /**
      * @param string $paypalOrderId
@@ -54,16 +55,14 @@ class ValidateOrder
      */
     public function __construct($paypalOrderId, $merchantId)
     {
-        $this->setMerchantId($merchantId);
-        $this->setPaypalOrderId($paypalOrderId);
+        $this->merchantId = $merchantId;
+        $this->paypalOrderId = $paypalOrderId;
     }
 
     /**
      * Process the validation for an order
      *
      * @param array $payload array with all information required by PaymentModule->validateOrder()
-     *
-     * @return bool
      *
      * @throws PsCheckoutException
      * @throws \PrestaShopException
@@ -75,31 +74,52 @@ class ValidateOrder
         $order = $paypalOrder->getOrder();
 
         if (empty($order)) {
-            throw new PsCheckoutException(sprintf('Unable to retrieve Paypal Order for %s', $this->paypalOrderId));
+            throw new PsCheckoutException(sprintf('Unable to retrieve Paypal Order for %s', $this->paypalOrderId), PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
         }
 
-        $apiOrder = new Order(\Context::getContext()->link);
+        $transactionIdentifier = false === empty($order['purchase_units'][0]['payments']['captures'][0]['id']) ? $order['purchase_units'][0]['payments']['captures'][0]['id'] : '';
+        $transactionStatus = false === empty($order['purchase_units'][0]['payments']['captures'][0]['status']) ? $order['purchase_units'][0]['payments']['captures'][0]['status'] : '';
 
-        switch ($paypalOrder->getOrderIntent()) {
-            case self::INTENT_CAPTURE:
-                // API call here
-                $response = $apiOrder->capture($order['id'], $this->merchantId);
-                break;
-            case self::INTENT_AUTHORIZE:
-                // API call here
-                $response = $apiOrder->authorize($order['id'], $this->merchantId);
-                break;
-            default:
-                throw new PsCheckoutException(sprintf('Unknown Intent type %s, Paypal Order %s', $paypalOrder->getOrderIntent(), $this->paypalOrderId));
+        // @todo To be refactored in v2.0.0 with Service Container
+        if (true === empty($order['purchase_units'][0]['payments']['captures'])) {
+            $apiOrder = new Order(\Context::getContext()->link);
+            $response = $apiOrder->capture($order['id'], $this->merchantId); // API call here
+
+            if (false === $response['status']) {
+                if (false === empty($response['exceptionMessage']) && false === empty($response['exceptionCode'])) {
+                    throw new PsCheckoutException($response['exceptionMessage'], (int) $response['exceptionCode']);
+                }
+
+                if (false === empty($response['body']['message'])) {
+                    (new PayPalError($response['body']['message']))->throwException();
+                }
+
+                throw new PsCheckoutException(isset($response['body']['error']) ? $response['body']['error'] : 'Unknown error', PsCheckoutException::UNKNOWN);
+            }
+
+            if (false === empty($response['body']['purchase_units'][0]['payments']['captures'])) {
+                $transactionIdentifier = $response['body']['purchase_units'][0]['payments']['captures'][0]['id'];
+                $transactionStatus = $response['body']['purchase_units'][0]['payments']['captures'][0]['status'];
+
+                if (self::CAPTURE_STATUS_DECLINED === $transactionStatus
+                    && false === empty($response['body']['payment_source'])
+                    && false === empty($response['body']['payment_source'][0]['card'])
+                    && false === empty($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response'])
+                ) {
+                    $payPalProcessorResponse = new PayPalProcessorResponse(
+                        isset($response['body']['payment_source'][0]['card']['brand']) ? $response['body']['payment_source'][0]['card']['brand'] : null,
+                        isset($response['body']['payment_source'][0]['card']['type']) ? $response['body']['payment_source'][0]['card']['type'] : null,
+                        isset($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['avs_code']) ? $response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['avs_code'] : null,
+                        isset($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['cvv_code']) ? $response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['cvv_code'] : null,
+                        isset($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['response_code']) ? $response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['response_code'] : null
+                    );
+                    $payPalProcessorResponse->throwException();
+                }
+            }
         }
 
-        if (false === $response['status']) {
-            return false;
-        }
-
-        if ($response['body']['status'] === self::CAPTURE_STATUS_DECLINED) {
-            // Avoid order with payment error
-            return false;
+        if (self::CAPTURE_STATUS_DECLINED === $transactionStatus) {
+            throw new PsCheckoutException(sprintf('Transaction declined by PayPal : %s', false === empty($response['body']['details']['description']) ? $response['body']['details']['description'] : 'No detail'), PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
         }
 
         /** @var \PaymentModule $module */
@@ -112,7 +132,7 @@ class ValidateOrder
             $this->getPaymentMessageTranslation($payload['paymentMethod'], $module),
             null,
             [
-                'transaction_id' => $response['body']['id'],
+                'transaction_id' => $transactionIdentifier,
             ],
             $payload['currencyId'],
             false,
@@ -120,16 +140,14 @@ class ValidateOrder
         );
 
         if (false === $this->setOrdersMatrice($module->currentOrder, $this->paypalOrderId)) {
-            throw new PsCheckoutException(sprintf('Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s', $module->currentOrder, $this->paypalOrderId));
+            throw new PsCheckoutException(sprintf('Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s', $module->currentOrder, $this->paypalOrderId), PsCheckoutException::PSCHECKOUT_ORDER_MATRICE_ERROR);
         }
 
         $this->setOrderState(
             $module->currentOrder,
-            $response['body']['status'],
+            $transactionStatus,
             $payload['paymentMethod']
         );
-
-        return true;
     }
 
     /**
@@ -158,6 +176,9 @@ class ValidateOrder
      * @param string $orderPaypalId paypal order id
      *
      * @return bool
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     private function setOrdersMatrice($orderPrestashopId, $orderPaypalId)
     {
@@ -175,6 +196,9 @@ class ValidateOrder
      * @param int $orderId Order identifier
      * @param string $status Capture status
      * @param string $paymentMethod can be 'paypal' or 'card'
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     private function setOrderState($orderId, $status, $paymentMethod)
     {
@@ -201,6 +225,9 @@ class ValidateOrder
      * @param int $orderId Order identifier
      *
      * @return int OrderState identifier
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     private function getPaidStatusId($orderId)
     {
@@ -225,25 +252,5 @@ class ValidateOrder
         }
 
         return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
-    }
-
-    /**
-     * setter for merchantId
-     *
-     * @param string $merchantId
-     */
-    public function setMerchantId($merchantId)
-    {
-        $this->merchantId = $merchantId;
-    }
-
-    /**
-     * setter for orderId
-     *
-     * @param string $orderId
-     */
-    public function setPaypalOrderId($orderId)
-    {
-        $this->paypalOrderId = $orderId;
     }
 }

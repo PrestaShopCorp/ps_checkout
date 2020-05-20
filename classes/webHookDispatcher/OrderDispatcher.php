@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Date\DatePresenter;
 
 class OrderDispatcher implements Dispatcher
@@ -35,6 +36,10 @@ class OrderDispatcher implements Dispatcher
      * Dispatch the Event Type to manage the merchant status
      *
      * {@inheritdoc}
+     *
+     * @throws PsCheckoutException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function dispatchEventType($payload)
     {
@@ -44,10 +49,10 @@ class OrderDispatcher implements Dispatcher
             return false;
         }
 
-//        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REFUNED
-//            || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REVERSED) {
-//            return $this->dispatchPaymentAction($payload['eventType'], $payload['resource'], $psOrderId);
-//        }
+        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REFUNED
+            || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REVERSED) {
+            return $this->dispatchPaymentAction($payload['eventType'], $payload['resource'], $psOrderId);
+        }
 
         if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_COMPLETED
             || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_DENIED
@@ -69,19 +74,17 @@ class OrderDispatcher implements Dispatcher
      * @param string $orderId paypal order id
      *
      * @return bool|int
+     *
+     * @throws PsCheckoutException
      */
     private function getPrestashopOrderId($orderId)
     {
-        $orderError = (new WebHookValidation())->validateRefundOrderIdValue($orderId);
-
-        if (!empty($orderError)) {
-            throw new UnauthorizedException($orderError);
-        }
+        (new WebHookValidation())->validateRefundOrderIdValue($orderId);
 
         $psOrderId = (new \OrderMatrice())->getOrderPrestashopFromPaypal($orderId);
 
         if (!$psOrderId) {
-            throw new UnprocessableException('order #' . $orderId . ' does not exist');
+            throw new PsCheckoutException(sprintf('order #%s does not exist', $orderId), PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
         }
 
         return $psOrderId;
@@ -95,22 +98,22 @@ class OrderDispatcher implements Dispatcher
      * @param int $orderId
      *
      * @return bool
+     *
+     * @throws PsCheckoutException
      */
     private function dispatchPaymentAction($eventType, $resource, $orderId)
     {
-        $orderError = (new WebHookValidation())->validateRefundResourceValues($resource);
+        (new WebHookValidation())->validateRefundResourceValues($resource);
 
-        if (!empty($orderError)) {
-            throw new UnauthorizedException($orderError);
-        }
+        return true;
 
-        $initiateBy = 'Merchant';
-
-        if ($eventType === self::PS_CHECKOUT_PAYMENT_REVERSED) {
-            $initiateBy = 'Paypal';
-        }
-
-        return (new WebHookOrder($initiateBy, $resource, $orderId))->updateOrder();
+//        $initiateBy = 'Merchant';
+//
+//        if ($eventType === self::PS_CHECKOUT_PAYMENT_REVERSED) {
+//            $initiateBy = 'Paypal';
+//        }
+//
+//        return (new WebHookOrder($initiateBy, $resource, $orderId))->updateOrder();
     }
 
     /**
@@ -121,14 +124,14 @@ class OrderDispatcher implements Dispatcher
      * @param int $orderId
      *
      * @return bool
+     *
+     * @throws PsCheckoutException
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     private function dispatchPaymentStatus($eventType, $resource, $orderId)
     {
-        $orderError = (new WebHookValidation())->validateRefundOrderIdValue($orderId);
-
-        if (!empty($orderError)) {
-            throw new UnauthorizedException($orderError);
-        }
+        (new WebHookValidation())->validateRefundOrderIdValue($orderId);
 
         $order = new \Order($orderId);
         $currentOrderStateId = (int) $order->getCurrentState();

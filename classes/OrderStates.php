@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Translations\OrderStatesTranslations;
 
 class OrderStates
@@ -49,6 +50,9 @@ class OrderStates
      * FYI: this method is also used in the upgrade-1.2.14.php file
      *
      * @return bool
+     *
+     * @throws PsCheckoutException
+     * @throws \PrestaShopDatabaseException
      */
     public function installPaypalStates()
     {
@@ -66,8 +70,12 @@ class OrderStates
      * Get the paypal state id if it doesn't exist by creating it
      *
      * @param string $state
+     * @param string $color
      *
      * @return int
+     *
+     * @throws PsCheckoutException
+     * @throws \PrestaShopDatabaseException
      */
     private function getPaypalStateId($state, $color)
     {
@@ -85,8 +93,12 @@ class OrderStates
      * Create the Paypal State id
      *
      * @param string $state
+     * @param string $color
      *
      * @return int orderStateId
+     *
+     * @throws PsCheckoutException
+     * @throws \PrestaShopDatabaseException
      */
     private function createPaypalStateId($state, $color)
     {
@@ -103,7 +115,7 @@ class OrderStates
             return $insertedId;
         }
 
-        throw new PsCheckoutException('Not able to insert the new order state');
+        throw new PsCheckoutException('Not able to insert the new order state', PsCheckoutException::PRESTASHOP_ORDER_STATE_ERROR);
     }
 
     /**
@@ -111,6 +123,9 @@ class OrderStates
      *
      * @param string $state
      * @param int $orderStateId
+     *
+     * @throws PsCheckoutException
+     * @throws \PrestaShopDatabaseException
      */
     private function createPaypalStateLangs($state, $orderStateId)
     {
@@ -153,6 +168,9 @@ class OrderStates
      * @param int $orderStateId
      * @param string $translations
      * @param int $langId
+     *
+     * @throws PsCheckoutException
+     * @throws \PrestaShopDatabaseException
      */
     private function insertNewStateLang($orderStateId, $translations, $langId)
     {
@@ -164,7 +182,7 @@ class OrderStates
         ];
 
         if (false === \Db::getInstance()->insert(self::ORDER_STATE_LANG_TABLE, $data)) {
-            throw new PsCheckoutException('Not able to insert the new order state language');
+            throw new PsCheckoutException('Not able to insert the new order state language', PsCheckoutException::PRESTASHOP_ORDER_STATE_ERROR);
         }
     }
 

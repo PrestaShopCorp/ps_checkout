@@ -30,7 +30,7 @@ class Order extends PaymentClient
     /**
      * Create order to paypal api
      *
-     * @param string $payload Cart details (json)
+     * @param array $payload Cart details (json)
      *
      * @return array data with paypal order id or false if error
      */
@@ -55,7 +55,7 @@ class Order extends PaymentClient
     {
         $this->setRoute('/payments/order/capture');
 
-        $response = $this->post([
+        return $this->post([
             'json' => json_encode([
                 'mode' => 'paypal',
                 'orderId' => (string) $orderId,
@@ -64,20 +64,6 @@ class Order extends PaymentClient
                 ],
             ]),
         ]);
-
-        if (false === $response['status']) {
-            return $response;
-        }
-
-        if (false === isset($response['body']['purchase_units'][0]['payments']['captures'][0])) {
-            $response['status'] = false;
-
-            return $response;
-        }
-
-        $response['body'] = $response['body']['purchase_units'][0]['payments']['captures'][0];
-
-        return $response;
     }
 
     /**

@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+
 class WebHookOrder
 {
     /**
@@ -88,7 +90,7 @@ class WebHookOrder
         $orderPayments = $order->getOrderPaymentCollection();
         foreach ($orderPayments as $orderPayment) {
             if ($orderPayment->transaction_id === $this->paypalTransactionId) {
-                throw new PsCheckoutException(sprintf('This PayPal transaction is already saved : %s', $this->paypalTransactionId));
+                throw new PsCheckoutException(sprintf('This PayPal transaction is already saved : %s', $this->paypalTransactionId), PsCheckoutException::PRESTASHOP_REFUND_ALREADY_SAVED);
             }
         }
 
@@ -96,7 +98,7 @@ class WebHookOrder
         $expectiveTotalAmountToRefund = $amountAlreadyRefunded + $this->amount;
 
         if ($order->total_paid < $expectiveTotalAmountToRefund) {
-            throw new NotAcceptableException('Can\'t refund more than the order amount');
+            throw new PsCheckoutException(sprintf('Cannot refund more than the order amount %s < %s', $order->total_paid, $expectiveTotalAmountToRefund), PsCheckoutException::PRESTASHOP_REFUND_TOTAL_AMOUNT_REACHED);
         }
 
         $orderProductList = (array) $order->getProducts();

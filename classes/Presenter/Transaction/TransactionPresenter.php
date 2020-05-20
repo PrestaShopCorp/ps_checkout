@@ -32,6 +32,8 @@ class TransactionPresenter implements PresenterInterface
      * present pending orders
      *
      * @return array
+     *
+     * @throws \PrestaShopDatabaseException
      */
     public function present()
     {
@@ -45,8 +47,7 @@ class TransactionPresenter implements PresenterInterface
             $transaction['orderLink'] = $link->getAdminLink('AdminOrders', true, [], ['id_order' => $transaction['id_order'], 'vieworder' => 1]);
             $transaction['username'] = substr($transaction['firstname'], 0, 1) . '. ' . $transaction['lastname'];
             $transaction['userProfileLink'] = $link->getAdminLink('AdminCustomers', true, [], ['id_customer' => $transaction['id_customer'], 'viewcustomer' => 1]);
-            $currency = new \Currency($transaction['id_currency']);
-            $transaction['before_commission'] = \Tools::displayPrice($transaction['amount'], $currency);
+            $transaction['before_commission'] = \Tools::displayPrice($transaction['amount'], \Currency::getCurrencyInstance((int) $transaction['id_currency']));
             $transaction['type'] = strpos($transaction['amount'], '-') !== false ? 'Refund' : 'Payment';
             $transaction['typeForDisplay'] = ($transaction['type'] === 'Refund') ? $module->l('Refund', 'translations') : $module->l('Payment', 'translations');
             $transaction['commission'] = '-';
@@ -56,17 +57,30 @@ class TransactionPresenter implements PresenterInterface
         return $transactions;
     }
 
+    /**
+     * @return array
+     *
+     * @throws \PrestaShopDatabaseException
+     */
     private function getTransactions()
     {
-        return \Db::getInstance()->executeS('
+        $transactions = \Db::getInstance()->executeS('
             SELECT op.*, o.id_order, c.id_customer, c.firstname, c.lastname
             FROM `' . _DB_PREFIX_ . 'order_payment` op
             INNER JOIN `' . _DB_PREFIX_ . 'orders` o ON (o.reference = op.order_reference)
             INNER JOIN `' . _DB_PREFIX_ . 'customer` c ON (c.id_customer = o.id_customer)
-            WHERE op.payment_method = "Prestashop Checkout"
+            WHERE o.module = "ps_checkout"
+            AND op.transaction_id IS NOT NULL
+            AND op.transaction_id != ""
             AND o.id_shop = ' . (int) \Context::getContext()->shop->id . '
             ORDER BY op.date_add DESC
             LIMIT 1000
         ');
+
+        if (empty($transactions)) {
+            return [];
+        }
+
+        return $transactions;
     }
 }

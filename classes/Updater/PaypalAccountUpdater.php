@@ -22,8 +22,8 @@ namespace PrestaShop\Module\PrestashopCheckout\Updater;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop;
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
-use PrestaShop\Module\PrestashopCheckout\PsCheckoutException;
 
 /**
  * Check and set the merchant status
@@ -46,12 +46,19 @@ class PaypalAccountUpdater
      */
     private $account;
 
+    /**
+     * PaypalAccountUpdater constructor.
+     *
+     * @param PaypalAccount $account
+     *
+     * @throws PsCheckoutException
+     */
     public function __construct(PaypalAccount $account)
     {
         $merchantId = $account->getMerchantId();
 
         if (empty($merchantId)) {
-            throw new PsCheckoutException('MerchantId cannot be empty');
+            throw new PsCheckoutException('MerchantId cannot be empty', PsCheckoutException::PSCHECKOUT_MERCHANT_IDENTIFIER_MISSING);
         }
 
         $this->setAccount($account);

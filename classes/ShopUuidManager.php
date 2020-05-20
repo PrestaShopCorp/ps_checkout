@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use Ramsey\Uuid\Uuid;
+
 /**
  * Manage ShopUuid
  */
@@ -46,13 +48,15 @@ class ShopUuidManager
      * @param int $idShop
      *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function generateForShop($idShop)
     {
         $result = true;
 
         if (false === \Configuration::hasKey('PS_CHECKOUT_SHOP_UUID_V4', null, null, (int) $idShop) || !$this->getForShop($idShop)) {
-            $uuid4 = \Ramsey\Uuid\Uuid::uuid4();
+            $uuid4 = Uuid::uuid4();
             $result = $result && \Configuration::updateValue(
                 'PS_CHECKOUT_SHOP_UUID_V4',
                 $uuid4->toString(),

@@ -20,8 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
-use PrestaShop\Module\PrestashopCheckout\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
 /**
@@ -48,6 +48,8 @@ class PsxModule implements PresenterInterface
      * Present the Psx module (vuex)
      *
      * @return array
+     *
+     * @throws PsCheckoutException
      */
     public function present()
     {
@@ -77,6 +79,8 @@ class PsxModule implements PresenterInterface
      * @param string $dir
      *
      * @return array $data
+     *
+     * @throws PsCheckoutException
      */
     private function getJsonData($dir)
     {
@@ -86,7 +90,7 @@ class PsxModule implements PresenterInterface
         );
 
         if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new PsCheckoutException(sprintf('The legacy to standard locales JSON could not be decoded %s', json_last_error_msg()));
+            throw new PsCheckoutException(sprintf('The legacy to standard locales JSON could not be decoded %s', json_last_error_msg()), PsCheckoutException::PSCHECKOUT_LOCALE_DECODE_ERROR);
         }
 
         return $data;

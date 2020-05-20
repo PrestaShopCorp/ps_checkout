@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
 
 class MerchantDispatcher implements Dispatcher
@@ -29,6 +30,8 @@ class MerchantDispatcher implements Dispatcher
      * Dispatch the Event Type to manage the merchant status
      *
      * {@inheritdoc}
+     *
+     * @throws PsCheckoutException
      */
     public function dispatchEventType($payload)
     {

@@ -20,8 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
-use PrestaShop\Module\PrestashopCheckout\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
@@ -64,6 +64,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
     /**
      * Build payload with cart details
+     *
+     * @throws PsCheckoutException
      */
     public function buildFullPayload()
     {
@@ -90,6 +92,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
     /**
      * Build payload without cart details
+     *
+     * @throws PsCheckoutException
      */
     public function buildMinimalPayload()
     {
@@ -268,8 +272,6 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
     /**
      * Build the paypal items node
-     *
-     * @return array
      */
     public function buildItemsNode()
     {
@@ -447,10 +449,13 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         return \Country::getIsoById($countryId);
     }
 
+    /**
+     * @throws PsCheckoutException
+     */
     private function checkPaypalOrderIdWhenUpdate()
     {
         if (true === $this->isUpdate && empty($this->paypalOrderId)) {
-            throw new PsCheckoutException('PayPal order ID is required when building payload for update an order');
+            throw new PsCheckoutException('PayPal order ID is required when building payload for update an order', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
         }
     }
 
