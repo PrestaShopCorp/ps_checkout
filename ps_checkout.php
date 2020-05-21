@@ -37,6 +37,7 @@ class Ps_checkout extends PaymentModule
         'displayAdminOrderMainBottom',
         'actionObjectShopAddAfter',
         'actionAdminControllerSetMedia',
+        'displayPaymentTop',
     ];
 
     /**
@@ -662,23 +663,9 @@ class Ps_checkout extends PaymentModule
                             'isExpressCheckout' => true,
                         ],
                         true
-                    ))
-                    ->setAdditionalInformation($this->generateExpressCheckoutForm());
+                    ));
 
         return $expressCheckoutPaymentOption;
-    }
-
-    public function generateExpressCheckoutForm()
-    {
-        $this->context->smarty->assign([
-            'paypalEmail' => $this->context->cookie->__get('paypalEmail'),
-            'jsHideOtherPaymentOptions' => $this->_path . 'views/js/hideOtherPaymentOptions.js?v=' . $this->version,
-            'paypalLogoPath' => $this->_path . 'views/img/paypal_express.png',
-        ]);
-
-        return $this->context->smarty->fetch(
-            'module:ps_checkout/views/templates/front/paymentOptions/expressCheckout.tpl'
-        );
     }
 
     /**
@@ -1043,5 +1030,29 @@ class Ps_checkout extends PaymentModule
         ]);
 
         return $this->display(__FILE__, '/views/templates/hook/displayAdminOrderMainBottom.tpl');
+    }
+
+    /**
+     * This hook display a block on top of PaymentOptions on PrestaShop 1.7
+     *
+     * @return string
+     */
+    public function hookDisplayPaymentTop()
+    {
+        if (false === $this->context->cookie->__isset('paypalOrderId')) {
+            return '';
+        }
+
+        $this->context->smarty->assign([
+            'paypalLogoPath' => $this->getPathUri() . 'views/img/paypal_express.png',
+            'translatedText' => strtr(
+                $this->l('You have selected your [PAYPAL_ACCOUNT] PayPal account to proceed to the payment.', 'translations'),
+                [
+                    '[PAYPAL_ACCOUNT]' => $this->context->cookie->__get('paypalEmail'),
+                ]
+            ),
+        ]);
+
+        return $this->display(__FILE__, '/views/templates/hook/displayPaymentTop.tpl');
     }
 }
