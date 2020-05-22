@@ -255,7 +255,8 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
             $this->notifyCustomerService($exception);
         }
 
-
+        // Preserve current cart from customer changes to allow merchant to see whats wrong
+        $this->generateNewCart();
 
         $this->context->smarty->assign([
             'alertClass' => 'danger',
@@ -300,5 +301,18 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
         $customerMessage->private = 1;
         $customerMessage->read = false;
         $customerMessage->add();
+    }
+
+    /**
+     * @see FrontController::init()
+     */
+    private function generateNewCart()
+    {
+        $cart = clone $this->context->cart;
+        $cart->id = 0;
+        $cart->add();
+
+        $this->context->cart = $cart;
+        $this->context->cookie->__set('id_cart', (int) $cart->id);
     }
 }
