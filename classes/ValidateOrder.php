@@ -224,7 +224,7 @@ class ValidateOrder
             return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
         }
 
-        return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
+        return (int) \Configuration::undefinedMethod('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
     }
 
     /**

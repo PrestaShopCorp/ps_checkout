@@ -11,7 +11,7 @@
     "require-dev": {
         "php": ">=5.6",
         "phpunit/phpunit": "~5.7",
-        "prestashop/php-dev-tools": "~3.0"
+        "prestashop/php-dev-tools": "dev-try-github-annotations-in-phpstan-reports"
     },
     "autoload": {
         "psr-4": {
@@ -29,6 +29,12 @@
         "ramsey/uuid": "^3.8",
         "vlucas/phpdotenv": "^3.4"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/Quetzacoalt91/php-dev-tools"
+        }
+    ],
     "author": "PrestaShop",
     "license": "AFL-3.0"
 }
