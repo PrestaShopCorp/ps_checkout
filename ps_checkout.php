@@ -99,7 +99,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '1.4.0';
+    const VERSION = '1.4.1';
 
     /**
      * @var \Monolog\Logger
@@ -1058,12 +1058,19 @@ class Ps_checkout extends PaymentModule
     public function hookReceiveWebhook_ps_checkout(array $params)
     {
         const $headers = $params['headers'];
+        const $body = $params['body'];
+        const $correlationId = $headers['correlationId'];
+        const $action = $body['action'];
+        const $data = $body['data'];
 
+        switch ($action) {
+            case 'my-action':
+                // TODO
+                return '';
+            default:
+                return 'Action unknown';
+        }
 
-        //PrestaShopLogger::addLog(json_encode($params['headers']));
-        //PrestaShopLogger::addLog(json_encode($params['body']));
-        //dump($params['headers']);
-        //dump($params['body']);
-        return '';
+        return ''; // empty string '' if succeed; or an error message string if failed.
     }
 }
