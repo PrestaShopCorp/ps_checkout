@@ -32,18 +32,22 @@
   </div>
   {/if}
 
-  <div id="paypal-button-container" class="" style="max-width:300px;"></div>
+  <div id="paypal-button-container"></div>
 </div>
 
 <style>
-#pscheckout-express-checkout .cart {
-  margin-top:15px;
-  margin-bottom:15px
-}
-#pscheckout-express-checkout .checkout {
-  margin-top:15px;
-  margin-bottom:15px
-}
+  #pscheckout-express-checkout .cart {
+    margin-top:15px;
+    margin-bottom:15px
+  }
+  #pscheckout-express-checkout .checkout {
+    margin-top:15px;
+    margin-bottom:15px
+  }
+  #paypal-button-container {
+    max-width:300px;
+    margin: auto;
+  }
 </style>
 
 <script>

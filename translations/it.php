@@ -378,3 +378,10 @@ $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_5825dad
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_da74acca9d5669367fa982b7694f5303'] = 'Valuta di rimborso PayPal non valida.';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_d1a7ac6d45dcb4a782b441e29380056a'] = 'Il rimborso è stato effettuato tramite PayPal.';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_ee6403a0a4d60590a6b6634df2fdce3f'] = 'Il rimborso non può essere effettuato tramite PayPal.';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_2347172eb56070e194a4a9367d2b0b2f'] = 'Hai scelto il tuo conto PayPal [PAYPAL_ACCOUNT] per procedere con il pagamento.';
+$_MODULE['<{ps_checkout}prestashop>validateorder_1e4b9d2cc53ea6d007fef536fd4d73e8'] = 'Pagamento tramite carta';
+$_MODULE['<{ps_checkout}prestashop>validateorder_e8bec250a9e89935ecc32d6775af9da4'] = 'Pagamento con PayPal';
+$_MODULE['<{ps_checkout}prestashop>orderdispatcher_1e4b9d2cc53ea6d007fef536fd4d73e8'] = 'Pagamento tramite carta';
+$_MODULE['<{ps_checkout}prestashop>orderdispatcher_e8bec250a9e89935ecc32d6775af9da4'] = 'Pagamento con PayPal';
+$_MODULE['<{ps_checkout}prestashop>transactionpresenter_76f0ed934de85cc7131910b32ede7714'] = 'Rimborsato';
+$_MODULE['<{ps_checkout}prestashop>transactionpresenter_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Pagamento';

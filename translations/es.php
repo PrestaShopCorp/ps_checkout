@@ -378,3 +378,10 @@ $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_5825dad
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_da74acca9d5669367fa982b7694f5303'] = 'Divisa de reembolso de PayPal no válida.';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_d1a7ac6d45dcb4a782b441e29380056a'] = 'PayPal no efectuó el reembolso.';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_ee6403a0a4d60590a6b6634df2fdce3f'] = 'PayPal no pudo efectuar el reembolso.';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_2347172eb56070e194a4a9367d2b0b2f'] = 'Ha elegido su cuenta PayPal [PAYPAL_ACCOUNT] para continuar con el pago.';
+$_MODULE['<{ps_checkout}prestashop>validateorder_1e4b9d2cc53ea6d007fef536fd4d73e8'] = 'Pago con tarjeta';
+$_MODULE['<{ps_checkout}prestashop>validateorder_e8bec250a9e89935ecc32d6775af9da4'] = 'Pago con PayPal';
+$_MODULE['<{ps_checkout}prestashop>orderdispatcher_1e4b9d2cc53ea6d007fef536fd4d73e8'] = 'Pago con tarjeta';
+$_MODULE['<{ps_checkout}prestashop>orderdispatcher_e8bec250a9e89935ecc32d6775af9da4'] = 'Pago con PayPal';
+$_MODULE['<{ps_checkout}prestashop>transactionpresenter_76f0ed934de85cc7131910b32ede7714'] = 'Reintegrado';
+$_MODULE['<{ps_checkout}prestashop>transactionpresenter_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Pago';

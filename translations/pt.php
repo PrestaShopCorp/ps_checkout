@@ -175,8 +175,8 @@ $_MODULE['<{ps_checkout}prestashop>expresscheckout_e81c4e4f2b7b93b481e13a8553c2a
 $_MODULE['<{ps_checkout}prestashop>translations_6bde19fb9d1c68cdb5a8efa405370887'] = 'Ferramenta para identificar fraudes';
 $_MODULE['<{ps_checkout}prestashop>translations_f09c0f26e20972759eb40c75eb089b10'] = 'Página de resumo do pedido';
 $_MODULE['<{ps_checkout}prestashop>translations_eb763a2e313718f33f55e1f0d84df6ee'] = 'Página de produto';
-$_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_6ff063fbc860a79759a7369ac32cee22'] = 'Finalização do pedido';
-$_MODULE['<{ps_checkout}prestashop>paymentpaypalconfirmation_6ff063fbc860a79759a7369ac32cee22'] = 'Finalização do pedido';
+$_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_6ff063fbc860a79759a7369ac32cee22'] = 'Pagamento';
+$_MODULE['<{ps_checkout}prestashop>paymentpaypalconfirmation_6ff063fbc860a79759a7369ac32cee22'] = 'Pagamento';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_21ff087f1520a70163128cae982de67a'] = 'Pagamento com cartão';
 $_MODULE['<{ps_checkout}prestashop>paymentpaypalconfirmation_21ff087f1520a70163128cae982de67a'] = 'Pagamento com cartão';
 $_MODULE['<{ps_checkout}prestashop>translations_25d76826f85d2bb976027066e6fcc522'] = 'Configurações de arredondamento a atualizar';
@@ -277,7 +277,7 @@ $_MODULE['<{ps_checkout}prestashop>orderpresenter_2d13df6f8b5e4c5af9f87e0dc39df6
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_616b5940be86c327aaa5090f50c061f5'] = 'Negado';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_9f004157e4c148dac71da3ae5906351f'] = 'Parcialmente reembolsado';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_cc61945cbbf46721a053467c395c666f'] = 'Reembolsado';
-$_MODULE['<{ps_checkout}prestashop>orderpresenter_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Finalização do pedido';
+$_MODULE['<{ps_checkout}prestashop>orderpresenter_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Pagamento';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_76f0ed934de85cc7131910b32ede7714'] = 'Reembolso';
 $_MODULE['<{ps_checkout}prestashop>translations_7f79b3c1755a6eaf27e27a183a675477'] = 'Disponibilidade do cartão de crédito colocado em espera';
 $_MODULE['<{ps_checkout}prestashop>translations_0daf2583d30c61242d1b36d66909e8d2'] = 'Infelizmente, de momento não pode processar pagamentos por cartão de crédito. Enquanto isso, ainda é possível receber pagamentos por PayPal Por favor, realize algumas ações na sua conta PayPal, onde poderá ter recebido uma notificação. Se este não for o caso, entre em contacto com o serviço de atendimento ao cliente PayPal.';
@@ -294,7 +294,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_a0fc2c9aa33a67d83ee99e0aeb474883
 $_MODULE['<{ps_checkout}prestashop>translations_6c5f414021afc703cc9f10eeb8616e06'] = 'Alterar as configurações de arredondamento';
 $_MODULE['<{ps_checkout}prestashop>translations_84cc580b771c1b8f9c2e739ffbea97de'] = 'Configurações atualizadas!';
 $_MODULE['<{ps_checkout}prestashop>translations_9e67f7c55ebde9258ce8526e702f2337'] = 'As suas configurações de arredondamento são agora compatíveis';
-$_MODULE['<{ps_checkout}prestashop>translations_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Finalização do pedido';
+$_MODULE['<{ps_checkout}prestashop>translations_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Pagamento';
 $_MODULE['<{ps_checkout}prestashop>translations_76f0ed934de85cc7131910b32ede7714'] = 'Reembolso';
 $_MODULE['<{ps_checkout}prestashop>translations_44749712dbec183e983dcd78a7736c41'] = 'Data';
 $_MODULE['<{ps_checkout}prestashop>translations_8dd3857cf665ec993675dfa427008164'] = 'Número da encomenda';
@@ -378,3 +378,10 @@ $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_5825dad
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_da74acca9d5669367fa982b7694f5303'] = 'Moeda de reembolso PayPal inválida.';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_d1a7ac6d45dcb4a782b441e29380056a'] = 'O reembolso foi efetuado pelo PayPal.';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_ee6403a0a4d60590a6b6634df2fdce3f'] = 'O reembolso não pôde ser efetuado pelo PayPal.';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_2347172eb56070e194a4a9367d2b0b2f'] = 'Você escolheu sua conta do PayPal [PAYPAL_ACCOUNT] para prosseguir com o pagamento.';
+$_MODULE['<{ps_checkout}prestashop>validateorder_1e4b9d2cc53ea6d007fef536fd4d73e8'] = 'Pago com cartão';
+$_MODULE['<{ps_checkout}prestashop>validateorder_e8bec250a9e89935ecc32d6775af9da4'] = 'Pago com PayPal';
+$_MODULE['<{ps_checkout}prestashop>orderdispatcher_1e4b9d2cc53ea6d007fef536fd4d73e8'] = 'Pago com cartão';
+$_MODULE['<{ps_checkout}prestashop>orderdispatcher_e8bec250a9e89935ecc32d6775af9da4'] = 'Pago com PayPal';
+$_MODULE['<{ps_checkout}prestashop>transactionpresenter_76f0ed934de85cc7131910b32ede7714'] = 'Reembolso';
+$_MODULE['<{ps_checkout}prestashop>transactionpresenter_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Pago';
