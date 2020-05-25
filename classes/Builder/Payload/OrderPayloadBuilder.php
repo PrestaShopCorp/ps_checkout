@@ -225,7 +225,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 'given_name' => $this->cart['addresses']['invoice']->firstname,
                 'surname' => $this->cart['addresses']['invoice']->lastname,
             ],
-            'email_address' => $this->cart['customer']->email,
+            'email_address' => (string) $this->cart['customer']->email,
             'address' => [
                 'address_line_1' => $this->cart['addresses']['invoice']->address1,
                 'address_line_2' => (string) $this->cart['addresses']['invoice']->address2,

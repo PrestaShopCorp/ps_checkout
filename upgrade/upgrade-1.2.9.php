@@ -28,13 +28,13 @@ if (!defined('_PS_VERSION_')) {
  *
  * @return true|string True if everything goes fine, error details otherwise
  */
-function removeFromFsDuringUpgrade(array $files)
+function removePsCheckoutPhpUnitFromFsDuringUpgrade(array $files)
 {
     $files = array_reverse($files);
     foreach ($files as $file) {
         if (is_dir($file)) {
             $iterator = new FilesystemIterator($file, FilesystemIterator::CURRENT_AS_PATHNAME | FilesystemIterator::SKIP_DOTS);
-            removeFromFsDuringUpgrade(iterator_to_array($iterator));
+            removePsCheckoutPhpUnitFromFsDuringUpgrade(iterator_to_array($iterator));
             if (!rmdir($file) && file_exists($file)) {
                 return 'Deletion of directory ' . $file . 'failed';
             }
@@ -61,7 +61,7 @@ function upgrade_module_1_2_9($module)
      */
     $path = __DIR__ . '/../vendor/phpunit';
     if (file_exists($path)) {
-        $result = removeFromFsDuringUpgrade([$path]);
+        $result = removePsCheckoutPhpUnitFromFsDuringUpgrade([$path]);
         if ($result !== true) {
             $module->getLogger()->error('Could not delete PHPUnit from module.');
 
