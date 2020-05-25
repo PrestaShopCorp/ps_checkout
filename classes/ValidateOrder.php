@@ -178,9 +178,6 @@ class ValidateOrder
      */
     private function setOrderState($orderId, $status, $paymentMethod)
     {
-        $orderHistory = new \OrderHistory();
-        $orderHistory->id_order = $orderId;
-
         switch ($status) {
             case static::CAPTURE_STATUS_COMPLETED:
                 $orderState = $this->getPaidStatusId($orderId);
@@ -193,8 +190,15 @@ class ValidateOrder
                 break;
         }
 
-        $orderHistory->changeIdOrderState($orderState, $orderId);
-        $orderHistory->addWithemail();
+        $order = new \Order($orderId);
+        $currentOrderStateId = (int) $order->getCurrentState();
+
+        if ($currentOrderStateId !== $orderState) {
+            $orderHistory = new \OrderHistory();
+            $orderHistory->id_order = $orderId;
+            $orderHistory->changeIdOrderState($orderState, $orderId);
+            $orderHistory->addWithemail();
+        }
     }
 
     /**
