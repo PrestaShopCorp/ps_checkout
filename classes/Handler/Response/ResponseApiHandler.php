@@ -44,6 +44,8 @@ class ResponseApiHandler
             'status' => $this->responseIsSuccessful($responseContents, $response->getStatusCode()),
             'httpCode' => $response->getStatusCode(),
             'body' => $responseContents,
+            'exceptionCode' => null,
+            'exceptionMessage' => null,
         ];
     }
 

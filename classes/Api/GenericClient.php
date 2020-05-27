@@ -200,7 +200,7 @@ class GenericClient
 
     private function handleException(\Ps_checkout $module, \Exception $exception, $options = [])
     {
-        $body = $exception->getMessage();
+        $body = null;
         $httpCode = 500;
         $hasResponse = method_exists($exception, 'hasResponse') ? $exception->hasResponse() : false;
 
@@ -222,6 +222,8 @@ class GenericClient
             'status' => false,
             'httpCode' => $httpCode,
             'body' => $body,
+            'exceptionCode' => $exception->getCode(),
+            'exceptionMessage' => $exception->getMessage(),
         ];
     }
 }
