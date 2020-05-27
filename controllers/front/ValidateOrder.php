@@ -21,6 +21,7 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 
 class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontController
@@ -105,7 +106,13 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
     {
         parent::initContent();
 
-        $this->setTemplate('module:ps_checkout/views/templates/front/validateOrder.tpl');
+        $template = 'validateOrderLegacy.tpl';
+
+        if ((new ShopContext())->isShop17()) {
+            $template = 'module:ps_checkout/views/templates/front/validateOrder.tpl';
+        }
+
+        $this->setTemplate($template);
     }
 
     /**
@@ -132,6 +139,10 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
      */
     private function redirectToCheckout(array $params = [])
     {
+        if (false === empty($params['step']) && 'payment' === $params['step']) {
+            $params['step'] = (new ShopContext())->isShop17() ? 4 : 3;
+        }
+
         Tools::redirect(
             $this->context->link->getPageLink(
                 'order',
@@ -206,7 +217,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
      */
     private function handleException(Exception $exception)
     {
-        $exceptionMessageForCustomer = $this->l('Error processing payment', 'translations');
+        $exceptionMessageForCustomer = $this->module->l('Error processing payment', 'translations');
         $exceptionCode = $exception->getCode();
         $notifyCustomerService = true;
 
@@ -225,7 +236,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
             case PayPalException::REDIRECT_PAYER_FOR_ALTERNATE_FUNDING:
             case PayPalException::TRANSACTION_BLOCKED_BY_PAYEE:
             case PayPalException::TRANSACTION_REFUSED:
-                $this->redirectToCheckout(['step' => 4, 'paymentError' => $exception->getCode()]);
+                $this->redirectToCheckout(['step' => 'payment', 'paymentError' => $exception->getCode()]);
                 break;
             case PayPalException::ORDER_ALREADY_CAPTURED:
                 $this->module->currentOrder = (new \OrderMatrice())->getOrderPrestashopFromPaypal(Tools::getValue('orderId'));
@@ -234,21 +245,21 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
                     $this->redirectToOrderConfirmation();
                 }
 
-                $exceptionMessageForCustomer = $this->l('Order cannot be saved', 'translations');
+                $exceptionMessageForCustomer = $this->module->l('Order cannot be saved', 'translations');
                 break;
             case PsCheckoutException::PRESTASHOP_PAYMENT_UNAVAILABLE:
-                $exceptionMessageForCustomer = $this->l('This payment method is unavailable', 'translations');
+                $exceptionMessageForCustomer = $this->module->l('This payment method is unavailable', 'translations');
                 break;
             case PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING:
-                $exceptionMessageForCustomer = $this->l('PayPal order identifier is missing', 'translations');
+                $exceptionMessageForCustomer = $this->module->l('PayPal order identifier is missing', 'translations');
                 $notifyCustomerService = false;
                 break;
             case PsCheckoutException::PAYPAL_PAYMENT_METHOD_MISSING:
-                $exceptionMessageForCustomer = $this->l('PayPal payment method is missing', 'translations');
+                $exceptionMessageForCustomer = $this->module->l('PayPal payment method is missing', 'translations');
                 $notifyCustomerService = false;
                 break;
             case PsCheckoutException::PRESTASHOP_CONTEXT_INVALID:
-                $exceptionMessageForCustomer = $this->l('Cart is invalid', 'translations');
+                $exceptionMessageForCustomer = $this->module->l('Cart is invalid', 'translations');
                 $notifyCustomerService = false;
                 break;
         }
@@ -315,14 +326,14 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
             return;
         }
 
-        $message = $this->l('This message is sent automatically by module PrestaShop Checkout', 'translations') . PHP_EOL . PHP_EOL;
-        $message .= $this->l('A customer encountered a processing payment error :', 'translations') . PHP_EOL;
-        $message .= $this->l('Customer identifier:', 'translations') . ' ' . (int) $this->context->customer->id . PHP_EOL;
-        $message .= $this->l('Cart identifier:', 'translations') . ' ' . (int) $this->context->cart->id . PHP_EOL;
-        $message .= $this->l('PayPal order identifier:', 'translations') . ' ' . Tools::safeOutput($paypalOrderId) . PHP_EOL;
-        $message .= $this->l('Exception identifier:', 'translations') . ' ' . (int) $exception->getCode() . PHP_EOL;
-        $message .= $this->l('Exception detail:', 'translations') . ' ' . Tools::safeOutput($exception->getMessage()) . PHP_EOL . PHP_EOL;
-        $message .= $this->l('If you need assistance, please contact our Support Team on PrestaShop Checkout configuration page on Help subtab.', 'translations') . PHP_EOL;
+        $message = $this->module->l('This message is sent automatically by module PrestaShop Checkout', 'translations') . PHP_EOL . PHP_EOL;
+        $message .= $this->module->l('A customer encountered a processing payment error :', 'translations') . PHP_EOL;
+        $message .= $this->module->l('Customer identifier:', 'translations') . ' ' . (int) $this->context->customer->id . PHP_EOL;
+        $message .= $this->module->l('Cart identifier:', 'translations') . ' ' . (int) $this->context->cart->id . PHP_EOL;
+        $message .= $this->module->l('PayPal order identifier:', 'translations') . ' ' . Tools::safeOutput($paypalOrderId) . PHP_EOL;
+        $message .= $this->module->l('Exception identifier:', 'translations') . ' ' . (int) $exception->getCode() . PHP_EOL;
+        $message .= $this->module->l('Exception detail:', 'translations') . ' ' . Tools::safeOutput($exception->getMessage()) . PHP_EOL . PHP_EOL;
+        $message .= $this->module->l('If you need assistance, please contact our Support Team on PrestaShop Checkout configuration page on Help subtab.', 'translations') . PHP_EOL;
 
         $customerThread = new CustomerThread();
         $customerThread->id_customer = (int) $this->context->customer->id;
