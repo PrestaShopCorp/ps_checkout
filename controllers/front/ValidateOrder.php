@@ -201,6 +201,8 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
 
     /**
      * @param Exception $exception
+     *
+     * @todo To be refactored with Service Container in v2.0.0
      */
     private function handleException(Exception $exception)
     {
@@ -265,21 +267,61 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
         ]);
     }
 
+    /**
+     * @param Exception $exception
+     *
+     * @todo To be refactored with Service Container in v2.0.0
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     */
     private function notifyCustomerService(Exception $exception)
     {
+        $paypalOrderId = Tools::getValue('orderId');
         $contacts = Contact::getContacts((int) $this->context->language->id);
 
         if (empty($contacts)) {
             return;
         }
 
+        // Cannot use id_cart because we create a new cart to preserve current cart from customer changes
+        $token = Tools::substr(
+            Tools::encrypt(implode(
+                '|',
+                [
+                    (int) $this->context->customer->id,
+                    (int) $this->context->shop->id,
+                    (int) $this->context->language->id,
+                    (int) $exception->getCode(),
+                    $paypalOrderId,
+                    get_class($exception),
+                ]
+            )),
+            0,
+            12
+        );
+
+        $isThreadAlreadyCreated = (bool) Db::getInstance()->getValue('
+            SELECT 1
+            FROM ' . _DB_PREFIX_ . 'customer_thread
+            WHERE id_customer = ' . (int) $this->context->customer->id . '
+            AND id_shop = ' . (int) $this->context->shop->id . '
+            AND status = "open"
+            AND token = "' . pSQL($token) . '"
+        ');
+
+        // Prevent spam Customer Service on case of page refresh
+        if (true === $isThreadAlreadyCreated) {
+            return;
+        }
+
         $message = $this->l('This message is sent automatically by module PrestaShop Checkout', 'translations') . PHP_EOL . PHP_EOL;
         $message .= $this->l('A customer encountered a processing payment error :', 'translations') . PHP_EOL;
-        $message .= $this->l('Customer identifier:', 'translations') . ' ' . $this->context->customer->id . PHP_EOL;
-        $message .= $this->l('Cart identifier:', 'translations') . ' ' . $this->context->cart->id . PHP_EOL;
-        $message .= $this->l('PayPal order identifier:', 'translations') . ' ' . Tools::getValue('orderId') . PHP_EOL;
-        $message .= $this->l('Exception identifier:', 'translations') . ' ' . $exception->getCode() . PHP_EOL;
-        $message .= $this->l('Exception detail:', 'translations') . ' ' . $exception->getMessage() . PHP_EOL . PHP_EOL;
+        $message .= $this->l('Customer identifier:', 'translations') . ' ' . (int) $this->context->customer->id . PHP_EOL;
+        $message .= $this->l('Cart identifier:', 'translations') . ' ' . (int) $this->context->cart->id . PHP_EOL;
+        $message .= $this->l('PayPal order identifier:', 'translations') . ' ' . Tools::safeOutput($paypalOrderId) . PHP_EOL;
+        $message .= $this->l('Exception identifier:', 'translations') . ' ' . (int) $exception->getCode() . PHP_EOL;
+        $message .= $this->l('Exception detail:', 'translations') . ' ' . Tools::safeOutput($exception->getMessage()) . PHP_EOL . PHP_EOL;
         $message .= $this->l('If you need assistance, please contact our Support Team on PrestaShop Checkout configuration page on Help subtab.', 'translations') . PHP_EOL;
 
         $customerThread = new CustomerThread();
@@ -290,7 +332,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
         $customerThread->id_contact = (int) $contacts[0]['id_contact']; // Should be configurable
         $customerThread->email = $this->context->customer->email;
         $customerThread->status = 'open';
-        $customerThread->token = Tools::passwdGen(12);
+        $customerThread->token = $token;
         $customerThread->add();
 
         $customerMessage = new CustomerMessage();
