@@ -114,23 +114,35 @@ function initHostedFields() {
         hostedFields.submit({
           contingencies: ['3D_SECURE'], // only necessary if using 3D Secure verification
         }).then((payload) => {
-          if (payload.liabilityShifted === undefined) { // No 3DS Contingency Passed or card not enrolled to 3ds
+          // No 3DS Contingency Passed or card not enrolled to 3ds
+          if (undefined === payload.liabilityShifted) {
             window.location.replace(orderValidationLinkByCard);
-            console.log('undefined');
           }
 
-          if (payload.liabilityShifted) { // 3DS Contingency Passed - Buyer confirmed Successfully
+          // 3DS Contingency Passed - Buyer confirmed Successfully
+          if (true === payload.liabilityShifted) {
             window.location.replace(orderValidationLinkByCard);
-            console.log('success');
           }
 
-          if (payload.liabilityShifted === false) { // 3DS Contingency Passed, but Buyer skipped 3DS
-            console.log('error');
+          // 3DS Contingency Passed, but Buyer skipped 3DS
+          if (false === payload.liabilityShifted) {
+            switch (payload.authenticationReason) {
+              case 'ERROR':
+              case 'SKIPPED_BY_BUYER':
+              case 'FAILURE':
+                displayCardError('3DS_' + payload.authenticationReason);
+                break;
+              default:
+                window.location.replace(orderValidationLinkByCard);
+            }
           }
         }).catch((err) => {
-          displayCardError(err); // display alert danger with errors
-          toggleLoader(false);
-          console.log(err);
+          if (undefined !== err.details && undefined !== err.details[0] && undefined !== err.details[0].issue) {
+            displayCardError(err.details[0].issue);
+            return;
+          }
+
+          displayCardError('UNKNOWN');
         });
       });
     });
@@ -138,26 +150,15 @@ function initHostedFields() {
 }
 
 function displayCardError(err) {
-  if (typeof err.details === 'undefined') {
-    return;
+  const displayError = document.getElementById('hostedFieldsErrors');
+
+  if (undefined === err || undefined === hostedFieldsErrors[err]) {
+    err = 'UNKNOWN';
   }
 
-  const displayError = document.getElementById('hostedFieldsErrors');
-  const errorList = document.getElementById('hostedFieldsErrorList');
-
-  // reset previous messages set in the div
-  errorList.innerHTML = '';
-
   displayError.classList.remove('hide-paypal-error');
-
-  Object.keys(err.details).forEach((item) => {
-    const errorCode = err.details[item].issue;
-    const errorMessage = hostedFieldsErrors[errorCode];
-
-    const li = document.createElement('li');
-    li.appendChild(document.createTextNode(errorMessage));
-    errorList.appendChild(li);
-  });
+  displayError.textContent = hostedFieldsErrors[err];
+  toggleLoader(false);
 }
 
 function toggleLoader(enable) {

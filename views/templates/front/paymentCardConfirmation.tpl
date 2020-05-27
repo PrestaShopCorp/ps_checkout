@@ -112,13 +112,7 @@
 
       {* Error returned by the paypal SDK
       The sdk make a first check on the card before trying to process the payment *}
-      <div id="hostedFieldsErrors" class="hide-paypal-error">
-          <div class="alert alert-danger" role="alert" data-alert="danger">
-              <ul id="hostedFieldsErrorList">
-              </ul>
-          </div>
-      </div>
-
+      <div id="hostedFieldsErrors" class="alert alert-danger hide-paypal-error"></div>
     </div>
   </div><!-- .cheque-box -->
   <div class="cart_navigation clearfix" id="cart_navigation">

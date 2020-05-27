@@ -85,6 +85,10 @@ class HostedFieldsErrors
             'CURRENCY_NOT_SUPPORTED_FOR_CARD_TYPE' => $this->module->l('Currency code not supported for direct card payments using this card type. Please refer https://developer.paypal.com/docs/integration/direct/rest/currency-codes/ for list of supported currency codes.', 'hostedfieldserrors'),
             'AUTHORIZATION_AMOUNT_LIMIT_EXCEEDED' => $this->module->l('Authorization amount exceeds allowable limit. Please provide the authorization amount within allowable limit and try again.', 'hostedfieldserrors'),
             'ORDER_ALREADY_AUTHORIZED' => $this->module->l('Order already authorized. Only one authorization per order is allowed. Please contact customer service to check that your order has successfully been validated.', 'hostedfieldserrors'),
+            '3DS_ERROR' => $this->module->l('3D Secure validation failed, please try again or try another payment method.', 'hostedfieldserrors'),
+            '3DS_SKIPPED_BY_BUYER' => $this->module->l('You skipped 3D Secure validation, please try again or try another payment method.', 'hostedfieldserrors'),
+            '3DS_FAILURE' => $this->module->l('3D Secure processing validation error, please try again or try another payment method.', 'hostedfieldserrors'),
+            'UNKNOWN' => $this->module->l('Card processing payment error, please try again or try another payment method.', 'hostedfieldserrors'),
         ];
 
         return json_encode($errors);
