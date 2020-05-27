@@ -24,13 +24,48 @@
 {/block}
 
 {block name='page_content_top'}
-<div class="alert alert-{$alertClass|escape:'html':'UTF-8'}">
-  <p><strong>{l s='Error processing payment' mod='ps_checkout'}</strong></p>
-  <p>{l s='Your payment cannot be processed, Customer Service have been notified.' mod='ps_checkout'}</p>
-  <p><a href="{$urls.pages.contact}" class="alert-link">{l s='Please contact Customer Service to get assistance.' mod='ps_checkout'}</a></p>
-  <p class="text-muted">{l s='Error message :' mod='ps_checkout'} {$exceptionMessageForCustomer|escape:'html':'UTF-8'}</p>
-  <p class="text-muted">{l s='Error code :' mod='ps_checkout'} {$exceptionCode|escape:'html':'UTF-8'}</p>
-</div>
+  <div class="alert alert-{$alertClass|escape:'html':'UTF-8'}">
+    <p><strong>{l s='There was an error processing your order' mod='ps_checkout'}</strong></p>
+    <p>{l s='Customer Service have been notified, please contact us to check if your payment has been processed.' mod='ps_checkout'}</p>
+    <p><a href="{$urls.pages.contact}" class="alert-link" id="link-customer-service"><i class="material-icons">message</i> {l s='Click here to contact Customer Service' mod='ps_checkout'}</a></p>
+    <p>{l s='You can provide following additional details:' mod='ps_checkout'}</p>
+    <ul>
+      <li class="text-muted">{l s='Error code :' mod='ps_checkout'} {$exceptionCode|escape:'html':'UTF-8'}</li>
+      <li class="text-muted">{l s='Error message :' mod='ps_checkout'} {$exceptionMessageForCustomer|escape:'html':'UTF-8'}</li>
+    </ul>
+  </div>
+  <style>
+    #module-ps_checkout-ValidateOrder .alert ul {
+      list-style: inherit;
+      padding-left: inherit;
+      margin-bottom: auto;
+    }
+  </style>
+  {widget name="contactform"}
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const customerServiceLink = document.getElementById('link-customer-service');
+      const contactForm = document.querySelector('.contact-form form');
+      const contactFormOrderField = null !== contactForm ? contactForm.querySelector('[name="id_order"]') : null;
+      const contactFormMessageField = null !== contactForm ? contactForm.querySelector('[name="message"]') : null;
+
+      if (null !== contactForm) {
+        contactForm.id = 'widget-contact-form';
+        customerServiceLink.href = '#widget-contact-form';
+      }
+
+      if (null !== contactFormOrderField) {
+        contactFormOrderField.readonly = true;
+      }
+
+      if (null !== contactFormMessageField) {
+        let contactFormMessageValue = '\n';
+        contactFormMessageValue += "{l s='Error code :' mod='ps_checkout'} {$exceptionCode|escape:'html':'UTF-8'}\n";
+        contactFormMessageValue += "{l s='Error message :' mod='ps_checkout'} {$exceptionMessageForCustomer|escape:'html':'UTF-8'}";
+        contactFormMessageField.value = contactFormMessageValue;
+      }
+    });
+  </script>
 {/block}
 
 {block name='page_footer'}
