@@ -96,6 +96,7 @@ function initPaypalScript() {
   paypalScript.setAttribute('data-client-token', "{$clientToken|escape:'htmlall':'UTF-8'}");
   paypalScript.setAttribute('id', 'psCheckoutPaypalSdk');
   paypalScript.setAttribute('data-namespace', 'paypalSdkPsCheckout');
+  paypalScript.setAttribute('data-enable-3ds', '');
   paypalScript.setAttribute('async', '');
   document.head.appendChild(paypalScript);
 }

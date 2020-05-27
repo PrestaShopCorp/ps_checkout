@@ -69,6 +69,7 @@ function loadPaypalScript() {
   paypalScript.setAttribute('src', "{$paypalSdkLink nofilter}");
   paypalScript.setAttribute('id', 'psCheckoutPaypalSdk');
   paypalScript.setAttribute('data-namespace', 'paypalSdkPsCheckoutEC');
+  paypalScript.setAttribute('data-enable-3ds', '');
   paypalScript.setAttribute('async', '');
   document.head.appendChild(paypalScript);
 }
