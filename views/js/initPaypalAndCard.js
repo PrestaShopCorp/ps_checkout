@@ -19,7 +19,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const interval = setInterval(() => {
-    if (window.paypalSdkPsCheckout !== undefined) {
+    if (undefined !== window.paypalSdkPsCheckout) {
       initPsCheckout();
       clearInterval(interval);
     }
@@ -27,11 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initPsCheckout() {
-  if (typeof paypalOrderId === 'undefined') {
+  if (undefined === paypalOrderId) {
     throw new Error('No paypal order id');
   }
-
-  hostedFieldsErrors = JSON.parse(hostedFieldsErrors.replace(/&quot;/g, '"'));
 
   hideDefaultPaymentButtonIfPaypalIsChecked();
 
@@ -51,9 +49,6 @@ function initPsCheckout() {
 }
 
 function initSmartButtons() {
-  // remove "amp;" from the url
-  const orderValidationLinkByPaypal = validateOrderLinkByPaypal.replace(/\amp;/g, '');
-
   paypalSdkPsCheckout.Buttons({
     style: {
       shape: 'pill',
@@ -83,15 +78,12 @@ function initSmartButtons() {
       return paypalOrderId;
     },
     onApprove() {
-      window.location.replace(orderValidationLinkByPaypal);
+      window.location.replace(validateOrderLinkByCard);
     },
   }).render('#paypal-button-container');
 }
 
 function initHostedFields() {
-  // remove "amp;" from the url
-  const orderValidationLinkByCard = validateOrderLinkByCard.replace(/\amp;/g, '');
-
   // check whether hosted fields is eligible for that Partner Account
   if (paypalSdkPsCheckout.HostedFields.isEligible()) {
     // render hosted fields
@@ -170,12 +162,12 @@ function initHostedFields() {
         }).then((payload) => {
           // No 3DS Contingency Passed or card not enrolled to 3ds
           if (undefined === payload.liabilityShifted) {
-            window.location.replace(orderValidationLinkByCard);
+            window.location.replace(validateOrderLinkByCard);
           }
 
           // 3DS Contingency Passed - Buyer confirmed Successfully
           if (true === payload.liabilityShifted) {
-            window.location.replace(orderValidationLinkByCard);
+            window.location.replace(validateOrderLinkByCard);
           }
 
           // 3DS Contingency Passed, but Buyer skipped 3DS
@@ -187,7 +179,7 @@ function initHostedFields() {
                 displayCardError('3DS_' + payload.authenticationReason);
                 break;
               default:
-                window.location.replace(orderValidationLinkByCard);
+                window.location.replace(validateOrderLinkByCard);
             }
           }
         }).catch((err) => {
