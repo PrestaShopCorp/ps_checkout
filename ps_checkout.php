@@ -117,6 +117,8 @@ class Ps_checkout extends PaymentModule
         $this->version = '1.5.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
+        $this->currencies = true;
+        $this->currencies_mode = 'checkbox';
 
         $this->module_key = '82bc76354cfef947e06f1cc78f5efe2e';
 
