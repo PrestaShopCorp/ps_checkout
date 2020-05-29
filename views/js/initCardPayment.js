@@ -19,7 +19,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const interval = setInterval(() => {
-    if (window.paypalSdkPsCheckout !== undefined) {
+    if (undefined !== window.paypalSdkPsCheckout) {
       initPsCheckout();
       clearInterval(interval);
     }
@@ -27,19 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initPsCheckout() {
-  if (typeof paypalOrderId === 'undefined') {
+  if (undefined === paypalOrderId) {
     throw new Error('No paypal order id');
   }
-
-  hostedFieldsErrors = JSON.parse(hostedFieldsErrors.replace(/&quot;/g, '"'));
 
   initHostedFields();
 }
 
 function initHostedFields() {
-  // remove "amp;" from the url
-  const orderValidationLinkByCard = validateOrderLinkByCard.replace(/\amp;/g, '');
-
   // check whether hosted fields is eligible for that Partner Account
   if (paypalSdkPsCheckout.HostedFields.isEligible()) {
     // render hosted fields
@@ -116,12 +111,12 @@ function initHostedFields() {
         }).then((payload) => {
           // No 3DS Contingency Passed or card not enrolled to 3ds
           if (undefined === payload.liabilityShifted) {
-            window.location.replace(orderValidationLinkByCard);
+            window.location.replace(validateOrderLinkByCard);
           }
 
           // 3DS Contingency Passed - Buyer confirmed Successfully
           if (true === payload.liabilityShifted) {
-            window.location.replace(orderValidationLinkByCard);
+            window.location.replace(validateOrderLinkByCard);
           }
 
           // 3DS Contingency Passed, but Buyer skipped 3DS
@@ -133,7 +128,7 @@ function initHostedFields() {
                 displayCardError('3DS_' + payload.authenticationReason);
                 break;
               default:
-                window.location.replace(orderValidationLinkByCard);
+                window.location.replace(validateOrderLinkByCard);
             }
           }
         }).catch((err) => {
@@ -162,7 +157,7 @@ function displayCardError(err) {
 }
 
 function toggleLoader(enable) {
-  if (enable === true) {
+  if (true === enable) {
     const span = document.createElement('span');
     span.classList.add('spinner-hosted-fields');
     document.querySelector('#cart_navigation').append(span);
