@@ -61,7 +61,7 @@
     <p>
       - {l s='Please confirm your order by clicking on the method you want to pay with.' mod='ps_checkout'}
     </p>
-
+    <div id="paypal-button-container" style="width: 300px; margin-top: 20px;"></div>
   </div>
 
   <div class="cart_navigation clearfix" id="cart_navigation">
@@ -69,8 +69,6 @@
       <a class="button-exclusive btn btn-default" href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html':'UTF-8'}">
         <i class="icon-chevron-left"></i>{l s='Other payment methods' mod='ps_checkout'}
       </a>
-    </div>
-    <div id="paypal-button-container">
     </div>
   </div>
 </form>
