@@ -100,7 +100,6 @@
 </template>
 
 <script>
-  import * as error from '@/lib/auth';
   import Reassurance from '@/components/block/reassurance';
   import ajax from '@/requests/ajax.js';
 
@@ -139,7 +138,7 @@
         }).then((response) => {
           if (undefined !== response.body
             && undefined !== response.body.error
-            && undefined !== response.body.message
+            && undefined !== response.body.error.message
           ) {
             this.handleResponseError(response.body.error.message);
             return;
@@ -154,13 +153,13 @@
       },
       handleResponseError(err) {
         switch (err) {
-          case error.INVALID_EMAIL:
+          case 'INVALID_EMAIL':
             this.setEmailError(false, this.$t('firebase.error.invalidEmail'));
             break;
-          case error.MISSING_EMAIL:
+          case 'MISSING_EMAIL':
             this.setEmailError(false, this.$t('firebase.error.missingEmail'));
             break;
-          case error.EMAIL_NOT_FOUND:
+          case 'EMAIL_NOT_FOUND':
             this.setEmailError(false, this.$t('firebase.error.emailNotFound'));
             break;
           default:
