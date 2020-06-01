@@ -232,6 +232,16 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessRefreshPaypalAccountStatus()
     {
+        $paypalAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository();
+        $psAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository();
+
+        // update merchant status only if the merchant onboarding is completed
+        if ($paypalAccount->onbardingIsCompleted()
+            && $psAccount->onbardingIsCompleted()
+        ) {
+            (new PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater($paypalAccount->getOnboardedAccount()))->update();
+        }
+
         $this->ajaxDie(
             json_encode((new PaypalModule())->present())
         );
