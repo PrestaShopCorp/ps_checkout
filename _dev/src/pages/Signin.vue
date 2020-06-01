@@ -119,7 +119,6 @@
 </template>
 
 <script>
-  import * as error from '@/lib/auth';
   import Reassurance from '@/components/block/reassurance';
 
   export default {
@@ -180,22 +179,22 @@
       handleResponseError(response) {
         if (undefined !== response.body
           && undefined !== response.body.error
-          && undefined !== response.body.message
+          && undefined !== response.body.error.message
         ) {
           switch (response.body.error.message) {
-            case error.EMAIL_NOT_FOUND:
+            case 'EMAIL_NOT_FOUND':
               this.setEmailError(false, this.$t('firebase.error.emailNotFound'));
               this.resetPasswordError();
               break;
-            case error.INVALID_EMAIL:
+            case 'INVALID_EMAIL':
               this.setEmailError(false, this.$t('firebase.error.invalidEmail'));
               this.resetPasswordError();
               break;
-            case error.INVALID_PASSWORD:
+            case 'INVALID_PASSWORD':
               this.setPasswordError(false, this.$t('firebase.error.invalidPassword'));
               this.resetEmailError();
               break;
-            case error.MISSING_PASSWORD:
+            case 'MISSING_PASSWORD':
               this.setPasswordError(false, this.$t('firebase.error.missingPassword'));
               this.resetEmailError();
               break;
