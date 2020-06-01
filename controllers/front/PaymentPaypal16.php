@@ -89,8 +89,8 @@ class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontControl
             'hostedFieldsErrors' => (new HostedFieldsErrors($module))->getHostedFieldsErrors(),
         ]);
 
-        $this->context->controller->addJS($module->getPathUri() . 'views/js/initPaypalPayment.js');
-        $this->context->controller->addCSS($module->getPathUri() . 'views/css/payments16.css');
+        $this->context->controller->addJS($module->getPathUri() . 'views/js/initPaypalPayment.js?v=' . $this->module->version);
+        $this->context->controller->addCSS($module->getPathUri() . 'views/css/payments16.css?v=' . $this->module->version);
 
         $this->setTemplate('paymentPaypalConfirmation.tpl');
     }
