@@ -89,8 +89,8 @@ class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontControlle
             'hostedFieldsErrors' => (new HostedFieldsErrors($module))->getHostedFieldsErrors(),
         ]);
 
-        $this->context->controller->addJS($module->getPathUri() . 'views/js/initCardPayment.js');
-        $this->context->controller->addCSS($module->getPathUri() . 'views/css/payments16.css');
+        $this->context->controller->addJS($module->getPathUri() . 'views/js/initCardPayment.js?v=' . $this->module->version);
+        $this->context->controller->addCSS($module->getPathUri() . 'views/css/payments16.css?v=' . $this->module->version);
 
         $this->setTemplate('paymentCardConfirmation.tpl');
     }
