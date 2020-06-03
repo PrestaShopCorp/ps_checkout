@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
 use GuzzleHttp\Client;
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
+use PrestaShop\AccountsAuth\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
@@ -36,6 +36,8 @@ class PaymentClient extends GenericClient
     {
         $this->setLink($link);
 
+        $context = \Context::getContext();
+
         // Client can be provided for tests
         if (null === $client) {
             $client = new Client([
@@ -46,15 +48,15 @@ class PaymentClient extends GenericClient
                     'headers' => [
                         'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
                         'Accept' => 'application/json',
-                        'Authorization' => 'Bearer ' . (new Token())->getToken(),
-                        'Shop-Id' => (new ShopUuidManager())->getForShop((int) \Context::getContext()->shop->id),
+                        'Authorization' => 'Bearer ' . (new Token())->getToken((int) $context->shop->id),
+                        'Shop-Id' => (new ShopUuidManager())->getForShop((int) $context->shop->id),
                         'Hook-Url' => $this->link->getModuleLink(
                             'ps_checkout',
                             'DispatchWebHook',
                             [],
                             true,
                             null,
-                            (int) \Context::getContext()->shop->id
+                            (int) $context->shop->id
                         ),
                         'Bn-Code' => (new ShopContext())->getBnCode(),
                         'Module-Version' => \Ps_checkout::VERSION, // version of the module

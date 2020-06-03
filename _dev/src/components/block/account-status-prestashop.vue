@@ -32,11 +32,13 @@
 </template>
 
 <script>
+  import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
+
   export default {
     name: 'AccountStatusPrestaShop',
     computed: {
       prestashopAccountIsActive() {
-        return this.$store.state.firebase.onboardingCompleted;
+        return isOnboardingCompleted();
       },
     },
   };

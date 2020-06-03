@@ -4,6 +4,7 @@
   "homepage": "https://github.com/PrestaShopCorp/ps_checkout",
   "license": "AFL-3.0",
   "type": "prestashop-module",
+  "minimum-stability": "dev",
   "authors": [
     {
       "name": "PrestaShop SA",
@@ -28,7 +29,8 @@
     "symfony/config": "^3.4",
     "symfony/dependency-injection": "^3.4",
     "vlucas/phpdotenv": "^3.4",
-    "webmozart/assert": "^1.0"
+    "webmozart/assert": "^1.0",
+    "prestashop/prestashop-accounts-auth": "dev-master"
   },
   "require-dev": {
     "phpunit/phpunit": "~5.7",

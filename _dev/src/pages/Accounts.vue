@@ -19,7 +19,11 @@
 <template>
   <div>
     <b-container>
-      <AccountList />
+      <PsAccounts>
+        <template v-slot:body>
+          <AccountList />
+        </template>
+      </PsAccounts>
     </b-container>
 
     <b-container
@@ -39,20 +43,23 @@
 </template>
 
 <script>
+  import {PsAccounts} from 'prestashop_accounts_vue_components';
   import AccountList from '@/components/panel/account-list';
   import PaymentAcceptance from '@/components/panel/payment-acceptance';
   import Reassurance from '@/components/block/reassurance';
+  import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
 
   export default {
     name: 'Accounts',
     components: {
+      PsAccounts,
       AccountList,
       PaymentAcceptance,
       Reassurance,
     },
     computed: {
       firebaseStatusAccount() {
-        return this.$store.state.firebase.onboardingCompleted;
+        return isOnboardingCompleted();
       },
       paypalStatusAccount() {
         return this.$store.state.paypal.onboardingCompleted;
