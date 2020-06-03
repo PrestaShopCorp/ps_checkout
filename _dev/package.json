@@ -13,6 +13,7 @@
     "core-js": "^3.4.3",
     "lodash": "^4.17.15",
     "prestakit": "^1.1.0",
+    "prestashop_accounts_vue_components": "/Users/julien/Documents/PrestaShop/MODULE/DEV/prestashop_accounts_vue_components",
     "vue": "^2.6.10",
     "vue-i18n": "^8.15.3",
     "vue-router": "^3.1.3",
