@@ -24,7 +24,9 @@ use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
 
 class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontController
 {
-    /** @var Ps_checkout */
+    /**
+     * @var Ps_checkout
+     */
     public $module;
 
     /**
@@ -251,6 +253,11 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
                 $operator = 'up'
             );
             $cart->update();
+
+            $this->module->getLogger()->info(sprintf(
+                'Express checkout : Create Cart %s',
+                (int) $cart->id
+            ));
 
             $this->context->cart = $cart;
             $this->context->cookie->__set('id_cart', $cart->id);

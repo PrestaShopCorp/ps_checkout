@@ -19,6 +19,8 @@ parameters:
 		- '#Parameter \#1 \$id_hook of method ModuleCore::updatePosition\(\) expects bool, int given.#'
 		- '#Property TabCore::\$name \(string\) does not accept array.#'
 		- '#Access to an undefined property PaymentModule::\$currentOrderReference.#'
-		- '#Property CustomerCore::\$passwd \(int\) does not accept bool|string.#'
+		- '#Property CustomerCore::\$passwd \(int\) does not accept bool\|string.#'
+		- '#Parameter \#4 \$ssl of method LinkCore::getModuleLink\(\) expects null, true given.#'
+		- '#Parameter \#1 \$id of class Customer constructor expects null, int<1, max>\|int<min, -1> given.#'
 
 	level: 5
