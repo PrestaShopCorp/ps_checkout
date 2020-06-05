@@ -82,12 +82,20 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
      */
     private function createAndLoginCustomer($payer)
     {
+        // Note this controller is used only start PrestaShop 1.7
+        if (false === method_exists('Customer', 'customerExists')
+            || false === method_exists($this->context, 'updateCustomer')
+        ) {
+            return;
+        }
+
+        /** @var int $idCustomerExists */
         $idCustomerExists = Customer::customerExists($payer->email_address, true);
 
         if (0 === $idCustomerExists) {
             $customer = $this->createCustomer($payer);
         } else {
-            $customer = new Customer((int) $idCustomerExists);
+            $customer = new Customer($idCustomerExists);
         }
 
         $this->context->updateCustomer($customer);
@@ -137,12 +145,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
 
         // check if a paypal address already exist for the customer
         $paypalAddress = $this->addressAlreadyExist('PayPal', $this->context->customer->id);
-
-        if (false !== $paypalAddress) {
-            $address = new Address($paypalAddress); // if yes, update it with the new address
-        } else {
-            $address = new Address(); // otherwise create a new address
-        }
+        $address = $paypalAddress ? new Address($paypalAddress) : new Address();
 
         $address->alias = 'PayPal';
         $address->id_customer = $this->context->customer->id;
