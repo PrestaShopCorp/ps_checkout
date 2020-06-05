@@ -702,6 +702,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $loggerDirectory = $this->module->getService('ps_checkout.logger.directory');
         /** @var LoggerFileReader $loggerFileReader */
         $loggerFileReader = $this->module->getService('ps_checkout.logger.file.reader');
+        $fileData = [];
 
         try {
             $fileData = $loggerFileReader->read(
