@@ -280,9 +280,27 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         foreach ($this->cart['products'] as $product => $value) {
             $paypalItem = [];
 
+            $sku = '';
+
+            if (false === empty($value['reference'])) {
+                $sku = $value['reference'];
+            }
+
+            if (false === empty($value['ean13'])) {
+                $sku = $value['ean13'];
+            }
+
+            if (false === empty($value['isbn'])) {
+                $sku = $value['isbn'];
+            }
+
+            if (false === empty($value['upc'])) {
+                $sku = $value['upc'];
+            }
+
             $paypalItem['name'] = $this->truncate($value['name'], 127);
             $paypalItem['description'] = $this->truncate(strip_tags($value['description_short']), 127);
-            $paypalItem['sku'] = $this->truncate($value['unity'], 127);
+            $paypalItem['sku'] = $this->truncate($sku, 127);
             $paypalItem['unit_amount']['currency_code'] = $this->cart['currency']['iso_code'];
             $paypalItem['unit_amount']['value'] = $value['total'] / $value['quantity'];
             $paypalItem['tax']['currency_code'] = $this->cart['currency']['iso_code'];
