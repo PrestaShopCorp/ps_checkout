@@ -106,6 +106,7 @@ class GenericClient
             $response = [
                 'status' => false,
                 'httpCode' => 500,
+                'body' => '',
                 'exception' => $exception->getMessage(),
             ];
         }
