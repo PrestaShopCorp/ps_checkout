@@ -20,7 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Logger;
 
-use PrestaShop\Module\PrestashopCheckout\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
 /**
  * Class responsible for reading log files.
@@ -34,13 +34,12 @@ class LoggerFileReader
      *
      * @return array
      *
-     * @throws \Exception //@todo After v1.5.0 rebase, use a PsCheckoutException
+     * @throws PsCheckoutException
      */
     public function read(\SplFileObject $logFile, $offset, $limit)
     {
         if (false === $logFile->isFile()) {
-            //@todo After v1.5.0 rebase, use a PsCheckoutException
-            throw new \Exception('File not found.');
+            throw new PsCheckoutException('File not found', PsCheckoutException::PSCHECKOUT_LOGGER_FILE_READER_NOT_FOUND);
         }
 
         $isEndOfFile = true;
@@ -49,8 +48,7 @@ class LoggerFileReader
         $fileLines = [];
 
         if (false === $logFile->isReadable()) {
-            //@todo After v1.5.0 rebase, use a PsCheckoutException
-            throw new \Exception('File is not readable.');
+            throw new PsCheckoutException('File is not readable', PsCheckoutException::PSCHECKOUT_LOGGER_FILE_READER_NOT_READABLE);
         }
 
         while ($logFile->valid()) {
