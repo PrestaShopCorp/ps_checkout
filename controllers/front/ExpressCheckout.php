@@ -17,6 +17,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
 
@@ -94,18 +96,23 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         $firstName,
         $lastName
     ) {
+        // Note this controller is used only start PrestaShop 1.7
+        if (false === method_exists('Customer', 'customerExists')
+            || false === method_exists($this->context, 'updateCustomer')
+        ) {
+            return;
+        }
+
         $idCustomerExists = Customer::customerExists($email, true);
 
-        if (0 === $idCustomerExists) {
-            // @todo Extract factory in a Service.
-            $customer = $this->createCustomer(
+        $customer = (0 !== $idCustomerExists)
+            ? new Customer($idCustomerExists)
+            : $this->createCustomer(
                 $email,
                 $firstName,
                 $lastName
-            );
-        } else {
-            $customer = new Customer((int) $idCustomerExists);
-        }
+            )
+        ;
 
         $this->context->updateCustomer($customer);
     }
@@ -120,8 +127,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
      * @param string $lastName
      *
      * @return Customer
-     *
-     * @throws PrestaShopException
      */
     private function createCustomer($email, $firstName, $lastName)
     {
@@ -150,9 +155,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
      * @param string $phone
      *
      * @return bool
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
      */
     private function createAddress(
         $firstName,
@@ -175,13 +177,8 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         }
 
         // check if a paypal address already exist for the customer
-        $paypalAddress = $this->addressAlreadyExist('PayPal', $this->context->customer->id);
-
-        if (false !== $paypalAddress) {
-            $address = new Address($paypalAddress); // if yes, update it with the new address
-        } else {
-            $address = new Address(); // otherwise create a new address
-        }
+        $paypalAddress = $this->getPayPalAddressId('PayPal', $this->context->customer->id);
+        $address = (0 !== $paypalAddress) ? new Address($paypalAddress) : new Address();
 
         $address->alias = 'PayPal';
         $address->id_customer = $this->context->customer->id;
@@ -207,14 +204,12 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
     }
 
     /**
-     * Check if address already exist, if yes return the id_address
-     *
      * @param string $alias
      * @param int $id_customer
      *
-     * @return int
+     * @return int Address identifier
      */
-    private function addressAlreadyExist($alias, $id_customer)
+    private function getPayPalAddressId($alias, $id_customer)
     {
         $query = new DbQuery();
         $query->select('id_address');
@@ -223,18 +218,17 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         $query->where('id_customer = ' . (int) $id_customer);
         $query->where('deleted = 0');
 
-        return Db::getInstance()->getValue($query);
+        return (int) Db::getInstance()->getValue($query);
     }
 
     /**
      * Ajax: Create and return paypal order
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws PsCheckoutException
      */
     public function displayAjaxCreatePaypalOrder()
     {
-        $product = \Tools::getValue('product');
+        $product = Tools::getValue('product');
 
         if (!empty($product)) {
             $product = json_decode($product);
