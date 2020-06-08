@@ -33,7 +33,6 @@ $_MODULE['<{ps_checkout}prestashop>validateorder_1889f1b9cd95ba96c924904b633e680
 $_MODULE['<{ps_checkout}prestashop>validateorder_937a6208751c6044e846b7e70cf5305c'] = 'PayPal bestelcode:';
 $_MODULE['<{ps_checkout}prestashop>validateorder_c4dde5b1549f1efa1692d8873acb62db'] = 'Uitzonderingscode';
 $_MODULE['<{ps_checkout}prestashop>validateorder_b0245f6ceb905dcd9d2cda968eca9290'] = 'Uitzonderingscode:';
-$_MODULE['<{ps_checkout}prestashop>validateorder_ad882fed0995d9be1922fff253202368'] = '';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_1b43db46cf115ecaf2b2e79c780b5266'] = 'Geen PrestaShop-orderreferentie ontvangen';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_8aeb76260f5c8706d7e4e723f4417424'] = 'Deze PrestaShop opdracht [PRESTASHOP_ORDER_ID] is niet betaald met PrestaShop Checkout';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_0f1c930c145fe9e076b18148be8d2860'] = 'Kan de PayPal-bestelling die bij deze PrestaShop-bestelling hoort niet vinden [PRESTASHOP_ORDER_ID].';
@@ -330,7 +329,6 @@ $_MODULE['<{ps_checkout}prestashop>translations_565c23511bb8643ac5552fbd5e4ba358
 $_MODULE['<{ps_checkout}prestashop>translations_83c6cac8e2ac2ca242a4c1b7e3062bf8'] = 'Zorg voor een ruim aanbod van betaalmogelijkheden: kaarten, PayPal enz.';
 $_MODULE['<{ps_checkout}prestashop>translations_d59048f21fd887ad520398ce677be586'] = 'Meer informatie';
 $_MODULE['<{ps_checkout}prestashop>translations_6bde19fb9d1c68cdb5a8efa405370887'] = 'Fraudetool';
-$_MODULE['<{ps_checkout}prestashop>translations_eef93fd0a202e0102e08d10f9d69b2cc'] = '';
 $_MODULE['<{ps_checkout}prestashop>translations_33b0504f0b776f2c13381c543bf2017c'] = 'Zet nog een stap verder';
 $_MODULE['<{ps_checkout}prestashop>translations_c12fb9a7b1d63237624c3a069891e7f4'] = 'Personalisering van de aankoopervaring, transactielijst, geschillenbeslechting... en nog veel meer!';
 $_MODULE['<{ps_checkout}prestashop>translations_c7b5d73ffc406b56966f030ac1b1da10'] = 'Naar het platform voor geschillenbeslechting gaan';
