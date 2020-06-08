@@ -30,7 +30,7 @@ class Order extends PaymentClient
     /**
      * Create order to paypal api
      *
-     * @param array $payload Cart details (json)
+     * @param string $payload Cart details (json)
      *
      * @return array data with paypal order id or false if error
      */
