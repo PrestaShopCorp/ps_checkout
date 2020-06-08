@@ -158,7 +158,6 @@
 </template>
 
 <script>
-  import * as error from '@/lib/auth';
   import Reassurance from '@/components/block/reassurance';
   import PSCheckbox from '@/components/form/checkbox';
 
@@ -238,22 +237,22 @@
       handleResponseError(response) {
         if (undefined !== response.body
           && undefined !== response.body.error
-          && undefined !== response.body.message
+          && undefined !== response.body.error.message
         ) {
           switch (response.body.error.message) {
-            case error.EMAIL_EXISTS:
+            case 'EMAIL_EXISTS':
               this.setEmailError(false, this.$t('firebase.error.emailExists'));
               this.resetPasswordError();
               break;
-            case error.MISSING_PASSWORD:
+            case 'MISSING_PASSWORD':
               this.setPasswordError(false, this.$t('firebase.error.missingPassword'));
               this.resetEmailError();
               break;
-            case error.INVALID_EMAIL:
+            case 'INVALID_EMAIL':
               this.setEmailError(false, this.$t('firebase.error.invalidEmail'));
               this.resetPasswordError();
               break;
-            case error.MISSING_EMAIL:
+            case 'MISSING_EMAIL':
               this.setEmailError(false, this.$t('firebase.error.missingEmail'));
               this.resetPasswordError();
               break;

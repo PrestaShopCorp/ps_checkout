@@ -61,51 +61,45 @@
     <p>
       - {l s='Please confirm your order by clicking on the method you want to pay with.' mod='ps_checkout'}
     </p>
-
+    <div id="paypal-button-container" style="width: 300px; margin-top: 20px;"></div>
   </div>
 
   <div class="cart_navigation clearfix" id="cart_navigation">
     <div class="flex-display">
-      <a class="button-exclusive btn btn-default" href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html':'UTF-8'}">
+      <a class="button-exclusive btn btn-default" href="{$link->getPageLink('order', true, NULL, 'step=3')|escape:'html':'UTF-8'}">
         <i class="icon-chevron-left"></i>{l s='Other payment methods' mod='ps_checkout'}
       </a>
-    </div>
-    <div id="paypal-button-container">
     </div>
   </div>
 </form>
 {/if}
 
 <script>
-/**
- * Create paypal script
- */
-function initPaypalScript() {
-  if (typeof paypalSdkPsCheckout !== 'undefined') {
-    return;
+  const paypalOrderId = "{$paypalOrderId|escape:'javascript':'UTF-8'}";
+  const validateOrderLinkByPaypal = "{$validateOrderLinkByPaypal|escape:'javascript':'UTF-8' nofilter}";
+  /**
+   * Create paypal script
+   */
+  function initPaypalScript() {
+    if (typeof paypalSdkPsCheckout !== 'undefined') {
+      return;
+    }
+
+    let psCheckoutScript = document.getElementById('paypalSdkPsCheckout');
+
+    if (null !== psCheckoutScript) {
+      return;
+    }
+
+    const paypalScript = document.createElement('script');
+    paypalScript.setAttribute('src', "{$paypalSdkLink|escape:'javascript':'UTF-8' nofilter}");
+    paypalScript.setAttribute('data-client-token', "{$clientToken|escape:'javascript':'UTF-8'}");
+    paypalScript.setAttribute('id', 'psCheckoutPaypalSdk');
+    paypalScript.setAttribute('data-namespace', 'paypalSdkPsCheckout');
+    paypalScript.setAttribute('data-enable-3ds', '');
+    paypalScript.setAttribute('async', '');
+    document.head.appendChild(paypalScript);
   }
 
-  let psCheckoutScript = document.getElementById('paypalSdkPsCheckout');
-
-  if (psCheckoutScript !== null) {
-    return;
-  }
-
-  const paypalScript = document.createElement('script');
-  paypalScript.setAttribute('src', "{$paypalSdkLink nofilter}");
-  paypalScript.setAttribute('data-client-token', "{$clientToken|escape:'htmlall':'UTF-8'}");
-  paypalScript.setAttribute('id', 'psCheckoutPaypalSdk');
-  paypalScript.setAttribute('data-namespace', 'paypalSdkPsCheckout');
-  paypalScript.setAttribute('async', '');
-  document.head.appendChild(paypalScript);
-}
-
-initPaypalScript();
+  initPaypalScript();
 </script>
-
-{literal}
-<script type="text/javascript">
-  var paypalOrderId = "{/literal}{$paypalOrderId|escape:'javascript':'UTF-8'}{literal}";
-  var validateOrderLinkByPaypal = "{/literal}{$validateOrderLinkByPaypal|escape:'javascript':'UTF-8'}{literal}";
-</script>
-{/literal}

@@ -34,6 +34,8 @@ class OrderPendingPresenter implements PresenterInterface
      * present pending orders
      *
      * @return array
+     *
+     * @throws \PrestaShopDatabaseException
      */
     public function present()
     {
@@ -76,13 +78,15 @@ class OrderPendingPresenter implements PresenterInterface
      *
      * @param array $idStates
      *
-     * @return mixed
+     * @return array
+     *
+     * @throws \PrestaShopDatabaseException
      */
     private function getPendingOrders($idStates)
     {
         $idStates = array_map('intval', $idStates);
 
-        return \Db::getInstance()->executeS('
+        $orders = \Db::getInstance()->executeS('
             SELECT o.id_order, o.current_state, o.total_paid, o.date_add, c.id_customer, c.firstname, c.lastname
             FROM `' . _DB_PREFIX_ . 'orders` o
             INNER JOIN `' . _DB_PREFIX_ . 'customer` c ON (o.id_customer = c.id_customer)
@@ -92,5 +96,11 @@ class OrderPendingPresenter implements PresenterInterface
             ORDER BY o.date_add DESC
             LIMIT 1000
         ');
+
+        if (empty($orders)) {
+            return [];
+        }
+
+        return $orders;
     }
 }

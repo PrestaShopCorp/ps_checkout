@@ -20,52 +20,38 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+
 class WebHookValidation
 {
-    const HEADER_DATA_ERROR = 'Header can\'t be empty';
-    const HEADER_SHOPID_ERROR = 'Shop-Id can\'t be empty';
-    const HEADER_MERCHANTID_ERROR = 'Merchant-Id can\'t be empty';
-    const HEADER_PSXID_ERROR = 'Psx-Id can\'t be empty';
-    const BODY_DATA_ERROR = 'Body can\'t be empty';
-    const BODY_EVENTTYPE_ERROR = 'eventType can\'t be empty';
-    const BODY_CATEGORY_ERROR = 'category can\'t be empty';
-    const BODY_RESOURCE_ERROR = 'Resource can\'t be empty';
-    const RESOURCE_DATA_ERROR = 'Resource can\'t be empty';
-    const RESOURCE_VALUE_EMPTY_ERROR = 'Amount value can\'t be empty';
-    const RESOURCE_VALUE_ZERO_ERROR = 'Amount value must be higher than 0';
-    const RESOURCE_CURRENCY_ERROR = 'Amount currency can\'t be empty';
-    const ORDER_ERROR = 'orderId must not be empty';
-
     /**
      * Validates the webHook header data
      *
      * @param array $headerValues
      *
-     * @return array
+     * @return bool
+     *
+     * @throws PsCheckoutException
      */
     public function validateHeaderDatas(array $headerValues)
     {
-        $errors = [];
-
         if (empty($headerValues)) {
-            $errors[] = self::HEADER_DATA_ERROR;
-
-            return $errors;
+            throw new PsCheckoutException('Header can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_HEADER_EMPTY);
         }
 
         if (empty($headerValues['Shop-Id'])) {
-            $errors[] = self::HEADER_SHOPID_ERROR;
+            throw new PsCheckoutException('Shop-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_EMPTY);
         }
 
         if (empty($headerValues['Merchant-Id'])) {
-            $errors[] = self::HEADER_MERCHANTID_ERROR;
+            throw new PsCheckoutException('Merchant-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_MERCHANT_ID_EMPTY);
         }
 
         if (empty($headerValues['Psx-Id'])) {
-            $errors[] = self::HEADER_PSXID_ERROR;
+            throw new PsCheckoutException('Psx-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_PSX_ID_EMPTY);
         }
 
-        return $errors;
+        return true;
     }
 
     /**
@@ -73,31 +59,29 @@ class WebHookValidation
      *
      * @param array $payload
      *
-     * @return array
+     * @return bool
+     *
+     * @throws PsCheckoutException
      */
     public function validateBodyDatas(array $payload)
     {
-        $errors = [];
-
         if (empty($payload)) {
-            $errors[] = self::BODY_DATA_ERROR;
-
-            return $errors;
+            throw new PsCheckoutException('Body can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_BODY_EMPTY);
         }
 
         if (empty($payload['eventType'])) {
-            $errors[] = self::BODY_EVENTTYPE_ERROR;
+            throw new PsCheckoutException('eventType can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_EVENT_TYPE_EMPTY);
         }
 
         if (empty($payload['category'])) {
-            $errors[] = self::BODY_CATEGORY_ERROR;
+            throw new PsCheckoutException('category can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_CATEGORY_EMPTY);
         }
 
         if (empty($payload['resource'])) {
-            $errors[] = self::BODY_RESOURCE_ERROR;
+            throw new PsCheckoutException('Resource can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_RESOURCE_EMPTY);
         }
 
-        return $errors;
+        return true;
     }
 
     /**
@@ -105,31 +89,29 @@ class WebHookValidation
      *
      * @param array $resource
      *
-     * @return array|bool Error lists, bool if ok
+     * @return bool
+     *
+     * @throws PsCheckoutException
      */
     public function validateRefundResourceValues(array $resource)
     {
-        $errors = [];
-
         if (empty($resource)) {
-            $errors[] = self::RESOURCE_DATA_ERROR;
-
-            return $errors;
+            throw new PsCheckoutException('Resource can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_RESOURCE_EMPTY);
         }
 
         if (empty($resource['amount']['value'])) {
-            $errors[] = self::RESOURCE_VALUE_EMPTY_ERROR;
+            throw new PsCheckoutException('Amount value can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_AMOUNT_EMPTY);
         }
 
         if (0 >= $resource['amount']['value']) {
-            $errors[] = self::RESOURCE_VALUE_ZERO_ERROR;
+            throw new PsCheckoutException('Amount value must be higher than 0', PsCheckoutException::PSCHECKOUT_WEBHOOK_AMOUNT_INVALID);
         }
 
         if (empty($resource['amount']['currency_code'])) {
-            $errors[] = self::RESOURCE_CURRENCY_ERROR;
+            throw new PsCheckoutException('Amount currency can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_CURRENCY_EMPTY);
         }
 
-        return $errors;
+        return true;
     }
 
     /**
@@ -137,16 +119,16 @@ class WebHookValidation
      *
      * @param int|string $orderId can be paypal order id (string) or prestashop order id (int)
      *
-     * @return array|bool Error lists, bool if ok
+     * @return bool
+     *
+     * @throws PsCheckoutException
      */
     public function validateRefundOrderIdValue($orderId)
     {
-        $errors = [];
-
         if (empty($orderId)) {
-            $errors[] = self::ORDER_ERROR;
+            throw new PsCheckoutException('orderId must not be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_ORDER_ID_EMPTY);
         }
 
-        return $errors;
+        return true;
     }
 }

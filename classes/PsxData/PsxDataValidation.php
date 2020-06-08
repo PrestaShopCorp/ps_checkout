@@ -111,7 +111,7 @@ class PsxDataValidation
             $errors[] = self::PHONE_COUNTRY;
         }
 
-        if (!preg_match('/^^[0-9]{1,14}$/', $data['business_phone'])
+        if (!preg_match('/^[0-9]{1,14}$/', $data['business_phone'])
             || strlen($data['business_phone']) < 1
             || strlen($data['business_phone']) > 14
         ) {
@@ -119,7 +119,7 @@ class PsxDataValidation
         }
 
         if (!empty($data['business_website'])
-            && (!preg_match('/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\d?(\/)]$/m', $data['business_website']) || strlen($data['business_website']) > 255)
+            && (!preg_match('/^(http(s)?:\/\/)[\w.-]+(?:\.[\w.-]+)+[\w\d?(\/)]$/m', $data['business_website']) || strlen($data['business_website']) > 255)
         ) {
             $errors[] = self::WEBSITE;
         }

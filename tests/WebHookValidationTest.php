@@ -18,46 +18,53 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 use PHPUnit\Framework\TestCase;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 
 class WebHookValidationTest extends TestCase
 {
     /**
-     * @dataProvider headerDataProvider
+     * @throws PsCheckoutException
      */
-    public function testHeaderDatas($resultExpect, $dataToValidate)
+    public function testHeaderDataWithValidParams()
     {
-        $this->assertSame(
-            $resultExpect,
-            (new WebHookValidation())->validateHeaderDatas($dataToValidate)
-        );
+        $webHookValidation = new WebHookValidation();
+        $this->assertTrue($webHookValidation->validateHeaderDatas([
+            'Shop-Id' => '9a053ac6-9e7c-4c75-b57d-XXXXXXXX',
+            'Merchant-Id' => 'SZKJZHXXXXXXX',
+            'Psx-Id' => 'wVH5CmKq4XeJkXXXXXXXXXXXXXXX',
+        ]));
     }
 
+    /**
+     * @dataProvider headerDataProvider
+     *
+     * @param int $exceptionCodeExpected
+     * @param array $dataToValidate
+     *
+     * @throws PsCheckoutException
+     */
+    public function testHeaderDataWithInvalidParams($exceptionCodeExpected, array $dataToValidate)
+    {
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode($exceptionCodeExpected);
+
+        $webHookValidation = new WebHookValidation();
+        $webHookValidation->validateHeaderDatas($dataToValidate);
+    }
+
+    /**
+     * @return array[]
+     */
     public function headerDataProvider()
     {
         return [
             [
-                [
-                    WebHookValidation::HEADER_DATA_ERROR,
-                ],
+                PsCheckoutException::PSCHECKOUT_WEBHOOK_HEADER_EMPTY,
                 [],
             ],
             [
-                [
-                    WebHookValidation::HEADER_SHOPID_ERROR,
-                    WebHookValidation::HEADER_MERCHANTID_ERROR,
-                    WebHookValidation::HEADER_PSXID_ERROR,
-                ],
-                [
-                    'Shop-Id' => '',
-                    'Merchant-Id' => '',
-                    'Psx-Id' => '',
-                ],
-            ],
-            [
-                [
-                    WebHookValidation::HEADER_SHOPID_ERROR,
-                ],
+                PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_EMPTY,
                 [
                     'Shop-Id' => '',
                     'Merchant-Id' => 'SZKJZHXXXXXXX',
@@ -65,9 +72,7 @@ class WebHookValidationTest extends TestCase
                 ],
             ],
             [
-                [
-                    WebHookValidation::HEADER_MERCHANTID_ERROR,
-                ],
+                PsCheckoutException::PSCHECKOUT_WEBHOOK_MERCHANT_ID_EMPTY,
                 [
                     'Shop-Id' => '9a053ac6-9e7c-4c75-b57d-XXXXXXXX',
                     'Merchant-Id' => '',
@@ -75,71 +80,60 @@ class WebHookValidationTest extends TestCase
                 ],
             ],
             [
-                [
-                    WebHookValidation::HEADER_PSXID_ERROR,
-                ],
+                PsCheckoutException::PSCHECKOUT_WEBHOOK_PSX_ID_EMPTY,
                 [
                     'Shop-Id' => '9a053ac6-9e7c-4c75-b57d-XXXXXXXX',
                     'Merchant-Id' => 'SZKJZHXXXXXXX',
                     'Psx-Id' => '',
-                ],
-            ],
-            [
-                [
-                    WebHookValidation::HEADER_PSXID_ERROR,
-                ],
-                [
-                    'Shop-Id' => '9a053ac6-9e7c-4c75-b57d-XXXXXXXX',
-                    'Merchant-Id' => 'SZKJZHXXXXXXX',
-                ],
-            ],
-            [
-                [],
-                [
-                    'Shop-Id' => '9a053ac6-9e7c-4c75-b57d-XXXXXXXX',
-                    'Merchant-Id' => 'SZKJZHXXXXXXX',
-                    'Psx-Id' => 'wVH5CmKq4XeJkXXXXXXXXXXXXXXX',
                 ],
             ],
         ];
+    }
+
+    /**
+     * @throws PsCheckoutException
+     */
+    public function testBodyDataWithValidParams()
+    {
+        $webHookValidation = new WebHookValidation();
+        $this->assertTrue($webHookValidation->validateBodyDatas([
+            'eventType' => 'PaymentCaptureRefunded',
+            'category' => 'ShopNotificationMerchantAccount',
+            'resource' => [
+                'amount',
+            ],
+        ]));
     }
 
     /**
      * @dataProvider bodyDataProvider
+     *
+     * @param int $exceptionCodeExpected
+     * @param array $dataToValidate
+     *
+     * @throws PsCheckoutException
      */
-    public function testBodyDatas($resultExpect, $dataToValidate)
+    public function testBodyDataWithInvalidParams($exceptionCodeExpected, $dataToValidate)
     {
-        $this->assertSame(
-            $resultExpect,
-            (new WebHookValidation())->validateBodyDatas($dataToValidate)
-        );
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode($exceptionCodeExpected);
+
+        $webHookValidation = new WebHookValidation();
+        $webHookValidation->validateBodyDatas($dataToValidate);
     }
 
+    /**
+     * @return array[]
+     */
     public function bodyDataProvider()
     {
         return [
             [
-                [
-                    WebHookValidation::BODY_DATA_ERROR,
-                ],
+                PsCheckoutException::PSCHECKOUT_WEBHOOK_BODY_EMPTY,
                 [],
             ],
             [
-                [
-                    WebHookValidation::BODY_EVENTTYPE_ERROR,
-                    WebHookValidation::BODY_CATEGORY_ERROR,
-                    WebHookValidation::BODY_RESOURCE_ERROR,
-                ],
-                [
-                    'eventType' => '',
-                    'category' => '',
-                    'resource' => '',
-                ],
-            ],
-            [
-                [
-                    WebHookValidation::BODY_EVENTTYPE_ERROR,
-                ],
+                PsCheckoutException::PSCHECKOUT_WEBHOOK_EVENT_TYPE_EMPTY,
                 [
                     'eventType' => '',
                     'category' => 'ShopNotificationMerchantAccount',
@@ -149,9 +143,7 @@ class WebHookValidationTest extends TestCase
                 ],
             ],
             [
-                [
-                    WebHookValidation::BODY_CATEGORY_ERROR,
-                ],
+                PsCheckoutException::PSCHECKOUT_WEBHOOK_CATEGORY_EMPTY,
                 [
                     'eventType' => 'PaymentCaptureRefunded',
                     'category' => '',
@@ -161,121 +153,121 @@ class WebHookValidationTest extends TestCase
                 ],
             ],
             [
-                [
-                    WebHookValidation::BODY_RESOURCE_ERROR,
-                ],
+                PsCheckoutException::PSCHECKOUT_WEBHOOK_RESOURCE_EMPTY,
                 [
                     'eventType' => 'PaymentCaptureRefunded',
                     'category' => 'ShopNotificationMerchantAccount',
-                    'resource' => [],
-                ],
-            ],
-            [
-                [
-                    WebHookValidation::BODY_RESOURCE_ERROR,
-                ],
-                [
-                    'eventType' => 'PaymentCaptureRefunded',
-                    'category' => 'ShopNotificationMerchantAccount',
-                ],
-            ],
-            [
-                [],
-                [
-                    'eventType' => 'PaymentCaptureRefunded',
-                    'category' => 'ShopNotificationMerchantAccount',
-                    'resource' => [
-                        'amount',
-                    ],
                 ],
             ],
         ];
+    }
+
+    /**
+     * @throws PsCheckoutException
+     */
+    public function testResourceDataWithValidParams()
+    {
+        $webHookValidation = new WebHookValidation();
+        $this->assertTrue($webHookValidation->validateRefundResourceValues([
+            'amount' => [
+                'value' => '12.00',
+                'currency_code' => 'EUR',
+            ],
+        ]));
     }
 
     /**
      * @dataProvider resourceDataProvider
+     *
+     * @param int $exceptionCodeExpected
+     * @param array $dataToValidate
+     *
+     * @throws PsCheckoutException
      */
-    public function testResourceDatas($resultExpect, $dataToValidate)
+    public function testResourceDataWithInvalidParams($exceptionCodeExpected, $dataToValidate)
     {
-        $this->assertSame(
-            $resultExpect,
-            (new WebHookValidation())->validateRefundResourceValues($dataToValidate)
-        );
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode($exceptionCodeExpected);
+
+        $webHookValidation = new WebHookValidation();
+        $webHookValidation->validateRefundResourceValues($dataToValidate);
     }
 
+    /**
+     * @return array[]
+     */
     public function resourceDataProvider()
     {
-        $allWrongDatas = new \stdClass();
-        $allWrongDatas->value = null;
-        $allWrongDatas->currency_code = null;
-
-        $valueZeroError = new \stdClass();
-        $valueZeroError->value = -1;
-        $valueZeroError->currency_code = 'FR';
-
-        $currencyError = new \stdClass();
-        $currencyError->value = 10;
-        $currencyError->currency_code = null;
-
         return [
             [
-                [
-                    WebHookValidation::RESOURCE_DATA_ERROR,
-                ],
+                PsCheckoutException::PSCHECKOUT_WEBHOOK_RESOURCE_EMPTY,
                 [],
             ],
             [
+                PsCheckoutException::PSCHECKOUT_WEBHOOK_AMOUNT_EMPTY,
                 [
-                    WebHookValidation::RESOURCE_VALUE_EMPTY_ERROR,
-                    WebHookValidation::RESOURCE_VALUE_ZERO_ERROR,
-                    WebHookValidation::RESOURCE_CURRENCY_ERROR,
-                ],
-                [
-                    'amount' => $allWrongDatas,
-                ],
-            ],
-            [
-                [
-                    WebHookValidation::RESOURCE_VALUE_ZERO_ERROR,
-                ],
-                [
-                    'amount' => $valueZeroError,
+                    'amount' => [
+                        'value' => '',
+                        'currency_code' => 'EUR',
+                    ],
                 ],
             ],
             [
+                PsCheckoutException::PSCHECKOUT_WEBHOOK_AMOUNT_INVALID,
                 [
-                    WebHookValidation::RESOURCE_CURRENCY_ERROR,
+                    'amount' => [
+                        'value' => '0',
+                        'currency_code' => 'EUR',
+                    ],
                 ],
+            ],
+            [
+                PsCheckoutException::PSCHECKOUT_WEBHOOK_CURRENCY_EMPTY,
                 [
-                    'amount' => $currencyError,
+                    'amount' => [
+                        'value' => '12.00',
+                        'currency_code' => '',
+                    ],
                 ],
             ],
         ];
     }
 
     /**
-     * @dataProvider orderDataProvider
+     * @throws PsCheckoutException
      */
-    public function testOrderDatas($resultExpect, $dataToValidate)
+    public function testOrderDataWithValidParams()
     {
-        $this->assertSame(
-            $resultExpect,
-            (new WebHookValidation())->validateRefundOrderIdValue($dataToValidate)
-        );
+        $webHookValidation = new WebHookValidation();
+        $this->assertTrue($webHookValidation->validateRefundOrderIdValue('68N82910RXXXXXXXX'));
     }
 
+    /**
+     * @dataProvider orderDataProvider
+     *
+     * @param int $exceptionCodeExpected
+     * @param string $dataToValidate
+     *
+     * @throws PsCheckoutException
+     */
+    public function testOrderDataWithInvalidParams($exceptionCodeExpected, $dataToValidate)
+    {
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode($exceptionCodeExpected);
+
+        $webHookValidation = new WebHookValidation();
+        $webHookValidation->validateRefundOrderIdValue($dataToValidate);
+    }
+
+    /**
+     * @return array[]
+     */
     public function orderDataProvider()
     {
         return [
             [
-                [
-                    WebHookValidation::ORDER_ERROR,
-                ],
+                PsCheckoutException::PSCHECKOUT_WEBHOOK_ORDER_ID_EMPTY,
                 '',
-            ],
-            [
-                [],
-                '68N82910RXXXXXXXX',
             ],
         ];
     }

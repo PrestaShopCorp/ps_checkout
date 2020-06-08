@@ -100,7 +100,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '1.4.1';
+    const VERSION = '1.5.0';
 
     /**
      * @var \Monolog\Logger
@@ -114,9 +114,11 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '1.4.1';
+        $this->version = '1.5.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
+        $this->currencies = true;
+        $this->currencies_mode = 'checkbox';
 
         $this->module_key = '82bc76354cfef947e06f1cc78f5efe2e';
 
@@ -1039,19 +1041,76 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayPaymentTop()
     {
-        if (false === $this->context->cookie->__isset('paypalOrderId')) {
-            return '';
+        $paymentError = (int) Tools::getValue('paymentError');
+        $paymentErrorMessage = '';
+        $isExpressCheckout = $this->context->cookie->__isset('paypalOrderId');
+
+        if (0 < $paymentError) {
+            switch ($paymentError) {
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException::PAYPAL_PAYMENT_CARD_ERROR:
+                    $paymentErrorMessage = $this->l('The transaction failed. Please try a different card.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::CARD_TYPE_NOT_SUPPORTED:
+                    $paymentErrorMessage = $this->l('Processing of this card type is not supported. Use another card type.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::INVALID_SECURITY_CODE_LENGTH:
+                    $paymentErrorMessage = $this->l('The CVC code length is invalid for the specified card type.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::CURRENCY_NOT_SUPPORTED_FOR_CARD_TYPE:
+                    $paymentErrorMessage = $this->l('Your card cannot be used to pay in this currency, please try another payment method.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::CURRENCY_NOT_SUPPORTED_FOR_COUNTRY:
+                    $paymentErrorMessage = $this->l('Your card cannot be used to pay in our country, please try another payment method.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::INSTRUMENT_DECLINED:
+                    $paymentErrorMessage = $this->l('This payment method declined transaction, please try another.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::MAX_NUMBER_OF_PAYMENT_ATTEMPTS_EXCEEDED:
+                    $paymentErrorMessage = $this->l('You have exceeded the maximum number of payment attempts.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::PAYER_ACCOUNT_LOCKED_OR_CLOSED:
+                    $paymentErrorMessage = $this->l('Your PayPal account is locked or closed, please try another.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::PAYER_ACCOUNT_RESTRICTED:
+                    $paymentErrorMessage = $this->l('You are not allowed to pay with this PayPal account, please try another.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::PAYER_CANNOT_PAY:
+                    $paymentErrorMessage = $this->l('You are not allowed to pay with this payment method, please try another.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::PAYER_COUNTRY_NOT_SUPPORTED:
+                    $paymentErrorMessage = $this->l('Your country is not supported by this payment method, please try to select another.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::REDIRECT_PAYER_FOR_ALTERNATE_FUNDING:
+                    $paymentErrorMessage = $this->l('The transaction failed. Please try a different payment method.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::TRANSACTION_BLOCKED_BY_PAYEE:
+                    $paymentErrorMessage = $this->l('The transaction was blocked by Fraud Protection settings.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::TRANSACTION_REFUSED:
+                    $paymentErrorMessage = $this->l('The transaction was refused.', 'translations');
+                    break;
+                default:
+                    $paymentErrorMessage = $this->l('Please try a different payment method or try again later.', 'translations');
+            }
         }
 
         $this->context->smarty->assign([
-            'paypalLogoPath' => $this->getPathUri() . 'views/img/paypal_express.png',
-            'translatedText' => strtr(
-                $this->l('You have selected your [PAYPAL_ACCOUNT] PayPal account to proceed to the payment.', 'translations'),
-                [
-                    '[PAYPAL_ACCOUNT]' => $this->context->cookie->__get('paypalEmail'),
-                ]
-            ),
+            'paymentError' => $paymentError,
+            'paymentErrorMessage' => $paymentErrorMessage,
+            'isExpressCheckout' => $isExpressCheckout,
         ]);
+
+        if (true === $isExpressCheckout) {
+            $this->context->smarty->assign([
+                'paypalLogoPath' => $this->getPathUri() . 'views/img/paypal_express.png',
+                'translatedText' => strtr(
+                    $this->l('You have selected your [PAYPAL_ACCOUNT] PayPal account to proceed to the payment.', 'translations'),
+                    [
+                        '[PAYPAL_ACCOUNT]' => $this->context->cookie->__get('paypalEmail'),
+                    ]
+                ),
+            ]);
+        }
 
         return $this->display(__FILE__, '/views/templates/hook/displayPaymentTop.tpl');
     }

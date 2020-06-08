@@ -40,9 +40,19 @@
   </article>
 </div>
 
-<script type='text/javascript' src='{$jsPathInitPaypalSdk|escape:'javascript':'UTF-8'}'></script>
+<script type='text/javascript' src='{$jsPathInitPaypalSdk|escape:'javascript':'UTF-8' nofilter}'></script>
 
 <script>
+  const cardNumberPlaceholder = "{l s='Card number' mod='ps_checkout'}";
+  const expDatePlaceholder = "{l s='MM/YY' mod='ps_checkout'}";
+  const cvvPlaceholder = "{l s='XXX' mod='ps_checkout'}";
+  const paypalOrderId = "{$paypalOrderId|escape:'javascript':'UTF-8'}";
+  const validateOrderLinkByCard = "{$validateOrderLinkByCard|escape:'javascript':'UTF-8' nofilter}";
+  const validateOrderLinkByPaypal = "{$validateOrderLinkByPaypal|escape:'javascript':'UTF-8' nofilter}";
+  const cardIsActive = "{$cardIsActive|escape:'javascript':'UTF-8'}";
+  const paypalIsActive = "{$paypalIsActive|escape:'javascript':'UTF-8'}";
+  const paypalPaymentOption = "{$paypalPaymentOption|escape:'javascript':'UTF-8'}";
+  const hostedFieldsErrors = {$hostedFieldsErrors|escape:'javascript':'UTF-8'|stripslashes nofilter};
 /**
  * Create paypal script
  */
@@ -58,10 +68,11 @@ function initPaypalScript() {
   }
 
   const paypalScript = document.createElement('script');
-  paypalScript.setAttribute('src', "{$paypalSdkLink nofilter}");
-  paypalScript.setAttribute('data-client-token', "{$clientToken|escape:'htmlall':'UTF-8'}");
+  paypalScript.setAttribute('src', "{$paypalSdkLink|escape:'javascript':'UTF-8' nofilter}");
+  paypalScript.setAttribute('data-client-token', "{$clientToken|escape:'javascript':'UTF-8'}");
   paypalScript.setAttribute('id', 'psCheckoutPaypalSdk');
   paypalScript.setAttribute('data-namespace', 'paypalSdkPsCheckout');
+  paypalScript.setAttribute('data-enable-3ds', '');
   paypalScript.setAttribute('async', '');
   document.head.appendChild(paypalScript);
 }
@@ -69,17 +80,3 @@ function initPaypalScript() {
 initPaypalScript();
 </script>
 
-{literal}
-<script type="text/javascript">
-  var cardNumberPlaceholder = "{/literal}{l s='Card number' mod='ps_checkout'}{literal}";
-  var expDatePlaceholder = "{/literal}{l s='MM/YY' mod='ps_checkout'}{literal}";
-  var cvvPlaceholder = "{/literal}{l s='XXX' mod='ps_checkout'}{literal}";
-  var paypalOrderId = "{/literal}{$paypalOrderId|escape:'javascript':'UTF-8'}{literal}";
-  var validateOrderLinkByCard = "{/literal}{$validateOrderLinkByCard|escape:'javascript':'UTF-8'}{literal}";
-  var validateOrderLinkByPaypal = "{/literal}{$validateOrderLinkByPaypal|escape:'javascript':'UTF-8'}{literal}";
-  var cardIsActive = "{/literal}{$cardIsActive|escape:'javascript':'UTF-8'}{literal}";
-  var paypalIsActive = "{/literal}{$paypalIsActive|escape:'javascript':'UTF-8'}{literal}";
-  var paypalPaymentOption = "{/literal}{$paypalPaymentOption|escape:'javascript':'UTF-8'}{literal}";
-  var hostedFieldsErrors = "{/literal}{$hostedFieldsErrors|escape:'javascript':'UTF-8'}{literal}";
-</script>
-{/literal}

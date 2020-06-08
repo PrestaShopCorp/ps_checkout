@@ -37,37 +37,22 @@ class Link
     }
 }
 
-class PrestaShopLogger
-{
-    public static function addLog()
-    {
-    }
-}
-
 class Module
 {
+    /** @var \Psr\Log\LoggerInterface */
     private $logger;
-
-    public function __construct()
-    {
-        $this->logger = new Logger();
-    }
 
     public static function getInstanceByName($name)
     {
         return new self();
     }
 
+    /**
+     * @return \Psr\Log\LoggerInterface
+     */
     public function getLogger()
     {
         return $this->logger;
-    }
-}
-
-class Logger
-{
-    public function debug($msg)
-    {
     }
 }
 

@@ -20,7 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Entity;
 
-use PrestaShop\Module\PrestashopCheckout\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
 /**
  * Not really an entity.
@@ -72,14 +72,25 @@ class PsAccount
      */
     private $psxForm;
 
+    /**
+     * PsAccount constructor.
+     *
+     * @param string|null $idToken
+     * @param string|null $refreshToken
+     * @param string|null $email
+     * @param string|null $localId
+     * @param array|null $psxForm
+     *
+     * @throws PsCheckoutException
+     */
     public function __construct($idToken = null, $refreshToken = null, $email = null, $localId = null, $psxForm = null)
     {
         if (empty($idToken)) {
-            throw new PsCheckoutException('idToken cannot be empty');
+            throw new PsCheckoutException('idToken cannot be empty', PsCheckoutException::PSACCOUNT_TOKEN_MISSING);
         }
 
         if (empty($refreshToken)) {
-            throw new PsCheckoutException('refreshToken cannot be empty');
+            throw new PsCheckoutException('refreshToken cannot be empty', PsCheckoutException::PSACCOUNT_REFRESH_TOKEN_MISSING);
         }
 
         $this->setIdToken($idToken);
@@ -99,7 +110,7 @@ class PsAccount
     }
 
     /**
-     * setter $email
+     * @param string $email
      */
     public function setEmail($email)
     {
@@ -107,7 +118,7 @@ class PsAccount
     }
 
     /**
-     * setter $idToken
+     * @param string $idToken
      */
     public function setIdToken($idToken)
     {
@@ -115,7 +126,7 @@ class PsAccount
     }
 
     /**
-     * setter $localId
+     * @param string $localId
      */
     public function setLocalId($localId)
     {
@@ -123,7 +134,7 @@ class PsAccount
     }
 
     /**
-     * setter $refreshToken
+     * @param string $refreshToken
      */
     public function setRefreshToken($refreshToken)
     {
@@ -131,7 +142,7 @@ class PsAccount
     }
 
     /**
-     * setter $psxForm
+     * @param mixed $form
      */
     public function setPsxForm($form)
     {
