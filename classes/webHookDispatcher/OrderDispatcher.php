@@ -45,10 +45,6 @@ class OrderDispatcher implements Dispatcher
     {
         $psOrderId = $this->getPrestashopOrderId($payload['orderId']);
 
-        if (false === $psOrderId) {
-            return false;
-        }
-
         if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REFUNED
             || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REVERSED) {
             return $this->dispatchPaymentAction($payload['eventType'], $payload['resource'], $psOrderId);
@@ -73,7 +69,7 @@ class OrderDispatcher implements Dispatcher
      *
      * @param string $orderId paypal order id
      *
-     * @return bool|int
+     * @return int
      *
      * @throws PsCheckoutException
      */
