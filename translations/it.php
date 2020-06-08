@@ -33,7 +33,6 @@ $_MODULE['<{ps_checkout}prestashop>validateorder_1889f1b9cd95ba96c924904b633e680
 $_MODULE['<{ps_checkout}prestashop>validateorder_937a6208751c6044e846b7e70cf5305c'] = 'ID ordine PayPal:';
 $_MODULE['<{ps_checkout}prestashop>validateorder_c4dde5b1549f1efa1692d8873acb62db'] = 'Eccezione ID';
 $_MODULE['<{ps_checkout}prestashop>validateorder_b0245f6ceb905dcd9d2cda968eca9290'] = 'Eccezione ID:';
-$_MODULE['<{ps_checkout}prestashop>validateorder_ad882fed0995d9be1922fff253202368'] = '';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_1b43db46cf115ecaf2b2e79c780b5266'] = 'Nessun numero ordine PrestaShop ricevuto';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_8aeb76260f5c8706d7e4e723f4417424'] = 'Questo ordine PrestaShop [PRESTASHOP_ORDER_ID] non è stato pagato con PrestaShop Checkout';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_0f1c930c145fe9e076b18148be8d2860'] = 'Impossibile trovare l\'ordine PayPal associato a questo ordine PrestaShop [PRESTASHOP_ORDER_ID]';
@@ -330,7 +329,6 @@ $_MODULE['<{ps_checkout}prestashop>translations_565c23511bb8643ac5552fbd5e4ba358
 $_MODULE['<{ps_checkout}prestashop>translations_83c6cac8e2ac2ca242a4c1b7e3062bf8'] = 'Offri la gamma più ampia di metodi di pagamento: carte, PayPal, ecc.';
 $_MODULE['<{ps_checkout}prestashop>translations_d59048f21fd887ad520398ce677be586'] = 'Per saperne di più';
 $_MODULE['<{ps_checkout}prestashop>translations_6bde19fb9d1c68cdb5a8efa405370887'] = 'Strumento di gestione delle frodi';
-$_MODULE['<{ps_checkout}prestashop>translations_eef93fd0a202e0102e08d10f9d69b2cc'] = '';
 $_MODULE['<{ps_checkout}prestashop>translations_33b0504f0b776f2c13381c543bf2017c'] = 'Approfondisci l\'argomento';
 $_MODULE['<{ps_checkout}prestashop>translations_c12fb9a7b1d63237624c3a069891e7f4'] = 'Personalizzazione dell\'esperienza di pagamento, elenco delle transazioni, gestione delle controversie... e molte altre funzioni!';
 $_MODULE['<{ps_checkout}prestashop>translations_c7b5d73ffc406b56966f030ac1b1da10'] = 'Vai alla piattaforma di gestione delle controversie';
