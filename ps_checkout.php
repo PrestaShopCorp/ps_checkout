@@ -421,7 +421,12 @@ class Ps_checkout extends PaymentModule
             'paymentOrder' => $this->getPaymentMethods(),
         ]);
 
-        $this->context->controller->addCss($this->_path . 'views/css/payments16.css');
+        $this->context->controller->addCss(
+            $this->_path . 'views/css/payments16.css?version=' . $this->version,
+            'all',
+            null,
+            false
+        );
 
         return $this->display(__FILE__, '/views/templates/hook/payment.tpl');
     }
@@ -759,11 +764,19 @@ class Ps_checkout extends PaymentModule
     public function hookActionAdminControllerSetMedia()
     {
         if ('AdminPayment' === Tools::getValue('controller')) {
-            $this->context->controller->addCss($this->_path . 'views/css/adminAfterHeader.css');
+            $this->context->controller->addCss(
+                $this->_path . 'views/css/adminAfterHeader.css?version=' . $this->version,
+                'all',
+                null,
+                false
+            );
         }
 
         if ('AdminOrders' === Tools::getValue('controller')) {
-            $this->context->controller->addJS($this->getPathUri() . 'views/js/adminOrderView.js?version=' . $this->version);
+            $this->context->controller->addJS(
+                $this->getPathUri() . 'views/js/adminOrderView.js?version=' . $this->version,
+                false
+            );
         }
     }
 
