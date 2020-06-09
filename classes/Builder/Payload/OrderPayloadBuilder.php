@@ -299,7 +299,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             }
 
             $paypalItem['name'] = $this->truncate($value['name'], 127);
-            $paypalItem['description'] = $this->truncate(strip_tags($value['description_short']), 127);
+            $paypalItem['description'] = false === empty($value['attributes']) ? $this->truncate($value['attributes'], 127) : '';
             $paypalItem['sku'] = $this->truncate($sku, 127);
             $paypalItem['unit_amount']['currency_code'] = $this->cart['currency']['iso_code'];
             $paypalItem['unit_amount']['value'] = $value['total'] / $value['quantity'];
