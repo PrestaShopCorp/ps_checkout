@@ -330,9 +330,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_565c23511bb8643ac5552fbd5e4ba358
 $_MODULE['<{ps_checkout}prestashop>translations_83c6cac8e2ac2ca242a4c1b7e3062bf8'] = 'Offer the widest range of payment methods: cards, PayPal, etc.';
 $_MODULE['<{ps_checkout}prestashop>translations_d59048f21fd887ad520398ce677be586'] = 'Learn more';
 $_MODULE['<{ps_checkout}prestashop>translations_6bde19fb9d1c68cdb5a8efa405370887'] = 'Fraud tool';
-$_MODULE['<{ps_checkout}prestashop>translations_eef93fd0a202e0102e08d10f9d69b2cc'] = 'PayPal algorithms automatically limit your fraud rate.
-                    If you want to go further in Fraud Management, there is a complete tool on the PayPal platform
-                    to set specific rules and drive your performance concerning fraud and chargeback costs.';
+$_MODULE['<{ps_checkout}prestashop>translations_eef93fd0a202e0102e08d10f9d69b2cc'] = 'PayPal algorithms automatically limit your fraud rate. If you want to go further in Fraud Management, there is a complete tool on the PayPal platform to set specific rules and drive your performance concerning fraud and chargeback costs.';
 $_MODULE['<{ps_checkout}prestashop>translations_33b0504f0b776f2c13381c543bf2017c'] = 'Go further';
 $_MODULE['<{ps_checkout}prestashop>translations_c12fb9a7b1d63237624c3a069891e7f4'] = 'Checkout customization, transactions list, dispute management ... and more to come!';
 $_MODULE['<{ps_checkout}prestashop>translations_c7b5d73ffc406b56966f030ac1b1da10'] = 'Go to the dispute management platform';
