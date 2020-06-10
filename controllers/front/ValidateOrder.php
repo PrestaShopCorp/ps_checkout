@@ -223,6 +223,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
 
         switch ($exception->getCode()) {
             case PsCheckoutException::PAYPAL_PAYMENT_CARD_ERROR:
+            case PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED:
             case PayPalException::CARD_TYPE_NOT_SUPPORTED:
             case PayPalException::INVALID_SECURITY_CODE_LENGTH:
             case PayPalException::CURRENCY_NOT_SUPPORTED_FOR_CARD_TYPE:
