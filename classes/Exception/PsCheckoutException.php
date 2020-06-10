@@ -52,4 +52,5 @@ class PsCheckoutException extends \PrestaShopExceptionCore
     const PAYPAL_PAYMENT_METHOD_MISSING = 28;
     const PAYPAL_PAYMENT_CARD_ERROR = 29;
     const PAYPAL_PAYMENT_CAPTURE_DECLINED = 30;
+    const PRESTASHOP_ORDER_ID_MISSING = 31;
 }
