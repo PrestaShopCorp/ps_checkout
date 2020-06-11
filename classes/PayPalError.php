@@ -295,6 +295,8 @@ class PayPalError
                 throw new PayPalException('Full refund refused - partial refund has already been done on this payment. You cannot refund this capture.', PayPalException::REFUND_NOT_ALLOWED);
             case 'REFUND_TIME_LIMIT_EXCEEDED':
                 throw new PayPalException('You are over the time limit to perform a refund on this capture. The refund cannot be issued at this time.', PayPalException::REFUND_TIME_LIMIT_EXCEEDED);
+            case 'NO_EXTERNAL_FUNDING_DETAILS_FOUND':
+                throw new PayPalException('External funding details not found.', PayPalException::NO_EXTERNAL_FUNDING_DETAILS_FOUND);
             default:
                 throw new PayPalException($this->message, PayPalException::UNKNOWN);
         }
