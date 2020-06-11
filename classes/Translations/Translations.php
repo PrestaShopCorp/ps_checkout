@@ -144,16 +144,14 @@ class Translations
             ],
             'panel' => [
                 'account-list' => [
-                    'accountSettings' => $this->module->l('Account settings', 'translations'),
+                    'accountSettings' => $this->module->l('Your PayPal account', 'translations'),
                     'essentialsAccount' => $this->module->l('PrestaShop Checkout account', 'translations'),
-                    'activateAllPayment' => $this->module->l('You need to connect to both PrestaShop Checkout and PayPal accounts to activate all payment methods', 'translations'),
                     'connectedWitdh' => $this->module->l('You are now logged in with your', 'translations'),
                     'account' => $this->module->l('account', 'translations'),
                     'createNewAccount' => $this->module->l('Sign in or login to provide every payment method to your customer.', 'translations'),
                     'createAccount' => $this->module->l('Sign up', 'translations'),
                     'logIn' => $this->module->l('Log in', 'translations'),
                     'logOut' => $this->module->l('Log out', 'translations'),
-                    'paypalAccount' => $this->module->l('PayPal account', 'translations'),
                     'activatePayment' => $this->module->l('Log in or sign up to PayPal', 'translations'),
                     'accountIsLinked' => $this->module->l('Your PrestaShop Checkout account is linked to your PayPal account', 'translations'),
                     'linkToPaypal' => $this->module->l('Link to PayPal account', 'translations'),

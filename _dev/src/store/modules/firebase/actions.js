@@ -20,63 +20,7 @@ import * as types from './mutation-types';
 import ajax from '@/requests/ajax.js';
 
 export default {
-  logOut({commit, getters}) {
-    return ajax({
-      url: getters.adminController,
-      action: 'LogOutPsAccount',
-    }).then(() => {
-      commit(types.LOGOUT_ACCOUNT);
-      return Promise.resolve(true);
-    });
-  },
-
-  signIn({commit, getters}, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'SignIn',
-      data: {
-        email: payload.email,
-        password: payload.password,
-      },
-    }).then((response) => {
-      if (response.status === false) {
-        return Promise.reject(response);
-      }
-
-      commit(types.UPDATE_ACCOUNT, {
-        email: response.body.email,
-        idToken: response.body.idToken,
-        localId: response.body.localId,
-        refreshToken: response.body.refreshToken,
-        onboardingCompleted: true,
-      });
-
-      return Promise.resolve(response);
-    });
-  },
-
-  signUp({commit, getters}, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'SignUp',
-      data: {
-        email: payload.email,
-        password: payload.password,
-      },
-    }).then((response) => {
-      if (response.status === false) {
-        return Promise.reject(response);
-      }
-
-      commit(types.UPDATE_ACCOUNT, {
-        email: response.body.email,
-        idToken: response.body.idToken,
-        localId: response.body.localId,
-        refreshToken: response.body.refreshToken,
-        onboardingCompleted: true,
-      });
-
-      return Promise.resolve(response);
-    });
+  temp({commit, getters}) {
+    return Promise.resolve(true);
   },
 };

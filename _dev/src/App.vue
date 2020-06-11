@@ -41,65 +41,61 @@
     <div class="pt-5" />
     <div class="pt-3" />
 
+    <div
+      class="container"
+      v-if="isShopContext"
+    >
+      <RoundingBanner />
+    </div>
 
-    <PsAccounts class="container">
-      <div
-        class="container"
-        v-if="isShopContext"
+    <div
+      class="container"
+      v-if="isTestMode"
+    >
+      <b-alert
+        variant="warning"
+        show
       >
-        <RoundingBanner />
-      </div>
+        <p>{{ $t('general.testModeOn') }}</p>
+      </b-alert>
+    </div>
 
-      <div
-        class="container"
-        v-if="isTestMode"
+    <div
+      class="container"
+      v-if="!isShopContext"
+    >
+      <b-alert
+        variant="warning"
+        show
       >
-        <b-alert
-          variant="warning"
-          show
+        <h2>{{ $t('general.multiShop.title') }}</h2>
+        <p>{{ $t('general.multiShop.subtitle') }}</p>
+        <p>{{ $t('general.multiShop.chooseOne') }}</p>
+        <b-list-group
+          v-for="group in shopsTree"
+          :key="group.id"
+          class="mt-3 mb-3 col-4"
         >
-          <p>{{ $t('general.testModeOn') }}</p>
-        </b-alert>
-      </div>
-
-      <div
-        class="container"
-        v-if="!isShopContext"
-      >
-        <b-alert
-          variant="warning"
-          show
-        >
-          <h2>{{ $t('general.multiShop.title') }}</h2>
-          <p>{{ $t('general.multiShop.subtitle') }}</p>
-          <p>{{ $t('general.multiShop.chooseOne') }}</p>
-          <b-list-group
-            v-for="group in shopsTree"
-            :key="group.id"
-            class="mt-3 mb-3 col-4"
+          <p class="text-muted">
+            {{ $t('general.multiShop.group') }} {{ group.name }}
+          </p>
+          <b-list-group-item
+            v-for="shop in group.shops"
+            :key="shop.id"
+            :href="shop.url"
           >
-            <p class="text-muted">
-              {{ $t('general.multiShop.group') }} {{ group.name }}
-            </p>
-            <b-list-group-item
-              v-for="shop in group.shops"
-              :key="shop.id"
-              :href="shop.url"
-            >
-              {{ $t('general.multiShop.configure') }} <b>{{ shop.name }}</b>
-            </b-list-group-item>
-          </b-list-group>
-          <p>{{ $t('general.multiShop.tips') }}</p>
-        </b-alert>
-      </div>
+            {{ $t('general.multiShop.configure') }} <b>{{ shop.name }}</b>
+          </b-list-group-item>
+        </b-list-group>
+        <p>{{ $t('general.multiShop.tips') }}</p>
+      </b-alert>
+    </div>
 
-      <router-view v-if="isShopContext" />
-    </PsAccounts>
+    <router-view v-if="isShopContext" />
   </div>
 </template>
 
 <script>
-  import {PsAccounts} from 'prestashop_accounts_vue_components';
   import Menu from '@/components/menu/menu';
   import MenuItem from '@/components/menu/menu-item';
   import RoundingBanner from '@/components/block/rounding-banner';
@@ -107,7 +103,6 @@
   export default {
     name: 'Home',
     components: {
-      PsAccounts,
       Menu,
       MenuItem,
       RoundingBanner,
