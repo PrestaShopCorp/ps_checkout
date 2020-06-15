@@ -38,6 +38,7 @@ class ValidateOrder
     const CAPTURE_STATUS_DECLINED = 'DECLINED';
 
     const PAYMENT_METHOD_PAYPAL = 'paypal';
+    const PAYMENT_METHOD_CARD = 'card';
 
     /**
      * @var string
@@ -164,10 +165,10 @@ class ValidateOrder
      */
     private function getPaymentMessageTranslation($paymentMethod, $module)
     {
-        $paymentMessage = $module->l('Payment by card');
+        $paymentMessage = $module->l('Payment by PayPal');
 
-        if ($paymentMethod === self::PAYMENT_METHOD_PAYPAL) {
-            $paymentMessage = $module->l('Payment by PayPal');
+        if ($paymentMethod === self::PAYMENT_METHOD_CARD) {
+            $paymentMessage = $module->l('Payment by card');
         }
 
         return $paymentMessage;
@@ -255,10 +256,10 @@ class ValidateOrder
      */
     private function getPendingStatusId($paymentMethod)
     {
-        if ($paymentMethod === static::PAYMENT_METHOD_PAYPAL) {
-            return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
+        if ($paymentMethod === static::PAYMENT_METHOD_CARD) {
+            return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
         }
 
-        return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
+        return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
     }
 }
