@@ -1089,6 +1089,9 @@ class Ps_checkout extends PaymentModule
                 case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::TRANSACTION_REFUSED:
                     $paymentErrorMessage = $this->l('The transaction was refused.', 'translations');
                     break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::NO_EXTERNAL_FUNDING_DETAILS_FOUND:
+                    $paymentErrorMessage = $this->l('This payment method seems not working currently, please try another.', 'translations');
+                    break;
                 default:
                     $paymentErrorMessage = $this->l('Please try a different payment method or try again later.', 'translations');
             }
