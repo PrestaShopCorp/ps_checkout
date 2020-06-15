@@ -1086,6 +1086,7 @@ class Ps_checkout extends PaymentModule
                 case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::TRANSACTION_BLOCKED_BY_PAYEE:
                     $paymentErrorMessage = $this->l('The transaction was blocked by Fraud Protection settings.', 'translations');
                     break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED:
                 case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::TRANSACTION_REFUSED:
                     $paymentErrorMessage = $this->l('The transaction was refused.', 'translations');
                     break;
