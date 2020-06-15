@@ -28,7 +28,7 @@ if (!defined('_PS_VERSION_')) {
  *
  * @return bool
  */
-function upgrade_module_1_5_0($module)
+function upgrade_module_1_5_1($module)
 {
     return (bool) $module->registerHook('displayPaymentTop');
 }
