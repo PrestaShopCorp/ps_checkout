@@ -100,7 +100,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '1.5.0';
+    const VERSION = '1.5.1';
 
     /**
      * @var \Monolog\Logger
@@ -114,7 +114,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '1.5.0';
+        $this->version = '1.5.1';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->currencies = true;
@@ -1086,8 +1086,12 @@ class Ps_checkout extends PaymentModule
                 case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::TRANSACTION_BLOCKED_BY_PAYEE:
                     $paymentErrorMessage = $this->l('The transaction was blocked by Fraud Protection settings.', 'translations');
                     break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED:
                 case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::TRANSACTION_REFUSED:
                     $paymentErrorMessage = $this->l('The transaction was refused.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::NO_EXTERNAL_FUNDING_DETAILS_FOUND:
+                    $paymentErrorMessage = $this->l('This payment method seems not working currently, please try another.', 'translations');
                     break;
                 default:
                     $paymentErrorMessage = $this->l('Please try a different payment method or try again later.', 'translations');

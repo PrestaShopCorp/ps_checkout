@@ -38,6 +38,7 @@ class ValidateOrder
     const CAPTURE_STATUS_DECLINED = 'DECLINED';
 
     const PAYMENT_METHOD_PAYPAL = 'paypal';
+    const PAYMENT_METHOD_CARD = 'card';
 
     /**
      * @var string
@@ -139,6 +140,10 @@ class ValidateOrder
             $payload['secureKey']
         );
 
+        if (empty($module->currentOrder)) {
+            throw new PsCheckoutException(sprintf('PrestaShop was unable to returns Prestashop Order ID for Prestashop Cart ID : %s  - Paypal Order ID : %s. This happens when PrestaShop take too long time to create an Order due to heavy processes in hooks actionValidateOrder and/or actionOrderStatusUpdate and/or actionOrderStatusPostUpdate', $payload['cartId'], $this->paypalOrderId), PsCheckoutException::PRESTASHOP_ORDER_ID_MISSING);
+        }
+
         if (false === $this->setOrdersMatrice($module->currentOrder, $this->paypalOrderId)) {
             throw new PsCheckoutException(sprintf('Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s', $module->currentOrder, $this->paypalOrderId), PsCheckoutException::PSCHECKOUT_ORDER_MATRICE_ERROR);
         }
@@ -160,10 +165,10 @@ class ValidateOrder
      */
     private function getPaymentMessageTranslation($paymentMethod, $module)
     {
-        $paymentMessage = $module->l('Payment by card');
+        $paymentMessage = $module->l('Payment by PayPal');
 
-        if ($paymentMethod === self::PAYMENT_METHOD_PAYPAL) {
-            $paymentMessage = $module->l('Payment by PayPal');
+        if ($paymentMethod === self::PAYMENT_METHOD_CARD) {
+            $paymentMessage = $module->l('Payment by card');
         }
 
         return $paymentMessage;
@@ -251,10 +256,10 @@ class ValidateOrder
      */
     private function getPendingStatusId($paymentMethod)
     {
-        if ($paymentMethod === static::PAYMENT_METHOD_PAYPAL) {
-            return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
+        if ($paymentMethod === static::PAYMENT_METHOD_CARD) {
+            return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
         }
 
-        return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
+        return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
     }
 }
