@@ -78,7 +78,7 @@ function initSmartButtons() {
       return paypalOrderId;
     },
     onApprove() {
-      window.location.replace(validateOrderLinkByCard);
+      window.location.replace(validateOrderLinkByPaypal);
     },
   }).render('#paypal-button-container');
 }
