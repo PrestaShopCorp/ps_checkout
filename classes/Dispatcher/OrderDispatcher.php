@@ -18,9 +18,11 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-namespace PrestaShop\Module\PrestashopCheckout;
+namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Date\DatePresenter;
+use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 
 class OrderDispatcher implements Dispatcher
 {
@@ -123,6 +125,7 @@ class OrderDispatcher implements Dispatcher
      * @throws PsCheckoutException
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
+     * @throws \Exception
      */
     private function dispatchPaymentStatus($eventType, $resource, $orderId)
     {

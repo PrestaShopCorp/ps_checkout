@@ -7,11 +7,13 @@ parameters:
 		- ../../classes
 		- ../../controllers
 		- ../../ps_checkout.php
+	reportUnmatchedIgnoredErrors: false
 	ignoreErrors:
 		- '#Cannot assign offset "merchant…" to string|true.#'
 		- '#Property ModuleCore::\$version \(float\) does not accept string.#'
 		- '#Strict comparison using === between false and string will always evaluate to false.#'
 		- '#Call to function is_array\(\) with Currency will always evaluate to false.#'
+		- '#Parameter \#1 \$id of class Customer constructor expects null, bool\|int<1, max>\|int<min, -1> given.#'
 		- '#Parameter \#1 \$id of class Customer constructor expects null, int given.#'
 		- '#Parameter \#1 \$hook_name of method ModuleCore::registerHook\(\) expects string, array<int, string> given.#'
 		- '#Parameter \#6 \$idShop of method LinkCore::getModuleLink\(\) expects null, int given.#'
