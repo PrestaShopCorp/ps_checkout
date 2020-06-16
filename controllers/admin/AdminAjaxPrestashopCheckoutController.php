@@ -218,7 +218,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessPsxSendData()
     {
-        $payload = json_decode(\Tools::getValue('payload'), true);
+        $payload = json_decode(Tools::getValue('payload'), true);
         $psxForm = (new PsxDataPrepare($payload))->prepareData();
         $errors = (new PsxDataValidation())->validateData($psxForm);
 
@@ -276,12 +276,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             json_encode([
                 'orders' => (new OrderPendingPresenter())->present(),
                 'transactions' => (new TransactionPresenter())->present(),
-                'countAllCheckoutTransactions' => (int) \Db::getInstance()->getValue('
+                'countAllCheckoutTransactions' => (int) Db::getInstance()->getValue('
                     SELECT COUNT(op.id_order_payment)
                     FROM `' . _DB_PREFIX_ . 'order_payment` op
                     INNER JOIN `' . _DB_PREFIX_ . 'orders` o ON (o.reference = op.order_reference)
                     WHERE op.payment_method = "Prestashop Checkout"
-                    AND o.id_shop = ' . (int) \Context::getContext()->shop->id
+                    AND o.id_shop = ' . (int) Context::getContext()->shop->id
                 ),
             ])
         );
@@ -315,7 +315,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             (int) Context::getContext()->shop->id
         );
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(\Context::getContext()->link))->updateSettings();
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
 
     /**
@@ -331,7 +331,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             (int) Context::getContext()->shop->id
         );
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(\Context::getContext()->link))->updateSettings();
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
 
     /**
@@ -347,7 +347,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             (int) Context::getContext()->shop->id
         );
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(\Context::getContext()->link))->updateSettings();
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
 
     /**
@@ -363,7 +363,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             (int) Context::getContext()->shop->id
         );
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(\Context::getContext()->link))->updateSettings();
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
 
     /**
@@ -399,7 +399,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             ]));
         }
 
-        $paypalOrderId = (new \OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
+        $paypalOrderId = (new OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
 
         if (empty($paypalOrderId)) {
             $this->ajaxDie(json_encode([
@@ -505,11 +505,11 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 'value' => $amount,
             ],
             'note_to_payer' => 'Refund by '
-                . \Configuration::get(
+                . Configuration::get(
                     'PS_SHOP_NAME',
                     null,
                     null,
-                    (int) \Context::getContext()->shop->id
+                    (int) Context::getContext()->shop->id
                 ),
         ]);
 

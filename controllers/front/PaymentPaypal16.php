@@ -38,7 +38,7 @@ class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontControl
 
         $cart = $this->context->cart;
 
-        /** @var \Ps_checkout */
+        /** @var Ps_checkout */
         $module = $this->module;
 
         if (false === $module->active) {
@@ -79,7 +79,7 @@ class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontControl
                 'PS_CHECKOUT_INTENT',
                 null,
                 null,
-                (int) \Context::getContext()->shop->id
+                (int) Context::getContext()->shop->id
             )),
             'locale' => $language['locale'],
             'currencyIsoCode' => $this->context->currency->iso_code,

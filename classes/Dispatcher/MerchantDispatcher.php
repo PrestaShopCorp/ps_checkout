@@ -17,12 +17,26 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-header('Cache-Control: no-store, no-cache, must-revalidate');
-header('Cache-Control: post-check=0, pre-check=0', false);
-header('Pragma: no-cache');
+namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 
-header('Location: ../');
-exit;
+use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
+
+class MerchantDispatcher implements Dispatcher
+{
+    /**
+     * Dispatch the Event Type to manage the merchant status
+     *
+     * {@inheritdoc}
+     *
+     * @throws PsCheckoutException
+     */
+    public function dispatchEventType($payload)
+    {
+        $paypalAccount = new PaypalAccount($payload['merchantId']);
+
+        return (new PaypalAccountUpdater($paypalAccount))->update();
+    }
+}
