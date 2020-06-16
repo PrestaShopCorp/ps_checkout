@@ -20,9 +20,9 @@
 
 use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook;
+use PrestaShop\Module\PrestashopCheckout\Dispatcher\MerchantDispatcher;
+use PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\MerchantDispatcher;
-use PrestaShop\Module\PrestashopCheckout\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 
@@ -216,10 +216,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      * Dispatch the web Hook according to the category
      *
      * @return bool
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws PsCheckoutException
      */
     private function dispatchWebHook()
     {

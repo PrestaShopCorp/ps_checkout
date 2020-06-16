@@ -18,25 +18,14 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-namespace PrestaShop\Module\PrestashopCheckout;
+namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 
-use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
-
-class MerchantDispatcher implements Dispatcher
+interface Dispatcher
 {
     /**
-     * Dispatch the Event Type to manage the merchant status
+     * @param array $payload
      *
-     * {@inheritdoc}
-     *
-     * @throws PsCheckoutException
+     * @return bool
      */
-    public function dispatchEventType($payload)
-    {
-        $paypalAccount = new PaypalAccount($payload['merchantId']);
-
-        return (new PaypalAccountUpdater($paypalAccount))->update();
-    }
+    public function dispatchEventType($payload);
 }
