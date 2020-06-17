@@ -17,7 +17,7 @@
  * International Registered Trademark & Property of PrestaShop SA
  *}
 
-<script type='text/javascript' src='{$jsExpressCheckoutPath|escape:'javascript':'UTF-8'}'></script>
+<script type="text/javascript" src="{$jsExpressCheckoutPath|escape:'javascript':'UTF-8'}"></script>
 
 <link rel="preload" href="{$paypalSdkLink|escape:'javascript':'UTF-8'}" as="script">
 

@@ -27,7 +27,7 @@
   <form id="conditions-to-approve-paypal" method="GET">
     <label for="conditions_to_approve">
       <input id="conditions_to_approve" type="checkbox" name="conditions_to_approve" class="buttons-approve">
-      {l s='I agree to the [1]terms of service[/1] and will adhere to them unconditionally.' mod='ps_checkout' tags=["<a href=\"$termsAndConditionsLink\" id=\"cta-terms-and-conditions-checkout\">"]}
+      {l s='I agree to the [1]terms of service[/1] and will adhere to them unconditionally.' mod='ps_checkout' tags=['<a href="$termsAndConditionsLink" id="cta-terms-and-conditions-checkout">']}
     </label>
   </form>
 </div>
@@ -40,7 +40,7 @@
   </article>
 </div>
 
-<script type='text/javascript' src='{$jsPathInitPaypalSdk|escape:'javascript':'UTF-8' nofilter}'></script>
+<script type="text/javascript" src="{$jsPathInitPaypalSdk|escape:'javascript':'UTF-8' nofilter}"></script>
 
 <script>
   const cardNumberPlaceholder = "{l s='Card number' mod='ps_checkout'}";
