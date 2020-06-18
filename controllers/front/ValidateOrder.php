@@ -237,6 +237,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
             case PayPalException::REDIRECT_PAYER_FOR_ALTERNATE_FUNDING:
             case PayPalException::TRANSACTION_BLOCKED_BY_PAYEE:
             case PayPalException::TRANSACTION_REFUSED:
+            case PayPalException::NO_EXTERNAL_FUNDING_DETAILS_FOUND:
                 $this->redirectToCheckout(['step' => 'payment', 'paymentError' => $exception->getCode()]);
                 break;
             case PayPalException::ORDER_ALREADY_CAPTURED:
