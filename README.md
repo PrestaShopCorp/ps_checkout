@@ -2,6 +2,13 @@
 
 # PrestaShop Checkout
 
+![PHP tests](https://github.com/PrestaShopCorp/ps_checkout/workflows/PHP%20tests/badge.svg)
+![NodeJS tests](https://github.com/PrestaShopCorp/ps_checkout/workflows/NodeJS%20tests/badge.svg)
+![JS tests](https://github.com/PrestaShopCorp/ps_checkout/workflows/JS%20tests/badge.svg)
+![Build & Release draft](https://github.com/PrestaShopCorp/ps_checkout/workflows/Build%20&%20Release%20draft/badge.svg)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/prestashopcorp/ps_checkout)
+[![GitHub license](https://img.shields.io/github/license/PrestaShopCorp/ps_checkout)](https://github.com/PrestaShopCorp/ps_checkout/LICENSE.md)
+
 ## About
 
 PrestaShop official payment module in partnership with PayPal.
