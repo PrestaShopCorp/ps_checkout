@@ -76,7 +76,7 @@
 
 <script>
   const paypalOrderId = "{$paypalOrderId|escape:'javascript':'UTF-8'}";
-  const validateOrderLinkByPaypal = "{$validateOrderLinkByPaypal|escape:'javascript':'UTF-8' nofilter}";
+  const validateOrderLinkByPaypal = "{$validateOrderLinkByPaypal|escape:'javascript':'UTF-8'|replace:'&amp;':'&' nofilter}";
   /**
    * Create paypal script
    */
@@ -92,7 +92,7 @@
     }
 
     const paypalScript = document.createElement('script');
-    paypalScript.setAttribute('src', "{$paypalSdkLink|escape:'javascript':'UTF-8' nofilter}");
+    paypalScript.setAttribute('src', "{$paypalSdkLink|escape:'javascript':'UTF-8'|replace:'&amp;':'&' nofilter}");
     paypalScript.setAttribute('data-client-token', "{$clientToken|escape:'javascript':'UTF-8'}");
     paypalScript.setAttribute('id', 'psCheckoutPaypalSdk');
     paypalScript.setAttribute('data-namespace', 'paypalSdkPsCheckout');
