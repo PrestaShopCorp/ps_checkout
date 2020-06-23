@@ -204,12 +204,12 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 'full_name' => $genderName . ' ' . $this->cart['addresses']['shipping']->lastname . ' ' . $this->cart['addresses']['shipping']->firstname,
             ],
             'address' => [
-                'address_line_1' => $this->cart['addresses']['shipping']->address1,
+                'address_line_1' => (string) $this->cart['addresses']['shipping']->address1,
                 'address_line_2' => (string) $this->cart['addresses']['shipping']->address2,
                 'admin_area_1' => (string) $this->getStateNameById($this->cart['addresses']['shipping']->id_state),
-                'admin_area_2' => $this->cart['addresses']['shipping']->city,
-                'country_code' => $countryCodeMatrice->getPaypalIsoCode($shippingCountryIsoCode),
-                'postal_code' => $this->cart['addresses']['shipping']->postcode,
+                'admin_area_2' => (string) $this->cart['addresses']['shipping']->city,
+                'country_code' => (string) $countryCodeMatrice->getPaypalIsoCode($shippingCountryIsoCode),
+                'postal_code' => (string) $this->cart['addresses']['shipping']->postcode,
             ],
         ];
 
@@ -226,23 +226,23 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
         $node['payer'] = [
             'name' => [
-                'given_name' => $this->cart['addresses']['invoice']->firstname,
-                'surname' => $this->cart['addresses']['invoice']->lastname,
+                'given_name' => (string) $this->cart['addresses']['invoice']->firstname,
+                'surname' => (string) $this->cart['addresses']['invoice']->lastname,
             ],
             'email_address' => (string) $this->cart['customer']->email,
             'address' => [
-                'address_line_1' => $this->cart['addresses']['invoice']->address1,
+                'address_line_1' => (string) $this->cart['addresses']['invoice']->address1,
                 'address_line_2' => (string) $this->cart['addresses']['invoice']->address2,
                 'admin_area_1' => (string) $this->getStateNameById($this->cart['addresses']['invoice']->id_state), //The highest level sub-division in a country, which is usually a province, state, or ISO-3166-2 subdivision.
-                'admin_area_2' => $this->cart['addresses']['invoice']->city, // A city, town, or village. Smaller than admin_area_level_1
-                'country_code' => $countryCodeMatrice->getPaypalIsoCode($payerCountryIsoCode),
-                'postal_code' => $this->cart['addresses']['invoice']->postcode,
+                'admin_area_2' => (string) $this->cart['addresses']['invoice']->city, // A city, town, or village. Smaller than admin_area_level_1
+                'country_code' => (string) $countryCodeMatrice->getPaypalIsoCode($payerCountryIsoCode),
+                'postal_code' => (string) $this->cart['addresses']['invoice']->postcode,
             ],
         ];
 
         // Add optional birthdate if provided
         if (!empty($this->cart['customer']->birthday) && $this->cart['customer']->birthday !== '0000-00-00') {
-            $node['payer']['birth_date'] = $this->cart['customer']->birthday;
+            $node['payer']['birth_date'] = (string) $this->cart['customer']->birthday;
         }
 
         $this->getPayload()->addAndMergeItems($node);
