@@ -17,9 +17,9 @@
  * International Registered Trademark & Property of PrestaShop SA
  *}
 
-<script type="text/javascript" src="{$jsExpressCheckoutPath|escape:'javascript':'UTF-8'}"></script>
+<script type="text/javascript" src="{$jsExpressCheckoutPath|escape:'javascript':'UTF-8'|replace:'&amp;':'&'}"></script>
 
-<link rel="preload" href="{$paypalSdkLink|escape:'javascript':'UTF-8'}" as="script">
+<link rel="preload" href="{$paypalSdkLink|escape:'javascript':'UTF-8'|replace:'&amp;':'&'}" as="script">
 
 <div id="pscheckout-express-checkout" style="display:none;">
   {if $displayMode eq 'cart'}
@@ -53,10 +53,10 @@
 </style>
 
 <script>
-  const checkoutLink = "{$checkoutLink|escape:'javascript':'UTF-8' nofilter}";
+  const checkoutLink = "{$checkoutLink|escape:'javascript':'UTF-8'|replace:'&amp;':'&' nofilter}";
   const displayMode = "{$displayMode|escape:'javascript':'UTF-8'}";
   const isPs176 = "{$isPs176|escape:'javascript':'UTF-8'}";
-  const expressCheckoutController = "{$expressCheckoutController|escape:'javascript':'UTF-8' nofilter}";
+  const expressCheckoutController = "{$expressCheckoutController|escape:'javascript':'UTF-8'|replace:'&amp;':'&' nofilter}";
   const paypalIsActive = "{$paypalIsActive|escape:'javascript':'UTF-8'}";
   /**
    * Load paypal script
@@ -73,7 +73,7 @@
     }
 
     const paypalScript = document.createElement('script');
-    paypalScript.setAttribute('src', "{$paypalSdkLink|escape:'javascript':'UTF-8' nofilter}");
+    paypalScript.setAttribute('src', "{$paypalSdkLink|escape:'javascript':'UTF-8'|replace:'&amp;':'&' nofilter}");
     paypalScript.setAttribute('id', 'psCheckoutPaypalSdk');
     paypalScript.setAttribute('data-namespace', 'paypalSdkPsCheckoutEC');
     paypalScript.setAttribute('data-enable-3ds', '');
