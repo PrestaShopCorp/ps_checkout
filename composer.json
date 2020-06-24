@@ -29,7 +29,7 @@
     "symfony/dependency-injection": "^3.4",
     "vlucas/phpdotenv": "^3.4",
     "webmozart/assert": "^1.0",
-    "prestashop/prestashop-accounts-auth": "dev-feature/704-webhooks"
+    "prestashop/prestashop-accounts-auth": "dev-feature/160-choice-uuid"
   },
   "require-dev": {
     "phpunit/phpunit": "~5.7",

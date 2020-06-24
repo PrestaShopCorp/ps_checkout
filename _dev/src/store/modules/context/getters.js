@@ -16,6 +16,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
+
 export default {
   adminController: (state) => state.prestashopCheckoutAjax,
   locale: (state) => state.language.iso_code,
@@ -23,6 +25,6 @@ export default {
   translations: (state) => state.translations,
   roundingSettingsIsCorrect: (state) => state.roundingSettingsIsCorrect,
   merchantIsFullyOnboarded: (state, getters) => getters.paypalOnboardingIsCompleted
-      && getters.firebaseOnboardingIsCompleted
+      && isOnboardingCompleted()
       && getters.psxOnboardingIsCompleted,
 };

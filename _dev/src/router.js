@@ -31,6 +31,7 @@ import Advanced from '@/pages/Advanced';
 import Experimental from '@/pages/Experimental';
 import Debug from '@/pages/Debug';
 import Help from '@/pages/Help';
+import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
 
 Vue.use(Router);
 
@@ -45,46 +46,10 @@ const router = new Router({
       name: 'Authentication',
       component: Accounts,
       beforeEnter: (to, from, next) => {
-        if (store.getters.firebaseOnboardingIsCompleted
+        if (isOnboardingCompleted()
           && !store.getters.paypalOnboardingIsCompleted
           && !store.getters.psxOnboardingIsCompleted) {
           next('/authentication/additional');
-        } else {
-          next();
-        }
-      },
-    },
-    {
-      path: '/authentication/signin',
-      name: 'Signin',
-      component: Signin,
-      beforeEnter: (to, from, next) => {
-        if (store.getters.firebaseOnboardingIsCompleted) {
-          next(from);
-        } else {
-          next();
-        }
-      },
-    },
-    {
-      path: '/authentication/signup',
-      name: 'Signup',
-      component: Signup,
-      beforeEnter: (to, from, next) => {
-        if (store.getters.firebaseOnboardingIsCompleted) {
-          next(from);
-        } else {
-          next();
-        }
-      },
-    },
-    {
-      path: '/authentication/reset',
-      name: 'ResetPassword',
-      component: ResetPassword,
-      beforeEnter: (to, from, next) => {
-        if (store.getters.firebaseOnboardingIsCompleted) {
-          next(from);
         } else {
           next();
         }
@@ -95,7 +60,7 @@ const router = new Router({
       name: 'PsxAdditionalDetails',
       component: PsxAdditionalDetails,
       beforeEnter: (to, from, next) => {
-        if (!store.getters.firebaseOnboardingIsCompleted
+        if (!isOnboardingCompleted()
           || store.getters.psxOnboardingIsCompleted) {
           next('/authentication');
         } else {
@@ -140,9 +105,6 @@ const router = new Router({
 const guestPages = [
   'Authentication',
   'PsxAdditionalDetails',
-  'Signin',
-  'Signup',
-  'ResetPassword',
   'Experimental',
   'Debug',
   'Help',

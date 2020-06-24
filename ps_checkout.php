@@ -361,7 +361,7 @@ class Ps_checkout extends PaymentModule
 
     public function getContent()
     {
-        $onboarding = new PrestaShop\AccountsAuth\Wrapper\Onboarding();
+        $psAccountPresenter = new PrestaShop\AccountsAuth\Presenter\PsAccountsPresenter('ps_checkout');
 
         $paypalAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository();
         $psAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository();
@@ -377,9 +377,10 @@ class Ps_checkout extends PaymentModule
             'pathApp' => $this->_path . 'views/js/app.js?v=' . $this->version,
         ]);
 
+        dump($psAccountPresenter->present());
         Media::addJsDef([
             'store' => (new PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter($this, $this->context))->present(),
-            'contextPsAccounts' => $onboarding->present(),
+            'contextPsAccounts' => $psAccountPresenter->present(),
         ]);
 
         return $this->display(__FILE__, '/views/templates/admin/configuration.tpl');

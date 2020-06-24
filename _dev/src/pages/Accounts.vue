@@ -47,6 +47,7 @@
   import AccountList from '@/components/panel/account-list';
   import PaymentAcceptance from '@/components/panel/payment-acceptance';
   import Reassurance from '@/components/block/reassurance';
+  import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
 
   export default {
     name: 'Accounts',
@@ -58,7 +59,7 @@
     },
     computed: {
       firebaseStatusAccount() {
-        return this.$store.state.firebase.onboardingCompleted;
+        return isOnboardingCompleted();
       },
       paypalStatusAccount() {
         return this.$store.state.paypal.onboardingCompleted;

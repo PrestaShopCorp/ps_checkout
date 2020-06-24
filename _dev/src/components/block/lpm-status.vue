@@ -46,12 +46,14 @@
 </template>
 
 <script>
+  import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
+
   export default {
     name: 'PaypalStatus',
     computed: {
       onboardingIsCompleted() {
         return this.$store.state.paypal.onboardingCompleted
-          && this.$store.state.firebase.onboardingCompleted;
+          && isOnboardingCompleted();
       },
       emailIsValid() {
         return this.$store.state.paypal.emailIsValid;

@@ -18,6 +18,7 @@
  */
 
 module.exports = {
+  lintOnSave: false,
   chainWebpack: (config) => {
     config.optimization.delete('splitChunks');
     config.plugins.delete('html');
