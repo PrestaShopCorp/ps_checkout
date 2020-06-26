@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "99113f29dbdb2a3b8db79a1859670663",
+    "content-hash": "043aa16f58b57fa4438356cfca228676",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -356,23 +356,22 @@
         },
         {
             "name": "prestashop/prestashop-accounts-auth",
-            "version": "dev-feature/160-choice-uuid",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PrestaShopCorp/prestashop_accounts_auth.git",
-                "reference": "7f6b14be6a9fc958fe34f41de63da45c08f77d8a"
+                "reference": "1ce2a0957569ea46ee56dc1392d9e6f01d0c37bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PrestaShopCorp/prestashop_accounts_auth/zipball/7f6b14be6a9fc958fe34f41de63da45c08f77d8a",
-                "reference": "7f6b14be6a9fc958fe34f41de63da45c08f77d8a",
+                "url": "https://api.github.com/repos/PrestaShopCorp/prestashop_accounts_auth/zipball/1ce2a0957569ea46ee56dc1392d9e6f01d0c37bb",
+                "reference": "1ce2a0957569ea46ee56dc1392d9e6f01d0c37bb",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "guzzlehttp/guzzle": "~5.0",
                 "php": ">=5.6",
-                "ramsey/uuid": "^3.8",
                 "symfony/dotenv": "^3.4"
             },
             "require-dev": {
@@ -391,7 +390,7 @@
                 "MIT"
             ],
             "description": "Firebase auth class",
-            "time": "2020-06-23T08:56:30+00:00"
+            "time": "2020-06-25T13:38:07+00:00"
         },
         {
             "name": "psr/container",
@@ -988,12 +987,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/phpdotenv.git",
-                "reference": "4669484ccbc38fe7c4e0c50456778f2010566aad"
+                "reference": "32a35acdf216dbec6a18d87d890ff924741b5d9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/4669484ccbc38fe7c4e0c50456778f2010566aad",
-                "reference": "4669484ccbc38fe7c4e0c50456778f2010566aad",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/32a35acdf216dbec6a18d87d890ff924741b5d9f",
+                "reference": "32a35acdf216dbec6a18d87d890ff924741b5d9f",
                 "shasum": ""
             },
             "require": {
@@ -1053,7 +1052,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-06-02T14:08:54+00:00"
+            "time": "2020-06-25T10:31:14+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -2920,12 +2919,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "bfe29ead7e7b1cc9ce74c6a40d06ad1f96fced13"
+                "reference": "b4adbbd0b8bdc11363015789be9911ba38d6f02a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/bfe29ead7e7b1cc9ce74c6a40d06ad1f96fced13",
-                "reference": "bfe29ead7e7b1cc9ce74c6a40d06ad1f96fced13",
+                "url": "https://api.github.com/repos/symfony/console/zipball/b4adbbd0b8bdc11363015789be9911ba38d6f02a",
+                "reference": "b4adbbd0b8bdc11363015789be9911ba38d6f02a",
                 "shasum": ""
             },
             "require": {
@@ -2998,7 +2997,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-05-30T18:58:05+00:00"
+            "time": "2020-06-23T12:31:34+00:00"
         },
         {
             "name": "symfony/debug",
