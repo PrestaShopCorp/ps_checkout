@@ -80,8 +80,9 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
             $this->context->cookie->__set('paypalEmail', $paypalOrder['payer']['email_address']);
         } catch (PsCheckoutException $exception) {
             $this->module->getLogger()->error(sprintf(
-                'Express Checkout - Exception %s : %s',
+                'Express Checkout - Exception %s Order PayPal %s : %s',
                 $exception->getCode(),
+                false === empty($paypalOrder['id']) && Validate::isGenericName($paypalOrder['id']) ? $paypalOrder['id'] : 'invalid',
                 $exception->getMessage()
             ));
         }
