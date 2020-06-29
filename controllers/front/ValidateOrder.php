@@ -220,6 +220,11 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
         $exceptionMessageForCustomer = $this->module->l('Error processing payment', 'translations');
         $exceptionCode = $exception->getCode();
         $notifyCustomerService = true;
+        $paypalOrder = Tools::getValue('orderId');
+
+        if (false === Validate::isGenericName($paypalOrder)) {
+            $paypalOrder = 'invalid';
+        }
 
         switch ($exception->getCode()) {
             case PsCheckoutException::PAYPAL_PAYMENT_CARD_ERROR:
@@ -241,7 +246,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
                 $this->redirectToCheckout(['step' => 'payment', 'paymentError' => $exception->getCode()]);
                 break;
             case PayPalException::ORDER_ALREADY_CAPTURED:
-                $this->module->currentOrder = (new \OrderMatrice())->getOrderPrestashopFromPaypal(Tools::getValue('orderId'));
+                $this->module->currentOrder = (new \OrderMatrice())->getOrderPrestashopFromPaypal($paypalOrder);
 
                 if (false === empty($this->module->currentOrder)) {
                     $this->redirectToOrderConfirmation();
@@ -269,14 +274,16 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
         if (true === $notifyCustomerService) {
             $this->notifyCustomerService($exception);
             $this->module->getLogger()->error(sprintf(
-                'ValidateOrder Exception %s : %s',
+                'ValidateOrder - Exception %s Order PayPal %s : %s',
                 $exception->getCode(),
+                $paypalOrder,
                 $exception->getMessage()
             ));
         } else {
             $this->module->getLogger()->notice(sprintf(
-                'ValidateOrder Exception %s : %s',
+                'ValidateOrder - Exception %s Order PayPal %s : %s',
                 $exception->getCode(),
+                $paypalOrder,
                 $exception->getMessage()
             ));
         }
