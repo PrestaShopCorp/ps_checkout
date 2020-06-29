@@ -268,6 +268,17 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
 
         if (true === $notifyCustomerService) {
             $this->notifyCustomerService($exception);
+            $this->module->getLogger()->error(sprintf(
+                'ValidateOrder Exception %s : %s',
+                $exception->getCode(),
+                $exception->getMessage()
+            ));
+        } else {
+            $this->module->getLogger()->notice(sprintf(
+                'ValidateOrder Exception %s : %s',
+                $exception->getCode(),
+                $exception->getMessage()
+            ));
         }
 
         // Preserve current cart from customer changes to allow merchant to see whats wrong
