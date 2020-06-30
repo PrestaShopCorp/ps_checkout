@@ -209,13 +209,11 @@
 </template>
 
 <script>
-  import AccountStatusPrestaShop from '@/components/block/account-status-prestashop.vue';
   import Onboarding from '@/components/block/onboarding';
   import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
 
   export default {
     components: {
-      AccountStatusPrestaShop,
       Onboarding,
     },
     computed: {
