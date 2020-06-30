@@ -975,6 +975,7 @@ class Ps_checkout extends PaymentModule
         $shop = $params['object'];
 
         (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForShop((int) $shop->id);
+        $this->installConfiguration();
         $this->addCheckboxCarrierRestrictionsForModule([(int) $shop->id]);
         $this->addCheckboxCountryRestrictionsForModule([(int) $shop->id]);
         if ($this->currencies_mode === 'checkbox') {
