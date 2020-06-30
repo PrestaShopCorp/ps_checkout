@@ -55,7 +55,7 @@ class ShopUuidManager
     {
         $result = true;
 
-        if (false === \Configuration::hasKey('PS_CHECKOUT_SHOP_UUID_V4', null, null, (int) $idShop) || !$this->getForShop($idShop)) {
+        if (false === $this->isSetForShop($idShop)) {
             $uuid4 = Uuid::uuid4();
             $result = $result && (bool) \Configuration::updateValue(
                 'PS_CHECKOUT_SHOP_UUID_V4',
@@ -83,5 +83,27 @@ class ShopUuidManager
         }
 
         return $result;
+    }
+
+    /**
+     * @param int $idShop
+     *
+     * @return bool
+     */
+    public function isSetForShop($idShop)
+    {
+        if (true === \Shop::isFeatureActive()
+            && false === \Configuration::hasKey('PS_CHECKOUT_SHOP_UUID_V4', null, null, (int) $idShop)
+        ) {
+            return false;
+        }
+
+        if (false === \Shop::isFeatureActive()
+            && false === \Configuration::hasKey('PS_CHECKOUT_SHOP_UUID_V4')
+        ) {
+            return false;
+        }
+
+        return (bool) $this->getForShop($idShop);
     }
 }
