@@ -209,14 +209,12 @@
 </template>
 
 <script>
-  import AccountStatusPayPal from '@/components/block/account-status-paypal.vue';
   import AccountStatusPrestaShop from '@/components/block/account-status-prestashop.vue';
   import Onboarding from '@/components/block/onboarding';
   import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
 
   export default {
     components: {
-      AccountStatusPayPal,
       AccountStatusPrestaShop,
       Onboarding,
     },

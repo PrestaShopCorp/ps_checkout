@@ -20,8 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use Ramsey\Uuid\Uuid;
-
 /**
  * Manage ShopUuid
  */
