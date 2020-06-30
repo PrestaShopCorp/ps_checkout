@@ -54,6 +54,8 @@
 </template>
 
 <script>
+  import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
+
   export default {
     name: 'Onboarding',
     data() {
@@ -66,7 +68,7 @@
         return this.$store.state.paypal.paypalOnboardingLink;
       },
       firebaseStatusAccount() {
-        return this.$store.state.firebase.onboardingCompleted;
+        return isOnboardingCompleted();
       },
     },
     methods: {

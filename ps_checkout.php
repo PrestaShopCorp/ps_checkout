@@ -87,11 +87,6 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_EC_ORDER_PAGE' => false,
         'PS_CHECKOUT_EC_CHECKOUT_PAGE' => false,
         'PS_CHECKOUT_EC_PRODUCT_PAGE' => false,
-        'PS_PSX_FIREBASE_EMAIL' => '',
-        'PS_PSX_FIREBASE_ID_TOKEN' => '',
-        'PS_PSX_FIREBASE_LOCAL_ID' => '',
-        'PS_PSX_FIREBASE_REFRESH_TOKEN' => '',
-        'PS_PSX_FIREBASE_REFRESH_DATE' => '',
         'PS_CHECKOUT_PSX_FORM' => '',
     ];
 
@@ -364,6 +359,8 @@ class Ps_checkout extends PaymentModule
 
     public function getContent()
     {
+        $psAccountPresenter = new PrestaShop\AccountsAuth\Presenter\PsAccountsPresenter($this->name);
+
         $paypalAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository();
         $psAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository();
 
@@ -380,6 +377,7 @@ class Ps_checkout extends PaymentModule
 
         Media::addJsDef([
             'store' => (new PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter($this, $this->context))->present(),
+            'contextPsAccounts' => $psAccountPresenter->present(),
         ]);
 
         return $this->display(__FILE__, '/views/templates/admin/configuration.tpl');

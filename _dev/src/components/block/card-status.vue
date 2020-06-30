@@ -105,6 +105,8 @@
 </template>
 
 <script>
+  import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
+
   export default {
     name: 'CardStatus',
     props: {
@@ -117,7 +119,7 @@
     computed: {
       onboardingIsCompleted() {
         return this.$store.state.paypal.onboardingCompleted
-          && this.$store.state.firebase.onboardingCompleted;
+          && isOnboardingCompleted();
       },
       cardIsInReview() {
         const {cardIsActive} = this.$store.state.paypal;

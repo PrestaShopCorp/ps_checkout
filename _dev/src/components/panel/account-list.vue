@@ -22,169 +22,43 @@
       <h3 class="card-header">
         <i class="material-icons">settings</i> {{ $t('panel.account-list.accountSettings') }}
       </h3>
-      <div class="card-body m-auto">
-        <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-4">
-          <h2 class="text-muted font-weight-light">
-            {{ $t('panel.account-list.activateAllPayment') }}
-          </h2>
+      <div class="card-body">
+        <div class="d-flex">
+          <div class="d-flex flex-grow-1">
+            <img
+              class="mr-2 align-self-center"
+              src="@/assets/images/paypal-logo-thumbnail.png"
+              width="46"
+            >
+            <div class="align-self-center">
+              <template v-if="paypalStatusAccount === false">
+                {{ $t('panel.account-list.activatePayment') }}
+              </template>
+              <template v-else>
+                {{ $t('panel.account-list.accountIsLinked') }}<br>
+                <b>{{ paypalEmail }}</b>
+              </template>
+            </div>
+          </div>
+          <div class="align-self-center">
+            <div
+              v-if="paypalStatusAccount === false"
+            >
+              <Onboarding />
+            </div>
+            <div
+              class="text-right"
+              v-else
+            >
+              <b-button
+                variant="outline-secondary"
+                @click.prevent="paypalUnlink()"
+              >
+                {{ $t('panel.account-list.useAnotherAccount') }}
+              </b-button>
+            </div>
+          </div>
         </div>
-
-        <table class="table">
-          <tbody>
-            <tr>
-              <td>
-                <img
-                  src="@/assets/images/logo.png"
-                  width="50"
-                >
-              </td>
-              <td>
-                <h3>{{ $t('panel.account-list.essentialsAccount') }}</h3>
-                <p class="text-muted fs-14 mb-0">
-                  <template v-if="firebaseStatusAccount === true">
-                    {{ $t('panel.account-list.connectedWitdh') }}
-                    <b>{{ $store.state.firebase.email }}</b>
-                    {{ $t('panel.account-list.account') }}
-                  </template>
-                  <template v-else>
-                    {{ $t('panel.account-list.createNewAccount') }}
-                  </template>
-                </p>
-              </td>
-              <td class="text-center">
-                <AccountStatusPrestaShop v-if="firebaseStatusAccount" />
-              </td>
-              <td>
-                <div
-                  class="text-center float-right"
-                  v-if="firebaseStatusAccount === false"
-                >
-                  <a
-                    href="#"
-                    @click.prevent="goToSignIn()"
-                    class="mr-4"
-                  ><b>{{ $t('panel.account-list.logIn') }}</b></a>
-                  <a
-                    href="#"
-                    @click.prevent="goToSignUp()"
-                    class="btn btn-primary-reverse btn-outline-primary light-button mb-1"
-                  >
-                    {{ $t('panel.account-list.createAccount') }}
-                  </a>
-                </div>
-                <div
-                  class="text-right"
-                  v-else
-                >
-                  <b-button
-                    v-if="!isReady"
-                    href="#"
-                    data-toggle="modal"
-                    data-target="#modalLogout"
-                    variant="outline-secondary"
-                  >
-                    {{ $t('panel.account-list.logOut') }}
-                  </b-button>
-                </div>
-                <!-- modal -->
-                <div
-                  class="modal"
-                  id="modalLogout"
-                  tabindex="-1"
-                  role="dialog"
-                  aria-labelledby="psxModalLogout"
-                >
-                  <div
-                    class="modal-dialog"
-                    role="document"
-                  >
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5
-                          class="modal-title"
-                          id="psxModalLogout"
-                        >
-                          {{ $t('panel.account-list.titleLogout') }}
-                        </h5>
-                        <button
-                          type="button"
-                          class="close"
-                          data-dismiss="modal"
-                          aria-label="Close"
-                        >
-                          <span aria-hidden="true">×</span>
-                        </button>
-                      </div>
-                      <div class="modal-body">
-                        <p>{{ $t('panel.account-list.descriptionLogout') }}</p>
-                      </div>
-                      <div class="modal-footer">
-                        <button
-                          type="button"
-                          class="btn btn-outline-secondary"
-                          data-dismiss="modal"
-                        >
-                          {{ $t('panel.account-list.cancel') }}
-                        </button>
-                        <button
-                          @click.prevent="logOut()"
-                          type="button"
-                          class="btn btn-primary"
-                          data-dismiss="modal"
-                        >
-                          {{ $t('panel.account-list.logOut') }}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <img
-                  src="@/assets/images/paypal-logo-thumbnail.png"
-                >
-              </td>
-              <td>
-                <h3 class="mt-2">
-                  {{ $t('panel.account-list.paypalAccount') }}
-                </h3>
-                <p class="text-muted fs-14">
-                  <template v-if="paypalStatusAccount === false">
-                    {{ $t('panel.account-list.activatePayment') }}
-                  </template>
-                  <template v-else>
-                    {{ $t('panel.account-list.accountIsLinked') }}<br>
-                    <b>{{ paypalEmail }}</b>
-                  </template>
-                </p>
-              </td>
-              <td class="text-center">
-                <AccountStatusPayPal v-if="paypalStatusAccount" />
-              </td>
-              <td>
-                <div
-                  class="text-center float-right"
-                  v-if="paypalStatusAccount === false"
-                >
-                  <Onboarding />
-                </div>
-                <div
-                  class="text-right"
-                  v-else
-                >
-                  <b-button
-                    variant="outline-secondary"
-                    @click.prevent="paypalUnlink()"
-                  >
-                    {{ $t('panel.account-list.useAnotherAccount') }}
-                  </b-button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
 
         <b-alert
           v-if="onboardingLinkError"
@@ -195,7 +69,10 @@
           <p>{{ $t('panel.account-list.onboardingLinkError') }}</p>
         </b-alert>
 
-        <b-container v-if="firebaseStatusAccount && paypalStatusAccount">
+        <div
+          class="pt-4"
+          v-if="firebaseStatusAccount && paypalStatusAccount"
+        >
           <b-alert
             v-if="!accountIslinked"
             variant="info"
@@ -327,21 +204,18 @@
               </div>
             </b-alert>
           </template>
-        </b-container>
+        </div>
       </div>
     </div>
   </form>
 </template>
 
 <script>
-  import AccountStatusPayPal from '@/components/block/account-status-paypal.vue';
-  import AccountStatusPrestaShop from '@/components/block/account-status-prestashop.vue';
+  import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
   import Onboarding from '@/components/block/onboarding';
 
   export default {
     components: {
-      AccountStatusPayPal,
-      AccountStatusPrestaShop,
       Onboarding,
     },
     computed: {
@@ -355,7 +229,7 @@
         return this.$store.state.paypal.emailMerchant;
       },
       firebaseStatusAccount() {
-        return this.$store.state.firebase.onboardingCompleted;
+        return isOnboardingCompleted();
       },
       paypalStatusAccount() {
         return this.$store.state.paypal.onboardingCompleted;
@@ -374,22 +248,10 @@
       },
     },
     methods: {
-      goToSignIn() {
-        // eslint-disable-next-line no-console
-        this.$router.push('/authentication/signin').catch((exception) => console.log(exception));
-      },
-      goToSignUp() {
-        // eslint-disable-next-line no-console
-        this.$router.push('/authentication/signup').catch((exception) => console.log(exception));
-      },
-      logOut() {
-        this.$store.dispatch('logOut').then(() => {
-          this.$store.dispatch('unlink');
-          this.$store.dispatch('psxOnboarding', false);
-        });
-      },
       paypalUnlink() {
         this.$store.dispatch('unlink').then(() => {
+          // TODO: Where trigger the psx onboarding
+          // this.$store.dispatch('psxOnboarding', false);
           this.$store.dispatch('getOnboardingLink');
         });
       },
@@ -438,5 +300,8 @@
 }
 .fs-14 {
   font-size: 14px;
+}
+.flex-grow-1 {
+  flex-grow: 1;
 }
 </style>

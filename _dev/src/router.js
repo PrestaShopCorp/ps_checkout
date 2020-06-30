@@ -18,13 +18,11 @@
  */
 import Vue from 'vue';
 import Router from 'vue-router';
+import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
 import store from './store';
 
 import Customize from '@/pages/Customize';
 import Accounts from '@/pages/Accounts';
-import Signin from '@/pages/Signin';
-import Signup from '@/pages/Signup';
-import ResetPassword from '@/pages/ResetPassword';
 import PsxAdditionalDetails from '@/pages/PsxAdditionalDetails';
 import Activity from '@/pages/Activity';
 import Advanced from '@/pages/Advanced';
@@ -45,46 +43,10 @@ const router = new Router({
       name: 'Authentication',
       component: Accounts,
       beforeEnter: (to, from, next) => {
-        if (store.getters.firebaseOnboardingIsCompleted
+        if (isOnboardingCompleted()
           && !store.getters.paypalOnboardingIsCompleted
           && !store.getters.psxOnboardingIsCompleted) {
           next('/authentication/additional');
-        } else {
-          next();
-        }
-      },
-    },
-    {
-      path: '/authentication/signin',
-      name: 'Signin',
-      component: Signin,
-      beforeEnter: (to, from, next) => {
-        if (store.getters.firebaseOnboardingIsCompleted) {
-          next(from);
-        } else {
-          next();
-        }
-      },
-    },
-    {
-      path: '/authentication/signup',
-      name: 'Signup',
-      component: Signup,
-      beforeEnter: (to, from, next) => {
-        if (store.getters.firebaseOnboardingIsCompleted) {
-          next(from);
-        } else {
-          next();
-        }
-      },
-    },
-    {
-      path: '/authentication/reset',
-      name: 'ResetPassword',
-      component: ResetPassword,
-      beforeEnter: (to, from, next) => {
-        if (store.getters.firebaseOnboardingIsCompleted) {
-          next(from);
         } else {
           next();
         }
@@ -95,7 +57,7 @@ const router = new Router({
       name: 'PsxAdditionalDetails',
       component: PsxAdditionalDetails,
       beforeEnter: (to, from, next) => {
-        if (!store.getters.firebaseOnboardingIsCompleted
+        if (!isOnboardingCompleted()
           || store.getters.psxOnboardingIsCompleted) {
           next('/authentication');
         } else {
@@ -140,9 +102,6 @@ const router = new Router({
 const guestPages = [
   'Authentication',
   'PsxAdditionalDetails',
-  'Signin',
-  'Signup',
-  'ResetPassword',
   'Experimental',
   'Debug',
   'Help',

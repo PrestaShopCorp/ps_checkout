@@ -24,7 +24,6 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\FirebaseModule;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule;
 
@@ -74,7 +73,6 @@ class StorePresenter implements PresenterInterface
 
         $this->store = array_merge(
             (new ContextModule($this->module, $this->context))->present(),
-            (new FirebaseModule())->present(),
             (new PaypalModule())->present(),
             (new PsxModule($this->context))->present(),
             (new ConfigurationModule())->present()

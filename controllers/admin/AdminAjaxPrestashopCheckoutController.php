@@ -18,10 +18,8 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 use Monolog\Logger;
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
-use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
@@ -146,71 +144,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         (new PersistentConfiguration())->savePaypalAccount($paypalAccount);
 
         $this->ajaxDie(json_encode(true));
-    }
-
-    /**
-     * AJAX: SignIn firebase account
-     */
-    public function ajaxProcessSignIn()
-    {
-        $email = Tools::getValue('email');
-        $password = Tools::getValue('password');
-
-        $firebase = new Auth();
-        $response = $firebase->signInWithEmailAndPassword($email, $password);
-
-        // if there is no error, save the account tokens in database
-        if (true === $response['status']) {
-            $psAccount = new PsAccount(
-                $response['body']['idToken'],
-                $response['body']['refreshToken'],
-                $response['body']['email'],
-                $response['body']['localId']
-            );
-
-            (new PersistentConfiguration())->savePsAccount($psAccount);
-        }
-
-        $this->ajaxDie(json_encode($response));
-    }
-
-    /**
-     * AJAX: SignUp firebase account
-     */
-    public function ajaxProcessSignUp()
-    {
-        $email = Tools::getValue('email');
-        $password = Tools::getValue('password');
-
-        $firebase = new Auth();
-        $response = $firebase->signUpWithEmailAndPassword($email, $password);
-
-        // if there is no error, save the account tokens in database
-        if (true === $response['status']) {
-            $psAccount = new PsAccount(
-                $response['body']['idToken'],
-                $response['body']['refreshToken'],
-                $response['body']['email'],
-                $response['body']['localId']
-            );
-
-            (new PersistentConfiguration())->savePsAccount($psAccount);
-        }
-
-        $this->ajaxDie(json_encode($response));
-    }
-
-    /**
-     * AJAX: Send email to reset firebase password
-     */
-    public function ajaxProcessSendPasswordResetEmail()
-    {
-        $email = Tools::getValue('email');
-
-        $firebase = new Auth();
-        $response = $firebase->sendPasswordResetEmail($email);
-
-        $this->ajaxDie(json_encode($response));
     }
 
     /**
