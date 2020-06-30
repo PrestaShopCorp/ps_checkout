@@ -37,6 +37,7 @@ class Ps_checkout extends PaymentModule
         'displayAdminOrderMainBottom',
         'actionObjectShopAddAfter',
         'actionAdminControllerSetMedia',
+        'displayPaymentTop',
     ];
 
     /**
@@ -99,11 +100,12 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '1.4.1';
+    const VERSION = '2.0.1';
 
-    /**
-     * @var \Monolog\Logger
-     */
+    /** @var \Symfony\Component\DependencyInjection\ContainerInterface */
+    private $container;
+
+    /** @var \Psr\Log\LoggerInterface */
     private $logger;
 
     public function __construct()
@@ -113,9 +115,11 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '1.4.0';
+        $this->version = '2.0.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
+        $this->currencies = true;
+        $this->currencies_mode = 'checkbox';
 
         $this->module_key = '82bc76354cfef947e06f1cc78f5efe2e';
 
@@ -427,7 +431,12 @@ class Ps_checkout extends PaymentModule
             'paymentOrder' => $this->getPaymentMethods(),
         ]);
 
-        $this->context->controller->addCss($this->_path . 'views/css/payments16.css');
+        $this->context->controller->addCss(
+            $this->_path . 'views/css/payments16.css?version=' . $this->version,
+            'all',
+            null,
+            false
+        );
 
         return $this->display(__FILE__, '/views/templates/hook/payment.tpl');
     }
@@ -672,23 +681,9 @@ class Ps_checkout extends PaymentModule
                             'isExpressCheckout' => true,
                         ],
                         true
-                    ))
-                    ->setAdditionalInformation($this->generateExpressCheckoutForm());
+                    ));
 
         return $expressCheckoutPaymentOption;
-    }
-
-    public function generateExpressCheckoutForm()
-    {
-        $this->context->smarty->assign([
-            'paypalEmail' => $this->context->cookie->__get('paypalEmail'),
-            'jsHideOtherPaymentOptions' => $this->_path . 'views/js/hideOtherPaymentOptions.js?v=' . $this->version,
-            'paypalLogoPath' => $this->_path . 'views/img/paypal_express.png',
-        ]);
-
-        return $this->context->smarty->fetch(
-            'module:ps_checkout/views/templates/front/paymentOptions/expressCheckout.tpl'
-        );
     }
 
     /**
@@ -727,6 +722,13 @@ class Ps_checkout extends PaymentModule
     public function checkCurrency($cart)
     {
         $currencyOrder = new \Currency($cart->id_currency);
+
+        /**
+         * Fix missing type in @return statement
+         * https://github.com/PrestaShop/PrestaShop/blob/075f1fc13f839135ab58744be4b8d9ec4c70ff4a/classes/PaymentModule.php#L791
+         *
+         * @var Currency|array|false
+         */
         $currenciesModule = $this->getCurrency($cart->id_currency);
 
         if (is_array($currenciesModule)) {
@@ -772,11 +774,19 @@ class Ps_checkout extends PaymentModule
     public function hookActionAdminControllerSetMedia()
     {
         if ('AdminPayment' === Tools::getValue('controller')) {
-            $this->context->controller->addCss($this->_path . 'views/css/adminAfterHeader.css');
+            $this->context->controller->addCss(
+                $this->_path . 'views/css/adminAfterHeader.css?version=' . $this->version,
+                'all',
+                null,
+                false
+            );
         }
 
         if ('AdminOrders' === Tools::getValue('controller')) {
-            $this->context->controller->addJS($this->getPathUri() . 'views/js/adminOrderView.js?version=' . $this->version);
+            $this->context->controller->addJS(
+                $this->getPathUri() . 'views/js/adminOrderView.js?version=' . $this->version,
+                false
+            );
         }
     }
 
@@ -932,7 +942,9 @@ class Ps_checkout extends PaymentModule
     }
 
     /**
-     * @return \Monolog\Logger
+     * @todo to be removed
+     *
+     * @return \Psr\Log\LoggerInterface
      */
     public function getLogger()
     {
@@ -940,7 +952,8 @@ class Ps_checkout extends PaymentModule
             return $this->logger;
         }
 
-        $this->logger = PrestaShop\Module\PrestashopCheckout\Factory\CheckoutLogger::create();
+        /* @var \Psr\Log\LoggerInterface logger */
+        $this->logger = $this->getService('ps_checkout.logger');
 
         return $this->logger;
     }
@@ -1055,6 +1068,7 @@ class Ps_checkout extends PaymentModule
         return $this->display(__FILE__, '/views/templates/hook/displayAdminOrderMainBottom.tpl');
     }
 
+
     public function hookReceiveWebhook_ps_checkout(array $params)
     {
         const $headers = $params['headers'];
@@ -1072,5 +1086,116 @@ class Ps_checkout extends PaymentModule
         }
 
         return ''; // empty string '' if succeed; or an error message string if failed.
+    }
+
+    /**
+     * This hook display a block on top of PaymentOptions on PrestaShop 1.7
+     *
+     * @return string
+     */
+    public function hookDisplayPaymentTop()
+    {
+        $paymentError = (int) Tools::getValue('paymentError');
+        $paymentErrorMessage = '';
+        $isExpressCheckout = $this->context->cookie->__isset('paypalOrderId');
+
+        if (0 < $paymentError) {
+            switch ($paymentError) {
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException::PAYPAL_PAYMENT_CARD_ERROR:
+                    $paymentErrorMessage = $this->l('The transaction failed. Please try a different card.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::CARD_TYPE_NOT_SUPPORTED:
+                    $paymentErrorMessage = $this->l('Processing of this card type is not supported. Use another card type.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::INVALID_SECURITY_CODE_LENGTH:
+                    $paymentErrorMessage = $this->l('The CVC code length is invalid for the specified card type.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::CURRENCY_NOT_SUPPORTED_FOR_CARD_TYPE:
+                    $paymentErrorMessage = $this->l('Your card cannot be used to pay in this currency, please try another payment method.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::CURRENCY_NOT_SUPPORTED_FOR_COUNTRY:
+                    $paymentErrorMessage = $this->l('Your card cannot be used to pay in our country, please try another payment method.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::INSTRUMENT_DECLINED:
+                    $paymentErrorMessage = $this->l('This payment method declined transaction, please try another.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::MAX_NUMBER_OF_PAYMENT_ATTEMPTS_EXCEEDED:
+                    $paymentErrorMessage = $this->l('You have exceeded the maximum number of payment attempts.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::PAYER_ACCOUNT_LOCKED_OR_CLOSED:
+                    $paymentErrorMessage = $this->l('Your PayPal account is locked or closed, please try another.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::PAYER_ACCOUNT_RESTRICTED:
+                    $paymentErrorMessage = $this->l('You are not allowed to pay with this PayPal account, please try another.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::PAYER_CANNOT_PAY:
+                    $paymentErrorMessage = $this->l('You are not allowed to pay with this payment method, please try another.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::PAYER_COUNTRY_NOT_SUPPORTED:
+                    $paymentErrorMessage = $this->l('Your country is not supported by this payment method, please try to select another.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::REDIRECT_PAYER_FOR_ALTERNATE_FUNDING:
+                    $paymentErrorMessage = $this->l('The transaction failed. Please try a different payment method.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::TRANSACTION_BLOCKED_BY_PAYEE:
+                    $paymentErrorMessage = $this->l('The transaction was blocked by Fraud Protection settings.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED:
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::TRANSACTION_REFUSED:
+                    $paymentErrorMessage = $this->l('The transaction was refused.', 'translations');
+                    break;
+                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::NO_EXTERNAL_FUNDING_DETAILS_FOUND:
+                    $paymentErrorMessage = $this->l('This payment method seems not working currently, please try another.', 'translations');
+                    break;
+                default:
+                    $paymentErrorMessage = $this->l('Please try a different payment method or try again later.', 'translations');
+            }
+        }
+
+        $this->context->smarty->assign([
+            'paymentError' => $paymentError,
+            'paymentErrorMessage' => $paymentErrorMessage,
+            'isExpressCheckout' => $isExpressCheckout,
+        ]);
+
+        if (true === $isExpressCheckout) {
+            $this->context->smarty->assign([
+                'paypalLogoPath' => $this->getPathUri() . 'views/img/paypal_express.png',
+                'translatedText' => strtr(
+                    $this->l('You have selected your [PAYPAL_ACCOUNT] PayPal account to proceed to the payment.', 'translations'),
+                    [
+                        '[PAYPAL_ACCOUNT]' => $this->context->cookie->__get('paypalEmail'),
+                    ]
+                ),
+            ]);
+        }
+
+        return $this->display(__FILE__, '/views/templates/hook/displayPaymentTop.tpl');
+    }
+
+    /**
+     * @param string $serviceName
+     *
+     * @return mixed
+     */
+    public function getService($serviceName)
+    {
+        if (method_exists($this, 'get')) {
+            // Use Core container introduced in 1.7.3.0
+            return $this->get($serviceName);
+        }
+
+        if (null === $this->container) {
+            $cacheDirectory = new \PrestaShop\Module\PrestashopCheckout\Cache\CacheDirectory(
+                _PS_VERSION_,
+                _PS_ROOT_DIR_,
+                _PS_MODE_DEV_
+            );
+            $containerProvider = new \PrestaShop\Module\PrestashopCheckout\DependencyInjection\ContainerProvider($this, $cacheDirectory);
+
+            $this->container = $containerProvider->get(defined('_PS_ADMIN_DIR_') ? 'admin' : 'front');
+        }
+
+        return $this->container->get($serviceName);
     }
 }

@@ -18,7 +18,7 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PsxDataMatrice;
+namespace PrestaShop\Module\PrestashopCheckout\PsxData;
 
 class PsxDataMatrice
 {

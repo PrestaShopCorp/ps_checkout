@@ -17,29 +17,18 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-namespace PrestaShop\Module\PrestashopCheckout;
-
-class WebHookNock
+/**
+ * Update main function for module Version 1.4.1
+ *
+ * @param Module $module
+ *
+ * @return bool
+ */
+function upgrade_module_1_4_1($module)
 {
-    /**
-     * Return headers for PSL
-     *
-     * @param int $headerCode
-     * @param array $headerDatas
-     */
-    public function setHeader($headerCode, array $headerDatas)
-    {
-        http_response_code($headerCode);
-        header('Content-Type: application/json');
-        headers_list();
-
-        $bodyReturn = json_encode($headerDatas);
-
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-        $module->getLogger()->error($bodyReturn);
-
-        echo $bodyReturn;
-    }
+    return (bool) $module->registerHook('displayPaymentTop');
 }

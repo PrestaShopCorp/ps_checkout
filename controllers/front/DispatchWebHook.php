@@ -18,12 +18,10 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook;
-use PrestaShop\Module\PrestashopCheckout\MerchantDispatcher;
-use PrestaShop\Module\PrestashopCheckout\OrderDispatcher;
-use PrestaShop\Module\PrestashopCheckout\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Dispatcher\MerchantDispatcher;
+use PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
-use PrestaShop\Module\PrestashopCheckout\UnauthorizedException;
-use PrestaShop\Module\PrestashopCheckout\WebHookNock;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 
 class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontController
@@ -31,14 +29,19 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     const PS_CHECKOUT_PAYPAL_ID_LABEL = 'PS_CHECKOUT_PAYPAL_ID_MERCHANT';
 
     /**
+     * @var Ps_checkout
+     */
+    public $module;
+
+    /**
      * @var bool If set to true, will be redirected to authentication page
      */
     public $auth = false;
 
     /**
-     * Id coming from PSL
+     * UUID coming from PSL
      *
-     * @var int
+     * @var string
      */
     private $shopId;
 
@@ -73,36 +76,26 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
         try {
             $headerValues = $this->getHeaderValues();
             $validationValues = new WebHookValidation();
-            $errors = $validationValues->validateHeaderDatas($headerValues);
-
-            // If there is errors, return them
-            if (!empty($errors)) {
-                throw new UnauthorizedException($errors);
-            }
+            $validationValues->validateHeaderDatas($headerValues);
 
             $this->setAtributesHeaderValues($headerValues);
 
             $bodyContent = file_get_contents('php://input');
 
             if (empty($bodyContent)) {
-                throw new UnauthorizedException(WebHookValidation::BODY_DATA_ERROR);
+                throw new PsCheckoutException('Body can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_BODY_EMPTY);
             }
 
             $bodyValues = json_decode($bodyContent, true);
 
             if (empty($bodyValues)) {
-                throw new UnauthorizedException(WebHookValidation::BODY_DATA_ERROR);
+                throw new PsCheckoutException('Body can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_BODY_EMPTY);
             }
 
-            $errors = $validationValues->validateBodyDatas($bodyValues);
-
-            // If there is errors, return them
-            if (!empty($errors)) {
-                throw new UnauthorizedException($errors);
-            }
+            $validationValues->validateBodyDatas($bodyValues);
 
             if (false === $this->checkPSLSignature($bodyValues)) {
-                throw new UnauthorizedException('Invalid PSL signature');
+                throw new PsCheckoutException('Invalid PSL signature', PsCheckoutException::PSCHECKOUT_WEBHOOK_PSL_SIGNATURE_INVALID);
             }
 
             $this->setAtributesBodyValues($bodyValues);
@@ -113,8 +106,8 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
             }
 
             return $this->dispatchWebHook();
-        } catch (PsCheckoutException $e) {
-            (new WebHookNock())->setHeader($e->getHTTPCode(), $e->getArrayMessages());
+        } catch (Exception $exception) {
+            $this->handleException($exception);
         }
 
         return false;
@@ -129,7 +122,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     private function checkPSLSignature(array $bodyValues)
     {
-        $context = \Context::getContext();
+        $context = Context::getContext();
         $response = (new Webhook($context->link))->getShopSignature($bodyValues);
 
         // data return false if no error
@@ -149,7 +142,19 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     {
         // Not available on nginx
         if (function_exists('getallheaders')) {
-            return getallheaders();
+            $headers = getallheaders();
+
+            // Ensure we will not return empty values if Request is FORWARDED
+            if (false === empty($headers['Shop-Id'])
+                && false === empty($headers['Merchant-Id'])
+                && false === empty($headers['Psx-Id'])
+            ) {
+                return [
+                    'Shop-Id' => $headers['Shop-Id'],
+                    'Merchant-Id' => $headers['Merchant-Id'],
+                    'Psx-Id' => $headers['Psx-Id'],
+                ];
+            }
         }
 
         return [
@@ -191,16 +196,15 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      * Check the IP whitelist and Shop, Merchant and Psx Ids
      *
      * @return bool
+     *
+     * @throws PsCheckoutException
      */
     private function checkExecutionPermissions()
     {
-        /*
-        *   @TODO : Get payload hash to confirm that it's not modified
-        */
-        $localShopId = (new ShopUuidManager())->getForShop((int) \Context::getContext()->shop->id);
+        $localShopId = (new ShopUuidManager())->getForShop((int) Context::getContext()->shop->id);
 
         if ($this->shopId !== $localShopId) {
-            throw new UnauthorizedException('shopId wrong');
+            throw new PsCheckoutException('shopId wrong', PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_INVALID);
         }
 
         return true;
@@ -214,14 +218,31 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     private function dispatchWebHook()
     {
         if ('ShopNotificationMerchantAccount' === $this->payload['category']) {
+            $this->module->getLogger()->info(sprintf(
+                'DispatchWebHook %s merchantId : %s',
+                $this->payload['category'],
+                $this->merchantId
+            ));
+
             return (new MerchantDispatcher())->dispatchEventType(
                 ['merchantId' => $this->merchantId]
             );
         }
 
         if ('ShopNotificationOrderChange' === $this->payload['category']) {
+            $this->module->getLogger()->info(sprintf(
+                'DispatchWebHook %s PayPal Order id : %s',
+                $this->payload['category'],
+                $this->payload['orderId']
+            ));
+
             return (new OrderDispatcher())->dispatchEventType($this->payload);
         }
+
+        $this->module->getLogger()->info(sprintf(
+            'DispatchWebHook %s : ignored',
+            $this->payload['category']
+        ));
 
         return true;
     }
@@ -280,5 +301,64 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     protected function canonicalRedirection($canonical_url = '')
     {
         return;
+    }
+
+    /**
+     * @param Exception $exception
+     */
+    private function handleException(Exception $exception)
+    {
+        $this->module->getLogger()->error(sprintf(
+            'Webhook exception : %s',
+            $exception->getMessage()
+        ));
+
+        http_response_code($this->getHttpCodeFromExceptionCode($exception->getCode()));
+        header('Content-Type: application/json');
+        headers_list();
+
+        $bodyReturn = json_encode($exception->getMessage());
+
+        echo $bodyReturn;
+    }
+
+    /**
+     * @param int $exceptionCode
+     *
+     * @return int
+     */
+    private function getHttpCodeFromExceptionCode($exceptionCode)
+    {
+        $httpCode = 500;
+
+        switch ($exceptionCode) {
+            case PsCheckoutException::PRESTASHOP_REFUND_ALREADY_SAVED:
+                $httpCode = 200;
+                break;
+            case PsCheckoutException::PSCHECKOUT_WEBHOOK_PSL_SIGNATURE_INVALID:
+            case PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_INVALID:
+                $httpCode = 401;
+                break;
+            case PsCheckoutException::PSCHECKOUT_WEBHOOK_AMOUNT_INVALID:
+                $httpCode = 406;
+                break;
+            case PsCheckoutException::PSCHECKOUT_WEBHOOK_HEADER_EMPTY:
+            case PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_EMPTY:
+            case PsCheckoutException::PSCHECKOUT_WEBHOOK_MERCHANT_ID_EMPTY:
+            case PsCheckoutException::PSCHECKOUT_WEBHOOK_PSX_ID_EMPTY:
+            case PsCheckoutException::PSCHECKOUT_WEBHOOK_BODY_EMPTY:
+            case PsCheckoutException::PSCHECKOUT_WEBHOOK_EVENT_TYPE_EMPTY:
+            case PsCheckoutException::PSCHECKOUT_WEBHOOK_CATEGORY_EMPTY:
+            case PsCheckoutException::PSCHECKOUT_WEBHOOK_RESOURCE_EMPTY:
+            case PsCheckoutException::PSCHECKOUT_WEBHOOK_AMOUNT_EMPTY:
+            case PsCheckoutException::PSCHECKOUT_WEBHOOK_CURRENCY_EMPTY:
+            case PsCheckoutException::PSCHECKOUT_WEBHOOK_ORDER_ID_EMPTY:
+            case PsCheckoutException::PSCHECKOUT_MERCHANT_IDENTIFIER_MISSING:
+            case PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND:
+                $httpCode = 422;
+                break;
+        }
+
+        return $httpCode;
     }
 }

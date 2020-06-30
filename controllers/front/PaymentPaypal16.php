@@ -38,7 +38,7 @@ class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontControl
 
         $cart = $this->context->cart;
 
-        /** @var \Ps_checkout */
+        /** @var Ps_checkout */
         $module = $this->module;
 
         if (false === $module->active) {
@@ -79,7 +79,7 @@ class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontControl
                 'PS_CHECKOUT_INTENT',
                 null,
                 null,
-                (int) \Context::getContext()->shop->id
+                (int) Context::getContext()->shop->id
             )),
             'locale' => $language['locale'],
             'currencyIsoCode' => $this->context->currency->iso_code,
@@ -89,8 +89,16 @@ class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontControl
             'hostedFieldsErrors' => (new HostedFieldsErrors($module))->getHostedFieldsErrors(),
         ]);
 
-        $this->context->controller->addJS($module->getPathUri() . 'views/js/initPaypalPayment.js');
-        $this->context->controller->addCSS($module->getPathUri() . 'views/css/payments16.css');
+        $this->context->controller->addJS(
+            $module->getPathUri() . 'views/js/initPaypalPayment.js?v=' . $this->module->version,
+            false
+        );
+        $this->context->controller->addCSS(
+            $module->getPathUri() . 'views/css/payments16.css?v=' . $this->module->version,
+            'all',
+            null,
+            false
+        );
 
         $this->setTemplate('paymentPaypalConfirmation.tpl');
     }

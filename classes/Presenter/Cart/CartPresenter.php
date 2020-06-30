@@ -21,8 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Cart;
 
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
-use PrestaShop\Module\PrestashopCheckout\ShopContext;
-use PrestaShop\PrestaShop\Adapter\Cart\CartPresenter as PsCartPresenter;
 
 /**
  * Present the cart waiting by the create order paypal builder
@@ -30,129 +28,49 @@ use PrestaShop\PrestaShop\Adapter\Cart\CartPresenter as PsCartPresenter;
 class CartPresenter implements PresenterInterface
 {
     /**
-     * @var \Cart
-     */
-    private $cart;
-
-    /**
-     * @var \Customer
-     */
-    private $customer;
-
-    /**
-     * @var \Language
-     */
-    private $language;
-
-    public function __construct(\Context $context)
-    {
-        $this->setCart($context->cart);
-        $this->setCustomer($context->customer);
-        $this->setLanguage($context->language);
-    }
-
-    /**
      * Present improved cart
      *
      * @return array
+     *
+     * @throws \Exception
      */
     public function present()
     {
-        $productList = $this->getCart()->getProducts();
+        $context = \Context::getContext();
+        $productList = $context->cart->getProducts();
 
-        $cart = (array) $this->getCart();
+        $cart = (array) $context->cart;
 
-        if ((new ShopContext())->isShop17()) {
-            $cart = new PsCartPresenter();
-            $cart = $cart->present($this->getCart());
+        if (class_exists('\PrestaShop\PrestaShop\Adapter\Cart\CartPresenter')) {
+            $cart = new \PrestaShop\PrestaShop\Adapter\Cart\CartPresenter();
+            $cart = $cart->present($context->cart);
         }
 
-        if (!isset($cart['totals']['total_including_tax']['amount'])) {
+        if (false === isset($cart['totals']['total_including_tax']['amount'])) {
             // Handle native CartPresenter before 1.7.2
-            $cart['totals']['total_including_tax']['amount'] = $this->getCart()->getOrderTotal(true);
+            $cart['totals']['total_including_tax']['amount'] = $context->cart->getOrderTotal(true);
         }
 
-        $shippingAddress = \Address::initialize($cart['id_address_delivery']);
-        $invoiceAddress = \Address::initialize($cart['id_address_invoice']);
+        $shippingAddress = \Address::initialize((int) $cart['id_address_delivery']);
+        $invoiceAddress = \Address::initialize((int) $cart['id_address_invoice']);
+        $currency = \Currency::getCurrencyInstance((int) $context->cart->id_currency);
 
         return [
             'cart' => array_merge(
                 $cart,
-                ['id' => $this->getCart()->id],
-                ['shipping_cost' => $this->getCart()->getTotalShippingCost(null, true)]
+                ['id' => $context->cart->id],
+                ['shipping_cost' => $context->cart->getTotalShippingCost(null, true)]
             ),
-            'customer' => $this->getCustomer(),
-            'language' => $this->getLanguage(),
+            'customer' => \Validate::isLoadedObject($context->customer) ? $context->customer : new \Customer((int) $context->cart->id_customer),
+            'language' => $context->language,
             'products' => $productList,
             'addresses' => [
                 'shipping' => $shippingAddress,
                 'invoice' => $invoiceAddress,
             ],
             'currency' => [
-                'iso_code' => $this->getCurrencyIsoFromId($this->getCart()->id_currency),
+                'iso_code' => $currency->iso_code,
             ],
         ];
-    }
-
-    /**
-     * Get currency iso code from id currency
-     *
-     * @param int $currencyId
-     *
-     * @return string Currency iso code
-     */
-    private function getCurrencyIsoFromId($currencyId)
-    {
-        $currency = \Currency::getCurrency($currencyId);
-
-        return $currency['iso_code'];
-    }
-
-    /**
-     * setter
-     */
-    public function setCustomer($customer)
-    {
-        $this->customer = $customer;
-    }
-
-    /**
-     * setter
-     */
-    public function setCart($cart)
-    {
-        $this->cart = $cart;
-    }
-
-    /**
-     * setter
-     */
-    public function setLanguage($language)
-    {
-        $this->language = $language;
-    }
-
-    /**
-     * getter
-     */
-    public function getCustomer()
-    {
-        return $this->customer;
-    }
-
-    /**
-     * getter
-     */
-    public function getCart()
-    {
-        return $this->cart;
-    }
-
-    /**
-     * getter
-     */
-    public function getLanguage()
-    {
-        return $this->language;
     }
 }

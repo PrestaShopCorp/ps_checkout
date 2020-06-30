@@ -20,8 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
-use PrestaShop\Module\PrestashopCheckout\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
@@ -64,6 +64,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
     /**
      * Build payload with cart details
+     *
+     * @throws PsCheckoutException
      */
     public function buildFullPayload()
     {
@@ -90,6 +92,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
     /**
      * Build payload without cart details
+     *
+     * @throws PsCheckoutException
      */
     public function buildMinimalPayload()
     {
@@ -225,7 +229,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 'given_name' => $this->cart['addresses']['invoice']->firstname,
                 'surname' => $this->cart['addresses']['invoice']->lastname,
             ],
-            'email_address' => $this->cart['customer']->email,
+            'email_address' => (string) $this->cart['customer']->email,
             'address' => [
                 'address_line_1' => $this->cart['addresses']['invoice']->address1,
                 'address_line_2' => (string) $this->cart['addresses']['invoice']->address2,
@@ -268,8 +272,6 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
     /**
      * Build the paypal items node
-     *
-     * @return array
      */
     public function buildItemsNode()
     {
@@ -278,9 +280,27 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         foreach ($this->cart['products'] as $product => $value) {
             $paypalItem = [];
 
+            $sku = '';
+
+            if (false === empty($value['reference'])) {
+                $sku = $value['reference'];
+            }
+
+            if (false === empty($value['ean13'])) {
+                $sku = $value['ean13'];
+            }
+
+            if (false === empty($value['isbn'])) {
+                $sku = $value['isbn'];
+            }
+
+            if (false === empty($value['upc'])) {
+                $sku = $value['upc'];
+            }
+
             $paypalItem['name'] = $this->truncate($value['name'], 127);
-            $paypalItem['description'] = $this->truncate(strip_tags($value['description_short']), 127);
-            $paypalItem['sku'] = $this->truncate($value['unity'], 127);
+            $paypalItem['description'] = false === empty($value['attributes']) ? $this->truncate($value['attributes'], 127) : '';
+            $paypalItem['sku'] = $this->truncate($sku, 127);
             $paypalItem['unit_amount']['currency_code'] = $this->cart['currency']['iso_code'];
             $paypalItem['unit_amount']['value'] = $value['total'] / $value['quantity'];
             $paypalItem['tax']['currency_code'] = $this->cart['currency']['iso_code'];
@@ -447,10 +467,13 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         return \Country::getIsoById($countryId);
     }
 
+    /**
+     * @throws PsCheckoutException
+     */
     private function checkPaypalOrderIdWhenUpdate()
     {
         if (true === $this->isUpdate && empty($this->paypalOrderId)) {
-            throw new PsCheckoutException('PayPal order ID is required when building payload for update an order');
+            throw new PsCheckoutException('PayPal order ID is required when building payload for update an order', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
         }
     }
 

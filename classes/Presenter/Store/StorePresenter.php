@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule;
@@ -62,6 +63,8 @@ class StorePresenter implements PresenterInterface
      * Build the store required by vuex
      *
      * @return array
+     *
+     * @throws PsCheckoutException
      */
     public function present()
     {

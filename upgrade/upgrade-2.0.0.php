@@ -17,15 +17,21 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-namespace PrestaShop\Module\PrestashopCheckout;
-
-class UnprocessableException extends PsCheckoutException
+/**
+ * Update main function for module version 2.0.0
+ *
+ * @param Module $module
+ *
+ * @return bool
+ */
+function upgrade_module_2_0_0($module)
 {
-    /**
-     * Set the HTTP code returned
-     *
-     * @var int
-     */
-    const HTTP_CODE = 422;
+    return (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_MAX_FILES', '15')
+        && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_LEVEL', \Monolog\Logger::ERROR)
+        && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP', '1')
+        && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP_FORMAT', 'DEBUG');
 }

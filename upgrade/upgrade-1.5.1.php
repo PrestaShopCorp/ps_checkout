@@ -17,15 +17,18 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-namespace PrestaShop\Module\PrestashopCheckout;
-
-class NotAcceptableException extends PsCheckoutException
+/**
+ * Update main function for module Version 1.5.1
+ *
+ * @param Ps_checkout $module
+ *
+ * @return bool
+ */
+function upgrade_module_1_5_1($module)
 {
-    /**
-     * Set the HTTP code returned
-     *
-     * @var int
-     */
-    const HTTP_CODE = 406;
+    return (bool) $module->registerHook('displayPaymentTop');
 }

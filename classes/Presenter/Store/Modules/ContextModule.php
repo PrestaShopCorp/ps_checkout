@@ -186,16 +186,12 @@ class ContextModule implements PresenterInterface
         switch ($isoCode) {
             case 'fr':
                 return 'https://www.prestashop.com/fr/prestashop-checkout-conditions-generales-utilisation';
-                break;
             case 'es':
                 return 'https://www.prestashop.com/es/prestashop-checkout-condiciones-generales-uso';
-                break;
             case 'it':
                 return 'https://www.prestashop.com/it/prestashop-checkout-condizioni-generali-utilizzo';
-                break;
             default:
                 return 'https://www.prestashop.com/en/prestashop-checkout-general-terms-use';
-                break;
         }
     }
 

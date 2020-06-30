@@ -18,14 +18,14 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-namespace PrestaShop\Module\PrestashopCheckout;
+namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 
-class UnauthorizedException extends PsCheckoutException
+interface Dispatcher
 {
     /**
-     * Set the HTTP code returned
+     * @param array $payload
      *
-     * @var int
+     * @return bool
      */
-    const HTTP_CODE = 401;
+    public function dispatchEventType($payload);
 }

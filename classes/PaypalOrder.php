@@ -42,6 +42,8 @@ class PaypalOrder
 
     /**
      * Load paypal order data
+     *
+     * @param string $id PayPal Order identifier
      */
     private function loadOrder($id)
     {

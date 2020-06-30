@@ -55,7 +55,7 @@ class Order extends PaymentClient
     {
         $this->setRoute('/payments/order/capture');
 
-        $response = $this->post([
+        return $this->post([
             'json' => json_encode([
                 'mode' => 'paypal',
                 'orderId' => (string) $orderId,
@@ -64,20 +64,6 @@ class Order extends PaymentClient
                 ],
             ]),
         ]);
-
-        if (false === $response['status']) {
-            return $response;
-        }
-
-        if (false === isset($response['body']['purchase_units'][0]['payments']['captures'][0])) {
-            $response['status'] = false;
-
-            return $response;
-        }
-
-        $response['body'] = $response['body']['purchase_units'][0]['payments']['captures'][0];
-
-        return $response;
     }
 
     /**
@@ -109,6 +95,7 @@ class Order extends PaymentClient
     public function authorize($orderId, $merchantId)
     {
         // TODO : waiting maasland integration
+        return [];
     }
 
     /**

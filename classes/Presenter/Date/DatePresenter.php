@@ -35,6 +35,8 @@ class DatePresenter
     /**
      * @param string $timestamp
      * @param string $format
+     *
+     * @throws \Exception
      */
     public function __construct($timestamp, $format)
     {

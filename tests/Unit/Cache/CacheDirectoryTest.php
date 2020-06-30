@@ -18,51 +18,31 @@
  * International Registered Trademark & Property of PrestaShop SA
  */
 
-namespace PrestaShop\Module\PrestashopCheckout;
+namespace Tests\Unit\Cache;
 
-class PsCheckoutException extends \PrestaShopExceptionCore
+use PHPUnit\Framework\TestCase;
+use PrestaShop\Module\PrestashopCheckout\Cache\CacheDirectory;
+
+class CacheDirectoryTest extends TestCase
 {
-    /**
-     * Set the HTTP code returned
-     *
-     * @var int
-     */
-    const HTTP_CODE = 400;
-
-    /**
-     * Contain the error message or messages
-     *
-     * @var string|array
-     */
-    private $messages;
-
-    /**
-     * @param string|array $messages
-     */
-    public function __construct($messages)
+    public function testItIsReturnValidPathForVersionLessThan17()
     {
-        parent::__construct();
+        $cacheDirectory = new CacheDirectory('1.6.1.0', __DIR__, true);
 
-        $this->messages = $messages;
+        $this->assertSame(__DIR__ . '/cache', $cacheDirectory->getPath());
     }
 
-    /**
-     * Get the array or string message and return an array
-     *
-     * @return array
-     */
-    public function getArrayMessages()
+    public function testItIsReturnValidPathForVersionLessThan174()
     {
-        return (array) $this->messages;
+        $cacheDirectory = new CacheDirectory('1.7.0.0', __DIR__, true);
+
+        $this->assertSame(__DIR__ . '/app/cache/dev', $cacheDirectory->getPath());
     }
 
-    /**
-     * Get the HTTP error Code
-     *
-     * @return int
-     */
-    public function getHTTPCode()
+    public function testItIsReturnValidPathForVersionGreaterThanEq174()
     {
-        return $this::HTTP_CODE;
+        $cacheDirectory = new CacheDirectory('1.7.4.0', __DIR__, true);
+
+        $this->assertSame(__DIR__ . '/var/cache/dev', $cacheDirectory->getPath());
     }
 }

@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
@@ -171,6 +172,8 @@ class Refund
      * @param string $transactionId
      *
      * @return bool
+     *
+     * @throws PsCheckoutException
      */
     public function doTotalRefund(\Order $order, $orderProductList, $transactionId)
     {
@@ -192,6 +195,8 @@ class Refund
      * @param string $transactionId
      *
      * @return bool
+     *
+     * @throws PsCheckoutException
      */
     public function doPartialRefund(\Order $order, $orderProductList, $transactionId)
     {
@@ -200,7 +205,7 @@ class Refund
 
         foreach ($orderProductList as $key => $value) {
             if ($this->refundProductLimitReached($value)) {
-                throw new NotAcceptableException('Can\'t refund more products than possible');
+                throw new PsCheckoutException('Can\'t refund more products than possible', PsCheckoutException::PRESTASHOP_REFUND_TOTAL_AMOUNT_REACHED);
             }
 
             $refundAmountDetail = (float) $value['total_price_tax_incl'] * $refundPercent;
@@ -309,7 +314,7 @@ class Refund
         $orderPayments = $order->getOrderPaymentCollection();
         foreach ($orderPayments as $orderPayment) {
             if ($orderPayment->transaction_id === $paypalTransactionId) {
-                throw new PsCheckoutException(sprintf('This PayPal transaction is already saved : %s', $orderPayment->transaction_id));
+                throw new PsCheckoutException(sprintf('This PayPal transaction is already saved : %s', $orderPayment->transaction_id), PsCheckoutException::PRESTASHOP_REFUND_ALREADY_SAVED);
             }
         }
 
@@ -371,6 +376,9 @@ class Refund
      * @param int $orderId
      *
      * @return bool
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
      */
     public function cancelPsRefund($orderId)
     {
@@ -399,6 +407,8 @@ class Refund
      * @param int $orderId
      *
      * @return object OrderSlip
+     *
+     * @throws \PrestaShopException
      */
     private function getOrderSlip($orderId)
     {
@@ -415,6 +425,8 @@ class Refund
      * @param int $orderSlipId
      *
      * @return array list of order slip detail associated to the order slip
+     *
+     * @throws \PrestaShopDatabaseException
      */
     private function getOrderSlipDetail($orderSlipId)
     {

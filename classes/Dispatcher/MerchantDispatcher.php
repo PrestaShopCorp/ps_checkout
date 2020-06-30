@@ -1,4 +1,5 @@
-{**
+<?php
+/**
  * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,14 +16,27 @@
  * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ */
 
-{literal}
-<script type="text/javascript">
-  var paypalEmail = "{/literal}{$paypalEmail|escape:'javascript':'UTF-8'}{literal}";
-  var paypalLogoPath = "{/literal}{$paypalLogoPath|escape:'javascript':'UTF-8'}{literal}";
-  var expressCheckoutLabelPaymentOption = '{/literal}{l s='You have selected your %s PayPal account to proceed to the payment.' sprintf=[$paypalEmail] mod='ps_checkout'}{literal}';
-</script>
-{/literal}
+namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 
-<script type='text/javascript' src='{$jsHideOtherPaymentOptions|escape:'javascript':'UTF-8'}'></script>
+use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
+
+class MerchantDispatcher implements Dispatcher
+{
+    /**
+     * Dispatch the Event Type to manage the merchant status
+     *
+     * {@inheritdoc}
+     *
+     * @throws PsCheckoutException
+     */
+    public function dispatchEventType($payload)
+    {
+        $paypalAccount = new PaypalAccount($payload['merchantId']);
+
+        return (new PaypalAccountUpdater($paypalAccount))->update();
+    }
+}

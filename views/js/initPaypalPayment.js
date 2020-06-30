@@ -19,7 +19,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const interval = setInterval(() => {
-    if (window.paypalSdkPsCheckout !== undefined) {
+    if (undefined !== window.paypalSdkPsCheckout) {
       initPsCheckout();
       clearInterval(interval);
     }
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initPsCheckout() {
-  if (typeof paypalOrderId === 'undefined') {
+  if (undefined === paypalOrderId) {
     throw new Error('No paypal order id');
   }
 
@@ -35,9 +35,6 @@ function initPsCheckout() {
 }
 
 function initSmartButtons() {
-  // remove "amp;" from the url
-  const orderValidationLinkByPaypal = validateOrderLinkByPaypal.replace(/\amp;/g, '');
-
   paypalSdkPsCheckout.Buttons({
     style: {
       shape: 'pill',
@@ -47,7 +44,7 @@ function initSmartButtons() {
       return paypalOrderId;
     },
     onApprove() {
-      window.location.replace(orderValidationLinkByPaypal);
+      window.location.replace(validateOrderLinkByPaypal);
     },
   }).render('#paypal-button-container');
 }
