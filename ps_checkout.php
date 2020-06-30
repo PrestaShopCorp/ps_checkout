@@ -176,7 +176,7 @@ class Ps_checkout extends PaymentModule
         foreach (\Shop::getShops(false, null, true) as $shopId) {
             foreach ($this->configurationList as $name => $value) {
                 if (false === Configuration::hasKey($name, null, null, (int) $shopId)) {
-                    $result = $result && Configuration::updateValue(
+                    $result = $result && (bool) Configuration::updateValue(
                         $name,
                         $value,
                         false,
@@ -975,6 +975,7 @@ class Ps_checkout extends PaymentModule
         $shop = $params['object'];
 
         (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForShop((int) $shop->id);
+        $this->installConfiguration();
         $this->addCheckboxCarrierRestrictionsForModule([(int) $shop->id]);
         $this->addCheckboxCountryRestrictionsForModule([(int) $shop->id]);
         if ($this->currencies_mode === 'checkbox') {
