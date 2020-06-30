@@ -96,10 +96,10 @@
 </template>
 
 <script>
+  import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
   import Menu from '@/components/menu/menu';
   import MenuItem from '@/components/menu/menu-item';
   import RoundingBanner from '@/components/block/rounding-banner';
-  import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
 
   export default {
     name: 'Home',

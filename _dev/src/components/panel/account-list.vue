@@ -23,7 +23,6 @@
         <i class="material-icons">settings</i> {{ $t('panel.account-list.accountSettings') }}
       </h3>
       <div class="card-body">
-
         <div class="d-flex">
           <div class="d-flex flex-grow-1">
             <img
@@ -70,7 +69,10 @@
           <p>{{ $t('panel.account-list.onboardingLinkError') }}</p>
         </b-alert>
 
-        <div class="pt-4" v-if="firebaseStatusAccount && paypalStatusAccount">
+        <div
+          class="pt-4"
+          v-if="firebaseStatusAccount && paypalStatusAccount"
+        >
           <b-alert
             v-if="!accountIslinked"
             variant="info"
@@ -209,8 +211,8 @@
 </template>
 
 <script>
-  import Onboarding from '@/components/block/onboarding';
   import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
+  import Onboarding from '@/components/block/onboarding';
 
   export default {
     components: {

@@ -43,11 +43,11 @@
 </template>
 
 <script>
-  import {PsAccounts} from 'prestashop_accounts_vue_components';
+  import {PsAccounts, isOnboardingCompleted} from 'prestashop_accounts_vue_components';
   import AccountList from '@/components/panel/account-list';
   import PaymentAcceptance from '@/components/panel/payment-acceptance';
   import Reassurance from '@/components/block/reassurance';
-  import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
+
 
   export default {
     name: 'Accounts',

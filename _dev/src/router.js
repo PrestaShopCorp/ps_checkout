@@ -18,20 +18,17 @@
  */
 import Vue from 'vue';
 import Router from 'vue-router';
+import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
 import store from './store';
 
 import Customize from '@/pages/Customize';
 import Accounts from '@/pages/Accounts';
-import Signin from '@/pages/Signin';
-import Signup from '@/pages/Signup';
-import ResetPassword from '@/pages/ResetPassword';
 import PsxAdditionalDetails from '@/pages/PsxAdditionalDetails';
 import Activity from '@/pages/Activity';
 import Advanced from '@/pages/Advanced';
 import Experimental from '@/pages/Experimental';
 import Debug from '@/pages/Debug';
 import Help from '@/pages/Help';
-import {isOnboardingCompleted} from 'prestashop_accounts_vue_components';
 
 Vue.use(Router);
 
