@@ -4,7 +4,6 @@
   "homepage": "https://github.com/PrestaShopCorp/ps_checkout",
   "license": "AFL-3.0",
   "type": "prestashop-module",
-  "minimum-stability": "dev",
   "authors": [
     {
       "name": "PrestaShop SA",
