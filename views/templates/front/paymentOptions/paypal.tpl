@@ -17,7 +17,7 @@
  * International Registered Trademark & Property of PrestaShop SA
  *}
 
-<link rel="preload" href="{$paypalSdkLink|escape:'htmlall':'UTF-8'}" as="script">
+<link rel="preload" href="{$paypalSdkLink|escape:'htmlall':'UTF-8'|replace:'&amp;':'&'}" as="script">
 
 <div class="paypal-tips">{l s='You will be redirected to the related gateway to complete payment' mod='ps_checkout'}</div>
 
@@ -27,7 +27,7 @@
   <form id="conditions-to-approve-paypal" method="GET">
     <label for="conditions_to_approve">
       <input id="conditions_to_approve" type="checkbox" name="conditions_to_approve" class="buttons-approve">
-      {l s='I agree to the [1]terms of service[/1] and will adhere to them unconditionally.' mod='ps_checkout' tags=["<a href=\"$termsAndConditionsLink\" id=\"cta-terms-and-conditions-checkout\">"]}
+      {l s='I agree to the [1]terms of service[/1] and will adhere to them unconditionally.' mod='ps_checkout' tags=['<a href="$termsAndConditionsLink" id="cta-terms-and-conditions-checkout">']}
     </label>
   </form>
 </div>
@@ -40,19 +40,19 @@
   </article>
 </div>
 
-<script type='text/javascript' src='{$jsPathInitPaypalSdk|escape:'javascript':'UTF-8' nofilter}'></script>
+<script type="text/javascript" src="{$jsPathInitPaypalSdk|escape:'javascript':'UTF-8'|replace:'&amp;':'&' nofilter}"></script>
 
 <script>
   const cardNumberPlaceholder = "{l s='Card number' mod='ps_checkout'}";
   const expDatePlaceholder = "{l s='MM/YY' mod='ps_checkout'}";
   const cvvPlaceholder = "{l s='XXX' mod='ps_checkout'}";
   const paypalOrderId = "{$paypalOrderId|escape:'javascript':'UTF-8'}";
-  const validateOrderLinkByCard = "{$validateOrderLinkByCard|escape:'javascript':'UTF-8' nofilter}";
-  const validateOrderLinkByPaypal = "{$validateOrderLinkByPaypal|escape:'javascript':'UTF-8' nofilter}";
+  const validateOrderLinkByCard = "{$validateOrderLinkByCard|escape:'javascript':'UTF-8'|replace:'&amp;':'&' nofilter}";
+  const validateOrderLinkByPaypal = "{$validateOrderLinkByPaypal|escape:'javascript':'UTF-8'|replace:'&amp;':'&' nofilter}";
   const cardIsActive = "{$cardIsActive|escape:'javascript':'UTF-8'}";
   const paypalIsActive = "{$paypalIsActive|escape:'javascript':'UTF-8'}";
   const paypalPaymentOption = "{$paypalPaymentOption|escape:'javascript':'UTF-8'}";
-  const hostedFieldsErrors = {$hostedFieldsErrors|escape:'javascript':'UTF-8'|stripslashes nofilter};
+  const hostedFieldsErrors = {$hostedFieldsErrors|escape:'javascript':'UTF-8'|stripslashes|replace:'&amp;':'&' nofilter};
 /**
  * Create paypal script
  */
@@ -68,7 +68,7 @@ function initPaypalScript() {
   }
 
   const paypalScript = document.createElement('script');
-  paypalScript.setAttribute('src', "{$paypalSdkLink|escape:'javascript':'UTF-8' nofilter}");
+  paypalScript.setAttribute('src', "{$paypalSdkLink|escape:'javascript':'UTF-8'|replace:'&amp;':'&' nofilter}");
   paypalScript.setAttribute('data-client-token', "{$clientToken|escape:'javascript':'UTF-8'}");
   paypalScript.setAttribute('id', 'psCheckoutPaypalSdk');
   paypalScript.setAttribute('data-namespace', 'paypalSdkPsCheckout');

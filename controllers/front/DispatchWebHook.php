@@ -17,6 +17,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+
+use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\MerchantDispatcher;
@@ -295,10 +297,14 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     private function handleException(Exception $exception)
     {
-        $this->module->getLogger()->error(sprintf(
-            'Webhook exception : %s',
-            $exception->getMessage()
-        ));
+        $this->module->getLogger()->log(
+            PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND === $exception->getCode() ? Logger::NOTICE : Logger::ERROR,
+            sprintf(
+                'Webhook exception %s : %s',
+                $exception->getCode(),
+                $exception->getMessage()
+            )
+        );
 
         http_response_code($this->getHttpCodeFromExceptionCode($exception->getCode()));
         header('Content-Type: application/json');

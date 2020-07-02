@@ -17,10 +17,10 @@
  * International Registered Trademark & Property of PrestaShop SA
  *}
 
-<link rel="preload" href="{$paypalSdkLink|escape:'javascript':'UTF-8'}" as="script">
+<link rel="preload" href="{$paypalSdkLink|escape:'javascript':'UTF-8'|replace:'&amp;':'&'}" as="script">
 
 {capture name=path}
-<a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html':'UTF-8'}" title="{l s='Go back to the Checkout' mod='ps_checkout'}">
+<a href="{$link->getPageLink('order', true, NULL, 'step=3')|escape:'html':'UTF-8'}" title="{l s='Go back to the Checkout' mod='ps_checkout'}">
   {l s='Checkout' mod='ps_checkout'}
 </a>
 <span class="navigation-pipe">
@@ -133,8 +133,8 @@
   const expDatePlaceholder = "{l s='MM/YY' mod='ps_checkout'}";
   const cvvPlaceholder = "{l s='XXX' mod='ps_checkout'}";
   const paypalOrderId = "{$paypalOrderId|escape:'javascript':'UTF-8'}";
-  const validateOrderLinkByCard = "{$validateOrderLinkByCard|escape:'javascript':'UTF-8' nofilter}";
-  const hostedFieldsErrors = {$hostedFieldsErrors|escape:'javascript':'UTF-8'|stripslashes nofilter};
+  const validateOrderLinkByCard = "{$validateOrderLinkByCard|escape:'javascript':'UTF-8'|replace:'&amp;':'&' nofilter}";
+  const hostedFieldsErrors = {$hostedFieldsErrors|escape:'javascript':'UTF-8'|stripslashes|replace:'&amp;':'&' nofilter};
 
   /**
    * Create paypal script
@@ -151,7 +151,7 @@
     }
 
     const paypalScript = document.createElement('script');
-    paypalScript.setAttribute('src', "{$paypalSdkLink|escape:'javascript':'UTF-8' nofilter}");
+    paypalScript.setAttribute('src', "{$paypalSdkLink|escape:'javascript':'UTF-8'|replace:'&amp;':'&' nofilter}");
     paypalScript.setAttribute('data-client-token', "{$clientToken|escape:'javascript':'UTF-8'}");
     paypalScript.setAttribute('id', 'psCheckoutPaypalSdk');
     paypalScript.setAttribute('data-namespace', 'paypalSdkPsCheckout');

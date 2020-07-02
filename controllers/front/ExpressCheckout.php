@@ -17,6 +17,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
+
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
 
@@ -26,8 +28,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
     public $module;
 
     /**
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * {@inheritdoc}
      */
     public function postProcess()
     {
@@ -37,45 +38,54 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
             return;
         }
 
-        $token = Tools::getValue('expressCheckoutToken');
+        try {
+            $token = Tools::getValue('expressCheckoutToken');
 
-        if ($token !== Tools::getToken()) {
-            throw new PrestaShopException('Bad token');
-        }
+            if ($token !== Tools::getToken()) {
+                throw new PsCheckoutException('Bad token', PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_BAD_TOKEN);
+            }
 
-        $paypalOrder = Tools::getValue('paypalOrder');
+            $paypalOrder = Tools::getValue('paypalOrder');
 
-        if (empty($paypalOrder)) {
-            throw new PrestaShopException('Paypal order cannot be empty');
-        }
+            if (empty($paypalOrder)) {
+                throw new PsCheckoutException('Paypal order cannot be empty', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
+            }
 
-        $paypalOrder = json_decode($paypalOrder, true);
+            $paypalOrder = json_decode($paypalOrder, true);
 
-        if (false === $this->context->customer->isLogged()) {
+            if (false === $this->context->customer->isLogged()) {
+                // @todo Extract factory in a Service.
+                $this->createAndLoginCustomer(
+                    $paypalOrder['payer']['email_address'],
+                    $paypalOrder['payer']['name']['given_name'],
+                    $paypalOrder['payer']['name']['surname']
+                );
+            }
+
+            // Always 0 index because we are not using the paypal marketplace system
+            // This index is only used in a marketplace context
             // @todo Extract factory in a Service.
-            $this->createAndLoginCustomer(
-                $paypalOrder['payer']['email_address'],
+            $this->createAddress(
                 $paypalOrder['payer']['name']['given_name'],
-                $paypalOrder['payer']['name']['surname']
+                $paypalOrder['payer']['name']['surname'],
+                $paypalOrder['purchase_units'][0]['shipping']['address']['address_line_1'],
+                false === empty($paypalOrder['purchase_units'][0]['shipping']['address']['address_line_2']) ? $paypalOrder['purchase_units'][0]['shipping']['address']['address_line_2'] : '',
+                $paypalOrder['purchase_units'][0]['shipping']['address']['postal_code'],
+                $paypalOrder['purchase_units'][0]['shipping']['address']['admin_area_2'],
+                $paypalOrder['purchase_units'][0]['shipping']['address']['country_code'],
+                false === empty($paypalOrder['payer']['phone']) ? $paypalOrder['payer']['phone']['phone_number']['national_number'] : ''
             );
+
+            $this->context->cookie->__set('paypalOrderId', $paypalOrder['id']);
+            $this->context->cookie->__set('paypalEmail', $paypalOrder['payer']['email_address']);
+        } catch (PsCheckoutException $exception) {
+            $this->module->getLogger()->error(sprintf(
+                'Express Checkout - Exception %s Order PayPal %s : %s',
+                $exception->getCode(),
+                false === empty($paypalOrder['id']) && Validate::isGenericName($paypalOrder['id']) ? $paypalOrder['id'] : 'invalid',
+                $exception->getMessage()
+            ));
         }
-
-        // Always 0 index because we are not using the paypal marketplace system
-        // This index is only used in a marketplace context
-        // @todo Extract factory in a Service.
-        $this->createAddress(
-            $paypalOrder['payer']['name']['given_name'],
-            $paypalOrder['payer']['name']['surname'],
-            $paypalOrder['purchase_units'][0]['shipping']['address']['address_line_1'],
-            false === empty($paypalOrder['purchase_units'][0]['shipping']['address']['address_line_2']) ? $paypalOrder['purchase_units'][0]['shipping']['address']['address_line_2'] : '',
-            $paypalOrder['purchase_units'][0]['shipping']['address']['postal_code'],
-            $paypalOrder['purchase_units'][0]['shipping']['address']['admin_area_2'],
-            $paypalOrder['purchase_units'][0]['shipping']['address']['country_code'],
-            false === empty($paypalOrder['payer']['phone']) ? $paypalOrder['payer']['phone']['phone_number']['national_number'] : ''
-        );
-
-        $this->context->cookie->__set('paypalOrderId', $paypalOrder['id']);
-        $this->context->cookie->__set('paypalEmail', $paypalOrder['payer']['email_address']);
 
         $this->redirectToCheckout();
     }
@@ -121,7 +131,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
      *
      * @return Customer
      *
-     * @throws PrestaShopException
+     * @throws PsCheckoutException
      */
     private function createCustomer($email, $firstName, $lastName)
     {
@@ -130,7 +140,12 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         $customer->firstname = $firstName;
         $customer->lastname = $lastName;
         $customer->passwd = Tools::passwdGen();
-        $customer->save();
+
+        try {
+            $customer->save();
+        } catch (Exception $exception) {
+            throw new PsCheckoutException($exception->getMessage(), PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_CANNOT_SAVE_CUSTOMER);
+        }
 
         return $customer;
     }
@@ -151,8 +166,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
      *
      * @return bool
      *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
+     * @throws PsCheckoutException
      */
     private function createAddress(
         $firstName,
@@ -168,7 +182,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         $psIsoCode = (new PaypalCountryCodeMatrice())->getPrestashopIsoCode($countryIsoCode);
         $idCountry = Country::getByIso($psIsoCode);
 
-        $country = new Country($idCountry);
+        $country = new Country((int) $idCountry);
 
         if (0 === (int) $country->active) {
             return false;
@@ -193,7 +207,12 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         $address->city = $city;
         $address->id_country = $idCountry;
         $address->phone = $phone;
-        $address->save();
+
+        try {
+            $address->save();
+        } catch (Exception $exception) {
+            throw new PsCheckoutException($exception->getMessage(), PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_CANNOT_SAVE_ADDRESS);
+        }
 
         $this->context->cart->id_address_delivery = $address->id;
         $this->context->cart->id_address_invoice = $address->id;
