@@ -210,9 +210,7 @@ function displayCardError(err) {
 }
 
 function hideDefaultPaymentButtonIfPaypalIsChecked() {
-  const conditionsToApproveId = document.getElementById('conditions-to-approve');
   const paymentDefaultButton = document.getElementById('payment-confirmation');
-
   const paypalOptions = document.getElementsByName('payment-option');
 
   for (let i = 0; i < paypalOptions.length; i++) {
@@ -221,10 +219,10 @@ function hideDefaultPaymentButtonIfPaypalIsChecked() {
     item.addEventListener('click', () => {
       if (item.checked && item.dataset.moduleName === paypalPaymentOption) {
         paymentDefaultButton.classList.add('paypal-hide-default');
-        conditionsToApproveId.classList.add('paypal-hide-default');
+        toggleConditionsToApprove(true);
       } else {
         paymentDefaultButton.classList.remove('paypal-hide-default');
-        conditionsToApproveId.classList.remove('paypal-hide-default');
+        toggleConditionsToApprove(false);
       }
     });
   }
@@ -242,5 +240,19 @@ function toggleLoader(enable) {
     document.querySelector('#payment-confirmation button').prepend(span);
   } else {
     document.querySelector('.spinner-hosted-fields').remove();
+  }
+}
+
+function toggleConditionsToApprove(enable) {
+  const conditionsToApproveId = document.getElementById('conditions-to-approve');
+
+  if (null === conditionsToApproveId) {
+    return;
+  }
+
+  if (true === enable) {
+    conditionsToApproveId.classList.add('paypal-hide-default');
+  } else {
+    conditionsToApproveId.classList.remove('paypal-hide-default');
   }
 }
