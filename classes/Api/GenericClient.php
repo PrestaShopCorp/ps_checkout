@@ -24,6 +24,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Ring\Exception\RingException;
 use Monolog\Logger;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
 
 /**
@@ -83,8 +84,26 @@ class GenericClient
         try {
             $response = $this->getClient()->post($this->getRoute(), $options);
         } catch (RequestException $exception) {
-            return $this->handleException($module, $exception, $options);
+            return $this->handleException(
+                $module,
+                new PsCheckoutException(
+                    $exception->getMessage(),
+                    PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION,
+                    $exception
+                ),
+                $options
+            );
         } catch (RingException $exception) {
+            return $this->handleException(
+                $module,
+                new PsCheckoutException(
+                    $exception->getMessage(),
+                    PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION,
+                    $exception
+                ),
+                $options
+            );
+        } catch (\Exception $exception) {
             return $this->handleException($module, $exception, $options);
         }
 

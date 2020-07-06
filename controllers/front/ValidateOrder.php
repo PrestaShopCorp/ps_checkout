@@ -257,6 +257,9 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
             case PsCheckoutException::PRESTASHOP_PAYMENT_UNAVAILABLE:
                 $exceptionMessageForCustomer = $this->module->l('This payment method is unavailable', 'translations');
                 break;
+            case PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION:
+                $exceptionMessageForCustomer = $this->module->l('Unable to call API', 'translations');
+                break;
             case PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING:
                 $exceptionMessageForCustomer = $this->module->l('PayPal order identifier is missing', 'translations');
                 $notifyCustomerService = false;
