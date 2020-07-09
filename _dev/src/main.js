@@ -19,6 +19,7 @@
 import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue';
 import VueCollapse from 'vue2-collapse';
+import psAccountsVueComponents from 'prestashop_accounts_vue_components';
 import i18n from './lib/i18n';
 import App from './App.vue';
 import router from './router';
@@ -26,6 +27,8 @@ import store from './store';
 
 Vue.use(BootstrapVue);
 Vue.use(VueCollapse);
+Vue.use(psAccountsVueComponents);
+psAccountsVueComponents.locale(i18n.locale);
 
 Vue.config.productionTip = process.env.NODE_ENV === 'production';
 
