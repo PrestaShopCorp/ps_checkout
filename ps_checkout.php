@@ -138,6 +138,7 @@ class Ps_checkout extends PaymentModule
     {
         // Install for both 1.7 and 1.6
         $defaultInstall = parent::install() &&
+            (new PrestaShop\AccountsAuth\Installer\Install())->installPsAccounts() &&
             (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops() &&
             $this->installConfiguration() &&
             $this->registerHook(self::HOOK_LIST) &&

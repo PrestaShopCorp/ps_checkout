@@ -19,7 +19,7 @@
 <template>
   <div>
     <b-alert
-      v-if="errorForm != null"
+      v-if="errorForm.length > 0"
       variant="danger"
       show
     >
@@ -467,7 +467,27 @@
           sm="12"
           md="10"
           lg="8"
-          class="m-auto pt-5"
+          class="m-auto pt-3"
+        >
+          <PSCheckbox
+            id="terms"
+            v-model="terms"
+          >
+            {{ $t('panel.psx-form.termsOfUse') }}
+            <b-link
+              href="#"
+              target="_blank"
+            >
+              {{ $t('panel.psx-form.termsOfUseLinkText') }}
+            </b-link>
+          </PSCheckbox>
+        </b-col>
+
+        <b-col
+          sm="12"
+          md="10"
+          lg="8"
+          class="m-auto pt-2"
         >
           <p class="mb-0">
             {{ $t('panel.psx-form.privacyTextPart1') }}
@@ -483,37 +503,34 @@
         </b-col>
       </b-card-body>
 
-      <template v-slot:footer>
-        <div class="container-fluid pl-0">
-          <b-button
-            variant="secondary"
-            @click="back()"
-          >
-            {{ $t('panel.psx-form.back') }}
-          </b-button>
-        </div>
+      <b-card-footer>
         <b-button
           variant="primary"
           @click="submitForm()"
+          class="float-right"
         >
           {{ $t('panel.psx-form.continue') }}
         </b-button>
-      </template>
+      </b-card-footer>
     </b-card>
   </div>
 </template>
 
 <script>
   import {orderBy, uniqBy} from 'lodash';
+  import PSCheckbox from '@/components/form/checkbox';
 
   export default {
     name: 'PsxForm',
+    components: {
+      PSCheckbox,
+    },
     data() {
       return {
         errorException: '',
         subCategory: null,
         statesList: null,
-        errorForm: null,
+        errorForm: [],
         form: {
           business_contact_gender: 'Mr',
           business_contact_first_name: null,
@@ -533,6 +550,7 @@
           business_category: null,
           business_sub_category: '',
         },
+        terms: false,
       };
     },
     computed: {
@@ -557,13 +575,26 @@
     },
     methods: {
       submitForm() {
+        this.errorForm = [];
+
+        if (!this.terms) {
+          this.errorException = '';
+          this.errorForm.push(this.$t('panel.psx-form.termsOfUseError'));
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth',
+          });
+        }
+
         this.$store.dispatch('psxSendData', this.form).then((response) => {
-          if (response.status === true) {
+          if (response.status === true && this.errorForm.length === 0) {
             this.$store.dispatch('psxOnboarding', response.status);
             // eslint-disable-next-line no-console
             this.$router.push('/authentication').catch((exception) => console.log(exception));
           }
-          this.errorForm = response;
+
+          this.errorForm.push(...response);
           this.errorException = '';
           window.scrollTo({
             top: 0,
@@ -577,19 +608,13 @@
       handleResponseError(response) {
         if (undefined !== response.body) {
           this.errorException = response.body;
-          this.errorForm = null;
+          this.errorForm = [];
           window.scrollTo({
             top: 0,
             left: 0,
             behavior: 'smooth',
           });
         }
-      },
-      back() {
-        this.$store.dispatch('logOut').then(() => {
-          // eslint-disable-next-line no-console
-          this.$router.push('/authentication').catch((exception) => console.log(exception));
-        });
       },
       onChangeCategory(categoryId) {
         const subCat = this.$store.getters.getBusinessCategories[categoryId].business_subcategories;
