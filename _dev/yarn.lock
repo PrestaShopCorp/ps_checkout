@@ -6829,10 +6829,10 @@ prestakit@^1.1.0:
   resolved "https://registry.yarnpkg.com/prestakit/-/prestakit-1.1.0.tgz#0d17c93d02ad2db3c6e3bde27a1fe8a87171e81e"
   integrity sha512-4EDcS5cF3YFeiXLh2GXIoS/wn0wdLtuc6THoazU1LuQAn8M2VlNyxvoC0G0qVDNM0wBBS+xjsHyZxluVV6ZJhA==
 
-prestashop_accounts_vue_components@^0.0.12:
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/prestashop_accounts_vue_components/-/prestashop_accounts_vue_components-0.0.12.tgz#afff5e182035b557bcc8b394ead922698b229e00"
-  integrity sha512-v7PTuHRllLtdvdV2RBly4c0SqMTD29KWTxVRyQ0WAg4nRR/5SHK3duJi7W1o6xOY/7oTFf8VWCMwR+sS8uu6Pw==
+prestashop_accounts_vue_components@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/prestashop_accounts_vue_components/-/prestashop_accounts_vue_components-0.1.5.tgz#58e49ea979feb39b93a41c8173051d3c4534010d"
+  integrity sha512-Q6zvPOMN1mlqseaWzUrQDi7pH/Trb+PZ0dd4MfKXC7aMFpp55JDt7qF2MQ3YWetUmhSlfudchd9chB6wBo3wKw==
   dependencies:
     "@hapi/joi" "^17.1.1"
     babel-loader "^8.1.0"
