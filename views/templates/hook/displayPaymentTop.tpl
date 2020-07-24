@@ -43,6 +43,8 @@
 
       if ('ps_checkout_expressCheckout' === paymentOptionName) {
         paymentOption.click();
+        const paymentConfirmationButton = document.querySelector('#payment-confirmation button');
+        paymentConfirmationButton.removeAttribute('disabled');
       } else {
         paymentOption.disabled = true;
         paymentOptionContainer.style.display = 'none';
