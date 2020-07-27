@@ -35,25 +35,29 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
     public function postProcess()
     {
         $isAjax = Tools::getValue('ajax');
+        $token = Tools::getValue('expressCheckoutToken');
+        $paypalOrder = Tools::getValue('paypalOrder');
 
         if ($isAjax) {
             return;
         }
 
         try {
-            $token = Tools::getValue('expressCheckoutToken');
-
             if ($token !== Tools::getToken()) {
                 throw new PsCheckoutException('Bad token', PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_BAD_TOKEN);
             }
-
-            $paypalOrder = Tools::getValue('paypalOrder');
 
             if (empty($paypalOrder)) {
                 throw new PsCheckoutException('Paypal order cannot be empty', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
             }
 
             $paypalOrder = json_decode($paypalOrder, true);
+
+            $this->module->getLogger()->info(sprintf(
+                'Express checkout - token : %s PayPal Order : %s',
+                $token,
+                false === empty($paypalOrder['id']) && Validate::isGenericName($paypalOrder['id']) ? $paypalOrder['id'] : 'invalid'
+            ));
 
             if (false === $this->context->customer->isLogged()) {
                 // @todo Extract factory in a Service.
@@ -89,12 +93,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
             ));
         }
 
-        $this->module->getLogger()->info(sprintf(
-            'Express checkout - token : %s PayPal Order : %s',
-            $token,
-            $paypalOrder->id
-        ));
-
         $this->redirectToCheckout();
     }
 
@@ -112,6 +110,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         $firstName,
         $lastName
     ) {
+        /** @var int $idCustomerExists */
         $idCustomerExists = Customer::customerExists($email, true);
 
         if (0 === $idCustomerExists) {
@@ -122,10 +121,12 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
                 $lastName
             );
         } else {
-            $customer = new Customer((int) $idCustomerExists);
+            $customer = new Customer($idCustomerExists);
         }
 
-        $this->context->updateCustomer($customer);
+        if (method_exists($this->context, 'updateCustomer')) {
+            $this->context->updateCustomer($customer);
+        }
     }
 
     /**
@@ -199,7 +200,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         // check if a paypal address already exist for the customer
         $paypalAddress = $this->addressAlreadyExist('PayPal', $this->context->customer->id);
 
-        if (false !== $paypalAddress) {
+        if ($paypalAddress) {
             $address = new Address($paypalAddress); // if yes, update it with the new address
         } else {
             $address = new Address(); // otherwise create a new address
@@ -250,7 +251,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         $query->where('id_customer = ' . (int) $id_customer);
         $query->where('deleted = 0');
 
-        return Db::getInstance()->getValue($query);
+        return (int) Db::getInstance()->getValue($query);
     }
 
     /**

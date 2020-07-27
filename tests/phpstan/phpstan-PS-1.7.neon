@@ -9,7 +9,7 @@ parameters:
 		- ../../ps_checkout.php
 	reportUnmatchedIgnoredErrors: false
 	ignoreErrors:
-		- '#Cannot assign offset "merchant…" to string|true.#'
+		- '#Cannot assign offset "merchant…" to string\|true.#'
 		- '#Property ModuleCore::\$version \(float\) does not accept string.#'
 		- '#Strict comparison using === between false and string will always evaluate to false.#'
 		- '#Call to function is_array\(\) with Currency will always evaluate to false.#'
@@ -25,5 +25,6 @@ parameters:
 		- '#Parameter \#4 \$ssl of method LinkCore::getModuleLink\(\) expects null, true given.#'
 		- '#Parameter \#1 \$id of class Customer constructor expects null, int<1, max>\|int<min, -1> given.#'
 		- '#Property CustomerMessageCore::\$ip_address \(string\) does not accept int.#'
+		- '#Left side of \&\& is always true.#'
 
 	level: 5
