@@ -27,8 +27,6 @@ use GuzzleHttp\Message\ResponseInterface;
  */
 class ResponseApiHandler
 {
-    //TODO: Add Monolog to log all received response
-
     /**
      * Format api response
      *
@@ -38,6 +36,7 @@ class ResponseApiHandler
      */
     public function handleResponse(ResponseInterface $response)
     {
+        $response->getBody()->seek(0); // Rewind Stream to avoid empty body
         $responseContents = json_decode($response->getBody()->getContents(), true);
 
         return [

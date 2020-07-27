@@ -932,7 +932,9 @@ class Ps_checkout extends PaymentModule
     }
 
     /**
-     * @return \Monolog\Logger
+     * @todo to be removed
+     *
+     * @return \Psr\Log\LoggerInterface
      */
     public function getLogger()
     {
@@ -940,7 +942,8 @@ class Ps_checkout extends PaymentModule
             return $this->logger;
         }
 
-        $this->logger = PrestaShop\Module\PrestashopCheckout\Factory\CheckoutLogger::create();
+        /* @var \Psr\Log\LoggerInterface logger */
+        $this->logger = $this->getService('ps_checkout.logger');
 
         return $this->logger;
     }

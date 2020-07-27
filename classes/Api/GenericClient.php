@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Ring\Exception\RingException;
 use GuzzleHttp\Subscriber\Log\Formatter;
 use GuzzleHttp\Subscriber\Log\LogSubscriber;
@@ -79,9 +80,10 @@ class GenericClient
      */
     protected function post(array $options = [])
     {
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+
         if (true === (bool) $this->getConfiguration('PS_CHECKOUT_LOGGER_HTTP', true)) {
-            /** @var \Ps_checkout $module */
-            $module = \Module::getInstanceByName('ps_checkout');
             /** @var LoggerInterface $logger */
             $logger = $module->getService('ps_checkout.logger');
 
@@ -96,26 +98,22 @@ class GenericClient
             $response = $this->getClient()->post($this->getRoute(), $options);
         } catch (RequestException $exception) {
             return $this->handleException(
-                $module,
                 new PsCheckoutException(
                     $exception->getMessage(),
                     PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION,
                     $exception
-                ),
-                $options
+                )
             );
         } catch (RingException $exception) {
             return $this->handleException(
-                $module,
                 new PsCheckoutException(
                     $exception->getMessage(),
                     PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION,
                     $exception
-                ),
-                $options
+                )
             );
         } catch (\Exception $exception) {
-            return $this->handleException($module, $exception, $options);
+            return $this->handleException($exception);
         }
 
         $responseHandler = new ResponseApiHandler();
@@ -262,5 +260,25 @@ class GenericClient
         }
 
         return Formatter::DEBUG;
+    }
+
+    private function handleException(\Exception $exception)
+    {
+        $body = null;
+        $httpCode = 500;
+        $hasResponse = method_exists($exception, 'hasResponse') ? $exception->hasResponse() : false;
+
+        if (true === $hasResponse && method_exists($exception, 'getResponse')) {
+            $body = $exception->getResponse()->getBody();
+            $httpCode = $exception->getResponse()->getStatusCode();
+        }
+
+        return [
+            'status' => false,
+            'httpCode' => $httpCode,
+            'body' => $body,
+            'exceptionCode' => $exception->getCode(),
+            'exceptionMessage' => $exception->getMessage(),
+        ];
     }
 }
