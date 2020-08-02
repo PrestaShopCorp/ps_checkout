@@ -1,0 +1,31 @@
+name: Publish to the Marketplace
+
+on:
+  release:
+    action: [released]
+
+jobs:
+  publish_to_marketplace:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+
+      - name: Download release asset
+        uses: dsaltares/fetch-gh-release-asset@0.0.4
+        with:
+          repo: ${{ github.event.repository.full_name }}
+          version: ${{ github.event.release.id }}
+          file: ${{ github.event.repository.name }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prepare publishing tool
+        run: |
+          composer global require prestashop/publish-on-marketplace
+
+      - name: Release zip
+        run: |
+          ~/.composer/vendor/bin/publish-on-marketplace --archive=$PWD/${{ github.event.repository.name }}.zip --metadata-json=$PWD/.github/mktp-metadata.json --changelog="${{ github.event.release.body }}" --debug
+        env:
+          MARKETPLACE_API_KEY: ${{ secrets.MARKETPLACE_API_KEY }}
