@@ -36,12 +36,12 @@
   },
   "autoload": {
     "psr-4": {
-      "PrestaShop\\Module\\PrestashopCheckout\\": "classes/"
+      "PrestaShop\\Module\\PrestashopCheckout\\": "src"
     },
     "classmap": [
       "ps_checkout.php",
-      "controllers/",
-      "classes/ObjectModel/"
+      "controllers",
+      "classes"
     ]
   },
   "autoload-dev": {
@@ -54,7 +54,7 @@
       "@php -d date.timezone=UTC ./vendor/bin/phpunit -c tests/Unit/phpunit.xml"
     ],
     "set-license-header": [
-      "@php ./vendor/bin/header-stamp --license=\"assets/afl.txt\" --exclude=\".github,vendor\""
+      "@php ./vendor/bin/header-stamp --license=\"assets/afl.txt\" --exclude=\".github,node_modules,vendor\""
     ]
   }
 }
