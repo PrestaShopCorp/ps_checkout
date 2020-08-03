@@ -1,4 +1,4 @@
-{**
+<!--**
  * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,13 +15,39 @@
  * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ *-->
+<template>
+  <div>
+    <b-container class="mb-4">
+      <ActivePayment />
+    </b-container>
 
-<div id="app"></div>
+    <b-container v-if="shopIs17" class="mb-4">
+      <ExpressCheckout />
+    </b-container>
 
-<style>
-  /** Hide native multistore module activation panel, because of visual regressions on non-bootstrap content */
-  #content.nobootstrap div.bootstrap.panel {
-    display: none;
+    <b-container class="container">
+      <FeatureIncoming />
+    </b-container>
+  </div>
+</template>
+
+<script>
+import ActivePayment from "@/components/panel/active-payment";
+import ExpressCheckout from "@/components/panel/express-checkout";
+import FeatureIncoming from "@/components/block/feature-incoming";
+
+export default {
+  name: "Customize",
+  components: {
+    ActivePayment,
+    ExpressCheckout,
+    FeatureIncoming
+  },
+  computed: {
+    shopIs17() {
+      return this.$store.getters.shopIs17;
+    }
   }
-</style>
+};
+</script>

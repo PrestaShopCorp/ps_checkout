@@ -1,4 +1,4 @@
-{**
+/**
  * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,13 +15,9 @@
  * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ */
+const UPDATE_ROUNDING_SETTINGS_STATUS = "UPDATE_ROUNDING_SETTINGS_STATUS";
 
-<div id="app"></div>
-
-<style>
-  /** Hide native multistore module activation panel, because of visual regressions on non-bootstrap content */
-  #content.nobootstrap div.bootstrap.panel {
-    display: none;
-  }
-</style>
+export default {
+  UPDATE_ROUNDING_SETTINGS_STATUS
+};

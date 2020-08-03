@@ -1,4 +1,4 @@
-{**
+/**
  * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,13 +15,13 @@
  * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
-
-<div id="app"></div>
-
-<style>
-  /** Hide native multistore module activation panel, because of visual regressions on non-bootstrap content */
-  #content.nobootstrap div.bootstrap.panel {
-    display: none;
-  }
-</style>
+ */
+export const UPDATE_PAYMENT_METHODS_ORDER = "UPDATE_PAYMENT_METHODS_ORDER";
+export const UPDATE_PAYMENT_MODE = "UPDATE_PAYMENT_MODE";
+export const UPDATE_CAPTURE_MODE = "UPDATE_CAPTURE_MODE";
+export const UPDATE_PAYMENT_CARD_AVAILABILITY =
+  "UPDATE_PAYMENT_CARD_AVAILABILITY";
+export const UPDATE_EC_ORDER_PAGE = "UPDATE_EC_ORDER_PAGE";
+export const UPDATE_EC_CHECKOUT_PAGE = "UPDATE_EC_CHECKOUT_PAGE";
+export const UPDATE_EC_PRODUCT_PAGE = "UPDATE_EC_PRODUCT_PAGE";
+export const UPDATE_DEBUG_LOGS = "UPDATE_DEBUG_LOGS";

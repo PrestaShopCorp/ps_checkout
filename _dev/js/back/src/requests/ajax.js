@@ -1,4 +1,4 @@
-{**
+/**
  * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,13 +15,26 @@
  * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ */
+import axios from "axios";
+import { forEach } from "lodash";
 
-<div id="app"></div>
+export default function ajax(params) {
+  const form = new FormData();
+  form.append("ajax", true);
+  form.append("action", params.action);
 
-<style>
-  /** Hide native multistore module activation panel, because of visual regressions on non-bootstrap content */
-  #content.nobootstrap div.bootstrap.panel {
-    display: none;
-  }
-</style>
+  form.append("controller", "AdminAjaxPrestashopCheckout");
+
+  forEach(params.data, (value, key) => {
+    form.append(key, value);
+  });
+
+  return axios
+    .post(params.url, form)
+    .then(res => res.data)
+    .catch(error => {
+      // eslint-disable-next-line no-console
+      console.log(error);
+    });
+}

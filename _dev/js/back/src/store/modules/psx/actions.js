@@ -1,4 +1,4 @@
-{**
+/**
  * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,13 +15,27 @@
  * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ */
+import * as types from "./mutation-types";
+import ajax from "@/requests/ajax.js";
 
-<div id="app"></div>
-
-<style>
-  /** Hide native multistore module activation panel, because of visual regressions on non-bootstrap content */
-  #content.nobootstrap div.bootstrap.panel {
-    display: none;
+export default {
+  psxSendData({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: "PsxSendData",
+      data: {
+        payload: JSON.stringify(payload)
+      }
+    }).then(response => {
+      if (response.status === false) {
+        return Promise.reject(response);
+      }
+      commit(types.UPDATE_FORM_DATA, payload);
+      return Promise.resolve(response);
+    });
+  },
+  psxOnboarding({ commit }, payload) {
+    commit(types.UPDATE_ONBOARDING_STATUS, payload);
   }
-</style>
+};

@@ -1,4 +1,4 @@
-{**
+/**
  * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,13 +15,18 @@
  * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ */
+import * as types from "./mutation-types";
 
-<div id="app"></div>
-
-<style>
-  /** Hide native multistore module activation panel, because of visual regressions on non-bootstrap content */
-  #content.nobootstrap div.bootstrap.panel {
-    display: none;
+export default {
+  [types.UPDATE_ACCOUNT](state, payload) {
+    Object.assign(state, payload);
+  },
+  [types.LOGOUT_ACCOUNT](state) {
+    state.email = "";
+    state.localId = "";
+    state.idToken = "";
+    state.refreshToken = "";
+    state.onboardingCompleted = false;
   }
-</style>
+};

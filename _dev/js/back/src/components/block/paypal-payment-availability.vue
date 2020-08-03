@@ -1,4 +1,4 @@
-{**
+<!--**
  * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,13 +15,32 @@
  * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ *-->
+<template>
+  <div>
+    <template v-if="paypalIsActive">
+      <b-badge variant="success">
+        {{ $t("panel.active-payment.available") }}
+      </b-badge>
+    </template>
+    <template v-else>
+      <b-badge variant="danger">
+        {{ $t("panel.active-payment.notAvailable") }}
+      </b-badge>
+    </template>
+  </div>
+</template>
 
-<div id="app"></div>
-
-<style>
-  /** Hide native multistore module activation panel, because of visual regressions on non-bootstrap content */
-  #content.nobootstrap div.bootstrap.panel {
-    display: none;
+<script>
+export default {
+  name: "PayPalPaymentAvailability",
+  computed: {
+    paypalIsActive() {
+      return (
+        this.$store.state.paypal.paypalIsActive &&
+        this.$store.state.paypal.emailIsValid
+      );
+    }
   }
-</style>
+};
+</script>

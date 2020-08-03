@@ -1,0 +1,11 @@
+{
+  "allowJs": true,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./_dev/js/back/src/*"]
+    }
+  },
+  "include": ["./_dev/js/back/src/**/*", "./_dev/js/back/tests/**/*"],
+  "exclude": ["node_modules"]
+}

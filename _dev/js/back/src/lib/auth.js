@@ -1,4 +1,4 @@
-{**
+/**
  * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,13 +15,10 @@
  * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
-
-<div id="app"></div>
-
-<style>
-  /** Hide native multistore module activation panel, because of visual regressions on non-bootstrap content */
-  #content.nobootstrap div.bootstrap.panel {
-    display: none;
-  }
-</style>
+ */
+export const EMAIL_NOT_FOUND = "EMAIL_NOT_FOUND";
+export const INVALID_EMAIL = "INVALID_EMAIL";
+export const INVALID_PASSWORD = "INVALID_PASSWORD";
+export const EMAIL_EXISTS = "EMAIL_EXISTS";
+export const MISSING_PASSWORD = "MISSING_PASSWORD";
+export const MISSING_EMAIL = "MISSING_EMAIL";
