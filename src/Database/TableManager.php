@@ -42,7 +42,22 @@ class TableManager
             return false;
         }
 
-        return true;
+        return \Db::getInstance()->execute('
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_cart` (
+              `id_pscheckout_cart` int unsigned NOT NULL AUTO_INCREMENT,
+              `id_cart` int unsigned NOT NULL,
+              `paypal_intent` varchar(20) DEFAULT "CAPTURE",
+              `paypal_order` varchar(20) NULL,
+              `paypal_status` varchar(20) NULL,
+              `paypal_funding` varchar(20) NULL,
+              `paypal_token` varchar(1024) NULL,
+              `paypal_token_expire` datetime NULL,
+              `paypal_authorization_expire` datetime NULL,
+              `date_add` datetime NOT NULL,
+              `date_upd` datetime NOT NULL,
+              PRIMARY KEY (`id_pscheckout_cart`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+        ');
     }
 
     /**

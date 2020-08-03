@@ -22,6 +22,9 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
 
+/**
+ * @todo To be removed
+ */
 class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontController
 {
     /**

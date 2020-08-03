@@ -17,37 +17,11 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
-{if $paymentError}
-  <div class="alert alert-danger">
+<div id="ps_checkout-notification-container">
+  <p id="ps_checkout-canceled" class="alert alert-info" style="display:none;">{l s='Processing payment canceled, please choose another payment method or try again.' mod='ps_checkout'}</p>
+  <div id="ps_checkout-error" class="alert alert-danger" style="display:none;">
     <p><strong>{l s='Processing payment error' mod='ps_checkout'}</strong></p>
     <p>{l s='Payment failed, you have not been charged.' mod='ps_checkout'}</p>
-    <p>{$paymentErrorMessage|escape:'htmlall':'UTF-8'}</p>
+    <div id="ps_checkout-error-text"></div>
   </div>
-{/if}
-
-{if $isExpressCheckout}
-<div class="express-checkout-block mb-2">
-  <img src="{$paypalLogoPath|escape:'htmlall':'UTF-8'}" class="express-checkout-img" alt="PayPal">
-  <p class="express-checkout-label">
-    {$translatedText|escape:'htmlall':'UTF-8'}
-  </p>
 </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const paymentOptions = document.querySelectorAll('input[name="payment-option"]');
-
-    paymentOptions.forEach(function(paymentOption) {
-      const paymentOptionContainer = document.getElementById(paymentOption.id + '-container');
-      const paymentOptionName = paymentOption.getAttribute('data-module-name');
-
-      if ('ps_checkout_expressCheckout' === paymentOptionName) {
-        paymentOption.click();
-      } else {
-        paymentOption.disabled = true;
-        paymentOptionContainer.style.display = 'none';
-      }
-    });
-  });
-</script>
-{/if}

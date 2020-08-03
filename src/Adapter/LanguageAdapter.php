@@ -37,7 +37,10 @@ class LanguageAdapter
      */
     public function getLanguage($idLang)
     {
-        $language = \Language::getLanguage($idLang);
+        $language = \Language::getLanguage($idLang)
+            ? \Language::getLanguage($idLang)
+            : \Context::getContext()->language
+        ;
 
         if (false === (new ShopContext())->isShop17()) {
             $locale = explode('-', $language['language_code']);

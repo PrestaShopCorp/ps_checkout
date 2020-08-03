@@ -24,7 +24,7 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Update main function for module version 2.0.0
  *
- * @param Module $module
+ * @param Ps_checkout $module
  *
  * @return bool
  */
@@ -33,5 +33,23 @@ function upgrade_module_2_0_0($module)
     return (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_MAX_FILES', '15')
         && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_LEVEL', \Monolog\Logger::ERROR)
         && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP', '1')
-        && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP_FORMAT', 'DEBUG');
+        && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP_FORMAT', 'DEBUG')
+        && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_INTEGRATION_DATE', '2020-07-30')
+        && (bool) $module->registerHook(Ps_checkout::HOOK_LIST)
+        && (bool) Db::getInstance()->execute('
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_cart` (
+              `id_pscheckout_cart` int unsigned NOT NULL AUTO_INCREMENT,
+              `id_cart` int unsigned NOT NULL,
+              `paypal_intent` varchar(20) DEFAULT "CAPTURE",
+              `paypal_order` varchar(20) NULL,
+              `paypal_status` varchar(20) NULL,
+              `paypal_funding` varchar(20) NULL,
+              `paypal_token` varchar(1024) NULL,
+              `paypal_token_expire` datetime NULL,
+              `paypal_authorization_expire` datetime NULL,
+              `date_add` datetime NOT NULL,
+              `date_upd` datetime NOT NULL,
+              PRIMARY KEY (`id_pscheckout_cart`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+        ');
 }

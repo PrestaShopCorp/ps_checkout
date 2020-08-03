@@ -58,13 +58,15 @@ class OnboardingPayloadBuilder extends Builder
      */
     public function buildBaseNode()
     {
-        $language = (new LanguageAdapter())->getLanguage((int) \Context::getContext()->employee->id_lang);
-
-        $locale = $language['locale'];
+        $language = (new LanguageAdapter())->getLanguage(
+            \Context::getContext()->employee->id_lang
+                ? (int) \Context::getContext()->employee->id_lang
+                : (int) \Context::getContext()->language->id
+        );
 
         $node = [
             'url' => $this->getCallBackUrl(),
-            'preferred_language_code' => $locale,
+            'preferred_language_code' => $language['locale'],
             'primary_currency_code' => $this->getCurrencyIsoCode(),
         ];
 

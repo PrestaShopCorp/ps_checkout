@@ -273,6 +273,62 @@ class PaypalAccountRepository
     }
 
     /**
+     * @return bool
+     */
+    public function isCardVisaEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_CARD_VISA_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMasterCardEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_MASTER_CARD_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCardAmexEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_CARD_AMEX_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCardDiscoverEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_CARD_DISCOVER_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCardJcbEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_CARD_JCB_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCardEloEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_CARD_ELO_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCardHiperEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_CARD_HIPER_ENABLED);
+    }
+
+    /**
      * @param string $paymentMethod
      *
      * @return bool
