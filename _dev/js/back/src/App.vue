@@ -151,8 +151,8 @@
 
 <style lang="scss">
   #app {
-    @import '../../../../node_modules/bootstrap-vue/dist/bootstrap-vue';
-    @import '../../../../node_modules/prestakit/dist/css/bootstrap-prestashop-ui-kit';
+    @import '~bootstrap-vue/dist/bootstrap-vue';
+    @import '~prestakit/dist/css/bootstrap-prestashop-ui-kit';
   }
 
   #app {
