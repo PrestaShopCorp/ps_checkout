@@ -213,11 +213,7 @@
                 </li>
               </ul>
               <div class="mt-3">
-                <a
-                  @click="trackSegment()"
-                  href="https://www.paypal.com/policy/hub/kyc"
-                  target="_blank"
-                >
+                <a @click.prevent="trackSegment()">
                   {{ $t('pages.accounts.knowMoreAboutAccount') }}
                   <i class="material-icons">arrow_right_alt</i>
                 </a>
@@ -239,7 +235,7 @@
                 {{ $t('pages.accounts.transactionsUntil') }}.
               </p>
               <div class="mt-3">
-                <a href="https://www.paypal.com/policy/hub/kyc" target="_blank">
+                <a @click.prevent="trackSegment()">
                   {{ $t('pages.accounts.knowMoreAboutAccount') }}
                   <i class="material-icons">arrow_right_alt</i>
                 </a>
@@ -371,7 +367,13 @@ export default {
       });
     },
     trackSegment() {
-      this.$segment.track("ps_checkout_approval_on_paypal_link_know_more_approval");
+      if (window && window.analytics) {
+        this.$segment.track(
+          "ps_checkout_approval_on_paypal_link_know_more_approval"
+        );
+        // redirect to paypal url
+        window.open("https://www.paypal.com/policy/hub/kyc", "_blank");
+      }
     }
   }
 };
