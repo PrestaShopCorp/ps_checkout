@@ -22,6 +22,12 @@ import VueCollapse from 'vue2-collapse';
 import * as Sentry from '@sentry/browser';
 import { Vue as VueIntegration } from '@sentry/integrations';
 
+import i18n from "./lib/i18n";
+import App from "./App.vue";
+import router from "./router";
+import store from "./store";
+import VueSegment from 'vue-segment';
+
 import i18n from './lib/i18n';
 import App from './App.vue';
 import router from './router';
@@ -54,3 +60,7 @@ window.onload = () => {
     render: h => h(App)
   }).$mount('#app');
 };
+
+Vue.use(VueSegment, {
+  id: 'BftCN3EnnGD1ETnf4FUBxP1WFMQ80JFZ', router
+});
