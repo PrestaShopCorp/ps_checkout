@@ -24,24 +24,24 @@
       </div>
       <div>
         <h2 class="text-muted">
-          {{ $t("block.reassurance.title") }}
+          {{ $t('block.reassurance.title') }}
         </h2>
         <ul class="pl-0 pt-2 text-muted">
           <li>
             <i class="material-icons">check</i>
-            {{ $t("block.reassurance.label1") }}
+            {{ $t('block.reassurance.label1') }}
           </li>
           <li>
             <i class="material-icons">check</i>
-            {{ $t("block.reassurance.label2") }}
+            {{ $t('block.reassurance.label2') }}
           </li>
           <li>
             <i class="material-icons">check</i>
-            {{ $t("block.reassurance.label3") }}
+            {{ $t('block.reassurance.label3') }}
           </li>
         </ul>
         <b-button variant="link" :href="url" target="_blank" class="pl-0">
-          {{ $t("block.reassurance.learnMore") }}
+          {{ $t('block.reassurance.learnMore') }}
           <i class="material-icons">arrow_right_alt</i>
         </b-button>
       </div>
@@ -50,22 +50,22 @@
 </template>
 
 <script>
-export default {
-  props: {
-    url: {
-      type: String,
-      required: false,
-      default: "https://www.prestashop.com/prestashop-checkout"
+  export default {
+    props: {
+      url: {
+        type: String,
+        required: false,
+        default: 'https://www.prestashop.com/prestashop-checkout'
+      }
     }
-  }
-};
+  };
 </script>
 
 <style scoped>
-ul {
-  list-style-type: none;
-}
-li {
-  margin: 0 0 8px 0;
-}
+  ul {
+    list-style-type: none;
+  }
+  li {
+    margin: 0 0 8px 0;
+  }
 </style>

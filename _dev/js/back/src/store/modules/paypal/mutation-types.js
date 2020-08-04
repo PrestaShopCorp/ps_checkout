@@ -16,6 +16,6 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-export const UNLINK_ACCOUNT = "UNLINK_ACCOUNT";
-export const UPDATE_ONBOARDING_LINK = "UPDATE_ONBOARDING_LINK";
-export const UPDATE_PAYPAL_ACCOUNT_STATUS = "UPDATE_PAYPAL_ACCOUNT_STATUS";
+export const UNLINK_ACCOUNT = 'UNLINK_ACCOUNT';
+export const UPDATE_ONBOARDING_LINK = 'UPDATE_ONBOARDING_LINK';
+export const UPDATE_PAYPAL_ACCOUNT_STATUS = 'UPDATE_PAYPAL_ACCOUNT_STATUS';

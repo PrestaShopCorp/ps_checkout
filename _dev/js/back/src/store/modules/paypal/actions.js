@@ -16,14 +16,14 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-import * as types from "./mutation-types";
-import ajax from "@/requests/ajax.js";
+import * as types from './mutation-types';
+import ajax from '@/requests/ajax.js';
 
 export default {
   unlink({ commit, getters }) {
     return ajax({
       url: getters.adminController,
-      action: "LogOutPaypalAccount"
+      action: 'LogOutPaypalAccount'
     }).then(() => {
       commit(types.UNLINK_ACCOUNT);
       return Promise.resolve(true);
@@ -32,7 +32,7 @@ export default {
   getOnboardingLink({ commit, getters }) {
     return ajax({
       url: getters.adminController,
-      action: "GetOnboardingLink"
+      action: 'GetOnboardingLink'
     }).then(response => {
       if (response.status === false) {
         commit(types.UPDATE_ONBOARDING_LINK, false);
@@ -49,7 +49,7 @@ export default {
   refreshPaypalStatus({ commit, getters }) {
     return ajax({
       url: getters.adminController,
-      action: "RefreshPaypalAccountStatus"
+      action: 'RefreshPaypalAccountStatus'
     }).then(paypalModule => {
       commit(types.UPDATE_PAYPAL_ACCOUNT_STATUS, paypalModule);
       return Promise.resolve();

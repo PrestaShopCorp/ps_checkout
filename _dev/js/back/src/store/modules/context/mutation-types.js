@@ -16,7 +16,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-const UPDATE_ROUNDING_SETTINGS_STATUS = "UPDATE_ROUNDING_SETTINGS_STATUS";
+const UPDATE_ROUNDING_SETTINGS_STATUS = 'UPDATE_ROUNDING_SETTINGS_STATUS';
 
 export default {
   UPDATE_ROUNDING_SETTINGS_STATUS

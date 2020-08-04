@@ -20,16 +20,16 @@
   <b-card no-body>
     <b-card-body>
       <div class="m-auto max-width">
-        <h1>{{ $t("block.fraud-tool.title") }}</h1>
+        <h1>{{ $t('block.fraud-tool.title') }}</h1>
         <p>
-          {{ $t("block.fraud-tool.text") }}
+          {{ $t('block.fraud-tool.text') }}
         </p>
         <b-button
           variant="link"
           href="https://www.paypal.com/fraud-protection"
           target="_blank"
         >
-          {{ $t("block.fraud-tool.discoverFraudTool") }}
+          {{ $t('block.fraud-tool.discoverFraudTool') }}
           <i class="material-icons">arrow_right_alt</i>
         </b-button>
       </div>
@@ -38,13 +38,13 @@
 </template>
 
 <script>
-export default {
-  name: "FaudTool"
-};
+  export default {
+    name: 'FaudTool'
+  };
 </script>
 
 <style scoped>
-.max-width {
-  max-width: 500px !important;
-}
+  .max-width {
+    max-width: 500px !important;
+  }
 </style>

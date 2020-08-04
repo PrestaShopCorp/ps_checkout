@@ -20,24 +20,24 @@
   <div>
     <template v-if="prestashopAccountIsActive">
       <b-badge variant="success">
-        {{ $t("pages.accounts.approved") }}
+        {{ $t('pages.accounts.approved') }}
       </b-badge>
     </template>
     <template v-else>
       <b-badge variant="warning">
-        {{ $t("pages.accounts.approvalPending") }}
+        {{ $t('pages.accounts.approvalPending') }}
       </b-badge>
     </template>
   </div>
 </template>
 
 <script>
-export default {
-  name: "AccountStatusPrestaShop",
-  computed: {
-    prestashopAccountIsActive() {
-      return this.$store.state.firebase.onboardingCompleted;
+  export default {
+    name: 'AccountStatusPrestaShop',
+    computed: {
+      prestashopAccountIsActive() {
+        return this.$store.state.firebase.onboardingCompleted;
+      }
     }
-  }
-};
+  };
 </script>

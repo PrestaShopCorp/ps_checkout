@@ -21,24 +21,30 @@
     <b-container>
       <b-card class="mt-10">
         <template v-slot:header>
-          <i class="material-icons">feedback</i> Information
+          <i class="material-icons">feedback</i>
+          Information
         </template>
         <b-card-body>
           <ul>
             <li>
-              PrestaShop version: <b>{{ psVersion }}</b>
+              PrestaShop version:
+              <b>{{ psVersion }}</b>
             </li>
             <li>
-              PHP version: <b>{{ phpVersion }}</b>
+              PHP version:
+              <b>{{ phpVersion }}</b>
             </li>
             <li>
-              Module version: <b>{{ moduleVersion }}</b>
+              Module version:
+              <b>{{ moduleVersion }}</b>
             </li>
             <li>
-              Shop ID: <b>{{ shopId }}</b>
+              Shop ID:
+              <b>{{ shopId }}</b>
             </li>
             <li>
-              Rounding config: <b>{{ roundingSettingsIsCorrect }}</b>
+              Rounding config:
+              <b>{{ roundingSettingsIsCorrect }}</b>
             </li>
           </ul>
         </b-card-body>
@@ -48,7 +54,8 @@
     <b-container class="mt-4">
       <b-card class="mt-10">
         <template v-slot:header>
-          <i class="material-icons">settings</i> Logger settings
+          <i class="material-icons">settings</i>
+          Logger settings
         </template>
         <b-card-body>
           <b-form>
@@ -120,7 +127,8 @@
     <b-container class="mt-4" v-if="logFileNameSelected">
       <b-card class="mt-10">
         <template v-slot:header>
-          <i class="material-icons">receipt</i> Log viewer
+          <i class="material-icons">receipt</i>
+          Log viewer
         </template>
         <b-card-body>
           <b-form>
@@ -181,126 +189,126 @@
 </template>
 
 <script>
-import LogViewer from "@femessage/log-viewer";
-import ajax from "@/requests/ajax.js";
+  import LogViewer from '@femessage/log-viewer';
+  import ajax from '@/requests/ajax.js';
 
-export default {
-  components: {
-    LogViewer
-  },
-  name: "Debug",
-  computed: {
-    moduleVersion() {
-      return this.$store.state.context.moduleVersion;
+  export default {
+    components: {
+      LogViewer
     },
-    phpVersion() {
-      return this.$store.state.context.phpVersion;
-    },
-    psVersion() {
-      return this.$store.state.context.psVersion;
-    },
-    shopId() {
-      return this.$store.state.context.shopId;
-    },
-    roundingSettingsIsCorrect() {
-      return this.$store.getters.roundingSettingsIsCorrect;
-    },
-    loggerHttpFormats() {
-      return this.$store.state.configuration.logger.httpFormats;
-    },
-    loggerLevels() {
-      return this.$store.state.configuration.logger.levels;
-    },
-    loggerLevel: {
-      get() {
-        return this.$store.state.configuration.logger.level;
+    name: 'Debug',
+    computed: {
+      moduleVersion() {
+        return this.$store.state.context.moduleVersion;
       },
-      set(payload) {
-        this.$store.dispatch("changeLoggerLevel", payload);
+      phpVersion() {
+        return this.$store.state.context.phpVersion;
+      },
+      psVersion() {
+        return this.$store.state.context.psVersion;
+      },
+      shopId() {
+        return this.$store.state.context.shopId;
+      },
+      roundingSettingsIsCorrect() {
+        return this.$store.getters.roundingSettingsIsCorrect;
+      },
+      loggerHttpFormats() {
+        return this.$store.state.configuration.logger.httpFormats;
+      },
+      loggerLevels() {
+        return this.$store.state.configuration.logger.levels;
+      },
+      loggerLevel: {
+        get() {
+          return this.$store.state.configuration.logger.level;
+        },
+        set(payload) {
+          this.$store.dispatch('changeLoggerLevel', payload);
+        }
+      },
+      loggerMaxFiles: {
+        get() {
+          return this.$store.state.configuration.logger.maxFiles;
+        },
+        set(payload) {
+          this.$store.dispatch('changeLoggerMaxFiles', payload);
+        }
+      },
+      loggerHttp: {
+        get() {
+          return this.$store.state.configuration.logger.http;
+        },
+        set(payload) {
+          this.$store.dispatch('changeLoggerHttp', payload);
+        }
+      },
+      loggerHttpFormat: {
+        get() {
+          return this.$store.state.configuration.logger.httpFormat;
+        },
+        set(payload) {
+          this.$store.dispatch('changeLoggerHttpFormat', payload);
+        }
       }
     },
-    loggerMaxFiles: {
-      get() {
-        return this.$store.state.configuration.logger.maxFiles;
-      },
-      set(payload) {
-        this.$store.dispatch("changeLoggerMaxFiles", payload);
-      }
+    mounted() {
+      this.getLogFileNames();
     },
-    loggerHttp: {
-      get() {
-        return this.$store.state.configuration.logger.http;
-      },
-      set(payload) {
-        this.$store.dispatch("changeLoggerHttp", payload);
-      }
+    data() {
+      return {
+        logs: '',
+        logFileNames: {},
+        logFileNameSelected: '',
+        logFileReaderOffset: 0,
+        logFileReaderLimit: 500
+      };
     },
-    loggerHttpFormat: {
-      get() {
-        return this.$store.state.configuration.logger.httpFormat;
-      },
-      set(payload) {
-        this.$store.dispatch("changeLoggerHttpFormat", payload);
-      }
-    }
-  },
-  mounted() {
-    this.getLogFileNames();
-  },
-  data() {
-    return {
-      logs: "",
-      logFileNames: {},
-      logFileNameSelected: "",
-      logFileReaderOffset: 0,
-      logFileReaderLimit: 500
-    };
-  },
-  methods: {
-    getLogFileNames() {
-      ajax({
-        url: this.$store.getters.adminController,
-        action: "GetLogFiles"
-      }).then(response => {
-        if (typeof response === "object") {
-          this.logFileNames = response;
-          if (Object.keys(response)[0] !== undefined) {
-            this.logFileNameSelected = Object.keys(response)[0];
-            this.getLogs();
+    methods: {
+      getLogFileNames() {
+        ajax({
+          url: this.$store.getters.adminController,
+          action: 'GetLogFiles'
+        }).then(response => {
+          if (typeof response === 'object') {
+            this.logFileNames = response;
+            if (Object.keys(response)[0] !== undefined) {
+              this.logFileNameSelected = Object.keys(response)[0];
+              this.getLogs();
+            }
           }
-        }
-      });
-    },
-    getLogs() {
-      let refreshTimer = null;
-      ajax({
-        url: this.$store.getters.adminController,
-        action: "GetLogs",
-        data: {
-          file: this.logFileNameSelected,
-          offset: this.logFileReaderOffset,
-          limit: this.logFileReaderLimit
-        }
-      }).then(response => {
-        if (typeof response === "object" && response.status === true) {
-          this.logFileReaderOffset = response.currentOffset;
-          this.logFileReaderLimit = response.limit;
-          this.logFileNameSelected = response.file;
-          response.lines.forEach(line => {
-            this.logs += line;
-          });
-          refreshTimer = setTimeout(this.getLogs, 10000);
-        }
-      });
-      clearTimeout(refreshTimer);
-    },
-    onChangeLogFileName(logFileNameSelected) {
-      this.logFileNameSelected = logFileNameSelected;
-      this.getLogs();
-    },
-    onChangeLogFileReaderLimit(logFileReaderLimit) {
-      this.logFileReaderLimit = logFileReaderLimit;
+        });
+      },
+      getLogs() {
+        let refreshTimer = null;
+        ajax({
+          url: this.$store.getters.adminController,
+          action: 'GetLogs',
+          data: {
+            file: this.logFileNameSelected,
+            offset: this.logFileReaderOffset,
+            limit: this.logFileReaderLimit
+          }
+        }).then(response => {
+          if (typeof response === 'object' && response.status === true) {
+            this.logFileReaderOffset = response.currentOffset;
+            this.logFileReaderLimit = response.limit;
+            this.logFileNameSelected = response.file;
+            response.lines.forEach(line => {
+              this.logs += line;
+            });
+            refreshTimer = setTimeout(this.getLogs, 10000);
+          }
+        });
+        clearTimeout(refreshTimer);
+      },
+      onChangeLogFileName(logFileNameSelected) {
+        this.logFileNameSelected = logFileNameSelected;
+        this.getLogs();
+      },
+      onChangeLogFileReaderLimit(logFileReaderLimit) {
+        this.logFileReaderLimit = logFileReaderLimit;
+      }
     }
-  }
-};
+  };
 </script>

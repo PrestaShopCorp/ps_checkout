@@ -20,45 +20,45 @@
   <div>
     <template v-if="!accountIslinked">
       <b-badge variant="info">
-        {{ $t("pages.accounts.accountLinkingInProgress") }}
+        {{ $t('pages.accounts.accountLinkingInProgress') }}
       </b-badge>
     </template>
     <template v-else-if="emailValidationNeeded">
       <b-badge variant="warning">
-        {{ $t("pages.accounts.emailValidationNeeded") }}
+        {{ $t('pages.accounts.emailValidationNeeded') }}
       </b-badge>
     </template>
     <template v-else-if="approvalPending">
       <b-badge variant="warning">
-        {{ $t("pages.accounts.approvalPending") }}
+        {{ $t('pages.accounts.approvalPending') }}
       </b-badge>
     </template>
     <template v-else>
       <b-badge variant="success">
-        {{ $t("pages.accounts.approved") }}
+        {{ $t('pages.accounts.approved') }}
       </b-badge>
     </template>
   </div>
 </template>
 
 <script>
-export default {
-  name: "AccountStatusPayPal",
-  computed: {
-    accountIslinked() {
-      return this.$store.state.paypal.accountIslinked;
-    },
-    emailValidationNeeded() {
-      return !this.$store.state.paypal.emailIsValid;
-    },
-    approvalPending() {
-      return (
-        !this.$store.state.paypal.paypalIsActive ||
-        this.$store.state.paypal.cardIsActive === "LIMITED" ||
-        this.$store.state.paypal.cardIsActive === "NEED_MORE_DATA" ||
-        this.$store.state.paypal.cardIsActive === "IN_REVIEW"
-      );
+  export default {
+    name: 'AccountStatusPayPal',
+    computed: {
+      accountIslinked() {
+        return this.$store.state.paypal.accountIslinked;
+      },
+      emailValidationNeeded() {
+        return !this.$store.state.paypal.emailIsValid;
+      },
+      approvalPending() {
+        return (
+          !this.$store.state.paypal.paypalIsActive ||
+          this.$store.state.paypal.cardIsActive === 'LIMITED' ||
+          this.$store.state.paypal.cardIsActive === 'NEED_MORE_DATA' ||
+          this.$store.state.paypal.cardIsActive === 'IN_REVIEW'
+        );
+      }
     }
-  }
-};
+  };
 </script>

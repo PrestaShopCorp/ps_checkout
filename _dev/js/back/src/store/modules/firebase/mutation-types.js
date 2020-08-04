@@ -16,5 +16,5 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-export const UPDATE_ACCOUNT = "UPDATE_ACCOUNT";
-export const LOGOUT_ACCOUNT = "LOGOUT_ACCOUNT";
+export const UPDATE_ACCOUNT = 'UPDATE_ACCOUNT';
+export const LOGOUT_ACCOUNT = 'LOGOUT_ACCOUNT';

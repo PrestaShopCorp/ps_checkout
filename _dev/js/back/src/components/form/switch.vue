@@ -46,48 +46,48 @@
 </template>
 
 <script>
-export default {
-  name: "PSSwitch",
-  props: {
-    value: {
-      type: Boolean,
-      required: false,
-      default: false
+  export default {
+    name: 'PSSwitch',
+    props: {
+      value: {
+        type: Boolean,
+        required: false,
+        default: false
+      },
+      id: {
+        type: String,
+        required: true
+      },
+      name: {
+        type: String,
+        required: false,
+        default: ''
+      },
+      textPosition: {
+        type: String,
+        required: false,
+        default: 'right'
+      },
+      size: {
+        type: String,
+        required: false,
+        default: 'md'
+      }
     },
-    id: {
-      type: String,
-      required: true
+    data() {
+      return {
+        isActive: this.value
+      };
     },
-    name: {
-      type: String,
-      required: false,
-      default: ""
+    watch: {
+      isActive(val) {
+        this.$emit('input', val);
+      }
     },
-    textPosition: {
-      type: String,
-      required: false,
-      default: "right"
-    },
-    size: {
-      type: String,
-      required: false,
-      default: "md"
+    methods: {
+      toggleSwitch(value) {
+        this.isActive = value;
+      }
     }
-  },
-  data() {
-    return {
-      isActive: this.value
-    };
-  },
-  watch: {
-    isActive(val) {
-      this.$emit("input", val);
-    }
-  },
-  methods: {
-    toggleSwitch(value) {
-      this.isActive = value;
-    }
-  }
-};
+  };
 </script>

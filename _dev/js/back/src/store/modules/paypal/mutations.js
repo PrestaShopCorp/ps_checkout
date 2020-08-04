@@ -16,12 +16,12 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-import * as types from "./mutation-types";
+import * as types from './mutation-types';
 
 export default {
   [types.UNLINK_ACCOUNT](state) {
-    state.idMerchant = "";
-    state.emailMerchant = "";
+    state.idMerchant = '';
+    state.emailMerchant = '';
     state.onboardingCompleted = false;
   },
   [types.UPDATE_ONBOARDING_LINK](state, onboardingLink) {

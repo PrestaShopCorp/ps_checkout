@@ -23,17 +23,17 @@
 </template>
 
 <script>
-export default {
-  name: "Menu"
-};
+  export default {
+    name: 'Menu'
+  };
 </script>
 
 <style scoped>
-.nav {
-  width: 100%;
-  position: fixed;
-  margin-top: -22px;
-  z-index: 499;
-  background-color: #fff;
-}
+  .nav {
+    width: 100%;
+    position: fixed;
+    margin-top: -22px;
+    z-index: 499;
+    background-color: #fff;
+  }
 </style>

@@ -16,9 +16,9 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-export const EMAIL_NOT_FOUND = "EMAIL_NOT_FOUND";
-export const INVALID_EMAIL = "INVALID_EMAIL";
-export const INVALID_PASSWORD = "INVALID_PASSWORD";
-export const EMAIL_EXISTS = "EMAIL_EXISTS";
-export const MISSING_PASSWORD = "MISSING_PASSWORD";
-export const MISSING_EMAIL = "MISSING_EMAIL";
+export const EMAIL_NOT_FOUND = 'EMAIL_NOT_FOUND';
+export const INVALID_EMAIL = 'INVALID_EMAIL';
+export const INVALID_PASSWORD = 'INVALID_PASSWORD';
+export const EMAIL_EXISTS = 'EMAIL_EXISTS';
+export const MISSING_PASSWORD = 'MISSING_PASSWORD';
+export const MISSING_EMAIL = 'MISSING_EMAIL';

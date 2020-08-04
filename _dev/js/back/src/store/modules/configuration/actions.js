@@ -16,14 +16,14 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-import * as types from "./mutation-types";
-import ajax from "@/requests/ajax.js";
+import * as types from './mutation-types';
+import ajax from '@/requests/ajax.js';
 
 export default {
   updatePaymentMethods({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: "UpdatePaymentMethodsOrder",
+      action: 'UpdatePaymentMethodsOrder',
       data: {
         paymentMethods: JSON.stringify(payload.paymentMethods)
       }
@@ -36,7 +36,7 @@ export default {
   updatePaymentMode({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: "UpdatePaymentMode",
+      action: 'UpdatePaymentMode',
       data: {
         paymentMode: payload
       }
@@ -49,7 +49,7 @@ export default {
   updateCaptureMode({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: "UpdateCaptureMode",
+      action: 'UpdateCaptureMode',
       data: {
         captureMode: payload
       }
@@ -62,7 +62,7 @@ export default {
   toggleHostedFields({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: "ToggleCardPaymentAvailability",
+      action: 'ToggleCardPaymentAvailability',
       data: {
         status: payload ? 1 : 0
       }
@@ -75,7 +75,7 @@ export default {
   toggleECOrderPage({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: "ToggleECOrderPage",
+      action: 'ToggleECOrderPage',
       data: {
         status: payload ? 1 : 0
       }
@@ -88,7 +88,7 @@ export default {
   toggleECCheckoutPage({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: "ToggleECCheckoutPage",
+      action: 'ToggleECCheckoutPage',
       data: {
         status: payload ? 1 : 0
       }
@@ -101,7 +101,7 @@ export default {
   toggleECProductPage({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: "ToggleECProductPage",
+      action: 'ToggleECProductPage',
       data: {
         status: payload ? 1 : 0
       }
@@ -114,7 +114,7 @@ export default {
   toggleDebugLogs({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: "ToggleDebugLogs",
+      action: 'ToggleDebugLogs',
       data: {
         status: payload ? 1 : 0
       }

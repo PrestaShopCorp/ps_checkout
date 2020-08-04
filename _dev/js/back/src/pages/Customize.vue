@@ -33,21 +33,21 @@
 </template>
 
 <script>
-import ActivePayment from "@/components/panel/active-payment";
-import ExpressCheckout from "@/components/panel/express-checkout";
-import FeatureIncoming from "@/components/block/feature-incoming";
+  import ActivePayment from '@/components/panel/active-payment';
+  import ExpressCheckout from '@/components/panel/express-checkout';
+  import FeatureIncoming from '@/components/block/feature-incoming';
 
-export default {
-  name: "Customize",
-  components: {
-    ActivePayment,
-    ExpressCheckout,
-    FeatureIncoming
-  },
-  computed: {
-    shopIs17() {
-      return this.$store.getters.shopIs17;
+  export default {
+    name: 'Customize',
+    components: {
+      ActivePayment,
+      ExpressCheckout,
+      FeatureIncoming
+    },
+    computed: {
+      shopIs17() {
+        return this.$store.getters.shopIs17;
+      }
     }
-  }
-};
+  };
 </script>

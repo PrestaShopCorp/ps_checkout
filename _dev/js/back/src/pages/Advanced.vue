@@ -29,14 +29,14 @@
 </template>
 
 <script>
-import FraudTool from "@/components/block/fraud-tool";
-import FeatureIncoming from "@/components/block/feature-incoming";
+  import FraudTool from '@/components/block/fraud-tool';
+  import FeatureIncoming from '@/components/block/feature-incoming';
 
-export default {
-  name: "Advanced",
-  components: {
-    FraudTool,
-    FeatureIncoming
-  }
-};
+  export default {
+    name: 'Advanced',
+    components: {
+      FraudTool,
+      FeatureIncoming
+    }
+  };
 </script>

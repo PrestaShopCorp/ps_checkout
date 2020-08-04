@@ -24,7 +24,7 @@
         @click.prevent="getOnboardingLink()"
         class="btn btn-primary-reverse btn-outline-primary light-button"
       >
-        {{ $t("panel.account-list.linkToPaypal") }}
+        {{ $t('panel.account-list.linkToPaypal') }}
       </button>
       <a
         class="btn btn-primary-reverse btn-outline-primary light-button d-none"
@@ -33,10 +33,10 @@
         target="PPFrame"
         ref="paypalButton"
       >
-        {{ $t("panel.account-list.linkToPaypal") }}
+        {{ $t('panel.account-list.linkToPaypal') }}
       </a>
       <a v-show="!paypalIsLoaded" href="#">
-        <b>{{ $t("panel.account-list.loading") }} ...</b>
+        <b>{{ $t('panel.account-list.loading') }} ...</b>
       </a>
     </template>
     <template v-else>
@@ -44,93 +44,93 @@
         class="btn btn-primary-reverse btn-outline-primary light-button"
         disabled
       >
-        {{ $t("panel.account-list.linkToPsCheckoutFirst") }}
+        {{ $t('panel.account-list.linkToPsCheckoutFirst') }}
       </button>
     </template>
   </div>
 </template>
 
 <script>
-export default {
-  name: "Onboarding",
-  data() {
-    return {
-      paypalIsLoaded: false
-    };
-  },
-  computed: {
-    paypalOnboardingLink() {
-      return this.$store.state.paypal.paypalOnboardingLink;
+  export default {
+    name: 'Onboarding',
+    data() {
+      return {
+        paypalIsLoaded: false
+      };
     },
-    firebaseStatusAccount() {
-      return this.$store.state.firebase.onboardingCompleted;
-    }
-  },
-  methods: {
-    getOnboardingLink() {
-      if (
-        this.paypalOnboardingLink !== false &&
-        this.paypalOnboardingLink.length > 0
-      ) {
-        this.$refs.paypalButton.click();
-        return;
+    computed: {
+      paypalOnboardingLink() {
+        return this.$store.state.paypal.paypalOnboardingLink;
+      },
+      firebaseStatusAccount() {
+        return this.$store.state.firebase.onboardingCompleted;
       }
-
-      this.paypalIsLoaded = false;
-
-      this.$store
-        .dispatch("getOnboardingLink")
-        .then(() => {
+    },
+    methods: {
+      getOnboardingLink() {
+        if (
+          this.paypalOnboardingLink !== false &&
+          this.paypalOnboardingLink.length > 0
+        ) {
           this.$refs.paypalButton.click();
-        })
-        .catch(response => {
-          // eslint-disable-next-line no-console
-          console.log(response);
-        });
+          return;
+        }
 
-      this.paypalIsLoaded = true;
-    }
-  },
-  destroyed() {
-    const paypalScript = document.getElementById("paypal-js");
-    const signupScript = document.getElementById("signup-js");
-    const bizScript = document.getElementById("biz-js");
+        this.paypalIsLoaded = false;
 
-    if (paypalScript !== null) {
-      paypalScript.parentNode.removeChild(paypalScript);
-    }
+        this.$store
+          .dispatch('getOnboardingLink')
+          .then(() => {
+            this.$refs.paypalButton.click();
+          })
+          .catch(response => {
+            // eslint-disable-next-line no-console
+            console.log(response);
+          });
 
-    if (signupScript !== null) {
-      signupScript.parentNode.removeChild(signupScript);
-    }
-
-    if (bizScript !== null) {
-      bizScript.parentNode.removeChild(bizScript);
-    }
-  },
-  created() {
-    const paypalScript = document.createElement("script");
-    paypalScript.setAttribute(
-      "src",
-      "https://www.paypal.com/webapps/merchantboarding/js/lib/lightbox/partner.js"
-    );
-    paypalScript.setAttribute("id", "paypal-js");
-    paypalScript.setAttribute("async", "true");
-    document.head.appendChild(paypalScript);
-  },
-  mounted() {
-    const interval = setInterval(() => {
-      if (
-        window.PAYPAL !== undefined &&
-        Object.keys(window.PAYPAL.apps).length > 0 &&
-        Object.keys(window.PAYPAL.apps.Signup).length > 0 &&
-        Object.keys(window.PAYPAL.apps.Signup.MiniBrowser).length > 1
-      ) {
-        window.PAYPAL.apps.Signup.MiniBrowser.init();
         this.paypalIsLoaded = true;
-        clearInterval(interval);
       }
-    }, 200);
-  }
-};
+    },
+    destroyed() {
+      const paypalScript = document.getElementById('paypal-js');
+      const signupScript = document.getElementById('signup-js');
+      const bizScript = document.getElementById('biz-js');
+
+      if (paypalScript !== null) {
+        paypalScript.parentNode.removeChild(paypalScript);
+      }
+
+      if (signupScript !== null) {
+        signupScript.parentNode.removeChild(signupScript);
+      }
+
+      if (bizScript !== null) {
+        bizScript.parentNode.removeChild(bizScript);
+      }
+    },
+    created() {
+      const paypalScript = document.createElement('script');
+      paypalScript.setAttribute(
+        'src',
+        'https://www.paypal.com/webapps/merchantboarding/js/lib/lightbox/partner.js'
+      );
+      paypalScript.setAttribute('id', 'paypal-js');
+      paypalScript.setAttribute('async', 'true');
+      document.head.appendChild(paypalScript);
+    },
+    mounted() {
+      const interval = setInterval(() => {
+        if (
+          window.PAYPAL !== undefined &&
+          Object.keys(window.PAYPAL.apps).length > 0 &&
+          Object.keys(window.PAYPAL.apps.Signup).length > 0 &&
+          Object.keys(window.PAYPAL.apps.Signup.MiniBrowser).length > 1
+        ) {
+          window.PAYPAL.apps.Signup.MiniBrowser.init();
+          this.paypalIsLoaded = true;
+          clearInterval(interval);
+        }
+      }, 200);
+    }
+  };
 </script>

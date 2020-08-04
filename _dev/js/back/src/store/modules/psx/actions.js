@@ -16,14 +16,14 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-import * as types from "./mutation-types";
-import ajax from "@/requests/ajax.js";
+import * as types from './mutation-types';
+import ajax from '@/requests/ajax.js';
 
 export default {
   psxSendData({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: "PsxSendData",
+      action: 'PsxSendData',
       data: {
         payload: JSON.stringify(payload)
       }

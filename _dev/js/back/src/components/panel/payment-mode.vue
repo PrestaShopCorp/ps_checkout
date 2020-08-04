@@ -20,7 +20,7 @@
   <b-card no-body>
     <template v-slot:header>
       <i class="material-icons">toggle_on</i>
-      {{ $t("panel.payment-mode.title") }}
+      {{ $t('panel.payment-mode.title') }}
     </template>
     <b-card-body>
       <b-form>
@@ -41,7 +41,7 @@
         </b-form-group>
 
         <b-alert class="d-inline-block w-100" variant="info" show>
-          <p>{{ $t("panel.payment-mode.infoAlertText") }}.</p>
+          <p>{{ $t('panel.payment-mode.infoAlertText') }}.</p>
         </b-alert>
 
         <b-form-group
@@ -82,10 +82,10 @@
             class="px-0"
           >
             <template v-if="paymentMode === 'LIVE'">
-              {{ $t("panel.payment-mode.useSandboxMode") }}
+              {{ $t('panel.payment-mode.useSandboxMode') }}
             </template>
             <template v-else>
-              {{ $t("panel.payment-mode.useProductionMode") }}
+              {{ $t('panel.payment-mode.useProductionMode') }}
             </template>
           </b-button>
         </b-form-group>
@@ -95,42 +95,42 @@
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      intentOptions: [
-        { text: this.$t("panel.payment-mode.capture"), value: "CAPTURE" },
-        { text: this.$t("panel.payment-mode.authorize"), value: "AUTHORIZE" }
-      ]
-    };
-  },
-  methods: {
-    updatePaymentMode() {
-      let mode = "LIVE";
-      if (this.paymentMode === "LIVE") {
-        mode = "SANDBOX";
-      }
-
-      this.$store.dispatch("updatePaymentMode", mode).then(() => {
-        this.$store.dispatch("getOnboardingLink");
-      });
-    }
-  },
-  computed: {
-    captureMode: {
-      get() {
-        return this.$store.state.configuration.captureMode;
-      },
-      set(value) {
-        if (this.captureMode === value) {
-          return;
+  export default {
+    data() {
+      return {
+        intentOptions: [
+          { text: this.$t('panel.payment-mode.capture'), value: 'CAPTURE' },
+          { text: this.$t('panel.payment-mode.authorize'), value: 'AUTHORIZE' }
+        ]
+      };
+    },
+    methods: {
+      updatePaymentMode() {
+        let mode = 'LIVE';
+        if (this.paymentMode === 'LIVE') {
+          mode = 'SANDBOX';
         }
-        this.$store.dispatch("updateCaptureMode", value);
+
+        this.$store.dispatch('updatePaymentMode', mode).then(() => {
+          this.$store.dispatch('getOnboardingLink');
+        });
       }
     },
-    paymentMode() {
-      return this.$store.state.configuration.paymentMode;
+    computed: {
+      captureMode: {
+        get() {
+          return this.$store.state.configuration.captureMode;
+        },
+        set(value) {
+          if (this.captureMode === value) {
+            return;
+          }
+          this.$store.dispatch('updateCaptureMode', value);
+        }
+      },
+      paymentMode() {
+        return this.$store.state.configuration.paymentMode;
+      }
     }
-  }
-};
+  };
 </script>

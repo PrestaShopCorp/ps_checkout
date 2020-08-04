@@ -20,30 +20,30 @@
   <div>
     <template v-if="cardIsAvailable">
       <b-badge variant="success">
-        {{ $t("panel.active-payment.enabled") }}
+        {{ $t('panel.active-payment.enabled') }}
       </b-badge>
     </template>
     <template v-else>
       <b-badge variant="danger">
-        {{ $t("panel.active-payment.disabled") }}
+        {{ $t('panel.active-payment.disabled') }}
       </b-badge>
     </template>
   </div>
 </template>
 
 <script>
-export default {
-  name: "CardPaymentActivation",
-  computed: {
-    cardIsAvailable() {
-      return (
-        this.$store.state.paypal.emailIsValid &&
-        this.$store.state.paypal.paypalIsActive &&
-        this.$store.state.configuration.cardIsEnabled &&
-        (this.$store.state.paypal.cardIsActive === "SUBSCRIBED" ||
-          this.$store.state.paypal.cardIsActive === "LIMITED")
-      );
+  export default {
+    name: 'CardPaymentActivation',
+    computed: {
+      cardIsAvailable() {
+        return (
+          this.$store.state.paypal.emailIsValid &&
+          this.$store.state.paypal.paypalIsActive &&
+          this.$store.state.configuration.cardIsEnabled &&
+          (this.$store.state.paypal.cardIsActive === 'SUBSCRIBED' ||
+            this.$store.state.paypal.cardIsActive === 'LIMITED')
+        );
+      }
     }
-  }
-};
+  };
 </script>

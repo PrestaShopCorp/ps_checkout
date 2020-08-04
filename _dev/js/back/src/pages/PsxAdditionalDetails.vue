@@ -25,12 +25,12 @@
 </template>
 
 <script>
-import PsxFrom from "@/components/panel/psx-form";
+  import PsxFrom from '@/components/panel/psx-form';
 
-export default {
-  name: "PsxAdditionalDetails",
-  components: {
-    PsxFrom
-  }
-};
+  export default {
+    name: 'PsxAdditionalDetails',
+    components: {
+      PsxFrom
+    }
+  };
 </script>

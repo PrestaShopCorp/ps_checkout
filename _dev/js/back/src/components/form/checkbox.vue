@@ -33,22 +33,22 @@
 </template>
 
 <script>
-export default {
-  props: {
-    id: {
-      type: String,
-      required: true
-    },
-    isIndeterminate: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
-    value: {
-      type: Boolean,
-      required: false,
-      default: false
+  export default {
+    props: {
+      id: {
+        type: String,
+        required: true
+      },
+      isIndeterminate: {
+        type: Boolean,
+        required: false,
+        default: false
+      },
+      value: {
+        type: Boolean,
+        required: false,
+        default: false
+      }
     }
-  }
-};
+  };
 </script>

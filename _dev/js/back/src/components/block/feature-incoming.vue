@@ -22,18 +22,18 @@
       <img src="@/assets/images/brush.png" alt="" />
     </div>
     <div class="text-muted mt-4">
-      {{ $t("block.feature-incoming.text") }}
+      {{ $t('block.feature-incoming.text') }}
     </div>
   </div>
 </template>
 
 <style scoped>
-.feature-block {
-  border: 2px dashed #dddddd;
-  border-radius: 3px;
-  text-align: center;
-}
-.text-muted {
-  font-size: 16px;
-}
+  .feature-block {
+    border: 2px dashed #dddddd;
+    border-radius: 3px;
+    text-align: center;
+  }
+  .text-muted {
+    font-size: 16px;
+  }
 </style>

@@ -36,24 +36,24 @@
 </template>
 
 <script>
-import AccountList from "@/components/panel/account-list";
-import PaymentAcceptance from "@/components/panel/payment-acceptance";
-import Reassurance from "@/components/block/reassurance";
+  import AccountList from '@/components/panel/account-list';
+  import PaymentAcceptance from '@/components/panel/payment-acceptance';
+  import Reassurance from '@/components/block/reassurance';
 
-export default {
-  name: "Accounts",
-  components: {
-    AccountList,
-    PaymentAcceptance,
-    Reassurance
-  },
-  computed: {
-    firebaseStatusAccount() {
-      return this.$store.state.firebase.onboardingCompleted;
+  export default {
+    name: 'Accounts',
+    components: {
+      AccountList,
+      PaymentAcceptance,
+      Reassurance
     },
-    paypalStatusAccount() {
-      return this.$store.state.paypal.onboardingCompleted;
+    computed: {
+      firebaseStatusAccount() {
+        return this.$store.state.firebase.onboardingCompleted;
+      },
+      paypalStatusAccount() {
+        return this.$store.state.paypal.onboardingCompleted;
+      }
     }
-  }
-};
+  };
 </script>

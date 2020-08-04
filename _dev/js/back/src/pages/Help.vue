@@ -25,12 +25,12 @@
 </template>
 
 <script>
-import HelpPanel from "@/components/panel/help";
+  import HelpPanel from '@/components/panel/help';
 
-export default {
-  name: "Help",
-  components: {
-    HelpPanel
-  }
-};
+  export default {
+    name: 'Help',
+    components: {
+      HelpPanel
+    }
+  };
 </script>

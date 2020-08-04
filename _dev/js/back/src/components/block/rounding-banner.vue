@@ -23,9 +23,9 @@
       variant="warning"
       show
     >
-      <h2>{{ $t("block.rounding-banner.title") }}</h2>
+      <h2>{{ $t('block.rounding-banner.title') }}</h2>
       <p class="mb-3">
-        {{ $t("block.rounding-banner.content") }}
+        {{ $t('block.rounding-banner.content') }}
       </p>
       <p>
         <b-button
@@ -33,52 +33,52 @@
           variant="outline-secondary"
           @click="updateRoundingSettings()"
         >
-          {{ $t("block.rounding-banner.button") }}
+          {{ $t('block.rounding-banner.button') }}
         </b-button>
       </p>
     </b-alert>
     <b-alert v-if="confirmationAlert" variant="success" show>
-      <h2>{{ $t("block.rounding-banner.confirmationTitle") }}</h2>
+      <h2>{{ $t('block.rounding-banner.confirmationTitle') }}</h2>
       <p class="mb-3">
-        {{ $t("block.rounding-banner.confirmationLabel") }}
+        {{ $t('block.rounding-banner.confirmationLabel') }}
       </p>
     </b-alert>
   </div>
 </template>
 
 <script>
-export default {
-  name: "RoundingBanner",
-  data() {
-    return {
-      confirmationAlert: false
-    };
-  },
-  methods: {
-    updateRoundingSettings() {
-      this.$store.dispatch("updateRoundingSettings").then(() => {
-        this.confirmationAlert = true;
-      });
-    }
-  },
-  computed: {
-    isReady() {
-      return this.$store.state.context.isReady;
+  export default {
+    name: 'RoundingBanner',
+    data() {
+      return {
+        confirmationAlert: false
+      };
     },
-    roundingSettingsIsCorrect() {
-      return this.$store.getters.roundingSettingsIsCorrect;
-    }
-  },
-  watch: {
-    confirmationAlert(value) {
-      if (value === false) {
-        return;
+    methods: {
+      updateRoundingSettings() {
+        this.$store.dispatch('updateRoundingSettings').then(() => {
+          this.confirmationAlert = true;
+        });
       }
+    },
+    computed: {
+      isReady() {
+        return this.$store.state.context.isReady;
+      },
+      roundingSettingsIsCorrect() {
+        return this.$store.getters.roundingSettingsIsCorrect;
+      }
+    },
+    watch: {
+      confirmationAlert(value) {
+        if (value === false) {
+          return;
+        }
 
-      setTimeout(() => {
-        this.confirmationAlert = false;
-      }, 6000);
+        setTimeout(() => {
+          this.confirmationAlert = false;
+        }, 6000);
+      }
     }
-  }
-};
+  };
 </script>

@@ -20,14 +20,14 @@
   <b-card no-body>
     <template v-slot:header>
       <i class="material-icons">toggle_on</i>
-      {{ $t("panel.active-payment.activePaymentMethods") }}
+      {{ $t('panel.active-payment.activePaymentMethods') }}
     </template>
 
     <b-card-body>
       <b-col sm="10" md="10" lg="10" class="m-auto">
-        <b-card-title>{{
-          $t("panel.active-payment.changeOrder")
-        }}</b-card-title>
+        <b-card-title>
+          {{ $t('panel.active-payment.changeOrder') }}
+        </b-card-title>
 
         <div class="m-auto payment-method-container pb-3">
           <draggable
@@ -53,9 +53,9 @@
                     {{ index + 1 }}
                   </div>
                   <div class="icon">
-                    <i class="material-icons handle ml-2 mr-2"
-                      >drag_indicator</i
-                    >
+                    <i class="material-icons handle ml-2 mr-2">
+                      drag_indicator
+                    </i>
                   </div>
                   <div
                     v-if="element.name === 'card'"
@@ -74,16 +74,16 @@
                       <div class="flex-grow-1">
                         <label v-if="element.name === 'card'" class="mb-0">
                           <i class="material-icons mr-3">credit_card</i>
-                          {{ $t("panel.active-payment.creditCard") }}</label
-                        >
-                        <label v-else class="mb-0"
-                          ><img
+                          {{ $t('panel.active-payment.creditCard') }}
+                        </label>
+                        <label v-else class="mb-0">
+                          <img
                             class="mr-3"
                             src="@/assets/images/paypal-logo-thumbnail.png"
                             alt=""
                           />
-                          {{ $t("panel.active-payment.paypal") }}</label
-                        >
+                          {{ $t('panel.active-payment.paypal') }}
+                        </label>
                       </div>
                       <div class="status d-flex" v-if="element.name === 'card'">
                         <CardStatus
@@ -97,10 +97,10 @@
                           v-model="cardIsEnabled"
                         >
                           <template v-if="cardIsEnabled">
-                            {{ $t("panel.active-payment.enabled") }}
+                            {{ $t('panel.active-payment.enabled') }}
                           </template>
                           <template v-else>
-                            {{ $t("panel.active-payment.disabled") }}
+                            {{ $t('panel.active-payment.disabled') }}
                           </template>
                         </PSSwitch>
                       </div>
@@ -110,12 +110,10 @@
                       class="d-flex payment-method-content separator"
                     >
                       <div class="flex-grow-1">
-                        <label class="mb-0"
-                          ><i class="material-icons mr-3">public</i>
-                          {{
-                            $t("panel.active-payment.localPaymentMethods")
-                          }}</label
-                        >
+                        <label class="mb-0">
+                          <i class="material-icons mr-3">public</i>
+                          {{ $t('panel.active-payment.localPaymentMethods') }}
+                        </label>
                       </div>
                     </div>
                   </div>
@@ -127,10 +125,10 @@
 
         <b-alert variant="info" show>
           <h4 class="alert-heading">
-            {{ $t("panel.active-payment.tipsTitle") }}
+            {{ $t('panel.active-payment.tipsTitle') }}
           </h4>
           <p>
-            {{ $t("panel.active-payment.tipsContent") }}
+            {{ $t('panel.active-payment.tipsContent') }}
           </p>
         </b-alert>
       </b-col>
@@ -139,146 +137,146 @@
 </template>
 
 <script>
-import draggable from "vuedraggable";
-import CardStatus from "@/components/block/card-status";
-import PSSwitch from "@/components/form/switch";
+  import draggable from 'vuedraggable';
+  import CardStatus from '@/components/block/card-status';
+  import PSSwitch from '@/components/form/switch';
 
-export default {
-  components: {
-    CardStatus,
-    PSSwitch,
-    draggable
-  },
-  data() {
-    return {
-      list: this.$store.state.configuration.paymentMethods,
-      drag: false
-    };
-  },
-  watch: {
-    list(val) {
-      this.$store.dispatch({
-        type: "updatePaymentMethods",
-        paymentMethods: val
-      });
-    }
-  },
-  computed: {
-    dragOptions() {
+  export default {
+    components: {
+      CardStatus,
+      PSSwitch,
+      draggable
+    },
+    data() {
       return {
-        animation: 200,
-        group: "description",
-        disabled: false,
-        ghostClass: "ghost",
-        dragClass: "move"
+        list: this.$store.state.configuration.paymentMethods,
+        drag: false
       };
     },
-    cardIsEnabled: {
-      get() {
-        return this.$store.state.configuration.cardIsEnabled;
-      },
-      set(payload) {
-        this.$store.dispatch("toggleHostedFields", payload);
+    watch: {
+      list(val) {
+        this.$store.dispatch({
+          type: 'updatePaymentMethods',
+          paymentMethods: val
+        });
       }
     },
-    cardIsAvailable() {
-      return (
-        this.$store.state.paypal.cardIsActive === "SUBSCRIBED" ||
-        this.$store.state.paypal.cardIsActive === "LIMITED"
-      );
+    computed: {
+      dragOptions() {
+        return {
+          animation: 200,
+          group: 'description',
+          disabled: false,
+          ghostClass: 'ghost',
+          dragClass: 'move'
+        };
+      },
+      cardIsEnabled: {
+        get() {
+          return this.$store.state.configuration.cardIsEnabled;
+        },
+        set(payload) {
+          this.$store.dispatch('toggleHostedFields', payload);
+        }
+      },
+      cardIsAvailable() {
+        return (
+          this.$store.state.paypal.cardIsActive === 'SUBSCRIBED' ||
+          this.$store.state.paypal.cardIsActive === 'LIMITED'
+        );
+      }
     }
-  }
-};
+  };
 </script>
 
 <style scoped>
-.handle {
-  cursor: grab;
-  margin-top: 20px;
-}
-.handle:hover {
-  color: #25b9d7;
-}
-.sortable-chosen .handle {
-  cursor: grabbing;
-}
-.move {
-  cursor: grabbing;
-}
-.move .position {
-  display: none;
-}
-.move .payment-method {
-  cursor: grabbing;
-  margin-left: 40px;
-}
-.ghost .payment-method {
-  border: 2px dashed #25b9d7;
-  background-color: #fcfcfc;
-}
-.ghost .icon {
-  display: none;
-}
-.ghost .content {
-  display: none;
-}
-.ghost .ghost-replace-card {
-  display: block !important;
-}
-.ghost .ghost-replace-paypal {
-  display: block !important;
-}
-.ghost-replace-card {
-  display: none;
-  padding: 20px;
-  height: 64.27px;
-  text-align: center;
-  width: 100%;
-}
-.ghost-replace-paypal {
-  display: none;
-  padding: 20px;
-  height: 129.53px;
-  width: 100%;
-  text-align: center;
-  line-height: 6;
-}
-.move .number {
-  display: none;
-}
-.payment-method-container img {
-  width: 25px;
-}
-.payment-method-container .flex-grow-1.content i {
-  color: #25b9d7;
-}
-.payment-method {
-  position: relative;
-  display: block;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  background-color: #fff;
-  border: 1px solid #dddddd;
-  border-radius: 3px;
-}
-.payment-method.disable {
-  background-color: #fafbfc;
-}
-.payment-method.disable .material-icons {
-  color: #759299 !important;
-}
-.position {
-  position: absolute;
-  top: 20px;
-  left: -40px;
-}
-.payment-method-content {
-  padding: 20px;
-}
-.flex-grow-1 {
-  flex-grow: 1;
-}
-.separator {
-  border-top: 1px solid #dddddd;
-}
+  .handle {
+    cursor: grab;
+    margin-top: 20px;
+  }
+  .handle:hover {
+    color: #25b9d7;
+  }
+  .sortable-chosen .handle {
+    cursor: grabbing;
+  }
+  .move {
+    cursor: grabbing;
+  }
+  .move .position {
+    display: none;
+  }
+  .move .payment-method {
+    cursor: grabbing;
+    margin-left: 40px;
+  }
+  .ghost .payment-method {
+    border: 2px dashed #25b9d7;
+    background-color: #fcfcfc;
+  }
+  .ghost .icon {
+    display: none;
+  }
+  .ghost .content {
+    display: none;
+  }
+  .ghost .ghost-replace-card {
+    display: block !important;
+  }
+  .ghost .ghost-replace-paypal {
+    display: block !important;
+  }
+  .ghost-replace-card {
+    display: none;
+    padding: 20px;
+    height: 64.27px;
+    text-align: center;
+    width: 100%;
+  }
+  .ghost-replace-paypal {
+    display: none;
+    padding: 20px;
+    height: 129.53px;
+    width: 100%;
+    text-align: center;
+    line-height: 6;
+  }
+  .move .number {
+    display: none;
+  }
+  .payment-method-container img {
+    width: 25px;
+  }
+  .payment-method-container .flex-grow-1.content i {
+    color: #25b9d7;
+  }
+  .payment-method {
+    position: relative;
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border: 1px solid #dddddd;
+    border-radius: 3px;
+  }
+  .payment-method.disable {
+    background-color: #fafbfc;
+  }
+  .payment-method.disable .material-icons {
+    color: #759299 !important;
+  }
+  .position {
+    position: absolute;
+    top: 20px;
+    left: -40px;
+  }
+  .payment-method-content {
+    padding: 20px;
+  }
+  .flex-grow-1 {
+    flex-grow: 1;
+  }
+  .separator {
+    border-top: 1px solid #dddddd;
+  }
 </style>

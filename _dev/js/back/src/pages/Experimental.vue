@@ -25,12 +25,12 @@
 </template>
 
 <script>
-import PaymentMode from "@/components/panel/payment-mode";
+  import PaymentMode from '@/components/panel/payment-mode';
 
-export default {
-  name: "Experimental",
-  components: {
-    PaymentMode
-  }
-};
+  export default {
+    name: 'Experimental',
+    components: {
+      PaymentMode
+    }
+  };
 </script>

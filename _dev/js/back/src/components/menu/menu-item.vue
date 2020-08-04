@@ -25,16 +25,16 @@
 </template>
 
 <script>
-export default {
-  name: "MenuItem",
-  props: {
-    route: {
-      type: String,
-      default: ""
-    }
-  },
-  methods: {}
-};
+  export default {
+    name: 'MenuItem',
+    props: {
+      route: {
+        type: String,
+        default: ''
+      }
+    },
+    methods: {}
+  };
 </script>
 
 <style scoped></style>

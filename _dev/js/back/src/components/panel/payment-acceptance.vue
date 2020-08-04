@@ -21,7 +21,7 @@
     <div class="card">
       <h3 class="card-header">
         <i class="material-icons">credit_card</i>
-        {{ $t("panel.payment-acceptance.paymentAcceptanceTitle") }}
+        {{ $t('panel.payment-acceptance.paymentAcceptanceTitle') }}
       </h3>
 
       <div class="card-body m-auto">
@@ -30,10 +30,10 @@
             <thead>
               <tr>
                 <th class="text-left">
-                  {{ $t("panel.payment-acceptance.paymentMethod") }}
+                  {{ $t('panel.payment-acceptance.paymentMethod') }}
                 </th>
-                <th>{{ $t("panel.payment-acceptance.availability") }}</th>
-                <th>{{ $t("panel.payment-acceptance.activationStatus") }}</th>
+                <th>{{ $t('panel.payment-acceptance.availability') }}</th>
+                <th>{{ $t('panel.payment-acceptance.activationStatus') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -67,7 +67,7 @@
                   </div>
                   <div>
                     <h3 class="mt-2">
-                      {{ $t("panel.payment-acceptance.creditCardsLabel") }}
+                      {{ $t('panel.payment-acceptance.creditCardsLabel') }}
                     </h3>
                     <CardStatus :display-labels="true" />
                   </div>
@@ -84,9 +84,9 @@
 
           <b-alert class="mt-2" variant="info" show>
             <h4 class="alert-heading">
-              {{ $t("panel.payment-acceptance.tips") }}
+              {{ $t('panel.payment-acceptance.tips') }}
             </h4>
-            <p>{{ $t("panel.payment-acceptance.alertInfo") }}</p>
+            <p>{{ $t('panel.payment-acceptance.alertInfo') }}</p>
           </b-alert>
         </b-col>
       </div>
@@ -95,54 +95,54 @@
 </template>
 
 <script>
-import CardPaymentActivation from "@/components/block/card-payment-activation.vue";
-import CardPaymentAvailability from "@/components/block/card-payment-availability.vue";
-import CardStatus from "@/components/block/card-status";
-import PayPalPaymentActivation from "@/components/block/paypal-payment-activation.vue";
-import PayPalPaymentAvailability from "@/components/block/paypal-payment-availability.vue";
-import PaypalStatus from "@/components/block/paypal-status";
+  import CardPaymentActivation from '@/components/block/card-payment-activation.vue';
+  import CardPaymentAvailability from '@/components/block/card-payment-availability.vue';
+  import CardStatus from '@/components/block/card-status';
+  import PayPalPaymentActivation from '@/components/block/paypal-payment-activation.vue';
+  import PayPalPaymentAvailability from '@/components/block/paypal-payment-availability.vue';
+  import PaypalStatus from '@/components/block/paypal-status';
 
-export default {
-  components: {
-    CardPaymentActivation,
-    CardPaymentAvailability,
-    CardStatus,
-    PayPalPaymentActivation,
-    PayPalPaymentAvailability,
-    PaypalStatus
-  }
-};
+  export default {
+    components: {
+      CardPaymentActivation,
+      CardPaymentAvailability,
+      CardStatus,
+      PayPalPaymentActivation,
+      PayPalPaymentAvailability,
+      PaypalStatus
+    }
+  };
 </script>
 
 <style scoped>
-.nobootstrap .table {
-  border: unset;
-  border-radius: unset;
-}
+  .nobootstrap .table {
+    border: unset;
+    border-radius: unset;
+  }
 
-.nobootstrap .table tr th {
-  background-color: white;
-}
+  .nobootstrap .table tr th {
+    background-color: white;
+  }
 
-.line-separator {
-  height: 1px;
-  opacity: 0.2;
-  background: #6b868f;
-  border-bottom: 2px solid #6b868f;
-}
+  .line-separator {
+    height: 1px;
+    opacity: 0.2;
+    background: #6b868f;
+    border-bottom: 2px solid #6b868f;
+  }
 
-.paypal-icon {
-  align-self: center;
-  padding: 15px;
-}
+  .paypal-icon {
+    align-self: center;
+    padding: 15px;
+  }
 
-.card-icon {
-  align-self: center;
-  padding: 15px;
-}
+  .card-icon {
+    align-self: center;
+    padding: 15px;
+  }
 
-.card-icon .material-icons {
-  font-size: 42px !important;
-  color: #6c868e;
-}
+  .card-icon .material-icons {
+    font-size: 42px !important;
+    color: #6c868e;
+  }
 </style>

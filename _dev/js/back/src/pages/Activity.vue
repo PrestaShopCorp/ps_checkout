@@ -29,14 +29,14 @@
 </template>
 
 <script>
-import Reporting from "@/components/block/reporting";
-import Dispute from "@/components/block/dispute";
+  import Reporting from '@/components/block/reporting';
+  import Dispute from '@/components/block/dispute';
 
-export default {
-  name: "Activity",
-  components: {
-    Dispute,
-    Reporting
-  }
-};
+  export default {
+    name: 'Activity',
+    components: {
+      Dispute,
+      Reporting
+    }
+  };
 </script>

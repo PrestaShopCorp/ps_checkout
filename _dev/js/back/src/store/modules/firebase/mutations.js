@@ -16,17 +16,17 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-import * as types from "./mutation-types";
+import * as types from './mutation-types';
 
 export default {
   [types.UPDATE_ACCOUNT](state, payload) {
     Object.assign(state, payload);
   },
   [types.LOGOUT_ACCOUNT](state) {
-    state.email = "";
-    state.localId = "";
-    state.idToken = "";
-    state.refreshToken = "";
+    state.email = '';
+    state.localId = '';
+    state.idToken = '';
+    state.refreshToken = '';
     state.onboardingCompleted = false;
   }
 };

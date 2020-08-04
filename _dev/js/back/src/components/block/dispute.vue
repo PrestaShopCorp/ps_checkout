@@ -23,7 +23,7 @@
         <b-col>
           <b-button variant="text" size="lg">
             <i class="material-icons">school</i>
-            {{ $t("block.dispute.pendingDispute", { disputeCount: 0 }) }}
+            {{ $t('block.dispute.pendingDispute', { disputeCount: 0 }) }}
           </b-button>
         </b-col>
         <b-col cols="12" md="auto" class="m-auto">
@@ -32,7 +32,7 @@
             href="https://www.paypal.com/disputes/"
             target="_blank"
           >
-            {{ $t("block.dispute.goToDispute") }}
+            {{ $t('block.dispute.goToDispute') }}
             <i class="material-icons">arrow_right_alt</i>
           </b-button>
         </b-col>
@@ -42,7 +42,7 @@
 </template>
 
 <script>
-export default {
-  name: "Dispute"
-};
+  export default {
+    name: 'Dispute'
+  };
 </script>

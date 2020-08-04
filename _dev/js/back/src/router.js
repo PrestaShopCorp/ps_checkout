@@ -16,33 +16,33 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-import Vue from "vue";
-import Router from "vue-router";
-import store from "./store";
+import Vue from 'vue';
+import Router from 'vue-router';
+import store from './store';
 
-import Customize from "@/pages/Customize";
-import Accounts from "@/pages/Accounts";
-import Signin from "@/pages/Signin";
-import Signup from "@/pages/Signup";
-import ResetPassword from "@/pages/ResetPassword";
-import PsxAdditionalDetails from "@/pages/PsxAdditionalDetails";
-import Activity from "@/pages/Activity";
-import Advanced from "@/pages/Advanced";
-import Experimental from "@/pages/Experimental";
-import Debug from "@/pages/Debug";
-import Help from "@/pages/Help";
+import Customize from '@/pages/Customize';
+import Accounts from '@/pages/Accounts';
+import Signin from '@/pages/Signin';
+import Signup from '@/pages/Signup';
+import ResetPassword from '@/pages/ResetPassword';
+import PsxAdditionalDetails from '@/pages/PsxAdditionalDetails';
+import Activity from '@/pages/Activity';
+import Advanced from '@/pages/Advanced';
+import Experimental from '@/pages/Experimental';
+import Debug from '@/pages/Debug';
+import Help from '@/pages/Help';
 
 Vue.use(Router);
 
 const router = new Router({
   routes: [
     {
-      path: "/",
-      redirect: "/authentication"
+      path: '/',
+      redirect: '/authentication'
     },
     {
-      path: "/authentication",
-      name: "Authentication",
+      path: '/authentication',
+      name: 'Authentication',
       component: Accounts,
       beforeEnter: (to, from, next) => {
         if (
@@ -50,15 +50,15 @@ const router = new Router({
           !store.getters.paypalOnboardingIsCompleted &&
           !store.getters.psxOnboardingIsCompleted
         ) {
-          next("/authentication/additional");
+          next('/authentication/additional');
         } else {
           next();
         }
       }
     },
     {
-      path: "/authentication/signin",
-      name: "Signin",
+      path: '/authentication/signin',
+      name: 'Signin',
       component: Signin,
       beforeEnter: (to, from, next) => {
         if (store.getters.firebaseOnboardingIsCompleted) {
@@ -69,8 +69,8 @@ const router = new Router({
       }
     },
     {
-      path: "/authentication/signup",
-      name: "Signup",
+      path: '/authentication/signup',
+      name: 'Signup',
       component: Signup,
       beforeEnter: (to, from, next) => {
         if (store.getters.firebaseOnboardingIsCompleted) {
@@ -81,8 +81,8 @@ const router = new Router({
       }
     },
     {
-      path: "/authentication/reset",
-      name: "ResetPassword",
+      path: '/authentication/reset',
+      name: 'ResetPassword',
       component: ResetPassword,
       beforeEnter: (to, from, next) => {
         if (store.getters.firebaseOnboardingIsCompleted) {
@@ -93,48 +93,48 @@ const router = new Router({
       }
     },
     {
-      path: "/authentication/additional",
-      name: "PsxAdditionalDetails",
+      path: '/authentication/additional',
+      name: 'PsxAdditionalDetails',
       component: PsxAdditionalDetails,
       beforeEnter: (to, from, next) => {
         if (
           !store.getters.firebaseOnboardingIsCompleted ||
           store.getters.psxOnboardingIsCompleted
         ) {
-          next("/authentication");
+          next('/authentication');
         } else {
           next();
         }
       }
     },
     {
-      path: "/customize",
-      name: "Customize",
+      path: '/customize',
+      name: 'Customize',
       component: Customize
     },
     {
-      path: "/activity",
-      name: "Activity",
+      path: '/activity',
+      name: 'Activity',
       component: Activity
     },
     {
-      path: "/debug",
-      name: "Debug",
+      path: '/debug',
+      name: 'Debug',
       component: Debug
     },
     {
-      path: "/experimental",
-      name: "Experimental",
+      path: '/experimental',
+      name: 'Experimental',
       component: Experimental
     },
     {
-      path: "/advanced",
-      name: "Advanced",
+      path: '/advanced',
+      name: 'Advanced',
       component: Advanced
     },
     {
-      path: "/help",
-      name: "Help",
+      path: '/help',
+      name: 'Help',
       component: Help
     }
   ]
@@ -142,14 +142,14 @@ const router = new Router({
 
 // Page list accesible by guest customer
 const guestPages = [
-  "Authentication",
-  "PsxAdditionalDetails",
-  "Signin",
-  "Signup",
-  "ResetPassword",
-  "Experimental",
-  "Debug",
-  "Help"
+  'Authentication',
+  'PsxAdditionalDetails',
+  'Signin',
+  'Signup',
+  'ResetPassword',
+  'Experimental',
+  'Debug',
+  'Help'
 ];
 
 // Global navigation guard

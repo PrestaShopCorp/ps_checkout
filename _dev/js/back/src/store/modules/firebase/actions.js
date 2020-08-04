@@ -16,14 +16,14 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-import * as types from "./mutation-types";
-import ajax from "@/requests/ajax.js";
+import * as types from './mutation-types';
+import ajax from '@/requests/ajax.js';
 
 export default {
   logOut({ commit, getters }) {
     return ajax({
       url: getters.adminController,
-      action: "LogOutPsAccount"
+      action: 'LogOutPsAccount'
     }).then(() => {
       commit(types.LOGOUT_ACCOUNT);
       return Promise.resolve(true);
@@ -33,7 +33,7 @@ export default {
   signIn({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: "SignIn",
+      action: 'SignIn',
       data: {
         email: payload.email,
         password: payload.password
@@ -58,7 +58,7 @@ export default {
   signUp({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: "SignUp",
+      action: 'SignUp',
       data: {
         email: payload.email,
         password: payload.password

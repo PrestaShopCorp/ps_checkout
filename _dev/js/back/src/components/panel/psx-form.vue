@@ -20,7 +20,7 @@
   <div>
     <b-alert v-if="errorForm != null" variant="danger" show>
       <h4 class="alert-heading">
-        {{ errorForm.length }} {{ $t("panel.psx-form.errors") }}
+        {{ errorForm.length }} {{ $t('panel.psx-form.errors') }}
       </h4>
       <ul>
         <li v-for="(text, key) in errorForm" :key="key" class="alert-text">
@@ -36,18 +36,18 @@
     <b-card no-body footer-class="d-flex">
       <template v-slot:header>
         <i class="material-icons">account_box</i>
-        {{ $t("panel.psx-form.additionalDetails") }}
+        {{ $t('panel.psx-form.additionalDetails') }}
       </template>
 
       <b-card-body>
         <h1 class="text-muted font-weight-light text-center">
-          {{ $t("panel.psx-form.fillUp") }}
+          {{ $t('panel.psx-form.fillUp') }}
         </h1>
 
         <b-form>
           <b-col sm="12" md="10" lg="8" class="m-auto">
             <b-card-title class="py-4">
-              {{ $t("panel.psx-form.personalInformation") }}
+              {{ $t('panel.psx-form.personalInformation') }}
             </b-card-title>
 
             <b-row>
@@ -58,10 +58,10 @@
                     name="gender"
                   >
                     <b-form-radio value="Mr">
-                      {{ $t("panel.psx-form.genderMr") }}
+                      {{ $t('panel.psx-form.genderMr') }}
                     </b-form-radio>
                     <b-form-radio value="Ms">
-                      {{ $t("panel.psx-form.genderMrs") }}
+                      {{ $t('panel.psx-form.genderMrs') }}
                     </b-form-radio>
                   </b-form-radio-group>
                 </b-form-group>
@@ -137,13 +137,13 @@
                       --
                     </option>
                     <option value="merchant">
-                      {{ $t("panel.psx-form.merchant") }}
+                      {{ $t('panel.psx-form.merchant') }}
                     </option>
                     <option value="agency">
-                      {{ $t("panel.psx-form.agency") }}
+                      {{ $t('panel.psx-form.agency') }}
                     </option>
                     <option value="freelancer">
-                      {{ $t("panel.psx-form.freelancer") }}
+                      {{ $t('panel.psx-form.freelancer') }}
                     </option>
                   </b-form-select>
                 </b-form-group>
@@ -151,7 +151,7 @@
             </b-row>
 
             <b-card-title class="py-4">
-              {{ $t("panel.psx-form.billingAddress") }}
+              {{ $t('panel.psx-form.billingAddress') }}
             </b-card-title>
 
             <b-row>
@@ -294,7 +294,7 @@
             </b-row>
 
             <b-card-title class="py-4">
-              {{ $t("panel.psx-form.businessInformation") }}
+              {{ $t('panel.psx-form.businessInformation') }}
             </b-card-title>
 
             <b-row>
@@ -392,11 +392,11 @@
 
         <b-col sm="12" md="10" lg="8" class="m-auto pt-5">
           <p class="mb-0">
-            {{ $t("panel.psx-form.privacyTextPart1") }}
+            {{ $t('panel.psx-form.privacyTextPart1') }}
           </p>
           <p>
             <b-link :href="$t('panel.psx-form.privacyLink')" target="_blank">
-              {{ $t("panel.psx-form.privacyTextPart2") }}
+              {{ $t('panel.psx-form.privacyTextPart2') }}
             </b-link>
           </p>
         </b-col>
@@ -405,11 +405,11 @@
       <template v-slot:footer>
         <div class="container-fluid pl-0">
           <b-button variant="secondary" @click="back()">
-            {{ $t("panel.psx-form.back") }}
+            {{ $t('panel.psx-form.back') }}
           </b-button>
         </div>
         <b-button variant="primary" @click="submitForm()">
-          {{ $t("panel.psx-form.continue") }}
+          {{ $t('panel.psx-form.continue') }}
         </b-button>
       </template>
     </b-card>
@@ -417,179 +417,179 @@
 </template>
 
 <script>
-import { orderBy, uniqBy } from "lodash";
+  import { orderBy, uniqBy } from 'lodash';
 
-export default {
-  name: "PsxForm",
-  data() {
-    return {
-      errorException: "",
-      subCategory: null,
-      statesList: null,
-      errorForm: null,
-      form: {
-        business_contact_gender: "Mr",
-        business_contact_first_name: null,
-        business_contact_last_name: null,
-        business_contact_language: null,
-        qualification: "",
-        shop_name: null,
-        business_address_street: null,
-        business_address_zip: null,
-        business_address_city: null,
-        business_address_country: null,
-        business_address_state: null,
-        business_phone_country: "1",
-        business_phone: null,
-        business_website: null,
-        business_company_emr: null,
-        business_category: null,
-        business_sub_category: ""
+  export default {
+    name: 'PsxForm',
+    data() {
+      return {
+        errorException: '',
+        subCategory: null,
+        statesList: null,
+        errorForm: null,
+        form: {
+          business_contact_gender: 'Mr',
+          business_contact_first_name: null,
+          business_contact_last_name: null,
+          business_contact_language: null,
+          qualification: '',
+          shop_name: null,
+          business_address_street: null,
+          business_address_zip: null,
+          business_address_city: null,
+          business_address_country: null,
+          business_address_state: null,
+          business_phone_country: '1',
+          business_phone: null,
+          business_website: null,
+          business_company_emr: null,
+          business_category: null,
+          business_sub_category: ''
+        }
+      };
+    },
+    computed: {
+      getLanguagesDetails() {
+        return orderBy(this.$store.state.psx.languagesDetails, 'name');
+      },
+      getCountriesDetails() {
+        return orderBy(this.$store.state.psx.countriesDetails, 'name');
+      },
+      getPhoneCountryCode() {
+        return uniqBy(
+          orderBy(this.$store.state.psx.countriesDetails, 'code'),
+          'code'
+        );
+      },
+      getCompanyMonthyAverages() {
+        return this.$store.state.psx.businessDetails.business_company_emr;
+      },
+      getCompanyCategories() {
+        return this.$store.state.psx.businessDetails.business_categories;
+      },
+      subCategoryLabel() {
+        return `${this.$t('panel.psx-form.businessSubCategory')} (${this.$t(
+          'panel.psx-form.optional'
+        )})`;
       }
-    };
-  },
-  computed: {
-    getLanguagesDetails() {
-      return orderBy(this.$store.state.psx.languagesDetails, "name");
     },
-    getCountriesDetails() {
-      return orderBy(this.$store.state.psx.countriesDetails, "name");
-    },
-    getPhoneCountryCode() {
-      return uniqBy(
-        orderBy(this.$store.state.psx.countriesDetails, "code"),
-        "code"
-      );
-    },
-    getCompanyMonthyAverages() {
-      return this.$store.state.psx.businessDetails.business_company_emr;
-    },
-    getCompanyCategories() {
-      return this.$store.state.psx.businessDetails.business_categories;
-    },
-    subCategoryLabel() {
-      return `${this.$t("panel.psx-form.businessSubCategory")} (${this.$t(
-        "panel.psx-form.optional"
-      )})`;
-    }
-  },
-  methods: {
-    submitForm() {
-      this.$store
-        .dispatch("psxSendData", this.form)
-        .then(response => {
-          if (response.status === true) {
-            this.$store.dispatch("psxOnboarding", response.status);
-            this.$router
-              .push("/authentication")
-              // eslint-disable-next-line no-console
-              .catch(exception => console.log(exception));
-          }
-          this.errorForm = response;
-          this.errorException = "";
+    methods: {
+      submitForm() {
+        this.$store
+          .dispatch('psxSendData', this.form)
+          .then(response => {
+            if (response.status === true) {
+              this.$store.dispatch('psxOnboarding', response.status);
+              this.$router
+                .push('/authentication')
+                // eslint-disable-next-line no-console
+                .catch(exception => console.log(exception));
+            }
+            this.errorForm = response;
+            this.errorException = '';
+            window.scrollTo({
+              top: 0,
+              left: 0,
+              behavior: 'smooth'
+            });
+          })
+          .catch(response => {
+            this.handleResponseError(response);
+          });
+      },
+      handleResponseError(response) {
+        if (undefined !== response.body) {
+          this.errorException = response.body;
+          this.errorForm = null;
           window.scrollTo({
             top: 0,
             left: 0,
-            behavior: "smooth"
+            behavior: 'smooth'
           });
-        })
-        .catch(response => {
-          this.handleResponseError(response);
+        }
+      },
+      back() {
+        this.$store.dispatch('logOut').then(() => {
+          this.$router
+            .push('/authentication')
+            // eslint-disable-next-line no-console
+            .catch(exception => console.log(exception));
         });
-    },
-    handleResponseError(response) {
-      if (undefined !== response.body) {
-        this.errorException = response.body;
-        this.errorForm = null;
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: "smooth"
-        });
+      },
+      onChangeCategory(categoryId) {
+        this.subCategory = this.$store.getters.getBusinessCategories[
+          categoryId
+        ].business_subcategories;
+      },
+      onChangeCountry(countryCode) {
+        this.statesList = this.$store.state.psx.countriesStatesDetails[
+          countryCode
+        ];
+        this.form.business_address_state = null;
       }
-    },
-    back() {
-      this.$store.dispatch("logOut").then(() => {
-        this.$router
-          .push("/authentication")
-          // eslint-disable-next-line no-console
-          .catch(exception => console.log(exception));
-      });
-    },
-    onChangeCategory(categoryId) {
-      this.subCategory = this.$store.getters.getBusinessCategories[
-        categoryId
-      ].business_subcategories;
-    },
-    onChangeCountry(countryCode) {
-      this.statesList = this.$store.state.psx.countriesStatesDetails[
-        countryCode
-      ];
-      this.form.business_address_state = null;
     }
-  }
-};
+  };
 </script>
 
 <style scoped>
-.d-flex {
-  align-items: flex-start;
-}
-label.text-muted {
-  font-size: 18px;
-}
-.md-radio {
-  position: relative;
-  margin: 0;
-  margin: initial;
-  text-align: left;
-}
-.md-radio input[type="radio"] {
-  outline: 0;
-  display: none;
-}
-.md-radio label {
-  margin-bottom: 0;
-  padding-left: 25px;
-}
-i.md-radio-control:before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 20px;
-  height: 20px;
-  background: #fff;
-  border: 2px solid #bbcdd2;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-i.md-radio-control:after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-input[type="radio"].indeterminate + i.md-radio-control:after,
-input[type="radio"]:checked + i.md-radio-control:after {
-  background: #25b9d7;
-  width: 10px;
-  height: 10px;
-  left: 5px;
-  top: 5px;
-  border-radius: 50%;
-}
-.md-radio input[type="radio"].indeterminate + i.md-radio-control:before,
-.md-radio input[type="radio"]:checked + i.md-radio-control:before {
-  background: #fff;
-  border: 2px solid #25b9d7;
-}
-#app .has-danger {
-  border-color: #c45c67;
-}
-#privacy {
-  font-size: 12px;
-  text-align: justify;
-}
+  .d-flex {
+    align-items: flex-start;
+  }
+  label.text-muted {
+    font-size: 18px;
+  }
+  .md-radio {
+    position: relative;
+    margin: 0;
+    margin: initial;
+    text-align: left;
+  }
+  .md-radio input[type='radio'] {
+    outline: 0;
+    display: none;
+  }
+  .md-radio label {
+    margin-bottom: 0;
+    padding-left: 25px;
+  }
+  i.md-radio-control:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border: 2px solid #bbcdd2;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  i.md-radio-control:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  input[type='radio'].indeterminate + i.md-radio-control:after,
+  input[type='radio']:checked + i.md-radio-control:after {
+    background: #25b9d7;
+    width: 10px;
+    height: 10px;
+    left: 5px;
+    top: 5px;
+    border-radius: 50%;
+  }
+  .md-radio input[type='radio'].indeterminate + i.md-radio-control:before,
+  .md-radio input[type='radio']:checked + i.md-radio-control:before {
+    background: #fff;
+    border: 2px solid #25b9d7;
+  }
+  #app .has-danger {
+    border-color: #c45c67;
+  }
+  #privacy {
+    font-size: 12px;
+    text-align: justify;
+  }
 </style>

@@ -16,16 +16,16 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
-import Vue from "vue";
-import BootstrapVue from "bootstrap-vue";
-import VueCollapse from "vue2-collapse";
-import * as Sentry from "@sentry/browser";
-import { Vue as VueIntegration } from "@sentry/integrations";
+import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
+import VueCollapse from 'vue2-collapse';
+import * as Sentry from '@sentry/browser';
+import { Vue as VueIntegration } from '@sentry/integrations';
 
-import i18n from "./lib/i18n";
-import App from "./App.vue";
-import router from "./router";
-import store from "./store";
+import i18n from './lib/i18n';
+import App from './App.vue';
+import router from './router';
+import store from './store';
 
 Vue.use(BootstrapVue);
 Vue.use(VueCollapse);
@@ -41,10 +41,10 @@ const correlationId = Math.random()
   .toString(36)
   .substr(2, 9);
 Sentry.configureScope(scope => {
-  scope.setTag("transaction_id", correlationId);
+  scope.setTag('transaction_id', correlationId);
 });
 
-Vue.config.productionTip = process.env.NODE_ENV === "production";
+Vue.config.productionTip = process.env.NODE_ENV === 'production';
 
 window.onload = () => {
   new Vue({
@@ -52,5 +52,5 @@ window.onload = () => {
     store,
     i18n,
     render: h => h(App)
-  }).$mount("#app");
+  }).$mount('#app');
 };
