@@ -11,4 +11,4 @@ jobs:
         uses: PrestaShopCorp/github-action-lint-js/12@v1.0
         with:
           cmd: npm
-          path: ./_dev/js/back
+          path: ./
