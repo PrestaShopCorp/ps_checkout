@@ -213,7 +213,11 @@
                 </li>
               </ul>
               <div class="mt-3">
-                <a href="https://www.paypal.com/policy/hub/kyc" target="_blank">
+                <a
+                  @click="trackSegment()"
+                  href="https://www.paypal.com/policy/hub/kyc"
+                  target="_blank"
+                >
                   {{ $t('pages.accounts.knowMoreAboutAccount') }}
                   <i class="material-icons">arrow_right_alt</i>
                 </a>
@@ -367,6 +371,9 @@ export default {
       this.$store.dispatch("unlink").then(() => {
         this.$store.dispatch("getOnboardingLink");
       });
+    },
+    trackSegment() {
+      this.$segment.track("ps_checkout_approval_on_paypal_link_know_more_approval");
     }
   }
 };
