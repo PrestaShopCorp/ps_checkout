@@ -307,67 +307,69 @@
   import AccountStatusPrestaShop from '@/components/block/account-status-prestashop.vue';
   import Onboarding from '@/components/block/onboarding';
 
-  export default {
-    components: {
-      AccountStatusPayPal,
-      AccountStatusPrestaShop,
-      Onboarding
+export default {
+  components: {
+    AccountStatusPayPal,
+    AccountStatusPrestaShop,
+    Onboarding
+  },
+  computed: {
+    onboardingLinkError() {
+      return this.$store.state.paypal.paypalOnboardingLink === false;
     },
-    computed: {
-      onboardingLinkError() {
-        return this.$store.state.paypal.paypalOnboardingLink === false;
-      },
-      isReady() {
-        return this.$store.state.context.isReady;
-      },
-      paypalEmail() {
-        return this.$store.state.paypal.emailMerchant;
-      },
-      firebaseStatusAccount() {
-        return this.$store.state.firebase.onboardingCompleted;
-      },
-      paypalStatusAccount() {
-        return this.$store.state.paypal.onboardingCompleted;
-      },
-      paypalPaymentIsActive() {
-        return this.$store.state.paypal.paypalIsActive;
-      },
-      cardPaymentIsActive() {
-        return this.$store.state.paypal.cardIsActive;
-      },
-      merchantEmailIsValid() {
-        return this.$store.state.paypal.emailIsValid;
-      },
-      accountIslinked() {
-        return this.$store.state.paypal.accountIslinked;
-      }
+    isReady() {
+      return this.$store.state.context.isReady;
     },
-    methods: {
-      goToSignIn() {
-        this.$router
-          .push('/authentication/signin')
-          // eslint-disable-next-line no-console
-          .catch(exception => console.log(exception));
-      },
-      goToSignUp() {
-        this.$router
-          .push('/authentication/signup')
-          // eslint-disable-next-line no-console
-          .catch(exception => console.log(exception));
-      },
-      logOut() {
-        this.$store.dispatch('logOut').then(() => {
-          this.$store.dispatch('unlink');
-          this.$store.dispatch('psxOnboarding', false);
-        });
-      },
-      paypalUnlink() {
-        this.$store.dispatch('unlink').then(() => {
-          this.$store.dispatch('getOnboardingLink');
-        });
-      }
+    paypalEmail() {
+      return this.$store.state.paypal.emailMerchant;
+    },
+    firebaseStatusAccount() {
+      return this.$store.state.firebase.onboardingCompleted;
+    },
+    paypalStatusAccount() {
+      return this.$store.state.paypal.onboardingCompleted;
+    },
+    paypalPaymentIsActive() {
+      return this.$store.state.paypal.paypalIsActive;
+    },
+    cardPaymentIsActive() {
+      return this.$store.state.paypal.cardIsActive;
+    },
+    merchantEmailIsValid() {
+      return this.$store.state.paypal.emailIsValid;
+    },
+    accountIslinked() {
+      return this.$store.state.paypal.accountIslinked;
     }
-  };
+  },
+  methods: {
+    goToSignIn() {
+      this.$segment.track("ps_checkout_click_psx_ps_account_login");
+      this.$router
+        .push('/authentication/signin')
+        // eslint-disable-next-line no-console
+        .catch(exception => console.log(exception));
+    },
+    goToSignUp() {
+      this.$segment.track("ps_checkout_click_psx_ps_account_sign_up");
+      this.$router
+        .push('/authentication/signup')
+        // eslint-disable-next-line no-console
+        .catch(exception => console.log(exception));
+    },
+    logOut() {
+      this.$store.dispatch("logOut").then(() => {
+        this.$store.dispatch("unlink");
+        this.$store.dispatch("psxOnboarding", false);
+      });
+    },
+    paypalUnlink() {
+      this.$store.dispatch("unlink").then(() => {
+        this.$store.dispatch("getOnboardingLink");
+      });
+    }
+  }
+};
 </script>
 
 <style scoped>
