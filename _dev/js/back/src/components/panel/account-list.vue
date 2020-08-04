@@ -348,14 +348,12 @@ export default {
   },
   methods: {
     goToSignIn() {
-      this.$segment.track("ps_checkout_click_psx_ps_account_login");
       this.$router
         .push('/authentication/signin')
         // eslint-disable-next-line no-console
         .catch(exception => console.log(exception));
     },
     goToSignUp() {
-      this.$segment.track("ps_checkout_click_psx_ps_account_sign_up");
       this.$router
         .push('/authentication/signup')
         // eslint-disable-next-line no-console
