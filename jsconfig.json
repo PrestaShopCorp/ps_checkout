@@ -6,6 +6,6 @@
       "@/*": ["./_dev/js/back/src/*"]
     }
   },
-  "include": ["./_dev/js/back/src/**/*", "./_dev/js/back/tests/**/*"],
+  "include": ["./_dev/js/back/src/**/*"],
   "exclude": ["node_modules"]
 }
