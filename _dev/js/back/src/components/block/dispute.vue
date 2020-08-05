@@ -1,4 +1,4 @@
-{**
+<!--**
  * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,13 +15,34 @@
  * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ *-->
+<template>
+  <b-card no-body>
+    <b-card-body>
+      <b-row>
+        <b-col>
+          <b-button variant="text" size="lg">
+            <i class="material-icons">school</i>
+            {{ $t('block.dispute.pendingDispute', { disputeCount: 0 }) }}
+          </b-button>
+        </b-col>
+        <b-col cols="12" md="auto" class="m-auto">
+          <b-button
+            variant="link"
+            href="https://www.paypal.com/disputes/"
+            target="_blank"
+          >
+            {{ $t('block.dispute.goToDispute') }}
+            <i class="material-icons">arrow_right_alt</i>
+          </b-button>
+        </b-col>
+      </b-row>
+    </b-card-body>
+  </b-card>
+</template>
 
-<div id="app"></div>
-
-<style>
-  /** Hide native multistore module activation panel, because of visual regressions on non-bootstrap content */
-  #content.nobootstrap div.bootstrap.panel {
-    display: none;
-  }
-</style>
+<script>
+  export default {
+    name: 'Dispute'
+  };
+</script>

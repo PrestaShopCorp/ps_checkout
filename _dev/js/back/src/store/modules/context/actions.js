@@ -1,4 +1,4 @@
-{**
+/**
  * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,13 +15,22 @@
  * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ */
+import mutation from './mutation-types';
+import ajax from '@/requests/ajax.js';
 
-<div id="app"></div>
+export default {
+  updateRoundingSettings({ commit, getters }) {
+    return ajax({
+      url: getters.adminController,
+      action: 'EditRoundingSettings'
+    }).then(resp => {
+      if (resp) {
+        commit(mutation.UPDATE_ROUNDING_SETTINGS_STATUS);
+        return Promise.resolve(true);
+      }
 
-<style>
-  /** Hide native multistore module activation panel, because of visual regressions on non-bootstrap content */
-  #content.nobootstrap div.bootstrap.panel {
-    display: none;
+      return Promise.reject(resp);
+    });
   }
-</style>
+};

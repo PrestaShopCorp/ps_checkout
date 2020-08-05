@@ -374,10 +374,6 @@ class Ps_checkout extends PaymentModule
             (new PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater($paypalAccount))->update();
         }
 
-        $this->context->smarty->assign([
-            'pathApp' => $this->_path . 'views/js/app.js?v=' . $this->version,
-        ]);
-
         Media::addJsDef([
             'store' => (new PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter($this, $this->context))->present(),
         ]);
@@ -777,6 +773,10 @@ class Ps_checkout extends PaymentModule
                 $this->getPathUri() . 'views/js/adminOrderView.js?version=' . $this->version,
                 false
             );
+        }
+
+        if ($this->name === Tools::getValue('configure')) {
+            $this->context->controller->addJS($this->getPathUri() . 'views/js/back/js/app.js');
         }
     }
 

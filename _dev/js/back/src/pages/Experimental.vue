@@ -1,4 +1,4 @@
-{**
+<!--**
  * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,13 +15,22 @@
  * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ *-->
+<template>
+  <div>
+    <b-container>
+      <PaymentMode />
+    </b-container>
+  </div>
+</template>
 
-<div id="app"></div>
+<script>
+  import PaymentMode from '@/components/panel/payment-mode';
 
-<style>
-  /** Hide native multistore module activation panel, because of visual regressions on non-bootstrap content */
-  #content.nobootstrap div.bootstrap.panel {
-    display: none;
-  }
-</style>
+  export default {
+    name: 'Experimental',
+    components: {
+      PaymentMode
+    }
+  };
+</script>

@@ -4,8 +4,12 @@
 ### Ignore integration settings ###
 .env.test
 
+### NPM
+/node_modules/
+
 ### Vuejs ignore build files ###
-/views/js/app.js
+/views/js/back/
+/views/js/front.js
 /views/img/almost-ready.png
 /views/img/paypal-logo.png
 /views/img/brush.png

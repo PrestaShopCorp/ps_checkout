@@ -1,4 +1,4 @@
-{**
+<!--**
  * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
@@ -15,13 +15,26 @@
  * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
- *}
+ *-->
+<template>
+  <li class="nav-item">
+    <router-link active-class="active" class="nav-link" :to="route">
+      <slot />
+    </router-link>
+  </li>
+</template>
 
-<div id="app"></div>
+<script>
+  export default {
+    name: 'MenuItem',
+    props: {
+      route: {
+        type: String,
+        default: ''
+      }
+    },
+    methods: {}
+  };
+</script>
 
-<style>
-  /** Hide native multistore module activation panel, because of visual regressions on non-bootstrap content */
-  #content.nobootstrap div.bootstrap.panel {
-    display: none;
-  }
-</style>
+<style scoped></style>
