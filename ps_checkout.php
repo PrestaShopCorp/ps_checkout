@@ -785,6 +785,9 @@ class Ps_checkout extends PaymentModule
             'configureLink' => $link,
         ]);
 
+        // track when payment method header is called
+        Segment::track(array('event' => 'ps_checkout_view_payment_methods'));
+
         return $this->display(__FILE__, '/views/templates/hook/adminAfterHeader.tpl');
     }
 
