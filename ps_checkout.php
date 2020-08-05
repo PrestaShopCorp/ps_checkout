@@ -132,6 +132,9 @@ class Ps_checkout extends PaymentModule
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = ['min' => '1.6.1', 'max' => _PS_VERSION_];
+
+        // Segment initialisation
+        Segment::init('BftCN3EnnGD1ETnf4FUBxP1WFMQ80JFZ');
     }
 
     /**
@@ -141,6 +144,8 @@ class Ps_checkout extends PaymentModule
      */
     public function install()
     {
+        // track the install click button
+        Segment::track(array('event' => 'ps_checkout_install'));
         // Install for both 1.7 and 1.6
         $defaultInstall = parent::install() &&
             (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops() &&
@@ -227,6 +232,9 @@ class Ps_checkout extends PaymentModule
      */
     public function uninstall()
     {
+        // track the uninstall click button
+        Segment::track(array('event' => 'ps_checkout_uninstall'));
+
         foreach (array_keys($this->configurationList) as $name) {
             Configuration::deleteByName($name);
         }
@@ -234,6 +242,32 @@ class Ps_checkout extends PaymentModule
         return parent::uninstall() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->dropTable() &&
             $this->uninstallTabs();
+    }
+
+    /**
+     * Activate current module.
+     *
+     * @param bool $force_all If true, enable module for all shop
+     *
+     * @return bool
+     */
+    public function enable($force_all = false){
+        // track the activate click button
+        Segment::track(array('event' => 'ps_checkout_activate'));
+        return parent::enable($force_all);
+    }
+
+    /**
+     * Desactivate current module.
+     *
+     * @param bool $force_all If true, disable module for all shop
+     *
+     * @return bool
+     */
+    public function disable($force_all = false){
+        // track the deactivate click button
+        Segment::track(array('event' => 'ps_checkout_deactivate'));
+        return parent::disable($force_all);
     }
 
     /**
