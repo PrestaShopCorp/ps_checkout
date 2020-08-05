@@ -23,6 +23,10 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+class_alias('Segment', 'Analytics');
+// Segment initialisation
+Segment::init('BftCN3EnnGD1ETnf4FUBxP1WFMQ80JFZ');
+
 class Ps_checkout extends PaymentModule
 {
     /**
@@ -132,9 +136,6 @@ class Ps_checkout extends PaymentModule
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = ['min' => '1.6.1', 'max' => _PS_VERSION_];
-
-        // Segment initialisation
-        Segment::init('BftCN3EnnGD1ETnf4FUBxP1WFMQ80JFZ');
     }
 
     /**
@@ -253,7 +254,10 @@ class Ps_checkout extends PaymentModule
      */
     public function enable($force_all = false){
         // track the activate click button
-        Segment::track(array('event' => 'ps_checkout_activate'));
+        if( !Segment::track(array('userId'=> 'checkout_enable', 'event' => 'ps_checkout_enable'))
+            && !Segment::flush()){
+            return false;
+        }
         return parent::enable($force_all);
     }
 
@@ -266,7 +270,10 @@ class Ps_checkout extends PaymentModule
      */
     public function disable($force_all = false){
         // track the deactivate click button
-        Segment::track(array('event' => 'ps_checkout_deactivate'));
+        if( !Segment::track(array('userId'=> 'checkout_disable', 'event' => 'ps_checkout_deactivate'))
+        && !Segment::flush()){
+            return false;
+        }
         return parent::disable($force_all);
     }
 
