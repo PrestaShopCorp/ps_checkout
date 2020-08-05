@@ -375,6 +375,24 @@ export default {
         window.open("https://www.paypal.com/policy/hub/kyc", "_blank");
       }
     }
+  },
+  mounted: function() {
+    if (!this.firebaseStatusAccount && !this.paypalStatusAccount) {
+      // Anything connected
+      this.$segment.track("ps_checkout_logged_out_screen");
+    } else if (this.firebaseStatusAccount && !this.paypalStatusAccount) {
+      // Only ps account connected
+      this.$segment.track("ps_checkout_ps_account_connected");
+    } else if (this.firebaseStatusAccount && this.paypalStatusAccount) {
+      // Both "connected"
+      if (this.accountIslinked && !this.merchantEmailIsValid) {
+        // but need approval
+        this.$segment.track("ps_checkout_approval_pending");
+      } else {
+        // all right
+        this.$segment.track("ps_checkout_both_account_approved");
+      }
+    }
   }
 };
 </script>
