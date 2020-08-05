@@ -26,15 +26,16 @@ import i18n from "./lib/i18n";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-import VueSegment from 'vue-segment';
-
-import i18n from './lib/i18n';
-import App from './App.vue';
-import router from './router';
-import store from './store';
+import VueSegment from "@prestashopcorp/segment-vue";
 
 Vue.use(BootstrapVue);
 Vue.use(VueCollapse);
+
+Vue.use(VueSegment, {
+  id: "BftCN3EnnGD1ETnf4FUBxP1WFMQ80JFZ",
+  router,
+  pageCategory: "ps_checkout"
+});
 Sentry.init({
   dsn: `https://${process.env.VUE_APP_SENTRY_KEY}@${process.env.VUE_APP_SENTRY_ORGANIZATION}.ingest.sentry.io/${process.env.VUE_APP_SENTRY_PROJECT}`,
   integrations: [new VueIntegration({ Vue, attachProps: true })]
@@ -60,7 +61,3 @@ window.onload = () => {
     render: h => h(App)
   }).$mount('#app');
 };
-
-Vue.use(VueSegment, {
-  id: 'BftCN3EnnGD1ETnf4FUBxP1WFMQ80JFZ', router
-});
