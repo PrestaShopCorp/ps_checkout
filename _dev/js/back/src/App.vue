@@ -140,6 +140,9 @@
       }
     },
     created() {
+      if (window.analytics) {
+        // TODO add the identity part if needed this.$segment.identify({}, {});
+      }
       if (!this.onboardingPaypalIsCompleted || this.accountIslinked) {
         return;
       }
