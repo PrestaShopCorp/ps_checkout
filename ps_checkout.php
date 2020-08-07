@@ -17,15 +17,14 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+
+use PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker;
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-
-class_alias('Segment', 'Analytics');
-// Segment initialisation
-Segment::init('BftCN3EnnGD1ETnf4FUBxP1WFMQ80JFZ');
 
 class Ps_checkout extends PaymentModule
 {
@@ -112,6 +111,9 @@ class Ps_checkout extends PaymentModule
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
 
+    /** @var SegmentTracker */
+    private $segment;
+
     public function __construct()
     {
         $this->name = 'ps_checkout';
@@ -136,6 +138,8 @@ class Ps_checkout extends PaymentModule
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = ['min' => '1.6.1', 'max' => _PS_VERSION_];
+
+        $this->segment = $this->getService('ps_checkout.segment.tracker');
     }
 
     /**
@@ -146,7 +150,7 @@ class Ps_checkout extends PaymentModule
     public function install()
     {
         // track the install click button
-        Segment::track(array('event' => 'ps_checkout_install'));
+        $this->segment->track('ps_checkout_install');
         // Install for both 1.7 and 1.6
         $defaultInstall = parent::install() &&
             (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops() &&
@@ -234,7 +238,7 @@ class Ps_checkout extends PaymentModule
     public function uninstall()
     {
         // track the uninstall click button
-        Segment::track(array('event' => 'ps_checkout_uninstall'));
+        $this->segment->track('ps_checkout_uninstall');
 
         foreach (array_keys($this->configurationList) as $name) {
             Configuration::deleteByName($name);
@@ -254,11 +258,7 @@ class Ps_checkout extends PaymentModule
      */
     public function enable($force_all = false){
         // track the activate click button
-        if( !Segment::track(array('userId'=> 'checkout_enable', 'event' => 'ps_checkout_enable'))
-            && !Segment::flush()){
-            return false;
-        }
-        return parent::enable($force_all);
+        return parent::enable($force_all) && $this->segment->track('ps_checkout_enable');
     }
 
     /**
@@ -270,11 +270,7 @@ class Ps_checkout extends PaymentModule
      */
     public function disable($force_all = false){
         // track the deactivate click button
-        if( !Segment::track(array('userId'=> 'checkout_disable', 'event' => 'ps_checkout_deactivate'))
-        && !Segment::flush()){
-            return false;
-        }
-        return parent::disable($force_all);
+        return parent::disable($force_all) && $this->segment->track('ps_checkout_deactivate');
     }
 
     /**
@@ -793,7 +789,7 @@ class Ps_checkout extends PaymentModule
         ]);
 
         // track when payment method header is called
-        Segment::track(array('event' => 'ps_checkout_view_payment_methods'));
+        $this->segment->track('ps_checkout_view_payment_methods');
 
         return $this->display(__FILE__, '/views/templates/hook/adminAfterHeader.tpl');
     }
