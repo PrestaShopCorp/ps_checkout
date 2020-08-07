@@ -150,7 +150,7 @@ class Ps_checkout extends PaymentModule
     public function install()
     {
         // track the install click button
-        $this->segment->track('ps_checkout_install');
+        $this->segment->track('Install');
         // Install for both 1.7 and 1.6
         $defaultInstall = parent::install() &&
             (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops() &&
@@ -238,7 +238,7 @@ class Ps_checkout extends PaymentModule
     public function uninstall()
     {
         // track the uninstall click button
-        $this->segment->track('ps_checkout_uninstall');
+        $this->segment->track('Uninstall');
 
         foreach (array_keys($this->configurationList) as $name) {
             Configuration::deleteByName($name);
@@ -258,7 +258,7 @@ class Ps_checkout extends PaymentModule
      */
     public function enable($force_all = false){
         // track the activate click button
-        return parent::enable($force_all) && $this->segment->track('ps_checkout_enable');
+        return parent::enable($force_all) && $this->segment->track('Activate');
     }
 
     /**
@@ -270,7 +270,7 @@ class Ps_checkout extends PaymentModule
      */
     public function disable($force_all = false){
         // track the deactivate click button
-        return parent::disable($force_all) && $this->segment->track('ps_checkout_deactivate');
+        return parent::disable($force_all) && $this->segment->track('Deactivate');
     }
 
     /**
@@ -789,7 +789,7 @@ class Ps_checkout extends PaymentModule
         ]);
 
         // track when payment method header is called
-        $this->segment->track('ps_checkout_view_payment_methods');
+        $this->segment->track('View Payment Methods PS Page');
 
         return $this->display(__FILE__, '/views/templates/hook/adminAfterHeader.tpl');
     }

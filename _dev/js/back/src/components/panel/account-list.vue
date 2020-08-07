@@ -369,7 +369,7 @@ export default {
     trackSegment() {
       if (window && window.analytics) {
         this.$segment.track(
-          "ps_checkout_approval_on_paypal_link_know_more_approval"
+          "Approval on Paypal link triggered"
         );
         // redirect to paypal url
         window.open("https://www.paypal.com/policy/hub/kyc", "_blank");
@@ -379,18 +379,18 @@ export default {
   mounted: function() {
     if (!this.firebaseStatusAccount && !this.paypalStatusAccount) {
       // Anything connected
-      this.$segment.track("ps_checkout_logged_out_screen");
+      this.$segment.track("View Authentication - Status Logged Out");
     } else if (this.firebaseStatusAccount && !this.paypalStatusAccount) {
       // Only ps account connected
-      this.$segment.track("ps_checkout_ps_account_connected");
+      this.$segment.track("View Authentication - Status PS account connected");
     } else if (this.firebaseStatusAccount && this.paypalStatusAccount) {
       // Both "connected"
       if (this.accountIslinked && !this.merchantEmailIsValid) {
         // but need approval
-        this.$segment.track("ps_checkout_approval_pending");
+        this.$segment.track("View Authentication - Status PP approval pending");
       } else {
         // all right
-        this.$segment.track("ps_checkout_both_account_approved");
+        this.$segment.track("View Authentication screen - Status Both account approved");
       }
     }
   }

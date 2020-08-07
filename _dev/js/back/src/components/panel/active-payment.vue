@@ -176,7 +176,7 @@
           return this.$store.state.configuration.cardIsEnabled;
         },
         set(payload) {
-          this.$segment.track('ps_checkout_enabled_disabled_credit_card');
+          this.$segment.track("Enabled/Disabled Credit Card");
           this.$store.dispatch('toggleHostedFields', payload);
         }
       },

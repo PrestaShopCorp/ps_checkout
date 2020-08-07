@@ -52,6 +52,10 @@ class SegmentTracker
         \Segment::track(array(
             'userId' => $this->shopUuid,
             'event' => $message,
+            'channel' => "browser",
+            "context" => array(
+                "userAgent" => $_SERVER['HTTP_USER_AGENT']
+            )
         ));
         return \Segment::flush();
     }
