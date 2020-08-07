@@ -111,9 +111,6 @@ class Ps_checkout extends PaymentModule
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
 
-    /** @var SegmentTracker */
-    private $segment;
-
     public function __construct()
     {
         $this->name = 'ps_checkout';
@@ -138,8 +135,6 @@ class Ps_checkout extends PaymentModule
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = ['min' => '1.6.1', 'max' => _PS_VERSION_];
-
-        $this->segment = $this->getService('ps_checkout.segment.tracker');
     }
 
     /**
@@ -149,8 +144,6 @@ class Ps_checkout extends PaymentModule
      */
     public function install()
     {
-        // track the install click button
-        $this->segment->track('Install');
         // Install for both 1.7 and 1.6
         $defaultInstall = parent::install() &&
             (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops() &&
@@ -159,6 +152,9 @@ class Ps_checkout extends PaymentModule
             (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
             $this->installTabs();
+
+        // track the install click button
+        $this->getService('ps_checkout.segment.tracker')->track('Install');
 
         if (!$defaultInstall) {
             return false;
@@ -238,7 +234,7 @@ class Ps_checkout extends PaymentModule
     public function uninstall()
     {
         // track the uninstall click button
-        $this->segment->track('Uninstall');
+        $this->getService('ps_checkout.segment.tracker')->track('Uninstall');
 
         foreach (array_keys($this->configurationList) as $name) {
             Configuration::deleteByName($name);
@@ -258,7 +254,7 @@ class Ps_checkout extends PaymentModule
      */
     public function enable($force_all = false){
         // track the activate click button
-        return parent::enable($force_all) && $this->segment->track('Activate');
+        return parent::enable($force_all) && $this->getService('ps_checkout.segment.tracker')->track('Activate');
     }
 
     /**
@@ -270,7 +266,7 @@ class Ps_checkout extends PaymentModule
      */
     public function disable($force_all = false){
         // track the deactivate click button
-        return parent::disable($force_all) && $this->segment->track('Deactivate');
+        return parent::disable($force_all) && $this->getService('ps_checkout.segment.tracker')->track('Deactivate');
     }
 
     /**
@@ -789,7 +785,7 @@ class Ps_checkout extends PaymentModule
         ]);
 
         // track when payment method header is called
-        $this->segment->track('View Payment Methods PS Page');
+        $this->getService('ps_checkout.segment.tracker')->track('View Payment Methods PS Page');
 
         return $this->display(__FILE__, '/views/templates/hook/adminAfterHeader.tpl');
     }
@@ -1191,11 +1187,6 @@ class Ps_checkout extends PaymentModule
      */
     public function getService($serviceName)
     {
-        if (method_exists($this, 'get')) {
-            // Use Core container introduced in 1.7.3.0
-            return $this->get($serviceName);
-        }
-
         if (null === $this->container) {
             $cacheDirectory = new \PrestaShop\Module\PrestashopCheckout\Cache\CacheDirectory(
                 _PS_VERSION_,

@@ -42,6 +42,7 @@ class SegmentTracker
         \Segment::init($env->getSegmentApiKey());
         // TODO identify
         //\Segment::identify();
+        // TODO getContextListShopID and handler to dispatch all the track
         $this->shopUuid = $shopUuid->getForShop(\Context::getContext()->shop->id);
     }
 
