@@ -141,7 +141,7 @@
     },
     created() {
       if (window.analytics) {
-        // TODO add the identity part if needed this.$segment.identify({}, {});
+        // TODO Identify : this->$segment.identify('shopId', {traits});
       }
       if (!this.onboardingPaypalIsCompleted || this.accountIslinked) {
         return;
