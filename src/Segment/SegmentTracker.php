@@ -46,17 +46,17 @@ class SegmentTracker
 
     public function identify($traits, $shops)
     {
-        foreach($shops as $id) {
-            \Segment::identify(array(
-                "type" => "identify",
-                "traits" => array(
-                    "name" => "Peter Gibbons",
-                    "email" => "peter@example.com",
-                    "plan" => "premium",
-                    "logins" => 5
-                ),
-                "userId" => $this->shopUuid->getForShop($id)
-            ));
+        foreach ($shops as $id) {
+            \Segment::identify([
+                'type' => 'identify',
+                'traits' => [
+                    'name' => 'Peter Gibbons',
+                    'email' => 'peter@example.com',
+                    'plan' => 'premium',
+                    'logins' => 5
+                ],
+                'userId' => $this->shopUuid->getForShop($id)
+            ]);
         }
 
         return \Segment::flush();
@@ -70,14 +70,14 @@ class SegmentTracker
     {
         foreach($shops as $id)
         {
-            \Segment::track(array(
+            \Segment::track([
                 'userId' => $this->shopUuid->getForShop($id),
                 'event' => $message,
-                'channel' => "browser",
-                "context" => array(
-                    "userAgent" => $_SERVER['HTTP_USER_AGENT']
-                )
-            ));
+                'channel' => 'browser',
+                'context' => [
+                    'userAgent' => $_SERVER['HTTP_USER_AGENT']
+                ]
+            ]);
         }
 
         return \Segment::flush();

@@ -257,8 +257,9 @@ class Ps_checkout extends PaymentModule
     public function enable($force_all = false)
     {
         // track the activate click button
-        if($this->disableSegment) {
+        if ($this->disableSegment) {
             $this->disableSegment = false;
+
             return parent::enable($force_all);
         } else {
             return parent::enable($force_all)
@@ -276,8 +277,9 @@ class Ps_checkout extends PaymentModule
     public function disable($force_all = false)
     {
         // track the deactivate click button
-        if($this->disableSegment) {
+        if ($this->disableSegment) {
             $this->disableSegment = false;
+
             return parent::disable($force_all);
         } else {
             return parent::disable($force_all)
