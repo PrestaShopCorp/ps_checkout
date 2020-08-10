@@ -158,7 +158,7 @@ class Ps_checkout extends PaymentModule
             $this->installTabs();
 
         // track the install click button
-        $this->getService('ps_checkout.segment.tracker')->track('Install');
+        $this->getService('ps_checkout.segment.tracker')->track('Install', Shop::getContextListShopID());
 
         if (!$defaultInstall) {
             return false;
@@ -239,7 +239,7 @@ class Ps_checkout extends PaymentModule
     {
         // track the uninstall click button
         $this->disableSegment = true;
-        $this->getService('ps_checkout.segment.tracker')->track('Uninstall');
+        $this->getService('ps_checkout.segment.tracker')->track('Uninstall', Shop::getContextListShopID());
 
         foreach (array_keys($this->configurationList) as $name) {
             Configuration::deleteByName($name);
@@ -265,7 +265,8 @@ class Ps_checkout extends PaymentModule
             return parent::enable($force_all);
         }
         else{
-            return parent::enable($force_all) && $this->getService('ps_checkout.segment.tracker')->track('Activate');
+            return parent::enable($force_all)
+                && $this->getService('ps_checkout.segment.tracker')->track('Activate', Shop::getContextListShopID());
         }
     }
 
@@ -285,7 +286,8 @@ class Ps_checkout extends PaymentModule
         }
         else
         {
-            return parent::disable($force_all) && $this->getService('ps_checkout.segment.tracker')->track('Deactivate');
+            return parent::disable($force_all)
+                && $this->getService('ps_checkout.segment.tracker')->track('Deactivate', Shop::getContextListShopID());
         }
     }
 
@@ -805,7 +807,7 @@ class Ps_checkout extends PaymentModule
         ]);
 
         // track when payment method header is called
-        $this->getService('ps_checkout.segment.tracker')->track('View Payment Methods PS Page');
+        $this->getService('ps_checkout.segment.tracker')->track('View Payment Methods PS Page', Shop::getContextListShopID());
 
         return $this->display(__FILE__, '/views/templates/hook/adminAfterHeader.tpl');
     }

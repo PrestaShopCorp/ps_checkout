@@ -42,22 +42,26 @@ class SegmentTracker
         \Segment::init($env->getSegmentApiKey());
         // TODO identify
         //\Segment::identify();
-        // TODO getContextListShopID and handler to dispatch all the track
-        $this->shopUuid = $shopUuid->getForShop(\Context::getContext()->shop->id);
+        $this->shopUuid = $shopUuid;
     }
 
     /**
      * @param string $message
+     * @param array $shops
      */
-    public function track($message){
-        \Segment::track(array(
-            'userId' => $this->shopUuid,
-            'event' => $message,
-            'channel' => "browser",
-            "context" => array(
-                "userAgent" => $_SERVER['HTTP_USER_AGENT']
-            )
-        ));
+    public function track($message, $shops){
+        foreach($shops as $id)
+        {
+            \Segment::track(array(
+                'userId' => $this->shopUuid->getForShop($id),
+                'event' => $message,
+                'channel' => "browser",
+                "context" => array(
+                    "userAgent" => $_SERVER['HTTP_USER_AGENT']
+                )
+            ));
+        }
+
         return \Segment::flush();
     }
 }
