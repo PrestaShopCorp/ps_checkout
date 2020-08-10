@@ -53,9 +53,9 @@ class SegmentTracker
                     'name' => 'Peter Gibbons',
                     'email' => 'peter@example.com',
                     'plan' => 'premium',
-                    'logins' => 5
+                    'logins' => 5,
                 ],
-                'userId' => $this->shopUuid->getForShop($id)
+                'userId' => $this->shopUuid->getForShop($id),
             ]);
         }
 
@@ -68,15 +68,14 @@ class SegmentTracker
      */
     public function track($message, $shops)
     {
-        foreach($shops as $id)
-        {
+        foreach($shops as $id) {
             \Segment::track([
                 'userId' => $this->shopUuid->getForShop($id),
                 'event' => $message,
                 'channel' => 'browser',
                 'context' => [
-                    'userAgent' => $_SERVER['HTTP_USER_AGENT']
-                ]
+                    'userAgent' => $_SERVER['HTTP_USER_AGENT'],
+                ],
             ]);
         }
 
