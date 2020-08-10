@@ -96,6 +96,22 @@
           });
 
         this.paypalIsLoaded = true;
+
+        var time = 0;
+        const poll = setInterval(() => {
+          if (!window.analytics) {
+            return;
+          }
+          time++;
+          // the callback is fired when window.analytics is available and before any other hit is sent
+          this.$segment.track(
+            "Event for more than " + time + " minutes"
+          );
+
+          if (time >= 4) {
+            clearInterval(poll);
+          }
+        }, 60000);
       }
     },
     destroyed() {
