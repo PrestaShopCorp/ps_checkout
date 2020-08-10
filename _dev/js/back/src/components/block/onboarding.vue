@@ -68,6 +68,13 @@
     },
     methods: {
       getOnboardingLink() {
+
+        if (window && window.analytics) {
+          this.$segment.track(
+            "Paypal Lightbox triggered"
+          );
+        }
+
         if (
           this.paypalOnboardingLink !== false &&
           this.paypalOnboardingLink.length > 0
