@@ -17,9 +17,6 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-
-use PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker;
-
 require_once __DIR__ . '/vendor/autoload.php';
 
 if (!defined('_PS_VERSION_')) {
@@ -257,14 +254,13 @@ class Ps_checkout extends PaymentModule
      *
      * @return bool
      */
-    public function enable($force_all = false){
+    public function enable($force_all = false)
+    {
         // track the activate click button
-        if($this->disableSegment)
-        {
+        if($this->disableSegment) {
             $this->disableSegment = false;
             return parent::enable($force_all);
-        }
-        else{
+        } else {
             return parent::enable($force_all)
                 && $this->getService('ps_checkout.segment.tracker')->track('Activate', Shop::getContextListShopID());
         }
@@ -277,15 +273,13 @@ class Ps_checkout extends PaymentModule
      *
      * @return bool
      */
-    public function disable($force_all = false){
+    public function disable($force_all = false)
+    {
         // track the deactivate click button
-        if($this->disableSegment)
-        {
+        if($this->disableSegment) {
             $this->disableSegment = false;
             return parent::disable($force_all);
-        }
-        else
-        {
+        } else {
             return parent::disable($force_all)
                 && $this->getService('ps_checkout.segment.tracker')->track('Deactivate', Shop::getContextListShopID());
         }

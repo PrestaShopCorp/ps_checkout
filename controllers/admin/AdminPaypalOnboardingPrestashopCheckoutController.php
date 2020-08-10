@@ -24,6 +24,11 @@ use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
 
 class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminController
 {
+    /**
+     * @var Ps_checkout
+     */
+    public $module;
+
     public function init()
     {
         $idMerchant = Tools::getValue('merchantIdInPayPal');

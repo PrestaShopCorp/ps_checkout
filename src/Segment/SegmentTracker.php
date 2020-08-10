@@ -27,7 +27,6 @@ class_alias('Segment', 'Analytics');
 
 /**
  * Class used to send informations to the Segment platform
- * @package PrestaShop\Module\PrestashopCheckout\Segment
  */
 class SegmentTracker
 {
@@ -35,21 +34,40 @@ class SegmentTracker
 
     /**
      * SegmentTracker constructor.
+     *
      * @param SegmentEnv $env
      * @param ShopUuidManager $shopUuid
      */
-    public function __construct($env, $shopUuid){
+    public function __construct($env, $shopUuid)
+    {
         \Segment::init($env->getSegmentApiKey());
-        // TODO identify
-        //\Segment::identify();
         $this->shopUuid = $shopUuid;
+    }
+
+    public function identify($traits, $shops)
+    {
+        foreach($shops as $id) {
+            \Segment::identify(array(
+                "type" => "identify",
+                "traits" => array(
+                    "name" => "Peter Gibbons",
+                    "email" => "peter@example.com",
+                    "plan" => "premium",
+                    "logins" => 5
+                ),
+                "userId" => $this->shopUuid->getForShop($id)
+            ));
+        }
+
+        return \Segment::flush();
     }
 
     /**
      * @param string $message
      * @param array $shops
      */
-    public function track($message, $shops){
+    public function track($message, $shops)
+    {
         foreach($shops as $id)
         {
             \Segment::track(array(
