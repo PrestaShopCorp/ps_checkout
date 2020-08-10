@@ -32,6 +32,10 @@ class SegmentTracker
 {
     private $shopUuid;
 
+    private $key;
+
+    private $segmentApi;
+
     /**
      * SegmentTracker constructor.
      *
@@ -40,45 +44,42 @@ class SegmentTracker
      */
     public function __construct($env, $shopUuid)
     {
-        \Segment::init($env->getSegmentApiKey());
+        $this->segmentApi = new SegmentAPI();
+        $this->key = $env->getSegmentApiKey();
         $this->shopUuid = $shopUuid;
+    }
+
+    public function init()
+    {
+        $this->segmentApi->init($this->key);
     }
 
     public function identify($traits, $shops)
     {
-        foreach ($shops as $id) {
-            \Segment::identify([
-                'type' => 'identify',
-                'traits' => [
-                    'name' => 'Peter Gibbons',
-                    'email' => 'peter@example.com',
-                    'plan' => 'premium',
-                    'logins' => 5,
-                ],
-                'userId' => $this->shopUuid->getForShop($id),
-            ]);
-        }
+        \Segment::identify([
+            'subscriptionStatus' => 'inactive',
+            'type' => 'identify',
+            'traits' => [
+                'name' => 'Peter Gibbons',
+                'email' => 'peter@example.com',
+                'plan' => 'premium',
+                'logins' => 5,
+            ],
+        ]);
 
         return \Segment::flush();
     }
 
     /**
      * @param string $message
-     * @param array $shops
      */
-    public function track($message, $shops)
+    public function track($message)
     {
-        foreach($shops as $id) {
-            \Segment::track([
-                'userId' => $this->shopUuid->getForShop($id),
-                'event' => $message,
-                'channel' => 'browser',
-                'context' => [
-                    'userAgent' => $_SERVER['HTTP_USER_AGENT'],
-                ],
-            ]);
+        $shops = \Shop::getContextListShopID();
+        $shopIds = [];
+        foreach($shops as $id){
+            $shopIds[] = $this->shopUuid->getForShop($id);
         }
-
-        return \Segment::flush();
+        return $this->segmentApi->track($message, $shopIds);
     }
 }

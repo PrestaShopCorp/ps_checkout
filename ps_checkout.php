@@ -155,7 +155,11 @@ class Ps_checkout extends PaymentModule
             $this->installTabs();
 
         // track the install click button
-        $this->getService('ps_checkout.segment.tracker')->track('Install', Shop::getContextListShopID());
+        $tracker = $this->getService('ps_checkout.segment.tracker');
+        $tracker->init();
+        // TODO identify
+        //$tracker->identify();
+        $tracker->track('Install');
 
         if (!$defaultInstall) {
             return false;
@@ -236,7 +240,7 @@ class Ps_checkout extends PaymentModule
     {
         // track the uninstall click button
         $this->disableSegment = true;
-        $this->getService('ps_checkout.segment.tracker')->track('Uninstall', Shop::getContextListShopID());
+        $this->getService('ps_checkout.segment.tracker')->track('Uninstall');
 
         foreach (array_keys($this->configurationList) as $name) {
             Configuration::deleteByName($name);
@@ -263,7 +267,7 @@ class Ps_checkout extends PaymentModule
             return parent::enable($force_all);
         } else {
             return parent::enable($force_all)
-                && $this->getService('ps_checkout.segment.tracker')->track('Activate', Shop::getContextListShopID());
+                && $this->getService('ps_checkout.segment.tracker')->track('Activate');
         }
     }
 
@@ -283,7 +287,7 @@ class Ps_checkout extends PaymentModule
             return parent::disable($force_all);
         } else {
             return parent::disable($force_all)
-                && $this->getService('ps_checkout.segment.tracker')->track('Deactivate', Shop::getContextListShopID());
+                && $this->getService('ps_checkout.segment.tracker')->track('Deactivate');
         }
     }
 
@@ -803,7 +807,7 @@ class Ps_checkout extends PaymentModule
         ]);
 
         // track when payment method header is called
-        $this->getService('ps_checkout.segment.tracker')->track('View Payment Methods PS Page', Shop::getContextListShopID());
+        $this->getService('ps_checkout.segment.tracker')->track('View Payment Methods PS Page');
 
         return $this->display(__FILE__, '/views/templates/hook/adminAfterHeader.tpl');
     }
