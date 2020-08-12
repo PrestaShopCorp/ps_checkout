@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use Monolog\Logger;
+use PrestaShop\Module\PrestashopCheckout\Entity\PaymentOrder;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
@@ -118,9 +119,12 @@ class ConfigurationModule implements PresenterInterface
         );
 
         if (empty($paymentMethods)) {
+            // Create all the payment method available
+            $creditCard = new PaymentOrder('card', 0);
+            $paypal = new PaymentOrder('paypal', 1);
             $paymentMethods = [
-                ['name' => 'card'],
-                ['name' => 'paypal'],
+                $creditCard->toJSON(),
+                $paypal->toJSON(),
             ];
         } else {
             $paymentMethods = json_decode($paymentMethods, true);

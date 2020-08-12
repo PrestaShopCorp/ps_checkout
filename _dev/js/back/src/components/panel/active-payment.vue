@@ -42,15 +42,15 @@
               type="transition"
               :name="!drag ? 'flip-list' : null"
             >
-              <div v-for="(element, index) in list" :key="index" class="d-flex">
+              <div v-for="(element) in list" :key="element.position" class="d-flex">
                 <div
                   class="payment-method text-muted d-flex flex-grow-1"
                   :class="{
-                    disable: !cardIsEnabled && element.name === 'card'
+                    disable: element.name !== 'paypal' && element.enabled
                   }"
                 >
                   <div class="position">
-                    {{ index + 1 }}
+                    {{ element.position + 1 }}
                   </div>
                   <div class="icon">
                     <i class="material-icons handle ml-2 mr-2">
@@ -85,7 +85,7 @@
                           {{ $t('panel.active-payment.paypal') }}
                         </label>
                       </div>
-                      <div class="status d-flex" v-if="element.name === 'card'">
+                      <div class="status d-flex" v-if="element.name !== 'paypal'">
                         <CardStatus
                           class="mr-2"
                           v-if="cardIsAvailable === false"
@@ -94,9 +94,9 @@
                         <PSSwitch
                           id="hostedFieldsAvailability"
                           text-position="left"
-                          v-model="cardIsEnabled"
+                          v-model="element.enabled"
                         >
-                          <template v-if="cardIsEnabled">
+                          <template v-if="element.enabled">
                             {{ $t('panel.active-payment.enabled') }}
                           </template>
                           <template v-else>
