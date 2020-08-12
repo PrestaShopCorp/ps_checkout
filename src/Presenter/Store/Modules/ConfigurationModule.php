@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use Monolog\Logger;
-use PrestaShop\Module\PrestashopCheckout\Entity\PaymentOrder;
+use PrestaShop\Module\PrestashopCheckout\Entity\PaymentOption;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
@@ -120,11 +120,26 @@ class ConfigurationModule implements PresenterInterface
 
         if (empty($paymentMethods)) {
             // Create all the payment method available
-            $creditCard = new PaymentOrder('card', 0);
-            $paypal = new PaymentOrder('paypal', 1);
+            $creditCard = new PaymentOption('card', 0);
+            $paypal = new PaymentOption('paypal', 1, array(), 'paypal-logo-thumbnail.png');
+            $bancontact = new PaymentOption('bancontact', 2, array('be'));
+            $ideal = new PaymentOption('ideal', 3, array('nl'));
+            $giropay = new PaymentOption('gyropay', 4, array('de'));
+            $eps = new PaymentOption('eps', 5, array('at'));
+            $myBank = new PaymentOption('mybank', 6, array('it'));
+            $sofort = new PaymentOption('sofort', 7, array('be', 'es', 'it', 'de', 'nl', 'at'));
+            $p24 = new PaymentOption('p24', 8, array('pl'));
+
             $paymentMethods = [
-                $creditCard->toJSON(),
-                $paypal->toJSON(),
+                $creditCard->toArray(),
+                $paypal->toArray(),
+                $bancontact->toArray(),
+                $ideal->toArray(),
+                $giropay->toArray(),
+                $eps->toArray(),
+                $myBank->toArray(),
+                $sofort->toArray(),
+                $p24->toArray(),
             ];
         } else {
             $paymentMethods = json_decode($paymentMethods, true);

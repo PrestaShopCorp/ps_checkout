@@ -23,25 +23,33 @@ namespace PrestaShop\Module\PrestashopCheckout\Entity;
 /**
  * Class PaymentOrder
  */
-class PaymentOrder
+class PaymentOption
 {
     private $name;
 
     private $position;
 
+    private $logo;
+
     private $enabled;
+
+    private $countries;
 
     /**
      * PaymentOrder constructor.
      *
      * @param string $name
      * @param int $position
+     * @param string $logo
+     * @param array $countries
      * @param bool $enabled
      */
-    public function __construct($name, $position, $enabled = true)
+    public function __construct($name, $position, $countries = array(), $logo = '', $enabled = true)
     {
         $this->name = $name;
         $this->position = $position;
+        $this->logo = $logo;
+        $this->countries = $countries;
         $this->enabled = $enabled;
     }
 
@@ -50,11 +58,13 @@ class PaymentOrder
      *
      * @return array
      */
-    public function toJSON()
+    public function toArray()
     {
         return [
             'name' => $this->name,
             'position' => $this->position,
+            'logo' => $this->logo,
+            'countries' => $this->countries,
             'enabled' => $this->enabled,
         ];
     }

@@ -79,7 +79,7 @@
                         <label v-else class="mb-0">
                           <img
                             class="mr-3"
-                            src="@/assets/images/paypal-logo-thumbnail.png"
+                            src='@/assets/images/paypal-logo-thumbnail.png'
                             alt=""
                           />
                           {{ $t('panel.active-payment.paypal') }}
