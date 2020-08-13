@@ -49,16 +49,16 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessUpdatePaymentMethodsOrder()
     {
-        $paymentMethodsUpdated = json_decode(Tools::getValue('paymentMethods'), true);
-        $paymentMethods = [];
-        foreach($paymentMethodsUpdated as $index => $paymentMethod) {
-            $payment = new PaymentOption($paymentMethod['name'], $index, $paymentMethod['enabled'] );
-            $paymentMethods[] = $payment->toArray();
+        $paymentOptionsUpdated = json_decode(Tools::getValue('paymentMethods'), true);
+        $paymentOptions = [];
+        foreach ($paymentOptionsUpdated as $index => $paymentOption) {
+            $payment = new PaymentOption($paymentOption['name'], $index,$paymentOption['countries'], $paymentOption['logo'], $paymentOption['enabled'] );
+            $paymentOptions[] = $payment->toArray();
         }
 
         Configuration::updateValue(
             'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
-            json_encode($paymentMethods),
+            json_encode($paymentOptions),
             false,
             null,
             (int) Context::getContext()->shop->id
@@ -311,19 +311,49 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Toggle card hosted fields availability
+     * AJAX: Toggle payment option hosted fields availability
      */
-    public function ajaxProcessToggleCardPaymentAvailability()
+    public function ajaxProcessTogglePaymentOptionAvailability()
     {
+        $paymentOptions = json_decode(
+            Configuration::get(
+            'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
+            null,
+            null,
+            (int) Context::getContext()->shop->id
+        ), true);
+
+        $paymentOptionToUpdate = json_decode(Tools::getValue('paymentOption'), true);
+        foreach($paymentOptions as $key => $paymentOption) {
+            if ($paymentOption['name'] == $paymentOptionToUpdate['name']) {
+                $paymentOptions[$key]['enabled'] = $paymentOptionToUpdate['enabled'];
+                break;
+            }
+        }
+
         Configuration::updateValue(
-            'PS_CHECKOUT_CARD_PAYMENT_ENABLED',
-            Tools::getValue('status') ? 1 : 0,
+            'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
+            json_encode($paymentOptions),
             false,
             null,
             (int) Context::getContext()->shop->id
         );
 
+        if ($paymentOptionToUpdate['name'] === 'card') {
+            Configuration::updateValue(
+                'PS_CHECKOUT_CARD_PAYMENT_ENABLED',
+                $paymentOptionToUpdate['enabled'],
+                false,
+                null,
+                (int) Context::getContext()->shop->id
+            );
+        }
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
+
+        $this->ajaxDie(json_encode([
+            'status' => true,
+            ])
+        );
     }
 
     /**

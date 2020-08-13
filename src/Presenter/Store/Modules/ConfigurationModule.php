@@ -111,26 +111,26 @@ class ConfigurationModule implements PresenterInterface
      */
     private function getPaymentMethods()
     {
-        $paymentMethods = \Configuration::get(
+        $paymentOptions = \Configuration::get(
             'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
             null,
             null,
             (int) \Context::getContext()->shop->id
         );
 
-        if (empty($paymentMethods)) {
+        if (empty($paymentOptions)) {
             // Create all the payment method available
             $creditCard = new PaymentOption('card', 0);
             $paypal = new PaymentOption('paypal', 1, array(), 'paypal-logo-thumbnail.png');
-            $bancontact = new PaymentOption('bancontact', 2, array('be'));
-            $ideal = new PaymentOption('ideal', 3, array('nl'));
-            $giropay = new PaymentOption('gyropay', 4, array('de'));
-            $eps = new PaymentOption('eps', 5, array('at'));
-            $myBank = new PaymentOption('mybank', 6, array('it'));
-            $sofort = new PaymentOption('sofort', 7, array('be', 'es', 'it', 'de', 'nl', 'at'));
-            $p24 = new PaymentOption('p24', 8, array('pl'));
+            $bancontact = new PaymentOption('bancontact', 2, array('be'), 'bancontact_logo.png');
+            $ideal = new PaymentOption('ideal', 3, array('nl'), 'ideal_logo.png');
+            $giropay = new PaymentOption('gyropay', 4, array('de'), 'giropay_logo.png');
+            $eps = new PaymentOption('eps', 5, array('at'), 'eps_logo.png');
+            $myBank = new PaymentOption('mybank', 6, array('it'), 'mybank_logo.png');
+            $sofort = new PaymentOption('sofort', 7, array('be', 'es', 'it', 'de', 'nl', 'at'), 'sofort_logo.png');
+            $p24 = new PaymentOption('p24', 8, array('pl'), 'p24_logo.png');
 
-            $paymentMethods = [
+            $paymentOptions = [
                 $creditCard->toArray(),
                 $paypal->toArray(),
                 $bancontact->toArray(),
@@ -141,10 +141,18 @@ class ConfigurationModule implements PresenterInterface
                 $sofort->toArray(),
                 $p24->toArray(),
             ];
+
+            \Configuration::updateValue(
+                'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
+                json_encode($paymentOptions),
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            );
         } else {
-            $paymentMethods = json_decode($paymentMethods, true);
+            $paymentOptions = json_decode($paymentOptions, true);
         }
 
-        return $paymentMethods;
+        return $paymentOptions;
     }
 }

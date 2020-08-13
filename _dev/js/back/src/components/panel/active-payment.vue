@@ -58,16 +58,9 @@
                     </i>
                   </div>
                   <div
-                    v-if="element.name === 'card'"
                     class="ghost-replace-card"
                   >
                     <i class="material-icons text-center">save_alt</i>
-                  </div>
-                  <div
-                    v-if="element.name === 'paypal'"
-                    class="ghost-replace-paypal"
-                  >
-                    <i class="material-icons">save_alt</i>
                   </div>
                   <div class="flex-grow-1 content">
                     <div class="d-flex payment-method-content">
@@ -79,10 +72,10 @@
                         <label v-else class="mb-0">
                           <img
                             class="mr-3"
-                            src='@/assets/images/paypal-logo-thumbnail.png'
+                            :src="getLogo(element)"
                             alt=""
                           />
-                          {{ $t('panel.active-payment.paypal') }}
+                          {{ element.name }}
                         </label>
                       </div>
                       <div class="status d-flex" v-if="element.name !== 'paypal'">
@@ -92,9 +85,10 @@
                         />
 
                         <PSSwitch
-                          id="hostedFieldsAvailability"
+                          :id="element.name"
                           text-position="left"
                           v-model="element.enabled"
+                          @input="sendPaymentOptions"
                         >
                           <template v-if="element.enabled">
                             {{ $t('panel.active-payment.enabled') }}
@@ -103,17 +97,6 @@
                             {{ $t('panel.active-payment.disabled') }}
                           </template>
                         </PSSwitch>
-                      </div>
-                    </div>
-                    <div
-                      v-if="element.name === 'paypal'"
-                      class="d-flex payment-method-content separator"
-                    >
-                      <div class="flex-grow-1">
-                        <label class="mb-0">
-                          <i class="material-icons mr-3">public</i>
-                          {{ $t('panel.active-payment.localPaymentMethods') }}
-                        </label>
                       </div>
                     </div>
                   </div>
@@ -161,6 +144,21 @@
         });
       }
     },
+    methods: {
+      sendPaymentOptions(value, id) {
+        this.$store.dispatch({
+          type: 'togglePaymentOptionAvailability',
+          paymentOption: { name: id, enabled: value }
+        });
+      },
+      getLogo(val) {
+        if (!val.logo) {
+          return '';
+        } else {
+          return require('@/assets/images/'+ val.logo);
+        }
+      }
+    },
     computed: {
       dragOptions() {
         return {
@@ -170,14 +168,6 @@
           ghostClass: 'ghost',
           dragClass: 'move'
         };
-      },
-      cardIsEnabled: {
-        get() {
-          return this.$store.state.configuration.cardIsEnabled;
-        },
-        set(payload) {
-          this.$store.dispatch('toggleHostedFields', payload);
-        }
       },
       cardIsAvailable() {
         return (

@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Entity;
 
 /**
- * Class PaymentOrder
+ * Class PaymentOption
  */
 class PaymentOption
 {
@@ -36,7 +36,7 @@ class PaymentOption
     private $countries;
 
     /**
-     * PaymentOrder constructor.
+     * PaymentOption constructor.
      *
      * @param string $name
      * @param int $position

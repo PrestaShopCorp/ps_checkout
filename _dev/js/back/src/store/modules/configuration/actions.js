@@ -20,7 +20,7 @@ import * as types from './mutation-types';
 import ajax from '@/requests/ajax.js';
 
 export default {
-  updatePaymentMethods({ commit, getters }, payload) {
+  updatePaymentMethods({commit, getters}, payload) {
     return ajax({
       url: getters.adminController,
       action: 'UpdatePaymentMethodsOrder',
@@ -33,7 +33,7 @@ export default {
     });
   },
 
-  updatePaymentMode({ commit, getters }, payload) {
+  updatePaymentMode({commit, getters}, payload) {
     return ajax({
       url: getters.adminController,
       action: 'UpdatePaymentMode',
@@ -46,7 +46,7 @@ export default {
     });
   },
 
-  updateCaptureMode({ commit, getters }, payload) {
+  updateCaptureMode({commit, getters}, payload) {
     return ajax({
       url: getters.adminController,
       action: 'UpdateCaptureMode',
@@ -59,19 +59,21 @@ export default {
     });
   },
 
-  toggleHostedFields({ commit, getters }, payload) {
+  togglePaymentOptionAvailability({ commit, getters}, payload) {
     return ajax({
       url: getters.adminController,
-      action: 'ToggleCardPaymentAvailability',
+      action: 'TogglePaymentOptionAvailability',
       data: {
-        status: payload ? 1 : 0
+        paymentOption: JSON.stringify(payload.paymentOption)
       }
     }).then(() => {
-      commit(types.UPDATE_PAYMENT_CARD_AVAILABILITY, payload);
+      commit(
+        types.UPDATE_PAYMENT_CARD_AVAILABILITY,
+        payload.paymentOption.enabled
+      );
       return Promise.resolve(payload);
     });
   },
-
   toggleECOrderPage({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
