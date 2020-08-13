@@ -78,6 +78,12 @@
                           {{ element.name }}
                         </label>
                       </div>
+                      <div class="mr-3 d-flex" v-if="element.countries.length === 0">
+                        {{ $t('panel.active-payment.availableIn') }}  {{ $t('panel.active-payment.allCountries') }}
+                      </div>
+                      <div class="mr-3 d-flex" v-else>
+                        {{ $t('panel.active-payment.availableIn') }}  {{ element.countries.join(', ') }}
+                      </div>
                       <div class="status d-flex" v-if="element.name !== 'paypal'">
                         <CardStatus
                           class="mr-2"

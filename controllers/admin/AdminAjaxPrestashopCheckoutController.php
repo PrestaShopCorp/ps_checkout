@@ -52,7 +52,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $paymentOptionsUpdated = json_decode(Tools::getValue('paymentMethods'), true);
         $paymentOptions = [];
         foreach ($paymentOptionsUpdated as $index => $paymentOption) {
-            $payment = new PaymentOption($paymentOption['name'], $index,$paymentOption['countries'], $paymentOption['logo'], $paymentOption['enabled'] );
+            $payment = new PaymentOption($paymentOption['name'], $index, $paymentOption['countries'], $paymentOption['logo'], $paymentOption['enabled'] );
             $paymentOptions[] = $payment->toArray();
         }
 

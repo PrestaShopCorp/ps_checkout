@@ -64,8 +64,22 @@ class PaymentOption
             'name' => $this->name,
             'position' => $this->position,
             'logo' => $this->logo,
-            'countries' => $this->countries,
+            'countries' => $this->getCountries(),
             'enabled' => $this->enabled,
         ];
+    }
+
+    /**
+     * return the countries with their traductions to save in base
+     *
+     * @return array
+     */
+    public function getCountries()
+    {
+        $countries = [];
+        foreach ( $this->countries as $isoCode) {
+            $countries[] = \Country::getNameById(\Context::getContext()->language->id, \Country::getByIso($isoCode));
+        }
+        return $countries;
     }
 }
