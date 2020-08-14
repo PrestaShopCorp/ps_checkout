@@ -21,7 +21,7 @@ use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
-use PrestaShop\Module\PrestashopCheckout\Entity\PaymentOption;
+use PrestaShop\Module\PrestashopCheckout\PaymentOptions\PaymentOptionsHelper;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
@@ -50,15 +50,11 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessUpdatePaymentMethodsOrder()
     {
         $paymentOptionsUpdated = json_decode(Tools::getValue('paymentMethods'), true);
-        $paymentOptions = [];
-        foreach ($paymentOptionsUpdated as $index => $paymentOption) {
-            $payment = new PaymentOption($paymentOption['name'], $index, $paymentOption['countries'], $paymentOption['logo'], $paymentOption['enabled'] );
-            $paymentOptions[] = $payment->toArray();
-        }
+        $paymentOptions = PaymentOptionsHelper::decodePaymentOptionsFromAjax($paymentOptionsUpdated);
 
         Configuration::updateValue(
             'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
-            json_encode($paymentOptions),
+            json_encode($paymentOptions->getPaymentOptions()),
             false,
             null,
             (int) Context::getContext()->shop->id

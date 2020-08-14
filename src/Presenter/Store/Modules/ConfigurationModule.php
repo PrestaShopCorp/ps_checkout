@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use Monolog\Logger;
-use PrestaShop\Module\PrestashopCheckout\Entity\PaymentOption;
+use PrestaShop\Module\PrestashopCheckout\PaymentOptions\PaymentOptionsHelper;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
@@ -119,44 +119,19 @@ class ConfigurationModule implements PresenterInterface
         );
 
         if (empty($paymentOptions)) {
-            $paymentOptions = $this->initPaymentOptions();
+            $paymentOptions = PaymentOptionsHelper::initPaymentOptions();
 
             \Configuration::updateValue(
                 'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
-                json_encode($paymentOptions),
+                json_encode($paymentOptions->getPaymentOptions()),
                 false,
                 null,
                 (int) \Context::getContext()->shop->id
             );
         } else {
-            $paymentOptions = json_decode($paymentOptions, true);
+            $paymentOptions = PaymentOptionsHelper::decodePaymentOptionsFromConfig( json_decode($paymentOptions, true));
         }
 
-        return $paymentOptions;
-    }
-
-    private function initPaymentOptions()
-    {
-        // Create all the payment method available
-        $creditCard = new PaymentOption('card', 0);
-        $paypal = new PaymentOption('paypal', 1, array(), 'paypal-logo-thumbnail.png');
-        $bancontact = new PaymentOption('bancontact', 2, array('be'), 'bancontact_logo.png');
-        $ideal = new PaymentOption('ideal', 3, array('nl'), 'ideal_logo.png');
-        $giropay = new PaymentOption('gyropay', 4, array('de'), 'giropay_logo.png');
-        $eps = new PaymentOption('eps', 5, array('at'), 'eps_logo.png');
-        $myBank = new PaymentOption('mybank', 6, array('it'), 'mybank_logo.png');
-        $sofort = new PaymentOption('sofort', 7, array('be', 'es', 'it', 'de', 'nl', 'at'), 'sofort_logo.png');
-        $p24 = new PaymentOption('p24', 8, array('pl'), 'p24_logo.png');
-        return [
-            $creditCard->toArray(),
-            $paypal->toArray(),
-            $bancontact->toArray(),
-            $ideal->toArray(),
-            $giropay->toArray(),
-            $eps->toArray(),
-            $myBank->toArray(),
-            $sofort->toArray(),
-            $p24->toArray(),
-        ];
+        return $paymentOptions->getPaymentOptions(true);
     }
 }
