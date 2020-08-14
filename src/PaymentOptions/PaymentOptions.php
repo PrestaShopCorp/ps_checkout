@@ -17,6 +17,7 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
+
 namespace PrestaShop\Module\PrestashopCheckout\PaymentOptions;
 
 class PaymentOptions
@@ -28,7 +29,7 @@ class PaymentOptions
      *
      * @param PaymentOption[] $paymentOptions
      */
-    public function __construct( $paymentOptions = [] )
+    public function __construct($paymentOptions = [])
     {
         $this->paymentOptions = $paymentOptions;
     }
@@ -36,17 +37,18 @@ class PaymentOptions
     /**
      * @param PaymentOption $paymentOption
      */
-    public function addPaymentOption( $paymentOption )
+    public function addPaymentOption($paymentOption)
     {
         $this->paymentOptions[] = $paymentOption;
     }
 
-    public function getPaymentOptions( $toDisplay = false)
+    public function getPaymentOptions($toDisplay = false)
     {
         $payments = [];
         foreach ($this->paymentOptions as $paymentOption) {
             $payments[] = $paymentOption->toArray($toDisplay);
         }
+
         return $payments;
     }
 }

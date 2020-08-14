@@ -129,7 +129,7 @@ class ConfigurationModule implements PresenterInterface
                 (int) \Context::getContext()->shop->id
             );
         } else {
-            $paymentOptions = PaymentOptionsHelper::decodePaymentOptionsFromConfig( json_decode($paymentOptions, true));
+            $paymentOptions = PaymentOptionsHelper::decodePaymentOptionsFromConfig(json_decode($paymentOptions, true));
         }
 
         return $paymentOptions->getPaymentOptions(true);

@@ -17,8 +17,8 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
-namespace PrestaShop\Module\PrestashopCheckout\PaymentOptions;
 
+namespace PrestaShop\Module\PrestashopCheckout\PaymentOptions;
 
 class PaymentOptionsHelper
 {
@@ -28,19 +28,19 @@ class PaymentOptionsHelper
         $creditCard = new PaymentOption('card', 0);
         $paypal = new PaymentOption('paypal', 1, 'paypal-logo-thumbnail.png');
         $bancontact = new PaymentOption('bancontact', 2, 'bancontact_logo.png');
-        $bancontact->setCountriesByIsoCode(array('be'));
+        $bancontact->setCountriesByIsoCode(['be']);
         $ideal = new PaymentOption('ideal', 3, 'ideal_logo.png');
-        $ideal->setCountriesByIsoCode(array('nl'));
+        $ideal->setCountriesByIsoCode(['nl']);
         $giropay = new PaymentOption('gyropay', 4, 'giropay_logo.png');
-        $giropay->setCountriesByIsoCode(array('de'));
+        $giropay->setCountriesByIsoCode(['de']);
         $eps = new PaymentOption('eps', 5, 'eps_logo.png');
-        $eps->setCountriesByIsoCode(array('at'));
+        $eps->setCountriesByIsoCode(['at']);
         $myBank = new PaymentOption('mybank', 6, 'mybank_logo.png');
-        $myBank->setCountriesByIsoCode(array('it'));
+        $myBank->setCountriesByIsoCode(['it']);
         $sofort = new PaymentOption('sofort', 7, 'sofort_logo.png');
-        $sofort->setCountriesByIsoCode(array('be', 'es', 'it', 'de', 'nl', 'at'));
+        $sofort->setCountriesByIsoCode(['be', 'es', 'it', 'de', 'nl', 'at']);
         $p24 = new PaymentOption('p24', 8, 'p24_logo.png');
-        $p24->setCountriesByIsoCode(array('pl'));
+        $p24->setCountriesByIsoCode(['pl']);
 
         return new PaymentOptions([
             $creditCard,
@@ -57,16 +57,18 @@ class PaymentOptionsHelper
 
     /**
      * @param array $paymentOptionsFromConfig
+     *
      * @return PaymentOptions
      */
     public static function decodePaymentOptionsFromConfig($paymentOptionsFromConfig)
     {
         $paymentOptions = new PaymentOptions();
         foreach ($paymentOptionsFromConfig as $index => $paymentOption) {
-            $payment = new PaymentOption($paymentOption['name'], $index, $paymentOption['logo'], $paymentOption['enabled'] );
+            $payment = new PaymentOption($paymentOption['name'], $index, $paymentOption['logo'], $paymentOption['enabled']);
             $payment->setCountries($paymentOption['countries']);
             $paymentOptions->addPaymentOption($payment);
         }
+
         return $paymentOptions;
     }
 
@@ -78,6 +80,7 @@ class PaymentOptionsHelper
             $payment->setCountriesByName($paymentOption['countries']);
             $paymentOptions->addPaymentOption($payment);
         }
+
         return $paymentOptions;
     }
 }

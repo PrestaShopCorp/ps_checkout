@@ -17,6 +17,7 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
+
 namespace PrestaShop\Module\PrestashopCheckout\PaymentOptions;
 
 /**
@@ -56,7 +57,7 @@ class PaymentOption
     /**
      * @param array $idCountries
      */
-    public function setCountries( $idCountries)
+    public function setCountries($idCountries)
     {
         $this->countries = $idCountries;
     }
@@ -66,7 +67,7 @@ class PaymentOption
      *
      * @param array $countriesIsoCodes
      */
-    public function setCountriesByIsoCode( $countriesIsoCodes)
+    public function setCountriesByIsoCode($countriesIsoCodes)
     {
         $this->countries = [];
         foreach ( $countriesIsoCodes as $countryIsoCode) {
@@ -79,7 +80,7 @@ class PaymentOption
      *
      * @param array $countriesNames
      */
-    public function setCountriesByName( $countriesNames )
+    public function setCountriesByName($countriesNames)
     {
         $this->countries = [];
         foreach ( $countriesNames as $countryName) {
@@ -91,6 +92,7 @@ class PaymentOption
      * Get the payment order as json to save it in the config or to send it to front
      *
      * @param bool false $toDisplay is used to send countries as id or as name
+     *
      * @return array
      */
     public function toArray($toDisplay = false)
@@ -112,9 +114,10 @@ class PaymentOption
     private function getCountriesAsName()
     {
         $countries = [];
-        foreach ( $this->countries as $countryId) {
+        foreach ($this->countries as $countryId) {
             $countries[] = \Country::getNameById(\Context::getContext()->language->id, $countryId);
         }
+
         return $countries;
     }
 }

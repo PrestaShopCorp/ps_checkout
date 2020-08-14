@@ -21,11 +21,11 @@ use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
-use PrestaShop\Module\PrestashopCheckout\PaymentOptions\PaymentOptionsHelper;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
+use PrestaShop\Module\PrestashopCheckout\PaymentOptions\PaymentOptionsHelper;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
 use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter;
@@ -320,7 +320,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         ), true);
 
         $paymentOptionToUpdate = json_decode(Tools::getValue('paymentOption'), true);
-        foreach($paymentOptions as $key => $paymentOption) {
+        foreach ($paymentOptions as $key => $paymentOption) {
             if ($paymentOption['name'] == $paymentOptionToUpdate['name']) {
                 $paymentOptions[$key]['enabled'] = $paymentOptionToUpdate['enabled'];
                 break;
