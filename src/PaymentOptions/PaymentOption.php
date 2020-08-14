@@ -44,6 +44,9 @@ class PaymentOption
      */
     private $enabled;
 
+    /**
+     * @var array
+     */
     private $countries;
 
     /**
