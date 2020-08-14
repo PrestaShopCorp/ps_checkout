@@ -29,7 +29,7 @@ class PaymentOptions
      *
      * @param PaymentOption[] $paymentOptions
      */
-    public function __construct($paymentOptions = [])
+    public function __construct(array $paymentOptions = [])
     {
         $this->paymentOptions = $paymentOptions;
     }
