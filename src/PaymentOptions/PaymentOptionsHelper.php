@@ -76,7 +76,7 @@ class PaymentOptionsHelper
     {
         $paymentOptions = new PaymentOptions();
         foreach ($paymentOptionsFromAjax as $index => $paymentOption) {
-            $payment = new PaymentOption($paymentOption['name'], $index, $paymentOption['logo'], $paymentOption['enabled'] );
+            $payment = new PaymentOption($paymentOption['name'], $index, $paymentOption['logo'], $paymentOption['enabled']);
             $payment->setCountriesByName($paymentOption['countries']);
             $paymentOptions->addPaymentOption($payment);
         }

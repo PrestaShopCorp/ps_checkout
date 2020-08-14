@@ -70,7 +70,7 @@ class PaymentOption
     public function setCountriesByIsoCode($countriesIsoCodes)
     {
         $this->countries = [];
-        foreach ( $countriesIsoCodes as $countryIsoCode) {
+        foreach ($countriesIsoCodes as $countryIsoCode) {
             $this->countries[] = \Country::getByIso($countryIsoCode);
         }
     }
@@ -83,7 +83,7 @@ class PaymentOption
     public function setCountriesByName($countriesNames)
     {
         $this->countries = [];
-        foreach ( $countriesNames as $countryName) {
+        foreach ($countriesNames as $countryName) {
             $this->countries[] = \Country::getIdByName(null, $countryName);
         }
     }
