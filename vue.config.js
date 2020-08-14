@@ -30,7 +30,7 @@ module.exports = {
   },
   productionSourceMap: false,
   filenameHashing: false,
-  outputDir: "./views/js/back",
+  outputDir: "./views/",
   assetsDir: "",
   publicPath: "../modules/ps_checkout/views/"
 };
