@@ -32,6 +32,9 @@ class PaymentOption
      */
     private $name;
 
+    /**
+     * @var int
+     */
     private $position;
 
     private $logo;
