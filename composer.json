@@ -27,6 +27,7 @@
     "ramsey/uuid": "^3.8",
     "symfony/config": "^3.4",
     "symfony/dependency-injection": "^3.4",
+    "symfony/options-resolver": "^3.4",
     "vlucas/phpdotenv": "^3.4",
     "webmozart/assert": "^1.0"
   },
