@@ -43,6 +43,4 @@ class PaymentOptionsPresenter
             'enabled' => $paymentOption->isEnabled(),
         ];
     }
-
-
 }

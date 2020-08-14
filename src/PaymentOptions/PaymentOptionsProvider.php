@@ -63,6 +63,7 @@ class PaymentOptionsProvider
     {
         $ideal = new PaymentOption('ideal', 3, 'ideal_logo.png');
         $ideal->setCountriesByIsoCode(['nl']);
+
         return $ideal;
     }
 
@@ -70,6 +71,7 @@ class PaymentOptionsProvider
     {
         $giropay = new PaymentOption('gyropay', 4, 'giropay_logo.png');
         $giropay->setCountriesByIsoCode(['de']);
+
         return $giropay;
     }
 
@@ -77,6 +79,7 @@ class PaymentOptionsProvider
     {
         $eps = new PaymentOption('eps', 5, 'eps_logo.png');
         $eps->setCountriesByIsoCode(['at']);
+
         return $eps;
     }
 
@@ -84,6 +87,7 @@ class PaymentOptionsProvider
     {
         $myBank = new PaymentOption('mybank', 6, 'mybank_logo.png');
         $myBank->setCountriesByIsoCode(['it']);
+
         return $myBank;
     }
 
@@ -91,6 +95,7 @@ class PaymentOptionsProvider
     {
         $sofort = new PaymentOption('sofort', 7, 'sofort_logo.png');
         $sofort->setCountriesByIsoCode(['be', 'es', 'it', 'de', 'nl', 'at']);
+
         return $sofort;
     }
 
@@ -98,6 +103,7 @@ class PaymentOptionsProvider
     {
         $p24 = new PaymentOption('p24', 8, 'p24_logo.png');
         $p24->setCountriesByIsoCode(['pl']);
+
         return $p24;
     }
 }
