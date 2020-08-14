@@ -37,7 +37,7 @@ class PaymentOptions
     /**
      * @param PaymentOption $paymentOption
      */
-    public function addPaymentOption($paymentOption)
+    public function addPaymentOption(PaymentOption $paymentOption)
     {
         $this->paymentOptions[] = $paymentOption;
     }
