@@ -23,6 +23,9 @@ namespace PrestaShop\Module\PrestashopCheckout\Logger;
 use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 
+/**
+ * Class responsible for returning logger settings
+ */
 class LoggerConfiguration
 {
     const MAX_FILES = 15;

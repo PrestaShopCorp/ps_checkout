@@ -24,6 +24,9 @@ use Context;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use Shop;
 
+/**
+ * Class responsible to provide current PrestaShop Shop data
+ */
 class ShopProvider
 {
     /**
