@@ -27,6 +27,9 @@ namespace PrestaShop\Module\PrestashopCheckout\PaymentOptions;
  */
 class PaymentOption
 {
+    /**
+     * @var string
+     */
     private $name;
 
     private $position;
