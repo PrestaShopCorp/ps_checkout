@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\PaymentOptions;
 
 /**
- * Class PaymentOption
+ * Class PaymentOption used for model of payment option
  *
  * We keep the countries ids in the configuration
  */
@@ -104,21 +104,11 @@ class PaymentOption
     }
 
     /**
-     * Get the payment order as json to save it in the config or to send it to front
-     *
-     * @param bool false $toDisplay is used to send countries as id or as name
-     *
      * @return array
      */
-    public function toArray($toDisplay = false)
+    public function getCountries()
     {
-        return [
-            'name' => $this->name,
-            'position' => $this->position,
-            'logo' => $this->logo,
-            'countries' => $toDisplay ? $this->getCountriesAsName() : $this->countries,
-            'enabled' => $this->enabled,
-        ];
+        return $this->countries;
     }
 
     /**
@@ -126,7 +116,7 @@ class PaymentOption
      *
      * @return array
      */
-    private function getCountriesAsName()
+    public function getCountriesAsName()
     {
         $countries = [];
         foreach ($this->countries as $countryId) {
@@ -134,5 +124,69 @@ class PaymentOption
         }
 
         return $countries;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPosition()
+    {
+        return $this->position;
+    }
+
+    /**
+     * @param int $position
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLogo()
+    {
+        return $this->logo;
+    }
+
+    /**
+     * @param string $logo
+     */
+    public function setLogo($logo)
+    {
+        $this->logo = $logo;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param bool $enabled
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
     }
 }

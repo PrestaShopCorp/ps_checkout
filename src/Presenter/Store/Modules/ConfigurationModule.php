@@ -21,7 +21,8 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use Monolog\Logger;
-use PrestaShop\Module\PrestashopCheckout\PaymentOptions\PaymentOptionsHelper;
+use PrestaShop\Module\PrestashopCheckout\PaymentOptions\PaymentOptionsFactory;
+use PrestaShop\Module\PrestashopCheckout\PaymentOptions\PaymentOptionsProvider;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
@@ -119,7 +120,7 @@ class ConfigurationModule implements PresenterInterface
         );
 
         if (empty($paymentOptions)) {
-            $paymentOptions = PaymentOptionsHelper::initPaymentOptions();
+            $paymentOptions = (new PaymentOptionsProvider())->createDefaultPaymentOptions();
 
             \Configuration::updateValue(
                 'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
@@ -129,7 +130,7 @@ class ConfigurationModule implements PresenterInterface
                 (int) \Context::getContext()->shop->id
             );
         } else {
-            $paymentOptions = PaymentOptionsHelper::decodePaymentOptionsFromConfig(json_decode($paymentOptions, true));
+            $paymentOptions = (new PaymentOptionsFactory())->createPaymentOptionsFromConfiguration(json_decode($paymentOptions, true));
         }
 
         return $paymentOptions->getPaymentOptions(true);

@@ -10,3 +10,9 @@ services:
 
   ps_checkout.logger.file.reader:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader'
+
+  ps_checkout.paymentoptions.factory:
+    class: 'PrestaShop\Module\PrestashopCheckout\PaymentOptions\PaymentOptionsFactory'
+
+  ps_checkout.paymentoptions.provider:
+    class: 'PrestaShop\Module\PrestashopCheckout\PaymentOptions\PaymentOptionsProvider'

@@ -21,37 +21,28 @@
 namespace PrestaShop\Module\PrestashopCheckout\PaymentOptions;
 
 /**
- * Class PaymentOptions is used to create a full instance of payments options
+ * Class PaymentOptionsPresenter is used to convert payment options to array
  */
-class PaymentOptions
+class PaymentOptionsPresenter
 {
-    private $paymentOptions;
-
     /**
-     * PaymentOptions constructor.
+     * Get the payment order as json to save it in the config or to send it to front
      *
-     * @param PaymentOption[] $paymentOptions
-     */
-    public function __construct(array $paymentOptions = [])
-    {
-        $this->paymentOptions = $paymentOptions;
-    }
-
-    /**
      * @param PaymentOption $paymentOption
+     * @param bool false $toDisplay is used to send countries as id or as name
+     *
+     * @return array
      */
-    public function addPaymentOption(PaymentOption $paymentOption)
+    public function convertToArray($paymentOption, $toDisplay = false)
     {
-        $this->paymentOptions[] = $paymentOption;
+        return [
+            'name' => $paymentOption->getName(),
+            'position' => $paymentOption->getPosition(),
+            'logo' => $paymentOption->getLogo(),
+            'countries' => $toDisplay ? $paymentOption->getCountriesAsName() : $paymentOption->getCountries(),
+            'enabled' => $paymentOption->isEnabled(),
+        ];
     }
 
-    public function getPaymentOptions($toDisplay = false)
-    {
-        $payments = [];
-        foreach ($this->paymentOptions as $paymentOption) {
-            $payments[] = (new PaymentOptionsPresenter())->convertToArray($paymentOption, $toDisplay);
-        }
 
-        return $payments;
-    }
 }

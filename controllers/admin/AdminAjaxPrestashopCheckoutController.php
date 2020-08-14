@@ -25,7 +25,6 @@ use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
-use PrestaShop\Module\PrestashopCheckout\PaymentOptions\PaymentOptionsHelper;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
 use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter;
@@ -50,7 +49,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessUpdatePaymentMethodsOrder()
     {
         $paymentOptionsUpdated = json_decode(Tools::getValue('paymentMethods'), true);
-        $paymentOptions = PaymentOptionsHelper::decodePaymentOptionsFromAjax($paymentOptionsUpdated);
+        $paymentOptions = $this->module->getService('ps_checkout.paymentoptions.factory')->createPaymentOptionsFromAjax($paymentOptionsUpdated);
 
         Configuration::updateValue(
             'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
