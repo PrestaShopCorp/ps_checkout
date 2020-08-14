@@ -20,54 +20,36 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Logger;
 
-use Monolog\Handler\HandlerInterface;
-use Monolog\Handler\RotatingFileHandler;
-
-class LoggerHandlerFactory
+/**
+ * Class responsible for returning log filename.
+ */
+class LoggerFilename
 {
     /**
-     * @var string
-     */
-    private $directory;
-
-    /**
-     * @var string
+     * @var string Base filename
      */
     private $filename;
 
     /**
-     * @var int
+     * @var string Shop identifier
      */
-    private $maxFiles;
+    private $identifier;
 
     /**
-     * @var int
-     */
-    private $loggerLevel;
-
-    /**
-     * @param string $directory
      * @param string $filename
-     * @param int $maxFiles
-     * @param int $loggerLevel
+     * @param string $identifier
      */
-    public function __construct($directory, $filename, $maxFiles, $loggerLevel)
+    public function __construct($filename, $identifier)
     {
-        $this->directory = $directory;
         $this->filename = $filename;
-        $this->maxFiles = $maxFiles;
-        $this->loggerLevel = $loggerLevel;
+        $this->identifier = $identifier;
     }
 
     /**
-     * @return HandlerInterface
+     * @return string
      */
-    public function build()
+    public function get()
     {
-        return new RotatingFileHandler(
-            $this->directory . $this->filename,
-            $this->maxFiles,
-            $this->loggerLevel
-        );
+        return $this->filename . '_' . $this->identifier;
     }
 }

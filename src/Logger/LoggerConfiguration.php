@@ -20,54 +20,51 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Logger;
 
-use Monolog\Handler\HandlerInterface;
-use Monolog\Handler\RotatingFileHandler;
+use Monolog\Logger;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 
-class LoggerHandlerFactory
+class LoggerConfiguration
 {
-    /**
-     * @var string
-     */
-    private $directory;
+    const MAX_FILES = 15;
 
     /**
-     * @var string
+     * @var PrestaShopConfiguration
      */
-    private $filename;
+    private $configuration;
 
     /**
-     * @var int
+     * @param PrestaShopConfiguration $configuration
      */
-    private $maxFiles;
-
-    /**
-     * @var int
-     */
-    private $loggerLevel;
-
-    /**
-     * @param string $directory
-     * @param string $filename
-     * @param int $maxFiles
-     * @param int $loggerLevel
-     */
-    public function __construct($directory, $filename, $maxFiles, $loggerLevel)
+    public function __construct(PrestaShopConfiguration $configuration)
     {
-        $this->directory = $directory;
-        $this->filename = $filename;
-        $this->maxFiles = $maxFiles;
-        $this->loggerLevel = $loggerLevel;
+        $this->configuration = $configuration;
     }
 
     /**
-     * @return HandlerInterface
+     * @return int
      */
-    public function build()
+    public function getMaxFiles()
     {
-        return new RotatingFileHandler(
-            $this->directory . $this->filename,
-            $this->maxFiles,
-            $this->loggerLevel
+        return (int) $this->configuration->get(
+            'PS_CHECKOUT_LOGGER_MAX_FILES',
+            [
+                'default' => static::MAX_FILES,
+                'global' => true,
+            ]
+        );
+    }
+
+    /**
+     * @return int
+     */
+    public function getLevel()
+    {
+        return (int) $this->configuration->get(
+            'PS_CHECKOUT_LOGGER_LEVEL',
+            [
+                'default' => Logger::ERROR,
+                'global' => true,
+            ]
         );
     }
 }

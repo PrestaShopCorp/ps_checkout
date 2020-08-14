@@ -62,7 +62,7 @@ class LoggerFactory
         return new Logger(
             $this->name,
             [
-                $this->loggerHandler
+                $this->loggerHandler,
             ],
             [
                 new PsrLogMessageProcessor(),
