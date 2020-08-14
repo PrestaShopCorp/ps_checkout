@@ -24,7 +24,7 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class responsible to define default value for options
+ * Class responsible to define default value for PrestaShop configuration options
  */
 class PrestaShopConfigurationOptionsResolver
 {

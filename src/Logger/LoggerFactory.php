@@ -78,15 +78,15 @@ class LoggerFactory
     private function assertNameIsValid($name)
     {
         if (empty($name)) {
-            throw new PsCheckoutException('Logger name cannot be empty.', PsCheckoutException::PSCHECKOUT_LOGGER_NAME_INVALID);
+            throw new PsCheckoutException('Logger name cannot be empty.', PsCheckoutException::UNKNOWN);
         }
 
         if (false === is_string($name)) {
-            throw new PsCheckoutException('Logger name should be a string.', PsCheckoutException::PSCHECKOUT_LOGGER_NAME_INVALID);
+            throw new PsCheckoutException('Logger name should be a string.', PsCheckoutException::UNKNOWN);
         }
 
         if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $name)) {
-            throw new PsCheckoutException('Logger name is invalid.', PsCheckoutException::PSCHECKOUT_LOGGER_NAME_INVALID);
+            throw new PsCheckoutException('Logger name is invalid.', PsCheckoutException::UNKNOWN);
         }
     }
 }

@@ -21,13 +21,11 @@
 namespace Tests\Unit\Logger;
 
 use Generator;
-use Monolog\Handler\HandlerInterface;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
-use TypeError;
+use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFilename;
 
-class LoggerFactoryTest extends TestCase
+class LoggerFilenameTest extends TestCase
 {
     /**
      * @dataProvider getValidValue
@@ -38,7 +36,9 @@ class LoggerFactoryTest extends TestCase
      */
     public function testItIsCreatedSuccessfullyWhenValidValueIsGiven($data)
     {
-        new LoggerFactory($data['name'], $data['loggerHandler']);
+        $loggerFilename = new LoggerFilename($data['filename'], $data['identifier']);
+
+        $this->assertEquals('ps_checkout-1', $loggerFilename->get());
     }
 
     /**
@@ -50,14 +50,10 @@ class LoggerFactoryTest extends TestCase
      */
     public function testItThrowsExceptionWhenInvalidValueIsGiven($data)
     {
-        if ($data['loggerHandler'] instanceof HandlerInterface) {
-            $this->expectException(PsCheckoutException::class);
-            $this->expectExceptionCode(PsCheckoutException::UNKNOWN);
-        } else {
-            $this->expectException(TypeError::class);
-        }
+        $this->expectException(PsCheckoutException::class);
+        $this->expectExceptionCode(PsCheckoutException::UNKNOWN);
 
-        new LoggerFactory($data['name'], $data['loggerHandler']);
+        new LoggerFilename($data['filename'], $data['identifier']);
     }
 
     /**
@@ -66,8 +62,8 @@ class LoggerFactoryTest extends TestCase
     public function getValidValue()
     {
         yield [[
-            'name' => 'ps_checkout',
-            'loggerHandler' => $this->createMock(HandlerInterface::class),
+            'filename' => 'ps_checkout',
+            'identifier' => 1,
         ]];
     }
 
@@ -77,20 +73,20 @@ class LoggerFactoryTest extends TestCase
     public function getInvalidValue()
     {
         yield [[
-            'name' => null,
-            'loggerHandler' => null,
+            'filename' => null,
+            'identifier' => 0.15,
         ]];
         yield [[
-            'name' => '<ps_checkout>',
-            'loggerHandler' => null,
+            'filename' => '<ps_checkout>',
+            'identifier' => [],
         ]];
         yield [[
-            'name' => '{ps_checkout}',
-            'loggerHandler' => null,
+            'filename' => '{ps_checkout}',
+            'identifier' => 'a',
         ]];
         yield [[
-            'name' => null,
-            'loggerHandler' => $this->createMock(HandlerInterface::class),
+            'filename' => null,
+            'identifier' => null,
         ]];
     }
 }

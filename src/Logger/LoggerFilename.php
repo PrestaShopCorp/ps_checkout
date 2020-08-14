@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Logger;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+
 /**
  * Class responsible for returning log filename.
  */
@@ -31,18 +33,21 @@ class LoggerFilename
     private $filename;
 
     /**
-     * @var string Shop identifier
+     * @var int Shop identifier
      */
     private $identifier;
 
     /**
      * @param string $filename
-     * @param string $identifier
+     * @param int $identifier
+     *
+     * @throws PsCheckoutException
      */
     public function __construct($filename, $identifier)
     {
+        $this->assertNameIsValid($filename);
         $this->filename = $filename;
-        $this->identifier = $identifier;
+        $this->identifier = (int) $identifier;
     }
 
     /**
@@ -50,6 +55,26 @@ class LoggerFilename
      */
     public function get()
     {
-        return $this->filename . '_' . $this->identifier;
+        return $this->filename . '-' . $this->identifier;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @throws PsCheckoutException
+     */
+    private function assertNameIsValid($name)
+    {
+        if (empty($name)) {
+            throw new PsCheckoutException('Logger filename cannot be empty.', PsCheckoutException::UNKNOWN);
+        }
+
+        if (false === is_string($name)) {
+            throw new PsCheckoutException('Logger filename should be a string.', PsCheckoutException::UNKNOWN);
+        }
+
+        if (!preg_match('/^[a-zA-Z0-9_-]+$/', $name)) {
+            throw new PsCheckoutException('Logger filename is invalid.', PsCheckoutException::UNKNOWN);
+        }
     }
 }

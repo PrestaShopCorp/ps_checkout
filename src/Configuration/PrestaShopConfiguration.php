@@ -39,10 +39,6 @@ class PrestaShopConfiguration
     public function __construct(PrestaShopConfigurationOptionsResolver $optionsResolver)
     {
         $this->optionsResolver = $optionsResolver;
-
-        if (false === Configuration::configurationIsLoaded()) {
-            Configuration::loadConfiguration();
-        }
     }
 
     /**
