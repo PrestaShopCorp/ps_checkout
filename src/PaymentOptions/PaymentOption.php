@@ -39,6 +39,9 @@ class PaymentOption
 
     private $logo;
 
+    /**
+     * @var bool
+     */
     private $enabled;
 
     private $countries;
