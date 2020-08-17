@@ -31,28 +31,28 @@
           "
         >
           <p class="mb-0">
-            {{ $t('banner.paypal-status.congrats') }}
+            {{ $t('banner.paypalStatus.congrats') }}
           </p>
           <h3 class="mb-4">
-            {{ $t('banner.paypal-status.oneMoreThing') }}
+            {{ $t('banner.paypalStatus.oneMoreThing') }}
           </h3>
         </div>
         <div v-else>
           <h3 class="mb-0">
-            {{ $t('banner.paypal-status.allSet') }}
+            {{ $t('banner.paypalStatus.allSet') }}
           </h3>
           <p class="mb-4">
-            {{ $t('banner.paypal-status.confirmation') }}
+            {{ $t('banner.paypalStatus.confirmation') }}
           </p>
         </div>
 
         <p class="mb-3 text-muted">
           <img src="@/assets/images/baseline-check_circle.png" style="width:25px;" alt="check" />
-          {{ $t('banner.paypal-status.psAccountConnected') }}
+          {{ $t('banner.paypalStatus.psAccountConnected') }}
         </p>
         <p class="mb-3 text-muted">
           <img src="@/assets/images/baseline-check_circle.png" style="width:25px;" alt="check" />
-          {{ $t('banner.paypal-status.paypalAccountConnected') }}
+          {{ $t('banner.paypalStatus.paypalAccountConnected') }}
         </p>
         <p
           class="mb-4"
@@ -62,8 +62,8 @@
           "
         >
           <img src="" style="width:25px;" alt="not-check" />
-          {{ $t('banner.paypal-status.legalDocumentsSent') }}
-          {{ $t('banner.paypal-status.upTo') }}
+          {{ $t('banner.paypalStatus.legalDocumentsSent') }}
+          {{ $t('banner.paypalStatus.upTo') }}
         </p>
         <p
           class="mb-4"
@@ -72,8 +72,8 @@
           "
         >
           <img src="" style="width:25px;" alt="not-check" />
-          {{ $t('banner.paypal-status.legalDocumentsSent') }}
-          {{ $t('banner.paypal-status.onlyCC') }}
+          {{ $t('banner.paypalStatus.legalDocumentsSent') }}
+          {{ $t('banner.paypalStatus.onlyCC') }}
         </p>
         <p class="mb-4 text-muted" v-else>
           <img
@@ -81,8 +81,8 @@
             style="width:25px;"
             alt="check"
           />
-          {{ $t('banner.paypal-status.legalDocumentsSent') }}
-          {{ $t('banner.paypal-status.upTo') }}
+          {{ $t('banner.paypalStatus.legalDocumentsSent') }}
+          {{ $t('banner.paypalStatus.upTo') }}
         </p>
         <a
           href="https://www.paypal.com/policy/hub/kyc"
@@ -94,7 +94,7 @@
               cardPaymentIsActive === 'NEED_MORE_DATA'
           "
         >
-          {{ $t('banner.paypal-status.buttonLegal') }}
+          {{ $t('banner.paypalStatus.buttonLegal') }}
         </a>
         <a
           href="#"
@@ -102,7 +102,7 @@
           @click.prevent="updatePaypalStatusSettings()"
           v-else
         >
-          {{ $t('banner.paypal-status.buttonSuccess') }}
+          {{ $t('banner.paypalStatus.buttonSuccess') }}
         </a>
         <p
           class="mt-2 text-muted"
@@ -112,7 +112,7 @@
               cardPaymentIsActive === 'NEED_MORE_DATA'
           "
         >
-          {{ $t('banner.paypal-status.waitingFinalApprove') }}
+          {{ $t('banner.paypalStatus.waitingFinalApprove') }}
         </p>
       </div>
     </div>

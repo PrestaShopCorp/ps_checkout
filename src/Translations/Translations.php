@@ -143,7 +143,7 @@ class Translations
                 ],
             ],
             'banner' => [
-                'paypal-status' => [
+                'paypalStatus' => [
                     'buttonSuccess' => $this->module->l('Thank you, close this message', 'translations'),
                     'buttonLegal' => $this->module->l('Send my legal documents now', 'translations'),
                     'allSet' => $this->module->l("You're all set !", 'translations'),
