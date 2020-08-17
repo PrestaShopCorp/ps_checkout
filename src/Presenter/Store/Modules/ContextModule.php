@@ -225,10 +225,6 @@ class ContextModule implements PresenterInterface
      */
     private function liveStepConfirmed()
     {
-        return \Configuration::get(
-                'PS_CHECKOUT_LIVE_STEP_CONFIRMED',
-                null,
-                null,
-                (int) \Context::getContext()->shop->id) === '1';
+        return $this->module->getService('ps_checkout.step.live')->isConfirmed();
     }
 }

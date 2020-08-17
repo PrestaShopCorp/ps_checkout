@@ -90,13 +90,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessLiveStepConfirmed()
     {
-        Configuration::updateValue(
-            'PS_CHECKOUT_LIVE_STEP_CONFIRMED',
-            '1',
-            false,
-            null,
-            (int) Context::getContext()->shop->id
-        );
+        $this->module->getService('ps_checkout.step.live')->confirmed(true);
 
         $this->ajaxDie(json_encode(true));
     }
@@ -162,13 +156,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         (new PersistentConfiguration())->savePaypalAccount($paypalAccount);
 
         // we reset the Live Step banner
-        Configuration::updateValue(
-            'PS_CHECKOUT_LIVE_STEP_CONFIRMED',
-            '0',
-            false,
-            null,
-            (int) Context::getContext()->shop->id
-        );
+        $this->module->getService('ps_checkout.step.live')->confirmed(false);
 
         $this->ajaxDie(json_encode(true));
     }

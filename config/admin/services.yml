@@ -10,3 +10,6 @@ services:
 
   ps_checkout.logger.file.reader:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader'
+
+  ps_checkout.step.live:
+    class: 'PrestaShop\Module\PrestashopCheckout\Step\LiveStep'
