@@ -161,6 +161,15 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         (new PersistentConfiguration())->savePaypalAccount($paypalAccount);
 
+        // we reset the Live Step banner
+        Configuration::updateValue(
+            'PS_CHECKOUT_LIVE_STEP_CONFIRMED',
+            '0',
+            false,
+            null,
+            (int) Context::getContext()->shop->id
+        );
+
         $this->ajaxDie(json_encode(true));
     }
 
