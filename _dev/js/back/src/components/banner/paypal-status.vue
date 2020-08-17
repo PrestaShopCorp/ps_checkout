@@ -23,33 +23,96 @@
         <img src="@/assets/images/cb.png" alt="cb" />
       </div>
       <div class="flex-grow-1">
-        <h3 class="mb-0">
-          {{ $t('banner.paypal-status.all-set') }}
-        </h3>
-        <p class="mb-4">
-          {{ $t('banner.paypal-status.confirmation') }}
-        </p>
-        <p class="mb-3 text-muted">
-          <img src="@/assets/images/baseline-check_circle.png" style="width:25px;" alt="cb" />
-          {{ $t('banner.paypal-status.ps-account-connected') }}
-        </p>
-        <p class="mb-3 text-muted">
-          <img src="@/assets/images/baseline-check_circle.png" style="width:25px;" alt="cb" />
-          {{ $t('banner.paypal-status.paypal-account-connected') }}
-        </p>
-        <p class="mb-4 text-muted">
-          <img src="@/assets/images/baseline-check_circle.png" style="width:25px;" alt="cb" />
-          {{ $t('banner.paypal-status.legal-documents-sent') }}
-        </p>
+        <div
+          v-if="
+            cardPaymentIsActive === 'IN_REVIEW' ||
+              cardPaymentIsActive === 'LIMITED' ||
+              cardPaymentIsActive === 'NEED_MORE_DATA'
+          "
+        >
+          <p class="mb-0">
+            {{ $t('banner.paypal-status.congrats') }}
+          </p>
+          <h3 class="mb-4">
+            {{ $t('banner.paypal-status.oneMoreThing') }}
+          </h3>
+        </div>
+        <div v-else>
+          <h3 class="mb-0">
+            {{ $t('banner.paypal-status.allSet') }}
+          </h3>
+          <p class="mb-4">
+            {{ $t('banner.paypal-status.confirmation') }}
+          </p>
+        </div>
 
-        <p>
-          <a
-            href="#"
-            class="btn btn-primary"
-            @click.prevent="updatePaypalStatusSettings()"
-          >
-            {{ $t('banner.paypal-status.button-success') }}
-          </a>
+        <p class="mb-3 text-muted">
+          <img src="@/assets/images/baseline-check_circle.png" style="width:25px;" alt="check" />
+          {{ $t('banner.paypal-status.psAccountConnected') }}
+        </p>
+        <p class="mb-3 text-muted">
+          <img src="@/assets/images/baseline-check_circle.png" style="width:25px;" alt="check" />
+          {{ $t('banner.paypal-status.paypalAccountConnected') }}
+        </p>
+        <p
+          class="mb-4"
+          v-if="
+            cardPaymentIsActive === 'IN_REVIEW' ||
+              cardPaymentIsActive === 'LIMITED'
+          "
+        >
+          <img src="" style="width:25px;" alt="not-check" />
+          {{ $t('banner.paypal-status.legalDocumentsSent') }}
+          {{ $t('banner.paypal-status.upTo') }}
+        </p>
+        <p
+          class="mb-4"
+          v-else-if="
+            cardPaymentIsActive === 'NEED_MORE_DATA'
+          "
+        >
+          <img src="" style="width:25px;" alt="not-check" />
+          {{ $t('banner.paypal-status.legalDocumentsSent') }}
+          {{ $t('banner.paypal-status.onlyCC') }}
+        </p>
+        <p class="mb-4 text-muted" v-else>
+          <img
+            src="@/assets/images/baseline-check_circle.png"
+            style="width:25px;"
+            alt="check"
+          />
+          {{ $t('banner.paypal-status.legalDocumentsSent') }}
+          {{ $t('banner.paypal-status.upTo') }}
+        </p>
+        <a
+          href="https://www.paypal.com/policy/hub/kyc"
+          class="btn btn-primary"
+          target="_blank"
+          v-if="
+            cardPaymentIsActive === 'IN_REVIEW' ||
+              cardPaymentIsActive === 'LIMITED' ||
+              cardPaymentIsActive === 'NEED_MORE_DATA'
+          "
+        >
+          {{ $t('banner.paypal-status.buttonLegal') }}
+        </a>
+        <a
+          href="#"
+          class="btn btn-primary"
+          @click.prevent="updatePaypalStatusSettings()"
+          v-else
+        >
+          {{ $t('banner.paypal-status.buttonSuccess') }}
+        </a>
+        <p
+          class="mt-2 text-muted"
+          v-if="
+            cardPaymentIsActive === 'IN_REVIEW' ||
+              cardPaymentIsActive === 'LIMITED' ||
+              cardPaymentIsActive === 'NEED_MORE_DATA'
+          "
+        >
+          {{ $t('banner.paypal-status.waitingFinalApprove') }}
         </p>
       </div>
     </div>
