@@ -142,6 +142,16 @@ class Translations
                     'defaultError' => $this->module->l('Error, try later.', 'translations'),
                 ],
             ],
+            'banner' => [
+                'paypal-status' => [
+                    'button-success' => $this->module->l('Thank you, close this message', 'translations'),
+                    'all-set' => $this->module->l("You're all set !", 'translations'),
+                    'ps-account-connected' => $this->module->l('Connect your PrestaShop account', 'translations'),
+                    'paypal-account-connected' => $this->module->l('Link your PayPal account', 'translations'),
+                    'legal-documents-sent' => $this->module->l('Send your legal documents to PayPal : in the meantime, you can sell now up to 500$ in card transactions.', 'translations'),
+                    'confirmation' => $this->module->l('We have received the confirmation from PayPal. You can now process all card transactions with no limits.', 'translations'),
+                ],
+            ],
             'panel' => [
                 'account-list' => [
                     'accountSettings' => $this->module->l('Account settings', 'translations'),

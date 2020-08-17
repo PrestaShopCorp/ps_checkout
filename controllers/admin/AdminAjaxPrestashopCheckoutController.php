@@ -86,6 +86,22 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
+     * AJAX: Confirm PS Live Step Banner closed
+     */
+    public function ajaxProcessLiveStepConfirmed()
+    {
+        Configuration::updateValue(
+            'PS_CHECKOUT_LIVE_STEP_CONFIRMED',
+            '1',
+            false,
+            null,
+            (int) Context::getContext()->shop->id
+        );
+
+        $this->ajaxDie(json_encode(true));
+    }
+
+    /**
      * AJAX: Change prestashop rounding settings
      *
      * PS_ROUND_TYPE need to be set to 1 (Round on each item)

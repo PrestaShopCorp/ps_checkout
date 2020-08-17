@@ -46,6 +46,19 @@ export default {
       return Promise.resolve(response);
     });
   },
+  updatePaypalStatusSettings({ commit, getters }) {
+    return ajax({
+      url: getters.adminController,
+      action: 'LiveStepConfirmed'
+    }).then(resp => {
+      if (resp) {
+        commit(types.UPDATE_CONFIRMED_LIVE_STEP);
+        return Promise.resolve(true);
+      }
+
+      return Promise.reject(resp);
+    });
+  },
   refreshPaypalStatus({ commit, getters }) {
     return ajax({
       url: getters.adminController,

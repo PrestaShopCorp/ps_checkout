@@ -17,40 +17,41 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *-->
 <template>
-  <div class="card">
+  <div class="card" v-if="this.displayLiveStep">
     <div class="card-body d-flex">
       <div class="d-flex">
         <img src="@/assets/images/cb.png" alt="cb" />
       </div>
       <div class="flex-grow-1">
-        <h3>
+        <h3 class="mb-0">
           {{ $t('banner.paypal-status.all-set') }}
         </h3>
-        <p class="mb-3">
+        <p class="mb-4">
           {{ $t('banner.paypal-status.confirmation') }}
         </p>
-        <p class="mb-3">
-          <img src="@/assets/images/baseline-check_circle.png" alt="cb" />
-          {{ $t('banner.paypal-status.confirmation') }}
+        <p class="mb-3 text-muted">
+          <img src="@/assets/images/baseline-check_circle.png" style="width:25px;" alt="cb" />
+          {{ $t('banner.paypal-status.ps-account-connected') }}
         </p>
+        <p class="mb-3 text-muted">
+          <img src="@/assets/images/baseline-check_circle.png" style="width:25px;" alt="cb" />
+          {{ $t('banner.paypal-status.paypal-account-connected') }}
+        </p>
+        <p class="mb-4 text-muted">
+          <img src="@/assets/images/baseline-check_circle.png" style="width:25px;" alt="cb" />
+          {{ $t('banner.paypal-status.legal-documents-sent') }}
+        </p>
+
         <p>
-          <b-button
-            target="_blank"
-            variant="outline-secondary"
-            @click="updatePaypalStatusSettings()"
+          <a
+            href="#"
+            class="btn btn-primary"
+            @click.prevent="updatePaypalStatusSettings()"
           >
             {{ $t('banner.paypal-status.button-success') }}
-          </b-button>
+          </a>
         </p>
       </div>
-    </div>
-    <div>
-      <b-alert v-if="confirmationAlert" variant="success" show>
-        <h2>{{ $t('banner.paypal-status.confirmationTitle') }}</h2>
-        <p class="mb-3">
-          {{ $t('banner.paypal-status.confirmationLabel') }}
-        </p>
-      </b-alert>
     </div>
   </div>
 </template>
@@ -60,29 +61,19 @@
     name: 'PaypalStatusBanner',
     data() {
       return {
-        confirmationAlert: false
+        displayLiveStep: true
       };
     },
     methods: {
       updatePaypalStatusSettings() {
         this.$store.dispatch('updatePaypalStatusSettings').then(() => {
-          this.confirmationAlert = true;
+          this.displayLiveStep = false;
         });
       }
     },
     computed: {
       cardPaymentIsActive() {
         return this.$store.state.paypal.cardIsActive;
-      }
-    },
-    watch: {
-      confirmationAlert(value) {
-        if (value === false) {
-          return;
-        }
-        setTimeout(() => {
-          this.confirmationAlert = false;
-        }, 6000);
       }
     }
   };
