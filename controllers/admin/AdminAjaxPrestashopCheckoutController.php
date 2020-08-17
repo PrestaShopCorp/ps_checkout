@@ -53,7 +53,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         Configuration::updateValue(
             'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
-            json_encode($paymentOptions->getPaymentOptions()),
+            json_encode($paymentOptions->getPaymentOptionsAsArray()),
             false,
             null,
             (int) Context::getContext()->shop->id

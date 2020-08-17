@@ -124,7 +124,7 @@ class ConfigurationModule implements PresenterInterface
 
             \Configuration::updateValue(
                 'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
-                json_encode($paymentOptions->getPaymentOptions()),
+                json_encode($paymentOptions->getPaymentOptionsAsArray()),
                 false,
                 null,
                 (int) \Context::getContext()->shop->id
@@ -133,6 +133,6 @@ class ConfigurationModule implements PresenterInterface
             $paymentOptions = (new PaymentOptionsFactory())->createPaymentOptionsFromConfiguration(json_decode($paymentOptions, true));
         }
 
-        return $paymentOptions->getPaymentOptions(true);
+        return $paymentOptions->getPaymentOptionsAsArray(true);
     }
 }

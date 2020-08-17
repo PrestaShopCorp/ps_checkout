@@ -45,7 +45,7 @@ class PaymentOptions
         $this->paymentOptions[] = $paymentOption;
     }
 
-    public function getPaymentOptions($toDisplay = false)
+    public function getPaymentOptionsAsArray($toDisplay = false)
     {
         $payments = [];
         foreach ($this->paymentOptions as $paymentOption) {
@@ -53,5 +53,10 @@ class PaymentOptions
         }
 
         return $payments;
+    }
+
+    public function getPaymentOptions()
+    {
+        return $this->paymentOptions;
     }
 }

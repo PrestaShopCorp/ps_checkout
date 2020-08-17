@@ -53,7 +53,7 @@ class PaymentOptionsProvider
 
     private function getBanContactOption()
     {
-        $bancontact = new PaymentOption('bancontact', 2, 'bancontact_logo.png');
+        $bancontact = new PaymentOption('bancontact', 2, 'bancontact_logo.svg');
         $bancontact->setCountriesByIsoCode(['be']);
 
         return $bancontact;
@@ -61,7 +61,7 @@ class PaymentOptionsProvider
 
     private function getIdealOption()
     {
-        $ideal = new PaymentOption('ideal', 3, 'ideal_logo.png');
+        $ideal = new PaymentOption('ideal', 3, 'ideal_logo.svg');
         $ideal->setCountriesByIsoCode(['nl']);
 
         return $ideal;
@@ -69,7 +69,7 @@ class PaymentOptionsProvider
 
     private function getGiropayOption()
     {
-        $giropay = new PaymentOption('gyropay', 4, 'giropay_logo.png');
+        $giropay = new PaymentOption('gyropay', 4, 'giropay_logo.svg');
         $giropay->setCountriesByIsoCode(['de']);
 
         return $giropay;
@@ -77,7 +77,7 @@ class PaymentOptionsProvider
 
     private function getEPSOption()
     {
-        $eps = new PaymentOption('eps', 5, 'eps_logo.png');
+        $eps = new PaymentOption('eps', 5, 'eps_logo.svg');
         $eps->setCountriesByIsoCode(['at']);
 
         return $eps;
@@ -85,7 +85,7 @@ class PaymentOptionsProvider
 
     private function getMyBankOption()
     {
-        $myBank = new PaymentOption('mybank', 6, 'mybank_logo.png');
+        $myBank = new PaymentOption('mybank', 6, 'mybank_logo.svg');
         $myBank->setCountriesByIsoCode(['it']);
 
         return $myBank;
@@ -93,7 +93,7 @@ class PaymentOptionsProvider
 
     private function getSofortOption()
     {
-        $sofort = new PaymentOption('sofort', 7, 'sofort_logo.png');
+        $sofort = new PaymentOption('sofort', 7, 'sofort_logo.svg');
         $sofort->setCountriesByIsoCode(['be', 'es', 'it', 'de', 'nl', 'at']);
 
         return $sofort;
@@ -101,7 +101,7 @@ class PaymentOptionsProvider
 
     private function getP24Option()
     {
-        $p24 = new PaymentOption('p24', 8, 'p24_logo.png');
+        $p24 = new PaymentOption('p24', 8, 'p24_logo.svg');
         $p24->setCountriesByIsoCode(['pl']);
 
         return $p24;

@@ -17,6 +17,11 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+
+use PrestaShop\Module\PrestashopCheckout\PaymentOptions\PaymentOption;
+use PrestaShop\Module\PrestashopCheckout\PaymentOptions\PaymentOptionsFactory;
+use PrestaShop\Module\PrestashopCheckout\PaymentOptions\PaymentOptionsProvider;
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 if (!defined('_PS_VERSION_')) {
@@ -500,18 +505,17 @@ class Ps_checkout extends PaymentModule
             'jsPathInitPaypalSdk' => $this->_path . 'views/js/initPaypalAndCard.js?v=' . $this->version,
         ]);
 
-        $paymentMethods = $this->getPaymentMethods();
+        $paymentOptions = $this->getPaymentMethods()->getPaymentOptions();
 
         $payment_options = [];
 
-        foreach ($paymentMethods as $position => $paymentMethod) {
-            if ($paymentMethod['name'] === 'card'
+        foreach ($paymentOptions as $paymentOption) {
+            if ($paymentOption->getName() === 'card'
                 && true === $paypalAccountRepository->cardHostedFieldsIsAvailable()
             ) {
                 $payment_options[] = $this->getHostedFieldsPaymentOption();
-            } elseif ($paymentMethod['name'] === 'paypal'
-                && true === $paypalAccountRepository->paypalPaymentMethodIsValid()) {
-                $payment_options[] = $this->getPaypalPaymentOption();
+            } elseif ( true === $paypalAccountRepository->paypalPaymentMethodIsValid()) {
+                $payment_options[] = $this->getPaypalPaymentOption($paymentOption);
             }
         }
 
@@ -521,11 +525,11 @@ class Ps_checkout extends PaymentModule
     /**
      * Get payment methods order
      *
-     * @return array
+     * @return \PrestaShop\Module\PrestashopCheckout\PaymentOptions\PaymentOptions
      */
     public function getPaymentMethods()
     {
-        $paymentMethods = \Configuration::get(
+        $paymentOptions = \Configuration::get(
             'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
             null,
             null,
@@ -533,14 +537,21 @@ class Ps_checkout extends PaymentModule
         );
 
         // if no paymentMethods position is set, by default put credit card (hostedFields) as first position
-        if (empty($paymentMethods)) {
-            return [
-                ['name' => 'card'],
-                ['name' => 'paypal'],
-            ];
+        if (empty($paymentOptions)) {
+            $paymentOptions = (new PaymentOptionsProvider())->createDefaultPaymentOptions();
+
+            \Configuration::updateValue(
+                'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
+                json_encode($paymentOptions->getPaymentOptions()),
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            );
+        }else {
+            $paymentOptions = (new PaymentOptionsFactory())->createPaymentOptionsFromConfiguration(json_decode($paymentOptions, true));
         }
 
-        return json_decode($paymentMethods, true);
+        return $paymentOptions;
     }
 
     /**
@@ -591,16 +602,18 @@ class Ps_checkout extends PaymentModule
     /**
      * Generate paypal payment option
      *
+     * @param PaymentOption
+     *
      * @return object PaymentOption
      */
-    public function getPaypalPaymentOption()
+    public function getPaypalPaymentOption(PaymentOption $paymentOption)
     {
         $paypalPaymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-        $paypalPaymentOption->setModuleName($this->name . '_paypal')
-                            ->setCallToActionText($this->l('Pay with a PayPal account or other payment methods'))
+        $paypalPaymentOption->setModuleName($this->name . '_' . $paymentOption->getName())
+                            ->setCallToActionText($this->l('Pay by ' . $paymentOption->getName()))
                             ->setAction($this->context->link->getModuleLink($this->name, 'CreateOrder', [], true))
                             ->setAdditionalInformation($this->generatePaypalForm())
-                            ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/paypal.png'));
+                            ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/' . $paymentOption->getLogo()));
 
         return $paypalPaymentOption;
     }
