@@ -17,14 +17,16 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
+
 namespace PrestaShop\Module\PrestashopCheckout\Step;
 
 class LiveStep
 {
-    const CONFIG_LIVE_STEP = "PS_CHECKOUT_LIVE_STEP_CONFIRMED";
+    const CONFIG_LIVE_STEP = 'PS_CHECKOUT_LIVE_STEP_CONFIRMED';
 
     /**
      * @param bool $confirmed
+     *
      * @return mixed
      */
     public function confirmed($confirmed)
