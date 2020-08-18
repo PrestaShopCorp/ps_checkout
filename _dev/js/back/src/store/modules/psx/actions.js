@@ -29,7 +29,7 @@ export default {
       }
     }).then(response => {
       if (response.status === false) {
-        return Promise.reject(response);
+        throw response;
       }
       commit(types.UPDATE_FORM_DATA, payload);
       return Promise.resolve(response);

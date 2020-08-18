@@ -26,7 +26,7 @@ export default {
       action: 'LogOutPsAccount'
     }).then(() => {
       commit(types.LOGOUT_ACCOUNT);
-      return Promise.resolve(true);
+      return true;
     });
   },
 
@@ -40,7 +40,7 @@ export default {
       }
     }).then(response => {
       if (response.status === false) {
-        return Promise.reject(response);
+        throw response;
       }
 
       commit(types.UPDATE_ACCOUNT, {
@@ -65,7 +65,7 @@ export default {
       }
     }).then(response => {
       if (response.status === false) {
-        return Promise.reject(response);
+        throw response;
       }
 
       commit(types.UPDATE_ACCOUNT, {

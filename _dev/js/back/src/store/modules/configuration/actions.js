@@ -29,7 +29,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_PAYMENT_METHODS_ORDER, payload.paymentMethods);
-      return Promise.resolve(true);
+      return true;
     });
   },
 
@@ -42,7 +42,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_PAYMENT_MODE, payload);
-      return Promise.resolve(true);
+      return true;
     });
   },
 
@@ -55,7 +55,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_CAPTURE_MODE, payload);
-      return Promise.resolve(true);
+      return true;
     });
   },
 

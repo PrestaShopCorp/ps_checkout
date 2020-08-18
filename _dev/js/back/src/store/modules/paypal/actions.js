@@ -26,7 +26,7 @@ export default {
       action: 'LogOutPaypalAccount'
     }).then(() => {
       commit(types.UNLINK_ACCOUNT);
-      return Promise.resolve(true);
+      return true;
     });
   },
   getOnboardingLink({ commit, getters }) {
@@ -36,7 +36,7 @@ export default {
     }).then(response => {
       if (response.status === false) {
         commit(types.UPDATE_ONBOARDING_LINK, false);
-        return Promise.reject(response);
+        throw response;
       }
 
       if (undefined !== response.onboardingLink) {
@@ -53,10 +53,10 @@ export default {
     }).then(resp => {
       if (resp) {
         commit(types.UPDATE_CONFIRMED_LIVE_STEP);
-        return Promise.resolve(true);
+        return true;
       }
 
-      return Promise.reject(resp);
+      throw resp;
     });
   },
   refreshPaypalStatus({ commit, getters }) {
