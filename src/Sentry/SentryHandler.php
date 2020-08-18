@@ -20,37 +20,33 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Sentry;
 
-use Monolog\Handler\RavenHandler;
+use PrestaShop\Module\PrestashopCheckout\Environment\SentryEnv;
 
 /**
- * Class SentryHandler used it to handle sentry log
+ * Class SentryHandler used it to create the sentry client
  */
 class SentryHandler
 {
     private $client;
 
-    private $handler;
-
-    public function __construct()
+    public function __construct(SentryEnv $sentryEnv)
     {
-        //`https://${process.env.VUE_APP_SENTRY_KEY}@${process.env.VUE_APP_SENTRY_ORGANIZATION}.ingest.sentry.io/${process.env.VUE_APP_SENTRY_PROJECT}`
         $this->client =
             new \Raven_Client(
                 'https://'
-                . $_ENV['VUE_APP_SENTRY_KEY']
+                . $sentryEnv->getKey()
                 . '@'
-                . $_ENV['VUE_APP_SENTRY_ORGANIZATION']
+                . $sentryEnv->getOrganisation()
                 . '.ingest.sentry.io/'
-                . $_ENV['VUE_APP_SENTRY_PROJECT']
+                . $sentryEnv->getProject()
             );
-        $this->handler = new RavenHandler($this->client);
     }
 
     /**
-     * @return RavenHandler
+     * @return \Raven_Client
      */
-    public function getHandler()
+    public function getClient()
     {
-        return $this->handler;
+        return $this->client;
     }
 }
