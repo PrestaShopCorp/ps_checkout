@@ -6,7 +6,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder'
     arguments:
       - '@ps_checkout.logger.directory'
-      - '@ps_checkout.module'
+      - '@ps_checkout.logger.filename'
 
   ps_checkout.logger.file.reader:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader'

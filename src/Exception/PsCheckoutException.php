@@ -20,7 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Exception;
 
-class PsCheckoutException extends \PrestaShopExceptionCore
+class PsCheckoutException extends \Exception
 {
     const UNKNOWN = 0;
     const PRESTASHOP_ORDER_NOT_FOUND = 2;
