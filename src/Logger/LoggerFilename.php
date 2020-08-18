@@ -20,54 +20,42 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Logger;
 
-use Monolog\Handler\HandlerInterface;
-use Monolog\Logger;
-use Monolog\Processor\PsrLogMessageProcessor;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use Psr\Log\LoggerInterface;
 
 /**
- * Class responsible for create Logger instance.
+ * Class responsible for returning log filename.
  */
-class LoggerFactory
+class LoggerFilename
 {
     /**
-     * @var string
+     * @var string Base filename
      */
-    private $name;
+    private $filename;
 
     /**
-     * @var HandlerInterface
+     * @var int Shop identifier
      */
-    private $loggerHandler;
+    private $identifier;
 
     /**
-     * @param string $name
-     * @param HandlerInterface $loggerHandler
+     * @param string $filename
+     * @param int $identifier
      *
      * @throws PsCheckoutException
      */
-    public function __construct($name, HandlerInterface $loggerHandler)
+    public function __construct($filename, $identifier)
     {
-        $this->assertNameIsValid($name);
-        $this->name = $name;
-        $this->loggerHandler = $loggerHandler;
+        $this->assertNameIsValid($filename);
+        $this->filename = $filename;
+        $this->identifier = (int) $identifier;
     }
 
     /**
-     * @return LoggerInterface
+     * @return string
      */
-    public function build()
+    public function get()
     {
-        return new Logger(
-            $this->name,
-            [
-                $this->loggerHandler,
-            ],
-            [
-                new PsrLogMessageProcessor(),
-            ]
-        );
+        return $this->filename . '-' . $this->identifier;
     }
 
     /**
@@ -78,15 +66,15 @@ class LoggerFactory
     private function assertNameIsValid($name)
     {
         if (empty($name)) {
-            throw new PsCheckoutException('Logger name cannot be empty.', PsCheckoutException::UNKNOWN);
+            throw new PsCheckoutException('Logger filename cannot be empty.', PsCheckoutException::UNKNOWN);
         }
 
         if (false === is_string($name)) {
-            throw new PsCheckoutException('Logger name should be a string.', PsCheckoutException::UNKNOWN);
+            throw new PsCheckoutException('Logger filename should be a string.', PsCheckoutException::UNKNOWN);
         }
 
-        if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $name)) {
-            throw new PsCheckoutException('Logger name is invalid.', PsCheckoutException::UNKNOWN);
+        if (!preg_match('/^[a-zA-Z0-9_-]+$/', $name)) {
+            throw new PsCheckoutException('Logger filename is invalid.', PsCheckoutException::UNKNOWN);
         }
     }
 }

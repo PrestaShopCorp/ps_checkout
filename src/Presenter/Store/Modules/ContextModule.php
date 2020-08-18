@@ -74,6 +74,7 @@ class ContextModule implements PresenterInterface
                 'cguUrl' => $this->getCgu(),
                 'roundingSettingsIsCorrect' => $this->roundingSettingsIsCorrect(),
                 'liveStepConfirmed' => $this->liveStepConfirmed(),
+                'youtubeInstallerLink' => $this->getYoutubeInstallerLink(),
             ],
         ];
 
@@ -193,6 +194,27 @@ class ContextModule implements PresenterInterface
                 return 'https://www.prestashop.com/it/prestashop-checkout-condizioni-generali-utilizzo';
             default:
                 return 'https://www.prestashop.com/en/prestashop-checkout-general-terms-use';
+        }
+    }
+
+    /**
+     * Get the youtube link to help people to install PS_Checkout
+     *
+     * @return string
+     */
+    private function getYoutubeInstallerLink()
+    {
+        $isoCode = $this->context->language->iso_code;
+        $youtube = 'https://www.youtube.com/embed/';
+        switch ($isoCode) {
+            case 'fr':
+                return $youtube . 'TVShtzk5eUM';
+            case 'es':
+                return $youtube . 'CjfhyR368Q0';
+            case 'it':
+                return $youtube . 'bBHuojwH2V8';
+            default:
+                return $youtube . 'uovtJVCLaD8';
         }
     }
 
