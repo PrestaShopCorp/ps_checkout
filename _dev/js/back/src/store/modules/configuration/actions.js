@@ -68,7 +68,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_PAYMENT_CARD_AVAILABILITY, payload);
-      return Promise.resolve(payload);
+      return payload;
     });
   },
 
@@ -81,7 +81,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_EC_ORDER_PAGE, payload);
-      return Promise.resolve(payload);
+      return payload;
     });
   },
 
@@ -94,7 +94,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_EC_CHECKOUT_PAGE, payload);
-      return Promise.resolve(payload);
+      return payload;
     });
   },
 
@@ -107,7 +107,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_EC_PRODUCT_PAGE, payload);
-      return Promise.resolve(payload);
+      return payload;
     });
   },
 
@@ -120,7 +120,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_DEBUG_LOGS, payload);
-      return Promise.resolve(payload);
+      return payload;
     });
   }
 };

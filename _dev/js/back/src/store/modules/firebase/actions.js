@@ -51,7 +51,7 @@ export default {
         onboardingCompleted: true
       });
 
-      return Promise.resolve(response);
+      return response;
     });
   },
 
@@ -76,7 +76,7 @@ export default {
         onboardingCompleted: true
       });
 
-      return Promise.resolve(response);
+      return response;
     });
   }
 };
