@@ -75,17 +75,15 @@ class PayPalSdkLinkBuilder
             $components[] = 'buttons';
         }
 
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+
         $params = [
             'components' => implode(',', $components),
             'client-id' => (new PaypalEnv())->getPaypalClientId(),
             'merchant-id' => (new PaypalAccountRepository())->getMerchantId(),
             'currency' => \Context::getContext()->currency->iso_code,
-            'intent' => strtolower(\Configuration::get(
-                'PS_CHECKOUT_INTENT',
-                null,
-                null,
-                (int) \Context::getContext()->shop->id
-            )),
+            'intent' => strtolower($module->getService('ps_checkout.capture')->getCaptureMode()),
         ];
 
         $fundingSourcesDisabled = $this->getFundingSourcesDisabled();

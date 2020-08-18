@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use Monolog\Logger;
+use PrestaShop\Module\PrestashopCheckout\Capture\CaptureMode;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
@@ -38,12 +39,7 @@ class ConfigurationModule implements PresenterInterface
         $configurationModule = [
             'config' => [
                 'paymentMethods' => $this->getPaymentMethods(),
-                'captureMode' => \Configuration::get(
-                    'PS_CHECKOUT_INTENT',
-                    null,
-                    null,
-                    (int) \Context::getContext()->shop->id
-                ),
+                'captureMode' => (new CaptureMode())->getCaptureMode(),
                 'paymentMode' => \Configuration::get(
                     'PS_CHECKOUT_MODE',
                     null,

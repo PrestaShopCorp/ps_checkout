@@ -17,6 +17,9 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+
+use PrestaShop\Module\PrestashopCheckout\Capture\CaptureMode;
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 if (!defined('_PS_VERSION_')) {
@@ -75,7 +78,7 @@ class Ps_checkout extends PaymentModule
     ];
 
     public $configurationList = [
-        'PS_CHECKOUT_INTENT' => 'CAPTURE',
+        CaptureMode::PS_CHECKOUT_INTENT => CaptureMode::CAPTURE,
         'PS_CHECKOUT_MODE' => 'LIVE',
         'PS_CHECKOUT_PAYMENT_METHODS_ORDER' => '',
         'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => '',

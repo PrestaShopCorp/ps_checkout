@@ -13,3 +13,6 @@ services:
 
   ps_checkout.step.live:
     class: 'PrestaShop\Module\PrestashopCheckout\Step\LiveStep'
+
+  ps_checkout.capture:
+    class: 'PrestaShop\Module\PrestashopCheckout\Capture\CaptureMode'

@@ -62,13 +62,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessUpdateCaptureMode()
     {
-        Configuration::updateValue(
-            'PS_CHECKOUT_INTENT',
-            Tools::getValue('captureMode'),
-            false,
-            null,
-            (int) Context::getContext()->shop->id
-        );
+        $this->module->getService('ps_checkout.capture')->update(Tools::getValue('captureMode'));
     }
 
     /**
