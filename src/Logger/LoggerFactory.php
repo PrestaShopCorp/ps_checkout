@@ -71,10 +71,14 @@ class LoggerFactory
         );
         $rotatingFileHandler->setFormatter($lineFormatter);
 
+        $sentryHandler = $this->module->getService('ps_checkout.logger.sentry.handler')->getHandler();
+        $sentryHandler->setFormatter($lineFormatter);
+
         return new Logger(
             $this->module->name,
             [
                 $rotatingFileHandler,
+                $sentryHandler
             ],
             [
                 new PsrLogMessageProcessor(),
