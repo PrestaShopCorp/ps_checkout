@@ -31,6 +31,11 @@ use Psr\Log\LoggerInterface;
  */
 class LoggerFactory
 {
+    const PS_CHECKOUT_LOGGER_MAX_FILES = 'PS_CHECKOUT_LOGGER_MAX_FILES';
+    const PS_CHECKOUT_LOGGER_LEVEL = 'PS_CHECKOUT_LOGGER_LEVEL';
+    const PS_CHECKOUT_LOGGER_HTTP = 'PS_CHECKOUT_LOGGER_HTTP';
+    const PS_CHECKOUT_LOGGER_HTTP_FORMAT = 'PS_CHECKOUT_LOGGER_HTTP_FORMAT';
+
     /**
      * @var LoggerDirectory
      */
@@ -60,8 +65,8 @@ class LoggerFactory
     {
         $rotatingFileHandler = new RotatingFileHandler(
             $this->loggerDirectory->getPath() . $this->module->name . '-' . \Context::getContext()->shop->id,
-            (int) $this->getFromConfiguration('PS_CHECKOUT_LOGGER_MAX_FILES', 15),
-            (int) $this->getFromConfiguration('PS_CHECKOUT_LOGGER_LEVEL', Logger::ERROR)
+            (int) $this->getFromConfiguration(self::PS_CHECKOUT_LOGGER_MAX_FILES, 15),
+            (int) $this->getFromConfiguration(self::PS_CHECKOUT_LOGGER_LEVEL, Logger::ERROR)
         );
         $lineFormatter = new LineFormatter(
             LineFormatter::SIMPLE_FORMAT,
