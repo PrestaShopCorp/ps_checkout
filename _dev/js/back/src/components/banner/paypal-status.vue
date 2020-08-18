@@ -47,11 +47,21 @@
         </div>
 
         <p class="mb-3 text-muted">
-          <img src="@/assets/images/baseline-check_circle.png" style="width:25px;" alt="check" />
+          <img
+            src="@/assets/images/baseline-check_circle.png"
+            style="width:25px;"
+            class="mr-1"
+            alt="check"
+          />
           {{ $t('banner.paypalStatus.psAccountConnected') }}
         </p>
         <p class="mb-3 text-muted">
-          <img src="@/assets/images/baseline-check_circle.png" style="width:25px;" alt="check" />
+          <img
+            src="@/assets/images/baseline-check_circle.png"
+            style="width:25px;"
+            class="mr-1"
+            alt="check"
+          />
           {{ $t('banner.paypalStatus.paypalAccountConnected') }}
         </p>
         <p
@@ -61,17 +71,22 @@
               cardPaymentIsActive === 'LIMITED'
           "
         >
-          <img src="" style="width:25px;" alt="not-check" />
+          <img
+            src="@/assets/images/baseline-not_check_circle.png"
+            style="width:25px;"
+            class="mr-1"
+            alt="not-check"
+          />
           {{ $t('banner.paypalStatus.legalDocumentsSent') }}
           {{ $t('banner.paypalStatus.upTo') }}
         </p>
-        <p
-          class="mb-4"
-          v-else-if="
-            cardPaymentIsActive === 'NEED_MORE_DATA'
-          "
-        >
-          <img src="" style="width:25px;" alt="not-check" />
+        <p class="mb-4" v-else-if="cardPaymentIsActive === 'NEED_MORE_DATA'">
+          <img
+            src="@/assets/images/baseline-not_check_circle.png"
+            style="width:25px;"
+            class="mr-1"
+            alt="not-check"
+          />
           {{ $t('banner.paypalStatus.legalDocumentsSent') }}
           {{ $t('banner.paypalStatus.onlyCC') }}
         </p>
@@ -79,6 +94,7 @@
           <img
             src="@/assets/images/baseline-check_circle.png"
             style="width:25px;"
+            class="mr-1"
             alt="check"
           />
           {{ $t('banner.paypalStatus.legalDocumentsSent') }}
