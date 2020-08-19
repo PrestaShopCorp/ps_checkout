@@ -32,9 +32,9 @@ Vue.use(BootstrapVue);
 Vue.use(VueCollapse);
 
 Vue.use(VueSegment, {
-  id: "BftCN3EnnGD1ETnf4FUBxP1WFMQ80JFZ",
+  id: 'BftCN3EnnGD1ETnf4FUBxP1WFMQ80JFZ',
   router,
-  pageCategory: "ps_checkout"
+  pageCategory: 'ps_checkout'
 });
 Sentry.init({
   dsn: `https://${process.env.VUE_APP_SENTRY_KEY}@${process.env.VUE_APP_SENTRY_ORGANIZATION}.ingest.sentry.io/${process.env.VUE_APP_SENTRY_PROJECT}`,

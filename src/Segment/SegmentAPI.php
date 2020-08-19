@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Segment;
 
+use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
+
 class SegmentAPI
 {
     public function init($key, $options = []){
@@ -33,7 +35,34 @@ class SegmentAPI
                 'event' => $message,
                 'channel' => 'browser',
                 'context' => [
+                    'ip' => $_SERVER['REMOTE_ADDR'],
                     'userAgent' => $_SERVER['HTTP_USER_AGENT'],
+                ],
+                'properties' => [
+                    'psVersion' => _PS_VERSION_,
+                    'moduleVersion' => \Ps_checkout::VERSION
+                ],
+            ]);
+        }
+
+        return \Segment::flush();
+    }
+
+    public function identify($shops, $options = [])
+    {
+        $shopUuid = new ShopUuidManager();
+        foreach($shops as $shopId) {
+            \Segment::identify([
+                'userId' => $shopId,
+                'channel' => 'browser',
+                'context' => [
+                    'ip' => $_SERVER['REMOTE_ADDR'],
+                    "userAgent" => $_SERVER['HTTP_USER_AGENT'],
+                ],
+                'traits' => [
+                    'name' => $shopUuid->getShopUrl($shopId),
+                    'email' => \Context::getContext()->employee->email,
+                    'plan' => 'premium',
                 ],
             ]);
         }

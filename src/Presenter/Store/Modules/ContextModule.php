@@ -55,6 +55,8 @@ class ContextModule implements PresenterInterface
      */
     public function present()
     {
+        $shopuuid = new ShopUuidManager();
+        $shopId = (int) \Context::getContext()->shop->id;
         $contextModule = [
             'context' => [
                 'moduleVersion' => \Ps_checkout::VERSION,
@@ -62,7 +64,8 @@ class ContextModule implements PresenterInterface
                 'phpVersion' => phpversion(),
                 'shopIs17' => (new ShopContext())->isShop17(),
                 'moduleKey' => $this->module->module_key,
-                'shopId' => (new ShopUuidManager())->getForShop((int) \Context::getContext()->shop->id),
+                'shopId' => $shopuuid->getForShop($shopId),
+                'shopUri' => $shopuuid->getShopUrl($shopId),
                 'isReady' => (new ShopContext())->isReady(),
                 'isShopContext' => $this->isShopContext(),
                 'shopsTree' => $this->getShopsTree(),

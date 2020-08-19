@@ -141,7 +141,12 @@
     },
     created() {
       if (window.analytics) {
-        // TODO Identify : this->$segment.identify('shopId', {traits});
+        this.$segment.identify(this.$store.state.context.shopId, {
+          name: this.$store.state.context.shopUri,
+          psVersion: this.$store.state.context.psVersion,
+          moduleVersion: this.$store.state.context.moduleVersion,
+          context: { ip: '1.2.3.4', userAgent: navigator.userAgent }
+        });
       }
       if (!this.onboardingPaypalIsCompleted || this.accountIslinked) {
         return;
