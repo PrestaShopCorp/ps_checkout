@@ -51,6 +51,6 @@ class LiveStep
      */
     public function isConfirmed()
     {
-        return $this->configuration->get(static::CONFIG_LIVE_STEP) === '1';
+        return (bool) $this->configuration->get(static::CONFIG_LIVE_STEP);
     }
 }
