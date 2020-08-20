@@ -18,7 +18,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
-use PrestaShop\Module\PrestashopCheckout\Capture\CaptureMode;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Intent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -78,7 +79,7 @@ class Ps_checkout extends PaymentModule
     ];
 
     public $configurationList = [
-        CaptureMode::PS_CHECKOUT_INTENT => CaptureMode::CAPTURE,
+        PayPalConfiguration::INTENT => Intent::CAPTURE,
         'PS_CHECKOUT_MODE' => 'LIVE',
         'PS_CHECKOUT_PAYMENT_METHODS_ORDER' => '',
         'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => '',

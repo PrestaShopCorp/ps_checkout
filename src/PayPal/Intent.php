@@ -18,41 +18,13 @@
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Capture;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
 /**
- * Class CaptureMode used to get / update the capture mode from configuration
+ * Class Intent used to get constant
  */
-class CaptureMode
+class Intent
 {
-    const PS_CHECKOUT_INTENT = 'PS_CHECKOUT_INTENT';
-
     const CAPTURE = 'CAPTURE';
-
-    /**
-     * @param string $captureMode
-     */
-    public function update($captureMode)
-    {
-        \Configuration::updateValue(
-            self::PS_CHECKOUT_INTENT,
-            $captureMode,
-            false,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
-    }
-
-    /**
-     * @return false|mixed|string
-     */
-    public function getCaptureMode()
-    {
-        return \Configuration::get(
-            self::PS_CHECKOUT_INTENT,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
-    }
+    const AUTHORIZE = 'AUTHORIZE';
 }

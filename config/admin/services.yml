@@ -16,5 +16,7 @@ services:
     arguments:
       - '@ps_checkout.configuration'
 
-  ps_checkout.capture:
-    class: 'PrestaShop\Module\PrestashopCheckout\Capture\CaptureMode'
+  ps_checkout.paypal.configuration:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
+    arguments:
+      - '@ps_checkout.configuration'

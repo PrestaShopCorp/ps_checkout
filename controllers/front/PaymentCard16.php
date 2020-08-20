@@ -75,7 +75,7 @@ class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontControlle
             'clientToken' => $paypalOrder['body']['client_token'],
             'paypalOrderId' => $paypalOrder['body']['id'],
             'validateOrderLinkByCard' => $module->getValidateOrderLink($paypalOrder['body']['id'], 'card'),
-            'intent' => strtolower($module->getService('ps_checkout.capture')->getCaptureMode()),
+            'intent' => strtolower($module->getService('ps_checkout.paypal.configuration')->getIntent()),
             'locale' => $language['locale'],
             'currencyIsoCode' => $this->context->currency->iso_code,
             'isCardPaymentError' => (bool) Tools::getValue('hferror'),

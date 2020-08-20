@@ -83,7 +83,7 @@ class PayPalSdkLinkBuilder
             'client-id' => (new PaypalEnv())->getPaypalClientId(),
             'merchant-id' => (new PaypalAccountRepository())->getMerchantId(),
             'currency' => \Context::getContext()->currency->iso_code,
-            'intent' => strtolower($module->getService('ps_checkout.capture')->getCaptureMode()),
+            'intent' => strtolower($module->getService('ps_checkout.paypal.configuration')->getIntent()),
         ];
 
         $fundingSourcesDisabled = $this->getFundingSourcesDisabled();
