@@ -40,7 +40,7 @@ class PayPalConfiguration
     /**
      * Used to return the PS_CHECKOUT_INTENT from the Configuration
      *
-     * @return mixed
+     * @return string
      */
     public function getIntent()
     {
