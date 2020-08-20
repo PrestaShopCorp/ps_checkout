@@ -10,11 +10,3 @@ services:
 
   ps_checkout.logger.file.reader:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader'
-
-  ps_checkout.env.sentry:
-    class: 'PrestaShop\Module\PrestashopCheckout\Environment\SentryEnv'
-
-  ps_checkout.logger.sentry.handler:
-    class: 'PrestaShop\Module\PrestashopCheckout\Sentry\SentryHandler'
-    arguments:
-      - '@ps_checkout.env.sentry'

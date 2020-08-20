@@ -20,26 +20,25 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Sentry;
 
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\RavenHandler;
 use PrestaShop\Module\PrestashopCheckout\Environment\SentryEnv;
 
 /**
- * Class SentryHandler used it to create the sentry client
+ * Class SentryHandler used it to create the sentry client to log message
  */
 class SentryHandler
 {
     private $client;
 
+    private $handler;
+
     public function __construct(SentryEnv $sentryEnv)
     {
-        $this->client =
-            new \Raven_Client(
-                'https://'
-                . $sentryEnv->getKey()
-                . '@'
-                . $sentryEnv->getOrganisation()
-                . '.ingest.sentry.io/'
-                . $sentryEnv->getProject()
-            );
+        $this->client = new \Raven_Client($this->getUrl($sentryEnv));
+        $this->client = $this->client->install();
+
+        $this->handler = new RavenHandler($this->client);
     }
 
     /**
@@ -48,5 +47,36 @@ class SentryHandler
     public function getClient()
     {
         return $this->client;
+    }
+
+    /**
+     * @return RavenHandler
+     */
+    public function getHandler()
+    {
+        return $this->handler;
+    }
+
+    /**
+     * @param LineFormatter $lineFormatter
+     */
+    public function setFormatter(LineFormatter $lineFormatter)
+    {
+        $this->handler->setFormatter($lineFormatter);
+    }
+
+    /**
+     * @param SentryEnv $sentryEnv
+     *
+     * @return string
+     */
+    private function getUrl(SentryEnv $sentryEnv)
+    {
+        return $url = 'https://'
+            . $sentryEnv->getKey()
+            . '@'
+            . $sentryEnv->getOrganisation()
+            . '.ingest.sentry.io/'
+            . $sentryEnv->getProject();
     }
 }

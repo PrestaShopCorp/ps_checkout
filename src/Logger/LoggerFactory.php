@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Logger;
 
 use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\RavenHandler;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
@@ -77,18 +76,18 @@ class LoggerFactory
         );
         $rotatingFileHandler->setFormatter($lineFormatter);
 
-        $client = $this->module->getService('ps_checkout.logger.sentry.handler')->getClient();
-        $handler = new RavenHandler($client);
-        $handler->setFormatter(new LineFormatter("%message% %context% %extra%\n"));
+        $sentryHandler = $this->module->getService('ps_checkout.logger.sentry.handler')->getHandler();
+        $sentryHandler->setFormatter(new LineFormatter("%message% %context% %extra%\n"));
 
         return new Logger(
             $this->module->name,
             [
                 $rotatingFileHandler,
-                $handler,
+                $sentryHandler,
             ],
             [
                 new PsrLogMessageProcessor(),
+                $this->module->getService('ps_checkout.logger.sentry.processor'),
             ]
         );
     }
