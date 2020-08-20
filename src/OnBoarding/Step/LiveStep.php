@@ -43,7 +43,7 @@ class LiveStep
      */
     public function confirmed($confirmed)
     {
-        return $this->configuration->set(static::CONFIG_LIVE_STEP, $confirmed);
+        return $this->configuration->set(static::CONFIG_LIVE_STEP, (bool) $confirmed);
     }
 
     /**
