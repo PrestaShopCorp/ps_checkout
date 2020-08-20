@@ -47,7 +47,7 @@ class LiveStep
     }
 
     /**
-     * @return false|mixed|string
+     * @return bool
      */
     public function isConfirmed()
     {
