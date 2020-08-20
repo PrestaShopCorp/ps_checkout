@@ -31,7 +31,7 @@ class LiveStep
      */
     private $configuration;
 
-    public function __construct( PrestaShopConfiguration $configuration)
+    public function __construct(PrestaShopConfiguration $configuration)
     {
         $this->configuration = $configuration;
     }
@@ -51,6 +51,6 @@ class LiveStep
      */
     public function isConfirmed()
     {
-        return $this->configuration->get(static::CONFIG_LIVE_STEP ) === '1';
+        return $this->configuration->get(static::CONFIG_LIVE_STEP) === '1';
     }
 }
