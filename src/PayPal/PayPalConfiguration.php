@@ -44,7 +44,7 @@ class PayPalConfiguration
      */
     public function getIntent()
     {
-        return $this->configuration->get(self::INTENT);
+        return Intent::CAPTURE === $this->configuration->get(self::INTENT) ? Intent::CAPTURE : Intent::AUTHORIZE;
     }
 
     /**
