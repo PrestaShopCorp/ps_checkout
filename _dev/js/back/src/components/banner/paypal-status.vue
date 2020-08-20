@@ -137,7 +137,7 @@
     },
     computed: {
       cardPaymentIsActive() {
-        return 'NEED_MORE_DATA';//this.$store.state.paypal.cardIsActive;
+        return this.$store.state.paypal.cardIsActive;
       }
     }
   };
