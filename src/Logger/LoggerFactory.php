@@ -20,10 +20,10 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Logger;
 
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\RotatingFileHandler;
+use Monolog\Handler\HandlerInterface;
 use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -37,52 +37,40 @@ class LoggerFactory
     const PS_CHECKOUT_LOGGER_HTTP_FORMAT = 'PS_CHECKOUT_LOGGER_HTTP_FORMAT';
 
     /**
-     * @var LoggerDirectory
+     * @var string
      */
-    private $loggerDirectory;
+    private $name;
 
     /**
-     * @var \Module
+     * @var HandlerInterface
      */
-    private $module;
+    private $loggerHandler;
 
     /**
-     * @param LoggerDirectory $loggerDirectory
-     * @param \Module $module
+     * @param string $name
+     * @param HandlerInterface $loggerHandler
+     *
+     * @throws PsCheckoutException
      */
-    public function __construct(LoggerDirectory $loggerDirectory, \Module $module)
+    public function __construct($name, HandlerInterface $loggerHandler)
     {
-        $this->loggerDirectory = $loggerDirectory;
-        $this->module = $module;
+        $this->assertNameIsValid($name);
+        $this->name = $name;
+        $this->loggerHandler = $loggerHandler;
     }
 
     /**
-     * @todo Use more Dependency Injection with Service Container in v2.0.0
-     *
      * @return LoggerInterface
      */
     public function build()
     {
-        $rotatingFileHandler = new RotatingFileHandler(
-            $this->loggerDirectory->getPath() . $this->module->name . '-' . \Context::getContext()->shop->id,
-            (int) $this->getFromConfiguration(self::PS_CHECKOUT_LOGGER_MAX_FILES, 15),
-            (int) $this->getFromConfiguration(self::PS_CHECKOUT_LOGGER_LEVEL, Logger::ERROR)
-        );
-        $lineFormatter = new LineFormatter(
-            LineFormatter::SIMPLE_FORMAT,
-            LineFormatter::SIMPLE_DATE,
-            false,
-            false
-        );
-        $rotatingFileHandler->setFormatter($lineFormatter);
-
         $sentryHandler = $this->module->getService('ps_checkout.logger.sentry.handler')->getHandler();
         $sentryHandler->setFormatter(new LineFormatter("%message% %context% %extra%\n"));
-
+      
         return new Logger(
-            $this->module->name,
+            $this->name,
             [
-                $rotatingFileHandler,
+                $this->loggerHandler,
                 $sentryHandler,
             ],
             [
@@ -93,24 +81,22 @@ class LoggerFactory
     }
 
     /**
-     * @todo To be removed in v2.0.0
+     * @param string $name
      *
-     * @param string $key
-     * @param mixed $default
-     *
-     * @return mixed
+     * @throws PsCheckoutException
      */
-    private function getFromConfiguration($key, $default)
+    private function assertNameIsValid($name)
     {
-        if (false === \Configuration::hasKey($key)) {
-            return $default;
+        if (empty($name)) {
+            throw new PsCheckoutException('Logger name cannot be empty.', PsCheckoutException::UNKNOWN);
         }
 
-        return \Configuration::get(
-            $key,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        if (false === is_string($name)) {
+            throw new PsCheckoutException('Logger name should be a string.', PsCheckoutException::UNKNOWN);
+        }
+
+        if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $name)) {
+            throw new PsCheckoutException('Logger name is invalid.', PsCheckoutException::UNKNOWN);
+        }
     }
 }

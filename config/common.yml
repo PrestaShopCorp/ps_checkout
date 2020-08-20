@@ -8,6 +8,19 @@ services:
     arguments:
       - 'ps_checkout'
 
+  ps_checkout.shop.provider:
+    class: 'PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider'
+
+  ps_checkout.configuration.options.resolver:
+    class: 'PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfigurationOptionsResolver'
+    arguments:
+      - '@=service("ps_checkout.shop.provider").getIdentifier()'
+
+  ps_checkout.configuration:
+    class: 'PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration'
+    arguments:
+      - '@ps_checkout.configuration.options.resolver'
+
   ps_checkout.cache.directory:
     class: 'PrestaShop\Module\PrestashopCheckout\Cache\CacheDirectory'
     arguments:
@@ -21,11 +34,34 @@ services:
       - !php/const _PS_VERSION_
       - !php/const _PS_ROOT_DIR_
 
+  ps_checkout.logger.filename:
+    class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFilename'
+    arguments:
+      - '@=service("ps_checkout.module").name'
+      - '@=service("ps_checkout.shop.provider").getIdentifier()'
+
+  ps_checkout.logger.configuration:
+    class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration'
+    arguments:
+      - '@ps_checkout.configuration'
+
+  ps_checkout.logger.handler.factory:
+    class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerHandlerFactory'
+    arguments:
+      - '@=service("ps_checkout.logger.directory").getPath()'
+      - '@=service("ps_checkout.logger.filename").get()'
+      - '@=service("ps_checkout.logger.configuration").getMaxFiles()'
+      - '@=service("ps_checkout.logger.configuration").getLevel()'
+
+  ps_checkout.logger.handler:
+    class: 'Monolog\Handler\HandlerInterface'
+    factory: ['@ps_checkout.logger.handler.factory', 'build']
+
   ps_checkout.logger.factory:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory'
     arguments:
-      - '@ps_checkout.logger.directory'
-      - '@ps_checkout.module'
+      - '@=service("ps_checkout.module").name'
+      - '@ps_checkout.logger.handler'
 
   ps_checkout.logger:
     class: 'Psr\Log\LoggerInterface'

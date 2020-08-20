@@ -34,18 +34,18 @@ class LoggerFileFinder
     private $loggerDirectory;
 
     /**
-     * @var \Module
+     * @var LoggerFilename
      */
-    private $module;
+    private $loggerFilename;
 
     /**
      * @param LoggerDirectory $loggerDirectory
-     * @param \Module $module
+     * @param LoggerFilename $loggerFilename
      */
-    public function __construct(LoggerDirectory $loggerDirectory, \Module $module)
+    public function __construct($loggerDirectory, LoggerFilename $loggerFilename)
     {
         $this->loggerDirectory = $loggerDirectory;
-        $this->module = $module;
+        $this->loggerFilename = $loggerFilename;
     }
 
     /**
@@ -59,7 +59,7 @@ class LoggerFileFinder
 
         $finder = new Finder();
         $fileNames = [];
-        $fileNamePrefix = $this->module->name . '-' . \Context::getContext()->shop->id . '-';
+        $fileNamePrefix = $this->loggerFilename->get() . '-';
 
         foreach ($finder->files()->in($this->loggerDirectory->getPath())->name($fileNamePrefix . '*')->sortByName() as $file) {
             $fileNames[$file->getFilename()] = (new DatePresenter(str_replace($fileNamePrefix, '', $file->getFilename()), \Context::getContext()->language->date_format_lite))->present();
