@@ -18,11 +18,23 @@
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Step;
+namespace PrestaShop\Module\PrestashopCheckout\OnBoarding\Step;
+
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 
 class LiveStep
 {
     const CONFIG_LIVE_STEP = 'PS_CHECKOUT_LIVE_STEP_CONFIRMED';
+
+    /**
+     * @var PrestaShopConfiguration
+     */
+    private $configuration;
+
+    public function __construct( PrestaShopConfiguration $configuration)
+    {
+        $this->configuration = $configuration;
+    }
 
     /**
      * @param bool $confirmed
@@ -31,13 +43,7 @@ class LiveStep
      */
     public function confirmed($confirmed)
     {
-        return \Configuration::updateValue(
-            static::CONFIG_LIVE_STEP,
-            $confirmed,
-            false,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        return $this->configuration->set(static::CONFIG_LIVE_STEP, $confirmed);
     }
 
     /**
@@ -45,10 +51,6 @@ class LiveStep
      */
     public function isConfirmed()
     {
-        return \Configuration::get(
-                static::CONFIG_LIVE_STEP,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id) === '1';
+        return $this->configuration->get(static::CONFIG_LIVE_STEP ) === '1';
     }
 }

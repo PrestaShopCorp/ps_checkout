@@ -12,7 +12,9 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader'
 
   ps_checkout.step.live:
-    class: 'PrestaShop\Module\PrestashopCheckout\Step\LiveStep'
+    class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep'
+    arguments:
+      - '@ps_checkout.configuration'
 
   ps_checkout.capture:
     class: 'PrestaShop\Module\PrestashopCheckout\Capture\CaptureMode'
