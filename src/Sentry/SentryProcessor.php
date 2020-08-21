@@ -28,21 +28,20 @@ use Monolog\Processor\ProcessorInterface;
 class SentryProcessor implements ProcessorInterface
 {
     /**
-     * @param  array $record
+     * @param array $record
+     *
      * @return array
      */
     public function __invoke(array $record)
     {
         // record the current user
         $user = \Context::getContext()->employee;
-        $record['context']['user'] = array(
-            'name' => $user->firstname,
-            'username' => $user->firstname,
+        $record['context']['user'] = [
             'email' => $user->email,
-        );
+        ];
 
         // Add various tags
-        $record['context']['tags'] = array('platform' => 'php');
+        $record['context']['tags'] = ['platform' => 'php'];
 
         return $record;
     }
