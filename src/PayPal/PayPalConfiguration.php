@@ -50,12 +50,17 @@ class PayPalConfiguration
     /**
      * Used to set the PS_CHECKOUT_INTENT in the Configuration
      *
-     * @param string $captureMode
+     * @param $captureMode
      *
      * @throws PsCheckoutException
      */
     public function setIntent($captureMode)
     {
+        if(!in_array($captureMode, [Intent::CAPTURE, Intent::AUTHORIZE]))
+        {
+            throw new \UnexpectedValueException(sprintf('The value should be an Intent constant, %s value sent', $captureMode));
+        }
+
         $this->configuration->set(self::INTENT, $captureMode);
     }
 }
