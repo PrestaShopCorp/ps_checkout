@@ -17,34 +17,70 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *-->
 <template>
-  <b-card no-body>
+  <div class="card">
+    <h3 class="card-header">
+      <i class="material-icons">{{ icon }}</i>
+      {{ iconTitle }}
+    </h3>
     <b-card-body>
-      <div class="m-auto max-width">
-        <h1>{{ $t('block.fraud-tool.title') }}</h1>
-        <p>
-          {{ $t('block.fraud-tool.text') }}
+      <div class="ml-4 max-width">
+        <h4>{{ title }}</h4>
+        <p class="min-vh-100">
+          {{ description }}
         </p>
         <b-button
-          variant="link"
-          href="https://www.paypal.com/fraud-protection"
+          variant="primary"
+          :href="linkUrl"
           target="_blank"
+          class="mt-3"
         >
-          {{ $t('block.fraud-tool.discoverFraudTool') }}
-          <i class="material-icons">arrow_right_alt</i>
+          {{ linkTitle }}
         </b-button>
       </div>
     </b-card-body>
-  </b-card>
+  </div>
 </template>
 
 <script>
   export default {
-    name: 'FaudTool'
+    name: 'AccountSettingsDeepLink',
+    props: {
+      icon: {
+        type: String,
+        required: true
+      },
+      iconTitle: {
+        type: String,
+        required: true
+      },
+      title: {
+        type: String,
+        required: true
+      },
+      description: {
+        type: String,
+        required: true
+      },
+      linkTitle: {
+        type: String,
+        required: true
+      },
+      linkUrl: {
+        type: String,
+        required: true
+      }
+    }
   };
 </script>
 
 <style scoped>
-  .max-width {
-    max-width: 500px !important;
+  #app h3.card-header {
+    background-color: transparent;
+  }
+  #app .card-body h4 {
+    font-size: 16px;
+  }
+  #app .card-body p {
+    min-height: 100px;
   }
 </style>
