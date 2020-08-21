@@ -56,8 +56,7 @@ class PayPalConfiguration
      */
     public function setIntent($captureMode)
     {
-        if(!in_array($captureMode, [Intent::CAPTURE, Intent::AUTHORIZE]))
-        {
+        if (!in_array($captureMode, [Intent::CAPTURE, Intent::AUTHORIZE])) {
             throw new \UnexpectedValueException(sprintf('The value should be an Intent constant, %s value sent', $captureMode));
         }
 
