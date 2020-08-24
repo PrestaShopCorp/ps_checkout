@@ -72,7 +72,7 @@ class SentryHandler
      */
     private function getUrl(SentryEnv $sentryEnv)
     {
-        return $url = 'https://'
+        return 'https://'
             . $sentryEnv->getKey()
             . '@'
             . $sentryEnv->getOrganisation()
