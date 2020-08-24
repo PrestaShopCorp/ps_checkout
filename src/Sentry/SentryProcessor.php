@@ -35,10 +35,12 @@ class SentryProcessor implements ProcessorInterface
     public function __invoke(array $record)
     {
         // record the current user
-        $user = \Context::getContext()->employee;
-        $record['context']['user'] = [
-            'email' => $user->email,
-        ];
+        if (\Context::getContext()) {
+            $user = \Context::getContext()->employee;
+            $record['context']['user'] = [
+                'email' => $user->email,
+            ];
+        }
 
         // Add various tags
         $record['context']['tags'] = ['platform' => 'php'];
