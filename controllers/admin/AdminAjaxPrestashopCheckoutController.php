@@ -62,13 +62,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessUpdateCaptureMode()
     {
-        Configuration::updateValue(
-            'PS_CHECKOUT_INTENT',
-            Tools::getValue('captureMode'),
-            false,
-            null,
-            (int) Context::getContext()->shop->id
-        );
+        $this->module->getService('ps_checkout.paypal.configuration')->setIntent(Tools::getValue('captureMode'));
     }
 
     /**
@@ -83,6 +77,16 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             null,
             (int) Context::getContext()->shop->id
         );
+    }
+
+    /**
+     * AJAX: Confirm PS Live Step Banner closed
+     */
+    public function ajaxProcessLiveStepConfirmed()
+    {
+        $this->module->getService('ps_checkout.step.live')->confirmed(true);
+
+        $this->ajaxDie(json_encode(true));
     }
 
     /**
@@ -144,6 +148,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $paypalAccount->setCardPaymentStatus('');
 
         (new PersistentConfiguration())->savePaypalAccount($paypalAccount);
+
+        // we reset the Live Step banner
+        $this->module->getService('ps_checkout.step.live')->confirmed(false);
 
         $this->ajaxDie(json_encode(true));
     }

@@ -142,6 +142,22 @@ class Translations
                     'defaultError' => $this->module->l('Error, try later.', 'translations'),
                 ],
             ],
+            'banner' => [
+                'paypalStatus' => [
+                    'buttonSuccess' => $this->module->l('Thank you, close this message', 'translations'),
+                    'buttonLegal' => $this->module->l('Send my legal documents now', 'translations'),
+                    'allSet' => $this->module->l("You're all set !", 'translations'),
+                    'congrats' => $this->module->l("Congrats ! You're can to start selling online now.", 'translations'),
+                    'waitingFinalApprove' => $this->module->l('As soon as PayPal gets all your documents, you\'ll have to wait 48h for final approval.', 'translations'),
+                    'oneMoreThing' => $this->module->l('One more thing : send documents to be fully approved by PayPal', 'translations'),
+                    'psAccountConnected' => $this->module->l('Connect your PrestaShop account', 'translations'),
+                    'paypalAccountConnected' => $this->module->l('Link your PayPal account', 'translations'),
+                    'legalDocumentsSent' => $this->module->l('Send your legal documents to PayPal : ', 'translations'),
+                    'upTo' => $this->module->l('in the meantime, you can sell now up to 500$ in card transactions.', 'translations'),
+                    'onlyCC' => $this->module->l('in the meantime, you will only accept credit cards payments thought the PayPal branded credit card fields', 'translations'),
+                    'confirmation' => $this->module->l('We have received the confirmation from PayPal. You can now process all card transactions with no limits.', 'translations'),
+                ],
+            ],
             'panel' => [
                 'account-list' => [
                     'accountSettings' => $this->module->l('Account settings', 'translations'),
