@@ -38,10 +38,20 @@ class SentryProcessor implements ProcessorInterface
             $record['context'] = [];
         }
 
-        $user = \Context::getContext()->employee;
-        $record['context']['user'] = [
-            'email' => $user->email,
-        ];
+        $context = \Context::getContext();
+        $userMail = null;
+        if (in_array($context->controller->controller_type, ['front', 'modulefront'])) {
+            $userMail = $context->customer ? $context->customer->email : null;
+        }
+        elseif (in_array($context->controller->controller_type, ['admin', 'moduleadmin'])) {
+            $userMail = $context->employee ? $context->employee->email : null;
+        }
+
+        if ($userMail !== null) {
+            $record['context']['user'] = [
+                'email' => $userMail,
+            ];
+        }
 
         // Add various tags
         $record['context']['tags'] = ['platform' => 'php'];
