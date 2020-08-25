@@ -42,8 +42,7 @@ class SentryProcessor implements ProcessorInterface
         $userMail = null;
         if (in_array($context->controller->controller_type, ['front', 'modulefront'])) {
             $userMail = $context->customer ? $context->customer->email : null;
-        }
-        elseif (in_array($context->controller->controller_type, ['admin', 'moduleadmin'])) {
+        } elseif (in_array($context->controller->controller_type, ['admin', 'moduleadmin'])) {
             $userMail = $context->employee ? $context->employee->email : null;
         }
 
