@@ -23,8 +23,9 @@ jobs:
       - name: Clean-up project
         uses: PrestaShopCorp/github-action-clean-before-deploy@v1.0
       - name: Clean-up node_modules directory
-        shell: bash
         run: sudo rm -rf node_modules
+      - name: Clean-up storybook directory
+          run: sudo rm -rf .storybook
       - name: Create & upload artifact
         uses: actions/upload-artifact@v1
         with:
