@@ -514,7 +514,7 @@ class Ps_checkout extends PaymentModule
                 && true === $paypalAccountRepository->cardHostedFieldsIsAvailable()
             ) {
                 $payment_options[] = $this->getHostedFieldsPaymentOption();
-            } elseif ( true === $paypalAccountRepository->paypalPaymentMethodIsValid()) {
+            } elseif (true === $paypalAccountRepository->paypalPaymentMethodIsValid()) {
                 $payment_options[] = $this->getPaypalPaymentOption($paymentOption);
             }
         }
@@ -547,7 +547,7 @@ class Ps_checkout extends PaymentModule
                 null,
                 (int) \Context::getContext()->shop->id
             );
-        }else {
+        } else {
             $paymentOptions = (new PaymentOptionsFactory())->createPaymentOptionsFromConfiguration(json_decode($paymentOptions, true));
         }
 
