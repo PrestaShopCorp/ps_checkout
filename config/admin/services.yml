@@ -15,8 +15,3 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep'
     arguments:
       - '@ps_checkout.configuration'
-
-  ps_checkout.paypal.configuration:
-    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
-    arguments:
-      - '@ps_checkout.configuration'

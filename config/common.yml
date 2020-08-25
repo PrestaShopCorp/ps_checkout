@@ -66,3 +66,8 @@ services:
   ps_checkout.logger:
     class: 'Psr\Log\LoggerInterface'
     factory: ['@ps_checkout.logger.factory', 'build']
+
+  ps_checkout.paypal.configuration:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
+    arguments:
+      - '@ps_checkout.configuration'
