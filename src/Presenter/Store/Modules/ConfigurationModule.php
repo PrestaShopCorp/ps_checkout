@@ -56,6 +56,12 @@ class ConfigurationModule implements PresenterInterface
                     null,
                     (int) \Context::getContext()->shop->id
                 ),
+                'cardInlinePaypalIsEnabled' => (bool) \Configuration::get(
+                    'PS_CHECKOUT_PAYPAL_CB_INLINE',
+                    null,
+                    null,
+                    (int) \Context::getContext()->shop->id
+                ),
                 'logger' => [
                     'levels' => [
                         Logger::DEBUG => 'DEBUG : Detailed debug information',

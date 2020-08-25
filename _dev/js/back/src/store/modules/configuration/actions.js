@@ -71,7 +71,18 @@ export default {
       return Promise.resolve(payload);
     });
   },
-
+  toggleCardInlinePayPalField({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'ToggleCardInlinePayPalPayment',
+      data: {
+        status: payload ? 1 : 0
+      }
+    }).then(() => {
+      commit(types.UPDATE_CARD_INLINE_PAYPAL_AVAILABILITY, payload);
+      return Promise.resolve(payload);
+    });
+  },
   toggleECOrderPage({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,

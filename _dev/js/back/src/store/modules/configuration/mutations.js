@@ -31,6 +31,9 @@ export default {
   [types.UPDATE_PAYMENT_CARD_AVAILABILITY](state, payload) {
     state.cardIsEnabled = payload;
   },
+  [types.UPDATE_CARD_INLINE_PAYPAL_AVAILABILITY](state, payload) {
+    state.cardInlinePaypalIsEnabled = payload;
+  },
   [types.UPDATE_EC_ORDER_PAGE](state, payload) {
     state.expressCheckout.orderPage = payload;
   },

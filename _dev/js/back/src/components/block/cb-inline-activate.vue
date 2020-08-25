@@ -26,8 +26,8 @@
       <PSSwitch
         id="cardActivation"
         text-position="left"
-        v-model="cardIsEnabled"
-        :class="{ disable: !cardIsEnabled && element.name === 'card' }"
+        v-model="cardInlinePaypalIsEnabled"
+        :class="{ disable: false }"
       >
         <template>
           {{ $t('panel.payment-method-activation.label') }}
@@ -43,14 +43,14 @@
     name: 'CbInlineActivate',
     components: { PSSwitch },
     computed: {
-      cardIsEnabled: {
+      cardInlinePaypalIsEnabled: {
         get() {
-          return true; //this.$store.state.configuration.cardIsEnabled;
+          return this.$store.state.configuration.cardInlinePaypalIsEnabled;
         },
-        set() {
-          //this.$store.dispatch('toggleHostedFields', payload);
+        set(payload) {
+          this.$store.dispatch('toggleCardInlinePayPalField', payload);
         }
-      },
+      }
     }
   };
 </script>

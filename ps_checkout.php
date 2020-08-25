@@ -93,6 +93,7 @@ class Ps_checkout extends PaymentModule
         'PS_PSX_FIREBASE_REFRESH_TOKEN' => '',
         'PS_PSX_FIREBASE_REFRESH_DATE' => '',
         'PS_CHECKOUT_PSX_FORM' => '',
+        'PS_CHECKOUT_PAYPAL_CB_INLINE' => false,
     ];
 
     public $confirmUninstall;
