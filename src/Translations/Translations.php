@@ -264,6 +264,32 @@ class Translations
                     'noFaqAvailable' => $this->module->l('No faq available. Try later.', 'translations'),
                 ],
             ],
+            'account-settings-deeplink' => [
+                'fraud-tool' => [
+                    'title' => $this->module->l('Limit your fraud rate', 'translations'),
+                    'description' => $this->module->l('PayPal algorithms automatically limit your fraud rate. There is a complete tool on PayPal to set specific rules and drive your performance concerning fraud and chargeback costs.', 'translations'),
+                    'link-title' => $this->module->l('Setup fraud tool', 'translations'),
+                    'icon-title' => $this->module->l('Fraud tool', 'translations'),
+                ],
+                'bank-account' => [
+                    'title' => $this->module->l('Adjust your bank account', 'translations'),
+                    'description' => $this->module->l('Within your PayPal account, you can add a bank account to be beneficiary of your money transfer.', 'translations'),
+                    'link-title' => $this->module->l('Manage bank account', 'translations'),
+                    'icon-title' => $this->module->l('Bank account', 'translations'),
+                ],
+                'currencies' => [
+                    'title' => $this->module->l('Match currencies', 'translations'),
+                    'description' => $this->module->l('You can manage the currencies of your PayPal account. Ideally, make them match with the available currencies of your store.', 'translations'),
+                    'link-title' => $this->module->l('Manage currencies', 'translations'),
+                    'icon-title' => $this->module->l('Currencies', 'translations'),
+                ],
+                'conversion-rules' => [
+                    'title' => $this->module->l('Define the currency conversion rules', 'translations'),
+                    'description' => $this->module->l("Let's choose the conversion rules for any transaction in a currency other than those activated on your account, should they be automatically converted or request your validation.", 'translations'),
+                    'link-title' => $this->module->l('Manage conversion rules', 'translations'),
+                    'icon-title' => $this->module->l('Conversion rules', 'translations'),
+                ],
+            ],
             'block' => [
                 'reassurance' => [
                     'title' => $this->module->l('One module, all payments methods.', 'translations'),
@@ -271,13 +297,6 @@ class Translations
                     'label2' => $this->module->l('Benefit from all PayPal expertise and advantages', 'translations'),
                     'label3' => $this->module->l('Give access to relevant local payment methods for customers around the globe', 'translations'),
                     'learnMore' => $this->module->l('Learn more', 'translations'),
-                ],
-                'fraud-tool' => [
-                    'title' => $this->module->l('Fraud tool', 'translations'),
-                    'text' => $this->module->l('PayPal algorithms automatically limit your fraud rate.
-                    If you want to go further in Fraud Management, there is a complete tool on the PayPal platform
-                    to set specific rules and drive your performance concerning fraud and chargeback costs.', 'translations'),
-                    'discoverFraudTool' => $this->module->l('Go further', 'translations'),
                 ],
                 'feature-incoming' => [
                     'text' => $this->module->l('Checkout customization, transactions list, dispute management ... and more to come!', 'translations'),
