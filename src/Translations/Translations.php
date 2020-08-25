@@ -238,6 +238,10 @@ class Translations
                     'useProductionMode' => $this->module->l('Use production mode', 'translations'),
                     'tipProductionMode' => $this->module->l('Production mode enables you to collect your payments.', 'translations'),
                 ],
+                'payment-method-activation' => [
+                    'title' => $this->module->l('Payment methods activation', 'translations'),
+                    'label' => $this->module->l('PayPal Branded Credit Card Fields', 'translations'),
+                ],
                 'express-checkout' => [
                     'title' => $this->module->l('Define PayPal express checkout flow', 'translations'),
                     'pageLocation' => $this->module->l('Choose page location', 'translations'),

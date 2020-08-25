@@ -19,6 +19,9 @@
 <template>
   <div>
     <b-container class="mb-4">
+      <CbInlineActivate />
+    </b-container>
+    <b-container class="mb-4">
       <FraudTool />
     </b-container>
 
@@ -31,10 +34,12 @@
 <script>
   import FraudTool from '@/components/block/fraud-tool';
   import FeatureIncoming from '@/components/block/feature-incoming';
+  import CbInlineActivate from '@/components/block/cb-inline-activate';
 
   export default {
     name: 'Advanced',
     components: {
+      CbInlineActivate,
       FraudTool,
       FeatureIncoming
     }
