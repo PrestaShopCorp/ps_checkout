@@ -602,7 +602,7 @@ class Ps_checkout extends PaymentModule
     /**
      * Generate paypal payment option
      *
-     * @param PaymentOption
+     * @param PaymentOption $paymentOption
      *
      * @return object PaymentOption
      */
