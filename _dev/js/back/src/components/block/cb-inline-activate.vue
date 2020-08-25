@@ -27,7 +27,7 @@
         id="cardActivation"
         text-position="left"
         v-model="cardInlinePaypalIsEnabled"
-        :class="{ disable: false }"
+        :disable="!cardInlineEnabled"
       >
         <template>
           {{ $t('panel.payment-method-activation.label') }}
@@ -50,6 +50,15 @@
         set(payload) {
           this.$store.dispatch('toggleCardInlinePayPalField', payload);
         }
+      },
+      cardInlineEnabled() {
+        return (
+          !this.$store.state.configuration.cardIsEnabled ||
+          this.$store.state.paypal.cardIsActive === 'DENIED' ||
+          this.$store.state.paypal.cardIsActive === 'SUSPENDED' ||
+          this.$store.state.paypal.cardIsActive === 'NEED_MORE_DATA' ||
+          this.$store.state.paypal.cardIsActive === 'REVOKE'
+        );
       }
     }
   };

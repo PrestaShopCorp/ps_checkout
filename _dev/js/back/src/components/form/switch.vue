@@ -24,6 +24,7 @@
     <div
       class="switch-input"
       :class="{
+        'not-allowed': disable,
         '-checked': value,
         'switch-input-lg': size === 'lg',
         'switch-input-sm': size === 'sm'
@@ -36,6 +37,7 @@
         data-toggle="switch"
         data-inverse="true"
         type="checkbox"
+        :disabled="disable"
         :name="name"
       />
     </div>
@@ -72,6 +74,11 @@
         type: String,
         required: false,
         default: 'md'
+      },
+      disable: {
+        type: Boolean,
+        required: false,
+        default: false
       }
     },
     data() {
@@ -91,3 +98,14 @@
     }
   };
 </script>
+
+<style scoped>
+  #app .card-body div.not-allowed {
+    cursor: not-allowed;
+  }
+
+  #app .card-body div.not-allowed input:disabled {
+    pointer-events: none;
+  }
+
+</style>
