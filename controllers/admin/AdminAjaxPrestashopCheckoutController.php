@@ -22,6 +22,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
+use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
@@ -324,7 +325,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessToggleECOrderPage()
     {
         Configuration::updateValue(
-            'PS_CHECKOUT_EC_ORDER_PAGE',
+            ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE,
             Tools::getValue('status') ? 1 : 0,
             false,
             null,
@@ -340,7 +341,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessToggleECCheckoutPage()
     {
         Configuration::updateValue(
-            'PS_CHECKOUT_EC_CHECKOUT_PAGE',
+            ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE,
             Tools::getValue('status') ? 1 : 0,
             false,
             null,
@@ -356,7 +357,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessToggleECProductPage()
     {
         Configuration::updateValue(
-            'PS_CHECKOUT_EC_PRODUCT_PAGE',
+            ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE,
             Tools::getValue('status') ? 1 : 0,
             false,
             null,

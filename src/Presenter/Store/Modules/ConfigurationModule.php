@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use Monolog\Logger;
+use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
@@ -79,19 +80,19 @@ class ConfigurationModule implements PresenterInterface
                 ],
                 'expressCheckout' => [
                     'orderPage' => (bool) \Configuration::get(
-                        'PS_CHECKOUT_EC_ORDER_PAGE',
+                        ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE,
                         null,
                         null,
                         (int) \Context::getContext()->shop->id
                     ),
                     'checkoutPage' => (bool) \Configuration::get(
-                        'PS_CHECKOUT_EC_CHECKOUT_PAGE',
+                        ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE,
                         null,
                         null,
                         (int) \Context::getContext()->shop->id
                     ),
                     'productPage' => (bool) \Configuration::get(
-                        'PS_CHECKOUT_EC_PRODUCT_PAGE',
+                        ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE,
                         null,
                         null,
                         (int) \Context::getContext()->shop->id
