@@ -44,22 +44,6 @@ class PsAccountRepository
     }
 
     /**
-     * Reset prestashop account
-     *
-     * @return PsAccount
-     */
-    public function resetAccount()
-    {
-        return new PsAccount(
-            '',
-            '',
-            '',
-            '',
-            ''
-        );
-    }
-
-    /**
      * Retrieve the status of the psx form : return true if the form is completed, otherwise return false.
      * If on ready, the merchant doesn't need to complete the form, so return true to act like if the
      * user complete the form
@@ -158,7 +142,7 @@ class PsAccountRepository
         if ($toArray) {
             return json_decode(
                 \Configuration::get(
-                    'PS_CHECKOUT_PSX_FORM',
+                    PsAccount::PS_CHECKOUT_PSX_FORM,
                     null,
                     null,
                     (int) \Context::getContext()->shop->id

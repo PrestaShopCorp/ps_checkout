@@ -45,22 +45,6 @@ class PaypalAccountRepository
     }
 
     /**
-     * Reset paypal account
-     *
-     * @return PaypalAccount
-     */
-    public function resetAccount()
-    {
-        return new PaypalAccount(
-            '',
-            '',
-            '',
-            '',
-            ''
-        );
-    }
-
-    /**
      * Get the status of the paypal onBoarding
      *
      * @return bool

@@ -30,6 +30,49 @@ use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 class PersistentConfiguration
 {
     /**
+     * Function used to reset the PayPalField to LogOut the user
+     *
+     * @return bool
+     */
+    public function resetPayPalAccount()
+    {
+        return \Configuration::updateValue(
+                PaypalAccount::PS_CHECKOUT_PAYPAL_ID_MERCHANT,
+                '',
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            )
+            && \Configuration::updateValue(
+                PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT,
+                '',
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            )
+            && \Configuration::updateValue(
+                PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_STATUS,
+                '',
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            )
+            && \Configuration::updateValue(
+                PaypalAccount::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS,
+                '',
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            )
+            && \Configuration::updateValue(
+                PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS,
+                '',
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            );
+    }
+    /**
      * Save / update paypal account in database
      *
      * @param PaypalAccount $paypalAccount
@@ -75,6 +118,49 @@ class PersistentConfiguration
             );
     }
 
+    /**
+     * Function used to reset the PS account to LogOut the user
+     *
+     * @return bool
+     */
+    public function resetPsAccount()
+    {
+        return \Configuration::updateValue(
+                PsAccount::PS_PSX_FIREBASE_EMAIL,
+                '',
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            )
+            && \Configuration::updateValue(
+                PsAccount::PS_PSX_FIREBASE_ID_TOKEN,
+                '',
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            )
+            && \Configuration::updateValue(
+                PsAccount::PS_PSX_FIREBASE_LOCAL_ID,
+                '',
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            )
+            && \Configuration::updateValue(
+                PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN,
+                '',
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            )
+            && \Configuration::updateValue(
+                PsAccount::PS_CHECKOUT_PSX_FORM,
+                '',
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            );
+    }
     /**
      * Save / update ps account in database
      *

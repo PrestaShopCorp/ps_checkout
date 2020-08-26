@@ -85,14 +85,6 @@ class PsAccount
      */
     public function __construct($idToken = null, $refreshToken = null, $email = null, $localId = null, $psxForm = null)
     {
-        if (empty($idToken)) {
-            throw new PsCheckoutException('idToken cannot be empty', PsCheckoutException::PSACCOUNT_TOKEN_MISSING);
-        }
-
-        if (empty($refreshToken)) {
-            throw new PsCheckoutException('refreshToken cannot be empty', PsCheckoutException::PSACCOUNT_REFRESH_TOKEN_MISSING);
-        }
-
         $this->setIdToken($idToken);
         $this->setRefreshToken($refreshToken);
 
@@ -119,9 +111,15 @@ class PsAccount
 
     /**
      * @param string $idToken
+     *
+     * @throws PsCheckoutException
      */
     public function setIdToken($idToken)
     {
+        if (empty($idToken)) {
+            throw new PsCheckoutException('idToken cannot be empty', PsCheckoutException::PSACCOUNT_TOKEN_MISSING);
+        }
+
         $this->idToken = $idToken;
     }
 
@@ -135,9 +133,15 @@ class PsAccount
 
     /**
      * @param string $refreshToken
+     *
+     * @throws PsCheckoutException
      */
     public function setRefreshToken($refreshToken)
     {
+        if (empty($refreshToken)) {
+            throw new PsCheckoutException('refreshToken cannot be empty', PsCheckoutException::PSACCOUNT_REFRESH_TOKEN_MISSING);
+        }
+
         $this->refreshToken = $refreshToken;
     }
 

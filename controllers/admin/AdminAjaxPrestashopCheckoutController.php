@@ -121,10 +121,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessLogOutPsAccount()
     {
-        // logout ps account
-        $psAccount = (new PsAccountRepository())->resetAccount();
-
-        (new PersistentConfiguration())->savePsAccount($psAccount);
+        (new PersistentConfiguration())->resetPsAccount();
 
         $this->ajaxDie(json_encode(true));
     }
@@ -134,9 +131,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessLogOutPaypalAccount()
     {
-        $paypalAccount = (new PaypalAccountRepository())->resetAccount();
-
-        (new PersistentConfiguration())->savePaypalAccount($paypalAccount);
+        (new PersistentConfiguration())->resetPayPalAccount();
 
         // we reset the Live Step banner
         $this->module->getService('ps_checkout.step.live')->confirmed(false);
