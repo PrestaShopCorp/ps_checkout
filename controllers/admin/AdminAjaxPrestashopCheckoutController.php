@@ -122,13 +122,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessLogOutPsAccount()
     {
         // logout ps account
-        $psAccount = (new PsAccountRepository())->getOnboardedAccount();
-
-        $psAccount->setEmail('');
-        $psAccount->setIdToken('');
-        $psAccount->setLocalId('');
-        $psAccount->setRefreshToken('');
-        $psAccount->setPsxForm('');
+        $psAccount = (new PsAccountRepository())->resetAccount();
 
         (new PersistentConfiguration())->savePsAccount($psAccount);
 
@@ -140,13 +134,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessLogOutPaypalAccount()
     {
-        $paypalAccount = (new PaypalAccountRepository())->getOnboardedAccount();
-
-        $paypalAccount->setMerchantId('');
-        $paypalAccount->setEmail('');
-        $paypalAccount->setEmailIsVerified('');
-        $paypalAccount->setPaypalPaymentStatus('');
-        $paypalAccount->setCardPaymentStatus('');
+        $paypalAccount = (new PaypalAccountRepository())->resetAccount();
 
         (new PersistentConfiguration())->savePaypalAccount($paypalAccount);
 
@@ -252,9 +240,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $paypalAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository();
         $psAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository();
 
-        // update merchant status only if the merchant onboarding is completed
-        if ($paypalAccount->onbardingIsCompleted()
-            && $psAccount->onbardingIsCompleted()
+        // update merchant status only if the merchant onBoarding is completed
+        if ($paypalAccount->onBoardingIsCompleted()
+            && $psAccount->onBoardingIsCompleted()
         ) {
             (new PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater($paypalAccount->getOnboardedAccount()))->update();
         }
