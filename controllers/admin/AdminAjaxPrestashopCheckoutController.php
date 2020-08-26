@@ -21,6 +21,7 @@ use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
@@ -316,12 +317,11 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessToggleCardPaymentAvailability()
     {
-        Configuration::updateValue(
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $this->module->getService('ps_checkout.configuration');
+        $configuration->set(
             'PS_CHECKOUT_CARD_PAYMENT_ENABLED',
-            Tools::getValue('status') ? 1 : 0,
-            false,
-            null,
-            (int) Context::getContext()->shop->id
+            Tools::getValue('status') ? 1 : 0
         );
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
@@ -332,12 +332,11 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessToggleECOrderPage()
     {
-        Configuration::updateValue(
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $this->module->getService('ps_checkout.configuration');
+        $configuration->set(
             ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE,
-            Tools::getValue('status') ? 1 : 0,
-            false,
-            null,
-            (int) Context::getContext()->shop->id
+            Tools::getValue('status') ? 1 : 0
         );
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
@@ -348,12 +347,11 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessToggleECCheckoutPage()
     {
-        Configuration::updateValue(
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $this->module->getService('ps_checkout.configuration');
+        $configuration->set(
             ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE,
-            Tools::getValue('status') ? 1 : 0,
-            false,
-            null,
-            (int) Context::getContext()->shop->id
+            Tools::getValue('status') ? 1 : 0
         );
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
@@ -364,12 +362,11 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessToggleECProductPage()
     {
-        Configuration::updateValue(
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $this->module->getService('ps_checkout.configuration');
+        $configuration->set(
             ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE,
-            Tools::getValue('status') ? 1 : 0,
-            false,
-            null,
-            (int) Context::getContext()->shop->id
+            Tools::getValue('status') ? 1 : 0
         );
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();

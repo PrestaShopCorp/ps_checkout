@@ -21,36 +21,36 @@
 namespace PrestaShop\Module\PrestashopCheckout\ExpressCheckout;
 
 
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+
 class ExpressCheckoutRepository
 {
+    /**
+     * @var PrestaShopConfiguration
+     */
+    private $configuration;
+
+    public function __construct()
+    {
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        /** @var PrestaShopConfiguration $configuration */
+        $this->configuration = $module->getService('ps_checkout.configuration');
+    }
+
     public function getOrderPage()
     {
-        return (bool)  \Configuration::get(
-            ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        return (bool) $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE);
     }
 
     public function getCheckoutPage()
     {
-        return (bool)  \Configuration::get(
-            ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        return (bool) $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE);
     }
 
     public function getProductPage()
     {
-        return (bool)  \Configuration::get(
-            ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        return (bool) $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE);
     }
 
 }
