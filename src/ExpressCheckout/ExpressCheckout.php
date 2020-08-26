@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\ExpressCheckout;
 
-
 class ExpressCheckout
 {
     const PS_CHECKOUT_EC_PRODUCT_PAGE = 'PS_CHECKOUT_EC_PRODUCT_PAGE';

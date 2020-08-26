@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\ExpressCheckout;
 
-
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 
 class ExpressCheckoutRepository
@@ -34,7 +33,7 @@ class ExpressCheckoutRepository
     {
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
-        /** @var PrestaShopConfiguration $configuration */
+        /* @var PrestaShopConfiguration $configuration */
         $this->configuration = $module->getService('ps_checkout.configuration');
     }
 
@@ -52,5 +51,4 @@ class ExpressCheckoutRepository
     {
         return (bool) $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE);
     }
-
 }
