@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Sentry;
 
 use Monolog\Processor\ProcessorInterface;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
 /**
  * Class SentryProcessor
@@ -38,13 +39,7 @@ class SentryProcessor implements ProcessorInterface
             $record['context'] = [];
         }
 
-        $context = \Context::getContext();
-        $userMail = null;
-        if (in_array($context->controller->controller_type, ['front', 'modulefront'])) {
-            $userMail = $context->customer ? $context->customer->email : null;
-        } elseif (in_array($context->controller->controller_type, ['admin', 'moduleadmin'])) {
-            $userMail = $context->employee ? $context->employee->email : null;
-        }
+        $userMail = (new PsAccountRepository())->getOnboardedAccount()->getEmail();
 
         if ($userMail !== null) {
             $record['context']['user'] = [
