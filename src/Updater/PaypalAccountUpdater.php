@@ -71,13 +71,18 @@ class PaypalAccountUpdater
     {
         $merchantIntegration = $this->getMerchantIntegration();
 
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        /** @var PersistentConfiguration $persistentConfiguration */
+        $persistentConfiguration = $module->getService('ps_checkout.persistent.configuration');
+
         if (false === $merchantIntegration) {
             $this->account->setEmail('');
             $this->account->setEmailIsVerified('');
             $this->account->setPaypalPaymentStatus('');
             $this->account->setCardPaymentStatus('');
 
-            return (new PersistentConfiguration())->savePaypalAccount($this->account);
+            return $persistentConfiguration->savePaypalAccount($this->account);
         }
 
         $this->account->setEmail($merchantIntegration['primary_email']);
@@ -85,7 +90,7 @@ class PaypalAccountUpdater
         $this->account->setPaypalPaymentStatus($merchantIntegration['payments_receivable']);
         $this->account->setCardPaymentStatus($this->getCardStatus($merchantIntegration));
 
-        return (new PersistentConfiguration())->savePaypalAccount($this->account);
+        return $persistentConfiguration->savePaypalAccount($this->account);
     }
 
     /**

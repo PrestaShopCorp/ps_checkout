@@ -27,7 +27,6 @@ use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
-use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPresenter;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
@@ -121,7 +120,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessLogOutPsAccount()
     {
-        (new PersistentConfiguration())->resetPsAccount();
+        $this->module->getService('ps_checkout.persistent.configuration')->resetPsAccount();
 
         $this->ajaxDie(json_encode(true));
     }
@@ -131,7 +130,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessLogOutPaypalAccount()
     {
-        (new PersistentConfiguration())->resetPayPalAccount();
+        $this->module->getService('ps_checkout.persistent.configuration')->resetPayPalAccount();
 
         // we reset the Live Step banner
         $this->module->getService('ps_checkout.step.live')->confirmed(false);
@@ -159,7 +158,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 $response['body']['localId']
             );
 
-            (new PersistentConfiguration())->savePsAccount($psAccount);
+            $this->module->getService('ps_checkout.persistent.configuration')->savePsAccount($psAccount);
         }
 
         $this->ajaxDie(json_encode($response));
@@ -185,7 +184,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 $response['body']['localId']
             );
 
-            (new PersistentConfiguration())->savePsAccount($psAccount);
+            $this->module->getService('ps_checkout.persistent.configuration')->savePsAccount($psAccount);
         }
 
         $this->ajaxDie(json_encode($response));
@@ -290,7 +289,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $psAccount = (new PsAccountRepository())->getOnboardedAccount();
         $psAccount->setPsxForm(json_encode($form));
 
-        return (new PersistentConfiguration())->savePsAccount($psAccount);
+        return $this->module->getService('ps_checkout.persistent.configuration')->savePsAccount($psAccount);
     }
 
     /**

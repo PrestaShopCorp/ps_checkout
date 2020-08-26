@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 
@@ -30,46 +31,41 @@ use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 class PersistentConfiguration
 {
     /**
+     * @var PrestaShopConfiguration
+     */
+    private $configuration;
+
+    public function __construct( PrestaShopConfiguration $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
      * Function used to reset the PayPalField to LogOut the user
      *
      * @return bool
      */
     public function resetPayPalAccount()
     {
-        return \Configuration::updateValue(
+        return $this->configuration->set(
                 PaypalAccount::PS_CHECKOUT_PAYPAL_ID_MERCHANT,
-                '',
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                ''
             )
-            && \Configuration::updateValue(
+            && $this->configuration->set(
                 PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT,
-                '',
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                ''
             )
-            && \Configuration::updateValue(
+            && $this->configuration->set(
                 PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_STATUS,
-                '',
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                ''
             )
-            && \Configuration::updateValue(
+            && $this->configuration->set(
                 PaypalAccount::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS,
-                '',
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                ''
             )
-            && \Configuration::updateValue(
+            && $this->configuration->set(
                 PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS,
-                '',
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                ''
             );
     }
     /**
@@ -81,40 +77,25 @@ class PersistentConfiguration
      */
     public function savePaypalAccount(PaypalAccount $paypalAccount)
     {
-        return \Configuration::updateValue(
+        return $this->configuration->set(
                 PaypalAccount::PS_CHECKOUT_PAYPAL_ID_MERCHANT,
-                $paypalAccount->getMerchantId(),
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                $paypalAccount->getMerchantId()
             )
-            && \Configuration::updateValue(
+            && $this->configuration->set(
                 PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT,
-                $paypalAccount->getEmail(),
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                $paypalAccount->getEmail()
             )
-            && \Configuration::updateValue(
+            && $this->configuration->set(
                 PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_STATUS,
-                $paypalAccount->getEmailIsVerified(),
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                $paypalAccount->getEmailIsVerified()
             )
-            && \Configuration::updateValue(
+            && $this->configuration->set(
                 PaypalAccount::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS,
-                $paypalAccount->getPaypalPaymentStatus(),
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                $paypalAccount->getPaypalPaymentStatus()
             )
-            && \Configuration::updateValue(
+            && $this->configuration->set(
                 PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS,
-                $paypalAccount->getCardPaymentStatus(),
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                $paypalAccount->getCardPaymentStatus()
             );
     }
 
@@ -125,40 +106,25 @@ class PersistentConfiguration
      */
     public function resetPsAccount()
     {
-        return \Configuration::updateValue(
+        return $this->configuration->set(
                 PsAccount::PS_PSX_FIREBASE_EMAIL,
-                '',
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                ''
             )
-            && \Configuration::updateValue(
+            && $this->configuration->set(
                 PsAccount::PS_PSX_FIREBASE_ID_TOKEN,
-                '',
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                ''
             )
-            && \Configuration::updateValue(
+            && $this->configuration->set(
                 PsAccount::PS_PSX_FIREBASE_LOCAL_ID,
-                '',
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                ''
             )
-            && \Configuration::updateValue(
+            && $this->configuration->set(
                 PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN,
-                '',
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                ''
             )
-            && \Configuration::updateValue(
+            && $this->configuration->set(
                 PsAccount::PS_CHECKOUT_PSX_FORM,
-                '',
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                ''
             );
     }
     /**
@@ -170,40 +136,25 @@ class PersistentConfiguration
      */
     public function savePsAccount(PsAccount $psAccount)
     {
-        return \Configuration::updateValue(
+        return $this->configuration->set(
                 PsAccount::PS_PSX_FIREBASE_EMAIL,
-                $psAccount->getEmail(),
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                $psAccount->getEmail()
             )
-            && \Configuration::updateValue(
+            && $this->configuration->set(
                 PsAccount::PS_PSX_FIREBASE_ID_TOKEN,
-                $psAccount->getIdToken(),
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                $psAccount->getIdToken()
             )
-            && \Configuration::updateValue(
+            && $this->configuration->set(
                 PsAccount::PS_PSX_FIREBASE_LOCAL_ID,
-                $psAccount->getLocalId(),
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                $psAccount->getLocalId()
             )
-            && \Configuration::updateValue(
+            && $this->configuration->set(
                 PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN,
-                $psAccount->getRefreshToken(),
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                $psAccount->getRefreshToken()
             )
-            && \Configuration::updateValue(
+            && $this->configuration->set(
                 PsAccount::PS_CHECKOUT_PSX_FORM,
-                $psAccount->getPsxForm(),
-                false,
-                null,
-                (int) \Context::getContext()->shop->id
+                $psAccount->getPsxForm()
             );
     }
 }

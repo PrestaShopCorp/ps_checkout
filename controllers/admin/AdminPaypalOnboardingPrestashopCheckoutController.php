@@ -19,7 +19,6 @@
  */
 use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
-use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
 
 class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminController
@@ -37,7 +36,7 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
         }
 
         $paypalAccount = new PaypalAccount($idMerchant);
-        (new PersistentConfiguration())->savePaypalAccount($paypalAccount);
+        $this->module->getService('ps_checkout.persistent.configuration')->savePaypalAccount($paypalAccount);
 
         (new PaypalAccountUpdater($paypalAccount))->update();
 
