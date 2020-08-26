@@ -34,15 +34,29 @@ class PsAccountRepository
      */
     public function getOnboardedAccount()
     {
-        $psAccount = new PsAccount(
+        return new PsAccount(
             $this->getIdToken(),
             $this->getRefreshToken(),
             $this->getEmail(),
             $this->getLocalId(),
             $this->getPsxForm()
         );
+    }
 
-        return $psAccount;
+    /**
+     * Reset prestashop account
+     *
+     * @return PsAccount
+     */
+    public function resetAccount()
+    {
+        return new PsAccount(
+            '',
+            '',
+            '',
+            '',
+            ''
+        );
     }
 
     /**
@@ -67,7 +81,7 @@ class PsAccountRepository
      *
      * @return bool
      */
-    public function onbardingIsCompleted()
+    public function onBoardingIsCompleted()
     {
         return !empty($this->getIdToken()) && $this->psxFormIsCompleted();
     }

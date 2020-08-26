@@ -35,23 +35,37 @@ class PaypalAccountRepository
      */
     public function getOnboardedAccount()
     {
-        $paypalAccount = new PaypalAccount(
+        return new PaypalAccount(
             $this->getMerchantId(),
             $this->getMerchantEmail(),
             $this->getMerchantEmailStatus(),
             $this->getPaypalPaymentStatus(),
             $this->getCardHostedFieldsStatus()
         );
-
-        return $paypalAccount;
     }
 
     /**
-     * Get the status of the paypal onboarding
+     * Reset paypal account
+     *
+     * @return PaypalAccount
+     */
+    public function resetAccount()
+    {
+        return new PaypalAccount(
+            '',
+            '',
+            '',
+            '',
+            ''
+        );
+    }
+
+    /**
+     * Get the status of the paypal onBoarding
      *
      * @return bool
      */
-    public function onbardingIsCompleted()
+    public function onBoardingIsCompleted()
     {
         return !empty($this->getMerchantId());
     }
