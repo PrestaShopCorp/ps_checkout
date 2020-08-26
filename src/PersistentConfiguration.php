@@ -35,7 +35,7 @@ class PersistentConfiguration
      */
     private $configuration;
 
-    public function __construct( PrestaShopConfiguration $configuration)
+    public function __construct(PrestaShopConfiguration $configuration)
     {
         $this->configuration = $configuration;
     }
@@ -68,6 +68,7 @@ class PersistentConfiguration
                 ''
             );
     }
+
     /**
      * Save / update paypal account in database
      *
@@ -127,6 +128,7 @@ class PersistentConfiguration
                 ''
             );
     }
+
     /**
      * Save / update ps account in database
      *

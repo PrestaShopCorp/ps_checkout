@@ -33,7 +33,6 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
