@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
+use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
 
 /**
  * Handle request to maasland regarding the shop/merchant status
@@ -64,19 +65,19 @@ class Shop extends PaymentClient
                         (int) \Context::getContext()->shop->id
                     ),
                     'express_in_product' => (bool) \Configuration::get(
-                        'PS_CHECKOUT_EC_PRODUCT_PAGE',
+                        ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE,
                         null,
                         null,
                         (int) \Context::getContext()->shop->id
                     ),
                     'express_in_cart' => (bool) \Configuration::get(
-                        'PS_CHECKOUT_EC_ORDER_PAGE',
+                        ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE,
                         null,
                         null,
                         (int) \Context::getContext()->shop->id
                     ),
                     'express_in_checkout' => (bool) \Configuration::get(
-                        'PS_CHECKOUT_EC_CHECKOUT_PAGE',
+                        ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE,
                         null,
                         null,
                         (int) \Context::getContext()->shop->id
