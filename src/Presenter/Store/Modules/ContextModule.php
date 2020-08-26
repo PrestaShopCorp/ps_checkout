@@ -73,6 +73,7 @@ class ContextModule implements PresenterInterface
                 'readmeUrl' => $this->getReadme(),
                 'cguUrl' => $this->getCgu(),
                 'roundingSettingsIsCorrect' => $this->roundingSettingsIsCorrect(),
+                'liveStepConfirmed' => $this->liveStepConfirmed(),
                 'youtubeInstallerLink' => $this->getYoutubeInstallerLink(),
             ],
         ];
@@ -237,5 +238,15 @@ class ContextModule implements PresenterInterface
                 null,
                 null,
                 (int) \Context::getContext()->shop->id) === '2';
+    }
+
+    /**
+     * Check if the step live is complete and the banner closed
+     *
+     * @return bool
+     */
+    private function liveStepConfirmed()
+    {
+        return $this->module->getService('ps_checkout.step.live')->isConfirmed();
     }
 }
