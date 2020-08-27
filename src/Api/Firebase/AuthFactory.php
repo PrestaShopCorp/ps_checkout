@@ -25,8 +25,6 @@ use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 
 /**
  * Class AuthFactory used to interact between auth and db
- *
- *
  */
 class AuthFactory
 {
@@ -35,6 +33,9 @@ class AuthFactory
      */
     private $auth;
 
+    /**
+     * @var PersistentConfiguration
+     */
     private $configuration;
 
     public function __construct(Auth $auth, PersistentConfiguration $configuration)
@@ -54,6 +55,22 @@ class AuthFactory
         if (true === $response['status']) {
             $this->savePsAccount($response);
         }
+
+        return $response;
+    }
+
+    /**
+     * @param string $email
+     * @param string $password
+     */
+    public function signUp( $email, $password)
+    {
+        $response = $this->auth->signUpWithEmailAndPassword($email, $password);
+        // if there is no error, save the account tokens in database
+        if (true === $response['status']) {
+            $this->savePsAccount($response);
+        }
+
         return $response;
     }
 
