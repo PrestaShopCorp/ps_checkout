@@ -47,9 +47,7 @@ class SentryProcessor implements ProcessorInterface
                     'email' => $user->getEmail(),
                 ];
             }
-        }
-        catch( PsCheckoutException $exception)
-        {
+        } catch(PsCheckoutException $exception) {
             // In case the ps account isn't already configure, there is no PsAccount so nothing to do
         }
 
