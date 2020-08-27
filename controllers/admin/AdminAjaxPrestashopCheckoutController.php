@@ -23,6 +23,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
+use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
@@ -561,7 +562,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             ]));
         }
 
-        if (false === (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_LEVEL', $level)) {
+        if (false === (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_LEVEL, $level)) {
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -599,7 +600,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             ]));
         }
 
-        if (false === (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP_FORMAT', $format)) {
+        if (false === (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP_FORMAT, $format)) {
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -623,7 +624,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         $isEnabled = (bool) Tools::getValue('isEnabled');
 
-        if (false === (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP', (int) $isEnabled)) {
+        if (false === (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP, (int) $isEnabled)) {
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -656,7 +657,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             ]));
         }
 
-        if (false === (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_MAX_FILES', $maxFiles)) {
+        if (false === (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_MAX_FILES, $maxFiles)) {
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [

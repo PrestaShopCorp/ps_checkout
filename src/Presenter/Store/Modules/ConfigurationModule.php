@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
@@ -63,10 +64,10 @@ class ConfigurationModule implements PresenterInterface
                         'DEBUG' => 'Debug format',
                         'SHORT' => 'Short format',
                     ],
-                    'level' => (int) \Configuration::getGlobalValue('PS_CHECKOUT_LOGGER_LEVEL'),
-                    'maxFiles' => (int) \Configuration::getGlobalValue('PS_CHECKOUT_LOGGER_MAX_FILES'),
-                    'http' => (int) \Configuration::getGlobalValue('PS_CHECKOUT_LOGGER_HTTP'),
-                    'httpFormat' => \Configuration::getGlobalValue('PS_CHECKOUT_LOGGER_HTTP_FORMAT'),
+                    'level' => (int) \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_LEVEL),
+                    'maxFiles' => (int) \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_MAX_FILES),
+                    'http' => (int) \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP),
+                    'httpFormat' => \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP_FORMAT),
                 ],
                 'expressCheckout' => [
                     'orderPage' => (bool) $configuration->get('PS_CHECKOUT_EC_ORDER_PAGE'),
