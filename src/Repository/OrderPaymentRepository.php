@@ -26,22 +26,6 @@ namespace PrestaShop\Module\PrestashopCheckout\Repository;
 class OrderPaymentRepository
 {
     /**
-     * @param int $shopId
-     *
-     * @return int
-     */
-    public function countAllPSCheckoutPaymentMethod($shopId)
-    {
-        return (int) \Db::getInstance()->getValue('
-                    SELECT COUNT(op.id_order_payment)
-                    FROM `' . _DB_PREFIX_ . 'order_payment` op
-                    INNER JOIN `' . _DB_PREFIX_ . 'orders` o ON (o.reference = op.order_reference)
-                    WHERE op.payment_method = "Prestashop Checkout"
-                    AND o.id_shop = ' . (int) $shopId
-        );
-    }
-
-    /**
      * @param $shopId
      *
      * @return array|bool|\mysqli_result|\PDOStatement|resource

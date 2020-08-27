@@ -268,7 +268,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             json_encode([
                 'orders' => (new OrderPendingPresenter())->present(),
                 'transactions' => (new TransactionPresenter())->present(),
-                'countAllCheckoutTransactions' => $repository->countAllPSCheckoutPaymentMethod(Context::getContext()->shop->id),
             ])
         );
     }
