@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Sentry;
 
 use Monolog\Processor\ProcessorInterface;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
 /**
@@ -39,12 +40,17 @@ class SentryProcessor implements ProcessorInterface
             $record['context'] = [];
         }
 
-        $userMail = (new PsAccountRepository())->getOnboardedAccount()->getEmail();
-
-        if ($userMail !== null) {
-            $record['context']['user'] = [
-                'email' => $userMail,
-            ];
+        try {
+            $user = (new PsAccountRepository())->getOnboardedAccount();
+            if ($user !== null) {
+                $record['context']['user'] = [
+                    'email' => $user->getEmail(),
+                ];
+            }
+        }
+        catch( PsCheckoutException $exception)
+        {
+            // In case the ps account isn't already configure, there is no PsAccount so nothing to do
         }
 
         // Add various tags
