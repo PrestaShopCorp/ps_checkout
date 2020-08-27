@@ -110,6 +110,12 @@ p.payment_module .pscheckout-paypal img, p.payment_module .pscheckout-card img {
   backface-visibility: hidden;
 }
 
+.braintree-hosted-fields-valid {
+  outline: .1875rem solid #81d390 ;
+  border: unset;
+  backface-visibility: hidden;
+}
+
 .defautl-credit-card {
   position: absolute;
   top: 2px;
