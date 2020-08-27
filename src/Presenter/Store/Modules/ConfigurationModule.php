@@ -24,6 +24,7 @@ use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
@@ -43,11 +44,14 @@ class ConfigurationModule implements PresenterInterface
         /** @var PrestaShopConfiguration $configuration */
         $configuration = $module->getService('ps_checkout.configuration');
 
+        /** @var PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $module->getService('ps_checkout.paypal.configuration');
+
         $configurationModule = [
             'config' => [
                 'paymentMethods' => $this->getPaymentMethods(),
-                'captureMode' => $module->getService('ps_checkout.paypal.configuration')->getIntent(),
-                'paymentMode' => $configuration->get('PS_CHECKOUT_MODE'),
+                'captureMode' => $paypalConfiguration->getIntent(),
+                'paymentMode' => $paypalConfiguration->getPaymentMode(),
                 'cardIsEnabled' => (bool) $configuration->get('PS_CHECKOUT_CARD_PAYMENT_ENABLED'),
                 'logger' => [
                     'levels' => [

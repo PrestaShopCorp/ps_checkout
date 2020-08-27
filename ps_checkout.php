@@ -21,6 +21,7 @@
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Intent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -82,7 +83,7 @@ class Ps_checkout extends PaymentModule
 
     public $configurationList = [
         PayPalConfiguration::INTENT => Intent::CAPTURE,
-        'PS_CHECKOUT_MODE' => 'LIVE',
+        PayPalConfiguration::PAYMENT_MODE => Mode::LIVE,
         'PS_CHECKOUT_PAYMENT_METHODS_ORDER' => '',
         'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => '',
         'PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT' => '',
@@ -367,8 +368,8 @@ class Ps_checkout extends PaymentModule
         $psAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository();
 
         // update merchant status only if the merchant onboarding is completed
-        if ($paypalAccount->onbardingIsCompleted()
-            && $psAccount->onbardingIsCompleted()) {
+        if ($paypalAccount->onBoardingIsCompleted()
+            && $psAccount->onBoardingIsCompleted()) {
             $paypalAccount = $paypalAccount->getOnboardedAccount();
             (new PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater($paypalAccount))->update();
         }
@@ -809,9 +810,9 @@ class Ps_checkout extends PaymentModule
      */
     public function merchantIsValid()
     {
-        return (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->onbardingIsCompleted()
+        return (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->onBoardingIsCompleted()
             && (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->paypalEmailIsValid()
-            && (new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository())->onbardingIsCompleted();
+            && (new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository())->onBoardingIsCompleted();
     }
 
     /**

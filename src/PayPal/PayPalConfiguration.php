@@ -26,6 +26,7 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 class PayPalConfiguration
 {
     const INTENT = 'PS_CHECKOUT_INTENT';
+    const PAYMENT_MODE = 'PS_CHECKOUT_MODE';
 
     /**
      * @var PrestaShopConfiguration
@@ -61,5 +62,31 @@ class PayPalConfiguration
         }
 
         $this->configuration->set(self::INTENT, $captureMode);
+    }
+
+    /**
+     * Used to return the PS_CHECKOUT_MODE from the Configuration
+     *
+     * @return string
+     */
+    public function getPaymentMode()
+    {
+        return Mode::LIVE === $this->configuration->get(self::PAYMENT_MODE) ? Mode::LIVE : Mode::SANDBOX;
+    }
+
+    /**
+     * Used to set the PS_CHECKOUT_MODE in the Configuration
+     *
+     * @param $paymentMode
+     *
+     * @throws PsCheckoutException
+     */
+    public function setPaymentMode($paymentMode)
+    {
+        if (!in_array($paymentMode, [Mode::LIVE, Mode::SANDBOX])) {
+            throw new \UnexpectedValueException(sprintf('The value should be a Mode constant, %s value sent', $paymentMode));
+        }
+
+        $this->configuration->set(self::PAYMENT_MODE, $paymentMode);
     }
 }

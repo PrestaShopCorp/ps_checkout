@@ -34,15 +34,13 @@ class PsAccountRepository
      */
     public function getOnboardedAccount()
     {
-        $psAccount = new PsAccount(
+        return new PsAccount(
             $this->getIdToken(),
             $this->getRefreshToken(),
             $this->getEmail(),
             $this->getLocalId(),
             $this->getPsxForm()
         );
-
-        return $psAccount;
     }
 
     /**
@@ -67,7 +65,7 @@ class PsAccountRepository
      *
      * @return bool
      */
-    public function onbardingIsCompleted()
+    public function onBoardingIsCompleted()
     {
         return !empty($this->getIdToken()) && $this->psxFormIsCompleted();
     }
@@ -144,7 +142,7 @@ class PsAccountRepository
         if ($toArray) {
             return json_decode(
                 \Configuration::get(
-                    'PS_CHECKOUT_PSX_FORM',
+                    PsAccount::PS_CHECKOUT_PSX_FORM,
                     null,
                     null,
                     (int) \Context::getContext()->shop->id

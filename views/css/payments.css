@@ -141,6 +141,13 @@
   backface-visibility: hidden;
 }
 
+.braintree-hosted-fields-valid {
+  outline: .1875rem solid #81d390 ;
+  border: unset;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+
 .defautl-credit-card {
   position: absolute;
   top: 2px;
