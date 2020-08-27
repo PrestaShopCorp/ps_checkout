@@ -10,16 +10,16 @@
  * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
+ * to license@prestashop.com so we cnan send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *-->
 <template>
-  <div class="card" v-if="this.displayLiveStep">
-    <div class="card-body d-flex">
-      <div class="d-flex">
+  <div class="card shadow rounded" v-if="this.displayLiveStep">
+    <div class="card-body d-flex pl-0">
+      <div class="d-flex mr-2">
         <img src="@/assets/images/cb.png" alt="cb" />
       </div>
       <div class="flex-grow-1">
@@ -33,7 +33,7 @@
           <p class="mb-0">
             {{ $t('banner.paypalStatus.congrats') }}
           </p>
-          <h3 class="mb-4">
+          <h3 class="mb-3">
             {{ $t('banner.paypalStatus.oneMoreThing') }}
           </h3>
         </div>
@@ -41,18 +41,18 @@
           <h3 class="mb-0">
             {{ $t('banner.paypalStatus.allSet') }}
           </h3>
-          <p class="mb-4">
+          <p class="mb-3">
             {{ $t('banner.paypalStatus.confirmation') }}
           </p>
         </div>
 
-        <p class="mb-3 text-muted">
+        <p class="mb-2 text-muted">
           <span class="material-icons">
             check_circle
           </span>
           {{ $t('banner.paypalStatus.psAccountConnected') }}
         </p>
-        <p class="mb-3 text-muted">
+        <p class="mb-2 text-muted">
           <span class="material-icons">
             check_circle
           </span>
@@ -68,15 +68,19 @@
           <span class="material-icons circle">
             stop_circle
           </span>
-          {{ $t('banner.paypalStatus.legalDocumentsSent') }}
-          {{ $t('banner.paypalStatus.upTo') }}
+          <b>
+            {{ $t('banner.paypalStatus.legalDocumentsSent') }}
+            {{ $t('banner.paypalStatus.upTo') }}
+          </b>
         </p>
         <p class="mb-4" v-else-if="cardPaymentIsActive === 'NEED_MORE_DATA'">
           <span class="material-icons circle">
             stop_circle
           </span>
-          {{ $t('banner.paypalStatus.legalDocumentsSent') }}
-          {{ $t('banner.paypalStatus.onlyCC') }}
+          <b>
+            {{ $t('banner.paypalStatus.legalDocumentsSent') }}
+            {{ $t('banner.paypalStatus.onlyCC') }}
+          </b>
         </p>
         <p class="mb-4 text-muted" v-else>
           <span class="material-icons">
@@ -149,5 +153,9 @@
   }
   .material-icons.circle {
     color: #b5c7cd;
+  }
+
+  #app .shadow {
+    box-shadow: .5rem 1rem .5rem rgba(0,0,0,.15)!important;
   }
 </style>
