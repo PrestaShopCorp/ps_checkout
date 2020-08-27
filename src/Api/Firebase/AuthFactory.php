@@ -47,8 +47,10 @@ class AuthFactory
     /**
      * @param string $email
      * @param string $password
+     *
+     * @return array
      */
-    public function signIn( $email, $password)
+    public function signIn($email, $password)
     {
         $response = $this->auth->signInWithEmailAndPassword($email, $password);
         // if there is no error, save the account tokens in database
@@ -62,8 +64,10 @@ class AuthFactory
     /**
      * @param string $email
      * @param string $password
+     *
+     * @return array
      */
-    public function signUp( $email, $password)
+    public function signUp($email, $password)
     {
         $response = $this->auth->signUpWithEmailAndPassword($email, $password);
         // if there is no error, save the account tokens in database
@@ -74,6 +78,21 @@ class AuthFactory
         return $response;
     }
 
+    /**
+     * @param string $email
+     *
+     * @return array
+     */
+    public function resetPassword($email)
+    {
+        return $this->auth->sendPasswordResetEmail($email);
+    }
+
+    /**
+     * @param $response
+     *
+     * @throws \PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException
+     */
     private function savePsAccount($response)
     {
         $psAccount = new PsAccount(
