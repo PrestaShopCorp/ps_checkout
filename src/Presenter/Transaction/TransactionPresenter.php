@@ -38,8 +38,9 @@ class TransactionPresenter implements PresenterInterface
     public function present()
     {
         $link = new LinkAdapter();
-        $transactions = $this->getTransactions();
         $module = \Module::getInstanceByName('ps_checkout');
+        $transactions = $module->getService('ps_checkout.repository.orderpayment')
+            ->findAllPSCheckoutModule(\Context::getContext()->shop->id);
 
         foreach ($transactions as &$transaction) {
             $transaction['transactionID'] = $transaction['transaction_id'];
@@ -52,33 +53,6 @@ class TransactionPresenter implements PresenterInterface
             $transaction['typeForDisplay'] = ($transaction['type'] === 'Refund') ? $module->l('Refund', 'translations') : $module->l('Payment', 'translations');
             $transaction['commission'] = '-';
             $transaction['total_paid'] = '-';
-        }
-
-        return $transactions;
-    }
-
-    /**
-     * @return array
-     *
-     * @throws \PrestaShopDatabaseException
-     */
-    private function getTransactions()
-    {
-        $transactions = \Db::getInstance()->executeS('
-            SELECT op.*, o.id_order, c.id_customer, c.firstname, c.lastname
-            FROM `' . _DB_PREFIX_ . 'order_payment` op
-            INNER JOIN `' . _DB_PREFIX_ . 'orders` o ON (o.reference = op.order_reference)
-            INNER JOIN `' . _DB_PREFIX_ . 'customer` c ON (c.id_customer = o.id_customer)
-            WHERE o.module = "ps_checkout"
-            AND op.transaction_id IS NOT NULL
-            AND op.transaction_id != ""
-            AND o.id_shop = ' . (int) \Context::getContext()->shop->id . '
-            ORDER BY op.date_add DESC
-            LIMIT 1000
-        ');
-
-        if (empty($transactions)) {
-            return [];
         }
 
         return $transactions;

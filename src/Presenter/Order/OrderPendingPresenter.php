@@ -57,7 +57,11 @@ class OrderPendingPresenter implements PresenterInterface
             }
         }
 
-        $orders = $this->getPendingOrders($orderStates);
+        $idStates = array_map('intval', $orderStates);
+
+        $module = \Module::getInstanceByName('ps_checkout');
+        $orders = $module->getService('ps_checkout.repository.order')
+            ->findByStates(\Context::getContext()->shop->id, $idStates);
 
         foreach ($orders as &$order) {
             $order['username'] = substr($order['firstname'], 0, 1) . '. ' . $order['lastname'];
@@ -68,37 +72,6 @@ class OrderPendingPresenter implements PresenterInterface
             // TODO: Waiting for paypal infos (reporting lot 2)
             $order['commission'] = '-';
             $order['total_paid'] = '-';
-        }
-
-        return $orders;
-    }
-
-    /**
-     * get last 1000 pending checkout orders
-     *
-     * @param array $idStates
-     *
-     * @return array
-     *
-     * @throws \PrestaShopDatabaseException
-     */
-    private function getPendingOrders($idStates)
-    {
-        $idStates = array_map('intval', $idStates);
-
-        $orders = \Db::getInstance()->executeS('
-            SELECT o.id_order, o.current_state, o.total_paid, o.date_add, c.id_customer, c.firstname, c.lastname
-            FROM `' . _DB_PREFIX_ . 'orders` o
-            INNER JOIN `' . _DB_PREFIX_ . 'customer` c ON (o.id_customer = c.id_customer)
-            WHERE o.module = "ps_checkout"
-            AND o.id_shop = ' . (int) \Context::getContext()->shop->id . '
-            AND o.current_state IN (' . implode(',', array_keys($idStates)) . ')
-            ORDER BY o.date_add DESC
-            LIMIT 1000
-        ');
-
-        if (empty($orders)) {
-            return [];
         }
 
         return $orders;
