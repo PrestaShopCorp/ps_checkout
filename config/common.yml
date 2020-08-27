@@ -90,3 +90,12 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PersistentConfiguration'
     arguments:
       - '@ps_checkout.configuration'
+
+  ps_checkout.api.firebase.auth:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth'
+
+  ps_checkout.api.firebase.auth.factory:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\AuthFactory'
+    arguments:
+      - '@ps_checkout.api.firebase.auth'
+      - '@ps_checkout.persistent.configuration'

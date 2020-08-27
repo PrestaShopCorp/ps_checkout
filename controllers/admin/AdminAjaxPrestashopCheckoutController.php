@@ -142,23 +142,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessSignIn()
     {
-        $email = Tools::getValue('email');
-        $password = Tools::getValue('password');
-
-        $firebase = new Auth();
-        $response = $firebase->signInWithEmailAndPassword($email, $password);
-
-        // if there is no error, save the account tokens in database
-        if (true === $response['status']) {
-            $psAccount = new PsAccount(
-                $response['body']['idToken'],
-                $response['body']['refreshToken'],
-                $response['body']['email'],
-                $response['body']['localId']
-            );
-
-            $this->module->getService('ps_checkout.persistent.configuration')->savePsAccount($psAccount);
-        }
+        $response = $this->module->getService('ps_checkout.api.firebase.auth.factory')
+            ->signIn(Tools::getValue('email'), Tools::getValue('password'));
 
         $this->ajaxDie(json_encode($response));
     }
