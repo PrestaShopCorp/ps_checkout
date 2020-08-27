@@ -89,11 +89,11 @@ class AuthFactory
     }
 
     /**
-     * @param $response
+     * @param array $response
      *
      * @throws \PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException
      */
-    private function savePsAccount($response)
+    private function savePsAccount(array $response)
     {
         $psAccount = new PsAccount(
             $response['body']['idToken'],
