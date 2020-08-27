@@ -18,6 +18,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Intent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
@@ -89,9 +91,9 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_PAYPAL_PAYMENT_STATUS' => '',
         'PS_CHECKOUT_CARD_PAYMENT_STATUS' => '',
         'PS_CHECKOUT_CARD_PAYMENT_ENABLED' => true,
-        'PS_CHECKOUT_EC_ORDER_PAGE' => false,
-        'PS_CHECKOUT_EC_CHECKOUT_PAGE' => false,
-        'PS_CHECKOUT_EC_PRODUCT_PAGE' => false,
+        ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE => false,
+        ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE => false,
+        ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE => false,
         'PS_PSX_FIREBASE_EMAIL' => '',
         'PS_PSX_FIREBASE_ID_TOKEN' => '',
         'PS_PSX_FIREBASE_LOCAL_ID' => '',
@@ -297,12 +299,10 @@ class Ps_checkout extends PaymentModule
      */
     private function displayECOnCheckout()
     {
-        $displayOnCheckout = (bool) Configuration::get(
-            'PS_CHECKOUT_EC_CHECKOUT_PAGE',
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $this->getService('ps_checkout.configuration');
+
+        $displayOnCheckout = (bool) $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE);
 
         if (!$displayOnCheckout) {
             return false;
@@ -328,12 +328,9 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayExpressCheckout()
     {
-        $displayExpressCheckout = (bool) Configuration::get(
-            'PS_CHECKOUT_EC_ORDER_PAGE',
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $this->getService('ps_checkout.configuration');
+        $displayExpressCheckout = (bool) $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE);
 
         if (!$displayExpressCheckout) {
             return false;
@@ -350,17 +347,15 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayFooterProduct($params)
     {
-        $displayOnProductPage = (bool) Configuration::get(
-            'PS_CHECKOUT_EC_PRODUCT_PAGE',
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $this->getService('ps_checkout.configuration');
+        $displayOnProductPage = $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE);
 
         if (!$displayOnProductPage) {
             return false;
         }
 
+        // TODO replace older expressCheckout
         $expressCheckout = new PrestaShop\Module\PrestashopCheckout\ExpressCheckout($this, $this->context);
         $expressCheckout->setDisplayMode(PrestaShop\Module\PrestashopCheckout\ExpressCheckout::PRODUCT_MODE);
 
