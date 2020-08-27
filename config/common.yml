@@ -80,8 +80,13 @@ services:
 
   ps_checkout.logger.sentry.processor:
     class: 'PrestaShop\Module\PrestashopCheckout\Sentry\SentryProcessor'
-    
+
   ps_checkout.paypal.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
+    arguments:
+      - '@ps_checkout.configuration'
+
+  ps_checkout.persistent.configuration:
+    class: 'PrestaShop\Module\PrestashopCheckout\PersistentConfiguration'
     arguments:
       - '@ps_checkout.configuration'
