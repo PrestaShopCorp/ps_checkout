@@ -675,7 +675,8 @@
                 "segmentio"
             ],
             "time": "2017-08-18T22:13:00+00:00"
-         },
+        },
+        {
             "name": "sentry/sentry",
             "version": "1.11.0",
             "source": {
