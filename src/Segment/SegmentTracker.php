@@ -62,7 +62,7 @@ class SegmentTracker
     {
         $shops = \Shop::getContextListShopID();
         $shopIds = [];
-        foreach($shops as $id){
+        foreach ($shops as $id) {
             $shopIds[] = $this->shopUuid->getForShop($id);
         }
 

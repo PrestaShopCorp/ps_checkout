@@ -20,16 +20,16 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Segment;
 
-use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
-
 class SegmentAPI
 {
-    public function init($key, $options = []){
+    public function init($key, $options = [])
+    {
         \Segment::init($key, $options);
     }
 
-    public function track($message, $shops, $options = []){
-        foreach($shops as $shopId) {
+    public function track($message, $shops, $options = [])
+    {
+        foreach ($shops as $shopId) {
             \Segment::track([
                 'userId' => $shopId,
                 'event' => $message,
@@ -40,7 +40,7 @@ class SegmentAPI
                 ],
                 'properties' => [
                     'psVersion' => _PS_VERSION_,
-                    'moduleVersion' => \Ps_checkout::VERSION
+                    'moduleVersion' => \Ps_checkout::VERSION,
                 ],
             ]);
         }
