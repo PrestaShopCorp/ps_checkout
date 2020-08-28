@@ -55,32 +55,6 @@ class SegmentTracker
         $this->segmentApi->init($this->key);
     }
 
-    public function identify()
-    {
-        $shops = \Shop::getContextListShopID();
-        $shopIds = [];
-        foreach($shops as $id){
-            $shopIds[] = $this->shopUuid->getForShop($id);
-        }
-        foreach($shopIds as $shopId) {
-            \Segment::identify([
-                'userId' => $shopId,
-                'channel' => 'browser',
-                'context' => [
-                    'ip' => $_SERVER['REMOTE_ADDR'],
-                    "userAgent" => $_SERVER['HTTP_USER_AGENT'],
-                ],
-                'traits' => [
-                    'name' => $this->shopUuid->getShopUrl($shopId),
-                    'email' => \Context::getContext()->employee->email,
-                    'plan' => 'premium',
-                ],
-            ]);
-        }
-
-        return \Segment::flush();
-    }
-
     /**
      * @param string $message
      */
@@ -92,6 +66,6 @@ class SegmentTracker
             $shopIds[] = $this->shopUuid->getForShop($id);
         }
 
-        return $this->segmentApi->identify($shopIds) && $this->segmentApi->track($message, $shopIds);
+        return $this->segmentApi->track($message, $shopIds);
     }
 }

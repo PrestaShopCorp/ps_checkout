@@ -145,7 +145,7 @@
           name: this.$store.state.context.shopUri,
           psVersion: this.$store.state.context.psVersion,
           moduleVersion: this.$store.state.context.moduleVersion,
-          context: { ip: '1.2.3.4', userAgent: navigator.userAgent }
+          context: { userAgent: navigator.userAgent }
         });
       }
       if (!this.onboardingPaypalIsCompleted || this.accountIslinked) {

@@ -156,7 +156,6 @@ class Ps_checkout extends PaymentModule
 
         // track the install click button
         $tracker = $this->getService('ps_checkout.segment.tracker');
-        //$tracker->identify();
         $tracker->track('Install');
 
         if (!$defaultInstall) {

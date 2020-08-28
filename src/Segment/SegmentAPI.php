@@ -47,26 +47,4 @@ class SegmentAPI
 
         return \Segment::flush();
     }
-
-    public function identify($shops, $options = [])
-    {
-        $shopUuid = new ShopUuidManager();
-        foreach($shops as $shopId) {
-            \Segment::identify([
-                'userId' => $shopId,
-                'channel' => 'browser',
-                'context' => [
-                    'ip' => $_SERVER['REMOTE_ADDR'],
-                    "userAgent" => $_SERVER['HTTP_USER_AGENT'],
-                ],
-                'traits' => [
-                    'name' => $shopUuid->getShopUrl($shopId),
-                    'email' => \Context::getContext()->employee->email,
-                    'plan' => 'premium',
-                ],
-            ]);
-        }
-
-        return \Segment::flush();
-    }
 }
