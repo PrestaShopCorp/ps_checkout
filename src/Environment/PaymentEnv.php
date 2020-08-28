@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Environment;
 
+use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
+
 /**
  * Allow to set the differents api key / api link depending on
  */
@@ -43,7 +45,7 @@ class PaymentEnv extends Env
     {
         $this->setPaymentApiUrl($_ENV['PAYMENT_API_URL_LIVE']);
 
-        if ('sandbox' === $this->mode) {
+        if (Mode::SANDBOX === $this->mode) {
             $this->setPaymentApiUrl($_ENV['PAYMENT_API_URL_SANDBOX']);
         }
     }

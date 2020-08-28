@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Environment;
 
+use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
+
 /**
  * Allow to set the differents api key / api link depending on
  */
@@ -43,7 +45,7 @@ class PaypalEnv extends Env
     {
         $this->setPaypalClientId($_ENV['PAYPAL_CLIENT_ID_LIVE']);
 
-        if ('sandbox' === $this->mode) {
+        if (Mode::SANDBOX === $this->mode) {
             $this->setPaypalClientId($_ENV['PAYPAL_CLIENT_ID_SANDBOX']);
         }
     }
