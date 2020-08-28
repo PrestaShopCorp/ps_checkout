@@ -299,10 +299,7 @@ class Ps_checkout extends PaymentModule
      */
     private function displayECOnCheckout()
     {
-        /** @var PrestaShopConfiguration $configuration */
-        $configuration = $this->getService('ps_checkout.configuration');
-
-        $displayOnCheckout = (bool) $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE);
+        $displayOnCheckout = (bool) $this->getService('ps_checkout.express_checkout.configuration')->getCheckoutPage();
 
         if (!$displayOnCheckout) {
             return false;
@@ -328,9 +325,8 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayExpressCheckout()
     {
-        /** @var PrestaShopConfiguration $configuration */
-        $configuration = $this->getService('ps_checkout.configuration');
-        $displayExpressCheckout = (bool) $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE);
+
+        $displayExpressCheckout = (bool) $this->getService('ps_checkout.express_checkout.configuration')->getOrderPage();
 
         if (!$displayExpressCheckout) {
             return false;
@@ -347,9 +343,7 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayFooterProduct($params)
     {
-        /** @var PrestaShopConfiguration $configuration */
-        $configuration = $this->getService('ps_checkout.configuration');
-        $displayOnProductPage = $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE);
+        $displayOnProductPage = (bool) $this->getService('ps_checkout.express_checkout.configuration')->getProductPage();
 
         if (!$displayOnProductPage) {
             return false;
