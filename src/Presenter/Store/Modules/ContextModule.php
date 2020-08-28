@@ -72,8 +72,8 @@ class ContextModule implements PresenterInterface
                 'translations' => (new Translations($this->module))->getTranslations(),
                 'readmeUrl' => $this->getReadme(),
                 'cguUrl' => $this->getCgu(),
-                'roundingSettingsIsCorrect' => $this->roundingSettingsIsCorrect(),
-                'liveStepConfirmed' => $this->liveStepConfirmed(),
+                'roundingSettingsIsCorrect' => $this->module->getService('ps_checkout.paypal.configuration')->IsRoundingSettingsCorrect(),
+                'liveStepConfirmed' => $this->module->getService('ps_checkout.step.live')->isConfirmed(),
                 'youtubeInstallerLink' => $this->getYoutubeInstallerLink(),
             ],
         ];
@@ -216,37 +216,5 @@ class ContextModule implements PresenterInterface
             default:
                 return $youtube . 'uovtJVCLaD8';
         }
-    }
-
-    /**
-     * Check if the rounding configuration if correctly set
-     *
-     * PS_ROUND_TYPE need to be set to 1 (Round on each item)
-     * PS_PRICE_ROUND_MODE need to be set to 2 (Round up away from zero, when it is half way there)
-     *
-     * @return bool
-     */
-    private function roundingSettingsIsCorrect()
-    {
-        return \Configuration::get(
-                'PS_ROUND_TYPE',
-                null,
-                null,
-                (int) \Context::getContext()->shop->id) === '1'
-            && \Configuration::get(
-                'PS_PRICE_ROUND_MODE',
-                null,
-                null,
-                (int) \Context::getContext()->shop->id) === '2';
-    }
-
-    /**
-     * Check if the step live is complete and the banner closed
-     *
-     * @return bool
-     */
-    private function liveStepConfirmed()
-    {
-        return $this->module->getService('ps_checkout.step.live')->isConfirmed();
     }
 }
