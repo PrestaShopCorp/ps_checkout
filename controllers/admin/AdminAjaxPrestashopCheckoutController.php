@@ -34,7 +34,7 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresen
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
-use PrestaShop\Module\PrestashopCheckout\RoundingSettings\RoundingSettings;
+use PrestaShop\Module\PrestashopCheckout\Settings\RoundingSettings;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {

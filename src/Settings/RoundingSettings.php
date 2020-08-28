@@ -18,7 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\RoundingSettings;
+namespace PrestaShop\Module\PrestashopCheckout\Settings;
 
 /**
  * Class RoundingSettings used to get constant

@@ -22,7 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\RoundingSettings\RoundingSettings;
+use PrestaShop\Module\PrestashopCheckout\Settings\RoundingSettings;
 
 class PayPalConfiguration
 {
