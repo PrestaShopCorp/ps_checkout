@@ -52,7 +52,7 @@ class ConfigurationModule implements PresenterInterface
                 'paymentMethods' => $this->getPaymentMethods(),
                 'captureMode' => $paypalConfiguration->getIntent(),
                 'paymentMode' => $paypalConfiguration->getPaymentMode(),
-                'cardIsEnabled' => (bool) $configuration->get('PS_CHECKOUT_CARD_PAYMENT_ENABLED'),
+                'cardIsEnabled' => $paypalConfiguration->isCardPaymentEnabled(),
                 'logger' => [
                     'levels' => [
                         Logger::DEBUG => 'DEBUG : Detailed debug information',

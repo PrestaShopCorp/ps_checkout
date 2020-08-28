@@ -90,7 +90,7 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_PAYPAL_EMAIL_STATUS' => '',
         'PS_CHECKOUT_PAYPAL_PAYMENT_STATUS' => '',
         'PS_CHECKOUT_CARD_PAYMENT_STATUS' => '',
-        'PS_CHECKOUT_CARD_PAYMENT_ENABLED' => true,
+        PayPalConfiguration::CARD_PAYMENT_ENABLED => true,
         ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE => false,
         ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE => false,
         ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE => false,
