@@ -39,7 +39,7 @@ class LiveStep
     /**
      * @param bool $confirmed
      *
-     * return bool
+     * @return bool
      */
     public function confirmed($confirmed)
     {
