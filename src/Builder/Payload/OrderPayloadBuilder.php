@@ -24,6 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\RoundingSettings\RoundingSettings;
 
 /**
  * Build the payload for creating paypal order
@@ -126,6 +127,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         $module = \Module::getInstanceByName('ps_checkout');
         /** @var PrestaShopConfiguration $configuration */
         $configuration = $module->getService('ps_checkout.configuration');
+        $paypalConfiguration = $module->getService('ps_checkout.paypal.configuration');
 
         $shopName = $configuration->get('PS_SHOP_NAME');
 
@@ -153,9 +155,9 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         if (true === $this->isUpdate) {
             $node['id'] = $this->paypalOrderId;
         } else {
-            $roundType = (string) $configuration->get('PS_ROUND_TYPE');
+            $roundType = $paypalConfiguration->getRoundType();
 
-            $roundMode = (string) $configuration->get('PS_PRICE_ROUND_MODE');
+            $roundMode = $paypalConfiguration->getPriceRoundMode();
 
             $node['roundingConfig'] = $roundType . '-' . $roundMode;
         }

@@ -39,7 +39,7 @@ class LiveStep
     /**
      * @param bool $confirmed
      *
-     * @return bool
+     * return bool
      */
     public function confirmed($confirmed)
     {
@@ -47,6 +47,8 @@ class LiveStep
     }
 
     /**
+     * Check if the step live is complete and the banner closed
+     *
      * @return bool
      */
     public function isConfirmed()
