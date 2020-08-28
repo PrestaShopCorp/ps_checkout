@@ -45,6 +45,9 @@
               </ul>
             </div>
           </div>
+          <div class="text-center mb-4">
+            <iframe width="560" height="315" :src="youtubeLink" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
           <div class="faq">
             <h1>{{ $t('panel.help.faq') }}</h1>
             <div class="separator my-3" />
@@ -135,6 +138,9 @@
       },
       readmeUrl() {
         return this.$store.state.context.readmeUrl;
+      },
+      youtubeLink() {
+        return this.$store.state.context.youtubeInstallerLink;
       }
     },
     methods: {

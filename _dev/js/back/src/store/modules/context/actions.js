@@ -27,10 +27,10 @@ export default {
     }).then(resp => {
       if (resp) {
         commit(mutation.UPDATE_ROUNDING_SETTINGS_STATUS);
-        return Promise.resolve(true);
+        return true;
       }
 
-      return Promise.reject(resp);
+      throw resp;
     });
   }
 };

@@ -201,47 +201,6 @@
           </b-alert>
           <template v-else>
             <b-alert
-              v-if="cardPaymentIsActive === 'NEED_MORE_DATA'"
-              variant="warning"
-              show
-            >
-              <h2>{{ $t('pages.accounts.documentNeeded') }}</h2>
-              <p>{{ $t('pages.accounts.additionalDocumentsNeeded') }}</p>
-              <ul class="my-1">
-                <li>
-                  <b>{{ $t('pages.accounts.photoIds') }}</b>
-                </li>
-              </ul>
-              <div class="mt-3">
-                <a @click.prevent="trackSegment()">
-                  {{ $t('pages.accounts.knowMoreAboutAccount') }}
-                  <i class="material-icons">arrow_right_alt</i>
-                </a>
-              </div>
-            </b-alert>
-            <b-alert
-              v-if="
-                cardPaymentIsActive === 'IN_REVIEW' ||
-                  cardPaymentIsActive === 'LIMITED'
-              "
-              variant="warning"
-              show
-            >
-              <h2>{{ $t('pages.accounts.undergoingCheck') }}</h2>
-              <p>
-                {{ $t('pages.accounts.severalDays') }}
-                {{ $t('pages.accounts.youCanProcess') }}
-                <b>{{ $t('pages.accounts.upTo') }}</b>
-                {{ $t('pages.accounts.transactionsUntil') }}.
-              </p>
-              <div class="mt-3">
-                <a @click.prevent="trackSegment()">
-                  {{ $t('pages.accounts.knowMoreAboutAccount') }}
-                  <i class="material-icons">arrow_right_alt</i>
-                </a>
-              </div>
-            </b-alert>
-            <b-alert
               v-if="cardPaymentIsActive === 'DENIED'"
               variant="danger"
               show

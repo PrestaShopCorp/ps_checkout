@@ -26,8 +26,10 @@
     "monolog/monolog": "1.25.3",
     "ramsey/uuid": "^3.8",
     "segmentio/analytics-php": "^1.5",
+    "sentry/sentry": "^1.0",
     "symfony/config": "^3.4",
     "symfony/dependency-injection": "^3.4",
+    "symfony/options-resolver": "^3.4",
     "vlucas/phpdotenv": "^3.4",
     "webmozart/assert": "^1.0"
   },

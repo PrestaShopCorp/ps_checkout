@@ -18,22 +18,21 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 use Monolog\Logger;
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
-use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
+use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
-use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPresenter;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
@@ -62,13 +61,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessUpdateCaptureMode()
     {
-        Configuration::updateValue(
-            'PS_CHECKOUT_INTENT',
-            Tools::getValue('captureMode'),
-            false,
-            null,
-            (int) Context::getContext()->shop->id
-        );
+        $this->module->getService('ps_checkout.paypal.configuration')->setIntent(Tools::getValue('captureMode'));
     }
 
     /**
@@ -76,13 +69,17 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessUpdatePaymentMode()
     {
-        Configuration::updateValue(
-            'PS_CHECKOUT_MODE',
-            Tools::getValue('paymentMode'),
-            false,
-            null,
-            (int) Context::getContext()->shop->id
-        );
+        $this->module->getService('ps_checkout.paypal.configuration')->setPaymentMode(Tools::getValue('paymentMode'));
+    }
+
+    /**
+     * AJAX: Confirm PS Live Step Banner closed
+     */
+    public function ajaxProcessLiveStepConfirmed()
+    {
+        $this->module->getService('ps_checkout.step.live')->confirmed(true);
+
+        $this->ajaxDie(json_encode(true));
     }
 
     /**
@@ -116,16 +113,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessLogOutPsAccount()
     {
-        // logout ps account
-        $psAccount = (new PsAccountRepository())->getOnboardedAccount();
-
-        $psAccount->setEmail('');
-        $psAccount->setIdToken('');
-        $psAccount->setLocalId('');
-        $psAccount->setRefreshToken('');
-        $psAccount->setPsxForm('');
-
-        (new PersistentConfiguration())->savePsAccount($psAccount);
+        $this->module->getService('ps_checkout.persistent.configuration')->resetPsAccount();
 
         $this->ajaxDie(json_encode(true));
     }
@@ -135,15 +123,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessLogOutPaypalAccount()
     {
-        $paypalAccount = (new PaypalAccountRepository())->getOnboardedAccount();
+        $this->module->getService('ps_checkout.persistent.configuration')->resetPayPalAccount();
 
-        $paypalAccount->setMerchantId('');
-        $paypalAccount->setEmail('');
-        $paypalAccount->setEmailIsVerified('');
-        $paypalAccount->setPaypalPaymentStatus('');
-        $paypalAccount->setCardPaymentStatus('');
-
-        (new PersistentConfiguration())->savePaypalAccount($paypalAccount);
+        // we reset the Live Step banner
+        $this->module->getService('ps_checkout.step.live')->confirmed(false);
 
         $this->ajaxDie(json_encode(true));
     }
@@ -153,23 +136,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessSignIn()
     {
-        $email = Tools::getValue('email');
-        $password = Tools::getValue('password');
-
-        $firebase = new Auth();
-        $response = $firebase->signInWithEmailAndPassword($email, $password);
-
-        // if there is no error, save the account tokens in database
-        if (true === $response['status']) {
-            $psAccount = new PsAccount(
-                $response['body']['idToken'],
-                $response['body']['refreshToken'],
-                $response['body']['email'],
-                $response['body']['localId']
-            );
-
-            (new PersistentConfiguration())->savePsAccount($psAccount);
-        }
+        $response = $this->module->getService('ps_checkout.api.firebase.auth.factory')
+            ->signIn(Tools::getValue('email'), Tools::getValue('password'));
 
         $this->ajaxDie(json_encode($response));
     }
@@ -179,23 +147,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessSignUp()
     {
-        $email = Tools::getValue('email');
-        $password = Tools::getValue('password');
-
-        $firebase = new Auth();
-        $response = $firebase->signUpWithEmailAndPassword($email, $password);
-
-        // if there is no error, save the account tokens in database
-        if (true === $response['status']) {
-            $psAccount = new PsAccount(
-                $response['body']['idToken'],
-                $response['body']['refreshToken'],
-                $response['body']['email'],
-                $response['body']['localId']
-            );
-
-            (new PersistentConfiguration())->savePsAccount($psAccount);
-        }
+        $response = $this->module->getService('ps_checkout.api.firebase.auth.factory')
+            ->signUp(Tools::getValue('email'), Tools::getValue('password'));
 
         $this->ajaxDie(json_encode($response));
     }
@@ -205,10 +158,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessSendPasswordResetEmail()
     {
-        $email = Tools::getValue('email');
-
-        $firebase = new Auth();
-        $response = $firebase->sendPasswordResetEmail($email);
+        $response = $this->module->getService('ps_checkout.api.firebase.auth.factory')
+            ->resetPassword(Tools::getValue('email'));
 
         $this->ajaxDie(json_encode($response));
     }
@@ -244,9 +195,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $paypalAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository();
         $psAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository();
 
-        // update merchant status only if the merchant onboarding is completed
-        if ($paypalAccount->onbardingIsCompleted()
-            && $psAccount->onbardingIsCompleted()
+        // update merchant status only if the merchant onBoarding is completed
+        if ($paypalAccount->onBoardingIsCompleted()
+            && $psAccount->onBoardingIsCompleted()
         ) {
             (new PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater($paypalAccount->getOnboardedAccount()))->update();
         }
@@ -299,7 +250,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $psAccount = (new PsAccountRepository())->getOnboardedAccount();
         $psAccount->setPsxForm(json_encode($form));
 
-        return (new PersistentConfiguration())->savePsAccount($psAccount);
+        return $this->module->getService('ps_checkout.persistent.configuration')->savePsAccount($psAccount);
     }
 
     /**
@@ -307,12 +258,11 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessToggleCardPaymentAvailability()
     {
-        Configuration::updateValue(
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $this->module->getService('ps_checkout.configuration');
+        $configuration->set(
             'PS_CHECKOUT_CARD_PAYMENT_ENABLED',
-            Tools::getValue('status') ? 1 : 0,
-            false,
-            null,
-            (int) Context::getContext()->shop->id
+            Tools::getValue('status') ? 1 : 0
         );
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
@@ -323,12 +273,11 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessToggleECOrderPage()
     {
-        Configuration::updateValue(
-            'PS_CHECKOUT_EC_ORDER_PAGE',
-            Tools::getValue('status') ? 1 : 0,
-            false,
-            null,
-            (int) Context::getContext()->shop->id
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $this->module->getService('ps_checkout.configuration');
+        $configuration->set(
+            ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE,
+            Tools::getValue('status') ? 1 : 0
         );
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
@@ -339,12 +288,11 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessToggleECCheckoutPage()
     {
-        Configuration::updateValue(
-            'PS_CHECKOUT_EC_CHECKOUT_PAGE',
-            Tools::getValue('status') ? 1 : 0,
-            false,
-            null,
-            (int) Context::getContext()->shop->id
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $this->module->getService('ps_checkout.configuration');
+        $configuration->set(
+            ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE,
+            Tools::getValue('status') ? 1 : 0
         );
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
@@ -355,12 +303,11 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessToggleECProductPage()
     {
-        Configuration::updateValue(
-            'PS_CHECKOUT_EC_PRODUCT_PAGE',
-            Tools::getValue('status') ? 1 : 0,
-            false,
-            null,
-            (int) Context::getContext()->shop->id
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $this->module->getService('ps_checkout.configuration');
+        $configuration->set(
+            ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE,
+            Tools::getValue('status') ? 1 : 0
         );
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
@@ -554,7 +501,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             ]));
         }
 
-        if (false === (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_LEVEL', $level)) {
+        if (false === (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_LEVEL, $level)) {
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -592,7 +539,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             ]));
         }
 
-        if (false === (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP_FORMAT', $format)) {
+        if (false === (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP_FORMAT, $format)) {
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -616,7 +563,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         $isEnabled = (bool) Tools::getValue('isEnabled');
 
-        if (false === (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP', (int) $isEnabled)) {
+        if (false === (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP, (int) $isEnabled)) {
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -649,7 +596,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             ]));
         }
 
-        if (false === (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_MAX_FILES', $maxFiles)) {
+        if (false === (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_MAX_FILES, $maxFiles)) {
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [

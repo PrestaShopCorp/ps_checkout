@@ -21,6 +21,10 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use Monolog\Logger;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
+use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
@@ -35,27 +39,20 @@ class ConfigurationModule implements PresenterInterface
      */
     public function present()
     {
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $module->getService('ps_checkout.configuration');
+
+        /** @var PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $module->getService('ps_checkout.paypal.configuration');
+
         $configurationModule = [
             'config' => [
                 'paymentMethods' => $this->getPaymentMethods(),
-                'captureMode' => \Configuration::get(
-                    'PS_CHECKOUT_INTENT',
-                    null,
-                    null,
-                    (int) \Context::getContext()->shop->id
-                ),
-                'paymentMode' => \Configuration::get(
-                    'PS_CHECKOUT_MODE',
-                    null,
-                    null,
-                    (int) \Context::getContext()->shop->id
-                ),
-                'cardIsEnabled' => (bool) \Configuration::get(
-                    'PS_CHECKOUT_CARD_PAYMENT_ENABLED',
-                    null,
-                    null,
-                    (int) \Context::getContext()->shop->id
-                ),
+                'captureMode' => $paypalConfiguration->getIntent(),
+                'paymentMode' => $paypalConfiguration->getPaymentMode(),
+                'cardIsEnabled' => (bool) $configuration->get('PS_CHECKOUT_CARD_PAYMENT_ENABLED'),
                 'logger' => [
                     'levels' => [
                         Logger::DEBUG => 'DEBUG : Detailed debug information',
@@ -72,30 +69,15 @@ class ConfigurationModule implements PresenterInterface
                         'DEBUG' => 'Debug format',
                         'SHORT' => 'Short format',
                     ],
-                    'level' => (int) \Configuration::getGlobalValue('PS_CHECKOUT_LOGGER_LEVEL'),
-                    'maxFiles' => (int) \Configuration::getGlobalValue('PS_CHECKOUT_LOGGER_MAX_FILES'),
-                    'http' => (int) \Configuration::getGlobalValue('PS_CHECKOUT_LOGGER_HTTP'),
-                    'httpFormat' => \Configuration::getGlobalValue('PS_CHECKOUT_LOGGER_HTTP_FORMAT'),
+                    'level' => (int) \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_LEVEL),
+                    'maxFiles' => (int) \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_MAX_FILES),
+                    'http' => (int) \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP),
+                    'httpFormat' => \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP_FORMAT),
                 ],
                 'expressCheckout' => [
-                    'orderPage' => (bool) \Configuration::get(
-                        'PS_CHECKOUT_EC_ORDER_PAGE',
-                        null,
-                        null,
-                        (int) \Context::getContext()->shop->id
-                    ),
-                    'checkoutPage' => (bool) \Configuration::get(
-                        'PS_CHECKOUT_EC_CHECKOUT_PAGE',
-                        null,
-                        null,
-                        (int) \Context::getContext()->shop->id
-                    ),
-                    'productPage' => (bool) \Configuration::get(
-                        'PS_CHECKOUT_EC_PRODUCT_PAGE',
-                        null,
-                        null,
-                        (int) \Context::getContext()->shop->id
-                    ),
+                    'orderPage' => (bool) $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE),
+                    'checkoutPage' => (bool) $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE),
+                    'productPage' => (bool) $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE),
                 ],
             ],
         ];

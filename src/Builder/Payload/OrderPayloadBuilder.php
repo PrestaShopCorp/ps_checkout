@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
@@ -121,20 +122,15 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      */
     public function buildBaseNode()
     {
-        $shopName = \Configuration::get(
-            'PS_SHOP_NAME',
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $module->getService('ps_checkout.configuration');
+
+        $shopName = $configuration->get('PS_SHOP_NAME');
 
         $node = [
-            'intent' => \Configuration::get(
-                'PS_CHECKOUT_INTENT',
-                null,
-                null,
-                (int) \Context::getContext()->shop->id
-            ), // capture or authorize
+            'intent' => $module->getService('ps_checkout.paypal.configuration')->getIntent(), // capture or authorize
             'custom_id' => (string) $this->cart['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
             'description' => $this->truncate(
@@ -157,19 +153,9 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         if (true === $this->isUpdate) {
             $node['id'] = $this->paypalOrderId;
         } else {
-            $roundType = (string) \Configuration::get(
-                'PS_ROUND_TYPE',
-                null,
-                null,
-                (int) \Context::getContext()->shop->id
-            );
+            $roundType = (string) $configuration->get('PS_ROUND_TYPE');
 
-            $roundMode = (string) \Configuration::get(
-                'PS_PRICE_ROUND_MODE',
-                null,
-                null,
-                (int) \Context::getContext()->shop->id
-            );
+            $roundMode = (string) $configuration->get('PS_PRICE_ROUND_MODE');
 
             $node['roundingConfig'] = $roundType . '-' . $roundMode;
         }

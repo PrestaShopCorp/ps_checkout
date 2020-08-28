@@ -76,6 +76,8 @@ class ContextModule implements PresenterInterface
                 'readmeUrl' => $this->getReadme(),
                 'cguUrl' => $this->getCgu(),
                 'roundingSettingsIsCorrect' => $this->roundingSettingsIsCorrect(),
+                'liveStepConfirmed' => $this->liveStepConfirmed(),
+                'youtubeInstallerLink' => $this->getYoutubeInstallerLink(),
             ],
         ];
 
@@ -199,6 +201,27 @@ class ContextModule implements PresenterInterface
     }
 
     /**
+     * Get the youtube link to help people to install PS_Checkout
+     *
+     * @return string
+     */
+    private function getYoutubeInstallerLink()
+    {
+        $isoCode = $this->context->language->iso_code;
+        $youtube = 'https://www.youtube.com/embed/';
+        switch ($isoCode) {
+            case 'fr':
+                return $youtube . 'TVShtzk5eUM';
+            case 'es':
+                return $youtube . 'CjfhyR368Q0';
+            case 'it':
+                return $youtube . 'bBHuojwH2V8';
+            default:
+                return $youtube . 'uovtJVCLaD8';
+        }
+    }
+
+    /**
      * Check if the rounding configuration if correctly set
      *
      * PS_ROUND_TYPE need to be set to 1 (Round on each item)
@@ -218,5 +241,15 @@ class ContextModule implements PresenterInterface
                 null,
                 null,
                 (int) \Context::getContext()->shop->id) === '2';
+    }
+
+    /**
+     * Check if the step live is complete and the banner closed
+     *
+     * @return bool
+     */
+    private function liveStepConfirmed()
+    {
+        return $this->module->getService('ps_checkout.step.live')->isConfirmed();
     }
 }

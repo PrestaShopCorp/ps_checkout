@@ -17,6 +17,13 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Intent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 if (!defined('_PS_VERSION_')) {
@@ -75,8 +82,8 @@ class Ps_checkout extends PaymentModule
     ];
 
     public $configurationList = [
-        'PS_CHECKOUT_INTENT' => 'CAPTURE',
-        'PS_CHECKOUT_MODE' => 'LIVE',
+        PayPalConfiguration::INTENT => Intent::CAPTURE,
+        PayPalConfiguration::PAYMENT_MODE => Mode::LIVE,
         'PS_CHECKOUT_PAYMENT_METHODS_ORDER' => '',
         'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => '',
         'PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT' => '',
@@ -84,9 +91,9 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_PAYPAL_PAYMENT_STATUS' => '',
         'PS_CHECKOUT_CARD_PAYMENT_STATUS' => '',
         'PS_CHECKOUT_CARD_PAYMENT_ENABLED' => true,
-        'PS_CHECKOUT_EC_ORDER_PAGE' => false,
-        'PS_CHECKOUT_EC_CHECKOUT_PAGE' => false,
-        'PS_CHECKOUT_EC_PRODUCT_PAGE' => false,
+        ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE => false,
+        ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE => false,
+        ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE => false,
         'PS_PSX_FIREBASE_EMAIL' => '',
         'PS_PSX_FIREBASE_ID_TOKEN' => '',
         'PS_PSX_FIREBASE_LOCAL_ID' => '',
@@ -344,12 +351,10 @@ class Ps_checkout extends PaymentModule
      */
     private function displayECOnCheckout()
     {
-        $displayOnCheckout = (bool) Configuration::get(
-            'PS_CHECKOUT_EC_CHECKOUT_PAGE',
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $this->getService('ps_checkout.configuration');
+
+        $displayOnCheckout = (bool) $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE);
 
         if (!$displayOnCheckout) {
             return false;
@@ -375,12 +380,9 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayExpressCheckout()
     {
-        $displayExpressCheckout = (bool) Configuration::get(
-            'PS_CHECKOUT_EC_ORDER_PAGE',
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $this->getService('ps_checkout.configuration');
+        $displayExpressCheckout = (bool) $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE);
 
         if (!$displayExpressCheckout) {
             return false;
@@ -397,17 +399,15 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayFooterProduct($params)
     {
-        $displayOnProductPage = (bool) Configuration::get(
-            'PS_CHECKOUT_EC_PRODUCT_PAGE',
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $this->getService('ps_checkout.configuration');
+        $displayOnProductPage = $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE);
 
         if (!$displayOnProductPage) {
             return false;
         }
 
+        // TODO replace older expressCheckout
         $expressCheckout = new PrestaShop\Module\PrestashopCheckout\ExpressCheckout($this, $this->context);
         $expressCheckout->setDisplayMode(PrestaShop\Module\PrestashopCheckout\ExpressCheckout::PRODUCT_MODE);
 
@@ -420,8 +420,8 @@ class Ps_checkout extends PaymentModule
         $psAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository();
 
         // update merchant status only if the merchant onboarding is completed
-        if ($paypalAccount->onbardingIsCompleted()
-            && $psAccount->onbardingIsCompleted()) {
+        if ($paypalAccount->onBoardingIsCompleted()
+            && $psAccount->onBoardingIsCompleted()) {
             $paypalAccount = $paypalAccount->getOnboardedAccount();
             (new PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater($paypalAccount))->update();
         }
@@ -831,7 +831,7 @@ class Ps_checkout extends PaymentModule
         }
 
         if ($this->name === Tools::getValue('configure')) {
-            $this->context->controller->addJS($this->getPathUri() . 'views/js/back/js/app.js');
+            $this->context->controller->addJS($this->getPathUri() . 'views/js/app.js');
         }
     }
 
@@ -865,9 +865,9 @@ class Ps_checkout extends PaymentModule
      */
     public function merchantIsValid()
     {
-        return (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->onbardingIsCompleted()
+        return (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->onBoardingIsCompleted()
             && (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->paypalEmailIsValid()
-            && (new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository())->onbardingIsCompleted();
+            && (new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository())->onBoardingIsCompleted();
     }
 
     /**
