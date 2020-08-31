@@ -35,21 +35,25 @@
             <button
               id="popover-activation-card"
               type="button"
-              class="btn"
+              class="btn mr-4"
             >
-              <i class="material-icons">info_outline</i>
+              <i class="material-icons-outlined info">info</i>
             </button>
             <b-popover
               target="popover-activation-card"
               triggers="click hover"
               placement="bottom"
             >
-              <template>
-                {{ $t('panel.payment-method-activation.popover-difference-question') }}
+              <template class="popover-body">
+                <i class="material-icons-outlined wb_incandescent">wb_incandescent</i>
+                <b>{{ $t('panel.payment-method-activation.popover-difference-question') }}</b>
+                <br>
                 <br>
                 {{ $t('panel.payment-method-activation.popover-difference-answer') }}
                 <br>
-                {{ $t('panel.payment-method-activation.popover-when-question') }}
+                <br>
+                <b>{{ $t('panel.payment-method-activation.popover-when-question') }}</b>
+                <br>
                 <br>
                 {{ $t('panel.payment-method-activation.popover-when-answer') }}
               </template>
@@ -88,6 +92,46 @@
   };
 </script>
 
+<style lang="scss">
+  .checkout-popover {
+    vertical-align: bottom !important;
+    button {
+      vertical-align: middle;
+      text-transform: lowercase !important;
+      background-color: #fff !important;
+      border: 0px !important;
+      color: #7b9399 !important;
+      padding: 0 !important;
+      font-weight: bold !important;
+      line-height: 0px !important;
+      span {
+        font-size: 16px;
+        vertical-align: middle;
+      }
+      &:focus {
+        outline: inherit !important;
+      }
+      &:hover {
+        opacity: 0.6;
+        color: #25b9d7 !important;
+      }
+    }
+  }
+  .b-popover {
+    top: 10px !important;
+    background: #e5e1f9;
+    color: black;
+    padding: 30px 24px 40px 40px;
+    font-size: 12px;
+    line-height: 18px;
+    max-width: 500px;
+  }
+  .material-icons-outlined.wb_incandescent {
+    transform: rotate(180deg);
+    margin-right: 10px;
+    font-size: 18px;
+  }
+</style>
 <style scoped>
   #app .card-body label {
     font-weight: bold;
@@ -97,42 +141,8 @@
     background-color: transparent;
   }
 
-  #app .checkout-popover {
-    vertical-align: bottom !important;
-  }
-
-  #app .checkout-popover button {
-    vertical-align: middle;
-    text-transform: lowercase !important;
-    background-color: #fff !important;
-    border: 0px !important;
-    color: #7b9399 !important;
-    padding: 0 !important;
-    font-weight: bold !important;
-    line-height: 0px !important;
-  }
-  #app .checkout-popover button:focus {
-    outline: inherit !important;
-  }
-
-  #app .checkout-popover button:hover {
-    opacity: 0.6;
-    color: #25b9d7 !important;
-  }
-
-  #app .checkout-popover button span {
-    font-size: 16px;
-    vertical-align: middle;
-  }
-
-  #app .b-popover {
-    top: -10px !important;
-    background: rgba(0, 0, 0, 0.8);
-    color: #fff;
-    padding: 20px;
+  #app .material-icons-outlined.info {
+    font-size: 20px;
+    margin-left: 2px;
   }
 </style>
-
-<style lang="scss">
-
-</script>
