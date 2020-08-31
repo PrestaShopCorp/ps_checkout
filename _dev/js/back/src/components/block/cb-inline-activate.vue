@@ -31,6 +31,30 @@
       >
         <template>
           {{ $t('panel.payment-method-activation.label') }}
+          <span class="checkout-popover">
+            <button
+              id="popover-activation-card"
+              type="button"
+              class="btn"
+            >
+              <i class="material-icons">info_outline</i>
+            </button>
+            <b-popover
+              target="popover-activation-card"
+              triggers="click hover"
+              placement="bottom"
+            >
+              <template>
+                {{ $t('panel.payment-method-activation.popover-difference-question') }}
+                <br>
+                {{ $t('panel.payment-method-activation.popover-difference-answer') }}
+                <br>
+                {{ $t('panel.payment-method-activation.popover-when-question') }}
+                <br>
+                {{ $t('panel.payment-method-activation.popover-when-answer') }}
+              </template>
+            </b-popover>
+          </span>
         </template>
       </PSSwitch>
     </div>
@@ -68,4 +92,47 @@
   #app .card-body label {
     font-weight: bold;
   }
+
+  #app .card-body #popover-activation-card {
+    background-color: transparent;
+  }
+
+  #app .checkout-popover {
+    vertical-align: bottom !important;
+  }
+
+  #app .checkout-popover button {
+    vertical-align: middle;
+    text-transform: lowercase !important;
+    background-color: #fff !important;
+    border: 0px !important;
+    color: #7b9399 !important;
+    padding: 0 !important;
+    font-weight: bold !important;
+    line-height: 0px !important;
+  }
+  #app .checkout-popover button:focus {
+    outline: inherit !important;
+  }
+
+  #app .checkout-popover button:hover {
+    opacity: 0.6;
+    color: #25b9d7 !important;
+  }
+
+  #app .checkout-popover button span {
+    font-size: 16px;
+    vertical-align: middle;
+  }
+
+  #app .b-popover {
+    top: -10px !important;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 20px;
+  }
 </style>
+
+<style lang="scss">
+
+</script>
