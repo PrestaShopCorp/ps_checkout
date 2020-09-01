@@ -35,6 +35,7 @@ function upgrade_module_2_0_0($module)
 {
     $clearer = new \PrestaShop\PrestaShop\Adapter\Cache\Clearer\SymfonyCacheClearer();
     $clearer->clear();
+
     return (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_MAX_FILES, '15')
         && (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_LEVEL, \Monolog\Logger::ERROR)
         && (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP, '1')
