@@ -22,12 +22,11 @@
       <i class="material-icons">payments</i>
       {{ $t('panel.payment-method-activation.title') }}
     </h3>
-    <div class="card-body ml-5">
+    <div class="card-body ml-5" v-if="cardInlineEnabled">
       <PSSwitch
         id="cardActivation"
         text-position="left"
         v-model="cardInlinePaypalIsEnabled"
-        :disable="!cardInlineEnabled"
       >
         <template>
           {{ $t('panel.payment-method-activation.label') }}
@@ -47,20 +46,24 @@
               <template class="popover-body">
                 <i class="material-icons-outlined wb_incandescent">wb_incandescent</i>
                 <b>{{ $t('panel.payment-method-activation.popover-difference-question') }}</b>
-                <br>
-                <br>
-                {{ $t('panel.payment-method-activation.popover-difference-answer') }}
-                <br>
-                <br>
+                <br />
+                <br />
+                {{ $t('panel.payment-method-activation.popover-difference-answer-begin') }} <a href="https://www.prestashop.com/en/prestashop-checkout" target="_blank">www.prestashop.com/en/prestashop-checkout</a>
+                {{ $t('panel.payment-method-activation.popover-difference-answer-end') }} <a href="#" @click.prevent="goToAuthenticate()">Authentication tab</a>
+                <br />
+                <br />
                 <b>{{ $t('panel.payment-method-activation.popover-when-question') }}</b>
-                <br>
-                <br>
+                <br />
+                <br />
                 {{ $t('panel.payment-method-activation.popover-when-answer') }}
               </template>
             </b-popover>
           </span>
         </template>
       </PSSwitch>
+    </div>
+    <div class="card-body mx-5 my-3" v-else>
+      <b>{{ $t('panel.payment-method-activation.disable') }}</b>
     </div>
   </div>
 </template>
@@ -70,6 +73,13 @@
   export default {
     name: 'CbInlineActivate',
     components: { PSSwitch },
+    methods: {
+      goToAuthenticate() {
+        this.$router
+          .push('/authentication')
+          .catch(exception => console.log(exception));
+      }
+    },
     computed: {
       cardInlinePaypalIsEnabled: {
         get() {
