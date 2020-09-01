@@ -22,12 +22,15 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Settings\RoundingSettings;
 
 class PayPalConfiguration
 {
     const INTENT = 'PS_CHECKOUT_INTENT';
     const PAYMENT_MODE = 'PS_CHECKOUT_MODE';
     const CARD_PAYMENT_ENABLED = 'PS_CHECKOUT_CARD_PAYMENT_ENABLED';
+    const PS_ROUND_TYPE = 'PS_ROUND_TYPE';
+    const PS_PRICE_ROUND_MODE = 'PS_PRICE_ROUND_MODE';
 
     /**
      * @var PrestaShopConfiguration
@@ -107,5 +110,67 @@ class PayPalConfiguration
     public function isCardPaymentEnabled()
     {
         return (bool) $this->configuration->get(self::CARD_PAYMENT_ENABLED);
+    }
+    
+    /**
+     * @param $roundType
+     *
+     * @throws PsCheckoutException
+     */
+    public function setRoundType($roundType)
+    {
+        if (!in_array($roundType, [RoundingSettings::ROUND_ON_EACH_ITEM])) {
+            throw new \UnexpectedValueException(sprintf('The value should be a RoundingSettings constant, %s value sent', $roundType));
+        }
+
+        $this->configuration->set(self::PS_ROUND_TYPE, $roundType);
+    }
+
+    /**
+     * @param RoundingSettings $priceRoundMode
+     *
+     * @throws PsCheckoutException
+     */
+    public function setPriceRoundMode($priceRoundMode)
+    {
+        if (!in_array($priceRoundMode, [RoundingSettings::ROUND_UP_AWAY_FROM_ZERO])) {
+            throw new \UnexpectedValueException(sprintf('The value should be a RoundingSettings constant, %s value sent', $priceRoundMode));
+        }
+
+        $this->configuration->set(self::PS_PRICE_ROUND_MODE, $priceRoundMode);
+    }
+
+    /**
+     * Check if the rounding configuration if correctly set
+     *
+     * PS_ROUND_TYPE need to be set to 1 (Round on each item)
+     * PS_PRICE_ROUND_MODE need to be set to 2 (Round up away from zero, when it is half way there)
+     *
+     * @return bool
+     */
+    public function IsRoundingSettingsCorrect()
+    {
+        return $this->configuration->get(self::PS_ROUND_TYPE) === RoundingSettings::ROUND_ON_EACH_ITEM
+            && $this->configuration->get(self::PS_PRICE_ROUND_MODE) === RoundingSettings::ROUND_UP_AWAY_FROM_ZERO;
+    }
+
+    /**
+     * Used to return the PS_ROUND_TYPE from the Configuration
+     *
+     * @return string
+     */
+    public function getRoundType()
+    {
+        return $this->configuration->get(self::PS_ROUND_TYPE);
+    }
+
+    /**
+     * Used to return the PS_PRICE_ROUND_MODE from the Configuration
+     *
+     * @return string
+     */
+    public function getPriceRoundMode()
+    {
+        return $this->configuration->get(self::PS_PRICE_ROUND_MODE);
     }
 }

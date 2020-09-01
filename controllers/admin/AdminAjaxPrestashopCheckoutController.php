@@ -34,6 +34,7 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresen
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Settings\RoundingSettings;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {
@@ -90,20 +91,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessEditRoundingSettings()
     {
-        Configuration::updateValue(
-            'PS_ROUND_TYPE',
-            '1',
-            false,
-            null,
-            (int) Context::getContext()->shop->id
-        );
-        Configuration::updateValue(
-            'PS_PRICE_ROUND_MODE',
-            '2',
-            false,
-            null,
-            (int) Context::getContext()->shop->id
-        );
+        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
+        $paypalConfiguration->setRoundType(RoundingSettings::ROUND_ON_EACH_ITEM);
+        $paypalConfiguration->setPriceRoundMode(RoundingSettings::ROUND_UP_AWAY_FROM_ZERO);
 
         $this->ajaxDie(json_encode(true));
     }
