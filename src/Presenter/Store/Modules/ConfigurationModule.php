@@ -77,9 +77,9 @@ class ConfigurationModule implements PresenterInterface
                     'httpFormat' => \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP_FORMAT),
                 ],
                 'expressCheckout' => [
-                    'orderPage' => (bool) $ecConfiguration->getOrderPage(),
-                    'checkoutPage' => (bool) $ecConfiguration->getCheckoutPage(),
-                    'productPage' => (bool) $ecConfiguration->getProductPage(),
+                    'orderPage' => (bool) $ecConfiguration->isOrderPageEnabled(),
+                    'checkoutPage' => (bool) $ecConfiguration->isCheckoutPageEnabled(),
+                    'productPage' => (bool) $ecConfiguration->isProductPageEnabled(),
                 ],
             ],
         ];

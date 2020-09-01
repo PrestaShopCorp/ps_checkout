@@ -67,9 +67,9 @@ class Shop extends PaymentClient
             'json' => json_encode([
                 'settings' => [
                     'cb' => (bool) $configuration->get('PS_CHECKOUT_CARD_PAYMENT_ENABLED'),
-                    'express_in_product' => (bool) $ecConfiguration->getProductPage(),
-                    'express_in_cart' => (bool) $ecConfiguration->getOrderPage(),
-                    'express_in_checkout' => (bool) $ecConfiguration->getCheckoutPage(),
+                    'express_in_product' => (bool) $ecConfiguration->isProductPageEnabled(),
+                    'express_in_cart' => (bool) $ecConfiguration->isOrderPageEnabled(),
+                    'express_in_checkout' => (bool) $ecConfiguration->isCheckoutPageEnabled(),
                 ],
             ]),
         ]);

@@ -35,17 +35,17 @@ class ExpressCheckoutConfiguration
         $this->configuration = $configuration;
     }
 
-    public function getOrderPage()
+    public function isOrderPageEnabled()
     {
         return (bool) $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE);
     }
 
-    public function getCheckoutPage()
+    public function isCheckoutPageEnabled()
     {
         return (bool) $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE);
     }
 
-    public function getProductPage()
+    public function isProductPageEnabled()
     {
         return (bool) $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE);
     }

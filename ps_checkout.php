@@ -298,7 +298,7 @@ class Ps_checkout extends PaymentModule
      */
     private function displayECOnCheckout()
     {
-        $displayOnCheckout = (bool) $this->getService('ps_checkout.express_checkout.configuration')->getCheckoutPage();
+        $displayOnCheckout = (bool) $this->getService('ps_checkout.express_checkout.configuration')->isCheckoutPageEnabled();
 
         if (!$displayOnCheckout) {
             return false;
@@ -324,7 +324,7 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayExpressCheckout()
     {
-        $displayExpressCheckout = (bool) $this->getService('ps_checkout.express_checkout.configuration')->getOrderPage();
+        $displayExpressCheckout = (bool) $this->getService('ps_checkout.express_checkout.configuration')->isOrderPageEnabled();
 
         if (!$displayExpressCheckout) {
             return false;
@@ -341,7 +341,7 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayFooterProduct($params)
     {
-        $displayOnProductPage = (bool) $this->getService('ps_checkout.express_checkout.configuration')->getProductPage();
+        $displayOnProductPage = (bool) $this->getService('ps_checkout.express_checkout.configuration')->isProductPageEnabled();
 
         if (!$displayOnProductPage) {
             return false;
