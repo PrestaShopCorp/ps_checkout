@@ -20,6 +20,7 @@
 
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -52,7 +53,7 @@ function upgrade_module_1_2_10($module)
 
     foreach ($shopsList as $shopId) {
         \Configuration::updateValue(
-            'PS_CHECKOUT_CARD_PAYMENT_ENABLED',
+            PayPalConfiguration::CARD_PAYMENT_ENABLED,
             true,
             false,
             null,
