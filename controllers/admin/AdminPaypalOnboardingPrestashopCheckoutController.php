@@ -23,8 +23,14 @@ use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
 
 class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminController
 {
+    /**
+     * @var Ps_checkout
+     */
+    public $module;
+
     public function init()
     {
+        parent::init();
         $idMerchant = Tools::getValue('merchantIdInPayPal');
 
         if (true === empty($idMerchant)) {
@@ -36,9 +42,8 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
         }
 
         $paypalAccount = new PaypalAccount($idMerchant);
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-        $module->getService('ps_checkout.persistent.configuration')->savePaypalAccount($paypalAccount);
+
+        $this->module->getService('ps_checkout.persistent.configuration')->savePaypalAccount($paypalAccount);
 
         (new PaypalAccountUpdater($paypalAccount))->update();
 
