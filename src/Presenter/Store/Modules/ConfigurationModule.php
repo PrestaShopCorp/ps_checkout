@@ -22,7 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
-use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
+use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
@@ -43,6 +43,8 @@ class ConfigurationModule implements PresenterInterface
         $module = \Module::getInstanceByName('ps_checkout');
         /** @var PrestaShopConfiguration $configuration */
         $configuration = $module->getService('ps_checkout.configuration');
+        /** @var ExpressCheckoutConfiguration $ecConfiguration */
+        $ecConfiguration = $module->getService('ps_checkout.express_checkout.configuration');
 
         /** @var PayPalConfiguration $paypalConfiguration */
         $paypalConfiguration = $module->getService('ps_checkout.paypal.configuration');
@@ -75,9 +77,9 @@ class ConfigurationModule implements PresenterInterface
                     'httpFormat' => \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP_FORMAT),
                 ],
                 'expressCheckout' => [
-                    'orderPage' => (bool) $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE),
-                    'checkoutPage' => (bool) $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE),
-                    'productPage' => (bool) $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE),
+                    'orderPage' => (bool) $ecConfiguration->isOrderPageEnabled(),
+                    'checkoutPage' => (bool) $ecConfiguration->isCheckoutPageEnabled(),
+                    'productPage' => (bool) $ecConfiguration->isProductPageEnabled(),
                 ],
             ],
         ];
