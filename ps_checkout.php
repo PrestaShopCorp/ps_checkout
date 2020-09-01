@@ -689,12 +689,11 @@ class Ps_checkout extends PaymentModule
         }
 
         $this->context->smarty->assign([
-            'status' => $order->valid ? 'ok' : 'failed',
-            'id_order' => $order->id,
-            'shopIs17' => (new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17(),
+            'isShop17' => (new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17(),
+            'isAuthorized' => 'AUTHORIZE' === Configuration::get('PS_CHECKOUT_INTENT'),
         ]);
 
-        return $this->display(__FILE__, '/views/templates/hook/orderConfirmation.tpl');
+        return $this->display(__FILE__, '/views/templates/hook/displayOrderConfirmation.tpl');
     }
 
     /**
