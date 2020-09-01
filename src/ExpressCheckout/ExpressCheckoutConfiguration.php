@@ -21,34 +21,62 @@
 namespace PrestaShop\Module\PrestashopCheckout\ExpressCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
-class ExpressCheckoutRepository
+class ExpressCheckoutConfiguration
 {
     /**
      * @var PrestaShopConfiguration
      */
     private $configuration;
 
-    public function __construct()
+    public function __construct(PrestaShopConfiguration $configuration)
     {
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-        /* @var PrestaShopConfiguration $configuration */
-        $this->configuration = $module->getService('ps_checkout.configuration');
+        $this->configuration = $configuration;
     }
 
-    public function getOrderPage()
+    public function isOrderPageEnabled()
     {
         return (bool) $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE);
     }
 
-    public function getCheckoutPage()
+    public function isCheckoutPageEnabled()
     {
         return (bool) $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE);
     }
 
-    public function getProductPage()
+    public function isProductPageEnabled()
     {
         return (bool) $this->configuration->get(ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE);
+    }
+
+    /**
+     * @param bool $status
+     *
+     * @throws PsCheckoutException
+     */
+    public function setProductPage($status)
+    {
+        $this->configuration->set(ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE, $status);
+    }
+
+    /**
+     * @param bool $status
+     *
+     * @throws PsCheckoutException
+     */
+    public function setOrderPage($status)
+    {
+        $this->configuration->set(ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE, $status);
+    }
+
+    /**
+     * @param bool $status
+     *
+     * @throws PsCheckoutException
+     */
+    public function setCheckoutPage($status)
+    {
+        $this->configuration->set(ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE, $status);
     }
 }
