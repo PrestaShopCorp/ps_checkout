@@ -80,8 +80,8 @@ class Ps_checkout extends PaymentModule
     ];
 
     public $configurationList = [
-        'PS_CHECKOUT_INTENT' => Intent::CAPTURE,
-        'PS_CHECKOUT_MODE' => Mode::LIVE,
+        'PS_CHECKOUT_INTENT' => 'CAPTURE',
+        'PS_CHECKOUT_MODE' => 'LIVE',
         'PS_CHECKOUT_PAYMENT_METHODS_ORDER' => '',
         'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => '',
         'PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT' => '',
@@ -89,9 +89,9 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_PAYPAL_PAYMENT_STATUS' => '',
         'PS_CHECKOUT_CARD_PAYMENT_STATUS' => '',
         'PS_CHECKOUT_CARD_PAYMENT_ENABLED' => true,
-        ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE => false,
-        ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE => false,
-        ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE => false,
+        'PS_CHECKOUT_EC_ORDER_PAGE' => false,
+        'PS_CHECKOUT_EC_CHECKOUT_PAGE' => false,
+        'PS_CHECKOUT_EC_PRODUCT_PAGE' => false,
         'PS_PSX_FIREBASE_EMAIL' => '',
         'PS_PSX_FIREBASE_ID_TOKEN' => '',
         'PS_PSX_FIREBASE_LOCAL_ID' => '',
