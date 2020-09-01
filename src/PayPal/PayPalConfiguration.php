@@ -111,7 +111,7 @@ class PayPalConfiguration
     {
         return (bool) $this->configuration->get(self::CARD_PAYMENT_ENABLED);
     }
-    
+
     /**
      * @param $roundType
      *
