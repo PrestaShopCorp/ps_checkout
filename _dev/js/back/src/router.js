@@ -38,11 +38,17 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      redirect: '/authentication'
+      redirect: '/authentication',
+      meta: {
+        exclude: true
+      }
     },
     {
       path: '/authentication',
       name: 'Click configure',
+      meta: {
+        exclude: true
+      },
       component: Accounts,
       beforeEnter: (to, from, next) => {
         if (
