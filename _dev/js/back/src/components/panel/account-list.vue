@@ -324,15 +324,6 @@ export default {
       this.$store.dispatch("unlink").then(() => {
         this.$store.dispatch("getOnboardingLink");
       });
-    },
-    trackSegment() {
-      if (window && window.analytics) {
-        this.$segment.track(
-          "Approval on Paypal link triggered"
-        );
-        // redirect to paypal url
-        window.open("https://www.paypal.com/policy/hub/kyc", "_blank");
-      }
     }
   },
   mounted: function() {
