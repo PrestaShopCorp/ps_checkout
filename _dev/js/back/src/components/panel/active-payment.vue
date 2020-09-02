@@ -176,8 +176,10 @@
           return this.$store.state.configuration.cardIsEnabled;
         },
         set(payload) {
-          this.$segment.track("Enabled/Disabled Credit Card");
-          this.$store.dispatch('toggleHostedFields', payload);
+          this.$store.dispatch('toggleHostedFields', payload).then(() => {
+            var msg = payload ? 'Enabled' : 'Disabled';
+            this.$segment.track(msg + ' Credit Card');
+          });
         }
       },
       cardIsAvailable() {
