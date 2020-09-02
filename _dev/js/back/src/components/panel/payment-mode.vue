@@ -38,6 +38,25 @@
             button-variant="outline-primary"
             name="radio-btn-outline"
           />
+          <b-popover
+            target="intent-mode"
+            triggers="hover focus"
+            placement="rightbottom"
+          >
+            <template class="popover-body">
+              <i class="material-icons-outlined wb_incandescent">wb_incandescent</i>
+              <b>{{ $t('panel.payment-mode.tipdirectsale-question') }}</b>
+              <br />
+              <br />
+              {{ $t('panel.payment-mode.tipdirectsale-answer') }}
+              <br />
+              <br />
+              <b>{{ $t('panel.payment-mode.tipcapture-question') }}</b>
+              <br />
+              <br />
+              {{ $t('panel.payment-mode.tipcapture-answer') }}
+            </template>
+          </b-popover>
         </b-form-group>
 
         <b-alert class="d-inline-block w-100" variant="info" show>
@@ -134,3 +153,49 @@
     }
   };
 </script>
+
+<style lang="scss">
+  .checkout-popover {
+    vertical-align: bottom !important;
+    button {
+      vertical-align: middle;
+      text-transform: lowercase !important;
+      background-color: #fff !important;
+      border: 0px !important;
+      color: #7b9399 !important;
+      padding: 0 !important;
+      font-weight: bold !important;
+      line-height: 0px !important;
+      span {
+        font-size: 16px;
+        vertical-align: middle;
+      }
+      &:focus {
+        outline: inherit !important;
+      }
+      &:hover {
+        opacity: 0.6;
+        color: #25b9d7 !important;
+      }
+    }
+  }
+  .b-popover {
+    left: 20px !important;
+    top: -12px !important;
+    background: #e5e1f9;
+    color: black;
+    padding: 23px 28px;
+    font-size: 12px;
+    line-height: 18px;
+    max-width: 300px;
+    b {
+      font-size: 14px;
+    }
+  }
+  .material-icons-outlined.wb_incandescent {
+    transform: rotate(180deg);
+    margin-right: 10px;
+    font-size: 18px;
+    color: #fd1080;
+  }
+</style>
