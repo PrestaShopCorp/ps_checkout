@@ -47,8 +47,11 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
 
         (new PaypalAccountUpdater($paypalAccount))->update();
 
-        // track account paypal fully approved
-        $this->module->getService('ps_checkout.segment.tracker')->track('Account Paypal Fully Approved', Shop::getContextListShopID());
+        if($paypalAccount->getCardPaymentStatus() === PaypalAccountUpdater::SUBSCRIBED)
+        {
+            // track account paypal fully approved
+            $this->module->getService('ps_checkout.segment.tracker')->track('Account Paypal Fully Approved', Shop::getContextListShopID());
+        }
 
         Tools::redirect(
             (new LinkAdapter($this->context->link))->getAdminLink(
