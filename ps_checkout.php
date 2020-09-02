@@ -433,7 +433,6 @@ class Ps_checkout extends PaymentModule
         // track account paypal fully approved
         $this->getService('ps_checkout.segment.tracker')->track('Click Configure', Shop::getContextListShopID());
 
-
         return $this->display(__FILE__, '/views/templates/admin/configuration.tpl');
     }
 
