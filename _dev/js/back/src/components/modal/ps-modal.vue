@@ -35,6 +35,7 @@
             class="close"
             data-dismiss="modal"
             aria-label="Close"
+            @click="$emit('cancel')"
           >
             <span aria-hidden="true">×</span>
           </button>
