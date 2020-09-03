@@ -29,25 +29,31 @@ class SegmentAPI
 
     public function track($message, $shops, $options = [])
     {
+        $userAgent = $_SERVER['HTTP_USER_AGENT'];
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $path = strtok($_SERVER['REQUEST_URI'], '?');
+        $referer = $_SERVER['HTTP_REFERER'];
+        $queryString = '?' . $_SERVER['QUERY_STRING'];
+        $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         foreach ($shops as $shopId) {
             \Segment::track([
                 'userId' => $shopId,
                 'event' => $message,
                 'channel' => 'browser',
                 'context' => [
-                    'ip' => $_SERVER['REMOTE_ADDR'],
-                    'userAgent' => $_SERVER['HTTP_USER_AGENT'],
+                    'ip' => $ip,
+                    'userAgent' => $userAgent,
                     'locale' => \Context::getContext()->currentLocale,
                     'page' => [
-                        'path' => strtok($_SERVER['REQUEST_URI'], '?'),
-                        'referrer' => $_SERVER['HTTP_REFERER'],
-                        'search' => '?' . $_SERVER['QUERY_STRING'],
-                        'url' => (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]",
+                        'referrer' => $referer,
+                        'url' => $url,
                     ],
                 ],
                 'properties' => [
                     'psVersion' => _PS_VERSION_,
                     'moduleVersion' => \Ps_checkout::VERSION,
+                    'path' => $path,
+                    'search' => $queryString,
                 ],
             ]);
         }
