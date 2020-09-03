@@ -33,10 +33,41 @@
           <b-form-radio-group
             id="intent-mode"
             v-model="captureMode"
-            :options="intentOptions"
             buttons
             button-variant="outline-primary"
             name="radio-btn-outline"
+          >
+            <b-form-radio value="CAPTURE" v-if="this.captureMode !== 'CAPTURE'" data-toggle="modal" data-target="#modalSwitchAuthorize">
+              {{ $t('panel.payment-mode.capture') }}
+            </b-form-radio>
+            <b-form-radio value="CAPTURE" v-else>
+              {{ $t('panel.payment-mode.capture') }}
+            </b-form-radio>
+            <b-form-radio value="AUTHORIZE" v-if="this.captureMode !== 'AUTHORIZE'" data-toggle="modal" data-target="#modalSwitchAuthorize">
+              {{ $t('panel.payment-mode.authorize') }}
+            </b-form-radio>
+            <b-form-radio value="AUTHORIZE" v-else>
+              {{ $t('panel.payment-mode.authorize') }}
+            </b-form-radio>
+          </b-form-radio-group>
+          <!-- modal -->
+          <PSModal
+            v-if="captureMode === 'AUTHORIZE'"
+            :title="$t('modal.authorize.title')"
+            :description="$t('modal.authorize.description')"
+            id="modalSwitchAuthorize"
+            :button-label="$t('modal.authorize.button')"
+            v-on:update="updateCaptureMode()"
+            v-on:cancel="cancelCaptureMode()"
+          />
+          <PSModal
+            v-else
+            :title="$t('modal.capture.title')"
+            :description="$t('modal.capture.description')"
+            id="modalSwitchAuthorize"
+            :button-label="$t('modal.capture.button')"
+            v-on:update="updateCaptureMode()"
+            v-on:cancel="cancelCaptureMode()"
           />
           <b-popover
             target="intent-mode"
@@ -44,7 +75,9 @@
             placement="rightbottom"
           >
             <template class="popover-body">
-              <i class="material-icons-outlined wb_incandescent">wb_incandescent</i>
+              <i class="material-icons-outlined wb_incandescent">
+                wb_incandescent
+              </i>
               <b>{{ $t('panel.payment-mode.tipdirectsale-question') }}</b>
               <br />
               <br />
@@ -114,15 +147,9 @@
 </template>
 
 <script>
+  import PSModal from "@/components/modal/ps-modal";
   export default {
-    data() {
-      return {
-        intentOptions: [
-          { text: this.$t('panel.payment-mode.capture'), value: 'CAPTURE' },
-          { text: this.$t('panel.payment-mode.authorize'), value: 'AUTHORIZE' }
-        ]
-      };
-    },
+    components: { PSModal },
     methods: {
       updatePaymentMode() {
         let mode = 'LIVE';
@@ -133,18 +160,27 @@
         this.$store.dispatch('updatePaymentMode', mode).then(() => {
           this.$store.dispatch('getOnboardingLink');
         });
+      },
+      cancelCaptureMode() {
+        var selector = "#intent-mode input[value='" + this.captureMode + "']";
+        document.querySelector(selector).click();
+      },
+      updateCaptureMode() {
+        var captureMode =
+          this.captureMode === 'CAPTURE'
+            ? 'AUTHORIZE'
+            : this.captureMode === 'AUTHORIZE'
+            ? 'CAPTURE'
+            : '';
+        if (captureMode !== '') {
+          this.$store.dispatch('updateCaptureMode', captureMode);
+        }
       }
     },
     computed: {
       captureMode: {
         get() {
           return this.$store.state.configuration.captureMode;
-        },
-        set(value) {
-          if (this.captureMode === value) {
-            return;
-          }
-          this.$store.dispatch('updateCaptureMode', value);
         }
       },
       paymentMode() {

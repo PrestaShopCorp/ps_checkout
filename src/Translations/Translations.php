@@ -46,6 +46,18 @@ class Translations
         $linkTranslations = new LinksTranslations($locale);
 
         $translations[$locale] = [
+            'modal' => [
+                'authorize' => [
+                    'title' => 'Switch to Direct Sale ?',
+                    'description' => 'Every successful order will debit buyer bank account and credit your PayPal account.',
+                    'button' => 'Direct Sale',
+                ],
+                'capture' => [
+                    'title' => 'Switch to Capture at Shipping Mode ?',
+                    'description' => 'Every successful order will authorize the corresponding amount on buyer bank account. To capture that transaction, please go to the Order Page and select Capture.',
+                    'button' => 'Capture at shipping',
+                ],
+            ],
             'menu' => [
                 'authentication' => $this->module->l('Authentication', 'translations'),
                 'customizeCheckout' => $this->module->l('Customize checkout experience', 'translations'),
