@@ -266,85 +266,100 @@
   import AccountStatusPrestaShop from '@/components/block/account-status-prestashop.vue';
   import Onboarding from '@/components/block/onboarding';
 
-export default {
-  components: {
-    AccountStatusPayPal,
-    AccountStatusPrestaShop,
-    Onboarding
-  },
-  computed: {
-    onboardingLinkError() {
-      return this.$store.state.paypal.paypalOnboardingLink === false;
+  export default {
+    components: {
+      AccountStatusPayPal,
+      AccountStatusPrestaShop,
+      Onboarding
     },
-    isReady() {
-      return this.$store.state.context.isReady;
-    },
-    paypalEmail() {
-      return this.$store.state.paypal.emailMerchant;
-    },
-    firebaseStatusAccount() {
-      return this.$store.state.firebase.onboardingCompleted;
-    },
-    paypalStatusAccount() {
-      return this.$store.state.paypal.onboardingCompleted;
-    },
-    paypalPaymentIsActive() {
-      return this.$store.state.paypal.paypalIsActive;
-    },
-    cardPaymentIsActive() {
-      return this.$store.state.paypal.cardIsActive;
-    },
-    merchantEmailIsValid() {
-      return this.$store.state.paypal.emailIsValid;
-    },
-    accountIslinked() {
-      return this.$store.state.paypal.accountIslinked;
-    }
-  },
-  methods: {
-    goToSignIn() {
-      this.$router
-        .push('/authentication/signin')
-        // eslint-disable-next-line no-console
-        .catch(exception => console.log(exception));
-    },
-    goToSignUp() {
-      this.$router
-        .push('/authentication/signup')
-        // eslint-disable-next-line no-console
-        .catch(exception => console.log(exception));
-    },
-    logOut() {
-      this.$store.dispatch("logOut").then(() => {
-        this.$store.dispatch("unlink");
-        this.$store.dispatch("psxOnboarding", false);
-      });
-    },
-    paypalUnlink() {
-      this.$store.dispatch("unlink").then(() => {
-        this.$store.dispatch("getOnboardingLink");
-      });
-    }
-  },
-  mounted: function() {
-    if (!this.firebaseStatusAccount && !this.paypalStatusAccount) {
-      // Anything connected
-      this.$segment.track("View Authentication - Status Logged Out");
-    } else if (this.firebaseStatusAccount && !this.paypalStatusAccount) {
-      // Only ps account connected
-      this.$segment.track("View Authentication - Status PS account connected");
-    } else if (this.firebaseStatusAccount && this.paypalStatusAccount) {
-      // Both "connected"
-      if (this.accountIslinked && !this.merchantEmailIsValid) {
-        // but need approval
-        this.$segment.track("View Authentication - Status PP approval pending");
-      } else {
-        // all right
-        this.$segment.track("View Authentication screen - Status Both account approved");
+    computed: {
+      onboardingLinkError() {
+        return this.$store.state.paypal.paypalOnboardingLink === false;
+      },
+      isReady() {
+        return this.$store.state.context.isReady;
+      },
+      paypalEmail() {
+        return this.$store.state.paypal.emailMerchant;
+      },
+      firebaseStatusAccount() {
+        return this.$store.state.firebase.onboardingCompleted;
+      },
+      paypalStatusAccount() {
+        return this.$store.state.paypal.onboardingCompleted;
+      },
+      paypalPaymentIsActive() {
+        return this.$store.state.paypal.paypalIsActive;
+      },
+      cardPaymentIsActive() {
+        return this.$store.state.paypal.cardIsActive;
+      },
+      merchantEmailIsValid() {
+        return this.$store.state.paypal.emailIsValid;
+      },
+      accountIslinked() {
+        return this.$store.state.paypal.accountIslinked;
       }
+    },
+    methods: {
+      sendTrack() {
+        if (!this.firebaseStatusAccount && !this.paypalStatusAccount) {
+          // Anything connected
+          this.$segment.track('View Authentication - Status Logged Out');
+        } else if (this.firebaseStatusAccount && !this.paypalStatusAccount) {
+          // Only ps account connected
+          this.$segment.track(
+            'View Authentication - Status PS account connected'
+          );
+        } else if (this.firebaseStatusAccount && this.paypalStatusAccount) {
+          // Both "connected"
+          if (
+            this.accountIslinked &&
+            this.merchantEmailIsValid &&
+            this.cardPaymentIsActive === 'SUBSCRIBED'
+          ) {
+            // all right
+            this.$segment.track(
+              'View Authentication screen - Status Both account approved'
+            );
+          } else {
+            // but need approval
+            this.$segment.track(
+              'View Authentication - Status PP approval pending'
+            );
+          }
+        }
+      },
+      goToSignIn() {
+        this.$router
+          .push('/authentication/signin')
+          // eslint-disable-next-line no-console
+          .catch(exception => console.log(exception));
+      },
+      goToSignUp() {
+        this.$router
+          .push('/authentication/signup')
+          // eslint-disable-next-line no-console
+          .catch(exception => console.log(exception));
+      },
+      logOut() {
+        this.$store.dispatch('logOut').then(() => {
+          this.$store.dispatch('unlink');
+          this.$store.dispatch('psxOnboarding', false);
+          this.sendTrack();
+        });
+      },
+      paypalUnlink() {
+        this.$store.dispatch('unlink').then(() => {
+          this.$store.dispatch('getOnboardingLink');
+          this.sendTrack();
+        });
+      }
+    },
+    mounted: function() {
+      this.sendTrack();
     }
-  }
-};
+  };
 </script>
 
 <style scoped>
