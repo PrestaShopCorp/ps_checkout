@@ -37,13 +37,13 @@
             button-variant="outline-primary"
             name="radio-btn-outline"
           >
-            <b-form-radio value="CAPTURE" v-if="this.captureMode !== 'CAPTURE'" data-toggle="modal" data-target="#modalSwitchAuthorize">
+            <b-form-radio value="CAPTURE" v-if="captureMode !== 'CAPTURE'" data-toggle="modal" data-target="#modalSwitchAuthorize">
               {{ $t('panel.payment-mode.capture') }}
             </b-form-radio>
             <b-form-radio value="CAPTURE" v-else>
               {{ $t('panel.payment-mode.capture') }}
             </b-form-radio>
-            <b-form-radio value="AUTHORIZE" v-if="this.captureMode !== 'AUTHORIZE'" data-toggle="modal" data-target="#modalSwitchAuthorize">
+            <b-form-radio value="AUTHORIZE" v-if="captureMode !== 'AUTHORIZE'" data-toggle="modal" data-target="#modalSwitchAuthorize">
               {{ $t('panel.payment-mode.authorize') }}
             </b-form-radio>
             <b-form-radio value="AUTHORIZE" v-else>
