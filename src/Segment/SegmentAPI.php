@@ -54,6 +54,7 @@ class SegmentAPI
                     'moduleVersion' => \Ps_checkout::VERSION,
                     'path' => $path,
                     'search' => $queryString,
+                    'category' => 'ps_checkout',
                 ],
             ]);
         }

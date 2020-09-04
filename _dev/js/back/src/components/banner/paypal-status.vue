@@ -141,7 +141,9 @@
       },
       trackSegment() {
         if (window && window.analytics) {
-          this.$segment.track('Approval on Paypal link triggered');
+          this.$segment.track('Approval on Paypal link triggered', {
+            category: 'ps_checkout'
+          });
           // redirect to paypal url
           window.open('https://www.paypal.com/policy/hub/kyc', '_blank');
         }

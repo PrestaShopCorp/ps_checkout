@@ -178,7 +178,9 @@
         set(payload) {
           this.$store.dispatch('toggleHostedFields', payload).then(() => {
             var msg = payload ? 'Enabled' : 'Disabled';
-            this.$segment.track(msg + ' Credit Card');
+            this.$segment.track(msg + ' Credit Card', {
+              category: 'ps_checkout'
+            });
           });
         }
       },

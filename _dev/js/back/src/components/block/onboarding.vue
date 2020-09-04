@@ -68,11 +68,10 @@
     },
     methods: {
       getOnboardingLink() {
-
         if (window && window.analytics) {
-          this.$segment.track(
-            "Paypal Lightbox triggered"
-          );
+          this.$segment.track('Paypal Lightbox triggered', {
+            category: 'ps_checkout'
+          });
         }
 
         if (
@@ -104,9 +103,9 @@
           }
           time++;
           // the callback is fired when window.analytics is available and before any other hit is sent
-          this.$segment.track(
-            "Event for more than " + time + " minutes"
-          );
+          this.$segment.track('Event for more than ' + time + ' minutes', {
+            category: 'ps_checkout'
+          });
 
           if (time >= 4) {
             clearInterval(poll);
