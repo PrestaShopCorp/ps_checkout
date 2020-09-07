@@ -40,7 +40,6 @@ class ContainerProvider
      */
     private $moduleLocalPath;
 
-
     /**
      * @var CacheDirectory
      */
