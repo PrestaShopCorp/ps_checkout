@@ -116,7 +116,7 @@ class Ps_checkout extends PaymentModule
     /**
      * @var ServiceContainer
      */
-    private $service;
+    private $serviceContainer;
 
     public function __construct()
     {
@@ -143,7 +143,7 @@ class Ps_checkout extends PaymentModule
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = ['min' => '1.6.1', 'max' => _PS_VERSION_];
 
-        $this->service = new ServiceContainer($this->name, $this->getLocalPath());
+        $this->serviceContainer = new ServiceContainer($this->name, $this->getLocalPath());
     }
 
     /**
@@ -1156,6 +1156,6 @@ class Ps_checkout extends PaymentModule
      */
     public function getService($serviceName)
     {
-        return $this->service->getService($serviceName);
+        return $this->serviceContainer->getService($serviceName);
     }
 }
