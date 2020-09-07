@@ -91,6 +91,11 @@ services:
     arguments:
       - '@ps_checkout.configuration'
 
+  ps_checkout.express_checkout.configuration:
+    class: 'PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration'
+    arguments:
+      - '@ps_checkout.configuration'
+
   ps_checkout.api.firebase.auth:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth'
 

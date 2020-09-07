@@ -28,6 +28,7 @@ class PayPalConfiguration
 {
     const INTENT = 'PS_CHECKOUT_INTENT';
     const PAYMENT_MODE = 'PS_CHECKOUT_MODE';
+    const CARD_PAYMENT_ENABLED = 'PS_CHECKOUT_CARD_PAYMENT_ENABLED';
     const PS_ROUND_TYPE = 'PS_ROUND_TYPE';
     const PS_PRICE_ROUND_MODE = 'PS_PRICE_ROUND_MODE';
 
@@ -91,6 +92,24 @@ class PayPalConfiguration
         }
 
         $this->configuration->set(self::PAYMENT_MODE, $paymentMode);
+    }
+
+    /**
+     * @param bool $status
+     *
+     * @throws PsCheckoutException
+     */
+    public function setCardPaymentEnabled($status)
+    {
+        $this->configuration->set(self::CARD_PAYMENT_ENABLED, (bool) $status);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCardPaymentEnabled()
+    {
+        return (bool) $this->configuration->get(self::CARD_PAYMENT_ENABLED);
     }
 
     /**

@@ -91,7 +91,7 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_PAYPAL_EMAIL_STATUS' => '',
         'PS_CHECKOUT_PAYPAL_PAYMENT_STATUS' => '',
         'PS_CHECKOUT_CARD_PAYMENT_STATUS' => '',
-        'PS_CHECKOUT_CARD_PAYMENT_ENABLED' => true,
+        PayPalConfiguration::CARD_PAYMENT_ENABLED => true,
         ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE => false,
         ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE => false,
         ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE => false,
@@ -304,10 +304,7 @@ class Ps_checkout extends PaymentModule
      */
     private function displayECOnCheckout()
     {
-        /** @var PrestaShopConfiguration $configuration */
-        $configuration = $this->getService('ps_checkout.configuration');
-
-        $displayOnCheckout = (bool) $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE);
+        $displayOnCheckout = (bool) $this->getService('ps_checkout.express_checkout.configuration')->isCheckoutPageEnabled();
 
         if (!$displayOnCheckout) {
             return false;
@@ -333,9 +330,7 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayExpressCheckout()
     {
-        /** @var PrestaShopConfiguration $configuration */
-        $configuration = $this->getService('ps_checkout.configuration');
-        $displayExpressCheckout = (bool) $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE);
+        $displayExpressCheckout = (bool) $this->getService('ps_checkout.express_checkout.configuration')->isOrderPageEnabled();
 
         if (!$displayExpressCheckout) {
             return false;
@@ -352,9 +347,7 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayFooterProduct($params)
     {
-        /** @var PrestaShopConfiguration $configuration */
-        $configuration = $this->getService('ps_checkout.configuration');
-        $displayOnProductPage = $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE);
+        $displayOnProductPage = (bool) $this->getService('ps_checkout.express_checkout.configuration')->isProductPageEnabled();
 
         if (!$displayOnProductPage) {
             return false;
@@ -694,12 +687,11 @@ class Ps_checkout extends PaymentModule
         }
 
         $this->context->smarty->assign([
-            'status' => $order->valid ? 'ok' : 'failed',
-            'id_order' => $order->id,
-            'shopIs17' => (new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17(),
+            'isShop17' => (new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17(),
+            'isAuthorized' => 'AUTHORIZE' === Configuration::get('PS_CHECKOUT_INTENT'),
         ]);
 
-        return $this->display(__FILE__, '/views/templates/hook/orderConfirmation.tpl');
+        return $this->display(__FILE__, '/views/templates/hook/displayOrderConfirmation.tpl');
     }
 
     /**
