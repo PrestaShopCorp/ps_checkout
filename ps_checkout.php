@@ -147,12 +147,19 @@ class Ps_checkout extends PaymentModule
      */
     public function install()
     {
+        $stateDatas = [
+            'unremovable' => 1,
+            'send_email' => 1,
+            'logable' => 1,
+        ];
+        $langDatas['template'] = 'authorize';
         // Install for both 1.7 and 1.6
         $defaultInstall = parent::install() &&
             (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops() &&
             $this->installConfiguration() &&
             $this->registerHook(self::HOOK_LIST) &&
             (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
+            (new PrestaShop\Module\PrestashopCheckout\OrderStates())->updateState('PS_CHECKOUT_STATE_AUTHORIZED', $stateDatas, $langDatas) &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
             $this->installTabs();
 

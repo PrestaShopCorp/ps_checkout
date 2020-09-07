@@ -34,6 +34,7 @@ class OrderStates
     const DARK_BLUE_HEXA_COLOR = '#34209E';
     const BLUE_HEXA_COLOR = '#3498D8';
     const GREEN_HEXA_COLOR = '#01B887';
+    const PS_CHECKOUT_STATE_AUTHORIZED = 'PS_CHECKOUT_STATE_AUTHORIZED';
     const ORDER_STATES = [
         'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT' => self::DARK_BLUE_HEXA_COLOR,
         'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT' => self::DARK_BLUE_HEXA_COLOR,
@@ -60,6 +61,65 @@ class OrderStates
             $orderStateId = $this->getPaypalStateId($state, $color);
             $this->createPaypalStateLangs($state, $orderStateId);
             $this->setStateIcons($state, $orderStateId);
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     *
+     * @throws PsCheckoutException
+     * @throws \PrestaShopDatabaseException
+     */
+    public function updateState( $state, $stateDatas, $langStateDatas)
+    {
+        if (!in_array($state, [self::PS_CHECKOUT_STATE_AUTHORIZED]))
+        {
+            return false;
+        }
+        $orderStateId = $this->getPaypalStateId($state, self::ORDER_STATES[$state]);
+
+        return (bool) $this->updateStateData($orderStateId, $stateDatas)
+            && (bool) $this->updateStateLangData($state, $orderStateId, $langStateDatas);
+
+    }
+
+    /**
+     * @param int orderStateId
+     * @param array $datas
+     *
+     * @return bool
+     *
+     * @throws PsCheckoutException
+     */
+    private function updateStateData($orderStateId, array $datas)
+    {
+        $where = 'id_order_state =' . (int) $orderStateId;
+
+        if(false === \Db::getInstance()->update(self::ORDER_STATE_TABLE, $datas, $where)) {
+            throw new PsCheckoutException(sprintf('Not able to update the order state %s', $orderStateId), PsCheckoutException::PRESTASHOP_ORDER_STATE_ERROR);
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $orderStateId
+     *
+     * @return bool
+     *
+     * @throws PsCheckoutException
+     */
+    private function updateStateLangData($state, $orderStateId, $datas = null)
+    {
+        $languagesList = \Language::getLanguages();
+        $orderStatesTranslations = new OrderStatesTranslations();
+
+        // For each languages in the shop, we insert a new order state name
+        foreach ($languagesList as $key => $lang) {
+            $statesTranslations = $orderStatesTranslations->getTranslations($lang['iso_code']);
+            $this->updateStateLang($orderStateId, $statesTranslations[$state], (int) $lang['id_lang'], $datas);
         }
 
         return true;
@@ -184,6 +244,28 @@ class OrderStates
         if (false === \Db::getInstance()->insert(self::ORDER_STATE_LANG_TABLE, $data)) {
             throw new PsCheckoutException('Not able to insert the new order state language', PsCheckoutException::PRESTASHOP_ORDER_STATE_ERROR);
         }
+    }
+
+    /**
+     * @param $orderStateId
+     * @param $langId
+     * @param $translations
+     * @param null $datas
+     *
+     * @return bool
+     *
+     * @throws PsCheckoutException
+     */
+    private function updateStateLang($orderStateId, $translations, $langId, $datas = null)
+    {
+        $where = 'id_order_state =' . (int) $orderStateId . ' AND id_lang ='. (int) $langId;
+        $datas['name'] = pSQL($translations);
+
+        if (false === \Db::getInstance()->update(self::ORDER_STATE_LANG_TABLE, $datas, $where)) {
+            throw new PsCheckoutException('Not able to insert the update order state language', PsCheckoutException::PRESTASHOP_ORDER_STATE_ERROR);
+        }
+
+        return true;
     }
 
     /**
