@@ -31,9 +31,15 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 class ContainerProvider
 {
     /**
-     * @var \Module
+     * @var string
      */
-    private $module;
+    private $moduleName;
+
+    /**
+     * @var string
+     */
+    private $moduleLocalPath;
+
 
     /**
      * @var CacheDirectory
@@ -41,12 +47,14 @@ class ContainerProvider
     private $cacheDirectory;
 
     /**
-     * @param \Module $module
+     * @param string $moduleName
+     * @param string $moduleLocalPath
      * @param CacheDirectory $cacheDirectory
      */
-    public function __construct(\Module $module, CacheDirectory $cacheDirectory)
+    public function __construct($moduleName, $moduleLocalPath, CacheDirectory $cacheDirectory)
     {
-        $this->module = $module;
+        $this->moduleName = $moduleName;
+        $this->moduleLocalPath = $moduleLocalPath;
         $this->cacheDirectory = $cacheDirectory;
     }
 
@@ -57,7 +65,7 @@ class ContainerProvider
      */
     public function get($containerName)
     {
-        $containerClassName = ucfirst($this->module->name)
+        $containerClassName = ucfirst($this->moduleName)
             . ucfirst($containerName)
             . 'Container'
         ;
@@ -72,10 +80,10 @@ class ContainerProvider
 
         $containerBuilder = new ContainerBuilder();
         $containerBuilder->set(
-            $this->module->name . '.cache.directory',
+            $this->moduleName . '.cache.directory',
             $this->cacheDirectory
         );
-        $moduleConfigPath = $this->module->getLocalPath()
+        $moduleConfigPath = $this->moduleLocalPath
             . 'config/'
             . $containerName
         ;

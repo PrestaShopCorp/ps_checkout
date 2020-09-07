@@ -25,9 +25,14 @@ use PrestaShop\Module\PrestashopCheckout\Cache\CacheDirectory;
 class ServiceContainer
 {
     /**
-     * @var \Module
+     * @var string
      */
-    private $module;
+    private $moduleName;
+
+    /**
+     * @var string
+     */
+    private $moduleLocalPath;
 
     /**
      * @var \Symfony\Component\DependencyInjection\ContainerInterface
@@ -37,18 +42,14 @@ class ServiceContainer
     /**
      * @param \Module $module
      */
-    public function __construct($module)
+    public function __construct($moduleName, $moduleLocalPath)
     {
-        $this->module = $module;
+        $this->moduleName = $moduleName;
+        $this->moduleLocalPath = $moduleLocalPath;
     }
 
     public function getService($serviceName)
     {
-        if (method_exists($this->module, 'get')) {
-            // Use Core container introduced in 1.7.3.0
-            return $this->module->get($serviceName);
-        }
-
         if (null === $this->container) {
             $this->initContainer();
         }
@@ -63,7 +64,7 @@ class ServiceContainer
             _PS_ROOT_DIR_,
             _PS_MODE_DEV_
         );
-        $containerProvider = new ContainerProvider($this->module, $cacheDirectory);
+        $containerProvider = new ContainerProvider($this->moduleName, $this->moduleLocalPath, $cacheDirectory);
 
         $this->container = $containerProvider->get(defined('_PS_ADMIN_DIR_') ? 'admin' : 'front');
     }
