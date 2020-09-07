@@ -67,26 +67,29 @@ class OrderStates
     }
 
     /**
+     * @param string $state
+     * @param array $stateDatas
+     * @param array $langStateDatas
+     *
      * @return bool
      *
      * @throws PsCheckoutException
      * @throws \PrestaShopDatabaseException
      */
-    public function updateState( $state, $stateDatas, $langStateDatas)
+    public function updateState($state, array $stateDatas, array $langStateDatas)
     {
-        if (!in_array($state, [self::PS_CHECKOUT_STATE_AUTHORIZED]))
-        {
+        if (!in_array($state, [self::PS_CHECKOUT_STATE_AUTHORIZED])) {
             return false;
         }
+
         $orderStateId = $this->getPaypalStateId($state, self::ORDER_STATES[$state]);
 
         return (bool) $this->updateStateData($orderStateId, $stateDatas)
             && (bool) $this->updateStateLangData($state, $orderStateId, $langStateDatas);
-
     }
 
     /**
-     * @param int orderStateId
+     * @param int $orderStateId
      * @param array $datas
      *
      * @return bool
@@ -97,7 +100,7 @@ class OrderStates
     {
         $where = 'id_order_state =' . (int) $orderStateId;
 
-        if(false === \Db::getInstance()->update(self::ORDER_STATE_TABLE, $datas, $where)) {
+        if (false === \Db::getInstance()->update(self::ORDER_STATE_TABLE, $datas, $where)) {
             throw new PsCheckoutException(sprintf('Not able to update the order state %s', $orderStateId), PsCheckoutException::PRESTASHOP_ORDER_STATE_ERROR);
         }
 
@@ -105,7 +108,9 @@ class OrderStates
     }
 
     /**
-     * @param $orderStateId
+     * @param string $state
+     * @param string $orderStateId
+     * @param null $datas
      *
      * @return bool
      *
@@ -247,9 +252,9 @@ class OrderStates
     }
 
     /**
-     * @param $orderStateId
-     * @param $langId
-     * @param $translations
+     * @param string $orderStateId
+     * @param int $langId
+     * @param string $translations
      * @param null $datas
      *
      * @return bool
@@ -258,7 +263,7 @@ class OrderStates
      */
     private function updateStateLang($orderStateId, $translations, $langId, $datas = null)
     {
-        $where = 'id_order_state =' . (int) $orderStateId . ' AND id_lang ='. (int) $langId;
+        $where = 'id_order_state =' . (int) $orderStateId . ' AND id_lang =' . (int) $langId;
         $datas['name'] = pSQL($translations);
 
         if (false === \Db::getInstance()->update(self::ORDER_STATE_LANG_TABLE, $datas, $where)) {
