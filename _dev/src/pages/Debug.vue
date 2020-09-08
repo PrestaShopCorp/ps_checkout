@@ -28,6 +28,8 @@
           <li>PHP version: <b>{{ phpVersion }}</b></li>
           <li>Module version: <b>{{ moduleVersion }}</b></li>
           <li>Shop ID: <b>{{ shopId }}</b></li>
+          <li>PSX ID: <b>{{ psxId }}</b></li>
+          <li>Merchant ID: <b>{{ merchantId }}</b></li>
           <li>Rounding config: <b>{{ roundingSettingsIsCorrect }}</b></li>
         </ul>
         <PSSwitch
@@ -66,6 +68,12 @@
       },
       shopId() {
         return this.$store.state.context.shopId;
+      },
+      merchantId() {
+        return this.$store.state.context.merchantId;
+      },
+      psxId() {
+        return this.$store.state.context.psxId;
       },
       roundingSettingsIsCorrect() {
         return this.$store.getters.roundingSettingsIsCorrect;

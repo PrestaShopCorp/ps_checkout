@@ -63,6 +63,8 @@ class ContextModule implements PresenterInterface
                 'shopIs17' => (new ShopContext())->isShop17(),
                 'moduleKey' => $this->module->module_key,
                 'shopId' => (new ShopUuidManager())->getForShop((int) \Context::getContext()->shop->id),
+                'merchantId' => \Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT', null, null, (int) \Context::getContext()->shop->id),
+                'psxId' => \Configuration::get('PS_PSX_FIREBASE_LOCAL_ID', null, null, (int) \Context::getContext()->shop->id),
                 'isReady' => (new ShopContext())->isReady(),
                 'isShopContext' => $this->isShopContext(),
                 'shopsTree' => $this->getShopsTree(),
