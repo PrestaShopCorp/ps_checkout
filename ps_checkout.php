@@ -18,11 +18,11 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
-use PrestaShop\Module\PrestashopCheckout\DependencyInjection\ServiceContainer;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Intent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
+use PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
