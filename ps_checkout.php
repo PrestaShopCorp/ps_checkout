@@ -22,7 +22,6 @@ use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Intent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
-use PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -113,7 +112,7 @@ class Ps_checkout extends PaymentModule
     private $logger;
 
     /**
-     * @var ServiceContainer
+     * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
      */
     private $serviceContainer;
 
@@ -142,7 +141,7 @@ class Ps_checkout extends PaymentModule
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = ['min' => '1.6.1', 'max' => _PS_VERSION_];
 
-        $this->serviceContainer = new ServiceContainer($this->name, $this->getLocalPath());
+        $this->serviceContainer = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer($this->name, $this->getLocalPath());
     }
 
     /**
