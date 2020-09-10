@@ -125,6 +125,7 @@ class OrderState
         $this->hidden = false;
         $this->template = '';
         $this->deleted = false;
+        $this->unremovable = true;
     }
 
     /**

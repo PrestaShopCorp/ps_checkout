@@ -19,6 +19,7 @@
  */
 
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
+use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Intent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
@@ -158,8 +159,8 @@ class Ps_checkout extends PaymentModule
             (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops() &&
             $this->installConfiguration() &&
             $this->registerHook(self::HOOK_LIST) &&
-            (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
-            (new PrestaShop\Module\PrestashopCheckout\OrderStates())->updateState('PS_CHECKOUT_STATE_AUTHORIZED', $stateDatas, $langDatas) &&
+            $this->installOrderStates() &&
+            //(new PrestaShop\Module\PrestashopCheckout\OrderStates())->updateState('PS_CHECKOUT_STATE_AUTHORIZED', $stateDatas, $langDatas) &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
             $this->installTabs();
 
@@ -176,6 +177,33 @@ class Ps_checkout extends PaymentModule
         // Install specific to prestashop 1.6
         return $this->registerHook(self::HOOK_LIST_16) &&
             $this->updatePosition(\Hook::getIdByName('payment'), false, 1);
+    }
+
+    /**
+     * @return bool
+     */
+    public function installOrderStates()
+    {
+        $orderStates = [];
+        $class = new ReflectionClass("\PrestaShop\Module\PrestashopCheckout\Translations\OrderStatesTranslations");
+
+        foreach (OrderStates::ORDER_STATES as $configurationKey => $color) {
+            $orderStates[] = new PrestaShop\Module\PrestashopCheckout\OrderState\OrderState($configurationKey,
+                $class->getConstant($configurationKey), $color);
+        }
+
+        //add a specific Order State
+        $authorizeOrderState = new \PrestaShop\Module\PrestashopCheckout\OrderState\MailOrderState(
+            OrderStates::PS_CHECKOUT_STATE_AUTHORIZED,
+            $class->getConstant(OrderStates::PS_CHECKOUT_STATE_AUTHORIZED),
+            OrderStates::BLUE_HEXA_COLOR,
+            'authorize'
+        );
+
+        $authorizeOrderState->setLogable(true);
+
+        $orderStates[] = $authorizeOrderState;
+        return (bool) $this->getService('ps_checkout.repository.orderstate')->add($orderStates);
     }
 
     /**
@@ -246,6 +274,7 @@ class Ps_checkout extends PaymentModule
 
         return parent::uninstall() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->dropTable() &&
+            $this->deleteAllOrderState() &&
             $this->uninstallTabs();
     }
 
@@ -267,6 +296,18 @@ class Ps_checkout extends PaymentModule
         }
 
         return $uninstallTabCompleted;
+    }
+
+    /**
+     * Delete custom OrderState used for payment
+     * We mark them as deleted to not break passed Orders
+     *
+     * @return bool
+     */
+    private function deleteAllOrderState()
+    {
+        return $this->getService('ps_checkout.repository.orderstate')->deleteAllOrderStates();
+
     }
 
     /**
@@ -1149,11 +1190,6 @@ class Ps_checkout extends PaymentModule
      */
     public function getService($serviceName)
     {
-        if (method_exists($this, 'get')) {
-            // Use Core container introduced in 1.7.3.0
-            return $this->get($serviceName);
-        }
-
         if (null === $this->container) {
             $cacheDirectory = new \PrestaShop\Module\PrestashopCheckout\Cache\CacheDirectory(
                 _PS_VERSION_,

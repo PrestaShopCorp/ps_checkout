@@ -43,21 +43,26 @@ class OrderStateRepository
      *
      * @param OrderState[] $orderStates
      *
+     * @return bool
+     *
      * @throws OrderStateException
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
     public function add($orderStates)
     {
+        $result = true;
         foreach ($orderStates as $orderState) {
             if (!$this->exist($orderState->getConfigurationKey())) {
                 // add
-                $this->addNewOrderState($orderState);
+                $result = $result && $this->addNewOrderState($orderState);
             } else {
                 // update
-                $this->updateExistingOrderState($orderState);
+                $result = $result && $this->updateExistingOrderState($orderState);
             }
         }
+
+        return $result;
     }
 
     /**
@@ -159,6 +164,8 @@ class OrderStateRepository
     /**
      * @param OrderState $orderState
      *
+     * @return bool
+     *
      * @throws OrderStateException
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
@@ -188,6 +195,8 @@ class OrderStateRepository
         if (false === $result) {
             throw new OrderStateException(sprintf('Failed to update OrderState %s', $orderState->getConfigurationKey()), OrderStateException::ORDER_STATE_NOT_UPDATED);
         }
+
+        return $result;
     }
 
     /**
@@ -198,13 +207,15 @@ class OrderStateRepository
     private function addNewOrderState($orderState)
     {
         // save the new order State
-        $orderState->save($this->moduleName);
+        $result = (bool) $orderState->save($this->moduleName);
 
         // save the key in the configuration
-        $result = (bool) \Configuration::updateGlobalValue($orderState->getConfigurationKey(), (int) $orderState->getId());
+        $result = $result && (bool) \Configuration::updateGlobalValue($orderState->getConfigurationKey(), (int) $orderState->getId());
         if (false === $result) {
             throw new OrderStateException(sprintf('Failed to save OrderState %s to Configuration', $orderState->getConfigurationKey()), OrderStateException::ORDER_STATE_CONFIGURATION_NOT_SAVED);
         }
+
+        return $result;
     }
 
     /**

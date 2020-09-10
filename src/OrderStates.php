@@ -27,8 +27,6 @@ class OrderStates
 {
     const MODULE_NAME = 'ps_checkout';
     const ORDER_STATE_TEMPLATE = 'payment';
-    const ORDER_TABLE = 'orders';
-    const ORDER_HISTORY_TABLE = 'order_history';
     const ORDER_STATE_TABLE = 'order_state';
     const ORDER_STATE_LANG_TABLE = 'order_state_lang';
     const DARK_BLUE_HEXA_COLOR = '#34209E';
@@ -39,7 +37,6 @@ class OrderStates
         'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT' => self::DARK_BLUE_HEXA_COLOR,
         'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT' => self::DARK_BLUE_HEXA_COLOR,
         'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT' => self::DARK_BLUE_HEXA_COLOR,
-        'PS_CHECKOUT_STATE_AUTHORIZED' => self::BLUE_HEXA_COLOR,
         'PS_CHECKOUT_STATE_PARTIAL_REFUND' => self::GREEN_HEXA_COLOR,
         'PS_CHECKOUT_STATE_WAITING_CAPTURE' => self::BLUE_HEXA_COLOR,
     ];
