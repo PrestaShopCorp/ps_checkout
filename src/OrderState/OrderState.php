@@ -433,12 +433,8 @@ class OrderState
         $result = (bool) $orderStatePS->add();
 
         if (false === $result) {
-            throw new OrderStateException(sprintf(
-                'Failed to create OrderState %s',
-                $this->configurationKey
-            ), OrderStateException::ORDER_STATE_NOT_CREATED);
+            throw new OrderStateException(sprintf('Failed to create OrderState %s', $this->configurationKey), OrderStateException::ORDER_STATE_NOT_CREATED);
         }
-
         $this->id = $orderStatePS->id;
 
         return true;

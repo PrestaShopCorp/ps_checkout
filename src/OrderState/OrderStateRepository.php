@@ -203,7 +203,7 @@ class OrderStateRepository
         // save the key in the configuration
         $result = (bool) \Configuration::updateGlobalValue($orderState->getConfigurationKey(), (int) $orderState->getId());
         if (false === $result) {
-           throw new OrderStateException(sprintf('Failed to save OrderState %s to Configuration', $orderState->getConfigurationKey()), OrderStateException::ORDER_STATE_CONFIGURATION_NOT_SAVED);
+            throw new OrderStateException(sprintf('Failed to save OrderState %s to Configuration', $orderState->getConfigurationKey()), OrderStateException::ORDER_STATE_CONFIGURATION_NOT_SAVED);
         }
     }
 
