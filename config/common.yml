@@ -104,3 +104,8 @@ services:
     arguments:
       - '@ps_checkout.api.firebase.auth'
       - '@ps_checkout.persistent.configuration'
+
+  ps_checkout.repository.orderstate:
+    class: 'PrestaShop\Module\PrestashopCheckout\OrderState\OrderStateRepository'
+    arguments:
+      - '@=service("ps_checkout.module").name'
