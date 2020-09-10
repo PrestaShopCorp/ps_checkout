@@ -53,8 +53,7 @@ class OrderStateRepository
             if (!$this->exist($orderState->getConfigurationKey())) {
                 // add
                 $this->addNewOrderState($orderState);
-            }
-            else {
+            } else {
                 // update
                 $this->updateExistingOrderState($orderState);
             }
@@ -120,7 +119,7 @@ class OrderStateRepository
     {
         $orderStateId = (int) \Configuration::getGlobalValue($configurationKey);
         if ($orderStateId === 0) {
-            throw new OrderStateException(sprintf("The configuration key is not valid : %s", $configurationKey), OrderStateException::ORDER_STATE_INVALID_CONFIGURATION_KEY);
+            throw new OrderStateException(sprintf('The configuration key is not valid : %s', $configurationKey), OrderStateException::ORDER_STATE_INVALID_CONFIGURATION_KEY);
         }
 
         return $orderStateId;
@@ -187,10 +186,7 @@ class OrderStateRepository
         $result = (bool) $orderStatePS->update();
 
         if (false === $result) {
-            throw new OrderStateException(sprintf(
-                'Failed to update OrderState %s',
-                $orderState->getConfigurationKey()
-            ), OrderStateException::ORDER_STATE_NOT_UPDATED);
+            throw new OrderStateException(sprintf('Failed to update OrderState %s', $orderState->getConfigurationKey()), OrderStateException::ORDER_STATE_NOT_UPDATED);
         }
     }
 
@@ -207,10 +203,7 @@ class OrderStateRepository
         // save the key in the configuration
         $result = (bool) \Configuration::updateGlobalValue($orderState->getConfigurationKey(), (int) $orderState->getId());
         if (false === $result) {
-           throw new OrderStateException(sprintf(
-               'Failed to save OrderState %s to Configuration',
-               $orderState->getConfigurationKey()
-           ), OrderStateException::ORDER_STATE_CONFIGURATION_NOT_SAVED);
+           throw new OrderStateException(sprintf('Failed to save OrderState %s to Configuration', $orderState->getConfigurationKey()), OrderStateException::ORDER_STATE_CONFIGURATION_NOT_SAVED);
         }
     }
 
@@ -223,7 +216,7 @@ class OrderStateRepository
     {
         $orderStateId = (int) \Configuration::getGlobalValue($configurationKey);
         // test if the configuration key exist -> the function return 0 by default if there is no value in DB
-        return $orderStateId === 0 ;
+        return $orderStateId === 0;
     }
 
     /**
@@ -242,8 +235,8 @@ class OrderStateRepository
         /** @var \PrestaShop\PrestaShop\Adapter\Entity\OrderState $orderStatePS */
         $orderStatePS = $orderStateCollection->getFirst();
 
-        if ($orderStatePS === false){
-            throw new OrderStateException(sprintf('No OrderState for the id : %s ', $orderStateId),OrderStateException::ORDER_STATE_INVALID_ID);
+        if ($orderStatePS === false) {
+            throw new OrderStateException(sprintf('No OrderState for the id : %s', $orderStateId), OrderStateException::ORDER_STATE_INVALID_ID);
         }
 
         return $orderStatePS;
@@ -262,6 +255,7 @@ class OrderStateRepository
         if ($result === false) {
             throw new OrderStateException(sprintf("Can't delete the OrderState Configuration %s", $configurationKey), OrderStateException::ORDER_STATE_CONFIGURATION_NOT_DELETED);
         }
+
         return $result;
     }
 }

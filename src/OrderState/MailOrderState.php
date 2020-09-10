@@ -20,16 +20,15 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\OrderState;
 
-
 class MailOrderState extends OrderState
 {
     /**
      * @param string $configurationKey
-     * @param string $name
+     * @param array $name
      * @param string $color
      * @param string $template
      */
-    public function __construct($configurationKey, $name, $color, $template = '')
+    public function __construct($configurationKey, array $name, $color, $template = '')
     {
         parent::__construct($configurationKey, $name, $color);
         $this->setTemplate($template);

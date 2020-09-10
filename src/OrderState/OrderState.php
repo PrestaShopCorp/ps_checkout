@@ -109,7 +109,7 @@ class OrderState
      * @param array $name
      * @param string $color
      */
-    public function __construct($configurationKey, $name, $color)
+    public function __construct($configurationKey, array $name, $color)
     {
         $this->configurationKey = $configurationKey;
         $this->setName($name);
@@ -137,8 +137,10 @@ class OrderState
 
     /**
      * @param array $nameByLangIsoCode
+     *
+     * @throws OrderStateException
      */
-    public function setName($nameByLangIsoCode)
+    public function setName(array $nameByLangIsoCode)
     {
         if (empty($nameByLangIsoCode)) {
             throw new OrderStateException(sprintf("The name field shouldn't be empty"), OrderStateException::ORDER_STATE_EMPTY_NAME);

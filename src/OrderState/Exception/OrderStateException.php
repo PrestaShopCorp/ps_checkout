@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\OrderState\Exception;
 
-
 class OrderStateException extends \Exception
 {
     const UNKNOWN = 0;

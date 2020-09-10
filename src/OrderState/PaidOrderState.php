@@ -20,16 +20,15 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\OrderState;
 
-
 class PaidOrderState extends OrderState
 {
     /**
      * @param string $configurationKey
-     * @param string $name
+     * @param array $name
      * @param string $color
      * @param bool $logable
      */
-    public function __construct($configurationKey, $name, $color, $logable = false)
+    public function __construct($configurationKey, array $name, $color, $logable = false)
     {
         parent::__construct($configurationKey, $name, $color);
         $this->setPaid(true);

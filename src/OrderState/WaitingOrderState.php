@@ -24,10 +24,10 @@ class WaitingOrderState extends OrderState
 {
     /**
      * @param string $configurationKey
-     * @param string $name
+     * @param array $name
      * @param string $color
      */
-    public function __construct($configurationKey, $name, $color)
+    public function __construct($configurationKey, array $name, $color)
     {
         parent::__construct($configurationKey, $name, $color);
     }
