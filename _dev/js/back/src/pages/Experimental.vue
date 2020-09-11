@@ -19,18 +19,18 @@
 <template>
   <div>
     <b-container>
-      <PaymentMode />
+      <PaymentModeExperimental />
     </b-container>
   </div>
 </template>
 
 <script>
-  import PaymentMode from '@/components/panel/payment-mode';
+  import PaymentModeExperimental from "@/components/panel/payment-mode-experimental";
 
   export default {
     name: 'Experimental',
     components: {
-      PaymentMode
+      PaymentModeExperimental
     }
   };
 </script>

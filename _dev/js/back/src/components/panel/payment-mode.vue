@@ -17,7 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *-->
 <template>
-  <b-card no-body>
+  <b-card no-body class="mb-4">
     <template v-slot:header>
       <i class="material-icons">toggle_on</i>
       {{ $t('panel.payment-mode.title') }}
@@ -90,56 +90,6 @@
               {{ $t('panel.payment-mode.tipcapture-answer') }}
             </template>
           </b-popover>
-        </b-form-group>
-
-        <b-alert class="d-inline-block w-100" variant="info" show>
-          <p>{{ $t('panel.payment-mode.infoAlertText') }}.</p>
-        </b-alert>
-
-        <b-form-group
-          v-if="paymentMode === 'LIVE'"
-          label-cols="4"
-          label-align="right"
-          :description="$t('panel.payment-mode.tipProductionMode')"
-          :label="$t('panel.payment-mode.environment')"
-          label-for="production-input"
-        >
-          <b-form-input
-            id="production-input"
-            :value="$t('panel.payment-mode.productionMode')"
-            disabled
-          />
-        </b-form-group>
-
-        <b-form-group
-          v-else
-          label-cols="4"
-          label-align="right"
-          :description="$t('panel.payment-mode.tipSandboxMode')"
-          :label="$t('panel.payment-mode.environment')"
-          label-for="sandbox-input"
-        >
-          <b-form-input
-            id="sandbox-input"
-            :value="$t('panel.payment-mode.sandboxMode')"
-            disabled
-          />
-        </b-form-group>
-
-        <b-form-group label-cols="4" label-for="update-mode">
-          <b-button
-            id="update-mode"
-            @click="updatePaymentMode()"
-            variant="link"
-            class="px-0"
-          >
-            <template v-if="paymentMode === 'LIVE'">
-              {{ $t('panel.payment-mode.useSandboxMode') }}
-            </template>
-            <template v-else>
-              {{ $t('panel.payment-mode.useProductionMode') }}
-            </template>
-          </b-button>
         </b-form-group>
       </b-form>
     </b-card-body>

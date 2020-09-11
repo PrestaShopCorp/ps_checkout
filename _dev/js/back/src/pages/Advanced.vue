@@ -18,6 +18,7 @@
  *-->
 <template>
   <b-container>
+    <PaymentMode />
     <AccountSettingsDeepLink
       class="mb-4 w-50 d-inline-flex"
       :title="$t('account-settings-deeplink.fraud-tool.title')"
@@ -59,10 +60,12 @@
 
 <script>
   import AccountSettingsDeepLink from '@/components/block/account-settings-deeplink';
+  import PaymentMode from "@/components/panel/payment-mode";
 
   export default {
     name: 'Advanced',
     components: {
+      PaymentMode,
       AccountSettingsDeepLink
     }
   };
