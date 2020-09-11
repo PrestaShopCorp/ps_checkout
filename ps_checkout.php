@@ -201,6 +201,7 @@ class Ps_checkout extends PaymentModule
         );
 
         $orderStates[] = $authorizeOrderState;
+
         return (bool) $this->getService('ps_checkout.repository.orderstate')->add($orderStates);
     }
 
@@ -305,7 +306,6 @@ class Ps_checkout extends PaymentModule
     private function deleteAllOrderState()
     {
         return $this->getService('ps_checkout.repository.orderstate')->deleteAllOrderStates();
-
     }
 
     /**
