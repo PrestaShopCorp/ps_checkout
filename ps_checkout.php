@@ -19,7 +19,6 @@
  */
 
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
-use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Intent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
@@ -148,12 +147,6 @@ class Ps_checkout extends PaymentModule
      */
     public function install()
     {
-        $stateDatas = [
-            'unremovable' => 1,
-            'send_email' => 1,
-            'logable' => 1,
-        ];
-        $langDatas['template'] = 'authorize';
         // Install for both 1.7 and 1.6
         $defaultInstall = parent::install() &&
             (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops() &&

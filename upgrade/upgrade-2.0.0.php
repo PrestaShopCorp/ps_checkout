@@ -35,15 +35,9 @@ function upgrade_module_2_0_0($module)
 {
     $clearer = new \PrestaShop\PrestaShop\Adapter\Cache\Clearer\SymfonyCacheClearer();
     $clearer->clear();
+    $authorizeOrderState = $module->getService('ps_checkout.provider.orderstate').createAuthorizeOrderState();
 
-    $stateDatas = [
-        'unremovable' => 1,
-        'send_email' => 1,
-        'logable' => 1,
-    ];
-    $langDatas['template'] = 'authorize';
-
-    return (bool) (new PrestaShop\Module\PrestashopCheckout\OrderStates())->updateState('PS_CHECKOUT_STATE_AUTHORIZED', $stateDatas, $langDatas)
+    return (bool) $module->getService('ps_checkout.repository.orderstate').add([$authorizeOrderState])
         && (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_MAX_FILES, '15')
         && (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_LEVEL, \Monolog\Logger::ERROR)
         && (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP, '1')

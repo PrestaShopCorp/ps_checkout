@@ -21,18 +21,34 @@
 namespace PrestaShop\Module\PrestashopCheckout\OrderState;
 
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
+use PrestaShop\Module\PrestashopCheckout\Translations\OrderStatesTranslations;
 
 class OrderStateProvider
 {
+    const ORDER_STATE_ICON_FOLDER = '/views/img/OrderStatesIcons/';
+
+    /**
+     * @var string
+     */
+    private $moduleName;
+
+    /**
+     * @param string $moduleName
+     */
+    public function __construct($moduleName)
+    {
+        $this->moduleName = $moduleName;
+    }
+
     /**
      * @param string $moduleName
      *
-     * @return array
+     * @return OrderState[]
      */
-    public function createDefaultPayPalOrderStates($moduleName)
+    public function createDefaultPayPalOrderStates()
     {
         $orderStates = [];
-        $iconFolder = _PS_MODULE_DIR_ . $moduleName . '/views/img/OrderStatesIcons/';
+        $iconFolder = _PS_MODULE_DIR_ . $this->moduleName . self::ORDER_STATE_ICON_FOLDER;
         $class = new \ReflectionClass("\PrestaShop\Module\PrestashopCheckout\Translations\OrderStatesTranslations");
 
         foreach (OrderStates::ORDER_STATES as $configurationKey => $color) {
@@ -44,17 +60,30 @@ class OrderStateProvider
                 $class->getConstant($configurationKey), $color, $iconFolder . $icon);
         }
 
-        //add a specific Order State
-        $authorizeOrderState = new MailOrderState(
-            OrderStates::PS_CHECKOUT_STATE_AUTHORIZED,
-            $class->getConstant(OrderStates::PS_CHECKOUT_STATE_AUTHORIZED),
-            OrderStates::BLUE_HEXA_COLOR,
-            $iconFolder . 'waiting.gif',
-            'authorize'
-        );
-
-        $orderStates[] = $authorizeOrderState;
+        $orderStates[] = $this->createAuthorizeOrderState();
 
         return $orderStates;
+    }
+
+    /**
+     * @return MailOrderState
+     */
+    public function createAuthorizeOrderState()
+    {
+        return new MailOrderState(
+            OrderStates::PS_CHECKOUT_STATE_AUTHORIZED,
+            OrderStatesTranslations::PS_CHECKOUT_STATE_AUTHORIZED,
+            OrderStates::BLUE_HEXA_COLOR,
+            $this->getIconFolder() . 'waiting.gif',
+            'authorize'
+        );
+    }
+
+    /**
+     * @return string
+     */
+    private function getIconFolder()
+    {
+        return _PS_MODULE_DIR_ . $this->moduleName . self::ORDER_STATE_ICON_FOLDER;
     }
 }
