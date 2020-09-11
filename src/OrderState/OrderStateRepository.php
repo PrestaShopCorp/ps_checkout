@@ -197,7 +197,7 @@ class OrderStateRepository
         }
 
         if (false === (bool) \Tools::copy($orderState->getIcon(), _PS_ORDER_STATE_IMG_DIR_ . $orderStateId . '.gif')) {
-            throw new OrderStateException(sprintf('Failed to copy icon of OrderState %s', $orderState->getConfigurationKey()),OrderStateException::ORDER_STATE_ICON_NOT_COPIED);
+            throw new OrderStateException(sprintf('Failed to copy icon of OrderState %s', $orderState->getConfigurationKey()), OrderStateException::ORDER_STATE_ICON_NOT_COPIED);
         }
 
         return $result;

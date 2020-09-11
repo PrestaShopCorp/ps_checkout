@@ -465,7 +465,7 @@ class OrderState
         $this->id = $orderStatePS->id;
 
         if (false === (bool) \Tools::copy($this->icon, _PS_ORDER_STATE_IMG_DIR_ . $this->id . '.gif')) {
-            throw new OrderStateException(sprintf('Failed to copy icon of OrderState %s', $this->getConfigurationKey()),OrderStateException::ORDER_STATE_ICON_NOT_COPIED);
+            throw new OrderStateException(sprintf('Failed to copy icon of OrderState %s', $this->getConfigurationKey()), OrderStateException::ORDER_STATE_ICON_NOT_COPIED);
         }
 
         return true;

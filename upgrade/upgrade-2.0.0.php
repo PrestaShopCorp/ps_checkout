@@ -35,9 +35,9 @@ function upgrade_module_2_0_0($module)
 {
     $clearer = new \PrestaShop\PrestaShop\Adapter\Cache\Clearer\SymfonyCacheClearer();
     $clearer->clear();
-    $authorizeOrderState = $module->getService('ps_checkout.provider.orderstate').createAuthorizeOrderState();
+    $authorizeOrderState = $module->getService('ps_checkout.provider.orderstate')->createAuthorizeOrderState();
 
-    return (bool) $module->getService('ps_checkout.repository.orderstate').add([$authorizeOrderState])
+    return (bool) $module->getService('ps_checkout.repository.orderstate')->add([$authorizeOrderState])
         && (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_MAX_FILES, '15')
         && (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_LEVEL, \Monolog\Logger::ERROR)
         && (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP, '1')
