@@ -105,11 +105,17 @@ class OrderState
     private $deleted;
 
     /**
+     * @var string
+     */
+    private $icon;
+
+    /**
      * @param string $configurationKey
      * @param array $name
      * @param string $color
+     * @param string $iconPath
      */
-    public function __construct($configurationKey, array $name, $color)
+    public function __construct($configurationKey, array $name, $color, $iconPath)
     {
         $this->configurationKey = $configurationKey;
         $this->setName($name);
@@ -126,6 +132,7 @@ class OrderState
         $this->template = '';
         $this->deleted = false;
         $this->unremovable = true;
+        $this->setIcon($iconPath);
     }
 
     /**
@@ -405,6 +412,25 @@ class OrderState
     }
 
     /**
+     * @return string
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    /**
+     * @param string $icon
+     */
+    public function setIcon($icon)
+    {
+        if (false === (bool) \Tools::file_exists_cache($icon)) {
+            throw new OrderStateException(sprintf('Failed to find icon file of OrderState %s at the path %s', $this->getConfigurationKey(), $icon), OrderStateException::ORDER_STATE_INVALID_ICON_PATH);
+        }
+        $this->icon = $icon;
+    }
+
+    /**
      * @param string $moduleName
      *
      * @return bool
@@ -437,6 +463,10 @@ class OrderState
             throw new OrderStateException(sprintf('Failed to create OrderState %s', $this->configurationKey), OrderStateException::ORDER_STATE_NOT_CREATED);
         }
         $this->id = $orderStatePS->id;
+
+        if (false === (bool) \Tools::copy($this->icon, _PS_ORDER_STATE_IMG_DIR_ . $this->id . '.gif')) {
+            throw new OrderStateException(sprintf('Failed to copy icon of OrderState %s', $this->getConfigurationKey()),OrderStateException::ORDER_STATE_ICON_NOT_COPIED);
+        }
 
         return true;
     }

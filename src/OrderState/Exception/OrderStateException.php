@@ -30,4 +30,6 @@ class OrderStateException extends \Exception
     const ORDER_STATE_INVALID_ID = 5;
     const ORDER_STATE_NOT_UPDATED = 6;
     const ORDER_STATE_CONFIGURATION_NOT_DELETED = 7;
+    const ORDER_STATE_INVALID_ICON_PATH = 8;
+    const ORDER_STATE_ICON_NOT_COPIED = 9;
 }

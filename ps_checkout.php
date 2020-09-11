@@ -185,11 +185,16 @@ class Ps_checkout extends PaymentModule
     public function installOrderStates()
     {
         $orderStates = [];
+        $iconFolder = _PS_MODULE_DIR_ . $this->name . '/views/img/OrderStatesIcons/';
         $class = new ReflectionClass("\PrestaShop\Module\PrestashopCheckout\Translations\OrderStatesTranslations");
 
         foreach (OrderStates::ORDER_STATES as $configurationKey => $color) {
+            $icon = 'waiting.gif';
+            if ($configurationKey === OrderStates::PS_CHECKOUT_STATE_PARTIAL_REFUND) {
+                $icon = 'refund.gif';
+            }
             $orderStates[] = new PrestaShop\Module\PrestashopCheckout\OrderState\OrderState($configurationKey,
-                $class->getConstant($configurationKey), $color);
+                $class->getConstant($configurationKey), $color, $iconFolder . $icon);
         }
 
         //add a specific Order State
@@ -197,6 +202,7 @@ class Ps_checkout extends PaymentModule
             OrderStates::PS_CHECKOUT_STATE_AUTHORIZED,
             $class->getConstant(OrderStates::PS_CHECKOUT_STATE_AUTHORIZED),
             OrderStates::BLUE_HEXA_COLOR,
+            $iconFolder . 'waiting.gif',
             'authorize'
         );
 

@@ -26,10 +26,11 @@ class ShipOrderState extends OrderState
      * @param string $configurationKey
      * @param array $name
      * @param string $color
+     * @param string $iconPath
      */
-    public function __construct($configurationKey, array $name, $color)
+    public function __construct($configurationKey, array $name, $color, $iconPath)
     {
-        parent::__construct($configurationKey, $name, $color);
+        parent::__construct($configurationKey, $name, $color, $iconPath);
         $this->setShipped(true);
     }
 }

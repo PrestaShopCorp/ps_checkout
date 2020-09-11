@@ -26,11 +26,12 @@ class PaidOrderState extends OrderState
      * @param string $configurationKey
      * @param array $name
      * @param string $color
+     * @param string $iconPath
      * @param bool $logable
      */
-    public function __construct($configurationKey, array $name, $color, $logable = false)
+    public function __construct($configurationKey, array $name, $color, $iconPath, $logable = false)
     {
-        parent::__construct($configurationKey, $name, $color);
+        parent::__construct($configurationKey, $name, $color, $iconPath);
         $this->setPaid(true);
         $this->setLogable($logable);
     }

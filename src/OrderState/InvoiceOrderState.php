@@ -26,11 +26,12 @@ class InvoiceOrderState extends OrderState
      * @param string $configurationKey
      * @param array $name
      * @param string $color
+     * @param string $iconPath
      * @param bool $pdfInvoice
      */
-    public function __construct($configurationKey, array $name, $color, $pdfInvoice = false)
+    public function __construct($configurationKey, array $name, $color, $iconPath, $pdfInvoice = false)
     {
-        parent::__construct($configurationKey, $name, $color);
+        parent::__construct($configurationKey, $name, $color, $iconPath);
         $this->setInvoice(true);
         $this->setPdfInvoice($pdfInvoice);
     }

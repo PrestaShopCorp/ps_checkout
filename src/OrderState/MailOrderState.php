@@ -26,11 +26,12 @@ class MailOrderState extends OrderState
      * @param string $configurationKey
      * @param array $name
      * @param string $color
+     * @param string $iconPath
      * @param string $template
      */
-    public function __construct($configurationKey, array $name, $color, $template = '')
+    public function __construct($configurationKey, array $name, $color, $iconPath, $template = '')
     {
-        parent::__construct($configurationKey, $name, $color);
+        parent::__construct($configurationKey, $name, $color, $iconPath);
         $this->setTemplate($template);
     }
 }

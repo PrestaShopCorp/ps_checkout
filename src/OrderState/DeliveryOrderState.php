@@ -26,11 +26,12 @@ class DeliveryOrderState extends OrderState
      * @param string $configurationKey
      * @param array $name
      * @param string $color
+     * @param string $iconPath
      * @param bool $pdfDelivery
      */
-    public function __construct($configurationKey, array $name, $color, $pdfDelivery = false)
+    public function __construct($configurationKey, array $name, $color, $iconPath, $pdfDelivery = false)
     {
-        parent::__construct($configurationKey, $name, $color);
+        parent::__construct($configurationKey, $name, $color, $iconPath);
         $this->setDelivery(true);
         $this->setPdfDelivery($pdfDelivery);
     }
