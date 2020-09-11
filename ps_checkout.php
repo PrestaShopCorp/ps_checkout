@@ -200,8 +200,6 @@ class Ps_checkout extends PaymentModule
             'authorize'
         );
 
-        $authorizeOrderState->setLogable(true);
-
         $orderStates[] = $authorizeOrderState;
         return (bool) $this->getService('ps_checkout.repository.orderstate')->add($orderStates);
     }
