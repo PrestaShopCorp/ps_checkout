@@ -60,7 +60,7 @@ class Ps_checkout extends PaymentModule
         'displayPersonalInformationTop',
         'actionBeforeCartUpdateQty',
         'header',
-        'displayInvoiceLegalFreeText',
+        'displayInvoiceLegalFreeText'
     ];
 
     /**
@@ -158,6 +158,13 @@ class Ps_checkout extends PaymentModule
 
         if (!$defaultInstall) {
             return false;
+        }
+
+        // Install specific to prestashop 1.7.6
+        if ((new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop176()) {
+            return $this->registerHook(\PrestaShop\PrestaShop\Core\MailTemplate\ThemeCatalogInterface::LIST_MAIL_THEMES_HOOK) &&
+                $this->registerHook(self::HOOK_LIST_17) &&
+                $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1);
         }
 
         // Install specific to prestashop 1.7
@@ -1155,6 +1162,34 @@ class Ps_checkout extends PaymentModule
         }
 
         return $this->display(__FILE__, '/views/templates/hook/displayPaymentTop.tpl');
+    }
+
+    /**
+     * @param array $hookParams
+     */
+    public function hookActionListMailThemes(array $hookParams)
+    {
+        if (!isset($hookParams['mailThemes'])) {
+            return;
+        }
+
+        /** @var \PrestaShop\PrestaShop\Core\MailTemplate\ThemeCollectionInterface $themes */
+        $themes = $hookParams['mailThemes'];
+
+        /** @var \PrestaShop\PrestaShop\Core\MailTemplate\ThemeInterface $theme */
+        foreach ($themes as $theme) {
+            if (!in_array($theme->getName(), ['classic', 'modern'])) {
+                continue;
+            }
+
+            // Add a layout to each theme (don't forget to specify the module name)
+            $theme->getLayouts()->add(new \PrestaShop\PrestaShop\Core\MailTemplate\Layout\Layout(
+                'authorize',
+                __DIR__ . '/mails/layouts/authorize_' . $theme->getName() . '.html',
+                __DIR__.'/mails/layouts/authorize.txt',
+                $this->name
+            ));
+        }
     }
 
     /**
