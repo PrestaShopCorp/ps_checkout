@@ -109,3 +109,6 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\OrderState\OrderStateRepository'
     arguments:
       - '@=service("ps_checkout.module").name'
+
+  ps_checkout.provider.orderstate:
+    class: 'PrestaShop\Module\PrestashopCheckout\OrderState\OrderStateProvider'

@@ -35,19 +35,15 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_2_10($module)
 {
+    /** @var \PrestaShop\Module\PrestashopCheckout\OrderState\OrderStateRepository $orderStateRepository */
+    $orderStateRepository = $module->getService('ps_checkout.repository.orderstate');
+    $orders = [];
     foreach (OrderStates::ORDER_STATES as $key => $value) {
-        $idState = \Configuration::getGlobalValue($key);
-
-        $update = \Db::getInstance()->update(
-            OrderStates::ORDER_STATE_TABLE,
-            ['color' => $value],
-            'module_name = "ps_checkout" AND id_order_state = ' . (int) $idState
-        );
-
-        if ($update !== true) {
-            return false;
-        }
+        $orderState = $orderStateRepository->getOrderState($key);
+        $orderState->setColor($value);
+        $orders[] = $orderState;
     }
+    $orderStateRepository->add($orders);
 
     $shopsList = \Shop::getShops(false, null, true);
 

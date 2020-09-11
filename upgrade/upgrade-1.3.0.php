@@ -30,7 +30,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_3_0($module)
 {
-    return (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates()
+    return $module->getService('ps_checkout.provider.orderstate')->createDefaultPayPalOrderStates($module->name)
         && $module->registerHook('actionObjectShopAddAfter')
         && (new PrestaShop\Module\PrestashopCheckout\MultiStoreFixer())->run();
 }

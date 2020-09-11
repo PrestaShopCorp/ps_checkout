@@ -160,7 +160,6 @@ class Ps_checkout extends PaymentModule
             $this->installConfiguration() &&
             $this->registerHook(self::HOOK_LIST) &&
             $this->installOrderStates() &&
-            //(new PrestaShop\Module\PrestashopCheckout\OrderStates())->updateState('PS_CHECKOUT_STATE_AUTHORIZED', $stateDatas, $langDatas) &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
             $this->installTabs();
 
@@ -184,29 +183,7 @@ class Ps_checkout extends PaymentModule
      */
     public function installOrderStates()
     {
-        $orderStates = [];
-        $iconFolder = _PS_MODULE_DIR_ . $this->name . '/views/img/OrderStatesIcons/';
-        $class = new ReflectionClass("\PrestaShop\Module\PrestashopCheckout\Translations\OrderStatesTranslations");
-
-        foreach (OrderStates::ORDER_STATES as $configurationKey => $color) {
-            $icon = 'waiting.gif';
-            if ($configurationKey === OrderStates::PS_CHECKOUT_STATE_PARTIAL_REFUND) {
-                $icon = 'refund.gif';
-            }
-            $orderStates[] = new PrestaShop\Module\PrestashopCheckout\OrderState\OrderState($configurationKey,
-                $class->getConstant($configurationKey), $color, $iconFolder . $icon);
-        }
-
-        //add a specific Order State
-        $authorizeOrderState = new \PrestaShop\Module\PrestashopCheckout\OrderState\MailOrderState(
-            OrderStates::PS_CHECKOUT_STATE_AUTHORIZED,
-            $class->getConstant(OrderStates::PS_CHECKOUT_STATE_AUTHORIZED),
-            OrderStates::BLUE_HEXA_COLOR,
-            $iconFolder . 'waiting.gif',
-            'authorize'
-        );
-
-        $orderStates[] = $authorizeOrderState;
+        $orderStates = $this->getService('ps_checkout.provider.orderstate')->createDefaultPayPalOrderStates($this->name);
 
         return (bool) $this->getService('ps_checkout.repository.orderstate')->add($orderStates);
     }

@@ -143,7 +143,7 @@ class OrderStateRepository
         $orderStateId = $this->getOrderStateId($configurationKey);
         $orderStatePS = $this->getOrderStateById($orderStateId);
 
-        $orderState = new OrderState($configurationKey, [], $orderStatePS->color);
+        $orderState = new OrderState($configurationKey, [], $orderStatePS->color, $this->getImagePath($orderStateId));
         $orderState->setLogable($orderStatePS->logable);
         $orderState->setPaid($orderStatePS->paid);
         $orderState->setInvoice($orderStatePS->invoice);
@@ -268,5 +268,15 @@ class OrderStateRepository
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $orderStateId
+     *
+     * @return string
+     */
+    private function getImagePath($orderStateId)
+    {
+        return _PS_ORDER_STATE_IMG_DIR_ . $orderStateId . '.gif';
     }
 }
