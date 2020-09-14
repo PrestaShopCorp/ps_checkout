@@ -30,5 +30,9 @@ parameters:
 		- '#Call to an undefined method AdminController\|FrontController::registerStylesheet\(\)#'
 		- '#Method LinkCore::getAdminLink\(\) invoked with 4 parameters, 1-2 required.#'
 		- '#Static method ConfigurationCore::get\(\) invoked with 5 parameters, 1-4 required.#'
+		- '#PrestaShop\PrestaShop\Core\MailTemplate\ThemeCatalogInterface#'
+		- '#PrestaShop\PrestaShop\Core\MailTemplate\ThemeCollectionInterface#'
+		- '#PrestaShop\PrestaShop\Core\MailTemplate\ThemeInterface#'
+		- '#PrestaShop\PrestaShop\Core\MailTemplate\Layout\Layout#'
 
 	level: 2
