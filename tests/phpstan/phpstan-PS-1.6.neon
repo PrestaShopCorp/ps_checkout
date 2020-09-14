@@ -22,6 +22,12 @@ parameters:
 		- '#Access to an undefined property PaymentModule::\$currentOrderReference.#'
 		- '#Property CustomerCore::\$passwd \(int\) does not accept bool\|string.#'
 		- '#Parameter \#4 \$ssl of method LinkCore::getModuleLink\(\) expects null, true given.#'
+		- '#Access to constant LIST_MAIL_THEMES_HOOK on an unknown class PrestaShop\PrestaShop\Core\MailTemplate\ThemeCatalogInterface.#'
+		- '#PHPDoc tag @var for variable $themes contains unknown class PrestaShop\PrestaShop\Core\MailTemplate\ThemeCollectionInterface.#'
+		- '#PHPDoc tag @var for variable $theme contains unknown class PrestaShop\PrestaShop\Core\MailTemplate\ThemeInterface.#'
+		- '#Call to method getName() on an unknown class PrestaShop\PrestaShop\Core\MailTemplate\ThemeInterface.#'
+		- '#Call to method getLayouts() on an unknown class PrestaShop\PrestaShop\Core\MailTemplate\ThemeInterface.#'
+		- '#Instantiated class PrestaShop\PrestaShop\Core\MailTemplate\Layout\Layout not found.#'
 
 		# Ignore errors with classes from PS 1.7
 		- '#CheckoutPaymentStep#'
@@ -30,9 +36,5 @@ parameters:
 		- '#Call to an undefined method AdminController\|FrontController::registerStylesheet\(\)#'
 		- '#Method LinkCore::getAdminLink\(\) invoked with 4 parameters, 1-2 required.#'
 		- '#Static method ConfigurationCore::get\(\) invoked with 5 parameters, 1-4 required.#'
-		- '#PrestaShop\PrestaShop\Core\MailTemplate\ThemeCatalogInterface#'
-		- '#PrestaShop\PrestaShop\Core\MailTemplate\ThemeCollectionInterface#'
-		- '#PrestaShop\PrestaShop\Core\MailTemplate\ThemeInterface#'
-		- '#PrestaShop\PrestaShop\Core\MailTemplate\Layout\Layout#'
 
 	level: 2
