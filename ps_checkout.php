@@ -22,6 +22,10 @@ use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Intent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
+use PrestaShop\PrestaShop\Core\MailTemplate\Layout\Layout;
+use PrestaShop\PrestaShop\Core\MailTemplate\ThemeCatalogInterface;
+use PrestaShop\PrestaShop\Core\MailTemplate\ThemeCollectionInterface;
+use PrestaShop\PrestaShop\Core\MailTemplate\ThemeInterface;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -60,7 +64,7 @@ class Ps_checkout extends PaymentModule
         'displayPersonalInformationTop',
         'actionBeforeCartUpdateQty',
         'header',
-        'displayInvoiceLegalFreeText'
+        'displayInvoiceLegalFreeText',
     ];
 
     /**
@@ -162,7 +166,7 @@ class Ps_checkout extends PaymentModule
 
         // Install specific to prestashop 1.7.6
         if ((new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop176()) {
-            return $this->registerHook(\PrestaShop\PrestaShop\Core\MailTemplate\ThemeCatalogInterface::LIST_MAIL_THEMES_HOOK) &&
+            return $this->registerHook(ThemeCatalogInterface::LIST_MAIL_THEMES_HOOK) &&
                 $this->registerHook(self::HOOK_LIST_17) &&
                 $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1);
         }
@@ -1173,20 +1177,20 @@ class Ps_checkout extends PaymentModule
             return;
         }
 
-        /** @var \PrestaShop\PrestaShop\Core\MailTemplate\ThemeCollectionInterface $themes */
+        /** @var ThemeCollectionInterface $themes */
         $themes = $hookParams['mailThemes'];
 
-        /** @var \PrestaShop\PrestaShop\Core\MailTemplate\ThemeInterface $theme */
+        /** @var ThemeInterface $theme */
         foreach ($themes as $theme) {
             if (!in_array($theme->getName(), ['classic', 'modern'])) {
                 continue;
             }
 
             // Add a layout to each theme (don't forget to specify the module name)
-            $theme->getLayouts()->add(new \PrestaShop\PrestaShop\Core\MailTemplate\Layout\Layout(
+            $theme->getLayouts()->add(new Layout(
                 'authorize',
                 __DIR__ . '/mails/layouts/authorize_' . $theme->getName() . '.html',
-                __DIR__.'/mails/layouts/authorize.txt',
+                __DIR__ . '/mails/layouts/authorize.txt',
                 $this->name
             ));
         }

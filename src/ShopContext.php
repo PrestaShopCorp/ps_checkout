@@ -59,6 +59,6 @@ class ShopContext
 
     public function isShop176()
     {
-        return version_compare( _PS_VERSION_, '1.7.6.0', '>=');
+        return version_compare(_PS_VERSION_, '1.7.6.0', '>=');
     }
 }
