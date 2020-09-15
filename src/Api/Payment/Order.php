@@ -94,7 +94,63 @@ class Order extends PaymentClient
      */
     public function authorize($orderId, $merchantId)
     {
+        /*$this->setRoute('/payments/order/authorize');
+        return $this->post([
+            'json' => json_encode([
+                'mode' => 'paypal',
+                'orderId' => (string) $orderId,
+                'payee' => [
+                    'merchant_id' => $merchantId,
+                ],
+            ]),
+        ]);*/
         // TODO : waiting maasland integration
+        return [];
+    }
+
+    /**
+     * Capture an authorize order
+     *
+     * @param string $authorizeId
+     * @param string $merchantId
+     *
+     * @return array
+     */
+    public function captureAuthorize($authorizeId, $merchantId)
+    {
+        /*$this->setRoute('/payments/order/capture_authorization');
+        return $this->post([
+            'json' => json_encode([
+                'authorizationId' => (string) $authorizeId,
+                'payee' => [
+                    'merchant_id' => $merchantId,
+                ],
+            ]),
+        ]);*/
+        // TODO : waiting massland integration
+        return [];
+    }
+
+    /**
+     * Void an authorize order
+     *
+     * @param string $authorizeId
+     * @param string $merchantId
+     *
+     * @return array
+     */
+    public function void($authorizeId, $merchantId)
+    {
+        /*$this->setRoute('/payments/order/void');
+        return $this->post([
+            'json' => json_encode([
+                'authorizationId' => (string) $authorizeId,
+                'payee' => [
+                    'merchant_id' => $merchantId,
+                ],
+            ]),
+        ]);*/
+        // TODO : waiting massland integration
         return [];
     }
 

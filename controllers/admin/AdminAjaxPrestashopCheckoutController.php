@@ -366,6 +366,89 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         ]));
     }
 
+    public function ajaxProcessVoidOrder()
+    {
+        $orderPayPalId = Tools::getValue('orderPayPalOrder');
+        $transactionPayPalId = Tools::getValue('orderPayPalTransaction');
+
+        if (empty($orderPayPalId) || false === Validate::isGenericName($orderPayPalId)) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    $this->l('PayPal Order is invalid.', 'translations'),
+                ],
+            ]));
+        }
+
+        if (empty($transactionPayPalId) || false === Validate::isGenericName($transactionPayPalId)) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    $this->l('PayPal Transaction is invalid.', 'translations'),
+                ],
+            ]));
+        }
+
+        $response = (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order($this->context->link))->void($transactionPayPalId, (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->getMerchantId());
+
+        if (isset($response['httpCode']) && $response['httpCode'] === 200) {
+            $this->ajaxDie(json_encode([
+                'status' => true,
+                'content' => $this->l('Order has been capture by PayPal.', 'translations'),
+            ]));
+        } else {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    $this->l('Order cannot be capture by PayPal.', 'translations'),
+                ],
+            ]));
+        }
+    }
+
+    /**
+     * @todo To be refactored with Service Container
+     */
+    public function ajaxProcessCaptureAuthorizeOrder()
+    {
+        $orderPayPalId = Tools::getValue('orderPayPalOrder');
+        $transactionPayPalId = Tools::getValue('orderPayPalTransaction');
+
+        if (empty($orderPayPalId) || false === Validate::isGenericName($orderPayPalId)) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    $this->l('PayPal Order is invalid.', 'translations'),
+                ],
+            ]));
+        }
+
+        if (empty($transactionPayPalId) || false === Validate::isGenericName($transactionPayPalId)) {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    $this->l('PayPal Transaction is invalid.', 'translations'),
+                ],
+            ]));
+        }
+
+        $response = (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order($this->context->link))->captureAuthorize($transactionPayPalId, (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->getMerchantId());
+
+        if (isset($response['httpCode']) && $response['httpCode'] === 200) {
+            $this->ajaxDie(json_encode([
+                'status' => true,
+                'content' => $this->l('Order has been capture by PayPal.', 'translations'),
+            ]));
+        } else {
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    $this->l('Order cannot be capture by PayPal.', 'translations'),
+                ],
+            ]));
+        }
+    }
+
     /**
      * @todo To be refactored with Service Container
      */

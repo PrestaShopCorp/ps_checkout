@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Order;
 
+use PrestaShop\Module\PrestashopCheckout\PayPal\Intent;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Date\DatePresenter;
 
 class OrderPresenter
@@ -107,6 +108,7 @@ class OrderPresenter
         }
 
         $transactions = [];
+        $isAuthorize = $this->orderPayPal['intent'] === Intent::AUTHORIZE;
 
         foreach ($this->orderPayPal['purchase_units'] as $purchase) {
             if (empty($purchase['payments'])) {
@@ -126,6 +128,7 @@ class OrderPresenter
                         'currency' => $refund['amount']['currency_code'],
                         'date' => (new DatePresenter($refund['create_time'], 'Y-m-d H:i:s'))->present(),
                         'isRefundable' => false,
+                        'isAuthorize' => $isAuthorize,
                         'maxAmountRefundable' => 0,
                     ];
                 }
@@ -142,6 +145,7 @@ class OrderPresenter
                         'currency' => $payment['amount']['currency_code'],
                         'date' => (new DatePresenter($payment['create_time'], 'Y-m-d H:i:s'))->present(),
                         'isRefundable' => in_array($payment['status'], ['COMPLETED', 'PARTIALLY_REFUNDED']),
+                        'isAuthorize' => $isAuthorize,
                         'maxAmountRefundable' => $maxAmountRefundable > 0 ? $maxAmountRefundable : 0,
                     ];
                 }

@@ -76,21 +76,117 @@
           {$orderPayPalTransaction.amount|escape:'html':'UTF-8'} {$orderPayPalTransaction.currency|escape:'html':'UTF-8'}
         </td>
         <td class="text-right">
-          {if $orderPayPalTransaction.isRefundable}
-            <button type="button" class="btn btn-primary btn-sm refund" data-transaction-id="{$orderPayPalTransaction.id|escape:'html':'UTF-8'}">
-              {l s='Refund' mod='ps_checkout'}
+          {if $orderPayPalTransaction.isAuthorize}
+            <button type="button" class="btn btn-primary btn-sm capture" data-transaction-id="{$orderPayPalTransaction.id|escape:'html':'UTF-8'}">
+              <i class="material-icons mr-1">credit_card</i>{l s='CAPTURE PAYMENT' mod='ps_checkout'}
             </button>
+            <button type="button" class="btn btn-link void" data-transaction-id="{$orderPayPalTransaction.id|escape:'html':'UTF-8'}">
+              {l s='Void order' mod='ps_checkout'}
+            </button>
+          {else}
+            {if $orderPayPalTransaction.isRefundable}
+              <button type="button" class="btn btn-primary btn-sm refund" data-transaction-id="{$orderPayPalTransaction.id|escape:'html':'UTF-8'}">
+                {l s='Refund' mod='ps_checkout'}
+              </button>
+            {/if}
+            <a class="btn btn-sm btn-outline-secondary" target="_blank" href="https://www.paypal.com/activity/payment/{$orderPayPalTransaction.id|escape:'html':'UTF-8'}">
+              {l s='Details' mod='ps_checkout'}
+            </a>
           {/if}
-          <a class="btn btn-sm btn-outline-secondary" target="_blank" href="https://www.paypal.com/activity/payment/{$orderPayPalTransaction.id|escape:'html':'UTF-8'}">
-            {l s='Details' mod='ps_checkout'}
-          </a>
         </td>
       </tr>
     {/foreach}
     </tbody>
   </table>
   {foreach $orderPayPal.transactions as $orderPayPalTransaction}
-    {if $orderPayPalTransaction.isRefundable}
+    {if $orderPayPalTransaction.isAuthorize}
+      <div id="ps-checkout-capture-{$orderPayPalTransaction.id|escape:'html':'UTF-8'}" class="modal fade ps-checkout-capture" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <form action="{$orderPayPalBaseUrl|escape:'html':'UTF-8'}" method="POST" class="form-horizontal ps-checkout-capture-form">
+              <div class="modal-header">
+                <h5 class="modal-title">
+                  {l s='Capture payment to complete the order' mod='ps_checkout'}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="{l s='Cancel' mod='ps_checkout'}">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body mb-2">
+                <div class="modal-notifications">
+                </div>
+                <div class="modal-content-container">
+                  <input name="ajax" type="hidden" value="1">
+                  <input name="action" type="hidden" value="CaptureOrder">
+                  <input name="orderPayPalCaptureTransaction" type="hidden" value="{$orderPayPalTransaction.id|escape:'html':'UTF-8'}">
+                  <input name="orderPayPalCaptureOrder" type="hidden" value="{$orderPayPal.id|escape:'html':'UTF-8'}">
+                  <p class="text-muted">
+                    {l s="You're about to capture the payment from order {$orderPayPal.id|escape:'html':'UTF-8'}" mod='ps_checkout'}
+                  </p>
+                  <p>
+                    {l s="The amount is {$orderPayPalTransaction.amount|escape:'html':'UTF-8'} {$orderPayPalTransaction.currency|escape:'html':'UTF-8'}" mod='ps_checkout'}
+                  </p>
+                </div>
+                <div class="modal-loader text-center">
+                  <button class="btn-primary-reverse onclick unbind spinner"></button>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+                  {l s='Cancel' mod='ps_checkout'}
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  {l s='CAPTURE PAYMENT' mod='ps_checkout'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div id="ps-checkout-void-{$orderPayPalTransaction.id|escape:'html':'UTF-8'}" class="modal fade ps-checkout-void" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <form action="{$orderPayPalBaseUrl|escape:'html':'UTF-8'}" method="POST" class="form-horizontal ps-checkout-void-form">
+              <div class="modal-header">
+                <h5 class="modal-title">
+                  {l s='Void payment to cancel the order' mod='ps_checkout'}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="{l s='Cancel' mod='ps_checkout'}">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body mb-2">
+                <div class="modal-notifications">
+                </div>
+                <div class="modal-content-container">
+                  <input name="ajax" type="hidden" value="1">
+                  <input name="action" type="hidden" value="VoidOrder">
+                  <input name="orderPayPalTransaction" type="hidden" value="{$orderPayPalTransaction.id|escape:'html':'UTF-8'}">
+                  <input name="orderPayPalOrder" type="hidden" value="{$orderPayPal.id|escape:'html':'UTF-8'}">
+                  <p class="text-muted">
+                    {l s="You're about to void the payment from order {$orderPayPal.id|escape:'html':'UTF-8'}" mod='ps_checkout'}
+                  </p>
+                  <p>
+                    {l s="The amount is {$orderPayPalTransaction.amount|escape:'html':'UTF-8'} {$orderPayPalTransaction.currency|escape:'html':'UTF-8'}" mod='ps_checkout'}
+                  </p>
+                </div>
+                <div class="modal-loader text-center">
+                  <button class="btn-primary-reverse onclick unbind spinner"></button>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+                  {l s='Cancel' mod='ps_checkout'}
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  {l s='VOID PAYMENT' mod='ps_checkout'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    {elseif $orderPayPalTransaction.isRefundable}
       {assign var="maxAmountRefundable" value=$orderPayPalTransaction.maxAmountRefundable|string_format:"%.2f"}
       {assign var="orderPayPalRefundAmountIdentifier" value='orderPayPalRefundAmount'|cat:$orderPayPalTransaction.id}
       <div id="ps-checkout-refund-{$orderPayPalTransaction.id|escape:'html':'UTF-8'}" class="modal fade ps-checkout-refund" tabindex="-1" role="dialog">

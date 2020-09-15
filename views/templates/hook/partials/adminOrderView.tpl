@@ -33,6 +33,14 @@
       orderPayPalModalContentContainer: '.modal-content-container',
       orderPayPalModalLoaderContainer: '.modal-loader',
       orderPayPalModalRefundForm: '.ps-checkout-refund-form',
+      orderPayPalCaptureButton: '#ps_checkout button.capture',
+      orderPayPalModalCaptureContainerPrefix: '#ps-checkout-capture-',
+      orderPayPalModalCaptureForm: '.ps-checkout-capture-form',
+      orderPayPalModalCaptureContainer: '.ps-checkout-capture',
+      orderPayPalVoidButton: '#ps_checkout button.void',
+      orderPayPalModalVoidContainerPrefix: '#ps-checkout-void-',
+      orderPayPalModalVoidForm: '.ps-checkout-void-form',
+      orderPayPalModalVoidContainer: '.ps-checkout-void',
     });
   }
 </script>
