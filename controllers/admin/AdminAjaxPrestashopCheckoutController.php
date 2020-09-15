@@ -366,6 +366,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         ]));
     }
 
+    /**
+     * @todo To be refactored with Service Container
+     */
     public function ajaxProcessVoidOrder()
     {
         $orderPayPalId = Tools::getValue('orderPayPalOrder');

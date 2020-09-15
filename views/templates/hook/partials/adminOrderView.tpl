@@ -28,7 +28,7 @@
       orderPayPalNotificationsContainer: '.paypal-order-notifications',
       orderPayPalRefundButton: '#ps_checkout button.refund',
       orderPayPalModalContainerPrefix: '#ps-checkout-refund-',
-      orderPayPalModalContainer: '.ps-checkout-refund',
+      orderPayPalModalContainer: '.ps-checkout-order',
       orderPayPalModalNotificationsContainer: '.modal-notifications',
       orderPayPalModalContentContainer: '.modal-content-container',
       orderPayPalModalLoaderContainer: '.modal-loader',
@@ -36,11 +36,10 @@
       orderPayPalCaptureButton: '#ps_checkout button.capture',
       orderPayPalModalCaptureContainerPrefix: '#ps-checkout-capture-',
       orderPayPalModalCaptureForm: '.ps-checkout-capture-form',
-      orderPayPalModalCaptureContainer: '.ps-checkout-capture',
+      orderPayPalModalCaptureContainer: '.ps-checkout-order',
       orderPayPalVoidButton: '#ps_checkout button.void',
       orderPayPalModalVoidContainerPrefix: '#ps-checkout-void-',
       orderPayPalModalVoidForm: '.ps-checkout-void-form',
-      orderPayPalModalVoidContainer: '.ps-checkout-void',
     });
   }
 </script>

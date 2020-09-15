@@ -22,6 +22,101 @@ let ps_checkout = {};
 const {$} = window;
 
 (function() {
+  let orderRequestFetchDone = function(orderPayPalContainer, orderPayPalLoaderContainer, payPalOrderNotification, data) {
+    if (undefined !== data.content) {
+      $(orderPayPalContainer).append(data.content);
+    }
+
+    if (undefined !== data.errors) {
+      for (const error of data.errors) {
+        $(orderPayPalContainer).append(payPalOrderNotification.createErrorHTMLElement({
+          text: error,
+          class: 'danger',
+        }));
+      }
+    }
+
+    $(orderPayPalLoaderContainer).hide();
+  }
+
+  let orderRequestDone = function(modal, modalNotificationContainer, modalSubmitButton, modalLoaderContainer, payPalOrderNotification, config, data) {
+    if (undefined !== data.content) {
+      let payPalOrderFetcher = new PayPalOrderFetcher(config);
+
+      modal.on('hidden.bs.modal', function () {
+        $(config.orderPayPalNotificationsContainer).append(payPalOrderNotification.createErrorHTMLElement({
+          text: data.content,
+          class: 'success',
+        }));
+
+        $(config.orderPayPalContainer).empty();
+        $(config.orderPayPalLoaderContainer).show();
+
+        payPalOrderFetcher.execute();
+      });
+
+      modal.modal('hide');
+    }
+
+    if (undefined !== data.errors) {
+      for (const error of data.errors) {
+        $(modalNotificationContainer).append(payPalOrderNotification.createErrorHTMLElement({
+          text: error,
+          class: 'danger',
+        }));
+
+        modalSubmitButton.prop('disabled', false);
+      }
+    }
+
+    $(modalLoaderContainer).hide();
+  }
+
+  let orderRequestFail = function(orderPayPalNotificationsContainer, orderPayPalLoaderContainer, payPalOrderNotification, jqXHR, errorThrown) {
+    $(orderPayPalNotificationsContainer).append(payPalOrderNotification.createErrorHTMLElement({
+      text: errorThrown,
+      class: 'danger',
+    }));
+
+    if (undefined !== jqXHR.responseJSON && undefined !== jqXHR.responseJSON.content) {
+      $(orderPayPalNotificationsContainer).append(payPalOrderNotification.createErrorHTMLElement({
+        text: jqXHR.responseJSON.content,
+        class: 'danger',
+      }));
+    }
+
+    $(orderPayPalLoaderContainer).hide();
+  }
+
+  let submitForm = function(event, config, element) {
+    event.preventDefault();
+    const modal = element.parents(config.orderPayPalModalContainer);
+    const modalNotificationContainer = modal.find(config.orderPayPalModalNotificationsContainer);
+    const modalLoaderContainer = modal.find(config.orderPayPalModalLoaderContainer);
+    const modalSubmitButton = element.find('button[type="submit"]');
+    const payPalOrderNotification = new PayPalOrderNotification();
+
+    $(modalLoaderContainer).show();
+    modalSubmitButton.prop('disabled', true);
+
+    let payPalRequest = $.ajax({
+      type: 'POST',
+      headers: {"cache-control": "no-cache"},
+      cache: false,
+      dataType: 'json',
+      url: `${config.orderPayPalBaseUrl}&rand=${new Date().getTime()}`,
+      data: element.serialize(),
+    });
+
+    payPalRequest.done(function(data) {
+      orderRequestDone(modal, modalNotificationContainer, modalSubmitButton, modalLoaderContainer, payPalOrderNotification, config, data);
+    });
+
+    payPalRequest.fail(function(jqXHR, textStatus, errorThrown) {
+      orderRequestFail(modalNotificationContainer, modalLoaderContainer, payPalOrderNotification, jqXHR, errorThrown);
+    });
+  }
+
   /**
    * @param {object} config
    * @param {boolean} config.legacy - Use legacy style
@@ -30,18 +125,11 @@ const {$} = window;
    * @param {string} config.orderPayPalContainer - HTML element identifier
    * @param {string} config.orderPayPalLoaderContainer - HTML element identifier
    * @param {string} config.orderPayPalNotificationsContainer - HTML element identifier
-   * @param {string} config.orderPayPalRefundButton - HTML element identifier
-   * @param {string} config.orderPayPalModalContainerPrefix - HTML element identifier
-   * @param {string} config.orderPayPalModalContainer - HTML element identifier
-   * @param {string} config.orderPayPalModalNotificationsContainer - HTML element identifier
-   * @param {string} config.orderPayPalModalContentContainer - HTML element identifier
-   * @param {string} config.orderPayPalModalLoaderContainer - HTML element identifier
-   * @param {string} config.orderPayPalModalRefundForm - HTML element identifier
    * @constructor
    */
   let PayPalOrderFetcher = function(config) {
     this.execute = function() {
-      let payPalOrderNotification = new PayPalOrderNotification(config);
+      let payPalOrderNotification = new PayPalOrderNotification();
       let payPalOrderRequest = $.ajax({
         type: 'POST',
         headers: {"cache-control": "no-cache"},
@@ -57,36 +145,11 @@ const {$} = window;
       });
 
       payPalOrderRequest.done(function(data) {
-        if (undefined !== data.content) {
-          $(config.orderPayPalContainer).append(data.content);
-        }
-
-        if (undefined !== data.errors) {
-          for (const error of data.errors) {
-            $(config.orderPayPalContainer).append(payPalOrderNotification.createErrorHTMLElement({
-              text: error,
-              class: 'danger',
-            }));
-          }
-        }
-
-        $(config.orderPayPalLoaderContainer).hide();
+        orderRequestFetchDone(config.orderPayPalContainer, config.orderPayPalLoaderContainer, payPalOrderNotification, data);
       });
 
       payPalOrderRequest.fail(function(jqXHR, textStatus, errorThrown) {
-        $(config.orderPayPalNotificationsContainer).append(payPalOrderNotification.createErrorHTMLElement({
-          text: errorThrown,
-          class: 'danger',
-        }));
-
-        if (undefined !== jqXHR.responseJSON && undefined !== jqXHR.responseJSON.content) {
-          $(config.orderPayPalNotificationsContainer).append(payPalOrderNotification.createErrorHTMLElement({
-            text: jqXHR.responseJSON.content,
-            class: 'danger',
-          }));
-        }
-
-        $(config.orderPayPalLoaderContainer).hide();
+        orderRequestFail(config.orderPayPalNotificationsContainer, config.orderPayPalLoaderContainer, payPalOrderNotification, jqXHR, errorThrown);
       });
     };
   };
@@ -125,73 +188,7 @@ const {$} = window;
         });
 
         $(document).on('submit', config.orderPayPalModalRefundForm, function (event) {
-          event.preventDefault();
-          const refundModal = $(this).parents(config.orderPayPalModalContainer);
-          const refundModalNotificationContainer = refundModal.find(config.orderPayPalModalNotificationsContainer);
-          const refundModalLoaderContainer = refundModal.find(config.orderPayPalModalLoaderContainer);
-          const refundModalSubmitButton = $(this).find('button[type="submit"]');
-          const payPalOrderNotification = new PayPalOrderNotification(config);
-
-          $(refundModalLoaderContainer).show();
-          refundModalSubmitButton.prop('disabled', true);
-
-          let payPalRefundRequest = $.ajax({
-            type: 'POST',
-            headers: {"cache-control": "no-cache"},
-            cache: false,
-            dataType: 'json',
-            url: `${config.orderPayPalBaseUrl}&rand=${new Date().getTime()}`,
-            data: $(this).serialize(),
-          });
-
-          payPalRefundRequest.done(function(data) {
-            if (undefined !== data.content) {
-              let payPalOrderFetcher = new PayPalOrderFetcher(config);
-
-              refundModal.on('hidden.bs.modal', function () {
-                $(config.orderPayPalNotificationsContainer).append(payPalOrderNotification.createErrorHTMLElement({
-                  text: data.content,
-                  class: 'success',
-                }));
-
-                $(config.orderPayPalContainer).empty();
-                $(config.orderPayPalLoaderContainer).show();
-
-                payPalOrderFetcher.execute();
-              });
-
-              refundModal.modal('hide');
-            }
-
-            if (undefined !== data.errors) {
-              for (const error of data.errors) {
-                $(refundModalNotificationContainer).append(payPalOrderNotification.createErrorHTMLElement({
-                  text: error,
-                  class: 'danger',
-                }));
-
-                refundModalSubmitButton.prop('disabled', false);
-              }
-            }
-
-            $(refundModalLoaderContainer).hide();
-          });
-
-          payPalRefundRequest.fail(function(jqXHR, textStatus, errorThrown) {
-            $(refundModalNotificationContainer).append(payPalOrderNotification.createErrorHTMLElement({
-              text: errorThrown,
-              class: 'danger',
-            }));
-
-            if (undefined !== jqXHR.responseJSON && undefined !== jqXHR.responseJSON.content) {
-              $(refundModalNotificationContainer).append(payPalOrderNotification.createErrorHTMLElement({
-                text: jqXHR.responseJSON.content,
-                class: 'danger',
-              }));
-            }
-
-            $(refundModalLoaderContainer).hide();
-          });
+          submitForm(event, config, $(this));
         });
       });
     };
@@ -210,7 +207,6 @@ const {$} = window;
    * @param {string} config.orderPayPalModalContainerPrefix - HTML element identifier
    * @param {string} config.orderPayPalModalCaptureContainerPrefix - HTML element identifier
    * @param {string} config.orderPayPalModalContainer - HTML element identifier
-   * @param {string} config.orderPayPalModalCaptureContainer - HTML element identifier
    * @param {string} config.orderPayPalModalNotificationsContainer - HTML element identifier
    * @param {string} config.orderPayPalModalContentContainer - HTML element identifier
    * @param {string} config.orderPayPalModalLoaderContainer - HTML element identifier
@@ -230,73 +226,7 @@ const {$} = window;
         });
 
         $(document).on('submit', config.orderPayPalModalCaptureForm, function (event) {
-          event.preventDefault();
-          const captureModal = $(this).parents(config.orderPayPalModalCaptureContainer);
-          const captureModalNotificationContainer = captureModal.find(config.orderPayPalModalNotificationsContainer);
-          const captureModalLoaderContainer = captureModal.find(config.orderPayPalModalLoaderContainer);
-          const captureModalSubmitButton = $(this).find('button[type="submit"]');
-          const payPalOrderNotification = new PayPalOrderNotification(config);
-
-          $(captureModalLoaderContainer).show();
-          captureModalSubmitButton.prop('disabled', true);
-
-          let payPalCapturRequest = $.ajax({
-            type: 'POST',
-            headers: {"cache-control": "no-cache"},
-            cache: false,
-            dataType: 'json',
-            url: `${config.orderPayPalBaseUrl}&rand=${new Date().getTime()}`,
-            data: $(this).serialize(),
-          });
-
-          payPalCapturRequest.done(function(data) {
-            if (undefined !== data.content) {
-              let payPalOrderFetcher = new PayPalOrderFetcher(config);
-
-              captureModal.on('hidden.bs.modal', function () {
-                $(config.orderPayPalNotificationsContainer).append(payPalOrderNotification.createErrorHTMLElement({
-                  text: data.content,
-                  class: 'success',
-                }));
-
-                $(config.orderPayPalContainer).empty();
-                $(config.orderPayPalLoaderContainer).show();
-
-                payPalOrderFetcher.execute();
-              });
-
-              captureModal.modal('hide');
-            }
-
-            if (undefined !== data.errors) {
-              for (const error of data.errors) {
-                $(captureModalNotificationContainer).append(payPalOrderNotification.createErrorHTMLElement({
-                  text: error,
-                  class: 'danger',
-                }));
-
-                captureModalSubmitButton.prop('disabled', false);
-              }
-            }
-
-            $(captureModalLoaderContainer).hide();
-          });
-
-          payPalCapturRequest.fail(function(jqXHR, textStatus, errorThrown) {
-            $(captureModalNotificationContainer).append(payPalOrderNotification.createErrorHTMLElement({
-              text: errorThrown,
-              class: 'danger',
-            }));
-
-            if (undefined !== jqXHR.responseJSON && undefined !== jqXHR.responseJSON.content) {
-              $(captureModalNotificationContainer).append(payPalOrderNotification.createErrorHTMLElement({
-                text: jqXHR.responseJSON.content,
-                class: 'danger',
-              }));
-            }
-
-            $(captureModalLoaderContainer).hide();
-          });
+          submitForm(event, config, $(this));
         });
       });
     };
@@ -314,7 +244,6 @@ const {$} = window;
    * @param {string} config.orderPayPalModalContainerPrefix - HTML element identifier
    * @param {string} config.orderPayPalModalVoidContainerPrefix - HTML element identifier
    * @param {string} config.orderPayPalModalContainer - HTML element identifier
-   * @param {string} config.orderPayPalModalVoidContainer - HTML element identifier
    * @param {string} config.orderPayPalModalNotificationsContainer - HTML element identifier
    * @param {string} config.orderPayPalModalContentContainer - HTML element identifier
    * @param {string} config.orderPayPalModalLoaderContainer - HTML element identifier
@@ -334,84 +263,16 @@ const {$} = window;
         });
 
         $(document).on('submit', config.orderPayPalModalVoidForm, function (event) {
-          event.preventDefault();
-          const voidModal = $(this).parents(config.orderPayPalModalVoidContainer);
-          const voidModalNotificationContainer = voidModal.find(config.orderPayPalModalNotificationsContainer);
-          const voidModalLoaderContainer = voidModal.find(config.orderPayPalModalLoaderContainer);
-          const voidModalSubmitButton = $(this).find('button[type="submit"]');
-          const payPalOrderNotification = new PayPalOrderNotification(config);
-
-          $(voidModalLoaderContainer).show();
-          voidModalSubmitButton.prop('disabled', true);
-
-          let payPalVoidRequest = $.ajax({
-            type: 'POST',
-            headers: {"cache-control": "no-cache"},
-            cache: false,
-            dataType: 'json',
-            url: `${config.orderPayPalBaseUrl}&rand=${new Date().getTime()}`,
-            data: $(this).serialize(),
-          });
-
-          payPalVoidRequest.done(function(data) {
-            if (undefined !== data.content) {
-              let payPalOrderFetcher = new PayPalOrderFetcher(config);
-
-              voidModal.on('hidden.bs.modal', function () {
-                $(config.orderPayPalNotificationsContainer).append(payPalOrderNotification.createErrorHTMLElement({
-                  text: data.content,
-                  class: 'success',
-                }));
-
-                $(config.orderPayPalContainer).empty();
-                $(config.orderPayPalLoaderContainer).show();
-
-                payPalOrderFetcher.execute();
-              });
-
-              voidModal.modal('hide');
-            }
-
-            if (undefined !== data.errors) {
-              for (const error of data.errors) {
-                $(voidModalNotificationContainer).append(payPalOrderNotification.createErrorHTMLElement({
-                  text: error,
-                  class: 'danger',
-                }));
-
-                voidModalSubmitButton.prop('disabled', false);
-              }
-            }
-
-            $(voidModalLoaderContainer).hide();
-          });
-
-          payPalVoidRequest.fail(function(jqXHR, textStatus, errorThrown) {
-            $(voidModalNotificationContainer).append(payPalOrderNotification.createErrorHTMLElement({
-              text: errorThrown,
-              class: 'danger',
-            }));
-
-            if (undefined !== jqXHR.responseJSON && undefined !== jqXHR.responseJSON.content) {
-              $(voidModalNotificationContainer).append(payPalOrderNotification.createErrorHTMLElement({
-                text: jqXHR.responseJSON.content,
-                class: 'danger',
-              }));
-            }
-
-            $(voidModalLoaderContainer).hide();
-          });
+          submitForm(event, config, $(this));
         });
       });
     };
   };
 
   /**
-   * @param {object} config
-   * @param {string} config.orderPayPalNotificationsContainer - HTML element identifier
    * @constructor
    */
-  let PayPalOrderNotification = function(config) {
+  let PayPalOrderNotification = function() {
     /**
      *
      * @param {object} params

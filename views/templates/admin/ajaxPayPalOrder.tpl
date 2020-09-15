@@ -100,7 +100,7 @@
   </table>
   {foreach $orderPayPal.transactions as $orderPayPalTransaction}
     {if $orderPayPalTransaction.isAuthorize}
-      <div id="ps-checkout-capture-{$orderPayPalTransaction.id|escape:'html':'UTF-8'}" class="modal fade ps-checkout-capture" tabindex="-1" role="dialog">
+      <div id="ps-checkout-capture-{$orderPayPalTransaction.id|escape:'html':'UTF-8'}" class="modal fade ps-checkout-order" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <form action="{$orderPayPalBaseUrl|escape:'html':'UTF-8'}" method="POST" class="form-horizontal ps-checkout-capture-form">
@@ -143,7 +143,7 @@
           </div>
         </div>
       </div>
-      <div id="ps-checkout-void-{$orderPayPalTransaction.id|escape:'html':'UTF-8'}" class="modal fade ps-checkout-void" tabindex="-1" role="dialog">
+      <div id="ps-checkout-void-{$orderPayPalTransaction.id|escape:'html':'UTF-8'}" class="modal fade ps-checkout-order" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <form action="{$orderPayPalBaseUrl|escape:'html':'UTF-8'}" method="POST" class="form-horizontal ps-checkout-void-form">
@@ -189,7 +189,7 @@
     {elseif $orderPayPalTransaction.isRefundable}
       {assign var="maxAmountRefundable" value=$orderPayPalTransaction.maxAmountRefundable|string_format:"%.2f"}
       {assign var="orderPayPalRefundAmountIdentifier" value='orderPayPalRefundAmount'|cat:$orderPayPalTransaction.id}
-      <div id="ps-checkout-refund-{$orderPayPalTransaction.id|escape:'html':'UTF-8'}" class="modal fade ps-checkout-refund" tabindex="-1" role="dialog">
+      <div id="ps-checkout-refund-{$orderPayPalTransaction.id|escape:'html':'UTF-8'}" class="modal fade ps-checkout-order" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <form action="{$orderPayPalBaseUrl|escape:'html':'UTF-8'}" method="POST" class="form-horizontal ps-checkout-refund-form">
