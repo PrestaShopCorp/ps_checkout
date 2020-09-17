@@ -83,7 +83,7 @@ class Ps_checkout extends PaymentModule
     public $configurationList = [
         PayPalConfiguration::INTENT => Intent::CAPTURE,
         PayPalConfiguration::PAYMENT_MODE => Mode::LIVE,
-        'PS_CHECKOUT_PAYMENT_METHODS_ORDER' => '',
+        PayPalConfiguration::PAYMENT_METHODS_ORDER => '',
         'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => '',
         'PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT' => '',
         'PS_CHECKOUT_PAYPAL_EMAIL_STATUS' => '',
@@ -521,12 +521,7 @@ class Ps_checkout extends PaymentModule
      */
     public function getPaymentMethods()
     {
-        $paymentMethods = \Configuration::get(
-            'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        $paymentMethods = $this->getService('ps_checkout.paypal.configuration')->getPaymentMethodsOrder();
 
         // if no paymentMethods position is set, by default put credit card (hostedFields) as first position
         if (empty($paymentMethods)) {

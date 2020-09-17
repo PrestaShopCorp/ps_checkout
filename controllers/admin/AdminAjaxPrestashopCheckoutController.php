@@ -46,13 +46,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessUpdatePaymentMethodsOrder()
     {
-        Configuration::updateValue(
-            'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
-            Tools::getValue('paymentMethods'),
-            false,
-            null,
-            (int) Context::getContext()->shop->id
-        );
+        $this->module->getService('ps_checkout.paypal.configuration')->setPaymentMethodsOrder(Tools::getValue('paymentMethods'));
     }
 
     /**
