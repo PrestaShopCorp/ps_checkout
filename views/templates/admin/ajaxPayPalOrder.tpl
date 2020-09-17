@@ -117,7 +117,7 @@
                 </div>
                 <div class="modal-content-container">
                   <input name="ajax" type="hidden" value="1">
-                  <input name="action" type="hidden" value="CaptureOrder">
+                  <input name="action" type="hidden" value="CaptureAuthorizeOrder">
                   <input name="orderPayPalCaptureTransaction" type="hidden" value="{$orderPayPalTransaction.id|escape:'html':'UTF-8'}">
                   <input name="orderPayPalCaptureOrder" type="hidden" value="{$orderPayPal.id|escape:'html':'UTF-8'}">
                   <p class="text-muted">
