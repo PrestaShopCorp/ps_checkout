@@ -108,11 +108,13 @@ class Ps_checkout extends PaymentModule
     // the module each time to get the version
     const VERSION = '2.0.0';
 
-    /** @var \Symfony\Component\DependencyInjection\ContainerInterface */
-    private $container;
-
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
+
+    /**
+     * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
+     */
+    private $serviceContainer;
 
     public function __construct()
     {
@@ -138,6 +140,8 @@ class Ps_checkout extends PaymentModule
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = ['min' => '1.6.1', 'max' => _PS_VERSION_];
+
+        $this->serviceContainer = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer($this->name, $this->getLocalPath());
     }
 
     /**
@@ -1142,22 +1146,6 @@ class Ps_checkout extends PaymentModule
      */
     public function getService($serviceName)
     {
-        if (method_exists($this, 'get')) {
-            // Use Core container introduced in 1.7.3.0
-            return $this->get($serviceName);
-        }
-
-        if (null === $this->container) {
-            $cacheDirectory = new \PrestaShop\Module\PrestashopCheckout\Cache\CacheDirectory(
-                _PS_VERSION_,
-                _PS_ROOT_DIR_,
-                _PS_MODE_DEV_
-            );
-            $containerProvider = new \PrestaShop\Module\PrestashopCheckout\DependencyInjection\ContainerProvider($this, $cacheDirectory);
-
-            $this->container = $containerProvider->get(defined('_PS_ADMIN_DIR_') ? 'admin' : 'front');
-        }
-
-        return $this->container->get($serviceName);
+        return $this->serviceContainer->getService($serviceName);
     }
 }
