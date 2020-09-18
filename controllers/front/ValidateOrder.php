@@ -20,7 +20,6 @@
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 
@@ -77,7 +76,8 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
             $currency = $this->context->currency;
             $total = (float) $cart->getOrderTotal(true, Cart::BOTH);
 
-            $payment = new ValidateOrder($paypalOrderId, (new PaypalAccountRepository())->getMerchantId());
+            $merchandId = $this->module->getService('ps_checkout.repository.paypal.account')->getMerchantId();
+            $payment = new ValidateOrder($paypalOrderId, $merchandId);
 
             $dataOrder = [
                 'cartId' => (int) $cart->id,

@@ -20,9 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
-
 class ExpressCheckout
 {
     const PRODUCT_MODE = 'product';
@@ -58,8 +55,8 @@ class ExpressCheckout
             return false;
         }
 
-        $paypalAccountRepository = new PaypalAccountRepository();
-        $paypalSdkLink = new PayPalSdkLinkBuilder();
+        $paypalAccountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
+        $paypalSdkLink = $this->module->getService('ps_checkout.sdk.paypal.linkbuilder');
         $paypalSdkLink->enableDisplayExpressCheckout();
 
         $this->context->smarty->assign([

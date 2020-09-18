@@ -97,3 +97,14 @@ services:
     arguments:
       - '@ps_checkout.api.firebase.auth'
       - '@ps_checkout.persistent.configuration'
+
+  ps_checkout.repository.paypal.account:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository'
+    arguments:
+      - '@ps_checkout.configuration'
+
+  ps_checkout.sdk.paypal.linkbuilder:
+    class: 'PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder'
+    arguments:
+      - '@ps_checkout.repository.paypal.account'
+      - '@ps_checkout.paypal.configuration'

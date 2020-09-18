@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink;
 
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
@@ -34,6 +35,11 @@ class PayPalSdkLinkBuilder
      * @var PaypalAccountRepository
      */
     private $payPalAccountRepository;
+
+    /**
+     * @var PayPalConfiguration
+     */
+    private $configuration;
 
     /**
      * @var bool
@@ -52,10 +58,14 @@ class PayPalSdkLinkBuilder
 
     /**
      * @todo To be refactored with Service Container and Dependency Injection
+     *
+     * @param PaypalAccountRepository $payPalAccountRepository
+     * @param PayPalConfiguration $configuration
      */
-    public function __construct()
+    public function __construct(PaypalAccountRepository $payPalAccountRepository, PayPalConfiguration $configuration)
     {
-        $this->payPalAccountRepository = new PaypalAccountRepository();
+        $this->payPalAccountRepository = $payPalAccountRepository;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -75,15 +85,12 @@ class PayPalSdkLinkBuilder
             $components[] = 'buttons';
         }
 
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-
         $params = [
             'components' => implode(',', $components),
             'client-id' => (new PaypalEnv())->getPaypalClientId(),
-            'merchant-id' => (new PaypalAccountRepository())->getMerchantId(),
+            'merchant-id' => $this->payPalAccountRepository->getMerchantId(),
             'currency' => \Context::getContext()->currency->iso_code,
-            'intent' => strtolower($module->getService('ps_checkout.paypal.configuration')->getIntent()),
+            'intent' => strtolower($this->configuration->getIntent()),
         ];
 
         $fundingSourcesDisabled = $this->getFundingSourcesDisabled();

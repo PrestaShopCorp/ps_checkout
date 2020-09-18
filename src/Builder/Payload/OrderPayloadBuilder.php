@@ -23,7 +23,6 @@ namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
  * Build the payload for creating paypal order
@@ -130,6 +129,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
         $shopName = $configuration->get('PS_SHOP_NAME');
 
+        $merchantId = $module->getService('ps_checkout.repository.paypal.account')->getMerchantId();
+
         $node = [
             'intent' => $module->getService('ps_checkout.paypal.configuration')->getIntent(), // capture or authorize
             'custom_id' => (string) $this->cart['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
@@ -147,7 +148,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 'value' => $this->cart['cart']['totals']['total_including_tax']['amount'],
             ],
             'payee' => [
-                'merchant_id' => (new PaypalAccountRepository())->getMerchantId(),
+                'merchant_id' => $merchantId,
             ],
         ];
 

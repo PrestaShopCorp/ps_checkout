@@ -18,11 +18,9 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 use PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter;
-use PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontController
 {
@@ -53,7 +51,7 @@ class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontControlle
             $this->redirectToHomePage();
         }
 
-        $paypalAccountRepository = new PaypalAccountRepository();
+        $paypalAccountRepository = $module->getService('ps_checkout.repository.paypal.account');
 
         if (false === $paypalAccountRepository->cardHostedFieldsIsAvailable()) {
             $this->redirectToHomePage();
@@ -63,7 +61,7 @@ class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontControlle
         $paypalOrder = $paypalOrder->handle();
 
         $language = (new LanguageAdapter())->getLanguage($this->context->language->id);
-        $paypalSdkLink = new PayPalSdkLinkBuilder();
+        $paypalSdkLink = $module->getService('ps_checkout.sdk.paypal.linkbuilder');
         $paypalSdkLink->enableDisplayOnlyHostedFields();
 
         $this->context->smarty->assign([

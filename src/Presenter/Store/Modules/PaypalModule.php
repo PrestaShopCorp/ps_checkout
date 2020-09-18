@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
  * Construct the paypal module
@@ -35,7 +34,9 @@ class PaypalModule implements PresenterInterface
      */
     public function present()
     {
-        $paypalAccount = (new PaypalAccountRepository())->getOnboardedAccount();
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        $paypalAccount = $module->getService('ps_checkout.repository.paypal.account')->getOnboardedAccount();
 
         $paypalModule = [
             'paypal' => [

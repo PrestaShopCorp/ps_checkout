@@ -360,7 +360,7 @@ class Ps_checkout extends PaymentModule
 
     public function getContent()
     {
-        $paypalAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository();
+        $paypalAccount = $this->getService('ps_checkout.repository.paypal.account');
         $psAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository();
 
         // update merchant status only if the merchant onboarding is completed
@@ -404,7 +404,7 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
-        $paypalAccountRepository = new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository();
+        $paypalAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
 
         $this->context->smarty->assign([
             'path' => $this->_path . 'views/img/',
@@ -462,7 +462,7 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
-        $paypalAccountRepository = new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository();
+        $paypalAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
 
         $termsAndConditionsLinkCms = new \CMS(
             (int) Configuration::get(
@@ -478,7 +478,7 @@ class Ps_checkout extends PaymentModule
             $termsAndConditionsLinkCms->link_rewrite
         );
 
-        $paypalSdkLink = new PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder();
+        $paypalSdkLink = $this->getService('ps_checkout.sdk.paypal.linkbuilder');
 
         $this->context->smarty->assign([
             'paypalSdkLink' => $paypalSdkLink->buildLink(),
@@ -805,8 +805,9 @@ class Ps_checkout extends PaymentModule
      */
     public function merchantIsValid()
     {
-        return (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->onBoardingIsCompleted()
-            && (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->paypalEmailIsValid()
+        $ppaccountRepository = $this->getService('ps_checkout.repository.paypal.account');
+        return $ppaccountRepository->onBoardingIsCompleted()
+            && $ppaccountRepository->paypalEmailIsValid()
             && (new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository())->onBoardingIsCompleted();
     }
 

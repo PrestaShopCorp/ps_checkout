@@ -180,12 +180,11 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessRefreshPaypalAccountStatus()
     {
-        $paypalAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository();
+        $paypalAccount = $this->module->getService('ps_checkout.repository.paypal.account');
         $psAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository();
 
         // update merchant status only if the merchant onBoarding is completed
-        if ($paypalAccount->onBoardingIsCompleted()
-            && $psAccount->onBoardingIsCompleted()
+        if ($paypalAccount->onBoardingIsCompleted() && $psAccount->onBoardingIsCompleted()
         ) {
             (new PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater($paypalAccount->getOnboardedAccount()))->update();
         }
@@ -417,7 +416,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             'orderId' => $orderPayPalId,
             'captureId' => $transactionPayPalId,
             'payee' => [
-                'merchant_id' => (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->getMerchantId(),
+                'merchant_id' => $this->module->getService('ps_checkout.repository.paypal.account')->getMerchantId(),
             ],
             'amount' => [
                 'currency_code' => $currency,
