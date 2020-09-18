@@ -25,7 +25,6 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\FirebaseModule;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
 
 /**
  * Present the store to the vuejs app (vuex)
@@ -74,7 +73,7 @@ class StorePresenter implements PresenterInterface
         $this->store = array_merge(
             (new ContextModule($this->module, $this->context))->present(),
             (new FirebaseModule())->present(),
-            (new PaypalModule())->present(),
+            $this->module->getService('ps_checkout.store.module.paypal')->present(),
             $this->module->getService('ps_checkout.store.module.psx')->present(),
             (new ConfigurationModule())->present()
         );

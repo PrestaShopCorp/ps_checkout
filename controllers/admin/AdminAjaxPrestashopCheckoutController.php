@@ -27,7 +27,6 @@ use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPresenter;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
@@ -189,7 +188,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         }
 
         $this->ajaxDie(
-            json_encode((new PaypalModule())->present())
+            json_encode($this->module->getService('ps_checkout.store.module.paypal')->present())
         );
     }
 

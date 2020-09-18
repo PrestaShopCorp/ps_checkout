@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
  * Construct the paypal module
@@ -28,17 +29,28 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 class PaypalModule implements PresenterInterface
 {
     /**
+     * @var PaypalAccountRepository
+     */
+    private $paypalAccount;
+
+    /**
+     * @param PaypalAccountRepository $paypalAccountRepository
+     */
+    public function __construct(PaypalAccountRepository $paypalAccountRepository)
+    {
+        $this->paypalAccount = $paypalAccountRepository;
+    }
+
+    /**
      * Present the paypal module (vuex)
      *
      * @return array
      */
     public function present()
     {
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-        $paypalAccount = $module->getService('ps_checkout.repository.paypal.account')->getOnboardedAccount();
+        $paypalAccount = $this->paypalAccount->getOnboardedAccount();
 
-        $paypalModule = [
+        return [
             'paypal' => [
                 'idMerchant' => $paypalAccount->getMerchantId(),
                 'paypalOnboardingLink' => '',
@@ -50,7 +62,5 @@ class PaypalModule implements PresenterInterface
                 'paypalIsActive' => $paypalAccount->getPaypalPaymentStatus(),
             ],
         ];
-
-        return $paypalModule;
     }
 }
