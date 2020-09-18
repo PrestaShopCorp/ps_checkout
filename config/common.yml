@@ -8,6 +8,9 @@ services:
     arguments:
       - 'ps_checkout'
 
+  ps_checkout.context.prestashop:
+    class: 'PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
+
   ps_checkout.shop.provider:
     class: 'PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider'
 
@@ -64,6 +67,7 @@ services:
       - '@=service("ps_checkout.module").name'
       - '@ps_checkout.logger.handler'
       - '@ps_checkout.logger.sentry.handler'
+      - '@ps_checkout.logger.sentry.processor'
 
   ps_checkout.logger:
     class: 'Psr\Log\LoggerInterface'
@@ -73,6 +77,8 @@ services:
 
   ps_checkout.logger.sentry.processor:
     class: 'PrestaShop\Module\PrestashopCheckout\Sentry\SentryProcessor'
+    arguments:
+      - '@ps_checkout.repository.prestashop.account'
 
   ps_checkout.paypal.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
@@ -108,3 +114,19 @@ services:
     arguments:
       - '@ps_checkout.repository.paypal.account'
       - '@ps_checkout.paypal.configuration'
+
+  ps_checkout.repository.prestashop.account:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
+    arguments:
+      - '@ps_checkout.configuration'
+
+  ps_checkout.store.module.psx:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule'
+    arguments:
+      - '@ps_checkout.context.prestashop'
+      - '@ps_checkout.repository.prestashop.account'
+
+  ps_checkout.builder.payload.onboarding:
+    class: 'PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder'
+    arguments:
+      - '@ps_checkout.repository.prestashop.account'

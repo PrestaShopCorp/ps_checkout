@@ -32,10 +32,14 @@ class PaypalAccountRepository
     /** @var PrestaShopConfiguration */
     private $configuration;
 
+    /**
+     * @param PrestaShopConfiguration $configuration
+     */
     public function __construct(PrestaShopConfiguration $configuration)
     {
         $this->configuration = $configuration;
     }
+
     /**
      * Get the current paypal account onboarded
      *

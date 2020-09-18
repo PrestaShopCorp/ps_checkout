@@ -26,7 +26,6 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationMo
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\FirebaseModule;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule;
 
 /**
  * Present the store to the vuejs app (vuex)
@@ -76,7 +75,7 @@ class StorePresenter implements PresenterInterface
             (new ContextModule($this->module, $this->context))->present(),
             (new FirebaseModule())->present(),
             (new PaypalModule())->present(),
-            (new PsxModule($this->context))->present(),
+            $this->module->getService('ps_checkout.store.module.psx')->present(),
             (new ConfigurationModule())->present()
         );
 

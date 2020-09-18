@@ -31,7 +31,6 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
-use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Settings\RoundingSettings;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
@@ -181,7 +180,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessRefreshPaypalAccountStatus()
     {
         $paypalAccount = $this->module->getService('ps_checkout.repository.paypal.account');
-        $psAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository();
+        $psAccount = $this->module->getService('ps_checkout.repository.prestashop.account');
 
         // update merchant status only if the merchant onBoarding is completed
         if ($paypalAccount->onBoardingIsCompleted() && $psAccount->onBoardingIsCompleted()
@@ -234,7 +233,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     private function savePsxForm($form)
     {
-        $psAccount = (new PsAccountRepository())->getOnboardedAccount();
+        $psAccount = $this->module->getService('ps_checkout.repository.prestashop.account')->getOnboardedAccount();
         $psAccount->setPsxForm(json_encode($form));
 
         return $this->module->getService('ps_checkout.persistent.configuration')->savePsAccount($psAccount);

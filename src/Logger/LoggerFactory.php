@@ -54,17 +54,25 @@ class LoggerFactory
     private $sentryHandler;
 
     /**
+     * @var SentryProcessor|null
+     */
+    private $sentryProcessor;
+
+    /**
      * @param string $name
      * @param HandlerInterface $loggerHandler
+     * @param SentryHandler|null $sentryHandler
+     * @param SentryProcessor|null $sentryProcessor
      *
      * @throws PsCheckoutException
      */
-    public function __construct($name, HandlerInterface $loggerHandler, SentryHandler $sentryHandler = null)
+    public function __construct($name, HandlerInterface $loggerHandler, SentryHandler $sentryHandler = null, SentryProcessor $sentryProcessor = null)
     {
         $this->assertNameIsValid($name);
         $this->name = $name;
         $this->loggerHandler = $loggerHandler;
         $this->sentryHandler = $sentryHandler;
+        $this->sentryProcessor = $sentryProcessor;
     }
 
     /**
@@ -80,7 +88,7 @@ class LoggerFactory
             ],
             [
                 new PsrLogMessageProcessor(),
-                new SentryProcessor(),
+                $this->sentryProcessor,
             ]
         );
     }

@@ -31,6 +31,18 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 class OnboardingPayloadBuilder extends Builder
 {
     /**
+     * @var PsAccountRepository
+     */
+    private $psAccount;
+
+    public function __construct(PsAccountRepository $psAccount)
+    {
+        parent::__construct();
+        $this->psAccount = $psAccount;
+
+    }
+
+    /**
      * Build the full payload with customer details
      */
     public function buildFullPayload()
@@ -76,11 +88,10 @@ class OnboardingPayloadBuilder extends Builder
      */
     public function buildFullPersonDetailsNode()
     {
-        $psAccount = new PsAccountRepository();
-        $psxFormData = $psAccount->getPsxForm(true);
+        $psxFormData = $this->psAccount->getPsxForm(true);
 
         $node['person_details'] = array_filter([
-            'email_address' => $psAccount->getOnboardedAccount()->getEmail(),
+            'email_address' => $this->psAccount->getOnboardedAccount()->getEmail(),
             'name' => [
                 'given_name' => $psxFormData['business_contact_first_name'],
                 'surname' => $psxFormData['business_contact_last_name'],
@@ -96,11 +107,8 @@ class OnboardingPayloadBuilder extends Builder
      */
     public function buildMinimalPersonDetailsNode()
     {
-        $psAccount = new PsAccountRepository();
-        $psxFormData = $psAccount->getPsxForm(true);
-
         $node['person_details'] = array_filter([
-            'email_address' => $psAccount->getOnboardedAccount()->getEmail(),
+            'email_address' => $this->psAccount->getOnboardedAccount()->getEmail(),
         ]);
 
         $this->getPayload()->addAndMergeItems($node);
@@ -111,8 +119,7 @@ class OnboardingPayloadBuilder extends Builder
      */
     public function buildBusinessDetailsNode()
     {
-        $psAccount = new PsAccountRepository();
-        $psxFormData = $psAccount->getPsxForm(true);
+        $psxFormData = $this->psAccount->getPsxForm(true);
 
         $node['business_details'] = array_filter([
             'business_address' => array_filter([

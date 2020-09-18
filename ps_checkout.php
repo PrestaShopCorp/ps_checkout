@@ -361,7 +361,7 @@ class Ps_checkout extends PaymentModule
     public function getContent()
     {
         $paypalAccount = $this->getService('ps_checkout.repository.paypal.account');
-        $psAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository();
+        $psAccount = $this->getService('ps_checkout.repository.prestashop.account');
 
         // update merchant status only if the merchant onboarding is completed
         if ($paypalAccount->onBoardingIsCompleted()
@@ -805,10 +805,11 @@ class Ps_checkout extends PaymentModule
      */
     public function merchantIsValid()
     {
-        $ppaccountRepository = $this->getService('ps_checkout.repository.paypal.account');
-        return $ppaccountRepository->onBoardingIsCompleted()
-            && $ppaccountRepository->paypalEmailIsValid()
-            && (new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository())->onBoardingIsCompleted();
+        $ppAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
+        $psAccountRepository = $this->getService('ps_checkout.repository.prestashop.account');
+        return $ppAccountRepository->onBoardingIsCompleted()
+            && $ppAccountRepository->paypalEmailIsValid()
+            && $psAccountRepository->onBoardingIsCompleted();
     }
 
     /**
