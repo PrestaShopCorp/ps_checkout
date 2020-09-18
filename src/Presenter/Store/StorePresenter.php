@@ -72,7 +72,7 @@ class StorePresenter implements PresenterInterface
 
         $this->store = array_merge(
             (new ContextModule($this->module, $this->context))->present(),
-            (new FirebaseModule())->present(),
+            $this->module->getService('ps_checkout.store.module.firebase')->present(),
             $this->module->getService('ps_checkout.store.module.paypal')->present(),
             $this->module->getService('ps_checkout.store.module.psx')->present(),
             (new ConfigurationModule())->present()

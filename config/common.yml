@@ -131,6 +131,11 @@ services:
     arguments:
       - '@ps_checkout.repository.paypal.account'
 
+  ps_checkout.store.module.firebase:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\FirebaseModule'
+    arguments:
+      - '@ps_checkout.repository.prestashop.account'
+
   ps_checkout.builder.payload.onboarding:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder'
     arguments:

@@ -22,12 +22,26 @@ namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
 /**
  * Construct the firebase module
  */
 class FirebaseModule implements PresenterInterface
 {
+    /**
+     * @var PsAccountRepository
+     */
+    private $psAccount;
+
+    /**
+     * @param PsAccountRepository $psAccountRepository
+     */
+    public function __construct(PsAccountRepository $psAccountRepository)
+    {
+        $this->psAccount = $psAccountRepository;
+    }
+
     /**
      * Present the Firebase module (vuex)
      *
@@ -39,22 +53,10 @@ class FirebaseModule implements PresenterInterface
 
         $firebaseModule = [
             'firebase' => [
-                'email' => \Configuration::get(
-                    'PS_PSX_FIREBASE_EMAIL',
-                    null,
-                    null,
-                    (int) \Context::getContext()->shop->id),
+                'email' => $this->psAccount->getEmail(),
                 'idToken' => $idToken,
-                'localId' => \Configuration::get(
-                    'PS_PSX_FIREBASE_LOCAL_ID',
-                    null,
-                    null,
-                    (int) \Context::getContext()->shop->id),
-                'refreshToken' => \Configuration::get(
-                    'PS_PSX_FIREBASE_REFRESH_TOKEN',
-                    null,
-                    null,
-                    (int) \Context::getContext()->shop->id),
+                'localId' => $this->psAccount->getLocalId(),
+                'refreshToken' => $this->psAccount->getRefreshToken(),
                 'onboardingCompleted' => !empty($idToken),
             ],
         ];
