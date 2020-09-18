@@ -136,6 +136,12 @@ services:
     arguments:
       - '@ps_checkout.repository.prestashop.account'
 
+  ps_checkout.store.module.configuration:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule'
+    arguments:
+      - '@ps_checkout.express_checkout.configuration'
+      - '@ps_checkout.paypal.configuration'
+
   ps_checkout.builder.payload.onboarding:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder'
     arguments:
