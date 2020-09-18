@@ -807,6 +807,7 @@ class Ps_checkout extends PaymentModule
     {
         $ppAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
         $psAccountRepository = $this->getService('ps_checkout.repository.prestashop.account');
+
         return $ppAccountRepository->onBoardingIsCompleted()
             && $ppAccountRepository->paypalEmailIsValid()
             && $psAccountRepository->onBoardingIsCompleted();

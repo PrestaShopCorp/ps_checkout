@@ -133,6 +133,6 @@ class PsAccountRepository
     {
         $form = $this->configuration->get(PsAccount::PS_CHECKOUT_PSX_FORM);
 
-        return $toArray ? json_decode($form,true) : $form;
+        return $toArray ? json_decode($form, true) : $form;
     }
 }

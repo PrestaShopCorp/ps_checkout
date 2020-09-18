@@ -39,7 +39,6 @@ class OnboardingPayloadBuilder extends Builder
     {
         parent::__construct();
         $this->psAccount = $psAccount;
-
     }
 
     /**
