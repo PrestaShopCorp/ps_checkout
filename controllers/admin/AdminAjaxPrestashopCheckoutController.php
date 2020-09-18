@@ -185,7 +185,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         // update merchant status only if the merchant onBoarding is completed
         if ($paypalAccount->onBoardingIsCompleted() && $psAccount->onBoardingIsCompleted()
         ) {
-            (new PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater($paypalAccount->getOnboardedAccount()))->update();
+            $this->module->getService('ps_checkout.updater.paypal.account')->update($paypalAccount->getOnboardedAccount());
         }
 
         $this->ajaxDie(

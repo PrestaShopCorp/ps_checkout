@@ -130,3 +130,8 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder'
     arguments:
       - '@ps_checkout.repository.prestashop.account'
+
+  ps_checkout.updater.paypal.account:
+    class: 'PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater'
+    arguments:
+      - '@ps_checkout.persistent.configuration'

@@ -367,7 +367,7 @@ class Ps_checkout extends PaymentModule
         if ($paypalAccount->onBoardingIsCompleted()
             && $psAccount->onBoardingIsCompleted()) {
             $paypalAccount = $paypalAccount->getOnboardedAccount();
-            (new PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater($paypalAccount))->update();
+            $this->getService('ps_checkout.updater.paypal.account')->update($paypalAccount);
         }
 
         Media::addJsDef([
