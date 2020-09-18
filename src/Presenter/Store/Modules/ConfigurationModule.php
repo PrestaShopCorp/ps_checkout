@@ -46,11 +46,12 @@ class ConfigurationModule implements PresenterInterface
      * @param ExpressCheckoutConfiguration $ecConfiguration
      * @param PayPalConfiguration $paypalConfiguration
      */
-    public function __construct(ExpressCheckoutConfiguration $ecConfiguration,PayPalConfiguration $paypalConfiguration)
+    public function __construct(ExpressCheckoutConfiguration $ecConfiguration, PayPalConfiguration $paypalConfiguration)
     {
         $this->ecConfiguration = $ecConfiguration;
         $this->paypalConfiguration = $paypalConfiguration;
     }
+
     /**
      * Present the paypal module (vuex)
      *
