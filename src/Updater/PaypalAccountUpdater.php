@@ -50,6 +50,7 @@ class PaypalAccountUpdater
     {
         $this->persistentConfiguration = $persistentConfiguration;
     }
+
     /**
      * Update the merchant
      *
