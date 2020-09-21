@@ -87,8 +87,7 @@ class ContextModule implements PresenterInterface
         LiveStep $liveStep,
         Translations $translations,
         ShopContext $shopContext
-    )
-    {
+    ) {
         $this->moduleName = $moduleName;
         $this->moduleKey = $moduleKey;
         $this->psContext = $psContext;

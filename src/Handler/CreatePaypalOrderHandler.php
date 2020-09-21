@@ -105,7 +105,6 @@ class CreatePaypalOrderHandler
             }
         }
 
-
         $module->getLogger()->info(sprintf(
             'Create PayPal Order %s from cart %s',
             $paypalOrder['body']['id'],

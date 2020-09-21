@@ -22,7 +22,6 @@ namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store;
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule;
 
 /**
  * Present the store to the vuejs app (vuex)
