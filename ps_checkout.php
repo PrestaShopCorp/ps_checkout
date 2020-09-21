@@ -521,7 +521,9 @@ class Ps_checkout extends PaymentModule
      */
     public function getPaymentMethods()
     {
-        $paymentMethods = $this->getService('ps_checkout.paypal.configuration')->getPaymentMethodsOrder();
+        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration **/
+        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
+        $paymentMethods = $paypalConfiguration->getPaymentMethodsOrder();
 
         // if no paymentMethods position is set, by default put credit card (hostedFields) as first position
         if (empty($paymentMethods)) {
