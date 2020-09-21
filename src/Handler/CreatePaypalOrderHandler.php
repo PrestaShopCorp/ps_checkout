@@ -60,8 +60,14 @@ class CreatePaypalOrderHandler
 
         $builder = new OrderPayloadBuilder($cartPresenter);
 
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+
+        /** @var ShopContext $shopContext */
+        $shopContext = $module->getService('ps_checkout.context.shop');
+
         // Build full payload in 1.7
-        if ((new ShopContext())->isShop17()) {
+        if ($shopContext->isShop17()) {
             // enable express checkout mode if in express checkout
             if (true === $expressCheckout) {
                 $builder->setExpressCheckout(true);
@@ -88,7 +94,7 @@ class CreatePaypalOrderHandler
         }
 
         // Retry with minimal payload when full payload failed (only on 1.7)
-        if (substr((string) $paypalOrder['httpCode'], 0, 1) === '4' && (new ShopContext())->isShop17()) {
+        if (substr((string) $paypalOrder['httpCode'], 0, 1) === '4' && $shopContext->isShop17()) {
             $builder->buildMinimalPayload();
             $payload = $builder->presentPayload()->getJson();
 
@@ -99,8 +105,7 @@ class CreatePaypalOrderHandler
             }
         }
 
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
+
         $module->getLogger()->info(sprintf(
             'Create PayPal Order %s from cart %s',
             $paypalOrder['body']['id'],

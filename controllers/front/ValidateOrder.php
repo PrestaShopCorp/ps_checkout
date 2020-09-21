@@ -108,7 +108,10 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
 
         $template = 'validateOrderLegacy.tpl';
 
-        if ((new ShopContext())->isShop17()) {
+        /** @var ShopContext $shopContext */
+        $shopContext = $this->module->getService('ps_checkout.context.shop');
+
+        if ($shopContext->isShop17()) {
             $template = 'module:ps_checkout/views/templates/front/validateOrder.tpl';
         }
 
@@ -140,7 +143,9 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
     private function redirectToCheckout(array $params = [])
     {
         if (false === empty($params['step']) && 'payment' === $params['step']) {
-            $params['step'] = (new ShopContext())->isShop17() ? 4 : 3;
+            /** @var ShopContext $shopContext */
+            $shopContext = $this->module->getService('ps_checkout.context.shop');
+            $params['step'] = $shopContext->isShop17() ? 4 : 3;
         }
 
         Tools::redirect(

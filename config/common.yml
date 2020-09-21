@@ -11,6 +11,9 @@ services:
   ps_checkout.context.prestashop:
     class: 'PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
 
+  ps_checkout.context.shop:
+    class: 'PrestaShop\Module\PrestashopCheckout\ShopContext'
+
   ps_checkout.shop.provider:
     class: 'PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider'
 
@@ -146,8 +149,35 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder'
     arguments:
       - '@ps_checkout.repository.prestashop.account'
+      - '@ps_checkout.adapter.language'
 
   ps_checkout.updater.paypal.account:
     class: 'PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater'
     arguments:
       - '@ps_checkout.persistent.configuration'
+
+  ps_checkout.step.live:
+    class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep'
+    arguments:
+      - '@ps_checkout.configuration'
+
+  ps_checkout.translations.translations:
+    class: 'PrestaShop\Module\PrestashopCheckout\Translations\Translations'
+    arguments:
+      - '@ps_checkout.module'
+
+  ps_checkout.store.module.context:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule'
+    arguments:
+      - '@=service("ps_checkout.module").name'
+      - '@=service("ps_checkout.module").module_key'
+      - '@ps_checkout.context.prestashop'
+      - '@ps_checkout.paypal.configuration'
+      - '@ps_checkout.step.live'
+      - '@ps_checkout.translations.translations'
+      - '@ps_checkout.context.shop'
+
+  ps_checkout.adapter.language:
+    class: 'PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter'
+    arguments:
+      - '@ps_checkout.context.shop'

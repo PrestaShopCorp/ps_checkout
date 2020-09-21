@@ -165,7 +165,9 @@ class Ps_checkout extends PaymentModule
         }
 
         // Install specific to prestashop 1.7
-        if ((new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17()) {
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+        if ($shopContext->isShop17()) {
             return $this->registerHook(self::HOOK_LIST_17) &&
                 $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1);
         }
@@ -684,8 +686,10 @@ class Ps_checkout extends PaymentModule
             return '';
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
         $this->context->smarty->assign([
-            'isShop17' => (new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17(),
+            'isShop17' => $shopContext->isShop17(),
             'isAuthorized' => 'AUTHORIZE' === Configuration::get('PS_CHECKOUT_INTENT'),
         ]);
 
@@ -844,7 +848,9 @@ class Ps_checkout extends PaymentModule
      */
     public function addCheckboxCarrierRestrictionsForModule(array $shopsList = [])
     {
-        if (false === (new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17()) {
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+        if (false === $shopContext->isShop17()) {
             return true;
         }
 

@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
+use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 /**
@@ -38,11 +39,14 @@ class Onboarding extends PaymentClient
         $this->setRoute('/payments/onboarding/onboard');
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
+        /** @var OnboardingPayloadBuilder $builder */
         $builder = $module->getService('ps_checkout.builder.payload.onboarding');
+        /** @var ShopContext $shopContext */
+        $shopContext = $module->getService('ps_checkout.context.shop');
 
         $builder->buildFullPayload();
 
-        if ((new ShopContext())->isReady()) {
+        if ($shopContext->isReady()) {
             $builder->buildMinimalPayload();
         }
 

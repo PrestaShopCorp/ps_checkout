@@ -35,10 +35,20 @@ class OnboardingPayloadBuilder extends Builder
      */
     private $psAccount;
 
-    public function __construct(PsAccountRepository $psAccount)
+    /**
+     * @var LanguageAdapter
+     */
+    private $languageAdapter;
+
+    /**
+     * @param PsAccountRepository $psAccount
+     * @param LanguageAdapter $languageAdapter
+     */
+    public function __construct(PsAccountRepository $psAccount, LanguageAdapter $languageAdapter)
     {
         parent::__construct();
         $this->psAccount = $psAccount;
+        $this->languageAdapter = $languageAdapter;
     }
 
     /**
@@ -69,7 +79,7 @@ class OnboardingPayloadBuilder extends Builder
      */
     public function buildBaseNode()
     {
-        $language = (new LanguageAdapter())->getLanguage((int) \Context::getContext()->employee->id_lang);
+        $language = $this->languageAdapter->getLanguage((int) \Context::getContext()->employee->id_lang);
 
         $locale = $language['locale'];
 

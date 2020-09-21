@@ -17,7 +17,6 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-use PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
@@ -60,7 +59,7 @@ class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontControl
         $paypalOrder = new CreatePaypalOrderHandler($this->context);
         $paypalOrder = $paypalOrder->handle();
 
-        $language = (new LanguageAdapter())->getLanguage($this->context->language->id);
+        $language = $this->module->getService('ps_checkout.adapter.language')->getLanguage($this->context->language->id);
         $paypalSdkLink = $module->getService('ps_checkout.sdk.paypal.linkbuilder');
         $paypalSdkLink->enableDisplayOnlySmartButtons();
 

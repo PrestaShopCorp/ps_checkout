@@ -44,4 +44,19 @@ class PrestaShopContext
     {
         return $this->context->language !== null ? $this->context->language->iso_code : 'en';
     }
+
+    public function getLanguage()
+    {
+        return $this->context->language;
+    }
+
+    public function getLink()
+    {
+        return $this->context->link;
+    }
+
+    public function getShopId()
+    {
+        return $this->context->shop->id;
+    }
 }
