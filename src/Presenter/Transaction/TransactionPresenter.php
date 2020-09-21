@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Presenter\Transaction;
 
 use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\Repository\OrderPaymentRepository;
 
 /**
  * Present the pending orders for the reporting
@@ -38,9 +39,11 @@ class TransactionPresenter implements PresenterInterface
     public function present()
     {
         $link = new LinkAdapter();
+        /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
-        $transactions = $module->getService('ps_checkout.repository.orderpayment')
-            ->findAllPSCheckoutModule(\Context::getContext()->shop->id);
+        /** @var OrderPaymentRepository $repository */
+        $repository = $module->getService('ps_checkout.repository.orderpayment');
+        $transactions = $repository->findAllPSCheckoutModule(\Context::getContext()->shop->id);
 
         foreach ($transactions as &$transaction) {
             $transaction['transactionID'] = $transaction['transaction_id'];

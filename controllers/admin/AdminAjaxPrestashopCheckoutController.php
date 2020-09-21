@@ -259,10 +259,14 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessGetReportingDatas()
     {
+        /** @var PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter $pendingOrder */
+        $pendingOrder = $this->module->getService('ps_checkout.presenter.order.pending');
+        /** @var PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter $transactionOrder */
+        $transactionOrder = $this->module->getService('ps_checkout.presenter.transaction');
         $this->ajaxDie(
             json_encode([
-                'orders' => $this->module->getService('ps_checkout.presenter.order.pending')->present(),
-                'transactions' => $this->module->getService('ps_checkout.presenter.transaction')->present(),
+                'orders' => $pendingOrder->present(),
+                'transactions' => $transactionOrder->present(),
             ])
         );
     }

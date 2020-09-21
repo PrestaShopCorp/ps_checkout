@@ -23,6 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Presenter\Order;
 use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\Repository\OrderRepository;
 use PrestaShop\Module\PrestashopCheckout\Translations\OrderStatesTranslations;
 
 /**
@@ -59,9 +60,11 @@ class OrderPendingPresenter implements PresenterInterface
 
         $idStates = array_map('intval', $orderStates);
 
+        /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
-        $orders = $module->getService('ps_checkout.repository.order')
-            ->findByStates(\Context::getContext()->shop->id, $idStates);
+        /** @var OrderRepository $repository */
+        $repository = $module->getService('ps_checkout.repository.order');
+        $orders = $repository->findByStates(\Context::getContext()->shop->id, $idStates);
 
         foreach ($orders as &$order) {
             $order['username'] = substr($order['firstname'], 0, 1) . '. ' . $order['lastname'];
