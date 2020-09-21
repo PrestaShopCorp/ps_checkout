@@ -83,7 +83,7 @@ class Ps_checkout extends PaymentModule
     public $configurationList = [
         PayPalConfiguration::INTENT => Intent::CAPTURE,
         PayPalConfiguration::PAYMENT_MODE => Mode::LIVE,
-        PayPalConfiguration::PAYMENT_METHODS_ORDER => '',
+        'PS_CHECKOUT_PAYMENT_METHODS_ORDER' => '',
         'PS_CHECKOUT_PAYPAL_ID_MERCHANT' => '',
         'PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT' => '',
         'PS_CHECKOUT_PAYPAL_EMAIL_STATUS' => '',
