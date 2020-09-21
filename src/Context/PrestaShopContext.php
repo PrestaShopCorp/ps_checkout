@@ -40,7 +40,7 @@ class PrestaShopContext
      *
      * @return string
      */
-    public function getIsoCode()
+    public function getLanguageIsoCode()
     {
         return $this->context->language !== null ? $this->context->language->iso_code : 'en';
     }

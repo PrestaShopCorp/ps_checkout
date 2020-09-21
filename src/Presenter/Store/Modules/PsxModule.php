@@ -100,7 +100,7 @@ class PsxModule implements PresenterInterface
      */
     private function getBusinessFileName()
     {
-        $employeeLanguageIsoCode = $this->context->getIsoCode();
+        $employeeLanguageIsoCode = $this->context->getLanguageIsoCode();
 
         if (file_exists(self::ALL_BUSINESS_FILE . $employeeLanguageIsoCode . '.json')) {
             return self::ALL_BUSINESS_FILE . $employeeLanguageIsoCode . '.json';

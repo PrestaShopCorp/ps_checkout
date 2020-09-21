@@ -192,7 +192,7 @@ class ContextModule implements PresenterInterface
         $faq = new Faq();
         $faq->setModuleKey($this->moduleKey);
         $faq->setPsVersion(_PS_VERSION_);
-        $faq->setIsoCode($this->psContext->getIsoCode());
+        $faq->setIsoCode($this->psContext->getLanguageIsoCode());
 
         $response = $faq->getFaq();
 
@@ -212,7 +212,7 @@ class ContextModule implements PresenterInterface
      */
     private function getReadme()
     {
-        $isoCode = $this->psContext->getIsoCode();
+        $isoCode = $this->psContext->getLanguageIsoCode();
 
         $availableReadme = ['fr', 'en', 'it', 'es', 'nl', 'pl', 'pt'];
 
@@ -230,7 +230,7 @@ class ContextModule implements PresenterInterface
      */
     private function getCgu()
     {
-        $isoCode = $this->psContext->getIsoCode();
+        $isoCode = $this->psContext->getLanguageIsoCode();
 
         switch ($isoCode) {
             case 'fr':
@@ -251,7 +251,7 @@ class ContextModule implements PresenterInterface
      */
     private function getYoutubeInstallerLink()
     {
-        $isoCode = $this->psContext->getIsoCode();
+        $isoCode = $this->psContext->getLanguageIsoCode();
         $youtube = 'https://www.youtube.com/embed/';
         switch ($isoCode) {
             case 'fr':
