@@ -521,7 +521,7 @@ class Ps_checkout extends PaymentModule
      */
     public function getPaymentMethods()
     {
-        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration **/
+        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
         $paypalConfiguration = $this->getService('ps_checkout.paypal.configuration');
         $paymentMethods = $paypalConfiguration->getPaymentMethodsOrder();
 
