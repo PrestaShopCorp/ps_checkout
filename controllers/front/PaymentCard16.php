@@ -70,7 +70,7 @@ class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontControlle
 
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
         $paypalConfiguration = $module->getService('ps_checkout.paypal.configuration');
-        
+
         $this->context->smarty->assign([
             'paypalSdkLink' => $paypalSdkLink->buildLink(),
             'nbProducts' => $cart->nbProducts(),
