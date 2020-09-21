@@ -362,18 +362,22 @@ class Ps_checkout extends PaymentModule
 
     public function getContent()
     {
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
         $paypalAccount = $this->getService('ps_checkout.repository.paypal.account');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
         $psAccount = $this->getService('ps_checkout.repository.prestashop.account');
 
         // update merchant status only if the merchant onboarding is completed
         if ($paypalAccount->onBoardingIsCompleted()
             && $psAccount->onBoardingIsCompleted()) {
             $paypalAccount = $paypalAccount->getOnboardedAccount();
-            $this->getService('ps_checkout.updater.paypal.account')->update($paypalAccount);
+            /** @var \PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater $accountUpdater */
+            $accountUpdater = $this->getService('ps_checkout.updater.paypal.account');
+            $accountUpdater->update($paypalAccount);
         }
 
         Media::addJsDef([
-            'store' => (new PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter($this, $this->context))->present(),
+            'store' => (new PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter($this))->present(),
         ]);
 
         return $this->display(__FILE__, '/views/templates/admin/configuration.tpl');
@@ -406,6 +410,7 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository */
         $paypalAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
 
         $this->context->smarty->assign([
@@ -464,6 +469,7 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository */
         $paypalAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
 
         $termsAndConditionsLinkCms = new \CMS(
@@ -480,6 +486,7 @@ class Ps_checkout extends PaymentModule
             $termsAndConditionsLinkCms->link_rewrite
         );
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder $paypalSdkLink */
         $paypalSdkLink = $this->getService('ps_checkout.sdk.paypal.linkbuilder');
 
         $this->context->smarty->assign([
@@ -809,7 +816,9 @@ class Ps_checkout extends PaymentModule
      */
     public function merchantIsValid()
     {
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $ppAccountRepository */
         $ppAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
         $psAccountRepository = $this->getService('ps_checkout.repository.prestashop.account');
 
         return $ppAccountRepository->onBoardingIsCompleted()

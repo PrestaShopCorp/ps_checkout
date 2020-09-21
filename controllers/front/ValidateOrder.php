@@ -76,7 +76,9 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
             $currency = $this->context->currency;
             $total = (float) $cart->getOrderTotal(true, Cart::BOTH);
 
-            $merchandId = $this->module->getService('ps_checkout.repository.paypal.account')->getMerchantId();
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $accountRepository */
+            $accountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
+            $merchandId = $accountRepository->getMerchantId();
             $payment = new ValidateOrder($paypalOrderId, $merchandId);
 
             $dataOrder = [

@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
 
 class MerchantDispatcher implements Dispatcher
 {
@@ -36,8 +37,11 @@ class MerchantDispatcher implements Dispatcher
     {
         $paypalAccount = new PaypalAccount($payload['merchantId']);
 
+        /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
+        /** @var PaypalAccountUpdater $accountUpdater */
+        $accountUpdater = $module->getService('ps_checkout.updater.paypal.account');
 
-        return $module->getService('ps_checkout.updater.paypal.account')->update($paypalAccount);
+        return $accountUpdater->update($paypalAccount);
     }
 }

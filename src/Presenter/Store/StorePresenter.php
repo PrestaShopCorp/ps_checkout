@@ -22,6 +22,11 @@ namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store;
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\FirebaseModule;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule;
 
 /**
  * Present the store to the vuejs app (vuex)
@@ -34,16 +39,11 @@ class StorePresenter implements PresenterInterface
     private $module;
 
     /**
-     * @var \Context
-     */
-    private $context;
-
-    /**
      * @var array
      */
     private $store;
 
-    public function __construct(\Module $module, \Context $context, array $store = null)
+    public function __construct(\Module $module, array $store = null)
     {
         // Allow to set a custom store for tests purpose
         if (null !== $store) {
@@ -51,7 +51,6 @@ class StorePresenter implements PresenterInterface
         }
 
         $this->module = $module;
-        $this->context = $context;
     }
 
     /**
@@ -67,12 +66,23 @@ class StorePresenter implements PresenterInterface
             return $this->store;
         }
 
+        /** @var ContextModule $contextModule */
+        $contextModule = $this->module->getService('ps_checkout.store.module.context');
+        /** @var FirebaseModule $firebaseModule */
+        $firebaseModule = $this->module->getService('ps_checkout.store.module.firebase');
+        /** @var PaypalModule $paypalModule */
+        $paypalModule = $this->module->getService('ps_checkout.store.module.paypal');
+        /** @var PsxModule $psxModule */
+        $psxModule = $this->module->getService('ps_checkout.store.module.psx');
+        /** @var ConfigurationModule $configurationModule */
+        $configurationModule = $this->module->getService('ps_checkout.store.module.configuration');
+
         $this->store = array_merge(
-            $this->module->getService('ps_checkout.store.module.context')->present(),
-            $this->module->getService('ps_checkout.store.module.firebase')->present(),
-            $this->module->getService('ps_checkout.store.module.paypal')->present(),
-            $this->module->getService('ps_checkout.store.module.psx')->present(),
-            $this->module->getService('ps_checkout.store.module.configuration')->present()
+            $contextModule->present(),
+            $firebaseModule->present(),
+            $paypalModule->present(),
+            $psxModule->present(),
+            $configurationModule->present()
         );
 
         return $this->store;

@@ -50,6 +50,7 @@ class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontControl
             $this->redirectToHomePage();
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository */
         $paypalAccountRepository = $module->getService('ps_checkout.repository.paypal.account');
 
         if (false === $paypalAccountRepository->paypalPaymentMethodIsValid()) {
@@ -59,9 +60,16 @@ class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontControl
         $paypalOrder = new CreatePaypalOrderHandler($this->context);
         $paypalOrder = $paypalOrder->handle();
 
-        $language = $module->getService('ps_checkout.adapter.language')->getLanguage($this->context->language->id);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter $languageAdapater */
+        $languageAdapater = $module->getService('ps_checkout.adapter.language');
+        $language = $languageAdapater->getLanguage($this->context->language->id);
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder $paypalSdkLink */
         $paypalSdkLink = $module->getService('ps_checkout.sdk.paypal.linkbuilder');
         $paypalSdkLink->enableDisplayOnlySmartButtons();
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $module->getService('ps_checkout.paypal.configuration');
 
         $this->context->smarty->assign([
             'paypalSdkLink' => $paypalSdkLink->buildLink(),
@@ -72,7 +80,7 @@ class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontControl
             'clientToken' => $paypalOrder['body']['client_token'],
             'paypalOrderId' => $paypalOrder['body']['id'],
             'validateOrderLinkByPaypal' => $module->getValidateOrderLink($paypalOrder['body']['id'], 'paypal'),
-            'intent' => strtolower($module->getService('ps_checkout.paypal.configuration')->getIntent()),
+            'intent' => strtolower($paypalConfiguration->getIntent()),
             'locale' => $language['locale'],
             'currencyIsoCode' => $this->context->currency->iso_code,
             'isCardPaymentError' => (bool) Tools::getValue('hferror'),

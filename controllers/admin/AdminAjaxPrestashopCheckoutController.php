@@ -178,17 +178,23 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessRefreshPaypalAccountStatus()
     {
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
         $paypalAccount = $this->module->getService('ps_checkout.repository.paypal.account');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
         $psAccount = $this->module->getService('ps_checkout.repository.prestashop.account');
 
         // update merchant status only if the merchant onBoarding is completed
         if ($paypalAccount->onBoardingIsCompleted() && $psAccount->onBoardingIsCompleted()
         ) {
-            $this->module->getService('ps_checkout.updater.paypal.account')->update($paypalAccount->getOnboardedAccount());
+            /** @var \PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater $updater */
+            $updater = $this->module->getService('ps_checkout.updater.paypal.account');
+            $updater->update($paypalAccount->getOnboardedAccount());
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule $paypalModule */
+        $paypalModule = $this->module->getService('ps_checkout.store.module.paypal');
         $this->ajaxDie(
-            json_encode($this->module->getService('ps_checkout.store.module.paypal')->present())
+            json_encode($paypalModule->present())
         );
     }
 
@@ -232,10 +238,15 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     private function savePsxForm($form)
     {
-        $psAccount = $this->module->getService('ps_checkout.repository.prestashop.account')->getOnboardedAccount();
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $accountRepository */
+        $accountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+        $psAccount = $accountRepository->getOnboardedAccount();
         $psAccount->setPsxForm(json_encode($form));
 
-        return $this->module->getService('ps_checkout.persistent.configuration')->savePsAccount($psAccount);
+        /** @var \PrestaShop\Module\PrestashopCheckout\PersistentConfiguration $persistentConfiguration */
+        $persistentConfiguration = $this->module->getService('ps_checkout.persistent.configuration');
+
+        return $persistentConfiguration->savePsAccount($psAccount);
     }
 
     /**
@@ -410,11 +421,14 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             ]));
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $accountRepository */
+        $accountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
+
         $response = (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order($this->context->link))->refund([
             'orderId' => $orderPayPalId,
             'captureId' => $transactionPayPalId,
             'payee' => [
-                'merchant_id' => $this->module->getService('ps_checkout.repository.paypal.account')->getMerchantId(),
+                'merchant_id' => $accountRepository->getMerchantId(),
             ],
             'amount' => [
                 'currency_code' => $currency,

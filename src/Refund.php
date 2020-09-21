@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
  * Handle the refund of a paypal order
@@ -143,13 +144,14 @@ class Refund
 
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
-        $merchantId = $module->getService('ps_checkout.repository.paypal.account')->getMerchantId();
+        /** @var PaypalAccountRepository $accountRepository */
+        $accountRepository = $module->getService('ps_checkout.repository.paypal.account');
 
         $payload = [
             'orderId' => $this->getPaypalOrderId(),
             'captureId' => $captureId,
             'payee' => [
-                'merchant_id' => $merchantId,
+                'merchant_id' => $accountRepository->getMerchantId(),
             ],
             'amount' => [
                 'currency_code' => $this->getCurrencyCode(),
