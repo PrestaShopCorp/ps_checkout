@@ -376,8 +376,10 @@ class Ps_checkout extends PaymentModule
             $accountUpdater->update($paypalAccount);
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter $storePresenter */
+        $storePresenter = $this->getService('ps_checkout.store.store');
         Media::addJsDef([
-            'store' => (new PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter($this))->present(),
+            'store' => $storePresenter->present(),
         ]);
 
         return $this->display(__FILE__, '/views/templates/admin/configuration.tpl');

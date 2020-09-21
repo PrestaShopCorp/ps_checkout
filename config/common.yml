@@ -181,3 +181,8 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter'
     arguments:
       - '@ps_checkout.context.shop'
+
+  ps_checkout.store.store:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter'
+    arguments:
+      - ['@ps_checkout.store.module.context', '@ps_checkout.store.module.firebase', '@ps_checkout.store.module.paypal', '@ps_checkout.store.module.psx', '@ps_checkout.store.module.configuration']
