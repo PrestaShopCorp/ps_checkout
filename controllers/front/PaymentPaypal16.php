@@ -59,7 +59,7 @@ class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontControl
         $paypalOrder = new CreatePaypalOrderHandler($this->context);
         $paypalOrder = $paypalOrder->handle();
 
-        $language = $this->module->getService('ps_checkout.adapter.language')->getLanguage($this->context->language->id);
+        $language = $module->getService('ps_checkout.adapter.language')->getLanguage($this->context->language->id);
         $paypalSdkLink = $module->getService('ps_checkout.sdk.paypal.linkbuilder');
         $paypalSdkLink->enableDisplayOnlySmartButtons();
 
