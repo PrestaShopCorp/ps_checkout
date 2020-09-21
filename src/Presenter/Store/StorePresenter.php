@@ -62,7 +62,7 @@ class StorePresenter implements PresenterInterface
             return $this->store;
         }
 
-        foreach($this->presenters as $presenter) {
+        foreach ($this->presenters as $presenter) {
             if ($presenter instanceof PresenterInterface) {
                 $this->store = array_merge($this->store, $presenter->present());
             }
