@@ -263,7 +263,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
         $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
-        $paypalConfiguration->setCardPaymentEnabled(Tools::getValue('status') ? 1 : 0);
+        $paypalConfiguration->setCardPaymentEnabled(Tools::getValue('status') ? true : false);
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
@@ -275,7 +275,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
-        $ecConfiguration->setOrderPage(Tools::getValue('status') ? 1 : 0);
+        $ecConfiguration->setOrderPage(Tools::getValue('status') ? true : false);
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
@@ -287,7 +287,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
-        $ecConfiguration->setCheckoutPage(Tools::getValue('status') ? 1 : 0);
+        $ecConfiguration->setCheckoutPage(Tools::getValue('status') ? true : false);
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
@@ -299,7 +299,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
-        $ecConfiguration->setProductPage(Tools::getValue('status') ? 1 : 0);
+        $ecConfiguration->setProductPage(Tools::getValue('status') ? true : false);
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
