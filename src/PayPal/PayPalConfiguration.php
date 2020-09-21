@@ -148,7 +148,7 @@ class PayPalConfiguration
     }
 
     /**
-     * @param RoundingSettings $priceRoundMode
+     * @param string $priceRoundMode
      *
      * @throws PsCheckoutException
      */
