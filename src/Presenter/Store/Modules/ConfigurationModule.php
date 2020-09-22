@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use Monolog\Logger;
-use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
@@ -33,28 +32,38 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 class ConfigurationModule implements PresenterInterface
 {
     /**
+     * @var ExpressCheckoutConfiguration
+     */
+    private $ecConfiguration;
+
+    /**
+     * @var PayPalConfiguration
+     */
+    private $paypalConfiguration;
+
+    /**
+     * @param ExpressCheckoutConfiguration $ecConfiguration
+     * @param PayPalConfiguration $paypalConfiguration
+     */
+    public function __construct(ExpressCheckoutConfiguration $ecConfiguration, PayPalConfiguration $paypalConfiguration)
+    {
+        $this->ecConfiguration = $ecConfiguration;
+        $this->paypalConfiguration = $paypalConfiguration;
+    }
+
+    /**
      * Present the paypal module (vuex)
      *
      * @return array
      */
     public function present()
     {
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-        /** @var PrestaShopConfiguration $configuration */
-        $configuration = $module->getService('ps_checkout.configuration');
-        /** @var ExpressCheckoutConfiguration $ecConfiguration */
-        $ecConfiguration = $module->getService('ps_checkout.express_checkout.configuration');
-
-        /** @var PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $module->getService('ps_checkout.paypal.configuration');
-
-        $configurationModule = [
+        return [
             'config' => [
-                'paymentMethods' => $this->getPaymentMethods($paypalConfiguration),
-                'captureMode' => $paypalConfiguration->getIntent(),
-                'paymentMode' => $paypalConfiguration->getPaymentMode(),
-                'cardIsEnabled' => $paypalConfiguration->isCardPaymentEnabled(),
+                'paymentMethods' => $this->getPaymentMethods(),
+                'captureMode' => $this->paypalConfiguration->getIntent(),
+                'paymentMode' => $this->paypalConfiguration->getPaymentMode(),
+                'cardIsEnabled' => $this->paypalConfiguration->isCardPaymentEnabled(),
                 'logger' => [
                     'levels' => [
                         Logger::DEBUG => 'DEBUG : Detailed debug information',
@@ -77,14 +86,12 @@ class ConfigurationModule implements PresenterInterface
                     'httpFormat' => \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP_FORMAT),
                 ],
                 'expressCheckout' => [
-                    'orderPage' => (bool) $ecConfiguration->isOrderPageEnabled(),
-                    'checkoutPage' => (bool) $ecConfiguration->isCheckoutPageEnabled(),
-                    'productPage' => (bool) $ecConfiguration->isProductPageEnabled(),
+                    'orderPage' => (bool) $this->ecConfiguration->isOrderPageEnabled(),
+                    'checkoutPage' => (bool) $this->ecConfiguration->isCheckoutPageEnabled(),
+                    'productPage' => (bool) $this->ecConfiguration->isProductPageEnabled(),
                 ],
             ],
         ];
-
-        return $configurationModule;
     }
 
     /**
@@ -92,9 +99,9 @@ class ConfigurationModule implements PresenterInterface
      *
      * @return array payment method
      */
-    private function getPaymentMethods($paypalConfiguration)
+    private function getPaymentMethods()
     {
-        $paymentMethods = $paypalConfiguration->getPaymentMethodsOrder();
+        $paymentMethods = $this->paypalConfiguration->getPaymentMethodsOrder();
 
         if (empty($paymentMethods)) {
             $paymentMethods = [

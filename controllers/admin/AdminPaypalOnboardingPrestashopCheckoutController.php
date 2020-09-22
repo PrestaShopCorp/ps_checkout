@@ -43,9 +43,13 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
 
         $paypalAccount = new PaypalAccount($idMerchant);
 
-        $this->module->getService('ps_checkout.persistent.configuration')->savePaypalAccount($paypalAccount);
+        /** @var \PrestaShop\Module\PrestashopCheckout\PersistentConfiguration $persistentConfiguration */
+        $persistentConfiguration = $this->module->getService('ps_checkout.persistent.configuration');
+        $persistentConfiguration->savePaypalAccount($paypalAccount);
 
-        (new PaypalAccountUpdater($paypalAccount))->update();
+        /** @var PaypalAccountUpdater $accountUpdater */
+        $accountUpdater = $this->module->getService('ps_checkout.updater.paypal.account');
+        $accountUpdater->update($paypalAccount);
 
         Tools::redirect(
             (new LinkAdapter($this->context->link))->getAdminLink(

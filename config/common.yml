@@ -8,6 +8,12 @@ services:
     arguments:
       - 'ps_checkout'
 
+  ps_checkout.context.prestashop:
+    class: 'PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
+
+  ps_checkout.context.shop:
+    class: 'PrestaShop\Module\PrestashopCheckout\ShopContext'
+
   ps_checkout.shop.provider:
     class: 'PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider'
 
@@ -64,6 +70,7 @@ services:
       - '@=service("ps_checkout.module").name'
       - '@ps_checkout.logger.handler'
       - '@ps_checkout.logger.sentry.handler'
+      - '@ps_checkout.logger.sentry.processor'
 
   ps_checkout.logger:
     class: 'Psr\Log\LoggerInterface'
@@ -73,6 +80,8 @@ services:
 
   ps_checkout.logger.sentry.processor:
     class: 'PrestaShop\Module\PrestashopCheckout\Sentry\SentryProcessor'
+    arguments:
+      - '@ps_checkout.repository.prestashop.account'
 
   ps_checkout.paypal.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
@@ -97,3 +106,83 @@ services:
     arguments:
       - '@ps_checkout.api.firebase.auth'
       - '@ps_checkout.persistent.configuration'
+
+  ps_checkout.repository.paypal.account:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository'
+    arguments:
+      - '@ps_checkout.configuration'
+
+  ps_checkout.sdk.paypal.linkbuilder:
+    class: 'PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder'
+    arguments:
+      - '@ps_checkout.repository.paypal.account'
+      - '@ps_checkout.paypal.configuration'
+
+  ps_checkout.repository.prestashop.account:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
+    arguments:
+      - '@ps_checkout.configuration'
+
+  ps_checkout.store.module.psx:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule'
+    arguments:
+      - '@ps_checkout.context.prestashop'
+      - '@ps_checkout.repository.prestashop.account'
+
+  ps_checkout.store.module.paypal:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule'
+    arguments:
+      - '@ps_checkout.repository.paypal.account'
+
+  ps_checkout.store.module.firebase:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\FirebaseModule'
+    arguments:
+      - '@ps_checkout.repository.prestashop.account'
+
+  ps_checkout.store.module.configuration:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule'
+    arguments:
+      - '@ps_checkout.express_checkout.configuration'
+      - '@ps_checkout.paypal.configuration'
+
+  ps_checkout.builder.payload.onboarding:
+    class: 'PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder'
+    arguments:
+      - '@ps_checkout.repository.prestashop.account'
+      - '@ps_checkout.adapter.language'
+
+  ps_checkout.updater.paypal.account:
+    class: 'PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater'
+    arguments:
+      - '@ps_checkout.persistent.configuration'
+
+  ps_checkout.step.live:
+    class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep'
+    arguments:
+      - '@ps_checkout.configuration'
+
+  ps_checkout.translations.translations:
+    class: 'PrestaShop\Module\PrestashopCheckout\Translations\Translations'
+    arguments:
+      - '@ps_checkout.module'
+
+  ps_checkout.store.module.context:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule'
+    arguments:
+      - '@=service("ps_checkout.module").name'
+      - '@=service("ps_checkout.module").module_key'
+      - '@ps_checkout.context.prestashop'
+      - '@ps_checkout.paypal.configuration'
+      - '@ps_checkout.step.live'
+      - '@ps_checkout.translations.translations'
+      - '@ps_checkout.context.shop'
+
+  ps_checkout.adapter.language:
+    class: 'PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter'
+    arguments:
+      - '@ps_checkout.context.shop'
+
+  ps_checkout.store.store:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter'
+    arguments:
+      - ['@ps_checkout.store.module.context', '@ps_checkout.store.module.firebase', '@ps_checkout.store.module.paypal', '@ps_checkout.store.module.psx', '@ps_checkout.store.module.configuration']

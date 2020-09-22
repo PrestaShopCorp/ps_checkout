@@ -159,7 +159,9 @@ class Ps_checkout extends PaymentModule
         }
 
         // Install specific to prestashop 1.7
-        if ((new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17()) {
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+        if ($shopContext->isShop17()) {
             return $this->registerHook(self::HOOK_LIST_17) &&
                 $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1);
         }
@@ -354,18 +356,24 @@ class Ps_checkout extends PaymentModule
 
     public function getContent()
     {
-        $paypalAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository();
-        $psAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository();
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
+        $paypalAccount = $this->getService('ps_checkout.repository.paypal.account');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
+        $psAccount = $this->getService('ps_checkout.repository.prestashop.account');
 
         // update merchant status only if the merchant onboarding is completed
         if ($paypalAccount->onBoardingIsCompleted()
             && $psAccount->onBoardingIsCompleted()) {
             $paypalAccount = $paypalAccount->getOnboardedAccount();
-            (new PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater($paypalAccount))->update();
+            /** @var \PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater $accountUpdater */
+            $accountUpdater = $this->getService('ps_checkout.updater.paypal.account');
+            $accountUpdater->update($paypalAccount);
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter $storePresenter */
+        $storePresenter = $this->getService('ps_checkout.store.store');
         Media::addJsDef([
-            'store' => (new PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter($this, $this->context))->present(),
+            'store' => $storePresenter->present(),
         ]);
 
         return $this->display(__FILE__, '/views/templates/admin/configuration.tpl');
@@ -398,7 +406,8 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
-        $paypalAccountRepository = new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository();
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository */
+        $paypalAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
 
         $this->context->smarty->assign([
             'path' => $this->_path . 'views/img/',
@@ -456,7 +465,8 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
-        $paypalAccountRepository = new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository();
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository */
+        $paypalAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
 
         $termsAndConditionsLinkCms = new \CMS(
             (int) Configuration::get(
@@ -472,7 +482,8 @@ class Ps_checkout extends PaymentModule
             $termsAndConditionsLinkCms->link_rewrite
         );
 
-        $paypalSdkLink = new PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder();
+        /** @var \PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder $paypalSdkLink */
+        $paypalSdkLink = $this->getService('ps_checkout.sdk.paypal.linkbuilder');
 
         $this->context->smarty->assign([
             'paypalSdkLink' => $paypalSdkLink->buildLink(),
@@ -675,8 +686,10 @@ class Ps_checkout extends PaymentModule
             return '';
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
         $this->context->smarty->assign([
-            'isShop17' => (new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17(),
+            'isShop17' => $shopContext->isShop17(),
             'isAuthorized' => 'AUTHORIZE' === Configuration::get('PS_CHECKOUT_INTENT'),
         ]);
 
@@ -796,9 +809,14 @@ class Ps_checkout extends PaymentModule
      */
     public function merchantIsValid()
     {
-        return (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->onBoardingIsCompleted()
-            && (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->paypalEmailIsValid()
-            && (new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository())->onBoardingIsCompleted();
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $ppAccountRepository */
+        $ppAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->getService('ps_checkout.repository.prestashop.account');
+
+        return $ppAccountRepository->onBoardingIsCompleted()
+            && $ppAccountRepository->paypalEmailIsValid()
+            && $psAccountRepository->onBoardingIsCompleted();
     }
 
     /**
@@ -832,7 +850,9 @@ class Ps_checkout extends PaymentModule
      */
     public function addCheckboxCarrierRestrictionsForModule(array $shopsList = [])
     {
-        if (false === (new PrestaShop\Module\PrestashopCheckout\ShopContext())->isShop17()) {
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+        if (false === $shopContext->isShop17()) {
             return true;
         }
 

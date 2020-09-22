@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
@@ -126,12 +127,17 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         $module = \Module::getInstanceByName('ps_checkout');
         /** @var PrestaShopConfiguration $configuration */
         $configuration = $module->getService('ps_checkout.configuration');
+        /** @var PayPalConfiguration $paypalConfiguration */
         $paypalConfiguration = $module->getService('ps_checkout.paypal.configuration');
 
         $shopName = $configuration->get('PS_SHOP_NAME');
 
+        /** @var PaypalAccountRepository $accountRepository */
+        $accountRepository = $module->getService('ps_checkout.repository.paypal.account');
+        $merchantId = $accountRepository->getMerchantId();
+
         $node = [
-            'intent' => $module->getService('ps_checkout.paypal.configuration')->getIntent(), // capture or authorize
+            'intent' => $paypalConfiguration->getIntent(), // capture or authorize
             'custom_id' => (string) $this->cart['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
             'description' => $this->truncate(
@@ -147,7 +153,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 'value' => $this->cart['cart']['totals']['total_including_tax']['amount'],
             ],
             'payee' => [
-                'merchant_id' => (new PaypalAccountRepository())->getMerchantId(),
+                'merchant_id' => $merchantId,
             ],
         ];
 

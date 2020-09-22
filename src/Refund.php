@@ -142,11 +142,16 @@ class Refund
             return [];
         }
 
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        /** @var PaypalAccountRepository $accountRepository */
+        $accountRepository = $module->getService('ps_checkout.repository.paypal.account');
+
         $payload = [
             'orderId' => $this->getPaypalOrderId(),
             'captureId' => $captureId,
             'payee' => [
-                'merchant_id' => (new PaypalAccountRepository())->getMerchantId(),
+                'merchant_id' => $accountRepository->getMerchantId(),
             ],
             'amount' => [
                 'currency_code' => $this->getCurrencyCode(),

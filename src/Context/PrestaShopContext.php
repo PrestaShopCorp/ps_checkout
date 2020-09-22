@@ -18,30 +18,45 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
+namespace PrestaShop\Module\PrestashopCheckout\Context;
 
-use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
-
-class MerchantDispatcher implements Dispatcher
+/**
+ * Class PrestaShopContext used to get information from PrestaShop Context
+ */
+class PrestaShopContext
 {
     /**
-     * Dispatch the Event Type to manage the merchant status
-     *
-     * {@inheritdoc}
-     *
-     * @throws PsCheckoutException
+     * @var \Context
      */
-    public function dispatchEventType($payload)
+    private $context;
+
+    public function __construct()
     {
-        $paypalAccount = new PaypalAccount($payload['merchantId']);
+        $this->context = \Context::getContext();
+    }
 
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-        /** @var PaypalAccountUpdater $accountUpdater */
-        $accountUpdater = $module->getService('ps_checkout.updater.paypal.account');
+    /**
+     * Get the isoCode from the context language, if null, send 'en' as default value
+     *
+     * @return string
+     */
+    public function getLanguageIsoCode()
+    {
+        return $this->context->language !== null ? $this->context->language->iso_code : 'en';
+    }
 
-        return $accountUpdater->update($paypalAccount);
+    public function getLanguage()
+    {
+        return $this->context->language;
+    }
+
+    public function getLink()
+    {
+        return $this->context->link;
+    }
+
+    public function getShopId()
+    {
+        return $this->context->shop->id;
     }
 }
