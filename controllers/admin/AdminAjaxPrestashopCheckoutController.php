@@ -26,8 +26,6 @@ use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPresenter;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
 use PrestaShop\Module\PrestashopCheckout\Settings\RoundingSettings;

@@ -99,9 +99,9 @@ class ConfigurationModule implements PresenterInterface
      *
      * @return array payment method
      */
-    private function getPaymentMethods($paypalConfiguration)
+    private function getPaymentMethods()
     {
-        $paymentMethods = $paypalConfiguration->getPaymentMethodsOrder();
+        $paymentMethods = $this->paypalConfiguration->getPaymentMethodsOrder();
 
         if (empty($paymentMethods)) {
             $paymentMethods = [
