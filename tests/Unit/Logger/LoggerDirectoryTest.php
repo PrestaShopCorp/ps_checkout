@@ -27,22 +27,22 @@ class LoggerDirectoryTest extends TestCase
 {
     public function testItIsReturnValidPathForVersionLessThan17()
     {
-        $cacheDirectory = new LoggerDirectory('1.6.1.0', __DIR__);
+        $loggerDirectory = new LoggerDirectory('1.6.1.0', __DIR__);
 
-        $this->assertSame(__DIR__ . '/log/', $cacheDirectory->getPath());
+        $this->assertSame(__DIR__ . '/log/', $loggerDirectory->getPath());
     }
 
     public function testItIsReturnValidPathForVersionLessThan174()
     {
-        $cacheDirectory = new LoggerDirectory('1.7.0.0', __DIR__);
+        $loggerDirectory = new LoggerDirectory('1.7.0.0', __DIR__);
 
-        $this->assertSame(__DIR__ . '/app/logs/', $cacheDirectory->getPath());
+        $this->assertSame(__DIR__ . '/app/logs/', $loggerDirectory->getPath());
     }
 
     public function testItIsReturnValidPathForVersionGreaterThanEq174()
     {
-        $cacheDirectory = new LoggerDirectory('1.7.4.0', __DIR__);
+        $loggerDirectory = new LoggerDirectory('1.7.4.0', __DIR__);
 
-        $this->assertSame(__DIR__ . '/var/logs/', $cacheDirectory->getPath());
+        $this->assertSame(__DIR__ . '/var/logs/', $loggerDirectory->getPath());
     }
 }

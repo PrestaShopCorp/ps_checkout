@@ -25,10 +25,8 @@ use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPresenter;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
@@ -211,17 +209,14 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessGetReportingDatas()
     {
+        /** @var PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter $pendingOrder */
+        $pendingOrder = $this->module->getService('ps_checkout.presenter.order.pending');
+        /** @var PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter $transactionOrder */
+        $transactionOrder = $this->module->getService('ps_checkout.presenter.transaction');
         $this->ajaxDie(
             json_encode([
-                'orders' => (new OrderPendingPresenter())->present(),
-                'transactions' => (new TransactionPresenter())->present(),
-                'countAllCheckoutTransactions' => (int) Db::getInstance()->getValue('
-                    SELECT COUNT(op.id_order_payment)
-                    FROM `' . _DB_PREFIX_ . 'order_payment` op
-                    INNER JOIN `' . _DB_PREFIX_ . 'orders` o ON (o.reference = op.order_reference)
-                    WHERE op.payment_method = "Prestashop Checkout"
-                    AND o.id_shop = ' . (int) Context::getContext()->shop->id
-                ),
+                'orders' => $pendingOrder->present(),
+                'transactions' => $transactionOrder->present(),
             ])
         );
     }
