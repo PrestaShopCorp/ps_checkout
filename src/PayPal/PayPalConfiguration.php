@@ -31,6 +31,7 @@ class PayPalConfiguration
     const CARD_PAYMENT_ENABLED = 'PS_CHECKOUT_CARD_PAYMENT_ENABLED';
     const PS_ROUND_TYPE = 'PS_ROUND_TYPE';
     const PS_PRICE_ROUND_MODE = 'PS_PRICE_ROUND_MODE';
+    const PAYMENT_METHODS_ORDER = 'PS_CHECKOUT_PAYMENT_METHODS_ORDER';
 
     /**
      * @var PrestaShopConfiguration
@@ -66,6 +67,26 @@ class PayPalConfiguration
         }
 
         $this->configuration->set(self::INTENT, $captureMode);
+    }
+
+    /**
+     * Used to return the PS_CHECKOUT_PAYMENT_METHODS_ORDER from the Configuration
+     *
+     * @return string
+     */
+    public function getPaymentMethodsOrder()
+    {
+        return $this->configuration->get(self::PAYMENT_METHODS_ORDER);
+    }
+
+    /**
+     * Used to set the PS_CHECKOUT_PAYMENT_METHODS_ORDER in the Configuration
+     *
+     * @param $paymentMethodsOrder
+     */
+    public function setPaymentMethodsOrder($paymentMethodsOrder)
+    {
+        $this->configuration->set(self::PAYMENT_METHODS_ORDER, $paymentMethodsOrder);
     }
 
     /**
@@ -127,7 +148,7 @@ class PayPalConfiguration
     }
 
     /**
-     * @param RoundingSettings $priceRoundMode
+     * @param string $priceRoundMode
      *
      * @throws PsCheckoutException
      */

@@ -51,7 +51,7 @@ class ConfigurationModule implements PresenterInterface
 
         $configurationModule = [
             'config' => [
-                'paymentMethods' => $this->getPaymentMethods(),
+                'paymentMethods' => $this->getPaymentMethods($paypalConfiguration),
                 'captureMode' => $paypalConfiguration->getIntent(),
                 'paymentMode' => $paypalConfiguration->getPaymentMode(),
                 'cardIsEnabled' => $paypalConfiguration->isCardPaymentEnabled(),
@@ -92,14 +92,9 @@ class ConfigurationModule implements PresenterInterface
      *
      * @return array payment method
      */
-    private function getPaymentMethods()
+    private function getPaymentMethods($paypalConfiguration)
     {
-        $paymentMethods = \Configuration::get(
-            'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        $paymentMethods = $paypalConfiguration->getPaymentMethodsOrder();
 
         if (empty($paymentMethods)) {
             $paymentMethods = [
