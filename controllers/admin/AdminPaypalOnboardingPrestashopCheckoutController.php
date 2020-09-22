@@ -30,6 +30,7 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
 
     public function init()
     {
+        parent::init();
         $idMerchant = Tools::getValue('merchantIdInPayPal');
 
         if (true === empty($idMerchant)) {

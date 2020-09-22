@@ -18,9 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
-use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
-use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -53,7 +51,7 @@ function upgrade_module_1_2_10($module)
 
     foreach ($shopsList as $shopId) {
         \Configuration::updateValue(
-            PayPalConfiguration::CARD_PAYMENT_ENABLED,
+            'PS_CHECKOUT_CARD_PAYMENT_ENABLED',
             true,
             false,
             null,
@@ -62,21 +60,21 @@ function upgrade_module_1_2_10($module)
 
         // New configurations for express checkout feature
         \Configuration::updateValue(
-            ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE,
+            'PS_CHECKOUT_EC_ORDER_PAGE',
             false,
             false,
             null,
             (int) \Context::getContext()->shop->id
         );
         \Configuration::updateValue(
-            ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE,
+            'PS_CHECKOUT_EC_CHECKOUT_PAGE',
             false,
             false,
             null,
             (int) \Context::getContext()->shop->id
         );
         \Configuration::updateValue(
-            ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE,
+            'PS_CHECKOUT_EC_PRODUCT_PAGE',
             false,
             false,
             null,

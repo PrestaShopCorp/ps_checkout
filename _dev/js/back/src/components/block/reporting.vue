@@ -147,8 +147,6 @@
           this.transactions = response.transactions;
           this.orderTotalRows = this.orders.length;
           this.transactionTotalRows = this.transactions.length;
-          this.countAllCheckoutTransactions =
-            response.countAllCheckoutTransactions;
         });
       },
       setBadgeColor(color) {
@@ -265,8 +263,7 @@
         transactionTotalRows: 1,
         transactionCurrentPage: 1,
         transactionPerPage: 20,
-        transactionPageOptions: [5, 10, 15],
-        countAllCheckoutTransactions: null
+        transactionPageOptions: [5, 10, 15]
       };
     },
     created() {

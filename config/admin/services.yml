@@ -10,3 +10,19 @@ services:
 
   ps_checkout.logger.file.reader:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader'
+
+  ps_checkout.step.live:
+    class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep'
+    arguments:
+      - '@ps_checkout.configuration'
+  ps_checkout.repository.orderpayment:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\OrderPaymentRepository'
+
+  ps_checkout.repository.order:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\OrderRepository'
+
+  ps_checkout.presenter.order.pending:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter'
+
+  ps_checkout.presenter.transaction:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter'
