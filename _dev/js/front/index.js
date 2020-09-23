@@ -19,6 +19,7 @@
 import "promise-polyfill/src/polyfill";
 import "whatwg-fetch";
 import "url-polyfill";
+import PsCheckout from "./PsCheckout";
 
 const configPayPalSdk = {
   id: "ps_checkoutPayPalSdkScript",
@@ -28,6 +29,15 @@ const configPayPalSdk = {
   cspNonce: window.ps_checkoutCspNonce,
   orderId: window.ps_checkoutPayPalOrderId,
   clientToken: window.ps_checkoutPayPalClientToken
+};
+
+const configPsCheckout = {
+  createUrl: window.ps_checkoutCreateUrl,
+  checkCartUrl: window.ps_checkoutCheckUrl,
+  validateOrderUrl: window.ps_checkoutValidateUrl,
+  confirmationUrl: window.ps_checkoutConfirmUrl,
+  cancelUrl: window.ps_checkoutCancelUrl,
+  translations: window.ps_checkoutPayWithTranslations
 };
 
 /**
@@ -67,7 +77,10 @@ const initPayPalSdk = configPayPalSdk => {
   document.head.appendChild(script);
 
   script.onload = () => {
-    //@todo Init page handler
+    new PsCheckout(
+      window.ps_checkoutPayPalSdkInstance,
+      configPsCheckout
+    ).loadCheckout();
   };
 };
 

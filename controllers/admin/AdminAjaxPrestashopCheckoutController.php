@@ -337,7 +337,18 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             ]));
         }
 
-        $paypalOrderId = (new OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
+        $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
+        $psCheckoutCartCollection->where('id_cart', '=', (int) $order->id_cart);
+
+        /** @var PsCheckoutCart|false $psCheckoutCart */
+        $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+
+        if (false !== $psCheckoutCart) {
+            $paypalOrderId = $psCheckoutCart->paypal_order;
+        } else {
+            // Fallback to legacy Order Matrice
+            $paypalOrderId = (new OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
+        }
 
         if (empty($paypalOrderId)) {
             $this->ajaxDie(json_encode([

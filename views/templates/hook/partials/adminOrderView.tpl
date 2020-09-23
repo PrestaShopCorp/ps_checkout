@@ -18,7 +18,7 @@
  *}
 
 <script>
-  if (undefined !== ps_checkout) {
+  if (undefined !== window.ps_checkout) {
     ps_checkout.initialize({
       legacy: {$legacy|intval},
       orderPrestaShopId: {$orderPrestaShopId|intval},

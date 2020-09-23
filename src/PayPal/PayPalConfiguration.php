@@ -32,6 +32,7 @@ class PayPalConfiguration
     const PS_ROUND_TYPE = 'PS_ROUND_TYPE';
     const PS_PRICE_ROUND_MODE = 'PS_PRICE_ROUND_MODE';
     const PAYMENT_METHODS_ORDER = 'PS_CHECKOUT_PAYMENT_METHODS_ORDER';
+    const INTEGRATION_DATE = 'PS_CHECKOUT_INTEGRATION_DATE';
 
     /**
      * @var PrestaShopConfiguration
@@ -193,5 +194,10 @@ class PayPalConfiguration
     public function getPriceRoundMode()
     {
         return $this->configuration->get(self::PS_PRICE_ROUND_MODE);
+    }
+
+    public function getIntegrationDate()
+    {
+        return $this->configuration->get(static::INTEGRATION_DATE);
     }
 }

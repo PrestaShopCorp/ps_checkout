@@ -23,6 +23,9 @@ use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 
+/**
+ * @todo To be removed
+ */
 class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontController
 {
     /** @var Ps_checkout */

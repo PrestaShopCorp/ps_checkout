@@ -21,6 +21,9 @@ use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
 
+/**
+ * @todo To be removed
+ */
 class ps_checkoutPaymentPaypal16ModuleFrontController extends ModuleFrontController
 {
     public $ssl = true;
