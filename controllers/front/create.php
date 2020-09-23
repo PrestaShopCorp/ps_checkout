@@ -22,7 +22,6 @@ use PrestaShop\Decimal\Number;
 use PrestaShop\Decimal\Operation\Rounding;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
  * This controller receive ajax call to create a PayPal Order
@@ -172,6 +171,9 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
      */
     private function buildPayload()
     {
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository */
+        $paypalAccountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
+
         $products = $this->context->cart->getProducts();
 
         $totalOrderWithTax = $this->context->cart->getOrderTotal(true);
@@ -236,7 +238,7 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
             'description' => $this->truncate('Checking out with your cart from ' . $this->context->shop->name, 127),
             'soft_descriptor' => $this->truncate($this->context->shop->name, 22),
             'payee' => [
-                'merchant_id' => (new PaypalAccountRepository())->getMerchantId(),
+                'merchant_id' => $paypalAccountRepository->getMerchantId(),
             ],
             'amount' => [
                 'currency_code' => $this->context->currency->iso_code,

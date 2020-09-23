@@ -21,7 +21,10 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Faq\Faq;
+use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
@@ -33,19 +36,65 @@ use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 class ContextModule implements PresenterInterface
 {
     /**
-     * @var \Module
+     * @var string
      */
-    private $module;
+    private $moduleName;
 
     /**
-     * @var \Context
+     * @var string
      */
-    private $context;
+    private $moduleKey;
 
-    public function __construct(\Module $module, \Context $context)
-    {
-        $this->module = $module;
-        $this->context = $context;
+    /**
+     * @var PrestaShopContext
+     */
+    private $psContext;
+
+    /**
+     * @var PayPalConfiguration
+     */
+    private $paypalConfiguration;
+
+    /**
+     * @var LiveStep
+     */
+    private $liveStep;
+
+    /**
+     * @var Translations
+     */
+    private $translations;
+
+    /**
+     * @var ShopContext
+     */
+    private $shopContext;
+
+    /**
+     * @param string $moduleName
+     * @param string $moduleKey
+     * @param PrestaShopContext $psContext
+     * @param PayPalConfiguration $payPalConfiguration
+     * @param LiveStep $liveStep
+     * @param Translations $translations
+     * @param ShopContext $shopContext
+     */
+    public function __construct(
+        $moduleName,
+        $moduleKey,
+        PrestaShopContext $psContext,
+        PayPalConfiguration $payPalConfiguration,
+        LiveStep $liveStep,
+        Translations $translations,
+        ShopContext $shopContext
+    ) {
+        $this->moduleName = $moduleName;
+        $this->moduleKey = $moduleKey;
+        $this->psContext = $psContext;
+        $this->paypalConfiguration = $payPalConfiguration;
+        $this->liveStep = $liveStep;
+        $this->translations = $translations;
+        $this->shopContext = $shopContext;
     }
 
     /**
@@ -55,29 +104,28 @@ class ContextModule implements PresenterInterface
      */
     public function present()
     {
-        $contextModule = [
+        return [
             'context' => [
                 'moduleVersion' => \Ps_checkout::VERSION,
                 'psVersion' => _PS_VERSION_,
                 'phpVersion' => phpversion(),
-                'shopIs17' => (new ShopContext())->isShop17(),
-                'moduleKey' => $this->module->module_key,
-                'shopId' => (new ShopUuidManager())->getForShop((int) \Context::getContext()->shop->id),
-                'isReady' => (new ShopContext())->isReady(),
+                'shopIs17' => $this->shopContext->isShop17(),
+                'moduleKey' => $this->moduleKey,
+                'shopId' => (new ShopUuidManager())->getForShop((int) $this->psContext->getShopId()),
+                'isReady' => $this->shopContext->isReady(),
                 'isShopContext' => $this->isShopContext(),
                 'shopsTree' => $this->getShopsTree(),
                 'faq' => $this->getFaq(),
-                'language' => $this->context->language,
-                'prestashopCheckoutAjax' => (new LinkAdapter($this->context->link))->getAdminLink('AdminAjaxPrestashopCheckout'),
-                'translations' => (new Translations($this->module))->getTranslations(),
+                'language' => $this->psContext->getLanguage(),
+                'prestashopCheckoutAjax' => (new LinkAdapter($this->psContext->getLink()))->getAdminLink('AdminAjaxPrestashopCheckout'),
+                'translations' => $this->translations->getTranslations(),
                 'readmeUrl' => $this->getReadme(),
                 'cguUrl' => $this->getCgu(),
-                'roundingSettingsIsCorrect' => $this->roundingSettingsIsCorrect(),
+                'roundingSettingsIsCorrect' => $this->paypalConfiguration->IsRoundingSettingsCorrect(),
+                'liveStepConfirmed' => $this->liveStep->isConfirmed(),
                 'youtubeInstallerLink' => $this->getYoutubeInstallerLink(),
             ],
         ];
-
-        return $contextModule;
     }
 
     /**
@@ -103,7 +151,7 @@ class ContextModule implements PresenterInterface
             return $shopList;
         }
 
-        $linkAdapter = new LinkAdapter($this->context->link);
+        $linkAdapter = new LinkAdapter($this->psContext->getLink());
 
         foreach (\Shop::getTree() as $groupId => $groupData) {
             $shops = [];
@@ -117,7 +165,7 @@ class ContextModule implements PresenterInterface
                         true,
                         [],
                         [
-                            'configure' => $this->module->name,
+                            'configure' => $this->moduleName,
                             'setShopContext' => 's-' . $shopId,
                         ]
                     ),
@@ -142,9 +190,9 @@ class ContextModule implements PresenterInterface
     private function getFaq()
     {
         $faq = new Faq();
-        $faq->setModuleKey($this->module->module_key);
+        $faq->setModuleKey($this->moduleKey);
         $faq->setPsVersion(_PS_VERSION_);
-        $faq->setIsoCode($this->context->language->iso_code);
+        $faq->setIsoCode($this->psContext->getLanguageIsoCode());
 
         $response = $faq->getFaq();
 
@@ -164,7 +212,7 @@ class ContextModule implements PresenterInterface
      */
     private function getReadme()
     {
-        $isoCode = $this->context->language->iso_code;
+        $isoCode = $this->psContext->getLanguageIsoCode();
 
         $availableReadme = ['fr', 'en', 'it', 'es', 'nl', 'pl', 'pt'];
 
@@ -172,7 +220,7 @@ class ContextModule implements PresenterInterface
             $isoCode = 'en';
         }
 
-        return _MODULE_DIR_ . $this->module->name . '/docs/readme_' . $isoCode . '.pdf';
+        return _MODULE_DIR_ . $this->moduleName . '/docs/readme_' . $isoCode . '.pdf';
     }
 
     /**
@@ -182,7 +230,7 @@ class ContextModule implements PresenterInterface
      */
     private function getCgu()
     {
-        $isoCode = $this->context->language->iso_code;
+        $isoCode = $this->psContext->getLanguageIsoCode();
 
         switch ($isoCode) {
             case 'fr':
@@ -203,7 +251,7 @@ class ContextModule implements PresenterInterface
      */
     private function getYoutubeInstallerLink()
     {
-        $isoCode = $this->context->language->iso_code;
+        $isoCode = $this->psContext->getLanguageIsoCode();
         $youtube = 'https://www.youtube.com/embed/';
         switch ($isoCode) {
             case 'fr':
@@ -215,27 +263,5 @@ class ContextModule implements PresenterInterface
             default:
                 return $youtube . 'uovtJVCLaD8';
         }
-    }
-
-    /**
-     * Check if the rounding configuration if correctly set
-     *
-     * PS_ROUND_TYPE need to be set to 1 (Round on each item)
-     * PS_PRICE_ROUND_MODE need to be set to 2 (Round up away from zero, when it is half way there)
-     *
-     * @return bool
-     */
-    private function roundingSettingsIsCorrect()
-    {
-        return \Configuration::get(
-                'PS_ROUND_TYPE',
-                null,
-                null,
-                (int) \Context::getContext()->shop->id) === '1'
-            && \Configuration::get(
-                'PS_PRICE_ROUND_MODE',
-                null,
-                null,
-                (int) \Context::getContext()->shop->id) === '2';
     }
 }

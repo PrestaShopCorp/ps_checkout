@@ -19,6 +19,8 @@
  */
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PayPalError;
+use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
 
 /**
  * This controller receive ajax call to capture/authorize payment and create a PrestaShop Order
@@ -40,6 +42,11 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
         header('content-type:application/json');
 
         try {
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository */
+            $paypalAccountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
+            /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+            $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
+
             if (false === $this->checkIfContextIsValid()) {
                 throw new PsCheckoutException('The context is not valid', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
             }
@@ -75,10 +82,44 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             // @todo refactor this
             $apiOrder = new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order(\Context::getContext()->link);
 
-            if ('CAPTURE' === Configuration::get('PS_CHECKOUT_INTENT')) {
-                $response = $apiOrder->capture($bodyValues['orderID'], (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->getMerchantId());
-            } else {
-                $response = $apiOrder->authorize($bodyValues['orderID'], (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->getMerchantId());
+            if ('CAPTURE' !== $paypalConfiguration->getIntent()) {
+                throw new PsCheckoutException('PayPal Order intent AUTHORIZE is not implemented');
+            }
+
+            $response = $apiOrder->capture($bodyValues['orderID'], $paypalAccountRepository->getMerchantId());
+
+            if (false === $response['status']) {
+                if (false === empty($response['exceptionMessage']) && false === empty($response['exceptionCode'])) {
+                    throw new PsCheckoutException($response['exceptionMessage'], (int) $response['exceptionCode']);
+                }
+
+                if (false === empty($response['body']['message'])) {
+                    (new PayPalError($response['body']['message']))->throwException();
+                }
+
+                throw new PsCheckoutException(isset($response['body']['error']) ? $response['body']['error'] : 'Unknown error', PsCheckoutException::UNKNOWN);
+            }
+
+            $transactionIdentifier = $response['body']['purchase_units'][0]['payments']['captures'][0]['id'];
+            $transactionStatus = $response['body']['purchase_units'][0]['payments']['captures'][0]['status'];
+
+            if ('DECLINED' === $transactionStatus
+                && false === empty($response['body']['payment_source'])
+                && false === empty($response['body']['payment_source'][0]['card'])
+                && false === empty($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response'])
+            ) {
+                $payPalProcessorResponse = new PayPalProcessorResponse(
+                    isset($response['body']['payment_source'][0]['card']['brand']) ? $response['body']['payment_source'][0]['card']['brand'] : null,
+                    isset($response['body']['payment_source'][0]['card']['type']) ? $response['body']['payment_source'][0]['card']['type'] : null,
+                    isset($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['avs_code']) ? $response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['avs_code'] : null,
+                    isset($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['cvv_code']) ? $response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['cvv_code'] : null,
+                    isset($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['response_code']) ? $response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['response_code'] : null
+                );
+                $payPalProcessorResponse->throwException();
+            }
+
+            if ('DECLINED' === $transactionStatus) {
+                throw new PsCheckoutException(sprintf('Transaction declined by PayPal : %s', false === empty($response['body']['details']['description']) ? $response['body']['details']['description'] : 'No detail'), PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
             }
 
             $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
@@ -90,7 +131,7 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             if (false === $psCheckoutCart) {
                 $psCheckoutCart = new PsCheckoutCart();
                 $psCheckoutCart->id_cart = (int) $this->context->cart->id;
-                $psCheckoutCart->paypal_intent = 'CAPTURE' === Configuration::get('PS_CHECKOUT_INTENT') ? 'CAPTURE' : 'AUTHORIZE';
+                $psCheckoutCart->paypal_intent = $paypalConfiguration->getIntent();
                 $psCheckoutCart->paypal_order = $response['body']['id'];
                 $psCheckoutCart->paypal_status = $response['body']['status'];
                 $psCheckoutCart->add();
@@ -100,12 +141,6 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
                 $psCheckoutCart->update();
             }
 
-            if ('CAPTURE' === Configuration::get('PS_CHECKOUT_INTENT')) {
-                $transaction = false === empty($response['body']['purchase_units'][0]['payments']['captures'][0]['id']) ? $response['body']['purchase_units'][0]['payments']['captures'][0]['id'] : '';
-            } else {
-                $transaction = false === empty($response['body']['purchase_units'][0]['payments']['authorizations'][0]['id']) ? $response['body']['purchase_units'][0]['payments']['authorizations'][0]['id'] : '';
-            }
-
             $this->module->validateOrder(
                 (int) $this->context->cart->id,
                 (int) $this->getOrderState($psCheckoutCart->paypal_funding),
@@ -113,7 +148,7 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
                 $this->getOptionName($psCheckoutCart->paypal_funding),
                 null,
                 [
-                    'transaction_id' => $transaction,
+                    'transaction_id' => $transactionIdentifier,
                 ],
                 (int) $this->context->currency->id,
                 false,
@@ -130,7 +165,7 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
                 'body' => [
                     'paypal_status' => $response['body']['status'],
                     'paypal_order' => $response['body']['id'],
-                    'paypal_transaction' => $transaction,
+                    'paypal_transaction' => $transactionIdentifier,
                     'id_cart' => (int) $this->context->cart->id,
                     'id_module' => (int) $this->module->id,
                     'id_order' => (int) $this->module->currentOrder,

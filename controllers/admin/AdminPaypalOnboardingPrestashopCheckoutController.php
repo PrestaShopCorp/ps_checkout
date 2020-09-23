@@ -19,13 +19,18 @@
  */
 use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
-use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
 
 class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminController
 {
+    /**
+     * @var Ps_checkout
+     */
+    public $module;
+
     public function init()
     {
+        parent::init();
         $idMerchant = Tools::getValue('merchantIdInPayPal');
 
         if (true === empty($idMerchant)) {
@@ -37,9 +42,14 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
         }
 
         $paypalAccount = new PaypalAccount($idMerchant);
-        (new PersistentConfiguration())->savePaypalAccount($paypalAccount);
 
-        (new PaypalAccountUpdater($paypalAccount))->update();
+        /** @var \PrestaShop\Module\PrestashopCheckout\PersistentConfiguration $persistentConfiguration */
+        $persistentConfiguration = $this->module->getService('ps_checkout.persistent.configuration');
+        $persistentConfiguration->savePaypalAccount($paypalAccount);
+
+        /** @var PaypalAccountUpdater $accountUpdater */
+        $accountUpdater = $this->module->getService('ps_checkout.updater.paypal.account');
+        $accountUpdater->update($paypalAccount);
 
         Tools::redirect(
             (new LinkAdapter($this->context->link))->getAdminLink(

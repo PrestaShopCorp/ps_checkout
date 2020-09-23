@@ -18,6 +18,9 @@
  *-->
 <template>
   <div>
+    <b-container class="mb-4" v-if="!isLiveStepConfirmed && firebaseStatusAccount && paypalStatusAccount" >
+      <PaypalStatusBanner />
+    </b-container>
     <b-container>
       <AccountList />
     </b-container>
@@ -39,13 +42,15 @@
   import AccountList from '@/components/panel/account-list';
   import PaymentAcceptance from '@/components/panel/payment-acceptance';
   import Reassurance from '@/components/block/reassurance';
+  import PaypalStatusBanner from '@/components/banner/paypal-status';
 
   export default {
     name: 'Accounts',
     components: {
       AccountList,
       PaymentAcceptance,
-      Reassurance
+      Reassurance,
+      PaypalStatusBanner
     },
     computed: {
       firebaseStatusAccount() {
@@ -53,6 +58,9 @@
       },
       paypalStatusAccount() {
         return this.$store.state.paypal.onboardingCompleted;
+      },
+      isLiveStepConfirmed() {
+        return this.$store.state.context.liveStepConfirmed;
       }
     }
   };

@@ -20,7 +20,6 @@
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 
@@ -80,7 +79,10 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
             $currency = $this->context->currency;
             $total = (float) $cart->getOrderTotal(true, Cart::BOTH);
 
-            $payment = new ValidateOrder($paypalOrderId, (new PaypalAccountRepository())->getMerchantId());
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $accountRepository */
+            $accountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
+            $merchandId = $accountRepository->getMerchantId();
+            $payment = new ValidateOrder($paypalOrderId, $merchandId);
 
             $dataOrder = [
                 'cartId' => (int) $cart->id,
@@ -111,7 +113,10 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
 
         $template = 'validateOrderLegacy.tpl';
 
-        if ((new ShopContext())->isShop17()) {
+        /** @var ShopContext $shopContext */
+        $shopContext = $this->module->getService('ps_checkout.context.shop');
+
+        if ($shopContext->isShop17()) {
             $template = 'module:ps_checkout/views/templates/front/validateOrder.tpl';
         }
 
@@ -143,7 +148,9 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
     private function redirectToCheckout(array $params = [])
     {
         if (false === empty($params['step']) && 'payment' === $params['step']) {
-            $params['step'] = (new ShopContext())->isShop17() ? 4 : 3;
+            /** @var ShopContext $shopContext */
+            $shopContext = $this->module->getService('ps_checkout.context.shop');
+            $params['step'] = $shopContext->isShop17() ? 4 : 3;
         }
 
         Tools::redirect(

@@ -17,6 +17,7 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
 
 if (!defined('_PS_VERSION_')) {

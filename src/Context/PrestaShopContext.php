@@ -18,31 +18,45 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
-namespace Tests\Unit\Cache;
+namespace PrestaShop\Module\PrestashopCheckout\Context;
 
-use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\PrestashopCheckout\Cache\CacheDirectory;
-
-class CacheDirectoryTest extends TestCase
+/**
+ * Class PrestaShopContext used to get information from PrestaShop Context
+ */
+class PrestaShopContext
 {
-    public function testItIsReturnValidPathForVersionLessThan17()
-    {
-        $cacheDirectory = new CacheDirectory('1.6.1.0', __DIR__, true);
+    /**
+     * @var \Context
+     */
+    private $context;
 
-        $this->assertSame(__DIR__ . '/cache', $cacheDirectory->getPath());
+    public function __construct()
+    {
+        $this->context = \Context::getContext();
     }
 
-    public function testItIsReturnValidPathForVersionLessThan174()
+    /**
+     * Get the isoCode from the context language, if null, send 'en' as default value
+     *
+     * @return string
+     */
+    public function getLanguageIsoCode()
     {
-        $cacheDirectory = new CacheDirectory('1.7.0.0', __DIR__, true);
-
-        $this->assertSame(__DIR__ . '/app/cache/dev', $cacheDirectory->getPath());
+        return $this->context->language !== null ? $this->context->language->iso_code : 'en';
     }
 
-    public function testItIsReturnValidPathForVersionGreaterThanEq174()
+    public function getLanguage()
     {
-        $cacheDirectory = new CacheDirectory('1.7.4.0', __DIR__, true);
+        return $this->context->language;
+    }
 
-        $this->assertSame(__DIR__ . '/var/cache/dev', $cacheDirectory->getPath());
+    public function getLink()
+    {
+        return $this->context->link;
+    }
+
+    public function getShopId()
+    {
+        return $this->context->shop->id;
     }
 }

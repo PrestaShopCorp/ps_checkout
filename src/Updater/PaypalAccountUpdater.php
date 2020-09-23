@@ -42,18 +42,25 @@ class PaypalAccountUpdater
     const MIN_ID_LENGTH = 13;
 
     /**
-     * @var PaypalAccount
+     * @var PersistentConfiguration
      */
-    private $account;
+    private $persistentConfiguration;
+
+    public function __construct(PersistentConfiguration $persistentConfiguration)
+    {
+        $this->persistentConfiguration = $persistentConfiguration;
+    }
 
     /**
-     * PaypalAccountUpdater constructor.
+     * Update the merchant
      *
      * @param PaypalAccount $account
      *
+     * @return bool
+     *
      * @throws PsCheckoutException
      */
-    public function __construct(PaypalAccount $account)
+    public function update(PaypalAccount $account)
     {
         $merchantId = $account->getMerchantId();
 
@@ -61,31 +68,23 @@ class PaypalAccountUpdater
             throw new PsCheckoutException('MerchantId cannot be empty', PsCheckoutException::PSCHECKOUT_MERCHANT_IDENTIFIER_MISSING);
         }
 
-        $this->setAccount($account);
-    }
-
-    /**
-     * Update the merchant
-     */
-    public function update()
-    {
-        $merchantIntegration = $this->getMerchantIntegration();
+        $merchantIntegration = $this->getMerchantIntegration($merchantId);
 
         if (false === $merchantIntegration) {
-            $this->account->setEmail('');
-            $this->account->setEmailIsVerified('');
-            $this->account->setPaypalPaymentStatus('');
-            $this->account->setCardPaymentStatus('');
+            $account->setEmail('');
+            $account->setEmailIsVerified('');
+            $account->setPaypalPaymentStatus('');
+            $account->setCardPaymentStatus('');
 
-            return (new PersistentConfiguration())->savePaypalAccount($this->account);
+            return $this->persistentConfiguration->savePaypalAccount($account);
         }
 
-        $this->account->setEmail($merchantIntegration['primary_email']);
-        $this->account->setEmailIsVerified($merchantIntegration['primary_email_confirmed']);
-        $this->account->setPaypalPaymentStatus($merchantIntegration['payments_receivable']);
-        $this->account->setCardPaymentStatus($this->getCardStatus($merchantIntegration));
+        $account->setEmail($merchantIntegration['primary_email']);
+        $account->setEmailIsVerified($merchantIntegration['primary_email_confirmed']);
+        $account->setPaypalPaymentStatus($merchantIntegration['payments_receivable']);
+        $account->setCardPaymentStatus($this->getCardStatus($merchantIntegration));
 
-        return (new PersistentConfiguration())->savePaypalAccount($this->account);
+        return $this->persistentConfiguration->savePaypalAccount($account);
     }
 
     /**
@@ -157,36 +156,18 @@ class PaypalAccountUpdater
     /**
      * Get the merchant integration
      *
-     * @return array|bool response or false
+     * @param int $merchantId
+     *
+     * @return false|mixed
      */
-    private function getMerchantIntegration()
+    private function getMerchantIntegration($merchantId)
     {
-        $response = (new Shop(\Context::getContext()->link))->getMerchantIntegration($this->account->getMerchantId());
+        $response = (new Shop(\Context::getContext()->link))->getMerchantIntegration($merchantId);
 
         if (false === $response['status']) {
             return false;
         }
 
         return $response['body']['merchant_integrations'];
-    }
-
-    /**
-     * Setter for account
-     *
-     * @param PaypalAccount $account
-     */
-    public function setAccount($account)
-    {
-        $this->account = $account;
-    }
-
-    /**
-     * Getter for account
-     *
-     * @return PaypalAccount
-     */
-    public function getAccount()
-    {
-        return $this->account;
     }
 }

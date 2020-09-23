@@ -17,26 +17,59 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *-->
 <template>
-  <div>
-    <b-container class="mb-4">
-      <FraudTool />
-    </b-container>
-
-    <b-container>
-      <FeatureIncoming />
-    </b-container>
-  </div>
+  <b-container>
+    <AccountSettingsDeepLink
+      class="mb-4 w-50 d-inline-flex"
+      :title="$t('account-settings-deeplink.fraud-tool.title')"
+      :description="$t('account-settings-deeplink.fraud-tool.description')"
+      :linkTitle="$t('account-settings-deeplink.fraud-tool.link-title')"
+      linkUrl="https://www.paypal.com/fraud-protection"
+      icon="sports"
+      :iconTitle="$t('account-settings-deeplink.fraud-tool.icon-title')"
+    />
+    <AccountSettingsDeepLink
+      class="mb-4 w-50 d-inline-flex float-right"
+      :title="$t('account-settings-deeplink.bank-account.title')"
+      :description="$t('account-settings-deeplink.bank-account.description')"
+      :linkTitle="$t('account-settings-deeplink.bank-account.link-title')"
+      linkUrl="https://www.paypal.com/businessmanage/account/money"
+      icon="account_balance"
+      :iconTitle="$t('account-settings-deeplink.bank-account.icon-title')"
+    />
+    <AccountSettingsDeepLink
+      class="mb-4 w-50 d-inline-flex"
+      :title="$t('account-settings-deeplink.currencies.title')"
+      :description="$t('account-settings-deeplink.currencies.description')"
+      :linkTitle="$t('account-settings-deeplink.currencies.link-title')"
+      linkUrl="https://www.paypal.com/businessmanage/account/money"
+      icon="euro"
+      :iconTitle="$t('account-settings-deeplink.currencies.icon-title')"
+    />
+    <AccountSettingsDeepLink
+      class="mb-4 w-50 d-inline-flex float-right"
+      :title="$t('account-settings-deeplink.conversion-rules.title')"
+      :description="$t('account-settings-deeplink.conversion-rules.description')"
+      :linkTitle="$t('account-settings-deeplink.conversion-rules.link-title')"
+      linkUrl="https://www.paypal.com/businessmanage/preferences/payments"
+      icon="toll"
+      :iconTitle="$t('account-settings-deeplink.conversion-rules.icon-title')"
+    />
+  </b-container>
 </template>
 
 <script>
-  import FraudTool from '@/components/block/fraud-tool';
-  import FeatureIncoming from '@/components/block/feature-incoming';
+  import AccountSettingsDeepLink from '@/components/block/account-settings-deeplink';
 
   export default {
     name: 'Advanced',
     components: {
-      FraudTool,
-      FeatureIncoming
+      AccountSettingsDeepLink
     }
   };
 </script>
+
+<style scoped>
+  #app .d-inline-flex.w-50 {
+    width: 49% !important;
+  }
+</style>

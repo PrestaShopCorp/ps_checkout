@@ -20,8 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink;
 
-use PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
@@ -35,6 +35,11 @@ class PayPalSdkLinkBuilder
      * @var PaypalAccountRepository
      */
     private $payPalAccountRepository;
+
+    /**
+     * @var PayPalConfiguration
+     */
+    private $configuration;
 
     /**
      * @todo To be removed
@@ -59,10 +64,14 @@ class PayPalSdkLinkBuilder
 
     /**
      * @todo To be refactored with Service Container and Dependency Injection
+     *
+     * @param PaypalAccountRepository $payPalAccountRepository
+     * @param PayPalConfiguration $configuration
      */
-    public function __construct()
+    public function __construct(PaypalAccountRepository $payPalAccountRepository, PayPalConfiguration $configuration)
     {
-        $this->payPalAccountRepository = new PaypalAccountRepository();
+        $this->payPalAccountRepository = $payPalAccountRepository;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -85,36 +94,24 @@ class PayPalSdkLinkBuilder
         $params = [
             'components' => implode(',', $components),
             'client-id' => (new PaypalEnv())->getPaypalClientId(),
-            'merchant-id' => (new PaypalAccountRepository())->getMerchantId(),
+            'merchant-id' => $this->payPalAccountRepository->getMerchantId(),
             'currency' => \Context::getContext()->currency->iso_code,
-            'intent' => strtolower(\Configuration::get(
-                'PS_CHECKOUT_INTENT',
-                null,
-                null,
-                (int) \Context::getContext()->shop->id
-            )),
+            'intent' => strtolower($this->configuration->getIntent()),
             'commit' => 'order' === $this->getPageName() ? 'true' : 'false',
             'vault' => 'false',
-            'integration-date' => \Configuration::get('PS_CHECKOUT_INTEGRATION_DATE'),
+            'integration-date' => $this->configuration->getIntegrationDate(),
         ];
 
-        if ('SANDBOX' === \Configuration::get('PS_CHECKOUT_MODE')) {
+        if ('SANDBOX' === $this->configuration->getPaymentMode()) {
             $params['debug'] = 'true';
-            $params['buyer-country'] = \Context::getContext()->country->iso_code;
-            $language = (new LanguageAdapter())->getLanguage((int) \Context::getContext()->language->id);
-            $params['locale'] = $language['locale'];
+            // $params['buyer-country'] = \Context::getContext()->country->iso_code;
+            // $params['locale'] = 'es_ES'; //@todo retrieve locale from PayPalContext
         }
 
         $fundingSourcesDisabled = $this->getFundingSourcesDisabled();
 
         if (false === empty($fundingSourcesDisabled)) {
             $params['disable-funding'] = implode(',', $fundingSourcesDisabled);
-        }
-
-        $cardsDisabled = $this->getCardsDisabled();
-
-        if (false === empty($cardsDisabled)) {
-            $params['disable-card'] = implode(',', $cardsDisabled);
         }
 
         return self::BASE_LINK . '?' . urldecode(http_build_query($params));
@@ -174,46 +171,6 @@ class PayPalSdkLinkBuilder
         }
 
         return $fundingSourcesDisabled;
-    }
-
-    /**
-     * @see https://developer.paypal.com/docs/business/checkout/reference/javascript-sdk/#disable-card
-     *
-     * @return array
-     */
-    private function getCardsDisabled()
-    {
-        $cardsDisabled = [];
-
-        if (false === $this->payPalAccountRepository->isCardVisaEnabled()) {
-            $cardsDisabled[] = 'visa';
-        }
-
-        if (false === $this->payPalAccountRepository->isMasterCardEnabled()) {
-            $cardsDisabled[] = 'mastercard';
-        }
-
-        if (false === $this->payPalAccountRepository->isCardAmexEnabled()) {
-            $cardsDisabled[] = 'amex';
-        }
-
-        if (false === $this->payPalAccountRepository->isCardDiscoverEnabled()) {
-            $cardsDisabled[] = 'discover';
-        }
-
-        if (false === $this->payPalAccountRepository->isCardJcbEnabled()) {
-            $cardsDisabled[] = 'jcb';
-        }
-
-        if (false === $this->payPalAccountRepository->isCardEloEnabled()) {
-            $cardsDisabled[] = 'elo';
-        }
-
-        if (false === $this->payPalAccountRepository->isCardHiperEnabled()) {
-            $cardsDisabled[] = 'hiper';
-        }
-
-        return $cardsDisabled;
     }
 
     /**

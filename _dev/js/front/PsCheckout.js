@@ -48,41 +48,127 @@ export default class PsCheckout {
 
   loadCheckout() {
     const config = this.config;
-    if (undefined !== this.instancePayPalSdk) {
-      const buttonsContainer = document.getElementById(
-        "ps_checkout-buttons-container"
-      );
-      const paymentOptionsContainer = document.querySelector(
-        ".payment-options"
-      );
-      const paymentOptions = paymentOptionsContainer.querySelectorAll(
-        '[name="payment-option"]'
-      );
-      const paymentOption = document.querySelector(
-        '[data-module-name="ps_checkout"]'
-      );
-      const paymentOptionIdentifier =
-        null !== paymentOption ? paymentOption.id : null;
-      const paymentOptionContainer = document.getElementById(
-        paymentOptionIdentifier + "-container"
-      );
-      const paymentOptionAdditionalInformation = document.getElementById(
-        paymentOptionIdentifier + "-additional-information"
-      );
-      const paymentOptionFormContainer = document.getElementById(
-        "pay-with-" + paymentOptionIdentifier + "-form"
-      );
-      const notificationPaymentCanceled = document.getElementById(
-        "ps_checkout-canceled"
-      );
-      const notificationPaymentError = document.getElementById(
-        "ps_checkout-error"
-      );
 
-      paymentOptionContainer.style.display = "none";
+    if (undefined === this.instancePayPalSdk) {
+      throw new Error('No PayPal Javascript SDK Instance');
+    }
 
-      paymentOptions.forEach(element => {
-        element.addEventListener("change", () => {
+    const buttonsContainer = document.getElementById(
+      "ps_checkout-buttons-container"
+    );
+    const paymentOptionsContainer = document.querySelector(
+      ".payment-options"
+    );
+    const paymentOptions = paymentOptionsContainer.querySelectorAll(
+      '[name="payment-option"]'
+    );
+    const paymentOption = document.querySelector(
+      '[data-module-name="ps_checkout"]'
+    );
+    const paymentOptionIdentifier =
+      null !== paymentOption ? paymentOption.id : null;
+    const paymentOptionContainer = document.getElementById(
+      paymentOptionIdentifier + "-container"
+    );
+    const paymentOptionAdditionalInformation = document.getElementById(
+      paymentOptionIdentifier + "-additional-information"
+    );
+    const paymentOptionFormContainer = document.getElementById(
+      "pay-with-" + paymentOptionIdentifier + "-form"
+    );
+    const notificationPaymentCanceled = document.getElementById(
+      "ps_checkout-canceled"
+    );
+    const notificationPaymentError = document.getElementById(
+      "ps_checkout-error"
+    );
+
+    paymentOptionContainer.style.display = "none";
+
+    paymentOptions.forEach(element => {
+      element.addEventListener("change", () => {
+        document
+          .querySelectorAll(".checkout-smartbutton")
+          .forEach(smartbutton => {
+            notificationPaymentCanceled.style.display = "none";
+            notificationPaymentError.style.display = "none";
+            smartbutton.style.display = "none";
+          });
+      });
+    });
+
+    this.instancePayPalSdk.getFundingSources().forEach(fundingSource => {
+      let mark = this.instancePayPalSdk.Marks({
+        fundingSource: fundingSource
+      });
+
+      if (mark.isEligible()) {
+        let fundingSourceButtonElement = document.createElement("div");
+        fundingSourceButtonElement.id = "button-" + fundingSource;
+        fundingSourceButtonElement.classList.add("checkout-smartbutton");
+        buttonsContainer.append(fundingSourceButtonElement);
+        let fundingSourceButtonContainer = buttonsContainer.querySelector(
+          "#button-" + fundingSource
+        );
+        let fundingSourcePaymentOptionLabel =
+          undefined !== config.translations[fundingSource]
+            ? config.translations[fundingSource]
+            : config.translations["default"];
+        let fundingSourcePaymentOptionIdentifier =
+          paymentOptionIdentifier + "-" + fundingSource;
+        let fundingSourcePaymentOptionContainer = paymentOptionContainer.cloneNode(
+          true
+        );
+        let fundingSourcePaymentOptionContainerLabel = fundingSourcePaymentOptionContainer.querySelector(
+          'label[for="' + paymentOptionIdentifier + '"]'
+        );
+        let fundingSourcePaymentOptionContainerLabelElement = document.createElement(
+          "label"
+        );
+        let fundingSourcePaymentOptionContainerLabelElementSpan = document.createElement(
+          "span"
+        );
+        let fundingSourcePaymentOptionContainerLabelElementMark = document.createElement(
+          "div"
+        );
+        let fundingSourcePaymentOption = fundingSourcePaymentOptionContainer.querySelector(
+          '[name="payment-option"]'
+        );
+        let fundingSourcePaymentSelect = fundingSourcePaymentOptionContainer.querySelector(
+          '[name="select_payment_option"]'
+        );
+        let fundingSourcePaymentOptionFormContainer = paymentOptionFormContainer.cloneNode(
+          true
+        );
+        let fundingSourcePaymentOptionFormButton = fundingSourcePaymentOptionFormContainer.querySelector(
+          "#pay-with-" + paymentOptionIdentifier
+        );
+
+        fundingSourcePaymentOptionContainer.id =
+          fundingSourcePaymentOptionIdentifier + "-container";
+        fundingSourcePaymentOptionContainer.style.display = "block";
+
+        fundingSourcePaymentOptionContainerLabelElementMark.id =
+          fundingSource + "-mark";
+        fundingSourcePaymentOptionContainerLabelElementMark.style.display =
+          "inline-block";
+
+        fundingSourcePaymentOptionContainerLabelElementSpan.innerText = fundingSourcePaymentOptionLabel;
+        fundingSourcePaymentOptionContainerLabelElementSpan.append(
+          fundingSourcePaymentOptionContainerLabelElementMark
+        );
+
+        fundingSourcePaymentOptionContainerLabelElement.htmlFor = fundingSourcePaymentOptionIdentifier;
+        fundingSourcePaymentOptionContainerLabelElement.append(
+          fundingSourcePaymentOptionContainerLabelElementSpan
+        );
+
+        fundingSourcePaymentOptionContainerLabel.replaceWith(
+          fundingSourcePaymentOptionContainerLabelElement
+        );
+
+        fundingSourcePaymentOption.id = fundingSourcePaymentOptionIdentifier;
+        fundingSourcePaymentOption.addEventListener("change", () => {
           document
             .querySelectorAll(".checkout-smartbutton")
             .forEach(smartbutton => {
@@ -90,136 +176,53 @@ export default class PsCheckout {
               notificationPaymentError.style.display = "none";
               smartbutton.style.display = "none";
             });
-        });
-      });
 
-      this.instancePayPalSdk.getFundingSources().forEach(fundingSource => {
-        let mark = this.instancePayPalSdk.Marks({
-          fundingSource: fundingSource
-        });
-
-        if (mark.isEligible()) {
-          let fundingSourceButtonElement = document.createElement("div");
-          fundingSourceButtonElement.id = "button-" + fundingSource;
-          fundingSourceButtonElement.classList.add("checkout-smartbutton");
-          buttonsContainer.append(fundingSourceButtonElement);
-          let fundingSourceButtonContainer = buttonsContainer.querySelector(
-            "#button-" + fundingSource
-          );
-          let fundingSourcePaymentOptionLabel =
-            undefined !== config.translations[fundingSource]
-              ? config.translations[fundingSource]
-              : config.translations["default"];
-          let fundingSourcePaymentOptionIdentifier =
-            paymentOptionIdentifier + "-" + fundingSource;
-          let fundingSourcePaymentOptionContainer = paymentOptionContainer.cloneNode(
-            true
-          );
-          let fundingSourcePaymentOptionContainerLabel = fundingSourcePaymentOptionContainer.querySelector(
-            'label[for="' + paymentOptionIdentifier + '"]'
-          );
-          let fundingSourcePaymentOptionContainerLabelElement = document.createElement(
-            "label"
-          );
-          let fundingSourcePaymentOptionContainerLabelElementSpan = document.createElement(
-            "span"
-          );
-          let fundingSourcePaymentOptionContainerLabelElementMark = document.createElement(
-            "div"
-          );
-          let fundingSourcePaymentOption = fundingSourcePaymentOptionContainer.querySelector(
-            '[name="payment-option"]'
-          );
-          let fundingSourcePaymentSelect = fundingSourcePaymentOptionContainer.querySelector(
-            '[name="select_payment_option"]'
-          );
-          let fundingSourcePaymentOptionFormContainer = paymentOptionFormContainer.cloneNode(
-            true
-          );
-          let fundingSourcePaymentOptionFormButton = fundingSourcePaymentOptionFormContainer.querySelector(
-            "#pay-with-" + paymentOptionIdentifier
-          );
-
-          fundingSourcePaymentOptionContainer.id =
-            fundingSourcePaymentOptionIdentifier + "-container";
-          fundingSourcePaymentOptionContainer.style.display = "block";
-
-          fundingSourcePaymentOptionContainerLabelElementMark.id =
-            fundingSource + "-mark";
-          fundingSourcePaymentOptionContainerLabelElementMark.style.display =
-            "inline-block";
-
-          fundingSourcePaymentOptionContainerLabelElementSpan.innerText = fundingSourcePaymentOptionLabel;
-          fundingSourcePaymentOptionContainerLabelElementSpan.append(
-            fundingSourcePaymentOptionContainerLabelElementMark
-          );
-
-          fundingSourcePaymentOptionContainerLabelElement.htmlFor = fundingSourcePaymentOptionIdentifier;
-          fundingSourcePaymentOptionContainerLabelElement.append(
-            fundingSourcePaymentOptionContainerLabelElementSpan
-          );
-
-          fundingSourcePaymentOptionContainerLabel.replaceWith(
-            fundingSourcePaymentOptionContainerLabelElement
-          );
-
-          fundingSourcePaymentOption.id = fundingSourcePaymentOptionIdentifier;
-          fundingSourcePaymentOption.addEventListener("change", () => {
-            document
-              .querySelectorAll(".checkout-smartbutton")
-              .forEach(smartbutton => {
-                notificationPaymentCanceled.style.display = "none";
-                notificationPaymentError.style.display = "none";
-                smartbutton.style.display = "none";
-              });
-
-            if (fundingSourcePaymentOption.checked) {
-              fundingSourceButtonContainer.style.display = "block";
-            }
-          });
-
-          fundingSourcePaymentSelect.value = fundingSourcePaymentOptionIdentifier;
-
-          fundingSourcePaymentOptionFormContainer.id =
-            "pay-with-" + fundingSourcePaymentOptionIdentifier + "-form";
-          fundingSourcePaymentOptionFormButton.id =
-            "pay-with-" + fundingSourcePaymentOptionIdentifier;
-
-          paymentOptionsContainer.append(fundingSourcePaymentOptionContainer);
-          paymentOptionsContainer.append(
-            fundingSourcePaymentOptionFormContainer
-          );
-          fundingSourceButtonContainer.style.display = "none";
-
-          if (
-            "card" === fundingSource &&
-            this.instancePayPalSdk.HostedFields &&
-            this.instancePayPalSdk.HostedFields.isEligible()
-          ) {
-            const fundingSourcePaymentOptionAdditionalInformation = paymentOptionAdditionalInformation.cloneNode(true);
-            paymentOptionAdditionalInformation.remove();
-            fundingSourcePaymentOptionAdditionalInformation.id = fundingSourcePaymentOptionIdentifier + "-additional-information";
-            paymentOptionsContainer.append(
-              fundingSourcePaymentOptionAdditionalInformation
-            );
-            const hostedFieldsForm = document.getElementById(
-              "ps_checkout-hosted-fields-form"
-            );
-            hostedFieldsForm.style.display = "block";
-            const hostedFieldSubmitButton = document.querySelector("#payment-confirmation [type='submit']").cloneNode(true);
-            hostedFieldSubmitButton.id = "ps_checkout-hosted-submit-button";
-            hostedFieldSubmitButton.type = "button";
-            hostedFieldSubmitButton.classList.remove("disabled");
-            fundingSourceButtonContainer.append(hostedFieldSubmitButton);
-            this.createHostedFields(hostedFieldSubmitButton.id);
-          } else {
-            this.createButton(fundingSource).render("#button-" + fundingSource);
+          if (fundingSourcePaymentOption.checked) {
+            fundingSourceButtonContainer.style.display = "block";
           }
+        });
 
-          mark.render("#" + fundingSource + "-mark");
+        fundingSourcePaymentSelect.value = fundingSourcePaymentOptionIdentifier;
+
+        fundingSourcePaymentOptionFormContainer.id =
+          "pay-with-" + fundingSourcePaymentOptionIdentifier + "-form";
+        fundingSourcePaymentOptionFormButton.id =
+          "pay-with-" + fundingSourcePaymentOptionIdentifier;
+
+        paymentOptionsContainer.append(fundingSourcePaymentOptionContainer);
+        paymentOptionsContainer.append(
+          fundingSourcePaymentOptionFormContainer
+        );
+        fundingSourceButtonContainer.style.display = "none";
+
+        if (
+          "card" === fundingSource &&
+          this.instancePayPalSdk.HostedFields &&
+          this.instancePayPalSdk.HostedFields.isEligible()
+        ) {
+          const fundingSourcePaymentOptionAdditionalInformation = paymentOptionAdditionalInformation.cloneNode(true);
+          paymentOptionAdditionalInformation.remove();
+          fundingSourcePaymentOptionAdditionalInformation.id = fundingSourcePaymentOptionIdentifier + "-additional-information";
+          paymentOptionsContainer.append(
+            fundingSourcePaymentOptionAdditionalInformation
+          );
+          const hostedFieldsForm = document.getElementById(
+            "ps_checkout-hosted-fields-form"
+          );
+          hostedFieldsForm.style.display = "block";
+          const hostedFieldSubmitButton = document.querySelector("#payment-confirmation [type='submit']").cloneNode(true);
+          hostedFieldSubmitButton.id = "ps_checkout-hosted-submit-button";
+          hostedFieldSubmitButton.type = "button";
+          hostedFieldSubmitButton.classList.remove("disabled");
+          fundingSourceButtonContainer.append(hostedFieldSubmitButton);
+          this.createHostedFields(hostedFieldSubmitButton.id);
+        } else {
+          this.createButton(fundingSource).render("#button-" + fundingSource);
         }
-      });
-    }
+
+        mark.render("#" + fundingSource + "-mark");
+      }
+    });
   }
 
   /**

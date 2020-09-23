@@ -17,12 +17,9 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-use PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter;
-use PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\HostedFieldsErrors;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
  * @todo To be removed
@@ -56,7 +53,8 @@ class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontControlle
             $this->redirectToHomePage();
         }
 
-        $paypalAccountRepository = new PaypalAccountRepository();
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository */
+        $paypalAccountRepository = $module->getService('ps_checkout.repository.paypal.account');
 
         if (false === $paypalAccountRepository->cardHostedFieldsIsAvailable()) {
             $this->redirectToHomePage();
@@ -65,9 +63,16 @@ class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontControlle
         $paypalOrder = new CreatePaypalOrderHandler($this->context);
         $paypalOrder = $paypalOrder->handle();
 
-        $language = (new LanguageAdapter())->getLanguage($this->context->language->id);
-        $paypalSdkLink = new PayPalSdkLinkBuilder();
+        /** @var \PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter $languageAdapater */
+        $languageAdapater = $module->getService('ps_checkout.adapter.language');
+        $language = $languageAdapater->getLanguage($this->context->language->id);
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder $paypalSdkLink */
+        $paypalSdkLink = $module->getService('ps_checkout.sdk.paypal.linkbuilder');
         $paypalSdkLink->enableDisplayOnlyHostedFields();
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $module->getService('ps_checkout.paypal.configuration');
 
         $this->context->smarty->assign([
             'paypalSdkLink' => $paypalSdkLink->buildLink(),
@@ -78,12 +83,7 @@ class ps_checkoutPaymentCard16ModuleFrontController extends ModuleFrontControlle
             'clientToken' => $paypalOrder['body']['client_token'],
             'paypalOrderId' => $paypalOrder['body']['id'],
             'validateOrderLinkByCard' => $module->getValidateOrderLink($paypalOrder['body']['id'], 'card'),
-            'intent' => strtolower(\Configuration::get(
-                'PS_CHECKOUT_INTENT',
-                null,
-                null,
-                (int) \Context::getContext()->shop->id
-            )),
+            'intent' => strtolower($paypalConfiguration->getIntent()),
             'locale' => $language['locale'],
             'currencyIsoCode' => $this->context->currency->iso_code,
             'isCardPaymentError' => (bool) Tools::getValue('hferror'),
