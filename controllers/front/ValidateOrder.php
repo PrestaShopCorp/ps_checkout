@@ -248,14 +248,18 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
                 $this->redirectToCheckout($exception,['step' => 'payment', 'paymentError' => $exception->getCode()]);
                 break;
             case PayPalException::ORDER_ALREADY_CAPTURED:
-                $this->module->currentOrder = (new \OrderMatrice())->getOrderPrestashopFromPaypal($paypalOrder);
+                $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
+                $psCheckoutCartCollection->where('paypal_order', '=', (int) $paypalOrder);
 
-                if (false === empty($this->module->currentOrder)) {
-                    // TODO complete with information from new PSCheckoutCart model
+                /** @var PsCheckoutCart|false $psCheckoutCart */
+                $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+
+                if (false === $psCheckoutCart) {
+                    // TODO get transaction identifier
                     $this->redirectToOrderConfirmation(
                         [
-                            'status' => '',
-                            'paypalOrderId' => $this->module->currentOrder,
+                            'status' => $psCheckoutCart->paypal_status,
+                            'paypalOrderId' => $psCheckoutCart->paypal_order,
                             'transactionIdentifier' => '',
                         ]
                     );

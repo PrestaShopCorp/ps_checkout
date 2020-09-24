@@ -117,6 +117,25 @@ class ValidateOrder
                     $payPalProcessorResponse->throwException();
                 }
             }
+
+            $psCheckoutCartCollection = new \PrestaShopCollection('PsCheckoutCart');
+            $psCheckoutCartCollection->where('id_cart', '=', (int) $payload['cartId']);
+
+            /** @var \PsCheckoutCart|false $psCheckoutCart */
+            $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+
+            if (false === $psCheckoutCart) {
+                $psCheckoutCart = new \PsCheckoutCart();
+                $psCheckoutCart->id_cart = (int) $payload['cartId'];
+                $psCheckoutCart->paypal_intent = $paypalOrder->getOrderIntent();
+                $psCheckoutCart->paypal_order = $response['body']['id'];
+                $psCheckoutCart->paypal_status = $response['body']['status'];
+                $psCheckoutCart->add();
+            } else {
+                $psCheckoutCart->paypal_order = $response['body']['id'];
+                $psCheckoutCart->paypal_status = $response['body']['status'];
+                $psCheckoutCart->update();
+            }
         }
 
         if (self::CAPTURE_STATUS_DECLINED === $transactionStatus) {
@@ -142,10 +161,6 @@ class ValidateOrder
 
         if (empty($module->currentOrder)) {
             throw new PsCheckoutException(sprintf('PrestaShop was unable to returns Prestashop Order ID for Prestashop Cart ID : %s  - Paypal Order ID : %s. This happens when PrestaShop take too long time to create an Order due to heavy processes in hooks actionValidateOrder and/or actionOrderStatusUpdate and/or actionOrderStatusPostUpdate', $payload['cartId'], $this->paypalOrderId), PsCheckoutException::PRESTASHOP_ORDER_ID_MISSING);
-        }
-
-        if (false === $this->setOrdersMatrice($module->currentOrder, $this->paypalOrderId)) {
-            throw new PsCheckoutException(sprintf('Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s', $module->currentOrder, $this->paypalOrderId), PsCheckoutException::PSCHECKOUT_ORDER_MATRICE_ERROR);
         }
 
         $this->setOrderState(
@@ -178,26 +193,6 @@ class ValidateOrder
         }
 
         return $paymentMessage;
-    }
-
-    /**
-     * Set the matrice order values
-     *
-     * @param int $orderPrestashopId from prestashop
-     * @param string $orderPaypalId paypal order id
-     *
-     * @return bool
-     *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    private function setOrdersMatrice($orderPrestashopId, $orderPaypalId)
-    {
-        $orderMatrice = new \OrderMatrice();
-        $orderMatrice->id_order_prestashop = $orderPrestashopId;
-        $orderMatrice->id_order_paypal = $orderPaypalId;
-
-        return $orderMatrice->add();
     }
 
     /**
