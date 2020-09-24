@@ -17,29 +17,26 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
-{foreach from=$paymentOrder item=item key=key}
+<section id="ps_checkout-payment">
+  <div class="payment-options">
+    <div class="payment-option row">
+      <div class="col-xs-12">
+        <div class="payment-option-container">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-{if $item.name === 'card'}
-  {if $cardIsActive}
-  <p class="payment_module">
-    <a href="{$link->getModuleLink('ps_checkout', 'PaymentCard16')|escape:'html'}" class="pscheckout-card" title="{l s='Pay by Card' mod='ps_checkout'}">
-      <img src="{$path}payment-cards.png" alt="{l s='Pay by Card' mod='ps_checkout'}"/>
-      {l s='Pay by Card' mod='ps_checkout'}
-    </a>
-  </p>
-  {/if}
-{else}
-  {if $paypalIsActive}
-  <p class="payment_module">
-    <a href="{$link->getModuleLink('ps_checkout', 'PaymentPaypal16')|escape:'html'}" class="pscheckout-paypal" title="{l s='Pay with a PayPal account or other payment methods' mod='ps_checkout'}">
-      <img src="{$path}paypal.png" alt="{l s='Pay with a PayPal account or other payment methods' mod='ps_checkout'}"/>
-      {l s='Pay with a PayPal account or other payment methods' mod='ps_checkout'}
-    </a>
-  </p>
-  {/if}
-{/if}
-
-{/foreach}
-
-
-
+<style>
+  .payment-option-container {
+    background-color: #fbfbfb;
+    display: block;
+    border: 1px solid #d6d4d4;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    padding: 33px 40px 34px 99px;
+    margin-bottom: 10px;
+  }
+</style>
