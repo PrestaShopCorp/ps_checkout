@@ -168,7 +168,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
                 'id_cart' => (int) $this->context->cart->id,
                 'id_module' => (int) $this->module->id,
                 'id_order' => (int) $this->module->currentOrder,
-                'secure_key' =>  $this->context->customer->secure_key,
+                'secure_key' => $this->context->customer->secure_key,
             ],
             'exceptionCode' => null,
             'exceptionMessage' => null,
