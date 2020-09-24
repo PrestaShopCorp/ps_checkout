@@ -153,6 +153,12 @@ class ValidateOrder
             $transactionStatus,
             $payload['paymentMethod']
         );
+
+        return [
+            'status' => $response !== null ? $response['body']['status'] : $order['status'],
+            'paypalOrderId' => $response !== null ? $response['body']['id'] : $this->paypalOrderId,
+            'transactionIdentifier' => $transactionIdentifier,
+        ];
     }
 
     /**
