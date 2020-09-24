@@ -317,19 +317,8 @@ class Ps_checkout extends PaymentModule
     /**
      * Add payment option at the checkout in the front office (prestashop 1.6)
      */
-    public function hookPayment($params)
+    public function hookPayment()
     {
-        /** @var Cart $cart */
-        $cart = $params['cart'];
-
-        if (false === Validate::isLoadedObject($cart) || false === $this->checkCurrency($cart)) {
-            return [];
-        }
-
-        $this->context->smarty->assign([
-            'path' => $this->_path . 'views/img/',
-        ]);
-
         return $this->display(__FILE__, '/views/templates/hook/payment.tpl');
     }
 
@@ -569,6 +558,8 @@ class Ps_checkout extends PaymentModule
                     'server' => 'local',
                 ]
             );
+        } else {
+            $this->context->controller->addJS($this->getPathUri() . 'views/js/front.js');
         }
     }
 
