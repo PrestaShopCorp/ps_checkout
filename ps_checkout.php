@@ -464,31 +464,6 @@ class Ps_checkout extends PaymentModule
     }
 
     /**
-     * Generate the url to the order validation controller
-     *
-     * @todo To be removed
-     *
-     * @param string $orderId order id paypal
-     * @param string $paymentMethod can be 'card' or 'paypal'
-     *
-     * @return string
-     */
-    public function getValidateOrderLink($orderId, $paymentMethod)
-    {
-        return $this->context->link->getModuleLink(
-            $this->name,
-            'ValidateOrder',
-            [
-                'orderId' => $orderId,
-                'paymentMethod' => $paymentMethod,
-            ],
-            true,
-            null,
-            (int) $this->context->shop->id
-        );
-    }
-
-    /**
      * Check if paypal and ps account are valid
      *
      * @return bool
