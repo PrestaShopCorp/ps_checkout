@@ -152,8 +152,8 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
 
     /**
      * Redirect to order confirmation page
+     *
      * @param array $response
-     * @param string $secureKey
      */
     private function redirectToOrderConfirmation($response)
     {
