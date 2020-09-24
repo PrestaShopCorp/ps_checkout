@@ -245,7 +245,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
             case PayPalException::TRANSACTION_BLOCKED_BY_PAYEE:
             case PayPalException::TRANSACTION_REFUSED:
             case PayPalException::NO_EXTERNAL_FUNDING_DETAILS_FOUND:
-                $this->redirectToCheckout($exception,['step' => 'payment', 'paymentError' => $exception->getCode()]);
+                $this->redirectToCheckout($exception, ['step' => 'payment', 'paymentError' => $exception->getCode()]);
                 break;
             case PayPalException::ORDER_ALREADY_CAPTURED:
                 $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
@@ -254,7 +254,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
                 /** @var PsCheckoutCart|false $psCheckoutCart */
                 $psCheckoutCart = $psCheckoutCartCollection->getFirst();
 
-                if (false === $psCheckoutCart) {
+                if (false === empty($psCheckoutCart)) {
                     // TODO get transaction identifier
                     $this->redirectToOrderConfirmation(
                         [
