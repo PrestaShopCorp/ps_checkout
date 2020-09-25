@@ -61,8 +61,7 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
 
             if (false === Validate::isLoadedObject($customer)) {
                 $this->sendBadRequestError(
-                    new PsCheckoutException('Unable to load Customer', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID),
-                    ['step' => 1]
+                    new PsCheckoutException('Unable to load Customer', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID)
                 );
             }
 
@@ -138,16 +137,9 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
      * Redirect to checkout page
      *
      * @param Exception $exception
-     * @param array $params
      */
-    private function sendBadRequestError(Exception $exception, array $params = [])
+    private function sendBadRequestError(Exception $exception)
     {
-        if (false === empty($params['step']) && 'payment' === $params['step']) {
-            /** @var ShopContext $shopContext */
-            $shopContext = $this->module->getService('ps_checkout.context.shop');
-            $params['step'] = $shopContext->isShop17() ? 4 : 3;
-        }
-
         header('HTTP/1.0 400 Bad Request');
 
         echo json_encode([
@@ -258,7 +250,7 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             case PayPalException::TRANSACTION_BLOCKED_BY_PAYEE:
             case PayPalException::TRANSACTION_REFUSED:
             case PayPalException::NO_EXTERNAL_FUNDING_DETAILS_FOUND:
-                $this->sendBadRequestError($exception, ['step' => 'payment', 'paymentError' => $exception->getCode()]);
+                $this->sendBadRequestError($exception);
                 break;
             case PayPalException::ORDER_ALREADY_CAPTURED:
                 $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
