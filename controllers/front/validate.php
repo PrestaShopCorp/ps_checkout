@@ -35,7 +35,7 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
     public $module;
 
     /**
-     * @var int
+     * @var string
      */
     private $paypalOrderId;
 
