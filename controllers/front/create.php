@@ -92,7 +92,7 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
                 'status' => true,
                 'httpCode' => 200,
                 'body' => [
-                    'id_order' => $response['body']['id'],
+                    'orderID' => $response['body']['id'],
                 ],
                 'exceptionCode' => null,
                 'exceptionMessage' => null,
