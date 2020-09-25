@@ -118,6 +118,10 @@ class ValidateOrder
                 }
             }
 
+            if (self::CAPTURE_STATUS_DECLINED === $transactionStatus) {
+                throw new PsCheckoutException(sprintf('Transaction declined by PayPal : %s', false === empty($response['body']['details']['description']) ? $response['body']['details']['description'] : 'No detail'), PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
+            }
+
             $psCheckoutCartCollection = new \PrestaShopCollection('PsCheckoutCart');
             $psCheckoutCartCollection->where('id_cart', '=', (int) $payload['cartId']);
 
@@ -136,38 +140,34 @@ class ValidateOrder
                 $psCheckoutCart->paypal_status = $response['body']['status'];
                 $psCheckoutCart->update();
             }
+
+            /** @var \PaymentModule $module */
+            $module = \Module::getInstanceByName('ps_checkout');
+
+            $module->validateOrder(
+                $payload['cartId'],
+                (int) $this->getOrderState($psCheckoutCart->paypal_funding),
+                $payload['amount'],
+                $this->getOptionName($module, $psCheckoutCart->paypal_funding),
+                null,
+                [
+                    'transaction_id' => $transactionIdentifier,
+                ],
+                $payload['currencyId'],
+                false,
+                $payload['secureKey']
+            );
+
+            if (empty($module->currentOrder)) {
+                throw new PsCheckoutException(sprintf('PrestaShop was unable to returns Prestashop Order ID for Prestashop Cart ID : %s  - Paypal Order ID : %s. This happens when PrestaShop take too long time to create an Order due to heavy processes in hooks actionValidateOrder and/or actionOrderStatusUpdate and/or actionOrderStatusPostUpdate', $payload['cartId'], $this->paypalOrderId), PsCheckoutException::PRESTASHOP_ORDER_ID_MISSING);
+            }
+
+            $this->setOrderState(
+                $module->currentOrder,
+                $transactionStatus,
+                $psCheckoutCart->paypal_funding
+            );
         }
-
-        if (self::CAPTURE_STATUS_DECLINED === $transactionStatus) {
-            throw new PsCheckoutException(sprintf('Transaction declined by PayPal : %s', false === empty($response['body']['details']['description']) ? $response['body']['details']['description'] : 'No detail'), PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
-        }
-
-        /** @var \PaymentModule $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-
-        $module->validateOrder(
-            $payload['cartId'],
-            $this->getPendingStatusId($payload['paymentMethod']),
-            $payload['amount'],
-            $this->getPaymentMessageTranslation($payload['paymentMethod'], $module),
-            null,
-            [
-                'transaction_id' => $transactionIdentifier,
-            ],
-            $payload['currencyId'],
-            false,
-            $payload['secureKey']
-        );
-
-        if (empty($module->currentOrder)) {
-            throw new PsCheckoutException(sprintf('PrestaShop was unable to returns Prestashop Order ID for Prestashop Cart ID : %s  - Paypal Order ID : %s. This happens when PrestaShop take too long time to create an Order due to heavy processes in hooks actionValidateOrder and/or actionOrderStatusUpdate and/or actionOrderStatusPostUpdate', $payload['cartId'], $this->paypalOrderId), PsCheckoutException::PRESTASHOP_ORDER_ID_MISSING);
-        }
-
-        $this->setOrderState(
-            $module->currentOrder,
-            $transactionStatus,
-            $payload['paymentMethod']
-        );
 
         return [
             'status' => $response !== null ? $response['body']['status'] : $order['status'],
@@ -177,22 +177,28 @@ class ValidateOrder
     }
 
     /**
-     * Get payment message
+     * Get translated Payment Option name
      *
-     * @param string $paymentMethod can be 'paypal' or 'card'
-     * @param \PaymentModule $module
+     * @todo Move to a dedicated Service
      *
-     * @return string translation
+     * @param string $fundingSource
+     *
+     * @return string
      */
-    private function getPaymentMessageTranslation($paymentMethod, $module)
+    private function getOptionName($module, $fundingSource)
     {
-        $paymentMessage = $module->l('Payment by PayPal');
-
-        if ($paymentMethod === self::PAYMENT_METHOD_CARD) {
-            $paymentMessage = $module->l('Payment by card');
+        switch ($fundingSource) {
+            case 'card':
+                $name = $module->l('Payment by card');
+                break;
+            case 'paypal':
+                $name = $module->l('Payment by PayPal');
+                break;
+            default:
+                $name = $module->displayName;
         }
 
-        return $paymentMessage;
+        return $name;
     }
 
     /**
@@ -201,12 +207,12 @@ class ValidateOrder
      *
      * @param int $orderId Order identifier
      * @param string $status Capture status
-     * @param string $paymentMethod can be 'paypal' or 'card'
+     * @param string $paypalFunding can be 'paypal' or 'card'
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    private function setOrderState($orderId, $status, $paymentMethod)
+    private function setOrderState($orderId, $status, $paypalFunding)
     {
         switch ($status) {
             case static::CAPTURE_STATUS_COMPLETED:
@@ -216,7 +222,7 @@ class ValidateOrder
                 $orderState = (int) \Configuration::getGlobalValue('PS_OS_ERROR');
                 break;
             default:
-                $orderState = $this->getPendingStatusId($paymentMethod);
+                $orderState = $this->getOrderState($paypalFunding);
                 break;
         }
 
@@ -251,16 +257,27 @@ class ValidateOrder
     }
 
     /**
-     * @param string $paymentMethod can be 'paypal' or 'card'
+     * Get OrderState identifier
      *
-     * @return int OrderState identifier
+     * @todo Move to a dedicated Service
+     *
+     * @param string $fundingSource
+     *
+     * @return int
      */
-    private function getPendingStatusId($paymentMethod)
+    private function getOrderState($fundingSource)
     {
-        if ($paymentMethod === static::PAYMENT_METHOD_CARD) {
-            return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
+        switch ($fundingSource) {
+            case 'card':
+                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
+                break;
+            case 'paypal':
+                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
+                break;
+            default:
+                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT');
         }
 
-        return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
+        return $orderStateId;
     }
 }
