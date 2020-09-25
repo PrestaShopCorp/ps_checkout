@@ -83,19 +83,12 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             }
 
             $this->paypalOrderId = $bodyValues['orderID'];
-            //$isExpressCheckout = (bool) $bodyValues['isExpressCheckout'];
 
             $this->module->getLogger()->info(sprintf(
                 'ValidateOrder PayPal Order Id : %s Cart : %s',
                 $bodyValues['orderID'],
-                //$isExpressCheckout ? 'true' : 'false',
                 Validate::isLoadedObject($this->context->cart) ? (int) $this->context->cart->id : 0
             ));
-
-            /*if ($isExpressCheckout) {
-                // API call here
-                $this->updatePaypalOrder($this->paypalOrderId);
-            }*/
 
             $currency = $this->context->currency;
             $total = (float) $cart->getOrderTotal(true, Cart::BOTH);
