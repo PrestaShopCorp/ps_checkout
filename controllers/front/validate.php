@@ -20,8 +20,6 @@
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
-use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 
 /**
@@ -111,25 +109,6 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             $this->sendOkResponse($response);
         } catch (Exception $exception) {
             $this->handleException($exception);
-        }
-    }
-
-    /**
-     * Update paypal order
-     *
-     * @param string $paypalOrderId
-     *
-     * @return void
-     */
-    private function updatePaypalOrder($paypalOrderId)
-    {
-        $paypalOrder = new CreatePaypalOrderHandler($this->context);
-        $response = $paypalOrder->handle(false, true, $paypalOrderId);
-
-        if (false === $response['status']) {
-            $this->sendBadRequestError(
-                new PsCheckoutException('Unable to handle PayPal Order update.', PsCheckoutException::PSCHECKOUT_UPDATE_ORDER_HANDLE_ERROR)
-            );
         }
     }
 
