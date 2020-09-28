@@ -32,10 +32,10 @@ class AbstractApiModuleFrontController extends ModuleFrontController
     protected function sendInternalServerError(Exception $exception, $exceptionMessageForCustomer)
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\Api\APIResponseFormatter $apiResponse */
-            $apiResponse = $this->module->getService('ps_checkout.api.response');
-            $response = $apiResponse->sendInternalServerError($exception, $exceptionMessageForCustomer);
-            $response->send();
-            exit;
+        $apiResponse = $this->module->getService('ps_checkout.api.response');
+        $response = $apiResponse->sendInternalServerError($exception, $exceptionMessageForCustomer);
+        $response->send();
+        exit;
     }
 
     /**
