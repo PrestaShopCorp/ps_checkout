@@ -121,15 +121,17 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
      */
     private function sendBadRequestError(Exception $exception)
     {
-        header('HTTP/1.0 400 Bad Request');
-
-        echo json_encode([
-            'status' => false,
-            'httpCode' => 400,
-            'body' => '',
-            'exceptionCode' => $exception->getCode(),
-            'exceptionMessage' => $exception->getMessage(),
-        ]);
+        $response =  new \Symfony\Component\HttpFoundation\JsonResponse(
+            [
+                'status' => false,
+                'httpCode' => 400,
+                'body' => '',
+                'exceptionCode' => $exception->getCode(),
+                'exceptionMessage' => $exception->getMessage(),
+            ],
+            \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
+        );
+        $response->send();
         exit;
     }
 
@@ -140,22 +142,24 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
      */
     private function sendOkResponse($response)
     {
-        header('content-type:application/json');
-        echo json_encode([
-            'status' => true,
-            'httpCode' => 200,
-            'body' => [
-                'paypal_status' => $response['status'],
-                'paypal_order' => $response['paypalOrderId'],
-                'paypal_transaction' => $response['transactionIdentifier'],
-                'id_cart' => (int) $this->context->cart->id,
-                'id_module' => (int) $this->module->id,
-                'id_order' => (int) $this->module->currentOrder,
-                'secure_key' => $this->context->customer->secure_key,
-            ],
-            'exceptionCode' => null,
-            'exceptionMessage' => null,
-        ]);
+        $response = new \Symfony\Component\HttpFoundation\JsonResponse(
+            [
+                'status' => true,
+                'httpCode' => 200,
+                'body' => [
+                    'paypal_status' => $response['status'],
+                    'paypal_order' => $response['paypalOrderId'],
+                    'paypal_transaction' => $response['transactionIdentifier'],
+                    'id_cart' => (int) $this->context->cart->id,
+                    'id_module' => (int) $this->module->id,
+                    'id_order' => (int) $this->module->currentOrder,
+                    'secure_key' => $this->context->customer->secure_key,
+                ],
+                'exceptionCode' => null,
+                'exceptionMessage' => null,
+            ]
+        );
+        $response->send();
         exit;
     }
 
@@ -293,15 +297,17 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
         // Preserve current cart from customer changes to allow merchant to see whats wrong
         $this->generateNewCart();
 
-        header('HTTP/1.0 500 Internal Server Error');
-
-        echo json_encode([
-            'status' => false,
-            'httpCode' => 500,
-            'body' => '',
-            'exceptionCode' => $exception->getCode(),
-            'exceptionMessage' => $exceptionMessageForCustomer,
-        ]);
+        $response = new \Symfony\Component\HttpFoundation\JsonResponse(
+            [
+                'status' => false,
+                'httpCode' => 500,
+                'body' => '',
+                'exceptionCode' => $exception->getCode(),
+                'exceptionMessage' => $exceptionMessageForCustomer,
+            ],
+            \Symfony\Component\HttpFoundation\Response::HTTP_INTERNAL_SERVER_ERROR
+        );
+        $response->send();
         exit;
     }
 
