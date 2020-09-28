@@ -33,19 +33,7 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractApiModuleFrontContro
     public function postProcess()
     {
         try {
-            if (false === $this->checkIfContextIsValid()) {
-                throw new PsCheckoutException('The context is not valid', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
-            }
-
-            if (false === $this->checkIfPaymentOptionIsAvailable()) {
-                throw new PsCheckoutException('This payment method is not available.', PsCheckoutException::PRESTASHOP_PAYMENT_UNAVAILABLE);
-            }
-
-            $customer = new Customer($this->context->cart->id_customer);
-
-            if (false === Validate::isLoadedObject($customer)) {
-                throw new PsCheckoutException('Customer is not loaded yet');
-            }
+            $this->checkPrerequisite();
 
             $bodyContent = file_get_contents('php://input');
 

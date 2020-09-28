@@ -1,6 +1,7 @@
 <?php
 
 use PrestaShop\Module\PrestashopCheckout\Api\APIResponseFormatter;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
@@ -27,6 +28,26 @@ class AbstractApiModuleFrontController extends ModuleFrontController
      * @var Ps_checkout
      */
     public $module;
+
+    /**
+     * @throws PsCheckoutException
+     */
+    protected function checkPrerequisite()
+    {
+        if (false === $this->checkIfContextIsValid()) {
+            throw new PsCheckoutException('The context is not valid', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
+        }
+
+        if (false === $this->checkIfPaymentOptionIsAvailable()) {
+            throw new PsCheckoutException('This payment method is not available.', PsCheckoutException::PRESTASHOP_PAYMENT_UNAVAILABLE);
+        }
+
+        $customer = new Customer($this->context->cart->id_customer);
+
+        if (false === Validate::isLoadedObject($customer)) {
+            throw new PsCheckoutException('Customer is not loaded yet');
+        }
+    }
 
     /**
      * @param Exception $exception
