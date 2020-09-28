@@ -63,7 +63,9 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
                 );
             }
 
-            $bodyContent = file_get_contents('php://input');
+            $request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
+
+            $bodyContent = $request->getContent();
 
             if (empty($bodyContent)) {
                 throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
