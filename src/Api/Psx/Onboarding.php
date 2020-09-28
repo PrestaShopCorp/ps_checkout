@@ -20,7 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Psx;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Client\PsxClient;
+use PrestaShop\Module\PrestashopCheckout\Api\Psx\Client\PsxClient;
 
 class Onboarding extends PsxClient
 {
