@@ -23,13 +23,8 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 /**
  * This controller receive ajax call on customer click on a payment button
  */
-class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
+class Ps_CheckoutCheckModuleFrontController extends AbstractApiModuleFrontController
 {
-    /**
-     * @var Ps_checkout
-     */
-    public $module;
-
     /**
      * @see FrontController::postProcess()
      *
@@ -37,7 +32,6 @@ class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
      */
     public function postProcess()
     {
-        header('content-type:application/json');
         try {
             if (false === $this->checkIfContextIsValid()) {
                 throw new PsCheckoutException('The context is not valid', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
@@ -85,23 +79,9 @@ class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
                 $this->context->cookie->__set('ps_checkout_fundingSource', $bodyValues['fundingSource']);
             }
 
-            echo json_encode([
-                'status' => true,
-                'httpCode' => 200,
-                'body' => $bodyValues,
-                'exceptionCode' => null,
-                'exceptionMessage' => null,
-            ]);
+            $this->sendOkResponse($bodyValues);
         } catch (Exception $exception) {
-            header('HTTP/1.0 400 Bad Request');
-
-            echo json_encode([
-                'status' => false,
-                'httpCode' => 400,
-                'body' => '',
-                'exceptionCode' => $exception->getCode(),
-                'exceptionMessage' => $exception->getMessage(),
-            ]);
+            $this->sendBadRequestError($exception);
         }
 
         exit;
