@@ -27,7 +27,6 @@ use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
  */
 class Ps_CheckoutValidateModuleFrontController extends AbstractApiModuleFrontController
 {
-
     /**
      * @var string
      */
@@ -46,19 +45,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractApiModuleFrontCon
             $cart = $this->context->cart;
             $customer = new Customer($cart->id_customer);
 
-            $request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
-
-            $bodyContent = $request->getContent();
-
-            if (empty($bodyContent)) {
-                throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
-            }
-
-            $bodyValues = json_decode($bodyContent, true);
-
-            if (empty($bodyValues)) {
-                throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
-            }
+            $bodyValues = $this->getDatasFromRequest();
 
             if (empty($bodyValues['orderID']) || false === Validate::isGenericName($bodyValues['orderID'])) {
                 throw new PsCheckoutException('PayPal Order identifier invalid', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
@@ -109,8 +96,6 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractApiModuleFrontCon
 
     /**
      * @param Exception $exception
-     *
-     * @todo To be refactored with Service Container in v2.0.0
      */
     private function handleException(Exception $exception)
     {

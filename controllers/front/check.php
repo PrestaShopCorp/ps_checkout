@@ -35,17 +35,7 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractApiModuleFrontContro
         try {
             $this->checkPrerequisite();
 
-            $bodyContent = file_get_contents('php://input');
-
-            if (empty($bodyContent)) {
-                throw new PsCheckoutException('Payload invalid', PsCheckoutException::PSCHECKOUT_WEBHOOK_BODY_EMPTY);
-            }
-
-            $bodyValues = json_decode($bodyContent, true);
-
-            if (empty($bodyValues)) {
-                throw new PsCheckoutException('Payload invalid', PsCheckoutException::PSCHECKOUT_WEBHOOK_BODY_EMPTY);
-            }
+            $bodyValues = $this->getDatasFromRequest();
 
             if (false === empty($bodyValues['fundingSource']) && false !== Validate::isGenericName($bodyValues['fundingSource'])) {
                 $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');

@@ -22,7 +22,7 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
-class AbstractApiModuleFrontController extends ModuleFrontController
+abstract class AbstractApiModuleFrontController extends ModuleFrontController
 {
     /**
      * @var Ps_checkout
@@ -47,6 +47,29 @@ class AbstractApiModuleFrontController extends ModuleFrontController
         if (false === Validate::isLoadedObject($customer)) {
             throw new PsCheckoutException('Customer is not loaded yet');
         }
+    }
+
+    /**
+     * @return mixed
+     *
+     * @throws PsCheckoutException
+     */
+    protected function getDatasFromRequest()
+    {
+        $request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
+
+        $bodyContent = $request->getContent();
+
+        if (empty($bodyContent)) {
+            throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
+        }
+
+        $bodyValues = json_decode($bodyContent, true);
+
+        if (empty($bodyValues)) {
+            throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
+        }
+        return $bodyValues;
     }
 
     /**
