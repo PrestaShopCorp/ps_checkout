@@ -22,7 +22,6 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-
 abstract class AbstractApiModuleFrontController extends ModuleFrontController
 {
     /**
