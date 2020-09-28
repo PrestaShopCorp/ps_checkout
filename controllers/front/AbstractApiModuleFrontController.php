@@ -71,4 +71,40 @@ class AbstractApiModuleFrontController extends ModuleFrontController
         $response->send();
         exit;
     }
+
+    /**
+     * Check if the context is valid
+     *
+     * @return bool
+     */
+    protected function checkIfContextIsValid()
+    {
+        return true === Validate::isLoadedObject($this->context->cart)
+            && true === Validate::isUnsignedInt($this->context->cart->id_customer)
+            && true === Validate::isUnsignedInt($this->context->cart->id_address_delivery)
+            && true === Validate::isUnsignedInt($this->context->cart->id_address_invoice);
+    }
+
+    /**
+     * Check that this payment option is still available in case the customer changed
+     * his address just before the end of the checkout process
+     *
+     * @return bool
+     */
+    protected function checkIfPaymentOptionIsAvailable()
+    {
+        $modules = Module::getPaymentModules();
+
+        if (empty($modules)) {
+            return false;
+        }
+
+        foreach ($modules as $module) {
+            if (isset($module['name']) && $this->module->name === $module['name']) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
