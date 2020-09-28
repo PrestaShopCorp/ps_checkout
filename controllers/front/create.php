@@ -23,13 +23,8 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 /**
  * This controller receive ajax call to create a PayPal Order
  */
-class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
+class Ps_CheckoutCreateModuleFrontController extends AbstractApiModuleFrontController
 {
-    /**
-     * @var Ps_checkout
-     */
-    public $module;
-
     /**
      * @see FrontController::postProcess()
      *
@@ -37,8 +32,6 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
      */
     public function postProcess()
     {
-        header('content-type:application/json');
-
         try {
             if (false === Validate::isLoadedObject($this->context->cart)) {
                 throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
@@ -52,17 +45,7 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
 
             if (false !== $psCheckoutCart && false === empty($psCheckoutCart->paypal_order)) {
                 // @todo Check if PayPal Order status before reuse it
-                header('content-type:application/json');
-                echo json_encode([
-                    'status' => true,
-                    'httpCode' => 200,
-                    'body' => [
-                        'orderID' => $psCheckoutCart->paypal_order,
-                    ],
-                    'exceptionCode' => null,
-                    'exceptionMessage' => null,
-                ]);
-                exit;
+                $this->sendOkResponse(['orderID' => $psCheckoutCart->paypal_order,]);
             }
 
             $paypalOrder = new PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler($this->context);
@@ -88,25 +71,9 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
             $psCheckoutCart->paypal_token_expire = (new DateTime())->modify('+3550 seconds')->format('Y-m-d H:i:s');
             $psCheckoutCart->save();
 
-            echo json_encode([
-                'status' => true,
-                'httpCode' => 200,
-                'body' => [
-                    'orderID' => $response['body']['id'],
-                ],
-                'exceptionCode' => null,
-                'exceptionMessage' => null,
-            ]);
+            $this->sendOkResponse(['orderID' => $response['body']['id'],]);
         } catch (Exception $exception) {
-            header('HTTP/1.0 400 Bad Request');
-
-            echo json_encode([
-                'status' => false,
-                'httpCode' => 400,
-                'body' => '',
-                'exceptionCode' => $exception->getCode(),
-                'exceptionMessage' => $exception->getMessage(),
-            ]);
+            $this->sendBadRequestError($exception);
         }
 
         exit;
