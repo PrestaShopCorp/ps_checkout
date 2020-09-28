@@ -70,7 +70,7 @@ class APIResponseFormatter
      */
     public function sendOkResponse($data)
     {
-        return new \Symfony\Component\HttpFoundation\JsonResponse(
+        return new JsonResponse(
             [
                 'status' => true,
                 'httpCode' => Response::HTTP_OK,

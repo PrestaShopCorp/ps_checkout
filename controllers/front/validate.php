@@ -104,7 +104,17 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractApiModuleFrontCon
             // API call here
             $response = $payment->validateOrder($dataOrder);
 
-            $this->sendOkResponse($response);
+            $this->sendOkResponse(
+                [
+                    'paypal_status' => $response['status'],
+                    'paypal_order' => $response['paypalOrderId'],
+                    'paypal_transaction' => $response['transactionIdentifier'],
+                    'id_cart' => (int) $this->context->cart->id,
+                    'id_module' => (int) $this->module->id,
+                    'id_order' => (int) $this->module->currentOrder,
+                    'secure_key' => $this->context->customer->secure_key,
+                ]
+            );
         } catch (Exception $exception) {
             $this->handleException($exception);
         }
@@ -156,9 +166,13 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractApiModuleFrontCon
                     // TODO get transaction identifier
                     $this->sendOkResponse(
                         [
-                            'status' => $psCheckoutCart->paypal_status,
-                            'paypalOrderId' => $psCheckoutCart->paypal_order,
-                            'transactionIdentifier' => '',
+                            'paypal_status' => $psCheckoutCart->paypal_status,
+                            'paypal_order' => $psCheckoutCart->paypal_order,
+                            'paypal_transaction' => '',
+                            'id_cart' => (int) $this->context->cart->id,
+                            'id_module' => (int) $this->module->id,
+                            'id_order' => (int) $this->module->currentOrder,
+                            'secure_key' => $this->context->customer->secure_key,
                         ]
                     );
                 }

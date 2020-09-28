@@ -1,4 +1,7 @@
 <?php
+
+use PrestaShop\Module\PrestashopCheckout\Api\APIResponseFormatter;
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -31,7 +34,7 @@ class AbstractApiModuleFrontController extends ModuleFrontController
      */
     protected function sendInternalServerError(Exception $exception, $exceptionMessageForCustomer)
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Api\APIResponseFormatter $apiResponse */
+        /** @var APIResponseFormatter $apiResponse */
         $apiResponse = $this->module->getService('ps_checkout.api.response');
         $response = $apiResponse->sendInternalServerError($exception, $exceptionMessageForCustomer);
         $response->send();
@@ -43,7 +46,7 @@ class AbstractApiModuleFrontController extends ModuleFrontController
      */
     protected function sendBadRequestError(Exception $exception)
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Api\APIResponseFormatter $apiResponse */
+        /** @var APIResponseFormatter $apiResponse */
         $apiResponse = $this->module->getService('ps_checkout.api.response');
         $response = $apiResponse->sendBadRequestError($exception);
         $response->send();
@@ -51,21 +54,11 @@ class AbstractApiModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @param array $response
+     * @param array $data
      */
-    protected function sendOkResponse($response)
+    protected function sendOkResponse($data)
     {
-        $data = [
-            'paypal_status' => $response['status'],
-            'paypal_order' => $response['paypalOrderId'],
-            'paypal_transaction' => $response['transactionIdentifier'],
-            'id_cart' => (int) $this->context->cart->id,
-            'id_module' => (int) $this->module->id,
-            'id_order' => (int) $this->module->currentOrder,
-            'secure_key' => $this->context->customer->secure_key,
-        ];
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\Api\APIResponseFormatter $apiResponse */
+        /** @var APIResponseFormatter $apiResponse */
         $apiResponse = $this->module->getService('ps_checkout.api.response');
         $response = $apiResponse->sendOkResponse($data);
         $response->send();
