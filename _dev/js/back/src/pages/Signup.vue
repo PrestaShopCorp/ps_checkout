@@ -221,7 +221,7 @@
         if (
           undefined !== response.body &&
           undefined !== response.body.error &&
-          undefined !== response.body.message
+          undefined !== response.body.error.message
         ) {
           switch (response.body.error.message) {
             case error.EMAIL_EXISTS:
