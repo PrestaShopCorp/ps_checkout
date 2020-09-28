@@ -41,10 +41,6 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractApiModuleFrontContr
                 ));
             }
 
-            //@todo remove cookie
-            $this->context->cookie->__unset('ps_checkout_orderId');
-            $this->context->cookie->__unset('ps_checkout_fundingSource');
-
             $this->sendOkResponse($bodyValues);
         } catch (Exception $exception) {
             $this->handleException($exception);
