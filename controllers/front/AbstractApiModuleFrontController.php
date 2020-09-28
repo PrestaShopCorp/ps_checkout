@@ -93,12 +93,13 @@ abstract class AbstractApiModuleFrontController extends ModuleFrontController
 
     /**
      * @param Exception $exception
+     * @param string $exceptionMessageForCustomer
      */
-    protected function sendBadRequestError(Exception $exception)
+    protected function sendBadRequestError(Exception $exception, $exceptionMessageForCustomer = null)
     {
         /** @var APIResponseFormatter $apiResponse */
         $apiResponse = $this->module->getService('ps_checkout.api.response');
-        $response = $apiResponse->sendBadRequestError($exception);
+        $response = $apiResponse->sendBadRequestError($exception, $exceptionMessageForCustomer);
         $response->send();
         exit;
     }

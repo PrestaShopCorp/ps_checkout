@@ -30,7 +30,7 @@ class APIResponseFormatter
      *
      * @return JsonResponse
      */
-    public function sendBadRequestError(\Exception $exception)
+    public function sendBadRequestError(\Exception $exception, $exceptionMessageForCustomer = null)
     {
         return new JsonResponse(
             [
@@ -38,7 +38,7 @@ class APIResponseFormatter
                 'httpCode' => Response::HTTP_BAD_REQUEST,
                 'body' => '',
                 'exceptionCode' => $exception->getCode(),
-                'exceptionMessage' => $exception->getMessage(),
+                'exceptionMessage' => $exceptionMessageForCustomer ? $exceptionMessageForCustomer : $exception->getMessage(),
             ],
             Response::HTTP_BAD_REQUEST
         );
