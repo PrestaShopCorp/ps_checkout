@@ -69,6 +69,7 @@ abstract class AbstractApiModuleFrontController extends ModuleFrontController
         if (empty($bodyValues)) {
             throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
         }
+
         return $bodyValues;
     }
 

@@ -21,13 +21,8 @@
 /**
  * This controller receive ajax call on customer canceled payment
  */
-class Ps_CheckoutCancelModuleFrontController extends ModuleFrontController
+class Ps_CheckoutCancelModuleFrontController extends AbstractApiModuleFrontController
 {
-    /**
-     * @var Ps_checkout
-     */
-    public $module;
-
     /**
      * @see FrontController::postProcess()
      *
@@ -35,10 +30,8 @@ class Ps_CheckoutCancelModuleFrontController extends ModuleFrontController
      */
     public function postProcess()
     {
-        $bodyContent = file_get_contents('php://input');
-
-        if (false === empty($bodyContent)) {
-            $bodyValues = json_decode($bodyContent, true);
+        try {
+            $bodyValues = $this->getDatasFromRequest();
 
             if (false === empty($bodyValues['orderID'])) {
                 $this->module->getLogger()->info(sprintf(
@@ -46,12 +39,15 @@ class Ps_CheckoutCancelModuleFrontController extends ModuleFrontController
                     $bodyValues['orderID']
                 ));
             }
+
+            //@todo remove cookie
+            $this->context->cookie->__unset('ps_checkout_orderId');
+            $this->context->cookie->__unset('ps_checkout_fundingSource');
+
+            $this->sendOkResponse($bodyValues);
+        } catch(Exception $exception) {
+            $this->sendBadRequestError($exception);
         }
 
-        //@todo remove cookie
-        $this->context->cookie->__unset('ps_checkout_orderId');
-        $this->context->cookie->__unset('ps_checkout_fundingSource');
-
-        exit;
     }
 }
