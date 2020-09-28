@@ -46,9 +46,8 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractApiModuleFrontContr
             $this->context->cookie->__unset('ps_checkout_fundingSource');
 
             $this->sendOkResponse($bodyValues);
-        } catch(Exception $exception) {
+        } catch (Exception $exception) {
             $this->handleException($exception);
         }
-
     }
 }

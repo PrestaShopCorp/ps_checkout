@@ -46,7 +46,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractApiModuleFrontContr
             if (false !== $psCheckoutCart && false === empty($psCheckoutCart->paypal_order)) {
                 // @todo Check if PayPal Order status before reuse it
                 $this->paypalOrderId = $psCheckoutCart->paypal_order;
-                $this->sendOkResponse(['orderID' => $psCheckoutCart->paypal_order,]);
+                $this->sendOkResponse(['orderID' => $psCheckoutCart->paypal_order]);
             }
 
             $paypalOrder = new PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler($this->context);
@@ -74,7 +74,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractApiModuleFrontContr
             $psCheckoutCart->paypal_token_expire = (new DateTime())->modify('+3550 seconds')->format('Y-m-d H:i:s');
             $psCheckoutCart->save();
 
-            $this->sendOkResponse(['orderID' => $response['body']['id'],]);
+            $this->sendOkResponse(['orderID' => $response['body']['id']]);
         } catch (Exception $exception) {
             $this->handleException($exception);
         }

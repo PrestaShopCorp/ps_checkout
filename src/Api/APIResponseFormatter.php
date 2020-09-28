@@ -47,12 +47,12 @@ class APIResponseFormatter
     /**
      * @param \Exception $exception
      * @param string $exceptionMessageForCustomer
+     *
      * @return JsonResponse
      */
     public function sendInternalServerError(\Exception $exception, $exceptionMessageForCustomer = null)
     {
         return new JsonResponse(
-
             [
                 'status' => false,
                 'httpCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
@@ -66,6 +66,7 @@ class APIResponseFormatter
 
     /**
      * @param array $data
+     *
      * @return JsonResponse
      */
     public function sendOkResponse($data)
