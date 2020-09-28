@@ -186,3 +186,6 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter'
     arguments:
       - ['@ps_checkout.store.module.context', '@ps_checkout.store.module.firebase', '@ps_checkout.store.module.paypal', '@ps_checkout.store.module.psx', '@ps_checkout.store.module.configuration']
+
+  ps_checkout.api.response:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\APIResponseFormatter'

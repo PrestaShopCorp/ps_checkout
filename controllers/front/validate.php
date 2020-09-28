@@ -25,12 +25,8 @@ use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 /**
  * This controller receive ajax call to capture/authorize payment and create a PrestaShop Order
  */
-class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
+class Ps_CheckoutValidateModuleFrontController extends AbstractApiModuleFrontController
 {
-    /**
-     * @var Ps_checkout
-     */
-    public $module;
 
     /**
      * @var string
@@ -112,55 +108,6 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
         } catch (Exception $exception) {
             $this->handleException($exception);
         }
-    }
-
-    /**
-     * Redirect to checkout page
-     *
-     * @param Exception $exception
-     */
-    private function sendBadRequestError(Exception $exception)
-    {
-        $response =  new \Symfony\Component\HttpFoundation\JsonResponse(
-            [
-                'status' => false,
-                'httpCode' => 400,
-                'body' => '',
-                'exceptionCode' => $exception->getCode(),
-                'exceptionMessage' => $exception->getMessage(),
-            ],
-            \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
-        );
-        $response->send();
-        exit;
-    }
-
-    /**
-     * Redirect to order confirmation page
-     *
-     * @param array $response
-     */
-    private function sendOkResponse($response)
-    {
-        $response = new \Symfony\Component\HttpFoundation\JsonResponse(
-            [
-                'status' => true,
-                'httpCode' => 200,
-                'body' => [
-                    'paypal_status' => $response['status'],
-                    'paypal_order' => $response['paypalOrderId'],
-                    'paypal_transaction' => $response['transactionIdentifier'],
-                    'id_cart' => (int) $this->context->cart->id,
-                    'id_module' => (int) $this->module->id,
-                    'id_order' => (int) $this->module->currentOrder,
-                    'secure_key' => $this->context->customer->secure_key,
-                ],
-                'exceptionCode' => null,
-                'exceptionMessage' => null,
-            ]
-        );
-        $response->send();
-        exit;
     }
 
     /**
@@ -297,18 +244,7 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
         // Preserve current cart from customer changes to allow merchant to see whats wrong
         $this->generateNewCart();
 
-        $response = new \Symfony\Component\HttpFoundation\JsonResponse(
-            [
-                'status' => false,
-                'httpCode' => 500,
-                'body' => '',
-                'exceptionCode' => $exception->getCode(),
-                'exceptionMessage' => $exceptionMessageForCustomer,
-            ],
-            \Symfony\Component\HttpFoundation\Response::HTTP_INTERNAL_SERVER_ERROR
-        );
-        $response->send();
-        exit;
+        $this->sendInternalServerError($exception, $exceptionMessageForCustomer);
     }
 
     /**
