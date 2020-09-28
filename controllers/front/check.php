@@ -59,7 +59,7 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractApiModuleFrontContro
 
             $this->sendOkResponse($bodyValues);
         } catch (Exception $exception) {
-            $this->sendBadRequestError($exception);
+            $this->handleException($exception);
         }
 
         exit;

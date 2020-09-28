@@ -34,6 +34,7 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractApiModuleFrontContr
             $bodyValues = $this->getDatasFromRequest();
 
             if (false === empty($bodyValues['orderID'])) {
+                $this->paypalOrderId = $bodyValues['orderID'];
                 $this->module->getLogger()->info(sprintf(
                     'Customer canceled payment - PayPal Order %s',
                     $bodyValues['orderID']
@@ -46,7 +47,7 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractApiModuleFrontContr
 
             $this->sendOkResponse($bodyValues);
         } catch(Exception $exception) {
-            $this->sendBadRequestError($exception);
+            $this->handleException($exception);
         }
 
     }

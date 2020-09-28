@@ -45,6 +45,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractApiModuleFrontContr
 
             if (false !== $psCheckoutCart && false === empty($psCheckoutCart->paypal_order)) {
                 // @todo Check if PayPal Order status before reuse it
+                $this->paypalOrderId = $psCheckoutCart->paypal_order;
                 $this->sendOkResponse(['orderID' => $psCheckoutCart->paypal_order,]);
             }
 
@@ -58,6 +59,8 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractApiModuleFrontContr
             if (empty($response['body']['id'])) {
                 throw new PsCheckoutException('Paypal order id is missing.', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
             }
+
+            $this->paypalOrderId = $response['body']['id'];
 
             if (false === $psCheckoutCart) {
                 $psCheckoutCart = new PsCheckoutCart();
@@ -73,7 +76,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractApiModuleFrontContr
 
             $this->sendOkResponse(['orderID' => $response['body']['id'],]);
         } catch (Exception $exception) {
-            $this->sendBadRequestError($exception);
+            $this->handleException($exception);
         }
 
         exit;
