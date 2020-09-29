@@ -23,15 +23,14 @@ jobs:
 
       - name: Gcloud auth and write env file
         run: |
-          echo $GOOGLE_APPLICATION_CREDENTIALS > $GCLOUD_TOKEN_PATH
+          echo $GOOGLE_APPLICATION_CREDENTIALS > token.json
           gcloud auth activate-service-account --key-file=$GCLOUD_TOKEN_PATH
           gcloud container clusters get-credentials $GCLOUD_CLUSTER \
           --zone europe-west1-c --project $GCLOUD_PROJECT
           gcloud beta secrets versions access latest --project=$GCLOUD_PROJECT --secret="checkout-module" > .env
-          rm $GCLOUD_TOKEN_PATH
+          rm token.json
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_CREDENTIAL_PRODUCTION }}
-          GCLOUD_TOKEN_PATH: ${{ env.GCLOUD_TOKEN_PATH }}
           GCLOUD_CLUSTER: ${{ secrets.GCLOUD_CLUSTER }}
           GCLOUD_PROJECT: ${{ secrets.GCLOUD_CREDENTIAL_PRODUCTION }}
 
