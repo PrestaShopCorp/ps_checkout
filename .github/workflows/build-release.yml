@@ -32,7 +32,7 @@ jobs:
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_CREDENTIAL_PRODUCTION }}
           GCLOUD_CLUSTER: ${{ secrets.GCLOUD_CLUSTER }}
-          GCLOUD_PROJECT: ${{ secrets.GCLOUD_CREDENTIAL_PRODUCTION }}
+          GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT_PRODUCTION }}
 
       - name: Clean-up project
         uses: PrestaShopCorp/github-action-clean-before-deploy@v1.0
