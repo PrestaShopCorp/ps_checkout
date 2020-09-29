@@ -80,26 +80,24 @@ abstract class AbstractApiModuleFrontController extends ModuleFrontController
 
     /**
      * @param Exception $exception
-     * @param string $exceptionMessageForCustomer
      */
-    protected function sendInternalServerError(Exception $exception, $exceptionMessageForCustomer)
+    protected function sendInternalServerError(Exception $exception)
     {
         /** @var APIResponseFormatter $apiResponse */
         $apiResponse = $this->module->getService('ps_checkout.api.response');
-        $response = $apiResponse->sendInternalServerError($exception, $exceptionMessageForCustomer);
+        $response = $apiResponse->sendInternalServerError($exception);
         $response->send();
         exit;
     }
 
     /**
      * @param Exception $exception
-     * @param string $exceptionMessageForCustomer
      */
-    protected function sendBadRequestError(Exception $exception, $exceptionMessageForCustomer = null)
+    protected function sendBadRequestError(Exception $exception)
     {
         /** @var APIResponseFormatter $apiResponse */
         $apiResponse = $this->module->getService('ps_checkout.api.response');
-        $response = $apiResponse->sendBadRequestError($exception, $exceptionMessageForCustomer);
+        $response = $apiResponse->sendBadRequestError($exception);
         $response->send();
         exit;
     }
@@ -154,10 +152,12 @@ abstract class AbstractApiModuleFrontController extends ModuleFrontController
 
     /**
      * @param Exception $exception
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     protected function handleException(Exception $exception)
     {
-        $exceptionMessageForCustomer = $this->module->l('Error processing payment', 'translations');
         $notifyCustomerService = true;
 
         $paypalOrder = $this->paypalOrderId;
@@ -206,50 +206,29 @@ abstract class AbstractApiModuleFrontController extends ModuleFrontController
                         ]
                     );
                 }
-
-                $exceptionMessageForCustomer = $this->module->l('Order cannot be saved', 'translations');
-                break;
-            case PsCheckoutException::PRESTASHOP_PAYMENT_UNAVAILABLE:
-                $exceptionMessageForCustomer = $this->module->l('This payment method is unavailable', 'translations');
-                break;
-            case PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION:
-                $exceptionMessageForCustomer = $this->module->l('Unable to call API', 'translations');
                 break;
             case PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING:
-                $exceptionMessageForCustomer = $this->module->l('PayPal order identifier is missing', 'translations');
-                $notifyCustomerService = false;
-                break;
             case PsCheckoutException::PAYPAL_PAYMENT_METHOD_MISSING:
-                $exceptionMessageForCustomer = $this->module->l('PayPal payment method is missing', 'translations');
-                $notifyCustomerService = false;
-                break;
             case PsCheckoutException::PRESTASHOP_CONTEXT_INVALID:
-                $exceptionMessageForCustomer = $this->module->l('Cart is invalid', 'translations');
                 $notifyCustomerService = false;
                 break;
         }
 
         if (true === $notifyCustomerService) {
             $this->notifyCustomerService($exception);
-            $this->module->getLogger()->error(sprintf(
-                'ValidateOrder - Exception %s Order PayPal %s : %s',
-                $exception->getCode(),
-                $paypalOrder,
-                $exception->getMessage()
-            ));
-        } else {
-            $this->module->getLogger()->notice(sprintf(
-                'ValidateOrder - Exception %s Order PayPal %s : %s',
-                $exception->getCode(),
-                $paypalOrder,
-                $exception->getMessage()
-            ));
         }
+
+        $this->module->getLogger()->error(sprintf(
+            'ValidateOrder - Exception %s Order PayPal %s : %s',
+            $exception->getCode(),
+            $paypalOrder,
+            $exception->getMessage()
+        ));
 
         // Preserve current cart from customer changes to allow merchant to see whats wrong
         $this->generateNewCart();
 
-        $this->sendInternalServerError($exception, $exceptionMessageForCustomer);
+        $this->sendInternalServerError($exception);
     }
 
     /**

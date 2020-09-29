@@ -187,5 +187,12 @@ services:
     arguments:
       - ['@ps_checkout.store.module.context', '@ps_checkout.store.module.firebase', '@ps_checkout.store.module.paypal', '@ps_checkout.store.module.psx', '@ps_checkout.store.module.configuration']
 
+  ps_checkout.converter.exception.customer:
+    class: 'PrestaShop\Module\PrestashopCheckout\Exception\CustomerExceptionConverter'
+    arguments:
+      - '@ps_checkout.paypal.configuration'
+
   ps_checkout.api.response:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\APIResponseFormatter'
+    arguments:
+      - '@ps_checkout.converter.exception.customer'

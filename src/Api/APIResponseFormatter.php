@@ -20,17 +20,31 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\CustomerExceptionConverter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class APIResponseFormatter
 {
     /**
+     * @var CustomerExceptionConverter
+     */
+    private $converter;
+
+    /**
+     * @param CustomerExceptionConverter $converter
+     */
+    public function __construct(CustomerExceptionConverter $converter)
+    {
+        $this->converter = $converter;
+    }
+
+    /**
      * @param \Exception $exception
      *
      * @return JsonResponse
      */
-    public function sendBadRequestError(\Exception $exception, $exceptionMessageForCustomer = null)
+    public function sendBadRequestError(\Exception $exception)
     {
         return new JsonResponse(
             [
@@ -38,7 +52,7 @@ class APIResponseFormatter
                 'httpCode' => Response::HTTP_BAD_REQUEST,
                 'body' => '',
                 'exceptionCode' => $exception->getCode(),
-                'exceptionMessage' => $exceptionMessageForCustomer ? $exceptionMessageForCustomer : $exception->getMessage(),
+                'exceptionMessage' => $this->converter->getCustomerMessage($exception),
             ],
             Response::HTTP_BAD_REQUEST
         );
@@ -46,11 +60,10 @@ class APIResponseFormatter
 
     /**
      * @param \Exception $exception
-     * @param string $exceptionMessageForCustomer
      *
      * @return JsonResponse
      */
-    public function sendInternalServerError(\Exception $exception, $exceptionMessageForCustomer = null)
+    public function sendInternalServerError(\Exception $exception)
     {
         return new JsonResponse(
             [
@@ -58,7 +71,7 @@ class APIResponseFormatter
                 'httpCode' => Response::HTTP_INTERNAL_SERVER_ERROR,
                 'body' => '',
                 'exceptionCode' => $exception->getCode(),
-                'exceptionMessage' => $exceptionMessageForCustomer ? $exceptionMessageForCustomer : $exception->getMessage(),
+                'exceptionMessage' => $this->converter->getCustomerMessage($exception),
             ],
             Response::HTTP_INTERNAL_SERVER_ERROR
         );
