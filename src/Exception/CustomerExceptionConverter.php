@@ -61,7 +61,7 @@ class CustomerExceptionConverter
         }
 
         if (in_array($exception->getCode(), self::customerMessages)) {
-           return self::customerMessages[$exception->getCode()];
+            return self::customerMessages[$exception->getCode()];
         }
 
         return self::defaultMessage;
