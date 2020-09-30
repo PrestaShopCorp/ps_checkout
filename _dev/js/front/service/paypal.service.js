@@ -123,7 +123,6 @@ export class PaypalService {
   }
 
   isHostedFieldsEligible() {
-    return true;
-    // return this.sdk.HostedFields && this.sdk.HostedFields.isEligible();
+    return this.sdk.HostedFields && this.sdk.HostedFields.isEligible();
   }
 }
