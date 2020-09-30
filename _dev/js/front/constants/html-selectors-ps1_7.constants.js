@@ -21,6 +21,12 @@ export const HtmlSelectorsPs1_7Constants = {
 
   BUTTONS_CONTAINER_ID: 'ps_checkout-buttons-container',
 
+  CHECKOUT_EXPRESS_CART_BUTTON_CONTAINER_ID:
+    'js-ps_checkout-express-button-container',
+  CHECKOUT_EXPRESS_CHECKOUT_BUTTON_CONTAINER:
+    '#checkout-personal-information-step .content',
+  CHECKOUT_EXPRESS_PRODUCT_BUTTON_CONTAINER: '.product-add-to-cart',
+
   CONDITIONS_CHECKBOX_CONTAINER_ID: 'conditions-to-approve',
   CONDITION_CHECKBOX: 'input[type="checkbox"]',
 

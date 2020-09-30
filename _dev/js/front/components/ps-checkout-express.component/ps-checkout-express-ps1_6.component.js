@@ -16,14 +16,27 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-export const PsCheckoutConfig = {
-  createUrl: window.ps_checkoutCreateUrl,
-  checkCartUrl: window.ps_checkoutCheckUrl,
-  validateOrderUrl: window.ps_checkoutValidateUrl,
-  confirmationUrl: window.ps_checkoutConfirmUrl,
-  cancelUrl: window.ps_checkoutCancelUrl,
-  getTokenUrl: window.ps_checkoutGetTokenURL,
-  translations: window.ps_checkoutPayWithTranslations,
+import { HtmlElementPs1_7Service } from '../../service/html-element-ps1_7.service';
+import { PaypalService } from '../../service/paypal.service';
+import { PsCheckoutService } from '../../service/ps-checkout.service';
 
-  staticToken: window.prestashop.static_token
-};
+export class PsCheckoutExpressPs1_6Component {
+  /**
+   * @param {PsCheckoutConfig} config
+   * @param {PayPalSdk} sdk
+   */
+  constructor(config, sdk) {
+    this.config = config;
+    this.sdk = sdk;
+
+    this.htmlElementService = new HtmlElementPs1_7Service();
+    this.payPalService = new PaypalService(this.sdk);
+    this.psCheckoutService = new PsCheckoutService(this.config);
+
+    this.children = {};
+  }
+
+  render() {
+    // TODO: 1.6 WIP
+  }
+}

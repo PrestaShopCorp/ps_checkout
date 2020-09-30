@@ -16,14 +16,34 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-export const PsCheckoutConfig = {
-  createUrl: window.ps_checkoutCreateUrl,
-  checkCartUrl: window.ps_checkoutCheckUrl,
-  validateOrderUrl: window.ps_checkoutValidateUrl,
-  confirmationUrl: window.ps_checkoutConfirmUrl,
-  cancelUrl: window.ps_checkoutCancelUrl,
-  getTokenUrl: window.ps_checkoutGetTokenURL,
-  translations: window.ps_checkoutPayWithTranslations,
+import {
+  PS_VERSION_1_6,
+  PS_VERSION_1_7
+} from '../../constants/ps-version.constants';
 
-  staticToken: window.prestashop.static_token
-};
+import { PsCheckoutExpressPs1_6Component } from './ps-checkout-express-ps1_6.component';
+import { PsCheckoutExpressPs1_7Component } from './ps-checkout-express-ps1_7.component';
+
+export class PsCheckoutExpressComponent {
+  constructor(config, sdk) {
+    this.instance = new {
+      [PS_VERSION_1_6]: PsCheckoutExpressPs1_6Component,
+      [PS_VERSION_1_7]: PsCheckoutExpressPs1_7Component
+
+      // TODO: Choose by PSVersion
+    }[PS_VERSION_1_7](config, sdk);
+  }
+
+  render() {
+    if (
+      !(
+        document.body.id === 'product' ||
+        document.body.id === 'cart' ||
+        document.body.id === 'checkout'
+      )
+    )
+      return;
+
+    this.instance.render();
+  }
+}

@@ -55,10 +55,12 @@
 export class PayPalSdkComponent {
   /**
    * @param {PayPalSdkConfig} config
+   * @param {string} token
    * @param {PayPalSdkCallback} onload
    */
-  constructor(config, onload) {
+  constructor(config, token, onload) {
     this.config = config;
+    this.token = token;
     this.onload = onload;
   }
 
@@ -82,9 +84,7 @@ export class PayPalSdkComponent {
       script.setAttribute('data-order-id', this.config.orderId);
     }
 
-    if (this.config.clientToken) {
-      script.setAttribute('data-client-token', this.config.clientToken);
-    }
+    script.setAttribute('data-client-token', this.token);
 
     document.head.appendChild(script);
 

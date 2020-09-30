@@ -21,8 +21,22 @@ export class PsCheckoutService {
     this.config = config;
   }
 
+  isUserLogged() {
+    return window.prestashop.customer.is_logged;
+  }
+
+  getProductDetails() {
+    return JSON.parse(
+      document.getElementById('product-details').dataset.product
+    );
+  }
+
+  addToken(url) {
+    return `${url}?static_token=${this.config.staticToken}`;
+  }
+
   postCancelOrder(data) {
-    return fetch(this.config.cancelUrl, {
+    return fetch(this.addToken(this.config.cancelUrl), {
       method: 'post',
       headers: {
         'content-type': 'application/json'
@@ -36,7 +50,7 @@ export class PsCheckoutService {
   }
 
   postCheckCartOrder(data, actions) {
-    return fetch(this.config.checkCartUrl, {
+    return fetch(this.addToken(this.config.checkCartUrl), {
       method: 'post',
       headers: {
         'content-type': 'application/json'
@@ -64,7 +78,7 @@ export class PsCheckoutService {
    * @returns {Promise<any>}
    */
   postCreateOrder(data) {
-    return fetch(this.config.createUrl, {
+    return fetch(this.addToken(this.config.createUrl), {
       method: 'post',
       headers: {
         'content-type': 'application/json'
@@ -81,8 +95,25 @@ export class PsCheckoutService {
       .then(({ body: { orderID } }) => orderID);
   }
 
+  postGetToken() {
+    return fetch(this.addToken(this.config.getTokenUrl), {
+      method: 'post',
+      headers: {
+        'content-type': 'application/json'
+      }
+    })
+      .then(response => {
+        if (false === response.ok) {
+          throw new Error(response.statusText);
+        }
+
+        return response.json();
+      })
+      .then(({ body: { token } }) => token);
+  }
+
   postValidateOrder(data, actions) {
-    return fetch(this.config.validateOrderUrl, {
+    return fetch(this.addToken(this.config.validateOrderUrl), {
       method: 'post',
       headers: {
         'content-type': 'application/json'

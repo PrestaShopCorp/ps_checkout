@@ -95,7 +95,6 @@ export class SmartButtonComponent {
           });
         },
         createOrder: data => {
-          console.log('Create Order');
           return this.psCheckoutService.postCreateOrder(data).catch(error => {
             this.checkout.children.notification.showError(
               `${error.message} ${error.name}`

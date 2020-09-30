@@ -24,11 +24,21 @@ import { PayPalSdkConfig } from './config/paypal-sdk.config';
 import { PsCheckoutConfig } from './config/ps-checkout.config';
 
 import { PayPalSdkComponent } from './components/paypal-sdk.component';
+import { PsCheckoutExpressComponent } from './components/ps-checkout-express.component';
 import { PsCheckoutComponent } from './components/ps-checkout.component';
 import { bootstrap } from './core/bootstrap';
+import { PsCheckoutService } from './service/ps-checkout.service';
 
 bootstrap(() => {
-  new PayPalSdkComponent(PayPalSdkConfig, sdk => {
-    new PsCheckoutComponent(PsCheckoutConfig, sdk).render();
-  }).render();
+  (PayPalSdkConfig.clientToken
+    ? Promise.resolve(PayPalSdkConfig.clientToken)
+    : new PsCheckoutService(PsCheckoutConfig).postGetToken()
+  )
+    .then(token => {
+      new PayPalSdkComponent(PayPalSdkConfig, token, sdk => {
+        new PsCheckoutComponent(PsCheckoutConfig, sdk).render();
+        new PsCheckoutExpressComponent(PsCheckoutConfig, sdk).render();
+      }).render();
+    })
+    .catch(() => console.error('Token could not be retrieved'));
 });

@@ -22,6 +22,9 @@ export const PayPalSdkConfig = {
   src: window.ps_checkoutPayPalSdkUrl,
   card3dsEnabled: window.ps_checkout3dsEnabled,
   cspNonce: window.ps_checkoutCspNonce,
+
+  // TODO: if exists check if not don't check
   orderId: window.ps_checkoutPayPalOrderId,
+
   clientToken: window.ps_checkoutPayPalClientToken
 };
