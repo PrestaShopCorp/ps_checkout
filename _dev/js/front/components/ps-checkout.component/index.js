@@ -16,19 +16,33 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import 'promise-polyfill/src/polyfill';
-import 'whatwg-fetch';
-import 'url-polyfill';
+import {
+  PS_VERSION_1_6,
+  PS_VERSION_1_7
+} from '../../constants/ps-version.constants';
 
-import { PayPalSdkConfig } from './config/paypal-sdk.config';
-import { PsCheckoutConfig } from './config/ps-checkout.config';
+import { PsCheckoutPs1_6Component } from './ps-checkout-ps1_6.component';
+import { PsCheckoutPs1_7Component } from './ps-checkout-ps1_7.component';
 
-import { PayPalSdkComponent } from './components/paypal-sdk.component';
-import { PsCheckoutComponent } from './components/ps-checkout.component';
-import { bootstrap } from './core/bootstrap';
+export class PsCheckoutComponent {
+  constructor(config, sdk) {
+    this.instance = new {
+      [PS_VERSION_1_6]: PsCheckoutPs1_6Component,
+      [PS_VERSION_1_7]: PsCheckoutPs1_7Component
 
-bootstrap(() => {
-  new PayPalSdkComponent(PayPalSdkConfig, sdk => {
-    new PsCheckoutComponent(PsCheckoutConfig, sdk).render();
-  }).render();
-});
+      // TODO: Choose by PSVersion
+    }[PS_VERSION_1_7](config, sdk);
+  }
+
+  render() {
+    if (document.body.id !== 'checkout') return;
+    if (
+      document
+        .getElementById('checkout-payment-step')
+        .classList.contains('-unreachable')
+    )
+      return;
+
+    this.instance.render();
+  }
+}

@@ -16,19 +16,27 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import 'promise-polyfill/src/polyfill';
-import 'whatwg-fetch';
-import 'url-polyfill';
+import { HtmlElementPs1_7Service } from '../../service/html-element-ps1_7.service';
+import { PaypalService } from '../../service/paypal.service';
+import { PsCheckoutService } from '../../service/ps-checkout.service';
 
-import { PayPalSdkConfig } from './config/paypal-sdk.config';
-import { PsCheckoutConfig } from './config/ps-checkout.config';
+export class PsCheckoutPs1_6Component {
+  /**
+   * @param {PsCheckoutConfig} config
+   * @param {PayPalSdk} sdk
+   */
+  constructor(config, sdk) {
+    this.config = config;
+    this.sdk = sdk;
 
-import { PayPalSdkComponent } from './components/paypal-sdk.component';
-import { PsCheckoutComponent } from './components/ps-checkout.component';
-import { bootstrap } from './core/bootstrap';
+    this.htmlElementService = new HtmlElementPs1_7Service();
+    this.payPalService = new PaypalService(this.sdk);
+    this.psCheckoutService = new PsCheckoutService(this.config);
 
-bootstrap(() => {
-  new PayPalSdkComponent(PayPalSdkConfig, sdk => {
-    new PsCheckoutComponent(PsCheckoutConfig, sdk).render();
-  }).render();
-});
+    this.children = {};
+  }
+
+  render() {
+    // TODO: 1.6 WIP
+  }
+}

@@ -16,19 +16,4 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import 'promise-polyfill/src/polyfill';
-import 'whatwg-fetch';
-import 'url-polyfill';
-
-import { PayPalSdkConfig } from './config/paypal-sdk.config';
-import { PsCheckoutConfig } from './config/ps-checkout.config';
-
-import { PayPalSdkComponent } from './components/paypal-sdk.component';
-import { PsCheckoutComponent } from './components/ps-checkout.component';
-import { bootstrap } from './core/bootstrap';
-
-bootstrap(() => {
-  new PayPalSdkComponent(PayPalSdkConfig, sdk => {
-    new PsCheckoutComponent(PsCheckoutConfig, sdk).render();
-  }).render();
-});
+export const SMART_BUTTON_CLASS = 'checkout-smartbutton';
