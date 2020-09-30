@@ -40,6 +40,38 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
         header('content-type:application/json');
 
         try {
+            // BEGIN Express Checkout
+            $bodyValues = [];
+            $bodyContent = file_get_contents('php://input');
+
+            if (false === empty($bodyContent)) {
+                $bodyValues = json_decode($bodyContent, true);
+            }
+
+            if (isset($bodyValues['quantity_wanted'], $bodyValues['id_product'], $bodyValues['id_product_attribute'], $bodyValues['id_customization'])) {
+                $cart = new Cart();
+                $cart->id_currency = $this->context->currency->id;
+                $cart->id_lang = $this->context->language->id;
+                $cart->add();
+                $cart->updateQty(
+                    (int) $bodyValues['quantity_wanted'],
+                    (int) $bodyValues['id_product'],
+                    empty($bodyValues['id_product_attribute']) ? null : (int) $bodyValues['id_product_attribute'],
+                    empty($bodyValues['id_customization']) ? false : (int) $bodyValues['id_customization'],
+                    $operator = 'up'
+                );
+                $cart->update();
+
+                $this->module->getLogger()->info(sprintf(
+                    'Express checkout : Create Cart %s',
+                    (int) $cart->id
+                ));
+
+                $this->context->cart = $cart;
+                $this->context->cookie->__set('id_cart', (int) $cart->id);
+            }
+            // END Express Checkout
+
             if (false === Validate::isLoadedObject($this->context->cart)) {
                 throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
             }
