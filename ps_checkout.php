@@ -484,6 +484,7 @@ class Ps_checkout extends PaymentModule
         $psCheckoutCart = $psCheckoutCartCollection->getFirst();
 
         Media::addJsDef([
+            $this->name . 'GetTokenURL' => $this->context->link->getModuleLink($this->name, 'token', [], true),
             $this->name . 'CreateUrl' => $this->context->link->getModuleLink($this->name, 'create', [], true),
             $this->name . 'CheckUrl' => $this->context->link->getModuleLink($this->name, 'check', [], true),
             $this->name . 'ValidateUrl' => $this->context->link->getModuleLink($this->name, 'validate', [], true),
