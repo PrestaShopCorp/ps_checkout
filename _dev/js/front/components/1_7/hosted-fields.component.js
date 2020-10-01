@@ -106,7 +106,11 @@ export class HostedFieldsComponent {
       .cloneNode(true);
     this.hostedFieldSubmitButton.id = 'ps_checkout-hosted-submit-button';
     this.hostedFieldSubmitButton.type = 'button';
+
     this.hostedFieldSubmitButton.classList.remove('disabled');
+    this.checkout.children.conditionsCheckbox.onChange(() => {
+      this.hostedFieldSubmitButton.disabled = !this.checkout.children.conditionsCheckbox.isChecked();
+    });
 
     this.smartButton.append(this.hostedFieldSubmitButton);
     this.buttonContainer.append(this.smartButton);
@@ -119,13 +123,12 @@ export class HostedFieldsComponent {
           expirationDate: '#ps_checkout-hosted-fields-card-expiration-date'
         },
         {
-          createOrder: () => {
+          createOrder: () =>
             this.psCheckoutService.postCreateOrder().catch(error => {
               this.checkout.children.notification.showError(
                 `${error.message} ${error.name}`
               );
-            });
-          }
+            })
         }
       )
       .then(hostedFields => {
