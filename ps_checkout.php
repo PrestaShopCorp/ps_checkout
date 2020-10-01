@@ -515,6 +515,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'ExpressCheckoutOrderEnabled' => $expressCheckoutConfiguration->isOrderPageEnabled(),
             $this->name . '3dsEnabled' => $payPalConfiguration->is3dSecureEnabled(),
             $this->name . 'CspNonce' => $payPalConfiguration->getCSPNonce(),
+            $this->name . 'FundingSourcesSorted' => $payPalConfiguration->getFundingSources(),
             $this->name . 'PayWithTranslations' => [
                 'paypal' => $this->l('Pay by PayPal'),
                 'venmo' => $this->l('Pay by Venmo'),
