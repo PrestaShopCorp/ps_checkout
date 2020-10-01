@@ -504,6 +504,7 @@ class Ps_checkout extends PaymentModule
         $psCheckoutCart = $psCheckoutCartCollection->getFirst();
 
         Media::addJsDef([
+            $this->name . 'CardFundingSourceImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'),
             $this->name . 'GetTokenURL' => $this->context->link->getModuleLink($this->name, 'token', [], true),
             $this->name . 'CreateUrl' => $this->context->link->getModuleLink($this->name, 'create', [], true),
             $this->name . 'CheckUrl' => $this->context->link->getModuleLink($this->name, 'check', [], true),
