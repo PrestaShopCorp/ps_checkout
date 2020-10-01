@@ -16,11 +16,6 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import { HtmlElementPs1_7Service } from '../../service/html-element-ps1_7.service';
-import { PaypalService } from '../../service/paypal.service';
-import { PsCheckoutService } from '../../service/ps-checkout.service';
-import { TranslationService } from '../../service/translation.service';
-
 export class PsCheckoutExpressPs1_6Component {
   /**
    * @param {PsCheckoutConfig} config
@@ -29,19 +24,10 @@ export class PsCheckoutExpressPs1_6Component {
   constructor(config, sdk) {
     this.config = config;
     this.sdk = sdk;
-
-    this.translationService = new TranslationService(); // TODO: Get locale
-
-    this.htmlElementService = new HtmlElementPs1_7Service();
-    this.payPalService = new PaypalService(this.sdk, this.translationService);
-    this.psCheckoutService = new PsCheckoutService(this.config);
-
-    this.$ = id => this.translationService.getTranslationString(id);
-
-    this.children = {};
   }
 
   render() {
-    // TODO: 1.6 WIP
+    // Not available for 1.6
+    return this;
   }
 }

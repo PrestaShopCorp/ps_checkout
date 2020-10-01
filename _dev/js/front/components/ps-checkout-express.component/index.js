@@ -34,15 +34,6 @@ export class PsCheckoutExpressComponent {
   }
 
   render() {
-    if (
-      !(
-        document.body.id === 'product' ||
-        document.body.id === 'cart' ||
-        document.body.id === 'checkout'
-      )
-    )
-      return;
-
     this.instance.render();
   }
 }

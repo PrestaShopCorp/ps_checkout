@@ -21,9 +21,9 @@ import {
   PS_VERSION_1_7
 } from '../../constants/ps-version.constants';
 
+import { PsCheckoutService } from '../../service/ps-checkout.service';
 import { PsCheckoutPs1_6Component } from './ps-checkout-ps1_6.component';
 import { PsCheckoutPs1_7Component } from './ps-checkout-ps1_7.component';
-import { PsCheckoutService } from '../../service/ps-checkout.service';
 
 export class PsCheckoutComponent {
   constructor(config, sdk) {
@@ -34,14 +34,6 @@ export class PsCheckoutComponent {
   }
 
   render() {
-    if (document.body.id !== 'checkout') return;
-    if (
-      document
-        .getElementById('checkout-payment-step')
-        .classList.contains('-unreachable')
-    )
-      return;
-
-    this.instance.render();
+    return this.instance.render();
   }
 }

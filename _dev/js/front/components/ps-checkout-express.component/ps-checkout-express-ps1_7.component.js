@@ -46,6 +46,15 @@ export class PsCheckoutExpressPs1_7Component {
   }
 
   render() {
+    if (
+      !(
+        document.body.id === 'product' ||
+        document.body.id === 'cart' ||
+        document.body.id === 'checkout'
+      )
+    )
+      return;
+
     if (undefined === this.sdk) {
       throw new Error('No PayPal Javascript SDK Instance');
     }
