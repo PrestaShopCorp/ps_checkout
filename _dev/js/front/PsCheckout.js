@@ -274,11 +274,11 @@ export default class PsCheckout {
         },
         cvv: {
           selector: "#ps_checkout-hosted-fields-card-cvv",
-          placeholder: "XXX" //@todo translations
+          placeholder: "CVV" //@todo translations
         },
         expirationDate: {
           selector: "#ps_checkout-hosted-fields-card-expiration-date",
-          placeholder: "MM/YY"
+          placeholder: "MM/YYYY"
         }
       }
     }).then(function(hostedFields) {
