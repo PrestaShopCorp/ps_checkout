@@ -16,6 +16,8 @@ export class MarkerComponent {
         this.config.customMarker[this.fundingSource.name]
       );
 
+      this.image.style.marginLeft = '0.25em';
+
       document.querySelector(this.htmlElementId).append(this.image);
     } else {
       this.fundingSource.mark.render(this.htmlElementId);
