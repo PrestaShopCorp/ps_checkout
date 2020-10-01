@@ -544,7 +544,7 @@ class Ps_checkout extends PaymentModule
                 'boleto' => $this->l('Pay by boleto'),
                 'maxima' => $this->l('Pay by maxima'),
                 'mercadopago' => $this->l('Pay by mercadopago'),
-                'card' => $this->l('Pay by Credit or debit cards'),
+                'card' => $this->l('Pay by Card'),
                 'default' => $this->l('Pay by '),
             ],
         ]);
