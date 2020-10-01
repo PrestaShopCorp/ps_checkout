@@ -21,6 +21,7 @@ import {
   PS_VERSION_1_7
 } from '../../constants/ps-version.constants';
 
+import { PsCheckoutService } from '../../service/ps-checkout.service';
 import { PsCheckoutExpressPs1_6Component } from './ps-checkout-express-ps1_6.component';
 import { PsCheckoutExpressPs1_7Component } from './ps-checkout-express-ps1_7.component';
 
@@ -29,9 +30,7 @@ export class PsCheckoutExpressComponent {
     this.instance = new {
       [PS_VERSION_1_6]: PsCheckoutExpressPs1_6Component,
       [PS_VERSION_1_7]: PsCheckoutExpressPs1_7Component
-
-      // TODO: Choose by PSVersion
-    }[PS_VERSION_1_7](config, sdk);
+    }[PsCheckoutService.getPrestashopVersion()](config, sdk);
   }
 
   render() {

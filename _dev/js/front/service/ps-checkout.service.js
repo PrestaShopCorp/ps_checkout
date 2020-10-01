@@ -16,6 +16,11 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+import {
+  PS_VERSION_1_6,
+  PS_VERSION_1_7
+} from '../constants/ps-version.constants';
+
 export class PsCheckoutService {
   constructor(config) {
     this.config = config;
@@ -161,5 +166,13 @@ export class PsCheckoutService {
           return actions.restart();
         }
       });
+  }
+
+  static getPrestashopVersion() {
+    if (!window.prestashop) {
+      return PS_VERSION_1_6;
+    }
+
+    return PS_VERSION_1_7;
   }
 }
