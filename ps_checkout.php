@@ -557,6 +557,15 @@ class Ps_checkout extends PaymentModule
         } else {
             $this->context->controller->addJS($this->getPathUri() . 'views/js/front.js');
         }
+
+        if (method_exists($this->context->controller, 'registerStylesheet')) {
+            $this->context->controller->registerStylesheet(
+                'ps-checkout-css-paymentOptions',
+                $this->getPathUri() . 'views/css/payments.css'
+            );
+        } else {
+            $this->context->controller->addCSS($this->getPathUri() . 'views/css/payments16.css');
+        }
     }
 
     /**
