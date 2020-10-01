@@ -32,7 +32,10 @@ export class PsCheckoutService {
   }
 
   addToken(url) {
-    return `${url}?static_token=${this.config.staticToken}`;
+    const urlObject = new URL(url);
+    urlObject.searchParams.append('static_token', this.config.staticToken);
+
+    return urlObject.toString();
   }
 
   postCancelOrder(data) {
