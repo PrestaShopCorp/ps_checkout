@@ -20,16 +20,20 @@
 <form id="ps_checkout-hosted-fields-form" class="form-horizontal" style="display:none;">
   <div class="form-group">
     <label class="form-control-label" for="ps_checkout-hosted-fields-card-number">{l s='Card number' mod='ps_checkout'}</label>
-    <div id="ps_checkout-hosted-fields-card-number" class="form-control"></div>
+    <div id="ps_checkout-hosted-fields-card-number" class="form-control">
+      <div id="card-image">
+        <img class="defautl-credit-card" src="{$modulePath}views/img/credit_card.png" alt="">
+      </div>
+    </div>
   </div>
   <div class="row">
     <div class="form-group col-xs-6">
-      <label class="form-control-label" for="ps_checkout-hosted-fields-card-cvv">{l s='CVV' mod='ps_checkout'}</label>
-      <div id="ps_checkout-hosted-fields-card-cvv" class="form-control"></div>
+      <label class="form-control-label" for="ps_checkout-hosted-fields-card-expiration-date">{l s='Expiry date' mod='ps_checkout'}</label>
+      <div id="ps_checkout-hosted-fields-card-expiration-date" class="form-control"></div>
     </div>
     <div class="form-group col-xs-6">
-      <label class="form-control-label" for="ps_checkout-hosted-fields-card-expiration-date">{l s='Expiration' mod='ps_checkout'}</label>
-      <div id="ps_checkout-hosted-fields-card-expiration-date" class="form-control"></div>
+      <label class="form-control-label" for="ps_checkout-hosted-fields-card-cvv">{l s='CVC' mod='ps_checkout'}</label>
+      <div id="ps_checkout-hosted-fields-card-cvv" class="form-control"></div>
     </div>
   </div>
   <div id="payments-sdk__contingency-lightbox"></div>

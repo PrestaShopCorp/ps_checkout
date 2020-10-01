@@ -345,6 +345,10 @@ class Ps_checkout extends PaymentModule
             return [];
         }
 
+        $this->context->smarty->assign([
+            'modulePath' => $this->getPathUri(),
+        ]);
+
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption->setModuleName($this->name);
         $paymentOption->setCallToActionText($this->l('Pay with PayPal'));
@@ -500,6 +504,7 @@ class Ps_checkout extends PaymentModule
         $psCheckoutCart = $psCheckoutCartCollection->getFirst();
 
         Media::addJsDef([
+            $this->name . 'CardFundingSourceImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'),
             $this->name . 'GetTokenURL' => $this->context->link->getModuleLink($this->name, 'token', [], true),
             $this->name . 'CreateUrl' => $this->context->link->getModuleLink($this->name, 'create', [], true),
             $this->name . 'CheckUrl' => $this->context->link->getModuleLink($this->name, 'check', [], true),
@@ -540,7 +545,7 @@ class Ps_checkout extends PaymentModule
                 'boleto' => $this->l('Pay by boleto'),
                 'maxima' => $this->l('Pay by maxima'),
                 'mercadopago' => $this->l('Pay by mercadopago'),
-                'card' => $this->l('Pay by Credit or debit cards'),
+                'card' => $this->l('Pay by Card'),
                 'default' => $this->l('Pay by '),
             ],
         ]);
@@ -557,6 +562,15 @@ class Ps_checkout extends PaymentModule
             );
         } else {
             $this->context->controller->addJS($this->getPathUri() . 'views/js/front.js');
+        }
+
+        if (method_exists($this->context->controller, 'registerStylesheet')) {
+            $this->context->controller->registerStylesheet(
+                'ps-checkout-css-paymentOptions',
+                $this->getPathUri() . 'views/css/payments.css'
+            );
+        } else {
+            $this->context->controller->addCSS($this->getPathUri() . 'views/css/payments16.css');
         }
     }
 
