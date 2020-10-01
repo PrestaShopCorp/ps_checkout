@@ -53,27 +53,29 @@ export class PsCheckoutService {
   }
 
   postCheckCartOrder(data, actions) {
-    return fetch(this.addToken(this.config.checkCartUrl), {
-      method: 'post',
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-      .then(response => {
-        if (false === response.ok) {
-          throw new Error(response.statusText);
-        }
+    return this.config.orderId
+      ? fetch(this.addToken(this.config.checkCartUrl), {
+          method: 'post',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+          .then(response => {
+            if (false === response.ok) {
+              throw new Error(response.statusText);
+            }
 
-        return response.json();
-      })
-      .then(data => {
-        if (!data) {
-          return actions.reject();
-        } else {
-          return actions.resolve();
-        }
-      });
+            return response.json();
+          })
+          .then(data => {
+            if (!data) {
+              return actions.reject();
+            } else {
+              return actions.resolve();
+            }
+          })
+      : Promise.resolve().then(() => actions.resolve());
   }
 
   /**

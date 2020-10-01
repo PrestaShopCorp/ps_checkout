@@ -27,6 +27,8 @@ export class ExpressButtonCartComponent {
     this.payPalService = checkout.payPalService;
     this.psCheckoutService = checkout.psCheckoutService;
 
+    this.$ = this.checkout.$;
+
     this.buttonContainer = this.htmlElementService.getCheckoutExpressCartButtonContainer();
   }
 
@@ -41,11 +43,14 @@ export class ExpressButtonCartComponent {
     return this.payPalService
       .getButtonExpress('paypal', {
         onInit: (data, actions) => actions.enable(),
-        onClick: (data, actions) =>
-          this.psCheckoutService.postCheckCartOrder(data, actions).catch(() => {
-            // perez-furio.ext: Double reject ???
-            actions.reject();
-          }),
+        onClick: (data, actions) => {
+          return this.psCheckoutService
+            .postCheckCartOrder(data, actions)
+            .catch(() => {
+              // TODO: Error notification
+              actions.reject();
+            });
+        },
         onError: error => console.error(error),
         onApprove: (data, actions) =>
           this.psCheckoutService.postValidateOrder(data, actions),
@@ -60,7 +65,7 @@ export class ExpressButtonCartComponent {
     this.checkoutExpressButton.id = 'ps-checkout-express-button';
 
     const separatorText = document.createElement('div');
-    separatorText.innerText = 'ou'; // TODO: @translation
+    separatorText.innerText = this.$('express-button.cart.separator');
 
     separatorText.style.padding = '1rem 0';
 

@@ -33,6 +33,8 @@ export class PaymentOptionComponent {
     this.checkout = checkout;
     this.checkoutConfig = checkout.config;
 
+    this.config = this.checkout.config;
+
     this.htmlElementService = checkout.htmlElementService;
     this.payPalService = checkout.payPalService;
 
@@ -82,6 +84,7 @@ export class PaymentOptionComponent {
     return BASE_PAYMENT_OPTION_ID + '-' + this.fundingSource.name;
   }
 
+  // TODO: @translation ?
   getPaymentOptionLabel() {
     return undefined !==
       this.checkoutConfig.translations[this.fundingSource.name]
@@ -162,7 +165,8 @@ export class PaymentOptionComponent {
   renderNewPaymentOptionChildren() {
     if (
       this.fundingSource.name === 'card' &&
-      this.payPalService.isHostedFieldsEligible()
+      this.payPalService.isHostedFieldsEligible() &&
+      this.config.expressCheckoutHostedFieldsEnabled
     ) {
       this.paymentOptionAdditionalInformation = BASE_PAYMENT_OPTION_ADDITIONAL_INFORMATION.cloneNode(
         true

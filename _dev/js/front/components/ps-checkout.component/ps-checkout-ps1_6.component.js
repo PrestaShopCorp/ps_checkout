@@ -19,6 +19,7 @@
 import { HtmlElementPs1_7Service } from '../../service/html-element-ps1_7.service';
 import { PaypalService } from '../../service/paypal.service';
 import { PsCheckoutService } from '../../service/ps-checkout.service';
+import { TranslationService } from '../../service/translation.service';
 
 export class PsCheckoutPs1_6Component {
   /**
@@ -29,14 +30,22 @@ export class PsCheckoutPs1_6Component {
     this.config = config;
     this.sdk = sdk;
 
+    this.translationService = new TranslationService(); // TODO: Get locale
+
     this.htmlElementService = new HtmlElementPs1_7Service();
-    this.payPalService = new PaypalService(this.sdk);
+    this.payPalService = new PaypalService(this.sdk, this.translationService);
     this.psCheckoutService = new PsCheckoutService(this.config);
+
+    this.$ = id => this.translationService.getTranslationString(id);
 
     this.children = {};
   }
 
   render() {
+    if (undefined === this.sdk) {
+      throw new Error(this.$('error.paypal-skd'));
+    }
+
     // TODO: 1.6 WIP
   }
 }

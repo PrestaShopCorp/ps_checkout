@@ -23,6 +23,7 @@ import { PsCheckoutService } from '../../service/ps-checkout.service';
 import { ExpressButtonCartComponent } from '../1_7/express-button-cart.component';
 import { ExpressButtonCheckoutComponent } from '../1_7/express-button-checkout.component';
 import { ExpressButtonProductComponent } from '../1_7/express-button-product.component';
+import { TranslationService } from '../../service/translation.service';
 
 export class PsCheckoutExpressPs1_7Component {
   /**
@@ -33,9 +34,13 @@ export class PsCheckoutExpressPs1_7Component {
     this.config = config;
     this.sdk = sdk;
 
+    this.translationService = new TranslationService(); // TODO: Get locale
+
     this.htmlElementService = new HtmlElementPs1_7Service();
-    this.payPalService = new PaypalService(this.sdk);
+    this.payPalService = new PaypalService(this.sdk, this.translationService);
     this.psCheckoutService = new PsCheckoutService(this.config);
+
+    this.$ = id => this.translationService.getTranslationString(id);
 
     this.children = {};
   }
@@ -47,17 +52,20 @@ export class PsCheckoutExpressPs1_7Component {
 
     switch (document.body.id) {
       case 'cart':
+        if (!this.config.expressCheckoutCartEnabled) return;
         if (document.body.classList.contains('cart-empty')) return;
         this.children.expressButton = new ExpressButtonCartComponent(
           this
         ).render();
         break;
       case 'checkout':
+        if (!this.config.expressCheckoutOrderEnabled) return;
         this.children.expressButton = new ExpressButtonCheckoutComponent(
           this
         ).render();
         break;
       case 'product':
+        if (!this.config.expressCheckoutProductEnabled) return;
         this.children.expressButton = new ExpressButtonProductComponent(
           this
         ).render();

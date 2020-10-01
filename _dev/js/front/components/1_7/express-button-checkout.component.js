@@ -25,6 +25,8 @@ export class ExpressButtonCheckoutComponent {
     this.payPalService = checkout.payPalService;
     this.psCheckoutService = checkout.psCheckoutService;
 
+    this.$ = this.checkout.$;
+
     this.buttonContainer = this.htmlElementService.getCheckoutExpressCheckoutButtonContainer();
   }
 
@@ -40,10 +42,10 @@ export class ExpressButtonCheckoutComponent {
       .getButtonExpress('paypal', {
         onInit: (data, actions) => actions.enable(),
         onClick: (data, actions) => {
-          this.psCheckoutService.postCheckCartOrder(data, actions).catch(() => {
-            // perez-furio.ext: Double reject ???
-            actions.reject();
-          });
+          this.psCheckoutService.postCheckCartOrder(data, actions).catch(() =>
+            // TODO: Error notification
+            actions.reject()
+          );
         },
         onError: error => {
           console.error(error);
@@ -83,7 +85,9 @@ export class ExpressButtonCheckoutComponent {
 
     this.checkoutExpressTitleItemHeading = document.createElement('div');
     this.checkoutExpressTitleItemHeading.classList.add('nav-link', 'active');
-    this.checkoutExpressTitleItemHeading.innerText = 'Achat rapide'; // todo @translation
+    this.checkoutExpressTitleItemHeading.innerText = this.$(
+      'express-button.checkout.express-checkout'
+    );
 
     this.checkoutExpressTitleItem.append(this.checkoutExpressTitleItemHeading);
     this.checkoutExpressTitle.append(this.checkoutExpressTitleItem);

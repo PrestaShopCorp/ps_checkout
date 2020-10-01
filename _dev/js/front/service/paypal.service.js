@@ -37,8 +37,11 @@
  */
 
 export class PaypalService {
-  constructor(sdk) {
+  constructor(sdk, translationService) {
     this.sdk = sdk;
+    this.translationService = translationService;
+
+    this.$ = id => this.translationService.getTranslationString(id);
   }
 
   /**
@@ -93,15 +96,15 @@ export class PaypalService {
       fields: {
         number: {
           selector: fieldSelectors.number,
-          placeholder: 'Card number' //@todo translations
+          placeholder: this.$('paypal.hosted-fields.card-number')
         },
         cvv: {
           selector: fieldSelectors.cvv,
-          placeholder: 'CVV' //@todo translations
+          placeholder: this.$('paypal.hosted-fields.cvv')
         },
         expirationDate: {
           selector: fieldSelectors.expirationDate,
-          placeholder: 'MM/YYYY'
+          placeholder: this.$('paypal.hosted-fields.expiration-date')
         }
       },
       ...events

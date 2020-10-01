@@ -23,6 +23,7 @@ import { PsCheckoutService } from '../../service/ps-checkout.service';
 import { NotificationComponent } from '../1_7/notification.component';
 import { PaymentOptionsComponent } from '../1_7/payment-options.component';
 import { ConditionsCheckboxComponent } from '../1_7/conditions-checkbox.component';
+import { TranslationService } from '../../service/translation.service';
 
 export class PsCheckoutPs1_7Component {
   /**
@@ -33,16 +34,20 @@ export class PsCheckoutPs1_7Component {
     this.config = config;
     this.sdk = sdk;
 
+    this.translationService = new TranslationService(); // TODO: Get locale
+
     this.htmlElementService = new HtmlElementPs1_7Service();
-    this.payPalService = new PaypalService(this.sdk);
+    this.payPalService = new PaypalService(this.sdk, this.translationService);
     this.psCheckoutService = new PsCheckoutService(this.config);
+
+    this.$ = id => this.translationService.getTranslationString(id);
 
     this.children = {};
   }
 
   render() {
     if (undefined === this.sdk) {
-      throw new Error('No PayPal Javascript SDK Instance');
+      throw new Error(this.$('error.paypal-skd'));
     }
 
     this.children.conditionsCheckbox = new ConditionsCheckboxComponent(

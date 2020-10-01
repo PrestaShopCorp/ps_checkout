@@ -16,21 +16,30 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-export const PsCheckoutConfig = {
-  createUrl: window.ps_checkoutCreateUrl,
-  checkCartUrl: window.ps_checkoutCheckUrl,
-  validateOrderUrl: window.ps_checkoutValidateUrl,
-  confirmationUrl: window.ps_checkoutConfirmUrl,
-  cancelUrl: window.ps_checkoutCancelUrl,
-  getTokenUrl: window.ps_checkoutGetTokenURL,
-  translations: window.ps_checkoutPayWithTranslations,
+const TRANSLATION_MAP = {
+  en: {
+    'express-button.cart.separator': 'or',
+    'express-button.checkout.express-checkout': 'Express Checkout',
 
-  expressCheckoutProductEnabled:
-    window.ps_checkoutExpressCheckoutProductEnabled,
-  expressCheckoutCartEnabled: window.ps_checkoutExpressCheckoutCartEnabled,
-  expressCheckoutOrderEnabled: window.ps_checkoutExpressCheckoutOrderEnabled,
-  expressCheckoutHostedFieldsEnabled: window.ps_checkoutHostedFieldsEnabled,
+    'paypal.hosted-fields.card-number': 'Card number',
+    'paypal.hosted-fields.cvv': 'CVV',
+    'paypal.hosted-fields.expiration-date': 'MM/YYYY',
 
-  orderId: window.ps_checkoutPayPalOrderId,
-  staticToken: window.prestashop.static_token
+    'error.paypal-skd': 'No PayPal Javascript SDK Instance'
+  },
+
+  fr: {
+    'express-button.cart.separator': 'ou',
+    'express-button.checkout.express-checkout': 'Achat Rapide'
+  }
 };
+
+export class TranslationService {
+  constructor(locale, defaultLocale = 'en') {
+    this.locale = locale || defaultLocale;
+  }
+
+  getTranslationString(id, locale = this.locale) {
+    return TRANSLATION_MAP[locale][id];
+  }
+}

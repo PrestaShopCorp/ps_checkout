@@ -69,8 +69,6 @@ export class SmartButtonComponent {
             .postCheckCartOrder(data, actions)
             .catch(error => {
               this.checkout.children.notification.showError(error.message);
-
-              // perez-furio.ext: Double reject ???
               actions.reject();
             });
         },

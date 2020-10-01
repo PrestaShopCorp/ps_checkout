@@ -40,10 +40,10 @@ export class ExpressButtonProductComponent {
       .getButtonExpress('paypal', {
         onInit: (data, actions) => actions.enable(),
         onClick: (data, actions) => {
-          this.psCheckoutService.postCheckCartOrder(data, actions).catch(() => {
-            // perez-furio.ext: Double reject ???
-            actions.reject();
-          });
+          this.psCheckoutService.postCheckCartOrder(data, actions).catch(() =>
+            // TODO: Error notification
+            actions.reject()
+          );
         },
         onError: error => {
           console.error(error);
