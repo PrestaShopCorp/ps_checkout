@@ -37,8 +37,9 @@
  */
 
 export class PaypalService {
-  constructor(sdk, translationService) {
+  constructor(sdk, config, translationService) {
     this.sdk = sdk;
+    this.config = config;
     this.translationService = translationService;
 
     this.$ = id => this.translationService.getTranslationString(id);
@@ -113,8 +114,13 @@ export class PaypalService {
 
   getEligibleFundingSources(cache) {
     if (!this.eligibleFundingSources || cache) {
-      this.eligibleFundingSources = this.sdk
-        .getFundingSources()
+      const paypalFundingSources = this.sdk.getFundingSources();
+      this.eligibleFundingSources = (
+        this.config.fundingSourcesSorted || paypalFundingSources
+      )
+        .filter(
+          fundingSource => paypalFundingSources.indexOf(fundingSource) >= 0
+        )
         .map(fundingSource => ({
           name: fundingSource,
           mark: this.sdk.Marks({ fundingSource })

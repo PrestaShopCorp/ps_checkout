@@ -33,7 +33,11 @@ export class PsCheckoutPs1_6Component {
     this.translationService = new TranslationService(); // TODO: Get locale
 
     this.htmlElementService = new HtmlElementPs1_7Service();
-    this.payPalService = new PaypalService(this.sdk, this.translationService);
+    this.payPalService = new PaypalService(
+      this.sdk,
+      this.config,
+      this.translationService
+    );
     this.psCheckoutService = new PsCheckoutService(this.config);
 
     this.$ = id => this.translationService.getTranslationString(id);

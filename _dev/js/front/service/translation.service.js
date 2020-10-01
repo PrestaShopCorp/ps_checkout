@@ -22,8 +22,8 @@ const TRANSLATION_MAP = {
     'express-button.checkout.express-checkout': 'Express Checkout',
 
     'paypal.hosted-fields.card-number': 'Card number',
-    'paypal.hosted-fields.cvv': 'CVV',
-    'paypal.hosted-fields.expiration-date': 'MM/YYYY',
+    'paypal.hosted-fields.cvv': 'XXX',
+    'paypal.hosted-fields.expiration-date': 'MM/YY',
 
     'error.paypal-skd': 'No PayPal Javascript SDK Instance'
   },
@@ -35,11 +35,14 @@ const TRANSLATION_MAP = {
 };
 
 export class TranslationService {
-  constructor(locale, defaultLocale = 'en') {
+  constructor(locale, defaultLocale = 'en', fallbackLocale = 'en') {
     this.locale = locale || defaultLocale;
+    this.fallbackLocale = fallbackLocale;
   }
 
   getTranslationString(id, locale = this.locale) {
-    return TRANSLATION_MAP[locale][id];
+    return (
+      TRANSLATION_MAP[locale][id] || TRANSLATION_MAP[this.fallbackLocale][id]
+    );
   }
 }

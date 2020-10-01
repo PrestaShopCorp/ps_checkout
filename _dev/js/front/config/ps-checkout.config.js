@@ -31,6 +31,8 @@ export const PsCheckoutConfig = {
   expressCheckoutOrderEnabled: window.ps_checkoutExpressCheckoutOrderEnabled,
   expressCheckoutHostedFieldsEnabled: window.ps_checkoutHostedFieldsEnabled,
 
+  fundingSourcesSorted: window.ps_checkoutFundingSourcesSorted,
+
   orderId: window.ps_checkoutPayPalOrderId,
   staticToken: window.prestashop.static_token
 };
