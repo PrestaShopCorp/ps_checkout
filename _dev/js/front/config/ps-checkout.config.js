@@ -25,6 +25,10 @@ export const PsCheckoutConfig = {
   getTokenUrl: window.ps_checkoutGetTokenURL,
   translations: window.ps_checkoutPayWithTranslations,
 
+  customMarker: {
+    card: window.ps_checkoutCardFundingSourceImg
+  },
+
   expressCheckoutProductEnabled:
     window.ps_checkoutExpressCheckoutProductEnabled,
   expressCheckoutCartEnabled: window.ps_checkoutExpressCheckoutCartEnabled,

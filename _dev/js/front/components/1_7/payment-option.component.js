@@ -18,6 +18,7 @@
  */
 import { SmartButtonComponent } from './smart-button.component';
 import { HostedFieldsComponent } from './hosted-fields.component';
+import { MarkerComponent } from './marker.component';
 
 const PAYMENT_OPTION_LABEL_MARK = id => `${id}-mark`;
 const PAYMENT_OPTION_CONTAINER_IDENTIFIER = id => `${id}-container`;
@@ -157,9 +158,11 @@ export class PaymentOptionComponent {
     this.paymentOptionsContainer.append(this.paymentOptionContainer);
     this.paymentOptionsContainer.append(this.paymentOptionFormContainer);
 
-    this.fundingSource.mark.render(
+    this.marker = new MarkerComponent(
+      this,
+      this.fundingSource,
       `#${PAYMENT_OPTION_LABEL_MARK(this.fundingSource.name)}`
-    );
+    ).render();
   }
 
   renderNewPaymentOptionChildren() {
