@@ -345,6 +345,10 @@ class Ps_checkout extends PaymentModule
             return [];
         }
 
+        $this->context->smarty->assign([
+            'modulePath' => $this->getPathUri(),
+        ]);
+
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption->setModuleName($this->name);
         $paymentOption->setCallToActionText($this->l('Pay with PayPal'));
