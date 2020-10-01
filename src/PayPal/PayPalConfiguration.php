@@ -221,4 +221,43 @@ class PayPalConfiguration
     {
         return false === (bool) $this->configuration->get(static::HOSTED_FIELDS_3DS_DISABLED);
     }
+
+    /**
+     * Get funding sources sorted according to configuration
+     *
+     * @return string[]
+     */
+    public function getFundingSources()
+    {
+        $paymentMethods = $this->configuration->get(self::PAYMENT_METHODS_ORDER);
+
+        if (empty($paymentMethods)) {
+            $paymentMethods = [
+                ['name' => 'card'],
+                ['name' => 'paypal'],
+            ];
+        } else {
+            $paymentMethods = json_decode($paymentMethods, true);
+        }
+
+        $fundingSources = [
+            'card',
+            'paypal',
+            'bancontact',
+            'ideal',
+            'gyropay',
+            'eps',
+            'mybank',
+            'sofort',
+            'p24',
+        ];
+
+        // If card is not in first position in configuration, move it at the end.
+        if ('card' !== $paymentMethods[0]['name']) {
+            unset($fundingSources[0]);
+            $fundingSources[] = 'card';
+        }
+
+        return array_values($fundingSources);
+    }
 }
