@@ -33,6 +33,8 @@ class PayPalConfiguration
     const PS_PRICE_ROUND_MODE = 'PS_PRICE_ROUND_MODE';
     const PAYMENT_METHODS_ORDER = 'PS_CHECKOUT_PAYMENT_METHODS_ORDER';
     const INTEGRATION_DATE = 'PS_CHECKOUT_INTEGRATION_DATE';
+    const HOSTED_FIELDS_3DS_DISABLED = 'PS_CHECKOUT_3DS_DISABLED';
+    const CSP_NONCE = 'PS_CHECKOUT_CSP_NONCE';
 
     /**
      * @var PrestaShopConfiguration
@@ -196,8 +198,27 @@ class PayPalConfiguration
         return $this->configuration->get(self::PS_PRICE_ROUND_MODE);
     }
 
+    /**
+     * @return string
+     */
     public function getIntegrationDate()
     {
-        return $this->configuration->get(static::INTEGRATION_DATE);
+        return $this->configuration->get(static::INTEGRATION_DATE, ['default' => \Ps_checkout::INTEGRATION_DATE]);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCSPNonce()
+    {
+        return $this->configuration->get(static::CSP_NONCE, ['default' => '']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function is3dSecureEnabled()
+    {
+        return false === (bool) $this->configuration->get(static::HOSTED_FIELDS_3DS_DISABLED);
     }
 }

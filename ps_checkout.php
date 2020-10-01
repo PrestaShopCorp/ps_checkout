@@ -96,6 +96,11 @@ class Ps_checkout extends PaymentModule
         'PS_PSX_FIREBASE_REFRESH_TOKEN' => '',
         'PS_PSX_FIREBASE_REFRESH_DATE' => '',
         'PS_CHECKOUT_PSX_FORM' => '',
+        'PS_CHECKOUT_LOGGER_MAX_FILES' => '15',
+        'PS_CHECKOUT_LOGGER_LEVEL' => '400',
+        'PS_CHECKOUT_LOGGER_HTTP' => '0',
+        'PS_CHECKOUT_LOGGER_HTTP_FORMAT' => 'DEBUG',
+        'PS_CHECKOUT_INTEGRATION_DATE' => self::INTEGRATION_DATE,
     ];
 
     public $confirmUninstall;
@@ -104,6 +109,8 @@ class Ps_checkout extends PaymentModule
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
     const VERSION = '2.0.0';
+
+    const INTEGRATION_DATE = '2020-07-30';
 
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
@@ -477,6 +484,15 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder $payPalSdkLinkBuilder */
         $payPalSdkLinkBuilder = $this->serviceContainer->getService('ps_checkout.sdk.paypal.linkbuilder');
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository */
+        $paypalAccountRepository = $this->serviceContainer->getService('ps_checkout.repository.paypal.account');
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $expressCheckoutConfiguration */
+        $expressCheckoutConfiguration = $this->serviceContainer->getService('ps_checkout.express_checkout.configuration');
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $payPalConfiguration */
+        $payPalConfiguration = $this->serviceContainer->getService('ps_checkout.paypal.configuration');
+
         $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
         $psCheckoutCartCollection->where('id_cart', '=', (int) $this->context->cart->id);
 
@@ -493,8 +509,12 @@ class Ps_checkout extends PaymentModule
             $this->name . 'PayPalSdkUrl' => $payPalSdkLinkBuilder->buildLink(),
             $this->name . 'PayPalClientToken' => $psCheckoutCart ? $psCheckoutCart->paypal_token : '',
             $this->name . 'PayPalOrderId' => $psCheckoutCart ? $psCheckoutCart->paypal_order : '',
-            $this->name . '3dsEnabled' => false === (bool) Configuration::get('PS_CHECKOUT_3DS_DISABLED'),
-            $this->name . 'CspNonce' => Configuration::get('PS_CHECKOUT_CSP_NONCE'),
+            $this->name . 'HostedFieldsEnabled' => $paypalAccountRepository->cardHostedFieldsIsAvailable(),
+            $this->name . 'ExpressCheckoutProductEnabled' => $expressCheckoutConfiguration->isProductPageEnabled(),
+            $this->name . 'ExpressCheckoutCartEnabled' => $expressCheckoutConfiguration->isCheckoutPageEnabled(),
+            $this->name . 'ExpressCheckoutOrderEnabled' => $expressCheckoutConfiguration->isOrderPageEnabled(),
+            $this->name . '3dsEnabled' => $payPalConfiguration->is3dSecureEnabled(),
+            $this->name . 'CspNonce' => $payPalConfiguration->getCSPNonce(),
             $this->name . 'PayWithTranslations' => [
                 'paypal' => $this->l('Pay by PayPal'),
                 'venmo' => $this->l('Pay by Venmo'),
