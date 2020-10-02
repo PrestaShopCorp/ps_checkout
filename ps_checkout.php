@@ -485,6 +485,12 @@ class Ps_checkout extends PaymentModule
      */
     public function hookActionFrontControllerSetMedia()
     {
+        $controller = Tools::getValue('controller');
+
+        if (false === in_array($controller, ['cart', 'product', 'order', 'orderopc'], true)) {
+            return;
+        }
+
         /** @var \PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder $payPalSdkLinkBuilder */
         $payPalSdkLinkBuilder = $this->serviceContainer->getService('ps_checkout.sdk.paypal.linkbuilder');
 
@@ -568,6 +574,9 @@ class Ps_checkout extends PaymentModule
                 'paypal.hosted-fields.placeholder.expiration-date' => $this->l('MM/YY'),
                 'paypal.hosted-fields.label.cvv' => $this->l('CVC'),
                 'paypal.hosted-fields.placeholder.cvv' => $this->l('XXX'),
+                'express-button.cart.separator' => $this->l('or'),
+                'express-button.checkout.express-checkout' => $this->l('Express Checkout'),
+                'error.paypal-sdk' => $this->l('No PayPal Javascript SDK Instance'),
                 'checkout.payment.others.link.label' => $this->l('Other payment methods'),
                 'checkout.payment.others.confirm.button.label' => $this->l('I confirm my order'),
                 'checkout.form.error.label' => $this->l('There was an error during the payment. Please try again or contact the support.'),
@@ -577,24 +586,27 @@ class Ps_checkout extends PaymentModule
         if (method_exists($this->context->controller, 'registerJavascript')) {
             $this->context->controller->registerJavascript(
                 $this->name . 'Front',
-                $this->getPathUri() . 'views/js/front.js',
+                $this->getPathUri() . 'views/js/front.js?version=' . $this->version,
                 [
                     'position' => 'bottom',
                     'priority' => 201,
-                    'server' => 'local',
+                    'server' => 'remote',
                 ]
             );
         } else {
-            $this->context->controller->addJS($this->getPathUri() . 'views/js/front.js');
+            $this->context->controller->addJS($this->getPathUri() . 'views/js/front.js?version=' . $this->version);
         }
 
         if (method_exists($this->context->controller, 'registerStylesheet')) {
             $this->context->controller->registerStylesheet(
                 'ps-checkout-css-paymentOptions',
-                $this->getPathUri() . 'views/css/payments.css'
+                $this->getPathUri() . 'views/css/payments.css?version=' . $this->version,
+                [
+                    'server' => 'remote',
+                ]
             );
         } else {
-            $this->context->controller->addCSS($this->getPathUri() . 'views/css/payments16.css');
+            $this->context->controller->addCSS($this->getPathUri() . 'views/css/payments16.css?version=' . $this->version);
         }
     }
 
