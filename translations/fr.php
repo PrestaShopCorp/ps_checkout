@@ -81,7 +81,7 @@ $_MODULE['<{ps_checkout}prestashop>orderconfirmation_ca7e41a658753c87973936d7ce2
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_66fcf4c223bbf4c7c886d4784e1f62e4'] = 'équipe de support.';
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_a47005f7a79a267052608d713c8cfe8d'] = 'Votre commande n\'a pas encore été validée, elle a seulement été créée. Il y a peut-être un problème avec votre paiement ou votre commande sera peut-être enregistrée plus tard. Veuillez contacter notre service client pour plus d\'informations.';
 $_MODULE['<{ps_checkout}prestashop>payment_2471e6ef6ef9018973f1658492115b52'] = 'Payer par carte';
-$_MODULE['<{ps_checkout}prestashop>payment_889a2e028c7f9ffb3d0754dab99bd44e'] = 'Payer avec un compte PayPal ou d\'autres moyen de paiement';
+$_MODULE['<{ps_checkout}prestashop>payment_889a2e028c7f9ffb3d0754dab99bd44e'] = 'Payer avec un compte PayPal';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_cb375d61d9ba4f21c2f0e4c1df8143e0'] = 'Référence de commande PayPal';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_cefbea0303801fa237623a23615f2755'] = 'Statut de commane PayPal ';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_44749712dbec183e983dcd78a7736c41'] = 'Date';
