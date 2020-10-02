@@ -522,7 +522,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'CspNonce' => $payPalConfiguration->getCSPNonce(),
             $this->name . 'FundingSourcesSorted' => $payPalConfiguration->getFundingSources(),
             $this->name . 'PayWithTranslations' => [
-                'paypal' => $this->l('Pay with a PayPal account or other payment methods'),
+                'paypal' => $this->l('Pay with a PayPal account'),
                 'venmo' => $this->l('Pay by Venmo'),
                 'itau' => $this->l('Pay by itau'),
                 'credit' => $this->l('Pay by PayPal Credit'),
