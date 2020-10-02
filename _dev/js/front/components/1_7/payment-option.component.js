@@ -42,6 +42,8 @@ export class PaymentOptionComponent {
     this.fundingSource = fundingSource;
     this.paymentOption = paymentOption;
 
+    this.$ = this.checkout.$;
+
     this.setBasePaymentOption();
 
     this.children = {};
@@ -85,12 +87,11 @@ export class PaymentOptionComponent {
     return BASE_PAYMENT_OPTION_ID + '-' + this.fundingSource.name;
   }
 
-  // TODO: @translation ?
   getPaymentOptionLabel() {
     return undefined !==
-      this.checkoutConfig.translations[this.fundingSource.name]
-      ? this.checkoutConfig.translations[this.fundingSource.name]
-      : this.checkoutConfig.translations['default'];
+      this.$(`funding-source.name.${this.fundingSource.name}`)
+      ? this.$(`funding-source.name.${this.fundingSource.name}`)
+      : this.$('funding-source.name.default');
   }
 
   renderNewPaymentOptionLabel() {

@@ -23,7 +23,18 @@ export const PsCheckoutConfig = {
   confirmationUrl: window.ps_checkoutConfirmUrl,
   cancelUrl: window.ps_checkoutCancelUrl,
   getTokenUrl: window.ps_checkoutGetTokenURL,
-  translations: window.ps_checkoutPayWithTranslations,
+
+  translations: {
+    ...Object.keys(window.ps_checkoutPayWithTranslations || {}).reduce(
+      (result, name) => {
+        result[`funding-source.name.${name}`] =
+          window.ps_checkoutPayWithTranslations[name];
+        return result;
+      },
+      {}
+    ),
+    ...window.ps_checkoutCheckoutTranslations
+  },
 
   customMarker: {
     card: window.ps_checkoutCardFundingSourceImg
@@ -38,5 +49,7 @@ export const PsCheckoutConfig = {
   fundingSourcesSorted: window.ps_checkoutFundingSourcesSorted,
 
   orderId: window.ps_checkoutPayPalOrderId,
-  staticToken: window.prestashop.static_token
+  staticToken: window.prestashop
+    ? window.prestashop.static_token
+    : window.static_token
 };

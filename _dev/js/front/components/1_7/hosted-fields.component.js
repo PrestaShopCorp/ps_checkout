@@ -34,10 +34,18 @@ export class HostedFieldsComponent {
     this.buttonContainer = this.htmlElementService.getButtonContainer();
 
     this.paymentOptionsContainer = this.htmlElementService.getPaymentOptionsContainer();
+
+    this.validity = false;
   }
 
   getButtonId() {
     return `button-${this.fundingSource.name}`;
+  }
+
+  isSubmittable() {
+    return (
+      this.checkout.children.conditionsCheckbox.isChecked() && this.validity
+    );
   }
 
   checkLiabilityShift(liabilityShift) {
@@ -109,7 +117,7 @@ export class HostedFieldsComponent {
 
     this.hostedFieldSubmitButton.classList.remove('disabled');
     this.checkout.children.conditionsCheckbox.onChange(() => {
-      this.hostedFieldSubmitButton.disabled = !this.checkout.children.conditionsCheckbox.isChecked();
+      this.hostedFieldSubmitButton.disabled = !this.isSubmittable();
     });
 
     this.smartButton.append(this.hostedFieldSubmitButton);
@@ -136,6 +144,18 @@ export class HostedFieldsComponent {
           const hostedFieldsSubmitButton = document.getElementById(
             this.hostedFieldSubmitButton.id
           );
+
+          hostedFields.on('validityChange', event => {
+            this.validity =
+              Object.keys(event.fields)
+                .map(name => event.fields[name])
+                .map(({ isValid }) => {
+                  return isValid;
+                })
+                .filter(validity => validity === false).length === 0;
+
+            this.hostedFieldSubmitButton.disabled = !this.isSubmittable();
+          });
 
           hostedFieldsSubmitButton.addEventListener('click', event => {
             event.preventDefault();

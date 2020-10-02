@@ -34,7 +34,7 @@ export class PsCheckoutPs1_7Component {
     this.config = config;
     this.sdk = sdk;
 
-    this.translationService = new TranslationService(); // TODO: Get locale
+    this.translationService = new TranslationService(this.config.translations);
 
     this.htmlElementService = new HtmlElementPs1_7Service();
     this.payPalService = new PaypalService(
@@ -59,7 +59,7 @@ export class PsCheckoutPs1_7Component {
       return;
 
     if (undefined === this.sdk) {
-      throw new Error(this.$('error.paypal-skd'));
+      throw new Error(this.$('error.paypal-sdk'));
     }
 
     this.children.conditionsCheckbox = new ConditionsCheckboxComponent(

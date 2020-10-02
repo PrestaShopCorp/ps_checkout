@@ -34,7 +34,7 @@ export class PsCheckoutExpressPs1_7Component {
     this.config = config;
     this.sdk = sdk;
 
-    this.translationService = new TranslationService(); // TODO: Get locale
+    this.translationService = new TranslationService(this.config.translations);
 
     this.htmlElementService = new HtmlElementPs1_7Service();
     this.payPalService = new PaypalService(

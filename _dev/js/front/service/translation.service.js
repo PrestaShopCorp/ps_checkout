@@ -16,33 +16,12 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-const TRANSLATION_MAP = {
-  en: {
-    'express-button.cart.separator': 'or',
-    'express-button.checkout.express-checkout': 'Express Checkout',
-
-    'paypal.hosted-fields.card-number': 'Card number',
-    'paypal.hosted-fields.cvv': 'XXX',
-    'paypal.hosted-fields.expiration-date': 'MM/YY',
-
-    'error.paypal-skd': 'No PayPal Javascript SDK Instance'
-  },
-
-  fr: {
-    'express-button.cart.separator': 'ou',
-    'express-button.checkout.express-checkout': 'Achat Rapide'
-  }
-};
-
 export class TranslationService {
-  constructor(locale, defaultLocale = 'en', fallbackLocale = 'en') {
-    this.locale = locale || defaultLocale;
-    this.fallbackLocale = fallbackLocale;
+  constructor(translationMap) {
+    this.translationMap = translationMap;
   }
 
-  getTranslationString(id, locale = this.locale) {
-    return (
-      TRANSLATION_MAP[locale][id] || TRANSLATION_MAP[this.fallbackLocale][id]
-    );
+  getTranslationString(id) {
+    return this.translationMap[id] || `TRANSLATED_STRING(${id})`;
   }
 }

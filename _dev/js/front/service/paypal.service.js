@@ -97,19 +97,83 @@ export class PaypalService {
       fields: {
         number: {
           selector: fieldSelectors.number,
-          placeholder: this.$('paypal.hosted-fields.card-number')
+          placeholder: this.$('paypal.hosted-fields.placeholder.card-number')
         },
         cvv: {
           selector: fieldSelectors.cvv,
-          placeholder: this.$('paypal.hosted-fields.cvv')
+          placeholder: this.$('paypal.hosted-fields.placeholder.cvv')
         },
         expirationDate: {
           selector: fieldSelectors.expirationDate,
-          placeholder: this.$('paypal.hosted-fields.expiration-date')
+          placeholder: this.$(
+            'paypal.hosted-fields.placeholder.expiration-date'
+          )
         }
       },
       ...events
-    });
+    })
+      .then(hostedFields => {
+        const numberField = document.querySelector(fieldSelectors.number);
+        const cvvField = document.querySelector(fieldSelectors.cvv);
+        const expirationDateField = document.querySelector(
+          fieldSelectors.expirationDate
+        );
+
+        const numberLabel = document.querySelector(
+          `label[for="${numberField.id}"]`
+        );
+        const cvvLabel = document.querySelector(`label[for="${cvvField.id}"]`);
+        const expirationDateLabel = document.querySelector(
+          `label[for="${expirationDateField.id}"]`
+        );
+
+        numberLabel.innerHTML = this.$(
+          'paypal.hosted-fields.label.card-number'
+        );
+        cvvLabel.innerHTML = this.$('paypal.hosted-fields.label.cvv');
+        expirationDateLabel.innerHTML = this.$(
+          'paypal.hosted-fields.label.expiration-date'
+        );
+
+        return hostedFields;
+      })
+      .then(hostedFields => {
+        hostedFields.on('cardTypeChange', ({ cards }) => {
+          // Change card bg depending on card type
+          if (cards.length === 1) {
+            document.querySelector('.defautl-credit-card').style.display =
+              'none';
+
+            const cardImage = document.getElementById('card-image');
+            cardImage.className = '';
+            cardImage.classList.add(cards[0].type);
+
+            document.querySelector('header').classList.add('header-slide');
+
+            // Change the CVV length for AmericanExpress cards
+            if (cards[0].code.size === 4) {
+              hostedFields.setAttribute({
+                field: 'cvv',
+                attribute: 'placeholder',
+                value: 'XXXX'
+              });
+            }
+          } else {
+            document.querySelector('.defautl-credit-card').style.display =
+              'block';
+            const cardImage = document.getElementById('card-image');
+            cardImage.className = '';
+
+            hostedFields.setAttribute({
+              field: 'cvv',
+              attribute: 'placeholder',
+              value: 'XXX'
+            });
+          }
+        });
+
+        return hostedFields;
+      });
   }
 
   getEligibleFundingSources(cache) {
