@@ -82,8 +82,14 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
             /** @var PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $psCheckoutCartCollection->getFirst();
 
-            if (false !== $psCheckoutCart && false === empty($psCheckoutCart->paypal_order)) {
-                // @todo Check if PayPal Order status before reuse it
+            // If we have a PayPal Order Id with a status CREATED or APPROVED and a not expired PayPal Client Token, we can use it
+            // If paypal_token_expire is in future, token is not expired
+            if (false !== $psCheckoutCart
+                && false === empty($psCheckoutCart->paypal_order)
+                && in_array($psCheckoutCart->paypal_status, ['CREATED', 'APPROVED'], true)
+                && false === empty($psCheckoutCart->paypal_token_expire)
+                && strtotime($psCheckoutCart->paypal_token_expire) > time()
+            ) {
                 header('content-type:application/json');
                 echo json_encode([
                     'status' => true,
