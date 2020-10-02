@@ -22,8 +22,11 @@ import {
 } from '../constants/ps-version.constants';
 
 export class PsCheckoutService {
-  constructor(config) {
+  constructor(config, translationService) {
     this.config = config;
+    this.translationService = translationService;
+
+    this.$ = id => this.translationService.getTranslationString(id);
   }
 
   isUserLogged() {
@@ -166,6 +169,47 @@ export class PsCheckoutService {
           return actions.restart();
         }
       });
+  }
+
+  validateLiablityShift(liabilityShift) {
+    if (undefined === liabilityShift) {
+      console.log('Hosted fields : Liability is undefined.');
+      return Promise.resolve();
+    }
+
+    if (false === liabilityShift) {
+      console.log('Hosted fields : Liability is false.');
+      return Promise.reject(
+        new Error(this.$('error.paypal-sdk.liability.false'))
+      );
+    }
+
+    if ('Possible' === liabilityShift) {
+      console.log('Hosted fields : Liability might shift to the card issuer.');
+      return Promise.resolve();
+    }
+
+    if ('No' === liabilityShift) {
+      console.log('Hosted fields : Liability is with the merchant.');
+      return Promise.resolve();
+    }
+
+    if ('Unknown' === liabilityShift) {
+      console.log(
+        'Hosted fields : The authentication system is not available.'
+      );
+      return Promise.resolve();
+    }
+
+    if (liabilityShift) {
+      console.log('Hosted fields : Liability might shift to the card issuer.');
+      return Promise.resolve();
+    }
+
+    console.log('Hosted fields : Liability unknown.');
+    return Promise.reject(
+      new Error(this.$('error.paypal-sdk.liability.unknown'))
+    );
   }
 
   static getPrestashopVersion() {

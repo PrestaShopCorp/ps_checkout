@@ -166,7 +166,16 @@ export class HostedFieldsComponent {
               })
               .then(payload => {
                 const { liabilityShift } = payload;
-                this.checkLiabilityShift(liabilityShift);
+                return this.psCheckoutService
+                  .validateLiablityShift(liabilityShift)
+                  .then(() => {
+                    const data = payload;
+
+                    data.orderID = data.orderId;
+                    delete data.orderId;
+
+                    return this.psCheckoutService.postValidateOrder(data);
+                  });
               })
               .catch(error => {
                 this.checkout.children.notification.showError(error.message);

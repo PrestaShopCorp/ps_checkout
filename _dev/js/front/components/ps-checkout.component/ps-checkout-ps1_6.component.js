@@ -38,7 +38,10 @@ export class PsCheckoutPs1_6Component {
       this.config,
       this.translationService
     );
-    this.psCheckoutService = new PsCheckoutService(this.config);
+    this.psCheckoutService = new PsCheckoutService(
+      this.config,
+      this.translationService
+    );
 
     this.$ = id => this.translationService.getTranslationString(id);
 
