@@ -503,11 +503,38 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $payPalConfiguration */
         $payPalConfiguration = $this->serviceContainer->getService('ps_checkout.paypal.configuration');
 
+        // BEGIN To be refactored in services
+        $payPalClientToken = '';
+        $payPalOrderId = '';
+
+        // BEGIN Repository
         $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
         $psCheckoutCartCollection->where('id_cart', '=', (int) $this->context->cart->id);
 
         /** @var PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+        // END Repository
+
+        // If we have a PayPal Order Id with a status CREATED or APPROVED and a not expired PayPal Client Token, we can use it
+        // If paypal_token_expire is in future, token is not expired
+        if (false !== $psCheckoutCart
+            && false === empty($psCheckoutCart->paypal_order)
+            && in_array($psCheckoutCart->paypal_status, ['CREATED', 'APPROVED'], true)
+            && false === empty($psCheckoutCart->paypal_token_expire)
+            && strtotime($psCheckoutCart->paypal_token_expire) > time()
+        ) {
+            $payPalOrderId = $psCheckoutCart->paypal_order;
+        }
+
+        // If we have no PayPal Order Id but a not expired PayPal Client Token, we can use it
+        // If paypal_token_expire is in future, token is not expired
+        if (false !== $psCheckoutCart
+            && false === empty($psCheckoutCart->paypal_token_expire)
+            && strtotime($psCheckoutCart->paypal_token_expire) > time()
+        ) {
+            $payPalClientToken = $psCheckoutCart->paypal_token;
+        }
+        // END To be refactored in services
 
         Media::addJsDef([
             $this->name . 'CardFundingSourceImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'),
@@ -518,8 +545,8 @@ class Ps_checkout extends PaymentModule
             $this->name . 'CancelUrl' => $this->context->link->getModuleLink($this->name, 'cancel', [], true),
             $this->name . 'ConfirmUrl' => $this->context->link->getPageLink('order-confirmation', true, (int) $this->context->language->id),
             $this->name . 'PayPalSdkUrl' => $payPalSdkLinkBuilder->buildLink(),
-            $this->name . 'PayPalClientToken' => $psCheckoutCart ? $psCheckoutCart->paypal_token : '',
-            $this->name . 'PayPalOrderId' => $psCheckoutCart ? $psCheckoutCart->paypal_order : '',
+            $this->name . 'PayPalClientToken' => $payPalClientToken,
+            $this->name . 'PayPalOrderId' => $payPalOrderId,
             $this->name . 'HostedFieldsEnabled' => $paypalAccountRepository->cardHostedFieldsIsAvailable(),
             $this->name . 'ExpressCheckoutProductEnabled' => $expressCheckoutConfiguration->isProductPageEnabled(),
             $this->name . 'ExpressCheckoutCartEnabled' => $expressCheckoutConfiguration->isOrderPageEnabled(),
