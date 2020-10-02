@@ -93,7 +93,7 @@
   margin-top: 6px;
 }
 
-.form-control {
+.js-additional-information .form-control {
   background-color: #F3F3F3;
   border-radius: 5px;
 }
@@ -131,13 +131,13 @@
   background-position: 0 -133px;
 }
 
-.braintree-hosted-fields-focused {
+.js-additional-information .braintree-hosted-fields-focused {
   border: .1875rem solid #2fb5d2;
   background-color: #fff;
   color: #232323;
 }
 
-.braintree-hosted-fields-invalid {
+.js-additional-information .braintree-hosted-fields-invalid {
   border: .1875rem solid #e76d7a;
   animation: shake 500ms cubic-bezier(.20, 1.3, .7, 1) both;
   transform: translate3d(0, 0, 0);
@@ -145,7 +145,7 @@
   backface-visibility: hidden;
 }
 
-.braintree-hosted-fields-valid {
+.js-additional-information .braintree-hosted-fields-valid {
   border: .1875rem solid #6fcc80;
   transform: translate3d(0, 0, 0);
   background-color: #fff;
