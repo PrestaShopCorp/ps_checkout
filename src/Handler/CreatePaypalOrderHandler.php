@@ -58,7 +58,7 @@ class CreatePaypalOrderHandler
         // Present an improved cart in order to create the payload
         $cartPresenter = (new CartPresenter())->present();
 
-        $builder = new OrderPayloadBuilder($cartPresenter);
+        $builder = new OrderPayloadBuilder($cartPresenter, true);
 
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
@@ -105,11 +105,14 @@ class CreatePaypalOrderHandler
             }
         }
 
-        $module->getLogger()->info(sprintf(
-            'Create PayPal Order %s from cart %s',
-            $paypalOrder['body']['id'],
-            $this->context->cart->id
-        ));
+        if (isset($paypalOrder['body']['id'])) {
+            $module->getLogger()->info(sprintf(
+                '%s PayPal Order %s from cart %s',
+                $updateOrder ? 'Update' : 'Create',
+                $paypalOrder['body']['id'],
+                $this->context->cart->id
+            ));
+        }
 
         return $paypalOrder;
     }
