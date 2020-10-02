@@ -57,9 +57,19 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      */
     private $paypalOrderId;
 
-    public function __construct(array $cart)
+    /**
+     * @var bool
+     */
+    private $isPatch;
+
+    /**
+     * @param array $cart
+     * @param bool $isPatch
+     */
+    public function __construct(array $cart, $isPatch = false)
     {
         $this->cart = $cart;
+        $this->isPatch = $isPatch;
 
         parent::__construct();
     }
@@ -163,7 +173,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         /** @var \PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $psCheckoutCartCollection->getFirst();
 
-        if (false !== $psCheckoutCart && false === empty($psCheckoutCart->paypal_token)) {
+        if (false === $this->isPatch && false !== $psCheckoutCart && false === empty($psCheckoutCart->paypal_token)) {
             $node['token'] = $psCheckoutCart->paypal_token;
         }
 
