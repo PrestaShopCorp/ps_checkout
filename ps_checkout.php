@@ -548,7 +548,7 @@ class Ps_checkout extends PaymentModule
                 'card' => $this->l('Pay by Card'),
                 'default' => $this->l('Pay by '),
             ],
-            $this->name.'CheckoutTranslations' => [
+            $this->name . 'CheckoutTranslations' => [
                 'checkout.go.back.link.title' => $this->l('Go back to the Checkout'),
                 'checkout.go.back.label' => $this->l('Checkout'),
                 'checkout.card.payment' => $this->l('Card payment'),
