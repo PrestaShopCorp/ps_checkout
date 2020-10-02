@@ -42,10 +42,11 @@ class Ps_CheckoutTokenModuleFrontController extends ModuleFrontController
             /** @var PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $psCheckoutCartCollection->getFirst();
 
+            // If paypal_token_expire is in future, token is not expired
             if (false !== $psCheckoutCart
                 && (
                     empty($psCheckoutCart->paypal_token_expire)
-                    || strtotime($psCheckoutCart->paypal_token_expire) > time()
+                    || strtotime($psCheckoutCart->paypal_token_expire) <= time()
                 )
             ) {
                 $psCheckoutCart->paypal_token = $this->getToken();
