@@ -103,8 +103,9 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
                 exit;
             }
 
+            $isExpressCheckout = (isset($bodyValues['express_checkout']) && $bodyValues['express_checkout']) || empty($this->context->cart->id_address_delivery);
             $paypalOrder = new PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler($this->context);
-            $response = $paypalOrder->handle();
+            $response = $paypalOrder->handle($isExpressCheckout);
 
             if (false === $response['status']) {
                 throw new PsCheckoutException($response['exceptionMessage'], (int) $response['exceptionCode']);
