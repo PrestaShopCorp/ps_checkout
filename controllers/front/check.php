@@ -75,8 +75,9 @@ class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
                 $psCheckoutCart->update();
             }
 
+            $isExpressCheckout = (isset($bodyValues['express_checkout']) && $bodyValues['express_checkout']) || empty($this->context->cart->id_address_delivery);
             $paypalOrder = new CreatePaypalOrderHandler($this->context);
-            $response = $paypalOrder->handle(false, true, $psCheckoutCart->paypal_order);
+            $response = $paypalOrder->handle($isExpressCheckout, true, $psCheckoutCart->paypal_order);
 
             if (false === $response['status']) {
                 throw new PsCheckoutException('Unable to patch PayPal Order', PsCheckoutException::PSCHECKOUT_UPDATE_ORDER_HANDLE_ERROR);
