@@ -56,22 +56,11 @@ export class ExpressButtonCheckoutComponent {
         onCancel: data => {
           return this.psCheckoutService.postCancelOrder(data);
         },
-        createOrder: () => {
-          const {
-            id_product,
-            id_product_attribute,
-            id_customization,
-            quantity_wanted
-          } = this.psCheckoutService.getProductDetails();
-
-          return this.psCheckoutService.postCreateOrder({
-            id_product,
-            id_product_attribute,
-            id_customization,
-            quantity_wanted,
+        createOrder: data =>
+          this.psCheckoutService.postCreateOrder({
+            data,
             express_checkout: true
-          });
-        }
+          })
       })
       .render('#ps-checkout-express-button');
   }

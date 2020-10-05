@@ -55,7 +55,11 @@ export class ExpressButtonCartComponent {
         onApprove: (data, actions) =>
           this.psCheckoutService.postValidateOrder(data, actions),
         onCancel: data => this.psCheckoutService.postCancelOrder(data),
-        createOrder: data => this.psCheckoutService.postCreateOrder(data)
+        createOrder: data =>
+          this.psCheckoutService.postCreateOrder({
+            data,
+            express_checkout: true
+          })
       })
       .render('#ps-checkout-express-button');
   }
