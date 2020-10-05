@@ -326,6 +326,13 @@ class Ps_checkout extends PaymentModule
      */
     public function hookPayment()
     {
+        if (false === Validate::isLoadedObject($this->context->cart)
+            || false === $this->checkCurrency($this->context->cart)
+            || false === $this->merchantIsValid()
+        ) {
+            return '';
+        }
+
         return $this->display(__FILE__, '/views/templates/hook/payment.tpl');
     }
 
@@ -341,7 +348,10 @@ class Ps_checkout extends PaymentModule
         /** @var Cart $cart */
         $cart = $params['cart'];
 
-        if (false === Validate::isLoadedObject($cart) || false === $this->checkCurrency($cart)) {
+        if (false === Validate::isLoadedObject($cart)
+            || false === $this->checkCurrency($cart)
+            || false === $this->merchantIsValid()
+        ) {
             return [];
         }
 
@@ -388,7 +398,7 @@ class Ps_checkout extends PaymentModule
      * Check if the module can process to a payment with the
      * current currency
      *
-     * @param object $cart
+     * @param Cart $cart
      *
      * @return bool
      */
@@ -487,7 +497,11 @@ class Ps_checkout extends PaymentModule
     {
         $controller = Tools::getValue('controller');
 
-        if (false === in_array($controller, ['cart', 'product', 'order', 'orderopc'], true)) {
+        if (false === in_array($controller, ['cart', 'product', 'order', 'orderopc'], true)
+            || false === Validate::isLoadedObject($this->context->cart)
+            || false === $this->checkCurrency($this->context->cart)
+            || false === $this->merchantIsValid()
+        ) {
             return;
         }
 
@@ -871,6 +885,13 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayPaymentTop()
     {
+        if (false === Validate::isLoadedObject($this->context->cart)
+            || false === $this->checkCurrency($this->context->cart)
+            || false === $this->merchantIsValid()
+        ) {
+            return '';
+        }
+
         $paymentError = (int) Tools::getValue('paymentError');
         $paymentErrorMessage = '';
         $isExpressCheckout = $this->context->cookie->__isset('paypalOrderId');
@@ -970,7 +991,10 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayPaymentByBinaries(array $params)
     {
-        if (false === $this->checkCurrency($this->context->cart)) {
+        if (false === Validate::isLoadedObject($this->context->cart)
+            || false === $this->checkCurrency($this->context->cart)
+            || false === $this->merchantIsValid()
+        ) {
             return '';
         }
 
