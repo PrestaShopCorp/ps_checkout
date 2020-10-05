@@ -490,16 +490,16 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder $payPalSdkLinkBuilder */
-        $payPalSdkLinkBuilder = $this->serviceContainer->getService('ps_checkout.sdk.paypal.linkbuilder');
+        $payPalSdkLinkBuilder = $this->getService('ps_checkout.sdk.paypal.linkbuilder');
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository */
-        $paypalAccountRepository = $this->serviceContainer->getService('ps_checkout.repository.paypal.account');
+        $paypalAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
 
         /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $expressCheckoutConfiguration */
-        $expressCheckoutConfiguration = $this->serviceContainer->getService('ps_checkout.express_checkout.configuration');
+        $expressCheckoutConfiguration = $this->getService('ps_checkout.express_checkout.configuration');
 
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $payPalConfiguration */
-        $payPalConfiguration = $this->serviceContainer->getService('ps_checkout.paypal.configuration');
+        $payPalConfiguration = $this->getService('ps_checkout.paypal.configuration');
 
         // BEGIN To be refactored in services
         $payPalClientToken = '';
@@ -954,7 +954,7 @@ class Ps_checkout extends PaymentModule
      */
     public function getService($serviceName)
     {
-        if (empty($this->serviceContainer)) {
+        if ($this->serviceContainer === null) {
             $this->serviceContainer = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer($this->name, $this->getLocalPath());
         }
 
