@@ -44,12 +44,6 @@ class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
                 throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
             }
 
-            $customer = new Customer($this->context->cart->id_customer);
-
-            if (false === Validate::isLoadedObject($customer)) {
-                throw new PsCheckoutException('Customer is not loaded yet');
-            }
-
             $bodyContent = file_get_contents('php://input');
 
             if (empty($bodyContent)) {
