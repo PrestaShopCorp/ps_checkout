@@ -144,8 +144,6 @@ class Ps_checkout extends PaymentModule
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = ['min' => '1.6.1', 'max' => _PS_VERSION_];
-
-        $this->serviceContainer = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer($this->name, $this->getLocalPath());
     }
 
     /**
@@ -952,10 +950,14 @@ class Ps_checkout extends PaymentModule
     /**
      * @param string $serviceName
      *
-     * @return mixed
+     * @return object|null
      */
     public function getService($serviceName)
     {
+        if (empty($this->serviceContainer)) {
+            $this->serviceContainer = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer($this->name, $this->getLocalPath());
+        }
+
         return $this->serviceContainer->getService($serviceName);
     }
 
