@@ -20,11 +20,10 @@
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
-use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
 
 /**
  * This controller receive ajax call when customer click on an express checkout button
- * It fetch PayPal Order to retrieve data from PayPal to save it in PrestaShop to prefill order page
+ * We retrieve data from PayPal in payload and save it in PrestaShop to prefill order page
  * Then customer must be redirected to order page to choose shipping method
  */
 class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontController
@@ -37,7 +36,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
     /**
      * @var array
      */
-    private $payPalOrder;
+    private $payload;
 
     /**
      * {@inheritdoc}
@@ -56,30 +55,22 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
                 throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
             }
 
-            $bodyValues = json_decode($bodyContent, true);
+            $this->payload = json_decode($bodyContent, true);
 
-            if (empty($bodyValues)) {
+            if (empty($this->payload)) {
                 throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
             }
 
-            if (empty($bodyValues['orderID']) || false === Validate::isGenericName($bodyValues['orderID'])) {
+            if (empty($this->payload['orderID']) || false === Validate::isGenericName($this->payload['orderID'])) {
                 throw new PsCheckoutException('PayPal Order identifier missing or invalid', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
             }
-
-            $orderPayPalFetcher = new PaypalOrder($bodyValues['orderID']);
-
-            if (false === $orderPayPalFetcher->isLoaded()) {
-                throw new PsCheckoutException('Unable to fetch PayPal Order', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
-            }
-
-            $this->payPalOrder = $orderPayPalFetcher->getOrder();
 
             if (false === $this->context->customer->isLogged()) {
                 // @todo Extract factory in a Service.
                 $this->createAndLoginCustomer(
-                    $this->payPalOrder['payer']['email_address'],
-                    $this->payPalOrder['payer']['name']['given_name'],
-                    $this->payPalOrder['payer']['name']['surname']
+                    $this->payload['order']['payer']['email_address'],
+                    $this->payload['order']['payer']['name']['given_name'],
+                    $this->payload['order']['payer']['name']['surname']
                 );
             }
 
@@ -87,20 +78,31 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
             // This index is only used in a marketplace context
             // @todo Extract factory in a Service.
             $this->createAddress(
-                $this->payPalOrder['payer']['name']['given_name'],
-                $this->payPalOrder['payer']['name']['surname'],
-                $this->payPalOrder['purchase_units'][0]['shipping']['address']['address_line_1'],
-                false === empty($this->payPalOrder['purchase_units'][0]['shipping']['address']['address_line_2']) ? $this->payPalOrder['purchase_units'][0]['shipping']['address']['address_line_2'] : '',
-                $this->payPalOrder['purchase_units'][0]['shipping']['address']['postal_code'],
-                $this->payPalOrder['purchase_units'][0]['shipping']['address']['admin_area_2'],
-                $this->payPalOrder['purchase_units'][0]['shipping']['address']['country_code'],
-                false === empty($this->payPalOrder['payer']['phone']) ? $this->payPalOrder['payer']['phone']['phone_number']['national_number'] : ''
+                $this->payload['order']['payer']['name']['given_name'],
+                $this->payload['order']['payer']['name']['surname'],
+                $this->payload['order']['shipping']['address']['address_line_1'],
+                false === empty($this->payload['order']['shipping']['address']['address_line_2']) ? $this->payload['order']['shipping']['address']['address_line_2'] : '',
+                $this->payload['order']['shipping']['address']['postal_code'],
+                $this->payload['order']['shipping']['address']['admin_area_2'],
+                $this->payload['order']['shipping']['address']['country_code'],
+                false === empty($bodyValues['order']['payer']['phone']) ? $this->payload['order']['payer']['phone']['phone_number']['national_number'] : ''
             );
+
+            $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
+            $psCheckoutCartCollection->where('id_cart', '=', (int) $this->context->cart->id);
+
+            /** @var PsCheckoutCart|false $psCheckoutCart */
+            $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+
+            if (false !== $psCheckoutCart && $psCheckoutCart->paypal_funding !== $this->payload['fundingSource']) {
+                $psCheckoutCart->paypal_funding = $this->payload['fundingSource'];
+                $psCheckoutCart->save();
+            }
         } catch (Exception $exception) {
             $this->module->getLogger()->error(sprintf(
                 'Express Checkout - Exception %s Order PayPal %s : %s',
                 $exception->getCode(),
-                false === empty($this->payPalOrder['id']) ? $this->payPalOrder['id'] : 'invalid',
+                $this->payload['orderID'],
                 $exception->getMessage()
             ));
 
@@ -109,9 +111,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
             echo json_encode([
                 'status' => false,
                 'httpCode' => 500,
-                'body' => [
-                    'orderID' => false === empty($this->payPalOrder['id']) ? $this->payPalOrder['id'] : null,
-                ],
+                'body' => $this->payload,
                 'exceptionCode' => $exception->getCode(),
                 'exceptionMessage' => $exception->getMessage(),
             ]);
@@ -124,9 +124,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         echo json_encode([
             'status' => true,
             'httpCode' => 200,
-            'body' => [
-                'orderID' => false === empty($this->payPalOrder['id']) ? $this->payPalOrder['id'] : null,
-            ],
+            'body' => $this->payload,
             'exceptionCode' => null,
             'exceptionMessage' => null,
         ]);
