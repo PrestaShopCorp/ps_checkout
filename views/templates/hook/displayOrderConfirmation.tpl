@@ -16,15 +16,12 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
-<div class="alert alert-success">
-  {if $isAuthorized }
-    {l s='Your order is confirmed.' mod='ps_checkout'}<br>
-    {if $isShop17}
-      <i class="material-icons">info</i>
-    {/if}
-     {l s="Important : you won't be charged until the order is shipping is effective." mod="ps_checkout"}
-  {else}
-    {l s='Your order has been created and is waiting for the payment to be approved by your bank, you will receive an email when the payment is accepted and effective.' mod='ps_checkout'}
-  {/if}
-</div>
-
+{if $isAuthorized }
+  <div class="alert alert-success">
+      {l s='Your order is confirmed.' mod='ps_checkout'}<br>
+      {if $isShop17}
+        <i class="material-icons">info</i>
+      {/if}
+      {l s="Important : you won't be charged until the order is shipping is effective." mod="ps_checkout"}
+  </div>
+{/if}
