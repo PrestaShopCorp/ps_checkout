@@ -171,6 +171,24 @@ export class PsCheckoutService {
       });
   }
 
+  postExpressCheckoutOrder(data) {
+    return fetch(this.addToken(this.config.expressCheckoutUrl), {
+      method: 'post',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }).then(response => {
+      if (false === response.ok) {
+        throw new Error(response.statusText);
+      }
+
+      window.location.href = new URL(
+        this.config.checkoutCheckoutUrl
+      ).toString();
+    });
+  }
+
   validateLiablityShift(liabilityShift) {
     if (undefined === liabilityShift) {
       console.log('Hosted fields : Liability is undefined.');

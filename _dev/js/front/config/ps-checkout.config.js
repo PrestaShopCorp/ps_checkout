@@ -23,6 +23,8 @@ export const PsCheckoutConfig = {
   confirmationUrl: window.ps_checkoutConfirmUrl,
   cancelUrl: window.ps_checkoutCancelUrl,
   getTokenUrl: window.ps_checkoutGetTokenURL,
+  checkoutCheckoutUrl: window.ps_checkoutCheckoutUrl,
+  expressCheckoutUrl: window.ps_checkoutExpressCheckoutUrl,
 
   translations: {
     ...Object.keys(window.ps_checkoutPayWithTranslations || {}).reduce(

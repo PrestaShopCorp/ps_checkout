@@ -48,52 +48,6 @@ export class HostedFieldsComponent {
     );
   }
 
-  checkLiabilityShift(liabilityShift) {
-    if (undefined === liabilityShift) {
-      this.checkout.children.notification.showError(
-        'Hosted fields : Liability is undefined.'
-      );
-      console.log('Hosted fields : Liability is undefined.');
-    }
-
-    if (false === liabilityShift) {
-      this.checkout.children.notification.showError(
-        'Hosted fields : Liability is false.'
-      );
-      console.log('Hosted fields : Liability is false.');
-    }
-
-    if ('Possible' === liabilityShift) {
-      this.checkout.children.notification.showError(
-        'Hosted fields : Liability might shift to the card issuer.'
-      );
-      console.log('Hosted fields : Liability might shift to the card issuer.');
-    }
-
-    if ('No' === liabilityShift) {
-      this.checkout.children.notification.showError(
-        'Hosted fields : Liability is with the merchant.'
-      );
-      console.log('Hosted fields : Liability is with the merchant.');
-    }
-
-    if ('Unknown' === liabilityShift) {
-      this.checkout.children.notification.showError(
-        'Hosted fields : The authentication system is not available.'
-      );
-      console.log(
-        'Hosted fields : The authentication system is not available.'
-      );
-    }
-
-    if (liabilityShift) {
-      this.checkout.children.notification.showError(
-        'Hosted fields : Liability might shift to the card issuer.'
-      );
-      console.log('Hosted fields : Liability might shift to the card issuer.');
-    }
-  }
-
   render() {
     this.paymentOptionAdditionalInformation = this.paymentOption.paymentOptionAdditionalInformation;
     this.paymentOptionAdditionalInformation.id = `${this.paymentOption.getPaymentOptionId()}-additional-information`;
@@ -132,11 +86,15 @@ export class HostedFieldsComponent {
         },
         {
           createOrder: () =>
-            this.psCheckoutService.postCreateOrder().catch(error => {
-              this.checkout.children.notification.showError(
-                `${error.message} ${error.name}`
-              );
-            })
+            this.psCheckoutService
+              .postCreateOrder({
+                fundingSource: this.fundingSource.name
+              })
+              .catch(error => {
+                this.checkout.children.notification.showError(
+                  `${error.message} ${error.name}`
+                );
+              })
         }
       )
       .then(hostedFields => {
@@ -171,10 +129,14 @@ export class HostedFieldsComponent {
                   .then(() => {
                     const data = payload;
 
+                    // Backend requirement
                     data.orderID = data.orderId;
                     delete data.orderId;
 
-                    return this.psCheckoutService.postValidateOrder(data);
+                    return this.psCheckoutService.postValidateOrder({
+                      ...data,
+                      fundingSource: this.fundingSource.name
+                    });
                   });
               })
               .catch(error => {
