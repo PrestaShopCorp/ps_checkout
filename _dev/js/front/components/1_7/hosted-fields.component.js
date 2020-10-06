@@ -136,7 +136,8 @@ export class HostedFieldsComponent {
 
                     return this.psCheckoutService.postValidateOrder({
                       ...data,
-                      fundingSource: this.fundingSource.name
+                      fundingSource: this.fundingSource.name,
+                      isHostedFields: true
                     });
                   });
               })
