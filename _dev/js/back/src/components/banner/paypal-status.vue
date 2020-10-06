@@ -17,7 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *-->
 <template>
-  <div class="card shadow rounded" v-if="!isLiveStepConfirmed && !isPayPalStatusConfirmed && this.displayLiveStep">
+  <div class="card shadow rounded" v-if="!isPayPalStatusConfirmed && this.displayLiveStep">
     <div class="card-body d-flex pl-0">
       <div class="d-flex mr-2">
         <img src="@/assets/images/cb.png" alt="cb" />
