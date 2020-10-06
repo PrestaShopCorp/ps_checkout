@@ -63,24 +63,26 @@ class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
             $psCheckoutCart = $psCheckoutCartCollection->getFirst();
 
             if (false === $psCheckoutCart) {
-                throw new PsCheckoutException('Unable to find PayPal data associated to this Cart', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
+                $psCheckoutCart = new PsCheckoutCart();
+                $psCheckoutCart->id_cart = (int) $this->context->cart->id;
             }
 
-            if (empty($psCheckoutCart->paypal_order)) {
-                throw new PsCheckoutException('Unable to find PayPal Order', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
-            }
-
-            if (false === empty($bodyValues['fundingSource']) && false !== Validate::isGenericName($bodyValues['fundingSource'])) {
+            if (false === empty($bodyValues['fundingSource'])
+                && false !== Validate::isGenericName($bodyValues['fundingSource'])
+                && $psCheckoutCart->paypal_funding !== $bodyValues['fundingSource']
+            ) {
                 $psCheckoutCart->paypal_funding = $bodyValues['fundingSource'];
-                $psCheckoutCart->update();
+                $psCheckoutCart->save();
             }
 
-            $isExpressCheckout = (isset($bodyValues['express_checkout']) && $bodyValues['express_checkout']) || empty($this->context->cart->id_address_delivery);
-            $paypalOrder = new CreatePaypalOrderHandler($this->context);
-            $response = $paypalOrder->handle($isExpressCheckout, true, $psCheckoutCart->paypal_order);
+            if (false === empty($psCheckoutCart->paypal_order)) {
+                $isExpressCheckout = (isset($bodyValues['express_checkout']) && $bodyValues['express_checkout']) || empty($this->context->cart->id_address_delivery);
+                $paypalOrder = new CreatePaypalOrderHandler($this->context);
+                $response = $paypalOrder->handle($isExpressCheckout, true, $psCheckoutCart->paypal_order);
 
-            if (false === $response['status']) {
-                throw new PsCheckoutException('Unable to patch PayPal Order', PsCheckoutException::PSCHECKOUT_UPDATE_ORDER_HANDLE_ERROR);
+                if (false === $response['status']) {
+                    throw new PsCheckoutException('Unable to patch PayPal Order', PsCheckoutException::PSCHECKOUT_UPDATE_ORDER_HANDLE_ERROR);
+                }
             }
 
             echo json_encode([
@@ -91,11 +93,11 @@ class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            header('HTTP/1.0 400 Bad Request');
+            header('HTTP/1.0 500 Internal Server Error');
 
             echo json_encode([
                 'status' => false,
-                'httpCode' => 400,
+                'httpCode' => 500,
                 'body' => '',
                 'exceptionCode' => $exception->getCode(),
                 'exceptionMessage' => $exception->getMessage(),
