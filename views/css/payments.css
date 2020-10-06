@@ -16,6 +16,9 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+.payment-options > div.payment-option > span.custom-radio {
+  margin-top: .55rem;
+}
 
 .buttons-approve {
   margin-right: 10px;
