@@ -85,10 +85,20 @@ export class ExpressButtonCheckoutComponent {
   render() {
     this.checkoutExpressButton = document.createElement('div');
     this.checkoutExpressButton.id = 'ps-checkout-express-button';
+    this.checkoutExpressButton.classList.add('col-md-6', 'px-0');
+
+    this.checkoutCol3 = document.createElement('div');
+    this.checkoutCol3.classList.add('col-md-3');
+
+    this.checkoutMainDiv = document.createElement('div');
+    this.checkoutMainDiv.classList.add('form-group');
+    this.checkoutMainDiv.style.display = 'flex';
+    this.checkoutMainDiv.append(this.checkoutCol3);
+    this.checkoutMainDiv.append(this.checkoutExpressButton);
 
     this.renderTitle();
 
-    this.buttonContainer.prepend(this.checkoutExpressButton);
+    this.buttonContainer.prepend(this.checkoutMainDiv);
     this.buttonContainer.prepend(this.checkoutExpressTitle);
 
     this.renderPayPalButton();

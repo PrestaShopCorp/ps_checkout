@@ -20,6 +20,12 @@
   margin-top: .55rem;
 }
 
+.product-add-to-cart #ps-checkout-express-button div.paypal-buttons-context-iframe {
+  margin-top:1.25rem;
+  width: 45%;
+  margin-left:75px;
+}
+
 .buttons-approve {
   margin-right: 10px;
 }
