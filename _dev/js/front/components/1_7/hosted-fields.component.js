@@ -88,7 +88,8 @@ export class HostedFieldsComponent {
           createOrder: () =>
             this.psCheckoutService
               .postCreateOrder({
-                fundingSource: this.fundingSource.name
+                fundingSource: this.fundingSource.name,
+                isHostedFields: true
               })
               .catch(error => {
                 this.checkout.children.notification.showError(

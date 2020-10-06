@@ -43,7 +43,7 @@ export class ExpressButtonCheckoutComponent {
         onInit: (data, actions) => actions.enable(),
         onClick: (data, actions) =>
           this.psCheckoutService
-            .postCheckCartOrder({ ...data, fundingSource: 'paypal' }, actions)
+            .postCheckCartOrder({ ...data, fundingSource: 'paypal', isExpressCheckout: true }, actions)
             // TODO: Error notification
             .catch(() => actions.reject()),
         // TODO: [PAYSHIP-605] Error handling
@@ -52,18 +52,20 @@ export class ExpressButtonCheckoutComponent {
           // TODO: Move this to constant when ExpressCheckoutButton component is created
           this.psCheckoutService.postExpressCheckoutOrder({
             ...data,
-            fundingSource: 'paypal'
+            fundingSource: 'paypal',
+            isExpressCheckout: true
           }),
         onCancel: data =>
           this.psCheckoutService.postCancelOrder({
             ...data,
-            fundingSource: 'paypal'
+            fundingSource: 'paypal',
+            isExpressCheckout: true
           }),
         createOrder: data =>
           this.psCheckoutService.postCreateOrder({
             ...data,
             fundingSource: 'paypal',
-            express_checkout: true
+            isExpressCheckout: true
           })
       })
       .render('#ps-checkout-express-button');
