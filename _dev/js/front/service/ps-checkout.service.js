@@ -189,6 +189,10 @@ export class PsCheckoutService {
         if (false === response.ok) {
           throw new Error(response.statusText);
         }
+
+        window.location.href = new URL(
+          this.config.checkoutCheckoutUrl
+        ).toString();
       })
     );
   }
