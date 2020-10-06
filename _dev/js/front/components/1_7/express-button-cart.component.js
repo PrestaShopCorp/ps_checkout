@@ -46,17 +46,23 @@ export class ExpressButtonCartComponent {
         onClick: (data, actions) =>
           this.psCheckoutService
             // TODO: Move this to constant when ExpressCheckoutButton component is created
-            .postCheckCartOrder({ ...data, fundingSource: 'paypal', isExpressCheckout: true }, actions)
+            .postCheckCartOrder(
+              { ...data, fundingSource: 'paypal', isExpressCheckout: true },
+              actions
+            )
             // TODO: Error notification
             .catch(() => actions.reject()),
         // TODO: [PAYSHIP-605] Error handling
         onError: error => console.error(error),
-        onApprove: data =>
-          this.psCheckoutService.postExpressCheckoutOrder({
-            ...data,
-            fundingSource: 'paypal',
-            isExpressCheckout: true
-          }),
+        onApprove: (data, actions) =>
+          this.psCheckoutService.postExpressCheckoutOrder(
+            {
+              ...data,
+              fundingSource: 'paypal',
+              isExpressCheckout: true
+            },
+            actions
+          ),
         onCancel: data =>
           this.psCheckoutService.postCancelOrder({
             ...data,
