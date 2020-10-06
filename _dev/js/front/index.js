@@ -16,78 +16,29 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import "promise-polyfill/src/polyfill";
-import "whatwg-fetch";
-import "url-polyfill";
-import PsCheckout from "./PsCheckout";
+import 'promise-polyfill/src/polyfill';
+import 'whatwg-fetch';
+import 'url-polyfill';
 
-const configPayPalSdk = {
-  id: "ps_checkoutPayPalSdkScript",
-  namespace: "ps_checkoutPayPalSdkInstance",
-  src: window.ps_checkoutPayPalSdkUrl,
-  card3dsEnabled: window.ps_checkout3dsEnabled,
-  cspNonce: window.ps_checkoutCspNonce,
-  orderId: window.ps_checkoutPayPalOrderId,
-  clientToken: window.ps_checkoutPayPalClientToken
-};
+import { PayPalSdkConfig } from './config/paypal-sdk.config';
+import { PsCheckoutConfig } from './config/ps-checkout.config';
 
-const configPsCheckout = {
-  createUrl: window.ps_checkoutCreateUrl,
-  checkCartUrl: window.ps_checkoutCheckUrl,
-  validateOrderUrl: window.ps_checkoutValidateUrl,
-  confirmationUrl: window.ps_checkoutConfirmUrl,
-  cancelUrl: window.ps_checkoutCancelUrl,
-  translations: window.ps_checkoutPayWithTranslations
-};
+import { PayPalSdkComponent } from './components/paypal-sdk.component';
+import { PsCheckoutExpressComponent } from './components/ps-checkout-express.component';
+import { PsCheckoutComponent } from './components/ps-checkout.component';
+import { bootstrap } from './core/bootstrap';
+import { PsCheckoutService } from './service/ps-checkout.service';
 
-/**
- * @param {object} configPayPalSdk
- * @param {string} configPayPalSdk.id
- * @param {string} configPayPalSdk.namespace
- * @param {string} configPayPalSdk.src
- * @param {string} configPayPalSdk.card3dsEnabled
- * @param {string} configPayPalSdk.cspNonce
- * @param {string} configPayPalSdk.orderId
- * @param {string} configPayPalSdk.clientToken
- */
-const initPayPalSdk = configPayPalSdk => {
-  const script = document.createElement("script");
-
-  script.setAttribute("async", "");
-  script.setAttribute("id", configPayPalSdk.id);
-  script.setAttribute("src", configPayPalSdk.src);
-  script.setAttribute("data-namespace", configPayPalSdk.namespace);
-
-  if (configPayPalSdk.card3dsEnabled) {
-    script.setAttribute("data-enable-3ds", "");
-  }
-
-  if (configPayPalSdk.cspNonce) {
-    script.setAttribute("data-csp-nonce", configPayPalSdk.cspNonce);
-  }
-
-  if (configPayPalSdk.orderId) {
-    script.setAttribute("data-order-id", configPayPalSdk.orderId);
-  }
-
-  if (configPayPalSdk.clientToken) {
-    script.setAttribute("data-client-token", configPayPalSdk.clientToken);
-  }
-
-  document.head.appendChild(script);
-
-  script.onload = () => {
-    new PsCheckout(
-      window.ps_checkoutPayPalSdkInstance,
-      configPsCheckout
-    ).loadCheckout();
-  };
-};
-
-if ("loading" === document.readyState) {
-  document.addEventListener("DOMContentLoaded", () => {
-    initPayPalSdk(configPayPalSdk);
-  });
-} else {
-  initPayPalSdk(configPayPalSdk);
-}
+bootstrap(() => {
+  (PayPalSdkConfig.clientToken
+    ? Promise.resolve(PayPalSdkConfig.clientToken)
+    : new PsCheckoutService(PsCheckoutConfig).postGetToken()
+  )
+    .then(token => {
+      new PayPalSdkComponent(PayPalSdkConfig, token, sdk => {
+        new PsCheckoutComponent(PsCheckoutConfig, sdk).render();
+        new PsCheckoutExpressComponent(PsCheckoutConfig, sdk).render();
+      }).render();
+    })
+    .catch(() => console.error('Token could not be retrieved'));
+});
