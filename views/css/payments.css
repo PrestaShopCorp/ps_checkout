@@ -20,6 +20,24 @@
   margin-top: .55rem;
 }
 
+.product-add-to-cart #ps-checkout-express-button div.paypal-buttons-context-iframe {
+  margin-top: 1.25rem;
+  width: 45%;
+  margin-left: 75px;
+}
+#checkout-personal-information-step #ps-checkout-express-button {
+  display: flex;
+}
+@media screen and (min-width: 768px) {
+  #checkout-personal-information-step #ps-checkout-express-button div.paypal-buttons-context-iframe {
+    float: left;
+    width: 50%;
+    padding: 15px 0;
+    margin-left: 25%;
+  }
+}
+
+
 .buttons-approve {
   margin-right: 10px;
 }
