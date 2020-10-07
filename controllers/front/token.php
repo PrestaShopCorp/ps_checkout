@@ -44,6 +44,10 @@ class Ps_CheckoutTokenModuleFrontController extends ModuleFrontController
                 throw new PsCheckoutException('Bad token', PsCheckoutException::PSCHECKOUT_BAD_STATIC_TOKEN);
             }
 
+            if (false === Validate::isLoadedObject($this->context->cart)) {
+                throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
+            }
+
             $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
             $psCheckoutCartCollection->where('id_cart', '=', (int) $this->context->cart->id);
 
