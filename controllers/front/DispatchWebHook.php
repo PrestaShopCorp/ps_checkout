@@ -26,6 +26,9 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 
+/**
+ * @todo To be refactored
+ */
 class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontController
 {
     const PS_CHECKOUT_PAYPAL_ID_LABEL = 'PS_CHECKOUT_PAYPAL_ID_MERCHANT';

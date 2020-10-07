@@ -20,7 +20,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
@@ -55,9 +57,19 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      */
     private $paypalOrderId;
 
-    public function __construct(array $cart)
+    /**
+     * @var bool
+     */
+    private $isPatch;
+
+    /**
+     * @param array $cart
+     * @param bool $isPatch
+     */
+    public function __construct(array $cart, $isPatch = false)
     {
         $this->cart = $cart;
+        $this->isPatch = $isPatch;
 
         parent::__construct();
     }
@@ -121,20 +133,21 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      */
     public function buildBaseNode()
     {
-        $shopName = \Configuration::get(
-            'PS_SHOP_NAME',
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        /** @var PrestaShopConfiguration $configuration */
+        $configuration = $module->getService('ps_checkout.configuration');
+        /** @var PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $module->getService('ps_checkout.paypal.configuration');
+
+        $shopName = $configuration->get('PS_SHOP_NAME');
+
+        /** @var PaypalAccountRepository $accountRepository */
+        $accountRepository = $module->getService('ps_checkout.repository.paypal.account');
+        $merchantId = $accountRepository->getMerchantId();
 
         $node = [
-            'intent' => \Configuration::get(
-                'PS_CHECKOUT_INTENT',
-                null,
-                null,
-                (int) \Context::getContext()->shop->id
-            ), // capture or authorize
+            'intent' => $paypalConfiguration->getIntent(), // capture or authorize
             'custom_id' => (string) $this->cart['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
             'description' => $this->truncate(
@@ -150,26 +163,26 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 'value' => $this->cart['cart']['totals']['total_including_tax']['amount'],
             ],
             'payee' => [
-                'merchant_id' => (new PaypalAccountRepository())->getMerchantId(),
+                'merchant_id' => $merchantId,
             ],
         ];
+
+        $psCheckoutCartCollection = new \PrestaShopCollection('PsCheckoutCart');
+        $psCheckoutCartCollection->where('id_cart', '=', (int) \Context::getContext()->cart->id);
+
+        /** @var \PsCheckoutCart|false $psCheckoutCart */
+        $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+
+        if (false === $this->isPatch && false !== $psCheckoutCart && false === empty($psCheckoutCart->paypal_token)) {
+            $node['token'] = $psCheckoutCart->paypal_token;
+        }
 
         if (true === $this->isUpdate) {
             $node['id'] = $this->paypalOrderId;
         } else {
-            $roundType = (string) \Configuration::get(
-                'PS_ROUND_TYPE',
-                null,
-                null,
-                (int) \Context::getContext()->shop->id
-            );
+            $roundType = $paypalConfiguration->getRoundType();
 
-            $roundMode = (string) \Configuration::get(
-                'PS_PRICE_ROUND_MODE',
-                null,
-                null,
-                (int) \Context::getContext()->shop->id
-            );
+            $roundMode = $paypalConfiguration->getPriceRoundMode();
 
             $node['roundingConfig'] = $roundType . '-' . $roundMode;
         }

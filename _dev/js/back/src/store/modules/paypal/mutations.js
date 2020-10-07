@@ -29,5 +29,8 @@ export default {
   },
   [types.UPDATE_PAYPAL_ACCOUNT_STATUS](state, paypalAccount) {
     Object.assign(state, paypalAccount.paypal);
+  },
+  [types.UPDATE_CONFIRMED_LIVE_STEP](state, confirmed) {
+    state.isLiveStepConfirmed = confirmed;
   }
 };

@@ -20,13 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store;
 
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\FirebaseModule;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule;
 
 /**
  * Present the store to the vuejs app (vuex)
@@ -34,51 +28,45 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule;
 class StorePresenter implements PresenterInterface
 {
     /**
-     * @var \Module
+     * @var PresenterInterface[]
      */
-    private $module;
-
-    /**
-     * @var \Context
-     */
-    private $context;
+    private $presenters;
 
     /**
      * @var array
      */
     private $store;
 
-    public function __construct(\Module $module, \Context $context, array $store = null)
+    /**
+     * @param PresenterInterface[] $presenters
+     * @param array $store
+     */
+    public function __construct($presenters, array $store = [])
     {
         // Allow to set a custom store for tests purpose
         if (null !== $store) {
             $this->store = $store;
         }
 
-        $this->module = $module;
-        $this->context = $context;
+        $this->presenters = $presenters;
     }
 
     /**
      * Build the store required by vuex
      *
      * @return array
-     *
-     * @throws PsCheckoutException
      */
     public function present()
     {
-        if (null !== $this->store) {
+        if ([] !== $this->store) {
             return $this->store;
         }
 
-        $this->store = array_merge(
-            (new ContextModule($this->module, $this->context))->present(),
-            (new FirebaseModule())->present(),
-            (new PaypalModule())->present(),
-            (new PsxModule($this->context))->present(),
-            (new ConfigurationModule())->present()
-        );
+        foreach ($this->presenters as $presenter) {
+            if ($presenter instanceof PresenterInterface) {
+                $this->store = array_merge($this->store, $presenter->present());
+            }
+        }
 
         return $this->store;
     }

@@ -69,32 +69,10 @@ class Env
             break;
         }
 
-        if (true === $this->isLive()) {
-            $this->setMode('live');
-        } else {
-            $this->setMode('sandbox');
-        }
-    }
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
 
-    /**
-     * Check if the module is in SANDBOX or LIVE mode
-     *
-     * @return bool true if the module is in LIVE mode
-     */
-    private function isLive()
-    {
-        $mode = \Configuration::get(
-            'PS_CHECKOUT_MODE',
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
-
-        if ('LIVE' === $mode) {
-            return true;
-        }
-
-        return false;
+        $this->setMode($module->getService('ps_checkout.paypal.configuration')->getPaymentMode());
     }
 
     /**

@@ -43,7 +43,7 @@ class LoggerFileReader
         }
 
         $isEndOfFile = true;
-        $totalFileLines = 0;
+        $totalFileNewLines = 0;
         $currentFileLineNumber = 0;
         $fileLines = [];
 
@@ -52,30 +52,30 @@ class LoggerFileReader
         }
 
         while ($logFile->valid()) {
-            if (0 === $offset) {
-                ++$totalFileLines;
-            }
+            $line = $logFile->fgets();
 
             if ($currentFileLineNumber < $offset) {
                 ++$currentFileLineNumber;
                 continue;
             }
 
-            if ($currentFileLineNumber >= $limit) {
+            if ($totalFileNewLines >= $limit) {
                 $isEndOfFile = false;
                 break;
             }
 
-            ++$currentFileLineNumber;
-
-            $fileLines[] = $logFile->fgets();
+            if (false === empty($line)) {
+                $fileLines[] = $line;
+                ++$totalFileNewLines;
+                ++$currentFileLineNumber;
+            }
         }
 
         return [
             'filename' => $logFile->getFilename(),
             'offset' => $offset,
             'limit' => $limit,
-            'currentOffset' => $currentFileLineNumber,
+            'currentOffset' => $offset + $totalFileNewLines,
             'eof' => $isEndOfFile,
             'lines' => $fileLines,
         ];

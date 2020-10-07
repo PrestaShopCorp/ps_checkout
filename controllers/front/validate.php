@@ -17,18 +17,31 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
-use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 
-class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontController
+/**
+ * This controller receive ajax call to capture/authorize payment and create a PrestaShop Order
+ */
+class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
 {
-    /** @var Ps_checkout */
+    /**
+     * @var Ps_checkout
+     */
     public $module;
 
+    /**
+     * @var string
+     */
+    private $paypalOrderId;
+
+    /**
+     * @see FrontController::postProcess()
+     *
+     * @todo Move logic to a Service
+     */
     public function postProcess()
     {
         try {
@@ -40,137 +53,108 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
                 throw new PsCheckoutException('This payment method is not available.', PsCheckoutException::PRESTASHOP_PAYMENT_UNAVAILABLE);
             }
 
-            $paypalOrderId = Tools::getValue('orderId');
-            $paymentMethod = Tools::getValue('paymentMethod');
-
-            if (true === empty($paypalOrderId) || false === Validate::isGenericName($paypalOrderId)) {
-                throw new PsCheckoutException('Paypal order id is missing.', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
-            }
-
-            if (true === empty($paymentMethod) || false === Validate::isGenericName($paymentMethod)) {
-                throw new PsCheckoutException('Paypal payment method is missing.', PsCheckoutException::PAYPAL_PAYMENT_METHOD_MISSING);
-            }
-
-            $isExpressCheckout = (bool) Tools::getValue('isExpressCheckout');
-
-            $this->module->getLogger()->info(sprintf(
-                'ValidateOrder PayPal Order Id : %s Payment Method : %s Express Checkout : %s Cart : %s',
-                $paypalOrderId,
-                $paymentMethod,
-                $isExpressCheckout ? 'true' : 'false',
-                Validate::isLoadedObject($this->context->cart) ? (int) $this->context->cart->id : 0
-            ));
-
-            if ($isExpressCheckout) {
-                // API call here
-                $this->updatePaypalOrder($paypalOrderId);
-            }
-
             $cart = $this->context->cart;
 
             $customer = new Customer($cart->id_customer);
 
             if (false === Validate::isLoadedObject($customer)) {
-                $this->redirectToCheckout(['step' => 1]);
+                $this->sendBadRequestError(
+                    new PsCheckoutException('Unable to load Customer', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID)
+                );
             }
+
+            $bodyContent = file_get_contents('php://input');
+
+            if (empty($bodyContent)) {
+                throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
+            }
+
+            $bodyValues = json_decode($bodyContent, true);
+
+            if (empty($bodyValues)) {
+                throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
+            }
+
+            if (empty($bodyValues['orderID']) || false === Validate::isGenericName($bodyValues['orderID'])) {
+                throw new PsCheckoutException('PayPal Order identifier invalid', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
+            }
+
+            $this->paypalOrderId = $bodyValues['orderID'];
+
+            $this->module->getLogger()->info(sprintf(
+                'ValidateOrder PayPal Order Id : %s Cart : %s',
+                $bodyValues['orderID'],
+                Validate::isLoadedObject($this->context->cart) ? (int) $this->context->cart->id : 0
+            ));
 
             $currency = $this->context->currency;
             $total = (float) $cart->getOrderTotal(true, Cart::BOTH);
 
-            $payment = new ValidateOrder($paypalOrderId, (new PaypalAccountRepository())->getMerchantId());
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $accountRepository */
+            $accountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
+            $merchandId = $accountRepository->getMerchantId();
+            $payment = new ValidateOrder($bodyValues['orderID'], $merchandId);
 
             $dataOrder = [
                 'cartId' => (int) $cart->id,
                 'amount' => $total,
-                'paymentMethod' => $paymentMethod,
                 'currencyId' => (int) $currency->id,
                 'secureKey' => $customer->secure_key,
             ];
 
             // If the payment is rejected redirect the client to the last checkout step (422 error)
             // API call here
-            $payment->validateOrder($dataOrder);
+            $response = $payment->validateOrder($dataOrder);
 
-            $this->redirectToOrderConfirmation();
+            $this->sendOkResponse($response);
         } catch (Exception $exception) {
             $this->handleException($exception);
         }
     }
 
     /**
-     * @see FrontController::initContent()
-     *
-     * @throws PrestaShopException
-     */
-    public function initContent()
-    {
-        parent::initContent();
-
-        $template = 'validateOrderLegacy.tpl';
-
-        if ((new ShopContext())->isShop17()) {
-            $template = 'module:ps_checkout/views/templates/front/validateOrder.tpl';
-        }
-
-        $this->setTemplate($template);
-    }
-
-    /**
-     * Update paypal order
-     *
-     * @param string $paypalOrderId
-     *
-     * @return void
-     */
-    private function updatePaypalOrder($paypalOrderId)
-    {
-        $paypalOrder = new CreatePaypalOrderHandler($this->context);
-        $response = $paypalOrder->handle(false, true, $paypalOrderId);
-
-        if (false === $response['status']) {
-            $this->redirectToCheckout();
-        }
-    }
-
-    /**
      * Redirect to checkout page
      *
-     * @param array $params
+     * @param Exception $exception
      */
-    private function redirectToCheckout(array $params = [])
+    private function sendBadRequestError(Exception $exception)
     {
-        if (false === empty($params['step']) && 'payment' === $params['step']) {
-            $params['step'] = (new ShopContext())->isShop17() ? 4 : 3;
-        }
+        header('HTTP/1.0 400 Bad Request');
 
-        Tools::redirect(
-            $this->context->link->getPageLink(
-                'order',
-                true,
-                $this->context->language->id,
-                $params
-            )
-        );
+        echo json_encode([
+            'status' => false,
+            'httpCode' => 400,
+            'body' => '',
+            'exceptionCode' => $exception->getCode(),
+            'exceptionMessage' => $exception->getMessage(),
+        ]);
+        exit;
     }
 
     /**
      * Redirect to order confirmation page
+     *
+     * @param array $response
      */
-    private function redirectToOrderConfirmation()
+    private function sendOkResponse($response)
     {
-        Tools::redirect(
-            $this->context->link->getPageLink(
-                'order-confirmation',
-                true,
-                $this->context->language->id,
-                [
-                    'id_cart' => $this->context->cart->id,
-                    'id_module' => $this->module->id,
-                    'id_order' => $this->module->currentOrder,
-                    'key' => $this->context->customer->secure_key,
-                ]
-            )
-        );
+        header('content-type:application/json');
+        echo json_encode([
+            'status' => true,
+            'httpCode' => 200,
+            'body' => [
+                'paypal_status' => $response['status'],
+                'paypal_order' => $response['paypalOrderId'],
+                'paypal_transaction' => $response['transactionIdentifier'],
+                'id_cart' => (int) $this->context->cart->id,
+                'id_module' => (int) $this->module->id,
+                'id_order' => (int) $this->module->currentOrder,
+                'secure_key' => $this->context->customer->secure_key,
+            ],
+            'exceptionCode' => null,
+            'exceptionMessage' => null,
+        ]);
+        exit;
     }
 
     /**
@@ -190,6 +174,8 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
     /**
      * Check that this payment option is still available in case the customer changed
      * his address just before the end of the checkout process
+     *
+     * @todo Move to main module class
      *
      * @return bool
      */
@@ -218,9 +204,9 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
     private function handleException(Exception $exception)
     {
         $exceptionMessageForCustomer = $this->module->l('Error processing payment', 'translations');
-        $exceptionCode = $exception->getCode();
         $notifyCustomerService = true;
-        $paypalOrder = Tools::getValue('orderId');
+
+        $paypalOrder = $this->paypalOrderId;
 
         if (false === Validate::isGenericName($paypalOrder)) {
             $paypalOrder = 'invalid';
@@ -243,13 +229,24 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
             case PayPalException::TRANSACTION_BLOCKED_BY_PAYEE:
             case PayPalException::TRANSACTION_REFUSED:
             case PayPalException::NO_EXTERNAL_FUNDING_DETAILS_FOUND:
-                $this->redirectToCheckout(['step' => 'payment', 'paymentError' => $exception->getCode()]);
+                $this->sendBadRequestError($exception);
                 break;
             case PayPalException::ORDER_ALREADY_CAPTURED:
-                $this->module->currentOrder = (new \OrderMatrice())->getOrderPrestashopFromPaypal($paypalOrder);
+                $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
+                $psCheckoutCartCollection->where('paypal_order', '=', (int) $paypalOrder);
 
-                if (false === empty($this->module->currentOrder)) {
-                    $this->redirectToOrderConfirmation();
+                /** @var PsCheckoutCart|false $psCheckoutCart */
+                $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+
+                if (false === empty($psCheckoutCart)) {
+                    // TODO get transaction identifier
+                    $this->sendOkResponse(
+                        [
+                            'status' => $psCheckoutCart->paypal_status,
+                            'paypalOrderId' => $psCheckoutCart->paypal_order,
+                            'transactionIdentifier' => '',
+                        ]
+                    );
                 }
 
                 $exceptionMessageForCustomer = $this->module->l('Order cannot be saved', 'translations');
@@ -294,11 +291,16 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
         // Preserve current cart from customer changes to allow merchant to see whats wrong
         $this->generateNewCart();
 
-        $this->context->smarty->assign([
-            'alertClass' => 'danger',
-            'exceptionCode' => $exceptionCode,
-            'exceptionMessageForCustomer' => $exceptionMessageForCustomer,
+        header('HTTP/1.0 500 Internal Server Error');
+
+        echo json_encode([
+            'status' => false,
+            'httpCode' => 500,
+            'body' => '',
+            'exceptionCode' => $exception->getCode(),
+            'exceptionMessage' => $exceptionMessageForCustomer,
         ]);
+        exit;
     }
 
     /**
@@ -311,7 +313,7 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
      */
     private function notifyCustomerService(Exception $exception)
     {
-        $paypalOrderId = Tools::getValue('orderId');
+        $paypalOrderId = $this->paypalOrderId;
         $contacts = Contact::getContacts((int) $this->context->language->id);
 
         if (empty($contacts)) {
@@ -389,6 +391,5 @@ class ps_checkoutValidateOrderModuleFrontController extends ModuleFrontControlle
         $cart->add();
 
         $this->context->cart = $cart;
-        $this->context->cookie->__set('id_cart', (int) $cart->id);
     }
 }

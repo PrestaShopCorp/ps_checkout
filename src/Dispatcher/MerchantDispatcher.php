@@ -37,6 +37,11 @@ class MerchantDispatcher implements Dispatcher
     {
         $paypalAccount = new PaypalAccount($payload['merchantId']);
 
-        return (new PaypalAccountUpdater($paypalAccount))->update();
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        /** @var PaypalAccountUpdater $accountUpdater */
+        $accountUpdater = $module->getService('ps_checkout.updater.paypal.account');
+
+        return $accountUpdater->update($paypalAccount);
     }
 }

@@ -20,10 +20,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Logger;
 
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\RotatingFileHandler;
+use Monolog\Handler\HandlerInterface;
 use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Sentry\SentryHandler;
+use PrestaShop\Module\PrestashopCheckout\Sentry\SentryProcessor;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -31,76 +33,83 @@ use Psr\Log\LoggerInterface;
  */
 class LoggerFactory
 {
-    /**
-     * @var LoggerDirectory
-     */
-    private $loggerDirectory;
+    const PS_CHECKOUT_LOGGER_MAX_FILES = 'PS_CHECKOUT_LOGGER_MAX_FILES';
+    const PS_CHECKOUT_LOGGER_LEVEL = 'PS_CHECKOUT_LOGGER_LEVEL';
+    const PS_CHECKOUT_LOGGER_HTTP = 'PS_CHECKOUT_LOGGER_HTTP';
+    const PS_CHECKOUT_LOGGER_HTTP_FORMAT = 'PS_CHECKOUT_LOGGER_HTTP_FORMAT';
 
     /**
-     * @var \Module
+     * @var string
      */
-    private $module;
+    private $name;
 
     /**
-     * @param LoggerDirectory $loggerDirectory
-     * @param \Module $module
+     * @var HandlerInterface
      */
-    public function __construct(LoggerDirectory $loggerDirectory, \Module $module)
+    private $loggerHandler;
+
+    /**
+     * @var SentryHandler|null
+     */
+    private $sentryHandler;
+
+    /**
+     * @var SentryProcessor|null
+     */
+    private $sentryProcessor;
+
+    /**
+     * @param string $name
+     * @param HandlerInterface $loggerHandler
+     * @param SentryHandler|null $sentryHandler
+     * @param SentryProcessor|null $sentryProcessor
+     *
+     * @throws PsCheckoutException
+     */
+    public function __construct($name, HandlerInterface $loggerHandler, SentryHandler $sentryHandler = null, SentryProcessor $sentryProcessor = null)
     {
-        $this->loggerDirectory = $loggerDirectory;
-        $this->module = $module;
+        $this->assertNameIsValid($name);
+        $this->name = $name;
+        $this->loggerHandler = $loggerHandler;
+        $this->sentryHandler = $sentryHandler;
+        $this->sentryProcessor = $sentryProcessor;
     }
 
     /**
-     * @todo Use more Dependency Injection with Service Container in v2.0.0
-     *
      * @return LoggerInterface
      */
     public function build()
     {
-        $rotatingFileHandler = new RotatingFileHandler(
-            $this->loggerDirectory->getPath() . $this->module->name . '-' . \Context::getContext()->shop->id,
-            (int) $this->getFromConfiguration('PS_CHECKOUT_LOGGER_MAX_FILES', 15),
-            (int) $this->getFromConfiguration('PS_CHECKOUT_LOGGER_LEVEL', Logger::ERROR)
-        );
-        $lineFormatter = new LineFormatter(
-            LineFormatter::SIMPLE_FORMAT,
-            LineFormatter::SIMPLE_DATE,
-            false,
-            false
-        );
-        $rotatingFileHandler->setFormatter($lineFormatter);
-
         return new Logger(
-            $this->module->name,
+            $this->name,
             [
-                $rotatingFileHandler,
+                $this->loggerHandler,
+                $this->sentryHandler->getHandler(),
             ],
             [
                 new PsrLogMessageProcessor(),
+                $this->sentryProcessor,
             ]
         );
     }
 
     /**
-     * @todo To be removed in v2.0.0
+     * @param string $name
      *
-     * @param string $key
-     * @param mixed $default
-     *
-     * @return mixed
+     * @throws PsCheckoutException
      */
-    private function getFromConfiguration($key, $default)
+    private function assertNameIsValid($name)
     {
-        if (false === \Configuration::hasKey($key)) {
-            return $default;
+        if (empty($name)) {
+            throw new PsCheckoutException('Logger name cannot be empty.', PsCheckoutException::UNKNOWN);
         }
 
-        return \Configuration::get(
-            $key,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        if (false === is_string($name)) {
+            throw new PsCheckoutException('Logger name should be a string.', PsCheckoutException::UNKNOWN);
+        }
+
+        if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $name)) {
+            throw new PsCheckoutException('Logger name is invalid.', PsCheckoutException::UNKNOWN);
+        }
     }
 }

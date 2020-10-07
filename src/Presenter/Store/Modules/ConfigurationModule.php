@@ -21,6 +21,9 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use Monolog\Logger;
+use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
@@ -29,33 +32,38 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 class ConfigurationModule implements PresenterInterface
 {
     /**
+     * @var ExpressCheckoutConfiguration
+     */
+    private $ecConfiguration;
+
+    /**
+     * @var PayPalConfiguration
+     */
+    private $paypalConfiguration;
+
+    /**
+     * @param ExpressCheckoutConfiguration $ecConfiguration
+     * @param PayPalConfiguration $paypalConfiguration
+     */
+    public function __construct(ExpressCheckoutConfiguration $ecConfiguration, PayPalConfiguration $paypalConfiguration)
+    {
+        $this->ecConfiguration = $ecConfiguration;
+        $this->paypalConfiguration = $paypalConfiguration;
+    }
+
+    /**
      * Present the paypal module (vuex)
      *
      * @return array
      */
     public function present()
     {
-        $configurationModule = [
+        return [
             'config' => [
                 'paymentMethods' => $this->getPaymentMethods(),
-                'captureMode' => \Configuration::get(
-                    'PS_CHECKOUT_INTENT',
-                    null,
-                    null,
-                    (int) \Context::getContext()->shop->id
-                ),
-                'paymentMode' => \Configuration::get(
-                    'PS_CHECKOUT_MODE',
-                    null,
-                    null,
-                    (int) \Context::getContext()->shop->id
-                ),
-                'cardIsEnabled' => (bool) \Configuration::get(
-                    'PS_CHECKOUT_CARD_PAYMENT_ENABLED',
-                    null,
-                    null,
-                    (int) \Context::getContext()->shop->id
-                ),
+                'captureMode' => $this->paypalConfiguration->getIntent(),
+                'paymentMode' => $this->paypalConfiguration->getPaymentMode(),
+                'cardIsEnabled' => $this->paypalConfiguration->isCardPaymentEnabled(),
                 'cardInlinePaypalIsEnabled' => (bool) \Configuration::get(
                     'PS_CHECKOUT_PAYPAL_CB_INLINE',
                     null,
@@ -78,35 +86,18 @@ class ConfigurationModule implements PresenterInterface
                         'DEBUG' => 'Debug format',
                         'SHORT' => 'Short format',
                     ],
-                    'level' => (int) \Configuration::getGlobalValue('PS_CHECKOUT_LOGGER_LEVEL'),
-                    'maxFiles' => (int) \Configuration::getGlobalValue('PS_CHECKOUT_LOGGER_MAX_FILES'),
-                    'http' => (int) \Configuration::getGlobalValue('PS_CHECKOUT_LOGGER_HTTP'),
-                    'httpFormat' => \Configuration::getGlobalValue('PS_CHECKOUT_LOGGER_HTTP_FORMAT'),
+                    'level' => (int) \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_LEVEL),
+                    'maxFiles' => (int) \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_MAX_FILES),
+                    'http' => (int) \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP),
+                    'httpFormat' => \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP_FORMAT),
                 ],
                 'expressCheckout' => [
-                    'orderPage' => (bool) \Configuration::get(
-                        'PS_CHECKOUT_EC_ORDER_PAGE',
-                        null,
-                        null,
-                        (int) \Context::getContext()->shop->id
-                    ),
-                    'checkoutPage' => (bool) \Configuration::get(
-                        'PS_CHECKOUT_EC_CHECKOUT_PAGE',
-                        null,
-                        null,
-                        (int) \Context::getContext()->shop->id
-                    ),
-                    'productPage' => (bool) \Configuration::get(
-                        'PS_CHECKOUT_EC_PRODUCT_PAGE',
-                        null,
-                        null,
-                        (int) \Context::getContext()->shop->id
-                    ),
+                    'orderPage' => (bool) $this->ecConfiguration->isOrderPageEnabled(),
+                    'checkoutPage' => (bool) $this->ecConfiguration->isCheckoutPageEnabled(),
+                    'productPage' => (bool) $this->ecConfiguration->isProductPageEnabled(),
                 ],
             ],
         ];
-
-        return $configurationModule;
     }
 
     /**
@@ -116,12 +107,7 @@ class ConfigurationModule implements PresenterInterface
      */
     private function getPaymentMethods()
     {
-        $paymentMethods = \Configuration::get(
-            'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        $paymentMethods = $this->paypalConfiguration->getPaymentMethodsOrder();
 
         if (empty($paymentMethods)) {
             $paymentMethods = [

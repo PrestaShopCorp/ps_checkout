@@ -18,31 +18,31 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
-namespace Tests\Unit\Cache;
+namespace Tests\Unit\Logger;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\PrestashopCheckout\Cache\CacheDirectory;
+use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
 
-class CacheDirectoryTest extends TestCase
+class LoggerDirectoryTest extends TestCase
 {
     public function testItIsReturnValidPathForVersionLessThan17()
     {
-        $cacheDirectory = new CacheDirectory('1.6.1.0', __DIR__, true);
+        $loggerDirectory = new LoggerDirectory('1.6.1.0', __DIR__);
 
-        $this->assertSame(__DIR__ . '/cache', $cacheDirectory->getPath());
+        $this->assertSame(__DIR__ . '/log/', $loggerDirectory->getPath());
     }
 
     public function testItIsReturnValidPathForVersionLessThan174()
     {
-        $cacheDirectory = new CacheDirectory('1.7.0.0', __DIR__, true);
+        $loggerDirectory = new LoggerDirectory('1.7.0.0', __DIR__);
 
-        $this->assertSame(__DIR__ . '/app/cache/dev', $cacheDirectory->getPath());
+        $this->assertSame(__DIR__ . '/app/logs/', $loggerDirectory->getPath());
     }
 
     public function testItIsReturnValidPathForVersionGreaterThanEq174()
     {
-        $cacheDirectory = new CacheDirectory('1.7.4.0', __DIR__, true);
+        $loggerDirectory = new LoggerDirectory('1.7.4.0', __DIR__);
 
-        $this->assertSame(__DIR__ . '/var/cache/dev', $cacheDirectory->getPath());
+        $this->assertSame(__DIR__ . '/var/logs/', $loggerDirectory->getPath());
     }
 }

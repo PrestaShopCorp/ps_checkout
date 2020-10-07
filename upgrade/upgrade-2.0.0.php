@@ -24,7 +24,7 @@ if (!defined('_PS_VERSION_')) {
 /**
  * Update main function for module version 2.0.0
  *
- * @param Module $module
+ * @param Ps_checkout $module
  *
  * @return bool
  */
@@ -32,6 +32,9 @@ function upgrade_module_2_0_0($module)
 {
     return (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_MAX_FILES', '15')
         && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_LEVEL', \Monolog\Logger::ERROR)
-        && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP', '1')
-        && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP_FORMAT', 'DEBUG');
+        && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP', '0')
+        && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP_FORMAT', 'DEBUG')
+        && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_INTEGRATION_DATE', Ps_checkout::INTEGRATION_DATE)
+        && (bool) $module->registerHook(Ps_checkout::HOOK_LIST)
+        && (bool) (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable();
 }

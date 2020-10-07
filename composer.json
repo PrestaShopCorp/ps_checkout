@@ -24,11 +24,15 @@
     "guzzlehttp/guzzle": "~5.0",
     "guzzlehttp/log-subscriber": "~1.0",
     "monolog/monolog": "1.25.3",
+    "prestashop/decimal": "^1.3",
     "ramsey/uuid": "^3.8",
+    "sentry/sentry": "^1.0",
     "symfony/config": "^3.4",
     "symfony/dependency-injection": "^3.4",
+    "symfony/options-resolver": "^3.4",
     "vlucas/phpdotenv": "^3.4",
-    "webmozart/assert": "^1.0"
+    "webmozart/assert": "^1.0",
+    "prestashop/module-lib-service-container": "^1.0"
   },
   "require-dev": {
     "phpunit/phpunit": "~5.7",

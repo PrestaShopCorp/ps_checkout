@@ -131,7 +131,7 @@
           if (
             undefined !== response.body &&
             undefined !== response.body.error &&
-            undefined !== response.body.message
+            undefined !== response.body.error.message
           ) {
             this.handleResponseError(response.body.error.message);
             return;

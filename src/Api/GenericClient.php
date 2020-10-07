@@ -27,6 +27,7 @@ use GuzzleHttp\Subscriber\Log\Formatter;
 use GuzzleHttp\Subscriber\Log\LogSubscriber;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
+use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -83,7 +84,7 @@ class GenericClient
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
 
-        if (true === (bool) $this->getConfiguration('PS_CHECKOUT_LOGGER_HTTP', true)) {
+        if (true === (bool) $this->getConfiguration(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP, true)) {
             /** @var LoggerInterface $logger */
             $logger = $module->getService('ps_checkout.logger');
 
@@ -249,7 +250,7 @@ class GenericClient
      */
     private function getLogFormatter()
     {
-        $formatter = $this->getConfiguration('PS_CHECKOUT_LOGGER_HTTP_FORMAT', 'DEBUG');
+        $formatter = $this->getConfiguration(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP_FORMAT, 'DEBUG');
 
         if ('CLF' === $formatter) {
             return Formatter::CLF;

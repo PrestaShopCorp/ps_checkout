@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
@@ -35,13 +36,19 @@ class PsxModule implements PresenterInterface
     const ALL_BUSINESS_FILE = _PS_MODULE_DIR_ . 'ps_checkout/views/json/i18n/business-information-';
 
     /**
-     * @var \Context
+     * @var PrestaShopContext
      */
     private $context;
 
-    public function __construct(\Context $context)
+    /**
+     * @var PsAccountRepository
+     */
+    private $psAccount;
+
+    public function __construct(PrestaShopContext $context, PsAccountRepository $psAccount)
     {
         $this->context = $context;
+        $this->psAccount = $psAccount;
     }
 
     /**
@@ -55,16 +62,8 @@ class PsxModule implements PresenterInterface
     {
         return [
             'psx' => [
-                'onboardingCompleted' => (new PsAccountRepository())->psxFormIsCompleted(),
-                'psxFormData' => json_decode(
-                    \Configuration::get(
-                        'PS_CHECKOUT_PSX_FORM',
-                        null,
-                        null,
-                        (int) \Context::getContext()->shop->id
-                    ),
-                    true
-                ),
+                'onboardingCompleted' => $this->psAccount->psxFormIsCompleted(),
+                'psxFormData' => $this->psAccount->getPsxForm(true),
                 'languagesDetails' => $this->getJsonData(self::ALL_LANGUAGES_FILE),
                 'countriesDetails' => $this->getJsonData(self::ALL_COUNTRIES_FILE),
                 'countriesStatesDetails' => $this->getJsonData(self::ALL_COUNTRIES_STATES_FILE),
@@ -101,7 +100,7 @@ class PsxModule implements PresenterInterface
      */
     private function getBusinessFileName()
     {
-        $employeeLanguageIsoCode = $this->context->language->iso_code;
+        $employeeLanguageIsoCode = $this->context->getLanguageIsoCode();
 
         if (file_exists(self::ALL_BUSINESS_FILE . $employeeLanguageIsoCode . '.json')) {
             return self::ALL_BUSINESS_FILE . $employeeLanguageIsoCode . '.json';

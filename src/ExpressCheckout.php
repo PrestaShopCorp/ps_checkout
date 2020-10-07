@@ -58,8 +58,10 @@ class ExpressCheckout
             return false;
         }
 
-        $paypalAccountRepository = new PaypalAccountRepository();
-        $paypalSdkLink = new PayPalSdkLinkBuilder();
+        /** @var PaypalAccountRepository $paypalAccountRepository */
+        $paypalAccountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
+        /** @var PayPalSdkLinkBuilder $paypalSdkLink */
+        $paypalSdkLink = $this->module->getService('ps_checkout.sdk.paypal.linkbuilder');
         $paypalSdkLink->enableDisplayExpressCheckout();
 
         $this->context->smarty->assign([

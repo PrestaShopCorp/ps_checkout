@@ -1,4 +1,4 @@
-<!--**
+/**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
@@ -15,36 +15,11 @@
  * @author    PrestaShop SA <contact@prestashop.com>
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- *-->
-<template>
-  <b-card no-body>
-    <b-card-body>
-      <div class="m-auto max-width">
-        <h1>{{ $t('block.fraud-tool.title') }}</h1>
-        <p>
-          {{ $t('block.fraud-tool.text') }}
-        </p>
-        <b-button
-          variant="link"
-          href="https://www.paypal.com/fraud-protection"
-          target="_blank"
-        >
-          {{ $t('block.fraud-tool.discoverFraudTool') }}
-          <i class="material-icons">arrow_right_alt</i>
-        </b-button>
-      </div>
-    </b-card-body>
-  </b-card>
-</template>
+ */
+import { HtmlSelectorsPs1_6Constants } from '../constants/html-selectors-ps1_6.constants';
 
-<script>
-  export default {
-    name: 'FaudTool'
-  };
-</script>
-
-<style scoped>
-  .max-width {
-    max-width: 500px !important;
+export class HtmlElementPs1_6Service {
+  constructor() {
+    this.selectors = HtmlSelectorsPs1_6Constants;
   }
-</style>
+}

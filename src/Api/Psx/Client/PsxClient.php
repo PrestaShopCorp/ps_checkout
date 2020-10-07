@@ -18,7 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api\Client;
+namespace PrestaShop\Module\PrestashopCheckout\Api\Psx\Client;
 
 use GuzzleHttp\Client;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;

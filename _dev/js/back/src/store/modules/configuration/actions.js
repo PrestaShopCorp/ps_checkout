@@ -29,7 +29,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_PAYMENT_METHODS_ORDER, payload.paymentMethods);
-      return Promise.resolve(true);
+      return true;
     });
   },
 
@@ -42,7 +42,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_PAYMENT_MODE, payload);
-      return Promise.resolve(true);
+      return true;
     });
   },
 
@@ -55,7 +55,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_CAPTURE_MODE, payload);
-      return Promise.resolve(true);
+      return true;
     });
   },
 
@@ -68,7 +68,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_PAYMENT_CARD_AVAILABILITY, payload);
-      return Promise.resolve(payload);
+      return payload;
     });
   },
   toggleCardInlinePayPalField({ commit, getters }, payload) {
@@ -92,7 +92,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_EC_ORDER_PAGE, payload);
-      return Promise.resolve(payload);
+      return payload;
     });
   },
 
@@ -105,7 +105,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_EC_CHECKOUT_PAGE, payload);
-      return Promise.resolve(payload);
+      return payload;
     });
   },
 
@@ -118,20 +118,59 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_EC_PRODUCT_PAGE, payload);
-      return Promise.resolve(payload);
+      return payload;
     });
   },
 
-  toggleDebugLogs({ commit, getters }, payload) {
+  changeLoggerLevel({ commit, getters }, value) {
     return ajax({
       url: getters.adminController,
-      action: 'ToggleDebugLogs',
+      action: 'UpdateLoggerLevel',
       data: {
-        status: payload ? 1 : 0
+        level: value
       }
     }).then(() => {
-      commit(types.UPDATE_DEBUG_LOGS, payload);
-      return Promise.resolve(payload);
+      commit(types.UPDATE_LOGGER_LEVEL, value);
+      return value;
+    });
+  },
+
+  changeLoggerMaxFiles({ commit, getters }, value) {
+    return ajax({
+      url: getters.adminController,
+      action: 'UpdateLoggerMaxFiles',
+      data: {
+        maxFiles: value
+      }
+    }).then(() => {
+      commit(types.UPDATE_LOGGER_MAX_FILES, value);
+      return value;
+    });
+  },
+
+  changeLoggerHttp({ commit, getters }, value) {
+    return ajax({
+      url: getters.adminController,
+      action: 'UpdateLoggerHttp',
+      data: {
+        isEnabled: value
+      }
+    }).then(() => {
+      commit(types.UPDATE_LOGGER_HTTP, value);
+      return value;
+    });
+  },
+
+  changeLoggerHttpFormat({ commit, getters }, value) {
+    return ajax({
+      url: getters.adminController,
+      action: 'UpdateLoggerHttpFormat',
+      data: {
+        httpFormat: value
+      }
+    }).then(() => {
+      commit(types.UPDATE_LOGGER_HTTP_FORMAT, value);
+      return value;
     });
   }
 };

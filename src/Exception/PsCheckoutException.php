@@ -20,7 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Exception;
 
-class PsCheckoutException extends \PrestaShopExceptionCore
+class PsCheckoutException extends \Exception
 {
     const UNKNOWN = 0;
     const PRESTASHOP_ORDER_NOT_FOUND = 2;
@@ -59,4 +59,6 @@ class PsCheckoutException extends \PrestaShopExceptionCore
     const PSCHECKOUT_HTTP_EXCEPTION = 35;
     const PSCHECKOUT_LOGGER_FILE_READER_NOT_FOUND = 36;
     const PSCHECKOUT_LOGGER_FILE_READER_NOT_READABLE = 37;
+    const PSCHECKOUT_VALIDATE_BODY_EMPTY = 38;
+    const PSCHECKOUT_UPDATE_ORDER_HANDLE_ERROR = 39;
 }
