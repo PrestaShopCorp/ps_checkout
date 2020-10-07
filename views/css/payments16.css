@@ -64,6 +64,12 @@ p.payment_module .pscheckout-paypal img, p.payment_module .pscheckout-card img {
   to { transform: rotate(360deg); }
 }
 
+.js-additional-information .form-control {
+  background-color: #f3f3f3;
+  border-radius: 5px;
+}
+
+
 #card-image {
   position: absolute;
   top: 28px;
@@ -97,22 +103,15 @@ p.payment_module .pscheckout-paypal img, p.payment_module .pscheckout-card img {
   background-position: 0 -133px;
 }
 
-.braintree-hosted-fields-focused {
-  outline: .1875rem solid #2fb5d2;
-  border: unset;
+.js-additional-information .braintree-hosted-fields-invalid {
+  border: .1875rem solid #e76d7a;
   background-color: #fff;
-  color: #232323;
-}
-
-.braintree-hosted-fields-invalid {
-  outline: .1875rem solid #e76d7a;
-  border: unset;
   backface-visibility: hidden;
 }
 
-.braintree-hosted-fields-valid {
-  outline: .1875rem solid #81d390 ;
-  border: unset;
+.js-additional-information .braintree-hosted-fields-valid {
+  border: .1875rem solid #6FCC80;
+  background-color: #fff;
   backface-visibility: hidden;
 }
 

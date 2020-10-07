@@ -9,6 +9,7 @@
 
 ### Vuejs ignore build files ###
 /views/js/back/
+/views/js/app.js
 /views/js/front.js
 /views/img/almost-ready.png
 /views/img/paypal-logo.png

@@ -55,7 +55,7 @@ $_MODULE['<{ps_checkout}prestashop>orderconfirmation_ca7e41a658753c87973936d7ce2
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_66fcf4c223bbf4c7c886d4784e1f62e4'] = 'działem obsługi klienta';
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_a47005f7a79a267052608d713c8cfe8d'] = 'Twoje zamówienie nie zostało jeszcze zatwierdzone, zostało jedynie utworzone. Mógł wystąpić problem z Twoją płatnością bądź też zamówienie zostanie zarejestrowane później. Skontaktuj się z naszym działem obsługi klienta, by dowiedzieć się więcej.';
 $_MODULE['<{ps_checkout}prestashop>payment_2471e6ef6ef9018973f1658492115b52'] = 'Zapłać kartą';
-$_MODULE['<{ps_checkout}prestashop>payment_889a2e028c7f9ffb3d0754dab99bd44e'] = 'Płać przez PayPal lub korzystając z innych metod płatności';
+$_MODULE['<{ps_checkout}prestashop>payment_889a2e028c7f9ffb3d0754dab99bd44e'] = 'Płać przez PayPal lub korzystając';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_644818852b4dd8cf9da73543e30f045a'] = 'Wróć do ścieżki zamówienia';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_6ff063fbc860a79759a7369ac32cee22'] = 'Płatność';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_21ff087f1520a70163128cae982de67a'] = 'Płatność kartą';

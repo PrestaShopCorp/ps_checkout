@@ -22,7 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
-use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
+use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
 
 /**
  * Handle request to maasland regarding the shop/merchant status
@@ -60,14 +60,16 @@ class Shop extends PaymentClient
         $module = \Module::getInstanceByName('ps_checkout');
         /** @var PrestaShopConfiguration $configuration */
         $configuration = $module->getService('ps_checkout.configuration');
+        /** @var ExpressCheckoutConfiguration $ecConfiguration */
+        $ecConfiguration = $module->getService('ps_checkout.express_checkout.configuration');
 
         return $this->post([
             'json' => json_encode([
                 'settings' => [
                     'cb' => (bool) $configuration->get('PS_CHECKOUT_CARD_PAYMENT_ENABLED'),
-                    'express_in_product' => (bool) $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE),
-                    'express_in_cart' => (bool) $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE),
-                    'express_in_checkout' => (bool) $configuration->get(ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE),
+                    'express_in_product' => (bool) $ecConfiguration->isProductPageEnabled(),
+                    'express_in_cart' => (bool) $ecConfiguration->isOrderPageEnabled(),
+                    'express_in_checkout' => (bool) $ecConfiguration->isCheckoutPageEnabled(),
                 ],
             ]),
         ]);

@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink;
 
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
@@ -36,26 +37,41 @@ class PayPalSdkLinkBuilder
     private $payPalAccountRepository;
 
     /**
+     * @var PayPalConfiguration
+     */
+    private $configuration;
+
+    /**
+     * @todo To be removed
+     *
      * @var bool
      */
     private $isExpressCheckout = false;
 
     /**
+     * @todo To be removed
+     *
      * @var bool
      */
     private $isDisplayOnlyHostedFields = false;
 
     /**
+     * @todo To be removed
+     *
      * @var bool
      */
     private $isDisplayOnlySmartButtons = false;
 
     /**
      * @todo To be refactored with Service Container and Dependency Injection
+     *
+     * @param PaypalAccountRepository $payPalAccountRepository
+     * @param PayPalConfiguration $configuration
      */
-    public function __construct()
+    public function __construct(PaypalAccountRepository $payPalAccountRepository, PayPalConfiguration $configuration)
     {
-        $this->payPalAccountRepository = new PaypalAccountRepository();
+        $this->payPalAccountRepository = $payPalAccountRepository;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -65,68 +81,40 @@ class PayPalSdkLinkBuilder
      */
     public function buildLink()
     {
-        $components = [];
+        $components = [
+            'buttons',
+            'marks',
+            'funding-eligibility',
+        ];
 
-        if ($this->isHostedFieldsEnabled()) {
+        if ($this->payPalAccountRepository->cardHostedFieldsIsAvailable()) {
             $components[] = 'hosted-fields';
         }
-
-        if ($this->isSmartButtonsEnabled()) {
-            $components[] = 'buttons';
-        }
-
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
 
         $params = [
             'components' => implode(',', $components),
             'client-id' => (new PaypalEnv())->getPaypalClientId(),
-            'merchant-id' => (new PaypalAccountRepository())->getMerchantId(),
+            'merchant-id' => $this->payPalAccountRepository->getMerchantId(),
             'currency' => \Context::getContext()->currency->iso_code,
-            'intent' => strtolower($module->getService('ps_checkout.paypal.configuration')->getIntent()),
+            'intent' => strtolower($this->configuration->getIntent()),
+            'commit' => 'order' === $this->getPageName() ? 'true' : 'false',
+            'vault' => 'false',
+            'integration-date' => $this->configuration->getIntegrationDate(),
         ];
+
+        if ('SANDBOX' === $this->configuration->getPaymentMode()) {
+            $params['debug'] = 'true';
+            // $params['buyer-country'] = \Context::getContext()->country->iso_code;
+            // $params['locale'] = 'es_ES'; //@todo retrieve locale from PayPalContext
+        }
 
         $fundingSourcesDisabled = $this->getFundingSourcesDisabled();
 
-        if ($this->isSmartButtonsEnabled() && false === empty($fundingSourcesDisabled)) {
-            $params['disable-funding'] = implode(',', $this->getFundingSourcesDisabled());
+        if (false === empty($fundingSourcesDisabled)) {
+            $params['disable-funding'] = implode(',', $fundingSourcesDisabled);
         }
 
         return self::BASE_LINK . '?' . urldecode(http_build_query($params));
-    }
-
-    public function enableDisplayExpressCheckout()
-    {
-        $this->isExpressCheckout = true;
-    }
-
-    public function enableDisplayOnlyHostedFields()
-    {
-        $this->isDisplayOnlyHostedFields = true;
-    }
-
-    public function enableDisplayOnlySmartButtons()
-    {
-        $this->isDisplayOnlySmartButtons = true;
-    }
-
-    /**
-     * @return bool
-     */
-    private function isSmartButtonsEnabled()
-    {
-        return false === $this->isDisplayOnlyHostedFields
-            && $this->payPalAccountRepository->paypalPaymentMethodIsValid();
-    }
-
-    /**
-     * @return bool
-     */
-    private function isHostedFieldsEnabled()
-    {
-        return false === $this->isDisplayOnlySmartButtons
-            && false === $this->isExpressCheckout
-            && $this->payPalAccountRepository->cardHostedFieldsIsAvailable();
     }
 
     /**
@@ -138,50 +126,89 @@ class PayPalSdkLinkBuilder
     {
         $fundingSourcesDisabled = [];
 
-        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isCreditOrDebitCardsEnabled()) {
+        if (false === $this->payPalAccountRepository->isCreditOrDebitCardsEnabled()) {
             $fundingSourcesDisabled[] = 'card';
         }
 
-        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isPayPalCreditEnabled()) {
+        if (false === $this->payPalAccountRepository->isPayPalCreditEnabled()) {
             $fundingSourcesDisabled[] = 'credit';
         }
 
-        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isVenmoEnabled()) {
+        if (false === $this->payPalAccountRepository->isVenmoEnabled()) {
             $fundingSourcesDisabled[] = 'venmo';
         }
 
-        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isSepaLastschriftEnabled()) {
+        if (false === $this->payPalAccountRepository->isSepaLastschriftEnabled()) {
             $fundingSourcesDisabled[] = 'sepa';
         }
 
-        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isBancontactEnabled()) {
+        if (false === $this->payPalAccountRepository->isBancontactEnabled()) {
             $fundingSourcesDisabled[] = 'bancontact';
         }
 
-        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isEpsEnabled()) {
+        if (false === $this->payPalAccountRepository->isEpsEnabled()) {
             $fundingSourcesDisabled[] = 'eps';
         }
 
-        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isGiropayEnabled()) {
+        if (false === $this->payPalAccountRepository->isGiropayEnabled()) {
             $fundingSourcesDisabled[] = 'giropay';
         }
 
-        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isIdealEnabled()) {
+        if (false === $this->payPalAccountRepository->isIdealEnabled()) {
             $fundingSourcesDisabled[] = 'ideal';
         }
 
-        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isMyBankEnabled()) {
+        if (false === $this->payPalAccountRepository->isMyBankEnabled()) {
             $fundingSourcesDisabled[] = 'mybank';
         }
 
-        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isPrzelewy24Enabled()) {
+        if (false === $this->payPalAccountRepository->isPrzelewy24Enabled()) {
             $fundingSourcesDisabled[] = 'p24';
         }
 
-        if (true === $this->isExpressCheckout || false === $this->payPalAccountRepository->isSofortEnabled()) {
+        if (false === $this->payPalAccountRepository->isSofortEnabled()) {
             $fundingSourcesDisabled[] = 'sofort';
         }
 
         return $fundingSourcesDisabled;
+    }
+
+    /**
+     * @todo To be removed
+     */
+    public function enableDisplayExpressCheckout()
+    {
+        $this->isExpressCheckout = true;
+    }
+
+    /**
+     * @todo To be removed
+     */
+    public function enableDisplayOnlyHostedFields()
+    {
+        $this->isDisplayOnlyHostedFields = true;
+    }
+
+    /**
+     * @todo To be removed
+     */
+    public function enableDisplayOnlySmartButtons()
+    {
+        $this->isDisplayOnlySmartButtons = true;
+    }
+
+    private function getPageName()
+    {
+        $controller = \Context::getContext()->controller;
+
+        if (empty($controller)) {
+            return '';
+        }
+
+        if (isset($controller->php_self)) {
+            return $controller->php_self;
+        }
+
+        return '';
     }
 }

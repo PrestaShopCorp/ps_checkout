@@ -30,6 +30,19 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 class SentryProcessor implements ProcessorInterface
 {
     /**
+     * @var PsAccountRepository
+     */
+    private $psAccount;
+
+    /**
+     * @param PsAccountRepository $psAccount
+     */
+    public function __construct(PsAccountRepository $psAccount)
+    {
+        $this->psAccount = $psAccount;
+    }
+
+    /**
      * @param array $record
      *
      * @return array
@@ -41,7 +54,7 @@ class SentryProcessor implements ProcessorInterface
         }
 
         try {
-            $user = (new PsAccountRepository())->getOnboardedAccount();
+            $user = $this->psAccount->getOnboardedAccount();
             if ($user !== null) {
                 $record['context']['user'] = [
                     'email' => $user->getEmail(),

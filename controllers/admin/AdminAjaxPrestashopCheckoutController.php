@@ -20,20 +20,15 @@
 use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
-use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
-use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPresenter;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
-use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Settings\RoundingSettings;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {
@@ -47,13 +42,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessUpdatePaymentMethodsOrder()
     {
-        Configuration::updateValue(
-            'PS_CHECKOUT_PAYMENT_METHODS_ORDER',
-            Tools::getValue('paymentMethods'),
-            false,
-            null,
-            (int) Context::getContext()->shop->id
-        );
+        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
+        $paypalConfiguration->setPaymentMethodsOrder(Tools::getValue('paymentMethods'));
     }
 
     /**
@@ -61,7 +52,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessUpdateCaptureMode()
     {
-        $this->module->getService('ps_checkout.paypal.configuration')->setIntent(Tools::getValue('captureMode'));
+        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
+        $paypalConfiguration->setIntent(Tools::getValue('captureMode'));
     }
 
     /**
@@ -69,7 +62,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessUpdatePaymentMode()
     {
-        $this->module->getService('ps_checkout.paypal.configuration')->setPaymentMode(Tools::getValue('paymentMode'));
+        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
+        $paypalConfiguration->setPaymentMode(Tools::getValue('paymentMode'));
     }
 
     /**
@@ -77,7 +72,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessLiveStepConfirmed()
     {
-        $this->module->getService('ps_checkout.step.live')->confirmed(true);
+        /** @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep $stepLive */
+        $stepLive = $this->module->getService('ps_checkout.step.live');
+        $stepLive->confirmed(true);
 
         $this->ajaxDie(json_encode(true));
     }
@@ -90,20 +87,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessEditRoundingSettings()
     {
-        Configuration::updateValue(
-            'PS_ROUND_TYPE',
-            '1',
-            false,
-            null,
-            (int) Context::getContext()->shop->id
-        );
-        Configuration::updateValue(
-            'PS_PRICE_ROUND_MODE',
-            '2',
-            false,
-            null,
-            (int) Context::getContext()->shop->id
-        );
+        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
+        $paypalConfiguration->setRoundType(RoundingSettings::ROUND_ON_EACH_ITEM);
+        $paypalConfiguration->setPriceRoundMode(RoundingSettings::ROUND_UP_AWAY_FROM_ZERO);
 
         $this->ajaxDie(json_encode(true));
     }
@@ -113,7 +100,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessLogOutPsAccount()
     {
-        $this->module->getService('ps_checkout.persistent.configuration')->resetPsAccount();
+        /** @var \PrestaShop\Module\PrestashopCheckout\PersistentConfiguration $persistentConfiguration */
+        $persistentConfiguration = $this->module->getService('ps_checkout.persistent.configuration');
+        $persistentConfiguration->resetPsAccount();
 
         $this->ajaxDie(json_encode(true));
     }
@@ -123,10 +112,14 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessLogOutPaypalAccount()
     {
-        $this->module->getService('ps_checkout.persistent.configuration')->resetPayPalAccount();
+        /** @var \PrestaShop\Module\PrestashopCheckout\PersistentConfiguration $persistentConfiguration */
+        $persistentConfiguration = $this->module->getService('ps_checkout.persistent.configuration');
+        $persistentConfiguration->resetPayPalAccount();
 
         // we reset the Live Step banner
-        $this->module->getService('ps_checkout.step.live')->confirmed(false);
+        /** @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep $stepLive */
+        $stepLive = $this->module->getService('ps_checkout.step.live');
+        $stepLive->confirmed(false);
 
         $this->ajaxDie(json_encode(true));
     }
@@ -136,8 +129,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessSignIn()
     {
-        $response = $this->module->getService('ps_checkout.api.firebase.auth.factory')
-            ->signIn(Tools::getValue('email'), Tools::getValue('password'));
+        /** @var \PrestaShop\Module\PrestashopCheckout\Api\Firebase\AuthFactory $firebaseAuth */
+        $firebaseAuth = $this->module->getService('ps_checkout.api.firebase.auth.factory');
+        $response = $firebaseAuth->signIn(Tools::getValue('email'), Tools::getValue('password'));
 
         $this->ajaxDie(json_encode($response));
     }
@@ -147,8 +141,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessSignUp()
     {
-        $response = $this->module->getService('ps_checkout.api.firebase.auth.factory')
-            ->signUp(Tools::getValue('email'), Tools::getValue('password'));
+        /** @var \PrestaShop\Module\PrestashopCheckout\Api\Firebase\AuthFactory $firebaseAuth */
+        $firebaseAuth = $this->module->getService('ps_checkout.api.firebase.auth.factory');
+        $response = $firebaseAuth->signUp(Tools::getValue('email'), Tools::getValue('password'));
 
         $this->ajaxDie(json_encode($response));
     }
@@ -158,8 +153,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessSendPasswordResetEmail()
     {
-        $response = $this->module->getService('ps_checkout.api.firebase.auth.factory')
-            ->resetPassword(Tools::getValue('email'));
+        /** @var \PrestaShop\Module\PrestashopCheckout\Api\Firebase\AuthFactory $firebaseAuth */
+        $firebaseAuth = $this->module->getService('ps_checkout.api.firebase.auth.factory');
+        $response = $firebaseAuth->resetPassword(Tools::getValue('email'));
 
         $this->ajaxDie(json_encode($response));
     }
@@ -192,18 +188,23 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessRefreshPaypalAccountStatus()
     {
-        $paypalAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository();
-        $psAccount = new PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository();
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
+        $paypalAccount = $this->module->getService('ps_checkout.repository.paypal.account');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
+        $psAccount = $this->module->getService('ps_checkout.repository.prestashop.account');
 
         // update merchant status only if the merchant onBoarding is completed
-        if ($paypalAccount->onBoardingIsCompleted()
-            && $psAccount->onBoardingIsCompleted()
+        if ($paypalAccount->onBoardingIsCompleted() && $psAccount->onBoardingIsCompleted()
         ) {
-            (new PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater($paypalAccount->getOnboardedAccount()))->update();
+            /** @var \PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater $updater */
+            $updater = $this->module->getService('ps_checkout.updater.paypal.account');
+            $updater->update($paypalAccount->getOnboardedAccount());
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule $paypalModule */
+        $paypalModule = $this->module->getService('ps_checkout.store.module.paypal');
         $this->ajaxDie(
-            json_encode((new PaypalModule())->present())
+            json_encode($paypalModule->present())
         );
     }
 
@@ -223,17 +224,14 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessGetReportingDatas()
     {
+        /** @var PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter $pendingOrder */
+        $pendingOrder = $this->module->getService('ps_checkout.presenter.order.pending');
+        /** @var PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter $transactionOrder */
+        $transactionOrder = $this->module->getService('ps_checkout.presenter.transaction');
         $this->ajaxDie(
             json_encode([
-                'orders' => (new OrderPendingPresenter())->present(),
-                'transactions' => (new TransactionPresenter())->present(),
-                'countAllCheckoutTransactions' => (int) Db::getInstance()->getValue('
-                    SELECT COUNT(op.id_order_payment)
-                    FROM `' . _DB_PREFIX_ . 'order_payment` op
-                    INNER JOIN `' . _DB_PREFIX_ . 'orders` o ON (o.reference = op.order_reference)
-                    WHERE op.payment_method = "Prestashop Checkout"
-                    AND o.id_shop = ' . (int) Context::getContext()->shop->id
-                ),
+                'orders' => $pendingOrder->present(),
+                'transactions' => $transactionOrder->present(),
             ])
         );
     }
@@ -247,10 +245,15 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     private function savePsxForm($form)
     {
-        $psAccount = (new PsAccountRepository())->getOnboardedAccount();
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $accountRepository */
+        $accountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+        $psAccount = $accountRepository->getOnboardedAccount();
         $psAccount->setPsxForm(json_encode($form));
 
-        return $this->module->getService('ps_checkout.persistent.configuration')->savePsAccount($psAccount);
+        /** @var \PrestaShop\Module\PrestashopCheckout\PersistentConfiguration $persistentConfiguration */
+        $persistentConfiguration = $this->module->getService('ps_checkout.persistent.configuration');
+
+        return $persistentConfiguration->savePsAccount($psAccount);
     }
 
     /**
@@ -258,12 +261,21 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessToggleCardPaymentAvailability()
     {
-        /** @var PrestaShopConfiguration $configuration */
-        $configuration = $this->module->getService('ps_checkout.configuration');
-        $configuration->set(
-            'PS_CHECKOUT_CARD_PAYMENT_ENABLED',
-            Tools::getValue('status') ? 1 : 0
-        );
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
+        $paypalConfiguration->setCardPaymentEnabled(Tools::getValue('status') ? true : false);
+
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
+    }
+
+    /**
+     * AJAX: Toggle card inline availability
+     */
+    public function ajaxProcessToggleCardInlinePayPalPayment()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
+        $paypalConfiguration->setCardInlinePaypalEnabled(Tools::getValue('status') ? true : false);
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
@@ -273,12 +285,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessToggleECOrderPage()
     {
-        /** @var PrestaShopConfiguration $configuration */
-        $configuration = $this->module->getService('ps_checkout.configuration');
-        $configuration->set(
-            ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE,
-            Tools::getValue('status') ? 1 : 0
-        );
+        /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
+        $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
+        $ecConfiguration->setOrderPage(Tools::getValue('status') ? true : false);
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
@@ -288,12 +297,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessToggleECCheckoutPage()
     {
-        /** @var PrestaShopConfiguration $configuration */
-        $configuration = $this->module->getService('ps_checkout.configuration');
-        $configuration->set(
-            ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE,
-            Tools::getValue('status') ? 1 : 0
-        );
+        /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
+        $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
+        $ecConfiguration->setCheckoutPage(Tools::getValue('status') ? true : false);
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
@@ -303,12 +309,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessToggleECProductPage()
     {
-        /** @var PrestaShopConfiguration $configuration */
-        $configuration = $this->module->getService('ps_checkout.configuration');
-        $configuration->set(
-            ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE,
-            Tools::getValue('status') ? 1 : 0
-        );
+        /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
+        $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
+        $ecConfiguration->setProductPage(Tools::getValue('status') ? true : false);
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
@@ -346,7 +349,18 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             ]));
         }
 
-        $paypalOrderId = (new OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
+        $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
+        $psCheckoutCartCollection->where('id_cart', '=', (int) $order->id_cart);
+
+        /** @var PsCheckoutCart|false $psCheckoutCart */
+        $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+
+        if (false !== $psCheckoutCart) {
+            $paypalOrderId = $psCheckoutCart->paypal_order;
+        } else {
+            // Fallback to legacy Order Matrice
+            $paypalOrderId = (new OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
+        }
 
         if (empty($paypalOrderId)) {
             $this->ajaxDie(json_encode([
@@ -441,11 +455,14 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             ]));
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $accountRepository */
+        $accountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
+
         $response = (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order($this->context->link))->refund([
             'orderId' => $orderPayPalId,
             'captureId' => $transactionPayPalId,
             'payee' => [
-                'merchant_id' => (new PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository())->getMerchantId(),
+                'merchant_id' => $accountRepository->getMerchantId(),
             ],
             'amount' => [
                 'currency_code' => $currency,

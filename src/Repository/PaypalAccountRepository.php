@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
 use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
 
@@ -28,6 +29,17 @@ use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
  */
 class PaypalAccountRepository
 {
+    /** @var PrestaShopConfiguration */
+    private $configuration;
+
+    /**
+     * @param PrestaShopConfiguration $configuration
+     */
+    public function __construct(PrestaShopConfiguration $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
     /**
      * Get the current paypal account onboarded
      *
@@ -104,12 +116,7 @@ class PaypalAccountRepository
      */
     public function getMerchantId()
     {
-        return \Configuration::get(
-            PaypalAccount::PS_CHECKOUT_PAYPAL_ID_MERCHANT,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        return $this->configuration->get(PaypalAccount::PS_CHECKOUT_PAYPAL_ID_MERCHANT);
     }
 
     /**
@@ -119,12 +126,7 @@ class PaypalAccountRepository
      */
     public function getMerchantEmail()
     {
-        return \Configuration::get(
-            PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        return $this->configuration->get(PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT);
     }
 
     /**
@@ -134,12 +136,7 @@ class PaypalAccountRepository
      */
     public function getMerchantEmailStatus()
     {
-        return \Configuration::get(
-            PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_STATUS,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        return $this->configuration->get(PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_STATUS);
     }
 
     /**
@@ -149,12 +146,7 @@ class PaypalAccountRepository
      */
     public function getPaypalPaymentStatus()
     {
-        return \Configuration::get(
-            PaypalAccount::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        return $this->configuration->get(PaypalAccount::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS);
     }
 
     /**
@@ -164,12 +156,7 @@ class PaypalAccountRepository
      */
     public function getCardHostedFieldsStatus()
     {
-        return \Configuration::get(
-            PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        return $this->configuration->get(PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS);
     }
 
     /**
@@ -271,6 +258,62 @@ class PaypalAccountRepository
     }
 
     /**
+     * @return bool
+     */
+    public function isCardVisaEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_CARD_VISA_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMasterCardEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_MASTER_CARD_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCardAmexEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_CARD_AMEX_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCardDiscoverEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_CARD_DISCOVER_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCardJcbEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_CARD_JCB_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCardEloEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_CARD_ELO_ENABLED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCardHiperEnabled()
+    {
+        return $this->isPaymentMethodEnabled(PaypalAccount::PS_CHECKOUT_CARD_HIPER_ENABLED);
+    }
+
+    /**
      * @param string $paymentMethod
      *
      * @return bool
@@ -281,11 +324,6 @@ class PaypalAccountRepository
             return true;
         }
 
-        return (bool) \Configuration::get(
-            $paymentMethod,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        return (bool) $this->configuration->get($paymentMethod);
     }
 }

@@ -18,7 +18,6 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
-use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckout;
 use PrestaShop\Module\PrestashopCheckout\OrderStates;
 
 if (!defined('_PS_VERSION_')) {
@@ -61,21 +60,21 @@ function upgrade_module_1_2_10($module)
 
         // New configurations for express checkout feature
         \Configuration::updateValue(
-            ExpressCheckout::PS_CHECKOUT_EC_ORDER_PAGE,
+            'PS_CHECKOUT_EC_ORDER_PAGE',
             false,
             false,
             null,
             (int) \Context::getContext()->shop->id
         );
         \Configuration::updateValue(
-            ExpressCheckout::PS_CHECKOUT_EC_CHECKOUT_PAGE,
+            'PS_CHECKOUT_EC_CHECKOUT_PAGE',
             false,
             false,
             null,
             (int) \Context::getContext()->shop->id
         );
         \Configuration::updateValue(
-            ExpressCheckout::PS_CHECKOUT_EC_PRODUCT_PAGE,
+            'PS_CHECKOUT_EC_PRODUCT_PAGE',
             false,
             false,
             null,

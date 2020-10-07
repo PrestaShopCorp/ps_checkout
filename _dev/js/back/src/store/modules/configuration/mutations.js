@@ -31,6 +31,9 @@ export default {
   [types.UPDATE_PAYMENT_CARD_AVAILABILITY](state, payload) {
     state.cardIsEnabled = payload;
   },
+  [types.UPDATE_CARD_INLINE_PAYPAL_AVAILABILITY](state, payload) {
+    state.cardInlinePaypalIsEnabled = payload;
+  },
   [types.UPDATE_EC_ORDER_PAGE](state, payload) {
     state.expressCheckout.orderPage = payload;
   },
@@ -40,7 +43,16 @@ export default {
   [types.UPDATE_EC_PRODUCT_PAGE](state, payload) {
     state.expressCheckout.productPage = payload;
   },
-  [types.UPDATE_DEBUG_LOGS](state, payload) {
-    state.debugLogsEnabled = payload;
+  [types.UPDATE_LOGGER_LEVEL](state, payload) {
+    state.logger.level = payload;
+  },
+  [types.UPDATE_LOGGER_MAX_FILES](state, payload) {
+    state.logger.maxFiles = payload;
+  },
+  [types.UPDATE_LOGGER_HTTP](state, payload) {
+    state.logger.http = payload;
+  },
+  [types.UPDATE_LOGGER_HTTP_FORMAT](state, payload) {
+    state.logger.httpFormat = payload;
   }
 };

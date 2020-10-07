@@ -262,5 +262,5 @@
     display: none !important;
   }
 
-  @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+  @import url('https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined');
 </style>

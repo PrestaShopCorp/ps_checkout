@@ -30,6 +30,7 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
 
     public function init()
     {
+        parent::init();
         $idMerchant = Tools::getValue('merchantIdInPayPal');
 
         if (true === empty($idMerchant)) {
@@ -41,11 +42,14 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
         }
 
         $paypalAccount = new PaypalAccount($idMerchant);
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-        $module->getService('ps_checkout.persistent.configuration')->savePaypalAccount($paypalAccount);
 
-        (new PaypalAccountUpdater($paypalAccount))->update();
+        /** @var \PrestaShop\Module\PrestashopCheckout\PersistentConfiguration $persistentConfiguration */
+        $persistentConfiguration = $this->module->getService('ps_checkout.persistent.configuration');
+        $persistentConfiguration->savePaypalAccount($paypalAccount);
+
+        /** @var PaypalAccountUpdater $accountUpdater */
+        $accountUpdater = $this->module->getService('ps_checkout.updater.paypal.account');
+        $accountUpdater->update($paypalAccount);
 
         if ($paypalAccount->getCardPaymentStatus() === PaypalAccountUpdater::SUBSCRIBED) {
             // track account paypal fully approved

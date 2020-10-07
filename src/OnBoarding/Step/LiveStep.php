@@ -47,6 +47,8 @@ class LiveStep
     }
 
     /**
+     * Check if the step live is complete and the banner closed
+     *
      * @return bool
      */
     public function isConfirmed()

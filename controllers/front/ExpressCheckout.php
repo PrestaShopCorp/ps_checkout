@@ -19,9 +19,13 @@
  */
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
 
+/**
+ * This controller receive ajax call when customer click on an express checkout button
+ * We retrieve data from PayPal in payload and save it in PrestaShop to prefill order page
+ * Then customer must be redirected to order page to choose shipping method
+ */
 class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontController
 {
     /**
@@ -30,41 +34,43 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
     public $module;
 
     /**
+     * @var array
+     */
+    private $payload;
+
+    /**
      * {@inheritdoc}
      */
     public function postProcess()
     {
-        $isAjax = Tools::getValue('ajax');
-        $token = Tools::getValue('expressCheckoutToken');
-        $paypalOrder = Tools::getValue('paypalOrder');
-
-        if ($isAjax) {
-            return;
-        }
-
         try {
-            if ($token !== Tools::getToken()) {
+            if (Tools::getValue('static_token') !== Tools::getToken(false)) {
                 throw new PsCheckoutException('Bad token', PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_BAD_TOKEN);
             }
 
-            if (empty($paypalOrder)) {
-                throw new PsCheckoutException('Paypal order cannot be empty', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
+            // We receive data in a payload not in GET/POST
+            $bodyContent = file_get_contents('php://input');
+
+            if (empty($bodyContent)) {
+                throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
             }
 
-            $paypalOrder = json_decode($paypalOrder, true);
+            $this->payload = json_decode($bodyContent, true);
 
-            $this->module->getLogger()->info(sprintf(
-                'Express checkout - token : %s PayPal Order : %s',
-                $token,
-                false === empty($paypalOrder['id']) && Validate::isGenericName($paypalOrder['id']) ? $paypalOrder['id'] : 'invalid'
-            ));
+            if (empty($this->payload)) {
+                throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
+            }
+
+            if (empty($this->payload['orderID']) || false === Validate::isGenericName($this->payload['orderID'])) {
+                throw new PsCheckoutException('PayPal Order identifier missing or invalid', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
+            }
 
             if (false === $this->context->customer->isLogged()) {
                 // @todo Extract factory in a Service.
                 $this->createAndLoginCustomer(
-                    $paypalOrder['payer']['email_address'],
-                    $paypalOrder['payer']['name']['given_name'],
-                    $paypalOrder['payer']['name']['surname']
+                    $this->payload['order']['payer']['email_address'],
+                    $this->payload['order']['payer']['name']['given_name'],
+                    $this->payload['order']['payer']['name']['surname']
                 );
             }
 
@@ -72,28 +78,58 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
             // This index is only used in a marketplace context
             // @todo Extract factory in a Service.
             $this->createAddress(
-                $paypalOrder['payer']['name']['given_name'],
-                $paypalOrder['payer']['name']['surname'],
-                $paypalOrder['purchase_units'][0]['shipping']['address']['address_line_1'],
-                false === empty($paypalOrder['purchase_units'][0]['shipping']['address']['address_line_2']) ? $paypalOrder['purchase_units'][0]['shipping']['address']['address_line_2'] : '',
-                $paypalOrder['purchase_units'][0]['shipping']['address']['postal_code'],
-                $paypalOrder['purchase_units'][0]['shipping']['address']['admin_area_2'],
-                $paypalOrder['purchase_units'][0]['shipping']['address']['country_code'],
-                false === empty($paypalOrder['payer']['phone']) ? $paypalOrder['payer']['phone']['phone_number']['national_number'] : ''
+                $this->payload['order']['payer']['name']['given_name'],
+                $this->payload['order']['payer']['name']['surname'],
+                $this->payload['order']['shipping']['address']['address_line_1'],
+                false === empty($this->payload['order']['shipping']['address']['address_line_2']) ? $this->payload['order']['shipping']['address']['address_line_2'] : '',
+                $this->payload['order']['shipping']['address']['postal_code'],
+                $this->payload['order']['shipping']['address']['admin_area_2'],
+                $this->payload['order']['shipping']['address']['country_code'],
+                false === empty($bodyValues['order']['payer']['phone']) ? $this->payload['order']['payer']['phone']['phone_number']['national_number'] : ''
             );
 
-            $this->context->cookie->__set('paypalOrderId', $paypalOrder['id']);
-            $this->context->cookie->__set('paypalEmail', $paypalOrder['payer']['email_address']);
-        } catch (PsCheckoutException $exception) {
+            $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
+            $psCheckoutCartCollection->where('id_cart', '=', (int) $this->context->cart->id);
+
+            /** @var PsCheckoutCart|false $psCheckoutCart */
+            $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+
+            if (false !== $psCheckoutCart && $psCheckoutCart->paypal_funding !== $this->payload['fundingSource']) {
+                $psCheckoutCart->paypal_funding = $this->payload['fundingSource'];
+                $psCheckoutCart->save();
+            }
+        } catch (Exception $exception) {
             $this->module->getLogger()->error(sprintf(
                 'Express Checkout - Exception %s Order PayPal %s : %s',
                 $exception->getCode(),
-                false === empty($paypalOrder['id']) && Validate::isGenericName($paypalOrder['id']) ? $paypalOrder['id'] : 'invalid',
+                $this->payload['orderID'],
                 $exception->getMessage()
             ));
+
+            header('HTTP/1.0 500 Internal Server Error');
+
+            echo json_encode([
+                'status' => false,
+                'httpCode' => 500,
+                'body' => $this->payload,
+                'exceptionCode' => $exception->getCode(),
+                'exceptionMessage' => $exception->getMessage(),
+            ]);
+
+            exit;
         }
 
-        $this->redirectToCheckout();
+        header('content-type:application/json');
+
+        echo json_encode([
+            'status' => true,
+            'httpCode' => 200,
+            'body' => $this->payload,
+            'exceptionCode' => null,
+            'exceptionMessage' => null,
+        ]);
+
+        exit;
     }
 
     /**
@@ -252,57 +288,5 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         $query->where('deleted = 0');
 
         return (int) Db::getInstance()->getValue($query);
-    }
-
-    /**
-     * Ajax: Create and return paypal order
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    public function displayAjaxCreatePaypalOrder()
-    {
-        $product = \Tools::getValue('product');
-
-        if (!empty($product)) {
-            $product = json_decode($product);
-
-            $cart = new Cart();
-            $cart->id_currency = $this->context->currency->id;
-            $cart->id_lang = $this->context->language->id;
-            $cart->add();
-            $cart->updateQty(
-                $product->quantity_wanted,
-                $product->id_product,
-                $product->id_product_attribute === '0' ? null : $product->id_product_attribute,
-                $product->id_customization === 0 ? false : $product->id_customization,
-                $operator = 'up'
-            );
-            $cart->update();
-
-            $this->module->getLogger()->info(sprintf(
-                'Express checkout : Create Cart %s',
-                (int) $cart->id
-            ));
-
-            $this->context->cart = $cart;
-            $this->context->cookie->__set('id_cart', $cart->id);
-        }
-
-        $paypalOrder = new CreatePaypalOrderHandler($this->context);
-        $paypalOrder = $paypalOrder->handle(true);
-
-        echo json_encode($paypalOrder);
-    }
-
-    private function redirectToCheckout()
-    {
-        Tools::redirect(
-            $this->context->link->getPageLink(
-                'order',
-                true,
-                $this->context->language->id
-            )
-        );
     }
 }

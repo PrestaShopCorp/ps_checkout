@@ -55,7 +55,7 @@ $_MODULE['<{ps_checkout}prestashop>orderconfirmation_ca7e41a658753c87973936d7ce2
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_66fcf4c223bbf4c7c886d4784e1f62e4'] = 'team esperto di supporto clienti.';
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_a47005f7a79a267052608d713c8cfe8d'] = ' Potrebbe verificarsi un problema con il pagamento o il pagamento potrebbe essere effettuato in ritardo; contatta il nostro Servizio clienti per maggiori informazioni.';
 $_MODULE['<{ps_checkout}prestashop>payment_2471e6ef6ef9018973f1658492115b52'] = 'Paga tramite carta';
-$_MODULE['<{ps_checkout}prestashop>payment_889a2e028c7f9ffb3d0754dab99bd44e'] = 'Paga con un conto PayPal o con altri metodi di pagamento';
+$_MODULE['<{ps_checkout}prestashop>payment_889a2e028c7f9ffb3d0754dab99bd44e'] = 'Paga con un conto PayPal';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_644818852b4dd8cf9da73543e30f045a'] = 'Torna al pagamento';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_6ff063fbc860a79759a7369ac32cee22'] = 'Pagamento';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_21ff087f1520a70163128cae982de67a'] = 'Pagamento con carta';

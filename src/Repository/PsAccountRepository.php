@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 
 /**
@@ -27,6 +28,17 @@ use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
  */
 class PsAccountRepository
 {
+    /** @var PrestaShopConfiguration */
+    private $configuration;
+
+    /**
+     * @param PrestaShopConfiguration $configuration
+     */
+    public function __construct(PrestaShopConfiguration $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
     /**
      * Get current onboarded prestashop account
      *
@@ -77,12 +89,7 @@ class PsAccountRepository
      */
     public function getEmail()
     {
-        return \Configuration::get(
-            PsAccount::PS_PSX_FIREBASE_EMAIL,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_EMAIL);
     }
 
     /**
@@ -92,12 +99,7 @@ class PsAccountRepository
      */
     public function getIdToken()
     {
-        return \Configuration::get(
-            PsAccount::PS_PSX_FIREBASE_ID_TOKEN,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_ID_TOKEN);
     }
 
     /**
@@ -107,12 +109,7 @@ class PsAccountRepository
      */
     public function getLocalId()
     {
-        return \Configuration::get(
-            PsAccount::PS_PSX_FIREBASE_LOCAL_ID,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_LOCAL_ID);
     }
 
     /**
@@ -122,12 +119,7 @@ class PsAccountRepository
      */
     public function getRefreshToken()
     {
-        return \Configuration::get(
-            PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN);
     }
 
     /**
@@ -139,23 +131,8 @@ class PsAccountRepository
      */
     public function getPsxForm($toArray = false)
     {
-        if ($toArray) {
-            return json_decode(
-                \Configuration::get(
-                    PsAccount::PS_CHECKOUT_PSX_FORM,
-                    null,
-                    null,
-                    (int) \Context::getContext()->shop->id
-                ),
-                true
-            );
-        }
+        $form = $this->configuration->get(PsAccount::PS_CHECKOUT_PSX_FORM);
 
-        return \Configuration::get(
-            PsAccount::PS_CHECKOUT_PSX_FORM,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
+        return $toArray ? json_decode($form, true) : $form;
     }
 }

@@ -129,4 +129,23 @@ class Order extends PaymentClient
             'json' => $payload,
         ]);
     }
+
+    /**
+     * @param string $merchantId
+     *
+     * @return array
+     */
+    public function generateClientToken($merchantId)
+    {
+        $this->setRoute('/payments/order/generate_client_token');
+
+        return $this->post([
+            'json' => [
+                'return_payload' => true,
+                'payee' => [
+                    'merchant_id' => $merchantId,
+                ],
+            ],
+        ]);
+    }
 }

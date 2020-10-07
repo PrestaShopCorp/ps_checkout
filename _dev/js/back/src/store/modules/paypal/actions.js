@@ -52,7 +52,7 @@ export default {
       action: 'LiveStepConfirmed'
     }).then(resp => {
       if (resp) {
-        commit(types.UPDATE_CONFIRMED_LIVE_STEP);
+        commit(types.UPDATE_CONFIRMED_LIVE_STEP, true);
         return true;
       }
 
