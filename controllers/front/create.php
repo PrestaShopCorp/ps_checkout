@@ -40,6 +40,10 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
         header('content-type:application/json');
 
         try {
+            if (Tools::getValue('static_token') !== Tools::getToken(false)) {
+                throw new PsCheckoutException('Bad token', PsCheckoutException::PSCHECKOUT_BAD_STATIC_TOKEN);
+            }
+
             // BEGIN Express Checkout
             $bodyValues = [];
             $bodyContent = file_get_contents('php://input');
@@ -120,11 +124,14 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
                 $psCheckoutCart->id_cart = (int) $this->context->cart->id;
             }
 
+            $psCheckoutCart->paypal_funding = $bodyValues['fundingSource'];
             $psCheckoutCart->paypal_order = $response['body']['id'];
             $psCheckoutCart->paypal_status = $response['body']['status'];
             $psCheckoutCart->paypal_intent = 'CAPTURE' === Configuration::get('PS_CHECKOUT_INTENT') ? 'CAPTURE' : 'AUTHORIZE';
             $psCheckoutCart->paypal_token = $response['body']['client_token'];
             $psCheckoutCart->paypal_token_expire = (new DateTime())->modify('+3550 seconds')->format('Y-m-d H:i:s');
+            $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) ? (bool) $bodyValues['isExpressCheckout'] : false;
+            $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) ? (bool) $bodyValues['isHostedFields'] : false;
             $psCheckoutCart->save();
 
             echo json_encode([
@@ -137,11 +144,11 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            header('HTTP/1.0 400 Bad Request');
+            header('HTTP/1.0 500 Internal Server Error');
 
             echo json_encode([
                 'status' => false,
-                'httpCode' => 400,
+                'httpCode' => 500,
                 'body' => '',
                 'exceptionCode' => $exception->getCode(),
                 'exceptionMessage' => $exception->getMessage(),

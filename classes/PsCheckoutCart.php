@@ -60,6 +60,16 @@ class PsCheckoutCart extends ObjectModel
     public $paypal_authorization_expire;
 
     /**
+     * @var bool
+     */
+    public $isExpressCheckout = false;
+
+    /**
+     * @var bool
+     */
+    public $isHostedFields = false;
+
+    /**
      * @var string Creation date in mysql date format
      */
     public $date_add;
@@ -125,6 +135,18 @@ class PsCheckoutCart extends ObjectModel
             'paypal_authorization_expire' => [
                 'type' => self::TYPE_DATE,
                 'validate' => 'isDate',
+                'allow_null' => true,
+                'required' => false,
+            ],
+            'isExpressCheckout' => [
+                'type' => self::TYPE_BOOL,
+                'validate' => 'isBool',
+                'allow_null' => true,
+                'required' => false,
+            ],
+            'isHostedFields' => [
+                'type' => self::TYPE_BOOL,
+                'validate' => 'isBool',
                 'allow_null' => true,
                 'required' => false,
             ],

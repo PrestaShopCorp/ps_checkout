@@ -355,14 +355,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $psCheckoutCartCollection->getFirst();
 
-        if (false !== $psCheckoutCart) {
-            $paypalOrderId = $psCheckoutCart->paypal_order;
-        } else {
-            // Fallback to legacy Order Matrice
-            $paypalOrderId = (new OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
-        }
-
-        if (empty($paypalOrderId)) {
+        if (false === $psCheckoutCart) {
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -376,7 +369,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             ]));
         }
 
-        $orderPayPal = new PaypalOrder($paypalOrderId);
+        $orderPayPal = new PaypalOrder($psCheckoutCart->paypal_order);
 
         if (false === $orderPayPal->isLoaded()) {
             $this->ajaxDie(json_encode([
@@ -385,7 +378,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                     strtr(
                         $this->l('Unable to fetch PayPal Order [PAYPAL_ORDER_ID]'),
                         [
-                            '[PAYPAL_ORDER_ID]' => $paypalOrderId,
+                            '[PAYPAL_ORDER_ID]' => $psCheckoutCart->paypal_order,
                         ]
                     ),
                 ],

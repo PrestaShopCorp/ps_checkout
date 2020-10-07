@@ -60,12 +60,12 @@ class DatePresenter
      */
     private function getTimeZone()
     {
-        return new \DateTimeZone(\Configuration::get(
-            'PS_TIMEZONE',
-            null,
-            null,
-            null,
-            date_default_timezone_get()
-        ));
+        $psTimeZone = \Configuration::get('PS_TIMEZONE');
+
+        if (empty($psTimeZone)) {
+            $psTimeZone = date_default_timezone_get();
+        }
+
+        return new \DateTimeZone($psTimeZone);
     }
 }

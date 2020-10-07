@@ -43,9 +43,11 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
      */
     public function postProcess()
     {
+        header('content-type:application/json');
+
         try {
             if (Tools::getValue('static_token') !== Tools::getToken(false)) {
-                throw new PsCheckoutException('Bad token', PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_BAD_TOKEN);
+                throw new PsCheckoutException('Bad token', PsCheckoutException::PSCHECKOUT_BAD_STATIC_TOKEN);
             }
 
             // We receive data in a payload not in GET/POST
@@ -65,6 +67,19 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
                 throw new PsCheckoutException('PayPal Order identifier missing or invalid', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
             }
 
+            $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
+            $psCheckoutCartCollection->where('id_cart', '=', (int) $this->context->cart->id);
+
+            /** @var PsCheckoutCart|false $psCheckoutCart */
+            $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+
+            if (false !== $psCheckoutCart) {
+                $psCheckoutCart->paypal_funding = $this->payload['fundingSource'];
+                $psCheckoutCart->isExpressCheckout = true;
+                $psCheckoutCart->isHostedFields = false;
+                $psCheckoutCart->save();
+            }
+
             if (false === $this->context->customer->isLogged()) {
                 // @todo Extract factory in a Service.
                 $this->createAndLoginCustomer(
@@ -73,6 +88,8 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
                     $this->payload['order']['payer']['name']['surname']
                 );
             }
+
+            $this->context->cookie->__set('paypalEmail', $this->payload['order']['payer']['email_address']);
 
             // Always 0 index because we are not using the paypal marketplace system
             // This index is only used in a marketplace context
@@ -87,17 +104,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
                 $this->payload['order']['shipping']['address']['country_code'],
                 false === empty($bodyValues['order']['payer']['phone']) ? $this->payload['order']['payer']['phone']['phone_number']['national_number'] : ''
             );
-
-            $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
-            $psCheckoutCartCollection->where('id_cart', '=', (int) $this->context->cart->id);
-
-            /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartCollection->getFirst();
-
-            if (false !== $psCheckoutCart && $psCheckoutCart->paypal_funding !== $this->payload['fundingSource']) {
-                $psCheckoutCart->paypal_funding = $this->payload['fundingSource'];
-                $psCheckoutCart->save();
-            }
         } catch (Exception $exception) {
             $this->module->getLogger()->error(sprintf(
                 'Express Checkout - Exception %s Order PayPal %s : %s',
@@ -118,8 +124,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
 
             exit;
         }
-
-        header('content-type:application/json');
 
         echo json_encode([
             'status' => true,

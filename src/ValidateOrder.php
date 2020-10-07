@@ -118,10 +118,6 @@ class ValidateOrder
                 }
             }
 
-            if (self::CAPTURE_STATUS_DECLINED === $transactionStatus) {
-                throw new PsCheckoutException(sprintf('Transaction declined by PayPal : %s', false === empty($response['body']['details']['description']) ? $response['body']['details']['description'] : 'No detail'), PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
-            }
-
             $psCheckoutCartCollection = new \PrestaShopCollection('PsCheckoutCart');
             $psCheckoutCartCollection->where('id_cart', '=', (int) $payload['cartId']);
 
@@ -141,9 +137,14 @@ class ValidateOrder
                 $psCheckoutCart->update();
             }
 
+            if (self::CAPTURE_STATUS_DECLINED === $transactionStatus) {
+                throw new PsCheckoutException(sprintf('Transaction declined by PayPal : %s', false === empty($response['body']['details']['description']) ? $response['body']['details']['description'] : 'No detail'), PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
+            }
+
             /** @var \PaymentModule $module */
             $module = \Module::getInstanceByName('ps_checkout');
 
+            // If OrderState here is not PS_OS_PAYMENT PrestaShop will not create OrderPayment and not save Transaction Id and right Option Name
             $module->validateOrder(
                 $payload['cartId'],
                 (int) $this->getOrderState($psCheckoutCart->paypal_funding),
@@ -162,16 +163,41 @@ class ValidateOrder
                 throw new PsCheckoutException(sprintf('PrestaShop was unable to returns Prestashop Order ID for Prestashop Cart ID : %s  - Paypal Order ID : %s. This happens when PrestaShop take too long time to create an Order due to heavy processes in hooks actionValidateOrder and/or actionOrderStatusUpdate and/or actionOrderStatusPostUpdate', $payload['cartId'], $this->paypalOrderId), PsCheckoutException::PRESTASHOP_ORDER_ID_MISSING);
             }
 
-            $this->setOrderState(
-                $module->currentOrder,
-                $transactionStatus,
-                $psCheckoutCart->paypal_funding
-            );
+            if (in_array($transactionStatus, [static::CAPTURE_STATUS_COMPLETED, static::CAPTURE_STATUS_DECLINED])) {
+                $newOrderState = static::CAPTURE_STATUS_COMPLETED === $transactionStatus ? $this->getPaidStatusId($module->currentOrder) : (int) \Configuration::getGlobalValue('PS_OS_ERROR');
+
+                $order = new \Order($module->currentOrder);
+                $currentOrderStateId = (int) $order->getCurrentState();
+
+                // If have to change current OrderState from Waiting to Paid or Canceled
+                if ($currentOrderStateId !== $newOrderState) {
+                    $orderHistory = new \OrderHistory();
+                    $orderHistory->id_order = $module->currentOrder;
+                    $orderHistory->changeIdOrderState($newOrderState, $module->currentOrder);
+                    $orderHistory->addWithemail();
+
+                    // If new OrderState is PS_OS_PAYMENT PrestaShop create an OrderPayment with no TransactionId and wrong Option Name
+                    // So we have to update it
+                    if ($newOrderState === (int) \Configuration::getGlobalValue('PS_OS_PAYMENT')) {
+                        $orderPaymentCollection = new \PrestaShopCollection('OrderPayment');
+                        $orderPaymentCollection->where('order_reference', '=', $module->currentOrderReference);
+
+                        /** @var \OrderPayment|false $orderPayment */
+                        $orderPayment = $orderPaymentCollection->getFirst();
+
+                        if (false !== $orderPayment) {
+                            $orderPayment->transaction_id = $transactionIdentifier;
+                            $orderPayment->payment_method = $this->getOptionName($module, $psCheckoutCart->paypal_funding);
+                            $orderPayment->save();
+                        }
+                    }
+                }
+            }
         }
 
         return [
-            'status' => $response !== null ? $response['body']['status'] : $order['status'],
-            'paypalOrderId' => $response !== null ? $response['body']['id'] : $this->paypalOrderId,
+            'status' => false === empty($response) ? $response['body']['status'] : $order['status'],
+            'paypalOrderId' => false === empty($response) ? $response['body']['id'] : $this->paypalOrderId,
             'transactionIdentifier' => $transactionIdentifier,
         ];
     }
@@ -179,62 +205,28 @@ class ValidateOrder
     /**
      * Get translated Payment Option name
      *
-     * @todo Move to a dedicated Service
-     *
+     * @param \PaymentModule $module
      * @param string $fundingSource
      *
      * @return string
+     *
+     * @todo Move to a dedicated Service
      */
     private function getOptionName($module, $fundingSource)
     {
         switch ($fundingSource) {
             case 'card':
-                $name = $module->l('Payment by card');
+                $name = $module->l('Payment by card', 'translations');
                 break;
             case 'paypal':
-                $name = $module->l('Payment by PayPal');
+                $name = $module->l('Payment by PayPal', 'translations');
                 break;
             default:
-                $name = $module->displayName;
+                // @todo Add translations for LPM
+                $name = $module->l('Payment by PayPal', 'translations');
         }
 
         return $name;
-    }
-
-    /**
-     * Set the status of the prestashop order if the payment has been
-     * successfully captured or not
-     *
-     * @param int $orderId Order identifier
-     * @param string $status Capture status
-     * @param string $paypalFunding can be 'paypal' or 'card'
-     *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    private function setOrderState($orderId, $status, $paypalFunding)
-    {
-        switch ($status) {
-            case static::CAPTURE_STATUS_COMPLETED:
-                $orderState = $this->getPaidStatusId($orderId);
-                break;
-            case static::CAPTURE_STATUS_DECLINED:
-                $orderState = (int) \Configuration::getGlobalValue('PS_OS_ERROR');
-                break;
-            default:
-                $orderState = $this->getOrderState($paypalFunding);
-                break;
-        }
-
-        $order = new \Order($orderId);
-        $currentOrderStateId = (int) $order->getCurrentState();
-
-        if ($currentOrderStateId !== $orderState) {
-            $orderHistory = new \OrderHistory();
-            $orderHistory->id_order = $orderId;
-            $orderHistory->changeIdOrderState($orderState, $orderId);
-            $orderHistory->addWithemail();
-        }
     }
 
     /**
