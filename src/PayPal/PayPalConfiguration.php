@@ -274,8 +274,7 @@ class PayPalConfiguration
         // If card is not enable and cb inline too -> no card
         if (!$this->isCardPaymentEnabled() && !$this->isCardInlinePaypalIsEnabled()) {
             unset($fundingSources[0]);
-        }
-        else {
+        } else {
             // If card is not in first position in configuration, move it at the end.
             if ('card' !== $paymentMethods[0]['name']) {
                 unset($fundingSources[0]);
