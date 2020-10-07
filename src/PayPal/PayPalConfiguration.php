@@ -35,6 +35,7 @@ class PayPalConfiguration
     const INTEGRATION_DATE = 'PS_CHECKOUT_INTEGRATION_DATE';
     const HOSTED_FIELDS_3DS_DISABLED = 'PS_CHECKOUT_3DS_DISABLED';
     const CSP_NONCE = 'PS_CHECKOUT_CSP_NONCE';
+    const PS_CHECKOUT_PAYPAL_CB_INLINE = 'PS_CHECKOUT_PAYPAL_CB_INLINE';
 
     /**
      * @var PrestaShopConfiguration
@@ -134,6 +135,24 @@ class PayPalConfiguration
     public function isCardPaymentEnabled()
     {
         return (bool) $this->configuration->get(self::CARD_PAYMENT_ENABLED);
+    }
+
+    /**
+     * @param bool $status
+     *
+     * @throws PsCheckoutException
+     */
+    public function setCardInlinePaypalEnabled($status)
+    {
+        $this->configuration->set(self::PS_CHECKOUT_PAYPAL_CB_INLINE, (bool) $status);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCardInlinePaypalIsEnabled()
+    {
+        return (bool) $this->configuration->get(self::PS_CHECKOUT_PAYPAL_CB_INLINE);
     }
 
     /**
@@ -252,10 +271,16 @@ class PayPalConfiguration
             'p24',
         ];
 
-        // If card is not in first position in configuration, move it at the end.
-        if ('card' !== $paymentMethods[0]['name']) {
+        // If card is not enable and cb inline too -> no card
+        if (!$this->isCardPaymentEnabled() && !$this->isCardInlinePaypalIsEnabled()) {
             unset($fundingSources[0]);
-            $fundingSources[] = 'card';
+        }
+        else {
+            // If card is not in first position in configuration, move it at the end.
+            if ('card' !== $paymentMethods[0]['name']) {
+                unset($fundingSources[0]);
+                $fundingSources[] = 'card';
+            }
         }
 
         return array_values($fundingSources);

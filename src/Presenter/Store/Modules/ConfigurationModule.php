@@ -64,12 +64,7 @@ class ConfigurationModule implements PresenterInterface
                 'captureMode' => $this->paypalConfiguration->getIntent(),
                 'paymentMode' => $this->paypalConfiguration->getPaymentMode(),
                 'cardIsEnabled' => $this->paypalConfiguration->isCardPaymentEnabled(),
-                'cardInlinePaypalIsEnabled' => (bool) \Configuration::get(
-                    'PS_CHECKOUT_PAYPAL_CB_INLINE',
-                    null,
-                    null,
-                    (int) \Context::getContext()->shop->id
-                ),
+                'cardInlinePaypalIsEnabled' => $this->paypalConfiguration->isCardInlinePaypalIsEnabled(),
                 'logger' => [
                     'levels' => [
                         Logger::DEBUG => 'DEBUG : Detailed debug information',

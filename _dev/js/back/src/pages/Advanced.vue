@@ -52,7 +52,9 @@
       <AccountSettingsDeepLink
         class="mb-4 w-50 d-inline-flex float-right"
         :title="$t('account-settings-deeplink.conversion-rules.title')"
-        :description="$t('account-settings-deeplink.conversion-rules.description')"
+        :description="
+          $t('account-settings-deeplink.conversion-rules.description')
+        "
         :linkTitle="$t('account-settings-deeplink.conversion-rules.link-title')"
         linkUrl="https://www.paypal.com/businessmanage/preferences/payments"
         icon="toll"
@@ -65,13 +67,11 @@
 <script>
   import AccountSettingsDeepLink from '@/components/block/account-settings-deeplink';
   import CbInlineActivate from '@/components/block/cb-inline-activate';
-  
+
   export default {
     name: 'Advanced',
     components: {
       CbInlineActivate,
-      FraudTool,
-      FeatureIncoming,
       AccountSettingsDeepLink
     }
   };

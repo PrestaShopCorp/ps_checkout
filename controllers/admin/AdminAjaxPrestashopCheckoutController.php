@@ -268,15 +268,14 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
 
+    /**
+     * AJAX: Toggle card inline availability
+     */
     public function ajaxProcessToggleCardInlinePayPalPayment()
     {
-        Configuration::updateValue(
-            'PS_CHECKOUT_PAYPAL_CB_INLINE',
-            Tools::getValue('status') ? 1 : 0,
-            false,
-            null,
-            (int) Context::getContext()->shop->id
-        );
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
+        $paypalConfiguration->setCardInlinePaypalEnabled(Tools::getValue('status') ? true : false);
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
