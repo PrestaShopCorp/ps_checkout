@@ -302,6 +302,45 @@
       }
     },
     methods: {
+      sendTrack() {
+        if (!this.firebaseStatusAccount && !this.paypalStatusAccount) {
+          // Anything connected
+          this.$segment.track('View Authentication - Status Logged Out', {
+            category: 'ps_checkout'
+          });
+        } else if (this.firebaseStatusAccount && !this.paypalStatusAccount) {
+          // Only ps account connected
+          this.$segment.track(
+            'View Authentication - Status PS account connected',
+            {
+              category: 'ps_checkout'
+            }
+          );
+        } else if (this.firebaseStatusAccount && this.paypalStatusAccount) {
+          // Both "connected"
+          if (
+            this.accountIslinked &&
+            this.merchantEmailIsValid &&
+            this.cardPaymentIsActive === 'SUBSCRIBED'
+          ) {
+            // all right
+            this.$segment.track(
+              'View Authentication screen - Status Both account approved',
+              {
+                category: 'ps_checkout'
+              }
+            );
+          } else {
+            // but need approval
+            this.$segment.track(
+              'View Authentication - Status PP approval pending',
+              {
+                category: 'ps_checkout'
+              }
+            );
+          }
+        }
+      },
       goToSignIn() {
         this.$router
           .push('/authentication/signin')
@@ -318,13 +357,18 @@
         this.$store.dispatch('logOut').then(() => {
           this.$store.dispatch('unlink');
           this.$store.dispatch('psxOnboarding', false);
+          this.sendTrack();
         });
       },
       paypalUnlink() {
         this.$store.dispatch('unlink').then(() => {
           this.$store.dispatch('getOnboardingLink');
+          this.sendTrack();
         });
       }
+    },
+    mounted: function() {
+      this.sendTrack();
     }
   };
 </script>

@@ -68,6 +68,12 @@
     },
     methods: {
       getOnboardingLink() {
+        if (window && window.analytics) {
+          this.$segment.track('Paypal Lightbox triggered', {
+            category: 'ps_checkout'
+          });
+        }
+
         if (
           this.paypalOnboardingLink !== false &&
           this.paypalOnboardingLink.length > 0
@@ -89,6 +95,23 @@
           });
 
         this.paypalIsLoaded = true;
+
+        // TODO put this part in a component
+        let time = 0;
+        const poll = setInterval(() => {
+          if (!window.analytics) {
+            return;
+          }
+          time++;
+          // the callback is fired when window.analytics is available and before any other hit is sent
+          this.$segment.track(`Event for more than ${time} minutes`, {
+            category: 'ps_checkout'
+          });
+
+          if (time >= 4) {
+            clearInterval(poll);
+          }
+        }, 60000);
       }
     },
     destroyed() {

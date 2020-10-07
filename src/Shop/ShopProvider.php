@@ -56,4 +56,57 @@ class ShopProvider
 
         throw new PsCheckoutException('Unable to retrieve current shop group identifier.');
     }
+
+    /**
+     * Get one Shop Url
+     *
+     * @param int $shopId
+     *
+     * @return string
+     */
+    public function getShopUrl($shopId)
+    {
+        return (new \Shop($shopId))->getBaseURL();
+    }
+
+    /**
+     * Get all shops Urls
+     *
+     * @return array
+     */
+    public function getShopsUrl()
+    {
+        $shopList = \Shop::getShops();
+        $protocol = $this->getShopsProtocolInformations();
+        $urlList = [];
+
+        foreach ($shopList as $shop) {
+            $urlList[] = [
+                'id_shop' => $shop['id_shop'],
+                'url' => $protocol['protocol'] . $shop[$protocol['domain_type']] . $shop['uri'],
+            ];
+        }
+
+        return $urlList;
+    }
+
+    /**
+     * getShopsProtocol
+     *
+     * @return array
+     */
+    protected function getShopsProtocolInformations()
+    {
+        if (true === \Tools::usingSecureMode()) {
+            return [
+                'domain_type' => 'domain_ssl',
+                'protocol' => 'https://',
+            ];
+        }
+
+        return [
+            'domain_type' => 'domain',
+            'protocol' => 'http://',
+        ];
+    }
 }

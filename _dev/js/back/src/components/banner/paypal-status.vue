@@ -90,7 +90,8 @@
           {{ $t('banner.paypalStatus.upTo') }}
         </p>
         <a
-          href="https://www.paypal.com/policy/hub/kyc"
+          href="#"
+          @click.prevent="trackSegment()"
           class="btn btn-primary"
           target="_blank"
           v-if="
@@ -137,6 +138,15 @@
         this.$store.dispatch('updatePaypalStatusSettings').then(() => {
           this.displayLiveStep = false;
         });
+      },
+      trackSegment() {
+        if (window && window.analytics) {
+          this.$segment.track('Approval on Paypal link triggered', {
+            category: 'ps_checkout'
+          });
+          // redirect to paypal url
+          window.open('https://www.paypal.com/policy/hub/kyc', '_blank');
+        }
       }
     },
     computed: {

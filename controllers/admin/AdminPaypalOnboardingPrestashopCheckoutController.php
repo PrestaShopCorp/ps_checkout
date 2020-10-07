@@ -51,6 +51,11 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
         $accountUpdater = $this->module->getService('ps_checkout.updater.paypal.account');
         $accountUpdater->update($paypalAccount);
 
+        if ($paypalAccount->getCardPaymentStatus() === PaypalAccountUpdater::SUBSCRIBED) {
+            // track account paypal fully approved
+            $this->module->getService('ps_checkout.segment.tracker')->track('Account Paypal Fully Approved', Shop::getContextListShopID());
+        }
+
         Tools::redirect(
             (new LinkAdapter($this->context->link))->getAdminLink(
                 'AdminModules',

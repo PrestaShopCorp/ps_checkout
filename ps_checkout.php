@@ -116,6 +116,8 @@ class Ps_checkout extends PaymentModule
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
 
+    private $disableSegment;
+
     /**
      * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
      */
@@ -145,6 +147,7 @@ class Ps_checkout extends PaymentModule
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = ['min' => '1.6.1', 'max' => _PS_VERSION_];
+        $this->disableSegment = false;
     }
 
     /**
@@ -154,6 +157,7 @@ class Ps_checkout extends PaymentModule
      */
     public function install()
     {
+        $this->disableSegment = true;
         // Install for both 1.7 and 1.6
         $defaultInstall = parent::install() &&
             (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops() &&
@@ -162,6 +166,10 @@ class Ps_checkout extends PaymentModule
             (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
             $this->installTabs();
+
+        // track the install click button
+        $tracker = $this->getService('ps_checkout.segment.tracker');
+        $tracker->track('Install');
 
         if (!$defaultInstall) {
             return false;
@@ -242,6 +250,10 @@ class Ps_checkout extends PaymentModule
      */
     public function uninstall()
     {
+        // track the uninstall click button
+        $this->disableSegment = true;
+        $this->getService('ps_checkout.segment.tracker')->track('Uninstall');
+
         foreach (array_keys($this->configurationList) as $name) {
             Configuration::deleteByName($name);
         }
@@ -249,6 +261,46 @@ class Ps_checkout extends PaymentModule
         return parent::uninstall() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->dropTable() &&
             $this->uninstallTabs();
+    }
+
+    /**
+     * Activate current module.
+     *
+     * @param bool $force_all If true, enable module for all shop
+     *
+     * @return bool
+     */
+    public function enable($force_all = false)
+    {
+        // track the activate click button
+        if ($this->disableSegment) {
+            $this->disableSegment = false;
+
+            return parent::enable($force_all);
+        } else {
+            return parent::enable($force_all)
+                && $this->getService('ps_checkout.segment.tracker')->track('Activate');
+        }
+    }
+
+    /**
+     * Desactivate current module.
+     *
+     * @param bool $force_all If true, disable module for all shop
+     *
+     * @return bool
+     */
+    public function disable($force_all = false)
+    {
+        // track the deactivate click button
+        if ($this->disableSegment) {
+            $this->disableSegment = false;
+
+            return parent::disable($force_all);
+        } else {
+            return parent::disable($force_all)
+                && $this->getService('ps_checkout.segment.tracker')->track('Deactivate');
+        }
     }
 
     /**
@@ -442,6 +494,9 @@ class Ps_checkout extends PaymentModule
             'imgPath' => $this->_path . 'views/img/',
             'configureLink' => $link,
         ]);
+
+        // track when payment method header is called
+        $this->getService('ps_checkout.segment.tracker')->track('View Payment Methods PS Page');
 
         return $this->display(__FILE__, '/views/templates/hook/adminAfterHeader.tpl');
     }

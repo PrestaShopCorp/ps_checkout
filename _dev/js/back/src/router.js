@@ -38,11 +38,17 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      redirect: '/authentication'
+      redirect: '/authentication',
+      meta: {
+        exclude: true
+      }
     },
     {
       path: '/authentication',
-      name: 'Authentication',
+      name: 'Click configure',
+      meta: {
+        exclude: true
+      },
       component: Accounts,
       beforeEnter: (to, from, next) => {
         if (
@@ -58,7 +64,7 @@ const router = new Router({
     },
     {
       path: '/authentication/signin',
-      name: 'Signin',
+      name: 'Click PS Account Login',
       component: Signin,
       beforeEnter: (to, from, next) => {
         if (store.getters.firebaseOnboardingIsCompleted) {
@@ -70,7 +76,7 @@ const router = new Router({
     },
     {
       path: '/authentication/signup',
-      name: 'Signup',
+      name: 'Click PS Account Sign Up',
       component: Signup,
       beforeEnter: (to, from, next) => {
         if (store.getters.firebaseOnboardingIsCompleted) {
@@ -94,7 +100,7 @@ const router = new Router({
     },
     {
       path: '/authentication/additional',
-      name: 'PsxAdditionalDetails',
+      name: 'View Form Biz',
       component: PsxAdditionalDetails,
       beforeEnter: (to, from, next) => {
         if (
@@ -109,12 +115,12 @@ const router = new Router({
     },
     {
       path: '/customize',
-      name: 'Customize',
+      name: 'View Customize Checkout Tab',
       component: Customize
     },
     {
       path: '/activity',
-      name: 'Activity',
+      name: 'View Manage Activity Tab',
       component: Activity
     },
     {
@@ -129,12 +135,12 @@ const router = new Router({
     },
     {
       path: '/advanced',
-      name: 'Advanced',
+      name: 'View Advanced Settings Tab',
       component: Advanced
     },
     {
       path: '/help',
-      name: 'Help',
+      name: 'View Help Tab',
       component: Help
     }
   ]
@@ -142,14 +148,14 @@ const router = new Router({
 
 // Page list accesible by guest customer
 const guestPages = [
-  'Authentication',
-  'PsxAdditionalDetails',
-  'Signin',
-  'Signup',
-  'ResetPassword',
-  'Experimental',
-  'Debug',
-  'Help'
+  '/authentication',
+  '/authentication/additional',
+  '/authentication/signin',
+  '/authentication/signup',
+  '/authentication/reset',
+  '/experimental',
+  '/debug',
+  '/help'
 ];
 
 // Global navigation guard
@@ -157,7 +163,7 @@ router.beforeEach((to, from, next) => {
   // if the merchant is onboarded, redirect to the next page
   if (store.getters.merchantIsFullyOnboarded) {
     next();
-  } else if (guestPages.indexOf(to.name) !== -1) {
+  } else if (guestPages.indexOf(to.path) !== -1) {
     // if the merchant is not onboarded: only autorize to navigate to authentication tab or help tab
     next();
   } else {

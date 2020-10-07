@@ -176,6 +176,7 @@ services:
       - '@ps_checkout.step.live'
       - '@ps_checkout.translations.translations'
       - '@ps_checkout.context.shop'
+      - '@ps_checkout.shop.provider'
 
   ps_checkout.adapter.language:
     class: 'PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter'

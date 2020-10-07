@@ -11,6 +11,23 @@ services:
   ps_checkout.logger.file.reader:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader'
 
+  ps_checkout.env.segmentenv:
+    class: 'PrestaShop\Module\PrestashopCheckout\Environment\SegmentEnv'
+    
+  ps_checkout.manager.shopuuid:
+    class: 'PrestaShop\Module\PrestashopCheckout\ShopUuidManager'
+
+  ps_checkout.segment.tracker:
+    class: 'PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker'
+    arguments:
+      - '@ps_checkout.env.segmentenv'
+      - '@ps_checkout.manager.shopuuid'
+  
+  ps_checkout.step.live:
+    class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep'
+    arguments:
+      - '@ps_checkout.configuration'
+
   ps_checkout.repository.orderpayment:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\OrderPaymentRepository'
 
