@@ -36,6 +36,7 @@
         data-toggle="switch"
         data-inverse="true"
         type="checkbox"
+        :disabled="disable"
         :name="name"
       />
     </div>

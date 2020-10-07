@@ -254,6 +254,16 @@ class Translations
                     'useProductionMode' => $this->module->l('Use production mode', 'translations'),
                     'tipProductionMode' => $this->module->l('Production mode enables you to collect your payments.', 'translations'),
                 ],
+                'payment-method-activation' => [
+                    'title' => $this->module->l('Alternative Credit Card Fields activation', 'translations'),
+                    'label' => $this->module->l('PayPal Branded Credit Card Fields', 'translations'),
+                    'disable' => $this->module->l('PayPal branded card fields are not available because Integrated card fields are activated, which provide a better checkout experience.', 'translations'),
+                    'popover-difference-question' => $this->module->l('What is the difference between Integrated Credit Card fields & PayPal branded Credit Card Fields ?', 'translations'),
+                    'popover-when-question' => $this->module->l('When to use PayPal branded Credit Card fields ?', 'translations'),
+                    'popover-difference-answer-begin' => $this->module->l('Integrated Credit Card fields provide the best payment experience you can find in PrestaShop. Well integrated in your checkout process, not branded, with the fewest number of fields, and lowest fee rates (see them on ', 'translations'),
+                    'popover-difference-answer-end' => $this->module->l(' ) : we highly recommend to use these ones, by default. But you need PayPal full approval for accepting Credit Cards payment with the fields. You can see the status of this approval in the ', 'translations'),
+                    'popover-when-answer' => $this->module->l('If approval is pending or issues are encountered with the Integrated fields, you can activate these fields as a backup, only if Integrated fields are not available or deactivated. The fees are the same as PayPal payment method.', 'translations'),
+                ],
                 'express-checkout' => [
                     'title' => $this->module->l('Define PayPal express checkout flow', 'translations'),
                     'pageLocation' => $this->module->l('Choose page location', 'translations'),
