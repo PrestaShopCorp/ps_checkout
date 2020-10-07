@@ -87,6 +87,19 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
 
             $this->paypalOrderId = $bodyValues['orderID'];
 
+            $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
+            $psCheckoutCartCollection->where('id_cart', '=', (int) $this->context->cart->id);
+
+            /** @var PsCheckoutCart|false $psCheckoutCart */
+            $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+
+            if (false !== $psCheckoutCart) {
+                $psCheckoutCart->paypal_funding = $bodyValues['fundingSource'];
+                $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) ? (bool) $bodyValues['isExpressCheckout'] : false;
+                $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) ? (bool) $bodyValues['isHostedFields'] : false;
+                $psCheckoutCart->save();
+            }
+
             $this->module->getLogger()->info(sprintf(
                 'ValidateOrder PayPal Order Id : %s Cart : %s',
                 $bodyValues['orderID'],
