@@ -66,10 +66,7 @@ class ShopProvider
      */
     public function getShopUrl($shopId)
     {
-        $shop = \Shop::getShop($shopId);
-        $protocol = $this->getShopsProtocolInformations();
-
-        return $protocol['protocol'] . $shop[$protocol['domain_type']] . $shop['uri'];
+        return (new \Shop($shopId))->getBaseURL();
     }
 
     /**

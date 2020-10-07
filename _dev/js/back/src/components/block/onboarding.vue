@@ -96,14 +96,15 @@
 
         this.paypalIsLoaded = true;
 
-        var time = 0;
+        // TODO put this part in a component
+        let time = 0;
         const poll = setInterval(() => {
           if (!window.analytics) {
             return;
           }
           time++;
           // the callback is fired when window.analytics is available and before any other hit is sent
-          this.$segment.track('Event for more than ' + time + ' minutes', {
+          this.$segment.track(`Event for more than ${time} minutes`, {
             category: 'ps_checkout'
           });
 
