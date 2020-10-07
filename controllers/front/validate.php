@@ -44,7 +44,13 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
      */
     public function postProcess()
     {
+        header('content-type:application/json');
+
         try {
+            if (Tools::getValue('static_token') !== Tools::getToken(false)) {
+                throw new PsCheckoutException('Bad token', PsCheckoutException::PSCHECKOUT_BAD_STATIC_TOKEN);
+            }
+
             if (false === $this->checkIfContextIsValid()) {
                 throw new PsCheckoutException('The context is not valid', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
             }
@@ -106,6 +112,8 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             // API call here
             $response = $payment->validateOrder($dataOrder);
 
+            $this->context->cookie->__unset('paypalEmail');
+
             $this->sendOkResponse($response);
         } catch (Exception $exception) {
             $this->handleException($exception);
@@ -138,7 +146,6 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
      */
     private function sendOkResponse($response)
     {
-        header('content-type:application/json');
         echo json_encode([
             'status' => true,
             'httpCode' => 200,

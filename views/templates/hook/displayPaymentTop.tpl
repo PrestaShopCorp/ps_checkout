@@ -25,3 +25,31 @@
     <div id="ps_checkout-error-text"></div>
   </div>
 </div>
+
+{if $isExpressCheckout}
+<div class="express-checkout-block mb-2">
+  <img src="{$paypalLogoPath|escape:'htmlall':'UTF-8'}" class="express-checkout-img" alt="PayPal">
+  <p class="express-checkout-label">
+    {$translatedText|escape:'htmlall':'UTF-8'}
+  </p>
+</div>
+{/if}
+
+{if $is17}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const paymentOptions = document.querySelectorAll('input[name="payment-option"]');
+
+    if (null !== paymentOptions) {
+      paymentOptions.forEach(function(paymentOption) {
+        const paymentOptionContainer = document.getElementById(paymentOption.id + '-container');
+        const paymentOptionName = paymentOption.getAttribute('data-module-name');
+
+        if ('ps_checkout' === paymentOptionName) {
+          paymentOptionContainer.style.display = 'none';
+        }
+      });
+    }
+  });
+</script>
+{/if}

@@ -18,6 +18,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+
 /**
  * This controller receive ajax call on customer canceled payment
  */
@@ -35,22 +37,44 @@ class Ps_CheckoutCancelModuleFrontController extends ModuleFrontController
      */
     public function postProcess()
     {
-        $bodyContent = file_get_contents('php://input');
+        header('content-type:application/json');
 
-        if (false === empty($bodyContent)) {
-            $bodyValues = json_decode($bodyContent, true);
-
-            if (false === empty($bodyValues['orderID'])) {
-                $this->module->getLogger()->info(sprintf(
-                    'Customer canceled payment - PayPal Order %s',
-                    $bodyValues['orderID']
-                ));
+        try {
+            if (Tools::getValue('static_token') !== Tools::getToken(false)) {
+                throw new PsCheckoutException('Bad token', PsCheckoutException::PSCHECKOUT_BAD_STATIC_TOKEN);
             }
-        }
 
-        //@todo remove cookie
-        $this->context->cookie->__unset('ps_checkout_orderId');
-        $this->context->cookie->__unset('ps_checkout_fundingSource');
+            $bodyContent = file_get_contents('php://input');
+
+            if (false === empty($bodyContent)) {
+                $bodyValues = json_decode($bodyContent, true);
+
+                if (false === empty($bodyValues['orderID'])) {
+                    $this->module->getLogger()->info(sprintf(
+                        'Customer canceled payment - PayPal Order %s',
+                        $bodyValues['orderID']
+                    ));
+                }
+            }
+
+            echo json_encode([
+                'status' => true,
+                'httpCode' => 200,
+                'body' => isset($bodyValues) ? $bodyValues : '',
+                'exceptionCode' => null,
+                'exceptionMessage' => null,
+            ]);
+        } catch (Exception $exception) {
+            header('HTTP/1.0 500 Internal Server Error');
+
+            echo json_encode([
+                'status' => false,
+                'httpCode' => 500,
+                'body' => '',
+                'exceptionCode' => $exception->getCode(),
+                'exceptionMessage' => $exception->getMessage(),
+            ]);
+        }
 
         exit;
     }

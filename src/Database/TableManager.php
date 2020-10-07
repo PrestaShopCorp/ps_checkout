@@ -22,29 +22,33 @@ namespace PrestaShop\Module\PrestashopCheckout\Database;
 
 class TableManager
 {
-    const TABLE_ORDER_MATRICE = 'pscheckout_order_matrice';
+    /**
+     * @var \Db
+     */
+    private $db;
 
     /**
-     * Create table TABLE_ORDER_MATRICE
+     * @param \Db|null $db PrestaShop Db instance
+     */
+    public function __construct(\Db $db = null)
+    {
+        if (null === $db) {
+            $db = \Db::getInstance();
+        }
+
+        $this->db = $db;
+    }
+
+    /**
+     * Create table
      *
      * @return bool
      */
     public function createTable()
     {
-        $query = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . self::TABLE_ORDER_MATRICE . '` (
-            `id_order_matrice` int(10) unsigned NOT NULL AUTO_INCREMENT,
-            `id_order_prestashop` int(10) unsigned NOT NULL,
-            `id_order_paypal` varchar(20) NOT NULL,
-            PRIMARY KEY (`id_order_matrice`)
-            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;';
-
-        if (\Db::getInstance()->execute($query) == false) {
-            return false;
-        }
-
-        return \Db::getInstance()->execute('
+        return $this->db->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_cart` (
-              `id_pscheckout_cart` int unsigned NOT NULL AUTO_INCREMENT,
+              `id_pscheckout_cart` int(10) unsigned NOT NULL AUTO_INCREMENT,
               `id_cart` int unsigned NOT NULL,
               `paypal_intent` varchar(20) DEFAULT "CAPTURE",
               `paypal_order` varchar(20) NULL,
@@ -53,6 +57,8 @@ class TableManager
               `paypal_token` varchar(1024) NULL,
               `paypal_token_expire` datetime NULL,
               `paypal_authorization_expire` datetime NULL,
+              `isExpressCheckout` tinyint(1) unsigned DEFAULT 0 NOT NULL,
+              `isHostedFields` tinyint(1) unsigned DEFAULT 0 NOT NULL,
               `date_add` datetime NOT NULL,
               `date_upd` datetime NOT NULL,
               PRIMARY KEY (`id_pscheckout_cart`)
@@ -61,18 +67,28 @@ class TableManager
     }
 
     /**
-     * Drop table TABLE_ORDER_MATRICE
+     * Drop table
      *
      * @return bool
      */
     public function dropTable()
     {
-        $query = 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . self::TABLE_ORDER_MATRICE . '`';
+        return $this->db->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'pscheckout_cart`');
+    }
 
-        if (\Db::getInstance()->execute($query) == false) {
-            return false;
-        }
-
-        return true;
+    /**
+     * Migrate data from old table based on id_order to new table based on id_cart
+     * PrestaShop can create multiple Order from one Cart, so we need to find associated PayPal Order
+     *
+     * @return bool
+     */
+    public function populatePsCartFromOrderMatrice()
+    {
+        return $this->db->execute('
+            INSERT INTO `' . _DB_PREFIX_ . 'pscheckout_cart` (`id_cart`, `paypal_order`, `date_add`, `date_upd`)
+            SELECT o.id_cart, om.id_order_paypal, o.date_add, o.date_upd
+            FROM `' . _DB_PREFIX_ . 'pscheckout_order_matrice` AS om
+            INNER JOIN `' . _DB_PREFIX_ . 'orders` AS o ON (om.id_order_prestashop = o.id_order)
+        ');
     }
 }

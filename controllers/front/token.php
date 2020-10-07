@@ -18,6 +18,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+
 /**
  * This controller receive ajax call to retrieve a PayPal Client Token
  */
@@ -35,7 +37,13 @@ class Ps_CheckoutTokenModuleFrontController extends ModuleFrontController
      */
     public function postProcess()
     {
+        header('content-type:application/json');
+
         try {
+            if (Tools::getValue('static_token') !== Tools::getToken(false)) {
+                throw new PsCheckoutException('Bad token', PsCheckoutException::PSCHECKOUT_BAD_STATIC_TOKEN);
+            }
+
             $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
             $psCheckoutCartCollection->where('id_cart', '=', (int) $this->context->cart->id);
 
@@ -70,11 +78,11 @@ class Ps_CheckoutTokenModuleFrontController extends ModuleFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            header('HTTP/1.0 400 Bad Request');
+            header('HTTP/1.0 500 Internal Server Error');
 
             echo json_encode([
                 'status' => false,
-                'httpCode' => 400,
+                'httpCode' => 500,
                 'body' => '',
                 'exceptionCode' => $exception->getCode(),
                 'exceptionMessage' => $exception->getMessage(),

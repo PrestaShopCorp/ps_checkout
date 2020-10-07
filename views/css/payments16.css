@@ -64,15 +64,30 @@ p.payment_module .pscheckout-paypal img, p.payment_module .pscheckout-card img {
   to { transform: rotate(360deg); }
 }
 
-.js-additional-information .form-control {
-  background-color: #f3f3f3;
+#ps_checkout-hosted-fields-card-number {
+  position: relative;
+  height: 45px;
+  margin-top: 6px;
+}
+
+#ps_checkout-hosted-fields-card-expiration-date {
+  height: 45px;
+  margin-top: 6px;
+}
+
+#ps_checkout-hosted-fields-card-cvv {
+  height: 45px;
+  margin-top: 6px;
+}
+
+#ps_checkout-hosted-fields-form .form-group .form-control {
+  background-color: #F3F3F3;
   border-radius: 5px;
 }
 
-
 #card-image {
   position: absolute;
-  top: 28px;
+  top: 7px;
   right: 1em;
   width: 44px;
   height: 28px;
@@ -103,19 +118,28 @@ p.payment_module .pscheckout-paypal img, p.payment_module .pscheckout-card img {
   background-position: 0 -133px;
 }
 
-.js-additional-information .braintree-hosted-fields-invalid {
+#ps_checkout-hosted-fields-form .braintree-hosted-fields-focused {
+  border: .1875rem solid #2fb5d2;
+  background-color: #fff;
+  color: #232323;
+}
+
+#ps_checkout-hosted-fields-form .braintree-hosted-fields-invalid {
   border: .1875rem solid #e76d7a;
+  animation: shake 500ms cubic-bezier(.20, 1.3, .7, 1) both;
+  transform: translate3d(0, 0, 0);
   background-color: #fff;
   backface-visibility: hidden;
 }
 
-.js-additional-information .braintree-hosted-fields-valid {
-  border: .1875rem solid #6FCC80;
+#ps_checkout-hosted-fields-form .braintree-hosted-fields-valid {
+  border: .1875rem solid #6fcc80;
+  transform: translate3d(0, 0, 0);
   background-color: #fff;
   backface-visibility: hidden;
 }
 
-.defautl-credit-card {
+#ps_checkout-hosted-fields-form .defautl-credit-card {
   position: absolute;
   top: 2px;
   right: 10px;

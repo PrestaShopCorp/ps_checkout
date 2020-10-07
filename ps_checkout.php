@@ -384,6 +384,10 @@ class Ps_checkout extends PaymentModule
             return '';
         }
 
+        $this->context->smarty->assign([
+            'modulePath' => $this->getPathUri(),
+        ]);
+
         return $this->display(__FILE__, '/views/templates/hook/payment.tpl');
     }
 
@@ -552,8 +556,6 @@ class Ps_checkout extends PaymentModule
         $controller = Tools::getValue('controller');
 
         if (false === in_array($controller, ['cart', 'product', 'order', 'orderopc'], true)
-            || false === Validate::isLoadedObject($this->context->cart)
-            || false === $this->checkCurrency($this->context->cart)
             || false === $this->merchantIsValid()
         ) {
             return;
@@ -618,6 +620,8 @@ class Ps_checkout extends PaymentModule
             $this->name . 'PayPalClientToken' => $payPalClientToken,
             $this->name . 'PayPalOrderId' => $payPalOrderId,
             $this->name . 'HostedFieldsEnabled' => $paypalAccountRepository->cardHostedFieldsIsAvailable(),
+            $this->name . 'HostedFieldsSelected' => false !== $psCheckoutCart ? (bool) $psCheckoutCart->isHostedFields : false,
+            $this->name . 'ExpressCheckoutSelected' => false !== $psCheckoutCart ? (bool) $psCheckoutCart->isExpressCheckout : false,
             $this->name . 'ExpressCheckoutProductEnabled' => $expressCheckoutConfiguration->isProductPageEnabled(),
             $this->name . 'ExpressCheckoutCartEnabled' => $expressCheckoutConfiguration->isOrderPageEnabled(),
             $this->name . 'ExpressCheckoutOrderEnabled' => $expressCheckoutConfiguration->isCheckoutPageEnabled(),
@@ -703,7 +707,7 @@ class Ps_checkout extends PaymentModule
                 ]
             );
         } else {
-            $this->context->controller->addCSS($this->getPathUri() . 'views/css/payments16.css?version=' . $this->version);
+            $this->context->controller->addCSS($this->getPathUri() . 'views/css/payments16.css');
         }
     }
 
@@ -835,29 +839,36 @@ class Ps_checkout extends PaymentModule
         /** @var \Order $order */
         $order = $params['order'];
 
-        if (!Validate::isLoadedObject($order)) {
-            return '';
-        }
-
-        $paypalOrderId = (new OrderMatrice())->getOrderPaypalFromPrestashop($order->id);
-
         // This order has not been paid with this module
-        if (empty($paypalOrderId)) {
+        if (false === Validate::isLoadedObject($order)
+            || $this->name !== $order->module
+        ) {
             return '';
         }
 
-        // Do not display wrong data to invoice
-        if (OrderMatrice::hasInconsistencies($order->id)) {
+        $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
+        $psCheckoutCartCollection->where('id_cart', '=', (int) $order->id_cart);
+
+        /** @var PsCheckoutCart|false $psCheckoutCart */
+        $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+
+        // No PayPal Order found for this Order
+        // Or inconsistencies due to bug v1.2.11 so we don't display wrong data to invoice
+        if (false === $psCheckoutCart
+            || $psCheckoutCartCollection->count() > 1
+        ) {
             return '';
         }
 
-        $legalFreeText = $this->l('PayPal Order Id : ', 'translations') . $paypalOrderId . PHP_EOL;
+        $legalFreeText = $this->l('PayPal Order Id : ', 'translations') . $psCheckoutCart->paypal_order . PHP_EOL;
 
         /** @var \OrderPayment[] $orderPayments */
         $orderPayments = $order->getOrderPaymentCollection();
 
         foreach ($orderPayments as $orderPayment) {
-            $legalFreeText .= $this->l('PayPal Transaction Id : ', 'translations') . $orderPayment->transaction_id . PHP_EOL;
+            if (false === empty($orderPayment->transaction_id)) {
+                $legalFreeText .= $this->l('PayPal Transaction Id : ', 'translations') . $orderPayment->transaction_id . PHP_EOL;
+            }
         }
 
         return $legalFreeText;
@@ -950,7 +961,7 @@ class Ps_checkout extends PaymentModule
 
         $paymentError = (int) Tools::getValue('paymentError');
         $paymentErrorMessage = '';
-        $isExpressCheckout = $this->context->cookie->__isset('paypalOrderId');
+        $isExpressCheckout = $this->context->cookie->__isset('paypalEmail');
 
         if (0 < $paymentError) {
             switch ($paymentError) {
@@ -1005,7 +1016,11 @@ class Ps_checkout extends PaymentModule
             }
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+
         $this->context->smarty->assign([
+            'is17' => $shopContext->isShop17(),
             'paymentError' => $paymentError,
             'paymentErrorMessage' => $paymentErrorMessage,
             'isExpressCheckout' => $isExpressCheckout,

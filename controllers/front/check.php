@@ -39,7 +39,12 @@ class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
     public function postProcess()
     {
         header('content-type:application/json');
+
         try {
+            if (Tools::getValue('static_token') !== Tools::getToken(false)) {
+                throw new PsCheckoutException('Bad token', PsCheckoutException::PSCHECKOUT_BAD_STATIC_TOKEN);
+            }
+
             if (false === Validate::isLoadedObject($this->context->cart)) {
                 throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
             }
@@ -67,13 +72,13 @@ class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
                 $psCheckoutCart->id_cart = (int) $this->context->cart->id;
             }
 
-            if (false === empty($bodyValues['fundingSource'])
-                && false !== Validate::isGenericName($bodyValues['fundingSource'])
-                && $psCheckoutCart->paypal_funding !== $bodyValues['fundingSource']
-            ) {
+            if (false === empty($bodyValues['fundingSource'])) {
                 $psCheckoutCart->paypal_funding = $bodyValues['fundingSource'];
-                $psCheckoutCart->save();
             }
+
+            $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) ? (bool) $bodyValues['isExpressCheckout'] : false;
+            $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) ? (bool) $bodyValues['isHostedFields'] : false;
+            $psCheckoutCart->save();
 
             if (false === empty($psCheckoutCart->paypal_order)) {
                 $isExpressCheckout = (isset($bodyValues['express_checkout']) && $bodyValues['express_checkout']) || empty($this->context->cart->id_address_delivery);

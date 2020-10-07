@@ -66,7 +66,7 @@ export class SmartButtonComponent {
           }
 
           this.psCheckoutService
-            .postCheckCartOrder(data, actions)
+            .postCheckCartOrder({ ...data, fundingSource: this.fundingSource.name }, actions)
             .catch(error => {
               this.checkout.children.notification.showError(error.message);
               actions.reject();
@@ -80,7 +80,7 @@ export class SmartButtonComponent {
         },
         onApprove: (data, actions) => {
           return this.psCheckoutService
-            .postValidateOrder(data, actions)
+            .postValidateOrder({ ...data, fundingSource: this.fundingSource.name }, actions)
             .catch(error => {
               this.checkout.children.notification.showError(error.message);
             });
@@ -93,7 +93,7 @@ export class SmartButtonComponent {
           });
         },
         createOrder: data => {
-          return this.psCheckoutService.postCreateOrder(data).catch(error => {
+          return this.psCheckoutService.postCreateOrder({ ...data, fundingSource: this.fundingSource.name }).catch(error => {
             this.checkout.children.notification.showError(
               `${error.message} ${error.name}`
             );

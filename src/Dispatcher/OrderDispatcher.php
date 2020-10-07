@@ -34,6 +34,11 @@ class OrderDispatcher implements Dispatcher
     const PS_CHECKOUT_PAYMENT_DENIED = 'PaymentCaptureDenied';
 
     /**
+     * @var \PsCheckoutCart
+     */
+    private $psCheckoutCart;
+
+    /**
      * Dispatch the Event Type to manage the merchant status
      *
      * {@inheritdoc}
@@ -44,7 +49,17 @@ class OrderDispatcher implements Dispatcher
      */
     public function dispatchEventType($payload)
     {
-        $psOrderId = $this->getPrestashopOrderId($payload['orderId']);
+        if (empty($payload['orderId'])) {
+            throw new PsCheckoutException('orderId must not be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_ORDER_ID_EMPTY);
+        }
+
+        $this->assignPsCheckoutCart($payload['orderId']);
+
+        $psOrderId = \Order::getOrderByCartId((int) $this->psCheckoutCart->id_cart);
+
+        if (false === $psOrderId) {
+            throw new PsCheckoutException(sprintf('order #%s does not exist', $this->psCheckoutCart->paypal_order), PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
+        }
 
         if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REFUNED
             || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REVERSED) {
@@ -63,28 +78,6 @@ class OrderDispatcher implements Dispatcher
         }
 
         return true;
-    }
-
-    /**
-     * Check the PSL orderId value and transform it into a Prestashop OrderId
-     *
-     * @param string $orderId paypal order id
-     *
-     * @return int
-     *
-     * @throws PsCheckoutException
-     */
-    private function getPrestashopOrderId($orderId)
-    {
-        (new WebHookValidation())->validateRefundOrderIdValue($orderId);
-
-        $psOrderId = (new \OrderMatrice())->getOrderPrestashopFromPaypal($orderId);
-
-        if (!$psOrderId) {
-            throw new PsCheckoutException(sprintf('order #%s does not exist', $orderId), PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
-        }
-
-        return $psOrderId;
     }
 
     /**
@@ -133,7 +126,7 @@ class OrderDispatcher implements Dispatcher
 
         $order = new \Order($orderId);
         $currentOrderStateId = (int) $order->getCurrentState();
-        $newOrderStateId = (int) $this->getNewState($eventType, $resource, $currentOrderStateId);
+        $newOrderStateId = (int) $this->getNewState($eventType, $currentOrderStateId);
 
         // Prevent duplicate state entry
         if ($currentOrderStateId !== $newOrderStateId
@@ -161,7 +154,7 @@ class OrderDispatcher implements Dispatcher
             if (\Validate::isLoadedObject($orderPayment)) {
                 if ($orderPayment->transaction_id !== $resource['id']) {
                     $orderPayment->transaction_id = $resource['id'];
-                    $orderPayment->payment_method = $this->getPaymentMessageTranslation($resource);
+                    $orderPayment->payment_method = $this->getPaymentMethodTranslation();
                     $orderPayment->save();
                 }
                 $shouldAddOrderPayment = false;
@@ -171,7 +164,7 @@ class OrderDispatcher implements Dispatcher
         if (true === $shouldAddOrderPayment) {
             $order->addOrderPayment(
                 $resource['amount']['value'],
-                $this->getPaymentMessageTranslation($resource),
+                $this->getPaymentMethodTranslation(),
                 $resource['id'],
                 \Currency::getCurrencyInstance(\Currency::getIdByIsoCode($resource['amount']['currency_code'])),
                 (new DatePresenter($resource['create_time'], 'Y-m-d H:i:s'))->present()
@@ -183,12 +176,11 @@ class OrderDispatcher implements Dispatcher
 
     /**
      * @param string $eventType
-     * @param array $resource
      * @param int $currentOrderStateId
      *
      * @return int
      */
-    private function getNewState($eventType, $resource, $currentOrderStateId)
+    private function getNewState($eventType, $currentOrderStateId)
     {
         if (static::PS_CHECKOUT_PAYMENT_AUTH_VOIDED === $eventType) {
             return (int) \Configuration::getGlobalValue('PS_OS_CANCELED');
@@ -202,7 +194,7 @@ class OrderDispatcher implements Dispatcher
             return (int) \Configuration::getGlobalValue('PS_OS_ERROR');
         }
 
-        return $this->getPendingStatusId($resource);
+        return $this->getPendingStatusId();
     }
 
     /**
@@ -220,32 +212,62 @@ class OrderDispatcher implements Dispatcher
     }
 
     /**
-     * @param array $resource
-     *
      * @return int OrderState identifier
      */
-    private function getPendingStatusId($resource)
+    private function getPendingStatusId()
     {
-        if (isset($resource['processor_response']['avs_code'])) {
-            return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
+        switch ($this->psCheckoutCart->paypal_funding) {
+            case 'card':
+                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
+                break;
+            case 'paypal':
+                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
+                break;
+            default:
+                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT');
         }
 
-        return (int) \Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
+        return $orderStateId;
     }
 
     /**
-     * @param array $resource
-     *
      * @return string
      */
-    private function getPaymentMessageTranslation(array $resource)
+    private function getPaymentMethodTranslation()
     {
         $module = \Module::getInstanceByName('ps_checkout');
 
-        if (isset($resource['processor_response']['avs_code'])) {
-            return $module->l('Payment by card');
+        switch ($this->psCheckoutCart->paypal_funding) {
+            case 'card':
+                $message = $module->l('Payment by card', 'translations');
+                break;
+            case 'paypal':
+                $message = $module->l('Payment by PayPal', 'translations');
+                break;
+            default:
+                // @todo Add translations for LPM
+                $message = $module->l('Payment by PayPal', 'translations');
         }
 
-        return $module->l('Payment by PayPal');
+        return $message;
+    }
+
+    /**
+     * @param string $payPalOrderId PayPal Order Id
+     *
+     * @throws PsCheckoutException
+     * @throws \PrestaShopException
+     */
+    private function assignPsCheckoutCart($payPalOrderId)
+    {
+        $psCheckoutCartCollection = new \PrestaShopCollection('PsCheckoutCart');
+        $psCheckoutCartCollection->where('paypal_order', '=', $payPalOrderId);
+
+        /* @var \PsCheckoutCart|false $psCheckoutCart */
+        $this->psCheckoutCart = $psCheckoutCartCollection->getFirst();
+
+        if (false === $this->psCheckoutCart) {
+            throw new PsCheckoutException(sprintf('order #%s does not exist', $payPalOrderId), PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
+        }
     }
 }

@@ -17,8 +17,6 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-use PrestaShop\Module\PrestashopCheckout\Database\TableManager;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -32,5 +30,5 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_2_11($module)
 {
-    return \Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . TableManager::TABLE_ORDER_MATRICE . '` CHANGE `id_order_prestashop` `id_order_prestashop` INT(10) UNSIGNED NOT NULL;');
+    return \Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_order_matrice` CHANGE `id_order_prestashop` `id_order_prestashop` INT(10) UNSIGNED NOT NULL;');
 }
