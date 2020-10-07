@@ -42,6 +42,7 @@ export const PsCheckoutConfig = {
     card: window.ps_checkoutCardFundingSourceImg
   },
 
+  expressCheckoutSelected: window.ps_checkoutExpressCheckoutSelected,
   expressCheckoutProductEnabled:
     window.ps_checkoutExpressCheckoutProductEnabled,
   expressCheckoutCartEnabled: window.ps_checkoutExpressCheckoutCartEnabled,

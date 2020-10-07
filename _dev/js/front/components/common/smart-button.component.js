@@ -19,7 +19,7 @@
 import { SMART_BUTTON_CLASS } from '../../constants/ps-checkout-classes.constants';
 
 export class SmartButtonComponent {
-  constructor(checkout, fundingSource) {
+  constructor(checkout, fundingSource, htmlContainer) {
     this.checkout = checkout;
     this.checkoutConfig = checkout.config;
 
@@ -29,7 +29,8 @@ export class SmartButtonComponent {
     this.payPalService = checkout.payPalService;
     this.psCheckoutService = checkout.psCheckoutService;
 
-    this.buttonContainer = this.htmlElementService.getButtonContainer();
+    this.buttonContainer =
+      htmlContainer || this.htmlElementService.getButtonContainer();
   }
 
   getButtonId() {
@@ -40,6 +41,11 @@ export class SmartButtonComponent {
     return this.payPalService
       .getButtonPayment(this.fundingSource.name, {
         onInit: (data, actions) => {
+          if (!this.checkout.children.conditionsCheckbox) {
+            actions.enable();
+            return;
+          }
+
           if (this.checkout.children.conditionsCheckbox.isChecked()) {
             this.checkout.children.notification.hideConditions();
             actions.enable();
@@ -59,14 +65,20 @@ export class SmartButtonComponent {
           });
         },
         onClick: (data, actions) => {
-          if (!this.checkout.children.conditionsCheckbox.isChecked()) {
+          if (
+            this.checkout.children.conditionsCheckbox &&
+            !this.checkout.children.conditionsCheckbox.isChecked()
+          ) {
             this.checkout.children.notification.hideCancelled();
             this.checkout.children.notification.hideError();
             this.checkout.children.notification.showConditions();
           }
 
           this.psCheckoutService
-            .postCheckCartOrder({ ...data, fundingSource: this.fundingSource.name }, actions)
+            .postCheckCartOrder(
+              { ...data, fundingSource: this.fundingSource.name },
+              actions
+            )
             .catch(error => {
               this.checkout.children.notification.showError(error.message);
               actions.reject();
@@ -80,7 +92,10 @@ export class SmartButtonComponent {
         },
         onApprove: (data, actions) => {
           return this.psCheckoutService
-            .postValidateOrder({ ...data, fundingSource: this.fundingSource.name }, actions)
+            .postValidateOrder(
+              { ...data, fundingSource: this.fundingSource.name },
+              actions
+            )
             .catch(error => {
               this.checkout.children.notification.showError(error.message);
             });
@@ -93,11 +108,16 @@ export class SmartButtonComponent {
           });
         },
         createOrder: data => {
-          return this.psCheckoutService.postCreateOrder({ ...data, fundingSource: this.fundingSource.name }).catch(error => {
-            this.checkout.children.notification.showError(
-              `${error.message} ${error.name}`
-            );
-          });
+          return this.psCheckoutService
+            .postCreateOrder({
+              ...data,
+              fundingSource: this.fundingSource.name
+            })
+            .catch(error => {
+              this.checkout.children.notification.showError(
+                `${error.message} ${error.name}`
+              );
+            });
         }
       })
       .render(`#${this.getButtonId()}`);

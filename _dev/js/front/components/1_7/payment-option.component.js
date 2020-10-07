@@ -16,9 +16,9 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import { SmartButtonComponent } from './smart-button.component';
-import { HostedFieldsComponent } from './hosted-fields.component';
-import { MarkerComponent } from './marker.component';
+import { SmartButtonComponent } from '../common/smart-button.component';
+import { HostedFieldsComponent } from '../common/hosted-fields.component';
+import { MarkerComponent } from '../common/marker.component';
 
 const PAYMENT_OPTION_LABEL_MARK = id => `${id}-mark`;
 const PAYMENT_OPTION_CONTAINER_IDENTIFIER = id => `${id}-container`;
@@ -219,6 +219,6 @@ export class PaymentOptionComponent {
   }
 
   isDefaultPaymentOption() {
-    return !!this.fundingSource;
+    return !this.fundingSource;
   }
 }

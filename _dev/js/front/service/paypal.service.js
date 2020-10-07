@@ -45,6 +45,10 @@ export class PaypalService {
     this.$ = id => this.translationService.getTranslationString(id);
   }
 
+  getOrderId() {
+    return this.config.orderId;
+  }
+
   /**
    * @param {string} fundingSource
    * @param {PaypalButtonEvents} events

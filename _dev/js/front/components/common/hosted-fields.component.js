@@ -19,7 +19,13 @@
 import { SMART_BUTTON_CLASS } from '../../constants/ps-checkout-classes.constants';
 
 export class HostedFieldsComponent {
-  constructor(checkout, paymentOption, fundingSource) {
+  constructor(
+    checkout,
+    paymentOption,
+    fundingSource,
+    hostedFieldsContainer,
+    paymentButtonContainer
+  ) {
     this.checkout = checkout;
     this.checkoutConfig = checkout.config;
 
@@ -31,7 +37,9 @@ export class HostedFieldsComponent {
     this.payPalService = checkout.payPalService;
     this.psCheckoutService = checkout.psCheckoutService;
 
-    this.buttonContainer = this.htmlElementService.getButtonContainer();
+    this.buttonContainer =
+      paymentButtonContainer || this.htmlElementService.getButtonContainer();
+    this.hostedFieldsContainer = hostedFieldsContainer;
 
     this.paymentOptionsContainer = this.htmlElementService.getPaymentOptionsContainer();
 
@@ -49,30 +57,39 @@ export class HostedFieldsComponent {
   }
 
   render() {
-    this.paymentOptionAdditionalInformation = this.paymentOption.paymentOptionAdditionalInformation;
-    this.paymentOptionAdditionalInformation.id = `${this.paymentOption.getPaymentOptionId()}-additional-information`;
-    this.paymentOptionsContainer.append(
-      this.paymentOptionAdditionalInformation
-    );
+    if (!this.hostedFieldsContainer) {
+      this.hostedFieldsContainer = this.paymentOption.paymentOptionAdditionalInformation;
+      this.hostedFieldsContainer.id = `${this.paymentOption.getPaymentOptionId()}-additional-information`;
+      this.paymentOptionsContainer.append(this.hostedFieldsContainer);
+    }
+
+    if (this.htmlElementService.getHostedFieldsForm) {
+      this.hostedFieldForms = this.htmlElementService.getHostedFieldsForm();
+      this.hostedFieldForms.style.display = 'block';
+    }
 
     this.smartButton = document.createElement('div');
 
     this.smartButton.id = this.getButtonId();
     this.smartButton.classList.add(SMART_BUTTON_CLASS);
 
-    this.hostedFieldForms = this.htmlElementService.getHostedFieldsForm();
-    this.hostedFieldForms.style.display = 'block';
+    const basePaymentButton = document.querySelector(
+      "#payment-confirmation [type='submit']"
+    );
 
-    this.hostedFieldSubmitButton = document
-      .querySelector("#payment-confirmation [type='submit']")
-      .cloneNode(true);
+    this.hostedFieldSubmitButton = basePaymentButton
+      ? basePaymentButton
+      : document.createElement('button');
+
     this.hostedFieldSubmitButton.id = 'ps_checkout-hosted-submit-button';
     this.hostedFieldSubmitButton.type = 'button';
+    !basePaymentButton && (this.hostedFieldSubmitButton.innerHTML = 'GO');
 
     this.hostedFieldSubmitButton.classList.remove('disabled');
-    this.checkout.children.conditionsCheckbox.onChange(() => {
-      this.hostedFieldSubmitButton.disabled = !this.isSubmittable();
-    });
+    this.checkout.children.conditionsCheckbox &&
+      this.checkout.children.conditionsCheckbox.onChange(() => {
+        this.hostedFieldSubmitButton.disabled = !this.isSubmittable();
+      });
 
     this.smartButton.append(this.hostedFieldSubmitButton);
     this.buttonContainer.append(this.smartButton);

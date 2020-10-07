@@ -55,6 +55,6 @@ export class NotificationComponent {
 
   showError(message) {
     this.notificationPaymentError.style.display = 'block';
-    this.notificationPaymentErrorText.textContent = message;
+    // this.notificationPaymentErrorText.textContent = message;
   }
 }
