@@ -25,7 +25,9 @@ export class ExpressButtonProductComponent {
     this.payPalService = checkout.payPalService;
     this.psCheckoutService = checkout.psCheckoutService;
 
-    this.buttonContainer = this.htmlElementService.getCheckoutExpressProductButtonContainer();
+    this.buttonContainer = this.htmlElementService.getCheckoutExpressProductButtonContainer(
+      true
+    );
   }
 
   renderPayPalButton() {
