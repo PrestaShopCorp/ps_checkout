@@ -80,11 +80,11 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
                 throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
             }
 
-            $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
-            $psCheckoutCartCollection->where('id_cart', '=', (int) $this->context->cart->id);
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
 
             // If we have a PayPal Order Id with a status CREATED or APPROVED and a not expired PayPal Client Token, we can use it
             // If paypal_token_expire is in future, token is not expired
@@ -132,7 +132,7 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
             $psCheckoutCart->paypal_token_expire = (new DateTime())->modify('+3550 seconds')->format('Y-m-d H:i:s');
             $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) ? (bool) $bodyValues['isExpressCheckout'] : false;
             $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) ? (bool) $bodyValues['isHostedFields'] : false;
-            $psCheckoutCart->save();
+            $psCheckoutCartRepository->save($psCheckoutCart);
 
             echo json_encode([
                 'status' => true,

@@ -67,17 +67,17 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
                 throw new PsCheckoutException('PayPal Order identifier missing or invalid', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
             }
 
-            $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
-            $psCheckoutCartCollection->where('id_cart', '=', (int) $this->context->cart->id);
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
 
             if (false !== $psCheckoutCart) {
                 $psCheckoutCart->paypal_funding = $this->payload['fundingSource'];
                 $psCheckoutCart->isExpressCheckout = true;
                 $psCheckoutCart->isHostedFields = false;
-                $psCheckoutCart->save();
+                $psCheckoutCartRepository->save($psCheckoutCart);
             }
 
             if (false === $this->context->customer->isLogged()) {

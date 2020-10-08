@@ -118,11 +118,14 @@ class ValidateOrder
                 }
             }
 
-            $psCheckoutCartCollection = new \PrestaShopCollection('PsCheckoutCart');
-            $psCheckoutCartCollection->where('id_cart', '=', (int) $payload['cartId']);
+            /** @var \Ps_checkout $module */
+            $module = \Module::getInstanceByName('ps_checkout');
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            $psCheckoutCartRepository = $module->getService('ps_checkout.repository.pscheckoutcart');
 
             /** @var \PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $payload['cartId']);
 
             if (false === $psCheckoutCart) {
                 $psCheckoutCart = new \PsCheckoutCart();
@@ -130,19 +133,16 @@ class ValidateOrder
                 $psCheckoutCart->paypal_intent = $paypalOrder->getOrderIntent();
                 $psCheckoutCart->paypal_order = $response['body']['id'];
                 $psCheckoutCart->paypal_status = $response['body']['status'];
-                $psCheckoutCart->add();
+                $psCheckoutCartRepository->save($psCheckoutCart);
             } else {
                 $psCheckoutCart->paypal_order = $response['body']['id'];
                 $psCheckoutCart->paypal_status = $response['body']['status'];
-                $psCheckoutCart->update();
+                $psCheckoutCartRepository->save($psCheckoutCart);
             }
 
             if (self::CAPTURE_STATUS_DECLINED === $transactionStatus) {
                 throw new PsCheckoutException(sprintf('Transaction declined by PayPal : %s', false === empty($response['body']['details']['description']) ? $response['body']['details']['description'] : 'No detail'), PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
             }
-
-            /** @var \PaymentModule $module */
-            $module = \Module::getInstanceByName('ps_checkout');
 
             // If OrderState here is not PS_OS_PAYMENT PrestaShop will not create OrderPayment and not save Transaction Id and right Option Name
             $module->validateOrder(
