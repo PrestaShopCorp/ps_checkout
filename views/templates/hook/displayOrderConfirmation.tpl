@@ -16,7 +16,11 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
-{if $isAuthorized }
+{if $status === 'pending' }
+  <div class="alert alert-warning">
+    {l s='Your order hasn\'t been validated yet, only created. There can be an issue with your payment or it can be captured later, please contact our customer service to have more details about it.' mod='ps_checkout'}
+  </div>
+{elseif $isAuthorized }
   <div class="alert alert-success">
       {l s='Your order is confirmed.' mod='ps_checkout'}<br>
       {if $isShop17}
