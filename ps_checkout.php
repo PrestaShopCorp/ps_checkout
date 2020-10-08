@@ -442,6 +442,7 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService('ps_checkout.context.shop');
         $this->context->smarty->assign([
+            'status' => $order->valid ? 'ok' : 'failed',
             'isShop17' => $shopContext->isShop17(),
             'isAuthorized' => 'AUTHORIZE' === Configuration::get('PS_CHECKOUT_INTENT'),
         ]);
