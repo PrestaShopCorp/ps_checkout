@@ -87,17 +87,17 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
 
             $this->paypalOrderId = $bodyValues['orderID'];
 
-            $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
-            $psCheckoutCartCollection->where('id_cart', '=', (int) $this->context->cart->id);
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
 
             if (false !== $psCheckoutCart) {
                 $psCheckoutCart->paypal_funding = $bodyValues['fundingSource'];
                 $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) ? (bool) $bodyValues['isExpressCheckout'] : false;
                 $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) ? (bool) $bodyValues['isHostedFields'] : false;
-                $psCheckoutCart->save();
+                $psCheckoutCartRepository->save($psCheckoutCart);
             }
 
             $this->module->getLogger()->info(sprintf(

@@ -55,7 +55,7 @@ class Ps_checkout extends PaymentModule
         'displayExpressCheckout',
         'DisplayFooterProduct',
         'displayPersonalInformationTop',
-        'actionBeforeCartUpdateQty',
+        'actionCartUpdateQuantityBefore',
         'header',
         'displayInvoiceLegalFreeText',
     ];
@@ -349,6 +349,7 @@ class Ps_checkout extends PaymentModule
 
     public function getContent()
     {
+        $this->registerhook(static::HOOK_LIST_17);
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
         $paypalAccount = $this->getService('ps_checkout.repository.paypal.account');
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
@@ -370,6 +371,24 @@ class Ps_checkout extends PaymentModule
         ]);
 
         return $this->display(__FILE__, '/views/templates/admin/configuration.tpl');
+    }
+
+    public function hookActionCartUpdateQuantityBefore()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+        $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
+
+        /** @var PsCheckoutCart|false $psCheckoutCart */
+        $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
+
+        if (false === Validate::isLoadedObject($psCheckoutCart)) {
+            return;
+        }
+
+        if ($psCheckoutCart->isExpressCheckout) {
+            $psCheckoutCartRepository->remove($psCheckoutCart);
+            $this->context->cookie->__unset('paypalEmail');
+        }
     }
 
     /**
@@ -558,6 +577,7 @@ class Ps_checkout extends PaymentModule
 
         if (false === in_array($controller, ['cart', 'product', 'order', 'orderopc'], true)
             || false === $this->merchantIsValid()
+            || false === Validate::isLoadedObject($this->context->cart)
         ) {
             return;
         }
@@ -578,13 +598,11 @@ class Ps_checkout extends PaymentModule
         $payPalClientToken = '';
         $payPalOrderId = '';
 
-        // BEGIN Repository
-        $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
-        $psCheckoutCartCollection->where('id_cart', '=', (int) $this->context->cart->id);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+        $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
 
         /** @var PsCheckoutCart|false $psCheckoutCart */
-        $psCheckoutCart = $psCheckoutCartCollection->getFirst();
-        // END Repository
+        $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
 
         // If we have a PayPal Order Id with a status CREATED or APPROVED and a not expired PayPal Client Token, we can use it
         // If paypal_token_expire is in future, token is not expired
@@ -847,17 +865,14 @@ class Ps_checkout extends PaymentModule
             return '';
         }
 
-        $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
-        $psCheckoutCartCollection->where('id_cart', '=', (int) $order->id_cart);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+        $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
 
         /** @var PsCheckoutCart|false $psCheckoutCart */
-        $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+        $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $order->id_cart);
 
         // No PayPal Order found for this Order
-        // Or inconsistencies due to bug v1.2.11 so we don't display wrong data to invoice
-        if (false === $psCheckoutCart
-            || $psCheckoutCartCollection->count() > 1
-        ) {
+        if (false === $psCheckoutCart) {
             return '';
         }
 
@@ -962,7 +977,6 @@ class Ps_checkout extends PaymentModule
 
         $paymentError = (int) Tools::getValue('paymentError');
         $paymentErrorMessage = '';
-        $isExpressCheckout = $this->context->cookie->__isset('paypalEmail');
 
         if (0 < $paymentError) {
             switch ($paymentError) {
@@ -1019,6 +1033,14 @@ class Ps_checkout extends PaymentModule
 
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService('ps_checkout.context.shop');
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+        $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
+
+        /** @var PsCheckoutCart|false $psCheckoutCart */
+        $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
+
+        $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout;
 
         $this->context->smarty->assign([
             'is17' => $shopContext->isShop17(),

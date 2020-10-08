@@ -61,11 +61,11 @@ class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
                 throw new PsCheckoutException('Payload invalid', PsCheckoutException::PSCHECKOUT_WEBHOOK_BODY_EMPTY);
             }
 
-            $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
-            $psCheckoutCartCollection->where('id_cart', '=', (int) $this->context->cart->id);
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
 
             if (false === $psCheckoutCart) {
                 $psCheckoutCart = new PsCheckoutCart();
@@ -78,7 +78,7 @@ class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
 
             $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) ? (bool) $bodyValues['isExpressCheckout'] : false;
             $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) ? (bool) $bodyValues['isHostedFields'] : false;
-            $psCheckoutCart->save();
+            $psCheckoutCartRepository->save($psCheckoutCart);
 
             if (false === empty($psCheckoutCart->paypal_order)) {
                 $isExpressCheckout = (isset($bodyValues['express_checkout']) && $bodyValues['express_checkout']) || empty($this->context->cart->id_address_delivery);
