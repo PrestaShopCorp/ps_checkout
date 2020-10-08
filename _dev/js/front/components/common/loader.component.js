@@ -38,7 +38,7 @@ export class LoaderComponent {
 
           transition: opacity 0.5s linear;
 
-          background-color: #00000040;
+          background-color: rgba(0, 0, 0, 0.15);
           z-index: 100;
         }
 
