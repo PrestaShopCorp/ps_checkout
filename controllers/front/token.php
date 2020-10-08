@@ -44,11 +44,15 @@ class Ps_CheckoutTokenModuleFrontController extends ModuleFrontController
                 throw new PsCheckoutException('Bad token', PsCheckoutException::PSCHECKOUT_BAD_STATIC_TOKEN);
             }
 
-            $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
-            $psCheckoutCartCollection->where('id_cart', '=', (int) $this->context->cart->id);
+            if (false === Validate::isLoadedObject($this->context->cart)) {
+                throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
+            }
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
 
             // If paypal_token_expire is in future, token is not expired
             if (false !== $psCheckoutCart
@@ -59,13 +63,13 @@ class Ps_CheckoutTokenModuleFrontController extends ModuleFrontController
             ) {
                 $psCheckoutCart->paypal_token = $this->getToken();
                 $psCheckoutCart->paypal_token_expire = (new DateTime())->modify('+3550 seconds')->format('Y-m-d H:i:s');
-                $psCheckoutCart->update();
+                $psCheckoutCartRepository->save($psCheckoutCart);
             } else {
                 $psCheckoutCart = new PsCheckoutCart();
                 $psCheckoutCart->id_cart = (int) $this->context->cart->id;
                 $psCheckoutCart->paypal_token = $this->getToken();
                 $psCheckoutCart->paypal_token_expire = (new DateTime())->modify('+3550 seconds')->format('Y-m-d H:i:s');
-                $psCheckoutCart->add();
+                $psCheckoutCartRepository->save($psCheckoutCart);
             }
 
             echo json_encode([
