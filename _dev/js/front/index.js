@@ -29,12 +29,24 @@ import { PsCheckoutComponent } from './components/ps-checkout.component';
 import { bootstrap } from './core/bootstrap';
 import { PsCheckoutService } from './service/ps-checkout.service';
 
+function isTokenNeeded() {
+  // 1.7
+  if (!PsCheckoutConfig.expressCheckoutHostedFieldsEnabled) return false;
+  if (document.body.id !== 'checkout') return false;
+  return !document
+    .getElementById('checkout-payment-step')
+    .classList.contains('-unreachable');
+}
+
 bootstrap(() => {
-  (PayPalSdkConfig.clientToken
-    ? Promise.resolve(PayPalSdkConfig.clientToken)
-    : new PsCheckoutService(PsCheckoutConfig).postGetToken()
+  (isTokenNeeded()
+    ? PayPalSdkConfig.clientToken
+      ? Promise.resolve(PayPalSdkConfig.clientToken)
+      : new PsCheckoutService(PsCheckoutConfig).postGetToken()
+    : Promise.resolve('')
   )
     .then(token => {
+      console.log(`Token: ${token}`);
       new PayPalSdkComponent(PayPalSdkConfig, token, sdk => {
         new PsCheckoutComponent(PsCheckoutConfig, sdk).render();
         new PsCheckoutExpressComponent(PsCheckoutConfig, sdk).render();
