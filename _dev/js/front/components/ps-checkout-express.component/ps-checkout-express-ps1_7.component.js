@@ -91,6 +91,10 @@ export class PsCheckoutExpressPs1_7Component {
     }
 
     this.renderExpressCheckout();
-    window.prestashop.on('updatedCart', () => this.renderExpressCheckout());
+    window.prestashop.on('updatedCart', () => {
+      if (window.prestashop.cart) {
+        return this.renderExpressCheckout();
+      }
+    });
   }
 }
