@@ -39,7 +39,7 @@ export class LoaderComponent {
           transition: opacity 0.5s linear;
 
           background-color: #00000040;
-          z-index: 100000000;
+          z-index: 100;
         }
 
         .ps-checkout.overlay.visible {

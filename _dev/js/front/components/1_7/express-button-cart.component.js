@@ -82,6 +82,8 @@ export class ExpressButtonCartComponent {
   }
 
   render() {
+    if (!this.buttonContainer) return;
+
     this.checkoutExpressButton = document.createElement('div');
     this.checkoutExpressButton.id = 'ps-checkout-express-button';
 
