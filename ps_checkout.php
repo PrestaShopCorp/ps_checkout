@@ -577,7 +577,6 @@ class Ps_checkout extends PaymentModule
 
         if (false === in_array($controller, ['cart', 'product', 'order', 'orderopc'], true)
             || false === $this->merchantIsValid()
-            || false === Validate::isLoadedObject($this->context->cart)
         ) {
             return;
         }
@@ -597,12 +596,16 @@ class Ps_checkout extends PaymentModule
         // BEGIN To be refactored in services
         $payPalClientToken = '';
         $payPalOrderId = '';
+        $psCheckoutCart = false;
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
-        $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
+        // Sometimes we can be in Front Office without a cart...
+        if (Validate::isLoadedObject($this->context->cart)) {
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
 
-        /** @var PsCheckoutCart|false $psCheckoutCart */
-        $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
+            /** @var PsCheckoutCart|false $psCheckoutCart */
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
+        }
 
         // If we have a PayPal Order Id with a status CREATED or APPROVED and a not expired PayPal Client Token, we can use it
         // If paypal_token_expire is in future, token is not expired
