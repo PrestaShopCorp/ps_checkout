@@ -135,6 +135,7 @@
     font-size: 12px;
     line-height: 18px;
     max-width: 500px;
+    z-index: 500;
   }
   .material-icons-outlined.wb_incandescent {
     transform: rotate(180deg);
