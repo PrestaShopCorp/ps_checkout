@@ -38,7 +38,6 @@ export class PaymentOptionsComponent {
 
   render() {
     console.log(this.config.expressCheckoutSelected);
-
     if (!this.config.expressCheckoutSelected) {
       // Default Payment Options
       this.children.paymentOptions = this.paymentOptions.map(paymentOption =>
@@ -78,6 +77,7 @@ export class PaymentOptionsComponent {
 
       paymentButton.addEventListener('click', event => {
         event.preventDefault();
+        this.checkout.children.loader.show();
 
         this.psCheckoutService
           .postCheckCartOrder(
@@ -89,7 +89,6 @@ export class PaymentOptionsComponent {
             { resolve: () => {}, reject: () => {} }
           )
           .then(() => {
-            console.log('CALLING VALIDATE');
             return this.psCheckoutService.postValidateOrder({
               orderID: this.payPalService.getOrderId(),
               fundingSource: 'paypal',
@@ -98,6 +97,7 @@ export class PaymentOptionsComponent {
           })
           .catch(error => {
             console.log(error);
+            this.checkout.children.loader.hide();
             this.checkout.children.notification.showError(error.message);
           });
       });

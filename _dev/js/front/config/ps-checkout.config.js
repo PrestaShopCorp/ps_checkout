@@ -38,6 +38,7 @@ export const PsCheckoutConfig = {
     ...window.ps_checkoutCheckoutTranslations
   },
 
+  loaderImage: window.ps_checkoutLoaderImage,
   customMarker: {
     card: window.ps_checkoutCardFundingSourceImg
   },

@@ -24,6 +24,7 @@ import { NotificationComponent } from '../1_7/notification.component';
 import { PaymentOptionsComponent } from '../1_7/payment-options.component';
 import { ConditionsCheckboxComponent } from '../1_7/conditions-checkbox.component';
 import { TranslationService } from '../../service/translation.service';
+import { LoaderComponent } from '../common/loader.component';
 
 export class PsCheckoutPs1_7Component {
   /**
@@ -65,6 +66,7 @@ export class PsCheckoutPs1_7Component {
       throw new Error(this.$('error.paypal-sdk'));
     }
 
+    this.children.loader = new LoaderComponent(this).render();
     this.children.conditionsCheckbox = new ConditionsCheckboxComponent(
       this
     ).render();

@@ -65,6 +65,7 @@ export class SmartButtonComponent {
           });
         },
         onClick: (data, actions) => {
+          this.checkout.children.loader.show();
           if (
             this.checkout.children.conditionsCheckbox &&
             !this.checkout.children.conditionsCheckbox.isChecked()
@@ -86,6 +87,7 @@ export class SmartButtonComponent {
         },
         onError: error => {
           console.error(error);
+          this.checkout.children.loader.hide();
           this.checkout.children.notification.showError(
             error instanceof TypeError ? error.message : ''
           );
@@ -101,6 +103,7 @@ export class SmartButtonComponent {
             });
         },
         onCancel: data => {
+          this.checkout.children.loader.hide();
           this.checkout.children.notification.showCanceled();
 
           return this.psCheckoutService.postCancelOrder(data).catch(error => {

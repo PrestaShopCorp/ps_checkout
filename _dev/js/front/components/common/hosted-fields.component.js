@@ -135,6 +135,7 @@ export class HostedFieldsComponent {
 
           hostedFieldsSubmitButton.addEventListener('click', event => {
             event.preventDefault();
+            this.checkout.children.loader.show();
             hostedFieldsSubmitButton.disabled = true;
             hostedFields
               .submit({
@@ -159,6 +160,7 @@ export class HostedFieldsComponent {
                   });
               })
               .catch(error => {
+                this.checkout.children.loader.hide();
                 this.checkout.children.notification.showError(error.message);
                 hostedFieldsSubmitButton.disabled = false;
               });
