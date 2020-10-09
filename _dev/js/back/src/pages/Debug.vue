@@ -297,13 +297,15 @@
             response.lines.forEach(line => {
               this.logs += line;
             });
-            refreshTimer = setTimeout(this.getLogs, 10000);
+            refreshTimer = setTimeout(this.getLogs, response.eof ? 60000 : 10000);
           }
         });
         clearTimeout(refreshTimer);
       },
       onChangeLogFileName(logFileNameSelected) {
         this.logFileNameSelected = logFileNameSelected;
+        this.logFileReaderOffset = 0;
+        this.logs = '';
         this.getLogs();
       },
       onChangeLogFileReaderLimit(logFileReaderLimit) {
