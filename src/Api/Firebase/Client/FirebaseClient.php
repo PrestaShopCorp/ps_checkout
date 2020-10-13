@@ -46,6 +46,7 @@ class FirebaseClient extends GenericClient
 
         $client = new Client([
             'defaults' => [
+                'verify' => $this->getVerify(),
                 'timeout' => $this->timeout,
                 'exceptions' => $this->catchExceptions,
                 'allow_redirects' => false,

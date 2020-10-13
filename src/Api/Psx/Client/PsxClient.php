@@ -33,6 +33,7 @@ class PsxClient extends GenericClient
         $client = new Client([
             'base_url' => (new PsxEnv())->getPsxApiUrl(),
             'defaults' => [
+                'verify' => $this->getVerify(),
                 'timeout' => $this->getTimeout(),
                 'exceptions' => $this->getExceptionsMode(),
                 'headers' => [
