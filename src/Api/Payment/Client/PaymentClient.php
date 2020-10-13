@@ -41,6 +41,7 @@ class PaymentClient extends GenericClient
             $client = new Client([
                 'base_url' => (new PaymentEnv())->getPaymentApiUrl(),
                 'defaults' => [
+                    'verify' => $this->getVerify(),
                     'timeout' => $this->timeout,
                     'exceptions' => $this->catchExceptions,
                     'headers' => [

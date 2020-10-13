@@ -282,4 +282,18 @@ class GenericClient
             'exceptionMessage' => $exception->getMessage(),
         ];
     }
+
+    /**
+     * @see https://docs.guzzlephp.org/en/5.3/clients.html#verify
+     *
+     * @return true|string
+     */
+    protected function getVerify()
+    {
+        if (defined('_PS_CACHE_CA_CERT_FILE_')) {
+            return constant('_PS_CACHE_CA_CERT_FILE_');
+        }
+
+        return true;
+    }
 }
