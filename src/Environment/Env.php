@@ -110,4 +110,22 @@ class Env
     {
         $this->mode = $mode;
     }
+
+    /**
+     * @param string $name
+     *
+     * @return mixed
+     */
+    public function getEnv($name)
+    {
+        if (isset($_ENV[$name])) {
+            return $_ENV[$name];
+        }
+
+        if (isset($_SERVER[$name])) {
+            return $_SERVER[$name];
+        }
+
+        return getenv($name);
+    }
 }

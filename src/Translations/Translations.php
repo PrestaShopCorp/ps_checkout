@@ -315,6 +315,12 @@ class Translations
                     'link-title' => $this->module->l('Manage conversion rules', 'translations'),
                     'icon-title' => $this->module->l('Conversion rules', 'translations'),
                 ],
+                'soft-descriptor' => [
+                    'title' => $this->module->l('Configure your bank statements description', 'translations'),
+                    'description' => $this->module->l('You can choose the short or long description that appears on your customer\'s bank statements. Let\'s make them sure to understand their transaction!', 'translations'),
+                    'link-title' => $this->module->l('Set up description', 'translations'),
+                    'icon-title' => $this->module->l('Details for Bank statements', 'translations'),
+                ],
             ],
             'block' => [
                 'reassurance' => [

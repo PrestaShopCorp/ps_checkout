@@ -154,10 +154,6 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 'Checking out with your cart from ' . $shopName,
                 127
             ),
-            'soft_descriptor' => $this->truncate(
-                $shopName,
-                22
-            ),
             'amount' => [
                 'currency_code' => $this->cart['currency']['iso_code'],
                 'value' => $this->cart['cart']['totals']['total_including_tax']['amount'],
