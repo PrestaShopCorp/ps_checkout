@@ -36,7 +36,7 @@ class FirebaseEnv extends Env
     {
         parent::__construct();
 
-        $this->setFirebaseApiKey($_ENV['FIREBASE_API_KEY']);
+        $this->setFirebaseApiKey($this->getEnv('FIREBASE_API_KEY'));
     }
 
     /**

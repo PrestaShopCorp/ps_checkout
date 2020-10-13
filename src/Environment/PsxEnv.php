@@ -36,7 +36,7 @@ class PsxEnv extends Env
     {
         parent::__construct();
 
-        $this->setPsxApiUrl($_ENV['PSX_API_URL']);
+        $this->setPsxApiUrl($this->getEnv('PSX_API_URL'));
     }
 
     /**

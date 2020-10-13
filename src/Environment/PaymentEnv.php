@@ -43,10 +43,10 @@ class PaymentEnv extends Env
 
     private function setEnvDependingOnMode()
     {
-        $this->setPaymentApiUrl($_ENV['PAYMENT_API_URL_LIVE']);
+        $this->setPaymentApiUrl($this->getEnv('PAYMENT_API_URL_LIVE'));
 
         if (Mode::SANDBOX === $this->mode) {
-            $this->setPaymentApiUrl($_ENV['PAYMENT_API_URL_SANDBOX']);
+            $this->setPaymentApiUrl($this->getEnv('PAYMENT_API_URL_SANDBOX'));
         }
     }
 

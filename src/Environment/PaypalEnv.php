@@ -43,10 +43,10 @@ class PaypalEnv extends Env
 
     private function setEnvDependingOnMode()
     {
-        $this->setPaypalClientId($_ENV['PAYPAL_CLIENT_ID_LIVE']);
+        $this->setPaypalClientId($this->getEnv('PAYPAL_CLIENT_ID_LIVE'));
 
         if (Mode::SANDBOX === $this->mode) {
-            $this->setPaypalClientId($_ENV['PAYPAL_CLIENT_ID_SANDBOX']);
+            $this->setPaypalClientId($this->getEnv('PAYPAL_CLIENT_ID_SANDBOX'));
         }
     }
 
