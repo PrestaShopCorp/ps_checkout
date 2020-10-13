@@ -874,12 +874,29 @@ class Ps_checkout extends PaymentModule
         /** @var PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $order->id_cart);
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration $psConfiguration */
+        $psConfiguration = $this->getService('ps_checkout.configuration');
+
         // No PayPal Order found for this Order
         if (false === $psCheckoutCart) {
             return '';
         }
 
-        $legalFreeText = $this->l('PayPal Order Id : ', 'translations') . $psCheckoutCart->paypal_order . PHP_EOL;
+        $legalFreeText = $psConfiguration->get(
+            'PS_INVOICE_LEGAL_FREE_TEXT',
+            [
+                'id_lang' => (int) $order->id_lang,
+                'id_shop' => (int) $order->id_shop,
+                'default' => '',
+            ]
+        );
+
+        // If a legal free text is found, we add blank lines after
+        if (false === empty($legalFreeText)) {
+            $legalFreeText .= PHP_EOL . PHP_EOL;
+        }
+
+        $legalFreeText .= $this->l('PayPal Order Id : ', 'translations') . $psCheckoutCart->paypal_order . PHP_EOL;
 
         /** @var \OrderPayment[] $orderPayments */
         $orderPayments = $order->getOrderPaymentCollection();
