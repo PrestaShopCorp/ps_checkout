@@ -60,6 +60,17 @@
         icon="toll"
         :iconTitle="$t('account-settings-deeplink.conversion-rules.icon-title')"
       />
+      <AccountSettingsDeepLink
+        class="mb-4 w-50 d-inline-flex"
+        :title="$t('account-settings-deeplink.soft-descriptor.title')"
+        :description="
+          $t('account-settings-deeplink.soft-descriptor.description')
+        "
+        :linkTitle="$t('account-settings-deeplink.soft-descriptor.link-title')"
+        linkUrl="https://www.paypal.com/businessprofile/settings/info/edit"
+        icon="list_alt"
+        :iconTitle="$t('account-settings-deeplink.soft-descriptor.icon-title')"
+      />
     </b-container>
   </div>
 </template>
