@@ -704,6 +704,8 @@ class Ps_checkout extends PaymentModule
                 'checkout.payment.others.link.label' => $this->l('Other payment methods'),
                 'checkout.payment.others.confirm.button.label' => $this->l('I confirm my order'),
                 'checkout.form.error.label' => $this->l('There was an error during the payment. Please try again or contact the support.'),
+                'loader-component.label.header' => $this->l('Thanks for your purchase!'),
+                'loader-component.label.body' => $this->l('Please wait, we proceed to payment'),
             ],
         ]);
 
