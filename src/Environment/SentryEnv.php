@@ -47,9 +47,9 @@ class SentryEnv extends Env
     {
         parent::__construct();
 
-        $this->setKey($_ENV['VUE_APP_SENTRY_KEY']);
-        $this->setOrganisation($_ENV['VUE_APP_SENTRY_ORGANIZATION']);
-        $this->setProject($_ENV['VUE_APP_SENTRY_PROJECT']);
+        $this->setKey($this->getEnv('VUE_APP_SENTRY_KEY'));
+        $this->setOrganisation($this->getEnv('VUE_APP_SENTRY_ORGANIZATION'));
+        $this->setProject($this->getEnv('VUE_APP_SENTRY_PROJECT'));
     }
 
     /**

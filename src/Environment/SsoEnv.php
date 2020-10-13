@@ -36,7 +36,7 @@ class SsoEnv extends Env
     {
         parent::__construct();
 
-        $this->setSsoUrl($_ENV['SSO_URL']);
+        $this->setSsoUrl($this->getEnv('SSO_URL'));
     }
 
     /**
