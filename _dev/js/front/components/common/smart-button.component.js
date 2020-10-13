@@ -84,6 +84,7 @@ export class SmartButtonComponent {
               actions
             )
             .catch(error => {
+              this.checkout.children.loader.hide();
               this.checkout.children.notification.showError(error.message);
               actions.reject();
             });
@@ -103,6 +104,7 @@ export class SmartButtonComponent {
               actions
             )
             .catch(error => {
+              this.checkout.children.loader.hide();
               this.checkout.children.notification.showError(error.message);
             });
         },
@@ -110,9 +112,15 @@ export class SmartButtonComponent {
           this.checkout.children.loader.hide();
           this.checkout.children.notification.showCanceled();
 
-          return this.psCheckoutService.postCancelOrder(data).catch(error => {
-            this.checkout.children.notification.showError(error.message);
-          });
+          return this.psCheckoutService
+            .postCancelOrder({
+              ...data,
+              fundingSource: this.fundingSource.name
+            })
+            .catch(error => {
+              this.checkout.children.loader.hide();
+              this.checkout.children.notification.showError(error.message);
+            });
         },
         createOrder: data => {
           return this.psCheckoutService

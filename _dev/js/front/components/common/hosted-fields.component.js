@@ -51,9 +51,9 @@ export class HostedFieldsComponent {
   }
 
   isSubmittable() {
-    return (
-      this.checkout.children.conditionsCheckbox.isChecked() && this.validity
-    );
+    return this.checkout.children.conditionsCheckbox
+      ? this.checkout.children.conditionsCheckbox.isChecked() && this.validity
+      : this.validity;
   }
 
   render() {
@@ -73,17 +73,13 @@ export class HostedFieldsComponent {
     this.smartButton.id = this.getButtonId();
     this.smartButton.classList.add(SMART_BUTTON_CLASS);
 
-    const basePaymentButton = document.querySelector(
+    this.hostedFieldSubmitButton = this.buttonContainer.querySelector(
       "#payment-confirmation [type='submit']"
     );
 
-    this.hostedFieldSubmitButton = basePaymentButton
-      ? basePaymentButton
-      : document.createElement('button');
-
     this.hostedFieldSubmitButton.id = 'ps_checkout-hosted-submit-button';
     this.hostedFieldSubmitButton.type = 'button';
-    !basePaymentButton && (this.hostedFieldSubmitButton.innerHTML = 'GO');
+    this.hostedFieldSubmitButton.disabled = true;
 
     this.hostedFieldSubmitButton.classList.remove('disabled');
     this.checkout.children.conditionsCheckbox &&

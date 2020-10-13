@@ -16,10 +16,13 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import { HtmlElementPs1_7Service } from '../../service/html-element-ps1_7.service';
+import { HtmlElementPs1_6Service } from '../../service/html-element-ps1_6.service';
 import { PaypalService } from '../../service/paypal.service';
 import { PsCheckoutService } from '../../service/ps-checkout.service';
 import { TranslationService } from '../../service/translation.service';
+
+import { PaymentOptionsComponent } from '../1_6/payment-options.component';
+import { LoaderComponent } from '../common/loader.component';
 
 export class PsCheckoutPs1_6Component {
   /**
@@ -30,9 +33,9 @@ export class PsCheckoutPs1_6Component {
     this.config = config;
     this.sdk = sdk;
 
-    this.translationService = new TranslationService(); // TODO: Get locale
+    this.translationService = new TranslationService(this.config.translations);
 
-    this.htmlElementService = new HtmlElementPs1_7Service();
+    this.htmlElementService = new HtmlElementPs1_6Service();
     this.payPalService = new PaypalService(
       this.sdk,
       this.config,
@@ -49,10 +52,40 @@ export class PsCheckoutPs1_6Component {
   }
 
   render() {
+    if (document.body.id !== 'order' && document.body.id !== 'order-opc')
+      return;
+
     if (undefined === this.sdk) {
-      throw new Error(this.$('error.paypal-skd'));
+      throw new Error(this.$('error.paypal-sdk'));
     }
 
-    // TODO: 1.6 WIP
+    if (document.body.id === 'order') {
+      if (
+        !document.getElementById('step_end').classList.contains('step_current')
+      )
+        return;
+
+      this.children.loader = new LoaderComponent(this).render();
+      this.children.paymentOptions = new PaymentOptionsComponent(this).render();
+    } else {
+      const updatePaymentMethods = window['updatePaymentMethods'];
+      window['updatePaymentMethods'] = (...args) => {
+        updatePaymentMethods(...args);
+
+        if (document.getElementById('cgv').checked) {
+          this.children.loader = new LoaderComponent(this).render();
+          this.children.paymentOptions = new PaymentOptionsComponent(
+            this
+          ).render();
+        }
+      };
+
+      if (document.getElementById('cgv').checked) {
+        this.children.loader = new LoaderComponent(this).render();
+        this.children.paymentOptions = new PaymentOptionsComponent(
+          this
+        ).render();
+      }
+    }
   }
 }

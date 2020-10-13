@@ -180,7 +180,7 @@ export class PaypalService {
       });
   }
 
-  getEligibleFundingSources(cache) {
+  getEligibleFundingSources(cache = false) {
     if (!this.eligibleFundingSources || cache) {
       const paypalFundingSources = this.sdk.getFundingSources();
       this.eligibleFundingSources = (
