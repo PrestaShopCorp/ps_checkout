@@ -211,8 +211,6 @@ export class PaymentOptionComponent {
 
       this.children.smartButton && this.children.smartButton.show();
       this.children.hostedFields && this.children.hostedFields.show();
-
-      // this.basePaymentOptionAdditionalInformation.style.display = 'none';
     });
 
     return this;

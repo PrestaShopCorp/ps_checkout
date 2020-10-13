@@ -37,7 +37,6 @@ export class PaymentOptionsComponent {
   }
 
   render() {
-    console.log(this.config.expressCheckoutSelected);
     if (!this.config.expressCheckoutSelected) {
       // Default Payment Options
       this.children.paymentOptions = this.paymentOptions.map(paymentOption =>

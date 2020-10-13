@@ -73,7 +73,7 @@ export class HostedFieldsComponent {
     this.smartButton.id = this.getButtonId();
     this.smartButton.classList.add(SMART_BUTTON_CLASS);
 
-    this.hostedFieldSubmitButton = this.buttonContainer.querySelector(
+    this.hostedFieldSubmitButton = document.querySelector(
       "#payment-confirmation [type='submit']"
     );
 
