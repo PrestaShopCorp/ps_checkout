@@ -121,6 +121,9 @@ class ValidateOrder
             /** @var \Ps_checkout $module */
             $module = \Module::getInstanceByName('ps_checkout');
 
+            /** @var \PrestaShop\Module\PrestashopCheckout\FundingSourceProvider $fundingSourceProvider */
+            $fundingSourceProvider = $module->getService('ps_checkout.provider.funding_source');
+
             /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
             $psCheckoutCartRepository = $module->getService('ps_checkout.repository.pscheckoutcart');
 
@@ -149,7 +152,7 @@ class ValidateOrder
                 $payload['cartId'],
                 (int) $this->getOrderState($psCheckoutCart->paypal_funding),
                 $payload['amount'],
-                $this->getOptionName($module, $psCheckoutCart->paypal_funding),
+                $fundingSourceProvider->getPaymentMethodName($psCheckoutCart->paypal_funding),
                 null,
                 [
                     'transaction_id' => $transactionIdentifier,
@@ -196,7 +199,7 @@ class ValidateOrder
 
                         if (false !== $orderPayment) {
                             $orderPayment->transaction_id = $transactionIdentifier;
-                            $orderPayment->payment_method = $this->getOptionName($module, $psCheckoutCart->paypal_funding);
+                            $orderPayment->payment_method = $fundingSourceProvider->getPaymentMethodName($psCheckoutCart->paypal_funding);
                             $orderPayment->save();
                         }
                     }
@@ -231,33 +234,6 @@ class ValidateOrder
         $orderMatrice->id_order_paypal = $orderPaypalId;
 
         return $orderMatrice->add();
-    }
-
-    /**
-     * Get translated Payment Option name
-     *
-     * @param \PaymentModule $module
-     * @param string $fundingSource
-     *
-     * @return string
-     *
-     * @todo Move to a dedicated Service
-     */
-    private function getOptionName($module, $fundingSource)
-    {
-        switch ($fundingSource) {
-            case 'card':
-                $name = $module->l('Payment by card', 'translations');
-                break;
-            case 'paypal':
-                $name = $module->l('Payment by PayPal', 'translations');
-                break;
-            default:
-                // @todo Add translations for LPM
-                $name = $module->l('Payment by PayPal', 'translations');
-        }
-
-        return $name;
     }
 
     /**

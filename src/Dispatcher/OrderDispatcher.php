@@ -154,13 +154,19 @@ class OrderDispatcher implements Dispatcher
         $orderPaymentCollection->where('amount', '=', $resource['amount']['value']);
         $shouldAddOrderPayment = true;
 
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSourceProvider $fundingSourceProvider */
+        $fundingSourceProvider = $module->getService('ps_checkout.provider.funding_source');
+
         /** @var \OrderPayment[] $orderPayments */
         $orderPayments = $orderPaymentCollection->getAll();
         foreach ($orderPayments as $orderPayment) {
             if (\Validate::isLoadedObject($orderPayment)) {
                 if ($orderPayment->transaction_id !== $resource['id']) {
                     $orderPayment->transaction_id = $resource['id'];
-                    $orderPayment->payment_method = $this->getPaymentMethodTranslation();
+                    $fundingSourceProvider->getPaymentMethodName($this->psCheckoutCart->paypal_funding);
                     $orderPayment->save();
                 }
                 $shouldAddOrderPayment = false;
@@ -170,7 +176,7 @@ class OrderDispatcher implements Dispatcher
         if (true === $shouldAddOrderPayment) {
             $order->addOrderPayment(
                 $resource['amount']['value'],
-                $this->getPaymentMethodTranslation(),
+                $fundingSourceProvider->getPaymentMethodName($this->psCheckoutCart->paypal_funding),
                 $resource['id'],
                 \Currency::getCurrencyInstance(\Currency::getIdByIsoCode($resource['amount']['currency_code'])),
                 (new DatePresenter($resource['create_time'], 'Y-m-d H:i:s'))->present()
@@ -234,28 +240,6 @@ class OrderDispatcher implements Dispatcher
         }
 
         return $orderStateId;
-    }
-
-    /**
-     * @return string
-     */
-    private function getPaymentMethodTranslation()
-    {
-        $module = \Module::getInstanceByName('ps_checkout');
-
-        switch ($this->psCheckoutCart->paypal_funding) {
-            case 'card':
-                $message = $module->l('Payment by card', 'translations');
-                break;
-            case 'paypal':
-                $message = $module->l('Payment by PayPal', 'translations');
-                break;
-            default:
-                // @todo Add translations for LPM
-                $message = $module->l('Payment by PayPal', 'translations');
-        }
-
-        return $message;
     }
 
     /**
