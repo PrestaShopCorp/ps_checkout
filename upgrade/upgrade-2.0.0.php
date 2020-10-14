@@ -30,7 +30,7 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_0_0($module)
 {
-    $tableManager = new PrestaShop\Module\PrestashopCheckout\Database\TableManager();
+    $db = Db::getInstance();
 
     return (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_MAX_FILES', '15')
         && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_LEVEL', \Monolog\Logger::ERROR)
@@ -38,6 +38,28 @@ function upgrade_module_2_0_0($module)
         && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_LOGGER_HTTP_FORMAT', 'DEBUG')
         && (bool) Configuration::updateGlobalValue('PS_CHECKOUT_INTEGRATION_DATE', Ps_checkout::INTEGRATION_DATE)
         && (bool) $module->registerHook(Ps_checkout::HOOK_LIST)
-        && (bool) $tableManager->createTable()
-        && (bool) $tableManager->populatePsCartFromOrderMatrice();
+        && (bool) $db->execute('
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_cart` (
+              `id_pscheckout_cart` int(10) unsigned NOT NULL AUTO_INCREMENT,
+              `id_cart` int unsigned NOT NULL,
+              `paypal_intent` varchar(20) DEFAULT "CAPTURE",
+              `paypal_order` varchar(20) NULL,
+              `paypal_status` varchar(20) NULL,
+              `paypal_funding` varchar(20) NULL,
+              `paypal_token` varchar(1024) NULL,
+              `paypal_token_expire` datetime NULL,
+              `paypal_authorization_expire` datetime NULL,
+              `isExpressCheckout` tinyint(1) unsigned DEFAULT 0 NOT NULL,
+              `isHostedFields` tinyint(1) unsigned DEFAULT 0 NOT NULL,
+              `date_add` datetime NOT NULL,
+              `date_upd` datetime NOT NULL,
+              PRIMARY KEY (`id_pscheckout_cart`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+        ')
+        && (bool) $db->execute('
+            INSERT INTO `' . _DB_PREFIX_ . 'pscheckout_cart` (`id_cart`, `paypal_order`, `date_add`, `date_upd`)
+            SELECT o.id_cart, om.id_order_paypal, o.date_add, o.date_upd
+            FROM `' . _DB_PREFIX_ . 'pscheckout_order_matrice` AS om
+            INNER JOIN `' . _DB_PREFIX_ . 'orders` AS o ON (om.id_order_prestashop = o.id_order)
+        ');
 }
