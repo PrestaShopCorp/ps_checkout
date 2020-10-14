@@ -429,13 +429,17 @@ class Ps_checkout extends PaymentModule
             return [];
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSourceProvider $fundingSourceProvider */
+        $fundingSourceProvider = $this->getService('ps_checkout.provider.funding_source');
+        $paymentOptionNames = $fundingSourceProvider->getPaymentOptionNames();
+
         $this->context->smarty->assign([
             'modulePath' => $this->getPathUri(),
         ]);
 
         $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
         $paymentOption->setModuleName($this->name);
-        $paymentOption->setCallToActionText($this->l('Pay with PayPal'));
+        $paymentOption->setCallToActionText($paymentOptionNames['paypal']);
         $paymentOption->setBinary(true);
         $paymentOption->setAdditionalInformation($this->display(__FILE__, '/views/templates/hook/paymentOptionButtonsAdditionalInformation.tpl'));
 
@@ -593,6 +597,9 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $payPalConfiguration */
         $payPalConfiguration = $this->getService('ps_checkout.paypal.configuration');
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSourceProvider $fundingSourceProvider */
+        $fundingSourceProvider = $this->getService('ps_checkout.provider.funding_source');
+
         // BEGIN To be refactored in services
         $payPalClientToken = '';
         $payPalOrderId = '';
@@ -651,33 +658,7 @@ class Ps_checkout extends PaymentModule
             $this->name . '3dsEnabled' => $payPalConfiguration->is3dSecureEnabled(),
             $this->name . 'CspNonce' => $payPalConfiguration->getCSPNonce(),
             $this->name . 'FundingSourcesSorted' => $payPalConfiguration->getFundingSources(),
-            $this->name . 'PayWithTranslations' => [
-                'paypal' => $this->l('Pay with a PayPal account'),
-                'venmo' => $this->l('Pay by Venmo'),
-                'itau' => $this->l('Pay by itau'),
-                'credit' => $this->l('Pay by PayPal Credit'),
-                'paylater' => $this->l('Pay by paylater'),
-                'ideal' => $this->l('Pay by iDEAL'),
-                'sepa' => $this->l('Pay by SEPA-Lastschrift'),
-                'bancontact' => $this->l('Pay by Bancontact'),
-                'giropay' => $this->l('Pay by giropay'),
-                'eps' => $this->l('Pay by eps'),
-                'sofort' => $this->l('Pay by Sofort'),
-                'mybank' => $this->l('Pay by MyBank'),
-                'blik' => $this->l('Pay by BLIK'),
-                'p24' => $this->l('Pay by Przelewy24'),
-                'zimpler' => $this->l('Pay by zimpler'),
-                'wechatpay' => $this->l('Pay by wechatpay'),
-                'payu' => $this->l('Pay by payu'),
-                'verkkopankki' => $this->l('Pay by verkkopankki'),
-                'trustly' => $this->l('Pay by trustly'),
-                'oxxo' => $this->l('Pay by oxxo'),
-                'boleto' => $this->l('Pay by boleto'),
-                'maxima' => $this->l('Pay by maxima'),
-                'mercadopago' => $this->l('Pay by mercadopago'),
-                'card' => $this->l('Pay by Card'),
-                'default' => $this->l('Pay by '),
-            ],
+            $this->name . 'PayWithTranslations' => $fundingSourceProvider->getPaymentOptionNames(),
             $this->name . 'CheckoutTranslations' => [
                 'checkout.go.back.link.title' => $this->l('Go back to the Checkout'),
                 'checkout.go.back.label' => $this->l('Checkout'),

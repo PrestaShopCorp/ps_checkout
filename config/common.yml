@@ -190,3 +190,8 @@ services:
 
   ps_checkout.repository.pscheckoutcart:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
+
+  ps_checkout.provider.funding_source:
+    class: 'PrestaShop\Module\PrestashopCheckout\FundingSourceProvider'
+    arguments:
+      - '@ps_checkout.module'

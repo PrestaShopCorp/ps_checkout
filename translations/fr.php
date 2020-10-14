@@ -431,3 +431,7 @@ $_MODULE['<{ps_checkout}prestashop>orderpresenter_c453a4b8e8d98e82f35b67f433e3b4
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_76f0ed934de85cc7131910b32ede7714'] = 'Remboursement';
 $_MODULE['<{ps_checkout}prestashop>transactionpresenter_76f0ed934de85cc7131910b32ede7714'] = 'Remboursement';
 $_MODULE['<{ps_checkout}prestashop>transactionpresenter_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Paiement';
+$_MODULE['<{ps_checkout}prestashop>fundingsourceprovider_1d565b9e5303987bb1b1938d5d458bca'] = 'Carte';
+$_MODULE['<{ps_checkout}prestashop>fundingsourceprovider_34ace703adbf14df140d3c02234f67bd'] = 'Payer avec un compte PayPal';
+$_MODULE['<{ps_checkout}prestashop>fundingsourceprovider_2471e6ef6ef9018973f1658492115b52'] = 'Payer par carte';
+$_MODULE['<{ps_checkout}prestashop>fundingsourceprovider_f990493af3321939ca512f8f2cace108'] = 'Payer par %s';
