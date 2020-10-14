@@ -22,4 +22,30 @@ export class HtmlElementPs1_6Service {
   constructor() {
     this.selectors = HtmlSelectorsPs1_6Constants;
   }
+
+  getAnyPaymentOption() {
+    return document.querySelector(this.selectors.ANY_PAYMENT_OPTION);
+  }
+
+  getCheckoutPaymentOptionsContainer() {
+    return document.querySelector(
+      this.selectors.CHECKOUT_PAYMENT_OPTIONS_CONTAINER
+    );
+  }
+
+  getPaymentOptionsContainer() {
+    return document.getElementById(this.selectors.PAYMENT_OPTIONS_CONTAINER);
+  }
+
+  getPaymentOptions() {
+    return Array.prototype.slice.call(
+      this.getPaymentOptionsContainer().querySelectorAll(
+        this.selectors.PAYMENT_OPTION
+      )
+    );
+  }
+
+  getPaymentOptionContainer(container) {
+    return container.querySelector(this.selectors.PAYMENT_OPTION_CONTAINER);
+  }
 }

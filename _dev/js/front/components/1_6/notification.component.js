@@ -20,11 +20,11 @@ export class NotificationComponent {
   constructor(checkout) {
     this.htmlElementService = checkout.htmlElementService;
 
-    this.notificationConditions = this.htmlElementService.getNotificationConditions();
-    this.notificationPaymentCanceled = this.htmlElementService.getNotificationPaymentCanceled();
-
-    this.notificationPaymentError = this.htmlElementService.getNotificationPaymentError();
-    //this.notificationPaymentErrorText = this.htmlElementService.getNotificationPaymentErrorText();
+    // this.notificationConditions = this.htmlElementService.getNotificationConditions();
+    // this.notificationPaymentCanceled = this.htmlElementService.getNotificationPaymentCanceled();
+    //
+    // this.notificationPaymentError = this.htmlElementService.getNotificationPaymentError();
+    // this.notificationPaymentErrorText = this.htmlElementService.getNotificationPaymentErrorText();
   }
 
   render() {
@@ -34,27 +34,27 @@ export class NotificationComponent {
   }
 
   hideCancelled() {
-    this.notificationPaymentCanceled.style.display = 'none';
+    // this.notificationPaymentCanceled.style.display = 'none';
   }
 
   hideConditions() {
-    this.notificationConditions.style.display = 'none';
+    // this.notificationConditions.style.display = 'none';
   }
 
   hideError() {
-    this.notificationPaymentError.style.display = 'none';
+    // this.notificationPaymentError.style.display = 'none';
   }
 
   showCanceled() {
-    this.notificationPaymentCanceled.style.display = 'block';
+    // this.notificationPaymentCanceled.style.display = 'block';
   }
 
   showConditions() {
-    this.notificationConditions.style.display = 'block';
+    // this.notificationConditions.style.display = 'block';
   }
 
   showError(message) {
-    this.notificationPaymentError.style.display = 'block';
+    // this.notificationPaymentError.style.display = 'block';
     // this.notificationPaymentErrorText.textContent = message;
   }
 }

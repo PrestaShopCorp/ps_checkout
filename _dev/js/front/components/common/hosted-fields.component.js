@@ -19,7 +19,13 @@
 import { SMART_BUTTON_CLASS } from '../../constants/ps-checkout-classes.constants';
 
 export class HostedFieldsComponent {
-  constructor(checkout, paymentOption, fundingSource) {
+  constructor(
+    checkout,
+    paymentOption,
+    fundingSource,
+    hostedFieldsContainer,
+    paymentButtonContainer
+  ) {
     this.checkout = checkout;
     this.checkoutConfig = checkout.config;
 
@@ -31,7 +37,9 @@ export class HostedFieldsComponent {
     this.payPalService = checkout.payPalService;
     this.psCheckoutService = checkout.psCheckoutService;
 
-    this.buttonContainer = this.htmlElementService.getButtonContainer();
+    this.buttonContainer =
+      paymentButtonContainer || this.htmlElementService.getButtonContainer();
+    this.hostedFieldsContainer = hostedFieldsContainer;
 
     this.paymentOptionsContainer = this.htmlElementService.getPaymentOptionsContainer();
 
@@ -43,36 +51,41 @@ export class HostedFieldsComponent {
   }
 
   isSubmittable() {
-    return (
-      this.checkout.children.conditionsCheckbox.isChecked() && this.validity
-    );
+    return this.checkout.children.conditionsCheckbox
+      ? this.checkout.children.conditionsCheckbox.isChecked() && this.validity
+      : this.validity;
   }
 
   render() {
-    this.paymentOptionAdditionalInformation = this.paymentOption.paymentOptionAdditionalInformation;
-    this.paymentOptionAdditionalInformation.id = `${this.paymentOption.getPaymentOptionId()}-additional-information`;
-    this.paymentOptionsContainer.append(
-      this.paymentOptionAdditionalInformation
-    );
+    if (!this.hostedFieldsContainer) {
+      this.hostedFieldsContainer = this.paymentOption.paymentOptionAdditionalInformation;
+      this.hostedFieldsContainer.id = `${this.paymentOption.getPaymentOptionId()}-additional-information`;
+      this.paymentOptionsContainer.append(this.hostedFieldsContainer);
+    }
+
+    if (this.htmlElementService.getHostedFieldsForm) {
+      this.hostedFieldForms = this.htmlElementService.getHostedFieldsForm();
+      this.hostedFieldForms.style.display = 'block';
+    }
 
     this.smartButton = document.createElement('div');
 
     this.smartButton.id = this.getButtonId();
     this.smartButton.classList.add(SMART_BUTTON_CLASS);
 
-    this.hostedFieldForms = this.htmlElementService.getHostedFieldsForm();
-    this.hostedFieldForms.style.display = 'block';
+    this.hostedFieldSubmitButton = document.querySelector(
+      "#payment-confirmation [type='submit']"
+    );
 
-    this.hostedFieldSubmitButton = document
-      .querySelector("#payment-confirmation [type='submit']")
-      .cloneNode(true);
     this.hostedFieldSubmitButton.id = 'ps_checkout-hosted-submit-button';
     this.hostedFieldSubmitButton.type = 'button';
+    this.hostedFieldSubmitButton.disabled = true;
 
     this.hostedFieldSubmitButton.classList.remove('disabled');
-    this.checkout.children.conditionsCheckbox.onChange(() => {
-      this.hostedFieldSubmitButton.disabled = !this.isSubmittable();
-    });
+    this.checkout.children.conditionsCheckbox &&
+      this.checkout.children.conditionsCheckbox.onChange(() => {
+        this.hostedFieldSubmitButton.disabled = !this.isSubmittable();
+      });
 
     this.smartButton.append(this.hostedFieldSubmitButton);
     this.buttonContainer.append(this.smartButton);
@@ -118,6 +131,7 @@ export class HostedFieldsComponent {
 
           hostedFieldsSubmitButton.addEventListener('click', event => {
             event.preventDefault();
+            this.checkout.children.loader.show();
             hostedFieldsSubmitButton.disabled = true;
             hostedFields
               .submit({
@@ -142,6 +156,7 @@ export class HostedFieldsComponent {
                   });
               })
               .catch(error => {
+                this.checkout.children.loader.hide();
                 this.checkout.children.notification.showError(error.message);
                 hostedFieldsSubmitButton.disabled = false;
               });

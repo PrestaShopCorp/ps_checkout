@@ -38,10 +38,12 @@ export const PsCheckoutConfig = {
     ...window.ps_checkoutCheckoutTranslations
   },
 
+  loaderImage: window.ps_checkoutLoaderImage,
   customMarker: {
     card: window.ps_checkoutCardFundingSourceImg
   },
 
+  expressCheckoutSelected: window.ps_checkoutExpressCheckoutSelected,
   expressCheckoutProductEnabled:
     window.ps_checkoutExpressCheckoutProductEnabled,
   expressCheckoutCartEnabled: window.ps_checkoutExpressCheckoutCartEnabled,

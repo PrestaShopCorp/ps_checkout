@@ -28,11 +28,39 @@ import { PsCheckoutExpressComponent } from './components/ps-checkout-express.com
 import { PsCheckoutComponent } from './components/ps-checkout.component';
 import { bootstrap } from './core/bootstrap';
 import { PsCheckoutService } from './service/ps-checkout.service';
+import {
+  PS_VERSION_1_6,
+  PS_VERSION_1_7
+} from './constants/ps-version.constants';
+
+function isTokenNeeded() {
+  if (!PsCheckoutConfig.expressCheckoutHostedFieldsEnabled) return false;
+
+  switch (PsCheckoutService.getPrestashopVersion()) {
+    case PS_VERSION_1_6: {
+      if (document.body.id === 'order') {
+        return !!document
+          .getElementById('step_end')
+          .classList.contains('step_current');
+      }
+
+      return document.body.id === 'order-opc';
+    }
+    case PS_VERSION_1_7: {
+      if (document.body.id !== 'checkout') return false;
+      return !document
+        .getElementById('checkout-payment-step')
+        .classList.contains('-unreachable');
+    }
+  }
+}
 
 bootstrap(() => {
-  (PayPalSdkConfig.clientToken
-    ? Promise.resolve(PayPalSdkConfig.clientToken)
-    : new PsCheckoutService(PsCheckoutConfig).postGetToken()
+  (isTokenNeeded()
+    ? PayPalSdkConfig.clientToken
+      ? Promise.resolve(PayPalSdkConfig.clientToken)
+      : new PsCheckoutService(PsCheckoutConfig).postGetToken()
+    : Promise.resolve('')
   )
     .then(token => {
       new PayPalSdkComponent(PayPalSdkConfig, token, sdk => {

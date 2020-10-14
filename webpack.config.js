@@ -18,11 +18,35 @@
  */
 module.exports = {
   entry: {
-    front: "./_dev/js/front/index.js"
+    front: './_dev/js/front/index.js'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  targets: {
+                    chrome: '58',
+                    ie: '11'
+                  }
+                }
+              ]
+            ]
+          }
+        }
+      }
+    ]
   },
   output: {
-    filename: "[name].js",
-    path: __dirname + "/views/js"
+    filename: '[name].js',
+    path: __dirname + '/views/js'
   },
-  mode: "production"
+  mode: 'production'
 };

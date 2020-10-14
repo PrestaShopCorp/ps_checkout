@@ -45,6 +45,10 @@ export class PaypalService {
     this.$ = id => this.translationService.getTranslationString(id);
   }
 
+  getOrderId() {
+    return this.config.orderId;
+  }
+
   /**
    * @param {string} fundingSource
    * @param {PaypalButtonEvents} events
@@ -176,7 +180,7 @@ export class PaypalService {
       });
   }
 
-  getEligibleFundingSources(cache) {
+  getEligibleFundingSources(cache = false) {
     if (!this.eligibleFundingSources || cache) {
       const paypalFundingSources = this.sdk.getFundingSources();
       this.eligibleFundingSources = (
