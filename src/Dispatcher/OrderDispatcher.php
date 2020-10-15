@@ -137,11 +137,17 @@ class OrderDispatcher implements Dispatcher
         ) {
             $orderHistory = new \OrderHistory();
             $orderHistory->id_order = $orderId;
-            $orderHistory->changeIdOrderState(
-                $newOrderStateId,
-                $orderId
-            );
-            $orderHistory->addWithemail();
+
+            try {
+                $orderHistory->changeIdOrderState(
+                    $newOrderStateId,
+                    $orderId
+                );
+                $orderHistory->addWithemail();
+            } catch (\Exception $exception) {
+                // If PrestaShop cannot send email or generate invoice do not break next operation
+                // For example : https://github.com/PrestaShop/PrestaShop/issues/18837
+            }
         }
 
         $orderPaymentCollection = $order->getOrderPaymentCollection();

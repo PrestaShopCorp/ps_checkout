@@ -177,8 +177,13 @@ class ValidateOrder
                 if ($currentOrderStateId !== $newOrderState) {
                     $orderHistory = new \OrderHistory();
                     $orderHistory->id_order = $module->currentOrder;
-                    $orderHistory->changeIdOrderState($newOrderState, $module->currentOrder);
-                    $orderHistory->addWithemail();
+                    try {
+                        $orderHistory->changeIdOrderState($newOrderState, $module->currentOrder);
+                        $orderHistory->addWithemail();
+                    } catch (\Exception $exception) {
+                        // If PrestaShop cannot send email or generate invoice do not break next operation
+                        // For example : https://github.com/PrestaShop/PrestaShop/issues/18837
+                    }
 
                     // If new OrderState is PS_OS_PAYMENT PrestaShop create an OrderPayment with no TransactionId and wrong Option Name
                     // So we have to update it
