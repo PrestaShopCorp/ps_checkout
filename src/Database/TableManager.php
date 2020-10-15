@@ -47,6 +47,13 @@ class TableManager
     public function createTable()
     {
         return $this->db->execute('
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_order_matrice` (
+            `id_order_matrice` int(10) unsigned NOT NULL AUTO_INCREMENT,
+            `id_order_prestashop` int(10) unsigned NOT NULL,
+            `id_order_paypal` varchar(20) NOT NULL,
+            PRIMARY KEY (`id_order_matrice`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+        ') && $this->db->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_cart` (
               `id_pscheckout_cart` int(10) unsigned NOT NULL AUTO_INCREMENT,
               `id_cart` int unsigned NOT NULL,
@@ -73,7 +80,8 @@ class TableManager
      */
     public function dropTable()
     {
-        return $this->db->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'pscheckout_cart`');
+        return true;
+        //return $this->db->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'pscheckout_cart`');
     }
 
     /**

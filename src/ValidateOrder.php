@@ -163,6 +163,10 @@ class ValidateOrder
                 throw new PsCheckoutException(sprintf('PrestaShop was unable to returns Prestashop Order ID for Prestashop Cart ID : %s  - Paypal Order ID : %s. This happens when PrestaShop take too long time to create an Order due to heavy processes in hooks actionValidateOrder and/or actionOrderStatusUpdate and/or actionOrderStatusPostUpdate', $payload['cartId'], $this->paypalOrderId), PsCheckoutException::PRESTASHOP_ORDER_ID_MISSING);
             }
 
+            if (false === $this->setOrdersMatrice($module->currentOrder, $this->paypalOrderId)) {
+                throw new PsCheckoutException(sprintf('Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s', $module->currentOrder, $this->paypalOrderId), PsCheckoutException::PSCHECKOUT_ORDER_MATRICE_ERROR);
+            }
+
             if (in_array($transactionStatus, [static::CAPTURE_STATUS_COMPLETED, static::CAPTURE_STATUS_DECLINED])) {
                 $newOrderState = static::CAPTURE_STATUS_COMPLETED === $transactionStatus ? $this->getPaidStatusId($module->currentOrder) : (int) \Configuration::getGlobalValue('PS_OS_ERROR');
 
@@ -200,6 +204,28 @@ class ValidateOrder
             'paypalOrderId' => false === empty($response) ? $response['body']['id'] : $this->paypalOrderId,
             'transactionIdentifier' => $transactionIdentifier,
         ];
+    }
+
+    /**
+     * @todo To remove when need of fallback on previous version is gone
+     *
+     * Set the matrice order values
+     *
+     * @param int $orderPrestashopId from prestashop
+     * @param string $orderPaypalId paypal order id
+     *
+     * @return bool
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    private function setOrdersMatrice($orderPrestashopId, $orderPaypalId)
+    {
+        $orderMatrice = new \OrderMatrice();
+        $orderMatrice->id_order_prestashop = $orderPrestashopId;
+        $orderMatrice->id_order_paypal = $orderPaypalId;
+
+        return $orderMatrice->add();
     }
 
     /**
