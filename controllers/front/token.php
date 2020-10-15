@@ -78,6 +78,16 @@ class Ps_CheckoutTokenModuleFrontController extends ModuleFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
+            /* @var \Psr\Log\LoggerInterface logger */
+            $logger = $this->module->getService('ps_checkout.logger');
+            $logger->error(
+                sprintf(
+                    'TokenController exception %s : %s',
+                    $exception->getCode(),
+                    $exception->getMessage()
+                )
+            );
+
             header('HTTP/1.0 500 Internal Server Error');
 
             echo json_encode([

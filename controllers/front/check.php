@@ -86,7 +86,7 @@ class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
                 $response = $paypalOrder->handle($isExpressCheckout, true, $psCheckoutCart->paypal_order);
 
                 if (false === $response['status']) {
-                    throw new PsCheckoutException('Unable to patch PayPal Order', PsCheckoutException::PSCHECKOUT_UPDATE_ORDER_HANDLE_ERROR);
+                    throw new PsCheckoutException(sprintf('Unable to patch PayPal Order - Exception %s : %s', $response['exceptionCode'], $response['exceptionMessage']), PsCheckoutException::PSCHECKOUT_UPDATE_ORDER_HANDLE_ERROR);
                 }
             }
 
@@ -98,6 +98,16 @@ class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
+            /* @var \Psr\Log\LoggerInterface logger */
+            $logger = $this->module->getService('ps_checkout.logger');
+            $logger->error(
+                sprintf(
+                    'CheckController - Exception %s : %s',
+                    $exception->getCode(),
+                    $exception->getMessage()
+                )
+            );
+
             header('HTTP/1.0 500 Internal Server Error');
 
             echo json_encode([

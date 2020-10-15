@@ -105,12 +105,18 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
                 false === empty($bodyValues['order']['payer']['phone']) ? $this->payload['order']['payer']['phone']['phone_number']['national_number'] : ''
             );
         } catch (Exception $exception) {
-            $this->module->getLogger()->error(sprintf(
-                'Express Checkout - Exception %s Order PayPal %s : %s',
-                $exception->getCode(),
-                $this->payload['orderID'],
-                $exception->getMessage()
-            ));
+            /* @var \Psr\Log\LoggerInterface logger */
+            $logger = $this->module->getService('ps_checkout.logger');
+            $logger->error(
+                sprintf(
+                    'ExpressCheckoutController - Exception %s : %s',
+                    $exception->getCode(),
+                    $exception->getMessage()
+                ),
+                [
+                    'paypal_order' => $this->payload['orderID'],
+                ]
+            );
 
             header('HTTP/1.0 500 Internal Server Error');
 

@@ -57,6 +57,7 @@ class SentryProcessor implements ProcessorInterface
             $user = $this->psAccount->getOnboardedAccount();
             if ($user !== null) {
                 $record['context']['user'] = [
+                    'id' => $user->getLocalId(),
                     'email' => $user->getEmail(),
                 ];
             }
@@ -65,7 +66,12 @@ class SentryProcessor implements ProcessorInterface
         }
 
         // Add various tags
-        $record['context']['tags'] = ['platform' => 'php'];
+        $record['context']['tags'] = [
+            'platform' => 'php',
+            'php_version' => phpversion(),
+            'module_version' => \Ps_checkout::VERSION,
+            'prestashop_version' => _PS_VERSION_,
+        ];
 
         return $record;
     }

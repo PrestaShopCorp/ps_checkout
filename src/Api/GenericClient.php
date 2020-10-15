@@ -265,7 +265,7 @@ class GenericClient
 
     private function handleException(\Exception $exception)
     {
-        $body = null;
+        $body = '';
         $httpCode = 500;
         $hasResponse = method_exists($exception, 'hasResponse') ? $exception->hasResponse() : false;
 
