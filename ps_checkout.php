@@ -547,7 +547,13 @@ class Ps_checkout extends PaymentModule
         }
 
         if ($this->name === Tools::getValue('configure')) {
-            $this->context->controller->addJS($this->getPathUri() . 'views/js/app.js');
+            /** @var \PrestaShop\Module\PrestashopCheckout\Environment\SentryEnv $sentryEnv */
+            $sentryEnv = $this->getService('ps_checkout.env.sentry');
+
+            Media::addJsDef([
+                $this->name . 'SentryDsn' => $sentryEnv->getDsn(),
+            ]);
+            $this->context->controller->addJS($this->getPathUri() . 'views/js/app.js?version=' . $this->version);
         }
     }
 

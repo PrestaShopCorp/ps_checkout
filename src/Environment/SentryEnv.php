@@ -99,4 +99,17 @@ class SentryEnv extends Env
     {
         $this->project = $project;
     }
+
+    /**
+     * @return string
+     */
+    public function getDsn()
+    {
+        return 'https://'
+            . $this->getKey()
+            . '@'
+            . $this->getOrganisation()
+            . 'ingest.sentry.io/'
+            . $this->getProject();
+    }
 }

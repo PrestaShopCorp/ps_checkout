@@ -36,8 +36,9 @@ Vue.use(VueSegment, {
   router,
   pageCategory: 'ps_checkout'
 });
+
 Sentry.init({
-  dsn: `https://${process.env.VUE_APP_SENTRY_KEY}@${process.env.VUE_APP_SENTRY_ORGANIZATION}.ingest.sentry.io/${process.env.VUE_APP_SENTRY_PROJECT}`,
+  dsn: window.ps_checkoutSentryDsn,
   integrations: [new VueIntegration({ Vue, attachProps: true })]
 });
 Sentry.configureScope(scope => {
