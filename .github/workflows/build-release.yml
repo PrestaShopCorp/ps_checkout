@@ -36,6 +36,9 @@ jobs:
           cmd: npm
           path: ./
 
+      - name: Execute webpack and vue-cli-service
+        run: npm build
+
       - name: Install composer dependencies
         run: composer install --no-dev -o
 
