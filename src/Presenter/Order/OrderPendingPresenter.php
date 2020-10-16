@@ -71,7 +71,7 @@ class OrderPendingPresenter implements PresenterInterface
             $order['userProfileLink'] = $link->getAdminLink('AdminCustomers', true, [], ['id_customer' => $order['id_customer'], 'viewcustomer' => 1]);
             $order['orderLink'] = $link->getAdminLink('AdminOrders', true, [], ['id_order' => $order['id_order'], 'vieworder' => 1]);
             $order['state'] = $orderStates[$order['current_state']];
-            $order['before_commission'] = \Tools::displayPrice($order['total_paid']);
+            $order['before_commission'] = \Tools::displayPrice($order['total_paid'], \Currency::getCurrencyInstance($order['id_currency']));
             // TODO: Waiting for paypal infos (reporting lot 2)
             $order['commission'] = '-';
             $order['total_paid'] = '-';

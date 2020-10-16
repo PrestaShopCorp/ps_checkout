@@ -38,7 +38,7 @@ class OrderRepository
     public function findByStates($shopId, array $idStates)
     {
         $orders = \Db::getInstance()->executeS('
-            SELECT o.id_order, o.current_state, o.total_paid, o.date_add, c.id_customer, c.firstname, c.lastname
+            SELECT o.id_order, o.id_currency, o.current_state, o.total_paid, o.date_add, c.id_customer, c.firstname, c.lastname
             FROM `' . _DB_PREFIX_ . 'orders` o
             INNER JOIN `' . _DB_PREFIX_ . 'customer` c ON (o.id_customer = c.id_customer)
             WHERE o.module = "ps_checkout"
