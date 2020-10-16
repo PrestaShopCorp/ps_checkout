@@ -547,7 +547,7 @@ class Ps_checkout extends PaymentModule
         }
 
         if ($this->name === Tools::getValue('configure')) {
-            $this->context->controller->addJS($this->getPathUri() . 'views/js/app.js');
+            $this->context->controller->addJS($this->getPathUri() . 'views/js/app.js?version=' . $this->version);
         }
     }
 
