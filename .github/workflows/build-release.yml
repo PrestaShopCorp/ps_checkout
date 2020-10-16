@@ -30,18 +30,6 @@ jobs:
           GCLOUD_CLUSTER: ${{ secrets.GCLOUD_CLUSTER }}
           GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT_PRODUCTION }}
 
-      - name: Build JS dependencies
-        uses: PrestaShopCorp/github-action-build-js/12@v1.0
-        with:
-          cmd: npm
-          path: ./
-
-      - name: Execute webpack and vue-cli-service
-        run: npm build
-
-      - name: Install composer dependencies
-        run: composer install --no-dev -o
-
       - name: Gcloud auth and write env file
         run: |
           echo $GOOGLE_APPLICATION_CREDENTIALS > ./token.json
@@ -54,6 +42,15 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_CREDENTIAL_PRODUCTION }}
           GCLOUD_CLUSTER: ${{ secrets.GCLOUD_CLUSTER }}
           GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT_PRODUCTION }}
+
+      - name: Build JS dependencies
+        uses: PrestaShopCorp/github-action-build-js/12@v1.0
+        with:
+          cmd: npm
+          path: ./
+
+      - name: Install composer dependencies
+        run: composer install --no-dev -o
 
       - name: Clean-up project
         uses: PrestaShopCorp/github-action-clean-before-deploy@v1.0
