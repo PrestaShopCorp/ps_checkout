@@ -43,7 +43,6 @@ class SegmentAPI
                 'context' => [
                     'ip' => $ip,
                     'userAgent' => $userAgent,
-                    'locale' => \Context::getContext()->currentLocale,
                     'page' => [
                         'referrer' => $referrer,
                         'url' => $url,
