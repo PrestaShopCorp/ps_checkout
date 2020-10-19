@@ -231,9 +231,9 @@ class Translations
                     'tipsContent' => $this->module->l('Boost your conversion rate by displaying PayPal as the first choice in the list of payment methods', 'translations'),
                 ],
                 'payment-acceptance' => [
-                    'paymentMethod' => $this->module->l('Payment method'),
-                    'availability' => $this->module->l('Availability'),
-                    'activationStatus' => $this->module->l('Activation status'),
+                    'paymentMethod' => $this->module->l('Payment method', 'translations'),
+                    'availability' => $this->module->l('Availability', 'translations'),
+                    'activationStatus' => $this->module->l('Activation status', 'translations'),
                     'paymentAcceptanceTitle' => $this->module->l('Payment methods acceptance', 'translations'),
                     'creditCardsLabel' => $this->module->l('Credit and Debit Cards', 'translations'),
                     'tips' => $this->module->l('Tips', 'translations'),
