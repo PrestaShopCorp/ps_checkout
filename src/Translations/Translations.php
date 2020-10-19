@@ -146,8 +146,8 @@ class Translations
                 'paypalStatus' => [
                     'buttonSuccess' => $this->module->l('Thank you, close this message', 'translations'),
                     'buttonLegal' => $this->module->l('Send my legal documents now', 'translations'),
-                    'allSet' => $this->module->l("You're all set !", 'translations'),
-                    'congrats' => $this->module->l("Congrats ! You're can to start selling online now.", 'translations'),
+                    'allSet' => $this->module->l('You\'re all set !', 'translations'),
+                    'congrats' => $this->module->l('Congrats ! You\'re can to start selling online now.', 'translations'),
                     'waitingFinalApprove' => $this->module->l('As soon as PayPal gets all your documents, you\'ll have to wait 48h for final approval.', 'translations'),
                     'oneMoreThing' => $this->module->l('One more thing : send documents to be fully approved by PayPal', 'translations'),
                     'psAccountConnected' => $this->module->l('Connect your PrestaShop account', 'translations'),
@@ -311,7 +311,7 @@ class Translations
                 ],
                 'conversion-rules' => [
                     'title' => $this->module->l('Define the currency conversion rules', 'translations'),
-                    'description' => $this->module->l("Let's choose the conversion rules for any transaction in a currency other than those activated on your account, should they be automatically converted or request your validation.", 'translations'),
+                    'description' => $this->module->l('Let\'s choose the conversion rules for any transaction in a currency other than those activated on your account, should they be automatically converted or request your validation.', 'translations'),
                     'link-title' => $this->module->l('Manage conversion rules', 'translations'),
                     'icon-title' => $this->module->l('Conversion rules', 'translations'),
                 ],
