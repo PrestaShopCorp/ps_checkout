@@ -92,8 +92,7 @@ export class LoaderComponent {
 
     this.text = document.createElement('h1');
     this.text.classList.add('ps-checkout', 'text');
-    // this.text.innerHTML = this.$('loader-component.label.header');
-    this.text.innerHTML = 'Thanks for your purchase!';
+    this.text.innerHTML = this.$('loader-component.label.header');
 
     this.loader = document.createElement('img');
     this.loader.classList.add('ps-checkout', 'loader');
@@ -102,8 +101,7 @@ export class LoaderComponent {
 
     this.subtext = document.createElement('div');
     this.subtext.classList.add('ps-checkout', 'subtext');
-    // this.text.innerHTML = this.$('loader-component.label.body');
-    this.subtext.innerHTML = 'Please wait, we proceed to payment';
+    this.text.innerHTML = this.$('loader-component.label.body');
 
     this.popup.append(this.text);
     this.popup.append(this.loader);
