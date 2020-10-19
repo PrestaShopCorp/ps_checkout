@@ -1,10 +1,11 @@
 /**
- * 2007-2020 PrestaShop and Contributors
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
@@ -12,9 +13,8 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2020 PrestaShop SA and Contributors
+ * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- * International Registered Trademark & Property of PrestaShop SA
  */
 
  p.payment_module a.pscheckout-paypal:after, p.payment_module a.pscheckout-card:after {
@@ -64,9 +64,30 @@ p.payment_module .pscheckout-paypal img, p.payment_module .pscheckout-card img {
   to { transform: rotate(360deg); }
 }
 
+#ps_checkout-hosted-fields-card-number {
+  position: relative;
+  height: 45px;
+  margin-top: 6px;
+}
+
+#ps_checkout-hosted-fields-card-expiration-date {
+  height: 45px;
+  margin-top: 6px;
+}
+
+#ps_checkout-hosted-fields-card-cvv {
+  height: 45px;
+  margin-top: 6px;
+}
+
+#ps_checkout-hosted-fields-form .form-group .form-control {
+  background-color: #F3F3F3;
+  border-radius: 5px;
+}
+
 #card-image {
   position: absolute;
-  top: 28px;
+  top: 7px;
   right: 1em;
   width: 44px;
   height: 28px;
@@ -97,20 +118,28 @@ p.payment_module .pscheckout-paypal img, p.payment_module .pscheckout-card img {
   background-position: 0 -133px;
 }
 
-.braintree-hosted-fields-focused {
-  outline: .1875rem solid #2fb5d2;
-  border: unset;
+#ps_checkout-hosted-fields-form .braintree-hosted-fields-focused {
+  border: .1875rem solid #2fb5d2;
   background-color: #fff;
   color: #232323;
 }
 
-.braintree-hosted-fields-invalid {
-  outline: .1875rem solid #e76d7a;
-  border: unset;
+#ps_checkout-hosted-fields-form .braintree-hosted-fields-invalid {
+  border: .1875rem solid #e76d7a;
+  animation: shake 500ms cubic-bezier(.20, 1.3, .7, 1) both;
+  transform: translate3d(0, 0, 0);
+  background-color: #fff;
   backface-visibility: hidden;
 }
 
-.defautl-credit-card {
+#ps_checkout-hosted-fields-form .braintree-hosted-fields-valid {
+  border: .1875rem solid #6fcc80;
+  transform: translate3d(0, 0, 0);
+  background-color: #fff;
+  backface-visibility: hidden;
+}
+
+#ps_checkout-hosted-fields-form .defautl-credit-card {
   position: absolute;
   top: 2px;
   right: 10px;

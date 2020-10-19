@@ -1,11 +1,12 @@
 <?php
 /**
- * 2007-2020 PrestaShop and Contributors
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * that is bundled with this package in the file LICENSE.md.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
@@ -13,19 +14,21 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2020 PrestaShop SA and Contributors
+ * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- * International Registered Trademark & Property of PrestaShop SA
  */
 
 use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook;
+use PrestaShop\Module\PrestashopCheckout\Dispatcher\MerchantDispatcher;
+use PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\MerchantDispatcher;
-use PrestaShop\Module\PrestashopCheckout\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 
+/**
+ * @todo To be refactored
+ */
 class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontController
 {
     const PS_CHECKOUT_PAYPAL_ID_LABEL = 'PS_CHECKOUT_PAYPAL_ID_MERCHANT';
@@ -41,9 +44,9 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     public $auth = false;
 
     /**
-     * Id coming from PSL
+     * UUID coming from PSL
      *
-     * @var int
+     * @var string
      */
     private $shopId;
 
@@ -216,22 +219,35 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      * Dispatch the web Hook according to the category
      *
      * @return bool
-     *
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     * @throws PsCheckoutException
      */
     private function dispatchWebHook()
     {
         if ('ShopNotificationMerchantAccount' === $this->payload['category']) {
+            $this->module->getLogger()->info(sprintf(
+                'DispatchWebHook %s merchantId : %s',
+                $this->payload['category'],
+                $this->merchantId
+            ));
+
             return (new MerchantDispatcher())->dispatchEventType(
                 ['merchantId' => $this->merchantId]
             );
         }
 
         if ('ShopNotificationOrderChange' === $this->payload['category']) {
+            $this->module->getLogger()->info(sprintf(
+                'DispatchWebHook %s PayPal Order id : %s',
+                $this->payload['category'],
+                $this->payload['orderId']
+            ));
+
             return (new OrderDispatcher())->dispatchEventType($this->payload);
         }
+
+        $this->module->getLogger()->info(sprintf(
+            'DispatchWebHook %s : ignored',
+            $this->payload['category']
+        ));
 
         return true;
     }
