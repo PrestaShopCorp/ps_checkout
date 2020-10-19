@@ -1,0 +1,104 @@
+<?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ */
+
+namespace PrestaShop\Module\PrestashopCheckout;
+
+use Module;
+
+class FundingSourceProvider
+{
+    /**
+     * @var array
+     */
+    private $fundingSourceNames;
+
+    /**
+     * @var array
+     */
+    private $paymentOptionNames;
+
+    /**
+     * @param Module $module
+     */
+    public function __construct(Module $module)
+    {
+        $this->fundingSourceNames = [
+            'card' => $module->l('Card', 'fundingsourceprovider'),
+            'paypal' => 'PayPal',
+            'venmo' => 'Venmo',
+            'itau' => 'Itau',
+            'credit' => 'PayPal Credit',
+            'paylater' => 'PayLater',
+            'ideal' => 'iDEAL',
+            'bancontact' => 'Bancontact',
+            'giropay' => 'Giropay',
+            'eps' => 'EPS',
+            'sofort' => 'Sofort',
+            'mybank' => 'MyBank',
+            'blik' => 'BLIK',
+            'p24' => 'Przelewy24',
+            'zimpler' => 'Zimpler',
+            'wechatpay' => 'WeChat Pay',
+            'payu' => 'PayU',
+            'verkkopankki' => 'Verkkopankki',
+            'trustly' => 'Trustly',
+            'oxxo' => 'OXXO',
+            'boleto' => 'Boleto',
+            'maxima' => 'Maxima',
+            'mercadopago' => 'Mercado Pago',
+            'sepa' => 'SEPA',
+        ];
+
+        $payByTranslation = $module->l('Pay by %s', 'fundingsourceprovider');
+
+        foreach ($this->fundingSourceNames as $fundingSource => $name) {
+            if ('paypal' === $fundingSource) {
+                // Specific translation
+                $this->paymentOptionNames[$fundingSource] = $module->l('Pay with a PayPal account', 'fundingsourceprovider');
+            } elseif ('card' === $fundingSource) {
+                // Specific translation
+                $this->paymentOptionNames[$fundingSource] = $module->l('Pay by Card', 'fundingsourceprovider');
+            } else {
+                $this->paymentOptionNames[$fundingSource] = sprintf($payByTranslation, $name);
+            }
+        }
+
+        // Provide a default wording "Pay by " for FO
+        $this->paymentOptionNames['default'] = str_replace('%s', '', $payByTranslation);
+    }
+
+    /**
+     * @param string $fundingSource
+     *
+     * @return string
+     */
+    public function getPaymentMethodName($fundingSource)
+    {
+        return isset($this->fundingSourceNames[$fundingSource]) ? $this->fundingSourceNames[$fundingSource] : '';
+    }
+
+    /**
+     * @return array
+     */
+    public function getPaymentOptionNames()
+    {
+        return $this->paymentOptionNames;
+    }
+}

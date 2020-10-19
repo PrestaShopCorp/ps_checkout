@@ -1,0 +1,34 @@
+includes:
+	- %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
+
+parameters:
+	paths:
+		# From PHPStan 0.12, paths to check are relative to the neon file
+		- ../../classes
+		- ../../controllers
+		- ../../ps_checkout.php
+	reportUnmatchedIgnoredErrors: false
+	ignoreErrors:
+		- '#Cannot assign offset "merchant…" to string\|true.#'
+		- '#Property ModuleCore::\$version \(float\) does not accept string.#'
+		- '#Strict comparison using === between false and string will always evaluate to false.#'
+		- '#Call to function is_array\(\) with Currency will always evaluate to false.#'
+		- '#Parameter \#1 \$id of class Customer constructor expects null, int given.#'
+		- '#Parameter \#1 \$hook_name of method ModuleCore::registerHook\(\) expects string, array<int, string> given.#'
+		- '#Parameter \#6 \$idShop of method LinkCore::getModuleLink\(\) expects null, int given.#'
+		- '#Call to an undefined method\(\) AdminController|FrontController::getCheckoutProcess\(\).#'
+		- '#Parameter \#1 \$id_hook of method ModuleCore::updatePosition\(\) expects bool, int given.#'
+		- '#Property TabCore::\$name \(string\) does not accept array.#'
+		- '#Access to an undefined property PaymentModule::\$currentOrderReference.#'
+		- '#Property CustomerCore::\$passwd \(int\) does not accept bool\|string.#'
+		- '#Parameter \#4 \$ssl of method LinkCore::getModuleLink\(\) expects null, true given.#'
+
+		# Ignore errors with classes from PS 1.7
+		- '#CheckoutPaymentStep#'
+		- '#PrestaShop\\PrestaShop\\Adapter\\Cart\\CartPresenter#'
+		- '#PrestaShop\\PrestaShop\\Core\\Payment\\PaymentOption#'
+		- '#Call to an undefined method AdminController\|FrontController::registerStylesheet\(\)#'
+		- '#Method LinkCore::getAdminLink\(\) invoked with 4 parameters, 1-2 required.#'
+		- '#Static method ConfigurationCore::get\(\) invoked with 5 parameters, 1-4 required.#'
+
+	level: 2
