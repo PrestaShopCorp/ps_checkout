@@ -29,12 +29,17 @@ class SegmentAPI
 
     public function track($message, $shops, $options = [])
     {
-        $userAgent = $_SERVER['HTTP_USER_AGENT'];
-        $ip = $_SERVER['REMOTE_ADDR'];
+        if (\Tools::isPHPCLI()) {
+            return true;
+        }
+
+        $userAgent = array_key_exists('HTTP_USER_AGENT', $_SERVER) === true ? $_SERVER['HTTP_USER_AGENT'] : '';
+        $ip = array_key_exists('REMOTE_ADDR', $_SERVER) === true ? $_SERVER['REMOTE_ADDR'] : '';
         $path = strtok($_SERVER['REQUEST_URI'], '?');
         $referrer = array_key_exists('HTTP_REFERER', $_SERVER) === true ? $_SERVER['HTTP_REFERER'] : '';
         $queryString = '?' . $_SERVER['QUERY_STRING'];
         $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+
         foreach ($shops as $shopId) {
             \Segment::track([
                 'userId' => $shopId,
