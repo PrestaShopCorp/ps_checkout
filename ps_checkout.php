@@ -157,7 +157,10 @@ class Ps_checkout extends PaymentModule
      */
     public function install()
     {
+        // When PrestaShop install a module, enable() and install() are called but we want to track only install()
+        // Should be done before parent::install() because enable() will be called first
         $this->disableSegment = true;
+
         // Install for both 1.7 and 1.6
         $defaultInstall = parent::install() &&
             (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops() &&
@@ -167,12 +170,16 @@ class Ps_checkout extends PaymentModule
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
             $this->installTabs();
 
-        // track the install click button
-        $tracker = $this->getService('ps_checkout.segment.tracker');
-        $tracker->track('Install');
-
         if (!$defaultInstall) {
             return false;
+        }
+
+        // We want to track only event appends on PrestaShop BO
+        // We must doing that here because before module is not installed so Service Container cannot be used
+        if (defined('_PS_ADMIN_DIR_')) {
+            /** @var \PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker $tracker */
+            $tracker = $this->getService('ps_checkout.segment.tracker');
+            $tracker->track('Install');
         }
 
         // Install specific to prestashop 1.7
@@ -250,9 +257,16 @@ class Ps_checkout extends PaymentModule
      */
     public function uninstall()
     {
-        // track the uninstall click button
+        // When PrestaShop uninstall a module, disable() and uninstall() are called but we want to track only uninstall()
+        // Should be done before parent::uninstall() because disable() will be called first
         $this->disableSegment = true;
-        $this->getService('ps_checkout.segment.tracker')->track('Uninstall');
+
+        // We want to track only event appends on PrestaShop BO
+        if (defined('_PS_ADMIN_DIR_')) {
+            /** @var \PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker $tracker */
+            $tracker = $this->getService('ps_checkout.segment.tracker');
+            $tracker->track('Uninstall');
+        }
 
         foreach (array_keys($this->configurationList) as $name) {
             Configuration::deleteByName($name);
@@ -272,15 +286,22 @@ class Ps_checkout extends PaymentModule
      */
     public function enable($force_all = false)
     {
-        // track the activate click button
+        $isEnabled = parent::enable($force_all);
+
+        // When PrestaShop install a module, enable() and install() are called but we want to track only install()
+        // We want to track only event appends on PrestaShop BO
+        if ($isEnabled && false === $this->disableSegment && defined('_PS_ADMIN_DIR_')) {
+            /** @var \PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker $tracker */
+            $tracker = $this->getService('ps_checkout.segment.tracker');
+            $tracker->track('Activate');
+        }
+
+        // After event is sent or ignored, we want to track events like before
         if ($this->disableSegment) {
             $this->disableSegment = false;
-
-            return parent::enable($force_all);
-        } else {
-            return parent::enable($force_all)
-                && $this->getService('ps_checkout.segment.tracker')->track('Activate');
         }
+
+        return $isEnabled;
     }
 
     /**
@@ -292,15 +313,20 @@ class Ps_checkout extends PaymentModule
      */
     public function disable($force_all = false)
     {
-        // track the deactivate click button
+        // When PrestaShop uninstall a module, disable() and uninstall() are called but we want to track only uninstall()
+        // We want to track only event appends on PrestaShop BO
+        if (false === $this->disableSegment && defined('_PS_ADMIN_DIR_')) {
+            /** @var \PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker $tracker */
+            $tracker = $this->getService('ps_checkout.segment.tracker');
+            $tracker->track('Deactivate');
+        }
+
+        // After event is sent or ignored, we want to track events like before
         if ($this->disableSegment) {
             $this->disableSegment = false;
-
-            return parent::disable($force_all);
-        } else {
-            return parent::disable($force_all)
-                && $this->getService('ps_checkout.segment.tracker')->track('Deactivate');
         }
+
+        return parent::disable($force_all);
     }
 
     /**
