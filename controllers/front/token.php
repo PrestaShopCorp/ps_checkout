@@ -63,6 +63,7 @@ class Ps_CheckoutTokenModuleFrontController extends ModuleFrontController
             if (empty($psCheckoutCart->paypal_token_expire)
                 || strtotime($psCheckoutCart->paypal_token_expire) <= time()
             ) {
+                $psCheckoutCart->paypal_order = '';
                 $psCheckoutCart->paypal_token = $this->getToken();
                 $psCheckoutCart->paypal_token_expire = (new DateTime())->modify('+3550 seconds')->format('Y-m-d H:i:s');
                 $psCheckoutCartRepository->save($psCheckoutCart);
