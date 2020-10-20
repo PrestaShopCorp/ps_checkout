@@ -174,13 +174,8 @@ class Ps_checkout extends PaymentModule
             return false;
         }
 
-        // We want to track only event appends on PrestaShop BO
         // We must doing that here because before module is not installed so Service Container cannot be used
-        if (defined('_PS_ADMIN_DIR_')) {
-            /** @var \PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker $tracker */
-            $tracker = $this->getService('ps_checkout.segment.tracker');
-            $tracker->track('Install');
-        }
+        $this->trackModuleAction('Install');
 
         // Install specific to prestashop 1.7
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
@@ -260,13 +255,7 @@ class Ps_checkout extends PaymentModule
         // When PrestaShop uninstall a module, disable() and uninstall() are called but we want to track only uninstall()
         // Should be done before parent::uninstall() because disable() will be called first
         $this->disableSegment = true;
-
-        // We want to track only event appends on PrestaShop BO
-        if (defined('_PS_ADMIN_DIR_')) {
-            /** @var \PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker $tracker */
-            $tracker = $this->getService('ps_checkout.segment.tracker');
-            $tracker->track('Uninstall');
-        }
+        $this->trackModuleAction('Uninstall');
 
         foreach (array_keys($this->configurationList) as $name) {
             Configuration::deleteByName($name);
@@ -289,11 +278,8 @@ class Ps_checkout extends PaymentModule
         $isEnabled = parent::enable($force_all);
 
         // When PrestaShop install a module, enable() and install() are called but we want to track only install()
-        // We want to track only event appends on PrestaShop BO
-        if ($isEnabled && false === $this->disableSegment && defined('_PS_ADMIN_DIR_')) {
-            /** @var \PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker $tracker */
-            $tracker = $this->getService('ps_checkout.segment.tracker');
-            $tracker->track('Activate');
+        if ($isEnabled && false === $this->disableSegment) {
+            $this->trackModuleAction('Activate');
         }
 
         // After event is sent or ignored, we want to track events like before
@@ -314,11 +300,8 @@ class Ps_checkout extends PaymentModule
     public function disable($force_all = false)
     {
         // When PrestaShop uninstall a module, disable() and uninstall() are called but we want to track only uninstall()
-        // We want to track only event appends on PrestaShop BO
-        if (false === $this->disableSegment && defined('_PS_ADMIN_DIR_')) {
-            /** @var \PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker $tracker */
-            $tracker = $this->getService('ps_checkout.segment.tracker');
-            $tracker->track('Deactivate');
+        if (false === $this->disableSegment) {
+            $this->trackModuleAction('Deactivate');
         }
 
         // After event is sent or ignored, we want to track events like before
@@ -550,7 +533,7 @@ class Ps_checkout extends PaymentModule
         ]);
 
         // track when payment method header is called
-        $this->getService('ps_checkout.segment.tracker')->track('View Payment Methods PS Page');
+        $this->trackModuleAction('View Payment Methods PS Page');
 
         return $this->display(__FILE__, '/views/templates/hook/adminAfterHeader.tpl');
     }
@@ -1131,5 +1114,18 @@ class Ps_checkout extends PaymentModule
         ]);
 
         return $this->display(__FILE__, '/views/templates/hook/displayPaymentByBinaries.tpl');
+    }
+
+    /**
+     * @param string $action
+     */
+    private function trackModuleAction($action)
+    {
+        // We want to track only event appends on PrestaShop BO
+        if (defined('_PS_ADMIN_DIR_')) {
+            /** @var \PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker $tracker */
+            $tracker = $this->getService('ps_checkout.segment.tracker');
+            $tracker->track($action);
+        }
     }
 }
