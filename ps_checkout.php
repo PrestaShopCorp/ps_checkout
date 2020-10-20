@@ -623,14 +623,6 @@ class Ps_checkout extends PaymentModule
             && strtotime($psCheckoutCart->paypal_token_expire) > time()
         ) {
             $payPalOrderId = $psCheckoutCart->paypal_order;
-        }
-
-        // If we have no PayPal Order Id but a not expired PayPal Client Token, we can use it
-        // If paypal_token_expire is in future, token is not expired
-        if (false !== $psCheckoutCart
-            && false === empty($psCheckoutCart->paypal_token_expire)
-            && strtotime($psCheckoutCart->paypal_token_expire) > time()
-        ) {
             $payPalClientToken = $psCheckoutCart->paypal_token;
         }
         // END To be refactored in services
