@@ -146,7 +146,7 @@ class Ps_checkout extends PaymentModule
         $this->description = $this->l('Provide the most commonly used payment methods to your customers in this all-in-one module, and manage all your sales in a centralized interface.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
-        $this->ps_versions_compliancy = ['min' => '1.7.5.0', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = ['min' => '1.6.1.0', 'max' => _PS_VERSION_];
         $this->disableSegment = false;
     }
 
