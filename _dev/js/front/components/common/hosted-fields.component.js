@@ -73,9 +73,9 @@ export class HostedFieldsComponent {
     this.smartButton.id = this.getButtonId();
     this.smartButton.classList.add(SMART_BUTTON_CLASS);
 
-    this.hostedFieldSubmitButton = document.querySelector(
-      "#payment-confirmation [type='submit']"
-    );
+    this.hostedFieldSubmitButton = document
+      .querySelector("#payment-confirmation [type='submit']")
+      .cloneNode(true);
 
     this.hostedFieldSubmitButton.id = 'ps_checkout-hosted-submit-button';
     this.hostedFieldSubmitButton.type = 'button';
