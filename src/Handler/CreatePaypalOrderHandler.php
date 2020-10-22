@@ -80,7 +80,14 @@ class CreatePaypalOrderHandler
             }
 
             $builder->buildFullPayload();
-        } else { // if on 1.6 always build minimal payload
+        } else {
+            // enable update mode if we build an order for update it
+            if (true === $updateOrder) {
+                $builder->setIsUpdate(true);
+                $builder->setPaypalOrderId($paypalOrderId);
+            }
+
+            // if on 1.6 always build minimal payload
             $builder->buildMinimalPayload();
         }
 
