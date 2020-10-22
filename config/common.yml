@@ -1,59 +1,74 @@
 services:
-  _defaults:
-    public: true
+  # From PS 1.7.0 to PS 1.7.3, the bundled version of Symfony is 2.x on which the _defaults
+  # key is invalid. To prevent error on these versions, each service has to be specificaly
+  # declared as public.
+  #  _defaults:
+  #   public: true
 
   ps_checkout.module:
     class: 'Ps_checkout'
     factory: ['Module', 'getInstanceByName']
+    public: true
     arguments:
       - 'ps_checkout'
 
   ps_checkout.context.prestashop:
     class: 'PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
+    public: true
 
   ps_checkout.context.shop:
     class: 'PrestaShop\Module\PrestashopCheckout\ShopContext'
+    public: true
 
   ps_checkout.shop.provider:
     class: 'PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider'
+    public: true
 
   ps_checkout.configuration.options.resolver:
     class: 'PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfigurationOptionsResolver'
+    public: true
     arguments:
       - '@=service("ps_checkout.shop.provider").getIdentifier()'
 
   ps_checkout.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration'
+    public: true
     arguments:
       - '@ps_checkout.configuration.options.resolver'
 
   ps_checkout.logger.directory:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory'
+    public: true
     arguments:
       - !php/const _PS_VERSION_
       - !php/const _PS_ROOT_DIR_
 
   ps_checkout.logger.filename:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFilename'
+    public: true
     arguments:
       - '@=service("ps_checkout.module").name'
       - '@=service("ps_checkout.shop.provider").getIdentifier()'
 
   ps_checkout.logger.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration'
+    public: true
     arguments:
       - '@ps_checkout.configuration'
 
   ps_checkout.env.sentry:
     class: 'PrestaShop\Module\PrestashopCheckout\Environment\SentryEnv'
+    public: true
 
   ps_checkout.logger.sentry.handler:
     class: 'PrestaShop\Module\PrestashopCheckout\Sentry\SentryHandler'
+    public: true
     arguments:
       - '@ps_checkout.env.sentry'
 
   ps_checkout.logger.handler.factory:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerHandlerFactory'
+    public: true
     arguments:
       - '@=service("ps_checkout.logger.directory").getPath()'
       - '@=service("ps_checkout.logger.filename").get()'
@@ -62,10 +77,12 @@ services:
 
   ps_checkout.logger.handler:
     class: 'Monolog\Handler\HandlerInterface'
+    public: true
     factory: ['@ps_checkout.logger.handler.factory', 'build']
 
   ps_checkout.logger.factory:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory'
+    public: true
     arguments:
       - '@=service("ps_checkout.module").name'
       - '@ps_checkout.logger.handler'
@@ -74,100 +91,119 @@ services:
 
   ps_checkout.logger:
     class: 'Psr\Log\LoggerInterface'
+    public: true
     factory: ['@ps_checkout.logger.factory', 'build']
     arguments:
       - '@ps_checkout.logger.directory'
 
   ps_checkout.logger.sentry.processor:
     class: 'PrestaShop\Module\PrestashopCheckout\Sentry\SentryProcessor'
+    public: true
     arguments:
       - '@ps_checkout.repository.prestashop.account'
 
   ps_checkout.paypal.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
+    public: true
     arguments:
       - '@ps_checkout.configuration'
 
   ps_checkout.persistent.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\PersistentConfiguration'
+    public: true
     arguments:
       - '@ps_checkout.configuration'
 
   ps_checkout.express_checkout.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration'
+    public: true
     arguments:
       - '@ps_checkout.configuration'
 
   ps_checkout.api.firebase.auth:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth'
+    public: true
 
   ps_checkout.api.firebase.auth.factory:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\AuthFactory'
+    public: true
     arguments:
       - '@ps_checkout.api.firebase.auth'
       - '@ps_checkout.persistent.configuration'
 
   ps_checkout.repository.paypal.account:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository'
+    public: true
     arguments:
       - '@ps_checkout.configuration'
 
   ps_checkout.sdk.paypal.linkbuilder:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder'
+    public: true
     arguments:
       - '@ps_checkout.repository.paypal.account'
       - '@ps_checkout.paypal.configuration'
 
   ps_checkout.repository.prestashop.account:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
+    public: true
     arguments:
       - '@ps_checkout.configuration'
 
   ps_checkout.store.module.psx:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule'
+    public: true
     arguments:
       - '@ps_checkout.context.prestashop'
       - '@ps_checkout.repository.prestashop.account'
 
   ps_checkout.store.module.paypal:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule'
+    public: true
     arguments:
       - '@ps_checkout.repository.paypal.account'
 
   ps_checkout.store.module.firebase:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\FirebaseModule'
+    public: true
     arguments:
       - '@ps_checkout.repository.prestashop.account'
 
   ps_checkout.store.module.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule'
+    public: true
     arguments:
       - '@ps_checkout.express_checkout.configuration'
       - '@ps_checkout.paypal.configuration'
 
   ps_checkout.builder.payload.onboarding:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder'
+    public: true
     arguments:
       - '@ps_checkout.repository.prestashop.account'
       - '@ps_checkout.adapter.language'
 
   ps_checkout.updater.paypal.account:
     class: 'PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater'
+    public: true
     arguments:
       - '@ps_checkout.persistent.configuration'
 
   ps_checkout.step.live:
     class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep'
+    public: true
     arguments:
       - '@ps_checkout.configuration'
 
   ps_checkout.translations.translations:
     class: 'PrestaShop\Module\PrestashopCheckout\Translations\Translations'
+    public: true
     arguments:
       - '@ps_checkout.module'
 
   ps_checkout.store.module.context:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule'
+    public: true
     arguments:
       - '@=service("ps_checkout.module").name'
       - '@=service("ps_checkout.module").module_key'
@@ -180,18 +216,22 @@ services:
 
   ps_checkout.adapter.language:
     class: 'PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter'
+    public: true
     arguments:
       - '@ps_checkout.context.shop'
 
   ps_checkout.store.store:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter'
+    public: true
     arguments:
       - ['@ps_checkout.store.module.context', '@ps_checkout.store.module.firebase', '@ps_checkout.store.module.paypal', '@ps_checkout.store.module.psx', '@ps_checkout.store.module.configuration']
 
   ps_checkout.repository.pscheckoutcart:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
+    public: true
 
   ps_checkout.provider.funding_source:
     class: 'PrestaShop\Module\PrestashopCheckout\FundingSourceProvider'
+    public: true
     arguments:
       - '@ps_checkout.module'
