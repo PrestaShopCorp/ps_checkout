@@ -16,16 +16,26 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
-{if $status === 'pending' }
-  <div class="alert alert-warning">
-    {l s='Your order hasn\'t been validated yet, only created. There can be an issue with your payment or it can be captured later, please contact our customer service to have more details about it.' mod='ps_checkout'}
-  </div>
-{elseif $isAuthorized }
-  <div class="alert alert-success">
-      {l s='Your order is confirmed.' mod='ps_checkout'}<br>
-      {if $isShop17}
-        <i class="material-icons">info</i>
-      {/if}
-      {l s="Important : you won't be charged until the order is shipping is effective." mod="ps_checkout"}
-  </div>
-{/if}
+<section id="ps_checkout-displayOrderConfirmation">
+  {if $status === 'pending' }
+    <div class="alert alert-warning">
+      {l s='Your order hasn\'t been validated yet, only created. There can be an issue with your payment or it can be captured later, please contact our customer service to have more details about it.' mod='ps_checkout'}
+    </div>
+  {elseif $isShop17 && $isAuthorized }
+    {* PrestaShop 1.7 show a confirmation message itself, so we display only a message in case of isAuthorized *}
+    <div class="alert alert-info">
+      <i class="material-icons">info</i>
+      {l s="Important : you won't be charged until the order's shipping is effective." mod="ps_checkout"}
+    </div>
+  {elseif !$isShop17 }
+    {* PrestaShop 1.6 doesn't show a confirmation message itself, so have to display it *}
+    <div class="alert alert-success">
+      {l s='Your order is confirmed.' mod='ps_checkout'}
+    </div>
+    {if $isAuthorized }
+      <div class="box">
+        <p>{l s="Important : you won't be charged until the order's shipping is effective." mod="ps_checkout"}</p>
+      </div>
+    {/if}
+  {/if}
+</section>
