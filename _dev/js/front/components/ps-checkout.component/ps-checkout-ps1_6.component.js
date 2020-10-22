@@ -60,7 +60,6 @@ export class PsCheckoutPs1_6Component {
       throw new Error(this.$('error.paypal-sdk'));
     }
 
-    window.x = this.children;
     this.children.notification = new NotificationComponent(this).render();
 
     if (document.body.id === 'order') {
