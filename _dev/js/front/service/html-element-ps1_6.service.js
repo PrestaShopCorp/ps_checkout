@@ -33,6 +33,56 @@ export class HtmlElementPs1_6Service {
     );
   }
 
+  getNotificationPaymentContainer(cache = false) {
+    if (!this.notificationPaymentContainer || cache) {
+      this.notificationPaymentContainer = document.getElementById(
+        this.selectors.NOTIFICATION_CONTAINER_ID
+      );
+    }
+
+    return this.notificationPaymentContainer;
+  }
+
+  getNotificationPaymentContainerTarget(cache = false) {
+    if (!this.notificationPaymentContainerTarget || cache) {
+      this.notificationPaymentContainerTarget = document.getElementById(
+        this.selectors.NOTIFICATION_TARGET_ID
+      );
+    }
+
+    return this.notificationPaymentContainerTarget;
+  }
+
+  getNotificationPaymentCanceled(cache = false) {
+    if (!this.notificationPaymentCanceled || cache) {
+      this.notificationPaymentCanceled = document.getElementById(
+        this.selectors.NOTIFICATION_PAYMENT_CANCELED_ID
+      );
+    }
+
+    return this.notificationPaymentCanceled;
+  }
+
+  getNotificationPaymentError(cache = false) {
+    if (!this.notificationPaymentError || cache) {
+      this.notificationPaymentError = document.getElementById(
+        this.selectors.NOTIFICATION_PAYMENT_ERROR_ID
+      );
+    }
+
+    return this.notificationPaymentError;
+  }
+
+  getNotificationPaymentErrorText(cache = false) {
+    if (!this.notificationPaymentErrorText || cache) {
+      this.notificationPaymentErrorText = document.getElementById(
+        this.selectors.NOTIFICATION_PAYMENT_ERROR_TEXT_ID
+      );
+    }
+
+    return this.notificationPaymentErrorText;
+  }
+
   getPaymentOptionsContainer() {
     return document.getElementById(this.selectors.PAYMENT_OPTIONS_CONTAINER);
   }

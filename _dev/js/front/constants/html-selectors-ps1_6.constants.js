@@ -21,6 +21,13 @@ export const HtmlSelectorsPs1_6Constants = {
 
   CHECKOUT_PAYMENT_OPTIONS_CONTAINER: '#ps_checkout-payment .payment-options',
 
+  NOTIFICATION_TARGET_ID: 'HOOK_PAYMENT',
+
+  NOTIFICATION_CONTAINER_ID: 'ps_checkout-notification-container',
+  NOTIFICATION_PAYMENT_CANCELED_ID: 'ps_checkout-canceled',
+  NOTIFICATION_PAYMENT_ERROR_ID: 'ps_checkout-error',
+  NOTIFICATION_PAYMENT_ERROR_TEXT_ID: 'ps_checkout-error-text',
+
   PAYMENT_OPTION: '.row',
   PAYMENT_OPTION_CONTAINER: '.payment-option-container',
 
