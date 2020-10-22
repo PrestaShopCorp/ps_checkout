@@ -190,6 +190,21 @@ class Ps_checkout extends PaymentModule
             $this->updatePosition(\Hook::getIdByName('payment'), false, 1);
     }
 
+    public function checkCompliancy()
+    {
+        $isCompliant = parent::checkCompliancy();
+
+        if ($isCompliant
+            && Tools::version_compare(_PS_VERSION_, '1.7.0', '>=')
+            && Tools::version_compare(_PS_VERSION_, '1.7.4', '<')
+        ) {
+            // We are aware about dependencies are not compliant for PrestaShop >= 1.7.0 and < 1.7.4 due to Symfony version mismatch
+            return false;
+        }
+
+        return $isCompliant;
+    }
+
     /**
      * Install configuration for each shop
      *
