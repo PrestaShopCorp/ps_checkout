@@ -42,7 +42,7 @@
               </div>
             </div>
 
-            <div id="payment-confirmation" class="submit">
+            <div id="payment-confirmation" class="submit hidden">
               <button id="hosted-fields-validation" class="button btn btn-default button-medium" type="submit">
                 <span>{l s='I confirm my order' mod='ps_checkout'}<i class="icon-chevron-right right"></i></span>
               </button>

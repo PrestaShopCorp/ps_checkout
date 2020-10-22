@@ -29,7 +29,6 @@ export class NotificationComponent {
 
   render() {
     // This component doesn't need to be rendered since it's already on the template.
-
     return this;
   }
 
