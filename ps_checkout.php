@@ -1077,7 +1077,10 @@ class Ps_checkout extends PaymentModule
     public function getService($serviceName)
     {
         if ($this->serviceContainer === null) {
-            $this->serviceContainer = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer($this->name, $this->getLocalPath());
+            $this->serviceContainer = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer(
+                $this->name . str_replace('.', '', $this->version),
+                $this->getLocalPath()
+            );
         }
 
         return $this->serviceContainer->getService($serviceName);
