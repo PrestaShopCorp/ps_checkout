@@ -39,6 +39,17 @@ p.payment_module a.pscheckout-paypal, p.payment_module a.pscheckout-card {
   padding: 30px 40px 30px 20px;
 }
 
+.payment-option-container {
+  background-color: #fbfbfb;
+  display: block;
+  border: 1px solid #d6d4d4;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  padding: 33px 40px 34px 99px;
+  margin-bottom: 10px;
+}
+
 #hostedFieldsErrors.hide-paypal-error {
   display: none;
 }

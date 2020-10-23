@@ -272,3 +272,17 @@
 .ps-checkout-funding-img {
   margin: 0 0.25em;
 }
+
+#ps_checkout-hosted-fields-card-number {
+  position: relative;
+  height: 45px;
+  margin-top: 6px;
+}
+#ps_checkout-hosted-fields-card-expiration-date {
+  height: 45px;
+  margin-top: 6px;
+}
+#ps_checkout-hosted-fields-card-cvv {
+  height: 45px;
+  margin-top: 6px;
+}
