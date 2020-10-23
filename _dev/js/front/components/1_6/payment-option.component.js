@@ -51,38 +51,38 @@ export class PaymentOptionComponent {
 
       // TODO: Move to CSS
       STYLE.innerHTML = `
-      #ps_checkout-payment a span {
+      #ps_checkout-displayPayment a span {
         color: white;
       }
 
-      #ps_checkout-payment .form-group {
+      #ps_checkout-displayPayment .form-group {
         margin-left: 0;
         margin-right: 0;
 
         margin-bottom: 15px;
       }
 
-      #ps_checkout-payment .form-group .form-control {
+      #ps_checkout-displayPayment .form-group .form-control {
         max-width: initial;
       }
 
-      #ps_checkout-payment .payment_module a {
+      #ps_checkout-displayPayment .payment_module a {
         padding: 33px 99px 34px 99px;
       }
 
-      #ps_checkout-payment .payment_module .pscheckout-paypal, #ps_checkout-payment .payment_module .pscheckout-card {
+      #ps_checkout-displayPayment .payment_module .pscheckout-paypal, #ps_checkout-displayPayment .payment_module .pscheckout-card {
         background: #fbfbfb;
         padding: 25px 99px 25px 10px;
       }
-      #ps_checkout-payment .payment_module.closed:first-child {}
-      #ps_checkout-payment .payment_module.closed:last-child { display: none }
+      #ps_checkout-displayPayment .payment_module.closed:first-child {}
+      #ps_checkout-displayPayment .payment_module.closed:last-child { display: none }
 
-      #ps_checkout-payment .payment_module.open:first-child { margin: 0 }
-      #ps_checkout-payment .payment_module.open:first-child .pscheckout-paypal, #ps_checkout-payment .payment_module.open:first-child .pscheckout-card {
+      #ps_checkout-displayPayment .payment_module.open:first-child { margin: 0 }
+      #ps_checkout-displayPayment .payment_module.open:first-child .pscheckout-paypal, #ps_checkout-displayPayment .payment_module.open:first-child .pscheckout-card {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
       }
-      #ps_checkout-payment .payment_module.open:last-child a {
+      #ps_checkout-displayPayment .payment_module.open:last-child a {
         border-top: none;
         border-top-left-radius: 0;
         border-top-right-radius: 0;

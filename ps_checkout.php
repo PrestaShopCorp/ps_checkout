@@ -74,7 +74,7 @@ class Ps_checkout extends PaymentModule
      * @var array
      */
     const HOOK_LIST_16 = [
-        'payment',
+        'displayPayment',
     ];
 
     public $configurationList = [
@@ -403,7 +403,7 @@ class Ps_checkout extends PaymentModule
     /**
      * Add payment option at the checkout in the front office (prestashop 1.6)
      */
-    public function hookPayment()
+    public function hookDisplayPayment()
     {
         if (false === Validate::isLoadedObject($this->context->cart)
             || false === $this->checkCurrency($this->context->cart)
@@ -416,7 +416,7 @@ class Ps_checkout extends PaymentModule
             'modulePath' => $this->getPathUri(),
         ]);
 
-        return $this->display(__FILE__, '/views/templates/hook/payment.tpl');
+        return $this->display(__FILE__, '/views/templates/hook/displayPayment.tpl');
     }
 
     /**
