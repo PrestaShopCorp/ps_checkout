@@ -23,7 +23,6 @@ import { MarkerComponent } from '../common/marker.component';
 const PAYMENT_OPTION_LABEL_MARK = id => `${id}-mark`;
 // const PAYMENT_OPTION_CONTAINER_IDENTIFIER = id => `${id}-container`;
 
-let STYLE;
 let BASE_PAYMENT_OPTION;
 
 export class PaymentOptionComponent {
@@ -45,52 +44,6 @@ export class PaymentOptionComponent {
 
     this.open = false;
     this.children = {};
-
-    if (!STYLE) {
-      STYLE = document.createElement('style');
-
-      // TODO: Move to CSS
-      STYLE.innerHTML = `
-      #ps_checkout-displayPayment a span {
-        color: white;
-      }
-
-      #ps_checkout-displayPayment .form-group {
-        margin-left: 0;
-        margin-right: 0;
-
-        margin-bottom: 15px;
-      }
-
-      #ps_checkout-displayPayment .form-group .form-control {
-        max-width: initial;
-      }
-
-      #ps_checkout-displayPayment .payment_module a {
-        padding: 33px 99px 34px 99px;
-      }
-
-      #ps_checkout-displayPayment .payment_module .pscheckout-paypal, #ps_checkout-displayPayment .payment_module .pscheckout-card {
-        background: #fbfbfb;
-        padding: 25px 99px 25px 10px;
-      }
-      #ps_checkout-displayPayment .payment_module.closed:first-child {}
-      #ps_checkout-displayPayment .payment_module.closed:last-child { display: none }
-
-      #ps_checkout-displayPayment .payment_module.open:first-child { margin: 0 }
-      #ps_checkout-displayPayment .payment_module.open:first-child .pscheckout-paypal, #ps_checkout-displayPayment .payment_module.open:first-child .pscheckout-card {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-      }
-      #ps_checkout-displayPayment .payment_module.open:last-child a {
-        border-top: none;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-      }
-    `;
-
-      document.getElementsByTagName('head')[0].appendChild(STYLE);
-    }
   }
 
   setBasePaymentOption() {

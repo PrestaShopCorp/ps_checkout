@@ -88,9 +88,8 @@ export class ExpressButtonCartComponent {
     this.checkoutExpressButton.id = 'ps-checkout-express-button';
 
     const separatorText = document.createElement('div');
+    separatorText.classList.add('ps-checkout-express-separator');
     separatorText.innerText = this.$('express-button.cart.separator');
-
-    separatorText.style.padding = '1rem 0';
 
     this.buttonContainer.append(separatorText);
     this.buttonContainer.append(this.checkoutExpressButton);
