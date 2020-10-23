@@ -714,7 +714,12 @@ class Ps_checkout extends PaymentModule
                 ]
             );
         } else {
-            $this->context->controller->addCSS($this->getPathUri() . 'views/css/payments16.css');
+            $this->context->controller->addCss(
+                $this->getPathUri() . 'views/css/payments16.css?version=' . $this->version,
+                'all',
+                null,
+                false
+            );
         }
     }
 
