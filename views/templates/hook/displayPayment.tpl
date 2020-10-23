@@ -17,7 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
-<section id="ps_checkout-payment">
+<section id="ps_checkout-displayPayment">
   <div class="payment-options">
     <div class="payment-option row" style="display: none;">
       <div class="col-xs-12">
