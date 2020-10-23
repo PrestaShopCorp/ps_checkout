@@ -53,18 +53,3 @@
     </div>
   </div>
 </section>
-
-
-
-<style>
-  .payment-option-container {
-    background-color: #fbfbfb;
-    display: block;
-    border: 1px solid #d6d4d4;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-    border-radius: 4px;
-    padding: 33px 40px 34px 99px;
-    margin-bottom: 10px;
-  }
-</style>
