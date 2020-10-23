@@ -28,13 +28,12 @@ export class MarkerComponent {
   render() {
     if (this.config.customMarker[this.fundingSource.name]) {
       this.image = document.createElement('img');
+      this.image.classList.add('ps-checkout-funding-img');
       this.image.setAttribute('alt', this.fundingSource.name);
       this.image.setAttribute(
         'src',
         this.config.customMarker[this.fundingSource.name]
       );
-
-      this.image.style.margin = '0 0.25em';
 
       document.querySelector(this.htmlElementId).append(this.image);
     } else {
