@@ -405,7 +405,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_6f37cc415e05b569eb8e9dd042b2a
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_76f0ed934de85cc7131910b32ede7714'] = 'Remboursement';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_3ec365dd533ddb7ef3d1c111186ce872'] = 'Détails';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_ea4788705e6873b424c65e91c2846b19'] = 'Annuler';
-$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_4b245695f7aed6ecbb8563c43746e720'] = 'Votre demande de transaction va être transmise à PayPal. Vous devrez enregistrer le rembooursement dans la commande PrestaShop ensuite : choisir le type de remboursement (standart ou partiel pour générer un avoir.';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_4b245695f7aed6ecbb8563c43746e720'] = 'Votre demande de remboursement va être transmise à PayPal. Ensuite, vous devrez enregistrer le remboursement dans la commande PrestaShop : choisir le type de remboursement (standard ou partiel) pour générer un avoir.';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_4ceb2a7564dfbf7e6cf1af8e5414cb51'] = 'Choisir le montant à rembourser (TTC)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d7a33669a0339e4ddf767d4ce80488eb'] = 'Maximum [AMOUNT_MAX] [CURRENCY] (TTC)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_9cb8277c514a23ac5cb62632e14abad2'] = 'Référence de commande PayPal : ';
@@ -417,7 +417,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_ec53a8c4f07baed5d882507
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_6f37cc415e05b569eb8e9dd042b2a5ce'] = 'Montant (TTC)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_76f0ed934de85cc7131910b32ede7714'] = 'Remboursement';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_3ec365dd533ddb7ef3d1c111186ce872'] = 'Details';
-$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_4b245695f7aed6ecbb8563c43746e720'] = 'Votre demande de transaction va être transmise à PayPal. Vous devrez enregistrer le rembooursement dans la commande PrestaShop ensuite : choisir le type de remboursement (standart ou partiel pour générer un avoir.';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_4b245695f7aed6ecbb8563c43746e720'] = 'Votre demande de remboursement va être transmise à PayPal. Ensuite, vous devrez enregistrer le remboursement dans la commande PrestaShop : choisir le type de remboursement (standard ou partiel) pour générer un avoir.';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_4ceb2a7564dfbf7e6cf1af8e5414cb51'] = 'Choisir le montant à rembourser';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_d7a33669a0339e4ddf767d4ce80488eb'] = 'Maximum [AMOUNT_MAX] [CURRENCY] (TTC)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_ea4788705e6873b424c65e91c2846b19'] = 'Annuler';
