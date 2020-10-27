@@ -115,6 +115,7 @@ const {$} = window;
         $(document).on('click', config.orderPayPalRefundButton, function () {
           const refundModal = $(config.orderPayPalModalContainerPrefix + $(this).attr('data-transaction-id'));
           $(config.orderPayPalNotificationsContainer).empty();
+          refundModal.find(config.orderPayPalModalNotificationsContainer).empty();
           refundModal.find(config.orderPayPalModalLoaderContainer).hide();
           refundModal.modal('show');
         });
@@ -132,6 +133,7 @@ const {$} = window;
           const refundModalSubmitButton = $(this).find('button[type="submit"]');
           const payPalOrderNotification = new PayPalOrderNotification(config);
 
+          $(refundModalNotificationContainer).empty();
           $(refundModalLoaderContainer).show();
           refundModalSubmitButton.prop('disabled', true);
 
