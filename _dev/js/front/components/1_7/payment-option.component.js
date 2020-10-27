@@ -169,18 +169,21 @@ export class PaymentOptionComponent {
   renderNewPaymentOptionChildren() {
     if (
       this.fundingSource.name === 'card' &&
-      this.payPalService.isHostedFieldsEligible() &&
       this.config.expressCheckoutHostedFieldsEnabled
     ) {
-      this.paymentOptionAdditionalInformation = BASE_PAYMENT_OPTION_ADDITIONAL_INFORMATION.cloneNode(
-        true
-      );
+      if (this.payPalService.isHostedFieldsEligible()) {
+        this.paymentOptionAdditionalInformation = BASE_PAYMENT_OPTION_ADDITIONAL_INFORMATION.cloneNode(
+          true
+        );
 
-      this.children.hostedFields = new HostedFieldsComponent(
-        this.checkout,
-        this,
-        this.fundingSource
-      ).render();
+        this.children.hostedFields = new HostedFieldsComponent(
+          this.checkout,
+          this,
+          this.fundingSource
+        ).render();
+      } else {
+        console.error('Hosted Fields eligibility is declined');
+      }
     } else {
       this.children.smartButton = new SmartButtonComponent(
         this.checkout,
