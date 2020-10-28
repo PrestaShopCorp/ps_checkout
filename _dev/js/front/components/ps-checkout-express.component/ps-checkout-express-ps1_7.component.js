@@ -69,6 +69,13 @@ export class PsCheckoutExpressPs1_7Component {
         break;
       case 'product':
         if (!this.config.expressCheckoutProductEnabled) return;
+        if (
+          this.children.expressButton &&
+          this.children.expressButton.checkoutExpressButton &&
+          this.children.expressButton.checkoutExpressButton.parentNode
+        )
+          return;
+
         this.children.expressButton = new ExpressButtonProductComponent(
           this
         ).render();

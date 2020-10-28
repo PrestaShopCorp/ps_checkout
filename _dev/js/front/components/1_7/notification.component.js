@@ -24,12 +24,11 @@ export class NotificationComponent {
     this.notificationPaymentCanceled = this.htmlElementService.getNotificationPaymentCanceled();
 
     this.notificationPaymentError = this.htmlElementService.getNotificationPaymentError();
-    //this.notificationPaymentErrorText = this.htmlElementService.getNotificationPaymentErrorText();
+    this.notificationPaymentErrorText = this.htmlElementService.getNotificationPaymentErrorText();
   }
 
   render() {
     // This component doesn't need to be rendered since it's already on the template.
-
     return this;
   }
 
@@ -55,6 +54,6 @@ export class NotificationComponent {
 
   showError(message) {
     this.notificationPaymentError.style.display = 'block';
-    // this.notificationPaymentErrorText.textContent = message;
+    this.notificationPaymentErrorText.textContent = message;
   }
 }

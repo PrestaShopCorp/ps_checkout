@@ -215,3 +215,74 @@
 .express-checkout-label {
   color: inherit;
 }
+
+.ps-checkout.overlay {
+  visibility: hidden;
+  opacity: 0;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
+  transition: opacity 0.5s linear;
+
+  background-color: rgba(0, 0, 0, 0.15);
+  z-index: 100;
+}
+
+.ps-checkout.overlay.visible {
+  visibility: visible;
+  opacity: 100;
+}
+
+.ps-checkout.popup {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
+  width: 450px;
+  height: 250px;
+
+  margin: auto;
+
+  background-color: #fff;
+  border-radius: 15px;
+}
+
+.ps-checkout.text, .ps-checkout.loader {
+  display: block;
+  margin: 0 auto;
+  margin-top: 45px;
+  text-align: center;
+}
+
+.ps-checkout.subtext {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.ps-checkout-express-separator {
+  padding: 1rem 0;
+}
+
+.ps-checkout-funding-img {
+  margin: 0 0.25em;
+}
+
+#ps_checkout-hosted-fields-card-number {
+  position: relative;
+  height: 45px;
+  margin-top: 6px;
+}
+#ps_checkout-hosted-fields-card-expiration-date {
+  height: 45px;
+  margin-top: 6px;
+}
+#ps_checkout-hosted-fields-card-cvv {
+  height: 45px;
+  margin-top: 6px;
+}

@@ -21,6 +21,7 @@ import { PaypalService } from '../../service/paypal.service';
 import { PsCheckoutService } from '../../service/ps-checkout.service';
 import { TranslationService } from '../../service/translation.service';
 
+import { NotificationComponent } from '../1_6/notification.component';
 import { PaymentOptionsComponent } from '../1_6/payment-options.component';
 import { LoaderComponent } from '../common/loader.component';
 
@@ -58,6 +59,8 @@ export class PsCheckoutPs1_6Component {
     if (undefined === this.sdk) {
       throw new Error(this.$('error.paypal-sdk'));
     }
+
+    this.children.notification = new NotificationComponent(this).render();
 
     if (document.body.id === 'order') {
       if (

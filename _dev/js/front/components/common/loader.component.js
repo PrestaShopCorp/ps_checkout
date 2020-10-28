@@ -16,7 +16,6 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-let STYLE;
 
 export class LoaderComponent {
   constructor(checkout) {
@@ -24,64 +23,6 @@ export class LoaderComponent {
     this.config = this.checkout.config;
 
     this.$ = this.checkout.$;
-
-    if (!STYLE) {
-      STYLE = document.createElement('style');
-
-      // TODO: Move to CSS
-      STYLE.innerHTML = `
-        .ps-checkout.overlay {
-          visibility: hidden;
-          opacity: 0;
-
-          position: fixed;
-          top: 0;
-          left: 0;
-          bottom: 0;
-          right: 0;
-
-          transition: opacity 0.5s linear;
-
-          background-color: rgba(0, 0, 0, 0.15);
-          z-index: 100;
-        }
-
-        .ps-checkout.overlay.visible {
-          visibility: visible;
-          opacity: 100;
-        }
-
-        .ps-checkout.popup {
-          position: absolute;
-          top: 0;
-          left: 0;
-          bottom: 0;
-          right: 0;
-
-          width: 450px;
-          height: 250px;
-
-          margin: auto;
-
-          background-color: #fff;
-          border-radius: 15px;
-        }
-
-        .ps-checkout.text, .ps-checkout.loader {
-          display: block;
-          margin: 0 auto;
-          margin-top: 45px;
-          text-align: center;
-        }
-
-        .ps-checkout.subtext {
-          margin-top: 25px;
-          text-align: center;
-        }
-    `;
-
-      document.getElementsByTagName('head')[0].appendChild(STYLE);
-    }
   }
   render() {
     this.overlay = document.createElement('div');

@@ -20,19 +20,4 @@
 <section id="{$moduleName}-binary-form" class="js-payment-binary js-payment-{$moduleName} disabled">
   <p class="alert alert-warning accept-cgv">{l s='You must accept the terms and conditions to be able to process your order.' mod='ps_checkout'}</p>
   <div id="{$moduleName}-buttons-container"></div>
-  <style>
-    #ps_checkout-hosted-fields-card-number {
-      position: relative;
-      height: 45px;
-      margin-top: 6px;
-    }
-    #ps_checkout-hosted-fields-card-expiration-date {
-      height: 45px;
-      margin-top: 6px;
-    }
-    #ps_checkout-hosted-fields-card-cvv {
-      height: 45px;
-      margin-top: 6px;
-    }
-  </style>
 </section>

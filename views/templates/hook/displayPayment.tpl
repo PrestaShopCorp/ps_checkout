@@ -17,7 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
-<section id="ps_checkout-payment">
+<section id="ps_checkout-displayPayment">
   <div class="payment-options">
     <div class="payment-option row" style="display: none;">
       <div class="col-xs-12">
@@ -42,7 +42,7 @@
               </div>
             </div>
 
-            <div id="payment-confirmation" class="submit">
+            <div id="payment-confirmation" class="submit hidden">
               <button id="hosted-fields-validation" class="button btn btn-default button-medium" type="submit">
                 <span>{l s='I confirm my order' mod='ps_checkout'}<i class="icon-chevron-right right"></i></span>
               </button>
@@ -53,18 +53,3 @@
     </div>
   </div>
 </section>
-
-
-
-<style>
-  .payment-option-container {
-    background-color: #fbfbfb;
-    display: block;
-    border: 1px solid #d6d4d4;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-    border-radius: 4px;
-    padding: 33px 40px 34px 99px;
-    margin-bottom: 10px;
-  }
-</style>

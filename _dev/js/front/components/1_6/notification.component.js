@@ -20,41 +20,37 @@ export class NotificationComponent {
   constructor(checkout) {
     this.htmlElementService = checkout.htmlElementService;
 
-    // this.notificationConditions = this.htmlElementService.getNotificationConditions();
-    // this.notificationPaymentCanceled = this.htmlElementService.getNotificationPaymentCanceled();
-    //
-    // this.notificationPaymentError = this.htmlElementService.getNotificationPaymentError();
-    // this.notificationPaymentErrorText = this.htmlElementService.getNotificationPaymentErrorText();
+    this.notificationPaymentContainer = this.htmlElementService.getNotificationPaymentContainer();
+    this.notificationPaymentContainerTarget = this.htmlElementService.getNotificationPaymentContainerTarget();
+
+    this.notificationPaymentCanceled = this.htmlElementService.getNotificationPaymentCanceled();
+
+    this.notificationPaymentError = this.htmlElementService.getNotificationPaymentError();
+    this.notificationPaymentErrorText = this.htmlElementService.getNotificationPaymentErrorText();
   }
 
   render() {
-    // This component doesn't need to be rendered since it's already on the template.
+    this.notificationPaymentContainerTarget.prepend(
+      this.notificationPaymentContainer
+    );
 
     return this;
   }
 
   hideCancelled() {
-    // this.notificationPaymentCanceled.style.display = 'none';
-  }
-
-  hideConditions() {
-    // this.notificationConditions.style.display = 'none';
+    this.notificationPaymentCanceled.style.display = 'none';
   }
 
   hideError() {
-    // this.notificationPaymentError.style.display = 'none';
+    this.notificationPaymentError.style.display = 'none';
   }
 
   showCanceled() {
-    // this.notificationPaymentCanceled.style.display = 'block';
-  }
-
-  showConditions() {
-    // this.notificationConditions.style.display = 'block';
+    this.notificationPaymentCanceled.style.display = 'block';
   }
 
   showError(message) {
-    // this.notificationPaymentError.style.display = 'block';
-    // this.notificationPaymentErrorText.textContent = message;
+    this.notificationPaymentError.style.display = 'block';
+    this.notificationPaymentErrorText.textContent = message;
   }
 }

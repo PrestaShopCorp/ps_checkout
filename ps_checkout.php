@@ -74,7 +74,7 @@ class Ps_checkout extends PaymentModule
      * @var array
      */
     const HOOK_LIST_16 = [
-        'payment',
+        'displayPayment',
     ];
 
     public $configurationList = [
@@ -109,7 +109,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.0.5';
+    const VERSION = '2.0.6';
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -130,7 +130,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.0.5';
+        $this->version = '2.0.6';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->currencies = true;
@@ -146,7 +146,7 @@ class Ps_checkout extends PaymentModule
         $this->description = $this->l('Provide the most commonly used payment methods to your customers in this all-in-one module, and manage all your sales in a centralized interface.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
-        $this->ps_versions_compliancy = ['min' => '1.7.5.0', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = ['min' => '1.6.1.0', 'max' => _PS_VERSION_];
         $this->disableSegment = false;
     }
 
@@ -358,7 +358,6 @@ class Ps_checkout extends PaymentModule
 
     public function getContent()
     {
-        $this->registerhook(static::HOOK_LIST_17);
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
         $paypalAccount = $this->getService('ps_checkout.repository.paypal.account');
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
@@ -403,7 +402,7 @@ class Ps_checkout extends PaymentModule
     /**
      * Add payment option at the checkout in the front office (prestashop 1.6)
      */
-    public function hookPayment()
+    public function hookDisplayPayment()
     {
         if (false === Validate::isLoadedObject($this->context->cart)
             || false === $this->checkCurrency($this->context->cart)
@@ -416,7 +415,7 @@ class Ps_checkout extends PaymentModule
             'modulePath' => $this->getPathUri(),
         ]);
 
-        return $this->display(__FILE__, '/views/templates/hook/payment.tpl');
+        return $this->display(__FILE__, '/views/templates/hook/displayPayment.tpl');
     }
 
     /**
@@ -714,7 +713,12 @@ class Ps_checkout extends PaymentModule
                 ]
             );
         } else {
-            $this->context->controller->addCSS($this->getPathUri() . 'views/css/payments16.css');
+            $this->context->controller->addCss(
+                $this->getPathUri() . 'views/css/payments16.css?version=' . $this->version,
+                'all',
+                null,
+                false
+            );
         }
     }
 
@@ -1077,7 +1081,10 @@ class Ps_checkout extends PaymentModule
     public function getService($serviceName)
     {
         if ($this->serviceContainer === null) {
-            $this->serviceContainer = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer($this->name, $this->getLocalPath());
+            $this->serviceContainer = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer(
+                $this->name . str_replace('.', '', $this->version),
+                $this->getLocalPath()
+            );
         }
 
         return $this->serviceContainer->getService($serviceName);

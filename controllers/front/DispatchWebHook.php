@@ -324,7 +324,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
 
         http_response_code($this->getHttpCodeFromExceptionCode($exception->getCode()));
         header('Content-Type: application/json');
-        headers_list();
 
         $bodyReturn = json_encode($exception->getMessage());
 

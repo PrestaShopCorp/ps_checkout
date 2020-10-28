@@ -58,9 +58,11 @@ export class PaymentOptionsComponent {
         ).render();
 
         if (!paymentOption.isDefaultPaymentOption()) {
-          paymentOption.onClick((...args) =>
-            this.onPaymentOptionChange(...args)
-          );
+          paymentOption.onClick((...args) => {
+            this.checkout.children.notification.hideCancelled();
+            this.checkout.children.notification.hideError();
+            this.onPaymentOptionChange(...args);
+          });
         }
 
         return paymentOption;

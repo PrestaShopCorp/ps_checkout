@@ -2,7 +2,12 @@
 # Edit at https://www.gitignore.io/?templates=vim,vuejs,emacs,linux,macos,windows,phpstorm,composer,sublimetext,visualstudiocode
 
 ### Ignore integration settings ###
+.env
 .env.test
+
+### PrestaShop cache
+config.xml
+config_*.xml
 
 ### NPM
 /node_modules/

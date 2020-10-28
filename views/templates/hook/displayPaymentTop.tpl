@@ -21,7 +21,6 @@
   <p id="ps_checkout-canceled" class="alert alert-info" style="display:none;">{l s='Processing payment canceled, please choose another payment method or try again.' mod='ps_checkout'}</p>
   <div id="ps_checkout-error" class="alert alert-danger" style="display:none;">
     <p><strong>{l s='Processing payment error' mod='ps_checkout'}</strong></p>
-    <p>{l s='Payment failed, you have not been charged.' mod='ps_checkout'}</p>
     <div id="ps_checkout-error-text"></div>
   </div>
 </div>
