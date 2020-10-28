@@ -87,12 +87,12 @@ class ValidateOrder
             $response = $apiOrder->capture($order['id'], $this->merchantId); // API call here
 
             if (false === $response['status']) {
-                if (false === empty($response['exceptionMessage']) && false === empty($response['exceptionCode'])) {
-                    throw new PsCheckoutException($response['exceptionMessage'], (int) $response['exceptionCode']);
-                }
-
                 if (false === empty($response['body']['message'])) {
                     (new PayPalError($response['body']['message']))->throwException();
+                }
+
+                if (false === empty($response['exceptionMessage']) && false === empty($response['exceptionCode'])) {
+                    throw new PsCheckoutException($response['exceptionMessage'], (int) $response['exceptionCode']);
                 }
 
                 throw new PsCheckoutException(isset($response['body']['error']) ? $response['body']['error'] : 'Unknown error', PsCheckoutException::UNKNOWN);
@@ -148,19 +148,25 @@ class ValidateOrder
             }
 
             // If OrderState here is not PS_OS_PAYMENT PrestaShop will not create OrderPayment and not save Transaction Id and right Option Name
-            $module->validateOrder(
-                $payload['cartId'],
-                (int) $this->getOrderState($psCheckoutCart->paypal_funding),
-                $payload['amount'],
-                $fundingSourceProvider->getPaymentMethodName($psCheckoutCart->paypal_funding),
-                null,
-                [
-                    'transaction_id' => $transactionIdentifier,
-                ],
-                $payload['currencyId'],
-                false,
-                $payload['secureKey']
-            );
+            try {
+                $module->validateOrder(
+                    $payload['cartId'],
+                    (int) $this->getOrderState($psCheckoutCart->paypal_funding),
+                    $payload['amount'],
+                    $fundingSourceProvider->getPaymentMethodName($psCheckoutCart->paypal_funding),
+                    null,
+                    [
+                        'transaction_id' => $transactionIdentifier,
+                    ],
+                    $payload['currencyId'],
+                    false,
+                    $payload['secureKey']
+                );
+            } catch (\ErrorException $exception) {
+                // Notice or warning from PHP
+            } catch (\Exception $exception) {
+                throw new PsCheckoutException('PrestaShop cannot validate order', PsCheckoutException::PRESTASHOP_VALIDATE_ORDER, $exception);
+            }
 
             if (empty($module->currentOrder)) {
                 throw new PsCheckoutException(sprintf('PrestaShop was unable to returns Prestashop Order ID for Prestashop Cart ID : %s  - Paypal Order ID : %s. This happens when PrestaShop take too long time to create an Order due to heavy processes in hooks actionValidateOrder and/or actionOrderStatusUpdate and/or actionOrderStatusPostUpdate', $payload['cartId'], $this->paypalOrderId), PsCheckoutException::PRESTASHOP_ORDER_ID_MISSING);
@@ -183,9 +189,11 @@ class ValidateOrder
                     try {
                         $orderHistory->changeIdOrderState($newOrderState, $module->currentOrder);
                         $orderHistory->addWithemail();
-                    } catch (\Exception $exception) {
-                        // If PrestaShop cannot send email or generate invoice do not break next operation
+                    } catch (\ErrorException $exception) {
+                        // Notice or warning from PHP
                         // For example : https://github.com/PrestaShop/PrestaShop/issues/18837
+                    } catch (\Exception $exception) {
+                        throw new PsCheckoutException('Unable to change PrestaShop OrderState', PsCheckoutException::PRESTASHOP_ORDER_STATE_ERROR, $exception);
                     }
 
                     // If new OrderState is PS_OS_PAYMENT PrestaShop create an OrderPayment with no TransactionId and wrong Option Name
@@ -200,7 +208,11 @@ class ValidateOrder
                         if (false !== $orderPayment) {
                             $orderPayment->transaction_id = $transactionIdentifier;
                             $orderPayment->payment_method = $fundingSourceProvider->getPaymentMethodName($psCheckoutCart->paypal_funding);
-                            $orderPayment->save();
+                            try {
+                                $orderPayment->save();
+                            } catch (\Exception $exception) {
+                                throw new PsCheckoutException('Unable to save PrestaShop OrderPayment', PsCheckoutException::PRESTASHOP_ORDER_PAYMENT, $exception);
+                            }
                         }
                     }
                 }
