@@ -65,10 +65,6 @@ export class SmartButtonComponent {
           });
         },
         onClick: (data, actions) => {
-          if (this.fundingSource.name !== 'card') {
-            this.checkout.children.loader.show();
-          }
-
           if (
             this.checkout.children.conditionsCheckbox &&
             !this.checkout.children.conditionsCheckbox.isChecked()
@@ -76,6 +72,12 @@ export class SmartButtonComponent {
             this.checkout.children.notification.hideCancelled();
             this.checkout.children.notification.hideError();
             this.checkout.children.notification.showConditions();
+
+            return;
+          }
+
+          if (this.fundingSource.name !== 'card') {
+            this.checkout.children.loader.show();
           }
 
           this.psCheckoutService
