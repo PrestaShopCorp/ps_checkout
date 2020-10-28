@@ -55,7 +55,11 @@ export class PsCheckoutService {
       body: JSON.stringify(data)
     }).then(response => {
       if (false === response.ok) {
-        throw new Error(response.statusText);
+        return response.json().then(response => {
+          throw response.body && response.body.error
+            ? response.body.error
+            : { message: 'Unknown error' };
+        });
       }
     });
   }
@@ -71,7 +75,11 @@ export class PsCheckoutService {
         })
           .then(response => {
             if (false === response.ok) {
-              throw new Error(response.statusText);
+              return response.json().then(response => {
+                throw response.body && response.body.error
+                  ? response.body.error
+                  : { message: 'Unknown error' };
+              });
             }
 
             return response.json();
@@ -100,7 +108,11 @@ export class PsCheckoutService {
     })
       .then(response => {
         if (false === response.ok) {
-          throw new Error(response.statusText);
+          return response.json().then(response => {
+            throw response.body && response.body.error
+              ? response.body.error
+              : { message: 'Unknown error' };
+          });
         }
 
         return response.json();
@@ -117,7 +129,11 @@ export class PsCheckoutService {
     })
       .then(response => {
         if (false === response.ok) {
-          throw new Error(response.statusText);
+          return response.json().then(response => {
+            throw response.body && response.body.error
+              ? response.body.error
+              : { message: 'Unknown error' };
+          });
         }
 
         return response.json();
@@ -135,7 +151,11 @@ export class PsCheckoutService {
     })
       .then(response => {
         if (false === response.ok) {
-          throw new Error(response.statusText);
+          return response.json().then(response => {
+            throw response.body && response.body.error
+              ? response.body.error
+              : { message: 'Unknown error' };
+          });
         }
 
         return response.json();
@@ -187,7 +207,11 @@ export class PsCheckoutService {
         })
       }).then(response => {
         if (false === response.ok) {
-          throw new Error(response.statusText);
+          return response.json().then(response => {
+            throw response.body && response.body.error
+              ? response.body.error
+              : { message: 'Unknown error' };
+          });
         }
 
         window.location.href = new URL(
