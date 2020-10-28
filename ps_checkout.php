@@ -358,7 +358,6 @@ class Ps_checkout extends PaymentModule
 
     public function getContent()
     {
-        $this->registerhook(static::HOOK_LIST_17);
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
         $paypalAccount = $this->getService('ps_checkout.repository.paypal.account');
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
