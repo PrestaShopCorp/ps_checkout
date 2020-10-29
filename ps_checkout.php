@@ -608,6 +608,9 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\FundingSourceProvider $fundingSourceProvider */
         $fundingSourceProvider = $this->getService('ps_checkout.provider.funding_source');
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Security\PrestaShopTokenProvider $prestaShopTokenProvider */
+        $prestaShopTokenProvider = $this->getService('ps_checkout.security.prestashop.token.provider');
+
         // BEGIN To be refactored in services
         $payPalClientToken = '';
         $payPalOrderId = '';
@@ -638,12 +641,12 @@ class Ps_checkout extends PaymentModule
         Media::addJsDef([
             $this->name . 'LoaderImage' => $this->getPathUri() . 'views/img/loader.svg',
             $this->name . 'CardFundingSourceImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'),
-            $this->name . 'GetTokenURL' => $this->context->link->getModuleLink($this->name, 'token', [], true),
-            $this->name . 'CreateUrl' => $this->context->link->getModuleLink($this->name, 'create', [], true),
-            $this->name . 'CheckUrl' => $this->context->link->getModuleLink($this->name, 'check', [], true),
-            $this->name . 'ValidateUrl' => $this->context->link->getModuleLink($this->name, 'validate', [], true),
-            $this->name . 'CancelUrl' => $this->context->link->getModuleLink($this->name, 'cancel', [], true),
-            $this->name . 'ExpressCheckoutUrl' => $this->context->link->getModuleLink($this->name, 'ExpressCheckout', [], true),
+            $this->name . 'GetTokenURL' => $this->context->link->getModuleLink($this->name, 'token', ['token' => $prestaShopTokenProvider->getToken()], true),
+            $this->name . 'CreateUrl' => $this->context->link->getModuleLink($this->name, 'create', ['token' => $prestaShopTokenProvider->getToken()], true),
+            $this->name . 'CheckUrl' => $this->context->link->getModuleLink($this->name, 'check', ['token' => $prestaShopTokenProvider->getToken()], true),
+            $this->name . 'ValidateUrl' => $this->context->link->getModuleLink($this->name, 'validate', ['token' => $prestaShopTokenProvider->getToken()], true),
+            $this->name . 'CancelUrl' => $this->context->link->getModuleLink($this->name, 'cancel', ['token' => $prestaShopTokenProvider->getToken()], true),
+            $this->name . 'ExpressCheckoutUrl' => $this->context->link->getModuleLink($this->name, 'ExpressCheckout', ['token' => $prestaShopTokenProvider->getToken()], true),
             $this->name . 'CheckoutUrl' => $this->context->link->getPageLink('order', true, $this->context->language->id),
             $this->name . 'ConfirmUrl' => $this->context->link->getPageLink('order-confirmation', true, (int) $this->context->language->id),
             $this->name . 'PayPalSdkUrl' => $payPalSdkLinkBuilder->buildLink(),
