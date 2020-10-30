@@ -96,7 +96,11 @@ class ValidateOrder
             $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $payload['cartId']);
 
             $apiOrder = new Order(\Context::getContext()->link);
-            $response = $apiOrder->capture($order['id'], $this->merchantId, $psCheckoutCart->paypal_funding); // API call here
+            $response = $apiOrder->capture(
+                $order['id'],
+                $this->merchantId,
+                false === $psCheckoutCart ? 'paypal' : $psCheckoutCart->paypal_funding
+            ); // API call here
 
             if (false === $response['status']) {
                 if (false === empty($response['body']['message'])) {
