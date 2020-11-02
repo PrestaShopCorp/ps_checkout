@@ -16,9 +16,7 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import 'promise-polyfill/src/polyfill';
-import 'whatwg-fetch';
-import 'url-polyfill';
+import './utils/polyfills';
 
 import { PayPalSdkConfig } from './config/paypal-sdk.config';
 import { PsCheckoutConfig } from './config/ps-checkout.config';

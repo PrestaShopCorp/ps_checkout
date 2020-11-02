@@ -36,7 +36,7 @@
 
 {if $is17}
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', function() {
     const paymentOptions = document.querySelectorAll('input[name="payment-option"]');
 
     if (null !== paymentOptions) {
