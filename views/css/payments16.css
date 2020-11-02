@@ -188,6 +188,7 @@ p.payment_module a.pscheckout-paypal, p.payment_module a.pscheckout-card {
 
 #ps_checkout-displayPayment .payment_module a {
   padding: 33px 99px 34px 99px;
+  text-decoration: none;
 }
 
 #ps_checkout-displayPayment .payment_module .pscheckout-paypal, #ps_checkout-displayPayment .payment_module .pscheckout-card {
