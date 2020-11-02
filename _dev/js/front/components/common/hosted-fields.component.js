@@ -57,11 +57,11 @@ export class HostedFieldsComponent {
   }
 
   render() {
-    if (!this.hostedFieldsContainer) {
-      this.hostedFieldsContainer = this.paymentOption.paymentOptionAdditionalInformation;
-      this.hostedFieldsContainer.id = `${this.paymentOption.getPaymentOptionId()}-additional-information`;
-      this.paymentOptionsContainer.append(this.hostedFieldsContainer);
-    }
+    // if (!this.hostedFieldsContainer) {
+    //   this.hostedFieldsContainer = this.paymentOption.paymentOptionAdditionalInformation;
+    //   this.hostedFieldsContainer.id = `${this.paymentOption.getPaymentOptionId()}-additional-information`;
+    //   this.paymentOptionsContainer.append(this.hostedFieldsContainer);
+    // }
 
     if (this.htmlElementService.getHostedFieldsForm) {
       this.hostedFieldForms = this.htmlElementService.getHostedFieldsForm();
