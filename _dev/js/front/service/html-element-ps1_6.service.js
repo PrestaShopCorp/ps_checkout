@@ -23,7 +23,7 @@ export class HtmlElementPs1_6Service {
     this.selectors = HtmlSelectorsPs1_6Constants;
   }
 
-  getAnyPaymentOption() {
+  getBasePaymentOption() {
     return document.querySelector(this.selectors.ANY_PAYMENT_OPTION);
   }
 

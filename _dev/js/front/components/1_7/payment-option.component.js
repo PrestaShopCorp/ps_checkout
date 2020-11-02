@@ -23,6 +23,8 @@ import { MarkerComponent } from '../common/marker.component';
 const PAYMENT_OPTION_LABEL_MARK = id => `${id}-mark`;
 const PAYMENT_OPTION_CONTAINER_IDENTIFIER = id => `${id}-container`;
 
+let BASE_PAYMENT;
+
 let BASE_PAYMENT_OPTION;
 let BASE_PAYMENT_OPTION_ID;
 let BASE_PAYMENT_OPTION_CONTAINER;
@@ -53,15 +55,17 @@ export class PaymentOptionComponent {
     if (BASE_PAYMENT_OPTION) return;
 
     BASE_PAYMENT_OPTION = this.htmlElementService
-      .getAnyPaymentOption()
+      .getBasePaymentOption()
       .cloneNode(true);
 
     BASE_PAYMENT_OPTION_ID = BASE_PAYMENT_OPTION.id || null;
 
     // perez-furio.ext: If this happens, global error (No Payment Option available)?
-    BASE_PAYMENT_OPTION_CONTAINER = this.htmlElementService
-      .getPaymentOptionContainer(BASE_PAYMENT_OPTION_ID)
-      .cloneNode(true);
+    BASE_PAYMENT = this.htmlElementService.getPaymentOptionContainer(
+      BASE_PAYMENT_OPTION_ID
+    );
+
+    BASE_PAYMENT_OPTION_CONTAINER = BASE_PAYMENT.cloneNode(true);
 
     BASE_PAYMENT_OPTION_FORM = this.htmlElementService
       .getPaymentOptionFormContainer(BASE_PAYMENT_OPTION_ID)
@@ -71,10 +75,6 @@ export class PaymentOptionComponent {
       .getPaymentOptionAdditionalInformation(BASE_PAYMENT_OPTION_ID)
       .cloneNode(true);
 
-    this.htmlElementService.getAnyPaymentOption().remove();
-    this.htmlElementService
-      .getPaymentOptionContainer(BASE_PAYMENT_OPTION_ID)
-      .remove();
     this.htmlElementService
       .getPaymentOptionFormContainer(BASE_PAYMENT_OPTION_ID)
       .remove();
@@ -101,19 +101,26 @@ export class PaymentOptionComponent {
 
     this.paymentOption.id = this.getPaymentOptionId();
 
-    const containerLabel = this.htmlElementService.getPaymentOptionLabel(
-      this.paymentOptionContainer,
-      BASE_PAYMENT_OPTION_ID
-    );
+    const containerLabel =
+      this.htmlElementService.getPaymentOptionLabel(
+        this.paymentOptionContainer,
+        this.$('funding-source.name.paypal')
+      ) ||
+      this.htmlElementService.getPaymentOptionLabelLegacy(
+        this.paymentOptionContainer,
+        BASE_PAYMENT_OPTION_ID
+      );
 
-    const newContainerLabel = document.createElement('label');
+    const newContainerLabel = document.createElement('span');
     newContainerLabel.htmlFor = `${BASE_PAYMENT_OPTION_ID}-${this.fundingSource.name}`;
 
     const newContainerLabelSpan = document.createElement('span');
+    newContainerLabelSpan.classList.add('ps_checkout-label');
     newContainerLabelSpan.innerText = this.getPaymentOptionLabel();
 
     const newContainerLabelMark = document.createElement('div');
     newContainerLabelMark.style.display = 'inline-block';
+    newContainerLabelMark.classList.add('ps_checkout-mark');
     newContainerLabelMark.id = PAYMENT_OPTION_LABEL_MARK(
       this.fundingSource.name
     );
@@ -126,6 +133,7 @@ export class PaymentOptionComponent {
   renderNewPaymentOptionContainer() {
     this.paymentOptionContainer = BASE_PAYMENT_OPTION_CONTAINER.cloneNode(true);
 
+    this.paymentOptionContainer.classList.add('ps_checkout-payment-option');
     this.paymentOptionContainer.style.display = 'block';
     this.paymentOptionContainer.id = PAYMENT_OPTION_CONTAINER_IDENTIFIER(
       this.getPaymentOptionId()
@@ -155,9 +163,14 @@ export class PaymentOptionComponent {
     this.renderNewPaymentOptionContainer();
     this.renderNewPaymentOptionContainerForm();
 
-    this.paymentOptionsContainer = this.htmlElementService.getPaymentOptionsContainer();
-    this.paymentOptionsContainer.append(this.paymentOptionContainer);
-    this.paymentOptionsContainer.append(this.paymentOptionFormContainer);
+    BASE_PAYMENT.parentNode.insertBefore(
+      this.paymentOptionContainer,
+      BASE_PAYMENT
+    );
+    BASE_PAYMENT.parentNode.insertBefore(
+      this.paymentOptionFormContainer,
+      BASE_PAYMENT
+    );
 
     this.marker = new MarkerComponent(
       this,
@@ -174,6 +187,11 @@ export class PaymentOptionComponent {
     ) {
       this.paymentOptionAdditionalInformation = BASE_PAYMENT_OPTION_ADDITIONAL_INFORMATION.cloneNode(
         true
+      );
+      this.paymentOptionAdditionalInformation.id = `${this.getPaymentOptionId()}-additional-information`;
+      BASE_PAYMENT.parentNode.insertBefore(
+        this.paymentOptionAdditionalInformation,
+        BASE_PAYMENT
       );
 
       this.children.hostedFields = new HostedFieldsComponent(

@@ -286,3 +286,12 @@
   height: 45px;
   margin-top: 6px;
 }
+
+.ps_checkout-payment-option span.custom-radio {
+  float: none !important;
+  margin-right: 1.0rem !important;
+}
+
+.ps_checkout-payment-option label {
+  display: inline-block !important;
+}

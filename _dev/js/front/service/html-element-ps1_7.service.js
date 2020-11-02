@@ -23,14 +23,14 @@ export class HtmlElementPs1_7Service {
     this.selectors = HtmlSelectorsPs1_7Constants;
   }
 
-  getAnyPaymentOption(cache = false) {
-    if (!this.anyPaymentOption || cache) {
-      this.anyPaymentOption = document.querySelector(
+  getBasePaymentOption(cache = false) {
+    if (!this.basePaymentOption || cache) {
+      this.basePaymentOption = document.querySelector(
         this.selectors.ANY_PAYMENT_OPTION
       );
     }
 
-    return this.anyPaymentOption;
+    return this.basePaymentOption;
   }
 
   getButtonContainer(cache = false) {
@@ -145,7 +145,12 @@ export class HtmlElementPs1_7Service {
     return container.querySelector(this.selectors.PAYMENT_OPTION);
   }
 
-  getPaymentOptionLabel(container, id) {
+  getPaymentOptionLabel(container, text) {
+    const items = Array.prototype.slice.call(container.querySelectorAll('*'));
+    return items.find(item => item.innerText === text);
+  }
+
+  getPaymentOptionLabelLegacy(container, id) {
     return container.querySelector(this.selectors.PAYMENT_OPTION_LABEL(id));
   }
 
