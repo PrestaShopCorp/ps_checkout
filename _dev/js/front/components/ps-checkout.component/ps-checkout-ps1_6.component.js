@@ -60,14 +60,13 @@ export class PsCheckoutPs1_6Component {
       throw new Error(this.$('error.paypal-sdk'));
     }
 
-    this.children.notification = new NotificationComponent(this).render();
-
     if (document.body.id === 'order') {
       if (
         !document.getElementById('step_end').classList.contains('step_current')
       )
         return;
 
+      this.children.notification = new NotificationComponent(this).render();
       this.children.loader = new LoaderComponent(this).render();
       this.children.paymentOptions = new PaymentOptionsComponent(this).render();
     } else {
@@ -76,6 +75,7 @@ export class PsCheckoutPs1_6Component {
         updatePaymentMethods(...args);
 
         if (document.getElementById('cgv').checked) {
+          this.children.notification = new NotificationComponent(this).render();
           this.children.loader = new LoaderComponent(this).render();
           this.children.paymentOptions = new PaymentOptionsComponent(
             this
@@ -84,6 +84,7 @@ export class PsCheckoutPs1_6Component {
       };
 
       if (document.getElementById('cgv').checked) {
+        this.children.notification = new NotificationComponent(this).render();
         this.children.loader = new LoaderComponent(this).render();
         this.children.paymentOptions = new PaymentOptionsComponent(
           this
