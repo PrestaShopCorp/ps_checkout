@@ -21,8 +21,8 @@ import { HostedFieldsComponent } from '../common/hosted-fields.component';
 import { MarkerComponent } from '../common/marker.component';
 
 const PAYMENT_OPTION_LABEL_MARK = id => `${id}-mark`;
-// const PAYMENT_OPTION_CONTAINER_IDENTIFIER = id => `${id}-container`;
 
+let BASE_PAYMENT;
 let BASE_PAYMENT_OPTION;
 
 export class PaymentOptionComponent {
@@ -49,11 +49,9 @@ export class PaymentOptionComponent {
   setBasePaymentOption() {
     if (BASE_PAYMENT_OPTION) return;
 
-    BASE_PAYMENT_OPTION = this.htmlElementService
-      .getAnyPaymentOption()
-      .cloneNode(true);
-
-    this.htmlElementService.getAnyPaymentOption().remove();
+    // perez-furio.ext: If this happens, global error (No Payment Option available)?
+    BASE_PAYMENT = this.htmlElementService.getBasePaymentOption();
+    BASE_PAYMENT_OPTION = BASE_PAYMENT.cloneNode(true);
   }
 
   getPaymentOptionId() {
@@ -118,7 +116,7 @@ export class PaymentOptionComponent {
     this.renderNewPaymentOptionContainer();
 
     this.checkoutPaymentOptionsContainer = this.htmlElementService.getCheckoutPaymentOptionsContainer();
-    this.checkoutPaymentOptionsContainer.prepend(this.paymentOption);
+    BASE_PAYMENT.parentNode.insertBefore(this.paymentOption, BASE_PAYMENT);
 
     this.marker = new MarkerComponent(
       this,

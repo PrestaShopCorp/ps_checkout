@@ -179,11 +179,11 @@ p.payment_module a.pscheckout-paypal, p.payment_module a.pscheckout-card {
   margin-left: 0;
   margin-right: 0;
 
-  margin-bottom: 15px;
+  margin-bottom: 15px !important;
 }
 
 #ps_checkout-displayPayment .form-group .form-control {
-  max-width: initial;
+  max-width: initial !important;
 }
 
 #ps_checkout-displayPayment .payment_module a {
