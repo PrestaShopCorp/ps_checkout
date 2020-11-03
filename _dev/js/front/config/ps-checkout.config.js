@@ -26,6 +26,8 @@ export const PsCheckoutConfig = {
   checkoutCheckoutUrl: window.ps_checkoutCheckoutUrl,
   expressCheckoutUrl: window.ps_checkoutExpressCheckoutUrl,
 
+  hostedFieldsEnabled: window.ps_checkoutHostedFieldsEnabled,
+
   translations: {
     ...Object.keys(window.ps_checkoutPayWithTranslations || {}).reduce(
       (result, name) => {
