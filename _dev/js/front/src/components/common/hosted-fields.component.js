@@ -57,12 +57,6 @@ export class HostedFieldsComponent {
   }
 
   render() {
-    // if (!this.hostedFieldsContainer) {
-    //   this.hostedFieldsContainer = this.paymentOption.paymentOptionAdditionalInformation;
-    //   this.hostedFieldsContainer.id = `${this.paymentOption.getPaymentOptionId()}-additional-information`;
-    //   this.paymentOptionsContainer.append(this.hostedFieldsContainer);
-    // }
-
     if (this.htmlElementService.getHostedFieldsForm) {
       this.hostedFieldForms = this.htmlElementService.getHostedFieldsForm();
       this.hostedFieldForms.style.display = 'block';
@@ -104,32 +98,32 @@ export class HostedFieldsComponent {
                 fundingSource: this.fundingSource.name,
                 isHostedFields: true
               })
-              .catch(error => {
+              .catch((error) => {
                 this.checkout.children.notification.showError(
                   `${error.message} ${error.name}`
                 );
               })
         }
       )
-      .then(hostedFields => {
+      .then((hostedFields) => {
         if (null !== this.hostedFieldForms) {
           const hostedFieldsSubmitButton = document.getElementById(
             this.hostedFieldSubmitButton.id
           );
 
-          hostedFields.on('validityChange', event => {
+          hostedFields.on('validityChange', (event) => {
             this.validity =
               Object.keys(event.fields)
-                .map(name => event.fields[name])
+                .map((name) => event.fields[name])
                 .map(({ isValid }) => {
                   return isValid;
                 })
-                .filter(validity => validity === false).length === 0;
+                .filter((validity) => validity === false).length === 0;
 
             this.hostedFieldSubmitButton.disabled = !this.isSubmittable();
           });
 
-          hostedFieldsSubmitButton.addEventListener('click', event => {
+          hostedFieldsSubmitButton.addEventListener('click', (event) => {
             event.preventDefault();
             this.checkout.children.loader.show();
             hostedFieldsSubmitButton.disabled = true;
@@ -137,7 +131,7 @@ export class HostedFieldsComponent {
               .submit({
                 contingencies: ['3D_SECURE']
               })
-              .then(payload => {
+              .then((payload) => {
                 const { liabilityShift } = payload;
                 return this.psCheckoutService
                   .validateLiablityShift(liabilityShift)
@@ -155,7 +149,7 @@ export class HostedFieldsComponent {
                     });
                   });
               })
-              .catch(error => {
+              .catch((error) => {
                 this.checkout.children.loader.hide();
                 this.checkout.children.notification.showError(error.message);
                 hostedFieldsSubmitButton.disabled = false;

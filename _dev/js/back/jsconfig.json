@@ -3,9 +3,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./_dev/js/back/src/*"]
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["./_dev/js/back/src/**/*"],
+  "include": ["./src/**/*"],
   "exclude": ["node_modules"]
 }

@@ -60,8 +60,8 @@ bootstrap(() => {
       : new PsCheckoutService(PsCheckoutConfig).postGetToken()
     : Promise.resolve('')
   )
-    .then(token => {
-      new PayPalSdkComponent(PayPalSdkConfig, token, sdk => {
+    .then((token) => {
+      new PayPalSdkComponent(PayPalSdkConfig, token, (sdk) => {
         new PsCheckoutComponent(PsCheckoutConfig, sdk).render();
         new PsCheckoutExpressComponent(PsCheckoutConfig, sdk).render();
       }).render();

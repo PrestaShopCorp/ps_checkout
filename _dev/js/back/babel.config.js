@@ -16,21 +16,6 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-const path = require("path");
 module.exports = {
-  chainWebpack: config => {
-    config.optimization.delete("splitChunks");
-    config.plugins.delete("html");
-    config.plugins.delete("preload");
-    config.plugins.delete("prefetch");
-    config.resolve.alias.set("@", path.resolve(__dirname, "_dev/js/back/src"));
-  },
-  css: {
-    extract: false
-  },
-  productionSourceMap: false,
-  filenameHashing: false,
-  outputDir: "./views/",
-  assetsDir: "",
-  publicPath: "../modules/ps_checkout/views/"
+  presets: ['@vue/cli-plugin-babel/preset']
 };

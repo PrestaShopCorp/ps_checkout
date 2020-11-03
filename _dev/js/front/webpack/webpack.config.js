@@ -16,37 +16,31 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+const { INPUT_FILE, OUTPUT_FOLDER } = require('./utils/paths');
+
 module.exports = {
   entry: {
-    front: './_dev/js/front/index.js'
+    front: INPUT_FILE
   },
+  output: {
+    filename: '[name].js',
+    path: OUTPUT_FOLDER
+  },
+
+  stats: {
+    children: false,
+    modules: false
+  },
+
   module: {
     rules: [
       {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
         use: {
-          loader: 'babel-loader',
-          options: {
-            presets: [
-              [
-                '@babel/preset-env',
-                {
-                  targets: {
-                    chrome: '58',
-                    ie: '11'
-                  }
-                }
-              ]
-            ]
-          }
+          loader: 'babel-loader'
         }
       }
     ]
-  },
-  output: {
-    filename: '[name].js',
-    path: __dirname + '/views/js'
-  },
-  mode: 'production'
+  }
 };

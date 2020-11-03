@@ -16,12 +16,9 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import 'classlist-polyfill';
-import 'promise-polyfill/src/polyfill';
-import 'whatwg-fetch';
-import 'url-polyfill';
+const { merge } = require('webpack-merge');
 
-import './web-api.child-node.remove';
-import './web-api.child-node.replace-with';
-import './web-api.parent-node.append';
-import './web-api.parent-node.prepend';
+const common = require('../webpack.config');
+module.exports = merge(common, {
+  mode: 'development'
+});

@@ -16,6 +16,12 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-module.exports = {
-  presets: ["@vue/cli-plugin-babel/preset"]
-};
+import 'classlist-polyfill';
+import 'promise-polyfill/src/polyfill';
+import 'url-polyfill';
+import 'whatwg-fetch';
+
+import './web-api.child-node.remove';
+import './web-api.child-node.replace-with';
+import './web-api.parent-node.append';
+import './web-api.parent-node.prepend';
