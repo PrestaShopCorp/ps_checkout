@@ -7,9 +7,9 @@
     "url": "git+https://github.com/PrestaShopCorp/ps_checkout.git"
   },
   "scripts": {
-    "build": "webpack --config ./webpack/profile/build.js",
+    "build": "npx webpack --config ./webpack/profile/build.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "webpack --config ./webpack/profile/watch.js --watch"
+    "watch": "npx webpack --config ./webpack/profile/watch.js --watch"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
