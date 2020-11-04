@@ -477,7 +477,7 @@ class Ps_checkout extends PaymentModule
             }
 
             $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-            $paymentOption->setModuleName($this->name . '_' . $fundingSource);
+            $paymentOption->setModuleName($this->name . '-' . $fundingSource);
             $paymentOption->setCallToActionText($paymentOptionName);
             $paymentOption->setBinary(true);
 
@@ -1146,8 +1146,28 @@ class Ps_checkout extends PaymentModule
             return '';
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository */
+        $paypalAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSourceProvider $fundingSourceProvider */
+        $fundingSourceProvider = $this->getService('ps_checkout.provider.funding_source');
+        $paymentOptionNames = $fundingSourceProvider->getPaymentOptionNames();
+        $paymentOptions = [];
+
+        /*
+         * @todo Check fundingSource availability and if is enabled in configuration
+         */
+
+        foreach ($paymentOptionNames as $fundingSource => $paymentOptionName) {
+            if (!in_array($fundingSource, ['card', 'paypal', 'bancontact', 'sofort', 'blik', 'eps', 'p24', 'ideal', 'mybank'])) {
+                continue;
+            }
+
+            $paymentOptions[$fundingSource] = $paymentOptionName;
+        }
+
         $this->context->smarty->assign([
-            'moduleName' => $this->name,
+            'paymentOptions' => $paymentOptions,
         ]);
 
         return $this->display(__FILE__, '/views/templates/hook/displayPaymentByBinaries.tpl');

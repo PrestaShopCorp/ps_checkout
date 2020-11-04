@@ -20,7 +20,7 @@
 <section id="ps_checkout-displayPayment">
   <div class="payment-options">
     {foreach from=$paymentOptions item="paymentOptionName" key="fundingSource"}
-      <div class="payment-option row" style="display: none;">
+      <div class="payment-option row" style="/**display: none;**/">
         <div class="col-xs-12">
           <p class="payment_module closed">
             <a class="pscheckout-{$fundingSource}" href="#">
@@ -30,10 +30,6 @@
                 {/if}
               </div>
               {$paymentOptionName}
-            </a>
-          </p>
-          <p class="payment_module closed">
-            <a>
               <div id="button-{$fundingSource}" class="checkout-smartbutton">
                 {if $fundingSource == 'card' && $isHostedFieldsAvailable}
                   <form id="ps_checkout-hosted-fields-form" class="form-horizontal" style="display:none;">
