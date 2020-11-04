@@ -54,8 +54,5 @@ export const PsCheckoutConfig = {
 
   fundingSourcesSorted: window.ps_checkoutFundingSourcesSorted,
 
-  orderId: window.ps_checkoutPayPalOrderId,
-  staticToken: window.prestashop
-    ? window.prestashop.static_token
-    : window.static_token
+  orderId: window.ps_checkoutPayPalOrderId
 };

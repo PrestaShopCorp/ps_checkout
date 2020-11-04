@@ -40,10 +40,6 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
         header('content-type:application/json');
 
         try {
-            if (Tools::getValue('static_token') !== Tools::getToken(false)) {
-                throw new PsCheckoutException('Bad token', PsCheckoutException::PSCHECKOUT_BAD_STATIC_TOKEN);
-            }
-
             // BEGIN Express Checkout
             $bodyValues = [];
             $bodyContent = file_get_contents('php://input');
