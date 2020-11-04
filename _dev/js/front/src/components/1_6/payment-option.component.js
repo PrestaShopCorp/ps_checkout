@@ -20,7 +20,7 @@ import { SmartButtonComponent } from '../common/smart-button.component';
 import { HostedFieldsComponent } from '../common/hosted-fields.component';
 import { MarkerComponent } from '../common/marker.component';
 
-const PAYMENT_OPTION_LABEL_MARK = id => `${id}-mark`;
+const PAYMENT_OPTION_LABEL_MARK = (id) => `${id}-mark`;
 
 let BASE_PAYMENT;
 let BASE_PAYMENT_OPTION;
@@ -132,7 +132,7 @@ export class PaymentOptionComponent {
       this.config.expressCheckoutHostedFieldsEnabled
     ) {
       this.dataContainer.append(...this.sourcePaymentOptionContainer.children);
-      this.dataContainer.children.forEach(el => (el.style.display = ''));
+      this.dataContainer.children.forEach((el) => (el.style.display = ''));
 
       this.children.hostedFields = new HostedFieldsComponent(
         this.checkout,
@@ -185,7 +185,7 @@ export class PaymentOptionComponent {
   }
 
   onClick(listener) {
-    this.paymentOptionAnchor.addEventListener('click', event => {
+    this.paymentOptionAnchor.addEventListener('click', (event) => {
       event.preventDefault();
       listener(this, event);
     });

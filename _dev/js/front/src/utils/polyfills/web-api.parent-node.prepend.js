@@ -21,8 +21,8 @@
  * Polyfill .prepend()
  * https://developer.mozilla.org/es/docs/Web/API/ParentNode/append#Polyfill
  */
-(function(arr) {
-  arr.forEach(function(item) {
+(function (arr) {
+  arr.forEach(function (item) {
     // eslint-disable-next-line no-prototype-builtins
     if (item.hasOwnProperty('prepend')) {
       return;
@@ -35,7 +35,7 @@
         var argArr = Array.prototype.slice.call(arguments),
           docFrag = document.createDocumentFragment();
 
-        argArr.forEach(function(argItem) {
+        argArr.forEach(function (argItem) {
           var isNode = argItem instanceof Node;
           docFrag.appendChild(
             isNode ? argItem : document.createTextNode(String(argItem))

@@ -21,8 +21,8 @@
  * Polyfill .remove()
  * https://developer.mozilla.org/es/docs/Web/API/ChildNode/remove#Polyfill
  */
-(function(arr) {
-  arr.forEach(function(item) {
+(function (arr) {
+  arr.forEach(function (item) {
     // eslint-disable-next-line no-prototype-builtins
     if (item.hasOwnProperty('remove')) {
       return;

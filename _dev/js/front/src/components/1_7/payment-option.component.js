@@ -20,8 +20,8 @@ import { SmartButtonComponent } from '../common/smart-button.component';
 import { HostedFieldsComponent } from '../common/hosted-fields.component';
 import { MarkerComponent } from '../common/marker.component';
 
-const PAYMENT_OPTION_LABEL_MARK = id => `${id}-mark`;
-const PAYMENT_OPTION_CONTAINER_IDENTIFIER = id => `${id}-container`;
+const PAYMENT_OPTION_LABEL_MARK = (id) => `${id}-mark`;
+const PAYMENT_OPTION_CONTAINER_IDENTIFIER = (id) => `${id}-container`;
 
 let BASE_PAYMENT;
 

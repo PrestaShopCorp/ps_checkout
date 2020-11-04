@@ -48,7 +48,7 @@ export class PsCheckoutPs1_7Component {
       this.translationService
     );
 
-    this.$ = id => this.translationService.getTranslationString(id);
+    this.$ = (id) => this.translationService.getTranslationString(id);
 
     this.children = {};
   }

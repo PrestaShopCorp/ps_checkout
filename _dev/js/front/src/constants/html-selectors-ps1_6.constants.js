@@ -19,7 +19,8 @@
 export const HtmlSelectorsPs1_6Constants = {
   ANY_PAYMENT_OPTION: '#ps_checkout-displayPayment .payment-option.row',
 
-  CHECKOUT_PAYMENT_OPTIONS_CONTAINER: '#ps_checkout-displayPayment .payment-options',
+  CHECKOUT_PAYMENT_OPTIONS_CONTAINER:
+    '#ps_checkout-displayPayment .payment-options',
 
   NOTIFICATION_TARGET_ID: 'HOOK_PAYMENT',
 

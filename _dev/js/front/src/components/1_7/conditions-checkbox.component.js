@@ -36,13 +36,13 @@ export class ConditionsCheckboxComponent {
     return this.conditionsContainer
       ? this.conditionsCheckboxes
           .map(({ checked }) => checked)
-          .filter(value => !value).length === 0
+          .filter((value) => !value).length === 0
       : true;
   }
 
   onChange(listener) {
     this.conditionsContainer &&
-      this.conditionsCheckboxes.forEach(checkbox =>
+      this.conditionsCheckboxes.forEach((checkbox) =>
         checkbox.addEventListener('change', () => listener())
       );
   }
