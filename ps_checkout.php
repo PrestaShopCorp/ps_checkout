@@ -1122,9 +1122,13 @@ class Ps_checkout extends PaymentModule
     {
         // We want to track only event appends on PrestaShop BO
         if (defined('_PS_ADMIN_DIR_')) {
-            /** @var \PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker $tracker */
-            $tracker = $this->getService('ps_checkout.segment.tracker');
-            $tracker->track($action);
+            try {
+                /** @var \PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker $tracker */
+                $tracker = $this->getService('ps_checkout.segment.tracker');
+                $tracker->track($action);
+            } catch (Exception $exception) {
+                // Sometime on module enable after an upgrade .env data are not loaded
+            }
         }
     }
 }
