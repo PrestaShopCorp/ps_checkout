@@ -46,13 +46,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
         header('content-type:application/json');
 
         try {
-            /** @var \PrestaShop\Module\PrestashopCheckout\Security\PrestaShopTokenProvider $prestaShopTokenProvider */
-            $prestaShopTokenProvider = $this->module->getService('ps_checkout.security.prestashop.token.provider');
-
-            if (Tools::getValue('token') !== $prestaShopTokenProvider->getToken()) {
-                throw new PsCheckoutException('Bad token', PsCheckoutException::PSCHECKOUT_BAD_STATIC_TOKEN);
-            }
-
             // We receive data in a payload not in GET/POST
             $bodyContent = file_get_contents('php://input');
 

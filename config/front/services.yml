@@ -1,14 +1,2 @@
 imports:
   - { resource: ../common.yml }
-
-services:
-  ps_checkout.security.prestashop.token.factory:
-    class: 'PrestaShop\Module\PrestashopCheckout\Security\PrestaShopTokenFactory'
-    public: true
-
-  ps_checkout.security.prestashop.token.provider:
-    class: 'PrestaShop\Module\PrestashopCheckout\Security\PrestaShopTokenProvider'
-    public: true
-    arguments:
-      - '@ps_checkout.security.prestashop.token.factory'
-      - '@ps_checkout.module'

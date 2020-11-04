@@ -41,13 +41,6 @@ class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
         header('content-type:application/json');
 
         try {
-            /** @var \PrestaShop\Module\PrestashopCheckout\Security\PrestaShopTokenProvider $prestaShopTokenProvider */
-            $prestaShopTokenProvider = $this->module->getService('ps_checkout.security.prestashop.token.provider');
-
-            if (Tools::getValue('token') !== $prestaShopTokenProvider->getToken()) {
-                throw new PsCheckoutException('Bad token', PsCheckoutException::PSCHECKOUT_BAD_STATIC_TOKEN);
-            }
-
             if (false === Validate::isLoadedObject($this->context->cart)) {
                 throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
             }
