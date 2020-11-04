@@ -53,7 +53,7 @@ class Ps_checkout extends PaymentModule
         'paymentOptions',
         'displayAdminAfterHeader',
         'displayExpressCheckout',
-        'DisplayFooterProduct',
+        'displayFooterProduct',
         'displayPersonalInformationTop',
         'actionCartUpdateQuantityBefore',
         'header',
