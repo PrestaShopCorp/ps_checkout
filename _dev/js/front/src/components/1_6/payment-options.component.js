@@ -32,7 +32,7 @@ export class PaymentOptionsComponent {
   }
 
   onPaymentOptionChange(paymentOption) {
-    this.children.paymentOptions.forEach(paymentOption => {
+    this.children.paymentOptions.forEach((paymentOption) => {
       if (!paymentOption.isDefaultPaymentOption()) {
         paymentOption.setOpen(false);
       }
@@ -43,14 +43,14 @@ export class PaymentOptionsComponent {
 
   render() {
     // Default Payment Options
-    this.children.paymentOptions = this.paymentOptions.map(paymentOption =>
+    this.children.paymentOptions = this.paymentOptions.map((paymentOption) =>
       new PaymentOptionComponent(this.checkout, null, paymentOption).render()
     );
 
     // PayPal Payment Options
     this.children.paymentOptions = [
       ...this.children.paymentOptions,
-      ...this.payPalService.getEligibleFundingSources().map(fundingSource => {
+      ...this.payPalService.getEligibleFundingSources().map((fundingSource) => {
         const paymentOption = new PaymentOptionComponent(
           this.checkout,
           fundingSource,

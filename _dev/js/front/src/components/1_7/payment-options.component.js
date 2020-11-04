@@ -39,7 +39,7 @@ export class PaymentOptionsComponent {
   render() {
     if (!this.config.expressCheckoutSelected) {
       // Default Payment Options
-      this.children.paymentOptions = this.paymentOptions.map(paymentOption =>
+      this.children.paymentOptions = this.paymentOptions.map((paymentOption) =>
         new PaymentOptionComponent(this.checkout, null, paymentOption).render()
       );
 
@@ -48,7 +48,7 @@ export class PaymentOptionsComponent {
         ...this.children.paymentOptions,
         ...this.payPalService
           .getEligibleFundingSources()
-          .map(fundingSource =>
+          .map((fundingSource) =>
             new PaymentOptionComponent(
               this.checkout,
               fundingSource,
@@ -74,7 +74,7 @@ export class PaymentOptionsComponent {
       paymentButton.id = 'ps_checkout-hosted-submit-button';
       paymentButton.type = 'button';
 
-      paymentButton.addEventListener('click', event => {
+      paymentButton.addEventListener('click', (event) => {
         event.preventDefault();
         this.checkout.children.loader.show();
 
@@ -94,7 +94,7 @@ export class PaymentOptionsComponent {
               isExpressCheckout: true
             });
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
             this.checkout.children.loader.hide();
             this.checkout.children.notification.showError(error.message);

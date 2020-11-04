@@ -26,7 +26,7 @@ export class PsCheckoutService {
     this.config = config;
     this.translationService = translationService;
 
-    this.$ = id => this.translationService.getTranslationString(id);
+    this.$ = (id) => this.translationService.getTranslationString(id);
   }
 
   isUserLogged() {
@@ -53,9 +53,9 @@ export class PsCheckoutService {
         'content-type': 'application/json'
       },
       body: JSON.stringify(data)
-    }).then(response => {
+    }).then((response) => {
       if (false === response.ok) {
-        return response.json().then(response => {
+        return response.json().then((response) => {
           throw response.body && response.body.error
             ? response.body.error
             : { message: 'Unknown error' };
@@ -73,9 +73,9 @@ export class PsCheckoutService {
           },
           body: JSON.stringify(data)
         })
-          .then(response => {
+          .then((response) => {
             if (false === response.ok) {
-              return response.json().then(response => {
+              return response.json().then((response) => {
                 throw response.body && response.body.error
                   ? response.body.error
                   : { message: 'Unknown error' };
@@ -84,7 +84,7 @@ export class PsCheckoutService {
 
             return response.json();
           })
-          .then(data => {
+          .then((data) => {
             if (!data) {
               return actions.reject();
             } else {
@@ -106,9 +106,9 @@ export class PsCheckoutService {
       },
       ...(data ? { body: JSON.stringify(data) } : {})
     })
-      .then(response => {
+      .then((response) => {
         if (false === response.ok) {
-          return response.json().then(response => {
+          return response.json().then((response) => {
             throw response.body && response.body.error
               ? response.body.error
               : { message: 'Unknown error' };
@@ -127,9 +127,9 @@ export class PsCheckoutService {
         'content-type': 'application/json'
       }
     })
-      .then(response => {
+      .then((response) => {
         if (false === response.ok) {
-          return response.json().then(response => {
+          return response.json().then((response) => {
             throw response.body && response.body.error
               ? response.body.error
               : { message: 'Unknown error' };
@@ -149,9 +149,9 @@ export class PsCheckoutService {
       },
       body: JSON.stringify(data)
     })
-      .then(response => {
+      .then((response) => {
         if (false === response.ok) {
-          return response.json().then(response => {
+          return response.json().then((response) => {
             throw response.body && response.body.error
               ? response.body.error
               : { message: 'Unknown error' };
@@ -160,7 +160,7 @@ export class PsCheckoutService {
 
         return response.json();
       })
-      .then(response => {
+      .then((response) => {
         if (response.body && 'COMPLETED' === response.body.paypal_status) {
           const {
             id_cart,
@@ -205,9 +205,9 @@ export class PsCheckoutService {
             shipping: purchase_units[0].shipping
           }
         })
-      }).then(response => {
+      }).then((response) => {
         if (false === response.ok) {
-          return response.json().then(response => {
+          return response.json().then((response) => {
             throw response.body && response.body.error
               ? response.body.error
               : { message: 'Unknown error' };

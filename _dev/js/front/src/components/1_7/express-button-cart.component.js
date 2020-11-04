@@ -55,7 +55,7 @@ export class ExpressButtonCartComponent {
             // TODO: Error notification
             .catch(() => actions.reject()),
         // TODO: [PAYSHIP-605] Error handling
-        onError: error => console.error(error),
+        onError: (error) => console.error(error),
         onApprove: (data, actions) =>
           this.psCheckoutService.postExpressCheckoutOrder(
             {
@@ -65,13 +65,13 @@ export class ExpressButtonCartComponent {
             },
             actions
           ),
-        onCancel: data =>
+        onCancel: (data) =>
           this.psCheckoutService.postCancelOrder({
             ...data,
             fundingSource: 'paypal',
             isExpressCheckout: true
           }),
-        createOrder: data =>
+        createOrder: (data) =>
           this.psCheckoutService.postCreateOrder({
             ...data,
             fundingSource: 'paypal',

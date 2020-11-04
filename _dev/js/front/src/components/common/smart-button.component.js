@@ -85,13 +85,13 @@ export class SmartButtonComponent {
               { ...data, fundingSource: this.fundingSource.name },
               actions
             )
-            .catch(error => {
+            .catch((error) => {
               this.checkout.children.loader.hide();
               this.checkout.children.notification.showError(error.message);
               actions.reject();
             });
         },
-        onError: error => {
+        onError: (error) => {
           console.error(error);
           this.checkout.children.loader.hide();
           this.checkout.children.notification.showError(
@@ -105,12 +105,12 @@ export class SmartButtonComponent {
               { ...data, fundingSource: this.fundingSource.name },
               actions
             )
-            .catch(error => {
+            .catch((error) => {
               this.checkout.children.loader.hide();
               this.checkout.children.notification.showError(error.message);
             });
         },
-        onCancel: data => {
+        onCancel: (data) => {
           this.checkout.children.loader.hide();
           this.checkout.children.notification.showCanceled();
 
@@ -119,18 +119,18 @@ export class SmartButtonComponent {
               ...data,
               fundingSource: this.fundingSource.name
             })
-            .catch(error => {
+            .catch((error) => {
               this.checkout.children.loader.hide();
               this.checkout.children.notification.showError(error.message);
             });
         },
-        createOrder: data => {
+        createOrder: (data) => {
           return this.psCheckoutService
             .postCreateOrder({
               ...data,
               fundingSource: this.fundingSource.name
             })
-            .catch(error => {
+            .catch((error) => {
               this.checkout.children.loader.hide();
               this.checkout.children.notification.showError(
                 `${error.message} ${error.name}`
