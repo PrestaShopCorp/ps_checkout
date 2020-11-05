@@ -39,18 +39,14 @@ function isTokenNeeded() {
   switch (PsCheckoutService.getPrestashopVersion()) {
     case PS_VERSION_1_6: {
       if (document.body.id === 'order') {
-        return !!document
-          .getElementById('step_end')
-          .classList.contains('step_current');
+        return document.getElementById('ps_checkout-displayPayment');
       }
 
       return document.body.id === 'order-opc';
     }
     case PS_VERSION_1_7: {
       if (document.body.id !== 'checkout') return false;
-      return !document
-        .getElementById('checkout-payment-step')
-        .classList.contains('-unreachable');
+      return document.querySelector('[data-module-name="ps_checkout"]');
     }
   }
 }
