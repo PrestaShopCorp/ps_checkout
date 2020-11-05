@@ -47,10 +47,6 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
         header('content-type:application/json');
 
         try {
-            if (Tools::getValue('static_token') !== Tools::getToken(false)) {
-                throw new PsCheckoutException('Bad token', PsCheckoutException::PSCHECKOUT_BAD_STATIC_TOKEN);
-            }
-
             if (false === $this->checkIfContextIsValid()) {
                 throw new PsCheckoutException('The context is not valid', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
             }

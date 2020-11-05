@@ -194,12 +194,12 @@ export class PaypalService {
           mark: this.sdk.Marks({ fundingSource })
         }))
         .filter(({ name, mark }) => {
-          if (name === 'card' && this.config.hostedFieldsEnabled) {
-            if (this.isHostedFieldsEligible()) {
-              return true;
-            } else {
-              console.error('Hosted Fields eligibility is declined');
-              return false;
+          if (name === 'card') {
+            if (this.config.hostedFieldsEnabled) {
+              return this.isHostedFieldsEligible()
+                ? true
+                : (console.error('Hosted Fields eligibility is declined'),
+                  false);
             }
           }
 

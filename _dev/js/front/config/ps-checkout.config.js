@@ -26,6 +26,8 @@ export const PsCheckoutConfig = {
   checkoutCheckoutUrl: window.ps_checkoutCheckoutUrl,
   expressCheckoutUrl: window.ps_checkoutExpressCheckoutUrl,
 
+  hostedFieldsEnabled: window.ps_checkoutHostedFieldsEnabled,
+
   translations: {
     ...Object.keys(window.ps_checkoutPayWithTranslations || {}).reduce(
       (result, name) => {
@@ -52,8 +54,5 @@ export const PsCheckoutConfig = {
 
   fundingSourcesSorted: window.ps_checkoutFundingSourcesSorted,
 
-  orderId: window.ps_checkoutPayPalOrderId,
-  staticToken: window.prestashop
-    ? window.prestashop.static_token
-    : window.static_token
+  orderId: window.ps_checkoutPayPalOrderId
 };

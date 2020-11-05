@@ -63,10 +63,7 @@ export class PsCheckoutPs1_6Component {
     this.children.notification = new NotificationComponent(this).render();
 
     if (document.body.id === 'order') {
-      if (
-        !document.getElementById('step_end').classList.contains('step_current')
-      )
-        return;
+      if (!document.getElementById('ps_checkout-displayPayment')) return;
 
       this.children.loader = new LoaderComponent(this).render();
       this.children.paymentOptions = new PaymentOptionsComponent(this).render();
@@ -83,7 +80,8 @@ export class PsCheckoutPs1_6Component {
         }
       };
 
-      if (document.getElementById('cgv').checked) {
+      const cgv = document.getElementById('cgv');
+      if ((cgv && cgv.checked) || !cgv) {
         this.children.loader = new LoaderComponent(this).render();
         this.children.paymentOptions = new PaymentOptionsComponent(
           this

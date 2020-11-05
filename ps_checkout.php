@@ -53,7 +53,7 @@ class Ps_checkout extends PaymentModule
         'paymentOptions',
         'displayAdminAfterHeader',
         'displayExpressCheckout',
-        'DisplayFooterProduct',
+        'displayFooterProduct',
         'displayPersonalInformationTop',
         'actionCartUpdateQuantityBefore',
         'header',
@@ -109,7 +109,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.0.6';
+    const VERSION = '2.0.7';
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -130,7 +130,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.0.6';
+        $this->version = '2.0.7';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->currencies = true;
@@ -1122,9 +1122,13 @@ class Ps_checkout extends PaymentModule
     {
         // We want to track only event appends on PrestaShop BO
         if (defined('_PS_ADMIN_DIR_')) {
-            /** @var \PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker $tracker */
-            $tracker = $this->getService('ps_checkout.segment.tracker');
-            $tracker->track($action);
+            try {
+                /** @var \PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker $tracker */
+                $tracker = $this->getService('ps_checkout.segment.tracker');
+                $tracker->track($action);
+            } catch (Exception $exception) {
+                // Sometime on module enable after an upgrade .env data are not loaded
+            }
         }
     }
 }
