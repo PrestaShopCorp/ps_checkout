@@ -195,14 +195,11 @@ export class PaypalService {
         }))
         .filter(({ name, mark }) => {
           if (name === 'card') {
-            if (
-              this.config.hostedFieldsEnabled &&
-              this.isHostedFieldsEligible()
-            ) {
-              return true;
-            } else {
-              console.error('Hosted Fields eligibility is declined');
-              return false;
+            if (this.config.hostedFieldsEnabled) {
+              return this.isHostedFieldsEligible()
+                ? true
+                : (console.error('Hosted Fields eligibility is declined'),
+                  false);
             }
           }
 
