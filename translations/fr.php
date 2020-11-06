@@ -275,7 +275,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_20db0bfeecd8fe60533206a2b5e9891a
 $_MODULE['<{ps_checkout}prestashop>translations_4994a8ffeba4ac3140beb89e8d41f174'] = 'Langue';
 $_MODULE['<{ps_checkout}prestashop>translations_8d3f5eff9c40ee315d452392bed5309b'] = 'Nom de famille';
 $_MODULE['<{ps_checkout}prestashop>translations_d9742516aee7b1910462f954d69a26d8'] = 'Vous êtes';
-$_MODULE['<{ps_checkout}prestashop>translations_f1b8245d77b318bc4a0916f66155b9e4'] = 'Un marchant';
+$_MODULE['<{ps_checkout}prestashop>translations_f1b8245d77b318bc4a0916f66155b9e4'] = 'Un marchand';
 $_MODULE['<{ps_checkout}prestashop>translations_9c9f75fecc9e80c7bf8f139d84f47cd3'] = 'Une agence';
 $_MODULE['<{ps_checkout}prestashop>translations_c7ab53436bfc19fb87789b804d3c608e'] = 'Un freelance';
 $_MODULE['<{ps_checkout}prestashop>translations_1fbc7e5f1b92c7ec072397b59a0bb5da'] = 'Adresse de facturation';
