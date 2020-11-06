@@ -55,7 +55,7 @@ export class PsCheckoutPs1_7Component {
 
   render() {
     if (document.body.id !== 'checkout') return;
-    if (!document.querySelector('[data-module-name="ps_checkout"]')) return;
+    if (!document.querySelector('[data-module-name^="ps_checkout"]')) return;
 
     if (undefined === this.sdk) {
       throw new Error(this.$('error.paypal-sdk'));

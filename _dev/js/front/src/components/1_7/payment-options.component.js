@@ -16,46 +16,69 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+import { BaseComponent } from '../../core/base.component';
+
 import { SMART_BUTTON_CLASS } from '../../constants/ps-checkout-classes.constants';
 import { PaymentOptionComponent } from './payment-option.component';
 
-export class PaymentOptionsComponent {
-  constructor(checkout) {
-    this.checkout = checkout;
-    this.config = this.checkout.config;
+export class PaymentOptionsComponent extends BaseComponent {
+  static INJECT = {
+    config: 'config',
+    htmlElementService: 'htmlElementService',
+    payPalService: 'payPalService',
+    psCheckoutService: 'psCheckoutService'
+  };
 
-    this.htmlElementService = this.checkout.htmlElementService;
-    this.payPalService = this.checkout.payPalService;
-    this.psCheckoutService = this.checkout.psCheckoutService;
-
+  constructor(app, props) {
+    super(app, props);
     this.paymentOptionsContainer = this.htmlElementService.getPaymentOptionsContainer();
     this.paymentOptions = this.htmlElementService.getPaymentOptions();
 
     this.buttonContainer = this.htmlElementService.getButtonContainer();
 
-    this.children = {};
+    this.data.HTMLElement = this.getPaymentOptions();
+
+    this.data.notificationComponent = this.app.children.notification;
+  }
+
+  getPaymentOptions() {
+    const paymentOptionsSelector = '.payment-options';
+    return document.querySelector(paymentOptionsSelector);
+  }
+
+  renderPaymentOptionItems() {
+    this.children.paymentOptions = this.payPalService
+      .getEligibleFundingSources()
+      .map((fundingSource) =>
+        new PaymentOptionComponent(this.app, {
+          fundingSource: fundingSource,
+          // TODO: Move this to HTMLElementService,
+          HTMLElement: document.querySelector(
+            `[data-module-name="ps_checkout-${fundingSource.name}"]`
+          )
+        }).render()
+      );
+  }
+
+  renderPaymentOptionRadios() {
+    const radios = Array.prototype.slice.call(
+      this.data.HTMLElement.querySelectorAll(
+        'input[type="radio"][name="payment-option"]'
+      )
+    );
+
+    radios.forEach((radio) => {
+      radio.addEventListener('change', () => {
+        this.data.notificationComponent.hideCancelled();
+        this.data.notificationComponent.hideError();
+      });
+    });
   }
 
   render() {
     if (!this.config.expressCheckoutSelected) {
-      // Default Payment Options
-      this.children.paymentOptions = this.paymentOptions.map((paymentOption) =>
-        new PaymentOptionComponent(this.checkout, null, paymentOption).render()
-      );
-
-      // PayPal Payment Options
-      this.children.paymentOptions = [
-        ...this.children.paymentOptions,
-        ...this.payPalService
-          .getEligibleFundingSources()
-          .map((fundingSource) =>
-            new PaymentOptionComponent(
-              this.checkout,
-              fundingSource,
-              null
-            ).render()
-          )
-      ];
+      this.renderPaymentOptionItems();
+      this.renderPaymentOptionRadios();
     } else {
       this.htmlElementService.getPaymentOptionsContainer().style.display =
         'none';

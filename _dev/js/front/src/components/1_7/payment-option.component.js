@@ -16,225 +16,123 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+import { BaseComponent } from '../../core/base.component';
+
 import { SmartButtonComponent } from '../common/smart-button.component';
 import { HostedFieldsComponent } from '../common/hosted-fields.component';
-import { MarkerComponent } from '../common/marker.component';
+import { MarkComponent } from '../common/marker.component';
 
-const PAYMENT_OPTION_LABEL_MARK = (id) => `${id}-mark`;
-const PAYMENT_OPTION_CONTAINER_IDENTIFIER = (id) => `${id}-container`;
+/**
+ * @typedef PaymentOptionComponentProps
+ *
+ * @param {string} fundingSource.name
+ * @param {*}      fundingSource.mark
+ *
+ * @param {HTMLElement} HTMLElement
+ * @param {HTMLElement} [HTMLElementWrapper]
+ * @param {HTMLElement} [HTMLElementLabel]
+ * @param {HTMLElement} [HTMLElementMark]
+ * @param {HTMLElement} [HTMLElementHostedFields]
+ * @param {HTMLElement} [HTMLElementSmartButtonWrapper]
+ */
 
-let BASE_PAYMENT;
+export class PaymentOptionComponent extends BaseComponent {
+  static INJECT = {
+    config: 'config',
+    htmlElementService: 'htmlElementService',
+    $: '$'
+  };
 
-let BASE_PAYMENT_OPTION;
-let BASE_PAYMENT_OPTION_ID;
-let BASE_PAYMENT_OPTION_CONTAINER;
-let BASE_PAYMENT_OPTION_FORM;
-let BASE_PAYMENT_OPTION_ADDITIONAL_INFORMATION;
+  /**
+   * @param checkout
+   * @param props
+   */
+  constructor(checkout, props) {
+    super(checkout, props);
 
-export class PaymentOptionComponent {
-  constructor(checkout, fundingSource, paymentOption) {
-    this.checkout = checkout;
-    this.checkoutConfig = checkout.config;
+    this.data.name = props.fundingSource.name;
 
-    this.config = this.checkout.config;
+    this.data.HTMLElement = props.HTMLElement;
+    this.data.HTMLElementWrapper = this.getWrapper();
+    this.data.HTMLElementLabel = this.getLabel();
+    this.data.HTMLElementMark = props.HTMLElementMark || null;
 
-    this.htmlElementService = checkout.htmlElementService;
-    this.payPalService = checkout.payPalService;
-
-    this.fundingSource = fundingSource;
-    this.paymentOption = paymentOption;
-
-    this.$ = this.checkout.$;
-
-    this.setBasePaymentOption();
-
-    this.children = {};
+    this.data.HTMLElementHostedFields = this.getHostedFields();
+    this.data.HTMLElementSmartButton = this.getSmartButton();
   }
 
-  setBasePaymentOption() {
-    if (BASE_PAYMENT_OPTION) return;
-
-    BASE_PAYMENT_OPTION = this.htmlElementService
-      .getBasePaymentOption()
-      .cloneNode(true);
-
-    BASE_PAYMENT_OPTION_ID = BASE_PAYMENT_OPTION.id || null;
-
-    // perez-furio.ext: If this happens, global error (No Payment Option available)?
-    BASE_PAYMENT = this.htmlElementService.getPaymentOptionContainer(
-      BASE_PAYMENT_OPTION_ID
+  getHostedFields() {
+    const hostedFieldsFormId = 'ps_checkout-hosted-fields-form';
+    return (
+      this.data.name === 'card' &&
+      (this.props.HTMLElementHostedFields ||
+        document.getElementById(hostedFieldsFormId))
     );
-
-    BASE_PAYMENT_OPTION_CONTAINER = BASE_PAYMENT.cloneNode(true);
-
-    BASE_PAYMENT_OPTION_FORM = this.htmlElementService
-      .getPaymentOptionFormContainer(BASE_PAYMENT_OPTION_ID)
-      .cloneNode(true);
-
-    BASE_PAYMENT_OPTION_ADDITIONAL_INFORMATION = this.htmlElementService
-      .getPaymentOptionAdditionalInformation(BASE_PAYMENT_OPTION_ID)
-      .cloneNode(true);
-
-    this.htmlElementService
-      .getPaymentOptionFormContainer(BASE_PAYMENT_OPTION_ID)
-      .remove();
-    this.htmlElementService
-      .getPaymentOptionAdditionalInformation(BASE_PAYMENT_OPTION_ID)
-      .remove();
   }
 
-  getPaymentOptionId() {
-    return BASE_PAYMENT_OPTION_ID + '-' + this.fundingSource.name;
+  getLabel() {
+    const translationKey = `funding-source.name.${this.data.name}`;
+    const label =
+      this.$(translationKey) !== undefined
+        ? this.$(translationKey)
+        : this.$('funding-source.name.default');
+
+    return Array.prototype.slice
+      .call(this.data.HTMLElementWrapper.querySelectorAll('*'))
+      .find((item) => item.innerText === label);
   }
 
-  getPaymentOptionLabel() {
-    return undefined !==
-      this.$(`funding-source.name.${this.fundingSource.name}`)
-      ? this.$(`funding-source.name.${this.fundingSource.name}`)
-      : this.$('funding-source.name.default');
+  getSmartButton() {
+    const smartButtonSelector = `.ps_checkout-button[data-funding-source=${this.data.name}]`;
+    return (
+      this.props.HTMLElementSmartButton ||
+      document.querySelector(smartButtonSelector)
+    );
   }
 
-  renderNewPaymentOptionLabel() {
-    this.paymentOption = this.htmlElementService.getPaymentOption(
-      this.paymentOptionContainer
-    );
-
-    this.paymentOption.id = this.getPaymentOptionId();
-
-    const containerLabel =
-      this.htmlElementService.getPaymentOptionLabel(
-        this.paymentOptionContainer,
-        this.$('funding-source.name.paypal')
-      ) ||
-      this.htmlElementService.getPaymentOptionLabelLegacy(
-        this.paymentOptionContainer,
-        BASE_PAYMENT_OPTION_ID
-      );
-
-    const newContainerLabel = document.createElement('span');
-    newContainerLabel.htmlFor = `${BASE_PAYMENT_OPTION_ID}-${this.fundingSource.name}`;
-
-    const newContainerLabelSpan = document.createElement('span');
-    newContainerLabelSpan.classList.add('ps_checkout-label');
-    newContainerLabelSpan.innerText = this.getPaymentOptionLabel();
-
-    const newContainerLabelMark = document.createElement('div');
-    newContainerLabelMark.style.display = 'inline-block';
-    newContainerLabelMark.classList.add('ps_checkout-mark');
-    newContainerLabelMark.id = PAYMENT_OPTION_LABEL_MARK(
-      this.fundingSource.name
-    );
-
-    newContainerLabelSpan.append(newContainerLabelMark);
-    newContainerLabel.append(newContainerLabelSpan);
-    containerLabel.replaceWith(newContainerLabel);
+  getWrapper() {
+    const wrapperId = `${this.data.HTMLElement.id}-container`;
+    return this.props.HTMLElementLabel || document.getElementById(wrapperId);
   }
 
-  renderNewPaymentOptionContainer() {
-    this.paymentOptionContainer = BASE_PAYMENT_OPTION_CONTAINER.cloneNode(true);
-
-    this.paymentOptionContainer.classList.add('ps_checkout-payment-option');
-    this.paymentOptionContainer.style.display = 'block';
-    this.paymentOptionContainer.id = PAYMENT_OPTION_CONTAINER_IDENTIFIER(
-      this.getPaymentOptionId()
-    );
-
-    let paymentOptionSelect = this.htmlElementService.getPaymentOptionSelect(
-      this.paymentOptionContainer
-    );
-    paymentOptionSelect.value = this.getPaymentOptionId();
-
-    this.renderNewPaymentOptionLabel();
+  renderWrapper() {
+    this.data.HTMLElementWrapper.classList.add('ps_checkout-payment-option');
+    this.data.HTMLElementWrapper.style.display = '';
   }
 
-  renderNewPaymentOptionContainerForm() {
-    this.paymentOptionFormContainer = BASE_PAYMENT_OPTION_FORM.cloneNode(true);
+  renderMark() {
+    if (!this.data.HTMLElementMarker) {
+      this.data.HTMLElementMarker = document.createElement('div');
+      this.data.HTMLElementMarker.style.display = 'inline-block';
 
-    const paymentOptionFormButton = this.htmlElementService.getPaymentOptionFormButton(
-      this.paymentOptionFormContainer,
-      BASE_PAYMENT_OPTION_ID
-    );
-
-    this.paymentOptionFormContainer.id = `pay-with-${this.getPaymentOptionId()}-form`;
-    paymentOptionFormButton.id = `pay-with-${this.getPaymentOptionId()}`;
-  }
-
-  renderNewPaymentOption() {
-    this.renderNewPaymentOptionContainer();
-    this.renderNewPaymentOptionContainerForm();
-
-    BASE_PAYMENT.parentNode.insertBefore(
-      this.paymentOptionContainer,
-      BASE_PAYMENT
-    );
-    BASE_PAYMENT.parentNode.insertBefore(
-      this.paymentOptionFormContainer,
-      BASE_PAYMENT
-    );
-
-    this.marker = new MarkerComponent(
-      this,
-      this.fundingSource,
-      `#${PAYMENT_OPTION_LABEL_MARK(this.fundingSource.name)}`
-    ).render();
-  }
-
-  renderNewPaymentOptionChildren() {
-    if (
-      this.fundingSource.name === 'card' &&
-      this.payPalService.isHostedFieldsEligible() &&
-      this.config.expressCheckoutHostedFieldsEnabled
-    ) {
-      this.paymentOptionAdditionalInformation = BASE_PAYMENT_OPTION_ADDITIONAL_INFORMATION.cloneNode(
-        true
-      );
-      this.paymentOptionAdditionalInformation.id = `${this.getPaymentOptionId()}-additional-information`;
-      BASE_PAYMENT.parentNode.insertBefore(
-        this.paymentOptionAdditionalInformation,
-        BASE_PAYMENT
-      );
-
-      this.children.hostedFields = new HostedFieldsComponent(
-        this.checkout,
-        this,
-        this.fundingSource
-      ).render();
-    } else {
-      this.children.smartButton = new SmartButtonComponent(
-        this.checkout,
-        this.fundingSource
-      ).render();
+      this.data.HTMLElementLabel.append(this.data.HTMLElementMarker);
     }
+
+    this.children.Marker = this.marker = new MarkComponent(this.app, {
+      fundingSource: this.props.fundingSource,
+
+      HTMLElement: this.data.HTMLElementMarker
+    }).render();
   }
 
   render() {
-    if (this.fundingSource) {
-      this.renderNewPaymentOption();
-      this.renderNewPaymentOptionChildren();
+    this.renderWrapper();
+    this.renderMark();
+
+    if (this.data.HTMLElementHostedFields) {
+      this.children.hostedFields = new HostedFieldsComponent(this.app, {
+        fundingSource: this.props.fundingSource,
+
+        HTMLElement: this.data.HTMLElementHostedFields
+      }).render();
+    } else {
+      this.children.smartButton = new SmartButtonComponent(this.app, {
+        fundingSource: this.props.fundingSource,
+
+        HTMLElement: this.data.HTMLElementSmartButton
+      }).render();
     }
 
-    this.paymentOption.addEventListener('change', () => {
-      this.checkout.children.notification.hideCancelled();
-      this.checkout.children.notification.hideError();
-      this.checkout.children.paymentOptions.children.paymentOptions.forEach(
-        ({ children }) => {
-          if (children.smartButton) {
-            children.smartButton.hide();
-          }
-          if (children.hostedFields) {
-            children.hostedFields.hide();
-          }
-        }
-      );
-
-      this.children.smartButton && this.children.smartButton.show();
-      this.children.hostedFields && this.children.hostedFields.show();
-    });
-
     return this;
-  }
-
-  isDefaultPaymentOption() {
-    return !this.fundingSource;
   }
 }
