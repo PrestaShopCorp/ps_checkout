@@ -576,9 +576,7 @@ class Ps_checkout extends PaymentModule
         $psAccountRepository = $this->getService('ps_checkout.repository.prestashop.account');
         /** @var \PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext $psContext */
         $psContext = $this->getService('ps_checkout.context.prestashop');
-        $shopUuid = (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->getForShop((int)$psContext->getShopId());
-
-        // echo var_dump($shopUuid); die;
+        $shopUuid = (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->getForShop((int) $psContext->getShopId());
 
         return $ppAccountRepository->onBoardingIsCompleted()
             && $ppAccountRepository->paypalEmailIsValid()
