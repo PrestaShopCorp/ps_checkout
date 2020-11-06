@@ -117,7 +117,7 @@
   margin-top: 6px;
 }
 
-.js-additional-information .form-control {
+.js-payment-option-form .form-control {
   background-color: #F3F3F3;
   border-radius: 5px;
 }
@@ -155,13 +155,13 @@
   background-position: 0 -133px;
 }
 
-.js-additional-information .braintree-hosted-fields-focused {
+.js-payment-option-form .braintree-hosted-fields-focused {
   border: .1875rem solid #2fb5d2;
   background-color: #fff;
   color: #232323;
 }
 
-.js-additional-information .braintree-hosted-fields-invalid {
+.js-payment-option-form .braintree-hosted-fields-invalid {
   border: .1875rem solid #e76d7a;
   animation: shake 500ms cubic-bezier(.20, 1.3, .7, 1) both;
   transform: translate3d(0, 0, 0);
@@ -169,7 +169,7 @@
   backface-visibility: hidden;
 }
 
-.js-additional-information .braintree-hosted-fields-valid {
+.js-payment-option-form .braintree-hosted-fields-valid {
   border: .1875rem solid #6fcc80;
   transform: translate3d(0, 0, 0);
   background-color: #fff;
@@ -294,4 +294,8 @@
 
 .ps_checkout-payment-option label {
   display: inline-block !important;
+}
+
+.js-payment-ps_checkout.disabled .ps_checkout-button[data-funding-source="card"] button:disabled {
+  opacity: initial;
 }

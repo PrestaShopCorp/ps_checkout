@@ -16,149 +16,149 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import { SMART_BUTTON_CLASS } from '../../constants/ps-checkout-classes.constants';
+import { BaseComponent } from '../../core/base.component';
 
-export class SmartButtonComponent {
-  constructor(checkout, fundingSource, htmlContainer) {
-    this.checkout = checkout;
-    this.checkoutConfig = checkout.config;
+/**
+ * @typedef SmartButtonComponentProps
+ *
+ * @param {string} fundingSource.name
+ * @param {*}      fundingSource.mark
+ *
+ * @param {HTMLElement} [HTMLElement]
+ * @param {HTMLElement} HTMLElementWrapper
+ */
 
-    this.fundingSource = fundingSource;
+export class SmartButtonComponent extends BaseComponent {
+  static INJECT = {
+    config: 'config',
+    htmlElementService: 'htmlElementService',
+    payPalService: 'payPalService',
+    psCheckoutService: 'psCheckoutService'
+  };
 
-    this.htmlElementService = checkout.htmlElementService;
-    this.payPalService = checkout.payPalService;
-    this.psCheckoutService = checkout.psCheckoutService;
+  constructor(app, props) {
+    super(app, props);
 
-    this.buttonContainer =
-      htmlContainer || this.htmlElementService.getButtonContainer();
-  }
+    this.data.name = props.fundingSource.name;
 
-  getButtonId() {
-    return `button-${this.fundingSource.name}`;
+    this.data.HTMLElement = props.HTMLElement;
+
+    this.data.conditionsComponent = this.app.children.conditionsCheckbox;
+    this.data.loaderComponent = this.app.children.loader;
+    this.data.notificationComponent = this.app.children.notification;
   }
 
   renderPayPalButton() {
+    const buttonSelector = `.ps_checkout-button[data-funding-source=${this.data.name}]`;
+
+    this.data.HTMLElement.classList.add('ps_checkout-button');
+    this.data.HTMLElement.setAttribute('data-funding-source', this.data.name);
+
     return this.payPalService
-      .getButtonPayment(this.fundingSource.name, {
+      .getButtonPayment(this.data.name, {
         onInit: (data, actions) => {
-          if (!this.checkout.children.conditionsCheckbox) {
+          if (!this.data.conditionsComponent) {
             actions.enable();
             return;
           }
 
-          if (this.checkout.children.conditionsCheckbox.isChecked()) {
-            this.checkout.children.notification.hideConditions();
+          if (this.data.conditionsComponent.isChecked()) {
+            this.data.notificationComponent.hideConditions();
             actions.enable();
           } else {
-            this.checkout.children.notification.showConditions();
+            this.data.notificationComponent.showConditions();
             actions.disable();
           }
 
-          this.checkout.children.conditionsCheckbox.onChange(() => {
-            if (this.checkout.children.conditionsCheckbox.isChecked()) {
-              this.checkout.children.notification.hideConditions();
+          this.data.conditionsComponent.onChange(() => {
+            if (this.data.conditionsComponent.isChecked()) {
+              this.data.notificationComponent.hideConditions();
               actions.enable();
             } else {
-              this.checkout.children.notification.showConditions();
+              this.data.notificationComponent.showConditions();
               actions.disable();
             }
           });
         },
         onClick: (data, actions) => {
           if (
-            this.checkout.children.conditionsCheckbox &&
-            !this.checkout.children.conditionsCheckbox.isChecked()
+            this.data.conditionsComponent &&
+            !this.data.conditionsComponent.isChecked()
           ) {
-            this.checkout.children.notification.hideCancelled();
-            this.checkout.children.notification.hideError();
-            this.checkout.children.notification.showConditions();
+            this.data.notificationComponent.hideCancelled();
+            this.data.notificationComponent.hideError();
+            this.data.notificationComponent.showConditions();
 
             return;
           }
 
-          if (this.fundingSource.name !== 'card') {
-            this.checkout.children.loader.show();
+          if (this.data.name !== 'card') {
+            this.data.loaderComponent.show();
           }
 
           this.psCheckoutService
             .postCheckCartOrder(
-              { ...data, fundingSource: this.fundingSource.name },
+              { ...data, fundingSource: this.data.name },
               actions
             )
             .catch((error) => {
-              this.checkout.children.loader.hide();
-              this.checkout.children.notification.showError(error.message);
+              this.data.loaderComponent.hide();
+              this.data.notificationComponent.showError(error.message);
               actions.reject();
             });
         },
         onError: (error) => {
           console.error(error);
-          this.checkout.children.loader.hide();
-          this.checkout.children.notification.showError(
+          this.data.loaderComponent.hide();
+          this.data.notificationComponent.showError(
             error instanceof TypeError ? error.message : ''
           );
         },
         onApprove: (data, actions) => {
-          this.checkout.children.loader.show();
+          this.data.loaderComponent.show();
           return this.psCheckoutService
             .postValidateOrder(
-              { ...data, fundingSource: this.fundingSource.name },
+              { ...data, fundingSource: this.data.name },
               actions
             )
             .catch((error) => {
-              this.checkout.children.loader.hide();
-              this.checkout.children.notification.showError(error.message);
+              this.data.loaderComponent.hide();
+              this.data.notificationComponent.showError(error.message);
             });
         },
         onCancel: (data) => {
-          this.checkout.children.loader.hide();
-          this.checkout.children.notification.showCanceled();
+          this.data.loaderComponent.hide();
+          this.data.notificationComponent.showCanceled();
 
           return this.psCheckoutService
             .postCancelOrder({
               ...data,
-              fundingSource: this.fundingSource.name
+              fundingSource: this.data.name
             })
             .catch((error) => {
-              this.checkout.children.loader.hide();
-              this.checkout.children.notification.showError(error.message);
+              this.data.loaderComponent.hide();
+              this.data.notificationComponent.showError(error.message);
             });
         },
         createOrder: (data) => {
           return this.psCheckoutService
             .postCreateOrder({
               ...data,
-              fundingSource: this.fundingSource.name
+              fundingSource: this.data.name
             })
             .catch((error) => {
-              this.checkout.children.loader.hide();
-              this.checkout.children.notification.showError(
+              this.data.loaderComponent.hide();
+              this.data.notificationComponent.showError(
                 `${error.message} ${error.name}`
               );
             });
         }
       })
-      .render(`#${this.getButtonId()}`);
+      .render(buttonSelector);
   }
 
   render() {
-    this.smartButton = document.createElement('div');
-
-    this.smartButton.id = this.getButtonId();
-    this.smartButton.classList.add(SMART_BUTTON_CLASS);
-
-    this.buttonContainer.append(this.smartButton);
-
     this.renderPayPalButton();
-
     return this;
-  }
-
-  show() {
-    this.smartButton.style.display = 'block';
-  }
-
-  hide() {
-    this.smartButton.style.display = 'none';
   }
 }
