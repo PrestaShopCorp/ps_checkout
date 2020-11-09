@@ -74,9 +74,9 @@ export class PsCheckoutPs1_6Component {
         if (document.getElementById('cgv').checked) {
           this.children.notification = new NotificationComponent(this).render();
           this.children.loader = new LoaderComponent(this).render();
-          this.children.paymentOptions = new PaymentOptionsComponent(
-            this
-          ).render();
+          this.children.paymentOptions = new PaymentOptionsComponent(this, {
+            markPosition: 'before'
+          }).render();
         }
       };
 
@@ -84,9 +84,9 @@ export class PsCheckoutPs1_6Component {
       if ((cgv && cgv.checked) || !cgv) {
         this.children.notification = new NotificationComponent(this).render();
         this.children.loader = new LoaderComponent(this).render();
-        this.children.paymentOptions = new PaymentOptionsComponent(
-          this
-        ).render();
+        this.children.paymentOptions = new PaymentOptionsComponent(this, {
+          markPosition: 'before'
+        }).render();
       }
     }
   }

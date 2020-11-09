@@ -18,9 +18,9 @@
  */
 import { BaseComponent } from '../../core/base.component';
 
-import { SmartButtonComponent } from '../common/smart-button.component';
-import { HostedFieldsComponent } from '../common/hosted-fields.component';
-import { MarkComponent } from '../common/marker.component';
+import { HostedFieldsComponent } from './hosted-fields.component';
+import { MarkComponent } from './marker.component';
+import { SmartButtonComponent } from './smart-button.component';
 
 /**
  * @typedef PaymentOptionComponentProps
@@ -79,7 +79,7 @@ export class PaymentOptionComponent extends BaseComponent {
 
     return Array.prototype.slice
       .call(this.data.HTMLElementWrapper.querySelectorAll('*'))
-      .find((item) => item.innerText === label);
+      .find((item) => item.innerHTML.trim() === label.trim());
   }
 
   getSmartButton() {
@@ -92,7 +92,14 @@ export class PaymentOptionComponent extends BaseComponent {
 
   getWrapper() {
     const wrapperId = `${this.data.HTMLElement.id}-container`;
-    return this.props.HTMLElementLabel || document.getElementById(wrapperId);
+    return this.props.HTMLElementWrapper || document.getElementById(wrapperId);
+  }
+
+  onLabelClick(listener) {
+    this.data.HTMLElementLabel.addEventListener('click', (event) => {
+      event.preventDefault();
+      listener(this, event);
+    });
   }
 
   renderWrapper() {
@@ -105,7 +112,11 @@ export class PaymentOptionComponent extends BaseComponent {
       this.data.HTMLElementMarker = document.createElement('div');
       this.data.HTMLElementMarker.style.display = 'inline-block';
 
-      this.data.HTMLElementLabel.append(this.data.HTMLElementMarker);
+      if (this.props.markPosition === 'before') {
+        this.data.HTMLElementLabel.prepend(this.data.HTMLElementMarker);
+      } else {
+        this.data.HTMLElementLabel.append(this.data.HTMLElementMarker);
+      }
     }
 
     this.children.Marker = this.marker = new MarkComponent(this.app, {

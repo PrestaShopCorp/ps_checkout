@@ -18,8 +18,8 @@
  */
 import { BaseComponent } from '../../core/base.component';
 
+import { PaymentOptionComponent } from '../common/payment-option.component';
 import { SMART_BUTTON_CLASS } from '../../constants/ps-checkout-classes.constants';
-import { PaymentOptionComponent } from './payment-option.component';
 
 export class PaymentOptionsComponent extends BaseComponent {
   static INJECT = {
@@ -31,10 +31,8 @@ export class PaymentOptionsComponent extends BaseComponent {
 
   constructor(app, props) {
     super(app, props);
-    this.paymentOptionsContainer = this.htmlElementService.getPaymentOptionsContainer();
-    this.paymentOptions = this.htmlElementService.getPaymentOptions();
 
-    this.buttonContainer = this.htmlElementService.getButtonContainer();
+    // this.buttonContainer = this.htmlElementService.getButtonContainer();
 
     this.data.HTMLElement = this.getPaymentOptions();
 
@@ -52,6 +50,8 @@ export class PaymentOptionsComponent extends BaseComponent {
       .map((fundingSource) =>
         new PaymentOptionComponent(this.app, {
           fundingSource: fundingSource,
+          markPosition: this.props.markPosition,
+
           // TODO: Move this to HTMLElementService,
           HTMLElement: document.querySelector(
             `[data-module-name="ps_checkout-${fundingSource.name}"]`
