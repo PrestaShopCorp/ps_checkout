@@ -47,7 +47,7 @@ export class PsCheckoutPs1_6Component {
       this.translationService
     );
 
-    this.$ = id => this.translationService.getTranslationString(id);
+    this.$ = (id) => this.translationService.getTranslationString(id);
 
     this.children = {};
   }
@@ -72,7 +72,8 @@ export class PsCheckoutPs1_6Component {
       window['updatePaymentMethods'] = (...args) => {
         updatePaymentMethods(...args);
 
-        if (document.getElementById('cgv').checked) {
+        const cgv = document.getElementById('cgv');
+        if ((cgv && cgv.checked) || !cgv) {
           this.children.loader = new LoaderComponent(this).render();
           this.children.paymentOptions = new PaymentOptionsComponent(
             this
