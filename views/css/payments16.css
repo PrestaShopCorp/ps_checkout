@@ -17,7 +17,35 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
- p.payment_module a.pscheckout-paypal:after, p.payment_module a.pscheckout-card:after {
+.ps_checkout-payment-option div.payment_module {
+  margin-bottom: 10px;
+}
+
+.ps_checkout-payment-option div.payment_module a {
+  display: block;
+  border: 1px solid #d6d4d4;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  font-size: 17px;
+  line-height: 23px;
+  color: #333;
+  font-weight: bold;
+  letter-spacing: -1px;
+  position: relative;
+  text-decoration: none;
+}
+
+.ps_checkout-payment-option div.payment_module:first-child a {
+  background: #fbfbfb;
+  padding: 25px 99px 25px 10px;
+}
+
+.ps_checkout-payment-option div.payment_module:last-child a {
+  padding: 33px 99px 34px 99px;
+}
+
+.ps_checkout-payment-option div.payment_module:first-child a:after {
   display: block;
   content: "\f054";
   position: absolute;
@@ -31,14 +59,6 @@
   color: #777;
 }
 
-p.payment_module .pscheckout-paypal, p.payment_module .pscheckout-card {
-  background-color: #fbfbfb;
-}
-
-p.payment_module a.pscheckout-paypal, p.payment_module a.pscheckout-card {
-  padding: 30px 40px 30px 20px;
-}
-
 .payment-option-container {
   background-color: #fbfbfb;
   display: block;
@@ -48,6 +68,32 @@ p.payment_module a.pscheckout-paypal, p.payment_module a.pscheckout-card {
   border-radius: 4px;
   padding: 33px 40px 34px 99px;
   margin-bottom: 10px;
+}
+
+.ps_checkout-payment-option div.payment_module .form-group {
+  margin-left: 0;
+  margin-right: 0;
+
+  margin-bottom: 15px !important;
+}
+
+.ps_checkout-payment-option div.payment_module .form-group .form-control {
+  max-width: initial !important;
+}
+
+.ps_checkout-payment-option div.payment_module.closed:first-child {}
+.ps_checkout-payment-option div.payment_module.closed:last-child { display: none }
+
+.ps_checkout-payment-option div.payment_module.open:first-child { margin: 0 }
+.ps_checkout-payment-option div.payment_module.open:first-child a {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.ps_checkout-payment-option div.payment_module.open:last-child a {
+  border-top: none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 #hostedFieldsErrors.hide-paypal-error {
@@ -169,44 +215,6 @@ p.payment_module a.pscheckout-paypal, p.payment_module a.pscheckout-card {
 #cart_navigation .flex-display {
   flex-grow: 1;
   text-align: left;
-}
-
-#ps_checkout-displayPayment a span {
-  color: white;
-}
-
-#ps_checkout-displayPayment .form-group {
-  margin-left: 0;
-  margin-right: 0;
-
-  margin-bottom: 15px !important;
-}
-
-#ps_checkout-displayPayment .form-group .form-control {
-  max-width: initial !important;
-}
-
-#ps_checkout-displayPayment .payment_module a {
-  padding: 33px 99px 34px 99px;
-  text-decoration: none;
-}
-
-#ps_checkout-displayPayment .payment_module .pscheckout-paypal, #ps_checkout-displayPayment .payment_module .pscheckout-card {
-  background: #fbfbfb;
-  padding: 25px 99px 25px 10px;
-}
-#ps_checkout-displayPayment .payment_module.closed:first-child {}
-#ps_checkout-displayPayment .payment_module.closed:last-child { display: none }
-
-#ps_checkout-displayPayment .payment_module.open:first-child { margin: 0 }
-#ps_checkout-displayPayment .payment_module.open:first-child .pscheckout-paypal, #ps_checkout-displayPayment .payment_module.open:first-child .pscheckout-card {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-#ps_checkout-displayPayment .payment_module.open:last-child a {
-  border-top: none;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
 }
 
 .ps-checkout.overlay {

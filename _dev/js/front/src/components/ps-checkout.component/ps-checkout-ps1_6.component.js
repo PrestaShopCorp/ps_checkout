@@ -75,18 +75,18 @@ export class PsCheckoutPs1_6Component {
         const cgv = document.getElementById('cgv');
         if ((cgv && cgv.checked) || !cgv) {
           this.children.loader = new LoaderComponent(this).render();
-          this.children.paymentOptions = new PaymentOptionsComponent(
-            this
-          ).render();
+          this.children.paymentOptions = new PaymentOptionsComponent(this, {
+            markPosition: 'before'
+          }).render();
         }
       };
 
       const cgv = document.getElementById('cgv');
       if ((cgv && cgv.checked) || !cgv) {
         this.children.loader = new LoaderComponent(this).render();
-        this.children.paymentOptions = new PaymentOptionsComponent(
-          this
-        ).render();
+        this.children.paymentOptions = new PaymentOptionsComponent(this, {
+          markPosition: 'before'
+        }).render();
       }
     }
   }

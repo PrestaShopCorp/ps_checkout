@@ -16,58 +16,82 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import { PaymentOptionComponent } from './payment-option.component';
+import { BaseComponent } from '../../core/base.component';
+import { PaymentOptionComponent } from '../common/payment-option.component';
 
-export class PaymentOptionsComponent {
-  constructor(checkout) {
-    this.checkout = checkout;
+export class PaymentOptionsComponent extends BaseComponent {
+  static INJECT = {
+    config: 'config',
+    htmlElementService: 'htmlElementService',
+    payPalService: 'payPalService',
+    psCheckoutService: 'psCheckoutService'
+  };
 
-    this.htmlElementService = checkout.htmlElementService;
-    this.payPalService = checkout.payPalService;
+  constructor(app, props) {
+    super(app, props);
 
-    this.paymentOptionsContainer = this.htmlElementService.getPaymentOptionsContainer();
-    this.paymentOptions = this.htmlElementService.getPaymentOptions();
+    this.data.HTMLElement = this.getPaymentOptions();
 
-    this.children = {};
+    this.data.notificationComponent = this.app.children.notification;
   }
 
-  onPaymentOptionChange(paymentOption) {
-    this.children.paymentOptions.forEach((paymentOption) => {
-      if (!paymentOption.isDefaultPaymentOption()) {
-        paymentOption.setOpen(false);
-      }
-    });
+  getPaymentOptions() {
+    const paymentOptionsSelector = '.payment-options';
+    return document.querySelector(paymentOptionsSelector);
+  }
 
-    paymentOption.setOpen(true);
+  renderPaymentOptionItems() {
+    this.children.paymentOptions = this.payPalService
+      .getEligibleFundingSources()
+      .map((fundingSource) =>
+        new PaymentOptionComponent(this.app, {
+          fundingSource: fundingSource,
+          markPosition: this.props.markPosition,
+
+          // TODO: Move this to HTMLElementService,
+          HTMLElement: document.querySelector(
+            `[data-module-name="ps_checkout-${fundingSource.name}"]`
+          )
+        }).render()
+      );
+  }
+
+  renderPaymentOptionListener() {
+    const HTMLListenerElements = this.children.paymentOptions.map(
+      (paymentOption) => {
+        const HTMLElement = paymentOption.data.HTMLElementWrapper;
+        const [button, form] = Array.prototype.slice.call(
+          HTMLElement.querySelectorAll('.payment_module')
+        );
+
+        return { button, form };
+      }
+    );
+
+    this.children.paymentOptions.forEach((paymentOption, index) => {
+      paymentOption.onLabelClick(() => {
+        HTMLListenerElements.forEach(({ button, form }) => {
+          button.classList.add('closed');
+          form.classList.add('closed');
+          button.classList.remove('open');
+          form.classList.remove('open');
+        });
+
+        HTMLListenerElements[index].button.classList.add('open');
+        HTMLListenerElements[index].button.classList.remove('closed');
+        HTMLListenerElements[index].form.classList.add('open');
+        HTMLListenerElements[index].form.classList.remove('closed');
+      });
+    });
   }
 
   render() {
-    // Default Payment Options
-    this.children.paymentOptions = this.paymentOptions.map((paymentOption) =>
-      new PaymentOptionComponent(this.checkout, null, paymentOption).render()
-    );
-
-    // PayPal Payment Options
-    this.children.paymentOptions = [
-      ...this.children.paymentOptions,
-      ...this.payPalService.getEligibleFundingSources().map((fundingSource) => {
-        const paymentOption = new PaymentOptionComponent(
-          this.checkout,
-          fundingSource,
-          null
-        ).render();
-
-        if (!paymentOption.isDefaultPaymentOption()) {
-          paymentOption.onClick((...args) => {
-            this.checkout.children.notification.hideCancelled();
-            this.checkout.children.notification.hideError();
-            this.onPaymentOptionChange(...args);
-          });
-        }
-
-        return paymentOption;
-      })
-    ];
+    if (!this.config.expressCheckoutSelected) {
+      this.renderPaymentOptionItems();
+      this.renderPaymentOptionListener();
+    } else {
+      // TODO
+    }
 
     return this;
   }
