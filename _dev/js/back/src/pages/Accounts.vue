@@ -18,7 +18,12 @@
  *-->
 <template>
   <div>
-    <b-container class="mb-4" v-if="!isLiveStepConfirmed && firebaseStatusAccount && paypalStatusAccount" >
+    <b-container
+      class="mb-4"
+      v-if="
+        !isLiveStepConfirmed && firebaseStatusAccount && paypalStatusAccount
+      "
+    >
       <PaypalStatusBanner />
     </b-container>
     <b-container>

@@ -22,6 +22,7 @@ export default {
   shopIs17: state => state.shopIs17,
   translations: state => state.translations,
   roundingSettingsIsCorrect: state => state.roundingSettingsIsCorrect,
+  shopId: state => state.shopId,
   merchantIsFullyOnboarded: (state, getters) =>
     getters.paypalOnboardingIsCompleted &&
     getters.firebaseOnboardingIsCompleted &&
