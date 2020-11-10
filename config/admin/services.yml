@@ -42,6 +42,10 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\OrderRepository'
     public: true
 
+  ps_checkout.repository.paypal.code:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository'
+    public: true
+
   ps_checkout.presenter.order.pending:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter'
     public: true

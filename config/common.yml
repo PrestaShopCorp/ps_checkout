@@ -107,6 +107,7 @@ services:
     public: true
     arguments:
       - '@ps_checkout.configuration'
+      - '@ps_checkout.repository.paypal.code'
 
   ps_checkout.persistent.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\PersistentConfiguration'
