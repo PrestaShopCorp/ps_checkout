@@ -56,6 +56,7 @@ class Translations
             'general' => [
                 'save' => $this->module->l('Save', 'translations'),
                 'testModeOn' => $this->module->l('Test mode is turned on', 'translations'),
+                'wrongConfiguration' => $this->module->l('An error during configuration was detected. Please reset the PrestaShop Checkout module and configure it again.', 'translations'),
                 'multiShop' => [
                     'title' => $this->module->l('Multistore detected', 'translations'),
                     'subtitle' => $this->module->l('Each shop must be configured separately, even if you configure the same account on all of them.', 'translations'),
@@ -147,7 +148,7 @@ class Translations
                     'buttonSuccess' => $this->module->l('Thank you, close this message', 'translations'),
                     'buttonLegal' => $this->module->l('Send my legal documents now', 'translations'),
                     'allSet' => $this->module->l('You\'re all set !', 'translations'),
-                    'congrats' => $this->module->l('Congrats ! You\'re can to start selling online now.', 'translations'),
+                    'congrats' => $this->module->l('Congrats ! You can start selling online now.', 'translations'),
                     'waitingFinalApprove' => $this->module->l('As soon as PayPal gets all your documents, you\'ll have to wait 48h for final approval.', 'translations'),
                     'oneMoreThing' => $this->module->l('One more thing : send documents to be fully approved by PayPal', 'translations'),
                     'psAccountConnected' => $this->module->l('Connect your PrestaShop account', 'translations'),
