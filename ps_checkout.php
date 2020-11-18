@@ -383,6 +383,10 @@ class Ps_checkout extends PaymentModule
 
     public function hookActionCartUpdateQuantityBefore()
     {
+        if (false === Validate::isLoadedObject($this->context->cart)) {
+            return;
+        }
+
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
         $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
 
