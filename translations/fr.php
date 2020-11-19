@@ -56,7 +56,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_dd9e544a1e050b62561061f3229d5def'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_2fa665589c499e8dead3daa2ee8cc0a4'] = 'La longueur du code CVV est incorrect pour ce type de carte.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_aaf5593b992a74786b8a7d942efa40ec'] = 'Votre carte ne peut pas être utilisée pour payer dans cette devise, veuillez essayer un autre moyen de paiement.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_77c9fca2821a98712dab74c2c8148402'] = 'Votre carte ne peut pas être utilisée pour payer dans ce pays, veuillez essayer un autre moyen de paiement.';
-$_MODULE['<{ps_checkout}prestashop>ps_checkout_4d8364340cc96b2df8772cdec3e1f64c'] = 'Le moyen de paiement a refusé la transaction, veuillez en utilisant un autre.';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_4d8364340cc96b2df8772cdec3e1f64c'] = 'Le moyen de paiement a refusé la transaction, veuillez en utiliser un autre.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_33da114589573cc39176bfaa3ad32023'] = 'Vous avez atteint le nombre maximal de tentatives de paiement.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_55b4c1f5d07923f828fae74d6c52a498'] = 'Votre compte PayPal est verrouillé ou fermé, veuillez en utiliser un autre.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_7f77b6e4e1e8f9ee6de4986f23375597'] = 'Vous n\'êtes pas autorisé à payer avec ce compte PayPal, veuillez en utiliser un autre.';
@@ -64,7 +64,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_c94066f8412e90dc79e01086fc7efd72'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_ccce995f84eb842ff057dcf7c93828db'] = 'Votre pays n\'est pas supporté pour ce moyen de paiement, veuillez en utiliser un autre.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_33f135b2e2505108827096bf260e723c'] = 'La transaction a échoué. Veuillez utiliser un autre moyen de paiement.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_58c08d0c7b972b96c8eed1acf2482996'] = 'La transaction a été bloquée par le service de protection contre la fraude.';
-$_MODULE['<{ps_checkout}prestashop>ps_checkout_10fe6db261f79ac6848dd8109d5e73b3'] = 'La transaction été refusée.';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_10fe6db261f79ac6848dd8109d5e73b3'] = 'La transaction a été refusée.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_45c4bc7eeb5fa739bf86b16413d601db'] = 'Cette méthode de paiement ne semble pas fonctionner pour le moment, veuillez en essayer une autre.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_244993a6f1718c94c6ffd4acb1249d70'] = 'Veuillez utiliser un autre moyen de paiement ou essayer plus tard.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_2347172eb56070e194a4a9367d2b0b2f'] = 'Vous avez choisi le compte PayPal [PAYPAL_ACCOUNT] pour effectuer le paiement.';
@@ -275,7 +275,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_20db0bfeecd8fe60533206a2b5e9891a
 $_MODULE['<{ps_checkout}prestashop>translations_4994a8ffeba4ac3140beb89e8d41f174'] = 'Langue';
 $_MODULE['<{ps_checkout}prestashop>translations_8d3f5eff9c40ee315d452392bed5309b'] = 'Nom de famille';
 $_MODULE['<{ps_checkout}prestashop>translations_d9742516aee7b1910462f954d69a26d8'] = 'Vous êtes';
-$_MODULE['<{ps_checkout}prestashop>translations_f1b8245d77b318bc4a0916f66155b9e4'] = 'Un marchant';
+$_MODULE['<{ps_checkout}prestashop>translations_f1b8245d77b318bc4a0916f66155b9e4'] = 'Un marchand';
 $_MODULE['<{ps_checkout}prestashop>translations_9c9f75fecc9e80c7bf8f139d84f47cd3'] = 'Une agence';
 $_MODULE['<{ps_checkout}prestashop>translations_c7ab53436bfc19fb87789b804d3c608e'] = 'Un freelance';
 $_MODULE['<{ps_checkout}prestashop>translations_1fbc7e5f1b92c7ec072397b59a0bb5da'] = 'Adresse de facturation';

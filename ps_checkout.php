@@ -53,7 +53,7 @@ class Ps_checkout extends PaymentModule
         'paymentOptions',
         'displayAdminAfterHeader',
         'displayExpressCheckout',
-        'DisplayFooterProduct',
+        'displayFooterProduct',
         'displayPersonalInformationTop',
         'actionCartUpdateQuantityBefore',
         'header',
@@ -109,7 +109,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.0.6';
+    const VERSION = '2.0.8';
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -130,7 +130,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.0.6';
+        $this->version = '2.0.8';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->currencies = true;
@@ -383,6 +383,10 @@ class Ps_checkout extends PaymentModule
 
     public function hookActionCartUpdateQuantityBefore()
     {
+        if (false === Validate::isLoadedObject($this->context->cart)) {
+            return;
+        }
+
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
         $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
 
@@ -574,10 +578,14 @@ class Ps_checkout extends PaymentModule
         $ppAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
         $psAccountRepository = $this->getService('ps_checkout.repository.prestashop.account');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext $psContext */
+        $psContext = $this->getService('ps_checkout.context.prestashop');
+        $shopUuid = (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->getForShop((int) $psContext->getShopId());
 
         return $ppAccountRepository->onBoardingIsCompleted()
             && $ppAccountRepository->paypalEmailIsValid()
-            && $psAccountRepository->onBoardingIsCompleted();
+            && $psAccountRepository->onBoardingIsCompleted()
+            && $shopUuid;
     }
 
     /**
@@ -1122,9 +1130,13 @@ class Ps_checkout extends PaymentModule
     {
         // We want to track only event appends on PrestaShop BO
         if (defined('_PS_ADMIN_DIR_')) {
-            /** @var \PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker $tracker */
-            $tracker = $this->getService('ps_checkout.segment.tracker');
-            $tracker->track($action);
+            try {
+                /** @var \PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker $tracker */
+                $tracker = $this->getService('ps_checkout.segment.tracker');
+                $tracker->track($action);
+            } catch (Exception $exception) {
+                // Sometime on module enable after an upgrade .env data are not loaded
+            }
         }
     }
 }

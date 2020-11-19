@@ -53,6 +53,12 @@
       </b-alert>
     </div>
 
+    <div class="container" v-if="!hasShopId">
+      <b-alert variant="danger" show>
+        <p>{{ $t('general.wrongConfiguration') }}</p>
+      </b-alert>
+    </div>
+
     <div class="container" v-if="!isShopContext">
       <b-alert variant="warning" show>
         <h2>{{ $t('general.multiShop.title') }}</h2>
@@ -128,6 +134,9 @@
       },
       shopsTree() {
         return this.$store.state.context.shopsTree;
+      },
+      hasShopId() {
+        return this.$store.state.context.shopId;
       }
     },
     watch: {

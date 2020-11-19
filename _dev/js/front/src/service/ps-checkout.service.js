@@ -39,15 +39,8 @@ export class PsCheckoutService {
     );
   }
 
-  addToken(url) {
-    const urlObject = new URL(url);
-    urlObject.searchParams.append('static_token', this.config.staticToken);
-
-    return urlObject.toString();
-  }
-
   postCancelOrder(data) {
-    return fetch(this.addToken(this.config.cancelUrl), {
+    return fetch(this.config.cancelUrl, {
       method: 'post',
       headers: {
         'content-type': 'application/json'
@@ -66,7 +59,7 @@ export class PsCheckoutService {
 
   postCheckCartOrder(data, actions) {
     return this.config.orderId
-      ? fetch(this.addToken(this.config.checkCartUrl), {
+      ? fetch(this.config.checkCartUrl, {
           method: 'post',
           headers: {
             'content-type': 'application/json'
@@ -99,7 +92,7 @@ export class PsCheckoutService {
    * @returns {Promise<any>}
    */
   postCreateOrder(data) {
-    return fetch(this.addToken(this.config.createUrl), {
+    return fetch(this.config.createUrl, {
       method: 'post',
       headers: {
         'content-type': 'application/json'
@@ -121,7 +114,7 @@ export class PsCheckoutService {
   }
 
   postGetToken() {
-    return fetch(this.addToken(this.config.getTokenUrl), {
+    return fetch(this.config.getTokenUrl, {
       method: 'post',
       headers: {
         'content-type': 'application/json'
@@ -142,7 +135,7 @@ export class PsCheckoutService {
   }
 
   postValidateOrder(data, actions) {
-    return fetch(this.addToken(this.config.validateOrderUrl), {
+    return fetch(this.config.validateOrderUrl, {
       method: 'post',
       headers: {
         'content-type': 'application/json'
@@ -193,7 +186,7 @@ export class PsCheckoutService {
 
   postExpressCheckoutOrder(data, actions) {
     return actions.order.get().then(({ payer, purchase_units }) =>
-      fetch(this.addToken(this.config.expressCheckoutUrl), {
+      fetch(this.config.expressCheckoutUrl, {
         method: 'post',
         headers: {
           'content-type': 'application/json'
