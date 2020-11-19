@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
+use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
@@ -42,13 +43,19 @@ class ConfigurationModule implements PresenterInterface
     private $paypalConfiguration;
 
     /**
+     * @var FundingSourceProvider
+     */
+    private $fundingSourceProvider;
+
+    /**
      * @param ExpressCheckoutConfiguration $ecConfiguration
      * @param PayPalConfiguration $paypalConfiguration
      */
-    public function __construct(ExpressCheckoutConfiguration $ecConfiguration, PayPalConfiguration $paypalConfiguration)
+    public function __construct(ExpressCheckoutConfiguration $ecConfiguration, PayPalConfiguration $paypalConfiguration, FundingSourceProvider $fundingSourceProvider)
     {
         $this->ecConfiguration = $ecConfiguration;
         $this->paypalConfiguration = $paypalConfiguration;
+        $this->fundingSourceProvider = $fundingSourceProvider;
     }
 
     /**
@@ -102,17 +109,6 @@ class ConfigurationModule implements PresenterInterface
      */
     private function getPaymentMethods()
     {
-        $paymentMethods = $this->paypalConfiguration->getPaymentMethodsOrder();
-
-        if (empty($paymentMethods)) {
-            $paymentMethods = [
-                ['name' => 'card'],
-                ['name' => 'paypal'],
-            ];
-        } else {
-            $paymentMethods = json_decode($paymentMethods, true);
-        }
-
-        return $paymentMethods;
+        return $this->fundingSourceProvider->getAll(true);
     }
 }

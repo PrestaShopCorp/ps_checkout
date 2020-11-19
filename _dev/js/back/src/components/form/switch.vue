@@ -18,7 +18,7 @@
  *-->
 <template>
   <label :for="id">
-    <label class="mr-2" v-if="textPosition === 'left'">
+    <label class="mr-2 d-none d-lg-inline" v-if="textPosition === 'left'">
       <slot />
     </label>
     <div
@@ -31,13 +31,14 @@
     >
       <input
         :id="id"
-        @input="$emit('input', $event.target.checked)"
+        @input="$emit('input', $event.target.checked, id, position)"
         :checked="value"
         data-toggle="switch"
         data-inverse="true"
         type="checkbox"
         :disabled="disable"
         :name="name"
+        :position="position"
       />
     </div>
     <label class="ml-1" v-if="textPosition === 'right'">
@@ -59,10 +60,18 @@
         type: String,
         required: true
       },
+      position: {
+        type: Number,
+        required: true
+      },
       name: {
         type: String,
         required: false,
         default: ''
+      },
+      disable: {
+        type: Boolean,
+        required: false
       },
       textPosition: {
         type: String,
@@ -73,21 +82,6 @@
         type: String,
         required: false,
         default: 'md'
-      }
-    },
-    data() {
-      return {
-        isActive: this.value
-      };
-    },
-    watch: {
-      isActive(val) {
-        this.$emit('input', val);
-      }
-    },
-    methods: {
-      toggleSwitch(value) {
-        this.isActive = value;
       }
     }
   };
