@@ -44,7 +44,7 @@
         const paymentOptionContainer = document.getElementById(paymentOption.id + '-container');
         const paymentOptionName = paymentOption.getAttribute('data-module-name');
 
-        if ('ps_checkout' === paymentOptionName) {
+        if (-1 !== paymentOptionName.search('ps_checkout')) {
           paymentOptionContainer.style.display = 'none';
         }
       });

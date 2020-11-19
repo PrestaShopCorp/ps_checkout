@@ -20,7 +20,7 @@ import * as types from './mutation-types';
 import ajax from '@/requests/ajax.js';
 
 export default {
-  updatePaymentMethods({ commit, getters }, payload) {
+  updatePaymentMethods({commit, getters}, payload) {
     return ajax({
       url: getters.adminController,
       action: 'UpdatePaymentMethodsOrder',
@@ -29,11 +29,11 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_PAYMENT_METHODS_ORDER, payload.paymentMethods);
-      return true;
+      return Promise.resolve(true);
     });
   },
 
-  updatePaymentMode({ commit, getters }, payload) {
+  updatePaymentMode({commit, getters}, payload) {
     return ajax({
       url: getters.adminController,
       action: 'UpdatePaymentMode',
@@ -42,11 +42,11 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_PAYMENT_MODE, payload);
-      return true;
+      return Promise.resolve(true);
     });
   },
 
-  updateCaptureMode({ commit, getters }, payload) {
+  updateCaptureMode({commit, getters}, payload) {
     return ajax({
       url: getters.adminController,
       action: 'UpdateCaptureMode',
@@ -55,31 +55,22 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_CAPTURE_MODE, payload);
-      return true;
+      return Promise.resolve(true);
     });
   },
 
-  toggleHostedFields({ commit, getters }, payload) {
+  togglePaymentOptionAvailability({ commit, getters}, payload) {
     return ajax({
       url: getters.adminController,
-      action: 'ToggleCardPaymentAvailability',
+      action: 'TogglePaymentOptionAvailability',
       data: {
-        status: payload ? 1 : 0
+        paymentOption: JSON.stringify(payload.paymentOption)
       }
     }).then(() => {
-      commit(types.UPDATE_PAYMENT_CARD_AVAILABILITY, payload);
-      return payload;
-    });
-  },
-  toggleCardInlinePayPalField({ commit, getters }, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'ToggleCardInlinePayPalPayment',
-      data: {
-        status: payload ? 1 : 0
-      }
-    }).then(() => {
-      commit(types.UPDATE_CARD_INLINE_PAYPAL_AVAILABILITY, payload);
+      commit(
+        types.UPDATE_PAYMENT_CARD_AVAILABILITY,
+        payload.paymentOption.enabled
+      );
       return Promise.resolve(payload);
     });
   },
@@ -92,7 +83,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_EC_ORDER_PAGE, payload);
-      return payload;
+      return Promise.resolve(payload);
     });
   },
 
@@ -105,7 +96,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_EC_CHECKOUT_PAGE, payload);
-      return payload;
+      return Promise.resolve(payload);
     });
   },
 
@@ -118,7 +109,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_EC_PRODUCT_PAGE, payload);
-      return payload;
+      return Promise.resolve(payload);
     });
   },
 

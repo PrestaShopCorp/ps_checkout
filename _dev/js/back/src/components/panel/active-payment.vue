@@ -42,11 +42,15 @@
               type="transition"
               :name="!drag ? 'flip-list' : null"
             >
-              <div v-for="(element, index) in list" :key="index" class="d-flex">
+              <div
+                v-for="(element, index) in list"
+                :key="element.position"
+                class="d-flex"
+              >
                 <div
                   class="payment-method text-muted d-flex flex-grow-1"
                   :class="{
-                    disable: !cardIsEnabled && element.name === 'card'
+                    disable: !element.isToggleable
                   }"
                 >
                   <div class="position">
@@ -57,63 +61,65 @@
                       drag_indicator
                     </i>
                   </div>
-                  <div
-                    v-if="element.name === 'card'"
-                    class="ghost-replace-card"
-                  >
+                  <div class="ghost-replace-card">
                     <i class="material-icons text-center">save_alt</i>
-                  </div>
-                  <div
-                    v-if="element.name === 'paypal'"
-                    class="ghost-replace-paypal"
-                  >
-                    <i class="material-icons">save_alt</i>
                   </div>
                   <div class="flex-grow-1 content">
                     <div class="d-flex payment-method-content">
                       <div class="flex-grow-1">
-                        <label v-if="element.name === 'card'" class="mb-0">
-                          <i class="material-icons mr-3">credit_card</i>
-                          {{ $t('panel.active-payment.creditCard') }}
-                        </label>
-                        <label v-else class="mb-0">
+                        <label class="mb-0">
                           <img
-                            class="mr-3"
-                            src="@/assets/images/paypal-logo-thumbnail.png"
+                            class="mr-3 logo"
+                            :src="getLogo(element)"
                             alt=""
                           />
-                          {{ $t('panel.active-payment.paypal') }}
+
+                          <span v-if="element.name === 'card'">
+                            {{ $t('panel.active-payment.creditCard') }}
+                          </span>
+
+                          <span v-else>
+                            {{ element.label }}
+                          </span>
                         </label>
                       </div>
-                      <div class="status d-flex" v-if="element.name === 'card'">
+
+                      <div class="d-none d-lg-flex mr-5">
+                        {{ $t('panel.active-payment.availableIn') }}
+
+                        <span
+                          v-if="element.countries.length === 0"
+                          class="ml-1 country"
+                        >
+                          {{ $t('panel.active-payment.allCountries') }}
+                        </span>
+
+                        <span v-else class="ml-1 country">
+                          {{ element.countries.join(', ') }}
+                        </span>
+                      </div>
+
+                      <div class="d-flex status">
                         <CardStatus
                           class="mr-2"
                           v-if="cardIsAvailable === false"
                         />
 
                         <PSSwitch
-                          id="hostedFieldsAvailability"
+                          v-if="element.isToggleable"
+                          :id="element.name"
+                          :position="index + 1"
                           text-position="left"
-                          v-model="cardIsEnabled"
+                          v-model="element.isEnabled"
+                          @input="sendPaymentOptions"
                         >
-                          <template v-if="cardIsEnabled">
+                          <template v-if="element.isEnabled">
                             {{ $t('panel.active-payment.enabled') }}
                           </template>
                           <template v-else>
                             {{ $t('panel.active-payment.disabled') }}
                           </template>
                         </PSSwitch>
-                      </div>
-                    </div>
-                    <div
-                      v-if="element.name === 'paypal'"
-                      class="d-flex payment-method-content separator"
-                    >
-                      <div class="flex-grow-1">
-                        <label class="mb-0">
-                          <i class="material-icons mr-3">public</i>
-                          {{ $t('panel.active-payment.localPaymentMethods') }}
-                        </label>
                       </div>
                     </div>
                   </div>
@@ -161,6 +167,27 @@
         });
       }
     },
+    methods: {
+      sendPaymentOptions(value, id, position) {
+        this.$store.dispatch({
+          type: 'togglePaymentOptionAvailability',
+          paymentOption: {
+            name: id,
+            position: position,
+            isEnabled: value
+          }
+        });
+      },
+      getLogo(val) {
+        if (!val.name) {
+          return '';
+        } else {
+          return require('@/assets/images/funding-sources/' +
+            val.name +
+            '.svg');
+        }
+      }
+    },
     computed: {
       dragOptions() {
         return {
@@ -170,19 +197,6 @@
           ghostClass: 'ghost',
           dragClass: 'move'
         };
-      },
-      cardIsEnabled: {
-        get() {
-          return this.$store.state.configuration.cardIsEnabled;
-        },
-        set(payload) {
-          this.$store.dispatch('toggleHostedFields', payload).then(() => {
-            var msg = payload ? 'Enabled' : 'Disabled';
-            this.$segment.track(msg + ' Credit Card', {
-              category: 'ps_checkout'
-            });
-          });
-        }
       },
       cardIsAvailable() {
         return (
@@ -273,7 +287,7 @@
   .position {
     position: absolute;
     top: 20px;
-    left: -40px;
+    left: 40px;
   }
   .payment-method-content {
     padding: 20px;
@@ -283,5 +297,19 @@
   }
   .separator {
     border-top: 1px solid #dddddd;
+  }
+  .logo {
+    max-height: 30px;
+    min-width: 60px;
+    max-width: 90px;
+  }
+  .country {
+    font-weight: 600;
+    text-align: right;
+  }
+  @media screen and (min-width: 992px) {
+    .status {
+      min-width: 10em;
+    }
   }
 </style>
