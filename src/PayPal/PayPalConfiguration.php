@@ -306,7 +306,8 @@ class PayPalConfiguration
             JOIN ps_module_country mc ON mc.id_country = c.id_country
             JOIN ps_module m ON m.id_module = mc.id_module
             WHERE c.active = 1
-            AND m.name = 'ps_checkout'"
+            AND m.name = 'ps_checkout'
+            AND mc.id_shop = " . \Context::getContext()->shop->id
         );
         $paypalCodes = $this->codeRepository->getCountryCodes();
 
@@ -327,7 +328,8 @@ class PayPalConfiguration
             JOIN ps_module_currency mc ON mc.id_currency = c.id_currency
             JOIN ps_module m ON m.id_module = mc.id_module
             WHERE c.active = 1
-            AND m.name = 'ps_checkout'"
+            AND m.name = 'ps_checkout'
+            AND mc.id_shop = " . \Context::getContext()->shop->id
         );
         $paypalCodes = $this->codeRepository->getCurrencyCodes();
 

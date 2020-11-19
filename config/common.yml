@@ -236,3 +236,7 @@ services:
     public: true
     arguments:
       - '@ps_checkout.module'
+
+  ps_checkout.repository.paypal.code:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository'
+    public: true
