@@ -118,6 +118,10 @@ export class HostedFieldsComponent extends BaseComponent {
               'disabled',
               !this.isSubmittable()
             );
+
+            this.isSubmittable()
+              ? this.data.HTMLElementButton.removeAttribute('disabled')
+              : this.data.HTMLElementButton.setAttribute('disabled', '');
           });
 
           this.data.HTMLElementButton.addEventListener('click', (event) => {
@@ -163,7 +167,7 @@ export class HostedFieldsComponent extends BaseComponent {
     );
 
     this.data.HTMLElementButtonWrapper.append(this.data.HTMLElementButton);
-    this.data.HTMLElementButton.disabled = !this.isSubmittable();
+    // this.data.HTMLElementButton.disabled = !this.isSubmittable();
 
     this.data.conditionsComponent &&
       this.data.conditionsComponent.onChange(() => {

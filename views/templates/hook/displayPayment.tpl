@@ -57,7 +57,9 @@
                   </div>
                 </form>
               {/if}
-              <div class="ps_checkout-button" data-funding-source="{$fundingSource}"></div>
+              <div class="js-payment-ps_checkout-card">
+                <div class="ps_checkout-button" data-funding-source="{$fundingSource}"></div>
+              </div>
             </a>
           </div>
         </div>
