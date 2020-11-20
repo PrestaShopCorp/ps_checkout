@@ -83,7 +83,9 @@ export class PaymentOptionsComponent extends BaseComponent {
       this.htmlElementService.getPaymentOptionsContainer().style.display =
         'none';
 
-      this.htmlElementService.getAnyPaymentOption().checked = true;
+      document.querySelector(
+        'input[type="radio"][data-module-name="ps_checkout-paypal"]'
+      ).checked = true;
 
       this.smartButton = document.createElement('div');
 
@@ -99,7 +101,7 @@ export class PaymentOptionsComponent extends BaseComponent {
 
       paymentButton.addEventListener('click', (event) => {
         event.preventDefault();
-        this.checkout.children.loader.show();
+        this.app.children.loader.show();
 
         this.psCheckoutService
           .postCheckCartOrder(
@@ -119,17 +121,20 @@ export class PaymentOptionsComponent extends BaseComponent {
           })
           .catch((error) => {
             console.log(error);
-            this.checkout.children.loader.hide();
-            this.checkout.children.notification.showError(error.message);
+            this.app.children.loader.hide();
+            this.app.children.notification.showError(error.message);
           });
       });
 
-      this.checkout.children.conditionsCheckbox.onChange(() => {
-        paymentButton.disabled = !this.checkout.children.conditionsCheckbox.isChecked();
+      this.app.children.conditionsCheckbox.onChange(() => {
+        paymentButton.disabled = !this.app.children.conditionsCheckbox.isChecked();
       });
 
       this.smartButton.append(paymentButton);
-      this.buttonContainer.append(this.smartButton);
+      document
+        .querySelector('.ps_checkout-button[data-funding-source="paypal"]')
+        .append(this.smartButton);
+      // this.buttonContainer.append(this.smartButton);
     }
 
     return this;

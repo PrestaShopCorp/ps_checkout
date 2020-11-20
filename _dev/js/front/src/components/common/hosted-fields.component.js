@@ -93,11 +93,11 @@ export class HostedFieldsComponent extends BaseComponent {
           createOrder: () =>
             this.psCheckoutService
               .postCreateOrder({
-                fundingSource: this.fundingSource.name,
+                fundingSource: this.data.name,
                 isHostedFields: true
               })
               .catch((error) => {
-                this.checkout.children.notification.showError(
+                this.app.children.notification.showError(
                   `${error.message} ${error.name}`
                 );
               })
@@ -122,7 +122,7 @@ export class HostedFieldsComponent extends BaseComponent {
 
           this.data.HTMLElementButton.addEventListener('click', (event) => {
             event.preventDefault();
-            this.checkout.children.loader.show();
+            this.app.children.loader.show();
             this.data.HTMLElementSection.classList.toggle('disabled', true);
 
             hostedFields
@@ -142,14 +142,14 @@ export class HostedFieldsComponent extends BaseComponent {
 
                     return this.psCheckoutService.postValidateOrder({
                       ...data,
-                      fundingSource: this.fundingSource.name,
+                      fundingSource: this.data.name,
                       isHostedFields: true
                     });
                   });
               })
               .catch((error) => {
-                this.checkout.children.loader.hide();
-                this.checkout.children.notification.showError(error.message);
+                this.app.children.loader.hide();
+                this.app.children.notification.showError(error.message);
                 this.data.HTMLElementButton.disabled = false;
               });
           });
