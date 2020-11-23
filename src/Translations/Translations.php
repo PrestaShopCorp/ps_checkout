@@ -239,6 +239,8 @@ class Translations
                     'restricted' => $this->module->l('Restricted', 'translations'),
                     'creditCard' => $this->module->l('Credit card', 'translations'),
                     'paypal' => $this->module->l('PayPal', 'translations'),
+                    'availableIn' => $this->module->l('available in :', 'translations'),
+                    'allCountries' => $this->module->l('All countries', 'translations'),
                     'localPaymentMethods' => $this->module->l('Local payment methods', 'translations'),
                     'tipsTitle' => $this->module->l('TIPS', 'translations'),
                     'tipsContent' => $this->module->l('Boost your conversion rate by displaying PayPal as the first choice in the list of payment methods', 'translations'),

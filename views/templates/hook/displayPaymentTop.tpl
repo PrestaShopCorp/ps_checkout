@@ -36,7 +36,7 @@
 
 {if $is17}
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', function() {
     const paymentOptions = document.querySelectorAll('input[name="payment-option"]');
 
     if (null !== paymentOptions) {
@@ -44,7 +44,7 @@
         const paymentOptionContainer = document.getElementById(paymentOption.id + '-container');
         const paymentOptionName = paymentOption.getAttribute('data-module-name');
 
-        if ('ps_checkout' === paymentOptionName) {
+        if (-1 !== paymentOptionName.search('ps_checkout')) {
           paymentOptionContainer.style.display = 'none';
         }
       });
