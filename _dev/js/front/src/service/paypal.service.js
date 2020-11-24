@@ -42,7 +42,7 @@ export class PaypalService {
     this.config = config;
     this.translationService = translationService;
 
-    this.$ = id => this.translationService.getTranslationString(id);
+    this.$ = (id) => this.translationService.getTranslationString(id);
   }
 
   getOrderId() {
@@ -116,7 +116,7 @@ export class PaypalService {
       },
       ...events
     })
-      .then(hostedFields => {
+      .then((hostedFields) => {
         const numberField = document.querySelector(fieldSelectors.number);
         const cvvField = document.querySelector(fieldSelectors.cvv);
         const expirationDateField = document.querySelector(
@@ -141,7 +141,7 @@ export class PaypalService {
 
         return hostedFields;
       })
-      .then(hostedFields => {
+      .then((hostedFields) => {
         hostedFields.on('cardTypeChange', ({ cards }) => {
           // Change card bg depending on card type
           if (cards.length === 1) {
@@ -187,9 +187,9 @@ export class PaypalService {
         this.config.fundingSourcesSorted || paypalFundingSources
       )
         .filter(
-          fundingSource => paypalFundingSources.indexOf(fundingSource) >= 0
+          (fundingSource) => paypalFundingSources.indexOf(fundingSource) >= 0
         )
-        .map(fundingSource => ({
+        .map((fundingSource) => ({
           name: fundingSource,
           mark: this.sdk.Marks({ fundingSource })
         }))

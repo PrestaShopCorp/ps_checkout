@@ -16,74 +16,72 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import { SMART_BUTTON_CLASS } from '../../constants/ps-checkout-classes.constants';
+import { BaseComponent } from '../../core/base.component';
 
-export class HostedFieldsComponent {
-  constructor(
-    checkout,
-    paymentOption,
-    fundingSource,
-    hostedFieldsContainer,
-    paymentButtonContainer
-  ) {
-    this.checkout = checkout;
-    this.checkoutConfig = checkout.config;
+export class HostedFieldsComponent extends BaseComponent {
+  static INJECT = {
+    config: 'config',
+    htmlElementService: 'htmlElementService',
+    payPalService: 'payPalService',
+    psCheckoutService: 'psCheckoutService'
+  };
 
-    this.paymentOption = paymentOption;
+  constructor(app, props) {
+    super(app, props);
 
-    this.fundingSource = fundingSource;
+    this.data.name = props.fundingSource.name;
+    this.data.validity = false;
 
-    this.htmlElementService = checkout.htmlElementService;
-    this.payPalService = checkout.payPalService;
-    this.psCheckoutService = checkout.psCheckoutService;
+    this.data.HTMLElement = props.HTMLElement;
+    this.data.HTMLElementBaseButton = this.getBaseButton();
+    this.data.HTMLElementButton = null;
+    this.data.HTMLElementButtonWrapper = this.getButtonWrapper();
+    this.data.HTMLElementCardNumber = this.getCardNumber();
+    this.data.HTMLElementCardCVV = this.getCardCVV();
+    this.data.HTMLElementCardExpirationDate = this.getCardExpirationDate();
+    this.data.HTMLElementSection = this.getSection();
 
-    this.buttonContainer =
-      paymentButtonContainer || this.htmlElementService.getButtonContainer();
-    this.hostedFieldsContainer = hostedFieldsContainer;
-
-    this.paymentOptionsContainer = this.htmlElementService.getPaymentOptionsContainer();
-
-    this.validity = false;
+    this.data.conditionsComponent = this.app.children.conditionsCheckbox;
   }
 
-  getButtonId() {
-    return `button-${this.fundingSource.name}`;
+  getBaseButton() {
+    const buttonSelector = `#payment-confirmation button`;
+    return document.querySelector(buttonSelector);
+  }
+
+  getButtonWrapper() {
+    const buttonWrapper = `.ps_checkout-button[data-funding-source=${this.data.name}]`;
+    return document.querySelector(buttonWrapper);
+  }
+
+  getCardNumber() {
+    const cardNumberId = '#ps_checkout-hosted-fields-card-number';
+    return document.getElementById(cardNumberId);
+  }
+
+  getCardCVV() {
+    const cardCVVId = '#ps_checkout-hosted-fields-card-cvv';
+    return document.getElementById(cardCVVId);
+  }
+
+  getCardExpirationDate() {
+    const cardExpirationDateId =
+      '#ps_checkout-hosted-fields-card-expiration-date';
+    return document.getElementById(cardExpirationDateId);
+  }
+
+  getSection() {
+    const sectionSelector = `.js-payment-ps_checkout-${this.data.name}`;
+    return document.querySelector(sectionSelector);
   }
 
   isSubmittable() {
-    return this.checkout.children.conditionsCheckbox
-      ? this.checkout.children.conditionsCheckbox.isChecked() && this.validity
-      : this.validity;
+    return this.data.conditionsComponent
+      ? this.data.conditionsComponent.isChecked() && this.data.validity
+      : this.data.validity;
   }
 
-  render() {
-    if (this.htmlElementService.getHostedFieldsForm) {
-      this.hostedFieldForms = this.htmlElementService.getHostedFieldsForm();
-      this.hostedFieldForms.style.display = 'block';
-    }
-
-    this.smartButton = document.createElement('div');
-
-    this.smartButton.id = this.getButtonId();
-    this.smartButton.classList.add(SMART_BUTTON_CLASS);
-
-    this.hostedFieldSubmitButton = document
-      .querySelector("#payment-confirmation [type='submit']")
-      .cloneNode(true);
-
-    this.hostedFieldSubmitButton.id = 'ps_checkout-hosted-submit-button';
-    this.hostedFieldSubmitButton.type = 'button';
-    this.hostedFieldSubmitButton.disabled = true;
-
-    this.hostedFieldSubmitButton.classList.remove('disabled');
-    this.checkout.children.conditionsCheckbox &&
-      this.checkout.children.conditionsCheckbox.onChange(() => {
-        this.hostedFieldSubmitButton.disabled = !this.isSubmittable();
-      });
-
-    this.smartButton.append(this.hostedFieldSubmitButton);
-    this.buttonContainer.append(this.smartButton);
-
+  renderPayPalHostedFields() {
     this.payPalService
       .getHostedFields(
         {
@@ -95,24 +93,20 @@ export class HostedFieldsComponent {
           createOrder: () =>
             this.psCheckoutService
               .postCreateOrder({
-                fundingSource: this.fundingSource.name,
+                fundingSource: this.data.name,
                 isHostedFields: true
               })
               .catch((error) => {
-                this.checkout.children.notification.showError(
+                this.app.children.notification.showError(
                   `${error.message} ${error.name}`
                 );
               })
         }
       )
       .then((hostedFields) => {
-        if (null !== this.hostedFieldForms) {
-          const hostedFieldsSubmitButton = document.getElementById(
-            this.hostedFieldSubmitButton.id
-          );
-
+        if (this.data.HTMLElement !== null) {
           hostedFields.on('validityChange', (event) => {
-            this.validity =
+            this.data.validity =
               Object.keys(event.fields)
                 .map((name) => event.fields[name])
                 .map(({ isValid }) => {
@@ -120,13 +114,21 @@ export class HostedFieldsComponent {
                 })
                 .filter((validity) => validity === false).length === 0;
 
-            this.hostedFieldSubmitButton.disabled = !this.isSubmittable();
+            this.data.HTMLElementSection.classList.toggle(
+              'disabled',
+              !this.isSubmittable()
+            );
+
+            this.isSubmittable()
+              ? this.data.HTMLElementButton.removeAttribute('disabled')
+              : this.data.HTMLElementButton.setAttribute('disabled', '');
           });
 
-          hostedFieldsSubmitButton.addEventListener('click', (event) => {
+          this.data.HTMLElementButton.addEventListener('click', (event) => {
             event.preventDefault();
-            this.checkout.children.loader.show();
-            hostedFieldsSubmitButton.disabled = true;
+            this.app.children.loader.show();
+            this.data.HTMLElementSection.classList.toggle('disabled', true);
+
             hostedFields
               .submit({
                 contingencies: ['3D_SECURE']
@@ -144,28 +146,39 @@ export class HostedFieldsComponent {
 
                     return this.psCheckoutService.postValidateOrder({
                       ...data,
-                      fundingSource: this.fundingSource.name,
+                      fundingSource: this.data.name,
                       isHostedFields: true
                     });
                   });
               })
               .catch((error) => {
-                this.checkout.children.loader.hide();
-                this.checkout.children.notification.showError(error.message);
-                hostedFieldsSubmitButton.disabled = false;
+                this.app.children.loader.hide();
+                this.app.children.notification.showError(error.message);
+                this.data.HTMLElementButton.disabled = false;
               });
           });
         }
       });
+  }
+
+  renderButton() {
+    this.data.HTMLElementButton = this.data.HTMLElementBaseButton.cloneNode(
+      true
+    );
+
+    this.data.HTMLElementButtonWrapper.append(this.data.HTMLElementButton);
+    // this.data.HTMLElementButton.disabled = !this.isSubmittable();
+
+    this.data.conditionsComponent &&
+      this.data.conditionsComponent.onChange(() => {
+        this.data.HTMLElementButton.disabled = !this.isSubmittable();
+      });
+  }
+
+  render() {
+    this.renderButton();
+    this.renderPayPalHostedFields();
 
     return this;
-  }
-
-  show() {
-    this.smartButton.style.display = 'block';
-  }
-
-  hide() {
-    this.smartButton.style.display = 'none';
   }
 }

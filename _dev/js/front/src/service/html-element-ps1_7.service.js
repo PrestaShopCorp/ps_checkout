@@ -147,7 +147,7 @@ export class HtmlElementPs1_7Service {
 
   getPaymentOptionLabel(container, text) {
     const items = Array.prototype.slice.call(container.querySelectorAll('*'));
-    return items.find(item => item.innerText === text);
+    return items.find((item) => item.innerText === text);
   }
 
   getPaymentOptionLabelLegacy(container, id) {

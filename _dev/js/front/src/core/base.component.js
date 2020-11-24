@@ -16,34 +16,37 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-export class ConditionsCheckboxComponent {
-  constructor(checkout) {
-    this.htmlElementService = checkout.htmlElementService;
 
-    this.conditionsContainer = this.htmlElementService.getConditionsCheckboxContainer();
-    this.conditionsCheckboxes = this.htmlElementService.getConditionsCheckboxes(
-      this.conditionsContainer
-    );
+function inject(instance, constructor) {
+  if (constructor === BaseComponent) return;
+  inject(instance, Object.getPrototypeOf(constructor));
+
+  // TODO: Use a true container (Bottle.js?)
+  const app = instance.app;
+  const services = constructor.INJECT || {};
+
+  for (const alias of Object.keys(services)) {
+    const name = services[alias];
+    instance[alias] = app[name];
+  }
+}
+
+export class BaseComponent {
+  constructor(app, props) {
+    this.app = app;
+
+    this.data = {};
+    this.props = props || {};
+
+    this.children = {};
+
+    inject(this, this.constructor);
   }
 
+  /**
+   * @return {this}
+   */
   render() {
-    // This component doesn't need to be rendered since it's already on the template.
-
     return this;
-  }
-
-  isChecked() {
-    return this.conditionsContainer
-      ? this.conditionsCheckboxes
-          .map(({ checked }) => checked)
-          .filter((value) => !value).length === 0
-      : true;
-  }
-
-  onChange(listener) {
-    this.conditionsContainer &&
-      this.conditionsCheckboxes.forEach((checkbox) =>
-        checkbox.addEventListener('change', () => listener())
-      );
   }
 }
