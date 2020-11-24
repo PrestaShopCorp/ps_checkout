@@ -637,8 +637,21 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $payPalConfiguration */
         $payPalConfiguration = $this->getService('ps_checkout.paypal.configuration');
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider $fundingSourceTranslationProvider */
-        $fundingSourceTranslationProvider = $this->getService('ps_checkout.funding_source.translation');
+        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
+        $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
+
+        $fundingSourcesSorted = [];
+        $payWithTranslations = [];
+        $isCardAvailable = false;
+
+        foreach ($fundingSourceProvider->getAll() as $fundingSource) {
+            $fundingSourcesSorted[] = $fundingSource->name;
+            $payWithTranslations[$fundingSource->name] = $fundingSource->label;
+
+            if ('card' === $fundingSource->name) {
+                $isCardAvailable = $fundingSource->isEnabled;
+            }
+        }
 
         // BEGIN To be refactored in services
         $payPalClientToken = '';
@@ -681,7 +694,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'PayPalSdkUrl' => $payPalSdkLinkBuilder->buildLink(),
             $this->name . 'PayPalClientToken' => $payPalClientToken,
             $this->name . 'PayPalOrderId' => $payPalOrderId,
-            $this->name . 'HostedFieldsEnabled' => $paypalAccountRepository->cardHostedFieldsIsAvailable(),
+            $this->name . 'HostedFieldsEnabled' => $isCardAvailable && $paypalAccountRepository->cardHostedFieldsIsAvailable(),
             $this->name . 'HostedFieldsSelected' => false !== $psCheckoutCart ? (bool) $psCheckoutCart->isHostedFields : false,
             $this->name . 'ExpressCheckoutSelected' => false !== $psCheckoutCart ? (bool) $psCheckoutCart->isExpressCheckout : false,
             $this->name . 'ExpressCheckoutProductEnabled' => $expressCheckoutConfiguration->isProductPageEnabled(),
@@ -689,8 +702,8 @@ class Ps_checkout extends PaymentModule
             $this->name . 'ExpressCheckoutOrderEnabled' => $expressCheckoutConfiguration->isCheckoutPageEnabled(),
             $this->name . '3dsEnabled' => $payPalConfiguration->is3dSecureEnabled(),
             $this->name . 'CspNonce' => $payPalConfiguration->getCSPNonce(),
-            $this->name . 'FundingSourcesSorted' => $payPalConfiguration->getFundingSources(),
-            $this->name . 'PayWithTranslations' => $fundingSourceTranslationProvider->getPaymentOptionNames(),
+            $this->name . 'FundingSourcesSorted' => $fundingSourcesSorted,
+            $this->name . 'PayWithTranslations' => $payWithTranslations,
             $this->name . 'CheckoutTranslations' => [
                 'checkout.go.back.link.title' => $this->l('Go back to the Checkout'),
                 'checkout.go.back.label' => $this->l('Checkout'),
