@@ -16,14 +16,19 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+import { BaseComponent } from '../../core/dependency-injection/base.component';
 
-export class LoaderComponent {
-  constructor(checkout) {
-    this.checkout = checkout;
-    this.config = this.checkout.config;
+export class LoaderComponent extends BaseComponent {
+  static Inject = {
+    querySelectorService: 'QuerySelectorService',
+    config: 'PsCheckoutConfig',
+    $: '$'
+  };
 
-    this.$ = this.checkout.$;
+  created() {
+    this.data.parent = this.querySelectorService.getLoaderParent();
   }
+
   render() {
     this.overlay = document.createElement('div');
     this.overlay.classList.add('ps-checkout', 'overlay');
@@ -49,7 +54,7 @@ export class LoaderComponent {
     this.popup.append(this.subtext);
 
     this.overlay.append(this.popup);
-    document.body.append(this.overlay);
+    this.data.parent.append(this.overlay);
 
     return this;
   }

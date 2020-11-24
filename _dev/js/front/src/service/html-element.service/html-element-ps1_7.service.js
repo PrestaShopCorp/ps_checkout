@@ -16,7 +16,7 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import { HtmlSelectorsPs1_7Constants } from '../constants/html-selectors-ps1_7.constants';
+import { HtmlSelectorsPs1_7Constants } from '../../constants/html-selectors-ps1_7.constants';
 
 export class HtmlElementPs1_7Service {
   constructor() {

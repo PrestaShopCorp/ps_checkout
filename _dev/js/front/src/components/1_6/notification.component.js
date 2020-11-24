@@ -16,9 +16,15 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-export class NotificationComponent {
-  constructor(checkout) {
-    this.htmlElementService = checkout.htmlElementService;
+import { BaseComponent } from '../../core/dependency-injection/base.component';
+
+export class NotificationComponent extends BaseComponent {
+  static Inject = {
+    htmlElementService: 'HTMLElementService'
+  };
+
+  constructor(app, props) {
+    super(app, props);
 
     this.notificationPaymentContainer = this.htmlElementService.getNotificationPaymentContainer();
     this.notificationPaymentContainerTarget = this.htmlElementService.getNotificationPaymentContainerTarget();

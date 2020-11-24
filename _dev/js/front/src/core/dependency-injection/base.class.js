@@ -16,14 +16,18 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import 'classlist-polyfill';
-import 'core-js/stable';
-import 'promise-polyfill/src/polyfill';
-import 'regenerator-runtime/runtime';
-import 'url-polyfill';
-import 'whatwg-fetch';
+import { inject } from '../../utils/dependency-injection/inject';
 
-import './web-api.child-node.remove';
-import './web-api.child-node.replace-with';
-import './web-api.parent-node.append';
-import './web-api.parent-node.prepend';
+export class BaseClass {
+  constructor(app) {
+    this.app = app;
+    inject(BaseClass)(this, this.constructor);
+  }
+
+  /**
+   * @return {this}
+   */
+  render() {
+    return this;
+  }
+}

@@ -16,202 +16,20 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import {
-  PS_VERSION_1_6,
-  PS_VERSION_1_7
-} from '../constants/ps-version.constants';
+import { BaseClass } from '../core/dependency-injection/base.class';
 
-export class PsCheckoutService {
-  constructor(config, translationService) {
-    this.config = config;
-    this.translationService = translationService;
+export class PsCheckoutService extends BaseClass {
+  static Inject = {
+    psCheckoutApi: 'PsCheckoutApi',
+    payPalSdkConfig: 'PayPalSdkConfig',
 
-    this.$ = (id) => this.translationService.getTranslationString(id);
-  }
+    $: '$'
+  };
 
-  isUserLogged() {
-    return window.prestashop.customer.is_logged;
-  }
-
-  getProductDetails() {
-    return JSON.parse(
-      document.getElementById('product-details').dataset.product
-    );
-  }
-
-  postCancelOrder(data) {
-    return fetch(this.config.cancelUrl, {
-      method: 'post',
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    }).then((response) => {
-      if (false === response.ok) {
-        return response.json().then((response) => {
-          throw response.body && response.body.error
-            ? response.body.error
-            : { message: 'Unknown error' };
-        });
-      }
-    });
-  }
-
-  postCheckCartOrder(data, actions) {
-    return this.config.orderId
-      ? fetch(this.config.checkCartUrl, {
-          method: 'post',
-          headers: {
-            'content-type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        })
-          .then((response) => {
-            if (false === response.ok) {
-              return response.json().then((response) => {
-                throw response.body && response.body.error
-                  ? response.body.error
-                  : { message: 'Unknown error' };
-              });
-            }
-
-            return response.json();
-          })
-          .then((data) => {
-            if (!data) {
-              return actions.reject();
-            } else {
-              return actions.resolve();
-            }
-          })
-      : Promise.resolve().then(() => actions.resolve());
-  }
-
-  /**
-   * @param {*} [data]
-   * @returns {Promise<any>}
-   */
-  postCreateOrder(data) {
-    return fetch(this.config.createUrl, {
-      method: 'post',
-      headers: {
-        'content-type': 'application/json'
-      },
-      ...(data ? { body: JSON.stringify(data) } : {})
-    })
-      .then((response) => {
-        if (false === response.ok) {
-          return response.json().then((response) => {
-            throw response.body && response.body.error
-              ? response.body.error
-              : { message: 'Unknown error' };
-          });
-        }
-
-        return response.json();
-      })
-      .then(({ body: { orderID } }) => orderID);
-  }
-
-  postGetToken() {
-    return fetch(this.config.getTokenUrl, {
-      method: 'post',
-      headers: {
-        'content-type': 'application/json'
-      }
-    })
-      .then((response) => {
-        if (false === response.ok) {
-          return response.json().then((response) => {
-            throw response.body && response.body.error
-              ? response.body.error
-              : { message: 'Unknown error' };
-          });
-        }
-
-        return response.json();
-      })
-      .then(({ body: { token } }) => token);
-  }
-
-  postValidateOrder(data, actions) {
-    return fetch(this.config.validateOrderUrl, {
-      method: 'post',
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-      .then((response) => {
-        if (false === response.ok) {
-          return response.json().then((response) => {
-            throw response.body && response.body.error
-              ? response.body.error
-              : { message: 'Unknown error' };
-          });
-        }
-
-        return response.json();
-      })
-      .then((response) => {
-        if (response.body && 'COMPLETED' === response.body.paypal_status) {
-          const {
-            id_cart,
-            id_module,
-            id_order,
-            secure_key,
-            paypal_order,
-            paypal_transaction
-          } = response.body;
-
-          const confirmationUrl = new URL(this.config.confirmationUrl);
-          confirmationUrl.searchParams.append('id_cart', id_cart);
-          confirmationUrl.searchParams.append('id_module', id_module);
-          confirmationUrl.searchParams.append('id_order', id_order);
-          confirmationUrl.searchParams.append('key', secure_key);
-          confirmationUrl.searchParams.append('paypal_order', paypal_order);
-          confirmationUrl.searchParams.append(
-            'paypal_transaction',
-            paypal_transaction
-          );
-
-          window.location.href = confirmationUrl.toString();
-        }
-
-        if (response.error && 'INSTRUMENT_DECLINED' === response.error) {
-          return actions.restart();
-        }
-      });
-  }
-
-  postExpressCheckoutOrder(data, actions) {
-    return actions.order.get().then(({ payer, purchase_units }) =>
-      fetch(this.config.expressCheckoutUrl, {
-        method: 'post',
-        headers: {
-          'content-type': 'application/json'
-        },
-        body: JSON.stringify({
-          ...data,
-          order: {
-            payer: payer,
-            shipping: purchase_units[0].shipping
-          }
-        })
-      }).then((response) => {
-        if (false === response.ok) {
-          return response.json().then((response) => {
-            throw response.body && response.body.error
-              ? response.body.error
-              : { message: 'Unknown error' };
-          });
-        }
-
-        window.location.href = new URL(
-          this.config.checkoutCheckoutUrl
-        ).toString();
-      })
-    );
+  async getPayPalToken() {
+    return this.payPalSdkConfig.clientToken
+      ? Promise.resolve(this.payPalSdkConfig.clientToken)
+      : await this.psCheckoutApi.postGetToken();
   }
 
   validateLiablityShift(liabilityShift) {
@@ -253,13 +71,5 @@ export class PsCheckoutService {
     return Promise.reject(
       new Error(this.$('error.paypal-sdk.liability.unknown'))
     );
-  }
-
-  static getPrestashopVersion() {
-    if (!window.prestashop) {
-      return PS_VERSION_1_6;
-    }
-
-    return PS_VERSION_1_7;
   }
 }

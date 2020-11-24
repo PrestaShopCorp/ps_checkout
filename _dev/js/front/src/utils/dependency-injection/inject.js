@@ -16,14 +16,30 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import 'classlist-polyfill';
-import 'core-js/stable';
-import 'promise-polyfill/src/polyfill';
-import 'regenerator-runtime/runtime';
-import 'url-polyfill';
-import 'whatwg-fetch';
 
-import './web-api.child-node.remove';
-import './web-api.child-node.replace-with';
-import './web-api.parent-node.append';
-import './web-api.parent-node.prepend';
+/**
+ * @param cls
+ * @return {function(AppAwareClass, *=): (void)}
+ */
+export function inject(cls) {
+  /**
+   * @param {AppAwareClass} instance
+   * @param constructor
+   *
+   * @return void
+   */
+  const injector = (instance, constructor) => {
+    if (constructor === cls) return;
+    injector(instance, Object.getPrototypeOf(constructor));
+
+    const container = instance.app.container;
+    const services = constructor.Inject || {};
+
+    for (const alias of Object.keys(services)) {
+      const name = services[alias];
+      instance[alias] = container[name];
+    }
+  };
+
+  return injector;
+}

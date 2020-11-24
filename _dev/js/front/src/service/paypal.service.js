@@ -29,6 +29,8 @@
  * @property {function} createOrder
  */
 
+import { BaseClass } from '../core/dependency-injection/base.class';
+
 /**
  * @typedef PaypalHostedFieldsEvents
  * @type {*}
@@ -36,14 +38,12 @@
  * @property {function} createOrder
  */
 
-export class PaypalService {
-  constructor(sdk, config, translationService) {
-    this.sdk = sdk;
-    this.config = config;
-    this.translationService = translationService;
-
-    this.$ = (id) => this.translationService.getTranslationString(id);
-  }
+export class PayPalService extends BaseClass {
+  static Inject = {
+    config: 'PayPalSdkConfig',
+    sdk: 'PayPalSDK',
+    $: '$'
+  };
 
   getOrderId() {
     return this.config.orderId;

@@ -16,37 +16,40 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-
-function inject(instance, constructor) {
-  if (constructor === BaseComponent) return;
-  inject(instance, Object.getPrototypeOf(constructor));
-
-  // TODO: Use a true container (Bottle.js?)
-  const app = instance.app;
-  const services = constructor.INJECT || {};
-
-  for (const alias of Object.keys(services)) {
-    const name = services[alias];
-    instance[alias] = app[name];
-  }
-}
-
-export class BaseComponent {
-  constructor(app, props) {
-    this.app = app;
-
-    this.data = {};
-    this.props = props || {};
-
-    this.children = {};
-
-    inject(this, this.constructor);
+export class PrestashopPs1_6Service {
+  static getProductDetails() {
+    return {};
   }
 
-  /**
-   * @return {this}
-   */
-  render() {
-    return this;
+  static isCartPage() {
+    return false;
+  }
+
+  static isOrderPaymentStepPage() {
+    if (document.body.id === 'order') {
+      return document.getElementById('ps_checkout-displayPayment');
+    }
+
+    return document.body.id === 'order-opc';
+  }
+
+  static isOrderPersonalInformationStepPage() {
+    return false;
+  }
+
+  static isProductPage() {
+    return false;
+  }
+
+  static onUpdatedCart() {}
+
+  static onUpdatePaymentMethods(listener) {
+    if (window['updatePaymentMethods']) {
+      const updatePaymentMethods = window['updatePaymentMethods'];
+      window['updatePaymentMethods'] = (...args) => {
+        updatePaymentMethods(...args);
+        listener(...args);
+      };
+    }
   }
 }

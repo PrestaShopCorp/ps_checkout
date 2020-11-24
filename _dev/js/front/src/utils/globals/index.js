@@ -16,14 +16,14 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import 'classlist-polyfill';
-import 'core-js/stable';
-import 'promise-polyfill/src/polyfill';
-import 'regenerator-runtime/runtime';
-import 'url-polyfill';
-import 'whatwg-fetch';
+window.ps_checkout = window.ps_checkout || {};
 
-import './web-api.child-node.remove';
-import './web-api.child-node.replace-with';
-import './web-api.parent-node.append';
-import './web-api.parent-node.prepend';
+window.ps_checkout.app = window.ps_checkout.app || null;
+
+window.ps_checkout.config = window.ps_checkout.config || {};
+window.ps_checkout.selectors = window.ps_checkout.app || {};
+
+window.ps_checkout.events = window.ps_checkout.events || new EventTarget();
+
+window.ps_checkout.version =
+  window.ps_checkout.version || window.ps_checkoutVersion;
