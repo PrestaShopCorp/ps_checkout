@@ -67,10 +67,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessUpdatePaymentMode()
     {
-        /** @var PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository $fundingSourceConfigurationRepository */
-        $fundingSourceConfigurationRepository = $this->module->getService('ps_checkout.funding_source.configuration.repository');
-
-        $fundingSourceConfigurationRepository->save(Tools::getValue('paymentMethods'));
+        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
+        $paypalConfiguration->setPaymentMode(Tools::getValue('paymentMode'));
     }
 
     /**

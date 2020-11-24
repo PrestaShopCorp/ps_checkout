@@ -25,6 +25,10 @@
     "postfront:build": "rm ./_dev/js/front/.env",
     "preback:build": "cp ./.env ./_dev/js/back/.",
     "prefront:build": "cp ./.env ./_dev/js/front/.",
+    "postback:watch": "rm ./_dev/js/back/.env",
+    "postfront:watch": "rm ./_dev/js/front/.env",
+    "preback:watch": "cp ./.env ./_dev/js/back/.",
+    "prefront:watch": "cp ./.env ./_dev/js/front/.",
     "preinstall": "npm run back:install && npm run front:install",
     "storybook": "npm run back:storybook",
     "test": "npm run back:test && npm run front:test"

@@ -27,6 +27,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import VueSegment from "@prestashopcorp/segment-vue";
+import ToggleSwitch from 'vuejs-toggle-switch';
 
 Vue.use(BootstrapVue);
 Vue.use(VueCollapse);
@@ -36,6 +37,7 @@ Vue.use(VueSegment, {
   router,
   pageCategory: 'ps_checkout'
 });
+Vue.use(ToggleSwitch);
 Sentry.init({
   dsn: `https://${process.env.VUE_APP_SENTRY_KEY}@${process.env.VUE_APP_SENTRY_ORGANIZATION}.ingest.sentry.io/${process.env.VUE_APP_SENTRY_PROJECT}`,
   integrations: [new VueIntegration({ Vue, attachProps: true })]

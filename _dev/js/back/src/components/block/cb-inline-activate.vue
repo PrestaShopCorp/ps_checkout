@@ -22,7 +22,45 @@
       <i class="material-icons">payments</i>
       {{ $t('panel.payment-method-activation.title') }}
     </h3>
-    <div class="card-body ml-5" v-if="cardInlineEnabled">
+
+    <div class="d-flex card-body ml-3" v-if="isFundingSourceCardEnabled">
+      <span class="d-flex">
+        <toggle-switch
+          :options="myOptions"
+          v-model="selectedMapOption"
+        />
+      </span>
+        <span class="checkout-popover d-flex align-self-center">
+          <button
+            id="popover-activation-card"
+            type="button"
+            class="btn mr-4"
+          >
+            <i class="material-icons-outlined info">info</i>
+          </button>
+          <b-popover
+            target="popover-activation-card"
+            triggers="click hover"
+            placement="bottom"
+          >
+            <template class="popover-body">
+              <i class="material-icons-outlined wb_incandescent">wb_incandescent</i>
+              <b>{{ $t('panel.payment-method-activation.popover-difference-question') }}</b>
+              <br />
+              <br />
+              {{ $t('panel.payment-method-activation.popover-difference-answer-begin') }} <a href="https://www.prestashop.com/en/prestashop-checkout" target="_blank">www.prestashop.com/en/prestashop-checkout</a>
+              {{ $t('panel.payment-method-activation.popover-difference-answer-end') }} <a href="#" @click.prevent="goToAuthenticate()">Authentication tab</a>
+              <br />
+              <br />
+              <b>{{ $t('panel.payment-method-activation.popover-when-question') }}</b>
+              <br />
+              <br />
+              {{ $t('panel.payment-method-activation.popover-when-answer') }}
+            </template>
+          </b-popover>
+        </span>
+    </div>
+    <!-- <div class="card-body ml-5" v-if="cardInlineEnabled">
       <PSSwitch
         id="cardActivation"
         text-position="left"
@@ -61,7 +99,7 @@
           </span>
         </template>
       </PSSwitch>
-    </div>
+    </div> -->
     <div class="card-body mx-5 my-3" v-else>
       <b>{{ $t('panel.payment-method-activation.disable') }}</b>
     </div>
@@ -69,15 +107,52 @@
 </template>
 
 <script>
-  import PSSwitch from '@/components/form/switch';
+  // import PSSwitch from '@/components/form/switch';
   export default {
     name: 'CbInlineActivate',
-    components: { PSSwitch },
+    data() {
+      return {
+        test: this.$i18n.t('panel.payment-method-activation.popover-when-answer'),
+        myOptions: {
+              layout: {
+                color: 'black',
+                backgroundColor: 'lightgray',
+                selectedColor: 'white',
+                selectedBackgroundColor: 'blue',
+                borderColor: 'black',
+                fontFamily: 'Arial',
+                fontWeight: 'normal',
+                fontWeightSelected: 'bold',
+                squareCorners: true,
+                noBorder: true
+              },
+              size: {
+                fontSize: 1,
+                // height: 10,
+                padding: 0.5,
+                width: 35
+              },
+              items: {
+                delay: .4,
+                preSelected: this.$i18n.t('panel.payment-method-activation.paypal-branded-credit-card-fields'),
+                disabled: false,
+                labels: [
+                  {name: this.$i18n.t('panel.payment-method-activation.integrated-credit-card-fields'), color: 'white', backgroundColor: '#25b9d7'},
+                  {name: this.$i18n.t('panel.payment-method-activation.paypal-branded-credit-card-fields'), color: 'white', backgroundColor: '#25b9d7'}
+                ]
+              }
+        }
+      };
+    },
+    // components: { PSSwitch },
     methods: {
       goToAuthenticate() {
         this.$router
           .push('/authentication')
           .catch(exception => console.log(exception));
+      },
+      updateMap(value) {
+        console.log(value);
       }
     },
     computed: {
@@ -97,7 +172,16 @@
           this.$store.state.paypal.cardIsActive === 'NEED_MORE_DATA' ||
           this.$store.state.paypal.cardIsActive === 'REVOKE'
         );
+      },
+      isFundingSourceCardEnabled() {
+        return this.$store.state.configuration.isFundingSourceCardEnabled;
+      },
+      selectedMapOption() {
+        return this.$store.state.configuration.cardInlinePaypalIsEnabled;
       }
+    },
+    updated() {
+        console.log('update');
     }
   };
 </script>
