@@ -22,12 +22,11 @@ import VueCollapse from 'vue2-collapse';
 import * as Sentry from '@sentry/browser';
 import { Vue as VueIntegration } from '@sentry/integrations';
 
-import i18n from "./lib/i18n";
-import App from "./App.vue";
-import router from "./router";
-import store from "./store";
-import VueSegment from "@prestashopcorp/segment-vue";
-import ToggleSwitch from 'vuejs-toggle-switch';
+import i18n from './lib/i18n';
+import App from './App.vue';
+import router from './router';
+import store from './store';
+import VueSegment from '@prestashopcorp/segment-vue';
 
 Vue.use(BootstrapVue);
 Vue.use(VueCollapse);
@@ -37,7 +36,7 @@ Vue.use(VueSegment, {
   router,
   pageCategory: 'ps_checkout'
 });
-Vue.use(ToggleSwitch);
+
 Sentry.init({
   dsn: `https://${process.env.VUE_APP_SENTRY_KEY}@${process.env.VUE_APP_SENTRY_ORGANIZATION}.ingest.sentry.io/${process.env.VUE_APP_SENTRY_PROJECT}`,
   integrations: [new VueIntegration({ Vue, attachProps: true })]

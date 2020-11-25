@@ -20,7 +20,7 @@ import * as types from './mutation-types';
 import ajax from '@/requests/ajax.js';
 
 export default {
-  updatePaymentMethods({commit, getters}, payload) {
+  updatePaymentMethods({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
       action: 'UpdatePaymentMethodsOrder',
@@ -33,7 +33,7 @@ export default {
     });
   },
 
-  updatePaymentMode({commit, getters}, payload) {
+  updatePaymentMode({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
       action: 'UpdatePaymentMode',
@@ -46,7 +46,7 @@ export default {
     });
   },
 
-  updateCaptureMode({commit, getters}, payload) {
+  updateCaptureMode({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
       action: 'UpdateCaptureMode',
@@ -58,8 +58,19 @@ export default {
       return Promise.resolve(true);
     });
   },
-
-  togglePaymentOptionAvailability({ commit, getters}, payload) {
+  updateCreditCardFields({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'UpdateCreditCardFields',
+      data: {
+        hostedFieldsEnabled: payload
+      }
+    }).then(() => {
+      commit(types.UPDATE_CREDIT_CARD_FIELDS, payload);
+      return Promise.resolve(true);
+    });
+  },
+  togglePaymentOptionAvailability({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
       action: 'TogglePaymentOptionAvailability',

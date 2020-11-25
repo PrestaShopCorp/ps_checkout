@@ -33,8 +33,6 @@
     "storybook": "npm run back:storybook",
     "test": "npm run back:test && npm run front:test"
   },
-  "devDependencies": {},
-  "dependencies": {},
   "license": "AFL-3.0",
   "private": true
 }

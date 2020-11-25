@@ -275,6 +275,17 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
+     * AJAX: Update credit card fields (Hosted fields / Smartbutton)
+     */
+    public function ajaxProcessUpdateCreditCardFields()
+    {
+        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
+
+        $paypalConfiguration->setCardPaymentEnabled(Tools::getValue('hostedFieldsEnabled'));
+    }
+
+    /**
      * AJAX: Toggle express checkout on order page
      */
     public function ajaxProcessToggleECOrderPage()
