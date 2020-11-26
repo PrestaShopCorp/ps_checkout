@@ -44,7 +44,7 @@ function isTokenNeeded() {
     }
     case PS_VERSION_1_7: {
       if (document.body.id !== 'checkout') return false;
-      return document.querySelector('[data-module-name="ps_checkout"]');
+      return document.querySelector('[data-module-name^="ps_checkout"]');
     }
   }
 }
