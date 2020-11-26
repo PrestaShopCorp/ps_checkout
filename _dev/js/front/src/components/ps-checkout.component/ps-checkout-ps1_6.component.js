@@ -60,9 +60,8 @@ export class PsCheckoutPs1_6Component {
       throw new Error(this.$('error.paypal-sdk'));
     }
 
-    this.children.notification = new NotificationComponent(this).render();
-
     if (document.body.id === 'order') {
+      this.children.notification = new NotificationComponent(this).render();
       if (!document.getElementById('ps_checkout-displayPayment')) return;
 
       this.children.loader = new LoaderComponent(this).render();
@@ -72,21 +71,29 @@ export class PsCheckoutPs1_6Component {
       window['updatePaymentMethods'] = (...args) => {
         updatePaymentMethods(...args);
 
+        if (window.isLogged) {
+          const cgv = document.getElementById('cgv');
+          if ((cgv && cgv.checked) || !cgv) {
+            this.children.notification = new NotificationComponent(
+              this
+            ).render();
+            this.children.loader = new LoaderComponent(this).render();
+            this.children.paymentOptions = new PaymentOptionsComponent(this, {
+              markPosition: 'before'
+            }).render();
+          }
+        }
+      };
+
+      if (window.isLogged) {
         const cgv = document.getElementById('cgv');
         if ((cgv && cgv.checked) || !cgv) {
+          this.children.notification = new NotificationComponent(this).render();
           this.children.loader = new LoaderComponent(this).render();
           this.children.paymentOptions = new PaymentOptionsComponent(this, {
             markPosition: 'before'
           }).render();
         }
-      };
-
-      const cgv = document.getElementById('cgv');
-      if ((cgv && cgv.checked) || !cgv) {
-        this.children.loader = new LoaderComponent(this).render();
-        this.children.paymentOptions = new PaymentOptionsComponent(this, {
-          markPosition: 'before'
-        }).render();
       }
     }
   }
