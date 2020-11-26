@@ -380,6 +380,8 @@ $_MODULE['<{ps_checkout}prestashop>translations_a390cb45733734e47c45d8ba62f2b0e9
 $_MODULE['<{ps_checkout}prestashop>translations_9180f9a5a138e11f11e569e1e1680d4e'] = 'Comisión';
 $_MODULE['<{ps_checkout}prestashop>translations_96b0141273eabab320119c467cdcaf17'] = 'Total';
 $_MODULE['<{ps_checkout}prestashop>translations_06df33001c1d7187fdd81ea1f5b277aa'] = 'Acciones';
+$_MODULE['<{ps_checkout}prestashop>translations_30aa465f0263c86b865c01a7f590e805'] = 'Disponible en:';
+$_MODULE['<{ps_checkout}prestashop>translations_c3987e4cac14a8456515f0d200da04ee'] = 'Todos los paises';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_cb375d61d9ba4f21c2f0e4c1df8143e0'] = 'Referencia del pedido de PayPal:';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_cefbea0303801fa237623a23615f2755'] = 'Estado del pedido de PayPal ';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_44749712dbec183e983dcd78a7736c41'] = 'Fecha';
@@ -473,10 +475,10 @@ $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_32187a5bef114c112c1e
 $_MODULE['<{ps_checkout}prestashop>displaypaymentbybinaries_d7467080ec566ee0c6cb59242ee28fa5'] = 'Debe aceptar los términos y condiciones para poder procesar su pedido.';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_42275e6d860a19342a3943af7d1e48a0'] = 'Error al procesar el pago';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_980f9122ef2d3b8195b5886e0e7fc8f0'] = 'El pago ha fallado, no se ha cargado el importe.';
-$_MODULE['<{ps_checkout}prestashop>payment_a44217022190f5734b2f72ba1e4f8a79'] = 'Número de tarjeta';
-$_MODULE['<{ps_checkout}prestashop>payment_95b16127e70e8a90220404fb48343182'] = 'Fecha de caducidad';
-$_MODULE['<{ps_checkout}prestashop>payment_5ea7f231296949070013bc43715aae01'] = 'CVV';
-$_MODULE['<{ps_checkout}prestashop>payment_46b9e3665f187c739c55983f757ccda0'] = 'Confirmar el pedido';
-$_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_a44217022190f5734b2f72ba1e4f8a79'] = 'Número de tarjeta';
-$_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_95b16127e70e8a90220404fb48343182'] = 'Fecha de caducidad';
-$_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_5ea7f231296949070013bc43715aae01'] = 'CVV';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_a44217022190f5734b2f72ba1e4f8a79'] = 'Número de tarjeta';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_95b16127e70e8a90220404fb48343182'] = 'Fecha de caducidad';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_5ea7f231296949070013bc43715aae01'] = 'CVV';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_46b9e3665f187c739c55983f757ccda0'] = 'Confirmar el pedido';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_a44217022190f5734b2f72ba1e4f8a79'] = 'Número de tarjeta';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_95b16127e70e8a90220404fb48343182'] = 'Fecha de caducidad';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_5ea7f231296949070013bc43715aae01'] = 'CVV';

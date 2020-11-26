@@ -473,10 +473,10 @@ $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_a47005f7a79a26705260
 $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_32187a5bef114c112c1ef96ca2e3da1a'] = 'O seu pedido está confirmado.';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_42275e6d860a19342a3943af7d1e48a0'] = 'Erro no processamento do pagamento';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_980f9122ef2d3b8195b5886e0e7fc8f0'] = 'O pagamento falhou, não lhe foi cobrada qualquer quantia.';
-$_MODULE['<{ps_checkout}prestashop>payment_a44217022190f5734b2f72ba1e4f8a79'] = 'Número do cartão';
-$_MODULE['<{ps_checkout}prestashop>payment_95b16127e70e8a90220404fb48343182'] = 'Data de vencimento';
-$_MODULE['<{ps_checkout}prestashop>payment_5ea7f231296949070013bc43715aae01'] = 'Código de segurança';
-$_MODULE['<{ps_checkout}prestashop>payment_46b9e3665f187c739c55983f757ccda0'] = 'Confirmo o meu pedido';
-$_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_a44217022190f5734b2f72ba1e4f8a79'] = 'Número do cartão';
-$_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_95b16127e70e8a90220404fb48343182'] = 'Data de vencimento';
-$_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_5ea7f231296949070013bc43715aae01'] = 'Código de segurança';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_a44217022190f5734b2f72ba1e4f8a79'] = 'Número do cartão';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_95b16127e70e8a90220404fb48343182'] = 'Data de vencimento';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_5ea7f231296949070013bc43715aae01'] = 'Código de segurança';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_46b9e3665f187c739c55983f757ccda0'] = 'Confirmo o meu pedido';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_a44217022190f5734b2f72ba1e4f8a79'] = 'Número do cartão';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_95b16127e70e8a90220404fb48343182'] = 'Data de vencimento';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_5ea7f231296949070013bc43715aae01'] = 'Código de segurança';
