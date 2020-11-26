@@ -74,26 +74,6 @@ class PayPalConfiguration
     }
 
     /**
-     * Used to return the PS_CHECKOUT_PAYMENT_METHODS_ORDER from the Configuration
-     *
-     * @return string
-     */
-    public function getPaymentMethodsOrder()
-    {
-        return $this->configuration->get(self::PAYMENT_METHODS_ORDER);
-    }
-
-    /**
-     * Used to set the PS_CHECKOUT_PAYMENT_METHODS_ORDER in the Configuration
-     *
-     * @param $paymentMethodsOrder
-     */
-    public function setPaymentMethodsOrder($paymentMethodsOrder)
-    {
-        $this->configuration->set(self::PAYMENT_METHODS_ORDER, $paymentMethodsOrder);
-    }
-
-    /**
      * Used to return the PS_CHECKOUT_MODE from the Configuration
      *
      * @return string
@@ -239,49 +219,5 @@ class PayPalConfiguration
     public function is3dSecureEnabled()
     {
         return false === (bool) $this->configuration->get(static::HOSTED_FIELDS_3DS_DISABLED);
-    }
-
-    /**
-     * Get funding sources sorted according to configuration
-     *
-     * @return string[]
-     */
-    public function getFundingSources()
-    {
-        $paymentMethods = $this->configuration->get(self::PAYMENT_METHODS_ORDER);
-
-        if (empty($paymentMethods)) {
-            $paymentMethods = [
-                ['name' => 'card'],
-                ['name' => 'paypal'],
-            ];
-        } else {
-            $paymentMethods = json_decode($paymentMethods, true);
-        }
-
-        $fundingSources = [
-            'card',
-            'paypal',
-            'bancontact',
-            'ideal',
-            'gyropay',
-            'eps',
-            'mybank',
-            'sofort',
-            'p24',
-        ];
-
-        // If card is not enable and cb inline too -> no card
-        if (!$this->isCardPaymentEnabled() && !$this->isCardInlinePaypalIsEnabled()) {
-            unset($fundingSources[0]);
-        } else {
-            // If card is not in first position in configuration, move it at the end.
-            if ('card' !== $paymentMethods[0]['name']) {
-                unset($fundingSources[0]);
-                $fundingSources[] = 'card';
-            }
-        }
-
-        return array_values($fundingSources);
     }
 }
