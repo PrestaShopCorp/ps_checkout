@@ -16,6 +16,7 @@ config_*.xml
 /views/js/back/
 /views/js/app.js
 /views/js/front.js
+/views/js/front.js.LICENSE.txt
 /views/img/almost-ready.png
 /views/img/paypal-logo.png
 /views/img/brush.png

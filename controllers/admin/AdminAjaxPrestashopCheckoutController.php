@@ -42,9 +42,14 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessUpdatePaymentMethodsOrder()
     {
-        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
-        $paypalConfiguration->setPaymentMethodsOrder(Tools::getValue('paymentMethods'));
+        $paymentOptions = json_decode(Tools::getValue('paymentMethods'), true);
+        /** @var PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository $fundingSourceConfigurationRepository */
+        $fundingSourceConfigurationRepository = $this->module->getService('ps_checkout.funding_source.configuration.repository');
+
+        foreach ($paymentOptions as $key => $paymentOption) {
+            $paymentOption['position'] = $key + 1;
+            $fundingSourceConfigurationRepository->save($paymentOption);
+        }
     }
 
     /**
@@ -257,27 +262,27 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Toggle card hosted fields availability
+     * AJAX: Toggle payment option hosted fields availability
      */
-    public function ajaxProcessToggleCardPaymentAvailability()
+    public function ajaxProcessTogglePaymentOptionAvailability()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
-        $paypalConfiguration->setCardPaymentEnabled(Tools::getValue('status') ? true : false);
+        $paymentOption = json_decode(Tools::getValue('paymentOption'), true);
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
+        /** @var PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository $fundingSourceConfigurationRepository */
+        $fundingSourceConfigurationRepository = $this->module->getService('ps_checkout.funding_source.configuration.repository');
+
+        return $fundingSourceConfigurationRepository->save($paymentOption);
     }
 
     /**
-     * AJAX: Toggle card inline availability
+     * AJAX: Update credit card fields (Hosted fields / Smartbutton)
      */
-    public function ajaxProcessToggleCardInlinePayPalPayment()
+    public function ajaxProcessUpdateCreditCardFields()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
         $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
-        $paypalConfiguration->setCardInlinePaypalEnabled(Tools::getValue('status') ? true : false);
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
+        $paypalConfiguration->setCardPaymentEnabled(Tools::getValue('hostedFieldsEnabled') ? true : false);
     }
 
     /**
