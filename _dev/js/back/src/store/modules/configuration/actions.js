@@ -78,10 +78,12 @@ export default {
         paymentOption: JSON.stringify(payload.paymentOption)
       }
     }).then(() => {
-      commit(
-        types.UPDATE_PAYMENT_CARD_AVAILABILITY,
-        payload.paymentOption.enabled
-      );
+      if ('card' === payload.paymentOption.name) {
+        commit(
+          types.UPDATE_PAYMENT_CARD_AVAILABILITY,
+          payload.paymentOption.isEnabled
+        );
+      }
       return Promise.resolve(payload);
     });
   },
