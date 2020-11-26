@@ -93,6 +93,7 @@
   import Menu from '@/components/menu/menu';
   import MenuItem from '@/components/menu/menu-item';
   import RoundingBanner from '@/components/block/rounding-banner';
+  import { isOnboardingCompleted } from 'prestashop_accounts_vue_components';
 
   export default {
     name: 'Home',
@@ -118,7 +119,7 @@
         return this.$store.state.paypal.onboardingCompleted;
       },
       onboardingFirebaseIsCompleted() {
-        return this.$store.state.firebase.onboardingCompleted;
+        return isOnboardingCompleted();
       },
       accountIslinked() {
         return this.$store.state.paypal.accountIslinked;
