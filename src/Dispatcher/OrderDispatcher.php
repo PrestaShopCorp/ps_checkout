@@ -257,7 +257,7 @@ class OrderDispatcher implements Dispatcher
         $this->psCheckoutCart = $psCheckoutCartCollection->getFirst();
 
         if (false === $this->psCheckoutCart) {
-            throw new PsCheckoutException(sprintf('order #%s does not exist', $payPalOrderId), PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
+            throw new PsCheckoutException(sprintf('order #%s is not linked to a cart', $payPalOrderId), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
     }
 }
