@@ -106,7 +106,7 @@ class PayPalConfiguration
      */
     public function setCardPaymentEnabled($status)
     {
-        $this->configuration->set(self::CARD_PAYMENT_ENABLED, (bool) $status);
+        $this->configuration->set(self::CARD_PAYMENT_ENABLED, (int) $status);
     }
 
     /**
@@ -124,7 +124,7 @@ class PayPalConfiguration
      */
     public function setCardInlinePaypalEnabled($status)
     {
-        $this->configuration->set(self::PS_CHECKOUT_PAYPAL_CB_INLINE, (bool) $status);
+        $this->configuration->set(self::PS_CHECKOUT_PAYPAL_CB_INLINE, (int) $status);
     }
 
     /**

@@ -282,7 +282,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
         $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
 
-        $paypalConfiguration->setCardPaymentEnabled(Tools::getValue('hostedFieldsEnabled'));
+        $paypalConfiguration->setCardPaymentEnabled(Tools::getValue('hostedFieldsEnabled') ? true : false);
     }
 
     /**
