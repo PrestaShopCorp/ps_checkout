@@ -166,21 +166,29 @@ class OrderDispatcher implements Dispatcher
             if (\Validate::isLoadedObject($orderPayment)) {
                 if ($orderPayment->transaction_id !== $resource['id']) {
                     $orderPayment->transaction_id = $resource['id'];
-                    $fundingSourceTranslationProvider->getPaymentMethodName($this->psCheckoutCart->paypal_funding);
-                    $orderPayment->save();
+                    $orderPayment->payment_method = $fundingSourceTranslationProvider->getPaymentMethodName($this->psCheckoutCart->paypal_funding);
+                    try {
+                        $orderPayment->save();
+                    } catch (\Exception $exception) {
+                        throw new PsCheckoutException('Cannot update OrderPayment', PsCheckoutException::PRESTASHOP_ORDER_PAYMENT, $exception);
+                    }
                 }
                 $shouldAddOrderPayment = false;
             }
         }
 
         if (true === $shouldAddOrderPayment) {
-            $order->addOrderPayment(
-                $resource['amount']['value'],
-                $fundingSourceTranslationProvider->getPaymentMethodName($this->psCheckoutCart->paypal_funding),
-                $resource['id'],
-                \Currency::getCurrencyInstance(\Currency::getIdByIsoCode($resource['amount']['currency_code'])),
-                (new DatePresenter($resource['create_time'], 'Y-m-d H:i:s'))->present()
-            );
+            try {
+                $order->addOrderPayment(
+                    $resource['amount']['value'],
+                    $fundingSourceTranslationProvider->getPaymentMethodName($this->psCheckoutCart->paypal_funding),
+                    $resource['id'],
+                    \Currency::getCurrencyInstance(\Currency::getIdByIsoCode($resource['amount']['currency_code'])),
+                    (new DatePresenter($resource['create_time'], 'Y-m-d H:i:s'))->present()
+                );
+            } catch (\Exception $exception) {
+                throw new PsCheckoutException('Cannot add OrderPayment', PsCheckoutException::PRESTASHOP_ORDER_PAYMENT, $exception);
+            }
         }
 
         return true;
