@@ -65,48 +65,42 @@ class FundingSourceCollectionBuilder
         $bancontact->setIsEnabled($this->configuration->isEnabled('bancontact'));
         $bancontact->setCountries($this->eligibilityConstraint->getCountries('bancontact'));
 
-        // BLIK
-        $blik = new FundingSourceEntity('blik');
-        $blik->setPosition($this->configuration->getPosition('blik', 4));
-        $blik->setIsEnabled($this->configuration->isEnabled('blik'));
-        $blik->setCountries($this->eligibilityConstraint->getCountries('blik'));
-
         // eps
         $eps = new FundingSourceEntity('eps');
-        $eps->setPosition($this->configuration->getPosition('eps', 5));
+        $eps->setPosition($this->configuration->getPosition('eps', 4));
         $eps->setIsEnabled($this->configuration->isEnabled('eps'));
         $eps->setCountries($this->eligibilityConstraint->getCountries('eps'));
 
         // giropay
         $giropay = new FundingSourceEntity('giropay');
-        $giropay->setPosition($this->configuration->getPosition('giropay', 6));
+        $giropay->setPosition($this->configuration->getPosition('giropay', 5));
         $giropay->setIsEnabled($this->configuration->isEnabled('giropay'));
         $giropay->setCountries($this->eligibilityConstraint->getCountries('giropay'));
 
         // iDEAL
         $ideal = new FundingSourceEntity('ideal');
-        $ideal->setPosition($this->configuration->getPosition('ideal', 7));
+        $ideal->setPosition($this->configuration->getPosition('ideal', 6));
         $ideal->setIsEnabled($this->configuration->isEnabled('ideal'));
         $ideal->setCountries($this->eligibilityConstraint->getCountries('ideal'));
 
         // MyBank
         $mybank = new FundingSourceEntity('mybank');
-        $mybank->setPosition($this->configuration->getPosition('mybank', 8));
+        $mybank->setPosition($this->configuration->getPosition('mybank', 7));
         $mybank->setIsEnabled($this->configuration->isEnabled('mybank'));
         $mybank->setCountries($this->eligibilityConstraint->getCountries('mybank'));
 
         // P24
         $p24 = new FundingSourceEntity('p24');
-        $p24->setPosition($this->configuration->getPosition('p24', 9));
+        $p24->setPosition($this->configuration->getPosition('p24', 8));
         $p24->setIsEnabled($this->configuration->isEnabled('p24'));
         $p24->setCountries($this->eligibilityConstraint->getCountries('p24'));
 
         // Sofort
         $sofort = new FundingSourceEntity('sofort');
-        $sofort->setPosition($this->configuration->getPosition('sofort', 10));
+        $sofort->setPosition($this->configuration->getPosition('sofort', 9));
         $sofort->setIsEnabled($this->configuration->isEnabled('sofort'));
         $sofort->setCountries($this->eligibilityConstraint->getCountries('sofort'));
 
-        return [$paypal, $card, $bancontact, $blik, $eps, $giropay, $ideal, $mybank, $p24, $sofort];
+        return [$paypal, $card, $bancontact, $eps, $giropay, $ideal, $mybank, $p24, $sofort];
     }
 }

@@ -13,7 +13,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "vue-cli-service test:unit",
-    "watch": "vue-cli-service build --no-clean --mode development --watch ./_dev/js/back/src/main.js"
+    "watch": "vue-cli-service build --no-clean --mode development --watch ./src/main.js"
   },
   "devDependencies": {
     "@babel/core": "^7.11.0",
