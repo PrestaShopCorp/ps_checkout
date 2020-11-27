@@ -471,7 +471,7 @@ class Ps_checkout extends PaymentModule
             $paymentOption->setCallToActionText($fundingSource->label);
             $paymentOption->setBinary(true);
 
-            if ('card' === $fundingSource->name && $paypalAccountRepository->cardHostedFieldsIsAvailable) {
+            if ('card' === $fundingSource->name && $paypalAccountRepository->cardHostedFieldsIsAvailable()) {
                 $this->context->smarty->assign('modulePath', $this->getPathUri());
                 $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/paymentOptions.tpl'));
             }
