@@ -136,7 +136,13 @@ class PayPalSdkLinkBuilder
     {
         $fundingSourcesDisabled = [];
 
-        foreach ($this->fundingSourceConfigurationRepository->getAll() as $fundingSource) {
+        $fundingSources = $this->fundingSourceConfigurationRepository->getAll();
+
+        if (empty($fundingSources)) {
+            return $fundingSourcesDisabled;
+        }
+
+        foreach ($fundingSources as $fundingSource) {
             if (!$fundingSource['active']) {
                 $fundingSourcesDisabled[] = $fundingSource['name'];
             }
