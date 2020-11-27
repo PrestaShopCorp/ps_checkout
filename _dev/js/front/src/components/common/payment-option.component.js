@@ -65,6 +65,7 @@ export class PaymentOptionComponent extends BaseComponent {
     const hostedFieldsFormId = 'ps_checkout-hosted-fields-form';
     return (
       this.data.name === 'card' &&
+      this.config.hostedFieldsEnabled &&
       (this.props.HTMLElementHostedFields ||
         document.getElementById(hostedFieldsFormId))
     );
