@@ -16,51 +16,76 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+import { BaseComponent } from '../../core/base.component';
+
+import { PaymentOptionComponent } from '../common/payment-option.component';
 import { SMART_BUTTON_CLASS } from '../../constants/ps-checkout-classes.constants';
-import { PaymentOptionComponent } from './payment-option.component';
 
-export class PaymentOptionsComponent {
-  constructor(checkout) {
-    this.checkout = checkout;
-    this.config = this.checkout.config;
+export class PaymentOptionsComponent extends BaseComponent {
+  static INJECT = {
+    config: 'config',
+    htmlElementService: 'htmlElementService',
+    payPalService: 'payPalService',
+    psCheckoutService: 'psCheckoutService'
+  };
 
-    this.htmlElementService = this.checkout.htmlElementService;
-    this.payPalService = this.checkout.payPalService;
-    this.psCheckoutService = this.checkout.psCheckoutService;
+  constructor(app, props) {
+    super(app, props);
 
-    this.paymentOptionsContainer = this.htmlElementService.getPaymentOptionsContainer();
-    this.paymentOptions = this.htmlElementService.getPaymentOptions();
+    // this.buttonContainer = this.htmlElementService.getButtonContainer();
 
-    this.buttonContainer = this.htmlElementService.getButtonContainer();
+    this.data.HTMLElement = this.getPaymentOptions();
 
-    this.children = {};
+    this.data.notificationComponent = this.app.children.notification;
+  }
+
+  getPaymentOptions() {
+    const paymentOptionsSelector = '.payment-options';
+    return document.querySelector(paymentOptionsSelector);
+  }
+
+  renderPaymentOptionItems() {
+    this.children.paymentOptions = this.payPalService
+      .getEligibleFundingSources()
+      .map((fundingSource) =>
+        new PaymentOptionComponent(this.app, {
+          fundingSource: fundingSource,
+          markPosition: this.props.markPosition,
+
+          // TODO: Move this to HTMLElementService,
+          HTMLElement: document.querySelector(
+            `[data-module-name="ps_checkout-${fundingSource.name}"]`
+          )
+        }).render()
+      );
+  }
+
+  renderPaymentOptionRadios() {
+    const radios = Array.prototype.slice.call(
+      this.data.HTMLElement.querySelectorAll(
+        'input[type="radio"][name="payment-option"]'
+      )
+    );
+
+    radios.forEach((radio) => {
+      radio.addEventListener('change', () => {
+        this.data.notificationComponent.hideCancelled();
+        this.data.notificationComponent.hideError();
+      });
+    });
   }
 
   render() {
     if (!this.config.expressCheckoutSelected) {
-      // Default Payment Options
-      this.children.paymentOptions = this.paymentOptions.map(paymentOption =>
-        new PaymentOptionComponent(this.checkout, null, paymentOption).render()
-      );
-
-      // PayPal Payment Options
-      this.children.paymentOptions = [
-        ...this.children.paymentOptions,
-        ...this.payPalService
-          .getEligibleFundingSources()
-          .map(fundingSource =>
-            new PaymentOptionComponent(
-              this.checkout,
-              fundingSource,
-              null
-            ).render()
-          )
-      ];
+      this.renderPaymentOptionItems();
+      this.renderPaymentOptionRadios();
     } else {
       this.htmlElementService.getPaymentOptionsContainer().style.display =
         'none';
 
-      this.htmlElementService.getAnyPaymentOption().checked = true;
+      document.querySelector(
+        'input[type="radio"][data-module-name="ps_checkout-paypal"]'
+      ).checked = true;
 
       this.smartButton = document.createElement('div');
 
@@ -74,9 +99,9 @@ export class PaymentOptionsComponent {
       paymentButton.id = 'ps_checkout-hosted-submit-button';
       paymentButton.type = 'button';
 
-      paymentButton.addEventListener('click', event => {
+      paymentButton.addEventListener('click', (event) => {
         event.preventDefault();
-        this.checkout.children.loader.show();
+        this.app.children.loader.show();
 
         this.psCheckoutService
           .postCheckCartOrder(
@@ -94,19 +119,22 @@ export class PaymentOptionsComponent {
               isExpressCheckout: true
             });
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
-            this.checkout.children.loader.hide();
-            this.checkout.children.notification.showError(error.message);
+            this.app.children.loader.hide();
+            this.app.children.notification.showError(error.message);
           });
       });
 
-      this.checkout.children.conditionsCheckbox.onChange(() => {
-        paymentButton.disabled = !this.checkout.children.conditionsCheckbox.isChecked();
+      this.app.children.conditionsCheckbox.onChange(() => {
+        paymentButton.disabled = !this.app.children.conditionsCheckbox.isChecked();
       });
 
       this.smartButton.append(paymentButton);
-      this.buttonContainer.append(this.smartButton);
+      document
+        .querySelector('.ps_checkout-button[data-funding-source="paypal"]')
+        .append(this.smartButton);
+      // this.buttonContainer.append(this.smartButton);
     }
 
     return this;

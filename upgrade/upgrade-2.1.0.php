@@ -32,7 +32,7 @@ function upgrade_module_2_1_0($module)
 {
     $db = Db::getInstance();
 
-    return (bool) $db->execute('
+    $createFundingSourceTable = (bool) $db->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_funding_source` (
               `name` varchar(20) NOT NULL,
               `active` tinyint(1) unsigned DEFAULT 0 NOT NULL,
@@ -42,4 +42,26 @@ function upgrade_module_2_1_0($module)
               INDEX (`id_shop`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');
+
+    if ($createFundingSourceTable) {
+        $shopsList = \Shop::getShops(false, null, true);
+
+        foreach ($shopsList as $shopId) {
+            $isCardEnabled = (bool) \Configuration::get('PS_CHECKOUT_CARD_PAYMENT_ENABLED', null, null, $shopId);
+
+            if (false === $isCardEnabled) {
+                $db->insert(
+                    'pscheckout_funding_source',
+                    [
+                        'name' => 'card',
+                        'position' => 2,
+                        'active' => 0,
+                        'id_shop' => (int) $shopId,
+                    ]
+                );
+            }
+        }
+    }
+
+    return $createFundingSourceTable;
 }
