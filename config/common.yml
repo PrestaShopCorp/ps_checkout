@@ -143,6 +143,7 @@ services:
     arguments:
       - '@ps_checkout.repository.paypal.account'
       - '@ps_checkout.paypal.configuration'
+      - '@ps_checkout.funding_source.configuration.repository'
 
   ps_checkout.repository.prestashop.account:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
@@ -175,6 +176,7 @@ services:
     arguments:
       - '@ps_checkout.express_checkout.configuration'
       - '@ps_checkout.paypal.configuration'
+      - '@ps_checkout.funding_source.provider'
 
   ps_checkout.builder.payload.onboarding:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder'
@@ -230,8 +232,59 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
     public: true
 
-  ps_checkout.provider.funding_source:
-    class: 'PrestaShop\Module\PrestashopCheckout\FundingSourceProvider'
+  ps_checkout.funding_source.configuration.repository:
+    class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository'
+    public: true
+    arguments:
+      - '@ps_checkout.context.prestashop'
+
+  ps_checkout.funding_source.configuration:
+    class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfiguration'
+    public: true
+    arguments:
+      - '@ps_checkout.funding_source.configuration.repository'
+
+  ps_checkout.funding_source.eligibility_constraint:
+    class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceEligibilityConstraint'
+    public: true
+
+  ps_checkout.funding_source.collection.builder:
+    class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceCollectionBuilder'
+    public: true
+    arguments:
+      - '@ps_checkout.funding_source.configuration'
+      - '@ps_checkout.funding_source.eligibility_constraint'
+
+  ps_checkout.funding_source.translation:
+    class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider'
     public: true
     arguments:
       - '@ps_checkout.module'
+
+  ps_checkout.funding_source.entity:
+    class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceEntity'
+    public: true
+
+  ps_checkout.repository.country:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository'
+    public: true
+
+  ps_checkout.funding_source.presenter:
+    class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourcePresenter'
+    public: true
+    arguments:
+      - '@ps_checkout.funding_source.translation'
+      - '@ps_checkout.repository.country'
+
+  ps_checkout.funding_source.collection:
+    class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceCollection'
+    public: true
+    arguments:
+      - '@=service("ps_checkout.funding_source.collection.builder").create()'
+
+  ps_checkout.funding_source.provider:
+    class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider'
+    public: true
+    arguments:
+      - '@ps_checkout.funding_source.collection.builder'
+      - '@ps_checkout.funding_source.presenter'
