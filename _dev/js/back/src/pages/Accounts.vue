@@ -96,9 +96,6 @@
       incompatibleCurrencyCodes() {
         return this.$store.state.context.incompatibleCurrencyCodes;
       }
-    },
-    mounted() {
-      console.log(this.$store.state.context);
     }
   };
 </script>
