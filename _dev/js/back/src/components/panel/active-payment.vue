@@ -67,7 +67,7 @@
                   <div class="flex-grow-1 content">
                     <div class="d-flex payment-method-content">
                       <div class="flex-grow-1">
-                        <label class="mb-0">
+                        <label class="mb-0 label">
                           <img
                             class="mr-3 logo"
                             :src="getLogo(element)"
@@ -297,6 +297,10 @@
   }
   .separator {
     border-top: 1px solid #dddddd;
+  }
+  .label {
+    font-weight: 550;
+    color: #000000;
   }
   .logo {
     max-height: 30px;

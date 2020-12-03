@@ -473,10 +473,10 @@ $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_32187a5bef114c112c1e
 $_MODULE['<{ps_checkout}prestashop>displaypaymentbybinaries_d7467080ec566ee0c6cb59242ee28fa5'] = 'È necessario accettare i termini e le condizioni per poter evadere l\'ordine.';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_42275e6d860a19342a3943af7d1e48a0'] = 'Errore nell\'elaborazione del pagamento';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_980f9122ef2d3b8195b5886e0e7fc8f0'] = 'Il pagamento non è andato a buon fine, non ti è stato addebitato.';
-$_MODULE['<{ps_checkout}prestashop>payment_a44217022190f5734b2f72ba1e4f8a79'] = 'Numero carta';
-$_MODULE['<{ps_checkout}prestashop>payment_95b16127e70e8a90220404fb48343182'] = 'Data di scadenza';
-$_MODULE['<{ps_checkout}prestashop>payment_5ea7f231296949070013bc43715aae01'] = 'CVC';
-$_MODULE['<{ps_checkout}prestashop>payment_46b9e3665f187c739c55983f757ccda0'] = 'Confermo l’ordine';
-$_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_a44217022190f5734b2f72ba1e4f8a79'] = 'Numero carta';
-$_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_95b16127e70e8a90220404fb48343182'] = 'Data di scadenza';
-$_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_5ea7f231296949070013bc43715aae01'] = 'CVC';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_a44217022190f5734b2f72ba1e4f8a79'] = 'Numero carta';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_95b16127e70e8a90220404fb48343182'] = 'Data di scadenza';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_5ea7f231296949070013bc43715aae01'] = 'CVC';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_46b9e3665f187c739c55983f757ccda0'] = 'Confermo l’ordine';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_a44217022190f5734b2f72ba1e4f8a79'] = 'Numero carta';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_95b16127e70e8a90220404fb48343182'] = 'Data di scadenza';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_5ea7f231296949070013bc43715aae01'] = 'CVC';

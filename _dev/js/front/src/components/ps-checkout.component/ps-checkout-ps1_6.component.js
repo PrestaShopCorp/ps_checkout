@@ -31,14 +31,19 @@ export class PsCheckoutPs1_6Component extends BaseComponent {
   }
 
   renderCheckout() {
-    // TODO: Move this to HTMLElementService
-    const cgv = document.getElementById('cgv');
-    if ((cgv && cgv.checked) || !cgv) {
-      this.children.notification = new NotificationComponent(this.app).render();
-      this.children.loader = new LoaderComponent(this.app).render();
-      this.children.paymentOptions = new PaymentOptionsComponent(this.app, {
-        markPosition: 'before'
-      }).render();
+    // TODO: Move this to PrestashopService
+    if (window.isLogged) {
+      // TODO: Move this to HTMLElementService
+      const cgv = document.getElementById('cgv');
+      if ((cgv && cgv.checked) || !cgv) {
+        this.children.notification = new NotificationComponent(
+          this.app
+        ).render();
+        this.children.loader = new LoaderComponent(this.app).render();
+        this.children.paymentOptions = new PaymentOptionsComponent(this.app, {
+          markPosition: 'before'
+        }).render();
+      }
     }
   }
 

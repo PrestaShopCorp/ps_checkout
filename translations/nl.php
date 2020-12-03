@@ -470,10 +470,10 @@ $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_a47005f7a79a26705260
 $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_32187a5bef114c112c1ef96ca2e3da1a'] = 'Uw bestelling is bevestigd.';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_42275e6d860a19342a3943af7d1e48a0'] = 'Fout in de verwerking van de betaling';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_980f9122ef2d3b8195b5886e0e7fc8f0'] = 'De betaling is mislukt, deze is niet bij u in rekening gebracht.';
-$_MODULE['<{ps_checkout}prestashop>payment_a44217022190f5734b2f72ba1e4f8a79'] = 'Kaartnummer';
-$_MODULE['<{ps_checkout}prestashop>payment_95b16127e70e8a90220404fb48343182'] = 'Vervaldatum';
-$_MODULE['<{ps_checkout}prestashop>payment_5ea7f231296949070013bc43715aae01'] = 'CVC';
-$_MODULE['<{ps_checkout}prestashop>payment_46b9e3665f187c739c55983f757ccda0'] = 'Ik bevestig mijn bestelling';
-$_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_a44217022190f5734b2f72ba1e4f8a79'] = 'Kaartnummer';
-$_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_95b16127e70e8a90220404fb48343182'] = 'Vervaldatum';
-$_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_5ea7f231296949070013bc43715aae01'] = 'CVC';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_a44217022190f5734b2f72ba1e4f8a79'] = 'Kaartnummer';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_95b16127e70e8a90220404fb48343182'] = 'Vervaldatum';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_5ea7f231296949070013bc43715aae01'] = 'CVC';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_46b9e3665f187c739c55983f757ccda0'] = 'Ik bevestig mijn bestelling';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_a44217022190f5734b2f72ba1e4f8a79'] = 'Kaartnummer';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_95b16127e70e8a90220404fb48343182'] = 'Vervaldatum';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_5ea7f231296949070013bc43715aae01'] = 'CVC';

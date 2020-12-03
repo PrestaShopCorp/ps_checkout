@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink;
 
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
+use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
@@ -40,6 +41,11 @@ class PayPalSdkLinkBuilder
      * @var PayPalConfiguration
      */
     private $configuration;
+
+    /**
+     * @var FundingSourceConfigurationRepository
+     */
+    private $fundingSourceConfigurationRepository;
 
     /**
      * @todo To be removed
@@ -68,10 +74,14 @@ class PayPalSdkLinkBuilder
      * @param PaypalAccountRepository $payPalAccountRepository
      * @param PayPalConfiguration $configuration
      */
-    public function __construct(PaypalAccountRepository $payPalAccountRepository, PayPalConfiguration $configuration)
-    {
+    public function __construct(
+        PaypalAccountRepository $payPalAccountRepository,
+        PayPalConfiguration $configuration,
+        FundingSourceConfigurationRepository $fundingSourceConfigurationRepository
+    ) {
         $this->payPalAccountRepository = $payPalAccountRepository;
         $this->configuration = $configuration;
+        $this->fundingSourceConfigurationRepository = $fundingSourceConfigurationRepository;
     }
 
     /**
@@ -126,48 +136,16 @@ class PayPalSdkLinkBuilder
     {
         $fundingSourcesDisabled = [];
 
-        if (false === $this->payPalAccountRepository->isCreditOrDebitCardsEnabled()) {
-            $fundingSourcesDisabled[] = 'card';
+        $fundingSources = $this->fundingSourceConfigurationRepository->getAll();
+
+        if (empty($fundingSources)) {
+            return $fundingSourcesDisabled;
         }
 
-        if (false === $this->payPalAccountRepository->isPayPalCreditEnabled()) {
-            $fundingSourcesDisabled[] = 'credit';
-        }
-
-        if (false === $this->payPalAccountRepository->isVenmoEnabled()) {
-            $fundingSourcesDisabled[] = 'venmo';
-        }
-
-        if (false === $this->payPalAccountRepository->isSepaLastschriftEnabled()) {
-            $fundingSourcesDisabled[] = 'sepa';
-        }
-
-        if (false === $this->payPalAccountRepository->isBancontactEnabled()) {
-            $fundingSourcesDisabled[] = 'bancontact';
-        }
-
-        if (false === $this->payPalAccountRepository->isEpsEnabled()) {
-            $fundingSourcesDisabled[] = 'eps';
-        }
-
-        if (false === $this->payPalAccountRepository->isGiropayEnabled()) {
-            $fundingSourcesDisabled[] = 'giropay';
-        }
-
-        if (false === $this->payPalAccountRepository->isIdealEnabled()) {
-            $fundingSourcesDisabled[] = 'ideal';
-        }
-
-        if (false === $this->payPalAccountRepository->isMyBankEnabled()) {
-            $fundingSourcesDisabled[] = 'mybank';
-        }
-
-        if (false === $this->payPalAccountRepository->isPrzelewy24Enabled()) {
-            $fundingSourcesDisabled[] = 'p24';
-        }
-
-        if (false === $this->payPalAccountRepository->isSofortEnabled()) {
-            $fundingSourcesDisabled[] = 'sofort';
+        foreach ($fundingSources as $fundingSource) {
+            if (!$fundingSource['active']) {
+                $fundingSourcesDisabled[] = $fundingSource['name'];
+            }
         }
 
         return $fundingSourcesDisabled;
