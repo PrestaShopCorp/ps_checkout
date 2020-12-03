@@ -83,8 +83,24 @@ class ValidateOrder
 
         // @todo To be refactored in v2.0.0 with Service Container
         if (true === empty($order['purchase_units'][0]['payments']['captures'])) {
+            /** @var \Ps_checkout $module */
+            $module = \Module::getInstanceByName('ps_checkout');
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\FundingSourceProvider $fundingSourceProvider */
+            $fundingSourceProvider = $module->getService('ps_checkout.provider.funding_source');
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            $psCheckoutCartRepository = $module->getService('ps_checkout.repository.pscheckoutcart');
+
+            /** @var \PsCheckoutCart|false $psCheckoutCart */
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $payload['cartId']);
+
             $apiOrder = new Order(\Context::getContext()->link);
-            $response = $apiOrder->capture($order['id'], $this->merchantId); // API call here
+            $response = $apiOrder->capture(
+                $order['id'],
+                $this->merchantId,
+                false === $psCheckoutCart ? 'paypal' : $psCheckoutCart->paypal_funding
+            ); // API call here
 
             if (false === $response['status']) {
                 if (false === empty($response['body']['message'])) {
