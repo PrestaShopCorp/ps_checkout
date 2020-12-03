@@ -158,6 +158,18 @@ class Translations
                     'onlyCC' => $this->module->l('in the meantime, you will only accept credit cards payments thought the PayPal branded credit card fields', 'translations'),
                     'confirmation' => $this->module->l('We have received the confirmation from PayPal. You can now process all card transactions with no limits.', 'translations'),
                 ],
+                'paypalIncompatibleCountry' => [
+                    'title' => $this->module->l('PrestaShop Checkout transactions won\'t work in some of your configurated countries, but there is a solution !', 'translations'),
+                    'content' => $this->module->l('Please upgrade your settings for :', 'translations'),
+                    'configure' => $this->module->l('Configure', 'translations'),
+                    'more' => $this->module->l('Know more about compliant ISO Codes', 'translations'),
+                ],
+                'paypalIncompatibleCurrency' => [
+                    'title' => $this->module->l('PrestaShop Checkout transactions won\'t work in some of your configurated currencies, but there is a solution !', 'translations'),
+                    'content' => $this->module->l('Please upgrade your settings for :', 'translations'),
+                    'configure' => $this->module->l('Configure', 'translations'),
+                    'more' => $this->module->l('Know more about compliant ISO Codes', 'translations'),
+                ],
             ],
             'panel' => [
                 'account-list' => [

@@ -26,6 +26,25 @@
     >
       <PaypalStatusBanner />
     </b-container>
+
+    <b-container
+      class="mb-4"
+      v-if="
+        firebaseStatusAccount && paypalStatusAccount && incompatibleCountryCodes
+      "
+    >
+      <PaypalIncompatibleCountry />
+    </b-container>
+
+    <b-container
+      class="mb-4"
+      v-if="
+        firebaseStatusAccount && paypalStatusAccount && incompatibleCurrencyCodes
+      "
+    >
+      <PaypalIncompatibleCurrency />
+    </b-container>
+
     <b-container>
       <AccountList />
     </b-container>
@@ -48,6 +67,8 @@
   import PaymentAcceptance from '@/components/panel/payment-acceptance';
   import Reassurance from '@/components/block/reassurance';
   import PaypalStatusBanner from '@/components/banner/paypal-status';
+  import PaypalIncompatibleCountry from '@/components/banner/paypal-incompatible-country';
+  import PaypalIncompatibleCurrency from '@/components/banner/paypal-incompatible-currency';
 
   export default {
     name: 'Accounts',
@@ -55,7 +76,9 @@
       AccountList,
       PaymentAcceptance,
       Reassurance,
-      PaypalStatusBanner
+      PaypalStatusBanner,
+      PaypalIncompatibleCountry,
+      PaypalIncompatibleCurrency
     },
     computed: {
       firebaseStatusAccount() {
@@ -66,7 +89,16 @@
       },
       isLiveStepConfirmed() {
         return this.$store.state.context.liveStepConfirmed;
+      },
+      incompatibleCountryCodes() {
+        return this.$store.state.context.incompatibleCountryCodes;
+      },
+      incompatibleCurrencyCodes() {
+        return this.$store.state.context.incompatibleCurrencyCodes;
       }
+    },
+    mounted() {
+      console.log(this.$store.state.context);
     }
   };
 </script>

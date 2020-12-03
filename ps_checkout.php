@@ -34,6 +34,7 @@ class Ps_checkout extends PaymentModule
      * @var array
      */
     const HOOK_LIST = [
+        'displayAdminAfterHeader',
         'displayOrderConfirmation',
         'displayAdminOrderLeft',
         'displayAdminOrderMainBottom',
@@ -51,7 +52,6 @@ class Ps_checkout extends PaymentModule
      */
     const HOOK_LIST_17 = [
         'paymentOptions',
-        'displayAdminAfterHeader',
         'displayExpressCheckout',
         'displayFooterProduct',
         'displayPersonalInformationTop',
@@ -537,32 +537,53 @@ class Ps_checkout extends PaymentModule
     }
 
     /**
-     * Display promotion block in the admin payment controller
+     * Hook used to display templates under BO header
      */
     public function hookDisplayAdminAfterHeader()
     {
-        if ('AdminPayment' !== Tools::getValue('controller')) {
+        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->getService('ps_checkout.paypal.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+        $isShop17 = $shopContext->isShop17();
+
+        if ('AdminPayment' === Tools::getValue('controller') && $isShop17) { // Display on PrestaShop 1.7.x.x only
+            $params = [
+                'imgPath' => $this->_path . 'views/img/',
+                'configureLink' => (new PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter($this->context->link))->getAdminLink(
+                    'AdminModules',
+                    true,
+                    [],
+                    [
+                        'configure' => 'ps_checkout',
+                    ]
+                ),
+            ];
+            $track = 'View Payment Methods PS Page';
+            $template = '/views/templates/hook/adminAfterHeader/promotionBlock.tpl';
+        } elseif ('AdminCountries' === Tools::getValue('controller')) {
+            $params = [
+                'isShop17' => $isShop17,
+                'codesType' => 'countries',
+                'incompatibleCodes' => $paypalConfiguration->getIncompatibleCountryCodes(),
+                'paypalLink' => 'https://developer.paypal.com/docs/api/reference/country-codes/#',
+            ];
+            $track = 'View Countries PS Page';
+            $template = '/views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
+        } elseif ('AdminCurrencies' === Tools::getValue('controller')) {
+            $params = [
+                'isShop17' => $isShop17,
+                'codesType' => 'currencies',
+                'incompatibleCodes' => $paypalConfiguration->getIncompatibleCurrencyCodes(),
+                'paypalLink' => 'https://developer.paypal.com/docs/api/reference/currency-codes/#',
+            ];
+            $track = 'View Currencies PS Page';
+            $template = '/views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
+        } else {
             return false;
         }
 
-        $link = (new PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter($this->context->link))->getAdminLink(
-            'AdminModules',
-            true,
-            [],
-            [
-                'configure' => 'ps_checkout',
-            ]
-        );
-
-        $this->context->smarty->assign([
-            'imgPath' => $this->_path . 'views/img/',
-            'configureLink' => $link,
-        ]);
-
-        // track when payment method header is called
-        $this->trackModuleAction('View Payment Methods PS Page');
-
-        return $this->display(__FILE__, '/views/templates/hook/adminAfterHeader.tpl');
+        return $this->displayAdminAfterHeader($params, $track, $template);
     }
 
     /**
@@ -573,6 +594,24 @@ class Ps_checkout extends PaymentModule
         if ('AdminPayment' === Tools::getValue('controller')) {
             $this->context->controller->addCss(
                 $this->_path . 'views/css/adminAfterHeader.css?version=' . $this->version,
+                'all',
+                null,
+                false
+            );
+        }
+
+        if ('AdminCountries' === Tools::getValue('controller')) {
+            $this->context->controller->addCss(
+                $this->_path . 'views/css/incompatible-banner.css?version=' . $this->version,
+                'all',
+                null,
+                false
+            );
+        }
+
+        if ('AdminCurrencies' === Tools::getValue('controller')) {
+            $this->context->controller->addCss(
+                $this->_path . 'views/css/incompatible-banner.css?version=' . $this->version,
                 'all',
                 null,
                 false
@@ -1183,5 +1222,20 @@ class Ps_checkout extends PaymentModule
                 // Sometime on module enable after an upgrade .env data are not loaded
             }
         }
+    }
+
+    /**
+     * @param array $params
+     * @param string $track
+     * @param string $template
+     */
+    private function displayAdminAfterHeader($params, $track, $template)
+    {
+        $this->context->smarty->assign($params);
+
+        // track when payment method header is called
+        $this->trackModuleAction($track);
+
+        return $this->display(__FILE__, $template);
     }
 }
