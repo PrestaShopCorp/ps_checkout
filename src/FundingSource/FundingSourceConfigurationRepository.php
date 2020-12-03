@@ -105,9 +105,8 @@ class FundingSourceConfigurationRepository
                 [
                     'position' => (int) $data['position'],
                     'active' => (int) $data['isEnabled'],
-                    'id_shop' => (int) $this->context->getShopId(),
                 ],
-                'name = "' . pSQL($data['name']) . '"'
+                '`name` = "' . pSQL($data['name']) . '" AND `id_shop` = ' . (int) $this->context->getShopId()
             );
         }
 

@@ -29,7 +29,10 @@ export default {
     state.captureMode = payload;
   },
   [types.UPDATE_PAYMENT_CARD_AVAILABILITY](state, payload) {
-    state.cardIsEnabled = payload;
+    state.isFundingSourceCardEnabled = payload;
+  },
+  [types.UPDATE_CREDIT_CARD_FIELDS](state, payload) {
+    state.cardIsEnabled = payload.hostedFieldsEnabled;
   },
   [types.UPDATE_CARD_INLINE_PAYPAL_AVAILABILITY](state, payload) {
     state.cardInlinePaypalIsEnabled = payload;

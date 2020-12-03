@@ -16,28 +16,62 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-export class MarkerComponent {
-  constructor(checkout, fundingSource, htmlElementId) {
-    this.checkout = checkout;
-    this.config = this.checkout.config;
+import { BaseComponent } from '../../core/base.component';
 
-    this.fundingSource = fundingSource;
-    this.htmlElementId = htmlElementId;
+/**
+ * @typedef MarkComponentProps
+ *
+ * @param {string} fundingSource.name
+ * @param {*}      fundingSource.mark
+ *
+ * @param {HTMLElement} HTMLElement
+ * @param {HTMLElement} [HTMLElementImage]
+ */
+
+export class MarkComponent extends BaseComponent {
+  static INJECT = {
+    config: 'config'
+  };
+
+  /**
+   *
+   * @param app
+   * @param {MarkComponentProps} props
+   */
+  constructor(app, props) {
+    super(app, props);
+
+    this.data.name = props.fundingSource.name;
+    this.data.mark = props.fundingSource.mark;
+
+    this.data.HTMLElement = props.HTMLElement;
+    this.data.HTMLElementImage = props.HTMLElementImage || null;
+  }
+
+  hasCustomMark() {
+    return this.config.customMark[this.data.name];
+  }
+
+  renderCustomMark() {
+    const src = this.config.customMark[this.data.name];
+
+    this.data.HTMLElementImage = document.createElement('img');
+    this.data.HTMLElementImage.classList.add('ps-checkout-funding-img');
+    this.data.HTMLElementImage.setAttribute('alt', this.data.name);
+    this.data.HTMLElementImage.setAttribute('src', src);
+
+    this.data.HTMLElement.append(this.data.HTMLElementImage);
   }
 
   render() {
-    if (this.config.customMarker[this.fundingSource.name]) {
-      this.image = document.createElement('img');
-      this.image.classList.add('ps-checkout-funding-img');
-      this.image.setAttribute('alt', this.fundingSource.name);
-      this.image.setAttribute(
-        'src',
-        this.config.customMarker[this.fundingSource.name]
-      );
+    this.data.HTMLElement.classList.add('ps_checkout-mark');
+    this.data.HTMLElement.setAttribute('data-funding-source', this.data.name);
 
-      document.querySelector(this.htmlElementId).append(this.image);
+    if (this.hasCustomMark()) {
+      this.renderCustomMark();
     } else {
-      this.fundingSource.mark.render(this.htmlElementId);
+      const markSelector = `.ps_checkout-mark[data-funding-source=${this.data.name}]`;
+      this.data.mark.render(markSelector);
     }
 
     return this;

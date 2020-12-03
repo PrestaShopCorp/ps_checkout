@@ -41,7 +41,7 @@ export const PsCheckoutConfig = {
   },
 
   loaderImage: window.ps_checkoutLoaderImage,
-  customMarker: {
+  customMark: {
     card: window.ps_checkoutCardFundingSourceImg
   },
 

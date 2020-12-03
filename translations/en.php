@@ -314,7 +314,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_1441b24706d1d541f7312b64a89fec06
 $_MODULE['<{ps_checkout}prestashop>translations_230a08d54d32844a29f3b5e11cd67946'] = 'Alternative Credit Card Fields activation';
 $_MODULE['<{ps_checkout}prestashop>translations_6f266e3508d20d99c079e0130c679208'] = 'PayPal Branded Credit Card Fields';
 $_MODULE['<{ps_checkout}prestashop>translations_052a5961a6b60e7acd69643f309f47fd'] = 'PayPal branded card fields are not available because Integrated card fields are activated, which provide a better checkout experience.';
-$_MODULE['<{ps_checkout}prestashop>translations_8943eaeef1e351c8a69911799aa8676b'] = 'What is the difference between Integrated Credit Card fields & PayPal branded Credit Card Fields ?';
+$_MODULE['<{ps_checkout}prestashop>translations_19146f30e246bba7235f1f052711fe74'] = 'What is the difference between Integrated Credit Card fields & PayPal branded Credit Card Fields ?';
 $_MODULE['<{ps_checkout}prestashop>translations_ff8313e7d0a38ececa23e28fd77421de'] = 'When to use PayPal branded Credit Card fields ?';
 $_MODULE['<{ps_checkout}prestashop>translations_4cb668c4f89af857decf3d6ce310cd77'] = 'Integrated Credit Card fields provide the best payment experience you can find in PrestaShop. Well integrated in your checkout process, not branded, with the fewest number of fields, and lowest fee rates (see them on';
 $_MODULE['<{ps_checkout}prestashop>translations_3a8e02212752fecc2b5eb72111cdc40d'] = ') : we highly recommend to use these ones, by default. But you need PayPal full approval for accepting Credit Cards payment with the fields. You can see the status of this approval in the';
@@ -493,10 +493,10 @@ $_MODULE['<{ps_checkout}prestashop>displaypaymentbybinaries_d7467080ec566ee0c6cb
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_733ea3e302b9c48da7777481ed50e59a'] = 'Processing payment canceled, please choose another payment method or try again.';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_42275e6d860a19342a3943af7d1e48a0'] = 'Processing payment error';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_980f9122ef2d3b8195b5886e0e7fc8f0'] = 'Payment failed, you have not been charged.';
-$_MODULE['<{ps_checkout}prestashop>payment_a44217022190f5734b2f72ba1e4f8a79'] = 'Card number';
-$_MODULE['<{ps_checkout}prestashop>payment_95b16127e70e8a90220404fb48343182'] = 'Expiry date';
-$_MODULE['<{ps_checkout}prestashop>payment_5ea7f231296949070013bc43715aae01'] = 'CVC';
-$_MODULE['<{ps_checkout}prestashop>payment_46b9e3665f187c739c55983f757ccda0'] = 'I confirm my order';
-$_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_a44217022190f5734b2f72ba1e4f8a79'] = 'Card number';
-$_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_95b16127e70e8a90220404fb48343182'] = 'Expiry date';
-$_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_5ea7f231296949070013bc43715aae01'] = 'CVC';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_a44217022190f5734b2f72ba1e4f8a79'] = 'Card number';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_95b16127e70e8a90220404fb48343182'] = 'Expiry date';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_5ea7f231296949070013bc43715aae01'] = 'CVC';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_46b9e3665f187c739c55983f757ccda0'] = 'I confirm my order';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_a44217022190f5734b2f72ba1e4f8a79'] = 'Card number';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_95b16127e70e8a90220404fb48343182'] = 'Expiry date';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_5ea7f231296949070013bc43715aae01'] = 'CVC';

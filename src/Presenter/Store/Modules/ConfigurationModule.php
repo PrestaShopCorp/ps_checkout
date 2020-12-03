@@ -70,6 +70,7 @@ class ConfigurationModule implements PresenterInterface
                 'paymentMethods' => $this->getPaymentMethods(),
                 'captureMode' => $this->paypalConfiguration->getIntent(),
                 'paymentMode' => $this->paypalConfiguration->getPaymentMode(),
+                'isFundingSourceCardEnabled' => $this->isFundingSourceCardEnabled(),
                 'cardIsEnabled' => $this->paypalConfiguration->isCardPaymentEnabled(),
                 'cardInlinePaypalIsEnabled' => $this->paypalConfiguration->isCardInlinePaypalIsEnabled(),
                 'logger' => [
@@ -110,5 +111,21 @@ class ConfigurationModule implements PresenterInterface
     private function getPaymentMethods()
     {
         return $this->fundingSourceProvider->getAll(true);
+    }
+
+    /**
+     * Is funding source card enabled
+     *
+     * @return bool
+     */
+    private function isFundingSourceCardEnabled()
+    {
+        foreach ($this->fundingSourceProvider->getAll(true) as $fundingSource) {
+            if ('card' === $fundingSource->name) {
+                return $fundingSource->isEnabled;
+            }
+        }
+
+        return false;
     }
 }

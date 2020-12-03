@@ -63,4 +63,5 @@ class PsCheckoutException extends \Exception
     const PSCHECKOUT_UPDATE_ORDER_HANDLE_ERROR = 39;
     const PRESTASHOP_VALIDATE_ORDER = 40;
     const PRESTASHOP_ORDER_PAYMENT = 41;
+    const PRESTASHOP_CART_NOT_FOUND = 42;
 }

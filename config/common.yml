@@ -144,6 +144,7 @@ services:
     arguments:
       - '@ps_checkout.repository.paypal.account'
       - '@ps_checkout.paypal.configuration'
+      - '@ps_checkout.funding_source.configuration.repository'
 
   ps_checkout.repository.prestashop.account:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
