@@ -29,7 +29,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_PAYMENT_METHODS_ORDER, payload.paymentMethods);
-      return true;
+      return Promise.resolve(true);
     });
   },
 
@@ -42,7 +42,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_PAYMENT_MODE, payload);
-      return true;
+      return Promise.resolve(true);
     });
   },
 
@@ -55,31 +55,35 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_CAPTURE_MODE, payload);
-      return true;
+      return Promise.resolve(true);
     });
   },
-
-  toggleHostedFields({ commit, getters }, payload) {
+  updateCreditCardFields({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: 'ToggleCardPaymentAvailability',
+      action: 'UpdateCreditCardFields',
       data: {
-        status: payload ? 1 : 0
+        hostedFieldsEnabled: payload
       }
     }).then(() => {
-      commit(types.UPDATE_PAYMENT_CARD_AVAILABILITY, payload);
-      return payload;
+      commit(types.UPDATE_CREDIT_CARD_FIELDS, payload);
+      return Promise.resolve(true);
     });
   },
-  toggleCardInlinePayPalField({ commit, getters }, payload) {
+  togglePaymentOptionAvailability({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: 'ToggleCardInlinePayPalPayment',
+      action: 'TogglePaymentOptionAvailability',
       data: {
-        status: payload ? 1 : 0
+        paymentOption: JSON.stringify(payload.paymentOption)
       }
     }).then(() => {
-      commit(types.UPDATE_CARD_INLINE_PAYPAL_AVAILABILITY, payload);
+      if ('card' === payload.paymentOption.name) {
+        commit(
+          types.UPDATE_PAYMENT_CARD_AVAILABILITY,
+          payload.paymentOption.isEnabled
+        );
+      }
       return Promise.resolve(payload);
     });
   },
@@ -92,7 +96,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_EC_ORDER_PAGE, payload);
-      return payload;
+      return Promise.resolve(payload);
     });
   },
 
@@ -105,7 +109,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_EC_CHECKOUT_PAGE, payload);
-      return payload;
+      return Promise.resolve(payload);
     });
   },
 
@@ -118,7 +122,7 @@ export default {
       }
     }).then(() => {
       commit(types.UPDATE_EC_PRODUCT_PAGE, payload);
-      return payload;
+      return Promise.resolve(payload);
     });
   },
 

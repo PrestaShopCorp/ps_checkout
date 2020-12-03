@@ -17,7 +17,11 @@
  * International Registered Trademark & Property of PrestaShop SA
  *}
 
-<section id="{$moduleName}-binary-form" class="js-payment-binary js-payment-{$moduleName} disabled">
-  <p class="alert alert-warning accept-cgv">{l s='You must accept the terms and conditions to be able to process your order.' mod='ps_checkout'}</p>
-  <div id="{$moduleName}-buttons-container"></div>
-</section>
+{foreach from=$paymentOptions item="fundingSource"}
+  <section class="js-payment-binary js-payment-ps_checkout js-payment-ps_checkout-{$fundingSource} disabled">
+    <p class="alert alert-warning accept-cgv">{l s='You must accept the terms and conditions to be able to process your order.' mod='ps_checkout'}</p>
+    <div id="ps_checkout-{$fundingSource}-buttons-container">
+      <div class="ps_checkout-button" data-funding-source="{$fundingSource}"></div>
+    </div>
+  </section>
+{/foreach}

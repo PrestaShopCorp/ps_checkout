@@ -56,6 +56,7 @@ class Translations
             'general' => [
                 'save' => $this->module->l('Save', 'translations'),
                 'testModeOn' => $this->module->l('Test mode is turned on', 'translations'),
+                'wrongConfiguration' => $this->module->l('An error during configuration was detected. Please reset the PrestaShop Checkout module and configure it again.', 'translations'),
                 'multiShop' => [
                     'title' => $this->module->l('Multistore detected', 'translations'),
                     'subtitle' => $this->module->l('Each shop must be configured separately, even if you configure the same account on all of them.', 'translations'),
@@ -147,7 +148,7 @@ class Translations
                     'buttonSuccess' => $this->module->l('Thank you, close this message', 'translations'),
                     'buttonLegal' => $this->module->l('Send my legal documents now', 'translations'),
                     'allSet' => $this->module->l('You\'re all set !', 'translations'),
-                    'congrats' => $this->module->l('Congrats ! You\'re can to start selling online now.', 'translations'),
+                    'congrats' => $this->module->l('Congrats ! You can start selling online now.', 'translations'),
                     'waitingFinalApprove' => $this->module->l('As soon as PayPal gets all your documents, you\'ll have to wait 48h for final approval.', 'translations'),
                     'oneMoreThing' => $this->module->l('One more thing : send documents to be fully approved by PayPal', 'translations'),
                     'psAccountConnected' => $this->module->l('Connect your PrestaShop account', 'translations'),
@@ -226,6 +227,8 @@ class Translations
                     'restricted' => $this->module->l('Restricted', 'translations'),
                     'creditCard' => $this->module->l('Credit card', 'translations'),
                     'paypal' => $this->module->l('PayPal', 'translations'),
+                    'availableIn' => $this->module->l('available in :', 'translations'),
+                    'allCountries' => $this->module->l('All countries', 'translations'),
                     'localPaymentMethods' => $this->module->l('Local payment methods', 'translations'),
                     'tipsTitle' => $this->module->l('TIPS', 'translations'),
                     'tipsContent' => $this->module->l('Boost your conversion rate by displaying PayPal as the first choice in the list of payment methods', 'translations'),
@@ -257,12 +260,14 @@ class Translations
                 'payment-method-activation' => [
                     'title' => $this->module->l('Alternative Credit Card Fields activation', 'translations'),
                     'label' => $this->module->l('PayPal Branded Credit Card Fields', 'translations'),
-                    'disable' => $this->module->l('PayPal branded card fields are not available because Integrated card fields are activated, which provide a better checkout experience.', 'translations'),
-                    'popover-difference-question' => $this->module->l('What is the difference between Integrated Credit Card fields & PayPal branded Credit Card Fields ?', 'translations'),
+                    'disable' => $this->module->l('You can choose the type of credit card fields only if Credit card is activated in « Customize checkout experience » tab.', 'translations'),
+                    'popover-difference-question' => $this->module->l('What is the difference between Integrated Credit Card fields and PayPal branded Credit Card Fields ?', 'translations'),
                     'popover-when-question' => $this->module->l('When to use PayPal branded Credit Card fields ?', 'translations'),
                     'popover-difference-answer-begin' => $this->module->l('Integrated Credit Card fields provide the best payment experience you can find in PrestaShop. Well integrated in your checkout process, not branded, with the fewest number of fields, and lowest fee rates (see them on ', 'translations'),
                     'popover-difference-answer-end' => $this->module->l(' ) : we highly recommend to use these ones, by default. But you need PayPal full approval for accepting Credit Cards payment with the fields. You can see the status of this approval in the ', 'translations'),
                     'popover-when-answer' => $this->module->l('If approval is pending or issues are encountered with the Integrated fields, you can activate these fields as a backup, only if Integrated fields are not available or deactivated. The fees are the same as PayPal payment method.', 'translations'),
+                    'integrated-credit-card-fields' => $this->module->l('Integrated Credit Card Fields', 'translations'),
+                    'paypal-branded-credit-card-fields' => $this->module->l('PayPal branded Credit Card Fields', 'translations'),
                 ],
                 'express-checkout' => [
                     'title' => $this->module->l('Define PayPal express checkout flow', 'translations'),

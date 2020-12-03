@@ -157,8 +157,8 @@ class OrderDispatcher implements Dispatcher
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSourceProvider $fundingSourceProvider */
-        $fundingSourceProvider = $module->getService('ps_checkout.provider.funding_source');
+        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider $fundingSourceTranslationProvider */
+        $fundingSourceTranslationProvider = $module->getService('ps_checkout.funding_source.translation');
 
         /** @var \OrderPayment[] $orderPayments */
         $orderPayments = $orderPaymentCollection->getAll();
@@ -166,21 +166,29 @@ class OrderDispatcher implements Dispatcher
             if (\Validate::isLoadedObject($orderPayment)) {
                 if ($orderPayment->transaction_id !== $resource['id']) {
                     $orderPayment->transaction_id = $resource['id'];
-                    $fundingSourceProvider->getPaymentMethodName($this->psCheckoutCart->paypal_funding);
-                    $orderPayment->save();
+                    $orderPayment->payment_method = $fundingSourceTranslationProvider->getPaymentMethodName($this->psCheckoutCart->paypal_funding);
+                    try {
+                        $orderPayment->save();
+                    } catch (\Exception $exception) {
+                        throw new PsCheckoutException('Cannot update OrderPayment', PsCheckoutException::PRESTASHOP_ORDER_PAYMENT, $exception);
+                    }
                 }
                 $shouldAddOrderPayment = false;
             }
         }
 
         if (true === $shouldAddOrderPayment) {
-            $order->addOrderPayment(
-                $resource['amount']['value'],
-                $fundingSourceProvider->getPaymentMethodName($this->psCheckoutCart->paypal_funding),
-                $resource['id'],
-                \Currency::getCurrencyInstance(\Currency::getIdByIsoCode($resource['amount']['currency_code'])),
-                (new DatePresenter($resource['create_time'], 'Y-m-d H:i:s'))->present()
-            );
+            try {
+                $order->addOrderPayment(
+                    $resource['amount']['value'],
+                    $fundingSourceTranslationProvider->getPaymentMethodName($this->psCheckoutCart->paypal_funding),
+                    $resource['id'],
+                    \Currency::getCurrencyInstance(\Currency::getIdByIsoCode($resource['amount']['currency_code'])),
+                    (new DatePresenter($resource['create_time'], 'Y-m-d H:i:s'))->present()
+                );
+            } catch (\Exception $exception) {
+                throw new PsCheckoutException('Cannot add OrderPayment', PsCheckoutException::PRESTASHOP_ORDER_PAYMENT, $exception);
+            }
         }
 
         return true;
@@ -257,7 +265,7 @@ class OrderDispatcher implements Dispatcher
         $this->psCheckoutCart = $psCheckoutCartCollection->getFirst();
 
         if (false === $this->psCheckoutCart) {
-            throw new PsCheckoutException(sprintf('order #%s does not exist', $payPalOrderId), PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
+            throw new PsCheckoutException(sprintf('order #%s is not linked to a cart', $payPalOrderId), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
     }
 }
