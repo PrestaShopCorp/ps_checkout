@@ -86,8 +86,8 @@ class ValidateOrder
             /** @var \Ps_checkout $module */
             $module = \Module::getInstanceByName('ps_checkout');
 
-            /** @var \PrestaShop\Module\PrestashopCheckout\FundingSourceProvider $fundingSourceProvider */
-            $fundingSourceProvider = $module->getService('ps_checkout.funding_source.provider');
+            /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider $fundingSourceTranslationProvider */
+            $fundingSourceTranslationProvider = $module->getService('ps_checkout.funding_source.translation');
 
             /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
             $psCheckoutCartRepository = $module->getService('ps_checkout.repository.pscheckoutcart');
@@ -133,18 +133,6 @@ class ValidateOrder
                     $payPalProcessorResponse->throwException();
                 }
             }
-
-            /** @var \Ps_checkout $module */
-            $module = \Module::getInstanceByName('ps_checkout');
-
-            /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider $fundingSourceTranslationProvider */
-            $fundingSourceTranslationProvider = $module->getService('ps_checkout.funding_source.translation');
-
-            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
-            $psCheckoutCartRepository = $module->getService('ps_checkout.repository.pscheckoutcart');
-
-            /** @var \PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $payload['cartId']);
 
             if (false === $psCheckoutCart) {
                 $psCheckoutCart = new \PsCheckoutCart();
