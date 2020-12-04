@@ -47,9 +47,20 @@ function upgrade_module_2_2_0($module)
         $shopsList = \Shop::getShops(false, null, true);
 
         foreach ($shopsList as $shopId) {
-            $isCardEnabled = (bool) \Configuration::get('PS_CHECKOUT_CARD_PAYMENT_ENABLED', null, null, $shopId);
+            $isCardEnabled = (bool) \Configuration::get(
+                'PS_CHECKOUT_CARD_PAYMENT_ENABLED',
+                null,
+                null,
+                $shopId
+            );
+            $hasFundingSourceCard = (bool) $db->getValue('
+                SELECT 1
+                FROM `' . _DB_PREFIX_ . 'pscheckout_funding_source`
+                WHERE `name` = "card"
+                AND `id_shop` = ' . (int) $shopId
+            );
 
-            if (false === $isCardEnabled) {
+            if (false === $isCardEnabled && false === $hasFundingSourceCard) {
                 $db->insert(
                     'pscheckout_funding_source',
                     [
@@ -63,5 +74,5 @@ function upgrade_module_2_2_0($module)
         }
     }
 
-    return $createFundingSourceTable;
+    return true;
 }
