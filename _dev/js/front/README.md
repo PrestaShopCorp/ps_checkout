@@ -4,6 +4,32 @@
 so far. It was designed to work with the default Prestashop Theme, but it contains a set of settings that allows 
 you to customize it for your own Prestashop themes and modules.
 
+## In-depth module description
+These schemas provide further info on how Ps Checkout generates the HTML on the payment tunnel and how we set the
+initialization javascript code.
+
+### HTML Generation
+![HTML Generation Schema](docs/html-generation.jpg)
+
+### Front-end Initialization
+![Front-end Initialization Schema](docs/front-end-initialization.jpg)
+
+#### Notes
+- Only eligible payment options will unhide at the end of the render process, even if they are active on the
+configuration.
+- You can check which payment options will be tested for eligibility by checking the variable
+`ps_checkoutFundingSourcesSorted` in your devtools.
+- The integrated card form (hosted fields) appears if all these conditions are met:
+    - The card payment option is active
+    - The 'Integrated Credit Card Fields' option is active in the module configuration (Advanced Options)*
+    - The card payment option is eligible (checked by PayPal)
+    - The PayPal SDK has been loaded with a client token**
+
+\* You can verify this by checking the variable `ps_checkoutHostedFieldsEnabled` in your devtools.
+
+\** You can verify this by looking the 'Network' tab in your devtools and checking that the endpoint
+`/module/ps_checkout/token` has been called without errors.
+ 
 ## Customizing Ps Checkout
 
 **Ps Checkout** internally uses a global ``window.ps_checkout`` javascript object to implement **Paypal Checkout**
