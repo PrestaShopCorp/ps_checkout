@@ -87,7 +87,7 @@ class ValidateOrder
             $module = \Module::getInstanceByName('ps_checkout');
 
             /** @var \PrestaShop\Module\PrestashopCheckout\FundingSourceProvider $fundingSourceProvider */
-            $fundingSourceProvider = $module->getService('ps_checkout.provider.funding_source');
+            $fundingSourceProvider = $module->getService('ps_checkout.funding_source.provider');
 
             /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
             $psCheckoutCartRepository = $module->getService('ps_checkout.repository.pscheckoutcart');
