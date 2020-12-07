@@ -34,7 +34,7 @@ function upgrade_module_2_3_0($module)
 
     foreach (\Shop::getShops(false, null, true) as $shopId) {
         $result = $result && (bool) Configuration::updateValue(
-            'PS_CHECKOUT_PAYPAL_BUTTON'
+            'PS_CHECKOUT_PAYPAL_BUTTON',
             json_encode([
                 'shape' => 'pill',
                 'label' => 'pay',

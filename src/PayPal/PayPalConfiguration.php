@@ -296,6 +296,9 @@ class PayPalConfiguration
         }
 
         return $incompatibleCodes;
+    }
+
+    /**
      * @return array
      */
     public function getButtonConfiguration()
