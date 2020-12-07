@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository;
 use PrestaShop\Module\PrestashopCheckout\Settings\RoundingSettings;
 
 class PayPalConfiguration
@@ -42,9 +43,15 @@ class PayPalConfiguration
      */
     private $configuration;
 
-    public function __construct(PrestaShopConfiguration $configuration)
+    /**
+     * @var PayPalCodeRepository
+     */
+    private $codeRepository;
+
+    public function __construct(PrestaShopConfiguration $configuration, PayPalCodeRepository $codeRepository)
     {
         $this->configuration = $configuration;
+        $this->codeRepository = $codeRepository;
     }
 
     /**
@@ -219,5 +226,74 @@ class PayPalConfiguration
     public function is3dSecureEnabled()
     {
         return false === (bool) $this->configuration->get(static::HOSTED_FIELDS_3DS_DISABLED);
+    }
+
+    /**
+     * Get the incompatible ISO country codes with Paypal.
+     *
+     * @return array
+     */
+    public function getIncompatibleCountryCodes()
+    {
+        $db = \Db::getInstance();
+        $shopCodes = $db->executeS(
+            "SELECT c.iso_code
+            FROM ps_country c
+            JOIN ps_module_country mc ON mc.id_country = c.id_country
+            JOIN ps_module m ON m.id_module = mc.id_module
+            WHERE c.active = 1
+            AND m.name = 'ps_checkout'
+            AND mc.id_shop = " . \Context::getContext()->shop->id
+        );
+        $paypalCodes = $this->codeRepository->getCountryCodes();
+
+        return $this->checkCodesCompatibility($shopCodes, $paypalCodes);
+    }
+
+    /**
+     * Get the incompatible ISO currency codes with Paypal.
+     *
+     * @return array
+     */
+    public function getIncompatibleCurrencyCodes()
+    {
+        $db = \Db::getInstance();
+        $shopCodes = $db->executeS(
+            "SELECT c.iso_code
+            FROM ps_currency c
+            JOIN ps_module_currency mc ON mc.id_currency = c.id_currency
+            JOIN ps_module m ON m.id_module = mc.id_module
+            WHERE c.active = 1
+            AND m.name = 'ps_checkout'
+            AND mc.id_shop = " . \Context::getContext()->shop->id
+        );
+        $paypalCodes = $this->codeRepository->getCurrencyCodes();
+
+        return $this->checkCodesCompatibility($shopCodes, $paypalCodes);
+    }
+
+    /**
+     * Check shop codes compatibility with Paypal
+     *
+     * @param array $shopCodes
+     * @param array $paypalCodes
+     *
+     * @return array|null
+     */
+    private function checkCodesCompatibility($shopCodes, $paypalCodes)
+    {
+        $incompatibleCodes = [];
+
+        foreach ($shopCodes as $shopCode) {
+            if (!in_array(strtoupper($shopCode['iso_code']), array_keys($paypalCodes))) {
+                $incompatibleCodes[] = $shopCode['iso_code'];
+            }
+        }
+
+        if (empty($incompatibleCodes)) {
+            $incompatibleCodes = null;
+        }
+
+        return $incompatibleCodes;
     }
 }
