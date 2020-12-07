@@ -23,6 +23,10 @@ export default {
   translations: state => state.translations,
   roundingSettingsIsCorrect: state => state.roundingSettingsIsCorrect,
   shopId: state => state.shopId,
+  incompatibleCountryCodes: state => state.incompatibleCountryCodes,
+  incompatibleCurrencyCodes: state => state.incompatibleCurrencyCodes,
+  countriesLink: state => state.countriesLink,
+  currenciesLink: state => state.currenciesLink,
   merchantIsFullyOnboarded: (state, getters) =>
     getters.paypalOnboardingIsCompleted &&
     getters.firebaseOnboardingIsCompleted &&

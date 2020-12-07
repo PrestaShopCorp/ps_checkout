@@ -70,6 +70,15 @@ class TableManager
               `date_upd` datetime NOT NULL,
               PRIMARY KEY (`id_pscheckout_cart`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+        ') && $this->db->execute('
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_funding_source` (
+            `name` varchar(20) NOT NULL,
+            `active` tinyint(1) unsigned DEFAULT 0 NOT NULL,
+            `position` tinyint(2) unsigned NOT NULL,
+            `id_shop` int unsigned NOT NULL,
+            PRIMARY KEY (`name`, `id_shop`),
+            INDEX (`id_shop`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');
     }
 
