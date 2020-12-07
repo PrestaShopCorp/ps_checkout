@@ -378,6 +378,11 @@ class Ps_checkout extends PaymentModule
             'store' => $storePresenter->present(),
         ]);
 
+        $this->context->controller->addJS(
+            $this->getPathUri() . 'views/js/app.js?version=' . $this->version,
+            false
+        );
+
         return $this->display(__FILE__, '/views/templates/admin/configuration.tpl');
     }
 
@@ -624,10 +629,6 @@ class Ps_checkout extends PaymentModule
                 false
             );
         }
-
-        if ($this->name === Tools::getValue('configure')) {
-            $this->context->controller->addJS($this->getPathUri() . 'views/js/app.js?version=' . $this->version);
-        }
     }
 
     /**
@@ -785,7 +786,10 @@ class Ps_checkout extends PaymentModule
                 ]
             );
         } else {
-            $this->context->controller->addJS($this->getPathUri() . 'views/js/front.js?version=' . $this->version);
+            $this->context->controller->addJS(
+                $this->getPathUri() . 'views/js/front.js?version=' . $this->version,
+                false
+            );
         }
 
         if (method_exists($this->context->controller, 'registerStylesheet')) {
