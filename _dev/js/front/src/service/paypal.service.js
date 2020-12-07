@@ -57,9 +57,9 @@ export class PaypalService {
     return this.sdk.Buttons({
       fundingSource: fundingSource,
       style: {
-        label: 'pay',
-        commit: false
+        label: 'pay'
       },
+      commit: false,
       ...events
     });
   }
