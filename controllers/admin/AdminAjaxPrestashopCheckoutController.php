@@ -691,4 +691,14 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             'lines' => $fileData['lines'],
         ]));
     }
+
+    /**
+     * AJAX: Save PayPal button configuration
+     */
+    public function ajaxProcessSavePaypalButtonConfiguration()
+    {
+        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
+        $paypalConfiguration->setButtonConfiguration(json_decode(Tools::getValue('configuration')));
+    }
 }

@@ -17,7 +17,10 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *-->
 <template>
-  <div class="card shadow rounded" v-if="!isPayPalStatusConfirmed && this.displayLiveStep">
+  <div
+    class="card shadow rounded"
+    v-if="!isPayPalStatusConfirmed && this.displayLiveStep"
+  >
     <div class="card-body d-flex pl-0">
       <div class="d-flex mr-2">
         <img src="@/assets/images/cb.png" alt="cb" />
@@ -169,6 +172,6 @@
   }
 
   #app .shadow {
-    box-shadow: .5rem 1rem .5rem rgba(0,0,0,.15)!important;
+    box-shadow: 0.5rem 1rem 0.5rem rgba(0, 0, 0, 0.15) !important;
   }
 </style>

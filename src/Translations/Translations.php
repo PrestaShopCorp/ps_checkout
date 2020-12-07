@@ -280,6 +280,43 @@ class Translations
                     'alertTitle' => $this->module->l('TIPS', 'translations'),
                     'alertContent' => $this->module->l('Express Checkout Shortcut allows merging account creation and payment, to make your customers purchases effortless.', 'translations'),
                 ],
+                'button-customization' => [
+                    'title' => $this->module->l('Design smart payment buttons', 'translations'),
+                    'shape' => [
+                        'title' => $this->module->l('Adjust shape for all buttons', 'translations'),
+                        'select' => $this->module->l('Select the shape', 'translations'),
+                        'pill' => $this->module->l('Pill', 'translations'),
+                        'squared' => $this->module->l('Rectangle', 'translations'),
+                    ],
+                    'customize' => [
+                        'title' => $this->module->l('Customize PayPal button', 'translations'),
+                        'label' => [
+                            'select' => $this->module->l('Choose label', 'translations'),
+                            'pay' => $this->module->l('Pay with', 'translations'),
+                            'checkout' => $this->module->l('Checkout', 'translations'),
+                            'buynow' => $this->module->l('Buy Now', 'translations'),
+                        ],
+                        'color' => [
+                            'select' => $this->module->l('Select background color', 'translations'),
+                            'gold' => $this->module->l('Gold', 'translations'),
+                            'blue' => $this->module->l('Blue', 'translations'),
+                            'silver' => $this->module->l('Silver', 'translations'),
+                            'white' => $this->module->l('White', 'translations'),
+                            'black' => $this->module->l('Black', 'translations'),
+                        ],
+                        'tips' => [
+                            'title' => $this->module->l('TIPS', 'translations'),
+                            'content' => $this->module->l('Gold version shows better results on conversion rate', 'translations'),
+                        ],
+                        'save' => $this->module->l('Save', 'translations'),
+                    ],
+                    'preview' => [
+                        'title' => $this->module->l('Preview', 'translations'),
+                        'paypal-button' => $this->module->l('PayPal button', 'translations'),
+                        'local-payment-buttons' => $this->module->l('Local payment buttons', 'translations'),
+                        'notice' => $this->module->l('As for local payment methods, buttons will be displayed according to the purchase context: country, amount, device, etc.', 'translations'),
+                    ],
+                ],
                 'help' => [
                     'faq' => $this->module->l('FAQ', 'translations'),
                     'title' => $this->module->l('Help for PrestaShop Checkout', 'translations'),

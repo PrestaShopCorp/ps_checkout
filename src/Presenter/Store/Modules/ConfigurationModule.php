@@ -99,6 +99,7 @@ class ConfigurationModule implements PresenterInterface
                     'checkoutPage' => (bool) $this->ecConfiguration->isCheckoutPageEnabled(),
                     'productPage' => (bool) $this->ecConfiguration->isProductPageEnabled(),
                 ],
+                'paypalButton' => $this->paypalConfiguration->getButtonConfiguration(),
             ],
         ];
     }

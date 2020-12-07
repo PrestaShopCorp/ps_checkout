@@ -176,5 +176,17 @@ export default {
       commit(types.UPDATE_LOGGER_HTTP_FORMAT, value);
       return value;
     });
+  },
+  savePaypalButtonConfiguration({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'SavePaypalButtonConfiguration',
+      data: {
+        configuration: JSON.stringify(payload.configuration)
+      }
+    }).then(() => {
+      commit(types.SAVE_PAYPAL_BUTTON_CONFIGURATION, payload);
+      return Promise.resolve(true);
+    });
   }
 };
