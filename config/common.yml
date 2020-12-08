@@ -107,6 +107,7 @@ services:
     public: true
     arguments:
       - '@ps_checkout.configuration'
+      - '@ps_checkout.repository.paypal.code'
 
   ps_checkout.persistent.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\PersistentConfiguration'
@@ -288,3 +289,8 @@ services:
     arguments:
       - '@ps_checkout.funding_source.collection.builder'
       - '@ps_checkout.funding_source.presenter'
+
+  ps_checkout.repository.paypal.code:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository'
+    public: true
+

@@ -48,16 +48,17 @@ class Order extends PaymentClient
      *
      * @param string $orderId paypal
      * @param string $merchantId
+     * @param string $fundingSource
      *
      * @return array response from paypal if the payment is accepted or false if error occured
      */
-    public function capture($orderId, $merchantId)
+    public function capture($orderId, $merchantId, $fundingSource)
     {
         $this->setRoute('/payments/order/capture');
 
         return $this->post([
             'json' => json_encode([
-                'mode' => 'paypal',
+                'mode' => $fundingSource,
                 'orderId' => (string) $orderId,
                 'payee' => [
                     'merchant_id' => $merchantId,

@@ -137,6 +137,10 @@ class ContextModule implements PresenterInterface
                 'roundingSettingsIsCorrect' => $this->paypalConfiguration->IsRoundingSettingsCorrect(),
                 'liveStepConfirmed' => $this->liveStep->isConfirmed(),
                 'youtubeInstallerLink' => $this->getYoutubeInstallerLink(),
+                'incompatibleCountryCodes' => $this->paypalConfiguration->getIncompatibleCountryCodes(),
+                'incompatibleCurrencyCodes' => $this->paypalConfiguration->getIncompatibleCurrencyCodes(),
+                'countriesLink' => $this->getGeneratedLink('AdminCountries'),
+                'currenciesLink' => $this->getGeneratedLink('AdminCurrencies'),
             ],
         ];
     }
@@ -276,5 +280,31 @@ class ContextModule implements PresenterInterface
             default:
                 return $youtube . 'uovtJVCLaD8';
         }
+    }
+
+    /**
+     * Get the countries link
+     *
+     * @return string
+     */
+    private function getCountriesLink()
+    {
+        $linkAdapter = new LinkAdapter($this->psContext->getLink());
+
+        return $linkAdapter->getAdminLink('AdminCountries');
+    }
+
+    /**
+     * Get a generated link
+     *
+     * @param string $link
+     *
+     * @return string
+     */
+    private function getGeneratedLink($link)
+    {
+        $linkAdapter = new LinkAdapter($this->psContext->getLink());
+
+        return $linkAdapter->getAdminLink($link);
     }
 }
