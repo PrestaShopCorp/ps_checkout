@@ -298,7 +298,7 @@ class Translations
                         'title' => $this->module->l('Adjust shape for all buttons', 'translations'),
                         'select' => $this->module->l('Select the shape', 'translations'),
                         'pill' => $this->module->l('Pill', 'translations'),
-                        'squared' => $this->module->l('Rectangle', 'translations'),
+                        'rect' => $this->module->l('Rectangle', 'translations'),
                     ],
                     'customize' => [
                         'title' => $this->module->l('Customize PayPal button', 'translations'),
@@ -321,6 +321,7 @@ class Translations
                             'content' => $this->module->l('Gold version shows better results on conversion rate', 'translations'),
                         ],
                         'save' => $this->module->l('Save', 'translations'),
+                        'savedConfiguration' => $this->module->l('Button configuration saved with success !', 'translations'),
                     ],
                     'preview' => [
                         'title' => $this->module->l('Preview', 'translations'),

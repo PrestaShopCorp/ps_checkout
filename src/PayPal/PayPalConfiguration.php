@@ -310,6 +310,8 @@ class PayPalConfiguration
      * @param object $configuration
      *
      * @throws PsCheckoutException
+     *
+     * @return bool
      */
     public function setButtonConfiguration($configuration)
     {

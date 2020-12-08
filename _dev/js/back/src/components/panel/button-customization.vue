@@ -40,28 +40,16 @@
             name="btn-shape"
             class="mt-3"
           >
-            <!-- <b-form-radio class="custom-radio-form" value="pill">
-              <b-button v-if="'pill' === selectedShape" class="btn btn-pill custom-radio-button-form" variant="primary">
-                {{ $t('panel.button-customization.shape.pill') }}
-              </b-button>
-                <b-button v-else class="btn btn-pill custom-radio-button-form" variant="outline-secondary">
-                  {{ $t('panel.button-customization.shape.pill') }}
-                </b-button>
-            </b-form-radio> -->
-<!--
-            <b-form-radio class="custom-radio-form" value="squared">
-              <b-button class="btn btn-squared custom-radio-button-form" variant="outline-secondary">
-                {{ $t('panel.button-customization.shape.squared') }}
-              </b-button>
-            </b-form-radio> -->
-
             <b-form-radio
               class="custom-radio-form"
               v-for="shape in shapes"
               :key="shape.value"
               :value="shape.value"
             >
-              <span v-if="selectedShape === shape.value" v-html="shape.htmlActive"></span>
+              <span
+                v-if="selectedShape === shape.value"
+                v-html="shape.htmlActive"
+              ></span>
 
               <span v-else v-html="shape.html"></span>
             </b-form-radio>
@@ -129,7 +117,19 @@
             </b-button>
           </div>
 
-          <div id="tips" class="mt-5">
+          <b-alert
+            :show="dismissCountDown"
+            dismissible
+            fade
+            variant="success"
+            @dismissed="dismissCountDown = 0"
+            @dismiss-count-down="countDownChanged"
+            class="mt-4 px-5"
+          >
+            {{ $t('panel.button-customization.customize.savedConfiguration') }}
+          </b-alert>
+
+          <div id="tips" ref="tips" class="mt-5">
             <div class="d-flex">
               <i class="material-icons tips-logo mr-1">
                 emoji_objects
@@ -170,7 +170,7 @@
             :class="[classBtnPreview, classBtnPaypalPreview]"
           >
             <span
-              id="paypal-text-before"
+              ref="paypalTextBefore"
               class="paypal-text mr-1"
               :class="[classPaypalTextBefore, classPaypalTextColor]"
             >
@@ -185,7 +185,7 @@
             />
 
             <span
-              id="paypal-text-after"
+              ref="paypalTextAfter"
               class="paypal-text ml-1"
               :class="[classPaypalTextAfter, classPaypalTextColor]"
             >
@@ -235,34 +235,25 @@
           {
             htmlActive:
               '<div class="btn btn-primary" style="width: 220px; height: 40px; margin-top: -6px; border-radius: 25px">' +
-                this.$i18n.t('panel.button-customization.shape.pill') +
+              this.$i18n.t('panel.button-customization.shape.pill') +
               '</div>',
             html:
               '<div class="btn" style="width: 220px; height: 40px; margin-top: -6px; border-radius: 25px; border: 1px solid #555555">' +
-                this.$i18n.t('panel.button-customization.shape.pill') +
+              this.$i18n.t('panel.button-customization.shape.pill') +
               '</div>',
             value: 'pill'
           },
           {
             htmlActive:
               '<div class="btn btn-primary" style="width: 220px; height: 40px; margin-top: -6px; border-radius: 5px">' +
-                this.$i18n.t('panel.button-customization.shape.squared') +
+              this.$i18n.t('panel.button-customization.shape.rect') +
               '</div>',
             html:
               '<div class="btn" style="width: 220px; height: 40px; margin-top: -6px; border-radius: 5px; border: 1px solid #555555">' +
-                this.$i18n.t('panel.button-customization.shape.squared') +
+              this.$i18n.t('panel.button-customization.shape.rect') +
               '</div>',
-              value: 'squared'
-            }
-      ],
-        localPaymentMethods: [
-          { name: 'bancontact', label: 'Bancontact' },
-          { name: 'eps', label: 'EPS' },
-          { name: 'giropay', label: 'Giropay' },
-          { name: 'ideal', label: 'iDEAL' },
-          { name: 'mybank', label: 'MyBank' },
-          { name: 'p24', label: 'Przelewy24' },
-          { name: 'sofort', label: 'Sofort' }
+            value: 'rect'
+          }
         ],
         labels: [
           {
@@ -327,14 +318,31 @@
             value: 'white'
           }
         ],
-        selectedShape: this.$store.state.configuration.paypalButton.shape,
-        selectedLabel: this.$store.state.configuration.paypalButton.label,
-        selectedColor: this.$store.state.configuration.paypalButton.color
+        selectedShape: this.$store.state.configuration.paypalButton
+          ? this.$store.state.configuration.paypalButton.shape
+          : 'pill',
+        selectedLabel: this.$store.state.configuration.paypalButton
+          ? this.$store.state.configuration.paypalButton.label
+          : 'pay',
+        selectedColor: this.$store.state.configuration.paypalButton
+          ? this.$store.state.configuration.paypalButton.color
+          : 'gold',
+        localPaymentMethods: [
+          { name: 'bancontact', label: 'Bancontact' },
+          { name: 'eps', label: 'EPS' },
+          { name: 'giropay', label: 'Giropay' },
+          { name: 'ideal', label: 'iDEAL' },
+          { name: 'mybank', label: 'MyBank' },
+          { name: 'p24', label: 'Przelewy24' },
+          { name: 'sofort', label: 'Sofort' }
+        ],
+        dismissSecs: 2,
+        dismissCountDown: 0
       };
     },
     methods: {
       closeTips() {
-        document.getElementById('tips').remove();
+        this.$refs.tips.remove();
       },
       getPaypalLogo() {
         if ('blue' === this.selectedColor || 'black' === this.selectedColor) {
@@ -351,22 +359,16 @@
         }
       },
       changeLabel(value) {
-        var text = this.getText(value);
-        var paypalTextBefore = document.getElementById('paypal-text-before');
-        var paypalTextAfter = document.getElementById('paypal-text-after');
+        let text = this.getText(value);
 
         if ('pay' === value) {
-          paypalTextAfter.style.display = 'none';
-          paypalTextBefore.style.display = 'inline';
-          paypalTextBefore.innerHTML = text;
+          this.$refs.paypalTextBefore.innerHTML = text;
         } else {
-          paypalTextBefore.style.display = 'none';
-          paypalTextAfter.style.display = 'inline';
-          paypalTextAfter.innerHTML = text;
+          this.$refs.paypalTextAfter.innerHTML = text;
         }
       },
       getText(label) {
-        var text = null;
+        let text = null;
 
         this.labels.forEach(element => {
           if (label === element.value) {
@@ -389,13 +391,17 @@
             color: this.selectedColor
           }
         });
+        this.dismissCountDown = this.dismissSecs;
+      },
+      countDownChanged(dismissCountDown) {
+        this.dismissCountDown = dismissCountDown;
       }
     },
     computed: {
       classBtnPreview() {
         return {
           'btn-pill': 'pill' === this.selectedShape,
-          'btn-squared': 'squared' === this.selectedShape
+          'btn-rect': 'rect' === this.selectedShape
         };
       },
       classPaypalTextBefore() {
@@ -412,8 +418,10 @@
       },
       classPaypalTextColor() {
         return {
-          'paypal-text-black': 'blue' !== this.selectedColor && 'black' !== this.selectedColor,
-          'paypal-text-white': 'blue' === this.selectedColor || 'black' === this.selectedColor
+          'paypal-text-black':
+            'blue' !== this.selectedColor && 'black' !== this.selectedColor,
+          'paypal-text-white':
+            'blue' === this.selectedColor || 'black' === this.selectedColor
         };
       },
       classBtnPaypalPreview() {
@@ -427,7 +435,9 @@
       },
       labelValue: {
         get() {
-          return this.$store.state.configuration.paypalButton.label;
+          return this.$store.state.configuration.paypalButton
+            ? this.$store.state.configuration.paypalButton.label
+            : 'pay';
         },
         set(value) {
           this.selectedLabel = value;
@@ -435,14 +445,14 @@
       }
     },
     updated() {
-      var paypalText = document.getElementsByClassName('paypal-text');
-      var color = '#000000';
+      let paypalText = document.getElementsByClassName('paypal-text');
+      let color = '#000000';
 
       if ('blue' === this.selectedColor || 'black' === this.selectedColor) {
         color = '#ffffff';
       }
 
-      for (var i = 0, length = paypalText.length; i < length; i++) {
+      for (let i = 0, length = paypalText.length; i < length; i++) {
         paypalText[i].style.selectedColor = color;
       }
     }
@@ -474,7 +484,7 @@
   .btn-pill {
     border-radius: 25px !important;
   }
-  .btn-squared {
+  .btn-rect {
     border-radius: 5px !important;
     border: 1px solid #555555 !important;
   }
