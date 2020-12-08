@@ -56,7 +56,7 @@ export class PaypalService {
   getButtonExpress(fundingSource, events) {
     return this.sdk.Buttons({
       fundingSource: fundingSource,
-      style: {
+      style: this.config.buttonCustomization || {
         label: 'pay'
       },
       commit: false,
@@ -71,7 +71,7 @@ export class PaypalService {
   getButtonPayment(fundingSource, events) {
     return this.sdk.Buttons({
       fundingSource: fundingSource,
-      style: {
+      style: this.config.buttonCustomization || {
         label: 'pay'
       },
       ...events

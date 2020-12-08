@@ -722,6 +722,7 @@ class Ps_checkout extends PaymentModule
 
         Media::addJsDef([
             $this->name . 'LoaderImage' => $this->getPathUri() . 'views/img/loader.svg',
+            $this->name . 'PayPalButtonConfiguration' => $payPalConfiguration->getButtonConfiguration(),
             $this->name . 'CardFundingSourceImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'),
             $this->name . 'GetTokenURL' => $this->context->link->getModuleLink($this->name, 'token', [], true),
             $this->name . 'CreateUrl' => $this->context->link->getModuleLink($this->name, 'create', [], true),
