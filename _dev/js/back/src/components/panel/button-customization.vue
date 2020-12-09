@@ -112,7 +112,15 @@
           </b-form-radio-group>
 
           <div class="text-center mt-4">
-            <b-button @click="save">
+            <b-button
+              variant="primary"
+              @click="save"
+              :disabled="
+                this.savedShape === this.selectedShape &&
+                  this.savedLabel === this.selectedLabel &&
+                  this.savedColor === this.selectedColor
+              "
+            >
               {{ $t('panel.button-customization.customize.save') }}
             </b-button>
           </div>
@@ -173,6 +181,7 @@
               ref="paypalTextBefore"
               class="paypal-text mr-1"
               :class="[classPaypalTextBefore, classPaypalTextColor]"
+              :style="{ color: colorText }"
             >
               {{ getText(labelValue) }}
             </span>
@@ -188,6 +197,7 @@
               ref="paypalTextAfter"
               class="paypal-text ml-1"
               :class="[classPaypalTextAfter, classPaypalTextColor]"
+              :style="{ color: colorText }"
             >
               {{ getText(labelValue) }}
             </span>
@@ -202,7 +212,7 @@
 
             <b-row>
               <b-col
-                sm="6"
+                xl="6"
                 class="mb-2"
                 v-for="localPaymentMethod in localPaymentMethods"
                 :key="localPaymentMethod.name"
@@ -234,22 +244,22 @@
         shapes: [
           {
             htmlActive:
-              '<div class="btn btn-primary" style="width: 220px; height: 40px; margin-top: -6px; border-radius: 25px">' +
+              '<div class="btn btn-primary" style="width: 220px; height: 40px; margin-top: -8px; margin-bottom: 16px; border-radius: 25px"><div style="margin-top: 2px;">' +
               this.$i18n.t('panel.button-customization.shape.pill') +
-              '</div>',
+              '</div></div>',
             html:
-              '<div class="btn" style="width: 220px; height: 40px; margin-top: -6px; border-radius: 25px; border: 1px solid #555555">' +
+              '<div class="btn" style="width: 220px; height: 40px; margin-top: -8px; margin-bottom: 16px; border-radius: 25px; border: 1px solid #555555"><div style="margin-top: 2px;">' +
               this.$i18n.t('panel.button-customization.shape.pill') +
-              '</div>',
+              '</div></div>',
             value: 'pill'
           },
           {
             htmlActive:
-              '<div class="btn btn-primary" style="width: 220px; height: 40px; margin-top: -6px; border-radius: 5px">' +
+              '<div class="btn btn-primary" style="width: 220px; height: 40px; margin-top: -8px; margin-bottom: 16px; border-radius: 5px"><div style="margin-top: 2px;">' +
               this.$i18n.t('panel.button-customization.shape.rect') +
               '</div>',
             html:
-              '<div class="btn" style="width: 220px; height: 40px; margin-top: -6px; border-radius: 5px; border: 1px solid #555555">' +
+              '<div class="btn" style="width: 220px; height: 40px; margin-top: -8px; margin-bottom: 16px; border-radius: 5px; border: 1px solid #555555"><div style="margin-top: 2px;">' +
               this.$i18n.t('panel.button-customization.shape.rect') +
               '</div>',
             value: 'rect'
@@ -318,15 +328,18 @@
             value: 'white'
           }
         ],
-        selectedShape: this.$store.state.configuration.paypalButton
-          ? this.$store.state.configuration.paypalButton.shape
-          : 'pill',
-        selectedLabel: this.$store.state.configuration.paypalButton
-          ? this.$store.state.configuration.paypalButton.label
-          : 'pay',
-        selectedColor: this.$store.state.configuration.paypalButton
-          ? this.$store.state.configuration.paypalButton.color
-          : 'gold',
+        // selectedShape: this.$store.state.configuration.paypalButton
+        //   ? this.$store.state.configuration.paypalButton.shape
+        //   : 'pill',
+        selectedShape: this.getSavedShape(),
+        selectedLabel: this.getSavedLabel(),
+        selectedColor: this.getSavedColor(),
+        // selectedLabel: this.$store.state.configuration.paypalButton
+        //   ? this.$store.state.configuration.paypalButton.label
+        //   : 'pay',
+        // selectedColor: this.$store.state.configuration.paypalButton
+        //   ? this.$store.state.configuration.paypalButton.color
+        //   : 'gold',
         localPaymentMethods: [
           { name: 'bancontact', label: 'Bancontact' },
           { name: 'eps', label: 'EPS' },
@@ -395,6 +408,21 @@
       },
       countDownChanged(dismissCountDown) {
         this.dismissCountDown = dismissCountDown;
+      },
+      getSavedShape() {
+        return this.$store.state.configuration.paypalButton
+          ? this.$store.state.configuration.paypalButton.shape
+          : 'pill';
+      },
+      getSavedLabel() {
+        return this.$store.state.configuration.paypalButton
+          ? this.$store.state.configuration.paypalButton.label
+          : 'pay';
+      },
+      getSavedColor() {
+        return this.$store.state.configuration.paypalButton
+          ? this.$store.state.configuration.paypalButton.color
+          : 'gold';
       }
     },
     computed: {
@@ -435,25 +463,25 @@
       },
       labelValue: {
         get() {
-          return this.$store.state.configuration.paypalButton
-            ? this.$store.state.configuration.paypalButton.label
-            : 'pay';
+          return this.getSavedLabel();
         },
         set(value) {
           this.selectedLabel = value;
         }
-      }
-    },
-    updated() {
-      let paypalText = document.getElementsByClassName('paypal-text');
-      let color = '#000000';
-
-      if ('blue' === this.selectedColor || 'black' === this.selectedColor) {
-        color = '#ffffff';
-      }
-
-      for (let i = 0, length = paypalText.length; i < length; i++) {
-        paypalText[i].style.selectedColor = color;
+      },
+      colorText() {
+        return 'blue' === this.selectedColor || 'black' === this.selectedColor
+          ? '#ffffff'
+          : '#000000';
+      },
+      savedShape() {
+        return this.getSavedShape();
+      },
+      savedLabel() {
+        return this.getSavedLabel();
+      },
+      savedColor() {
+        return this.getSavedColor();
       }
     }
   };
@@ -469,9 +497,6 @@
   }
   .custom-radio-form {
     width: 250px;
-  }
-  .custom-radio-button-form {
-    margin-top: -6px !important;
   }
   .btn {
     width: 220px;
