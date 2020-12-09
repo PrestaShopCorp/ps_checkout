@@ -328,18 +328,9 @@
             value: 'white'
           }
         ],
-        // selectedShape: this.$store.state.configuration.paypalButton
-        //   ? this.$store.state.configuration.paypalButton.shape
-        //   : 'pill',
         selectedShape: this.getSavedShape(),
         selectedLabel: this.getSavedLabel(),
         selectedColor: this.getSavedColor(),
-        // selectedLabel: this.$store.state.configuration.paypalButton
-        //   ? this.$store.state.configuration.paypalButton.label
-        //   : 'pay',
-        // selectedColor: this.$store.state.configuration.paypalButton
-        //   ? this.$store.state.configuration.paypalButton.color
-        //   : 'gold',
         localPaymentMethods: [
           { name: 'bancontact', label: 'Bancontact' },
           { name: 'eps', label: 'EPS' },
