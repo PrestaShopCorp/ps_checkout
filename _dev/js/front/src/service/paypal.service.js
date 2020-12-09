@@ -54,11 +54,10 @@ export class PaypalService {
    * @param {PaypalButtonEvents} events
    */
   getButtonExpress(fundingSource, events) {
+    const style = this.config.buttonCustomization || { label: 'pay' };
     return this.sdk.Buttons({
       fundingSource: fundingSource,
-      style: this.config.buttonCustomization || {
-        label: 'pay'
-      },
+      style: fundingSource === 'paypal' ? style : { shape: style.shape },
       commit: false,
       ...events
     });
@@ -69,11 +68,10 @@ export class PaypalService {
    * @param {PaypalButtonEvents} events
    */
   getButtonPayment(fundingSource, events) {
+    const style = this.config.buttonCustomization || { label: 'pay' };
     return this.sdk.Buttons({
       fundingSource: fundingSource,
-      style: this.config.buttonCustomization || {
-        label: 'pay'
-      },
+      style: fundingSource === 'paypal' ? style : { shape: style.shape },
       ...events
     });
   }
