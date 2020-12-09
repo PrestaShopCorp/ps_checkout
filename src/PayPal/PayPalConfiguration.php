@@ -37,6 +37,7 @@ class PayPalConfiguration
     const HOSTED_FIELDS_3DS_DISABLED = 'PS_CHECKOUT_3DS_DISABLED';
     const CSP_NONCE = 'PS_CHECKOUT_CSP_NONCE';
     const PS_CHECKOUT_PAYPAL_CB_INLINE = 'PS_CHECKOUT_PAYPAL_CB_INLINE';
+    const PS_CHECKOUT_PAYPAL_BUTTON = 'PS_CHECKOUT_PAYPAL_BUTTON';
 
     /**
      * @var PrestaShopConfiguration
@@ -295,5 +296,25 @@ class PayPalConfiguration
         }
 
         return $incompatibleCodes;
+    }
+
+    /**
+     * @return array
+     */
+    public function getButtonConfiguration()
+    {
+        return json_decode($this->configuration->get(self::PS_CHECKOUT_PAYPAL_BUTTON));
+    }
+
+    /**
+     * @param object $configuration
+     *
+     * @throws PsCheckoutException
+     *
+     * @return bool
+     */
+    public function setButtonConfiguration($configuration)
+    {
+        $this->configuration->set(self::PS_CHECKOUT_PAYPAL_BUTTON, json_encode($configuration));
     }
 }
