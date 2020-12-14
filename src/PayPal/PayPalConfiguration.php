@@ -37,6 +37,7 @@ class PayPalConfiguration
     const HOSTED_FIELDS_3DS_DISABLED = 'PS_CHECKOUT_3DS_DISABLED';
     const CSP_NONCE = 'PS_CHECKOUT_CSP_NONCE';
     const PS_CHECKOUT_PAYPAL_CB_INLINE = 'PS_CHECKOUT_PAYPAL_CB_INLINE';
+    const PS_CHECKOUT_PAYPAL_BUTTON = 'PS_CHECKOUT_PAYPAL_BUTTON';
 
     /**
      * @var PrestaShopConfiguration
@@ -236,14 +237,14 @@ class PayPalConfiguration
     public function getIncompatibleCountryCodes()
     {
         $db = \Db::getInstance();
-        $shopCodes = $db->executeS(
-            "SELECT c.iso_code
-            FROM ps_country c
-            JOIN ps_module_country mc ON mc.id_country = c.id_country
-            JOIN ps_module m ON m.id_module = mc.id_module
+        $shopCodes = $db->executeS('
+            SELECT c.iso_code
+            FROM ' . _DB_PREFIX_ . 'country c
+            JOIN ' . _DB_PREFIX_ . 'module_country mc ON mc.id_country = c.id_country
+            JOIN ' . _DB_PREFIX_ . 'module m ON m.id_module = mc.id_module
             WHERE c.active = 1
-            AND m.name = 'ps_checkout'
-            AND mc.id_shop = " . \Context::getContext()->shop->id
+            AND m.name = "ps_checkout"
+            AND mc.id_shop = ' . \Context::getContext()->shop->id
         );
         $paypalCodes = $this->codeRepository->getCountryCodes();
 
@@ -258,14 +259,14 @@ class PayPalConfiguration
     public function getIncompatibleCurrencyCodes()
     {
         $db = \Db::getInstance();
-        $shopCodes = $db->executeS(
-            "SELECT c.iso_code
-            FROM ps_currency c
-            JOIN ps_module_currency mc ON mc.id_currency = c.id_currency
-            JOIN ps_module m ON m.id_module = mc.id_module
+        $shopCodes = $db->executeS('
+            SELECT c.iso_code
+            FROM ' . _DB_PREFIX_ . 'currency c
+            JOIN ' . _DB_PREFIX_ . 'module_currency mc ON mc.id_currency = c.id_currency
+            JOIN ' . _DB_PREFIX_ . 'module m ON m.id_module = mc.id_module
             WHERE c.active = 1
-            AND m.name = 'ps_checkout'
-            AND mc.id_shop = " . \Context::getContext()->shop->id
+            AND m.name = "ps_checkout"
+            AND mc.id_shop = ' . \Context::getContext()->shop->id
         );
         $paypalCodes = $this->codeRepository->getCurrencyCodes();
 
@@ -295,5 +296,25 @@ class PayPalConfiguration
         }
 
         return $incompatibleCodes;
+    }
+
+    /**
+     * @return array
+     */
+    public function getButtonConfiguration()
+    {
+        return json_decode($this->configuration->get(self::PS_CHECKOUT_PAYPAL_BUTTON));
+    }
+
+    /**
+     * @param object $configuration
+     *
+     * @throws PsCheckoutException
+     *
+     * @return bool
+     */
+    public function setButtonConfiguration($configuration)
+    {
+        $this->configuration->set(self::PS_CHECKOUT_PAYPAL_BUTTON, json_encode($configuration));
     }
 }

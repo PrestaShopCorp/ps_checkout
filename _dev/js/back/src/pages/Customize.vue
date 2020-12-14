@@ -26,6 +26,10 @@
       <ExpressCheckout />
     </b-container>
 
+    <b-container class="mb-4">
+      <ButtonCustomization />
+    </b-container>
+
     <b-container class="container">
       <FeatureIncoming />
     </b-container>
@@ -35,6 +39,7 @@
 <script>
   import ActivePayment from '@/components/panel/active-payment';
   import ExpressCheckout from '@/components/panel/express-checkout';
+  import ButtonCustomization from '@/components/panel/button-customization';
   import FeatureIncoming from '@/components/block/feature-incoming';
 
   export default {
@@ -42,6 +47,7 @@
     components: {
       ActivePayment,
       ExpressCheckout,
+      ButtonCustomization,
       FeatureIncoming
     },
     computed: {

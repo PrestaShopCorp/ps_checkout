@@ -39,7 +39,9 @@
     <b-container
       class="mb-4"
       v-if="
-        firebaseStatusAccount && paypalStatusAccount && incompatibleCurrencyCodes
+        firebaseStatusAccount &&
+          paypalStatusAccount &&
+          incompatibleCurrencyCodes
       "
     >
       <PaypalIncompatibleCurrency />

@@ -45,6 +45,9 @@ export const PsCheckoutConfig = {
     card: window.ps_checkoutCardFundingSourceImg
   },
 
+  // TODO: Move this to PayPalSDKConfig in the next version
+  buttonCustomization: window.ps_checkoutPayPalButtonConfiguration,
+
   expressCheckoutSelected: window.ps_checkoutExpressCheckoutSelected,
   expressCheckoutProductEnabled:
     window.ps_checkoutExpressCheckoutProductEnabled,

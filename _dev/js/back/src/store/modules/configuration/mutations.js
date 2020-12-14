@@ -57,5 +57,10 @@ export default {
   },
   [types.UPDATE_LOGGER_HTTP_FORMAT](state, payload) {
     state.logger.httpFormat = payload;
+  },
+  [types.SAVE_PAYPAL_BUTTON_CONFIGURATION](state, payload) {
+    state.paypalButton.shape = payload.configuration.shape;
+    state.paypalButton.label = payload.configuration.label;
+    state.paypalButton.color = payload.configuration.color;
   }
 };

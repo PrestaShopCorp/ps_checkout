@@ -159,7 +159,7 @@ class PayPalProcessorResponse
             case 'M':
                 return 'Address - Address and Postal Code';
             case 'N':
-                return  'No - The transaction is declined';
+                return 'No - The transaction is declined';
             case 'P':
                 return 'Postal (International "Z") - Postal Code only (no Address)';
             case 'R':
