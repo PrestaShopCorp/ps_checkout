@@ -134,9 +134,9 @@ export class HostedFieldsComponent extends BaseComponent {
                 contingencies: ['3D_SECURE']
               })
               .then((payload) => {
-                const { liabilityShift } = payload;
+                const { liabilityShifted, authenticationReason } = payload;
                 return this.psCheckoutService
-                  .validateLiablityShift(liabilityShift)
+                  .validateContingency(liabilityShifted, authenticationReason)
                   .then(() => {
                     const data = payload;
 
