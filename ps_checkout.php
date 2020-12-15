@@ -1166,7 +1166,7 @@ class Ps_checkout extends PaymentModule
         } else {
             $this->context->smarty->assign([
                 'spinnerPath' => $this->getPathUri() . 'views/img/tail-spin.svg',
-                'translatedText' => $this->l('Loading PS Checkout payment options', 'translations'),
+                'translatedText' => $this->l('Please wait, loading additional payment methods.', 'translations'),
             ]);
         }
 
