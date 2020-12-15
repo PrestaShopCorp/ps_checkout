@@ -16,23 +16,20 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import { BaseComponent } from '../../core/base.component';
+import { BaseComponent } from '../../core/dependency-injection/base.component';
 import { PaymentOptionComponent } from '../common/payment-option.component';
 
 export class PaymentOptionsComponent extends BaseComponent {
-  static INJECT = {
-    config: 'config',
-    htmlElementService: 'htmlElementService',
-    payPalService: 'payPalService',
-    psCheckoutService: 'psCheckoutService'
+  static Inject = {
+    config: 'PsCheckoutConfig',
+    payPalService: 'PayPalService',
+    psCheckoutService: 'PsCheckoutService'
   };
 
   constructor(app, props) {
     super(app, props);
 
     this.data.HTMLElement = this.getPaymentOptions();
-
-    this.data.notificationComponent = this.app.children.notification;
   }
 
   getPaymentOptions() {
@@ -43,23 +40,28 @@ export class PaymentOptionsComponent extends BaseComponent {
   renderPaymentOptionItems() {
     this.children.paymentOptions = this.payPalService
       .getEligibleFundingSources()
-      .map((fundingSource) =>
-        new PaymentOptionComponent(this.app, {
-          fundingSource: fundingSource,
-          markPosition: this.props.markPosition,
+      .map((fundingSource) => {
+        const HTMLElement = document.querySelector(
+          `[data-module-name^="ps_checkout-${fundingSource.name}"]`
+        );
 
-          // TODO: Move this to HTMLElementService,
-          HTMLElement: document.querySelector(
-            `[data-module-name="ps_checkout-${fundingSource.name}"]`
-          )
-        }).render()
-      );
+        return (
+          HTMLElement &&
+          new PaymentOptionComponent(this.app, {
+            fundingSource: fundingSource,
+            markPosition: this.props.markPosition,
+
+            HTMLElement
+          }).render()
+        );
+      })
+      .filter((paymentOption) => paymentOption);
   }
 
   renderPaymentOptionListener() {
     const HTMLListenerElements = this.children.paymentOptions.map(
       (paymentOption) => {
-        const HTMLElement = paymentOption.data.HTMLElementWrapper;
+        const HTMLElement = paymentOption.data.HTMLElementContainer;
         const [button, form] = Array.prototype.slice.call(
           HTMLElement.querySelectorAll('.payment_module')
         );
@@ -75,6 +77,9 @@ export class PaymentOptionsComponent extends BaseComponent {
           form.classList.add('closed');
           button.classList.remove('open');
           form.classList.remove('open');
+
+          this.data.notification.hideCancelled();
+          this.data.notification.hideError();
         });
 
         HTMLListenerElements[index].button.classList.add('open');
@@ -86,7 +91,9 @@ export class PaymentOptionsComponent extends BaseComponent {
   }
 
   render() {
-    if (!this.config.expressCheckoutSelected) {
+    if (!this.config.expressCheckout.active) {
+      this.data.notification = this.app.root.children.notification;
+
       this.renderPaymentOptionItems();
       this.renderPaymentOptionListener();
     } else {

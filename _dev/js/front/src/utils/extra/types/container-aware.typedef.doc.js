@@ -16,14 +16,17 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import 'classlist-polyfill';
-import 'core-js/stable';
-import 'promise-polyfill/src/polyfill';
-import 'regenerator-runtime/runtime';
-import 'url-polyfill';
-import 'whatwg-fetch';
 
-import './web-api.child-node.remove';
-import './web-api.child-node.replace-with';
-import './web-api.parent-node.append';
-import './web-api.parent-node.prepend';
+/**
+ * This file exists only for documentative purposes
+ */
+
+/* eslint-disable no-unused-vars */
+import Bottle from 'bottlejs';
+
+/**
+ * @typedef ContainerAwareClass
+ *
+ * @property {Bottle} bottle
+ * @property {Bottle.container} container
+ */

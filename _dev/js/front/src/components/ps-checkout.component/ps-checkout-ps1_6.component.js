@@ -16,85 +16,43 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import { HtmlElementPs1_6Service } from '../../service/html-element-ps1_6.service';
-import { PaypalService } from '../../service/paypal.service';
-import { PsCheckoutService } from '../../service/ps-checkout.service';
-import { TranslationService } from '../../service/translation.service';
-
+import { BaseComponent } from '../../core/dependency-injection/base.component';
 import { NotificationComponent } from '../1_6/notification.component';
 import { PaymentOptionsComponent } from '../1_6/payment-options.component';
 import { LoaderComponent } from '../common/loader.component';
 
-export class PsCheckoutPs1_6Component {
-  /**
-   * @param {PsCheckoutConfig} config
-   * @param {PayPalSdk} sdk
-   */
-  constructor(config, sdk) {
-    this.config = config;
-    this.sdk = sdk;
+export class PsCheckoutPs1_6Component extends BaseComponent {
+  static Inject = {
+    prestashopService: 'PrestashopService'
+  };
 
-    this.translationService = new TranslationService(this.config.translations);
+  created() {
+    this.app.root = this;
+  }
 
-    this.htmlElementService = new HtmlElementPs1_6Service();
-    this.payPalService = new PaypalService(
-      this.sdk,
-      this.config,
-      this.translationService
-    );
-    this.psCheckoutService = new PsCheckoutService(
-      this.config,
-      this.translationService
-    );
-
-    this.$ = (id) => this.translationService.getTranslationString(id);
-
-    this.children = {};
+  renderCheckout() {
+    // TODO: Move this to PrestashopService
+    if (window.isLogged) {
+      // TODO: Move this to HTMLElementService
+      const cgv = document.getElementById('cgv');
+      if ((cgv && cgv.checked) || !cgv) {
+        this.children.notification = new NotificationComponent(
+          this.app
+        ).render();
+        this.children.loader = new LoaderComponent(this.app).render();
+        this.children.paymentOptions = new PaymentOptionsComponent(this.app, {
+          markPosition: 'before'
+        }).render();
+      }
+    }
   }
 
   render() {
-    if (document.body.id !== 'order' && document.body.id !== 'order-opc')
-      return;
+    this.renderCheckout();
+    this.prestashopService.onUpdatePaymentMethods(() => {
+      this.renderCheckout();
+    });
 
-    if (undefined === this.sdk) {
-      throw new Error(this.$('error.paypal-sdk'));
-    }
-
-    if (document.body.id === 'order') {
-      this.children.notification = new NotificationComponent(this).render();
-      if (!document.getElementById('ps_checkout-displayPayment')) return;
-
-      this.children.loader = new LoaderComponent(this).render();
-      this.children.paymentOptions = new PaymentOptionsComponent(this).render();
-    } else {
-      const updatePaymentMethods = window['updatePaymentMethods'];
-      window['updatePaymentMethods'] = (...args) => {
-        updatePaymentMethods(...args);
-
-        if (window.isLogged) {
-          const cgv = document.getElementById('cgv');
-          if ((cgv && cgv.checked) || !cgv) {
-            this.children.notification = new NotificationComponent(
-              this
-            ).render();
-            this.children.loader = new LoaderComponent(this).render();
-            this.children.paymentOptions = new PaymentOptionsComponent(this, {
-              markPosition: 'before'
-            }).render();
-          }
-        }
-      };
-
-      if (window.isLogged) {
-        const cgv = document.getElementById('cgv');
-        if ((cgv && cgv.checked) || !cgv) {
-          this.children.notification = new NotificationComponent(this).render();
-          this.children.loader = new LoaderComponent(this).render();
-          this.children.paymentOptions = new PaymentOptionsComponent(this, {
-            markPosition: 'before'
-          }).render();
-        }
-      }
-    }
+    return this;
   }
 }

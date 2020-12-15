@@ -16,14 +16,23 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import 'classlist-polyfill';
-import 'core-js/stable';
-import 'promise-polyfill/src/polyfill';
-import 'regenerator-runtime/runtime';
-import 'url-polyfill';
-import 'whatwg-fetch';
 
-import './web-api.child-node.remove';
-import './web-api.child-node.replace-with';
-import './web-api.parent-node.append';
-import './web-api.parent-node.prepend';
+/**
+ * This file exists only for documentative purposes
+ */
+
+/**
+ * @typedef PayPalSdk
+ * @type {object}
+ *
+ * @property {function} getFundingSources
+ * @property {object} Buttons
+ * @property {function} Buttons.isEligible
+ * @property {function} Buttons.render
+ * @property {object} Marks
+ * @property {function} Marks.isEligible
+ * @property {function} Marks.render
+ * @property {object} HostedFields
+ * @property {function} HostedFields.isEligible
+ * @property {function} HostedFields.render
+ */

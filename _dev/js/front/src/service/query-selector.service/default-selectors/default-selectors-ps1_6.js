@@ -16,14 +16,19 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import 'classlist-polyfill';
-import 'core-js/stable';
-import 'promise-polyfill/src/polyfill';
-import 'regenerator-runtime/runtime';
-import 'url-polyfill';
-import 'whatwg-fetch';
+export const DefaultSelectors1_6 = {
+  BASE_PAYMENT_CONFIRMATION: '#payment-confirmation [type="submit"]',
 
-import './web-api.child-node.remove';
-import './web-api.child-node.replace-with';
-import './web-api.parent-node.append';
-import './web-api.parent-node.prepend';
+  CONDITIONS_CHECKBOXES: '#conditions-to-approve input[type="checkbox"]',
+
+  LOADER_PARENT: 'body',
+
+  NOTIFICATION_CONDITIONS: '.accept-cgv',
+  NOTIFICATION_PAYMENT_CANCELLED: '#ps_checkout-canceled',
+  NOTIFICATION_PAYMENT_ERROR: '#ps_checkout-error',
+  NOTIFICATION_PAYMENT_ERROR_TEXT: '#ps_checkout-error-text',
+
+  PAYMENT_OPTIONS: '.payment-options',
+  PAYMENT_OPTION_RADIOS:
+    '.payment-options input[type="radio"][name="payment-option"]'
+};

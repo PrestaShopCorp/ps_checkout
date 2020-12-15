@@ -721,6 +721,8 @@ class Ps_checkout extends PaymentModule
         // END To be refactored in services
 
         Media::addJsDef([
+            $this->name . 'Version' => self::VERSION,
+            $this->name . 'AutoRenderDisabled' => (bool) Configuration::get('PS_CHECKOUT_AUTO_RENDER_DISABLED'),
             $this->name . 'LoaderImage' => $this->getPathUri() . 'views/img/loader.svg',
             $this->name . 'PayPalButtonConfiguration' => $payPalConfiguration->getButtonConfiguration(),
             $this->name . 'CardFundingSourceImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'),

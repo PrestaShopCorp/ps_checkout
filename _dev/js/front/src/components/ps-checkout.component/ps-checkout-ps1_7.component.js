@@ -16,57 +16,28 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import { HtmlElementPs1_7Service } from '../../service/html-element-ps1_7.service';
-import { PaypalService } from '../../service/paypal.service';
-import { PsCheckoutService } from '../../service/ps-checkout.service';
-
+import { BaseComponent } from '../../core/dependency-injection/base.component';
 import { NotificationComponent } from '../1_7/notification.component';
 import { PaymentOptionsComponent } from '../1_7/payment-options.component';
 import { ConditionsCheckboxComponent } from '../1_7/conditions-checkbox.component';
-import { TranslationService } from '../../service/translation.service';
 import { LoaderComponent } from '../common/loader.component';
 
-export class PsCheckoutPs1_7Component {
-  /**
-   * @param {PsCheckoutConfig} config
-   * @param {PayPalSdk} sdk
-   */
-  constructor(config, sdk) {
-    this.config = config;
-    this.sdk = sdk;
-
-    this.translationService = new TranslationService(this.config.translations);
-
-    this.htmlElementService = new HtmlElementPs1_7Service();
-    this.payPalService = new PaypalService(
-      this.sdk,
-      this.config,
-      this.translationService
-    );
-    this.psCheckoutService = new PsCheckoutService(
-      this.config,
-      this.translationService
-    );
-
-    this.$ = (id) => this.translationService.getTranslationString(id);
-
-    this.children = {};
+export class PsCheckoutPs1_7Component extends BaseComponent {
+  created() {
+    this.app.root = this;
   }
 
   render() {
-    if (document.body.id !== 'checkout') return;
-    if (!document.querySelector('[data-module-name^="ps_checkout"]')) return;
-
-    if (undefined === this.sdk) {
-      throw new Error(this.$('error.paypal-sdk'));
-    }
-
-    this.children.loader = new LoaderComponent(this).render();
+    this.children.loader = new LoaderComponent(this.app).render();
     this.children.conditionsCheckbox = new ConditionsCheckboxComponent(
-      this
+      this.app
     ).render();
 
-    this.children.notification = new NotificationComponent(this).render();
-    this.children.paymentOptions = new PaymentOptionsComponent(this).render();
+    this.children.notification = new NotificationComponent(this.app).render();
+    this.children.paymentOptions = new PaymentOptionsComponent(
+      this.app
+    ).render();
+
+    return this;
   }
 }

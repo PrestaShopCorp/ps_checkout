@@ -16,24 +16,30 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+import { BaseComponent } from '../../core/dependency-injection/base.component';
 import {
   PS_VERSION_1_6,
   PS_VERSION_1_7
 } from '../../constants/ps-version.constants';
 
-import { PsCheckoutService } from '../../service/ps-checkout.service';
 import { PsCheckoutExpressPs1_6Component } from './ps-checkout-express-ps1_6.component';
 import { PsCheckoutExpressPs1_7Component } from './ps-checkout-express-ps1_7.component';
 
-export class PsCheckoutExpressComponent {
-  constructor(config, sdk) {
+export class PsCheckoutExpressComponent extends BaseComponent {
+  static Inject = {
+    prestashopService: 'PrestashopService'
+  };
+
+  constructor(app, props) {
+    super(app, props);
+
     this.instance = new {
       [PS_VERSION_1_6]: PsCheckoutExpressPs1_6Component,
       [PS_VERSION_1_7]: PsCheckoutExpressPs1_7Component
-    }[PsCheckoutService.getPrestashopVersion()](config, sdk);
+    }[this.prestashopService.getVersion()](app, props);
   }
 
   render() {
-    this.instance.render();
+    return this.instance.render();
   }
 }

@@ -16,24 +16,23 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-export class ConditionsCheckboxComponent {
-  constructor(checkout) {
-    this.htmlElementService = checkout.htmlElementService;
+import { BaseComponent } from '../../core/dependency-injection/base.component';
 
-    this.conditionsContainer = this.htmlElementService.getConditionsCheckboxContainer();
-    this.conditionsCheckboxes = this.htmlElementService.getConditionsCheckboxes(
-      this.conditionsContainer
-    );
+export class ConditionsCheckboxComponent extends BaseComponent {
+  static Inject = {
+    querySelectorService: 'QuerySelectorService'
+  };
+
+  created() {
+    this.conditionsCheckboxes = this.querySelectorService.getConditionsCheckboxes();
   }
 
-  render() {
-    // This component doesn't need to be rendered since it's already on the template.
-
-    return this;
+  isActive() {
+    return this.conditionsCheckboxes.length > 0;
   }
 
   isChecked() {
-    return this.conditionsContainer
+    return this.isActive()
       ? this.conditionsCheckboxes
           .map(({ checked }) => checked)
           .filter((value) => !value).length === 0
@@ -41,7 +40,7 @@ export class ConditionsCheckboxComponent {
   }
 
   onChange(listener) {
-    this.conditionsContainer &&
+    this.isActive() &&
       this.conditionsCheckboxes.forEach((checkbox) =>
         checkbox.addEventListener('change', () => listener())
       );

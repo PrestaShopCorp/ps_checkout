@@ -16,59 +16,62 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import { HtmlElementPs1_7Service } from '../../service/html-element-ps1_7.service';
-import { PaypalService } from '../../service/paypal.service';
-import { PsCheckoutService } from '../../service/ps-checkout.service';
+import { BaseComponent } from '../../core/dependency-injection/base.component';
 
 import { ExpressButtonCartComponent } from '../1_7/express-button-cart.component';
 import { ExpressButtonCheckoutComponent } from '../1_7/express-button-checkout.component';
 import { ExpressButtonProductComponent } from '../1_7/express-button-product.component';
-import { TranslationService } from '../../service/translation.service';
+import { ExpressCheckoutButtonComponent } from '../common/express-checkout-button.component';
 
-export class PsCheckoutExpressPs1_7Component {
-  /**
-   * @param {PsCheckoutConfig} config
-   * @param {PayPalSdk} sdk
-   */
-  constructor(config, sdk) {
-    this.config = config;
-    this.sdk = sdk;
+export class PsCheckoutExpressPs1_7Component extends BaseComponent {
+  static ID = 0;
 
-    this.translationService = new TranslationService(this.config.translations);
+  static Inject = {
+    config: 'PsCheckoutConfig',
+    prestashopService: 'PrestashopService',
+    psCheckoutApi: 'PsCheckoutApi'
+  };
 
-    this.htmlElementService = new HtmlElementPs1_7Service();
-    this.payPalService = new PaypalService(
-      this.sdk,
-      this.config,
-      this.translationService
-    );
-    this.psCheckoutService = new PsCheckoutService(
-      this.config,
-      this.translationService
+  renderExpressCheckoutCustom() {
+    this.props.HTMLElement.classList.add('ps_checkout-express-button');
+    this.props.HTMLElement.setAttribute(
+      'express-button-id',
+      PsCheckoutExpressPs1_7Component.ID
     );
 
-    this.$ = (id) => this.translationService.getTranslationString(id);
-
-    this.children = {};
+    this.children.expressButton = new ExpressCheckoutButtonComponent(this.app, {
+      querySelector: `.ps_checkout-express-button[express-button-id="${PsCheckoutExpressPs1_7Component.ID++}"]`,
+      createOrder: (data) =>
+        this.psCheckoutApi.postCreateOrder({
+          ...(this.props.productData || data),
+          fundingSource: 'paypal',
+          isExpressCheckout: true
+        })
+    }).render();
   }
 
   renderExpressCheckout() {
+    if (this.props.HTMLElement) {
+      this.renderExpressCheckoutCustom();
+      return;
+    }
+
     switch (document.body.id) {
       case 'cart':
-        if (!this.config.expressCheckoutCartEnabled) return;
+        if (!this.config.expressCheckout.enabled.cart) return;
         if (document.body.classList.contains('cart-empty')) return;
         this.children.expressButton = new ExpressButtonCartComponent(
-          this
+          this.app
         ).render();
         break;
       case 'checkout':
-        if (!this.config.expressCheckoutOrderEnabled) return;
+        if (!this.config.expressCheckout.enabled.order) return;
         this.children.expressButton = new ExpressButtonCheckoutComponent(
-          this
+          this.app
         ).render();
         break;
       case 'product':
-        if (!this.config.expressCheckoutProductEnabled) return;
+        if (!this.config.expressCheckout.enabled.product) return;
         if (
           this.children.expressButton &&
           this.children.expressButton.checkoutExpressButton &&
@@ -77,31 +80,18 @@ export class PsCheckoutExpressPs1_7Component {
           return;
 
         this.children.expressButton = new ExpressButtonProductComponent(
-          this
+          this.app
         ).render();
         break;
     }
   }
 
   render() {
-    if (
-      !(
-        document.body.id === 'product' ||
-        document.body.id === 'cart' ||
-        document.body.id === 'checkout'
-      )
-    )
-      return;
-
-    if (undefined === this.sdk) {
-      throw new Error('No PayPal Javascript SDK Instance');
-    }
-
     this.renderExpressCheckout();
-    window.prestashop.on('updatedCart', () => {
-      // if (window.prestashop.cart) {
+    this.prestashopService.onUpdatedCart(() => {
       return this.renderExpressCheckout();
-      // }
     });
+
+    return this;
   }
 }
