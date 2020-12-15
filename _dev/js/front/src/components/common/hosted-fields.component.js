@@ -123,7 +123,8 @@ export class HostedFieldsComponent extends BaseComponent {
           this.data.HTMLElementButton.addEventListener('click', (event) => {
             event.preventDefault();
             this.data.loader.show();
-            this.data.HTMLElementSection.classList.toggle('disabled', true);
+            // this.data.HTMLElementButton.classList.toggle('disabled', true);
+            this.data.HTMLElementButton.setAttribute('disabled', '');
 
             hostedFields
               .submit({
@@ -150,7 +151,7 @@ export class HostedFieldsComponent extends BaseComponent {
               .catch((error) => {
                 this.data.loader.hide();
                 this.data.notification.showError(error.message);
-                this.data.HTMLElementButton.disabled = false;
+                this.data.HTMLElementButton.removeAttribute('disabled');
               });
           });
         }

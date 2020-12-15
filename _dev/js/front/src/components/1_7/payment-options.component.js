@@ -123,11 +123,11 @@ export class PaymentOptionsComponent extends BaseComponent {
   }
 
   render() {
-    if (!this.config.expressCheckout.active) {
-      this.data.conditions = this.app.root.children.conditionsCheckbox;
-      this.data.notification = this.app.root.children.notification;
-      this.data.loader = this.app.root.children.loader;
+    this.data.conditions = this.app.root.children.conditionsCheckbox;
+    this.data.notification = this.app.root.children.notification;
+    this.data.loader = this.app.root.children.loader;
 
+    if (!this.config.expressCheckout.active) {
       this.renderPaymentOptionItems();
       this.renderPaymentOptionRadios();
     } else {
