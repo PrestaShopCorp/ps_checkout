@@ -1166,9 +1166,7 @@ class Ps_checkout extends PaymentModule
         } else {
             $this->context->smarty->assign([
                 'spinnerPath' => $this->getPathUri() . 'views/img/tail-spin.svg',
-                'translatedText' => strtr(
-                    $this->l('You have selected your PayPal account to proceed to the payment.', 'translations')
-                ),
+                'translatedText' => $this->l('Loading PS Checkout payment options', 'translations'),
             ]);
         }
 
