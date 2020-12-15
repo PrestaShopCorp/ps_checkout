@@ -32,6 +32,70 @@ export class PsCheckoutService extends BaseClass {
       : await this.psCheckoutApi.postGetToken();
   }
 
+  validateContingency(liabilityShifted, authenticationReason) {
+    // No 3DS Contingency Passed or card not enrolled to 3ds
+    if (undefined === liabilityShifted) {
+      return Promise.resolve();
+    }
+
+    // 3DS Contingency Passed - Buyer confirmed Successfully
+    if (true === liabilityShifted) {
+      return Promise.resolve();
+    }
+
+    // 3DS Contingency Passed, but liabilityShifted must be checked
+    if (false === liabilityShifted) {
+      switch (authenticationReason) {
+        case 'SUCCESSFUL':
+          // Buyer successfully authenticated using 3D Secure
+          return Promise.resolve();
+        case 'CARD_INELIGIBLE':
+          // Card is not eligible for 3D Secure authentication
+          // Continue with authorization as authentication is not required
+          return Promise.resolve();
+        case 'ATTEMPTED':
+          // Card is not enrolled in 3D Secure.
+          // Card issuing bank is not participating in 3D Secure
+          // Continue with authorization as authentication is not required
+          return Promise.resolve();
+        case 'BYPASSED':
+          // Buyer may have failed the challenge or the device was not verified
+          // You can continue with the authorization and assume liability.
+          // If you prefer not to assume liability, ask the buyer for another card
+          return Promise.resolve();
+        case 'UNAVAILABLE':
+          // Issuing bank is not able to complete authentication
+          // You can continue with the authorization and assume liability.
+          // If you prefer not to assume liability, ask the buyer for another card
+          return Promise.resolve();
+        case 'SKIPPED_BY_BUYER':
+          // Buyer was presented the 3D Secure challenge but chose to skip the authentication
+          // Do not continue with current authorization.
+          // Prompt the buyer to re-authenticate or request buyer for another form of payment
+          return Promise.reject(
+            new Error(this.$('error.paypal-sdk.contingency.cancel'))
+          );
+        case 'ERROR':
+          // An error occurred with the 3D Secure authentication system
+          // Prompt the buyer to re-authenticate or request for another form of payment
+          return Promise.reject(
+            new Error(this.$('error.paypal-sdk.contingency.error'))
+          );
+        case 'FAILURE':
+          // Buyer may have failed the challenge or the device was not verified
+          // Do not continue with current authorization.
+          // Prompt the buyer to re-authenticate or request buyer for another form of payment
+          return Promise.reject(
+            new Error(this.$('error.paypal-sdk.contingency.failure'))
+          );
+        default:
+          return Promise.reject(
+            new Error(this.$('error.paypal-sdk.contingency.unknown'))
+          );
+      }
+    }
+  }
+
   validateLiablityShift(liabilityShift) {
     if (undefined === liabilityShift) {
       console.log('Hosted fields : Liability is undefined.');
