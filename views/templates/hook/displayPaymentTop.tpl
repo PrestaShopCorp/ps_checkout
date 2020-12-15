@@ -39,7 +39,7 @@
       {$translatedText|escape:'htmlall':'UTF-8'}
     </p>
     <div class="express-checkout-spinner">
-      <img src="{$spinnerPath|escape:'htmlall':'UTF-8'}" alt="{$translatedText|escape:‘htmlall’:‘UTF-8’}">
+      <img src="{$spinnerPath|escape:'htmlall':'UTF-8'}" alt="{$translatedText|escape:'htmlall':'UTF-8'}">
     </div>
   </div>
 </div>
