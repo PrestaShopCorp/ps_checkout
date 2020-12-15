@@ -40,17 +40,22 @@ export class PaymentOptionsComponent extends BaseComponent {
   renderPaymentOptionItems() {
     this.children.paymentOptions = this.payPalService
       .getEligibleFundingSources()
-      .map((fundingSource) =>
-        new PaymentOptionComponent(this.app, {
-          fundingSource: fundingSource,
-          markPosition: this.props.markPosition,
+      .map((fundingSource) => {
+        const HTMLElement = document.querySelector(
+          `[data-module-name^="ps_checkout-${fundingSource.name}"]`
+        );
 
-          // TODO: Move this to HTMLElementService,
-          HTMLElement: document.querySelector(
-            `[data-module-name="ps_checkout-${fundingSource.name}"]`
-          )
-        }).render()
-      );
+        return (
+          HTMLElement &&
+          new PaymentOptionComponent(this.app, {
+            fundingSource: fundingSource,
+            markPosition: this.props.markPosition,
+
+            HTMLElement
+          }).render()
+        );
+      })
+      .filter((paymentOption) => paymentOption);
   }
 
   renderPaymentOptionListener() {

@@ -45,7 +45,7 @@ export class PaymentOptionsComponent extends BaseComponent {
       .getEligibleFundingSources()
       .map((fundingSource) => {
         const HTMLElement = document.querySelector(
-          `[data-module-name="ps_checkout-${fundingSource.name}"]`
+          `[data-module-name^="ps_checkout-${fundingSource.name}"]`
         );
 
         return (
@@ -111,6 +111,7 @@ export class PaymentOptionsComponent extends BaseComponent {
       '.ps_checkout-express-checkout-button'
     );
 
+    paymentButton.disabled = !this.data.conditions.isChecked();
     this.data.conditions.onChange(() => {
       paymentButton.disabled = !this.data.conditions.isChecked();
     });

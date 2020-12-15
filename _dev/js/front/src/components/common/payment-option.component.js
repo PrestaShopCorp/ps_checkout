@@ -133,7 +133,11 @@ export class PaymentOptionComponent extends BaseComponent {
       new CustomEvent('payment-option-active', {
         detail: {
           fundingSource: this.data.name,
-          HTMLElementContainer: this.data.HTMLElementContainer
+          HTMLElement: this.data.HTMLElement,
+          HTMLElementContainer: this.data.HTMLElementContainer,
+          HTMLElementBinary: this.data.HTMLElementHostedFields
+            ? this.children.hostedFields.data.HTMLElementButton.parentElement
+            : this.data.HTMLElementSmartButton
         }
       })
     );

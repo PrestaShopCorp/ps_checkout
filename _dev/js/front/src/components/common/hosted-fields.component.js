@@ -22,6 +22,7 @@ export class HostedFieldsComponent extends BaseComponent {
   static Inject = {
     config: 'PsCheckoutconfig',
     payPalService: 'PayPalService',
+    psCheckoutApi: 'PsCheckoutApi',
     psCheckoutService: 'PsCheckoutService'
   };
 
@@ -37,8 +38,6 @@ export class HostedFieldsComponent extends BaseComponent {
     this.data.HTMLElementCardCVV = this.getCardCVV();
     this.data.HTMLElementCardExpirationDate = this.getCardExpirationDate();
     this.data.HTMLElementSection = this.getSection();
-
-    this.data.conditions = this.app.root.children.conditionsCheckbox;
   }
 
   getBaseButton() {
@@ -88,13 +87,13 @@ export class HostedFieldsComponent extends BaseComponent {
         },
         {
           createOrder: () =>
-            this.psCheckoutService
+            this.psCheckoutApi
               .postCreateOrder({
                 fundingSource: this.data.name,
                 isHostedFields: true
               })
               .catch((error) => {
-                this.app.children.notification.showError(
+                this.data.notification.showError(
                   `${error.message} ${error.name}`
                 );
               })
@@ -123,7 +122,7 @@ export class HostedFieldsComponent extends BaseComponent {
 
           this.data.HTMLElementButton.addEventListener('click', (event) => {
             event.preventDefault();
-            this.app.children.loader.show();
+            this.data.loader.show();
             this.data.HTMLElementSection.classList.toggle('disabled', true);
 
             hostedFields
@@ -141,7 +140,7 @@ export class HostedFieldsComponent extends BaseComponent {
                     data.orderID = data.orderId;
                     delete data.orderId;
 
-                    return this.psCheckoutService.postValidateOrder({
+                    return this.psCheckoutApi.postValidateOrder({
                       ...data,
                       fundingSource: this.data.name,
                       isHostedFields: true
@@ -149,8 +148,8 @@ export class HostedFieldsComponent extends BaseComponent {
                   });
               })
               .catch((error) => {
-                this.app.children.loader.hide();
-                this.app.children.notification.showError(error.message);
+                this.data.loader.hide();
+                this.data.notification.showError(error.message);
                 this.data.HTMLElementButton.disabled = false;
               });
           });
@@ -173,6 +172,10 @@ export class HostedFieldsComponent extends BaseComponent {
   }
 
   render() {
+    this.data.conditions = this.app.root.children.conditionsCheckbox;
+    this.data.notification = this.app.root.children.notification;
+    this.data.loader = this.app.root.children.loader;
+
     this.renderButton();
     this.renderPayPalHostedFields();
 
