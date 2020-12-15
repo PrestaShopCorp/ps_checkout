@@ -1163,6 +1163,13 @@ class Ps_checkout extends PaymentModule
                     ]
                 ),
             ]);
+        } else {
+            $this->context->smarty->assign([
+                'spinnerPath' => $this->getPathUri() . 'views/img/tail-spin.svg',
+                'translatedText' => strtr(
+                    $this->l('You have selected your PayPal account to proceed to the payment.', 'translations')
+                ),
+            ]);
         }
 
         return $this->display(__FILE__, '/views/templates/hook/displayPaymentTop.tpl');
