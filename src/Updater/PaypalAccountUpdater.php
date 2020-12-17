@@ -24,6 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop;
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
 /**
  * Check and set the merchant status
@@ -46,9 +47,15 @@ class PaypalAccountUpdater
      */
     private $persistentConfiguration;
 
-    public function __construct(PersistentConfiguration $persistentConfiguration)
+    /**
+     * @var PsAccountRepository
+     */
+    private $psAccountRepository;
+
+    public function __construct(PersistentConfiguration $persistentConfiguration, PsAccountRepository $psAccountRepository)
     {
         $this->persistentConfiguration = $persistentConfiguration;
+        $this->psAccountRepository = $psAccountRepository;
     }
 
     /**
@@ -162,7 +169,7 @@ class PaypalAccountUpdater
      */
     private function getMerchantIntegration($merchantId)
     {
-        $response = (new Shop(\Context::getContext()->link))->getMerchantIntegration($merchantId);
+        $response = (new Shop(\Context::getContext()->link, $this->psAccountRepository))->getMerchantIntegration($merchantId);
 
         if (false === $response['status']) {
             return false;

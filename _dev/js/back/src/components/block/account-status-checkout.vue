@@ -1,4 +1,4 @@
-/**
+<!--**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
@@ -15,17 +15,29 @@
  * @author    PrestaShop SA <contact@prestashop.com>
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- */
-import { isOnboardingCompleted } from 'prestashop_accounts_vue_components';
-export default {
-  adminController: state => state.prestashopCheckoutAjax,
-  locale: state => state.language.iso_code,
-  shopIs17: state => state.shopIs17,
-  translations: state => state.translations,
-  roundingSettingsIsCorrect: state => state.roundingSettingsIsCorrect,
-  shopId: state => state.shopId,
-  merchantIsFullyOnboarded: (state, getters) =>
-    getters.paypalOnboardingIsCompleted &&
-    (isOnboardingCompleted() || getters.firebaseOnboardingIsCompleted) &&
-    getters.psxOnboardingIsCompleted
-};
+ *-->
+<template>
+  <div>
+    <template v-if="checkoutAccountIsActive">
+      <b-badge variant="success">
+        {{ $t('pages.accounts.approved') }}
+      </b-badge>
+    </template>
+    <template v-else>
+      <b-badge variant="warning">
+        {{ $t('pages.accounts.approvalPending') }}
+      </b-badge>
+    </template>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: 'AccountStatusCheckout',
+    computed: {
+      checkoutAccountIsActive() {
+        return this.$store.state.firebase.onboardingCompleted;
+      }
+    }
+  };
+</script>

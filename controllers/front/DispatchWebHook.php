@@ -23,7 +23,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\MerchantDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 
 /**
@@ -206,7 +206,9 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     private function checkExecutionPermissions()
     {
-        $localShopId = (new ShopUuidManager())->getForShop((int) Context::getContext()->shop->id);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->getService('ps_checkout.repository.prestashop.account');
+        $localShopId = $psAccountRepository->getShopUuid();
 
         if ($this->shopId !== $localShopId) {
             throw new PsCheckoutException('shopId wrong', PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_INVALID);

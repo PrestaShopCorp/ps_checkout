@@ -107,7 +107,10 @@ class Ps_CheckoutTokenModuleFrontController extends ModuleFrontController
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository */
         $paypalAccountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
 
-        $apiOrder = new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order(\Context::getContext()->link);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+
+        $apiOrder = new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order(\Context::getContext()->link, $psAccountRepository);
         $response = $apiOrder->generateClientToken($paypalAccountRepository->getMerchantId());
 
         if (empty($response['body']) || empty($response['body']['client_token'])) {

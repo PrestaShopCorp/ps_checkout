@@ -46,7 +46,20 @@
             </div>
           </div>
           <div class="text-center mb-4">
-            <iframe width="560" height="315" :src="youtubeLink" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe
+              width="560"
+              height="315"
+              :src="youtubeLink"
+              frameborder="0"
+              allow="
+                accelerometer;
+                autoplay;
+                encrypted-media;
+                gyroscope;
+                picture-in-picture
+              "
+              allowfullscreen
+            ></iframe>
           </div>
           <div class="faq">
             <h1>{{ $t('panel.help.faq') }}</h1>

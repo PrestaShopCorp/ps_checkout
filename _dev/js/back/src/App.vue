@@ -23,7 +23,10 @@
         {{ $t('menu.authentication') }}
       </MenuItem>
       <template
-        v-if="onboardingPaypalIsCompleted && onboardingFirebaseIsCompleted"
+        v-if="
+          onboardingPaypalIsCompleted &&
+            (onboardingCheckoutIsCompleted || onboardingPrestashopIsCompleted)
+        "
       >
         <MenuItem route="/customize">
           {{ $t('menu.customizeCheckout') }}
@@ -118,7 +121,10 @@
       onboardingPaypalIsCompleted() {
         return this.$store.state.paypal.onboardingCompleted;
       },
-      onboardingFirebaseIsCompleted() {
+      onboardingCheckoutIsCompleted() {
+        return this.$store.state.firebase.onboardingCompleted;
+      },
+      onboardingPrestashopIsCompleted() {
         return isOnboardingCompleted();
       },
       accountIslinked() {

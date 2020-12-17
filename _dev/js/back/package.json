@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@femessage/log-viewer": "^1.4.1",
-    "@prestashopcorp/segment-vue": "^1.1.3",
+    "@prestashopcorp/segment-vue": "^1.2.0",
     "@sentry/browser": "^5.18.0",
     "@sentry/integrations": "^5.18.0",
     "axios": "^0.19.0",

@@ -20,6 +20,7 @@
 use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
+use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
@@ -178,12 +179,18 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             $this->ajaxDie(json_encode($errors));
         }
 
+        /** @var PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration $configuration */
+        $configuration = $this->module->getService('ps_checkout.configuration');
+
         // Save form in database
-        if (false === $this->savePsxForm($psxForm)) {
+        if (false === $configuration->set(PsAccount::PS_CHECKOUT_PSX_FORM, json_encode($psxForm))) {
             $this->ajaxDie(json_encode(['Cannot save in database.']));
         }
 
-        $response = (new PsxOnboarding())->setOnboardingMerchant(array_filter($psxForm));
+        /** @var PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding $psxOnboarding */
+        $psxOnboarding = $this->module->getService('ps_checkout.api.psx.onboarding');
+
+        $response = $psxOnboarding->setOnboardingMerchant(array_filter($psxForm));
 
         $this->ajaxDie(json_encode($response));
     }
@@ -199,8 +206,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $psAccount = $this->module->getService('ps_checkout.repository.prestashop.account');
 
         // update merchant status only if the merchant onBoarding is completed
-        if ($paypalAccount->onBoardingIsCompleted() && $psAccount->onBoardingIsCompleted()
-        ) {
+        if ($paypalAccount->onBoardingIsCompleted() && $psAccount->onBoardingIsCompleted()) {
             /** @var \PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater $updater */
             $updater = $this->module->getService('ps_checkout.updater.paypal.account');
             $updater->update($paypalAccount->getOnboardedAccount());
@@ -218,9 +224,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessGetOnboardingLink()
     {
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+
         // Generate a new onboarding link to lin a new merchant
         $this->ajaxDie(
-            json_encode((new Onboarding($this->context->link))->getOnboardingLink())
+            json_encode((new Onboarding($this->context->link, $psAccountRepository))->getOnboardingLink())
         );
     }
 
@@ -239,26 +248,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 'transactions' => $transactionOrder->present(),
             ])
         );
-    }
-
-    /**
-     * Update the psx form
-     *
-     * @param array $form
-     *
-     * @return bool
-     */
-    private function savePsxForm($form)
-    {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $accountRepository */
-        $accountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
-        $psAccount = $accountRepository->getOnboardedAccount();
-        $psAccount->setPsxForm(json_encode($form));
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\PersistentConfiguration $persistentConfiguration */
-        $persistentConfiguration = $this->module->getService('ps_checkout.persistent.configuration');
-
-        return $persistentConfiguration->savePsAccount($psAccount);
     }
 
     /**

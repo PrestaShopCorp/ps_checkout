@@ -36,6 +36,7 @@ Vue.use(psAccountsVueComponents);
 Vue.use(VueSegment, {
   id: 'BftCN3EnnGD1ETnf4FUBxP1WFMQ80JFZ',
   router,
+  debug: process.env.NODE_ENV !== 'production',
   pageCategory: 'ps_checkout'
 });
 

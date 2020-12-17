@@ -1,3 +1,4 @@
+<?php
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -16,16 +17,18 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import { isOnboardingCompleted } from 'prestashop_accounts_vue_components';
-export default {
-  adminController: state => state.prestashopCheckoutAjax,
-  locale: state => state.language.iso_code,
-  shopIs17: state => state.shopIs17,
-  translations: state => state.translations,
-  roundingSettingsIsCorrect: state => state.roundingSettingsIsCorrect,
-  shopId: state => state.shopId,
-  merchantIsFullyOnboarded: (state, getters) =>
-    getters.paypalOnboardingIsCompleted &&
-    (isOnboardingCompleted() || getters.firebaseOnboardingIsCompleted) &&
-    getters.psxOnboardingIsCompleted
-};
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Update main function for module version 2.2.0
+ *
+ * @param Ps_checkout $module
+ *
+ * @return bool
+ */
+function upgrade_module_2_2_0($module)
+{
+    return (new PrestaShop\AccountsAuth\Installer\Install())->installPsAccounts();
+}

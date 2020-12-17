@@ -164,7 +164,6 @@ class Ps_checkout extends PaymentModule
         // Install for both 1.7 and 1.6
         $defaultInstall = parent::install() &&
             (new PrestaShop\AccountsAuth\Installer\Install())->installPsAccounts() &&
-            // (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops() &&
             $this->installConfiguration() &&
             $this->registerHook(self::HOOK_LIST) &&
             (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
@@ -376,7 +375,7 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter $storePresenter */
         $storePresenter = $this->getService('ps_checkout.store.store');
 
-        /** @var \PrestaShop\AccountsAuth\Presenter\PsAccountsPresenter $psAccountPresenter */
+        // /** @var \PrestaShop\AccountsAuth\Presenter\PsAccountsPresenter $psAccountPresenter */
         $psAccountPresenter = new PrestaShop\AccountsAuth\Presenter\PsAccountsPresenter($this->name);
 
         Media::addJsDef([
@@ -608,14 +607,11 @@ class Ps_checkout extends PaymentModule
         $ppAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
         $psAccountRepository = $this->getService('ps_checkout.repository.prestashop.account');
-        /** @var \PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext $psContext */
-        $psContext = $this->getService('ps_checkout.context.prestashop');
-        $shopUuid = (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->getForShop((int) $psContext->getShopId());
 
         return $ppAccountRepository->onBoardingIsCompleted()
             && $ppAccountRepository->paypalEmailIsValid()
             && $psAccountRepository->onBoardingIsCompleted()
-            && $shopUuid;
+            && $psAccountRepository->getShopUuid();
     }
 
     /**
@@ -959,8 +955,13 @@ class Ps_checkout extends PaymentModule
     {
         /** @var Shop $shop */
         $shop = $params['object'];
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->getService('ps_checkout.repository.prestashop.account');
 
-        (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForShop((int) $shop->id);
+        if (!$psAccountRepository->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
+            (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForShop((int) $shop->id);
+        }
+
         $this->installConfiguration();
         $this->addCheckboxCarrierRestrictionsForModule([(int) $shop->id]);
         $this->addCheckboxCountryRestrictionsForModule([(int) $shop->id]);
