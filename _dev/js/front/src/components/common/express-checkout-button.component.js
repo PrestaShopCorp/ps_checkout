@@ -20,7 +20,6 @@ import { BaseComponent } from '../../core/dependency-injection/base.component';
 
 export class ExpressCheckoutButtonComponent extends BaseComponent {
   static Inject = {
-    htmlElementService: 'HTMLElementService',
     payPalService: 'PayPalService',
     psCheckoutApi: 'PsCheckoutApi',
     $: '$'
@@ -71,6 +70,7 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
       return this.props.createOrder(data);
     }
   }
+
   renderPayPalButton() {
     if (
       !this.payPalService

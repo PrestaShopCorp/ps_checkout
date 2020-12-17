@@ -266,8 +266,43 @@
   text-align: center;
 }
 
-.ps-checkout-express-separator {
-  padding: 1rem 0;
+.ps_checkout-express-separator {
+  text-align: center;
+}
+
+.ps_checkout-express-separator {
+  display: flex;
+  flex-direction: row;
+  font-size: 20px;
+  color: #333;
+}
+
+.ps_checkout-express-separator:before, .ps_checkout-express-separator:after{
+  content: "";
+  flex: 1 1;
+  border-bottom: 1px solid #333;
+  margin: auto;
+}
+
+.ps_checkout-express-separator:before {
+  margin-right: 10px
+}
+
+.ps_checkout-express-separator:after {
+  margin-left: 10px
+}
+
+
+.ps_checkout-express-button.ps_checkout-express-button-cart {
+  text-align: center;
+  margin: 10px auto 0 auto;
+  font-size: 20px;
+  padding: 11px 0 10px 0;
+  width: 250px;
+}
+
+.ps_checkout-express-button.ps_checkout-express-button-checkout {
+  width: 270px;
 }
 
 .ps-checkout-funding-img {
@@ -314,4 +349,13 @@
   text-align: right;
   padding-right: 10px;
   width: 20%;
+}
+
+.express-checkout-block .ps_checkout-express-checkout-button {
+  overflow: auto;
+}
+
+.express-checkout-block .ps_checkout-express-checkout-button button {
+  float: right;
+  border-radius: 4px;
 }
