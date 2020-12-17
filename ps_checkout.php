@@ -34,6 +34,7 @@ class Ps_checkout extends PaymentModule
      * @var array
      */
     const HOOK_LIST = [
+        'displayAdminAfterHeader',
         'displayOrderConfirmation',
         'displayAdminOrderLeft',
         'displayAdminOrderMainBottom',
@@ -51,7 +52,6 @@ class Ps_checkout extends PaymentModule
      */
     const HOOK_LIST_17 = [
         'paymentOptions',
-        'displayAdminAfterHeader',
         'displayExpressCheckout',
         'displayFooterProduct',
         'displayPersonalInformationTop',
@@ -109,7 +109,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.2.0';
+    const VERSION = '2.5.0';
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -130,7 +130,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.2.0';
+        $this->version = '2.5.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->currencies = true;
@@ -383,6 +383,11 @@ class Ps_checkout extends PaymentModule
             'contextPsAccounts' => $psAccountPresenter->present(),
         ]);
 
+        $this->context->controller->addJS(
+            $this->getPathUri() . 'views/js/app.js?version=' . $this->version,
+            false
+        );
+
         return $this->display(__FILE__, '/views/templates/admin/configuration.tpl');
     }
 
@@ -431,7 +436,20 @@ class Ps_checkout extends PaymentModule
             $paymentOptions[$fundingSource->name] = $fundingSource->label;
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+        $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
+
+        /** @var PsCheckoutCart|false $psCheckoutCart */
+        $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
+
+        $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout;
+
         $this->context->smarty->assign([
+            'is17' => $shopContext->isShop17(),
+            'isExpressCheckout' => $isExpressCheckout,
             'modulePath' => $this->getPathUri(),
             'paymentOptions' => $paymentOptions,
             'isHostedFieldsAvailable' => $paypalAccountRepository->cardHostedFieldsIsAvailable(),
@@ -542,32 +560,53 @@ class Ps_checkout extends PaymentModule
     }
 
     /**
-     * Display promotion block in the admin payment controller
+     * Hook used to display templates under BO header
      */
     public function hookDisplayAdminAfterHeader()
     {
-        if ('AdminPayment' !== Tools::getValue('controller')) {
+        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->getService('ps_checkout.paypal.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+        $isShop17 = $shopContext->isShop17();
+
+        if ('AdminPayment' === Tools::getValue('controller') && $isShop17) { // Display on PrestaShop 1.7.x.x only
+            $params = [
+                'imgPath' => $this->_path . 'views/img/',
+                'configureLink' => (new PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter($this->context->link))->getAdminLink(
+                    'AdminModules',
+                    true,
+                    [],
+                    [
+                        'configure' => 'ps_checkout',
+                    ]
+                ),
+            ];
+            $track = 'View Payment Methods PS Page';
+            $template = '/views/templates/hook/adminAfterHeader/promotionBlock.tpl';
+        } elseif ('AdminCountries' === Tools::getValue('controller')) {
+            $params = [
+                'isShop17' => $isShop17,
+                'codesType' => 'countries',
+                'incompatibleCodes' => $paypalConfiguration->getIncompatibleCountryCodes(),
+                'paypalLink' => 'https://developer.paypal.com/docs/api/reference/country-codes/#',
+            ];
+            $track = 'View Countries PS Page';
+            $template = '/views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
+        } elseif ('AdminCurrencies' === Tools::getValue('controller')) {
+            $params = [
+                'isShop17' => $isShop17,
+                'codesType' => 'currencies',
+                'incompatibleCodes' => $paypalConfiguration->getIncompatibleCurrencyCodes(),
+                'paypalLink' => 'https://developer.paypal.com/docs/api/reference/currency-codes/#',
+            ];
+            $track = 'View Currencies PS Page';
+            $template = '/views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
+        } else {
             return false;
         }
 
-        $link = (new PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter($this->context->link))->getAdminLink(
-            'AdminModules',
-            true,
-            [],
-            [
-                'configure' => 'ps_checkout',
-            ]
-        );
-
-        $this->context->smarty->assign([
-            'imgPath' => $this->_path . 'views/img/',
-            'configureLink' => $link,
-        ]);
-
-        // track when payment method header is called
-        $this->trackModuleAction('View Payment Methods PS Page');
-
-        return $this->display(__FILE__, '/views/templates/hook/adminAfterHeader.tpl');
+        return $this->displayAdminAfterHeader($params, $track, $template);
     }
 
     /**
@@ -584,15 +623,29 @@ class Ps_checkout extends PaymentModule
             );
         }
 
+        if ('AdminCountries' === Tools::getValue('controller')) {
+            $this->context->controller->addCss(
+                $this->_path . 'views/css/incompatible-banner.css?version=' . $this->version,
+                'all',
+                null,
+                false
+            );
+        }
+
+        if ('AdminCurrencies' === Tools::getValue('controller')) {
+            $this->context->controller->addCss(
+                $this->_path . 'views/css/incompatible-banner.css?version=' . $this->version,
+                'all',
+                null,
+                false
+            );
+        }
+
         if ('AdminOrders' === Tools::getValue('controller')) {
             $this->context->controller->addJS(
                 $this->getPathUri() . 'views/js/adminOrderView.js?version=' . $this->version,
                 false
             );
-        }
-
-        if ($this->name === Tools::getValue('configure')) {
-            $this->context->controller->addJS($this->getPathUri() . 'views/js/app.js?version=' . $this->version);
         }
     }
 
@@ -683,7 +736,10 @@ class Ps_checkout extends PaymentModule
         // END To be refactored in services
 
         Media::addJsDef([
+            $this->name . 'Version' => self::VERSION,
+            $this->name . 'AutoRenderDisabled' => (bool) Configuration::get('PS_CHECKOUT_AUTO_RENDER_DISABLED'),
             $this->name . 'LoaderImage' => $this->getPathUri() . 'views/img/loader.svg',
+            $this->name . 'PayPalButtonConfiguration' => $payPalConfiguration->getButtonConfiguration(),
             $this->name . 'CardFundingSourceImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'),
             $this->name . 'GetTokenURL' => $this->context->link->getModuleLink($this->name, 'token', [], true),
             $this->name . 'CreateUrl' => $this->context->link->getModuleLink($this->name, 'create', [], true),
@@ -734,6 +790,10 @@ class Ps_checkout extends PaymentModule
                 'checkout.form.error.label' => $this->l('There was an error during the payment. Please try again or contact the support.'),
                 'loader-component.label.header' => $this->l('Thanks for your purchase!'),
                 'loader-component.label.body' => $this->l('Please wait, we proceed to payment'),
+                'error.paypal-sdk.contingency.cancel' => $this->l('Card holder authentication canceled, please choose another payment method or try again.'),
+                'error.paypal-sdk.contingency.error' => $this->l('An error occurred on card holder authentication, please choose another payment method or try again.'),
+                'error.paypal-sdk.contingency.failure' => $this->l('Card holder authentication failed, please choose another payment method or try again.'),
+                'error.paypal-sdk.contingency.unknown' => $this->l('Card holder authentication cannot be checked, please choose another payment method or try again.'),
             ],
         ]);
 
@@ -748,7 +808,10 @@ class Ps_checkout extends PaymentModule
                 ]
             );
         } else {
-            $this->context->controller->addJS($this->getPathUri() . 'views/js/front.js?version=' . $this->version);
+            $this->context->controller->addJS(
+                $this->getPathUri() . 'views/js/front.js?version=' . $this->version,
+                false
+            );
         }
 
         if (method_exists($this->context->controller, 'registerStylesheet')) {
@@ -1190,5 +1253,20 @@ class Ps_checkout extends PaymentModule
                 // Sometime on module enable after an upgrade .env data are not loaded
             }
         }
+    }
+
+    /**
+     * @param array $params
+     * @param string $track
+     * @param string $template
+     */
+    private function displayAdminAfterHeader($params, $track, $template)
+    {
+        $this->context->smarty->assign($params);
+
+        // track when payment method header is called
+        $this->trackModuleAction($track);
+
+        return $this->display(__FILE__, $template);
     }
 }

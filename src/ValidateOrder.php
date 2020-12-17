@@ -89,8 +89,24 @@ class ValidateOrder
 
         // @todo To be refactored in v2.0.0 with Service Container
         if (true === empty($order['purchase_units'][0]['payments']['captures'])) {
+            /** @var \Ps_checkout $module */
+            $module = \Module::getInstanceByName('ps_checkout');
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider $fundingSourceTranslationProvider */
+            $fundingSourceTranslationProvider = $module->getService('ps_checkout.funding_source.translation');
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            $psCheckoutCartRepository = $module->getService('ps_checkout.repository.pscheckoutcart');
+
+            /** @var \PsCheckoutCart|false $psCheckoutCart */
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $payload['cartId']);
+
             $apiOrder = new Order(\Context::getContext()->link, $psAccountRepository);
-            $response = $apiOrder->capture($order['id'], $this->merchantId); // API call here
+            $response = $apiOrder->capture(
+                $order['id'],
+                $this->merchantId,
+                false === $psCheckoutCart ? 'paypal' : $psCheckoutCart->paypal_funding
+            ); // API call here
 
             if (false === $response['status']) {
                 if (false === empty($response['body']['message'])) {
@@ -123,18 +139,6 @@ class ValidateOrder
                     $payPalProcessorResponse->throwException();
                 }
             }
-
-            /** @var \Ps_checkout $module */
-            $module = \Module::getInstanceByName('ps_checkout');
-
-            /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider $fundingSourceTranslationProvider */
-            $fundingSourceTranslationProvider = $module->getService('ps_checkout.funding_source.translation');
-
-            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
-            $psCheckoutCartRepository = $module->getService('ps_checkout.repository.pscheckoutcart');
-
-            /** @var \PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $payload['cartId']);
 
             if (false === $psCheckoutCart) {
                 $psCheckoutCart = new \PsCheckoutCart();

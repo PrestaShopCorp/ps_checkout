@@ -84,6 +84,11 @@ class CreatePaypalOrderHandler
 
             $builder->buildFullPayload();
         } else {
+            // enable express checkout mode if in express checkout
+            if (true === $expressCheckout) {
+                $builder->setExpressCheckout(true);
+            }
+
             // enable update mode if we build an order for update it
             if (true === $updateOrder) {
                 $builder->setIsUpdate(true);

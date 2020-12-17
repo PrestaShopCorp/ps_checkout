@@ -16,7 +16,7 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import { BaseComponent } from '../../core/base.component';
+import { BaseComponent } from '../../core/dependency-injection/base.component';
 
 /**
  * @typedef SmartButtonComponentProps
@@ -29,23 +29,20 @@ import { BaseComponent } from '../../core/base.component';
  */
 
 export class SmartButtonComponent extends BaseComponent {
-  static INJECT = {
-    config: 'config',
-    htmlElementService: 'htmlElementService',
-    payPalService: 'payPalService',
-    psCheckoutService: 'psCheckoutService'
+  static Inject = {
+    config: 'PsCheckoutConfig',
+    payPalService: 'PayPalService',
+    psCheckoutApi: 'PsCheckoutApi'
   };
 
-  constructor(app, props) {
-    super(app, props);
+  created() {
+    this.data.name = this.props.fundingSource.name;
 
-    this.data.name = props.fundingSource.name;
+    this.data.HTMLElement = this.props.HTMLElement;
 
-    this.data.HTMLElement = props.HTMLElement;
-
-    this.data.conditionsComponent = this.app.children.conditionsCheckbox;
-    this.data.loaderComponent = this.app.children.loader;
-    this.data.notificationComponent = this.app.children.notification;
+    this.data.conditions = this.app.root.children.conditionsCheckbox;
+    this.data.loader = this.app.root.children.loader;
+    this.data.notification = this.app.root.children.notification;
   }
 
   renderPayPalButton() {
@@ -57,98 +54,95 @@ export class SmartButtonComponent extends BaseComponent {
     return this.payPalService
       .getButtonPayment(this.data.name, {
         onInit: (data, actions) => {
-          if (!this.data.conditionsComponent) {
+          if (!this.data.conditions) {
             actions.enable();
             return;
           }
 
-          if (this.data.conditionsComponent.isChecked()) {
-            this.data.notificationComponent.hideConditions();
+          if (this.data.conditions.isChecked()) {
+            this.data.notification.hideConditions();
             actions.enable();
           } else {
-            this.data.notificationComponent.showConditions();
+            this.data.notification.showConditions();
             actions.disable();
           }
 
-          this.data.conditionsComponent.onChange(() => {
-            if (this.data.conditionsComponent.isChecked()) {
-              this.data.notificationComponent.hideConditions();
+          this.data.conditions.onChange(() => {
+            if (this.data.conditions.isChecked()) {
+              this.data.notification.hideConditions();
               actions.enable();
             } else {
-              this.data.notificationComponent.showConditions();
+              this.data.notification.showConditions();
               actions.disable();
             }
           });
         },
         onClick: (data, actions) => {
-          if (
-            this.data.conditionsComponent &&
-            !this.data.conditionsComponent.isChecked()
-          ) {
-            this.data.notificationComponent.hideCancelled();
-            this.data.notificationComponent.hideError();
-            this.data.notificationComponent.showConditions();
+          if (this.data.conditions && !this.data.conditions.isChecked()) {
+            this.data.notification.hideCancelled();
+            this.data.notification.hideError();
+            this.data.notification.showConditions();
 
             return;
           }
 
           if (this.data.name !== 'card') {
-            this.data.loaderComponent.show();
+            this.data.loader.show();
           }
 
-          this.psCheckoutService
+          this.psCheckoutApi
             .postCheckCartOrder(
               { ...data, fundingSource: this.data.name },
               actions
             )
             .catch((error) => {
-              this.data.loaderComponent.hide();
-              this.data.notificationComponent.showError(error.message);
+              this.data.loader.hide();
+              this.data.notification.showError(error.message);
               actions.reject();
             });
         },
         onError: (error) => {
           console.error(error);
-          this.data.loaderComponent.hide();
-          this.data.notificationComponent.showError(
+          this.data.loader.hide();
+          this.data.notification.showError(
             error instanceof TypeError ? error.message : ''
           );
         },
         onApprove: (data, actions) => {
-          this.data.loaderComponent.show();
-          return this.psCheckoutService
+          this.data.loader.show();
+          return this.psCheckoutApi
             .postValidateOrder(
               { ...data, fundingSource: this.data.name },
               actions
             )
             .catch((error) => {
-              this.data.loaderComponent.hide();
-              this.data.notificationComponent.showError(error.message);
+              this.data.loader.hide();
+              this.data.notification.showError(error.message);
             });
         },
         onCancel: (data) => {
-          this.data.loaderComponent.hide();
-          this.data.notificationComponent.showCanceled();
+          this.data.loader.hide();
+          this.data.notification.showCanceled();
 
-          return this.psCheckoutService
+          return this.psCheckoutApi
             .postCancelOrder({
               ...data,
               fundingSource: this.data.name
             })
             .catch((error) => {
-              this.data.loaderComponent.hide();
-              this.data.notificationComponent.showError(error.message);
+              this.data.loader.hide();
+              this.data.notification.showError(error.message);
             });
         },
         createOrder: (data) => {
-          return this.psCheckoutService
+          return this.psCheckoutApi
             .postCreateOrder({
               ...data,
               fundingSource: this.data.name
             })
             .catch((error) => {
-              this.data.loaderComponent.hide();
-              this.data.notificationComponent.showError(
+              this.data.loader.hide();
+              this.data.notification.showError(
                 `${error.message} ${error.name}`
               );
             });

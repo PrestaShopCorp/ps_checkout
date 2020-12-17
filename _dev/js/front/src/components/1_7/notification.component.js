@@ -16,20 +16,19 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-export class NotificationComponent {
-  constructor(checkout) {
-    this.htmlElementService = checkout.htmlElementService;
+import { BaseComponent } from '../../core/dependency-injection/base.component';
 
-    this.notificationConditions = this.htmlElementService.getNotificationConditions();
-    this.notificationPaymentCanceled = this.htmlElementService.getNotificationPaymentCanceled();
+export class NotificationComponent extends BaseComponent {
+  static Inject = {
+    querySelectorService: 'QuerySelectorService'
+  };
 
-    this.notificationPaymentError = this.htmlElementService.getNotificationPaymentError();
-    this.notificationPaymentErrorText = this.htmlElementService.getNotificationPaymentErrorText();
-  }
+  created() {
+    this.notificationConditions = this.querySelectorService.getNotificationConditions();
 
-  render() {
-    // This component doesn't need to be rendered since it's already on the template.
-    return this;
+    this.notificationPaymentCanceled = this.querySelectorService.getNotificationPaymentCanceled();
+    this.notificationPaymentError = this.querySelectorService.getNotificationPaymentError();
+    this.notificationPaymentErrorText = this.querySelectorService.getNotificationPaymentErrorText();
   }
 
   hideCancelled() {

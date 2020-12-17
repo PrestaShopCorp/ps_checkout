@@ -16,6 +16,20 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+function getTranslations() {
+  return {
+    ...Object.keys(window.ps_checkoutPayWithTranslations || {}).reduce(
+      (result, name) => {
+        result[`funding-source.name.${name}`] =
+          window.ps_checkoutPayWithTranslations[name];
+        return result;
+      },
+      {}
+    ),
+    ...window.ps_checkoutCheckoutTranslations
+  };
+}
+
 export const PsCheckoutConfig = {
   createUrl: window.ps_checkoutCreateUrl,
   checkCartUrl: window.ps_checkoutCheckUrl,
@@ -28,29 +42,25 @@ export const PsCheckoutConfig = {
 
   hostedFieldsEnabled: window.ps_checkoutHostedFieldsEnabled,
 
-  translations: {
-    ...Object.keys(window.ps_checkoutPayWithTranslations || {}).reduce(
-      (result, name) => {
-        result[`funding-source.name.${name}`] =
-          window.ps_checkoutPayWithTranslations[name];
-        return result;
-      },
-      {}
-    ),
-    ...window.ps_checkoutCheckoutTranslations
-  },
+  translations: getTranslations(),
 
   loaderImage: window.ps_checkoutLoaderImage,
   customMark: {
     card: window.ps_checkoutCardFundingSourceImg
   },
 
-  expressCheckoutSelected: window.ps_checkoutExpressCheckoutSelected,
-  expressCheckoutProductEnabled:
-    window.ps_checkoutExpressCheckoutProductEnabled,
-  expressCheckoutCartEnabled: window.ps_checkoutExpressCheckoutCartEnabled,
-  expressCheckoutOrderEnabled: window.ps_checkoutExpressCheckoutOrderEnabled,
-  expressCheckoutHostedFieldsEnabled: window.ps_checkoutHostedFieldsEnabled,
+  // TODO: Move this to PayPalSDKConfig in the next version
+  buttonCustomization: window.ps_checkoutPayPalButtonConfiguration,
+
+  autoRenderDisabled: window.ps_checkoutAutoRenderDisabled,
+  expressCheckout: {
+    active: window.ps_checkoutExpressCheckoutSelected,
+    enabled: {
+      cart: window.ps_checkoutExpressCheckoutCartEnabled,
+      order: window.ps_checkoutExpressCheckoutOrderEnabled,
+      product: window.ps_checkoutExpressCheckoutProductEnabled
+    }
+  },
 
   fundingSourcesSorted: window.ps_checkoutFundingSourcesSorted,
 

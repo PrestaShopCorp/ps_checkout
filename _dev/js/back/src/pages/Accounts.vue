@@ -30,6 +30,28 @@
     </b-container>
 
     <b-container
+      class="mb-4"
+      v-if="
+        (checkoutAccountStatus || prestashopAccountStatus) &&
+          paypalStatusAccount &&
+          incompatibleCountryCodes
+      "
+    >
+      <PaypalIncompatibleCountry />
+    </b-container>
+
+    <b-container
+      class="mb-4"
+      v-if="
+        (checkoutAccountStatus || prestashopAccountStatus) &&
+          paypalStatusAccount &&
+          incompatibleCurrencyCodes
+      "
+    >
+      <PaypalIncompatibleCurrency />
+    </b-container>
+
+    <b-container
       class="text-center"
       v-if="
         (!checkoutAccountStatus || !prestashopAccountStatus) &&
@@ -81,6 +103,8 @@
   import PaymentAcceptance from '@/components/panel/payment-acceptance';
   import Reassurance from '@/components/block/reassurance';
   import PaypalStatusBanner from '@/components/banner/paypal-status';
+  import PaypalIncompatibleCountry from '@/components/banner/paypal-incompatible-country';
+  import PaypalIncompatibleCurrency from '@/components/banner/paypal-incompatible-currency';
 
   export default {
     name: 'Accounts',
@@ -90,7 +114,9 @@
       CheckoutAccount,
       PaymentAcceptance,
       Reassurance,
-      PaypalStatusBanner
+      PaypalStatusBanner,
+      PaypalIncompatibleCountry,
+      PaypalIncompatibleCurrency
     },
     computed: {
       checkoutAccountStatus() {
@@ -113,6 +139,12 @@
       },
       cardPaymentIsActive() {
         return this.$store.state.paypal.cardIsActive;
+      },
+      incompatibleCountryCodes() {
+        return this.$store.state.context.incompatibleCountryCodes;
+      },
+      incompatibleCurrencyCodes() {
+        return this.$store.state.context.incompatibleCurrencyCodes;
       }
     },
     methods: {

@@ -16,23 +16,21 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import { BaseComponent } from '../../core/base.component';
+import { BaseComponent } from '../../core/dependency-injection/base.component';
 
 export class HostedFieldsComponent extends BaseComponent {
-  static INJECT = {
-    config: 'config',
-    htmlElementService: 'htmlElementService',
-    payPalService: 'payPalService',
-    psCheckoutService: 'psCheckoutService'
+  static Inject = {
+    config: 'PsCheckoutconfig',
+    payPalService: 'PayPalService',
+    psCheckoutApi: 'PsCheckoutApi',
+    psCheckoutService: 'PsCheckoutService'
   };
 
-  constructor(app, props) {
-    super(app, props);
-
-    this.data.name = props.fundingSource.name;
+  created() {
+    this.data.name = this.props.fundingSource.name;
     this.data.validity = false;
 
-    this.data.HTMLElement = props.HTMLElement;
+    this.data.HTMLElement = this.props.HTMLElement;
     this.data.HTMLElementBaseButton = this.getBaseButton();
     this.data.HTMLElementButton = null;
     this.data.HTMLElementButtonWrapper = this.getButtonWrapper();
@@ -40,8 +38,6 @@ export class HostedFieldsComponent extends BaseComponent {
     this.data.HTMLElementCardCVV = this.getCardCVV();
     this.data.HTMLElementCardExpirationDate = this.getCardExpirationDate();
     this.data.HTMLElementSection = this.getSection();
-
-    this.data.conditionsComponent = this.app.children.conditionsCheckbox;
   }
 
   getBaseButton() {
@@ -76,8 +72,8 @@ export class HostedFieldsComponent extends BaseComponent {
   }
 
   isSubmittable() {
-    return this.data.conditionsComponent
-      ? this.data.conditionsComponent.isChecked() && this.data.validity
+    return this.data.conditions
+      ? this.data.conditions.isChecked() && this.data.validity
       : this.data.validity;
   }
 
@@ -91,13 +87,13 @@ export class HostedFieldsComponent extends BaseComponent {
         },
         {
           createOrder: () =>
-            this.psCheckoutService
+            this.psCheckoutApi
               .postCreateOrder({
                 fundingSource: this.data.name,
                 isHostedFields: true
               })
               .catch((error) => {
-                this.app.children.notification.showError(
+                this.data.notification.showError(
                   `${error.message} ${error.name}`
                 );
               })
@@ -126,17 +122,18 @@ export class HostedFieldsComponent extends BaseComponent {
 
           this.data.HTMLElementButton.addEventListener('click', (event) => {
             event.preventDefault();
-            this.app.children.loader.show();
-            this.data.HTMLElementSection.classList.toggle('disabled', true);
+            this.data.loader.show();
+            // this.data.HTMLElementButton.classList.toggle('disabled', true);
+            this.data.HTMLElementButton.setAttribute('disabled', '');
 
             hostedFields
               .submit({
                 contingencies: ['3D_SECURE']
               })
               .then((payload) => {
-                const { liabilityShift } = payload;
+                const { liabilityShifted, authenticationReason } = payload;
                 return this.psCheckoutService
-                  .validateLiablityShift(liabilityShift)
+                  .validateContingency(liabilityShifted, authenticationReason)
                   .then(() => {
                     const data = payload;
 
@@ -144,7 +141,7 @@ export class HostedFieldsComponent extends BaseComponent {
                     data.orderID = data.orderId;
                     delete data.orderId;
 
-                    return this.psCheckoutService.postValidateOrder({
+                    return this.psCheckoutApi.postValidateOrder({
                       ...data,
                       fundingSource: this.data.name,
                       isHostedFields: true
@@ -152,9 +149,9 @@ export class HostedFieldsComponent extends BaseComponent {
                   });
               })
               .catch((error) => {
-                this.app.children.loader.hide();
-                this.app.children.notification.showError(error.message);
-                this.data.HTMLElementButton.disabled = false;
+                this.data.loader.hide();
+                this.data.notification.showError(error.message);
+                this.data.HTMLElementButton.removeAttribute('disabled');
               });
           });
         }
@@ -169,13 +166,17 @@ export class HostedFieldsComponent extends BaseComponent {
     this.data.HTMLElementButtonWrapper.append(this.data.HTMLElementButton);
     this.data.HTMLElementButton.disabled = !this.isSubmittable();
 
-    this.data.conditionsComponent &&
-      this.data.conditionsComponent.onChange(() => {
+    this.data.conditions &&
+      this.data.conditions.onChange(() => {
         this.data.HTMLElementButton.disabled = !this.isSubmittable();
       });
   }
 
   render() {
+    this.data.conditions = this.app.root.children.conditionsCheckbox;
+    this.data.notification = this.app.root.children.notification;
+    this.data.loader = this.app.root.children.loader;
+
     this.renderButton();
     this.renderPayPalHostedFields();
 

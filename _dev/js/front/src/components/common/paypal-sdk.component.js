@@ -16,52 +16,16 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+import { BaseComponent } from '../../core/dependency-injection/base.component';
 
-/**
- * @typedef PayPalSdkConfig
- * @type {object}
- *
- * @property {string} id
- * @property {string} namespace
- * @property {string} src
- * @property {string} card3dsEnabled
- * @property {string} cspNonce
- * @property {string} orderId
- * @property {string} clientToken
- */
+export class PayPalSdkComponent extends BaseComponent {
+  static Inject = {
+    config: 'PayPalSdkConfig'
+  };
 
-/**
- * @typedef PayPalSdk
- * @type {object}
- *
- * @property {function} getFundingSources
- * @property {object} Buttons
- * @property {function} Buttons.isEligible
- * @property {function} Buttons.render
- * @property {object} Marks
- * @property {function} Marks.isEligible
- * @property {function} Marks.render
- * @property {object} HostedFields
- * @property {function} HostedFields.isEligible
- * @property {function} HostedFields.render
- */
-
-/**
- * @function PayPalSdkCallback
- *
- * @param {PayPalSdk} sdk
- */
-
-export class PayPalSdkComponent {
-  /**
-   * @param {PayPalSdkConfig} config
-   * @param {string} token
-   * @param {PayPalSdkCallback} onload
-   */
-  constructor(config, token, onload) {
-    this.config = config;
-    this.token = token;
-    this.onload = onload;
+  created() {
+    this.sdk = null;
+    this.promise = null;
   }
 
   render() {
@@ -84,13 +48,21 @@ export class PayPalSdkComponent {
       script.setAttribute('data-order-id', this.config.orderId);
     }
 
-    script.setAttribute('data-client-token', this.token);
+    script.setAttribute('data-client-token', this.props.token);
 
     document.head.appendChild(script);
 
-    script.onload = () => {
-      this.sdk = window[this.config.namespace];
-      this.onload(this.sdk);
-    };
+    this.promise = new Promise((resolve, reject) => {
+      script.onload = () => {
+        this.sdk = window[this.config.namespace];
+        resolve(this.sdk);
+      };
+
+      script.onerror = () => {
+        reject();
+      };
+    });
+
+    return this;
   }
 }

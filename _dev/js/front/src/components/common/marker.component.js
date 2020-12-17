@@ -16,7 +16,7 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import { BaseComponent } from '../../core/base.component';
+import { BaseComponent } from '../../core/dependency-injection/base.component';
 
 /**
  * @typedef MarkComponentProps
@@ -25,27 +25,19 @@ import { BaseComponent } from '../../core/base.component';
  * @param {*}      fundingSource.mark
  *
  * @param {HTMLElement} HTMLElement
- * @param {HTMLElement} [HTMLElementImage]
  */
 
 export class MarkComponent extends BaseComponent {
-  static INJECT = {
-    config: 'config'
+  static Inject = {
+    config: 'PsCheckoutConfig'
   };
 
-  /**
-   *
-   * @param app
-   * @param {MarkComponentProps} props
-   */
-  constructor(app, props) {
-    super(app, props);
+  created() {
+    this.data.name = this.props.fundingSource.name;
+    this.data.mark = this.props.fundingSource.mark;
 
-    this.data.name = props.fundingSource.name;
-    this.data.mark = props.fundingSource.mark;
-
-    this.data.HTMLElement = props.HTMLElement;
-    this.data.HTMLElementImage = props.HTMLElementImage || null;
+    this.data.HTMLElement = this.props.HTMLElement;
+    this.data.HTMLElementImage = this.props.HTMLElementImage || null;
   }
 
   hasCustomMark() {

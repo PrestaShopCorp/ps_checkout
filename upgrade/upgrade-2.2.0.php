@@ -30,5 +30,49 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_2_0($module)
 {
-    return (new PrestaShop\AccountsAuth\Installer\Install())->installPsAccounts();
+    $db = Db::getInstance();
+
+    $createFundingSourceTable = (bool) $db->execute('
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_funding_source` (
+              `name` varchar(20) NOT NULL,
+              `active` tinyint(1) unsigned DEFAULT 0 NOT NULL,
+              `position` tinyint(2) unsigned NOT NULL,
+              `id_shop` int unsigned NOT NULL,
+              PRIMARY KEY (`name`, `id_shop`),
+              INDEX (`id_shop`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+        ');
+
+    if ($createFundingSourceTable) {
+        $shopsList = \Shop::getShops(false, null, true);
+
+        foreach ($shopsList as $shopId) {
+            $isCardEnabled = (bool) \Configuration::get(
+                'PS_CHECKOUT_CARD_PAYMENT_ENABLED',
+                null,
+                null,
+                $shopId
+            );
+            $hasFundingSourceCard = (bool) $db->getValue('
+                SELECT 1
+                FROM `' . _DB_PREFIX_ . 'pscheckout_funding_source`
+                WHERE `name` = "card"
+                AND `id_shop` = ' . (int) $shopId
+            );
+
+            if (false === $isCardEnabled && false === $hasFundingSourceCard) {
+                $db->insert(
+                    'pscheckout_funding_source',
+                    [
+                        'name' => 'card',
+                        'position' => 2,
+                        'active' => 0,
+                        'id_shop' => (int) $shopId,
+                    ]
+                );
+            }
+        }
+    }
+
+    return true;
 }

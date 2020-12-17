@@ -16,7 +16,7 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import { BaseComponent } from '../../core/base.component';
+import { BaseComponent } from '../../core/dependency-injection/base.component';
 
 import { HostedFieldsComponent } from './hosted-fields.component';
 import { MarkComponent } from './marker.component';
@@ -29,36 +29,29 @@ import { SmartButtonComponent } from './smart-button.component';
  * @param {*}      fundingSource.mark
  *
  * @param {HTMLElement} HTMLElement
- * @param {HTMLElement} [HTMLElementWrapper]
- * @param {HTMLElement} [HTMLElementLabel]
- * @param {HTMLElement} [HTMLElementMark]
- * @param {HTMLElement} [HTMLElementHostedFields]
- * @param {HTMLElement} [HTMLElementSmartButtonWrapper]
  */
 
 export class PaymentOptionComponent extends BaseComponent {
-  static INJECT = {
-    config: 'config',
-    htmlElementService: 'htmlElementService',
+  static Inject = {
+    config: 'PsCheckoutConfig',
     $: '$'
   };
 
-  /**
-   * @param checkout
-   * @param props
-   */
-  constructor(checkout, props) {
-    super(checkout, props);
+  created() {
+    this.data.name = this.props.fundingSource.name;
 
-    this.data.name = props.fundingSource.name;
-
-    this.data.HTMLElement = props.HTMLElement;
-    this.data.HTMLElementWrapper = this.getWrapper();
+    this.data.HTMLElement = this.props.HTMLElement;
+    this.data.HTMLElementContainer = this.getContainer();
     this.data.HTMLElementLabel = this.getLabel();
-    this.data.HTMLElementMark = props.HTMLElementMark || null;
+    this.data.HTMLElementMark = this.props.HTMLElementMark || null;
 
     this.data.HTMLElementHostedFields = this.getHostedFields();
     this.data.HTMLElementSmartButton = this.getSmartButton();
+  }
+
+  getContainer() {
+    const wrapperId = `${this.data.HTMLElement.id}-container`;
+    return document.getElementById(wrapperId);
   }
 
   getHostedFields() {
@@ -66,8 +59,7 @@ export class PaymentOptionComponent extends BaseComponent {
     return (
       this.data.name === 'card' &&
       this.config.hostedFieldsEnabled &&
-      (this.props.HTMLElementHostedFields ||
-        document.getElementById(hostedFieldsFormId))
+      document.getElementById(hostedFieldsFormId)
     );
   }
 
@@ -79,21 +71,13 @@ export class PaymentOptionComponent extends BaseComponent {
         : this.$('funding-source.name.default');
 
     return Array.prototype.slice
-      .call(this.data.HTMLElementWrapper.querySelectorAll('*'))
+      .call(this.data.HTMLElementContainer.querySelectorAll('*'))
       .find((item) => item.innerHTML.trim() === label.trim());
   }
 
   getSmartButton() {
     const smartButtonSelector = `.ps_checkout-button[data-funding-source=${this.data.name}]`;
-    return (
-      this.props.HTMLElementSmartButton ||
-      document.querySelector(smartButtonSelector)
-    );
-  }
-
-  getWrapper() {
-    const wrapperId = `${this.data.HTMLElement.id}-container`;
-    return this.props.HTMLElementWrapper || document.getElementById(wrapperId);
+    return document.querySelector(smartButtonSelector);
   }
 
   onLabelClick(listener) {
@@ -104,8 +88,8 @@ export class PaymentOptionComponent extends BaseComponent {
   }
 
   renderWrapper() {
-    this.data.HTMLElementWrapper.classList.add('ps_checkout-payment-option');
-    this.data.HTMLElementWrapper.style.display = '';
+    this.data.HTMLElementContainer.classList.add('ps_checkout-payment-option');
+    this.data.HTMLElementContainer.style.display = '';
   }
 
   renderMark() {
@@ -144,6 +128,19 @@ export class PaymentOptionComponent extends BaseComponent {
         HTMLElement: this.data.HTMLElementSmartButton
       }).render();
     }
+
+    window.ps_checkout.events.dispatchEvent(
+      new CustomEvent('payment-option-active', {
+        detail: {
+          fundingSource: this.data.name,
+          HTMLElement: this.data.HTMLElement,
+          HTMLElementContainer: this.data.HTMLElementContainer,
+          HTMLElementBinary: this.data.HTMLElementHostedFields
+            ? this.children.hostedFields.data.HTMLElementButton.parentElement
+            : this.data.HTMLElementSmartButton
+        }
+      })
+    );
 
     return this;
   }

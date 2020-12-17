@@ -29,6 +29,8 @@
  * @property {function} createOrder
  */
 
+import { BaseClass } from '../core/dependency-injection/base.class';
+
 /**
  * @typedef PaypalHostedFieldsEvents
  * @type {*}
@@ -36,14 +38,12 @@
  * @property {function} createOrder
  */
 
-export class PaypalService {
-  constructor(sdk, config, translationService) {
-    this.sdk = sdk;
-    this.config = config;
-    this.translationService = translationService;
-
-    this.$ = (id) => this.translationService.getTranslationString(id);
-  }
+export class PayPalService extends BaseClass {
+  static Inject = {
+    config: 'PayPalSdkConfig',
+    sdk: 'PayPalSDK',
+    $: '$'
+  };
 
   getOrderId() {
     return this.config.orderId;
@@ -54,12 +54,11 @@ export class PaypalService {
    * @param {PaypalButtonEvents} events
    */
   getButtonExpress(fundingSource, events) {
+    const style = this.config.buttonCustomization || { label: 'pay' };
     return this.sdk.Buttons({
       fundingSource: fundingSource,
-      style: {
-        label: 'pay',
-        commit: false
-      },
+      style: fundingSource === 'paypal' ? style : { shape: style.shape },
+      commit: false,
       ...events
     });
   }
@@ -69,11 +68,10 @@ export class PaypalService {
    * @param {PaypalButtonEvents} events
    */
   getButtonPayment(fundingSource, events) {
+    const style = this.config.buttonCustomization || { label: 'pay' };
     return this.sdk.Buttons({
       fundingSource: fundingSource,
-      style: {
-        label: 'pay'
-      },
+      style: fundingSource === 'paypal' ? style : { shape: style.shape },
       ...events
     });
   }
