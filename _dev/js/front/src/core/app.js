@@ -54,10 +54,6 @@ export class App {
 
     this.$ = this.container.$;
 
-    this.paymentOptionsLoader = new PaymentOptionsLoaderComponent(
-      this
-    ).render();
-
     this.root = null;
   }
 
@@ -91,6 +87,13 @@ export class App {
   }
 
   async renderCheckout() {
+    // Move this to PsCheckoutComponent?
+    if (!this.paymentOptionsLoader) {
+      this.paymentOptionsLoader = new PaymentOptionsLoaderComponent(
+        this
+      ).render();
+    }
+
     await this.initPayPalService(this.psCheckoutConfig.hostedFieldsEnabled);
     this.paymentOptionsLoader.hide();
     new PsCheckoutComponent(this).render();
