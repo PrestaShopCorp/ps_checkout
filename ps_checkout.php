@@ -431,7 +431,20 @@ class Ps_checkout extends PaymentModule
             $paymentOptions[$fundingSource->name] = $fundingSource->label;
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+        $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
+
+        /** @var PsCheckoutCart|false $psCheckoutCart */
+        $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
+
+        $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout;
+
         $this->context->smarty->assign([
+            'is17' => $shopContext->isShop17(),
+            'isExpressCheckout' => $isExpressCheckout,
             'modulePath' => $this->getPathUri(),
             'paymentOptions' => $paymentOptions,
             'isHostedFieldsAvailable' => $paypalAccountRepository->cardHostedFieldsIsAvailable(),

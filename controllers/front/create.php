@@ -53,13 +53,31 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
                 $cart->id_currency = $this->context->currency->id;
                 $cart->id_lang = $this->context->language->id;
                 $cart->add();
-                $cart->updateQty(
+                $isQuantityAdded = $cart->updateQty(
                     (int) $bodyValues['quantity_wanted'],
                     (int) $bodyValues['id_product'],
                     empty($bodyValues['id_product_attribute']) ? null : (int) $bodyValues['id_product_attribute'],
                     empty($bodyValues['id_customization']) ? false : (int) $bodyValues['id_customization'],
                     $operator = 'up'
                 );
+
+                if (!$isQuantityAdded) {
+                    header('HTTP/1.0 400 Bad Request');
+
+                    echo json_encode([
+                        'status' => false,
+                        'httpCode' => 400,
+                        'body' => [
+                            'error' => [
+                                'message' => 'Fail to update cart quantity.',
+                            ],
+                        ],
+                        'exceptionCode' => null,
+                        'exceptionMessage' => null,
+                    ]);
+                    exit;
+                }
+
                 $cart->update();
 
                 $this->module->getLogger()->info(sprintf(
@@ -103,7 +121,7 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
                 exit;
             }
 
-            $isExpressCheckout = (isset($bodyValues['express_checkout']) && $bodyValues['express_checkout']) || empty($this->context->cart->id_address_delivery);
+            $isExpressCheckout = (isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout']) || empty($this->context->cart->id_address_delivery);
             $paypalOrder = new PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler($this->context);
             $response = $paypalOrder->handle($isExpressCheckout);
 
@@ -120,7 +138,7 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
                 $psCheckoutCart->id_cart = (int) $this->context->cart->id;
             }
 
-            $psCheckoutCart->paypal_funding = $bodyValues['fundingSource'];
+            $psCheckoutCart->paypal_funding = isset($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : 'paypal';
             $psCheckoutCart->paypal_order = $response['body']['id'];
             $psCheckoutCart->paypal_status = $response['body']['status'];
             $psCheckoutCart->paypal_intent = 'CAPTURE' === Configuration::get('PS_CHECKOUT_INTENT') ? 'CAPTURE' : 'AUTHORIZE';

@@ -25,7 +25,7 @@
   </div>
 </div>
 
-{if $isExpressCheckout}
+{if $is17 && $isExpressCheckout}
 <div class="express-checkout-block mb-2">
   <img src="{$paypalLogoPath|escape:'htmlall':'UTF-8'}" class="express-checkout-img" alt="PayPal">
   <p class="express-checkout-label">
