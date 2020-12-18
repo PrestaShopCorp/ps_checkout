@@ -29,6 +29,7 @@ export const DefaultSelectors1_6 = {
   NOTIFICATION_PAYMENT_ERROR_TEXT: '#ps_checkout-error-text',
 
   PAYMENT_OPTIONS: '.payment-options',
+  PAYMENT_OPTIONS_LOADER: '#ps_checkout-loader',
   PAYMENT_OPTION_RADIOS:
     '.payment-options input[type="radio"][name="payment-option"]'
 };

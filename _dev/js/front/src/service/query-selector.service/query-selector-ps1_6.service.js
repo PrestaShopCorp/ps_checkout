@@ -58,6 +58,10 @@ export class QuerySelectorPs1_6Service {
     return document.querySelector(SELECTORS.PAYMENT_OPTIONS);
   }
 
+  static getPaymentOptionsLoader() {
+    return document.querySelector(SELECTORS.PAYMENT_OPTIONS_LOADER);
+  }
+
   static getPaymentOptionRadios() {
     return Array.prototype.slice.call(
       document.querySelectorAll(SELECTORS.PAYMENT_OPTION_RADIOS)
