@@ -68,6 +68,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_10fe6db261f79ac6848dd8109d5e73b3'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_45c4bc7eeb5fa739bf86b16413d601db'] = 'Cette méthode de paiement ne semble pas fonctionner pour le moment, veuillez en essayer une autre.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_244993a6f1718c94c6ffd4acb1249d70'] = 'Veuillez utiliser un autre moyen de paiement ou essayer plus tard.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_2347172eb56070e194a4a9367d2b0b2f'] = 'Vous avez choisi le compte PayPal [PAYPAL_ACCOUNT] pour effectuer le paiement.';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_aec47b33255dfc9e90e269930c428c40'] = 'Veuillez patienter, chargement de modes de paiement supplémentaires.';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_1b43db46cf115ecaf2b2e79c780b5266'] = 'Aucune référence de commande PrestaShop reçue';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_8aeb76260f5c8706d7e4e723f4417424'] = 'Cette commande PrestaShop [PRESTASHOP_ORDER_ID] n\'a pas été payée avec PrestaShop Checkout';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_0f1c930c145fe9e076b18148be8d2860'] = 'Impossible de trouver la commande PayPal associée à cette commande PrestaShop [PRESTASHOP_ORDER_ID]';
