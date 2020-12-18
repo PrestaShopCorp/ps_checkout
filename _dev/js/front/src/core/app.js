@@ -101,7 +101,6 @@ export class App {
 
   async renderExpressCheckout(props) {
     await this.initPayPalService();
-    this.paymentOptionsLoader.hide();
     new PsCheckoutExpressComponent(this, props).render();
   }
 
