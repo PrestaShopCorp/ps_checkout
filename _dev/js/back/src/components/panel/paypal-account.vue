@@ -169,6 +169,7 @@
       AccountStatusPayPal,
       Onboarding
     },
+    props: ['sendTrack'],
     computed: {
       onboardingLinkError() {
         return this.$store.state.paypal.paypalOnboardingLink === false;
@@ -199,10 +200,7 @@
       paypalUnlink() {
         this.$store.dispatch('unlink').then(() => {
           this.$store.dispatch('getOnboardingLink');
-          this.$segment.track(
-            'View Authentication screen - Unlink PayPal account',
-            { category: 'ps_checkout' }
-          );
+          this.sendTrack();
         });
       }
     }

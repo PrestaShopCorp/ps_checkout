@@ -19,7 +19,6 @@
  */
 use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
-use PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding as PsxOnboarding;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
@@ -282,8 +281,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
         $ecConfiguration->setOrderPage(Tools::getValue('status') ? true : false);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link, $psAccountRepository))->updateSettings();
     }
 
     /**
@@ -294,8 +295,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
         $ecConfiguration->setCheckoutPage(Tools::getValue('status') ? true : false);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link, $psAccountRepository))->updateSettings();
     }
 
     /**
@@ -306,8 +309,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
         $ecConfiguration->setProductPage(Tools::getValue('status') ? true : false);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link, $psAccountRepository))->updateSettings();
     }
 
     /**
@@ -445,7 +450,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $accountRepository */
         $accountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
 
-        $response = (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order($this->context->link))->refund([
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+
+        $response = (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order($this->context->link, $psAccountRepository))->refund([
             'orderId' => $orderPayPalId,
             'captureId' => $transactionPayPalId,
             'payee' => [

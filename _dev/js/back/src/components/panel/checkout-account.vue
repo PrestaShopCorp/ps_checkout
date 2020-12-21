@@ -137,6 +137,7 @@
     components: {
       AccountStatusCheckout
     },
+    props: ['sendTrack'],
     computed: {
       isReady() {
         return this.$store.state.context.isReady;
@@ -165,10 +166,7 @@
         this.$store.dispatch('logOut').then(() => {
           this.$store.dispatch('unlink');
           this.$store.dispatch('psxOnboarding', false);
-          this.$segment.track(
-            'View Authentication screen - Unlink Checkout account',
-            { category: 'ps_checkout' }
-          );
+          this.sendTrack();
         });
       }
     }

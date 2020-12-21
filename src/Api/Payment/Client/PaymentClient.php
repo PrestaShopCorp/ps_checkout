@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
 use GuzzleHttp\Client;
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
@@ -40,7 +39,7 @@ class PaymentClient extends GenericClient
     public function __construct(\Link $link, PsAccountRepository $psAccountRepository, Client $client = null)
     {
         $this->psAccountRepository = $psAccountRepository;
-        
+
         $this->setLink($link);
 
         // Client can be provided for tests

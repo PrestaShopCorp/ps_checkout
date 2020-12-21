@@ -33,7 +33,7 @@
       class="mb-4"
       v-if="
         (checkoutAccountStatus || prestashopAccountStatus) &&
-          paypalStatusAccount &&
+          paypalAccountStatus &&
           incompatibleCountryCodes
       "
     >
@@ -44,7 +44,7 @@
       class="mb-4"
       v-if="
         (checkoutAccountStatus || prestashopAccountStatus) &&
-          paypalStatusAccount &&
+          paypalAccountStatus &&
           incompatibleCurrencyCodes
       "
     >
@@ -66,15 +66,15 @@
     <b-container v-if="!checkoutAccountStatus">
       <PsAccounts>
         <template v-slot:body>
-          <PaypalAccount />
+          <PaypalAccount :sendTrack="sendTrack" />
         </template>
       </PsAccounts>
     </b-container>
 
     <b-container v-else>
-      <CheckoutAccount class="mb-3" />
+      <CheckoutAccount class="mb-3" :sendTrack="sendTrack" />
 
-      <PaypalAccount />
+      <PaypalAccount :sendTrack="sendTrack" />
     </b-container>
 
     <b-container
@@ -192,16 +192,17 @@
             let accountType = null;
 
             if (this.checkoutAccountStatus) {
-              accountType = 'Checkout';
+              accountType = 'PrestaShop Checkout';
             } else if (this.prestashopAccountStatus) {
-              accountType = 'PrestaShop';
+              accountType = 'PrestaShop Accounts';
             }
 
             this.$segment.track(
-              'View Authentication screen - Status Both account (' +
-                accountType +
-                ' and PayPal) approved',
-              { category: 'ps_checkout' }
+              'View Authentication screen - Status Both account approved',
+              {
+                category: 'ps_checkout',
+                psAccountType: accountType
+              }
             );
           } else {
             // but need approval
