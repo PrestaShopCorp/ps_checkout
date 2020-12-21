@@ -1183,6 +1183,11 @@ class Ps_checkout extends PaymentModule
                     ]
                 ),
             ]);
+        } else {
+            $this->context->smarty->assign([
+                'spinnerPath' => $this->getPathUri() . 'views/img/tail-spin.svg',
+                'translatedText' => $this->l('Please wait, loading additional payment methods.', 'translations'),
+            ]);
         }
 
         return $this->display(__FILE__, '/views/templates/hook/displayPaymentTop.tpl');

@@ -16,20 +16,18 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-export const DefaultSelectors1_7 = {
-  BASE_PAYMENT_CONFIRMATION: '#payment-confirmation [type="submit"]',
+import { BaseComponent } from '../../core/dependency-injection/base.component';
 
-  CONDITIONS_CHECKBOXES: '#conditions-to-approve input[type="checkbox"]',
+export class PaymentOptionsLoaderComponent extends BaseComponent {
+  static Inject = {
+    querySelectorService: 'QuerySelectorService'
+  };
 
-  LOADER_PARENT: 'body',
+  created() {
+    this.data.loader = this.querySelectorService.getPaymentOptionsLoader();
+  }
 
-  NOTIFICATION_CONDITIONS: '.accept-cgv',
-  NOTIFICATION_PAYMENT_CANCELLED: '#ps_checkout-canceled',
-  NOTIFICATION_PAYMENT_ERROR: '#ps_checkout-error',
-  NOTIFICATION_PAYMENT_ERROR_TEXT: '#ps_checkout-error-text',
-
-  PAYMENT_OPTIONS: '.payment-options',
-  PAYMENT_OPTIONS_LOADER: '#ps_checkout-loader',
-  PAYMENT_OPTION_RADIOS:
-    '.payment-options input[type="radio"][name="payment-option"]'
-};
+  hide() {
+    this.data.loader && (this.data.loader.style.display = 'none');
+  }
+}

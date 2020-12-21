@@ -208,12 +208,35 @@
   background-color: #f1f1f1;
   padding: 15px;
 }
+
+.express-checkout-block-wrapper {
+  font-size: 0;
+}
+
 .express-checkout-img {
   margin-bottom: 10px;
   width: 80px;
 }
 .express-checkout-label {
   color: inherit;
+}
+
+.express-checkout-spinner-text {
+  display: inline-block;
+  vertical-align: middle;
+
+  padding-left: 10px;
+  width: 80%;
+  margin: 0;
+}
+
+.express-checkout-spinner {
+  display: inline-block;
+  vertical-align: middle;
+
+  text-align: right;
+  padding-right: 10px;
+  width: 20%;
 }
 
 .ps-checkout.overlay {
