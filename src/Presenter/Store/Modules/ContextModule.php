@@ -113,8 +113,14 @@ class ContextModule implements PresenterInterface
      */
     public function present()
     {
-        $shopUuid = new ShopUuidManager();
+        // $shopUuid = new ShopUuidManager();
         $shopId = (int) \Context::getContext()->shop->id;
+
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $module->getService('ps_checkout.repository.prestashop.account');
 
         return [
             'context' => [
@@ -123,7 +129,7 @@ class ContextModule implements PresenterInterface
                 'phpVersion' => phpversion(),
                 'shopIs17' => $this->shopContext->isShop17(),
                 'moduleKey' => $this->moduleKey,
-                'shopId' => $shopUuid->getForShop($shopId),
+                'shopId' => $psAccountRepository->getShopUuid(),
                 'shopUri' => $this->shopProvider->getShopUrl($shopId),
                 'isReady' => $this->shopContext->isReady(),
                 'isShopContext' => $this->isShopContext(),

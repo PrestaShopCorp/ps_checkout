@@ -183,20 +183,20 @@
           this.paypalAccountStatus
         ) {
           // Both accounts "connected"
+          let accountType = null;
+
+          if (this.checkoutAccountStatus) {
+            accountType = 'PrestaShop Checkout';
+          } else if (this.prestashopAccountStatus) {
+            accountType = 'PrestaShop Accounts';
+          }
+
           if (
             this.accountIslinked &&
             this.merchantEmailIsValid &&
             this.cardPaymentIsActive === 'SUBSCRIBED'
           ) {
             // all right
-            let accountType = null;
-
-            if (this.checkoutAccountStatus) {
-              accountType = 'PrestaShop Checkout';
-            } else if (this.prestashopAccountStatus) {
-              accountType = 'PrestaShop Accounts';
-            }
-
             this.$segment.track(
               'View Authentication screen - Status Both account approved',
               {
@@ -208,7 +208,10 @@
             // but need approval
             this.$segment.track(
               'View Authentication - Status PP approval pending',
-              { category: 'ps_checkout' }
+              {
+                category: 'ps_checkout',
+                psAccountType: accountType
+              }
             );
           }
         }

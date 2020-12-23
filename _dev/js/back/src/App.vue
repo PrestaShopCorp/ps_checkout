@@ -56,7 +56,13 @@
       </b-alert>
     </div>
 
-    <div class="container" v-if="!hasShopId">
+    <div
+      class="container"
+      v-if="
+        (onboardingCheckoutIsCompleted || onboardingPrestashopIsCompleted) &&
+          !hasShopId
+      "
+    >
       <b-alert variant="danger" show>
         <p>{{ $t('general.wrongConfiguration') }}</p>
       </b-alert>
