@@ -527,6 +527,11 @@
         ];
         this.form.business_address_state = null;
       }
+    },
+    mounted() {
+      this.$segment.track('View Form Biz Page', {
+        category: 'ps_checkout'
+      });
     }
   };
 </script>
