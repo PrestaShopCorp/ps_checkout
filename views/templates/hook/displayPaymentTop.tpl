@@ -36,10 +36,10 @@
 <div id="ps_checkout-loader" class="express-checkout-block mb-2">
   <div class="express-checkout-block-wrapper">
     <p class="express-checkout-spinner-text">
-      {$translatedText|escape:'htmlall':'UTF-8'}
+      {$loaderTranslatedText|escape:'htmlall':'UTF-8'}
     </p>
     <div class="express-checkout-spinner">
-      <img src="{$spinnerPath|escape:'htmlall':'UTF-8'}" alt="{$translatedText|escape:'htmlall':'UTF-8'}">
+      <img src="{$spinnerPath|escape:'htmlall':'UTF-8'}" alt="{$loaderTranslatedText|escape:'htmlall':'UTF-8'}">
     </div>
   </div>
 </div>
