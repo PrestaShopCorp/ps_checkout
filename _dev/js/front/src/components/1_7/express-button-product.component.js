@@ -58,8 +58,6 @@ export class ExpressButtonProductComponent extends BaseComponent {
             quantity_wanted
           } = this.prestashopService.getProductDetails();
 
-          console.log(this.prestashopService.getProductDetails());
-
           return this.psCheckoutApi.postCreateOrder({
             id_product,
             id_product_attribute,
