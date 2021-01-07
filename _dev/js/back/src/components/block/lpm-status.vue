@@ -44,7 +44,10 @@
       onboardingIsCompleted() {
         return (
           this.$store.state.paypal.onboardingCompleted &&
-          isOnboardingCompleted()
+          (
+            this.$store.state.firebase.onboardingCompleted ||
+            isOnboardingCompleted()
+          )
         );
       },
       emailIsValid() {

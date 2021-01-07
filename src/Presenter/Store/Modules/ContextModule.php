@@ -113,7 +113,6 @@ class ContextModule implements PresenterInterface
      */
     public function present()
     {
-        // $shopUuid = new ShopUuidManager();
         $shopId = (int) \Context::getContext()->shop->id;
 
         /** @var \Ps_checkout $module */
