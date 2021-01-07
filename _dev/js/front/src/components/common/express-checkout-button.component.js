@@ -68,7 +68,7 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
 
   createOrder(data) {
     if (this.props.createOrder) {
-      this.props.createOrder(data);
+      return this.props.createOrder(data);
     }
   }
   renderPayPalButton() {
@@ -86,12 +86,7 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
         onError: (error) => this.onError(error),
         onApprove: (data, actions) => this.onApprove(data, actions),
         onCancel: (data) => this.onCancel(data),
-        createOrder: (data) =>
-          this.psCheckoutApi.postCreateOrder({
-            ...data,
-            fundingSource: 'paypal',
-            isExpressCheckout: true
-          })
+        createOrder: (data) => this.createOrder(data)
       })
       .render(this.props.querySelector);
   }
