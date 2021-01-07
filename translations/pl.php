@@ -296,6 +296,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_dbb2cf5e0c92b5bf2d47cd421ac60ae7
 $_MODULE['<{ps_checkout}prestashop>translations_ebb061953c0454b2c8ee7b0ac615ebcd'] = 'Opcjonalnie';
 $_MODULE['<{ps_checkout}prestashop>translations_a0bfb8e59e6c13fc8d990781f77694fe'] = 'Kontynuuj';
 $_MODULE['<{ps_checkout}prestashop>translations_5ef0c737746fae2ca90e66c39333f8f6'] = 'Błędy';
+$_MODULE['<{ps_checkout}prestashop>translations_f40be703dee22a1ce61f7b75190687b3'] = 'Przesyłając ten formularz, wyrażam zgodę na gromadzenie podanych danych przez PrestaShop S.A. w celu założenia konta PrestaShop Checkout. W przypadku założeniu konta będziesz otrzymywać informacje handlowe od PrestaShop';
 $_MODULE['<{ps_checkout}prestashop>translations_a6613b067cf99cf85bec0c26aacf70b9'] = 'Aktywuj różne metody płatności';
 $_MODULE['<{ps_checkout}prestashop>translations_396df27a404efda7df64c37895a845a9'] = 'Zmień kolejność metod płatności';
 $_MODULE['<{ps_checkout}prestashop>translations_00d23a76e43b46dae9ec7aa9dcbebb32'] = 'Włączono';
@@ -375,6 +376,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_190fcd96a9ebae0593cd777c8797b43b
 $_MODULE['<{ps_checkout}prestashop>translations_3a8d21886ccb1e466803db375c15aae9'] = 'Zaoferuj swoim klientom najszerszy wybór metod płatności: kartą, przez PayPal itd.';
 $_MODULE['<{ps_checkout}prestashop>translations_88bccdecc2c4b9dcc8afbbc94483293c'] = 'Korzystaj z całego doświadczenia i wszystkich zalet serwisu PayPal';
 $_MODULE['<{ps_checkout}prestashop>translations_91ac9ff2b524dada18330e5104c5e708'] = 'Zapewnij klientom z całego świata dostęp do ich lokalnych metod płatności';
+$_MODULE['<{ps_checkout}prestashop>translations_b9bba5b6f850988c410bd604cef96713'] = 'Nie widzisz odpowiedzi na swoje pytanie? ';
 $_MODULE['<{ps_checkout}prestashop>translations_02d4482d332e1aef3437cd61c9bcc624'] = 'Kontakt';
 $_MODULE['<{ps_checkout}prestashop>translations_e1e1ce67de4906765f104f24a4280a1d'] = 'Potrzebujesz pomocy? Tutaj znajdziesz dokumentację tego modułu';
 $_MODULE['<{ps_checkout}prestashop>translations_2607298669ace2fc910321afeb9f8a84'] = 'Pobierz Instrukcję użytkownika';
@@ -447,6 +449,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_3ec365dd533ddb7ef3d1c111186ce
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_ea4788705e6873b424c65e91c2846b19'] = 'Anuluj';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_4b245695f7aed6ecbb8563c43746e720'] = 'Twoje żądanie transakcji zostanie przekazane do PayPal. Będzie trzeba zarejestrować zwrot pieniędzy w zamówieniu PrestaShop w następujący sposób: wybrać rodzaj zwrotu (standardowy lub częściowy), aby wygenerować należność.';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_4ceb2a7564dfbf7e6cf1af8e5414cb51'] = 'Wybierz kwotę do zwrotu (z VAT)';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d7a33669a0339e4ddf767d4ce80488eb'] = 'Maksymalnie [AMOUNT_MAX] [WALUTA] (z VAT)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_9cb8277c514a23ac5cb62632e14abad2'] = 'Numer referencyjny zamówienia PayPal: ';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_dc29c5c0063af81d36b199ffb2970a9d'] = 'Status zamówienia w systemie PayPal';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_44749712dbec183e983dcd78a7736c41'] = 'Data';

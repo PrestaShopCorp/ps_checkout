@@ -297,6 +297,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_dbb2cf5e0c92b5bf2d47cd421ac60ae7
 $_MODULE['<{ps_checkout}prestashop>translations_ebb061953c0454b2c8ee7b0ac615ebcd'] = 'Optioneel';
 $_MODULE['<{ps_checkout}prestashop>translations_a0bfb8e59e6c13fc8d990781f77694fe'] = 'Doorgaan';
 $_MODULE['<{ps_checkout}prestashop>translations_5ef0c737746fae2ca90e66c39333f8f6'] = 'Fouten';
+$_MODULE['<{ps_checkout}prestashop>translations_f40be703dee22a1ce61f7b75190687b3'] = 'Door dit formulier in te dienen, verklaar ik me ermee akkoord dat de door mij verstrekte gegevens door PrestaShop S.A. worden gebruikt om mijn PrestaShop Checkout-account aan te maken. Maakt u een account aan, dan ontvangt u reclameberichten van PrestaShop';
 $_MODULE['<{ps_checkout}prestashop>translations_a6613b067cf99cf85bec0c26aacf70b9'] = 'Betaalmethoden activeren';
 $_MODULE['<{ps_checkout}prestashop>translations_396df27a404efda7df64c37895a845a9'] = 'De volgorde van de betaalmethoden wijzigen';
 $_MODULE['<{ps_checkout}prestashop>translations_00d23a76e43b46dae9ec7aa9dcbebb32'] = 'Ingeschakeld';
@@ -376,6 +377,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_190fcd96a9ebae0593cd777c8797b43b
 $_MODULE['<{ps_checkout}prestashop>translations_3a8d21886ccb1e466803db375c15aae9'] = 'Zorg voor een breed aanbod van betaalmethoden: credit- en debetkaarten, PayPal enz.';
 $_MODULE['<{ps_checkout}prestashop>translations_88bccdecc2c4b9dcc8afbbc94483293c'] = 'Geniet van alle PayPal-expertise en -voordelen';
 $_MODULE['<{ps_checkout}prestashop>translations_91ac9ff2b524dada18330e5104c5e708'] = 'Geef uw klanten wereldwijd toegang tot alle relevante, lokale betaalmethoden';
+$_MODULE['<{ps_checkout}prestashop>translations_b9bba5b6f850988c410bd604cef96713'] = 'Geen antwoord op uw vraag kunnen vinden? ';
 $_MODULE['<{ps_checkout}prestashop>translations_02d4482d332e1aef3437cd61c9bcc624'] = 'Neem contact met ons op voor meer informatie';
 $_MODULE['<{ps_checkout}prestashop>translations_e1e1ce67de4906765f104f24a4280a1d'] = 'Hulp nodig? Hier vindt u de documentatie bij deze module';
 $_MODULE['<{ps_checkout}prestashop>translations_2607298669ace2fc910321afeb9f8a84'] = 'Pdf downloaden';
@@ -448,6 +450,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_3ec365dd533ddb7ef3d1c111186ce
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_ea4788705e6873b424c65e91c2846b19'] = 'Annuleren';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_4b245695f7aed6ecbb8563c43746e720'] = 'Uw transactieverzoek wordt doorgestuurd naar PayPal. U moet de terugbetaling dan in de PrestaShop bestelling registreren: kies het type terugbetaling (standaard of gedeeltelijk) om een creditnota te genereren.';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_4ceb2a7564dfbf7e6cf1af8e5414cb51'] = 'Kies het terug te betalen bedrag (inclusief belasting)';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d7a33669a0339e4ddf767d4ce80488eb'] = 'Maximaal [AMOUNT_MAX] [CURRENCY] (incl. BTW)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_9cb8277c514a23ac5cb62632e14abad2'] = 'PayPal Bestelreferentie: ';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_dc29c5c0063af81d36b199ffb2970a9d'] = 'PayPal status van de bestelling:';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_44749712dbec183e983dcd78a7736c41'] = 'Datum';

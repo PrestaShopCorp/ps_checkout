@@ -164,6 +164,8 @@ $_MODULE['<{ps_checkout}prestashop>orderpresenter_9f004157e4c148dac71da3ae590635
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_cc61945cbbf46721a053467c395c666f'] = 'Erstattet';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Bezahlung';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_76f0ed934de85cc7131910b32ede7714'] = 'Rückerstattung';
+$_MODULE['<{ps_checkout}prestashop>transactionpresenter_76f0ed934de85cc7131910b32ede7714'] = 'Rückerstattung';
+$_MODULE['<{ps_checkout}prestashop>transactionpresenter_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Bezahlung';
 $_MODULE['<{ps_checkout}prestashop>translations_c75f7811d70d17dbcd88e9d03752cbed'] = 'Authentifizierung';
 $_MODULE['<{ps_checkout}prestashop>translations_3131503f02d3c484982dd6752109ad1c'] = 'Den Bezahlvorgang individuell gestalten';
 $_MODULE['<{ps_checkout}prestashop>translations_37c3e853135c8286d58849ec93874750'] = 'Aktivität verwalten';
@@ -290,6 +292,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_dbb2cf5e0c92b5bf2d47cd421ac60ae7
 $_MODULE['<{ps_checkout}prestashop>translations_ebb061953c0454b2c8ee7b0ac615ebcd'] = 'Optional';
 $_MODULE['<{ps_checkout}prestashop>translations_a0bfb8e59e6c13fc8d990781f77694fe'] = 'Weiter';
 $_MODULE['<{ps_checkout}prestashop>translations_5ef0c737746fae2ca90e66c39333f8f6'] = 'Fehler';
+$_MODULE['<{ps_checkout}prestashop>translations_f40be703dee22a1ce61f7b75190687b3'] = 'Mit dem Absenden dieses Formulars erkläre ich mich damit einverstanden, dass die Daten, die für die Erstellung des PrestaShop-Checkout-Kontos bereitgestellt werden, von PrestaShop S.A gespeichert werden. Durch die Erstellung Ihres Kontos werden Sie kommerzielle Werbung von PrestaShop erhalten';
 $_MODULE['<{ps_checkout}prestashop>translations_a6613b067cf99cf85bec0c26aacf70b9'] = 'Zahlungsmethoden aktivieren';
 $_MODULE['<{ps_checkout}prestashop>translations_396df27a404efda7df64c37895a845a9'] = 'Reihenfolge der Zahlungsmethoden ändern';
 $_MODULE['<{ps_checkout}prestashop>translations_00d23a76e43b46dae9ec7aa9dcbebb32'] = 'Aktiviert';
@@ -369,6 +372,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_190fcd96a9ebae0593cd777c8797b43b
 $_MODULE['<{ps_checkout}prestashop>translations_3a8d21886ccb1e466803db375c15aae9'] = 'die größte Auswahl an Zahlungsmitteln anbieten: Karten, PayPal…';
 $_MODULE['<{ps_checkout}prestashop>translations_88bccdecc2c4b9dcc8afbbc94483293c'] = 'von dem Know-how und den Vorteilen von PayPal profitieren';
 $_MODULE['<{ps_checkout}prestashop>translations_91ac9ff2b524dada18330e5104c5e708'] = 'Zugang zu geeigneten Zahlungsmitteln für Kunden auf der ganzen Welt ermöglichen';
+$_MODULE['<{ps_checkout}prestashop>translations_b9bba5b6f850988c410bd604cef96713'] = 'Sie haben keine Antwort auf Ihre Fragen gefunden? ';
 $_MODULE['<{ps_checkout}prestashop>translations_02d4482d332e1aef3437cd61c9bcc624'] = 'Kontaktieren Sie uns für weitere Informationen';
 $_MODULE['<{ps_checkout}prestashop>translations_e1e1ce67de4906765f104f24a4280a1d'] = 'Brauchen Sie Hilfe? Hier finden Sie das Benutzerhandbuch des Moduls';
 $_MODULE['<{ps_checkout}prestashop>translations_2607298669ace2fc910321afeb9f8a84'] = 'PDF herunterladen';
@@ -441,6 +445,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_3ec365dd533ddb7ef3d1c111186ce
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_ea4788705e6873b424c65e91c2846b19'] = 'Abbrechen';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_4b245695f7aed6ecbb8563c43746e720'] = 'Ihre Transaktionsanfrage wird an PayPal weitergeleitet. Dann müssen Sie die Rückerstattung in der PrestaShop-Bestellung registrieren: Wählen Sie die Art der Rückerstattung (Standard oder teilweise), um eine Gutschrift zu generieren.';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_4ceb2a7564dfbf7e6cf1af8e5414cb51'] = 'Wählen Sie den zu erstattenden Betrag (einschließlich Steuer)';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d7a33669a0339e4ddf767d4ce80488eb'] = 'Maximum [AMOUNT_MAX] [WÄHRUNG] (einschl. MwSt.)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_9cb8277c514a23ac5cb62632e14abad2'] = 'PayPal-Bestellnummer : ';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_dc29c5c0063af81d36b199ffb2970a9d'] = 'Status des PayPal-Gebots:';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_44749712dbec183e983dcd78a7736c41'] = 'Datum';
