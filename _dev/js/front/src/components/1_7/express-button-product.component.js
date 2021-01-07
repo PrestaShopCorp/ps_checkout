@@ -26,9 +26,7 @@ export class ExpressButtonProductComponent extends BaseComponent {
     prestashopService: 'PrestashopService'
   };
 
-  constructor(app, props) {
-    super(app, props);
-
+  created() {
     this.buttonContainer = this.htmlElementService.getCheckoutExpressProductButtonContainer(
       true
     );
@@ -59,6 +57,8 @@ export class ExpressButtonProductComponent extends BaseComponent {
             id_customization,
             quantity_wanted
           } = this.prestashopService.getProductDetails();
+
+          console.log(this.prestashopService.getProductDetails());
 
           return this.psCheckoutApi.postCreateOrder({
             id_product,

@@ -26,9 +26,7 @@ export class ExpressButtonCartComponent extends BaseComponent {
     $: '$'
   };
 
-  constructor(app, props) {
-    super(app, props);
-
+  created() {
     this.buttonContainer = this.htmlElementService.getCheckoutExpressCartButtonContainer(
       true
     );
