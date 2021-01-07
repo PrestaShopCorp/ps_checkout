@@ -67,6 +67,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_10fe6db261f79ac6848dd8109d5e73b3'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_45c4bc7eeb5fa739bf86b16413d601db'] = 'Cette méthode de paiement ne semble pas fonctionner pour le moment, veuillez en essayer une autre.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_244993a6f1718c94c6ffd4acb1249d70'] = 'Veuillez utiliser un autre moyen de paiement ou essayer plus tard.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_2347172eb56070e194a4a9367d2b0b2f'] = 'Vous avez choisi le compte PayPal [PAYPAL_ACCOUNT] pour effectuer le paiement.';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_aec47b33255dfc9e90e269930c428c40'] = 'Veuillez patienter, chargement de modes de paiement supplémentaires.';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_1b43db46cf115ecaf2b2e79c780b5266'] = 'Aucune référence de commande PrestaShop reçue';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_8aeb76260f5c8706d7e4e723f4417424'] = 'Cette commande PrestaShop [PRESTASHOP_ORDER_ID] n\'a pas été payée avec PrestaShop Checkout';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_0f1c930c145fe9e076b18148be8d2860'] = 'Impossible de trouver la commande PayPal associée à cette commande PrestaShop [PRESTASHOP_ORDER_ID]';
@@ -239,6 +240,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_b3a3bef1143977b9be6f9058641b1035
 $_MODULE['<{ps_checkout}prestashop>translations_74cd3a6cbf54c04a5634352d476f2b2f'] = 'Une erreur est survenue, veuillez réessayer plus tard.';
 $_MODULE['<{ps_checkout}prestashop>translations_d78c6d3fb359d61a40ceea54f41d5f06'] = 'Merci, fermer ce message.';
 $_MODULE['<{ps_checkout}prestashop>translations_c84a973ad6bd1079ae08b4f3d3584e0b'] = 'Envoyer mes documents légaux maintenant.';
+$_MODULE['<{ps_checkout}prestashop>translations_9cb7f08469a52068a24e2827b8bff107'] = 'Vous êtes prêt !';
 $_MODULE['<{ps_checkout}prestashop>translations_26a180e6da68731b08a94399789ff518'] = 'Félicitations ! Vous pouvez désormais recevoir des paiements.';
 $_MODULE['<{ps_checkout}prestashop>translations_081d8c5739e6266fddfb202afd722324'] = 'Une dernière chose : envoyez vos documents pour que votre compte PayPal soit totalement validé par PayPal.';
 $_MODULE['<{ps_checkout}prestashop>translations_2dddad3a82e8e68edd68fe1776c1c13b'] = 'Connecter votre compte PrestaShop';
@@ -252,14 +254,14 @@ $_MODULE['<{ps_checkout}prestashop>translations_f1206f9fadc5ce41694f69129aecac26
 $_MODULE['<{ps_checkout}prestashop>translations_cb2afa98a49d1ac44da748a5ee556a8a'] = 'En savoir plus sur les ISO Codes conformes';
 $_MODULE['<{ps_checkout}prestashop>translations_8af703b2bf59cc9742883ae7f4cb0e5b'] = 'Configurations de compte';
 $_MODULE['<{ps_checkout}prestashop>translations_4826f26ca366291a89abd1f29680202d'] = 'Compte PrestaShop Checkout';
-$_MODULE['<{ps_checkout}prestashop>translations_cea7c7f7bec10295a93d10bd879b95c7'] = 'Vous devez connecter des comptes PrestaShop Checkout et PayPal pour activer tous les moyens de paiement';
+$_MODULE['<{ps_checkout}prestashop>translations_49409b9de3fc13f7835c406653c1bcf8'] = 'Vous devez connecter des comptes PrestaShop et PayPal pour activer tous les moyens de paiement';
 $_MODULE['<{ps_checkout}prestashop>translations_9a2e255d065b9445b1a6f56ab54b5ae5'] = 'Vous êtes maintenant connecté avec votre compte ';
 $_MODULE['<{ps_checkout}prestashop>translations_e268443e43d93dab7ebef303bbe9642f'] = ' ';
 $_MODULE['<{ps_checkout}prestashop>translations_829cfbd41011647bf986de5c30a808d3'] = 'Connectez-vous ou créez un compte pour fournir tous les moyens de paiement à vos clients.  ';
 $_MODULE['<{ps_checkout}prestashop>translations_4394c8d8e63c470de62ced3ae85de5ae'] = 'Se déconnecter';
 $_MODULE['<{ps_checkout}prestashop>translations_5d4023dba17f36ce69357d25cbe4fbad'] = 'Compte PayPal';
 $_MODULE['<{ps_checkout}prestashop>translations_b7f41477baf42a89b6c905148b2e9f9a'] = 'Connectez ou créez un compte PayPal';
-$_MODULE['<{ps_checkout}prestashop>translations_a505696d1981f00d373a91df2ef25b2c'] = 'Votre compte PrestaShop Checkout est maintenant connecté à votre compte PayPal';
+$_MODULE['<{ps_checkout}prestashop>translations_0dd48299c95102f75579da47ee1aceff'] = 'Votre compte PrestaShop est maintenant connecté à votre compte PayPal';
 $_MODULE['<{ps_checkout}prestashop>translations_0f0a354b869158cf738ca27bfee975a2'] = 'Lier un compte PayPal';
 $_MODULE['<{ps_checkout}prestashop>translations_00a3f9babdff220441fb397492e2adf4'] = 'Commencez par lier un compte PrestaShop Checkout ';
 $_MODULE['<{ps_checkout}prestashop>translations_16bfbf9c462762cf1cba4134ec53c504'] = 'Chargement';

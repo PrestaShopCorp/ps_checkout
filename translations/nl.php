@@ -252,14 +252,14 @@ $_MODULE['<{ps_checkout}prestashop>translations_f1206f9fadc5ce41694f69129aecac26
 $_MODULE['<{ps_checkout}prestashop>translations_cb2afa98a49d1ac44da748a5ee556a8a'] = 'Meer weten over conforme ISO-codes';
 $_MODULE['<{ps_checkout}prestashop>translations_8af703b2bf59cc9742883ae7f4cb0e5b'] = 'Accountinstellingen';
 $_MODULE['<{ps_checkout}prestashop>translations_4826f26ca366291a89abd1f29680202d'] = 'PrestaShop Checkout-account';
-$_MODULE['<{ps_checkout}prestashop>translations_cea7c7f7bec10295a93d10bd879b95c7'] = 'U moet zich aanmelden met uw PrestaShop Checkout- en PayPal-account om alle betaalmethoden te activeren';
+$_MODULE['<{ps_checkout}prestashop>translations_49409b9de3fc13f7835c406653c1bcf8'] = 'U moet zich aanmelden met uw PrestaShop- en PayPal-account om alle betaalmethoden te activeren';
 $_MODULE['<{ps_checkout}prestashop>translations_9a2e255d065b9445b1a6f56ab54b5ae5'] = 'U bent nu ingelogd met uw account ';
 $_MODULE['<{ps_checkout}prestashop>translations_e268443e43d93dab7ebef303bbe9642f'] = 'account';
 $_MODULE['<{ps_checkout}prestashop>translations_829cfbd41011647bf986de5c30a808d3'] = 'Meld u aan of log in om uw klant alle betaalmethoden aan te bieden  ';
 $_MODULE['<{ps_checkout}prestashop>translations_4394c8d8e63c470de62ced3ae85de5ae'] = 'Uitloggen';
 $_MODULE['<{ps_checkout}prestashop>translations_5d4023dba17f36ce69357d25cbe4fbad'] = 'PayPal-account';
 $_MODULE['<{ps_checkout}prestashop>translations_b7f41477baf42a89b6c905148b2e9f9a'] = 'Log in of registreer u op PayPal';
-$_MODULE['<{ps_checkout}prestashop>translations_a505696d1981f00d373a91df2ef25b2c'] = 'Uw PrestaShop Checkout-account is aan uw PayPal-account gelinkt';
+$_MODULE['<{ps_checkout}prestashop>translations_0dd48299c95102f75579da47ee1aceff'] = 'Uw PrestaShop-account is aan uw PayPal-account gelinkt';
 $_MODULE['<{ps_checkout}prestashop>translations_0f0a354b869158cf738ca27bfee975a2'] = 'Link naar PayPal-account';
 $_MODULE['<{ps_checkout}prestashop>translations_00a3f9babdff220441fb397492e2adf4'] = 'Link aanmaken naar PrestaShop Checkout ';
 $_MODULE['<{ps_checkout}prestashop>translations_16bfbf9c462762cf1cba4134ec53c504'] = 'Aan het laden';

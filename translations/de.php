@@ -246,14 +246,14 @@ $_MODULE['<{ps_checkout}prestashop>translations_f1206f9fadc5ce41694f69129aecac26
 $_MODULE['<{ps_checkout}prestashop>translations_cb2afa98a49d1ac44da748a5ee556a8a'] = 'Erfahren Sie mehr über ISO-konforme Codes';
 $_MODULE['<{ps_checkout}prestashop>translations_8af703b2bf59cc9742883ae7f4cb0e5b'] = 'Konto-Einstellungen';
 $_MODULE['<{ps_checkout}prestashop>translations_4826f26ca366291a89abd1f29680202d'] = 'PrestaShop Checkout-Konto';
-$_MODULE['<{ps_checkout}prestashop>translations_cea7c7f7bec10295a93d10bd879b95c7'] = 'Um alle Zahlungsmethoden zu aktivieren, müssen Sie eine Verbindung zu den PrestaShop Checkout- und PayPal-Konten herstellen';
+$_MODULE['<{ps_checkout}prestashop>translations_49409b9de3fc13f7835c406653c1bcf8'] = 'Um alle Zahlungsmethoden zu aktivieren, müssen Sie eine Verbindung zu den PrestaShop- und PayPal-Konten herstellen';
 $_MODULE['<{ps_checkout}prestashop>translations_9a2e255d065b9445b1a6f56ab54b5ae5'] = 'Sie sind jetzt mit Ihrem Konto angemeldet ';
 $_MODULE['<{ps_checkout}prestashop>translations_e268443e43d93dab7ebef303bbe9642f'] = 'Konto';
 $_MODULE['<{ps_checkout}prestashop>translations_829cfbd41011647bf986de5c30a808d3'] = 'Melden Sie sich an, um alle Zahlungsmethoden für Ihre Kunden bereitzustellen.  ';
 $_MODULE['<{ps_checkout}prestashop>translations_4394c8d8e63c470de62ced3ae85de5ae'] = 'Abmelden';
 $_MODULE['<{ps_checkout}prestashop>translations_5d4023dba17f36ce69357d25cbe4fbad'] = 'PayPal-Konto';
 $_MODULE['<{ps_checkout}prestashop>translations_b7f41477baf42a89b6c905148b2e9f9a'] = 'Bei PayPal anmelden oder registrieren';
-$_MODULE['<{ps_checkout}prestashop>translations_a505696d1981f00d373a91df2ef25b2c'] = 'Ihr PrestaShop Checkout-Konto ist mit Ihrem PayPal-Konto verbunden';
+$_MODULE['<{ps_checkout}prestashop>translations_0dd48299c95102f75579da47ee1aceff'] = 'Ihr PrestaShop-Konto ist mit Ihrem PayPal-Konto verbunden';
 $_MODULE['<{ps_checkout}prestashop>translations_0f0a354b869158cf738ca27bfee975a2'] = 'Link zum PayPal-Konto';
 $_MODULE['<{ps_checkout}prestashop>translations_00a3f9babdff220441fb397492e2adf4'] = 'Verlinken Sie zuerst Ihr PrestaShop-Checkout-Konto ';
 $_MODULE['<{ps_checkout}prestashop>translations_16bfbf9c462762cf1cba4134ec53c504'] = 'Ladevorgang';
