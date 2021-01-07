@@ -34,6 +34,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_18356e0e1a570420945a00fac60fae68'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_7253e56eef5057e5763f535498a4abe2'] = 'Vous avez choisi de payer par PayPal.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_c884ed19483d45970c5bf23a681e2dd2'] = 'Voici un résumé de votre commande :';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_32231b6aa7f7da0da19a691bd78c5680'] = 'Le montant total de votre panier est de';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_1f87346a16cf80c372065de3c54c86d9'] = '(TTC)';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_edd87c9059d88fea45c0bd6384ce92b9'] = 'Veuillez finaliser votre commande en cliquant sur \"Je valide ma commande\"';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_a44217022190f5734b2f72ba1e4f8a79'] = 'Numéro de carte';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_95b16127e70e8a90220404fb48343182'] = 'Date d\'expiration';
@@ -67,6 +68,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_10fe6db261f79ac6848dd8109d5e73b3'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_45c4bc7eeb5fa739bf86b16413d601db'] = 'Cette méthode de paiement ne semble pas fonctionner pour le moment, veuillez en essayer une autre.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_244993a6f1718c94c6ffd4acb1249d70'] = 'Veuillez utiliser un autre moyen de paiement ou essayer plus tard.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_2347172eb56070e194a4a9367d2b0b2f'] = 'Vous avez choisi le compte PayPal [PAYPAL_ACCOUNT] pour effectuer le paiement.';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_aec47b33255dfc9e90e269930c428c40'] = 'Veuillez patienter, chargement de modes de paiement supplémentaires.';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_1b43db46cf115ecaf2b2e79c780b5266'] = 'Aucune référence de commande PrestaShop reçue';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_8aeb76260f5c8706d7e4e723f4417424'] = 'Cette commande PrestaShop [PRESTASHOP_ORDER_ID] n\'a pas été payée avec PrestaShop Checkout';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_0f1c930c145fe9e076b18148be8d2860'] = 'Impossible de trouver la commande PayPal associée à cette commande PrestaShop [PRESTASHOP_ORDER_ID]';
@@ -77,6 +79,7 @@ $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_5825dad
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_da74acca9d5669367fa982b7694f5303'] = 'Devise de remboursement PayPal invalide.';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_d1a7ac6d45dcb4a782b441e29380056a'] = 'Le remboursement a été effectué par PayPal.';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_ee6403a0a4d60590a6b6634df2fdce3f'] = 'Le remboursement n\'a pas pu être effectué par PayPal.';
+$_MODULE['<{ps_checkout}prestashop>validate_3c79e9f67771d5e278886a2d54f18c29'] = 'La commande ne peut pas être enregistrée';
 $_MODULE['<{ps_checkout}prestashop>validate_e1c709bbd92871a57367a9f923874278'] = 'Erreur lors du processus de paiement, vous avez peut être été débité. Veuillez vérifier votre historique de commande dans votre compte client. Contactez le service client pour en savoir plus.';
 $_MODULE['<{ps_checkout}prestashop>validate_fb970bdd962fa85ffc3459b4d5312b10'] = 'La transaction a échoué. Veuillez essayer une carte différente.';
 $_MODULE['<{ps_checkout}prestashop>validate_10fe6db261f79ac6848dd8109d5e73b3'] = 'La transaction été refusée.';
@@ -84,6 +87,9 @@ $_MODULE['<{ps_checkout}prestashop>validate_ff74fb308795919496b905a116ae1da6'] =
 $_MODULE['<{ps_checkout}prestashop>validate_7a10859a43abaade1a012eee5c336004'] = 'Impossible d\'appeler l\'API';
 $_MODULE['<{ps_checkout}prestashop>validate_2be21e54f13c38cffa6982e6745e6f88'] = 'L\'identifiant de commande PayPal est manquant';
 $_MODULE['<{ps_checkout}prestashop>validate_74669be39f71a0c86319cba711d40bb6'] = 'Le moyen de paiement par PayPal est manquant';
+$_MODULE['<{ps_checkout}prestashop>validate_e1c709bbd92871a57367a9f923874278'] = 'Erreur lors du processus de paiement, vous avez peut être été débité. Veuillez vérifier votre historique de commande dans votre compte client. Contactez le service client pour en savoir plus.';
+$_MODULE['<{ps_checkout}prestashop>validate_fb970bdd962fa85ffc3459b4d5312b10'] = 'La transaction a échoué. Veuillez essayer une carte différente.';
+$_MODULE['<{ps_checkout}prestashop>validate_10fe6db261f79ac6848dd8109d5e73b3'] = 'La transaction été refusée.';
 $_MODULE['<{ps_checkout}prestashop>validate_2cf1090c7f589e820c7379dd616aa927'] = 'La panier en cours est invalide, veuillez réessayer.';
 $_MODULE['<{ps_checkout}prestashop>validate_3c79e9f67771d5e278886a2d54f18c29'] = 'La commande ne peut pas être enregistrée';
 $_MODULE['<{ps_checkout}prestashop>validate_134d89d7f8e62de6dbbfec465e52ae26'] = 'Le statut de la commande ne peut être mis à jour.';
@@ -239,7 +245,9 @@ $_MODULE['<{ps_checkout}prestashop>translations_b3a3bef1143977b9be6f9058641b1035
 $_MODULE['<{ps_checkout}prestashop>translations_74cd3a6cbf54c04a5634352d476f2b2f'] = 'Une erreur est survenue, veuillez réessayer plus tard.';
 $_MODULE['<{ps_checkout}prestashop>translations_d78c6d3fb359d61a40ceea54f41d5f06'] = 'Merci, fermer ce message.';
 $_MODULE['<{ps_checkout}prestashop>translations_c84a973ad6bd1079ae08b4f3d3584e0b'] = 'Envoyer mes documents légaux maintenant.';
+$_MODULE['<{ps_checkout}prestashop>translations_9cb7f08469a52068a24e2827b8bff107'] = 'Vous êtes prêt !';
 $_MODULE['<{ps_checkout}prestashop>translations_26a180e6da68731b08a94399789ff518'] = 'Félicitations ! Vous pouvez désormais recevoir des paiements.';
+$_MODULE['<{ps_checkout}prestashop>translations_807235d3474190247606812059b87a5f'] = 'Patientez environ 48h pour la validation de vos documents par PayPal.';
 $_MODULE['<{ps_checkout}prestashop>translations_081d8c5739e6266fddfb202afd722324'] = 'Une dernière chose : envoyez vos documents pour que votre compte PayPal soit totalement validé par PayPal.';
 $_MODULE['<{ps_checkout}prestashop>translations_2dddad3a82e8e68edd68fe1776c1c13b'] = 'Connecter votre compte PrestaShop';
 $_MODULE['<{ps_checkout}prestashop>translations_f8373fe451b71e04d3b3b4551785f6a7'] = 'Lier votre compte PayPal';
@@ -267,6 +275,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_977b9a69632398e1d00aaf9fabedfd95
 $_MODULE['<{ps_checkout}prestashop>translations_ea4788705e6873b424c65e91c2846b19'] = 'Annuler';
 $_MODULE['<{ps_checkout}prestashop>translations_a427950fee816e9fc83db48c8c02c1d0'] = 'Vous êtes certain de vouloir vous déconnecter ?';
 $_MODULE['<{ps_checkout}prestashop>translations_8a9f98e889a0de9caf2feb4b9b382284'] = 'La déconnexion désactivera tous les modes de paiement. Vous ne pourrez plus recevoir de paiements avec PrestaShop Checkout.';
+$_MODULE['<{ps_checkout}prestashop>translations_84d77763ec5e08df59db49ea311fd391'] = 'Une erreur s\'est produite, la popup de PayPal pour se connecter ne peut pas être ouverte. Merci d\'attendre un peu et de cliquer à nouveau.';
 $_MODULE['<{ps_checkout}prestashop>translations_7d6395b374d009ee9cae645ecf8556d0'] = 'Informations additionnelles';
 $_MODULE['<{ps_checkout}prestashop>translations_906c903762f7ff4fb10d428be297a729'] = 'Remplissez le formulaire pour compléter l\'inscription:';
 $_MODULE['<{ps_checkout}prestashop>translations_2433db5a329ea473271a3cd8c013362e'] = 'Informations personnelles';
@@ -296,6 +305,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_dbb2cf5e0c92b5bf2d47cd421ac60ae7
 $_MODULE['<{ps_checkout}prestashop>translations_ebb061953c0454b2c8ee7b0ac615ebcd'] = 'Optionnel';
 $_MODULE['<{ps_checkout}prestashop>translations_a0bfb8e59e6c13fc8d990781f77694fe'] = 'Continuer';
 $_MODULE['<{ps_checkout}prestashop>translations_5ef0c737746fae2ca90e66c39333f8f6'] = 'Erreurs';
+$_MODULE['<{ps_checkout}prestashop>translations_f40be703dee22a1ce61f7b75190687b3'] = 'En soumettant ce formulaire, vous acceptez que votre adresse mail soit utilisée par PrestaShop S.A pour créer un compte Checkout. En créant votre compte, vous recevrez de la prospection commerciale de la part de PrestaShop';
 $_MODULE['<{ps_checkout}prestashop>translations_a6613b067cf99cf85bec0c26aacf70b9'] = 'Activer les moyens de paiement';
 $_MODULE['<{ps_checkout}prestashop>translations_396df27a404efda7df64c37895a845a9'] = 'Changer l\'ordre des moyens de paiement';
 $_MODULE['<{ps_checkout}prestashop>translations_00d23a76e43b46dae9ec7aa9dcbebb32'] = 'Activé';
@@ -316,6 +326,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_8321d1c08ab8dba3b38901799df90e14
 $_MODULE['<{ps_checkout}prestashop>translations_3fa24bedca614725dc240832a0c0ac94'] = 'Moyens de paiements acceptés';
 $_MODULE['<{ps_checkout}prestashop>translations_0c6755da915b75e43e9cfdf1f0382e82'] = 'Cartes de crédit';
 $_MODULE['<{ps_checkout}prestashop>translations_a0d4cc0f54602c3f247c72f15a7d2dbf'] = 'Conseil';
+$_MODULE['<{ps_checkout}prestashop>translations_5edab47a4928d49ab1d6742796462020'] = 'Pour tester vos méthodes de paiement, procéder à un paiement en privilégiant les petits montants, dès la commande est effectuée, procéder à un remboursement sur la page commande. Attention, vous ne pourrez pas récupérer les frais de commissions.';
 $_MODULE['<{ps_checkout}prestashop>translations_f74f3e145bac6c4950fc843725e4ced6'] = 'Activation des moyens de paiement';
 $_MODULE['<{ps_checkout}prestashop>translations_384036f8b0067ec3bb710a92f8734b3b'] = 'Type de transaction';
 $_MODULE['<{ps_checkout}prestashop>translations_bc294136fea992290d8b3b12a36fddfa'] = 'Vente direct';
@@ -332,9 +343,11 @@ $_MODULE['<{ps_checkout}prestashop>translations_1441b24706d1d541f7312b64a89fec06
 $_MODULE['<{ps_checkout}prestashop>translations_230a08d54d32844a29f3b5e11cd67946'] = 'Activation des champs de carte de crédit alternatifs';
 $_MODULE['<{ps_checkout}prestashop>translations_6f266e3508d20d99c079e0130c679208'] = 'Champs de carte de crédit de PayPal';
 $_MODULE['<{ps_checkout}prestashop>translations_8acc0bc61a5f75b13cea7e27bbcd51af'] = 'Vous pouvez activer les champs de carte de crédit alternatifs uniquement si le mode de paiement Carte Bancaire est activé dans l\'onglet Personnaliser l\'expérience d\'achat.';
+$_MODULE['<{ps_checkout}prestashop>translations_052a5961a6b60e7acd69643f309f47fd'] = 'Le champs de carte de crédit alternatifs de PayPal ne sont pas disponibles car les Champs de Carte Intégrés qui apportent la meilleure expérience d\'achat sont déjà activés.';
 $_MODULE['<{ps_checkout}prestashop>translations_19146f30e246bba7235f1f052711fe74'] = 'Quelle est la différence entre entre les Champs de Carte Intégrés et les Champs de Carte Alternatifs de Paypal ?';
 $_MODULE['<{ps_checkout}prestashop>translations_ff8313e7d0a38ececa23e28fd77421de'] = 'Quand faut-il utiliser les Champs de Carte Alternatifs de PayPal ?';
 $_MODULE['<{ps_checkout}prestashop>translations_4cb668c4f89af857decf3d6ce310cd77'] = 'Les Champs de Carte Intégrés proposent la meilleure expérience d\'achat sur PrestaShop. Bien intégrés dans le parcours d\'achat, sans marque, avec un nombre réduits de champs, et les frais de comissions les plus bas, (voir sur ';
+$_MODULE['<{ps_checkout}prestashop>translations_3a8e02212752fecc2b5eb72111cdc40d'] = ') : nous vous recommandons de les privilégier. Votre compte PayPal doit avoir été totalement approuvé afin d\'en bénéficier. Vous pouvez voir le statut d\'approbation de votre compte PayPal dans le';
 $_MODULE['<{ps_checkout}prestashop>translations_15c52cd080705793a4aef0f321a0f592'] = 'Si la validation de votre compte PayPal tarde, ou que vous rencontrez des problèmes de paiement avec les Champs de Carte Intégrés, vous pouvez activer ces champs alternatifs, comme solution temporaire, seulement si les Champs de Carte Intégrés sont indisponibles ou désactivés. Les comissions appliquées sont les mêmes que pour le paiement par PayPal.';
 $_MODULE['<{ps_checkout}prestashop>translations_3e335cc9a3b59223da56df9434994954'] = 'Champs de Carte Intégrés';
 $_MODULE['<{ps_checkout}prestashop>translations_c1053fd298c615d9bb6e45a1d9d763d6'] = 'Champs de Carte Alternatifs de Paypal';
@@ -375,6 +388,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_190fcd96a9ebae0593cd777c8797b43b
 $_MODULE['<{ps_checkout}prestashop>translations_3a8d21886ccb1e466803db375c15aae9'] = 'Offrir le plus large choix de moyens de paiement : cartes, PayPal, etc …';
 $_MODULE['<{ps_checkout}prestashop>translations_88bccdecc2c4b9dcc8afbbc94483293c'] = 'Bénéficier de tous les avantages et de l\'expertise de PayPal';
 $_MODULE['<{ps_checkout}prestashop>translations_91ac9ff2b524dada18330e5104c5e708'] = 'Donner accès à des moyens de paiement pertinents à vos clients dans tous les pays';
+$_MODULE['<{ps_checkout}prestashop>translations_b9bba5b6f850988c410bd604cef96713'] = 'Vous n\'avez pas trouvé de réponse à vos questions ? ';
 $_MODULE['<{ps_checkout}prestashop>translations_02d4482d332e1aef3437cd61c9bcc624'] = 'Nous contacter';
 $_MODULE['<{ps_checkout}prestashop>translations_e1e1ce67de4906765f104f24a4280a1d'] = 'Besoin d\'aide ? Trouvez ici la documentation du module';
 $_MODULE['<{ps_checkout}prestashop>translations_2607298669ace2fc910321afeb9f8a84'] = 'Télécharger le Guide utilisateur';
@@ -401,6 +415,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_565c23511bb8643ac5552fbd5e4ba358
 $_MODULE['<{ps_checkout}prestashop>translations_83c6cac8e2ac2ca242a4c1b7e3062bf8'] = 'Offrez le plus grand nombre de moyens de paiement : carte, PayPal, etc.';
 $_MODULE['<{ps_checkout}prestashop>translations_d59048f21fd887ad520398ce677be586'] = 'En savoir plus';
 $_MODULE['<{ps_checkout}prestashop>translations_c12fb9a7b1d63237624c3a069891e7f4'] = 'Personnalisation de l\'expérience d\'achat, rapport des transactions, gestion des litiges… et bien plus à venir !';
+$_MODULE['<{ps_checkout}prestashop>translations_44106d67db6b915eab67e4293f70a926'] = 'litige(s) en attente';
 $_MODULE['<{ps_checkout}prestashop>translations_c7b5d73ffc406b56966f030ac1b1da10'] = 'Aller à la plateforme de gestion des litiges';
 $_MODULE['<{ps_checkout}prestashop>translations_955ad3298db330b5ee880c2c9e6f23a0'] = 'Actif';
 $_MODULE['<{ps_checkout}prestashop>translations_baac076f6be8697a69d8dbb5cce5b2e8'] = 'Limité à 500$';
@@ -421,6 +436,8 @@ $_MODULE['<{ps_checkout}prestashop>translations_84cc580b771c1b8f9c2e739ffbea97de
 $_MODULE['<{ps_checkout}prestashop>translations_9e67f7c55ebde9258ce8526e702f2337'] = 'Vos configurations d\'arrondis sont maintenant compatibles';
 $_MODULE['<{ps_checkout}prestashop>translations_7c6c2e5d48ab37a007cbf70d3ea25fa4'] = 'En attente';
 $_MODULE['<{ps_checkout}prestashop>translations_8102d556eface36002bd4e3aef4f4acd'] = 'Toutes les transactions';
+$_MODULE['<{ps_checkout}prestashop>translations_d4222f5cc5b8395e93fa678bc7215381'] = 'transaction(s) en attente';
+$_MODULE['<{ps_checkout}prestashop>translations_f55d7f720fdc5e3ff693e4b82d4b6a72'] = 'transaction(s)';
 $_MODULE['<{ps_checkout}prestashop>translations_4ed439fd8ada46dc68dc84e0b57a3046'] = 'Vous trouverez ci-dessous toutes les transactions effectuées à travers PrestaShop Checkout, dans la limite de 1000, pour des raisons de rapidité de chargement.';
 $_MODULE['<{ps_checkout}prestashop>translations_bccbffbcbc3942d59b232727c1ae32cb'] = 'Voir toutes les transactions sur votre compte PayPal.';
 $_MODULE['<{ps_checkout}prestashop>translations_b886438c0d85fb1a3d1869d926326716'] = 'Aller sur PayPal';
@@ -447,6 +464,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_3ec365dd533ddb7ef3d1c111186ce
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_ea4788705e6873b424c65e91c2846b19'] = 'Annuler';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_4b245695f7aed6ecbb8563c43746e720'] = 'Votre demande de remboursement va être transmise à PayPal. Ensuite, vous devrez enregistrer le remboursement dans la commande PrestaShop : choisir le type de remboursement (standard ou partiel) pour générer un avoir.';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_4ceb2a7564dfbf7e6cf1af8e5414cb51'] = 'Choisir le montant à rembourser (TTC)';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d7a33669a0339e4ddf767d4ce80488eb'] = 'Maximum [AMOUNT_MAX] [CURRENCY] (TTC)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_9cb8277c514a23ac5cb62632e14abad2'] = 'Référence de commande PayPal : ';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_dc29c5c0063af81d36b199ffb2970a9d'] = 'Statut de commane PayPal :';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_44749712dbec183e983dcd78a7736c41'] = 'Date';
@@ -541,6 +559,7 @@ $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_32187a5bef114c112c1e
 $_MODULE['<{ps_checkout}prestashop>displaypaymentbybinaries_d7467080ec566ee0c6cb59242ee28fa5'] = 'Vous devez accepter les conditions générales pour valider votre commande. ';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_733ea3e302b9c48da7777481ed50e59a'] = 'Traitement du paiement annulé, veuillez choisir une autre méthode de paiement ou essayez de nouveau.';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_42275e6d860a19342a3943af7d1e48a0'] = 'Un problème est survenu lors du traitement de votre paiement';
+$_MODULE['<{ps_checkout}prestashop>displaypaymenttop_980f9122ef2d3b8195b5886e0e7fc8f0'] = 'Le paiement a échoué, vous n\'avez pas été débité.';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_a44217022190f5734b2f72ba1e4f8a79'] = 'Numéro de carte';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_95b16127e70e8a90220404fb48343182'] = 'Date d\'expiration';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_5ea7f231296949070013bc43715aae01'] = 'CVC';
