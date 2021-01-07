@@ -22,13 +22,11 @@ import { ExpressCheckoutButtonComponent } from '../common/express-checkout-butto
 export class ExpressButtonCheckoutComponent extends BaseComponent {
   static Inject = {
     htmlElementService: 'HTMLElementService',
-    PsCheckoutApi: 'PsCheckoutApi',
+    psCheckoutApi: 'PsCheckoutApi',
     $: '$'
   };
 
-  constructor(app, props) {
-    super(app, props);
-
+  created() {
     this.buttonContainer = this.htmlElementService.getCheckoutExpressCheckoutButtonContainer(
       true
     );
