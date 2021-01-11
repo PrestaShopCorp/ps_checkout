@@ -29,7 +29,7 @@ export class PsCheckoutService extends BaseClass {
   async getPayPalToken() {
     return this.payPalSdkConfig.clientToken
       ? Promise.resolve(this.payPalSdkConfig.clientToken)
-      : await this.psCheckoutApi.postGetToken();
+      : await this.psCheckoutApi.getGetToken();
   }
 
   validateContingency(liabilityShifted, authenticationReason) {
