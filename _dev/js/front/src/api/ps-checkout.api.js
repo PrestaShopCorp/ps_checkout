@@ -97,9 +97,9 @@ export class PsCheckoutApi extends BaseClass {
       .then(({ body: { orderID } }) => orderID);
   }
 
-  postGetToken() {
+  getGetToken() {
     return fetch(this.config.getTokenUrl, {
-      method: 'post',
+      method: 'get',
       headers: {
         'content-type': 'application/json'
       }
