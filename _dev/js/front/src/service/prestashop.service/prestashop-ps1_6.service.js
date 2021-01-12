@@ -16,4 +16,40 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-export const SMART_BUTTON_CLASS = 'checkout-smartbutton';
+export class PrestashopPs1_6Service {
+  static getProductDetails() {
+    return {};
+  }
+
+  static isCartPage() {
+    return false;
+  }
+
+  static isOrderPaymentStepPage() {
+    if (document.body.id === 'order') {
+      return document.getElementById('ps_checkout-displayPayment');
+    }
+
+    return document.body.id === 'order-opc';
+  }
+
+  static isOrderPersonalInformationStepPage() {
+    return false;
+  }
+
+  static isProductPage() {
+    return false;
+  }
+
+  static onUpdatedCart() {}
+
+  static onUpdatePaymentMethods(listener) {
+    if (window['updatePaymentMethods']) {
+      const updatePaymentMethods = window['updatePaymentMethods'];
+      window['updatePaymentMethods'] = (...args) => {
+        updatePaymentMethods(...args);
+        listener(...args);
+      };
+    }
+  }
+}

@@ -17,50 +17,25 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 import './utils/polyfills';
+import './utils/globals';
 
-import { PayPalSdkConfig } from './config/paypal-sdk.config';
-import { PsCheckoutConfig } from './config/ps-checkout.config';
-
-import { PayPalSdkComponent } from './components/paypal-sdk.component';
-import { PsCheckoutExpressComponent } from './components/ps-checkout-express.component';
-import { PsCheckoutComponent } from './components/ps-checkout.component';
+import { App } from './core/app';
 import { bootstrap } from './core/bootstrap';
-import { PsCheckoutService } from './service/ps-checkout.service';
-import {
-  PS_VERSION_1_6,
-  PS_VERSION_1_7
-} from './constants/ps-version.constants';
 
-function isTokenNeeded() {
-  if (!PsCheckoutConfig.expressCheckoutHostedFieldsEnabled) return false;
-
-  switch (PsCheckoutService.getPrestashopVersion()) {
-    case PS_VERSION_1_6: {
-      if (document.body.id === 'order') {
-        return document.getElementById('ps_checkout-displayPayment');
-      }
-
-      return document.body.id === 'order-opc';
-    }
-    case PS_VERSION_1_7: {
-      if (document.body.id !== 'checkout') return false;
-      return document.querySelector('[data-module-name^="ps_checkout"]');
-    }
+bootstrap(async () => {
+  window.ps_checkout = window.ps_checkout || {};
+  if (window.ps_checkout.app) {
+    return console.error(
+      'There is an existing instance of `ps_checkout` on this context.'
+    );
   }
-}
 
-bootstrap(() => {
-  (isTokenNeeded()
-    ? PayPalSdkConfig.clientToken
-      ? Promise.resolve(PayPalSdkConfig.clientToken)
-      : new PsCheckoutService(PsCheckoutConfig).postGetToken()
-    : Promise.resolve('')
-  )
-    .then((token) => {
-      new PayPalSdkComponent(PayPalSdkConfig, token, (sdk) => {
-        new PsCheckoutComponent(PsCheckoutConfig, sdk).render();
-        new PsCheckoutExpressComponent(PsCheckoutConfig, sdk).render();
-      }).render();
-    })
-    .catch(() => console.error('Token could not be retrieved'));
+  window.ps_checkout.app = new App();
+  window.ps_checkout.events.dispatchEvent(
+    new CustomEvent('init', { detail: { ps_checkout: window.ps_checkout } })
+  );
+  await window.ps_checkout.app.render();
+  window.ps_checkout.events.dispatchEvent(
+    new CustomEvent('loaded', { detail: { ps_checkout: window.ps_checkout } })
+  );
 });

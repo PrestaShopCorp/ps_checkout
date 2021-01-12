@@ -16,9 +16,16 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-export class TranslationService {
-  constructor(translationMap) {
-    this.translationMap = translationMap;
+import { BaseClass } from '../core/dependency-injection/base.class';
+
+export class TranslationService extends BaseClass {
+  static Inject = {
+    config: 'PsCheckoutConfig'
+  };
+
+  constructor(app) {
+    super(app);
+    this.translationMap = this.config.translations;
   }
 
   getTranslationString(id) {

@@ -16,37 +16,20 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+export const DefaultSelectors1_7 = {
+  BASE_PAYMENT_CONFIRMATION: '#payment-confirmation [type="submit"]',
 
-function inject(instance, constructor) {
-  if (constructor === BaseComponent) return;
-  inject(instance, Object.getPrototypeOf(constructor));
+  CONDITIONS_CHECKBOXES: '#conditions-to-approve input[type="checkbox"]',
 
-  // TODO: Use a true container (Bottle.js?)
-  const app = instance.app;
-  const services = constructor.INJECT || {};
+  LOADER_PARENT: 'body',
 
-  for (const alias of Object.keys(services)) {
-    const name = services[alias];
-    instance[alias] = app[name];
-  }
-}
+  NOTIFICATION_CONDITIONS: '.accept-cgv',
+  NOTIFICATION_PAYMENT_CANCELLED: '#ps_checkout-canceled',
+  NOTIFICATION_PAYMENT_ERROR: '#ps_checkout-error',
+  NOTIFICATION_PAYMENT_ERROR_TEXT: '#ps_checkout-error-text',
 
-export class BaseComponent {
-  constructor(app, props) {
-    this.app = app;
-
-    this.data = {};
-    this.props = props || {};
-
-    this.children = {};
-
-    inject(this, this.constructor);
-  }
-
-  /**
-   * @return {this}
-   */
-  render() {
-    return this;
-  }
-}
+  PAYMENT_OPTIONS: '.payment-options',
+  PAYMENT_OPTIONS_LOADER: '#ps_checkout-loader',
+  PAYMENT_OPTION_RADIOS:
+    '.payment-options input[type="radio"][name="payment-option"]'
+};

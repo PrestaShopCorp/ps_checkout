@@ -17,10 +17,13 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 import 'classlist-polyfill';
+import 'core-js/stable';
 import 'promise-polyfill/src/polyfill';
+import 'regenerator-runtime/runtime';
 import 'url-polyfill';
 import 'whatwg-fetch';
 
+import './event-target';
 import './web-api.child-node.remove';
 import './web-api.child-node.replace-with';
 import './web-api.parent-node.append';

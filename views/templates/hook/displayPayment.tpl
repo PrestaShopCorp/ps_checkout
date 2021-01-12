@@ -17,7 +17,28 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
+{if !$isOnePageCheckout16}
+  <div id="ps_checkout-loader" class="express-checkout-block mb-2">
+    <div class="express-checkout-block-wrapper">
+      <p class="express-checkout-spinner-text">
+        {$translatedText|escape:'htmlall':'UTF-8'}
+      </p>
+      <div class="express-checkout-spinner">
+        <img src="{$spinnerPath|escape:'htmlall':'UTF-8'}" alt="{$translatedText|escape:'htmlall':'UTF-8'}">
+      </div>
+    </div>
+  </div>
+{/if}
+
 <section id="ps_checkout-displayPayment">
+  {if !$is17 && $isExpressCheckout}
+  <div class="express-checkout-block">
+    <img src="{$paypalLogoPath|escape:'htmlall':'UTF-8'}" class="express-checkout-img" alt="PayPal">
+    <p class="express-checkout-label">
+      {$translatedText|escape:'htmlall':'UTF-8'}
+    </p>
+  </div>
+  {/if}
   <div class="payment-options">
     {foreach from=$paymentOptions item="paymentOptionName" key="fundingSource"}
       <div id="payment-option-{$fundingSource}-container" class="payment-option ps_checkout-payment-option row" style="display: none;">

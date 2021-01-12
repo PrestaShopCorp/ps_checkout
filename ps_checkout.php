@@ -109,7 +109,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.3.0';
+    const VERSION = '2.4.0';
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -130,7 +130,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.3.0';
+        $this->version = '2.4.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->currencies = true;
@@ -431,10 +431,24 @@ class Ps_checkout extends PaymentModule
             $paymentOptions[$fundingSource->name] = $fundingSource->label;
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+        $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
+
+        /** @var PsCheckoutCart|false $psCheckoutCart */
+        $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
+
+        $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout;
+
         $this->context->smarty->assign([
+            'is17' => $shopContext->isShop17(),
+            'isExpressCheckout' => $isExpressCheckout,
             'modulePath' => $this->getPathUri(),
             'paymentOptions' => $paymentOptions,
             'isHostedFieldsAvailable' => $paypalAccountRepository->cardHostedFieldsIsAvailable(),
+            'isOnePageCheckout16' => !$shopContext->isShop17() && (bool) Configuration::get('PS_ORDER_PROCESS_TYPE'),
         ]);
 
         return $this->display(__FILE__, '/views/templates/hook/displayPayment.tpl');
@@ -721,6 +735,8 @@ class Ps_checkout extends PaymentModule
         // END To be refactored in services
 
         Media::addJsDef([
+            $this->name . 'Version' => self::VERSION,
+            $this->name . 'AutoRenderDisabled' => (bool) Configuration::get('PS_CHECKOUT_AUTO_RENDER_DISABLED'),
             $this->name . 'LoaderImage' => $this->getPathUri() . 'views/img/loader.svg',
             $this->name . 'PayPalButtonConfiguration' => $payPalConfiguration->getButtonConfiguration(),
             $this->name . 'CardFundingSourceImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'),
@@ -773,6 +789,10 @@ class Ps_checkout extends PaymentModule
                 'checkout.form.error.label' => $this->l('There was an error during the payment. Please try again or contact the support.'),
                 'loader-component.label.header' => $this->l('Thanks for your purchase!'),
                 'loader-component.label.body' => $this->l('Please wait, we proceed to payment'),
+                'error.paypal-sdk.contingency.cancel' => $this->l('Card holder authentication canceled, please choose another payment method or try again.'),
+                'error.paypal-sdk.contingency.error' => $this->l('An error occurred on card holder authentication, please choose another payment method or try again.'),
+                'error.paypal-sdk.contingency.failure' => $this->l('Card holder authentication failed, please choose another payment method or try again.'),
+                'error.paypal-sdk.contingency.unknown' => $this->l('Card holder authentication cannot be checked, please choose another payment method or try again.'),
             ],
         ]);
 
@@ -1145,6 +1165,7 @@ class Ps_checkout extends PaymentModule
             'paymentError' => $paymentError,
             'paymentErrorMessage' => $paymentErrorMessage,
             'isExpressCheckout' => $isExpressCheckout,
+            'isOnePageCheckout16' => !$shopContext->isShop17() && (bool) Configuration::get('PS_ORDER_PROCESS_TYPE'),
         ]);
 
         if (true === $isExpressCheckout) {
@@ -1156,6 +1177,11 @@ class Ps_checkout extends PaymentModule
                         '[PAYPAL_ACCOUNT]' => $this->context->cookie->__get('paypalEmail'),
                     ]
                 ),
+            ]);
+        } else {
+            $this->context->smarty->assign([
+                'spinnerPath' => $this->getPathUri() . 'views/img/tail-spin.svg',
+                'translatedText' => $this->l('Please wait, loading additional payment methods.', 'translations'),
             ]);
         }
 

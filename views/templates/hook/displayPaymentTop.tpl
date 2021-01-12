@@ -25,13 +25,26 @@
   </div>
 </div>
 
-{if $isExpressCheckout}
+{if $is17 && $isExpressCheckout}
 <div class="express-checkout-block mb-2">
   <img src="{$paypalLogoPath|escape:'htmlall':'UTF-8'}" class="express-checkout-img" alt="PayPal">
   <p class="express-checkout-label">
     {$translatedText|escape:'htmlall':'UTF-8'}
   </p>
 </div>
+{else}
+  {if $is17 || $isOnePageCheckout16}
+  <div id="ps_checkout-loader" class="express-checkout-block mb-2">
+    <div class="express-checkout-block-wrapper">
+      <p class="express-checkout-spinner-text">
+        {$translatedText|escape:'htmlall':'UTF-8'}
+      </p>
+      <div class="express-checkout-spinner">
+        <img src="{$spinnerPath|escape:'htmlall':'UTF-8'}" alt="{$translatedText|escape:'htmlall':'UTF-8'}">
+      </div>
+    </div>
+  </div>
+  {/if}
 {/if}
 
 {if $is17}

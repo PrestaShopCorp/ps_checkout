@@ -16,68 +16,20 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-export class ExpressButtonCheckoutComponent {
-  constructor(checkout) {
-    this.checkout = checkout;
-    this.checkoutConfig = checkout.config;
+import { BaseComponent } from '../../core/dependency-injection/base.component';
+import { ExpressCheckoutButtonComponent } from '../common/express-checkout-button.component';
 
-    this.htmlElementService = checkout.htmlElementService;
-    this.payPalService = checkout.payPalService;
-    this.psCheckoutService = checkout.psCheckoutService;
+export class ExpressButtonCheckoutComponent extends BaseComponent {
+  static Inject = {
+    htmlElementService: 'HTMLElementService',
+    psCheckoutApi: 'PsCheckoutApi',
+    $: '$'
+  };
 
-    this.$ = this.checkout.$;
-
+  created() {
     this.buttonContainer = this.htmlElementService.getCheckoutExpressCheckoutButtonContainer(
       true
     );
-  }
-
-  renderPayPalButton() {
-    if (
-      !this.payPalService
-        .getEligibleFundingSources()
-        .filter(({ name }) => name === 'paypal').length > 0
-    )
-      return;
-
-    return this.payPalService
-      .getButtonExpress('paypal', {
-        onInit: (data, actions) => actions.enable(),
-        onClick: (data, actions) =>
-          this.psCheckoutService
-            // TODO: Move this to constant when ExpressCheckoutButton component is created
-            .postCheckCartOrder(
-              { ...data, fundingSource: 'paypal', isExpressCheckout: true },
-              actions
-            )
-            // TODO: Error notification
-            .catch(() => actions.reject()),
-        // TODO: [PAYSHIP-605] Error handling
-        onError: (error) => console.error(error),
-        // TODO: Move this to constant when ExpressCheckoutButton component is created
-        onApprove: (data, actions) =>
-          this.psCheckoutService.postExpressCheckoutOrder(
-            {
-              ...data,
-              fundingSource: 'paypal',
-              isExpressCheckout: true
-            },
-            actions
-          ),
-        onCancel: (data) =>
-          this.psCheckoutService.postCancelOrder({
-            ...data,
-            fundingSource: 'paypal',
-            isExpressCheckout: true
-          }),
-        createOrder: (data) =>
-          this.psCheckoutService.postCreateOrder({
-            ...data,
-            fundingSource: 'paypal',
-            isExpressCheckout: true
-          })
-      })
-      .render('#ps-checkout-express-button');
   }
 
   renderTitle() {
@@ -106,7 +58,19 @@ export class ExpressButtonCheckoutComponent {
     this.buttonContainer.prepend(this.checkoutExpressButton);
     this.buttonContainer.prepend(this.checkoutExpressTitle);
 
-    this.renderPayPalButton();
+    this.children.expressCheckoutButton = new ExpressCheckoutButtonComponent(
+      this.app,
+      {
+        // TODO: Move this to constant when ExpressCheckoutButton component is created
+        querySelector: '#ps-checkout-express-button',
+        createOrder: (data) =>
+          this.psCheckoutApi.postCreateOrder({
+            ...data,
+            fundingSource: 'paypal',
+            isExpressCheckout: true
+          })
+      }
+    ).render();
     return this;
   }
 }

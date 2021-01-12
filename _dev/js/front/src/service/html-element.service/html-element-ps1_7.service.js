@@ -16,7 +16,7 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import { HtmlSelectorsPs1_7Constants } from '../constants/html-selectors-ps1_7.constants';
+import { HtmlSelectorsPs1_7Constants } from '../../constants/html-selectors-ps1_7.constants';
 
 export class HtmlElementPs1_7Service {
   constructor() {
@@ -43,34 +43,22 @@ export class HtmlElementPs1_7Service {
     return this.buttonContainer;
   }
 
-  getCheckoutExpressCartButtonContainer(cache = false) {
-    if (!this.checkoutExpressCartButtonContainer || cache) {
-      this.checkoutExpressCartButtonContainer = document.getElementById(
-        this.selectors.CHECKOUT_EXPRESS_CART_BUTTON_CONTAINER_ID
-      );
-    }
-
-    return this.checkoutExpressCartButtonContainer;
+  getCheckoutExpressCartButtonContainer() {
+    return document.getElementById(
+      this.selectors.CHECKOUT_EXPRESS_CART_BUTTON_CONTAINER_ID
+    );
   }
 
-  getCheckoutExpressCheckoutButtonContainer(cache = false) {
-    if (!this.checkoutExpressCheckoutButtonContainer || cache) {
-      this.checkoutExpressCheckoutButtonContainer = document.querySelector(
-        this.selectors.CHECKOUT_EXPRESS_CHECKOUT_BUTTON_CONTAINER
-      );
-    }
-
-    return this.checkoutExpressCheckoutButtonContainer;
+  getCheckoutExpressCheckoutButtonContainer() {
+    return document.querySelector(
+      this.selectors.CHECKOUT_EXPRESS_CHECKOUT_BUTTON_CONTAINER
+    );
   }
 
-  getCheckoutExpressProductButtonContainer(cache = false) {
-    if (!this.checkoutExpressProductButtonContainer || cache) {
-      this.checkoutExpressProductButtonContainer = document.querySelector(
-        this.selectors.CHECKOUT_EXPRESS_PRODUCT_BUTTON_CONTAINER
-      );
-    }
-
-    return this.checkoutExpressProductButtonContainer;
+  getCheckoutExpressProductButtonContainer() {
+    return document.querySelector(
+      this.selectors.CHECKOUT_EXPRESS_PRODUCT_BUTTON_CONTAINER
+    );
   }
 
   getConditionsCheckboxContainer(cache = false) {
