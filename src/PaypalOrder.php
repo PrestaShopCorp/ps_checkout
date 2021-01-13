@@ -47,7 +47,13 @@ class PaypalOrder
      */
     private function loadOrder($id)
     {
-        $response = (new Order(\Context::getContext()->link))->fetch($id);
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $module->getService('ps_checkout.repository.prestashop.account');
+
+        $response = (new Order(\Context::getContext()->link, $psAccountRepository))->fetch($id);
 
         if (false === $response['status']) {
             return;

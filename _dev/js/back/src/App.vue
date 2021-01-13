@@ -23,7 +23,10 @@
         {{ $t('menu.authentication') }}
       </MenuItem>
       <template
-        v-if="onboardingPaypalIsCompleted && onboardingFirebaseIsCompleted"
+        v-if="
+          onboardingPaypalIsCompleted &&
+            (onboardingCheckoutIsCompleted || onboardingPrestashopIsCompleted)
+        "
       >
         <MenuItem route="/customize">
           {{ $t('menu.customizeCheckout') }}
@@ -53,7 +56,13 @@
       </b-alert>
     </div>
 
-    <div class="container" v-if="!hasShopId">
+    <div
+      class="container"
+      v-if="
+        (onboardingCheckoutIsCompleted || onboardingPrestashopIsCompleted) &&
+          !hasShopId
+      "
+    >
       <b-alert variant="danger" show>
         <p>{{ $t('general.wrongConfiguration') }}</p>
       </b-alert>
@@ -93,6 +102,7 @@
   import Menu from '@/components/menu/menu';
   import MenuItem from '@/components/menu/menu-item';
   import RoundingBanner from '@/components/block/rounding-banner';
+  import { isOnboardingCompleted } from 'prestashop_accounts_vue_components';
 
   export default {
     name: 'Home',
@@ -117,8 +127,11 @@
       onboardingPaypalIsCompleted() {
         return this.$store.state.paypal.onboardingCompleted;
       },
-      onboardingFirebaseIsCompleted() {
+      onboardingCheckoutIsCompleted() {
         return this.$store.state.firebase.onboardingCompleted;
+      },
+      onboardingPrestashopIsCompleted() {
+        return isOnboardingCompleted();
       },
       accountIslinked() {
         return this.$store.state.paypal.accountIslinked;

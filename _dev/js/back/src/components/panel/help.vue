@@ -51,7 +51,13 @@
               height="315"
               :src="youtubeLink"
               frameborder="0"
-              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allow="
+                accelerometer;
+                autoplay;
+                encrypted-media;
+                gyroscope;
+                picture-in-picture
+              "
               allowfullscreen
             ></iframe>
           </div>

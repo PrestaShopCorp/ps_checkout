@@ -109,7 +109,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.4.0';
+    const VERSION = '2.5.0';
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -130,7 +130,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.4.0';
+        $this->version = '2.5.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->currencies = true;
@@ -163,7 +163,7 @@ class Ps_checkout extends PaymentModule
 
         // Install for both 1.7 and 1.6
         $defaultInstall = parent::install() &&
-            (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops() &&
+            (new PrestaShop\AccountsAuth\Installer\Install())->installPsAccounts() &&
             $this->installConfiguration() &&
             $this->registerHook(self::HOOK_LIST) &&
             (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
@@ -374,8 +374,13 @@ class Ps_checkout extends PaymentModule
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter $storePresenter */
         $storePresenter = $this->getService('ps_checkout.store.store');
+
+        // /** @var \PrestaShop\AccountsAuth\Presenter\PsAccountsPresenter $psAccountPresenter */
+        $psAccountPresenter = new PrestaShop\AccountsAuth\Presenter\PsAccountsPresenter($this->name);
+
         Media::addJsDef([
             'store' => $storePresenter->present(),
+            'contextPsAccounts' => $psAccountPresenter->present(),
         ]);
 
         $this->context->controller->addJS(
@@ -656,14 +661,11 @@ class Ps_checkout extends PaymentModule
         $ppAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
         $psAccountRepository = $this->getService('ps_checkout.repository.prestashop.account');
-        /** @var \PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext $psContext */
-        $psContext = $this->getService('ps_checkout.context.prestashop');
-        $shopUuid = (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->getForShop((int) $psContext->getShopId());
 
         return $ppAccountRepository->onBoardingIsCompleted()
             && $ppAccountRepository->paypalEmailIsValid()
             && $psAccountRepository->onBoardingIsCompleted()
-            && $shopUuid;
+            && $psAccountRepository->getShopUuid();
     }
 
     /**
@@ -994,14 +996,14 @@ class Ps_checkout extends PaymentModule
             $legalFreeText .= PHP_EOL . PHP_EOL;
         }
 
-        $legalFreeText .= $this->l('PayPal Order Id : ', 'translations') . $psCheckoutCart->paypal_order . PHP_EOL;
+        $legalFreeText .= $this->l('PayPal Order Id : ') . $psCheckoutCart->paypal_order . PHP_EOL;
 
         /** @var \OrderPayment[] $orderPayments */
         $orderPayments = $order->getOrderPaymentCollection();
 
         foreach ($orderPayments as $orderPayment) {
             if (false === empty($orderPayment->transaction_id)) {
-                $legalFreeText .= $this->l('PayPal Transaction Id : ', 'translations') . $orderPayment->transaction_id . PHP_EOL;
+                $legalFreeText .= $this->l('PayPal Transaction Id : ') . $orderPayment->transaction_id . PHP_EOL;
             }
         }
 
@@ -1017,8 +1019,13 @@ class Ps_checkout extends PaymentModule
     {
         /** @var Shop $shop */
         $shop = $params['object'];
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->getService('ps_checkout.repository.prestashop.account');
 
-        (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForShop((int) $shop->id);
+        if (!$psAccountRepository->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
+            (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForShop((int) $shop->id);
+        }
+
         $this->installConfiguration();
         $this->addCheckboxCarrierRestrictionsForModule([(int) $shop->id]);
         $this->addCheckboxCountryRestrictionsForModule([(int) $shop->id]);
@@ -1093,62 +1100,6 @@ class Ps_checkout extends PaymentModule
             return '';
         }
 
-        $paymentError = (int) Tools::getValue('paymentError');
-        $paymentErrorMessage = '';
-
-        if (0 < $paymentError) {
-            switch ($paymentError) {
-                case \PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException::PAYPAL_PAYMENT_CARD_ERROR:
-                    $paymentErrorMessage = $this->l('The transaction failed. Please try a different card.', 'translations');
-                    break;
-                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::CARD_TYPE_NOT_SUPPORTED:
-                    $paymentErrorMessage = $this->l('Processing of this card type is not supported. Use another card type.', 'translations');
-                    break;
-                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::INVALID_SECURITY_CODE_LENGTH:
-                    $paymentErrorMessage = $this->l('The CVC code length is invalid for the specified card type.', 'translations');
-                    break;
-                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::CURRENCY_NOT_SUPPORTED_FOR_CARD_TYPE:
-                    $paymentErrorMessage = $this->l('Your card cannot be used to pay in this currency, please try another payment method.', 'translations');
-                    break;
-                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::CURRENCY_NOT_SUPPORTED_FOR_COUNTRY:
-                    $paymentErrorMessage = $this->l('Your card cannot be used to pay in our country, please try another payment method.', 'translations');
-                    break;
-                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::INSTRUMENT_DECLINED:
-                    $paymentErrorMessage = $this->l('This payment method declined transaction, please try another.', 'translations');
-                    break;
-                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::MAX_NUMBER_OF_PAYMENT_ATTEMPTS_EXCEEDED:
-                    $paymentErrorMessage = $this->l('You have exceeded the maximum number of payment attempts.', 'translations');
-                    break;
-                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::PAYER_ACCOUNT_LOCKED_OR_CLOSED:
-                    $paymentErrorMessage = $this->l('Your PayPal account is locked or closed, please try another.', 'translations');
-                    break;
-                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::PAYER_ACCOUNT_RESTRICTED:
-                    $paymentErrorMessage = $this->l('You are not allowed to pay with this PayPal account, please try another.', 'translations');
-                    break;
-                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::PAYER_CANNOT_PAY:
-                    $paymentErrorMessage = $this->l('You are not allowed to pay with this payment method, please try another.', 'translations');
-                    break;
-                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::PAYER_COUNTRY_NOT_SUPPORTED:
-                    $paymentErrorMessage = $this->l('Your country is not supported by this payment method, please try to select another.', 'translations');
-                    break;
-                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::REDIRECT_PAYER_FOR_ALTERNATE_FUNDING:
-                    $paymentErrorMessage = $this->l('The transaction failed. Please try a different payment method.', 'translations');
-                    break;
-                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::TRANSACTION_BLOCKED_BY_PAYEE:
-                    $paymentErrorMessage = $this->l('The transaction was blocked by Fraud Protection settings.', 'translations');
-                    break;
-                case \PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED:
-                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::TRANSACTION_REFUSED:
-                    $paymentErrorMessage = $this->l('The transaction was refused.', 'translations');
-                    break;
-                case \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException::NO_EXTERNAL_FUNDING_DETAILS_FOUND:
-                    $paymentErrorMessage = $this->l('This payment method seems not working currently, please try another.', 'translations');
-                    break;
-                default:
-                    $paymentErrorMessage = $this->l('Please try a different payment method or try again later.', 'translations');
-            }
-        }
-
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService('ps_checkout.context.shop');
 
@@ -1162,8 +1113,6 @@ class Ps_checkout extends PaymentModule
 
         $this->context->smarty->assign([
             'is17' => $shopContext->isShop17(),
-            'paymentError' => $paymentError,
-            'paymentErrorMessage' => $paymentErrorMessage,
             'isExpressCheckout' => $isExpressCheckout,
             'isOnePageCheckout16' => !$shopContext->isShop17() && (bool) Configuration::get('PS_ORDER_PROCESS_TYPE'),
         ]);
@@ -1172,7 +1121,7 @@ class Ps_checkout extends PaymentModule
             $this->context->smarty->assign([
                 'paypalLogoPath' => $this->getPathUri() . 'views/img/paypal_express.png',
                 'translatedText' => strtr(
-                    $this->l('You have selected your [PAYPAL_ACCOUNT] PayPal account to proceed to the payment.', 'translations'),
+                    $this->l('You have selected your [PAYPAL_ACCOUNT] PayPal account to proceed to the payment.'),
                     [
                         '[PAYPAL_ACCOUNT]' => $this->context->cookie->__get('paypalEmail'),
                     ]
@@ -1181,7 +1130,7 @@ class Ps_checkout extends PaymentModule
         } else {
             $this->context->smarty->assign([
                 'spinnerPath' => $this->getPathUri() . 'views/img/tail-spin.svg',
-                'translatedText' => $this->l('Please wait, loading additional payment methods.', 'translations'),
+                'loaderTranslatedText' => $this->l('Please wait, loading additional payment methods.'),
             ]);
         }
 

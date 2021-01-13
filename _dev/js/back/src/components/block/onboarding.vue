@@ -18,13 +18,13 @@
  *-->
 <template>
   <div>
-    <template v-if="firebaseStatusAccount">
+    <template v-if="checkoutAccountStatus || prestashopAccountStatus">
       <button
         v-show="paypalIsLoaded"
         @click.prevent="getOnboardingLink()"
         class="btn btn-primary-reverse btn-outline-primary light-button"
       >
-        {{ $t('panel.account-list.linkToPaypal') }}
+        {{ $t('panel.accounts.paypal.linkToPaypal') }}
       </button>
       <a
         class="btn btn-primary-reverse btn-outline-primary light-button d-none"
@@ -33,10 +33,10 @@
         target="PPFrame"
         ref="paypalButton"
       >
-        {{ $t('panel.account-list.linkToPaypal') }}
+        {{ $t('panel.accounts.paypal.linkToPaypal') }}
       </a>
       <a v-show="!paypalIsLoaded" href="#">
-        <b>{{ $t('panel.account-list.loading') }} ...</b>
+        <b>{{ $t('panel.accounts.paypal.loading') }} ...</b>
       </a>
     </template>
     <template v-else>
@@ -44,13 +44,14 @@
         class="btn btn-primary-reverse btn-outline-primary light-button"
         disabled
       >
-        {{ $t('panel.account-list.linkToPsCheckoutFirst') }}
+        {{ $t('panel.accounts.paypal.linkToPsCheckoutFirst') }}
       </button>
     </template>
   </div>
 </template>
 
 <script>
+  import { isOnboardingCompleted } from 'prestashop_accounts_vue_components';
   export default {
     name: 'Onboarding',
     data() {
@@ -62,8 +63,11 @@
       paypalOnboardingLink() {
         return this.$store.state.paypal.paypalOnboardingLink;
       },
-      firebaseStatusAccount() {
+      checkoutAccountStatus() {
         return this.$store.state.firebase.onboardingCompleted;
+      },
+      prestashopAccountStatus() {
+        return isOnboardingCompleted();
       }
     },
     methods: {

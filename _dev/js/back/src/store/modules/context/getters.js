@@ -16,6 +16,7 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+import { isOnboardingCompleted } from 'prestashop_accounts_vue_components';
 export default {
   adminController: state => state.prestashopCheckoutAjax,
   locale: state => state.language.iso_code,
@@ -29,6 +30,6 @@ export default {
   currenciesLink: state => state.currenciesLink,
   merchantIsFullyOnboarded: (state, getters) =>
     getters.paypalOnboardingIsCompleted &&
-    getters.firebaseOnboardingIsCompleted &&
+    (isOnboardingCompleted() || getters.firebaseOnboardingIsCompleted) &&
     getters.psxOnboardingIsCompleted
 };

@@ -18,7 +18,7 @@
  *-->
 <template>
   <div>
-    <template v-if="prestashopAccountIsActive">
+    <template v-if="checkoutAccountIsActive">
       <b-badge variant="success">
         {{ $t('pages.accounts.approved') }}
       </b-badge>
@@ -32,12 +32,11 @@
 </template>
 
 <script>
-  import { isOnboardingCompleted } from 'prestashop_accounts_vue_components';
   export default {
-    name: 'AccountStatusPrestaShop',
+    name: 'AccountStatusCheckout',
     computed: {
-      prestashopAccountIsActive() {
-        return isOnboardingCompleted();
+      checkoutAccountIsActive() {
+        return this.$store.state.firebase.onboardingCompleted;
       }
     }
   };
