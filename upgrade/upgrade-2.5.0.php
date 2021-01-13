@@ -30,9 +30,31 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_5_0($module)
 {
-    if (class_exists('PrestaShop\AccountsAuth\Installer\Install')) {
-        require_once __DIR__ . '/vendor/prestashop/prestashop-accounts-auth/src/Installer/Install.php';
+    if (true === (bool) version_compare(_PS_VERSION_, '1.7', '>=')) {
+        if (false === \Module::isInstalled($module)) {
+            $moduleManagerBuilder = \ModuleManagerBuilder::getInstance();
+            $moduleManager = $moduleManagerBuilder->build();
+
+            return $moduleManager->install('ps_accounts');
+        } else if (true === \Module::needUpgrade($module)) {
+            $moduleManagerBuilder = \ModuleManagerBuilder::getInstance();
+            $moduleManager = $moduleManagerBuilder->build();
+
+            return $moduleManager->upgrade('ps_accounts');
+        }
+    } else {
+        file_put_contents(_PS_MODULE_DIR_ . 'ps_account.zip', \Tools::addonsRequest('module', ['id_module' => '49648']));
+        \Tools::ZipExtract(_PS_MODULE_DIR_ . 'ps_accounts.zip', _PS_MODULE_DIR_);
+        $modulePsAccounts = \Module::getInstanceByName('ps_accounts');
+
+        if (false === \Module::isInstalled($module)) {
+            return $modulePsAccounts->install();
+        } else if (\Module::initUpgradeModule($modulePsAccounts)) {
+            $upgrade = $modulePsAccounts->runUpgradeModule();
+
+            return $upgrade['success'];
+        }
     }
 
-    return (new PrestaShop\AccountsAuth\Installer\Install())->installPsAccounts();
+    return true;
 }
