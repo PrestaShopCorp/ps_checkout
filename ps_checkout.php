@@ -453,6 +453,7 @@ class Ps_checkout extends PaymentModule
             'modulePath' => $this->getPathUri(),
             'paymentOptions' => $paymentOptions,
             'isHostedFieldsAvailable' => $paypalAccountRepository->cardHostedFieldsIsAvailable(),
+            'isOnePageCheckout16' => !$shopContext->isShop17() && (bool) Configuration::get('PS_ORDER_PROCESS_TYPE'),
         ]);
 
         return $this->display(__FILE__, '/views/templates/hook/displayPayment.tpl');
@@ -1113,6 +1114,7 @@ class Ps_checkout extends PaymentModule
         $this->context->smarty->assign([
             'is17' => $shopContext->isShop17(),
             'isExpressCheckout' => $isExpressCheckout,
+            'isOnePageCheckout16' => !$shopContext->isShop17() && (bool) Configuration::get('PS_ORDER_PROCESS_TYPE'),
         ]);
 
         if (true === $isExpressCheckout) {
