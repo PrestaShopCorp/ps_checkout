@@ -30,30 +30,76 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_5_0($module)
 {
-    if (true === (bool) version_compare(_PS_VERSION_, '1.7', '>=')) {
-        if (false === \Module::isInstalled($module)) {
-            $moduleManagerBuilder = \ModuleManagerBuilder::getInstance();
-            $moduleManager = $moduleManagerBuilder->build();
+    $is17 = (bool) version_compare(_PS_VERSION_, '1.7', '>=');
 
-            return $moduleManager->install('ps_accounts');
-        } elseif (true === \Module::needUpgrade($module)) {
-            $moduleManagerBuilder = \ModuleManagerBuilder::getInstance();
-            $moduleManager = $moduleManagerBuilder->build();
+    if (false === \Module::isInstalled('ps_accounts')) {
+        return $is17 ? installPsAccountIfIsShop1_7() : installPsAccountIfIsShop1_6();
+    }
 
-            return $moduleManager->upgrade('ps_accounts');
-        }
-    } else {
-        file_put_contents(_PS_MODULE_DIR_ . 'ps_account.zip', \Tools::addonsRequest('module', ['id_module' => '49648']));
-        \Tools::ZipExtract(_PS_MODULE_DIR_ . 'ps_accounts.zip', _PS_MODULE_DIR_);
-        $modulePsAccounts = \Module::getInstanceByName('ps_accounts');
+    return $is17 ? upgradePsAccountIfIsShop1_7() : upgradePsAccountIfIsShop1_6();
+}
 
-        if (false === \Module::isInstalled($module)) {
-            return $modulePsAccounts->install();
-        } elseif (\Module::initUpgradeModule($modulePsAccounts)) {
-            $upgrade = $modulePsAccounts->runUpgradeModule();
+/**
+ * Install module if shop version is 1.7
+ *
+ * @return bool
+ */
+function installPsAccountIfIsShop1_7()
+{
+    $moduleManagerBuilder = \PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder::getInstance();
+    $moduleManager = $moduleManagerBuilder->build();
 
-            return $upgrade['success'];
-        }
+    return $moduleManager->install('ps_accounts');
+}
+
+/**
+ * Install module if shop version is 1.6
+ *
+ * @return bool
+ */
+function installPsAccountIfIsShop1_6()
+{
+    file_put_contents(_PS_MODULE_DIR_ . 'ps_account.zip', \Tools::addonsRequest('module', ['id_module' => 49648]));
+    \Tools::ZipExtract(_PS_MODULE_DIR_ . 'ps_accounts.zip', _PS_MODULE_DIR_);
+    $modulePsAccounts = \Module::getInstanceByName('ps_accounts');
+
+    return $modulePsAccounts->install();
+}
+
+/**
+ * Update module if shop version is 1.7
+ *
+ * @return bool
+ */
+function upgradePsAccountIfIsShop1_7()
+{
+    $modulePsAccounts = \Module::getInstanceByName('ps_accounts');
+
+    if (true === \Module::needUpgrade($modulePsAccounts)) {
+        $moduleManagerBuilder = \PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder::getInstance();
+        $moduleManager = $moduleManagerBuilder->build();
+
+        return $moduleManager->upgrade('ps_accounts');
+    }
+
+    return true;
+}
+
+/**
+ * Update module if shop version is 1.6
+ *
+ * @return bool
+ */
+function upgradePsAccountIfIsShop1_6()
+{
+    file_put_contents(_PS_MODULE_DIR_ . 'ps_account.zip', \Tools::addonsRequest('module', ['id_module' => 49648]));
+    \Tools::ZipExtract(_PS_MODULE_DIR_ . 'ps_accounts.zip', _PS_MODULE_DIR_);
+    $modulePsAccounts = \Module::getInstanceByName('ps_accounts');
+
+    if (\Module::initUpgradeModule($modulePsAccounts)) {
+        $upgrade = $modulePsAccounts->runUpgradeModule();
+
+        return (bool) $upgrade['success'];
     }
 
     return true;
