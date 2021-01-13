@@ -36,7 +36,7 @@ function upgrade_module_2_5_0($module)
             $moduleManager = $moduleManagerBuilder->build();
 
             return $moduleManager->install('ps_accounts');
-        } else if (true === \Module::needUpgrade($module)) {
+        } elseif (true === \Module::needUpgrade($module)) {
             $moduleManagerBuilder = \ModuleManagerBuilder::getInstance();
             $moduleManager = $moduleManagerBuilder->build();
 
@@ -49,7 +49,7 @@ function upgrade_module_2_5_0($module)
 
         if (false === \Module::isInstalled($module)) {
             return $modulePsAccounts->install();
-        } else if (\Module::initUpgradeModule($modulePsAccounts)) {
+        } elseif (\Module::initUpgradeModule($modulePsAccounts)) {
             $upgrade = $modulePsAccounts->runUpgradeModule();
 
             return $upgrade['success'];
