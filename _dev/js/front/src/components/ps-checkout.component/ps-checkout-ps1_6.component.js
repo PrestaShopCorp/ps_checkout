@@ -20,6 +20,7 @@ import { BaseComponent } from '../../core/dependency-injection/base.component';
 import { NotificationComponent } from '../1_6/notification.component';
 import { PaymentOptionsComponent } from '../1_6/payment-options.component';
 import { LoaderComponent } from '../common/loader.component';
+import { PaymentOptionsLoaderComponent } from '../common/payment-options-loader.component';
 
 export class PsCheckoutPs1_6Component extends BaseComponent {
   static Inject = {
@@ -31,6 +32,10 @@ export class PsCheckoutPs1_6Component extends BaseComponent {
   }
 
   renderCheckout() {
+    this.children.paymentOptionsLoader = new PaymentOptionsLoaderComponent(
+      this.app
+    ).render();
+
     // TODO: Move this to PrestashopService
     if (window.isLogged) {
       // TODO: Move this to HTMLElementService
@@ -45,6 +50,8 @@ export class PsCheckoutPs1_6Component extends BaseComponent {
         }).render();
       }
     }
+
+    this.children.paymentOptionsLoader.hide();
   }
 
   render() {

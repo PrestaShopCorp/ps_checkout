@@ -26,6 +26,7 @@ export class PsCheckoutApi extends BaseClass {
   postCancelOrder(data) {
     return fetch(this.config.cancelUrl, {
       method: 'post',
+      credentials: 'same-origin',
       headers: {
         'content-type': 'application/json'
       },
@@ -45,6 +46,7 @@ export class PsCheckoutApi extends BaseClass {
     return this.config.orderId
       ? fetch(this.config.checkCartUrl, {
           method: 'post',
+          credentials: 'same-origin',
           headers: {
             'content-type': 'application/json'
           },
@@ -78,6 +80,7 @@ export class PsCheckoutApi extends BaseClass {
   postCreateOrder(data) {
     return fetch(this.config.createUrl, {
       method: 'post',
+      credentials: 'same-origin',
       headers: {
         'content-type': 'application/json'
       },
@@ -97,30 +100,36 @@ export class PsCheckoutApi extends BaseClass {
       .then(({ body: { orderID } }) => orderID);
   }
 
-  postGetToken() {
-    return fetch(this.config.getTokenUrl, {
-      method: 'post',
-      headers: {
-        'content-type': 'application/json'
-      }
-    })
-      .then((response) => {
-        if (false === response.ok) {
-          return response.json().then((response) => {
-            throw response.body && response.body.error
-              ? response.body.error
-              : { message: 'Unknown error' };
-          });
+  getGetToken() {
+    return (
+      fetch(this.config.getTokenUrl, {
+        method: 'get',
+        credentials: 'same-origin',
+        headers: {
+          'content-type': 'application/json'
         }
-
-        return response.json();
       })
-      .then(({ body: { token } }) => token);
+        .then((response) => {
+          if (false === response.ok) {
+            return response.json().then((response) => {
+              throw response.body && response.body.error
+                ? response.body.error
+                : { message: 'Unknown error' };
+            });
+          }
+
+          return response.json();
+        })
+        .then(({ body: { token } }) => token)
+        // TODO: Handle error
+        .catch(() => {})
+    );
   }
 
   postValidateOrder(data, actions) {
     return fetch(this.config.validateOrderUrl, {
       method: 'post',
+      credentials: 'same-origin',
       headers: {
         'content-type': 'application/json'
       },
@@ -172,6 +181,7 @@ export class PsCheckoutApi extends BaseClass {
     return actions.order.get().then(({ payer, purchase_units }) =>
       fetch(this.config.expressCheckoutUrl, {
         method: 'post',
+        credentials: 'same-origin',
         headers: {
           'content-type': 'application/json'
         },

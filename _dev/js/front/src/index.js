@@ -30,11 +30,11 @@ bootstrap(async () => {
     );
   }
 
-  window.ps_checkout.app = await new App();
+  window.ps_checkout.app = new App();
   window.ps_checkout.events.dispatchEvent(
     new CustomEvent('init', { detail: { ps_checkout: window.ps_checkout } })
   );
-  window.ps_checkout.app.render();
+  await window.ps_checkout.app.render();
   window.ps_checkout.events.dispatchEvent(
     new CustomEvent('loaded', { detail: { ps_checkout: window.ps_checkout } })
   );

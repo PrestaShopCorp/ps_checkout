@@ -101,27 +101,27 @@ window.ps_checkout.events:
 ```js
 window.ps_checkout.events = new EventTarget();
 // PS Checkout has been initialized but not rendered.
-window.ps_checkout.events.addEventListener('init', ({details}) => {
+window.ps_checkout.events.addEventListener('init', ({detail}) => {
     // === window.ps_checkout
-    const {ps_checkout} = details;
+    const {ps_checkout} = detail;
     // ...
 });
 
 // Payment Option is active
-window.ps_checkout.events.addEventListener('payment-option-active', ({details}) => {
+window.ps_checkout.events.addEventListener('payment-option-active', ({detail}) => {
     const {
         // HTMLNode of the Payment Option
         HTMLElementContainer,
         // Funding Source constant name
         fundingSource
-    } = details;
+    } = detail;
     // ...
 });
 
 // PS Checkout has just been rendered.
-window.ps_checkout.events.addEventListener('loaded', ({details}) => {
+window.ps_checkout.events.addEventListener('loaded', ({detail}) => {
     // === window.ps_checkout
-    const {ps_checkout} = details;
+    const {ps_checkout} = detail;
     // ...
 });
 ```
@@ -150,7 +150,7 @@ window.ps_checkout.events.addEventListener('init', () => {
     paymentOptionContainers.forEach(myContainer => myContainer.style.display = 'none');
 });
 
-window.ps_checkout.events.addEventListener('payment-option-active', ({details}) => {
+window.ps_checkout.events.addEventListener('payment-option-active', ({detail}) => {
     const { HTMLElementContainer } = detail;
     const myHTMLElementContainer = HTMLElementContainer.parentElement;
 
