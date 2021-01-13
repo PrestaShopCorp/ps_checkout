@@ -109,7 +109,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.5.0';
+    const VERSION = '2.5.0'
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -453,6 +453,7 @@ class Ps_checkout extends PaymentModule
             'modulePath' => $this->getPathUri(),
             'paymentOptions' => $paymentOptions,
             'isHostedFieldsAvailable' => $paypalAccountRepository->cardHostedFieldsIsAvailable(),
+            'isOnePageCheckout16' => !$shopContext->isShop17() && (bool) Configuration::get('PS_ORDER_PROCESS_TYPE'),
         ]);
 
         return $this->display(__FILE__, '/views/templates/hook/displayPayment.tpl');
@@ -1113,6 +1114,7 @@ class Ps_checkout extends PaymentModule
         $this->context->smarty->assign([
             'is17' => $shopContext->isShop17(),
             'isExpressCheckout' => $isExpressCheckout,
+            'isOnePageCheckout16' => !$shopContext->isShop17() && (bool) Configuration::get('PS_ORDER_PROCESS_TYPE'),
         ]);
 
         if (true === $isExpressCheckout) {

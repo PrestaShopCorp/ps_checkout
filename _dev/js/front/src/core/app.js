@@ -3,7 +3,6 @@ import Bottle from 'bottlejs';
 import { PsCheckoutApi } from '../api/ps-checkout.api';
 import { PayPalSdkConfig } from '../config/paypal-sdk.config';
 import { PsCheckoutConfig } from '../config/ps-checkout.config';
-import { PaymentOptionsLoaderComponent } from '../components/common/payment-options-loader.component';
 import { PayPalSdkComponent } from '../components/common/paypal-sdk.component';
 import { PsCheckoutComponent } from '../components/ps-checkout.component';
 import { PsCheckoutExpressComponent } from '../components/ps-checkout-express.component';
@@ -87,15 +86,7 @@ export class App {
   }
 
   async renderCheckout() {
-    // Move this to PsCheckoutComponent?
-    if (!this.paymentOptionsLoader) {
-      this.paymentOptionsLoader = new PaymentOptionsLoaderComponent(
-        this
-      ).render();
-    }
-
     await this.initPayPalService(this.psCheckoutConfig.hostedFieldsEnabled);
-    this.paymentOptionsLoader.hide();
     new PsCheckoutComponent(this).render();
   }
 

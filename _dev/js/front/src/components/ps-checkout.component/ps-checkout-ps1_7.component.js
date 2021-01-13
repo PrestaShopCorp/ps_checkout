@@ -21,6 +21,7 @@ import { NotificationComponent } from '../1_7/notification.component';
 import { PaymentOptionsComponent } from '../1_7/payment-options.component';
 import { ConditionsCheckboxComponent } from '../1_7/conditions-checkbox.component';
 import { LoaderComponent } from '../common/loader.component';
+import { PaymentOptionsLoaderComponent } from '../common/payment-options-loader.component';
 
 export class PsCheckoutPs1_7Component extends BaseComponent {
   created() {
@@ -28,6 +29,10 @@ export class PsCheckoutPs1_7Component extends BaseComponent {
   }
 
   render() {
+    this.children.paymentOptionsLoader = new PaymentOptionsLoaderComponent(
+      this.app
+    ).render();
+
     this.children.loader = new LoaderComponent(this.app).render();
     this.children.conditionsCheckbox = new ConditionsCheckboxComponent(
       this.app
@@ -37,6 +42,8 @@ export class PsCheckoutPs1_7Component extends BaseComponent {
     this.children.paymentOptions = new PaymentOptionsComponent(
       this.app
     ).render();
+
+    this.children.paymentOptionsLoader.hide();
 
     return this;
   }
