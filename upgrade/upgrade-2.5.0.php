@@ -31,7 +31,7 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_2_5_0($module)
 {
     if (class_exists('PrestaShop\AccountsAuth\Installer\Install')) {
-        require_once(__DIR__ . '/vendor/prestashop/prestashop-accounts-auth/src/Installer/Install.php');
+        require_once __DIR__ . '/vendor/prestashop/prestashop-accounts-auth/src/Installer/Install.php';
     }
 
     return (new PrestaShop\AccountsAuth\Installer\Install())->installPsAccounts();
