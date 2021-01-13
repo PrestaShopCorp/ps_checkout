@@ -21,7 +21,9 @@
     <b-container
       class="mb-4"
       v-if="
-        !isLiveStepConfirmed && firebaseStatusAccount && paypalStatusAccount
+        !isLiveStepConfirmed &&
+          (checkoutAccountStatus || prestashopAccountStatus) &&
+          paypalAccountStatus
       "
     >
       <PaypalStatusBanner />
@@ -30,7 +32,9 @@
     <b-container
       class="mb-4"
       v-if="
-        firebaseStatusAccount && paypalStatusAccount && incompatibleCountryCodes
+        (checkoutAccountStatus || prestashopAccountStatus) &&
+          paypalAccountStatus &&
+          incompatibleCountryCodes
       "
     >
       <PaypalIncompatibleCountry />
@@ -39,21 +43,46 @@
     <b-container
       class="mb-4"
       v-if="
-        firebaseStatusAccount &&
-          paypalStatusAccount &&
+        (checkoutAccountStatus || prestashopAccountStatus) &&
+          paypalAccountStatus &&
           incompatibleCurrencyCodes
       "
     >
       <PaypalIncompatibleCurrency />
     </b-container>
 
-    <b-container>
-      <AccountList />
+    <b-container
+      class="text-center"
+      v-if="
+        (!checkoutAccountStatus || !prestashopAccountStatus) &&
+          !paypalAccountStatus
+      "
+    >
+      <h2 class="text-muted font-weight-light">
+        {{ $t('panel.accounts.activateAllPayment') }}
+      </h2>
+    </b-container>
+
+    <b-container v-if="!checkoutAccountStatus">
+      <PsAccounts>
+        <template v-slot:body>
+          <PaypalAccount :sendTrack="sendTrack" />
+        </template>
+      </PsAccounts>
+    </b-container>
+
+    <b-container v-else>
+      <CheckoutAccount class="mb-3" :sendTrack="sendTrack" />
+
+      <PaypalAccount :sendTrack="sendTrack" />
     </b-container>
 
     <b-container
       class="mt-4"
-      v-if="firebaseStatusAccount !== false && paypalStatusAccount !== false"
+      v-if="
+        (checkoutAccountStatus || prestashopAccountStatus) &&
+          paypalAccountStatus
+      "
     >
       <PaymentAcceptance />
     </b-container>
@@ -65,7 +94,12 @@
 </template>
 
 <script>
-  import AccountList from '@/components/panel/account-list';
+  import {
+    PsAccounts,
+    isOnboardingCompleted
+  } from 'prestashop_accounts_vue_components';
+  import PaypalAccount from '@/components/panel/paypal-account';
+  import CheckoutAccount from '@/components/panel/checkout-account';
   import PaymentAcceptance from '@/components/panel/payment-acceptance';
   import Reassurance from '@/components/block/reassurance';
   import PaypalStatusBanner from '@/components/banner/paypal-status';
@@ -75,7 +109,9 @@
   export default {
     name: 'Accounts',
     components: {
-      AccountList,
+      PsAccounts,
+      PaypalAccount,
+      CheckoutAccount,
       PaymentAcceptance,
       Reassurance,
       PaypalStatusBanner,
@@ -83,14 +119,26 @@
       PaypalIncompatibleCurrency
     },
     computed: {
-      firebaseStatusAccount() {
+      checkoutAccountStatus() {
         return this.$store.state.firebase.onboardingCompleted;
       },
-      paypalStatusAccount() {
+      prestashopAccountStatus() {
+        return isOnboardingCompleted();
+      },
+      paypalAccountStatus() {
         return this.$store.state.paypal.onboardingCompleted;
       },
       isLiveStepConfirmed() {
         return this.$store.state.context.liveStepConfirmed;
+      },
+      accountIslinked() {
+        return this.$store.state.paypal.accountIslinked;
+      },
+      merchantEmailIsValid() {
+        return this.$store.state.paypal.emailIsValid;
+      },
+      cardPaymentIsActive() {
+        return this.$store.state.paypal.cardIsActive;
       },
       incompatibleCountryCodes() {
         return this.$store.state.context.incompatibleCountryCodes;
@@ -98,6 +146,79 @@
       incompatibleCurrencyCodes() {
         return this.$store.state.context.incompatibleCurrencyCodes;
       }
+    },
+    methods: {
+      sendTrack() {
+        if (
+          !this.checkoutAccountStatus &&
+          !this.prestashopAccountStatus &&
+          !this.paypalAccountStatus
+        ) {
+          // Anything connected
+          this.$segment.track('View Authentication - Status Logged Out', {
+            category: 'ps_checkout'
+          });
+        } else if (
+          this.checkoutAccountStatus &&
+          !this.prestashopAccountStatus &&
+          !this.paypalAccountStatus
+        ) {
+          // Only Checkout account connected
+          this.$segment.track(
+            'View Authentication - Status Checkout account connected',
+            { category: 'ps_checkout' }
+          );
+        } else if (
+          !this.checkoutAccountStatus &&
+          this.prestashopAccountStatus &&
+          !this.paypalAccountStatus
+        ) {
+          // Only PrestaShop account connected
+          this.$segment.track(
+            'View Authentication - Status PrestaShop account connected',
+            { category: 'ps_checkout' }
+          );
+        } else if (
+          (this.checkoutAccountStatus || this.prestashopAccountStatus) &&
+          this.paypalAccountStatus
+        ) {
+          // Both accounts "connected"
+          let accountType = null;
+
+          if (this.checkoutAccountStatus) {
+            accountType = 'PrestaShop Checkout';
+          } else if (this.prestashopAccountStatus) {
+            accountType = 'PrestaShop Accounts';
+          }
+
+          if (
+            this.accountIslinked &&
+            this.merchantEmailIsValid &&
+            this.cardPaymentIsActive === 'SUBSCRIBED'
+          ) {
+            // all right
+            this.$segment.track(
+              'View Authentication screen - Status Both account approved',
+              {
+                category: 'ps_checkout',
+                psAccountType: accountType
+              }
+            );
+          } else {
+            // but need approval
+            this.$segment.track(
+              'View Authentication - Status PP approval pending',
+              {
+                category: 'ps_checkout',
+                psAccountType: accountType
+              }
+            );
+          }
+        }
+      }
+    },
+    mounted() {
+      this.sendTrack();
     }
   };
 </script>

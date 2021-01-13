@@ -49,3 +49,14 @@ services:
   ps_checkout.presenter.transaction:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter'
     public: true
+
+  ps_checkout.api.psx.onboarding:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding'
+    public: true
+    parent: 'ps_checkout.api.psx.client'
+
+  ps_checkout.api.psx.client:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Psx\Client\PsxClient'
+    public: true
+    arguments:
+      - '@ps_checkout.repository.prestashop.account'

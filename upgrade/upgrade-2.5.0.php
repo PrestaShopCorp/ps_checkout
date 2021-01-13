@@ -1,4 +1,5 @@
-<!--**
+<?php
+/**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
@@ -15,30 +16,19 @@
  * @author    PrestaShop SA <contact@prestashop.com>
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- *-->
-<template>
-  <div>
-    <template v-if="prestashopAccountIsActive">
-      <b-badge variant="success">
-        {{ $t('pages.accounts.approved') }}
-      </b-badge>
-    </template>
-    <template v-else>
-      <b-badge variant="warning">
-        {{ $t('pages.accounts.approvalPending') }}
-      </b-badge>
-    </template>
-  </div>
-</template>
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-<script>
-  import { isOnboardingCompleted } from 'prestashop_accounts_vue_components';
-  export default {
-    name: 'AccountStatusPrestaShop',
-    computed: {
-      prestashopAccountIsActive() {
-        return isOnboardingCompleted();
-      }
-    }
-  };
-</script>
+/**
+ * Update main function for module version 2.5.0
+ *
+ * @param Ps_checkout $module
+ *
+ * @return bool
+ */
+function upgrade_module_2_5_0($module)
+{
+    return (new PrestaShop\AccountsAuth\Installer\Install())->installPsAccounts();
+}

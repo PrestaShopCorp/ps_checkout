@@ -66,6 +66,9 @@ class CreatePaypalOrderHandler
         /** @var ShopContext $shopContext */
         $shopContext = $module->getService('ps_checkout.context.shop');
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $module->getService('ps_checkout.repository.prestashop.account');
+
         // Build full payload in 1.7
         if ($shopContext->isShop17()) {
             // enable express checkout mode if in express checkout
@@ -100,9 +103,9 @@ class CreatePaypalOrderHandler
 
         // Create the paypal order or update it
         if (true === $updateOrder) {
-            $paypalOrder = (new Order($this->context->link))->patch($payload);
+            $paypalOrder = (new Order($this->context->link, $psAccountRepository))->patch($payload);
         } else {
-            $paypalOrder = (new Order($this->context->link))->create($payload);
+            $paypalOrder = (new Order($this->context->link, $psAccountRepository))->create($payload);
         }
 
         // Retry with minimal payload when full payload failed (only on 1.7)
@@ -111,9 +114,9 @@ class CreatePaypalOrderHandler
             $payload = $builder->presentPayload()->getJson();
 
             if (true === $updateOrder) {
-                $paypalOrder = (new Order($this->context->link))->patch($payload);
+                $paypalOrder = (new Order($this->context->link, $psAccountRepository))->patch($payload);
             } else {
-                $paypalOrder = (new Order($this->context->link))->create($payload);
+                $paypalOrder = (new Order($this->context->link, $psAccountRepository))->create($payload);
             }
         }
 
