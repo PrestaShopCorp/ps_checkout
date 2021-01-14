@@ -132,6 +132,12 @@ function upgradePsAccountIfIsShop1_6()
  */
 function downloadModuleIfIsShop1_6()
 {
+    if (!is_writable(_PS_MODULE_DIR_ . 'ps_accounts')) {
+        \PrestaShopLogger::addLog('Unable to write ps_accounts ZIP into modules folder');
+
+        return false;
+    }
+
     $content = \Tools::addonsRequest('module', ['id_module' => '49648']);
 
     if (!$content) {
@@ -140,12 +146,8 @@ function downloadModuleIfIsShop1_6()
         return false;
     }
 
-    $logger = new FileLogger(FileLogger::DEBUG);
-    $logger->setFilename(_PS_ROOT_DIR_ . '/log/ps_checkout_upgrade2.5.0.log');
-    $logger->logDebug($content);
-
-    if (!file_put_contents(_PS_MODULE_DIR_ . 'ps_account.zip', $content)) {
-        \PrestaShopLogger::addLog('Unable to write ps_accounts ZIP into modules folder');
+    if (false === file_put_contents(_PS_MODULE_DIR_ . 'ps_accounts.zip', $content)) {
+        \PrestaShopLogger::addLog('Unable to put ps_accounts ZIP into modules folder');
 
         return false;
     }
