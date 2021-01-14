@@ -33,7 +33,7 @@ function upgrade_module_2_5_0($module)
     $is17 = (bool) version_compare(_PS_VERSION_, '1.7', '>=');
 
     if (false === \Module::isInstalled('ps_accounts')) {
-        return $is17 ? installPsAccountIfIsShop1_7() : true;
+        return $is17 ? installPsAccountIfIsShop1_7() : installPsAccountIfIsShop1_6();
     }
 
     return $is17 ? upgradePsAccountIfIsShop1_7() : upgradePsAccountIfIsShop1_6();
@@ -59,9 +59,17 @@ function installPsAccountIfIsShop1_7()
  */
 function installPsAccountIfIsShop1_6()
 {
-    file_put_contents(_PS_MODULE_DIR_ . 'ps_account.zip', \Tools::addonsRequest('module', ['id_module' => 49648]));
-    \Tools::ZipExtract(_PS_MODULE_DIR_ . 'ps_accounts.zip', _PS_MODULE_DIR_);
+    if (!downloadModuleIfIsShop1_6()) {
+        return false;
+    }
+
     $modulePsAccounts = \Module::getInstanceByName('ps_accounts');
+
+    if (!$modulePsAccounts) {
+        \PrestaShopLogger::addLog('Unable to get ps_accounts instance to proceed install');
+
+        return false;
+    }
 
     return $modulePsAccounts->install();
 }
@@ -92,14 +100,56 @@ function upgradePsAccountIfIsShop1_7()
  */
 function upgradePsAccountIfIsShop1_6()
 {
-    file_put_contents(_PS_MODULE_DIR_ . 'ps_account.zip', \Tools::addonsRequest('module', ['id_module' => 49648]));
-    \Tools::ZipExtract(_PS_MODULE_DIR_ . 'ps_accounts.zip', _PS_MODULE_DIR_);
+    if (!downloadModuleIfIsShop1_6()) {
+        return false;
+    }
+
     $modulePsAccounts = \Module::getInstanceByName('ps_accounts');
+
+    if (!$modulePsAccounts) {
+        \PrestaShopLogger::addLog('Unable to get ps_accounts instance to proceed upgrade');
+
+        return false;
+    }
 
     if (\Module::initUpgradeModule($modulePsAccounts)) {
         $upgrade = $modulePsAccounts->runUpgradeModule();
 
+        if (!$upgrade['success']) {
+            \PrestaShopLogger::addLog('Unable to upgrade ps_accounts');
+        }
+
         return (bool) $upgrade['success'];
+    }
+
+    return true;
+}
+
+/**
+ * Download Module ps_accounts if shop version is 1.6
+ *
+ * @return bool
+ */
+function downloadModuleIfIsShop1_6()
+{
+    $content = \Tools::addonsRequest('module', ['id_module' => '49648']);
+
+    if (!$content) {
+        \PrestaShopLogger::addLog('Unable to download ps_accounts ZIP');
+
+        return false;
+    }
+
+    if (!file_put_contents(_PS_MODULE_DIR_ . 'ps_account.zip', $content)) {
+        \PrestaShopLogger::addLog('Unable to write ps_accounts ZIP into modules folder');
+
+        return false;
+    }
+
+    if (!\Tools::ZipExtract(_PS_MODULE_DIR_ . 'ps_accounts.zip', _PS_MODULE_DIR_)) {
+        \PrestaShopLogger::addLog('Unable to extract ps_accounts ZIP into modules folder');
+
+        return false;
     }
 
     return true;
