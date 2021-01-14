@@ -33,7 +33,7 @@ function upgrade_module_2_5_0($module)
     $is17 = (bool) version_compare(_PS_VERSION_, '1.7', '>=');
 
     if (false === \Module::isInstalled('ps_accounts')) {
-        return $is17 ? installPsAccountIfIsShop1_7() : installPsAccountIfIsShop1_6();
+        return $is17 ? installPsAccountIfIsShop1_7() : true;
     }
 
     return $is17 ? upgradePsAccountIfIsShop1_7() : upgradePsAccountIfIsShop1_6();
