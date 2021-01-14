@@ -51,7 +51,7 @@
                                 </div>
                             </div>
                             <div class="col-12 col-sm-4 col-md-3 col-lg-2 mb-3 m-auto">
-                                <div class="text-center">
+                                <div class="text-xs-center">
                                     <a href="{$configureLink|escape:'htmlall':'UTF-8'}" class="btn btn-primary-reverse btn-outline-primary light-button">
                                         {l s='Configure' mod='ps_checkout'}
                                     </a>
