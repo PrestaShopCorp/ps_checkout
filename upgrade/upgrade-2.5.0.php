@@ -132,7 +132,7 @@ function upgradePsAccountIfIsShop1_6()
  */
 function downloadModuleIfIsShop1_6()
 {
-    if (!is_writable(_PS_MODULE_DIR_ . 'ps_accounts')) {
+    if (!is_writable(_PS_MODULE_DIR_)) {
         \PrestaShopLogger::addLog('Unable to write ps_accounts ZIP into modules folder');
 
         return false;
