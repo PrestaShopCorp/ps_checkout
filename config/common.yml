@@ -151,7 +151,6 @@ services:
     public: true
     arguments:
       - '@ps_checkout.configuration'
-      - '@ps_checkout.accounts.service'
 
   ps_checkout.store.module.psx:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule'
@@ -296,6 +295,3 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository'
     public: true
 
-  ps_checkout.accounts.service:
-    class: 'PrestaShop\AccountsAuth\Service\PsAccountsService'
-    public: true

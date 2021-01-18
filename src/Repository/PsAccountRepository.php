@@ -20,7 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
-use PrestaShop\AccountsAuth\Service\PsAccountsService;
+use Module;
+use PrestaShop\Module\PsAccounts\Service\PsAccountsService;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
@@ -41,10 +42,11 @@ class PsAccountRepository
      * @param PrestaShopConfiguration $configuration
      * @param PsAccountsService $psAccountsService
      */
-    public function __construct(PrestaShopConfiguration $configuration, PsAccountsService $psAccountsService)
+    public function __construct(PrestaShopConfiguration $configuration)
     {
         $this->configuration = $configuration;
-        $this->psAccountsService = $psAccountsService;
+        $this->psAccountsService = Module::getInstanceByName('ps_accounts')
+            ->getService(PsAccountsService::class);
     }
 
     /**

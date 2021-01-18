@@ -163,7 +163,7 @@ class Ps_checkout extends PaymentModule
 
         // Install for both 1.7 and 1.6
         $defaultInstall = parent::install() &&
-            (new PrestaShop\AccountsAuth\Installer\Install())->installPsAccounts() &&
+            (new \PrestaShop\PsAccountsInstaller\Installer\Installer())->installPsAccounts() &&
             $this->installConfiguration() &&
             $this->registerHook(self::HOOK_LIST) &&
             (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
@@ -375,12 +375,10 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter $storePresenter */
         $storePresenter = $this->getService('ps_checkout.store.store');
 
-        // /** @var \PrestaShop\AccountsAuth\Presenter\PsAccountsPresenter $psAccountPresenter */
-        $psAccountPresenter = new PrestaShop\AccountsAuth\Presenter\PsAccountsPresenter($this->name);
-
         Media::addJsDef([
             'store' => $storePresenter->present(),
-            'contextPsAccounts' => $psAccountPresenter->present(),
+            'contextPsAccounts' => (new \PrestaShop\PsAccountsInstaller\Presenter\ContextPresenter())
+                ->Present($this->name),
         ]);
 
         $this->context->controller->addJS(
