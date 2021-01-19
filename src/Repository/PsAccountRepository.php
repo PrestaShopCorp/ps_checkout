@@ -100,7 +100,7 @@ class PsAccountRepository
      */
     public function isPrestaShopAccount()
     {
-        return $this->psAccountsService->getFirebaseIdToken() &&
+        return $this->psAccountsService->getToken() &&
             $this->psAccountsService->getEmail() &&
             $this->psAccountsService->getShopUuidV4();
     }
@@ -156,7 +156,7 @@ class PsAccountRepository
             return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN);
         }
 
-        return $this->psAccountsService->getFirebaseRefreshToken();
+        return $this->psAccountsService->getRefreshToken();
     }
 
     /**
