@@ -17,6 +17,9 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+
+use PrestaShop\Module\PsAccounts\Presenter\Store\Context\ContextPresenter;
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 if (!defined('_PS_VERSION_')) {
@@ -375,10 +378,12 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter $storePresenter */
         $storePresenter = $this->getService('ps_checkout.store.store');
 
+        $psAccountsPresenter = Module::getInstanceByName('ps_accounts')
+                ->getService(PrestaShop\Module\PsAccounts\Presenter\PsAccountsPresenter::class);
+
         Media::addJsDef([
             'store' => $storePresenter->present(),
-            'contextPsAccounts' => (new \PrestaShop\PsAccountsInstaller\Presenter\ContextPresenter())
-                ->Present($this->name),
+            'contextPsAccounts' => $psAccountsPresenter->present($this->name),
         ]);
 
         $this->context->controller->addJS(
