@@ -18,8 +18,6 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
-use PrestaShop\Module\PsAccounts\Presenter\Store\Context\ContextPresenter;
-
 require_once __DIR__ . '/vendor/autoload.php';
 
 if (!defined('_PS_VERSION_')) {
@@ -112,7 +110,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.5.0';
+    const VERSION = '2.6.0';
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -133,7 +131,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.5.0';
+        $this->version = '2.6.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->currencies = true;
@@ -157,6 +155,8 @@ class Ps_checkout extends PaymentModule
      * Function executed at the install of the module
      *
      * @return bool
+     *
+     * @throws Exception
      */
     public function install()
     {
@@ -166,12 +166,12 @@ class Ps_checkout extends PaymentModule
 
         // Install for both 1.7 and 1.6
         $defaultInstall = parent::install() &&
-            (new \PrestaShop\PsAccountsInstaller\Installer\Installer())->installPsAccounts() &&
             $this->installConfiguration() &&
             $this->registerHook(self::HOOK_LIST) &&
             (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
-            $this->installTabs();
+            $this->installTabs() &&
+            (new PrestaShop\PsAccountsInstaller\Installer\Installer())->installPsAccounts();
 
         if (!$defaultInstall) {
             return false;
@@ -378,8 +378,7 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter $storePresenter */
         $storePresenter = $this->getService('ps_checkout.store.store');
 
-        $psAccountsPresenter = Module::getInstanceByName('ps_accounts')
-                ->getService(PrestaShop\Module\PsAccounts\Presenter\PsAccountsPresenter::class);
+        $psAccountsPresenter = new PrestaShop\PsAccountsInstaller\Presenter\ContextPresenter();
 
         Media::addJsDef([
             'store' => $storePresenter->present(),
