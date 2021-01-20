@@ -18,7 +18,7 @@
  *-->
 <template>
   <div>
-    <b-alert variant="danger" show>
+    <b-alert variant="warning" show>
       <h2>{{ $t('banner.paypalIncompatibleCountry.title') }}</h2>
 
       <p class="mb-3">
@@ -42,7 +42,11 @@
 
       <p class="mt-4">
         <a :href="countriesLink" class="btn btn-primary" target="_blank">
-          {{ $t('banner.paypalIncompatibleCountry.configure') }}
+          {{ $t('banner.paypalIncompatibleCountry.changeCodes') }}
+        </a>
+
+        <a :href="paymentPreferencesLink" class="btn btn-primary ml-4" target="_blank">
+          {{ $t('banner.paypalIncompatibleCountry.changeActivation') }}
         </a>
 
         <b-button
@@ -69,6 +73,9 @@
       },
       countriesLink() {
         return this.$store.getters.countriesLink;
+      },
+      paymentPreferencesLink() {
+        return this.$store.getters.paymentPreferencesLink;
       }
     }
   };

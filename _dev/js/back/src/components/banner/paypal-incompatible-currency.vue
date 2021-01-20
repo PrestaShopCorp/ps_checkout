@@ -18,7 +18,7 @@
  *-->
 <template>
   <div>
-    <b-alert variant="danger" show>
+    <b-alert variant="warning" show>
       <h2>{{ $t('banner.paypalIncompatibleCurrency.title') }}</h2>
 
       <p class="mb-3">
@@ -42,7 +42,11 @@
 
       <p class="mt-4">
         <a :href="currenciesLink" class="btn btn-primary" target="_blank">
-          {{ $t('banner.paypalIncompatibleCountry.configure') }}
+          {{ $t('banner.paypalIncompatibleCurrency.changeCodes') }}
+        </a>
+
+        <a :href="paymentPreferencesLink" class="btn btn-primary ml-4" target="_blank">
+          {{ $t('banner.paypalIncompatibleCurrency.changeActivation') }}
         </a>
 
         <b-button
@@ -51,7 +55,7 @@
           target="_blank"
           class="ml-4"
         >
-          {{ $t('banner.paypalIncompatibleCountry.more') }}
+          {{ $t('banner.paypalIncompatibleCurrency.more') }}
 
           <i class="material-icons">trending_flat</i>
         </b-button>
@@ -69,6 +73,9 @@
       },
       currenciesLink() {
         return this.$store.getters.currenciesLink;
+      },
+      paymentPreferencesLink() {
+        return this.$store.getters.paymentPreferencesLink;
       }
     }
   };

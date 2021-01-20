@@ -28,6 +28,7 @@ export default {
   incompatibleCurrencyCodes: state => state.incompatibleCurrencyCodes,
   countriesLink: state => state.countriesLink,
   currenciesLink: state => state.currenciesLink,
+  paymentPreferencesLink: state => state.paymentPreferencesLink,
   merchantIsFullyOnboarded: (state, getters) =>
     getters.paypalOnboardingIsCompleted &&
     (isOnboardingCompleted() || getters.firebaseOnboardingIsCompleted) &&
