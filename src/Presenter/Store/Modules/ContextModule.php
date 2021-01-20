@@ -145,6 +145,7 @@ class ContextModule implements PresenterInterface
                 'incompatibleCurrencyCodes' => $this->paypalConfiguration->getIncompatibleCurrencyCodes(),
                 'countriesLink' => $this->getGeneratedLink('AdminCountries'),
                 'currenciesLink' => $this->getGeneratedLink('AdminCurrencies'),
+                'paymentPreferencesLink' => $this->getGeneratedLink($this->shopContext->isShop17() ? 'AdminPaymentPreferences' : 'AdminPayment'),
             ],
         ];
     }
@@ -305,7 +306,7 @@ class ContextModule implements PresenterInterface
      *
      * @return string
      */
-    private function getGeneratedLink($link)
+    public function getGeneratedLink($link)
     {
         $linkAdapter = new LinkAdapter($this->psContext->getLink());
 
