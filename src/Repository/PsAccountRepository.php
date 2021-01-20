@@ -21,11 +21,11 @@
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
 use Module;
-use PrestaShop\Module\PsAccounts\Service\PsAccountsService;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
+use PrestaShop\Module\PsAccounts\Service\PsAccountsService;
 
 /**
  * Repository for PsAccount class
