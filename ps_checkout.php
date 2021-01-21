@@ -454,6 +454,15 @@ class Ps_checkout extends PaymentModule
             'paymentOptions' => $paymentOptions,
             'isHostedFieldsAvailable' => $paypalAccountRepository->cardHostedFieldsIsAvailable(),
             'isOnePageCheckout16' => !$shopContext->isShop17() && (bool) Configuration::get('PS_ORDER_PROCESS_TYPE'),
+            'spinnerPath' => $this->getPathUri() . 'views/img/tail-spin.svg',
+            'loaderTranslatedText' => $this->l('Please wait, loading additional payment methods.'),
+            'paypalLogoPath' => $this->getPathUri() . 'views/img/paypal_express.png',
+            'translatedText' => strtr(
+                $this->l('You have selected your [PAYPAL_ACCOUNT] PayPal account to proceed to the payment.'),
+                [
+                    '[PAYPAL_ACCOUNT]' => $this->context->cookie->__get('paypalEmail') ? $this->context->cookie->__get('paypalEmail') : '',
+                ]
+            ),
         ]);
 
         return $this->display(__FILE__, '/views/templates/hook/displayPayment.tpl');
@@ -1115,24 +1124,16 @@ class Ps_checkout extends PaymentModule
             'is17' => $shopContext->isShop17(),
             'isExpressCheckout' => $isExpressCheckout,
             'isOnePageCheckout16' => !$shopContext->isShop17() && (bool) Configuration::get('PS_ORDER_PROCESS_TYPE'),
+            'spinnerPath' => $this->getPathUri() . 'views/img/tail-spin.svg',
+            'loaderTranslatedText' => $this->l('Please wait, loading additional payment methods.'),
+            'paypalLogoPath' => $this->getPathUri() . 'views/img/paypal_express.png',
+            'translatedText' => strtr(
+                $this->l('You have selected your [PAYPAL_ACCOUNT] PayPal account to proceed to the payment.'),
+                [
+                    '[PAYPAL_ACCOUNT]' => $this->context->cookie->__get('paypalEmail') ? $this->context->cookie->__get('paypalEmail') : '',
+                ]
+            ),
         ]);
-
-        if (true === $isExpressCheckout) {
-            $this->context->smarty->assign([
-                'paypalLogoPath' => $this->getPathUri() . 'views/img/paypal_express.png',
-                'translatedText' => strtr(
-                    $this->l('You have selected your [PAYPAL_ACCOUNT] PayPal account to proceed to the payment.'),
-                    [
-                        '[PAYPAL_ACCOUNT]' => $this->context->cookie->__get('paypalEmail'),
-                    ]
-                ),
-            ]);
-        } else {
-            $this->context->smarty->assign([
-                'spinnerPath' => $this->getPathUri() . 'views/img/tail-spin.svg',
-                'loaderTranslatedText' => $this->l('Please wait, loading additional payment methods.'),
-            ]);
-        }
 
         return $this->display(__FILE__, '/views/templates/hook/displayPaymentTop.tpl');
     }
