@@ -139,22 +139,6 @@ class PersistentConfiguration
     public function savePsAccount(PsAccount $psAccount)
     {
         return $this->configuration->set(
-                PsAccount::PS_PSX_FIREBASE_EMAIL,
-                $psAccount->getEmail()
-            )
-            && $this->configuration->set(
-                PsAccount::PS_PSX_FIREBASE_ID_TOKEN,
-                $psAccount->getIdToken()
-            )
-            && $this->configuration->set(
-                PsAccount::PS_PSX_FIREBASE_LOCAL_ID,
-                $psAccount->getLocalId()
-            )
-            && $this->configuration->set(
-                PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN,
-                $psAccount->getRefreshToken()
-            )
-            && $this->configuration->set(
                 PsAccount::PS_CHECKOUT_PSX_FORM,
                 $psAccount->getPsxForm()
             );
