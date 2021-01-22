@@ -232,21 +232,22 @@ class PayPalConfiguration
     /**
      * Get the incompatible ISO country codes with Paypal.
      *
-     * @param int $enabledShopCountries
+     * @param bool $onlyEnabledShopCountries
      *
      * @return array
      */
-    public function getIncompatibleCountryCodes($enabledShopCountries = 1)
+    public function getIncompatibleCountryCodes($onlyEnabledShopCountries = true)
     {
+        $active = $onlyEnabledShopCountries ? ' AND c.active = 1' : null;
         $db = \Db::getInstance();
         $shopCodes = $db->executeS('
             SELECT c.iso_code
             FROM ' . _DB_PREFIX_ . 'country c
             JOIN ' . _DB_PREFIX_ . 'module_country mc ON mc.id_country = c.id_country
             JOIN ' . _DB_PREFIX_ . 'module m ON m.id_module = mc.id_module
-            WHERE c.active = ' . $enabledShopCountries . '
-            AND m.name = "ps_checkout"
+            WHERE m.name = "ps_checkout"
             AND mc.id_shop = ' . \Context::getContext()->shop->id
+            . $active
         );
         $paypalCodes = $this->codeRepository->getCountryCodes();
 
@@ -256,21 +257,22 @@ class PayPalConfiguration
     /**
      * Get the incompatible ISO currency codes with Paypal.
      *
-     * @param int $enabledShopCurrencies
+     * @param bool $onlyEnabledShopCurrencies
      *
      * @return array
      */
-    public function getIncompatibleCurrencyCodes($enabledShopCurrencies = 1)
+    public function getIncompatibleCurrencyCodes($onlyEnabledShopCurrencies = true)
     {
+        $active = $onlyEnabledShopCurrencies ? ' AND c.active = 1' : null;
         $db = \Db::getInstance();
         $shopCodes = $db->executeS('
             SELECT c.iso_code
             FROM ' . _DB_PREFIX_ . 'currency c
             JOIN ' . _DB_PREFIX_ . 'module_currency mc ON mc.id_currency = c.id_currency
             JOIN ' . _DB_PREFIX_ . 'module m ON m.id_module = mc.id_module
-            WHERE c.active = ' . $enabledShopCurrencies . '
-            AND m.name = "ps_checkout"
+            WHERE m.name = "ps_checkout"
             AND mc.id_shop = ' . \Context::getContext()->shop->id
+            . $active
         );
         $paypalCodes = $this->codeRepository->getCurrencyCodes();
 

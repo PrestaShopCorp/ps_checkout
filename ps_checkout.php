@@ -256,16 +256,16 @@ class Ps_checkout extends PaymentModule
     {
         /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
         $paypalConfiguration = $this->getService('ps_checkout.paypal.configuration');
-        $incompatibleCodes = $paypalConfiguration->getIncompatibleCountryCodes(0);
+        $incompatibleCodes = $paypalConfiguration->getIncompatibleCountryCodes(false);
         $result = true;
 
         foreach ($incompatibleCodes as $incompatibleCode) {
             $db = \Db::getInstance();
 
             $result = $result && $db->execute('
-                DELETE FROM ps_module_country
+                DELETE FROM ' . _DB_PREFIX_ . 'module_country
                 WHERE id_country = (SELECT id_country FROM ' . _DB_PREFIX_ . 'country WHERE iso_code = "' . $incompatibleCode . '")
-                AND id_module = (SELECT id_module FROM ' . _DB_PREFIX_ . 'module WHERE name = "ps_checkout")
+                AND id_module = ' . $this->id . '
                 AND id_shop = ' . \Context::getContext()->shop->id
             );
         }
@@ -282,16 +282,16 @@ class Ps_checkout extends PaymentModule
     {
         /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
         $paypalConfiguration = $this->getService('ps_checkout.paypal.configuration');
-        $incompatibleCodes = $paypalConfiguration->getIncompatibleCurrencyCodes(0);
+        $incompatibleCodes = $paypalConfiguration->getIncompatibleCurrencyCodes(false);
         $result = true;
 
         foreach ($incompatibleCodes as $incompatibleCode) {
             $db = \Db::getInstance();
 
             $result = $result && $db->execute('
-                DELETE FROM ps_module_currency
+                DELETE FROM ' . _DB_PREFIX_ . 'module_currency
                 WHERE id_currency = (SELECT id_currency FROM ' . _DB_PREFIX_ . 'currency WHERE iso_code = "' . $incompatibleCode . '")
-                AND id_module = (SELECT id_module FROM ' . _DB_PREFIX_ . 'module WHERE name = "ps_checkout")
+                AND id_module = ' . $this->id . '
                 AND id_shop = ' . \Context::getContext()->shop->id
             );
         }
