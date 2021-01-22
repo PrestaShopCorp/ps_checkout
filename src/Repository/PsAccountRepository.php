@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
-use Module;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
@@ -37,7 +36,7 @@ class PsAccountRepository
     /** @var PrestaShopConfiguration */
     private $configuration;
 
-    /** @var mixed  */
+    /** @var mixed */
     private $psAccountsService;
 
     /**
@@ -50,7 +49,6 @@ class PsAccountRepository
         try {
             $this->psAccountsService = (new Installer())->getPsAccountsService();
         } catch (ModuleNotFoundException $e) {
-            //
         }
     }
 
