@@ -25,7 +25,9 @@ use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
-use PrestaShop\Module\PsAccounts\Service\PsAccountsService;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotFoundException;
+use PrestaShop\PsAccountsInstaller\Installer\Installer;
 
 /**
  * Repository for PsAccount class
@@ -35,24 +37,29 @@ class PsAccountRepository
     /** @var PrestaShopConfiguration */
     private $configuration;
 
-    /** @var PsAccountsService */
+    /** @var mixed  */
     private $psAccountsService;
 
     /**
      * @param PrestaShopConfiguration $configuration
-     * @param PsAccountsService $psAccountsService
      */
     public function __construct(PrestaShopConfiguration $configuration)
     {
         $this->configuration = $configuration;
-        $this->psAccountsService = Module::getInstanceByName('ps_accounts')
-            ->getService(PsAccountsService::class);
+
+        try {
+            $this->psAccountsService = (new Installer())->getPsAccountsService();
+        } catch (ModuleNotFoundException $e) {
+            //
+        }
     }
 
     /**
      * Get current onboarded prestashop account
      *
      * @return PsAccount
+     *
+     * @throws PsCheckoutException
      */
     public function getOnboardedAccount()
     {
@@ -100,7 +107,8 @@ class PsAccountRepository
      */
     public function isPrestaShopAccount()
     {
-        return $this->psAccountsService->getToken() &&
+        return null !== $this->psAccountsService &&
+            $this->psAccountsService->getToken() &&
             $this->psAccountsService->getEmail() &&
             $this->psAccountsService->getShopUuidV4();
     }
