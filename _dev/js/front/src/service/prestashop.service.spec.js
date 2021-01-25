@@ -16,29 +16,29 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-const { INPUT_FILE, OUTPUT_FOLDER } = require('./utils/paths');
+import { PrestashopService } from './prestashop.service';
+import {
+  PS_VERSION_1_6,
+  PS_VERSION_1_7
+} from '../constants/ps-version.constants';
 
-module.exports = {
-  entry: {
-    front: INPUT_FILE
-  },
-  output: {
-    filename: '[name].js',
-    path: OUTPUT_FOLDER
-  },
+// TODO: Refactor this class to use DIContainer
+function buildDIContainerMock() {
+  return {};
+}
 
-  stats: {
-    children: false,
-    modules: false
-  },
+describe('src/service/prestashop.service.spec.js', () => {
+  test('::getVersion() returns PS_VERSION_1_6', () => {
+    const psService = new PrestashopService();
+    expect(psService.getVersion()).toBe(PS_VERSION_1_6);
+  });
 
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /(node_modules|bower_components)/,
-        use: 'babel-loader'
-      }
-    ]
-  }
-};
+  test('::getVersion() returns PS_VERSION_1_7', () => {
+    window.prestashop = {};
+
+    const psService = new PrestashopService();
+    expect(psService.getVersion()).toBe(PS_VERSION_1_7);
+
+    delete window.prestashop;
+  });
+});
