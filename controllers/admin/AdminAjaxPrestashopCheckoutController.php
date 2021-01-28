@@ -139,8 +139,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         // we reset the Value banner
         /** @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner $valueBanner */
-        $stepLive = $this->module->getService('ps_checkout.step.value');
-        $stepLive->closed(false);
+        $valueBanner = $this->module->getService('ps_checkout.step.value');
+        $valueBanner->closed(false);
 
         $this->ajaxDie(json_encode(true));
     }
