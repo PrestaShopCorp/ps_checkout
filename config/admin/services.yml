@@ -34,6 +34,12 @@ services:
     arguments:
       - '@ps_checkout.configuration'
 
+  ps_checkout.step.value:
+    class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner'
+    public: true
+    arguments:
+      - '@ps_checkout.configuration'
+
   ps_checkout.repository.orderpayment:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\OrderPaymentRepository'
     public: true

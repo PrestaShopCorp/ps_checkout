@@ -59,6 +59,19 @@ export default {
       throw resp;
     });
   },
+  updatePaypalValueBanner({ commit, getters }) {
+    return ajax({
+      url: getters.adminController,
+      action: 'ValueBannerClosed'
+    }).then(resp => {
+      if (resp) {
+        commit(types.UPDATE_VALUE_BANNER_CLOSED, true);
+        return true;
+      }
+
+      throw resp;
+    });
+  },
   refreshPaypalStatus({ commit, getters }) {
     return ajax({
       url: getters.adminController,

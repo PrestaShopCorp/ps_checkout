@@ -84,6 +84,18 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
+     * AJAX: Confirm PS Value Banner closed
+     */
+    public function ajaxProcessValueBannerClosed()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner $valueBanner */
+        $valueBanner = $this->module->getService('ps_checkout.step.value');
+        $valueBanner->closed(true);
+
+        $this->ajaxDie(json_encode(true));
+    }
+
+    /**
      * AJAX: Change prestashop rounding settings
      *
      * PS_ROUND_TYPE need to be set to 1 (Round on each item)
@@ -124,6 +136,11 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep $stepLive */
         $stepLive = $this->module->getService('ps_checkout.step.live');
         $stepLive->confirmed(false);
+
+        // we reset the Value banner
+        /** @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner $valueBanner */
+        $stepLive = $this->module->getService('ps_checkout.step.value');
+        $stepLive->closed(false);
 
         $this->ajaxDie(json_encode(true));
     }

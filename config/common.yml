@@ -200,6 +200,12 @@ services:
     arguments:
       - '@ps_checkout.configuration'
 
+  ps_checkout.step.value:
+    class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner'
+    public: true
+    arguments:
+      - '@ps_checkout.configuration'
+
   ps_checkout.translations.translations:
     class: 'PrestaShop\Module\PrestashopCheckout\Translations\Translations'
     public: true
@@ -215,6 +221,7 @@ services:
       - '@ps_checkout.context.prestashop'
       - '@ps_checkout.paypal.configuration'
       - '@ps_checkout.step.live'
+      - '@ps_checkout.step.value'
       - '@ps_checkout.translations.translations'
       - '@ps_checkout.context.shop'
       - '@ps_checkout.shop.provider'
