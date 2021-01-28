@@ -184,8 +184,8 @@ class Translations
                     ],
                     'conversions' => [
                         'title' => $this->module->l('Higher conversions', 'translations'),
-                    ]
-                ]
+                    ],
+                ],
             ],
             'panel' => [
                 'accounts' => [
