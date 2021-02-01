@@ -72,9 +72,12 @@
                       <p class="fees-subtitle">
                         {{ $t('banner.paypalValueProposition.fees.subtitle') }}
                         <a
+                          @click="onClickFeesInfoTrack"
                           :href="
                             $t('banner.paypalValueProposition.fees.linkHref')
                           "
+                          target="_blank"
+                          rel="noopener noreferrer"
                         >
                           {{
                             $t('banner.paypalValueProposition.fees.linkLabel')
@@ -83,7 +86,9 @@
                       </p>
                     </div>
                     <div id="info-trigger" class="info-trigger">
-                      i
+                      <div class="info-trigger-icon">
+                        i
+                      </div>
                     </div>
                     <b-popover
                       target="info-trigger"
@@ -103,9 +108,12 @@
                         <br />
                         <br />
                         <a
+                          @click="onClickFeesInfoTrack"
                           :href="
                             $t('banner.paypalValueProposition.fees.linkHref')
                           "
+                          target="_blank"
+                          rel="noopener noreferrer"
                         >
                           {{
                             $t(
@@ -263,6 +271,11 @@
       onClose() {
         this.closed = true;
         this.$emit('onClose');
+      },
+      onClickFeesInfoTrack() {
+        this.$segment.track('Click on Fees info', {
+          category: 'ps_checkout'
+        });
       }
     }
   };
@@ -312,9 +325,11 @@
     background-color: #e5e1f9;
     border-radius: 10px;
 
-    margin: 0 1rem;
+    color: #22106a;
+
+    margin-bottom: 0.5rem;
     padding: 1rem;
-    width: 16rem;
+    width: 14rem;
   }
 
   .value-proposition-card-popup-image {
@@ -373,6 +388,14 @@
   }
 
   .value-proposition-card .info-trigger {
+    position: absolute;
+    top: -0.3rem;
+    right: 0.7rem;
+
+    padding: 1rem;
+  }
+
+  .value-proposition-card .info-trigger-icon {
     cursor: pointer;
     user-select: none;
 
@@ -380,10 +403,6 @@
     font-size: 0.75rem;
     font-weight: bold;
     line-height: 0.75rem;
-
-    position: absolute;
-    top: 0.7rem;
-    right: 1.7rem;
 
     width: 1rem;
     height: 1rem;

@@ -179,8 +179,8 @@ class Translations
                         'subtitle' => $this->module->l('per transaction depending on your country. ', 'translations'),
                         'linkLabel' => $this->module->l('Know more', 'translations'),
                         'linkHref' => $this->module->l('https://www.prestashop.com/en/prestashop-checkout', 'translations'),
-                        'popup' => $this->module->l('For more informations about your fees please visit this page', 'translations'),
-                        'popupLinkLabel' => $this->module->l('Checkout 2.0', 'translations'),
+                        'popup' => $this->module->l('For more informations about your fees please visit this page:', 'translations'),
+                        'popupLinkLabel' => $this->module->l('PrestaShop Checkout 2.0', 'translations'),
                     ],
                     'conversions' => [
                         'title' => $this->module->l('Higher conversions', 'translations'),
