@@ -112,10 +112,11 @@ class PsAccountRepository
     {
         // PS Accounts stand by
         // if (!$this->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
-            return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_EMAIL);
+        //     return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_EMAIL);
         // }
         //
         // return $this->psAccountsService->getEmail();
+        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_EMAIL);
     }
 
     /**
@@ -155,10 +156,11 @@ class PsAccountRepository
     {
         // PS Accounts stand by
         // if (!$this->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
-            return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN);
+        //     return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN);
         // }
         //
         // return $this->psAccountsService->getFirebaseRefreshToken();
+        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN);
     }
 
     /**
@@ -184,12 +186,16 @@ class PsAccountRepository
     {
         // PS Accounts stand by
         // if (!$this->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
-           $psContext = new PrestaShopContext();
-           $shopUuidManager = new \PrestaShop\Module\PrestashopCheckout\ShopUuidManager();
-
-           return $shopUuidManager->getForShop((int) $psContext->getShopId());
+        //    $psContext = new PrestaShopContext();
+        //    $shopUuidManager = new \PrestaShop\Module\PrestashopCheckout\ShopUuidManager();
+        // 
+        //    return $shopUuidManager->getForShop((int) $psContext->getShopId());
         // }
         //
         // return $this->psAccountsService->getShopUuidV4();
+        $psContext = new PrestaShopContext();
+        $shopUuidManager = new \PrestaShop\Module\PrestashopCheckout\ShopUuidManager();
+
+        return $shopUuidManager->getForShop((int) $psContext->getShopId());
     }
 }
