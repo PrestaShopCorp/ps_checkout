@@ -188,7 +188,7 @@ class PsAccountRepository
         // if (!$this->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
         //    $psContext = new PrestaShopContext();
         //    $shopUuidManager = new \PrestaShop\Module\PrestashopCheckout\ShopUuidManager();
-        // 
+        //
         //    return $shopUuidManager->getForShop((int) $psContext->getShopId());
         // }
         //
