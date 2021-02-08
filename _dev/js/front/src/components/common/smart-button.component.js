@@ -83,25 +83,25 @@ export class SmartButtonComponent extends BaseComponent {
             this.data.notification.hideError();
             this.data.notification.showConditions();
 
-            return;
+            return actions.reject();
           }
 
           if (this.data.name !== 'card') {
             this.data.loader.show();
           }
 
-          this.psCheckoutApi
+          return this.psCheckoutApi
             .postCheckCartOrder(
               { ...data, fundingSource: this.data.name },
               actions
             )
-            .catch((error) => {
+            .catch(error => {
               this.data.loader.hide();
               this.data.notification.showError(error.message);
-              actions.reject();
+              return actions.reject();
             });
         },
-        onError: (error) => {
+        onError: error => {
           console.error(error);
           this.data.loader.hide();
           this.data.notification.showError(
@@ -115,12 +115,12 @@ export class SmartButtonComponent extends BaseComponent {
               { ...data, fundingSource: this.data.name },
               actions
             )
-            .catch((error) => {
+            .catch(error => {
               this.data.loader.hide();
               this.data.notification.showError(error.message);
             });
         },
-        onCancel: (data) => {
+        onCancel: data => {
           this.data.loader.hide();
           this.data.notification.showCanceled();
 
@@ -129,18 +129,18 @@ export class SmartButtonComponent extends BaseComponent {
               ...data,
               fundingSource: this.data.name
             })
-            .catch((error) => {
+            .catch(error => {
               this.data.loader.hide();
               this.data.notification.showError(error.message);
             });
         },
-        createOrder: (data) => {
+        createOrder: data => {
           return this.psCheckoutApi
             .postCreateOrder({
               ...data,
               fundingSource: this.data.name
             })
-            .catch((error) => {
+            .catch(error => {
               this.data.loader.hide();
               this.data.notification.showError(
                 `${error.message} ${error.name}`
