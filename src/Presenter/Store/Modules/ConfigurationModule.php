@@ -25,6 +25,7 @@ use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfigur
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
@@ -32,6 +33,11 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
  */
 class ConfigurationModule implements PresenterInterface
 {
+    /**
+     * @var PayPalPayIn4XConfiguration
+     */
+    private $payIn4XConfiguration;
+
     /**
      * @var ExpressCheckoutConfiguration
      */
@@ -51,8 +57,9 @@ class ConfigurationModule implements PresenterInterface
      * @param ExpressCheckoutConfiguration $ecConfiguration
      * @param PayPalConfiguration $paypalConfiguration
      */
-    public function __construct(ExpressCheckoutConfiguration $ecConfiguration, PayPalConfiguration $paypalConfiguration, FundingSourceProvider $fundingSourceProvider)
+    public function __construct(PayPalPayIn4XConfiguration $payIn4XConfiguration, ExpressCheckoutConfiguration $ecConfiguration, PayPalConfiguration $paypalConfiguration, FundingSourceProvider $fundingSourceProvider)
     {
+        $this->payIn4XConfiguration = $payIn4XConfiguration;
         $this->ecConfiguration = $ecConfiguration;
         $this->paypalConfiguration = $paypalConfiguration;
         $this->fundingSourceProvider = $fundingSourceProvider;
@@ -98,6 +105,10 @@ class ConfigurationModule implements PresenterInterface
                     'orderPage' => (bool) $this->ecConfiguration->isOrderPageEnabled(),
                     'checkoutPage' => (bool) $this->ecConfiguration->isCheckoutPageEnabled(),
                     'productPage' => (bool) $this->ecConfiguration->isProductPageEnabled(),
+                ],
+                'payIn4X' => [
+                    'orderPage' => (bool) $this->payIn4XConfiguration->isOrderPageEnabled(),
+                    'productPage' => (bool) $this->payIn4XConfiguration->isProductPageEnabled(),
                 ],
                 'paypalButton' => $this->paypalConfiguration->getButtonConfiguration(),
             ],
