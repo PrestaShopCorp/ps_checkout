@@ -20,7 +20,7 @@
   <b-card no-body>
     <template v-slot:header>
       <i class="material-icons">picture_in_picture</i>
-      {{ $t('panel.express-checkout.title') }}
+      Pay in 4X
     </template>
 
     <b-card-body>
@@ -60,29 +60,6 @@
               </b-col>
               <b-col>
                 <PSCheckbox
-                  id="checkout-page"
-                  v-model="checkoutPageIsActive"
-                  class="mb-2"
-                  :centered="true"
-                />
-                <img
-                  @click="toggleCheckoutPage()"
-                  v-if="checkoutPageIsActive"
-                  class="active-img mb-2"
-                  src="@/assets/images/preview_checkout-page_active.png"
-                  alt=""
-                />
-                <img
-                  @click="toggleCheckoutPage()"
-                  v-else
-                  class="mb-2"
-                  src="@/assets/images/preview_checkout-page_inactive.png"
-                  alt=""
-                />
-                <div>{{ $t('panel.express-checkout.checkoutPage') }}</div>
-              </b-col>
-              <b-col>
-                <PSCheckbox
                   id="product-page"
                   v-model="productPageIsActive"
                   class="mb-2"
@@ -106,24 +83,7 @@
               </b-col>
             </b-form-row>
           </b-form-group>
-
-          <div class="text-muted small">
-            {{ $t('panel.express-checkout.shippingCost') }}
-          </div>
         </b-form>
-      </b-col>
-    </b-card-body>
-
-    <b-card-body>
-      <b-col sm="12" md="10" lg="10" class="m-auto">
-        <b-alert variant="info" show>
-          <h4 class="alert-heading">
-            {{ $t('panel.express-checkout.alertTitle') }}
-          </h4>
-          <p>
-            {{ $t('panel.express-checkout.alertContent') }}
-          </p>
-        </b-alert>
       </b-col>
     </b-card-body>
   </b-card>
@@ -139,41 +99,30 @@
     computed: {
       orderPageIsActive: {
         get() {
-          return this.$store.state.configuration.expressCheckout.orderPage;
+          return this.$store.state.configuration.payIn4X.orderPage;
         },
         set(payload) {
-          this.$store.dispatch('toggleECOrderPage', payload);
-        }
-      },
-      checkoutPageIsActive: {
-        get() {
-          return this.$store.state.configuration.expressCheckout.checkoutPage;
-        },
-        set(payload) {
-          this.$store.dispatch('toggleECCheckoutPage', payload);
+          this.$store.dispatch('togglePayIn4XOrderPage', payload);
         }
       },
       productPageIsActive: {
         get() {
-          return this.$store.state.configuration.expressCheckout.productPage;
+          return this.$store.state.configuration.payIn4X.productPage;
         },
         set(payload) {
-          this.$store.dispatch('toggleECProductPage', payload);
+          this.$store.dispatch('togglePayIn4XProductPage', payload);
         }
       }
     },
     methods: {
       toggleOrderPage() {
-        this.$store.dispatch('toggleECOrderPage', !this.orderPageIsActive);
-      },
-      toggleCheckoutPage() {
-        this.$store.dispatch(
-          'toggleECCheckoutPage',
-          !this.checkoutPageIsActive
-        );
+        this.$store.dispatch('togglePayIn4XOrderPage', !this.orderPageIsActive);
       },
       toggleProductPage() {
-        this.$store.dispatch('toggleECProductPage', !this.productPageIsActive);
+        this.$store.dispatch(
+          'togglePayIn4XProductPage',
+          !this.productPageIsActive
+        );
       }
     }
   };

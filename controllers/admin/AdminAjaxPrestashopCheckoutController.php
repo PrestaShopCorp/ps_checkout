@@ -335,6 +335,34 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
+     * AJAX: Toggle pay in 4x on order page
+     */
+    public function ajaxProcessTogglePayIn4XOrderPage()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XConfiguration */
+        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_in_4x.configuration');
+        $payIn4XConfiguration->setOrderPage(Tools::getValue('status') ? true : false);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link, $psAccountRepository))->updateSettings();
+    }
+
+    /**
+     * AJAX: Toggle pay in 4x on product page
+     */
+    public function ajaxProcessTogglePayIn4XProductPage()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XConfiguration */
+        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_in_4x.configuration');
+        $payIn4XConfiguration->setProductPage(Tools::getValue('status') ? true : false);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link, $psAccountRepository))->updateSettings();
+    }
+
+    /**
      * @todo To be refactored with Service Container
      */
     public function ajaxProcessFetchOrder()
