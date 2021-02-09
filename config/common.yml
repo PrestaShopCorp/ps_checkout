@@ -305,3 +305,7 @@ services:
     public: true
     arguments:
       - '@ps_checkout.context.prestashop'
+
+  ps_checkout.merchant:
+    class: 'PrestaShop\Module\PrestashopCheckout\Merchant'
+    public: true
