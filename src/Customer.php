@@ -41,7 +41,8 @@ class Customer
      *
      * @return null|string
      */
-    public function isLang($lang, $currency) {
+    public function isLang($lang, $currency)
+    {
         if (
             !$lang ||
             strtolower($lang) !== strtolower($this->psContext->getLanguageIsoCode()) ||
