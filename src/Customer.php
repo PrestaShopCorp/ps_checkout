@@ -33,9 +33,9 @@ class Customer
     {
         $this->psContext = $psContext;
     }
+
     /**
-     * Get customer country code from his IP address
-     *
+     * Get customer country by shop language and currency
      * @param string $lang ISO 639-1 code
      * @param string $currency ISO 4217 code
      *
