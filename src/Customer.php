@@ -39,7 +39,7 @@ class Customer
      * @param string $lang ISO 639-1 code
      * @param string $currency ISO 4217 code
      *
-     * @return null|string
+     * @return bool
      */
     public function isLang($lang, $currency)
     {
