@@ -54,10 +54,16 @@ class ConfigurationModule implements PresenterInterface
     private $fundingSourceProvider;
 
     /**
+     * @param PayPalPayIn4XConfiguration $payIn4XConfiguration
      * @param ExpressCheckoutConfiguration $ecConfiguration
      * @param PayPalConfiguration $paypalConfiguration
+     * @param FundingSourceProvider $fundingSourceProvider
      */
-    public function __construct(PayPalPayIn4XConfiguration $payIn4XConfiguration, ExpressCheckoutConfiguration $ecConfiguration, PayPalConfiguration $paypalConfiguration, FundingSourceProvider $fundingSourceProvider)
+    public function __construct(
+        PayPalPayIn4XConfiguration $payIn4XConfiguration,
+        ExpressCheckoutConfiguration $ecConfiguration,
+        PayPalConfiguration $paypalConfiguration,
+        FundingSourceProvider $fundingSourceProvider)
     {
         $this->payIn4XConfiguration = $payIn4XConfiguration;
         $this->ecConfiguration = $ecConfiguration;
