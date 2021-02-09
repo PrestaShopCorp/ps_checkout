@@ -60,7 +60,6 @@ class PrestaShopContext
         return $this->context->shop->id;
     }
 
-
     /**
      * Get the currency ISO code (ISO 4217) from the context
      *

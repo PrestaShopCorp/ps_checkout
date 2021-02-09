@@ -36,6 +36,7 @@ class Customer
 
     /**
      * Get customer country by shop language and currency
+     *
      * @param string $lang ISO 639-1 code
      * @param string $currency ISO 4217 code
      *
