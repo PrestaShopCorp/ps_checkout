@@ -22,7 +22,9 @@
       class="mb-4"
       v-if="
         !isLiveStepConfirmed &&
-          (checkoutAccountStatus || prestashopAccountStatus) &&
+          // PS Accounts stand by
+          /* (checkoutAccountStatus || prestashopAccountStatus) && */
+          checkoutAccountStatus &&
           paypalAccountStatus
       "
     >
@@ -32,7 +34,9 @@
     <b-container
       class="mb-4"
       v-if="
-        (checkoutAccountStatus || prestashopAccountStatus) &&
+        checkoutAccountStatus &&
+          // PS Accounts stand by
+          /* (checkoutAccountStatus || prestashopAccountStatus) && */
           paypalAccountStatus &&
           incompatibleCountryCodes
       "
@@ -43,7 +47,9 @@
     <b-container
       class="mb-4"
       v-if="
-        (checkoutAccountStatus || prestashopAccountStatus) &&
+        checkoutAccountStatus &&
+          // PS Accounts stand by
+          /* (checkoutAccountStatus || prestashopAccountStatus) && */
           paypalAccountStatus &&
           incompatibleCurrencyCodes
       "
@@ -54,7 +60,9 @@
     <b-container
       class="text-center"
       v-if="
-        (!checkoutAccountStatus || !prestashopAccountStatus) &&
+        checkoutAccountStatus &&
+          // PS Accounts stand by
+          /* (!checkoutAccountStatus || !prestashopAccountStatus) && */
           !paypalAccountStatus
       "
     >
@@ -63,15 +71,17 @@
       </h2>
     </b-container>
 
-    <b-container v-if="!checkoutAccountStatus">
+    <!-- PS Accounts stand by -->
+    <!-- <b-container v-if="!checkoutAccountStatus">
       <PsAccounts>
         <template v-slot:body>
           <PaypalAccount :sendTrack="sendTrack" />
         </template>
       </PsAccounts>
-    </b-container>
+    </b-container> -->
 
-    <b-container v-else>
+    <!-- <b-container v-else> -->
+    <b-container>
       <CheckoutAccount class="mb-3" :sendTrack="sendTrack" />
 
       <PaypalAccount :sendTrack="sendTrack" />
@@ -80,7 +90,9 @@
     <b-container
       class="mt-4"
       v-if="
-        (checkoutAccountStatus || prestashopAccountStatus) &&
+        checkoutAccountStatus &&
+          // PS Accounts stand by
+          /* (checkoutAccountStatus || prestashopAccountStatus) && */
           paypalAccountStatus
       "
     >
@@ -95,7 +107,8 @@
 
 <script>
   import {
-    PsAccounts,
+    // PS Accounts stand by
+    // PsAccounts,
     isOnboardingCompleted
   } from 'prestashop_accounts_vue_components';
   import PaypalAccount from '@/components/panel/paypal-account';
@@ -109,7 +122,8 @@
   export default {
     name: 'Accounts',
     components: {
-      PsAccounts,
+      // PS Accounts stand by
+      // PsAccounts,
       PaypalAccount,
       CheckoutAccount,
       PaymentAcceptance,
@@ -151,7 +165,8 @@
       sendTrack() {
         if (
           !this.checkoutAccountStatus &&
-          !this.prestashopAccountStatus &&
+          // PS Accounts stand by
+          // !this.prestashopAccountStatus &&
           !this.paypalAccountStatus
         ) {
           // Anything connected
@@ -160,7 +175,8 @@
           });
         } else if (
           this.checkoutAccountStatus &&
-          !this.prestashopAccountStatus &&
+          // PS Accounts stand by
+          // !this.prestashopAccountStatus &&
           !this.paypalAccountStatus
         ) {
           // Only Checkout account connected
@@ -168,28 +184,32 @@
             'View Authentication - Status Checkout account connected',
             { category: 'ps_checkout' }
           );
+          // PS Accounts stand by
+          // } else if (
+          //   !this.checkoutAccountStatus &&
+          //   this.prestashopAccountStatus &&
+          //   !this.paypalAccountStatus
+          // ) {
+          //   // Only PrestaShop account connected
+          //   this.$segment.track(
+          //     'View Authentication - Status PrestaShop account connected',
+          //     { category: 'ps_checkout' }
+          //   );
         } else if (
-          !this.checkoutAccountStatus &&
-          this.prestashopAccountStatus &&
-          !this.paypalAccountStatus
-        ) {
-          // Only PrestaShop account connected
-          this.$segment.track(
-            'View Authentication - Status PrestaShop account connected',
-            { category: 'ps_checkout' }
-          );
-        } else if (
-          (this.checkoutAccountStatus || this.prestashopAccountStatus) &&
+          // PS Accounts stand by
+          // (this.checkoutAccountStatus || this.prestashopAccountStatus) &&
+          this.checkoutAccountStatus &&
           this.paypalAccountStatus
         ) {
           // Both accounts "connected"
-          let accountType = null;
-
-          if (this.checkoutAccountStatus) {
-            accountType = 'PrestaShop Checkout';
-          } else if (this.prestashopAccountStatus) {
-            accountType = 'PrestaShop Accounts';
-          }
+          // PS Accounts stand by
+          // let accountType = null;
+          //
+          // if (this.checkoutAccountStatus) {
+          //   accountType = 'PrestaShop Checkout';
+          // } else if (this.prestashopAccountStatus) {
+          //   accountType = 'PrestaShop Accounts';
+          // }
 
           if (
             this.accountIslinked &&
@@ -200,8 +220,10 @@
             this.$segment.track(
               'View Authentication screen - Status Both account approved',
               {
-                category: 'ps_checkout',
-                psAccountType: accountType
+                category: 'ps_checkout'
+                // PS Accounts stand by
+                // category: 'ps_checkout',
+                // psAccountType: accountType
               }
             );
           } else {
@@ -209,8 +231,10 @@
             this.$segment.track(
               'View Authentication - Status PP approval pending',
               {
-                category: 'ps_checkout',
-                psAccountType: accountType
+                category: 'ps_checkout'
+                // PS Accounts stand by
+                // category: 'ps_checkout',
+                // psAccountType: accountType
               }
             );
           }

@@ -110,11 +110,13 @@ class PsAccountRepository
      */
     public function getEmail()
     {
-        if (!$this->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
-            return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_EMAIL);
-        }
-
-        return $this->psAccountsService->getEmail();
+        // PS Accounts stand by
+        // if (!$this->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
+        //     return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_EMAIL);
+        // }
+        //
+        // return $this->psAccountsService->getEmail();
+        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_EMAIL);
     }
 
     /**
@@ -124,13 +126,15 @@ class PsAccountRepository
      */
     public function getIdToken()
     {
-        if (!$this->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
-            $token = new Token();
-
-            return $token->getToken();
-        }
-
-        return $this->psAccountsService->getOrRefreshToken();
+        // PS Accounts stand by
+        // if (!$this->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
+        //     $token = new Token();
+        //
+        //     return $token->getToken();
+        // }
+        //
+        // return $this->psAccountsService->getOrRefreshToken();
+        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_ID_TOKEN);
     }
 
     /**
@@ -150,11 +154,13 @@ class PsAccountRepository
      */
     public function getRefreshToken()
     {
-        if (!$this->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
-            return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN);
-        }
-
-        return $this->psAccountsService->getFirebaseRefreshToken();
+        // PS Accounts stand by
+        // if (!$this->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
+        //     return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN);
+        // }
+        //
+        // return $this->psAccountsService->getFirebaseRefreshToken();
+        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN);
     }
 
     /**
@@ -178,13 +184,18 @@ class PsAccountRepository
      */
     public function getShopUuid()
     {
-        if (!$this->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
-            $psContext = new PrestaShopContext();
-            $shopUuidManager = new \PrestaShop\Module\PrestashopCheckout\ShopUuidManager();
+        // PS Accounts stand by
+        // if (!$this->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
+        //    $psContext = new PrestaShopContext();
+        //    $shopUuidManager = new \PrestaShop\Module\PrestashopCheckout\ShopUuidManager();
+        //
+        //    return $shopUuidManager->getForShop((int) $psContext->getShopId());
+        // }
+        //
+        // return $this->psAccountsService->getShopUuidV4();
+        $psContext = new PrestaShopContext();
+        $shopUuidManager = new \PrestaShop\Module\PrestashopCheckout\ShopUuidManager();
 
-            return $shopUuidManager->getForShop((int) $psContext->getShopId());
-        }
-
-        return $this->psAccountsService->getShopUuidV4();
+        return $shopUuidManager->getForShop((int) $psContext->getShopId());
     }
 }
