@@ -80,10 +80,12 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
 
                 $cart->update();
 
-                $this->module->getLogger()->info(sprintf(
-                    'Express checkout : Create Cart %s',
-                    (int) $cart->id
-                ));
+                $this->module->getLogger()->info(
+                    'Express checkout : Create Cart',
+                    [
+                        'id_cart' => (int) $cart->id,
+                    ]
+                );
 
                 $this->context->cart = $cart;
                 $this->context->cookie->__set('id_cart', (int) $cart->id);
@@ -161,11 +163,10 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
             /* @var \Psr\Log\LoggerInterface logger */
             $logger = $this->module->getService('ps_checkout.logger');
             $logger->error(
-                sprintf(
-                    'CreateController - Exception %s : %s',
-                    $exception->getCode(),
-                    $exception->getMessage()
-                )
+                'CreateController - Exception ' . $exception->getCode(),
+                [
+                    'exception' => $exception,
+                ]
             );
 
             header('HTTP/1.0 500 Internal Server Error');

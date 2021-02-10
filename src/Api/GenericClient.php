@@ -84,6 +84,9 @@ class GenericClient
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler $exceptionHandler */
+        $exceptionHandler = $module->getService('ps_checkout.handler.exception');
+
         if (true === (bool) $this->getConfiguration(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP, true)) {
             /** @var LoggerInterface $logger */
             $logger = $module->getService('ps_checkout.logger');
@@ -106,14 +109,15 @@ class GenericClient
                 )
             );
         } catch (RingException $exception) {
-            return $this->handleException(
-                new PsCheckoutException(
-                    $exception->getMessage(),
-                    PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION,
-                    $exception
-                )
+            $e = new PsCheckoutException(
+                $exception->getMessage(),
+                PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION,
+                $exception
             );
+            $exceptionHandler->handle($e, false);
+            return $this->handleException($e);
         } catch (\Exception $exception) {
+            $exceptionHandler->handle($exception, false);
             return $this->handleException($exception);
         }
 

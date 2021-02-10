@@ -121,12 +121,16 @@ class CreatePaypalOrderHandler
         }
 
         if (isset($paypalOrder['body']['id'])) {
-            $module->getLogger()->info(sprintf(
-                '%s PayPal Order %s from cart %s',
-                $updateOrder ? 'Update' : 'Create',
-                $paypalOrder['body']['id'],
-                $this->context->cart->id
-            ));
+            $module->getLogger()->info(
+                sprintf(
+                    '%s PayPal Order',
+                    $updateOrder ? 'Update' : 'Create'
+                ),
+                [
+                    'paypal_order' => $paypalOrder['body']['id'],
+                    'id_cart' => (int) $this->context->cart->id,
+                ]
+            );
         }
 
         return $paypalOrder;

@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Faq;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 
 /**
  * Retrieve the faq of the module
@@ -72,15 +71,17 @@ class Faq
     {
         try {
             $response = $this->client->post($this->generateRoute());
-        } catch (RequestException $e) {
+        } catch (\Exception $exception) {
             /** @var \Ps_checkout $module */
             $module = \Module::getInstanceByName('ps_checkout');
-            $module->getLogger()->error($e->getMessage());
+            $module->getLogger()->error(
+                'FAQ Exception ' . $exception->getCode(),
+                [
+                    'exception' => $exception,
+                ]
+            );
 
-            if (!$e->hasResponse()) {
-                return false;
-            }
-            $response = $e->getResponse();
+            return false;
         }
 
         $data = json_decode($response->getBody(), true);

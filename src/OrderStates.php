@@ -203,7 +203,12 @@ class OrderStates
 
         if (true === file_exists($iconToPaste)) {
             if (true !== is_writable($iconToPaste)) {
-                $module->getLogger()->error('[PSPInstall] ' . $iconToPaste . ' is not writable');
+                $module->getLogger()->error(
+                    '[PSPInstall] file is not writable',
+                    [
+                        'file' => $iconToPaste,
+                    ]
+                );
 
                 return false;
             }
@@ -219,7 +224,13 @@ class OrderStates
         $iconToCopy = $iconsFolderOrigin . $iconName . $iconExtension;
 
         if (false === copy($iconToCopy, $iconToPaste)) {
-            $module->getLogger()->error('[PSPInstall] not able to copy ' . $iconName . ' for ID ' . $orderStateId);
+            $module->getLogger()->error(
+                '[PSPInstall] not able to copy icon',
+                [
+                    'icon' => $iconName,
+                    'id_order_state' => $orderStateId,
+                ]
+            );
 
             return false;
         }

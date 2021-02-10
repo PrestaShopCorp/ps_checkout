@@ -90,11 +90,10 @@ class Ps_CheckoutCancelModuleFrontController extends ModuleFrontController
             /* @var \Psr\Log\LoggerInterface logger */
             $logger = $this->module->getService('ps_checkout.logger');
             $logger->error(
-                sprintf(
-                    'ExpressCheckoutController - Exception %s : %s',
-                    $exception->getCode(),
-                    $exception->getMessage()
-                )
+                'ExpressCheckoutController - Exception ' . $exception->getCode(),
+                [
+                    'exception' => $exception,
+                ]
             );
 
             header('HTTP/1.0 500 Internal Server Error');
