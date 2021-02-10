@@ -60,12 +60,6 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Environment\SentryEnv'
     public: true
 
-  ps_checkout.logger.sentry.handler:
-    class: 'PrestaShop\Module\PrestashopCheckout\Sentry\SentryHandler'
-    public: true
-    arguments:
-      - '@ps_checkout.env.sentry'
-
   ps_checkout.logger.handler.factory:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerHandlerFactory'
     public: true
@@ -86,8 +80,6 @@ services:
     arguments:
       - '@=service("ps_checkout.module").name'
       - '@ps_checkout.logger.handler'
-      - '@ps_checkout.logger.sentry.handler'
-      - '@ps_checkout.logger.sentry.processor'
 
   ps_checkout.logger:
     class: 'Psr\Log\LoggerInterface'
@@ -95,12 +87,6 @@ services:
     factory: ['@ps_checkout.logger.factory', 'build']
     arguments:
       - '@ps_checkout.logger.directory'
-
-  ps_checkout.logger.sentry.processor:
-    class: 'PrestaShop\Module\PrestashopCheckout\Sentry\SentryProcessor'
-    public: true
-    arguments:
-      - '@ps_checkout.repository.prestashop.account'
 
   ps_checkout.paypal.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'

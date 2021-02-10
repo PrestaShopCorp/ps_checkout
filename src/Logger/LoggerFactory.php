@@ -24,8 +24,6 @@ use Monolog\Handler\HandlerInterface;
 use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Sentry\SentryHandler;
-use PrestaShop\Module\PrestashopCheckout\Sentry\SentryProcessor;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -49,30 +47,16 @@ class LoggerFactory
     private $loggerHandler;
 
     /**
-     * @var SentryHandler|null
-     */
-    private $sentryHandler;
-
-    /**
-     * @var SentryProcessor|null
-     */
-    private $sentryProcessor;
-
-    /**
      * @param string $name
      * @param HandlerInterface $loggerHandler
-     * @param SentryHandler|null $sentryHandler
-     * @param SentryProcessor|null $sentryProcessor
      *
      * @throws PsCheckoutException
      */
-    public function __construct($name, HandlerInterface $loggerHandler, SentryHandler $sentryHandler = null, SentryProcessor $sentryProcessor = null)
+    public function __construct($name, HandlerInterface $loggerHandler)
     {
         $this->assertNameIsValid($name);
         $this->name = $name;
         $this->loggerHandler = $loggerHandler;
-        $this->sentryHandler = $sentryHandler;
-        $this->sentryProcessor = $sentryProcessor;
     }
 
     /**
@@ -84,11 +68,9 @@ class LoggerFactory
             $this->name,
             [
                 $this->loggerHandler,
-                $this->sentryHandler->getHandler(),
             ],
             [
                 new PsrLogMessageProcessor(),
-                $this->sentryProcessor,
             ]
         );
     }

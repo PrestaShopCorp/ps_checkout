@@ -94,11 +94,13 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
                 $psCheckoutCartRepository->save($psCheckoutCart);
             }
 
-            $this->module->getLogger()->info(sprintf(
-                'ValidateOrder PayPal Order Id : %s Cart : %s',
-                $bodyValues['orderID'],
-                Validate::isLoadedObject($this->context->cart) ? (int) $this->context->cart->id : 0
-            ));
+            $this->module->getLogger()->info(
+                'ValidateOrder',
+                [
+                    'paypal_order' => $this->paypalOrderId,
+                    'id_cart' => (int) $this->context->cart->id,
+                ]
+            );
 
             $currency = $this->context->currency;
             $total = (float) $cart->getOrderTotal(true, Cart::BOTH);
@@ -334,19 +336,21 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
 
         if (true === $notifyCustomerService) {
             $this->notifyCustomerService($exception);
-            $this->module->getLogger()->error(sprintf(
-                'ValidateOrder - Exception %s Order PayPal %s : %s',
-                $exception->getCode(),
-                $paypalOrder,
-                $exception->getMessage()
-            ));
+            $this->module->getLogger()->error(
+                'ValidateOrder - Exception ' . $exception->getCode(),
+                [
+                    'exception' => $exception,
+                    'paypal_order' => $paypalOrder,
+                ]
+            );
         } else {
-            $this->module->getLogger()->notice(sprintf(
-                'ValidateOrder - Exception %s Order PayPal %s : %s',
-                $exception->getCode(),
-                $paypalOrder,
-                $exception->getMessage()
-            ));
+            $this->module->getLogger()->notice(
+                'ValidateOrder - Exception ' . $exception->getCode(),
+                [
+                    'exception' => $exception,
+                    'paypal_order' => $paypalOrder,
+                ]
+            );
             $this->sendBadRequestError($exceptionMessageForCustomer, $exception);
         }
 
