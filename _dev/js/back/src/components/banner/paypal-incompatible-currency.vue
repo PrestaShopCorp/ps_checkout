@@ -90,10 +90,9 @@
     },
     methods: {
       clickChangeCodes() {
-        this.$segment.track(
-          'Clicked on "Change currencies ISO Codes"',
-          { category: 'ps_checkout' }
-        );
+        this.$segment.track('Clicked on "Change currencies ISO Codes"', {
+          category: 'ps_checkout'
+        });
       },
       clickChangeActivation() {
         this.$segment.track(

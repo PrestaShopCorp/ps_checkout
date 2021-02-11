@@ -53,8 +53,8 @@
         <a
           :href="paymentPreferencesLink"
           class="btn btn-primary ml-4"
-          target="_blank
-          "@click="clickChangeActivation"
+          target="_blank"
+          @click="clickChangeActivation"
         >
           {{ $t('banner.paypalIncompatibleCountry.changeActivation') }}
         </a>
@@ -90,10 +90,9 @@
     },
     methods: {
       clickChangeCodes() {
-        this.$segment.track(
-          'Clicked on "Change countries ISO Codes"',
-          { category: 'ps_checkout' }
-        );
+        this.$segment.track('Clicked on "Change countries ISO Codes"', {
+          category: 'ps_checkout'
+        });
       },
       clickChangeActivation() {
         this.$segment.track(
