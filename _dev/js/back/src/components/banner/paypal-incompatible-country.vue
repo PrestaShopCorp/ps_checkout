@@ -41,14 +41,20 @@
       </p>
 
       <p class="mt-4">
-        <a :href="countriesLink" class="btn btn-primary" target="_blank">
+        <a
+          :href="countriesLink"
+          class="btn btn-primary"
+          target="_blank"
+          @click="clickChangeCodes"
+        >
           {{ $t('banner.paypalIncompatibleCountry.changeCodes') }}
         </a>
 
         <a
           :href="paymentPreferencesLink"
           class="btn btn-primary ml-4"
-          target="_blank"
+          target="_blank
+          "@click="clickChangeActivation"
         >
           {{ $t('banner.paypalIncompatibleCountry.changeActivation') }}
         </a>
@@ -80,6 +86,20 @@
       },
       paymentPreferencesLink() {
         return this.$store.getters.paymentPreferencesLink;
+      }
+    },
+    methods: {
+      clickChangeCodes() {
+        this.$segment.track(
+          'Clicked on "Change countries ISO Codes"',
+          { category: 'ps_checkout' }
+        );
+      },
+      clickChangeActivation() {
+        this.$segment.track(
+          'Clicked on "Change countries activation for this payment module"',
+          { category: 'ps_checkout' }
+        );
       }
     }
   };

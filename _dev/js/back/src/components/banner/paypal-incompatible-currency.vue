@@ -41,7 +41,12 @@
       </p>
 
       <p class="mt-4">
-        <a :href="currenciesLink" class="btn btn-primary" target="_blank">
+        <a
+          :href="currenciesLink"
+          class="btn btn-primary"
+          target="_blank"
+          @click="clickChangeCodes"
+        >
           {{ $t('banner.paypalIncompatibleCurrency.changeCodes') }}
         </a>
 
@@ -49,6 +54,7 @@
           :href="paymentPreferencesLink"
           class="btn btn-primary ml-4"
           target="_blank"
+          @click="clickChangeActivation"
         >
           {{ $t('banner.paypalIncompatibleCurrency.changeActivation') }}
         </a>
@@ -80,6 +86,20 @@
       },
       paymentPreferencesLink() {
         return this.$store.getters.paymentPreferencesLink;
+      }
+    },
+    methods: {
+      clickChangeCodes() {
+        this.$segment.track(
+          'Clicked on "Change currencies ISO Codes"',
+          { category: 'ps_checkout' }
+        );
+      },
+      clickChangeActivation() {
+        this.$segment.track(
+          'Clicked on "Change currencies activation for this payment module"',
+          { category: 'ps_checkout' }
+        );
       }
     }
   };
