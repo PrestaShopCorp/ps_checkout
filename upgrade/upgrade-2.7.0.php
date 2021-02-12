@@ -22,13 +22,13 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Update main function for module version 2.6.0
+ * Update main function for module version 2.7.0
  *
  * @param Ps_checkout $module
  *
  * @return bool
  */
-function upgrade_module_2_6_0($module)
+function upgrade_module_2_7_0($module)
 {
     \Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` CHANGE `paypal_token` `paypal_token` text DEFAULT NULL;');
 
