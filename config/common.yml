@@ -306,3 +306,13 @@ services:
   ps_checkout.accounts.service:
     class: 'PrestaShop\AccountsAuth\Service\PsAccountsService'
     public: true
+
+  ps_checkout.customer:
+    class: 'PrestaShop\Module\PrestashopCheckout\Customer'
+    public: true
+    arguments:
+      - '@ps_checkout.context.prestashop'
+
+  ps_checkout.merchant:
+    class: 'PrestaShop\Module\PrestashopCheckout\Merchant'
+    public: true
