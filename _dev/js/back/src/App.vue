@@ -46,6 +46,14 @@
     <div class="pt-5" />
     <div class="pt-3" />
 
+    <div class="pt-5 d-md-none" />
+
+    <PaypalValueProposition
+      v-if="isAuthenticationRoute && !isValueBannerClosed"
+      :closeable="onboardingPaypalIsCompleted"
+      @onClose="updateValueBannerClosed"
+    />
+
     <div class="container" v-if="isShopContext">
       <RoundingBanner />
     </div>
@@ -101,6 +109,7 @@
 <script>
   import Menu from '@/components/menu/menu';
   import MenuItem from '@/components/menu/menu-item';
+  import PaypalValueProposition from '@/components/banner/paypal-value-proposition';
   import RoundingBanner from '@/components/block/rounding-banner';
   import { isOnboardingCompleted } from 'prestashop_accounts_vue_components';
 
@@ -109,11 +118,13 @@
     components: {
       Menu,
       MenuItem,
-      RoundingBanner
+      RoundingBanner,
+      PaypalValueProposition
     },
     data() {
       return {
-        paypalStatusUpdater: null
+        paypalStatusUpdater: null,
+        displayValueBanner: true
       };
     },
     methods: {
@@ -121,9 +132,21 @@
         this.paypalStatusUpdater = setInterval(() => {
           this.$store.dispatch('refreshPaypalStatus');
         }, 10000);
+      },
+      updateValueBannerClosed() {
+        this.$store.dispatch('updatePaypalValueBanner').then(() => {
+          this.displayValueBanner = false;
+        });
       }
     },
     computed: {
+      isValueBannerClosed() {
+        return (
+          this.onboardingPaypalIsCompleted &&
+          this.$store.state.context.valueBannerClosed &&
+          this.displayValueBanner
+        );
+      },
       onboardingPaypalIsCompleted() {
         return this.$store.state.paypal.onboardingCompleted;
       },
@@ -135,6 +158,9 @@
       },
       accountIslinked() {
         return this.$store.state.paypal.accountIslinked;
+      },
+      isAuthenticationRoute() {
+        return this.$route.name === 'Click configure';
       },
       isShopContext() {
         return this.$store.state.context.isShopContext;
