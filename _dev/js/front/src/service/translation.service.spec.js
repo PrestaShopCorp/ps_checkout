@@ -16,12 +16,14 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+import { PsCheckoutConfig } from '../config/ps-checkout.config';
 import { TranslationService } from './translation.service';
 
 function buildDIContainerMock() {
   return {
     container: {
       PsCheckoutConfig: {
+        ...PsCheckoutConfig,
         translations: {
           foo: 'Foo',
           bar: 'Bar'
