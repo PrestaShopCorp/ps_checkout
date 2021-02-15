@@ -32,5 +32,5 @@ function upgrade_module_2_7_0($module)
 {
     \Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` CHANGE `paypal_token` `paypal_token` text DEFAULT NULL;');
 
-    return true;
+    return $module->disableIncompatibleCountries() && $module->disableIncompatibleCurrencies();
 }
