@@ -16,6 +16,8 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+/* istanbul ignore file */
+// TODO: Remove this service (replace this with QuerySelectorService or local methods)
 import { HtmlSelectorsPs1_6Constants } from '../../constants/html-selectors-ps1_6.constants';
 
 export class HtmlElementPs1_6Service {
