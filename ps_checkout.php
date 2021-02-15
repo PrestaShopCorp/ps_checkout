@@ -109,7 +109,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.6.0';
+    const VERSION = '2.7.0';
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -130,7 +130,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.6.0';
+        $this->version = '2.7.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->currencies = true;
@@ -168,7 +168,9 @@ class Ps_checkout extends PaymentModule
             $this->registerHook(self::HOOK_LIST) &&
             (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
-            $this->installTabs();
+            $this->installTabs() &&
+            $this->disableIncompatibleCountries() &&
+            $this->disableIncompatibleCurrencies();
 
         if (!$defaultInstall) {
             return false;
@@ -243,6 +245,58 @@ class Ps_checkout extends PaymentModule
         }
 
         return $installTabCompleted;
+    }
+
+    /**
+     * Disable incompatible countries with PayPal for PrestaShop Checkout
+     *
+     * @return bool
+     */
+    public function disableIncompatibleCountries()
+    {
+        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->getService('ps_checkout.paypal.configuration');
+        $incompatibleCodes = $paypalConfiguration->getIncompatibleCountryCodes(false);
+        $result = true;
+
+        foreach ($incompatibleCodes as $incompatibleCode) {
+            $db = \Db::getInstance();
+
+            $result = $result && $db->execute('
+                DELETE FROM ' . _DB_PREFIX_ . 'module_country
+                WHERE id_country = (SELECT id_country FROM ' . _DB_PREFIX_ . 'country WHERE iso_code = "' . $incompatibleCode . '")
+                AND id_module = ' . $this->id . '
+                AND id_shop = ' . \Context::getContext()->shop->id
+            );
+        }
+
+        return $result;
+    }
+
+    /**
+     * Disable incompatible currencies with PayPal for PrestaShop Checkout
+     *
+     * @return bool
+     */
+    public function disableIncompatibleCurrencies()
+    {
+        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->getService('ps_checkout.paypal.configuration');
+        $incompatibleCodes = $paypalConfiguration->getIncompatibleCurrencyCodes(false);
+        $result = true;
+
+        foreach ($incompatibleCodes as $incompatibleCode) {
+            $db = \Db::getInstance();
+
+            $result = $result && $db->execute('
+                DELETE FROM ' . _DB_PREFIX_ . 'module_currency
+                WHERE id_currency = (SELECT id_currency FROM ' . _DB_PREFIX_ . 'currency WHERE iso_code = "' . $incompatibleCode . '")
+                AND id_module = ' . $this->id . '
+                AND id_shop = ' . \Context::getContext()->shop->id
+            );
+        }
+
+        return $result;
     }
 
     /**
@@ -576,9 +630,16 @@ class Ps_checkout extends PaymentModule
     {
         /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
         $paypalConfiguration = $this->getService('ps_checkout.paypal.configuration');
+        /** @var PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
+        $psAccount = $this->getService('ps_checkout.repository.prestashop.account');
+        /** @var PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
+        $paypalAccount = $this->getService('ps_checkout.repository.paypal.account');
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService('ps_checkout.context.shop');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule $moduleContext */
+        $moduleContext = $this->getService('ps_checkout.store.module.context');
         $isShop17 = $shopContext->isShop17();
+        $isFullyOnboarded = $psAccount->onBoardingIsCompleted() && $paypalAccount->onBoardingIsCompleted();
 
         if ('AdminPayment' === Tools::getValue('controller') && $isShop17) { // Display on PrestaShop 1.7.x.x only
             $params = [
@@ -594,21 +655,23 @@ class Ps_checkout extends PaymentModule
             ];
             $track = 'View Payment Methods PS Page';
             $template = '/views/templates/hook/adminAfterHeader/promotionBlock.tpl';
-        } elseif ('AdminCountries' === Tools::getValue('controller')) {
+        } elseif ('AdminCountries' === Tools::getValue('controller') && $isFullyOnboarded) {
             $params = [
                 'isShop17' => $isShop17,
                 'codesType' => 'countries',
                 'incompatibleCodes' => $paypalConfiguration->getIncompatibleCountryCodes(),
                 'paypalLink' => 'https://developer.paypal.com/docs/api/reference/country-codes/#',
+                'paymentPreferencesLink' => $moduleContext->getGeneratedLink($isShop17 ? 'AdminPaymentPreferences' : 'AdminPayment'),
             ];
             $track = 'View Countries PS Page';
             $template = '/views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
-        } elseif ('AdminCurrencies' === Tools::getValue('controller')) {
+        } elseif ('AdminCurrencies' === Tools::getValue('controller') && $isFullyOnboarded) {
             $params = [
                 'isShop17' => $isShop17,
                 'codesType' => 'currencies',
                 'incompatibleCodes' => $paypalConfiguration->getIncompatibleCurrencyCodes(),
                 'paypalLink' => 'https://developer.paypal.com/docs/api/reference/currency-codes/#',
+                'paymentPreferencesLink' => $moduleContext->getGeneratedLink($isShop17 ? 'AdminPaymentPreferences' : 'AdminPayment'),
             ];
             $track = 'View Currencies PS Page';
             $template = '/views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
@@ -1194,7 +1257,7 @@ class Ps_checkout extends PaymentModule
     private function trackModuleAction($action)
     {
         // We want to track only event appends on PrestaShop BO
-        if (defined('_PS_ADMIN_DIR_')) {
+        if (defined('_PS_ADMIN_DIR_') && 'View Countries PS Page' != $action && 'View Currencies PS Page' != $action) {
             try {
                 /** @var \PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker $tracker */
                 $tracker = $this->getService('ps_checkout.segment.tracker');
