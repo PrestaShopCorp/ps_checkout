@@ -251,6 +251,10 @@ class PayPalConfiguration
         );
         $paypalCodes = $this->codeRepository->getCountryCodes();
 
+        if (!is_array($shopCodes)) {
+            $shopCodes = [];
+        }
+
         return $this->checkCodesCompatibility($shopCodes, $paypalCodes);
     }
 
@@ -276,6 +280,10 @@ class PayPalConfiguration
         );
         $paypalCodes = $this->codeRepository->getCurrencyCodes();
 
+        if (!is_array($shopCodes)) {
+            $shopCodes = [];
+        }
+
         return $this->checkCodesCompatibility($shopCodes, $paypalCodes);
     }
 
@@ -290,10 +298,6 @@ class PayPalConfiguration
     private function checkCodesCompatibility(array $shopCodes, array $paypalCodes)
     {
         $incompatibleCodes = [];
-
-        if (!is_array($shopCodes)) {
-            $shopCodes = [];
-        }
 
         foreach ($shopCodes as $shopCode) {
             if (!in_array(strtoupper($shopCode['iso_code']), array_keys($paypalCodes))) {
