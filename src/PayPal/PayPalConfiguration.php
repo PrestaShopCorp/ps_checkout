@@ -68,7 +68,7 @@ class PayPalConfiguration
     /**
      * Used to set the PS_CHECKOUT_INTENT in the Configuration
      *
-     * @param $captureMode
+     * @param string $captureMode
      *
      * @throws PsCheckoutException
      */
@@ -94,7 +94,7 @@ class PayPalConfiguration
     /**
      * Used to set the PS_CHECKOUT_MODE in the Configuration
      *
-     * @param $paymentMode
+     * @param string $paymentMode
      *
      * @throws PsCheckoutException
      */
@@ -144,7 +144,7 @@ class PayPalConfiguration
     }
 
     /**
-     * @param $roundType
+     * @param string $roundType
      *
      * @throws PsCheckoutException
      */
@@ -316,8 +316,6 @@ class PayPalConfiguration
      * @param object $configuration
      *
      * @throws PsCheckoutException
-     *
-     * @return bool
      */
     public function setButtonConfiguration($configuration)
     {

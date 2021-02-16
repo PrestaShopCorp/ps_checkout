@@ -25,11 +25,13 @@ class CountryRepository
     /**
      * Get country by ISO
      *
-     * @return array
+     * @param string $country
+     *
+     * @return int
      */
     public function getByIso($country)
     {
-        return \Country::getByIso($country);
+        return (int) \Country::getByIso($country);
     }
 
     /**
@@ -42,7 +44,7 @@ class CountryRepository
         $names = [];
 
         foreach ($countries as $country) {
-            $names[] = \Country::getNameById(\Context::getContext()->language->id, $this->getByIso($country));
+            $names[] = \Country::getNameById((int) \Context::getContext()->language->id, $this->getByIso($country));
         }
 
         return $names;

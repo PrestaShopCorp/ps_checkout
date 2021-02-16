@@ -104,7 +104,7 @@ class LoggerFactory
             throw new PsCheckoutException('Logger name cannot be empty.', PsCheckoutException::UNKNOWN);
         }
 
-        if (false === is_string($name)) {
+        if (!is_string($name)) {
             throw new PsCheckoutException('Logger name should be a string.', PsCheckoutException::UNKNOWN);
         }
 
