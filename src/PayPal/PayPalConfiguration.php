@@ -285,7 +285,7 @@ class PayPalConfiguration
      * @param array $shopCodes
      * @param array $paypalCodes
      *
-     * @return array|null
+     * @return array
      */
     private function checkCodesCompatibility($shopCodes, $paypalCodes)
     {
@@ -297,9 +297,9 @@ class PayPalConfiguration
             }
         }
 
-        if (empty($incompatibleCodes)) {
-            $incompatibleCodes = null;
-        }
+        // if (empty($incompatibleCodes)) {
+        //     $incompatibleCodes = null;
+        // }
 
         return $incompatibleCodes;
     }
