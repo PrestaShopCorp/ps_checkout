@@ -170,7 +170,7 @@ class Ps_checkout extends PaymentModule
             (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
             $this->installTabs() &&
-            (new PrestaShop\PsAccountsInstaller\Installer\Installer())->installPsAccounts();
+            (new PrestaShop\PsAccountsInstaller\Installer\Installer())->install();
 
         if (!$defaultInstall) {
             return false;

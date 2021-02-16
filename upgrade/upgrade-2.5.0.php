@@ -30,5 +30,5 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_5_0($module)
 {
-    return (new PrestaShop\PsAccountsInstaller\Installer\Installer())->installPsAccounts();
+    return (new PrestaShop\PsAccountsInstaller\Installer\Installer())->install();
 }
