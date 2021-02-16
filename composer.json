@@ -60,7 +60,7 @@
       "@php -d date.timezone=UTC ./vendor/bin/phpunit -c tests/Unit/phpunit.xml"
     ],
     "set-license-header": [
-      "@php ./vendor/bin/header-stamp --license=\"assets/afl.txt\" --exclude=\".github,node_modules,vendor\""
+      "@php ./vendor/bin/header-stamp --license=\"assets/afl.txt\" --exclude=\".github,node_modules,vendor,tests,_dev\""
     ]
   }
 }
