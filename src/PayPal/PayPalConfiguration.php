@@ -291,6 +291,10 @@ class PayPalConfiguration
     {
         $incompatibleCodes = [];
 
+        if (!is_array($shopCodes)) {
+            $shopCodes = [];
+        }
+
         foreach ($shopCodes as $shopCode) {
             if (!in_array(strtoupper($shopCode['iso_code']), array_keys($paypalCodes))) {
                 $incompatibleCodes[] = $shopCode['iso_code'];
