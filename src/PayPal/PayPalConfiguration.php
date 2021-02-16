@@ -297,10 +297,6 @@ class PayPalConfiguration
             }
         }
 
-        // if (empty($incompatibleCodes)) {
-        //     $incompatibleCodes = null;
-        // }
-
         return $incompatibleCodes;
     }
 
