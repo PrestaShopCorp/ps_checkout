@@ -113,8 +113,9 @@ class ConfigurationModule implements PresenterInterface
                     'productPage' => (bool) $this->ecConfiguration->isProductPageEnabled(),
                 ],
                 'payIn4X' => [
-                    'orderPage' => (bool) $this->payIn4XConfiguration->isOrderPageEnabled(),
-                    'productPage' => (bool) $this->payIn4XConfiguration->isProductPageEnabled(),
+                    'activeForMerchant' => (bool) $this->payIn4XConfiguration->isActiveForMerchant(),
+                    'orderPage' => (bool) $this->payIn4XConfiguration->isOrderPageActive(),
+                    'productPage' => (bool) $this->payIn4XConfiguration->isProductPageActive(),
                 ],
                 'paypalButton' => $this->paypalConfiguration->getButtonConfiguration(),
             ],
