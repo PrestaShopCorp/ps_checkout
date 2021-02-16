@@ -287,7 +287,7 @@ class PayPalConfiguration
      *
      * @return array
      */
-    private function checkCodesCompatibility($shopCodes, $paypalCodes)
+    private function checkCodesCompatibility(array $shopCodes, array $paypalCodes)
     {
         $incompatibleCodes = [];
 
