@@ -1,3 +1,4 @@
+<?php
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -16,8 +17,20 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-export const UNLINK_ACCOUNT = 'UNLINK_ACCOUNT';
-export const UPDATE_ONBOARDING_LINK = 'UPDATE_ONBOARDING_LINK';
-export const UPDATE_PAYPAL_ACCOUNT_STATUS = 'UPDATE_PAYPAL_ACCOUNT_STATUS';
-export const UPDATE_CONFIRMED_LIVE_STEP = 'UPDATE_CONFIRMED_LIVE_STEP';
-export const UPDATE_VALUE_BANNER_CLOSED = 'UPDATE_VALUE_BANNER_CLOSED';
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Update main function for module version 2.7.0
+ *
+ * @param Ps_checkout $module
+ *
+ * @return bool
+ */
+function upgrade_module_2_7_0($module)
+{
+    \Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` CHANGE `paypal_token` `paypal_token` text DEFAULT NULL;');
+
+    return $module->disableIncompatibleCountries() && $module->disableIncompatibleCurrencies();
+}

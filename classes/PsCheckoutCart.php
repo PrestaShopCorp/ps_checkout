@@ -121,8 +121,6 @@ class PsCheckoutCart extends ObjectModel
             ],
             'paypal_token' => [
                 'type' => self::TYPE_STRING,
-                'validate' => 'isGenericName',
-                'size' => 1024,
                 'allow_null' => true,
                 'required' => false,
             ],
