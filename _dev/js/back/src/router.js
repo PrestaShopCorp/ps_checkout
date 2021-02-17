@@ -18,7 +18,7 @@
  */
 import Vue from 'vue';
 import Router from 'vue-router';
-import { isOnboardingCompleted } from 'prestashop_accounts_vue_components';
+// import { isOnboardingCompleted } from 'prestashop_accounts_vue_components';
 import store from './store';
 
 import Customize from '@/pages/Customize';
@@ -53,7 +53,8 @@ const router = new Router({
       component: Accounts,
       beforeEnter: (to, from, next) => {
         if (
-          isOnboardingCompleted() &&
+          // isOnboardingCompleted() &&
+          store.getters.firebaseOnboardingIsCompleted &&
           !store.getters.paypalOnboardingIsCompleted &&
           !store.getters.psxOnboardingIsCompleted
         ) {
@@ -68,7 +69,7 @@ const router = new Router({
       name: 'Click PS Account Login',
       component: Signin,
       beforeEnter: (to, from, next) => {
-        if (isOnboardingCompleted()) {
+        if (store.getters.firebaseOnboardingIsCompleted) {
           next(from);
         } else {
           next();
@@ -80,7 +81,7 @@ const router = new Router({
       name: 'Click PS Account Sign Up',
       component: Signup,
       beforeEnter: (to, from, next) => {
-        if (isOnboardingCompleted()) {
+        if (store.getters.firebaseOnboardingIsCompleted) {
           next(from);
         } else {
           next();
@@ -92,7 +93,7 @@ const router = new Router({
       name: 'ResetPassword',
       component: ResetPassword,
       beforeEnter: (to, from, next) => {
-        if (isOnboardingCompleted()) {
+        if (store.getters.firebaseOnboardingIsCompleted) {
           next(from);
         } else {
           next();
@@ -105,7 +106,7 @@ const router = new Router({
       component: PsxAdditionalDetails,
       beforeEnter: (to, from, next) => {
         if (
-          !isOnboardingCompleted() ||
+          !store.getters.firebaseOnboardingIsCompleted ||
           store.getters.psxOnboardingIsCompleted
         ) {
           next('/authentication');

@@ -24,6 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Faq\Faq;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep;
+use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider;
@@ -81,6 +82,7 @@ class ContextModule implements PresenterInterface
      * @param PrestaShopContext $psContext
      * @param PayPalConfiguration $payPalConfiguration
      * @param LiveStep $liveStep
+     * @param ValueBanner $valueBanner
      * @param Translations $translations
      * @param ShopContext $shopContext
      * @param ShopProvider $shopProvider
@@ -91,6 +93,7 @@ class ContextModule implements PresenterInterface
         PrestaShopContext $psContext,
         PayPalConfiguration $payPalConfiguration,
         LiveStep $liveStep,
+        ValueBanner $valueBanner,
         Translations $translations,
         ShopContext $shopContext,
         ShopProvider $shopProvider
@@ -100,6 +103,7 @@ class ContextModule implements PresenterInterface
         $this->psContext = $psContext;
         $this->paypalConfiguration = $payPalConfiguration;
         $this->liveStep = $liveStep;
+        $this->valueBanner = $valueBanner;
         $this->translations = $translations;
         $this->shopContext = $shopContext;
         $this->shopProvider = $shopProvider;
@@ -140,11 +144,13 @@ class ContextModule implements PresenterInterface
                 'cguUrl' => $this->getCgu(),
                 'roundingSettingsIsCorrect' => $this->paypalConfiguration->IsRoundingSettingsCorrect(),
                 'liveStepConfirmed' => $this->liveStep->isConfirmed(),
+                'valueBannerClosed' => $this->valueBanner->isClosed(),
                 'youtubeInstallerLink' => $this->getYoutubeInstallerLink(),
                 'incompatibleCountryCodes' => $this->paypalConfiguration->getIncompatibleCountryCodes(),
                 'incompatibleCurrencyCodes' => $this->paypalConfiguration->getIncompatibleCurrencyCodes(),
                 'countriesLink' => $this->getGeneratedLink('AdminCountries'),
                 'currenciesLink' => $this->getGeneratedLink('AdminCurrencies'),
+                'paymentPreferencesLink' => $this->getGeneratedLink($this->shopContext->isShop17() ? 'AdminPaymentPreferences' : 'AdminPayment'),
             ],
         ];
     }
@@ -305,7 +311,7 @@ class ContextModule implements PresenterInterface
      *
      * @return string
      */
-    private function getGeneratedLink($link)
+    public function getGeneratedLink($link)
     {
         $linkAdapter = new LinkAdapter($this->psContext->getLink());
 

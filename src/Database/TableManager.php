@@ -61,7 +61,7 @@ class TableManager
               `paypal_order` varchar(20) NULL,
               `paypal_status` varchar(20) NULL,
               `paypal_funding` varchar(20) NULL,
-              `paypal_token` varchar(1024) NULL,
+              `paypal_token` text DEFAULT NULL,
               `paypal_token_expire` datetime NULL,
               `paypal_authorization_expire` datetime NULL,
               `isExpressCheckout` tinyint(1) unsigned DEFAULT 0 NOT NULL,
