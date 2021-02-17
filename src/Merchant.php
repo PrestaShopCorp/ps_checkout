@@ -20,8 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestaShopCheckout\Api\Payment\Shop;
-
 class Merchant
 {
     /**
