@@ -16,29 +16,10 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-const { INPUT_FILE, OUTPUT_FOLDER } = require('./utils/paths');
+export const MarkComponentMock = jest.fn();
 
-module.exports = {
-  entry: {
-    front: INPUT_FILE
-  },
-  output: {
-    filename: '[name].js',
-    path: OUTPUT_FOLDER
-  },
+MarkComponentMock.render = jest.fn();
 
-  stats: {
-    children: false,
-    modules: false
-  },
-
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /(node_modules|bower_components)/,
-        use: 'babel-loader'
-      }
-    ]
-  }
-};
+MarkComponentMock.mockImplementation(() => ({
+  render: MarkComponentMock.render
+}));
