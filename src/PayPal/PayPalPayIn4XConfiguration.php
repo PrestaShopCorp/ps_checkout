@@ -21,10 +21,18 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Customer;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Merchant;
 
 class PayPalPayIn4XConfiguration
 {
+    const AVAILABLE_FOR_MERCHANT = ['FR'];
+    const AVAILABLE_FOR_CUSTOMER = [[
+        'country' => 'FR',
+        'currency' => 'EUR',
+    ]];
+
     const PAY_IN_4X_PRODUCT_PAGE = 'PAY_IN_4X_PRODUCT_PAGE';
     const PAY_IN_4X_ORDER_PAGE = 'PAY_IN_4X_ORDER_PAGE';
 
@@ -33,19 +41,78 @@ class PayPalPayIn4XConfiguration
      */
     private $configuration;
 
-    public function __construct(PrestaShopConfiguration $configuration)
+    /**
+     * @var Customer
+     */
+    private $customer;
+
+    /**
+     * @var Merchant
+     */
+    private $merchant;
+
+    /**
+     * @param PrestaShopConfiguration $configuration
+     * @param Customer $customer
+     * @param Merchant $merchant
+     */
+    public function __construct(PrestaShopConfiguration $configuration, Customer $customer, Merchant $merchant)
     {
         $this->configuration = $configuration;
+        $this->customer = $customer;
+        $this->merchant = $merchant;
+    }
+
+    public function isActiveForMerchant()
+    {
+        $active = false;
+        foreach (self::AVAILABLE_FOR_MERCHANT as &$country) {
+            if ($this->merchant->isLang($country)) {
+                $active = true;
+            }
+        }
+
+        return $active;
+    }
+
+    public function isActiveForCustomer()
+    {
+        $active = false;
+        foreach (self::AVAILABLE_FOR_CUSTOMER as &$item) {
+            if ($this->customer->isLang($item['country'], $item['currency'])) {
+                $active = true;
+            }
+        }
+
+        return $active;
+    }
+
+    public function isOrderPageActive()
+    {
+        return $this->isActiveForMerchant()
+            ? (bool) $this->configuration->get(self::PAY_IN_4X_ORDER_PAGE)
+            : false;
     }
 
     public function isOrderPageEnabled()
     {
-        return (bool) $this->configuration->get(self::PAY_IN_4X_ORDER_PAGE);
+        return $this->isActiveForCustomer() && $this->isActiveForMerchant()
+            ? (bool) $this->configuration->get(self::PAY_IN_4X_ORDER_PAGE)
+            : false;
+    }
+
+    public function isProductPageActive()
+    {
+        return $this->isActiveForMerchant()
+            ? (bool) $this->configuration->get(self::PAY_IN_4X_PRODUCT_PAGE)
+            : false;
     }
 
     public function isProductPageEnabled()
     {
-        return (bool) $this->configuration->get(self::PAY_IN_4X_PRODUCT_PAGE);
+        return $this->isActiveForCustomer() && $this->isActiveForMerchant()
+            ? (bool) $this->configuration->get(self::PAY_IN_4X_PRODUCT_PAGE)
+            : false;
     }
 
     /**
@@ -55,7 +122,9 @@ class PayPalPayIn4XConfiguration
      */
     public function setProductPage($status)
     {
-        $this->configuration->set(self::PAY_IN_4X_PRODUCT_PAGE, $status);
+        if ($this->isActiveForMerchant()) {
+            $this->configuration->set(self::PAY_IN_4X_PRODUCT_PAGE, $status);
+        }
     }
 
     /**
@@ -65,6 +134,8 @@ class PayPalPayIn4XConfiguration
      */
     public function setOrderPage($status)
     {
-        $this->configuration->set(self::PAY_IN_4X_ORDER_PAGE, $status);
+        if ($this->isActiveForMerchant()) {
+            $this->configuration->set(self::PAY_IN_4X_ORDER_PAGE, $status);
+        }
     }
 }
