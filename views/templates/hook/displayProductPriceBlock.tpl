@@ -17,10 +17,6 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
-<div id="js-ps_checkout-express-button-container">
-</div>
-
-{if $payIn4XisOrderPageEnabled == true}
-  <hr />
-  <div data-pp-message data-pp-placement="cart" data-pp-style-layout="flex" data-pp-style-ratio="8x1" data-pp-amount="500.00"></div>
+{if $payIn4XisProductPageEnabled == true}
+  <div data-pp-message data-pp-placement="product" data-pp-amount="{$product.price_amount}"></div>
 {/if}
