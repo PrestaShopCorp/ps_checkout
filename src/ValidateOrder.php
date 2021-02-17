@@ -81,12 +81,6 @@ class ValidateOrder
         $transactionIdentifier = false === empty($order['purchase_units'][0]['payments']['captures'][0]['id']) ? $order['purchase_units'][0]['payments']['captures'][0]['id'] : '';
         $transactionStatus = false === empty($order['purchase_units'][0]['payments']['captures'][0]['status']) ? $order['purchase_units'][0]['payments']['captures'][0]['status'] : '';
 
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $module->getService('ps_checkout.repository.prestashop.account');
-
         // @todo To be refactored in v2.0.0 with Service Container
         if (true === empty($order['purchase_units'][0]['payments']['captures'])) {
             /** @var \Ps_checkout $module */
@@ -101,7 +95,7 @@ class ValidateOrder
             /** @var \PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $payload['cartId']);
 
-            $apiOrder = new Order(\Context::getContext()->link, $psAccountRepository);
+            $apiOrder = new Order(\Context::getContext()->link);
             $response = $apiOrder->capture(
                 $order['id'],
                 $this->merchantId,

@@ -18,7 +18,7 @@
  *-->
 <template>
   <div>
-    <template v-if="checkoutAccountStatus || prestashopAccountStatus">
+    <template v-if="checkoutAccountStatus">
       <button
         v-show="paypalIsLoaded"
         @click.prevent="getOnboardingLink()"
@@ -51,7 +51,6 @@
 </template>
 
 <script>
-  import { isOnboardingCompleted } from 'prestashop_accounts_vue_components';
   export default {
     name: 'Onboarding',
     data() {
@@ -66,9 +65,6 @@
       checkoutAccountStatus() {
         return this.$store.state.firebase.onboardingCompleted;
       },
-      prestashopAccountStatus() {
-        return isOnboardingCompleted();
-      }
     },
     methods: {
       getOnboardingLink() {
