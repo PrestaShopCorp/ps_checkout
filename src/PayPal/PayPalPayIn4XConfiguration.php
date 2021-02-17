@@ -51,7 +51,6 @@ class PayPalPayIn4XConfiguration
      */
     private $merchant;
 
-
     /**
      * @param PrestaShopConfiguration $configuration
      * @param Customer $customer
