@@ -54,6 +54,7 @@ class Ps_checkout extends PaymentModule
         'paymentOptions',
         'displayExpressCheckout',
         'displayFooterProduct',
+        'displayProductPriceBlock',
         'displayPersonalInformationTop',
         'actionCartUpdateQuantityBefore',
         'header',
@@ -345,6 +346,13 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayExpressCheckout()
     {
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
+        $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
+
+        $this->context->smarty->assign([
+            'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageEnabled(),
+        ]);
+
         return $this->display(__FILE__, '/views/templates/hook/displayExpressCheckout.tpl');
     }
 
@@ -354,6 +362,23 @@ class Ps_checkout extends PaymentModule
     public function hookDisplayFooterProduct()
     {
         return $this->display(__FILE__, '/views/templates/hook/displayFooterProduct.tpl');
+    }
+
+    /**
+     * Express checkout on the product page
+     */
+    public function hookDisplayProductPriceBlock($params)
+    {
+        if ($params['type'] === 'weight') {
+            /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
+            $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
+
+            $this->context->smarty->assign([
+                'payIn4XisProductPageEnabled' => $payIn4XService->isProductPageEnabled(),
+            ]);
+
+            return $this->display(__FILE__, '/views/templates/hook/displayProductPriceBlock.tpl');
+        }
     }
 
     public function getContent()
