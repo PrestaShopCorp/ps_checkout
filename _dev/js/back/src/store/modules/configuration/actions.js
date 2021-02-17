@@ -58,6 +58,7 @@ export default {
       return Promise.resolve(true);
     });
   },
+
   updateCreditCardFields({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
@@ -70,6 +71,7 @@ export default {
       return Promise.resolve(true);
     });
   },
+
   togglePaymentOptionAvailability({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
@@ -87,6 +89,33 @@ export default {
       return Promise.resolve(payload);
     });
   },
+
+  togglePayIn4XOrderPage({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'TogglePayIn4XOrderPage',
+      data: {
+        status: payload ? 1 : 0
+      }
+    }).then(() => {
+      commit(types.UPDATE_PAY_IN_4X_ORDER_PAGE, payload);
+      return Promise.resolve(payload);
+    });
+  },
+
+  togglePayIn4XProductPage({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'TogglePayIn4XProductPage',
+      data: {
+        status: payload ? 1 : 0
+      }
+    }).then(() => {
+      commit(types.UPDATE_PAY_IN_4X_PRODUCT_PAGE, payload);
+      return Promise.resolve(payload);
+    });
+  },
+
   toggleECOrderPage({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
@@ -177,6 +206,7 @@ export default {
       return value;
     });
   },
+
   savePaypalButtonConfiguration({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,

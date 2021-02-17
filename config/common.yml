@@ -121,6 +121,12 @@ services:
     arguments:
       - '@ps_checkout.configuration'
 
+  ps_checkout.pay_in_4x.configuration:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration'
+    public: true
+    arguments:
+      - '@ps_checkout.configuration'
+
   ps_checkout.api.firebase.auth:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth'
     public: true
@@ -176,6 +182,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule'
     public: true
     arguments:
+      - '@ps_checkout.pay_in_4x.configuration'
       - '@ps_checkout.express_checkout.configuration'
       - '@ps_checkout.paypal.configuration'
       - '@ps_checkout.funding_source.provider'
