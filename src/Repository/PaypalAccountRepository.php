@@ -131,27 +131,13 @@ class PaypalAccountRepository
     }
 
     /**
-     * Get the merchant email
+     * Get the merchant country ISO code
      *
      * @return string|bool
      */
     public function getMerchantCountry()
     {
-        $merchantCountry = $this->configuration->get(PaypalAccount::PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT);
-
-        // Save the merchant country code PayPal in DB if not exists
-        if (!$merchantCountry) {
-            /** @var \Ps_checkout $module */
-            $module = \Module::getInstanceByName('ps_checkout');
-            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
-            $psAccount = $module->getService('ps_checkout.repository.prestashop.account');
-            $paypalShop = new \PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(\Context::getContext()->link, $psAccount);
-            $paypalCountry = $paypalShop->getMerchantIntegration($this->getMerchantId())['body']['merchant_integrations']['country'];
-            $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT, $paypalCountry);
-            $merchantCountry = $paypalCountry;
-        }
-
-        return $merchantCountry;
+        return $this->configuration->get(PaypalAccount::PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT);
     }
 
     /**

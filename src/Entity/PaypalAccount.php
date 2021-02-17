@@ -68,13 +68,6 @@ class PaypalAccount
     private $email;
 
     /**
-     * Merchant country ISO code
-     *
-     * @var string
-     */
-    private $merchantCountry;
-
-    /**
      * Status of the email, if it has been validated or not
      *
      * @var int
@@ -95,14 +88,21 @@ class PaypalAccount
      */
     private $cardPaymentStatus;
 
-    public function __construct($merchantId = null, $email = null, $merchantCountry = null, $emailIsVerified = null, $paypalPaymentStatus = null, $cardPaymentStatus = null)
+    /**
+     * Merchant country ISO code
+     *
+     * @var string
+     */
+    private $merchantCountry;
+
+    public function __construct($merchantId = null, $email = null, $emailIsVerified = null, $paypalPaymentStatus = null, $cardPaymentStatus = null, $merchantCountry = null)
     {
         $this->setMerchantId($merchantId);
         $this->setEmail($email);
-        $this->setMerchantCountry($merchantCountry);
         $this->setEmailIsVerified($emailIsVerified);
         $this->setPaypalPaymentStatus($paypalPaymentStatus);
         $this->setCardPaymentStatus($cardPaymentStatus);
+        $this->setMerchantCountry($merchantCountry);
     }
 
     /**

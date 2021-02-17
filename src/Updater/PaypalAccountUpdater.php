@@ -82,6 +82,7 @@ class PaypalAccountUpdater
             $account->setEmailIsVerified('');
             $account->setPaypalPaymentStatus('');
             $account->setCardPaymentStatus('');
+            $account->setMerchantCountry('');
 
             return $this->persistentConfiguration->savePaypalAccount($account);
         }
@@ -90,6 +91,7 @@ class PaypalAccountUpdater
         $account->setEmailIsVerified($merchantIntegration['primary_email_confirmed']);
         $account->setPaypalPaymentStatus($merchantIntegration['payments_receivable']);
         $account->setCardPaymentStatus($this->getCardStatus($merchantIntegration));
+        $account->setMerchantCountry($merchantIntegration['country']);
 
         return $this->persistentConfiguration->savePaypalAccount($account);
     }
