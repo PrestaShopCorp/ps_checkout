@@ -31,6 +31,7 @@ class PaypalAccount
      */
     const PS_CHECKOUT_PAYPAL_ID_MERCHANT = 'PS_CHECKOUT_PAYPAL_ID_MERCHANT';
     const PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT = 'PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT';
+    const PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT = 'PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT';
     const PS_CHECKOUT_PAYPAL_EMAIL_STATUS = 'PS_CHECKOUT_PAYPAL_EMAIL_STATUS';
     const PS_CHECKOUT_PAYPAL_PAYMENT_STATUS = 'PS_CHECKOUT_PAYPAL_PAYMENT_STATUS';
     const PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS = 'PS_CHECKOUT_CARD_PAYMENT_STATUS';
@@ -67,6 +68,13 @@ class PaypalAccount
     private $email;
 
     /**
+     * Merchant country ISO code
+     *
+     * @var string
+     */
+    private $merchantCountry;
+
+    /**
      * Status of the email, if it has been validated or not
      *
      * @var int
@@ -87,10 +95,11 @@ class PaypalAccount
      */
     private $cardPaymentStatus;
 
-    public function __construct($merchantId = null, $email = null, $emailIsVerified = null, $paypalPaymentStatus = null, $cardPaymentStatus = null)
+    public function __construct($merchantId = null, $email = null, $merchantCountry = null, $emailIsVerified = null, $paypalPaymentStatus = null, $cardPaymentStatus = null)
     {
         $this->setMerchantId($merchantId);
         $this->setEmail($email);
+        $this->setMerchantCountry($merchantCountry);
         $this->setEmailIsVerified($emailIsVerified);
         $this->setPaypalPaymentStatus($paypalPaymentStatus);
         $this->setCardPaymentStatus($cardPaymentStatus);
@@ -114,6 +123,16 @@ class PaypalAccount
     public function getEmail()
     {
         return $this->email;
+    }
+
+    /**
+     * Getter for merchantCountry
+     *
+     * @return string
+     */
+    public function getMerchantCountry()
+    {
+        return $this->merchantCountry;
     }
 
     /**
@@ -162,6 +181,16 @@ class PaypalAccount
     public function setEmail($email)
     {
         $this->email = $email;
+    }
+
+    /**
+     * Setter for merchantCountry
+     *
+     * @param string $merchantCountry
+     */
+    public function setMerchantCountry($merchantCountry)
+    {
+        $this->merchantCountry = $merchantCountry;
     }
 
     /**

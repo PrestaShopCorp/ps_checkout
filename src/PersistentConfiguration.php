@@ -56,6 +56,10 @@ class PersistentConfiguration
                 ''
             )
             && $this->configuration->set(
+                PaypalAccount::PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT,
+                ''
+            )
+            && $this->configuration->set(
                 PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_STATUS,
                 ''
             )
@@ -85,6 +89,10 @@ class PersistentConfiguration
             && $this->configuration->set(
                 PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT,
                 $paypalAccount->getEmail()
+            )
+            && $this->configuration->set(
+                PaypalAccount::PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT,
+                $paypalAccount->getMerchantCountry()
             )
             && $this->configuration->set(
                 PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_STATUS,
