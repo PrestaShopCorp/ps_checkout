@@ -26,11 +26,9 @@ namespace PrestaShop\Module\PrestashopCheckout\Repository;
 class OrderPaymentRepository
 {
     /**
-     * @param $shopId
+     * @param int $shopId
      *
-     * @return array|bool|\mysqli_result|\PDOStatement|resource
-     *
-     * @throws \PrestaShopDatabaseException
+     * @return array
      */
     public function findAllPSCheckoutModule($shopId)
     {

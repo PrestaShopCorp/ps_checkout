@@ -62,6 +62,11 @@ class ContextModule implements PresenterInterface
     private $liveStep;
 
     /**
+     * @var ValueBanner
+     */
+    private $valueBanner;
+
+    /**
      * @var Translations
      */
     private $translations;
