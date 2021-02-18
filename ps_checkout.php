@@ -110,7 +110,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.5.1';
+    const VERSION = '2.10.0';
 
     const INTEGRATION_DATE = '2020-07-30';
 

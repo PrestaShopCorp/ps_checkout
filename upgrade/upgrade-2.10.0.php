@@ -1,4 +1,5 @@
-{**
+<?php
+/**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
@@ -15,12 +16,24 @@
  * @author    PrestaShop SA <contact@prestashop.com>
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- *}
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-<div id="js-ps_checkout-express-button-container">
-</div>
+/**
+ * Update main function for module version 2.10.0
+ *
+ * @param Ps_checkout $module
+ *
+ * @return bool
+ */
+function upgrade_module_2_10_0($module)
+{
+    if (true === (bool) version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+        // Register hooks only for PrestaShop 1.7, used for Banner Pay in 4X
+        $module->registerHook('displayProductPriceBlock');
+    }
 
-{if $payIn4XisOrderPageEnabled == true}
-  <hr />
-  <div data-pp-message data-pp-placement="cart" data-pp-style-layout="flex" data-pp-style-ratio="8x1" data-pp-amount="{$cart.totals.total.amount}"></div>
-{/if}
+    return true;
+}
