@@ -44,6 +44,11 @@ class PayPalSdkLinkBuilder
     private $configuration;
 
     /**
+     * @var PayPalPayIn4XConfiguration
+     */
+    private $payIn4XConfiguration;
+
+    /**
      * @var FundingSourceConfigurationRepository
      */
     private $fundingSourceConfigurationRepository;
