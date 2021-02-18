@@ -23,5 +23,6 @@ export const PayPalSdkConfig = {
   card3dsEnabled: window.ps_checkout3dsEnabled,
   cspNonce: window.ps_checkoutCspNonce,
   orderId: window.ps_checkoutPayPalOrderId,
-  clientToken: window.ps_checkoutPayPalClientToken
+  clientToken: window.ps_checkoutPayPalClientToken,
+  buttonCustomization: window.ps_checkoutPayPalButtonConfiguration
 };

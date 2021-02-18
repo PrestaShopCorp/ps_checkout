@@ -23,11 +23,4 @@ export class BaseClass {
     this.app = app;
     inject(BaseClass)(this, this.constructor);
   }
-
-  /**
-   * @return {this}
-   */
-  render() {
-    return this;
-  }
 }

@@ -16,6 +16,8 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+/* istanbul ignore file */
+// TODO: Remove this
 export const HtmlSelectorsPs1_7Constants = {
   ANY_PAYMENT_OPTION: '[data-module-name="ps_checkout"]',
 
@@ -38,13 +40,13 @@ export const HtmlSelectorsPs1_7Constants = {
   NOTIFICATION_PAYMENT_ERROR_TEXT_ID: 'ps_checkout-error-text',
 
   PAYMENT_OPTION: '[name="payment-option"]',
-  PAYMENT_OPTION_LABEL: (id) => `label[for="${id}"]`,
+  PAYMENT_OPTION_LABEL: id => `label[for="${id}"]`,
   PAYMENT_OPTION_SELECT: '[name="select_payment_option"]',
-  PAYMENT_OPTION_CONTAINER_ID: (id) => `${id}-container`,
-  PAYMENT_OPTION_ADDITIONAL_INFORMATION_ID: (id) =>
+  PAYMENT_OPTION_CONTAINER_ID: id => `${id}-container`,
+  PAYMENT_OPTION_ADDITIONAL_INFORMATION_ID: id =>
     `${id}-additional-information`,
-  PAYMENT_OPTION_FORM_CONTAINER_ID: (id) => `pay-with-${id}-form`,
-  PAYMENT_OPTION_FORM_BUTTON: (id) => `#pay-with-${id}`,
+  PAYMENT_OPTION_FORM_CONTAINER_ID: id => `pay-with-${id}-form`,
+  PAYMENT_OPTION_FORM_BUTTON: id => `#pay-with-${id}`,
 
   PAYMENT_OPTIONS_CONTAINER: '.payment-options'
 };

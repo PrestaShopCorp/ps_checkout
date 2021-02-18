@@ -25,7 +25,7 @@
                     <i class="material-icons">error_outline</i>
                 </div>
         {else}
-            <div class="alert alert-danger">
+            <div class="alert alert-warning">
         {/if}
 
             <div class="banner-text">
@@ -42,6 +42,10 @@
                         {/foreach}
                     </b></i>
                 </p>
+
+                <a href="{$paymentPreferencesLink}" class="button-link" target="_blank">
+                    {l s="Change {$codesType} activation for this payment module" mod='ps_checkout'}
+                </a>
 
                 <a class="btn btn-link banner-link" href="{$paypalLink}" target="_blank">
                     {l s='Know more about compliant ISO Codes' mod='ps_checkout'}

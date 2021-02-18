@@ -32,5 +32,8 @@ export default {
   },
   [types.UPDATE_CONFIRMED_LIVE_STEP](state, confirmed) {
     state.isLiveStepConfirmed = confirmed;
+  },
+  [types.UPDATE_VALUE_BANNER_CLOSED](state, closed) {
+    state.isValueBannerClosed = closed;
   }
 };
