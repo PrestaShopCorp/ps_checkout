@@ -17,6 +17,7 @@
     "back:test:unit": "npm test:e2e --prefix ./_dev/js/back",
     "back:watch": "npm run watch --prefix ./_dev/js/back",
     "front:build": "npm run build --prefix ./_dev/js/front",
+    "front:coverage": "npm run coverage --prefix ./_dev/js/front",
     "front:install": "npm i --prefix ./_dev/js/front",
     "front:test": "npm test --prefix ./_dev/js/front",
     "front:watch": "npm run watch --prefix ./_dev/js/front",

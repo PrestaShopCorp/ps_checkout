@@ -47,26 +47,17 @@ class PersistentConfiguration
      */
     public function resetPayPalAccount()
     {
-        return $this->configuration->set(
-                PaypalAccount::PS_CHECKOUT_PAYPAL_ID_MERCHANT,
-                ''
-            )
-            && $this->configuration->set(
-                PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT,
-                ''
-            )
-            && $this->configuration->set(
-                PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_STATUS,
-                ''
-            )
-            && $this->configuration->set(
-                PaypalAccount::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS,
-                ''
-            )
-            && $this->configuration->set(
-                PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS,
-                ''
-            );
+        try {
+            $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_ID_MERCHANT, '');
+            $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT, '');
+            $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_STATUS, '');
+            $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS, '');
+            $this->configuration->set(PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS, '');
+        } catch (\Exception $exception) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -78,26 +69,17 @@ class PersistentConfiguration
      */
     public function savePaypalAccount(PaypalAccount $paypalAccount)
     {
-        return $this->configuration->set(
-                PaypalAccount::PS_CHECKOUT_PAYPAL_ID_MERCHANT,
-                $paypalAccount->getMerchantId()
-            )
-            && $this->configuration->set(
-                PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT,
-                $paypalAccount->getEmail()
-            )
-            && $this->configuration->set(
-                PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_STATUS,
-                $paypalAccount->getEmailIsVerified()
-            )
-            && $this->configuration->set(
-                PaypalAccount::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS,
-                $paypalAccount->getPaypalPaymentStatus()
-            )
-            && $this->configuration->set(
-                PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS,
-                $paypalAccount->getCardPaymentStatus()
-            );
+        try {
+            $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_ID_MERCHANT, $paypalAccount->getMerchantId());
+            $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT, $paypalAccount->getEmail());
+            $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_STATUS, $paypalAccount->getEmailIsVerified());
+            $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS, $paypalAccount->getPaypalPaymentStatus());
+            $this->configuration->set(PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS, $paypalAccount->getCardPaymentStatus());
+        } catch (\Exception $exception) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -107,26 +89,17 @@ class PersistentConfiguration
      */
     public function resetPsAccount()
     {
-        return $this->configuration->set(
-                PsAccount::PS_PSX_FIREBASE_EMAIL,
-                ''
-            )
-            && $this->configuration->set(
-                PsAccount::PS_PSX_FIREBASE_ID_TOKEN,
-                ''
-            )
-            && $this->configuration->set(
-                PsAccount::PS_PSX_FIREBASE_LOCAL_ID,
-                ''
-            )
-            && $this->configuration->set(
-                PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN,
-                ''
-            )
-            && $this->configuration->set(
-                PsAccount::PS_CHECKOUT_PSX_FORM,
-                ''
-            );
+        try {
+            $this->configuration->set(PsAccount::PS_PSX_FIREBASE_EMAIL, '');
+            $this->configuration->set(PsAccount::PS_PSX_FIREBASE_ID_TOKEN, '');
+            $this->configuration->set(PsAccount::PS_PSX_FIREBASE_LOCAL_ID, '');
+            $this->configuration->set(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN, '');
+            $this->configuration->set(PsAccount::PS_CHECKOUT_PSX_FORM, '');
+        } catch (\Exception $exception) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -151,29 +124,17 @@ class PersistentConfiguration
             $shopUuid = $shopUuidManager->getForShop($shopId);
         }
 
-        return $this->configuration->set(
-                PsAccount::PS_PSX_FIREBASE_EMAIL,
-                $psAccount->getEmail()
-            )
-            && $this->configuration->set(
-                PsAccount::PS_PSX_FIREBASE_ID_TOKEN,
-                $psAccount->getIdToken()
-            )
-            && $this->configuration->set(
-                PsAccount::PS_PSX_FIREBASE_LOCAL_ID,
-                $psAccount->getLocalId()
-            )
-            && $this->configuration->set(
-                PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN,
-                $psAccount->getRefreshToken()
-            )
-            && $this->configuration->set(
-                PsAccount::PS_CHECKOUT_PSX_FORM,
-                $psAccount->getPsxForm()
-            )
-            && $this->configuration->set(
-                PsAccount::PS_CHECKOUT_SHOP_UUID_V4,
-                $shopUuid
-            );
+        try {
+            $this->configuration->set(PsAccount::PS_PSX_FIREBASE_EMAIL, $psAccount->getEmail());
+            $this->configuration->set(PsAccount::PS_PSX_FIREBASE_ID_TOKEN, $psAccount->getIdToken());
+            $this->configuration->set(PsAccount::PS_PSX_FIREBASE_LOCAL_ID, $psAccount->getLocalId());
+            $this->configuration->set(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN, $psAccount->getRefreshToken());
+            $this->configuration->set(PsAccount::PS_CHECKOUT_PSX_FORM, $psAccount->getPsxForm());
+            $this->configuration->set(PsAccount::PS_CHECKOUT_SHOP_UUID_V4, $shopUuid);
+        } catch (\Exception $exception) {
+            return false;
+        }
+
+        return true;
     }
 }

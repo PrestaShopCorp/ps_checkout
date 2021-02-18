@@ -69,7 +69,7 @@ class LoggerFilename
             throw new PsCheckoutException('Logger filename cannot be empty.', PsCheckoutException::UNKNOWN);
         }
 
-        if (false === is_string($name)) {
+        if (!is_string($name)) {
             throw new PsCheckoutException('Logger filename should be a string.', PsCheckoutException::UNKNOWN);
         }
 
