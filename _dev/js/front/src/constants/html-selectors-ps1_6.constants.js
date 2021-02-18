@@ -16,6 +16,8 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+/* istanbul ignore file */
+// TODO: Remove this
 export const HtmlSelectorsPs1_6Constants = {
   ANY_PAYMENT_OPTION: '#ps_checkout-displayPayment .payment-option.row',
 

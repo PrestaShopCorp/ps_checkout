@@ -67,7 +67,7 @@ class PayPalCodeRepository
             'KY' => 'CAYMAN ISLANDS',
             'TD' => 'CHAD',
             'CL' => 'CHILE',
-            'C2' => 'CHINA',
+            'CN' => 'CHINA',
             'CO' => 'COLOMBIA',
             'KM' => 'COMOROS',
             'CG' => 'CONGO - BRAZZAVILLE',

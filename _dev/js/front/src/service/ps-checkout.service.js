@@ -96,6 +96,8 @@ export class PsCheckoutService extends BaseClass {
     }
   }
 
+  /* istanbul ignore next */
+  // TODO: Remove this method if finally is unneeded
   validateLiablityShift(liabilityShift) {
     if (undefined === liabilityShift) {
       console.log('Hosted fields : Liability is undefined.');
