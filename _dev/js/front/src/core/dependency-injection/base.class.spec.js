@@ -16,29 +16,36 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-const { INPUT_FILE, OUTPUT_FOLDER } = require('./utils/paths');
+import { DI_CONTAINER } from '../../../test/mocks/di-container.mock';
 
-module.exports = {
-  entry: {
-    front: INPUT_FILE
-  },
-  output: {
-    filename: '[name].js',
-    path: OUTPUT_FOLDER
-  },
+describe('src/core/dependency-injection/base-class.spec.js', () => {
+  let BaseClass;
 
-  stats: {
-    children: false,
-    modules: false
-  },
+  let inject;
+  let injector;
 
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /(node_modules|bower_components)/,
-        use: 'babel-loader'
-      }
-    ]
-  }
-};
+  beforeAll(() => {
+    injector = jest.fn();
+    inject = jest.fn().mockReturnValue(injector);
+
+    jest.doMock('../../utils/dependency-injection/inject', () => {
+      return {
+        __esModule: true,
+        inject
+      };
+    });
+
+    return import('./base.class').then(({ BaseClass: BaseClassModule }) => {
+      BaseClass = BaseClassModule;
+    });
+  });
+
+  afterAll(() => {
+    jest.resetModules();
+  });
+
+  test('Inject is being called', () => {
+    new BaseClass(DI_CONTAINER);
+    expect(inject).toHaveBeenCalled();
+  });
+});

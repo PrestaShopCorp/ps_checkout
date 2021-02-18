@@ -16,6 +16,8 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+/* istanbul ignore file */
+// TODO: Remove this service (replace this with QuerySelectorService or local methods)
 import { HtmlSelectorsPs1_7Constants } from '../../constants/html-selectors-ps1_7.constants';
 
 export class HtmlElementPs1_7Service {
@@ -135,7 +137,7 @@ export class HtmlElementPs1_7Service {
 
   getPaymentOptionLabel(container, text) {
     const items = Array.prototype.slice.call(container.querySelectorAll('*'));
-    return items.find((item) => item.innerText === text);
+    return items.find(item => item.innerText === text);
   }
 
   getPaymentOptionLabelLegacy(container, id) {
