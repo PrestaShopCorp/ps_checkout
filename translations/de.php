@@ -549,7 +549,7 @@ $_MODULE['<{ps_checkout}prestashop>paymentoptions_5ea7f231296949070013bc43715aae
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_1d565b9e5303987bb1b1938d5d458bca'] = 'Karte';
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_f990493af3321939ca512f8f2cace108'] = 'Bezahlen mit %s';
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_34ace703adbf14df140d3c02234f67bd'] = 'Bezahlen Sie mit einem PayPal-Konto';
-$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_2471e6ef6ef9018973f1658492115b52'] = 'Bezahlen mit Karte';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_983fe12e91079dcb00c74772b50747a3'] = 'Bezahlen mit Karte - 100% sichere zahlungen';
 $_MODULE['<{ps_checkout}prestashop>displaypaymentbybinaries_d7467080ec566ee0c6cb59242ee28fa5'] = 'Um Ihre Bestellung bearbeiten zu können, müssen Sie die Allgemeinen Geschäftsbedingungen akzeptieren.';
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_ca7e41a658753c87973936d7ce2429a8'] = 'Falls Sie Fragen, Anmerkungen oder Bedenken haben, kontaktieren Sie bitte unsere';
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_66fcf4c223bbf4c7c886d4784e1f62e4'] = 'Kundenbetreuung';
