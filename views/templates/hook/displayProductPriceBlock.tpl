@@ -17,6 +17,6 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
-{if $payIn4XisProductPageEnabled == true}
+{if isset($product) and $payIn4XisProductPageEnabled == true}
   <div data-pp-message data-pp-placement="product" data-pp-amount="{$product.price_amount}"></div>
 {/if}

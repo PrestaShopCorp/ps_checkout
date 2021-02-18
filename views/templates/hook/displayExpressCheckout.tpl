@@ -20,7 +20,7 @@
 <div id="js-ps_checkout-express-button-container">
 </div>
 
-{if $payIn4XisOrderPageEnabled == true}
+{if isset($cart) and $payIn4XisOrderPageEnabled == true}
   <hr />
   <div data-pp-message data-pp-placement="cart" data-pp-style-layout="flex" data-pp-style-ratio="8x1" data-pp-amount="{$cart.totals.total.amount}"></div>
 {/if}
