@@ -50,10 +50,10 @@ class PaypalAccountRepository
         return new PaypalAccount(
             $this->getMerchantId(),
             $this->getMerchantEmail(),
-            $this->getMerchantCountry(),
             $this->getMerchantEmailStatus(),
             $this->getPaypalPaymentStatus(),
-            $this->getCardHostedFieldsStatus()
+            $this->getCardHostedFieldsStatus(),
+            $this->getMerchantCountry()
         );
     }
 
