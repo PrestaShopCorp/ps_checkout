@@ -425,7 +425,7 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayProductPriceBlock($params)
     {
-        if ($params['type'] === 'weight') {
+        if ($params['type'] === 'weight' && 'product' === Tools::getValue('controller')) {
             /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
             $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
 
