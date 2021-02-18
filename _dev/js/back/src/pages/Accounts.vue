@@ -38,7 +38,7 @@
           // PS Accounts stand by
           /* (checkoutAccountStatus || prestashopAccountStatus) && */
           paypalAccountStatus &&
-          incompatibleCountryCodes
+          incompatibleCountryCodes.length > 0
       "
     >
       <PaypalIncompatibleCountry />
@@ -51,7 +51,7 @@
           // PS Accounts stand by
           /* (checkoutAccountStatus || prestashopAccountStatus) && */
           paypalAccountStatus &&
-          incompatibleCurrencyCodes
+          incompatibleCurrencyCodes.length > 0
       "
     >
       <PaypalIncompatibleCurrency />
