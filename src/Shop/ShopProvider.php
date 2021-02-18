@@ -36,7 +36,10 @@ class ShopProvider
      */
     public function getIdentifier()
     {
-        if (Context::getContext()->shop instanceof Shop) {
+        /** @var Shop|null $shop */
+        $shop = Context::getContext()->shop;
+
+        if ($shop instanceof Shop) {
             return (int) Context::getContext()->shop->id;
         }
 
@@ -50,7 +53,10 @@ class ShopProvider
      */
     public function getGroupIdentifier()
     {
-        if (Context::getContext()->shop instanceof Shop) {
+        /** @var Shop|null $shop */
+        $shop = Context::getContext()->shop;
+
+        if ($shop instanceof Shop) {
             return (int) Context::getContext()->shop->id_shop_group;
         }
 
