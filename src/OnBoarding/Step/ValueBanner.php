@@ -38,12 +38,10 @@ class ValueBanner
 
     /**
      * @param bool $closed
-     *
-     * @return bool
      */
     public function closed($closed)
     {
-        return $this->configuration->set(static::CONFIG_VALUE_BANNER, (bool) $closed);
+        $this->configuration->set(static::CONFIG_VALUE_BANNER, (bool) $closed);
     }
 
     /**

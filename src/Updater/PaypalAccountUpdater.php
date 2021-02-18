@@ -165,7 +165,7 @@ class PaypalAccountUpdater
     /**
      * Get the merchant integration
      *
-     * @param int $merchantId
+     * @param string $merchantId
      *
      * @return false|mixed
      */

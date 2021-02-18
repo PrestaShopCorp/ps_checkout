@@ -33,8 +33,8 @@ class PayPalPayIn4XConfiguration
         'currency' => 'EUR',
     ]];
 
-    const PAY_IN_4X_PRODUCT_PAGE = 'PAY_IN_4X_PRODUCT_PAGE';
-    const PAY_IN_4X_ORDER_PAGE = 'PAY_IN_4X_ORDER_PAGE';
+    const PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE = 'PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE';
+    const PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE = 'PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE';
 
     /**
      * @var PrestaShopConfiguration
@@ -90,28 +90,28 @@ class PayPalPayIn4XConfiguration
     public function isOrderPageActive()
     {
         return $this->isActiveForMerchant()
-            ? (bool) $this->configuration->get(self::PAY_IN_4X_ORDER_PAGE)
+            ? (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE)
             : false;
     }
 
     public function isOrderPageEnabled()
     {
         return $this->isActiveForCustomer() && $this->isActiveForMerchant()
-            ? (bool) $this->configuration->get(self::PAY_IN_4X_ORDER_PAGE)
+            ? (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE)
             : false;
     }
 
     public function isProductPageActive()
     {
         return $this->isActiveForMerchant()
-            ? (bool) $this->configuration->get(self::PAY_IN_4X_PRODUCT_PAGE)
+            ? (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE)
             : false;
     }
 
     public function isProductPageEnabled()
     {
         return $this->isActiveForCustomer() && $this->isActiveForMerchant()
-            ? (bool) $this->configuration->get(self::PAY_IN_4X_PRODUCT_PAGE)
+            ? (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE)
             : false;
     }
 
@@ -123,7 +123,7 @@ class PayPalPayIn4XConfiguration
     public function setProductPage($status)
     {
         if ($this->isActiveForMerchant()) {
-            $this->configuration->set(self::PAY_IN_4X_PRODUCT_PAGE, $status);
+            $this->configuration->set(self::PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE, $status);
         }
     }
 
@@ -135,7 +135,7 @@ class PayPalPayIn4XConfiguration
     public function setOrderPage($status)
     {
         if ($this->isActiveForMerchant()) {
-            $this->configuration->set(self::PAY_IN_4X_ORDER_PAGE, $status);
+            $this->configuration->set(self::PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE, $status);
         }
     }
 }

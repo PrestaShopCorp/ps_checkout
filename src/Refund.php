@@ -90,8 +90,14 @@ class Refund
             ];
         }
 
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $module->getService('ps_checkout.repository.prestashop.account');
+
         // API call here
-        $response = (new Order(\Context::getContext()->link))->refund($payload);
+        $response = (new Order(\Context::getContext()->link, $psAccountRepository))->refund($payload);
 
         if (422 === $response['httpCode']) {
             return $this->handleCallbackErrors($response['body']['message']);
