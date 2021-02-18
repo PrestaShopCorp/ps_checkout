@@ -91,6 +91,8 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_EC_ORDER_PAGE' => false,
         'PS_CHECKOUT_EC_CHECKOUT_PAGE' => false,
         'PS_CHECKOUT_EC_PRODUCT_PAGE' => false,
+        'PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE' => false,
+        'PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE' => false,
         'PS_PSX_FIREBASE_EMAIL' => '',
         'PS_PSX_FIREBASE_ID_TOKEN' => '',
         'PS_PSX_FIREBASE_LOCAL_ID' => '',

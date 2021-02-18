@@ -20,7 +20,7 @@
   <b-card no-body>
     <template v-slot:header>
       <i class="material-icons">picture_in_picture</i>
-      Pay in 4X
+      Pay in 4x messaging banner
     </template>
 
     <b-card-body>
@@ -80,16 +80,53 @@
                   alt=""
                 />
                 <div>{{ $t('panel.express-checkout.productPage') }}</div>
+                <div class="text-muted">
+                  ({{ $t('panel.express-checkout.recommended') }})
+                </div>
               </b-col>
             </b-form-row>
           </b-form-group>
+
+          <div class="text-muted small">
+            Affichez le Paiement en 4X PayPal sur votre site.
+            <br />
+            <br />
+            Le Paiement en 4X PayPal permet aux consommateurs français de payer
+            en 4 versements égaux. Vous pouvez promouvoir le Paiement en 4X
+            PayPal uniquement si vous êtes un commerçant basé en France, avec un
+            site internet en français et une intégration PayPal standard. Les
+            marchands ayant l’outil Vaulting (coffre-fort numérique) ou une
+            intégration de paiements récurrents/abonnement, ainsi que ceux
+            présentant certaines activités (vente de biens numériques / de biens
+            non physiques) ne sont pas éligibles pour promouvoir le Paiement en
+            4X PayPal.
+            <br />
+            <br />
+            Nous afficherons des messages sur votre site pour promouvoir le
+            Paiement en 4X PayPal. Vous ne pouvez pas promouvoir le Paiement en
+            4X PayPal avec un autre contenu, quel qu’il soit
+          </div>
         </b-form>
+      </b-col>
+    </b-card-body>
+    <b-card-body>
+      <b-col sm="12" md="10" lg="10" class="m-auto">
+        <b-alert variant="info" show>
+          <h4 class="alert-heading">
+            {{ $t('panel.express-checkout.alertTitle') }}
+          </h4>
+          <p>
+            Displaying this message has shown a better conversion rate and a
+            raise of Average Order Value
+          </p>
+        </b-alert>
       </b-col>
     </b-card-body>
   </b-card>
 </template>
 
 <script>
+  // TODO: Add translations to template
   import PSCheckbox from '@/components/form/checkbox';
 
   export default {
