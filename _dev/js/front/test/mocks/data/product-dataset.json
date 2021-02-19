@@ -1,0 +1,262 @@
+{
+  "id_shop_default": "1",
+  "id_manufacturer": "1",
+  "id_supplier": "0",
+  "reference": "demo_1",
+  "is_virtual": "0",
+  "delivery_in_stock": "",
+  "delivery_out_stock": "",
+  "id_category_default": "4",
+  "on_sale": "0",
+  "online_only": "0",
+  "ecotax": 0,
+  "minimal_quantity": "1",
+  "low_stock_threshold": null,
+  "low_stock_alert": "0",
+  "price": "0,10\u00a0\u20ac",
+  "unity": "",
+  "unit_price_ratio": "0.000000",
+  "additional_shipping_cost": "0.00",
+  "customizable": "0",
+  "text_fields": "0",
+  "uploadable_files": "0",
+  "redirect_type": "301-category",
+  "id_type_redirected": "0",
+  "available_for_order": "1",
+  "available_date": null,
+  "show_condition": "0",
+  "condition": "new",
+  "show_price": "1",
+  "indexed": "1",
+  "visibility": "both",
+  "cache_default_attribute": "1",
+  "advanced_stock_management": "0",
+  "date_add": "2019-07-12 15:09:17",
+  "date_upd": "2019-11-27 15:30:41",
+  "pack_stock_type": "3",
+  "meta_description": "",
+  "meta_keywords": "",
+  "meta_title": "",
+  "link_rewrite": "hummingbird-printed-t-shirt",
+  "name": "T-shirt imprim\u00e9 colibri",
+  "description": "<p><span style=\"font-size:10pt;font-style:normal;\"><span style=\"font-size:10pt;font-style:normal;\">Symbole de l\u00e9g\u00e8ret\u00e9 et de d\u00e9licatesse, le colibri \u00e9voque la gaiet\u00e9 et la curiosit\u00e9.<\/span><span style=\"font-size:10pt;font-style:normal;\"> La collection PolyFaune de la marque Studio Design propose des pi\u00e8ces aux coupes basiques et aux visuels color\u00e9s inspir\u00e9s des origamis japonais traditionnels. \u00c0 porter avec un chino ou un jean. Le proc\u00e9d\u00e9 d'impression par sublimation garantit la qualit\u00e9 et la long\u00e9vit\u00e9 des couleurs.<\/span><\/span><\/p>",
+  "description_short": "<p><span style=\"font-size:10pt;font-style:normal;\">Coupe classique, col rond, manches courtes. T-shirt en coton pima extra-fin \u00e0 fibres longues. <\/span><\/p>",
+  "available_now": "",
+  "available_later": "",
+  "id": 1,
+  "id_product": 1,
+  "out_of_stock": 2,
+  "new": 0,
+  "id_product_attribute": "1",
+  "quantity_wanted": 1,
+  "extraContent": [],
+  "allow_oosp": 0,
+  "category": "hommes",
+  "category_name": "Hommes",
+  "link": "http:\/\/shop13.webmodule.prestashop.net\/index.php?id_product=1&rewrite=hummingbird-printed-t-shirt&controller=product&id_lang=3",
+  "attribute_price": 0,
+  "price_tax_exc": 0.080000000000000002,
+  "price_without_reduction": 0.12,
+  "reduction": 0.024,
+  "specific_prices": {
+    "id_specific_price": "1",
+    "id_specific_price_rule": "0",
+    "id_cart": "0",
+    "id_product": "1",
+    "id_shop": "0",
+    "id_shop_group": "0",
+    "id_currency": "0",
+    "id_country": "0",
+    "id_group": "0",
+    "id_customer": "0",
+    "id_product_attribute": "0",
+    "price": "-1.000000",
+    "from_quantity": "1",
+    "reduction": "0.200000",
+    "reduction_tax": "1",
+    "reduction_type": "percentage",
+    "from": "0000-00-00 00:00:00",
+    "to": "0000-00-00 00:00:00",
+    "score": "32"
+  },
+  "quantity": 272,
+  "quantity_all_versions": 2372,
+  "id_image": "it-default",
+  "features": [
+    {
+      "name": "Composizioni",
+      "value": "Cotone",
+      "id_feature": "1",
+      "position": "0"
+    },
+    {
+      "name": "Propri\u00e9t\u00e9",
+      "value": "Manica corta",
+      "id_feature": "2",
+      "position": "1"
+    }
+  ],
+  "attachments": [],
+  "virtual": 0,
+  "pack": 0,
+  "packItems": [],
+  "nopackprice": 0,
+  "customization_required": false,
+  "attributes": {
+    "1": {
+      "id_attribute": "1",
+      "id_attribute_group": "1",
+      "name": "S",
+      "group": "Dimensione",
+      "reference": "demo_1",
+      "ean13": "",
+      "isbn": "",
+      "upc": ""
+    },
+    "2": {
+      "id_attribute": "8",
+      "id_attribute_group": "2",
+      "name": "Bianco",
+      "group": "Colore",
+      "reference": "demo_1",
+      "ean13": "",
+      "isbn": "",
+      "upc": ""
+    }
+  },
+  "rate": 20,
+  "tax_name": "TVA FR 20%",
+  "ecotax_rate": 0,
+  "unit_price": "",
+  "customizations": {
+    "fields": []
+  },
+  "id_customization": 0,
+  "is_customizable": false,
+  "show_quantities": true,
+  "quantity_label": "Articoli",
+  "quantity_discounts": [],
+  "customer_group_discount": 0,
+  "images": [
+    {
+      "bySize": {
+        "small_default": {
+          "url": "http:\/\/shop13.webmodule.prestashop.net\/img\/p\/2\/2-small_default.jpg",
+          "width": 98,
+          "height": 98
+        },
+        "cart_default": {
+          "url": "http:\/\/shop13.webmodule.prestashop.net\/img\/p\/2\/2-cart_default.jpg",
+          "width": 125,
+          "height": 125
+        },
+        "home_default": {
+          "url": "http:\/\/shop13.webmodule.prestashop.net\/img\/p\/2\/2-home_default.jpg",
+          "width": 250,
+          "height": 250
+        },
+        "medium_default": {
+          "url": "http:\/\/shop13.webmodule.prestashop.net\/img\/p\/2\/2-medium_default.jpg",
+          "width": 452,
+          "height": 452
+        },
+        "large_default": {
+          "url": "http:\/\/shop13.webmodule.prestashop.net\/img\/p\/2\/2-large_default.jpg",
+          "width": 800,
+          "height": 800
+        }
+      },
+      "small": {
+        "url": "http:\/\/shop13.webmodule.prestashop.net\/img\/p\/2\/2-small_default.jpg",
+        "width": 98,
+        "height": 98
+      },
+      "medium": {
+        "url": "http:\/\/shop13.webmodule.prestashop.net\/img\/p\/2\/2-home_default.jpg",
+        "width": 250,
+        "height": 250
+      },
+      "large": {
+        "url": "http:\/\/shop13.webmodule.prestashop.net\/img\/p\/2\/2-large_default.jpg",
+        "width": 800,
+        "height": 800
+      },
+      "legend": "T-shirt imprim\u00e9 colibri",
+      "cover": null,
+      "id_image": "2",
+      "position": "2",
+      "associatedVariants": [
+        "7",
+        "1",
+        "5",
+        "3"
+      ]
+    }
+  ],
+  "cover": {
+    "bySize": {
+      "small_default": {
+        "url": "http:\/\/shop13.webmodule.prestashop.net\/img\/p\/2\/2-small_default.jpg",
+        "width": 98,
+        "height": 98
+      },
+      "cart_default": {
+        "url": "http:\/\/shop13.webmodule.prestashop.net\/img\/p\/2\/2-cart_default.jpg",
+        "width": 125,
+        "height": 125
+      },
+      "home_default": {
+        "url": "http:\/\/shop13.webmodule.prestashop.net\/img\/p\/2\/2-home_default.jpg",
+        "width": 250,
+        "height": 250
+      },
+      "medium_default": {
+        "url": "http:\/\/shop13.webmodule.prestashop.net\/img\/p\/2\/2-medium_default.jpg",
+        "width": 452,
+        "height": 452
+      },
+      "large_default": {
+        "url": "http:\/\/shop13.webmodule.prestashop.net\/img\/p\/2\/2-large_default.jpg",
+        "width": 800,
+        "height": 800
+      }
+    },
+    "small": {
+      "url": "http:\/\/shop13.webmodule.prestashop.net\/img\/p\/2\/2-small_default.jpg",
+      "width": 98,
+      "height": 98
+    },
+    "medium": {
+      "url": "http:\/\/shop13.webmodule.prestashop.net\/img\/p\/2\/2-home_default.jpg",
+      "width": 250,
+      "height": 250
+    },
+    "large": {
+      "url": "http:\/\/shop13.webmodule.prestashop.net\/img\/p\/2\/2-large_default.jpg",
+      "width": 800,
+      "height": 800
+    },
+    "legend": "T-shirt imprim\u00e9 colibri",
+    "cover": null,
+    "id_image": "2",
+    "position": "2",
+    "associatedVariants": [
+      "7",
+      "1",
+      "5",
+      "3"
+    ]
+  },
+  "has_discount": true,
+  "discount_type": "percentage",
+  "discount_percentage": "-20%",
+  "discount_percentage_absolute": "20%",
+  "discount_amount": "0,02\u00a0\u20ac",
+  "discount_amount_to_display": "-0,02\u00a0\u20ac",
+  "price_amount": 0.096000000000000002,
+  "unit_price_full": "",
+  "show_availability": true,
+  "availability_date": null,
+  "availability_message": "",
+  "availability": "available"
+}

@@ -68,7 +68,7 @@ class PayPalConfiguration
     /**
      * Used to set the PS_CHECKOUT_INTENT in the Configuration
      *
-     * @param $captureMode
+     * @param string $captureMode
      *
      * @throws PsCheckoutException
      */
@@ -94,7 +94,7 @@ class PayPalConfiguration
     /**
      * Used to set the PS_CHECKOUT_MODE in the Configuration
      *
-     * @param $paymentMode
+     * @param string $paymentMode
      *
      * @throws PsCheckoutException
      */
@@ -144,7 +144,7 @@ class PayPalConfiguration
     }
 
     /**
-     * @param $roundType
+     * @param string $roundType
      *
      * @throws PsCheckoutException
      */
@@ -251,6 +251,10 @@ class PayPalConfiguration
         );
         $paypalCodes = $this->codeRepository->getCountryCodes();
 
+        if (!is_array($shopCodes)) {
+            $shopCodes = [];
+        }
+
         return $this->checkCodesCompatibility($shopCodes, $paypalCodes);
     }
 
@@ -276,6 +280,10 @@ class PayPalConfiguration
         );
         $paypalCodes = $this->codeRepository->getCurrencyCodes();
 
+        if (!is_array($shopCodes)) {
+            $shopCodes = [];
+        }
+
         return $this->checkCodesCompatibility($shopCodes, $paypalCodes);
     }
 
@@ -285,9 +293,9 @@ class PayPalConfiguration
      * @param array $shopCodes
      * @param array $paypalCodes
      *
-     * @return array|null
+     * @return array
      */
-    private function checkCodesCompatibility($shopCodes, $paypalCodes)
+    private function checkCodesCompatibility(array $shopCodes, array $paypalCodes)
     {
         $incompatibleCodes = [];
 
@@ -295,10 +303,6 @@ class PayPalConfiguration
             if (!in_array(strtoupper($shopCode['iso_code']), array_keys($paypalCodes))) {
                 $incompatibleCodes[] = $shopCode['iso_code'];
             }
-        }
-
-        if (empty($incompatibleCodes)) {
-            $incompatibleCodes = null;
         }
 
         return $incompatibleCodes;
@@ -316,8 +320,6 @@ class PayPalConfiguration
      * @param object $configuration
      *
      * @throws PsCheckoutException
-     *
-     * @return bool
      */
     public function setButtonConfiguration($configuration)
     {

@@ -29,6 +29,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
+use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 
 /**
@@ -60,6 +61,11 @@ class ContextModule implements PresenterInterface
      * @var LiveStep
      */
     private $liveStep;
+
+    /**
+     * @var ValueBanner
+     */
+    private $valueBanner;
 
     /**
      * @var Translations
@@ -116,13 +122,8 @@ class ContextModule implements PresenterInterface
      */
     public function present()
     {
+        $shopUuid = new ShopUuidManager();
         $shopId = (int) \Context::getContext()->shop->id;
-
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $module->getService('ps_checkout.repository.prestashop.account');
 
         return [
             'context' => [
@@ -131,7 +132,7 @@ class ContextModule implements PresenterInterface
                 'phpVersion' => phpversion(),
                 'shopIs17' => $this->shopContext->isShop17(),
                 'moduleKey' => $this->moduleKey,
-                'shopId' => $psAccountRepository->getShopUuid(),
+                'shopId' => $shopUuid->getForShop($shopId),
                 'shopUri' => $this->shopProvider->getShopUrl($shopId),
                 'isReady' => $this->shopContext->isReady(),
                 'isShopContext' => $this->isShopContext(),

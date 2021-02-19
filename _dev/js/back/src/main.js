@@ -19,7 +19,6 @@
 import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue';
 import VueCollapse from 'vue2-collapse';
-import psAccountsVueComponents from 'prestashop_accounts_vue_components';
 import * as Sentry from '@sentry/browser';
 import { Vue as VueIntegration } from '@sentry/integrations';
 
@@ -31,7 +30,6 @@ import VueSegment from '@prestashopcorp/segment-vue';
 
 Vue.use(BootstrapVue);
 Vue.use(VueCollapse);
-Vue.use(psAccountsVueComponents, { locale: i18n.locale });
 
 Vue.use(VueSegment, {
   id: 'BftCN3EnnGD1ETnf4FUBxP1WFMQ80JFZ',

@@ -6,6 +6,7 @@ parameters:
 		# From PHPStan 0.12, paths to check are relative to the neon file
 		- ../../classes
 		- ../../controllers
+		- ../../src
 		- ../../ps_checkout.php
 	reportUnmatchedIgnoredErrors: false
 	ignoreErrors:
