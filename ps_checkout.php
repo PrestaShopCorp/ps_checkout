@@ -102,6 +102,7 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_LOGGER_HTTP' => '0',
         'PS_CHECKOUT_LOGGER_HTTP_FORMAT' => 'DEBUG',
         'PS_CHECKOUT_INTEGRATION_DATE' => self::INTEGRATION_DATE,
+        'PS_CHECKOUT_SHOP_UUID_V4' => '',
     ];
 
     public $confirmUninstall;
@@ -169,7 +170,8 @@ class Ps_checkout extends PaymentModule
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
             $this->installTabs() &&
             $this->disableIncompatibleCountries() &&
-            $this->disableIncompatibleCurrencies();
+            $this->disableIncompatibleCurrencies() &&
+            (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops();
 
         if (!$defaultInstall) {
             return false;
@@ -204,12 +206,12 @@ class Ps_checkout extends PaymentModule
             foreach ($this->configurationList as $name => $value) {
                 if (false === Configuration::hasKey($name, null, null, (int) $shopId)) {
                     $result = $result && (bool) Configuration::updateValue(
-                        $name,
-                        $value,
-                        false,
-                        null,
-                        (int) $shopId
-                    );
+                            $name,
+                            $value,
+                            false,
+                            null,
+                            (int) $shopId
+                        );
                 }
             }
         }
@@ -266,7 +268,7 @@ class Ps_checkout extends PaymentModule
                 WHERE id_country = (SELECT id_country FROM ' . _DB_PREFIX_ . 'country WHERE iso_code = "' . $incompatibleCode . '")
                 AND id_module = ' . $this->id . '
                 AND id_shop = ' . \Context::getContext()->shop->id
-            );
+                );
         }
 
         return $result;
@@ -292,7 +294,7 @@ class Ps_checkout extends PaymentModule
                 WHERE id_currency = (SELECT id_currency FROM ' . _DB_PREFIX_ . 'currency WHERE iso_code = "' . $incompatibleCode . '")
                 AND id_module = ' . $this->id . '
                 AND id_shop = ' . \Context::getContext()->shop->id
-            );
+                );
         }
 
         return $result;
