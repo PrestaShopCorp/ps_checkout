@@ -22,5 +22,16 @@
 
 {if isset($cart) and $payIn4XisOrderPageEnabled == true}
   <hr />
-  <div data-pp-message data-pp-placement="cart" data-pp-style-layout="flex" data-pp-style-ratio="8x1" data-pp-amount="{$cart.totals.total.amount}"></div>
+  <div
+    data-pp-message
+    data-pp-placement="cart"
+    data-pp-style-layout="text"
+    data-pp-style-logo-type="inline"
+    data-pp-style-text-color="black"
+    data-pp-amount="{$cart.totals.total.amount}"></div>
+  <script>
+    window.ps_checkoutPayPalSdkInstance
+      && window.ps_checkoutPayPalSdkInstance.Messages
+      && window.ps_checkoutPayPalSdkInstance.Messages().render('[data-pp-message]');
+  </script>
 {/if}
