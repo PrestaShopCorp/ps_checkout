@@ -21,9 +21,7 @@
     <b-container
       class="mb-4"
       v-if="
-        !isLiveStepConfirmed &&
-          checkoutAccountStatus &&
-          paypalAccountStatus
+        !isLiveStepConfirmed && checkoutAccountStatus && paypalAccountStatus
       "
     >
       <PaypalStatusBanner />

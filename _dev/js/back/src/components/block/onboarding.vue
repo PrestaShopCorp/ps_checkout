@@ -64,7 +64,7 @@
       },
       checkoutAccountStatus() {
         return this.$store.state.firebase.onboardingCompleted;
-      },
+      }
     },
     methods: {
       getOnboardingLink() {
