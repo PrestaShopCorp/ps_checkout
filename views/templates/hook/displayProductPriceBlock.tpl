@@ -17,6 +17,13 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
-{if isset($product) and $payIn4XisProductPageEnabled == true}
-  <div data-pp-message data-pp-placement="product" data-pp-amount="{$product.price_amount}"></div>
+{if isset($cart) and $payIn4XisProductPageEnabled == true}
+  <div
+    data-pp-message
+    data-pp-placement="product"
+    data-pp-style-layout="text"
+    data-pp-style-logo-type="inline"
+    data-pp-style-text-color="black"
+    data-pp-amount="{$cart.totals.total.amount}"
+    ></div>
 {/if}
