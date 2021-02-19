@@ -34,11 +34,11 @@ class CustomerUpdater
         $context->cookie->__set('passwd', $customer->passwd);
         $context->cookie->__set('logged', 1);
         $context->cookie->__set('id_customer', (int) $customer->id);
-        $customer->logged = 1;
+        $customer->logged = true;
         $context->cookie->__set('email', $customer->email);
         $context->cookie->__set('is_guest', $customer->isGuest());
 
-        if (\Configuration::get('PS_CART_FOLLOWING') && (empty($context->cookie->id_cart) || \Cart::getNbProducts($context->cookie->__get('id_cart')) == 0) && $idCart = (int) \Cart::lastNoneOrderedCart($context->customer->id)) {
+        if (\Configuration::get('PS_CART_FOLLOWING') && (empty($context->cookie->id_cart) || \Cart::getNbProducts((int) $context->cookie->__get('id_cart')) == 0) && $idCart = (int) \Cart::lastNoneOrderedCart((int) $context->customer->id)) {
             $context->cart = new \Cart($idCart);
             $context->cart->secure_key = $customer->secure_key;
         } else {
