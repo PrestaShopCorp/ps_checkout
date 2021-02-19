@@ -239,12 +239,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessGetOnboardingLink()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
-
         // Generate a new onboarding link to lin a new merchant
         $this->ajaxDie(
-            json_encode((new Onboarding($this->context->link, $psAccountRepository))->getOnboardingLink())
+            json_encode((new Onboarding($this->context->link))->getOnboardingLink())
         );
     }
 
@@ -317,10 +314,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
         $ecConfiguration->setOrderPage(Tools::getValue('status') ? true : false);
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link, $psAccountRepository))->updateSettings();
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
 
     /**
@@ -331,10 +326,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
         $ecConfiguration->setCheckoutPage(Tools::getValue('status') ? true : false);
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link, $psAccountRepository))->updateSettings();
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
 
     /**
@@ -345,10 +338,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
         $ecConfiguration->setProductPage(Tools::getValue('status') ? true : false);
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link, $psAccountRepository))->updateSettings();
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
 
     /**
@@ -486,10 +477,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $accountRepository */
         $accountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
-
-        $response = (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order($this->context->link, $psAccountRepository))->refund([
+        $response = (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order($this->context->link))->refund([
             'orderId' => $orderPayPalId,
             'captureId' => $transactionPayPalId,
             'payee' => [

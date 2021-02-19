@@ -42,6 +42,8 @@ class PersistentConfiguration
 
     /**
      * Function used to reset the PayPalField to LogOut the user
+     *
+     * @return bool
      */
     public function resetPayPalAccount()
     {
@@ -109,20 +111,14 @@ class PersistentConfiguration
      */
     public function savePsAccount(PsAccount $psAccount)
     {
-        // PS Accounts stand by
-        // return $this->configuration->set(
-        //         PsAccount::PS_CHECKOUT_PSX_FORM,
-        //         $psAccount->getPsxForm()
-        //     );
-
         // Generate a new PS Checkout shop UUID if PS Account and Checkout shop UUID are identicals
         $psContext = new \PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext();
         $shopUuidManager = new \PrestaShop\Module\PrestashopCheckout\ShopUuidManager();
         $shopId = (int) $psContext->getShopId();
         $shopUuid = $shopUuidManager->getForShop($shopId);
-        $psAccountsService = new \PrestaShop\AccountsAuth\Service\PsAccountsService();
+        $psAccountsShopUuid = $this->configuration->get('PSX_UUID_V4');
 
-        if (!$shopUuid || $shopUuid === $psAccountsService->getShopUuidV4()) {
+        if (!$shopUuid || $shopUuid === $psAccountsShopUuid) {
             $this->configuration->set(PsAccount::PS_CHECKOUT_SHOP_UUID_V4, '');
             $shopUuidManager->generateForShop($shopId);
             $shopUuid = $shopUuidManager->getForShop($shopId);
