@@ -1,4 +1,3 @@
-<?php
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -17,18 +16,7 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * Update main function for module version 2.5.0
- *
- * @param Ps_checkout $module
- *
- * @return bool
- */
-function upgrade_module_2_5_0($module)
-{
-    return (new PrestaShop\AccountsAuth\Installer\Install())->installPsAccounts();
-}
+export const PayPalServiceMock = {
+  getButtonPayment: jest.fn(),
+  render: jest.fn()
+};

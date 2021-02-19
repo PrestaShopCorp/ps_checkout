@@ -43,7 +43,7 @@ class TransactionPresenter implements PresenterInterface
         $module = \Module::getInstanceByName('ps_checkout');
         /** @var OrderPaymentRepository $repository */
         $repository = $module->getService('ps_checkout.repository.orderpayment');
-        $transactions = $repository->findAllPSCheckoutModule(\Context::getContext()->shop->id);
+        $transactions = $repository->findAllPSCheckoutModule((int) \Context::getContext()->shop->id);
 
         foreach ($transactions as &$transaction) {
             $transaction['transactionID'] = $transaction['transaction_id'];

@@ -81,12 +81,6 @@ class ValidateOrder
         $transactionIdentifier = false === empty($order['purchase_units'][0]['payments']['captures'][0]['id']) ? $order['purchase_units'][0]['payments']['captures'][0]['id'] : '';
         $transactionStatus = false === empty($order['purchase_units'][0]['payments']['captures'][0]['status']) ? $order['purchase_units'][0]['payments']['captures'][0]['status'] : '';
 
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $module->getService('ps_checkout.repository.prestashop.account');
-
         // @todo To be refactored in v2.0.0 with Service Container
         if (true === empty($order['purchase_units'][0]['payments']['captures'])) {
             /** @var \Ps_checkout $module */
@@ -101,7 +95,7 @@ class ValidateOrder
             /** @var \PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $payload['cartId']);
 
-            $apiOrder = new Order(\Context::getContext()->link, $psAccountRepository);
+            $apiOrder = new Order(\Context::getContext()->link);
             $response = $apiOrder->capture(
                 $order['id'],
                 $this->merchantId,
@@ -189,8 +183,8 @@ class ValidateOrder
             if (in_array($transactionStatus, [static::CAPTURE_STATUS_COMPLETED, static::CAPTURE_STATUS_DECLINED])) {
                 $newOrderState = static::CAPTURE_STATUS_COMPLETED === $transactionStatus ? $this->getPaidStatusId($module->currentOrder) : (int) \Configuration::getGlobalValue('PS_OS_ERROR');
 
-                $order = new \Order($module->currentOrder);
-                $currentOrderStateId = (int) $order->getCurrentState();
+                $orderPS = new \Order($module->currentOrder);
+                $currentOrderStateId = (int) $orderPS->getCurrentState();
 
                 // If have to change current OrderState from Waiting to Paid or Canceled
                 if ($currentOrderStateId !== $newOrderState) {
@@ -210,7 +204,7 @@ class ValidateOrder
                     // So we have to update it
                     if ($newOrderState === (int) \Configuration::getGlobalValue('PS_OS_PAYMENT')) {
                         $orderPaymentCollection = new \PrestaShopCollection('OrderPayment');
-                        $orderPaymentCollection->where('order_reference', '=', $module->currentOrderReference);
+                        $orderPaymentCollection->where('order_reference', '=', $orderPS->reference);
 
                         /** @var \OrderPayment|false $orderPayment */
                         $orderPayment = $orderPaymentCollection->getFirst();

@@ -21,25 +21,19 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
 use GuzzleHttp\Client;
+use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
-use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
+use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 
 /**
  * Construct the client used to make call to maasland
  */
 class PaymentClient extends GenericClient
 {
-    /**
-     * @var PsAccountRepository
-     */
-    private $psAccountRepository;
-
-    public function __construct(\Link $link, PsAccountRepository $psAccountRepository, Client $client = null)
+    public function __construct(\Link $link, Client $client = null)
     {
-        $this->psAccountRepository = $psAccountRepository;
-
         $this->setLink($link);
 
         // Client can be provided for tests
@@ -53,8 +47,8 @@ class PaymentClient extends GenericClient
                     'headers' => [
                         'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
                         'Accept' => 'application/json',
-                        'Authorization' => 'Bearer ' . $psAccountRepository->getIdToken(),
-                        'Shop-Id' => $psAccountRepository->getShopUuid(),
+                        'Authorization' => 'Bearer ' . (new Token())->getToken(),
+                        'Shop-Id' => (new ShopUuidManager())->getForShop((int) \Context::getContext()->shop->id),
                         'Hook-Url' => $this->link->getModuleLink(
                             'ps_checkout',
                             'DispatchWebHook',

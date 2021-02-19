@@ -21,9 +21,7 @@
     <b-container
       class="mb-4"
       v-if="
-        !isLiveStepConfirmed &&
-          (checkoutAccountStatus || prestashopAccountStatus) &&
-          paypalAccountStatus
+        !isLiveStepConfirmed && checkoutAccountStatus && paypalAccountStatus
       "
     >
       <PaypalStatusBanner />
@@ -32,9 +30,9 @@
     <b-container
       class="mb-4"
       v-if="
-        (checkoutAccountStatus || prestashopAccountStatus) &&
+        checkoutAccountStatus &&
           paypalAccountStatus &&
-          incompatibleCountryCodes
+          incompatibleCountryCodes.length > 0
       "
     >
       <PaypalIncompatibleCountry />
@@ -43,9 +41,9 @@
     <b-container
       class="mb-4"
       v-if="
-        (checkoutAccountStatus || prestashopAccountStatus) &&
+        checkoutAccountStatus &&
           paypalAccountStatus &&
-          incompatibleCurrencyCodes
+          incompatibleCurrencyCodes.length > 0
       "
     >
       <PaypalIncompatibleCurrency />
@@ -53,25 +51,14 @@
 
     <b-container
       class="text-center"
-      v-if="
-        (!checkoutAccountStatus || !prestashopAccountStatus) &&
-          !paypalAccountStatus
-      "
+      v-if="checkoutAccountStatus && !paypalAccountStatus"
     >
       <h2 class="text-muted font-weight-light">
         {{ $t('panel.accounts.activateAllPayment') }}
       </h2>
     </b-container>
 
-    <b-container v-if="!checkoutAccountStatus">
-      <PsAccounts>
-        <template v-slot:body>
-          <PaypalAccount :sendTrack="sendTrack" />
-        </template>
-      </PsAccounts>
-    </b-container>
-
-    <b-container v-else>
+    <b-container>
       <CheckoutAccount class="mb-3" :sendTrack="sendTrack" />
 
       <PaypalAccount :sendTrack="sendTrack" />
@@ -79,10 +66,7 @@
 
     <b-container
       class="mt-4"
-      v-if="
-        (checkoutAccountStatus || prestashopAccountStatus) &&
-          paypalAccountStatus
-      "
+      v-if="checkoutAccountStatus && paypalAccountStatus"
     >
       <PaymentAcceptance />
     </b-container>
@@ -94,10 +78,6 @@
 </template>
 
 <script>
-  import {
-    PsAccounts,
-    isOnboardingCompleted
-  } from 'prestashop_accounts_vue_components';
   import PaypalAccount from '@/components/panel/paypal-account';
   import CheckoutAccount from '@/components/panel/checkout-account';
   import PaymentAcceptance from '@/components/panel/payment-acceptance';
@@ -109,7 +89,6 @@
   export default {
     name: 'Accounts',
     components: {
-      PsAccounts,
       PaypalAccount,
       CheckoutAccount,
       PaymentAcceptance,
@@ -121,9 +100,6 @@
     computed: {
       checkoutAccountStatus() {
         return this.$store.state.firebase.onboardingCompleted;
-      },
-      prestashopAccountStatus() {
-        return isOnboardingCompleted();
       },
       paypalAccountStatus() {
         return this.$store.state.paypal.onboardingCompleted;
@@ -149,48 +125,18 @@
     },
     methods: {
       sendTrack() {
-        if (
-          !this.checkoutAccountStatus &&
-          !this.prestashopAccountStatus &&
-          !this.paypalAccountStatus
-        ) {
+        if (!this.checkoutAccountStatus && !this.paypalAccountStatus) {
           // Anything connected
           this.$segment.track('View Authentication - Status Logged Out', {
             category: 'ps_checkout'
           });
-        } else if (
-          this.checkoutAccountStatus &&
-          !this.prestashopAccountStatus &&
-          !this.paypalAccountStatus
-        ) {
+        } else if (this.checkoutAccountStatus && !this.paypalAccountStatus) {
           // Only Checkout account connected
           this.$segment.track(
             'View Authentication - Status Checkout account connected',
             { category: 'ps_checkout' }
           );
-        } else if (
-          !this.checkoutAccountStatus &&
-          this.prestashopAccountStatus &&
-          !this.paypalAccountStatus
-        ) {
-          // Only PrestaShop account connected
-          this.$segment.track(
-            'View Authentication - Status PrestaShop account connected',
-            { category: 'ps_checkout' }
-          );
-        } else if (
-          (this.checkoutAccountStatus || this.prestashopAccountStatus) &&
-          this.paypalAccountStatus
-        ) {
-          // Both accounts "connected"
-          let accountType = null;
-
-          if (this.checkoutAccountStatus) {
-            accountType = 'PrestaShop Checkout';
-          } else if (this.prestashopAccountStatus) {
-            accountType = 'PrestaShop Accounts';
-          }
-
+        } else if (this.checkoutAccountStatus && this.paypalAccountStatus) {
           if (
             this.accountIslinked &&
             this.merchantEmailIsValid &&
@@ -200,8 +146,7 @@
             this.$segment.track(
               'View Authentication screen - Status Both account approved',
               {
-                category: 'ps_checkout',
-                psAccountType: accountType
+                category: 'ps_checkout'
               }
             );
           } else {
@@ -209,8 +154,7 @@
             this.$segment.track(
               'View Authentication - Status PP approval pending',
               {
-                category: 'ps_checkout',
-                psAccountType: accountType
+                category: 'ps_checkout'
               }
             );
           }

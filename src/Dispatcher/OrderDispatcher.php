@@ -55,6 +55,7 @@ class OrderDispatcher implements Dispatcher
 
         $this->assignPsCheckoutCart($payload['orderId']);
 
+        /** @var int|false $psOrderId */
         $psOrderId = \Order::getOrderByCartId((int) $this->psCheckoutCart->id_cart);
 
         if (false === $psOrderId) {
@@ -261,11 +262,13 @@ class OrderDispatcher implements Dispatcher
         $psCheckoutCartCollection = new \PrestaShopCollection('PsCheckoutCart');
         $psCheckoutCartCollection->where('paypal_order', '=', $payPalOrderId);
 
-        /* @var \PsCheckoutCart|false $psCheckoutCart */
-        $this->psCheckoutCart = $psCheckoutCartCollection->getFirst();
+        /** @var \PsCheckoutCart|false $psCheckoutCart */
+        $psCheckoutCart = $psCheckoutCartCollection->getFirst();
 
-        if (false === $this->psCheckoutCart) {
+        if (false === $psCheckoutCart) {
             throw new PsCheckoutException(sprintf('order #%s is not linked to a cart', $payPalOrderId), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
+
+        $this->psCheckoutCart = $psCheckoutCart;
     }
 }

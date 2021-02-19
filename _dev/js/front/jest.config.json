@@ -1,0 +1,21 @@
+{
+  "clearMocks": true,
+  "collectCoverageFrom": [
+    "src/*.js",
+    "src/**/*.js",
+    "!src/utils/extra/**",
+    "!src/utils/extra/**/*",
+    "!src/utils/polyfills/**",
+    "!src/utils/polyfills/**/*"
+  ],
+  "setupFiles": [
+    "./test/setup.js"
+  ],
+  "testMatch": [
+    "**/src/*.spec.js",
+    "**/src/**/*.spec.js"
+  ],
+  "transform": {
+    "\\.[jt]sx?$": "babel-jest"
+  }
+}

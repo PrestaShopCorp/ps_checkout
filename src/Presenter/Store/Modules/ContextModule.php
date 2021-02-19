@@ -24,10 +24,12 @@ use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Faq\Faq;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep;
+use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
+use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 
 /**
@@ -61,6 +63,11 @@ class ContextModule implements PresenterInterface
     private $liveStep;
 
     /**
+     * @var ValueBanner
+     */
+    private $valueBanner;
+
+    /**
      * @var Translations
      */
     private $translations;
@@ -81,6 +88,7 @@ class ContextModule implements PresenterInterface
      * @param PrestaShopContext $psContext
      * @param PayPalConfiguration $payPalConfiguration
      * @param LiveStep $liveStep
+     * @param ValueBanner $valueBanner
      * @param Translations $translations
      * @param ShopContext $shopContext
      * @param ShopProvider $shopProvider
@@ -91,6 +99,7 @@ class ContextModule implements PresenterInterface
         PrestaShopContext $psContext,
         PayPalConfiguration $payPalConfiguration,
         LiveStep $liveStep,
+        ValueBanner $valueBanner,
         Translations $translations,
         ShopContext $shopContext,
         ShopProvider $shopProvider
@@ -100,6 +109,7 @@ class ContextModule implements PresenterInterface
         $this->psContext = $psContext;
         $this->paypalConfiguration = $payPalConfiguration;
         $this->liveStep = $liveStep;
+        $this->valueBanner = $valueBanner;
         $this->translations = $translations;
         $this->shopContext = $shopContext;
         $this->shopProvider = $shopProvider;
@@ -112,13 +122,8 @@ class ContextModule implements PresenterInterface
      */
     public function present()
     {
+        $shopUuid = new ShopUuidManager();
         $shopId = (int) \Context::getContext()->shop->id;
-
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $module->getService('ps_checkout.repository.prestashop.account');
 
         return [
             'context' => [
@@ -127,7 +132,7 @@ class ContextModule implements PresenterInterface
                 'phpVersion' => phpversion(),
                 'shopIs17' => $this->shopContext->isShop17(),
                 'moduleKey' => $this->moduleKey,
-                'shopId' => $psAccountRepository->getShopUuid(),
+                'shopId' => $shopUuid->getForShop($shopId),
                 'shopUri' => $this->shopProvider->getShopUrl($shopId),
                 'isReady' => $this->shopContext->isReady(),
                 'isShopContext' => $this->isShopContext(),
@@ -140,11 +145,13 @@ class ContextModule implements PresenterInterface
                 'cguUrl' => $this->getCgu(),
                 'roundingSettingsIsCorrect' => $this->paypalConfiguration->IsRoundingSettingsCorrect(),
                 'liveStepConfirmed' => $this->liveStep->isConfirmed(),
+                'valueBannerClosed' => $this->valueBanner->isClosed(),
                 'youtubeInstallerLink' => $this->getYoutubeInstallerLink(),
                 'incompatibleCountryCodes' => $this->paypalConfiguration->getIncompatibleCountryCodes(),
                 'incompatibleCurrencyCodes' => $this->paypalConfiguration->getIncompatibleCurrencyCodes(),
                 'countriesLink' => $this->getGeneratedLink('AdminCountries'),
                 'currenciesLink' => $this->getGeneratedLink('AdminCurrencies'),
+                'paymentPreferencesLink' => $this->getGeneratedLink($this->shopContext->isShop17() ? 'AdminPaymentPreferences' : 'AdminPayment'),
             ],
         ];
     }
@@ -305,7 +312,7 @@ class ContextModule implements PresenterInterface
      *
      * @return string
      */
-    private function getGeneratedLink($link)
+    public function getGeneratedLink($link)
     {
         $linkAdapter = new LinkAdapter($this->psContext->getLink());
 
