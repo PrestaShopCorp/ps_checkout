@@ -353,7 +353,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
         $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link, $psAccountRepository))->updateSettings();
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
 
     /**
@@ -367,7 +367,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
         $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link, $psAccountRepository))->updateSettings();
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
     }
 
     /**
