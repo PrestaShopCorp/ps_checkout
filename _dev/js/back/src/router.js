@@ -18,7 +18,6 @@
  */
 import Vue from 'vue';
 import Router from 'vue-router';
-// import { isOnboardingCompleted } from 'prestashop_accounts_vue_components';
 import store from './store';
 
 import Customize from '@/pages/Customize';
@@ -53,7 +52,6 @@ const router = new Router({
       component: Accounts,
       beforeEnter: (to, from, next) => {
         if (
-          // isOnboardingCompleted() &&
           store.getters.firebaseOnboardingIsCompleted &&
           !store.getters.paypalOnboardingIsCompleted &&
           !store.getters.psxOnboardingIsCompleted

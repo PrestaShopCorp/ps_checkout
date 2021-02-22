@@ -24,19 +24,12 @@ use GuzzleHttp\Client;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PsxEnv;
-use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 
 class PsxClient extends GenericClient
 {
-    /**
-     * @var PsAccountRepository
-     */
-    private $psAccountRepository;
-
-    public function __construct(PsAccountRepository $psAccountRepository)
+    public function __construct()
     {
-        $this->psAccountRepository = $psAccountRepository;
-
         $client = new Client([
             'base_url' => (new PsxEnv())->getPsxApiUrl(),
             'defaults' => [
@@ -47,7 +40,7 @@ class PsxClient extends GenericClient
                     'Content-Type' => 'application/vnd.psx.v1+json', // api version to use (psl side)
                     'Accept' => 'application/json',
                     'Authorization' => 'Bearer ' . (new Token())->getToken(),
-                    'Shop-Id' => $psAccountRepository->getShopUuid(),
+                    'Shop-Id' => (new ShopUuidManager())->getForShop((int) \Context::getContext()->shop->id),
                     'Module-Version' => \Ps_checkout::VERSION, // version of the module
                     'Prestashop-Version' => _PS_VERSION_, // prestashop version
                 ],

@@ -33,12 +33,10 @@ export class PrestashopPs1_7Service {
   }
 
   static isOrderPersonalInformationStepPage() {
-    return (
-      document.body.id === 'checkout' &&
-      document
-        .querySelector('#checkout-personal-information-step')
-        .classList.contains('-current')
-    );
+    if (document.body.id !== 'checkout') return false;
+    const step = document.querySelector('#checkout-personal-information-step');
+
+    return step && step.classList.contains('-current');
   }
 
   static isProductPage() {

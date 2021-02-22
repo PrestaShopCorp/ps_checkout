@@ -32,12 +32,13 @@
 </template>
 
 <script>
-  import { isOnboardingCompleted } from 'prestashop_accounts_vue_components';
+  // import { isOnboardingCompleted } from 'prestashop_accounts_vue_components';
   export default {
     name: 'AccountStatusPrestaShop',
     computed: {
       prestashopAccountIsActive() {
-        return isOnboardingCompleted();
+        // return isOnboardingCompleted();
+        return false;
       }
     }
   };

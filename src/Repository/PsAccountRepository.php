@@ -20,8 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
-use PrestaShop\AccountsAuth\Service\PsAccountsService;
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
@@ -34,17 +32,12 @@ class PsAccountRepository
     /** @var PrestaShopConfiguration */
     private $configuration;
 
-    /** @var PsAccountsService */
-    private $psAccountsService;
-
     /**
      * @param PrestaShopConfiguration $configuration
-     * @param PsAccountsService $psAccountsService
      */
-    public function __construct(PrestaShopConfiguration $configuration, PsAccountsService $psAccountsService)
+    public function __construct(PrestaShopConfiguration $configuration)
     {
         $this->configuration = $configuration;
-        $this->psAccountsService = $psAccountsService;
     }
 
     /**
@@ -91,31 +84,12 @@ class PsAccountRepository
     }
 
     /**
-     * Check existing PrestaShop Account
-     * To remove when all merchants have switched to PrestaShop Accounts
-     *
-     * @return bool
-     */
-    public function isPrestaShopAccount()
-    {
-        return $this->psAccountsService->getFirebaseIdToken() &&
-            $this->psAccountsService->getEmail() &&
-            $this->psAccountsService->getShopUuidV4();
-    }
-
-    /**
      * Get firebase email from database
      *
      * @return string|bool
      */
     public function getEmail()
     {
-        // PS Accounts stand by
-        // if (!$this->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
-        //     return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_EMAIL);
-        // }
-        //
-        // return $this->psAccountsService->getEmail();
         return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_EMAIL);
     }
 
@@ -126,14 +100,6 @@ class PsAccountRepository
      */
     public function getIdToken()
     {
-        // PS Accounts stand by
-        // if (!$this->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
-        //     $token = new Token();
-        //
-        //     return $token->getToken();
-        // }
-        //
-        // return $this->psAccountsService->getOrRefreshToken();
         return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_ID_TOKEN);
     }
 
@@ -154,12 +120,6 @@ class PsAccountRepository
      */
     public function getRefreshToken()
     {
-        // PS Accounts stand by
-        // if (!$this->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
-        //     return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN);
-        // }
-        //
-        // return $this->psAccountsService->getFirebaseRefreshToken();
         return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN);
     }
 
@@ -184,15 +144,6 @@ class PsAccountRepository
      */
     public function getShopUuid()
     {
-        // PS Accounts stand by
-        // if (!$this->isPrestaShopAccount()) { // To remove when all merchants have switched to PrestaShop Accounts
-        //    $psContext = new PrestaShopContext();
-        //    $shopUuidManager = new \PrestaShop\Module\PrestashopCheckout\ShopUuidManager();
-        //
-        //    return $shopUuidManager->getForShop((int) $psContext->getShopId());
-        // }
-        //
-        // return $this->psAccountsService->getShopUuidV4();
         $psContext = new PrestaShopContext();
         $shopUuidManager = new \PrestaShop\Module\PrestashopCheckout\ShopUuidManager();
 

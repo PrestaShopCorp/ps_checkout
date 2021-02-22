@@ -70,12 +70,7 @@
           <p>{{ $t('panel.accounts.paypal.onboardingLinkError') }}</p>
         </b-alert>
 
-        <b-container
-          v-if="
-            (checkoutAccountStatus || prestashopAccountStatus) &&
-              paypalAccountStatus
-          "
-        >
+        <b-container v-if="checkoutAccountStatus && paypalAccountStatus">
           <b-alert v-if="!accountIslinked" variant="info" show>
             <h2>{{ $t('pages.accounts.waitingPaypalLinkingTitle') }}</h2>
             <p>{{ $t('pages.accounts.waitingPaypalLinking') }}</p>
@@ -162,7 +157,6 @@
 <script>
   import AccountStatusPayPal from '@/components/block/account-status-paypal.vue';
   import Onboarding from '@/components/block/onboarding';
-  import { isOnboardingCompleted } from 'prestashop_accounts_vue_components';
 
   export default {
     components: {
@@ -179,9 +173,6 @@
       },
       checkoutAccountStatus() {
         return this.$store.state.firebase.onboardingCompleted;
-      },
-      prestashopAccountStatus() {
-        return isOnboardingCompleted();
       },
       paypalAccountStatus() {
         return this.$store.state.paypal.onboardingCompleted;
