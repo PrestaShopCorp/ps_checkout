@@ -160,7 +160,6 @@ services:
     public: true
     arguments:
       - '@ps_checkout.configuration'
-      - '@ps_checkout.accounts.service'
 
   ps_checkout.store.module.psx:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule'
@@ -202,7 +201,6 @@ services:
     public: true
     arguments:
       - '@ps_checkout.persistent.configuration'
-      - '@ps_checkout.repository.prestashop.account'
 
   ps_checkout.step.live:
     class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep'
@@ -311,10 +309,6 @@ services:
 
   ps_checkout.repository.paypal.code:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository'
-    public: true
-
-  ps_checkout.accounts.service:
-    class: 'PrestaShop\AccountsAuth\Service\PsAccountsService'
     public: true
 
   ps_checkout.customer:
