@@ -35,12 +35,8 @@ class Merchant
         $module = \Module::getInstanceByName('ps_checkout');
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
         $paypalAccount = $module->getService('ps_checkout.repository.paypal.account');
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
-        $psAccount = $module->getService('ps_checkout.repository.prestashop.account');
-        $paypalShop = new \PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(\Context::getContext()->link, $psAccount);
-        $paypalCountry = $paypalShop->getMerchantIntegration($paypalAccount->getMerchantId())['body']['merchant_integrations']['country'];
 
-        if (!$lang || strtolower($lang) !== strtolower($paypalCountry)) {
+        if (!$lang || strtolower($lang) !== strtolower($paypalAccount->getMerchantCountry())) {
             return false;
         }
 

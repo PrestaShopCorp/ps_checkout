@@ -48,6 +48,7 @@ class PersistentConfiguration
         try {
             $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_ID_MERCHANT, '');
             $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT, '');
+            $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT, '');
             $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_STATUS, '');
             $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS, '');
             $this->configuration->set(PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS, '');
@@ -70,6 +71,7 @@ class PersistentConfiguration
         try {
             $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_ID_MERCHANT, $paypalAccount->getMerchantId());
             $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT, $paypalAccount->getEmail());
+            $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT, $paypalAccount->getMerchantCountry());
             $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_STATUS, $paypalAccount->getEmailIsVerified());
             $this->configuration->set(PaypalAccount::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS, $paypalAccount->getPaypalPaymentStatus());
             $this->configuration->set(PaypalAccount::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS, $paypalAccount->getCardPaymentStatus());
