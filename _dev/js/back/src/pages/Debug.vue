@@ -46,6 +46,10 @@
               Rounding config:
               <b>{{ roundingSettingsIsCorrect }}</b>
             </li>
+            <li>
+              Overrides exist:
+              <b>{{ overridesExist }}</b>
+            </li>
           </ul>
         </b-card-body>
       </b-card>
@@ -212,6 +216,9 @@
       },
       roundingSettingsIsCorrect() {
         return this.$store.getters.roundingSettingsIsCorrect;
+      },
+      overridesExist() {
+        return this.$store.state.context.overridesExist;
       },
       loggerHttpFormats() {
         return this.$store.state.configuration.logger.httpFormats;
