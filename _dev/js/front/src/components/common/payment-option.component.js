@@ -72,7 +72,7 @@ export class PaymentOptionComponent extends BaseComponent {
 
     return Array.prototype.slice
       .call(this.data.HTMLElementContainer.querySelectorAll('*'))
-      .find((item) => item.innerHTML.trim() === label.trim());
+      .find(item => item.innerHTML.trim() === label.trim());
   }
 
   getSmartButton() {
@@ -81,7 +81,7 @@ export class PaymentOptionComponent extends BaseComponent {
   }
 
   onLabelClick(listener) {
-    this.data.HTMLElementLabel.addEventListener('click', (event) => {
+    this.data.HTMLElementLabel.addEventListener('click', event => {
       event.preventDefault();
       listener(this, event);
     });

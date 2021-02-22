@@ -23,6 +23,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\MerchantDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 
 /**
@@ -127,9 +128,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
     private function checkPSLSignature(array $bodyValues)
     {
         $context = Context::getContext();
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
-        $response = (new Webhook($context->link, $psAccountRepository))->getShopSignature($bodyValues);
+        $response = (new Webhook($context->link))->getShopSignature($bodyValues);
 
         // data return false if no error
         if (200 === $response['httpCode'] && 'VERIFIED' === $response['body']['message']) {
@@ -207,9 +206,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     private function checkExecutionPermissions()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
-        $localShopId = $psAccountRepository->getShopUuid();
+        $localShopId = (new ShopUuidManager())->getForShop((int) Context::getContext()->shop->id);
 
         if ($this->shopId !== $localShopId) {
             throw new PsCheckoutException('shopId wrong', PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_INVALID);

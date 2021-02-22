@@ -74,7 +74,7 @@ class FundingSourceTranslationProvider
                 $this->paymentOptionNames[$fundingSource] = $module->l('Pay with a PayPal account', 'fundingsourcetranslationprovider');
             } elseif ('card' === $fundingSource) {
                 // Specific translation
-                $this->paymentOptionNames[$fundingSource] = $module->l('Pay by Card', 'fundingsourcetranslationprovider');
+                $this->paymentOptionNames[$fundingSource] = $module->l('Pay by Card - 100% secure payments', 'fundingsourcetranslationprovider');
             } else {
                 $this->paymentOptionNames[$fundingSource] = sprintf($payByTranslation, $name);
             }

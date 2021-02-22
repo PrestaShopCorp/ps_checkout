@@ -20,7 +20,7 @@
 .banner-alert {
     padding: .75rem 0 .75rem 2.875rem;
     background-color: #fff;
-    border: solid 2px #c05c67;
+    border: solid 2px #cd9321;
     position: relative;
     margin-bottom: 15px;
 }
@@ -32,8 +32,8 @@
 }
 
 .banner-icon {
-    background-color: #FDE1E1;
-    color: #c05c67;
+    background-color: #f5e9d3;
+    color: #cd9321;
     font-family: Material Icons;
     font-weight: 400;
     font-style: normal;
@@ -90,10 +90,11 @@
 
 .incompatible-list {
     color: #363a41;
+    margin-bottom: 1.5rem !important;
 }
 
 .banner-link {
-    margin-top: 1.5rem !important;
+    margin-left: 1.875rem;
     padding-left: 0 !important;
     font-size: .875rem !important;
     line-height: 1.5 !important;
@@ -111,4 +112,18 @@
 
 a.banner-link:hover {
     color: #25B9D7 !important;
+}
+
+.button-link {
+    /* margin-top: 1.5rem !important; */
+    background-color: #25b9d7;
+    padding: .375rem .838rem;
+    color: #ffffff !important;
+    font-size: .875rem;
+    font-weight: 600;
+}
+
+.button-link:hover {
+    background-color: #3ed2f0;
+    text-decoration: underline;
 }

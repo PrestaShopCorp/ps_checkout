@@ -137,7 +137,6 @@ services:
     public: true
     arguments:
       - '@ps_checkout.configuration'
-      - '@ps_checkout.accounts.service'
 
   ps_checkout.store.module.psx:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule'
@@ -178,10 +177,15 @@ services:
     public: true
     arguments:
       - '@ps_checkout.persistent.configuration'
-      - '@ps_checkout.repository.prestashop.account'
 
   ps_checkout.step.live:
     class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep'
+    public: true
+    arguments:
+      - '@ps_checkout.configuration'
+
+  ps_checkout.step.value:
+    class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner'
     public: true
     arguments:
       - '@ps_checkout.configuration'
@@ -201,6 +205,7 @@ services:
       - '@ps_checkout.context.prestashop'
       - '@ps_checkout.paypal.configuration'
       - '@ps_checkout.step.live'
+      - '@ps_checkout.step.value'
       - '@ps_checkout.translations.translations'
       - '@ps_checkout.context.shop'
       - '@ps_checkout.shop.provider'
@@ -280,12 +285,4 @@ services:
 
   ps_checkout.repository.paypal.code:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository'
-    public: true
-
-  ps_checkout.accounts.service:
-    class: 'PrestaShop\AccountsAuth\Service\PsAccountsService'
-    public: true
-
-  ps_checkout.handler.exception:
-    class: 'PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler'
     public: true
