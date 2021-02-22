@@ -115,9 +115,11 @@ class GenericClient
                 $exception
             );
             $exceptionHandler->handle($e, false);
+
             return $this->handleException($e);
         } catch (\Exception $exception) {
             $exceptionHandler->handle($exception, false);
+
             return $this->handleException($exception);
         }
 
