@@ -330,13 +330,13 @@ class ContextModule implements PresenterInterface
         $result = false;
 
         $moduleOverridePath = _PS_OVERRIDE_DIR_ . 'modules';
-        $themePath = _PS_ALL_THEMES_DIR_ . '/' . $this->psContext->getCurrentThemeName();
+        $themeModuleOverridePath = _PS_ALL_THEMES_DIR_ . $this->psContext->getCurrentThemeName() . '/modules';
 
         foreach (scandir($moduleOverridePath) as $directoryName) {
             $result |= $directoryName === $this->moduleName;
         }
 
-        foreach (scandir("$themePath/modules") as $directoryName) {
+        foreach (scandir($themeModuleOverridePath) as $directoryName) {
             $result |= $directoryName === $this->moduleName;
         }
 
