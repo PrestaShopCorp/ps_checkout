@@ -329,20 +329,15 @@ class ContextModule implements PresenterInterface
     {
         $result = false;
 
-        $moduleName = 'ps_checkout';
-        $moduleOverridePath = _PS_CORE_DIR_ . '/override/modules';
-        $themesPath = _PS_CORE_DIR_ . '/themes';
+        $moduleOverridePath = _PS_OVERRIDE_DIR_ . 'modules';
+        $themePath = _PS_ALL_THEMES_DIR_ . '/' . $this->psContext->getCurrentThemeName();
 
         foreach (scandir($moduleOverridePath) as $directoryName) {
-            $result |= $directoryName === $moduleName;
+            $result |= $directoryName === $this->moduleName;
         }
 
-        foreach (scandir($themesPath) as $themeDirectory) {
-            if (is_dir("$themesPath/$themeDirectory") && $themeDirectory !== '.' && $themeDirectory !== '..') {
-                foreach (scandir("$themesPath/$themeDirectory/modules") as $directoryName) {
-                    $result |= $directoryName === $moduleName;
-                }
-            }
+        foreach (scandir("$themePath/modules") as $directoryName) {
+            $result |= $directoryName === $this->moduleName;
         }
 
         return (bool) $result;
