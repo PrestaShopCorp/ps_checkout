@@ -210,13 +210,14 @@ class ValidateOrder
                         $orderPayment = $orderPaymentCollection->getFirst();
 
                         if (false !== $orderPayment) {
-                            $orderPayment->transaction_id = $transactionIdentifier;
-                            $orderPayment->payment_method = $fundingSourceTranslationProvider->getPaymentMethodName($psCheckoutCart->paypal_funding);
-                            try {
-                                $orderPayment->save();
-                            } catch (\Exception $exception) {
-                                throw new PsCheckoutException('Unable to save PrestaShop OrderPayment', PsCheckoutException::PRESTASHOP_ORDER_PAYMENT, $exception);
-                            }
+                            \Db::getInstance()->update(
+                                'order_payment',
+                                [
+                                    'payment_method' => pSQL($fundingSourceTranslationProvider->getPaymentMethodName($psCheckoutCart->paypal_funding)),
+                                    'transaction_id' => pSQL($transactionIdentifier),
+                                ],
+                                'id_order_payment = ' . (int) $orderPayment->id
+                            );
                         }
                     }
                 }
