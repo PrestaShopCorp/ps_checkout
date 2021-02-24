@@ -69,4 +69,9 @@ class PrestaShopContext
     {
         return $this->context->currency !== null ? $this->context->currency->iso_code : 'EUR';
     }
+
+    public function getCurrentThemeName()
+    {
+        return $this->context->shop->theme_name;
+    }
 }
