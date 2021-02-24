@@ -43,6 +43,10 @@
               <b>{{ shopId }}</b>
             </li>
             <li>
+              Merchant ID:
+              <b>{{ merchantId }}</b>
+            </li>
+            <li>
               Rounding config:
               <b>{{ roundingSettingsIsCorrect }}</b>
             </li>
@@ -225,6 +229,9 @@
       },
       loggerLevels() {
         return this.$store.state.configuration.logger.levels;
+      },
+      merchantId() {
+        return this.$store.state.paypal.idMerchant;
       },
       loggerLevel: {
         get() {
