@@ -29,7 +29,7 @@
         {/if}
 
             <div class="banner-text">
-                <h2>{l s="PrestaShop Checkout transactions won\'t work in some of your configurated {$codesType}, but there is a solution !" mod='ps_checkout'}</h2>
+                <h2>{l s="PrestaShop Checkout transactions won't work in some of your configured {$codesType}, but there is a solution !" mod='ps_checkout'}</h2>
 
                 <p class="banner-upgrade-info">
                     {l s='Please upgrade your settings for :' mod='ps_checkout'}
