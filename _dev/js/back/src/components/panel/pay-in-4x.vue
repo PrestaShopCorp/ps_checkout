@@ -20,7 +20,7 @@
   <b-card no-body>
     <template v-slot:header>
       <i class="material-icons">picture_in_picture</i>
-      Pay in 4x messaging banner
+      {{ $t('panel.pay-in-4x.title') }}
     </template>
 
     <b-card-body>
@@ -87,6 +87,7 @@
             </b-form-row>
           </b-form-group>
 
+          <!-- Legal text provided by PayPal displayed only in FR -->
           <div class="text-muted small">
             Affichez le Paiement en 4X PayPal sur votre site.
             <br />
@@ -116,8 +117,7 @@
             {{ $t('panel.express-checkout.alertTitle') }}
           </h4>
           <p>
-            Displaying this message has shown a better conversion rate and a
-            raise of Average Order Value
+            {{ $t('panel.pay-in-4x.alert-content') }}
           </p>
         </b-alert>
       </b-col>
