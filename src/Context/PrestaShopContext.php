@@ -59,4 +59,9 @@ class PrestaShopContext
     {
         return $this->context->shop->id;
     }
+
+    public function getCurrentThemeName()
+    {
+        return $this->context->shop->theme_name;
+    }
 }
