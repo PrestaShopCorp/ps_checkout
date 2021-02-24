@@ -39,6 +39,10 @@ export class PrestashopPs1_7Service {
     return step && step.classList.contains('-current');
   }
 
+  static isIframeProductPage() {
+    return false;
+  }
+
   static isProductPage() {
     return document.body.id === 'product';
   }
@@ -52,4 +56,6 @@ export class PrestashopPs1_7Service {
   }
 
   static onUpdatePaymentMethods() {}
+
+  static onUpdatedShoppingCartExtra() {}
 }
