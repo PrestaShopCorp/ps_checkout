@@ -43,8 +43,16 @@
               <b>{{ shopId }}</b>
             </li>
             <li>
+              Merchant ID:
+              <b>{{ merchantId }}</b>
+            </li>
+            <li>
               Rounding config:
               <b>{{ roundingSettingsIsCorrect }}</b>
+            </li>
+            <li>
+              Overrides exist:
+              <b>{{ overridesExist }}</b>
             </li>
           </ul>
         </b-card-body>
@@ -213,11 +221,17 @@
       roundingSettingsIsCorrect() {
         return this.$store.getters.roundingSettingsIsCorrect;
       },
+      overridesExist() {
+        return this.$store.state.context.overridesExist;
+      },
       loggerHttpFormats() {
         return this.$store.state.configuration.logger.httpFormats;
       },
       loggerLevels() {
         return this.$store.state.configuration.logger.levels;
+      },
+      merchantId() {
+        return this.$store.state.paypal.idMerchant;
       },
       loggerLevel: {
         get() {

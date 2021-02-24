@@ -22,7 +22,7 @@
       <ActivePayment />
     </b-container>
 
-    <b-container v-if="shopIs17" class="mb-4">
+    <b-container class="mb-4">
       <ExpressCheckout />
     </b-container>
 
@@ -49,11 +49,6 @@
       ExpressCheckout,
       ButtonCustomization,
       FeatureIncoming
-    },
-    computed: {
-      shopIs17() {
-        return this.$store.getters.shopIs17;
-      }
     }
   };
 </script>
