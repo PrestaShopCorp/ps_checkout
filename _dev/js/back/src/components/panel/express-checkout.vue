@@ -58,7 +58,7 @@
                   ({{ $t('panel.express-checkout.recommended') }})
                 </div>
               </b-col>
-              <b-col>
+              <b-col v-if="shopIs17">
                 <PSCheckbox
                   id="checkout-page"
                   v-model="checkoutPageIsActive"
@@ -160,6 +160,9 @@
         set(payload) {
           this.$store.dispatch('toggleECProductPage', payload);
         }
+      },
+      shopIs17() {
+        return this.$store.getters.shopIs17;
       }
     },
     methods: {

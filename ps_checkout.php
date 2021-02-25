@@ -59,6 +59,7 @@ class Ps_checkout extends PaymentModule
         'actionCartUpdateQuantityBefore',
         'header',
         'displayInvoiceLegalFreeText',
+        'actionObjectProductInCartDeleteAfter',
     ];
 
     /**
@@ -75,6 +76,8 @@ class Ps_checkout extends PaymentModule
      * @var array
      */
     const HOOK_LIST_16 = [
+        'actionBeforeCartUpdateQty',
+        'actionAfterDeleteProductInCart',
         'displayPayment',
     ];
 
@@ -469,6 +472,33 @@ class Ps_checkout extends PaymentModule
         return $this->display(__FILE__, '/views/templates/admin/configuration.tpl');
     }
 
+    /**
+     * This hook is called only since PrestaShop 1.7.0.0
+     */
+    public function hookActionObjectProductInCartDeleteAfter()
+    {
+        $this->hookActionCartUpdateQuantityBefore();
+    }
+
+    /**
+     * This hook is called only in PrestaShop 1.6.1 to 1.6.1.24
+     * Deprecated since PrestaShop 1.7.0.0
+     */
+    public function hookActionAfterDeleteProductInCart()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+
+        if ($shopContext->isShop17()) {
+            return;
+        }
+
+        $this->hookActionCartUpdateQuantityBefore();
+    }
+
+    /**
+     * This hook is called only since PrestaShop 1.7.0.0
+     */
     public function hookActionCartUpdateQuantityBefore()
     {
         if (false === Validate::isLoadedObject($this->context->cart)) {
@@ -489,6 +519,22 @@ class Ps_checkout extends PaymentModule
             $psCheckoutCartRepository->remove($psCheckoutCart);
             $this->context->cookie->__unset('paypalEmail');
         }
+    }
+
+    /**
+     * This hook is called only in PrestaShop 1.6.1 to 1.6.1.24
+     * Deprecated since PrestaShop 1.7.0.0
+     */
+    public function hookActionBeforeCartUpdateQty()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+
+        if ($shopContext->isShop17()) {
+            return;
+        }
+
+        $this->hookActionCartUpdateQuantityBefore();
     }
 
     /**
@@ -770,7 +816,7 @@ class Ps_checkout extends PaymentModule
     {
         $controller = Tools::getValue('controller');
 
-        if (false === in_array($controller, ['cart', 'product', 'order', 'orderopc'], true)
+        if (false === in_array($controller, ['cart', 'product', 'order', 'orderopc', 'authentication'], true)
             || false === $this->merchantIsValid()
         ) {
             return;
@@ -843,7 +889,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'ValidateUrl' => $this->context->link->getModuleLink($this->name, 'validate', [], true),
             $this->name . 'CancelUrl' => $this->context->link->getModuleLink($this->name, 'cancel', [], true),
             $this->name . 'ExpressCheckoutUrl' => $this->context->link->getModuleLink($this->name, 'ExpressCheckout', [], true),
-            $this->name . 'CheckoutUrl' => $this->context->link->getPageLink('order', true, $this->context->language->id),
+            $this->name . 'CheckoutUrl' => $this->getCheckoutPageUrl(),
             $this->name . 'ConfirmUrl' => $this->context->link->getPageLink('order-confirmation', true, (int) $this->context->language->id),
             $this->name . 'PayPalSdkUrl' => $payPalSdkLinkBuilder->buildLink(),
             $this->name . 'PayPalClientToken' => $payPalClientToken,
@@ -1299,5 +1345,43 @@ class Ps_checkout extends PaymentModule
         $this->trackModuleAction($track);
 
         return $this->display(__FILE__, $template);
+    }
+
+    /**
+     * Provide checkout page link
+     *
+     * @return string
+     */
+    private function getCheckoutPageUrl()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+
+        if ($shopContext->isShop17()) {
+            return $this->context->link->getPageLink(
+                'order',
+                true,
+                (int) $this->context->language->id
+            );
+        }
+
+        // PrestaShop 1.6 legacy native one page checkout
+        if (1 === (int) Configuration::get('PS_ORDER_PROCESS_TYPE')) {
+            return $this->context->link->getPageLink(
+                'order-opc',
+                true,
+                (int) $this->context->language->id
+            );
+        }
+
+        // PrestaShop 1.6 standard checkout
+        return $this->context->link->getPageLink(
+            'order',
+            true,
+            (int) $this->context->language->id,
+            [
+                'step' => 1,
+            ]
+        );
     }
 }

@@ -26,7 +26,7 @@
       <PayIn4X />
     </b-container>
 
-    <b-container v-if="shopIs17" class="mb-4">
+    <b-container class="mb-4">
       <ExpressCheckout />
     </b-container>
 

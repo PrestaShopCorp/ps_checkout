@@ -48,6 +48,10 @@ export class PrestashopService {
     return !!this.instance.isOrderPaymentStepPage();
   }
 
+  isIframeProductPage() {
+    return !!this.instance.isIframeProductPage();
+  }
+
   isProductPage() {
     return !!this.instance.isProductPage();
   }
@@ -66,5 +70,9 @@ export class PrestashopService {
 
   onUpdatePaymentMethods(listener) {
     this.instance.onUpdatePaymentMethods(listener);
+  }
+
+  onUpdatedShoppingCartExtra(listener) {
+    this.instance.onUpdatedShoppingCartExtra(listener);
   }
 }
