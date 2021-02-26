@@ -16,7 +16,7 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
-{if isset($totalCartPrice) and $payIn4XisProductPageEnabled == true}
+{if isset($totalCartPrice) and $payIn4XisOrderPageEnabled == true}
   {if not isset($content_only) or $content_only === 0}
     <div
       style='display: none;'

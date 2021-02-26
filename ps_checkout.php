@@ -469,7 +469,7 @@ class Ps_checkout extends PaymentModule
         $totalCartPrice = $this->context->cart->getSummaryDetails();
         $this->context->smarty->assign([
             'totalCartPrice' => $totalCartPrice['total_price'],
-            'payIn4XisProductPageEnabled' => $payIn4XService->isProductPageEnabled(),
+            'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageEnabled(),
         ]);
 
         return $this->display(__FILE__, '/views/templates/hook/displayCartTotalPriceLabel.tpl');
