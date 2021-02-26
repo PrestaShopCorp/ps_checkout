@@ -30,9 +30,10 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_10_0($module)
 {
-    if (true === (bool) version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
-        // Register hooks only for PrestaShop 1.7, used for Banner Pay in 4X
-        $module->registerHook('displayProductPriceBlock');
+    $module->registerHook('displayProductPriceBlock');
+    if (false === (bool) version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+        // Register hooks only for PrestaShop 1.6, used for Banner Pay in 4X
+        $module->registerHook('displayCartTotalPriceLabel');
     }
 
     return true;
