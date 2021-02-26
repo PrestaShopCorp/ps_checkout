@@ -46,7 +46,7 @@ jobs:
           host: ${{ secrets.SSH_HOST_INTEGRATION }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          script: sudo su -c 'docker exec $(docker ps -aqf "name=${{ secrets.CONTAINER_NAME }}") rm -rf modules/${{ env.MODULE_NAME }}'
+          script: sudo su -c 'docker exec $(docker ps -qf "name=${{ secrets.CONTAINER_NAME }}") rm -rf modules/${{ env.MODULE_NAME }}'
 
       - name: Copy module
         uses: appleboy/scp-action@master
@@ -74,7 +74,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            sudo su -c 'docker exec $(docker ps -aqf "name=${{ secrets.CONTAINER_NAME }}") bin/console prestashop:module install ${{ env.MODULE_NAME }}'
+            sudo su -c 'docker exec $(docker ps -qf "name=${{ secrets.CONTAINER_NAME }}") bin/console prestashop:module install ${{ env.MODULE_NAME }}'
 
       - name: Clear cache
         uses: appleboy/ssh-action@master
@@ -83,5 +83,5 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            sudo su -c 'docker exec $(docker ps -aqf "name=${{ secrets.CONTAINER_NAME }}") bin/console cache:cl'
-            sudo su -c 'docker exec $(docker ps -aqf "name=${{ secrets.CONTAINER_NAME }}") chmod -R 777 var/cache var/logs'
+            sudo su -c 'docker exec $(docker ps -qf "name=${{ secrets.CONTAINER_NAME }}") bin/console cache:cl'
+            sudo su -c 'docker exec $(docker ps -qf "name=${{ secrets.CONTAINER_NAME }}") chmod -R 777 var/cache var/logs'
