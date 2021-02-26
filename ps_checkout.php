@@ -42,6 +42,7 @@ class Ps_checkout extends PaymentModule
         'actionAdminControllerSetMedia',
         'displayPaymentTop',
         'displayPaymentByBinaries',
+        'displayProductPriceBlock',
         'actionFrontControllerSetMedia',
     ];
 
@@ -54,7 +55,6 @@ class Ps_checkout extends PaymentModule
         'paymentOptions',
         'displayExpressCheckout',
         'displayFooterProduct',
-        'displayProductPriceBlock',
         'displayPersonalInformationTop',
         'actionCartUpdateQuantityBefore',
         'header',
@@ -79,6 +79,7 @@ class Ps_checkout extends PaymentModule
         'actionBeforeCartUpdateQty',
         'actionAfterDeleteProductInCart',
         'displayPayment',
+        'displayCartTotalPriceLabel',
     ];
 
     public $configurationList = [
@@ -425,20 +426,55 @@ class Ps_checkout extends PaymentModule
     }
 
     /**
-     * Express checkout on the product page
+     * Pay in 4x banner in the product page
      */
     public function hookDisplayProductPriceBlock($params)
     {
         if ($params['type'] === 'weight' && 'product' === Tools::getValue('controller')) {
+            if (false === Validate::isLoadedObject($this->context->cart)) {
+                return;
+            }
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+            $shopContext = $this->getService('ps_checkout.context.shop');
+
             /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
             $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
 
+            $totalCartPrice = $this->context->cart->getSummaryDetails();
             $this->context->smarty->assign([
+                'totalCartPrice' => $totalCartPrice['total_price'],
                 'payIn4XisProductPageEnabled' => $payIn4XService->isProductPageEnabled(),
             ]);
 
             return $this->display(__FILE__, '/views/templates/hook/displayProductPriceBlock.tpl');
         }
+    }
+
+    /**
+     * Pay in 4x banner in the cart page for 1.6
+     */
+    public function hookDisplayCartTotalPriceLabel($params)
+    {
+//         if ($params['type'] === 'weight' && 'product' === Tools::getValue('controller')) {
+            if (false === Validate::isLoadedObject($this->context->cart)) {
+                return;
+            }
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+            $shopContext = $this->getService('ps_checkout.context.shop');
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
+            $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
+
+            $totalCartPrice = $this->context->cart->getSummaryDetails();
+            $this->context->smarty->assign([
+                'totalCartPrice' => $totalCartPrice['total_price'],
+                'payIn4XisProductPageEnabled' => $payIn4XService->isProductPageEnabled(),
+            ]);
+
+            return $this->display(__FILE__, '/views/templates/hook/displayCartTotalPriceLabel.tpl');
+//         }
     }
 
     public function getContent()
