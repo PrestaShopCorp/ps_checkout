@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Handler;
 
 use Exception;
-use Module;
 use Raven_Client;
 
 class ExceptionHandler
@@ -31,15 +30,10 @@ class ExceptionHandler
      */
     protected $client;
 
-    public function __construct()
+    public function __construct(\Ps_checkout $module)
     {
-        /** @var \Ps_checkout $module */
-        $module = Module::getInstanceByName('ps_checkout');
-        /** @var \PrestaShop\Module\PrestashopCheckout\Environment\SentryEnv $env */
-        $env = $module->getService('ps_checkout.env.sentry');
-
         $this->client = new Raven_Client(
-            $env->getKey(),
+            $_ENV['PS_CHECKOUT_SENTRY_DSN_MODULE'],
             [
                 'level' => 'warning',
                 'tags' => [

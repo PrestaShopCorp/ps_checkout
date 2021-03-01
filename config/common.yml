@@ -286,3 +286,9 @@ services:
   ps_checkout.repository.paypal.code:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository'
     public: true
+
+  ps_checkout.handler.exception:
+    class: 'PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler'
+    public: true
+    arguments:
+      - '@ps_checkout.module'
