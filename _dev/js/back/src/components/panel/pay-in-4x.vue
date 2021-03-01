@@ -20,7 +20,7 @@
   <b-card no-body>
     <template v-slot:header>
       <i class="material-icons">picture_in_picture</i>
-      {{ $t('panel.express-checkout.title') }}
+      {{ $t('panel.pay-in-4x.title') }}
     </template>
 
     <b-card-body>
@@ -58,29 +58,6 @@
                   ({{ $t('panel.express-checkout.recommended') }})
                 </div>
               </b-col>
-              <b-col v-if="shopIs17">
-                <PSCheckbox
-                  id="checkout-page"
-                  v-model="checkoutPageIsActive"
-                  class="mb-2"
-                  :centered="true"
-                />
-                <img
-                  @click="toggleCheckoutPage()"
-                  v-if="checkoutPageIsActive"
-                  class="active-img mb-2"
-                  src="@/assets/images/preview_checkout-page_active.png"
-                  alt=""
-                />
-                <img
-                  @click="toggleCheckoutPage()"
-                  v-else
-                  class="mb-2"
-                  src="@/assets/images/preview_checkout-page_inactive.png"
-                  alt=""
-                />
-                <div>{{ $t('panel.express-checkout.checkoutPage') }}</div>
-              </b-col>
               <b-col>
                 <PSCheckbox
                   id="product-page"
@@ -103,17 +80,42 @@
                   alt=""
                 />
                 <div>{{ $t('panel.express-checkout.productPage') }}</div>
+                <div class="text-muted">
+                  ({{ $t('panel.express-checkout.recommended') }})
+                </div>
               </b-col>
             </b-form-row>
           </b-form-group>
 
+          <!-- Legal text provided by PayPal displayed only in FR -->
           <div class="text-muted small">
-            {{ $t('panel.express-checkout.shippingCost') }}
+            Affichez le Paiement en 4X PayPal sur votre site.
+            <br />
+            <br />
+            Le Paiement en 4X PayPal permet aux consommateurs français de payer
+            en 4 versements égaux. Vous pouvez promouvoir le Paiement en 4X
+            PayPal uniquement si vous êtes un commerçant basé en France, avec un
+            site internet en français et une intégration PayPal standard. Les
+            marchands ayant l’outil Vaulting (coffre-fort numérique) ou une
+            intégration de paiements récurrents/abonnement, ainsi que ceux
+            présentant certaines activités (vente de biens numériques / de biens
+            non physiques) ne sont pas éligibles pour promouvoir le Paiement en
+            4X PayPal.
+            <br />
+            <br />
+            Nous afficherons des messages sur votre site pour promouvoir le
+            Paiement en 4X PayPal. Vous ne pouvez pas promouvoir le Paiement en
+            4X PayPal avec un autre contenu, quel qu’il soit.
+            <a
+              href="https://www.paypal.com/fr/business/buy-now-pay-later"
+              target="_blank"
+            >
+              En savoir plus
+            </a>
           </div>
         </b-form>
       </b-col>
     </b-card-body>
-
     <b-card-body>
       <b-col sm="12" md="10" lg="10" class="m-auto">
         <b-alert variant="info" show>
@@ -121,7 +123,7 @@
             {{ $t('panel.express-checkout.alertTitle') }}
           </h4>
           <p>
-            {{ $t('panel.express-checkout.alertContent') }}
+            {{ $t('panel.pay-in-4x.alert-content') }}
           </p>
         </b-alert>
       </b-col>
@@ -130,6 +132,7 @@
 </template>
 
 <script>
+  // TODO: Add translations to template
   import PSCheckbox from '@/components/form/checkbox';
 
   export default {
@@ -139,44 +142,30 @@
     computed: {
       orderPageIsActive: {
         get() {
-          return this.$store.state.configuration.expressCheckout.orderPage;
+          return this.$store.state.configuration.payIn4X.orderPage;
         },
         set(payload) {
-          this.$store.dispatch('toggleECOrderPage', payload);
-        }
-      },
-      checkoutPageIsActive: {
-        get() {
-          return this.$store.state.configuration.expressCheckout.checkoutPage;
-        },
-        set(payload) {
-          this.$store.dispatch('toggleECCheckoutPage', payload);
+          this.$store.dispatch('togglePayIn4XOrderPage', payload);
         }
       },
       productPageIsActive: {
         get() {
-          return this.$store.state.configuration.expressCheckout.productPage;
+          return this.$store.state.configuration.payIn4X.productPage;
         },
         set(payload) {
-          this.$store.dispatch('toggleECProductPage', payload);
+          this.$store.dispatch('togglePayIn4XProductPage', payload);
         }
-      },
-      shopIs17() {
-        return this.$store.getters.shopIs17;
       }
     },
     methods: {
       toggleOrderPage() {
-        this.$store.dispatch('toggleECOrderPage', !this.orderPageIsActive);
-      },
-      toggleCheckoutPage() {
-        this.$store.dispatch(
-          'toggleECCheckoutPage',
-          !this.checkoutPageIsActive
-        );
+        this.$store.dispatch('togglePayIn4XOrderPage', !this.orderPageIsActive);
       },
       toggleProductPage() {
-        this.$store.dispatch('toggleECProductPage', !this.productPageIsActive);
+        this.$store.dispatch(
+          'togglePayIn4XProductPage',
+          !this.productPageIsActive
+        );
       }
     }
   };

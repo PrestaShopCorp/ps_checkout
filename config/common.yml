@@ -121,6 +121,14 @@ services:
     arguments:
       - '@ps_checkout.configuration'
 
+  ps_checkout.pay_in_4x.configuration:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration'
+    public: true
+    arguments:
+      - '@ps_checkout.configuration'
+      - '@ps_checkout.customer'
+      - '@ps_checkout.merchant'
+
   ps_checkout.api.firebase.auth:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth'
     public: true
@@ -144,6 +152,7 @@ services:
     arguments:
       - '@ps_checkout.repository.paypal.account'
       - '@ps_checkout.paypal.configuration'
+      - '@ps_checkout.pay_in_4x.configuration'
       - '@ps_checkout.funding_source.configuration.repository'
 
   ps_checkout.repository.prestashop.account:
@@ -175,6 +184,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule'
     public: true
     arguments:
+      - '@ps_checkout.pay_in_4x.configuration'
       - '@ps_checkout.express_checkout.configuration'
       - '@ps_checkout.paypal.configuration'
       - '@ps_checkout.funding_source.provider'
@@ -299,4 +309,14 @@ services:
 
   ps_checkout.repository.paypal.code:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository'
+    public: true
+
+  ps_checkout.customer:
+    class: 'PrestaShop\Module\PrestashopCheckout\Customer'
+    public: true
+    arguments:
+      - '@ps_checkout.context.prestashop'
+
+  ps_checkout.merchant:
+    class: 'PrestaShop\Module\PrestashopCheckout\Merchant'
     public: true

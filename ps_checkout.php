@@ -42,6 +42,7 @@ class Ps_checkout extends PaymentModule
         'actionAdminControllerSetMedia',
         'displayPaymentTop',
         'displayPaymentByBinaries',
+        'displayProductPriceBlock',
         'actionFrontControllerSetMedia',
     ];
 
@@ -78,6 +79,7 @@ class Ps_checkout extends PaymentModule
         'actionBeforeCartUpdateQty',
         'actionAfterDeleteProductInCart',
         'displayPayment',
+        'displayCartTotalPriceLabel',
     ];
 
     public $configurationList = [
@@ -93,6 +95,8 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_EC_ORDER_PAGE' => false,
         'PS_CHECKOUT_EC_CHECKOUT_PAGE' => false,
         'PS_CHECKOUT_EC_PRODUCT_PAGE' => false,
+        'PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE' => false,
+        'PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE' => false,
         'PS_PSX_FIREBASE_EMAIL' => '',
         'PS_PSX_FIREBASE_ID_TOKEN' => '',
         'PS_PSX_FIREBASE_LOCAL_ID' => '',
@@ -113,7 +117,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.9.0';
+    const VERSION = '2.10.0';
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -134,7 +138,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.9.0';
+        $this->version = '2.10.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->currencies = true;
@@ -403,6 +407,13 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayExpressCheckout()
     {
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
+        $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
+
+        $this->context->smarty->assign([
+            'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageEnabled(),
+        ]);
+
         return $this->display(__FILE__, '/views/templates/hook/displayExpressCheckout.tpl');
     }
 
@@ -412,6 +423,56 @@ class Ps_checkout extends PaymentModule
     public function hookDisplayFooterProduct()
     {
         return $this->display(__FILE__, '/views/templates/hook/displayFooterProduct.tpl');
+    }
+
+    /**
+     * Pay in 4x banner in the product page
+     */
+    public function hookDisplayProductPriceBlock($params)
+    {
+        if ($params['type'] === 'weight' && 'product' === Tools::getValue('controller')) {
+            if (false === Validate::isLoadedObject($this->context->cart)) {
+                return;
+            }
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+            $shopContext = $this->getService('ps_checkout.context.shop');
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
+            $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
+
+            $totalCartPrice = $this->context->cart->getSummaryDetails();
+            $this->context->smarty->assign([
+                'totalCartPrice' => $totalCartPrice['total_price'],
+                'payIn4XisProductPageEnabled' => $payIn4XService->isProductPageEnabled(),
+            ]);
+
+            return $this->display(__FILE__, '/views/templates/hook/displayProductPriceBlock.tpl');
+        }
+    }
+
+    /**
+     * Pay in 4x banner in the cart page for 1.6
+     */
+    public function hookDisplayCartTotalPriceLabel($params)
+    {
+        if (false === Validate::isLoadedObject($this->context->cart)) {
+            return;
+        }
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
+        $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
+
+        $totalCartPrice = $this->context->cart->getSummaryDetails();
+        $this->context->smarty->assign([
+            'totalCartPrice' => $totalCartPrice['total_price'],
+            'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageEnabled(),
+        ]);
+
+        return $this->display(__FILE__, '/views/templates/hook/displayCartTotalPriceLabel.tpl');
     }
 
     public function getContent()
