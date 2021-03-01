@@ -1,4 +1,5 @@
-{**
+<?php
+/**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
@@ -15,23 +16,30 @@
  * @author    PrestaShop SA <contact@prestashop.com>
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- *}
+ */
 
-<div id="js-ps_checkout-express-button-container">
-</div>
+namespace PrestaShop\Module\PrestashopCheckout;
 
-{if isset($cart) and $payIn4XisOrderPageEnabled == true}
-  <hr />
-  <div
-    data-pp-message
-    data-pp-placement="cart"
-    data-pp-style-layout="text"
-    data-pp-style-logo-type="inline"
-    data-pp-style-text-color="black"
-    data-pp-amount="{$cart.totals.total.amount}"></div>
-  <script>
-    window.ps_checkoutPayPalSdkInstance
-      && window.ps_checkoutPayPalSdkInstance.Messages
-      && window.ps_checkoutPayPalSdkInstance.Messages().render('[data-pp-message]');
-  </script>
-{/if}
+class Merchant
+{
+    /**
+     * Get merchant country by PayPal
+     *
+     * @param string $lang ISO 639-1 code
+     *
+     * @return bool
+     */
+    public function isLang($lang)
+    {
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
+        $paypalAccount = $module->getService('ps_checkout.repository.paypal.account');
+
+        if (!$lang || strtolower($lang) !== strtolower($paypalAccount->getMerchantCountry())) {
+            return false;
+        }
+
+        return true;
+    }
+}

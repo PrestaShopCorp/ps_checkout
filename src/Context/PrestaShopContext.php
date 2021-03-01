@@ -60,6 +60,16 @@ class PrestaShopContext
         return $this->context->shop->id;
     }
 
+    /**
+     * Get the currency ISO code (ISO 4217) from the context
+     *
+     * @return string
+     */
+    public function getCurrencyIsoCode()
+    {
+        return $this->context->currency !== null ? $this->context->currency->iso_code : 'EUR';
+    }
+
     public function getCurrentThemeName()
     {
         return $this->context->shop->theme_name;

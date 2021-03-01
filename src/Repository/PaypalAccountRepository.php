@@ -52,7 +52,8 @@ class PaypalAccountRepository
             $this->getMerchantEmail(),
             $this->getMerchantEmailStatus(),
             $this->getPaypalPaymentStatus(),
-            $this->getCardHostedFieldsStatus()
+            $this->getCardHostedFieldsStatus(),
+            $this->getMerchantCountry()
         );
     }
 
@@ -127,6 +128,16 @@ class PaypalAccountRepository
     public function getMerchantEmail()
     {
         return $this->configuration->get(PaypalAccount::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT);
+    }
+
+    /**
+     * Get the merchant country ISO code
+     *
+     * @return string|bool
+     */
+    public function getMerchantCountry()
+    {
+        return $this->configuration->get(PaypalAccount::PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT);
     }
 
     /**
