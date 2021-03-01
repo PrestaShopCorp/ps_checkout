@@ -105,7 +105,13 @@
             <br />
             Nous afficherons des messages sur votre site pour promouvoir le
             Paiement en 4X PayPal. Vous ne pouvez pas promouvoir le Paiement en
-            4X PayPal avec un autre contenu, quel qu’il soit
+            4X PayPal avec un autre contenu, quel qu’il soit.
+            <a
+              href="https://www.paypal.com/fr/business/buy-now-pay-later"
+              target="_blank"
+            >
+              En savoir plus
+            </a>
           </div>
         </b-form>
       </b-col>
