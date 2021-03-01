@@ -44,7 +44,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
      */
     private $exceptionHandler;
 
-
     public function __construct()
     {
         parent::__construct();

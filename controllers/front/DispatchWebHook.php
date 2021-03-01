@@ -77,7 +77,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     private $exceptionHandler;
 
-
     public function __construct()
     {
         parent::__construct();

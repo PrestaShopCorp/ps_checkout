@@ -36,7 +36,6 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
      */
     private $exceptionHandler;
 
-
     public function __construct()
     {
         parent::__construct();
