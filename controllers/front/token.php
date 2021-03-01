@@ -19,6 +19,7 @@
  */
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
 
 /**
  * This controller receive ajax call to retrieve a PayPal Client Token
@@ -29,6 +30,19 @@ class Ps_CheckoutTokenModuleFrontController extends ModuleFrontController
      * @var Ps_checkout
      */
     public $module;
+
+    /**
+     * @var ExceptionHandler
+     */
+    private $exceptionHandler;
+
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->exceptionHandler = $this->module->getService('ps_checkout.handler.exception');
+    }
 
     /**
      * @see FrontController::postProcess()
@@ -75,6 +89,8 @@ class Ps_CheckoutTokenModuleFrontController extends ModuleFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
+            $this->exceptionHandler->handle($exception, false);
+
             /* @var \Psr\Log\LoggerInterface logger */
             $logger = $this->module->getService('ps_checkout.logger');
             $logger->error(

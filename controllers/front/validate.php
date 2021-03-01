@@ -20,6 +20,7 @@
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
 use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 
 /**
@@ -36,6 +37,19 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
      * @var string
      */
     private $paypalOrderId;
+
+    /**
+     * @var ExceptionHandler
+     */
+    private $exceptionHandler;
+
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->exceptionHandler = $this->module->getService('ps_checkout.handler.exception');
+    }
 
     /**
      * @see FrontController::postProcess()
@@ -231,6 +245,8 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
         if (false === Validate::isGenericName($paypalOrder)) {
             $paypalOrder = 'invalid';
         }
+
+        $this->exceptionHandler->handle($exception, false);
 
         if ('PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException' === $exceptionClass) {
             switch ($exception->getCode()) {
