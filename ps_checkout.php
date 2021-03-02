@@ -417,6 +417,7 @@ class Ps_checkout extends PaymentModule
 
         $count = 0;
         $paymentOptions = [];
+
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {
             if ($count === 8) {
                 break;
