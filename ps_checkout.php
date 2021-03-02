@@ -431,7 +431,6 @@ class Ps_checkout extends PaymentModule
                 array_pop($paymentOptions);
                 --$count;
             }
-
             $paymentOptions[] = $fundingSource->name;
         }
 
