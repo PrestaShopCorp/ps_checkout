@@ -33,7 +33,7 @@ function upgrade_module_2_12_0($module)
     if (true === (bool) version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
         // Register hooks only for PrestaShop 1.7.0, used for payment methods logo block
         $module->registerHook('displayProductAdditionalInfo');
-        $module->updatePosition(Hook::getIdByName('displayProductAdditionalInfo'), false, 1)
+        $module->updatePosition(Hook::getIdByName('displayProductAdditionalInfo'), false, 1);
     }
 
     return true;
