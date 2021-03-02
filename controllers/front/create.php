@@ -20,7 +20,6 @@
 
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
 
 /**
  * This controller receive ajax call to create a PayPal Order

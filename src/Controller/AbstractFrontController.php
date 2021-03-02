@@ -10,6 +10,11 @@ use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
 class AbstractFrontController extends ModuleFrontController
 {
     /**
+     * @var \Ps_checkout
+     */
+    public $module;
+
+    /**
      * @var ExceptionHandler
      */
     protected $sentryExceptionHandler;
