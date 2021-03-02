@@ -18,6 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
+use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
@@ -27,7 +28,7 @@ use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
  * We retrieve data from PayPal in payload and save it in PrestaShop to prefill order page
  * Then customer must be redirected to order page to choose shipping method
  */
-class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontController
+class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontController
 {
     /**
      * @var Ps_checkout
@@ -56,8 +57,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
      */
     public function postProcess()
     {
-        header('content-type:application/json');
-
         try {
             // We receive data in a payload not in GET/POST
             $bodyContent = file_get_contents('php://input');
@@ -129,28 +128,27 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
                 ]
             );
 
-            header('HTTP/1.0 500 Internal Server Error');
+            $this->exitWithExceptionMessage($exception);
 
-            echo json_encode([
-                'status' => false,
-                'httpCode' => 500,
-                'body' => $this->payload,
-                'exceptionCode' => $exception->getCode(),
-                'exceptionMessage' => $exception->getMessage(),
-            ]);
-
-            exit;
+            $this->exitWithCustomStatus(
+                [
+                    'status' => false,
+                    'httpCode' => 500,
+                    'body' => $this->payload,
+                    'exceptionCode' => $exception->getCode(),
+                    'exceptionMessage' => $exception->getMessage(),
+                ],
+                500
+            );
         }
 
-        echo json_encode([
+        $this->exitWithResponse([
             'status' => true,
             'httpCode' => 200,
             'body' => $this->payload,
             'exceptionCode' => null,
             'exceptionMessage' => null,
         ]);
-
-        exit;
     }
 
     /**

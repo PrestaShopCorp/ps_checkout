@@ -18,6 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
+use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
@@ -26,7 +27,7 @@ use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 /**
  * This controller receive ajax call to capture/authorize payment and create a PrestaShop Order
  */
-class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
+class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
 {
     /**
      * @var Ps_checkout
@@ -41,13 +42,13 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
     /**
      * @var ExceptionHandler
      */
-    private $exceptionHandler;
+    private $sentryExceptionHandler;
 
     public function __construct()
     {
         parent::__construct();
 
-        $this->exceptionHandler = $this->module->getService('ps_checkout.handler.exception');
+        $this->sentryExceptionHandler = $this->module->getService('ps_checkout.handler.exception');
     }
 
     /**
@@ -98,12 +99,12 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int)$this->context->cart->id);
 
             if (false !== $psCheckoutCart) {
                 $psCheckoutCart->paypal_funding = $bodyValues['fundingSource'];
-                $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) ? (bool) $bodyValues['isExpressCheckout'] : false;
-                $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) ? (bool) $bodyValues['isHostedFields'] : false;
+                $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) ? (bool)$bodyValues['isExpressCheckout'] : false;
+                $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) ? (bool)$bodyValues['isHostedFields'] : false;
                 $psCheckoutCartRepository->save($psCheckoutCart);
             }
 
@@ -111,12 +112,12 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
                 'ValidateOrder',
                 [
                     'paypal_order' => $this->paypalOrderId,
-                    'id_cart' => (int) $this->context->cart->id,
+                    'id_cart' => (int)$this->context->cart->id,
                 ]
             );
 
             $currency = $this->context->currency;
-            $total = (float) $cart->getOrderTotal(true, Cart::BOTH);
+            $total = (float)$cart->getOrderTotal(true, Cart::BOTH);
 
             /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $accountRepository */
             $accountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
@@ -124,9 +125,9 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             $payment = new ValidateOrder($bodyValues['orderID'], $merchandId);
 
             $dataOrder = [
-                'cartId' => (int) $cart->id,
+                'cartId' => (int)$cart->id,
                 'amount' => $total,
-                'currencyId' => (int) $currency->id,
+                'currencyId' => (int)$currency->id,
                 'secureKey' => $customer->secure_key,
             ];
 
@@ -150,9 +151,7 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
      */
     private function sendBadRequestError($exceptionMessageForCustomer, Exception $exception)
     {
-        header('HTTP/1.0 400 Bad Request');
-
-        echo json_encode([
+        $this->exitWithCustomStatus([
             'status' => false,
             'httpCode' => 400,
             'body' => [
@@ -163,8 +162,9 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             ],
             'exceptionCode' => $exception->getCode(),
             'exceptionMessage' => $exception->getMessage(),
-        ]);
-        exit;
+        ],
+            400,
+            'Bad Request');
     }
 
     /**
@@ -174,22 +174,21 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
      */
     private function sendOkResponse($response)
     {
-        echo json_encode([
+        $this->exitWithResponse([
             'status' => true,
             'httpCode' => 200,
             'body' => [
                 'paypal_status' => $response['status'],
                 'paypal_order' => $response['paypalOrderId'],
                 'paypal_transaction' => $response['transactionIdentifier'],
-                'id_cart' => (int) $this->context->cart->id,
-                'id_module' => (int) $this->module->id,
-                'id_order' => (int) $this->module->currentOrder,
+                'id_cart' => (int)$this->context->cart->id,
+                'id_module' => (int)$this->module->id,
+                'id_order' => (int)$this->module->currentOrder,
                 'secure_key' => $this->context->customer->secure_key,
             ],
             'exceptionCode' => null,
             'exceptionMessage' => null,
         ]);
-        exit;
     }
 
     /**
@@ -199,7 +198,7 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
      */
     private function checkIfContextIsValid()
     {
-        return true === (bool) $this->module->active
+        return true === (bool)$this->module->active
             && true === Validate::isLoadedObject($this->context->cart)
             && true === Validate::isUnsignedInt($this->context->cart->id_customer)
             && true === Validate::isUnsignedInt($this->context->cart->id_address_delivery)
@@ -210,9 +209,9 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
      * Check that this payment option is still available in case the customer changed
      * his address just before the end of the checkout process
      *
+     * @return bool
      * @todo Move to main module class
      *
-     * @return bool
      */
     private function checkIfPaymentOptionIsAvailable()
     {
@@ -244,8 +243,6 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
         if (false === Validate::isGenericName($paypalOrder)) {
             $paypalOrder = 'invalid';
         }
-
-        $this->exceptionHandler->handle($exception, false);
 
         if ('PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException' === $exceptionClass) {
             switch ($exception->getCode()) {
@@ -351,6 +348,7 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
 
         if (true === $notifyCustomerService) {
             $this->notifyCustomerService($exception);
+
             $this->module->getLogger()->error(
                 'ValidateOrder - Exception ' . $exception->getCode(),
                 [
@@ -358,6 +356,8 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
                     'paypal_order' => $paypalOrder,
                 ]
             );
+
+            $this->sentryExceptionHandler->handle($exception, false);
         } else {
             $this->module->getLogger()->notice(
                 'ValidateOrder - Exception ' . $exception->getCode(),
@@ -366,6 +366,7 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
                     'paypal_order' => $paypalOrder,
                 ]
             );
+
             $this->sendBadRequestError($exceptionMessageForCustomer, $exception);
         }
 
@@ -380,34 +381,34 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             $this->generateNewCart();
         }
 
-        header('HTTP/1.0 500 Internal Server Error');
-
-        echo json_encode([
-            'status' => false,
-            'httpCode' => 500,
-            'body' => [
-                'error' => [
-                    'message' => $exceptionMessageForCustomer,
+        $this->exitWithCustomStatus(
+            [
+                'status' => false,
+                'httpCode' => 500,
+                'body' => [
+                    'error' => [
+                        'message' => $exceptionMessageForCustomer,
+                    ],
                 ],
+                'exceptionCode' => $exception->getCode(),
+                'exceptionMessage' => $exception->getMessage(),
             ],
-            'exceptionCode' => $exception->getCode(),
-            'exceptionMessage' => $exception->getMessage(),
-        ]);
-        exit;
+            500,
+            'Internal Server Error');
     }
 
     /**
      * @param Exception $exception
      *
-     * @todo To be refactored with Service Container in v2.0.0
-     *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @todo To be refactored with Service Container in v2.0.0
+     *
      */
     private function notifyCustomerService(Exception $exception)
     {
         $paypalOrderId = $this->paypalOrderId;
-        $contacts = Contact::getContacts((int) $this->context->language->id);
+        $contacts = Contact::getContacts((int)$this->context->language->id);
 
         if (empty($contacts)) {
             return;
@@ -418,10 +419,10 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             Tools::encrypt(implode(
                 '|',
                 [
-                    (int) $this->context->customer->id,
-                    (int) $this->context->shop->id,
-                    (int) $this->context->language->id,
-                    (int) $exception->getCode(),
+                    (int)$this->context->customer->id,
+                    (int)$this->context->shop->id,
+                    (int)$this->context->language->id,
+                    (int)$exception->getCode(),
                     $paypalOrderId,
                     get_class($exception),
                 ]
@@ -430,11 +431,11 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             12
         );
 
-        $isThreadAlreadyCreated = (bool) Db::getInstance()->getValue('
+        $isThreadAlreadyCreated = (bool)Db::getInstance()->getValue('
             SELECT 1
             FROM ' . _DB_PREFIX_ . 'customer_thread
-            WHERE id_customer = ' . (int) $this->context->customer->id . '
-            AND id_shop = ' . (int) $this->context->shop->id . '
+            WHERE id_customer = ' . (int)$this->context->customer->id . '
+            AND id_shop = ' . (int)$this->context->shop->id . '
             AND status = "open"
             AND token = "' . pSQL($token) . '"
         ');
@@ -446,19 +447,19 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
 
         $message = $this->module->l('This message is sent automatically by module PrestaShop Checkout') . PHP_EOL . PHP_EOL;
         $message .= $this->module->l('A customer encountered a processing payment error :') . PHP_EOL;
-        $message .= $this->module->l('Customer identifier:') . ' ' . (int) $this->context->customer->id . PHP_EOL;
-        $message .= $this->module->l('Cart identifier:') . ' ' . (int) $this->context->cart->id . PHP_EOL;
+        $message .= $this->module->l('Customer identifier:') . ' ' . (int)$this->context->customer->id . PHP_EOL;
+        $message .= $this->module->l('Cart identifier:') . ' ' . (int)$this->context->cart->id . PHP_EOL;
         $message .= $this->module->l('PayPal order identifier:') . ' ' . Tools::safeOutput($paypalOrderId) . PHP_EOL;
-        $message .= $this->module->l('Exception identifier:') . ' ' . (int) $exception->getCode() . PHP_EOL;
+        $message .= $this->module->l('Exception identifier:') . ' ' . (int)$exception->getCode() . PHP_EOL;
         $message .= $this->module->l('Exception detail:') . ' ' . Tools::safeOutput($exception->getMessage()) . PHP_EOL . PHP_EOL;
         $message .= $this->module->l('If you need assistance, please contact our Support Team on PrestaShop Checkout configuration page on Help subtab.') . PHP_EOL;
 
         $customerThread = new CustomerThread();
-        $customerThread->id_customer = (int) $this->context->customer->id;
-        $customerThread->id_shop = (int) $this->context->shop->id;
-        $customerThread->id_order = (int) $this->module->currentOrder;
-        $customerThread->id_lang = (int) $this->context->language->id;
-        $customerThread->id_contact = (int) $contacts[0]['id_contact']; // Should be configurable
+        $customerThread->id_customer = (int)$this->context->customer->id;
+        $customerThread->id_shop = (int)$this->context->shop->id;
+        $customerThread->id_order = (int)$this->module->currentOrder;
+        $customerThread->id_lang = (int)$this->context->language->id;
+        $customerThread->id_contact = (int)$contacts[0]['id_contact']; // Should be configurable
         $customerThread->email = $this->context->customer->email;
         $customerThread->status = 'open';
         $customerThread->token = $token;
@@ -467,7 +468,7 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
         $customerMessage = new CustomerMessage();
         $customerMessage->id_customer_thread = $customerThread->id;
         $customerMessage->message = $message;
-        $customerMessage->ip_address = (int) ip2long(Tools::getRemoteAddr());
+        $customerMessage->ip_address = (int)ip2long(Tools::getRemoteAddr());
         $customerMessage->user_agent = $_SERVER['HTTP_USER_AGENT'];
         $customerMessage->private = 1;
         $customerMessage->read = false;

@@ -18,13 +18,14 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
+use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
 
 /**
  * This controller receive ajax call on customer canceled payment
  */
-class Ps_CheckoutCancelModuleFrontController extends ModuleFrontController
+class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
 {
     /**
      * @var Ps_checkout
@@ -92,7 +93,7 @@ class Ps_CheckoutCancelModuleFrontController extends ModuleFrontController
                 ]
             );
 
-            echo json_encode([
+            $this->exitWithResponse([
                 'status' => true,
                 'httpCode' => 200,
                 'body' => $bodyValues,
@@ -111,17 +112,7 @@ class Ps_CheckoutCancelModuleFrontController extends ModuleFrontController
                 ]
             );
 
-            header('HTTP/1.0 500 Internal Server Error');
-
-            echo json_encode([
-                'status' => false,
-                'httpCode' => 500,
-                'body' => '',
-                'exceptionCode' => $exception->getCode(),
-                'exceptionMessage' => $exception->getMessage(),
-            ]);
+            $this->exitWithExceptionMessage($exception);
         }
-
-        exit;
     }
 }

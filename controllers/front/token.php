@@ -18,13 +18,14 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
+use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
 
 /**
  * This controller receive ajax call to retrieve a PayPal Client Token
  */
-class Ps_CheckoutTokenModuleFrontController extends ModuleFrontController
+class Ps_CheckoutTokenModuleFrontController extends AbstractFrontController
 {
     /**
      * @var Ps_checkout
@@ -34,13 +35,13 @@ class Ps_CheckoutTokenModuleFrontController extends ModuleFrontController
     /**
      * @var ExceptionHandler
      */
-    private $exceptionHandler;
+    private $sentryExceptionHandler;
 
     public function __construct()
     {
         parent::__construct();
 
-        $this->exceptionHandler = $this->module->getService('ps_checkout.handler.exception');
+        $this->sentryExceptionHandler = $this->module->getService('ps_checkout.handler.exception');
     }
 
     /**
@@ -50,8 +51,6 @@ class Ps_CheckoutTokenModuleFrontController extends ModuleFrontController
      */
     public function postProcess()
     {
-        header('content-type:application/json');
-
         try {
             if (false === Validate::isLoadedObject($this->context->cart)) {
                 throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
@@ -78,7 +77,7 @@ class Ps_CheckoutTokenModuleFrontController extends ModuleFrontController
                 $psCheckoutCartRepository->save($psCheckoutCart);
             }
 
-            echo json_encode([
+            $this->exitWithResponse([
                 'status' => true,
                 'httpCode' => 200,
                 'body' => [
@@ -88,7 +87,7 @@ class Ps_CheckoutTokenModuleFrontController extends ModuleFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            $this->exceptionHandler->handle($exception, false);
+            $this->sentryExceptionHandler->handle($exception, false);
 
             /* @var \Psr\Log\LoggerInterface logger */
             $logger = $this->module->getService('ps_checkout.logger');
@@ -100,18 +99,8 @@ class Ps_CheckoutTokenModuleFrontController extends ModuleFrontController
                 )
             );
 
-            header('HTTP/1.0 500 Internal Server Error');
-
-            echo json_encode([
-                'status' => false,
-                'httpCode' => 500,
-                'body' => '',
-                'exceptionCode' => $exception->getCode(),
-                'exceptionMessage' => $exception->getMessage(),
-            ]);
+            $this->exitWithExceptionMessage($exception);
         }
-
-        exit;
     }
 
     /**

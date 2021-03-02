@@ -18,13 +18,14 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
+use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
 
 /**
  * This controller receive ajax call to create a PayPal Order
  */
-class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
+class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
 {
     /**
      * @var Ps_checkout
@@ -34,13 +35,13 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
     /**
      * @var ExceptionHandler
      */
-    private $exceptionHandler;
+    private $sentryExceptionHandler;
 
     public function __construct()
     {
         parent::__construct();
 
-        $this->exceptionHandler = $this->module->getService('ps_checkout.handler.exception');
+        $this->sentryExceptionHandler = $this->module->getService('ps_checkout.handler.exception');
     }
 
     /**
@@ -50,8 +51,6 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
      */
     public function postProcess()
     {
-        header('content-type:application/json');
-
         try {
             // BEGIN Express Checkout
             $bodyValues = [];
@@ -75,20 +74,21 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
                 );
 
                 if (!$isQuantityAdded) {
-                    header('HTTP/1.0 400 Bad Request');
-
-                    echo json_encode([
-                        'status' => false,
-                        'httpCode' => 400,
-                        'body' => [
-                            'error' => [
-                                'message' => 'Fail to update cart quantity.',
+                    $this->exitWithCustomStatus(
+                        [
+                            'status' => false,
+                            'httpCode' => 400,
+                            'body' => [
+                                'error' => [
+                                    'message' => 'Failed to update cart quantity.',
+                                ],
                             ],
+                            'exceptionCode' => null,
+                            'exceptionMessage' => null,
                         ],
-                        'exceptionCode' => null,
-                        'exceptionMessage' => null,
-                    ]);
-                    exit;
+                        400,
+                        'Bad Request'
+                    );
                 }
 
                 $cart->update();
@@ -106,7 +106,7 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
             // END Express Checkout
 
             if (false === Validate::isLoadedObject($this->context->cart)) {
-                $this->exceptionHandler->handle(new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID));
+                throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
             }
 
             /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
@@ -123,8 +123,7 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
                 && false === empty($psCheckoutCart->paypal_token_expire)
                 && strtotime($psCheckoutCart->paypal_token_expire) > time()
             ) {
-                header('content-type:application/json');
-                echo json_encode([
+                $this->exitWithResponse([
                     'status' => true,
                     'httpCode' => 200,
                     'body' => [
@@ -133,7 +132,6 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
                     'exceptionCode' => null,
                     'exceptionMessage' => null,
                 ]);
-                exit;
             }
 
             $isExpressCheckout = (isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout']) || empty($this->context->cart->id_address_delivery);
@@ -141,11 +139,11 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
             $response = $paypalOrder->handle($isExpressCheckout);
 
             if (false === $response['status']) {
-                $this->exceptionHandler->handle(new PsCheckoutException($response['exceptionMessage'], (int) $response['exceptionCode']));
+                throw new PsCheckoutException($response['exceptionMessage'], (int) $response['exceptionCode']);
             }
 
             if (empty($response['body']['id'])) {
-                $this->exceptionHandler->handle(new PsCheckoutException('Paypal order id is missing.', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING));
+                throw new PsCheckoutException('Paypal order id is missing.', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
             }
 
             if (false === $psCheckoutCart) {
@@ -163,7 +161,7 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
             $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) ? (bool) $bodyValues['isHostedFields'] : false;
             $psCheckoutCartRepository->save($psCheckoutCart);
 
-            echo json_encode([
+            $this->exitWithResponse([
                 'status' => true,
                 'httpCode' => 200,
                 'body' => [
@@ -173,7 +171,7 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            $this->exceptionHandler->handle($exception, false);
+            $this->sentryExceptionHandler->handle($exception, false);
 
             /* @var \Psr\Log\LoggerInterface logger */
             $logger = $this->module->getService('ps_checkout.logger');
@@ -184,17 +182,7 @@ class Ps_CheckoutCreateModuleFrontController extends ModuleFrontController
                 ]
             );
 
-            header('HTTP/1.0 500 Internal Server Error');
-
-            echo json_encode([
-                'status' => false,
-                'httpCode' => 500,
-                'body' => '',
-                'exceptionCode' => $exception->getCode(),
-                'exceptionMessage' => $exception->getMessage(),
-            ]);
+            $this->exitWithExceptionMessage($exception);
         }
-
-        exit;
     }
 }
