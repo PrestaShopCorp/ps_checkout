@@ -33,26 +33,12 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
     public $module;
 
     /**
-     * @var ExceptionHandler
-     */
-    private $exceptionHandler;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->exceptionHandler = $this->module->getService('ps_checkout.handler.exception');
-    }
-
-    /**
      * @see FrontController::postProcess()
      *
      * @todo Move logic to a Service
      */
     public function postProcess()
     {
-        header('content-type:application/json');
-
         try {
             if (false === Validate::isLoadedObject($this->context->cart)) {
                 throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
@@ -101,7 +87,7 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            $this->exceptionHandler->handle($exception, false);
+            $this->handleExceptionSendingToSentry($exception);
 
             /* @var \Psr\Log\LoggerInterface logger */
             $logger = $this->module->getService('ps_checkout.logger');

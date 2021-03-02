@@ -64,4 +64,11 @@ class PsCheckoutException extends \Exception
     const PRESTASHOP_VALIDATE_ORDER = 40;
     const PRESTASHOP_ORDER_PAYMENT = 41;
     const PRESTASHOP_CART_NOT_FOUND = 42;
+
+    const EXCEPTIONS_IGNORED_BY_SENTRY = [
+        self::PRESTASHOP_CONTEXT_INVALID,
+        self::PRESTASHOP_PAYMENT_UNAVAILABLE,
+        self::PSCHECKOUT_VALIDATE_BODY_EMPTY,
+        self::PAYPAL_ORDER_IDENTIFIER_MISSING,
+    ];
 }

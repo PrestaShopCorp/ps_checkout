@@ -33,18 +33,6 @@ class Ps_CheckoutTokenModuleFrontController extends AbstractFrontController
     public $module;
 
     /**
-     * @var ExceptionHandler
-     */
-    private $sentryExceptionHandler;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->sentryExceptionHandler = $this->module->getService('ps_checkout.handler.exception');
-    }
-
-    /**
      * @see FrontController::postProcess()
      *
      * @todo Move logic to a Service and refactor
@@ -87,7 +75,7 @@ class Ps_CheckoutTokenModuleFrontController extends AbstractFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            $this->sentryExceptionHandler->handle($exception, false);
+            $this->handleExceptionSendingToSentry($exception);
 
             /* @var \Psr\Log\LoggerInterface logger */
             $logger = $this->module->getService('ps_checkout.logger');

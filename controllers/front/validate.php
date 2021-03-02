@@ -40,26 +40,12 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
     private $paypalOrderId;
 
     /**
-     * @var ExceptionHandler
-     */
-    private $sentryExceptionHandler;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->sentryExceptionHandler = $this->module->getService('ps_checkout.handler.exception');
-    }
-
-    /**
      * @see FrontController::postProcess()
      *
      * @todo Move logic to a Service
      */
     public function postProcess()
     {
-        header('content-type:application/json');
-
         try {
             if (false === $this->checkIfContextIsValid()) {
                 throw new PsCheckoutException('The context is not valid', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);

@@ -20,17 +20,17 @@
 
 use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook;
+use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\MerchantDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 
 /**
  * @todo To be refactored
  */
-class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontController
+class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontController
 {
     const PS_CHECKOUT_PAYPAL_ID_LABEL = 'PS_CHECKOUT_PAYPAL_ID_MERCHANT';
 
@@ -71,18 +71,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      * @var array
      */
     private $payload;
-
-    /**
-     * @var ExceptionHandler
-     */
-    private $exceptionHandler;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->exceptionHandler = $this->module->getService('ps_checkout.handler.exception');
-    }
 
     /**
      * Initialize the webhook script
@@ -329,7 +317,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     private function handleException(Exception $exception)
     {
-        $this->exceptionHandler->handle($exception, false);
+        $this->handleExceptionSendingToSentry($exception);
 
         $this->module->getLogger()->log(
             PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND === $exception->getCode() ? Logger::NOTICE : Logger::ERROR,

@@ -4,9 +4,23 @@ namespace PrestaShop\Module\PrestashopCheckout\Controller;
 
 use Exception;
 use ModuleFrontController;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
 
 class AbstractFrontController extends ModuleFrontController
 {
+    /**
+     * @var ExceptionHandler
+     */
+    protected $sentryExceptionHandler;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->sentryExceptionHandler = $this->module->getService('ps_checkout.handler.exception');
+    }
+
     /**
      * @param Exception $exception
      *
@@ -54,5 +68,17 @@ class AbstractFrontController extends ModuleFrontController
         }
 
         exit;
+    }
+
+    protected function handleExceptionSendingToSentry(Exception $exception)
+    {
+        $exceptionClass = get_class($exception);
+
+        if (
+            'PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException' === $exceptionClass
+            && !in_array($exception->getCode(), PsCheckoutException::EXCEPTIONS_IGNORED_BY_SENTRY)
+        ) {
+            $this->sentryExceptionHandler->handle($exception, false);
+        }
     }
 }

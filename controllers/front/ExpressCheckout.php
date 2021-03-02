@@ -41,18 +41,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
     private $payload;
 
     /**
-     * @var ExceptionHandler
-     */
-    private $exceptionHandler;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->exceptionHandler = $this->module->getService('ps_checkout.handler.exception');
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function postProcess()
@@ -113,7 +101,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
                 false === empty($bodyValues['order']['payer']['phone']) ? $this->payload['order']['payer']['phone']['phone_number']['national_number'] : ''
             );
         } catch (Exception $exception) {
-            $this->exceptionHandler->handle($exception, false);
+            $this->handleExceptionSendingToSentry($exception);
 
             /* @var \Psr\Log\LoggerInterface logger */
             $logger = $this->module->getService('ps_checkout.logger');
@@ -127,8 +115,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
                     'paypal_order' => $this->payload['orderID'],
                 ]
             );
-
-            $this->exitWithExceptionMessage($exception);
 
             $this->exitWithCustomStatus(
                 [
