@@ -418,21 +418,30 @@ class Ps_checkout extends PaymentModule
         $count = 0;
         $paymentOptions = [];
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {
-            if ($count === 8) break;
+            if ($count === 8) {
+                break;
+            }
+
             $count += $fundingSource->name === 'card'
                 ? 3
                 : 1;
 
             while ($count > 8) {
                 array_pop($paymentOptions);
-                $count--;
+                --$count;
             }
+
             $paymentOptions[] = $fundingSource->name;
         }
 
         $width = 25;
-        if ($count == 6) $width = 33;
-        if ($count < 6) $width = 20;
+        if ($count == 6) {
+            $width = 33;
+        }
+
+        if ($count < 6) {
+            $width = 20;
+        }
 
         $this->context->smarty->assign([
             'width' => $width,
