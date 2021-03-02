@@ -365,6 +365,10 @@ class Translations
                     'downloadDoc' => $this->module->l('Download PDF', 'translations'),
                     'noFaqAvailable' => $this->module->l('No faq available. Try later.', 'translations'),
                 ],
+                'pay-in-4x' => [
+                    'title' => $this->module->l('Pay in 4x messaging banner', 'translations'),
+                    'alert-content' => $this->module->l('Displaying this message has shown a better conversion rate and a raise of Average Order Value.', 'translations'),
+                ],
             ],
             'account-settings-deeplink' => [
                 'fraud-tool' => [

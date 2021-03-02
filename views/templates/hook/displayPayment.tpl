@@ -17,7 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
-{if !$isOnePageCheckout16}
+{if !$isOnePageCheckout16 && !$isExpressCheckout}
   <div id="ps_checkout-loader" class="express-checkout-block mb-2">
     <div class="express-checkout-block-wrapper">
       <p class="express-checkout-spinner-text">

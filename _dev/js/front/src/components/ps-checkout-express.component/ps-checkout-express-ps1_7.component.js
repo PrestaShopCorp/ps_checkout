@@ -56,33 +56,40 @@ export class PsCheckoutExpressPs1_7Component extends BaseComponent {
       return;
     }
 
-    switch (document.body.id) {
-      case 'cart':
-        if (!this.config.expressCheckout.enabled.cart) return;
-        if (document.body.classList.contains('cart-empty')) return;
-        this.children.expressButton = new ExpressButtonCartComponent(
-          this.app
-        ).render();
-        break;
-      case 'checkout':
-        if (!this.config.expressCheckout.enabled.order) return;
-        this.children.expressButton = new ExpressButtonCheckoutComponent(
-          this.app
-        ).render();
-        break;
-      case 'product':
-        if (!this.config.expressCheckout.enabled.product) return;
-        if (
-          this.children.expressButton &&
-          this.children.expressButton.checkoutExpressButton &&
-          this.children.expressButton.checkoutExpressButton.parentNode
-        )
-          return;
+    if (this.prestashopService.isCartPage()) {
+      if (!this.config.expressCheckout.enabled.cart) return this;
+      if (document.body.classList.contains('cart-empty')) return this;
 
-        this.children.expressButton = new ExpressButtonProductComponent(
-          this.app
-        ).render();
-        break;
+      this.children.expressButton = new ExpressButtonCartComponent(
+        this.app
+      ).render();
+
+      return this;
+    }
+
+    if (this.prestashopService.isOrderPersonalInformationStepPage()) {
+      if (!this.config.expressCheckout.enabled.order) return this;
+      this.children.expressButton = new ExpressButtonCheckoutComponent(
+        this.app
+      ).render();
+
+      return this;
+    }
+
+    if (this.prestashopService.isProductPage()) {
+      if (!this.config.expressCheckout.enabled.product) return;
+      if (
+        this.children.expressButton &&
+        this.children.expressButton.checkoutExpressButton &&
+        this.children.expressButton.checkoutExpressButton.parentNode
+      )
+        return;
+
+      this.children.expressButton = new ExpressButtonProductComponent(
+        this.app
+      ).render();
+
+      return this;
     }
   }
 

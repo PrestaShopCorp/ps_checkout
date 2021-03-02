@@ -166,13 +166,14 @@ class OrderDispatcher implements Dispatcher
         foreach ($orderPayments as $orderPayment) {
             if (\Validate::isLoadedObject($orderPayment)) {
                 if ($orderPayment->transaction_id !== $resource['id']) {
-                    $orderPayment->transaction_id = $resource['id'];
-                    $orderPayment->payment_method = $fundingSourceTranslationProvider->getPaymentMethodName($this->psCheckoutCart->paypal_funding);
-                    try {
-                        $orderPayment->save();
-                    } catch (\Exception $exception) {
-                        throw new PsCheckoutException('Cannot update OrderPayment', PsCheckoutException::PRESTASHOP_ORDER_PAYMENT, $exception);
-                    }
+                    \Db::getInstance()->update(
+                        'order_payment',
+                        [
+                            'payment_method' => pSQL($fundingSourceTranslationProvider->getPaymentMethodName($this->psCheckoutCart->paypal_funding)),
+                            'transaction_id' => pSQL($resource['id']),
+                        ],
+                        'id_order_payment = ' . (int) $orderPayment->id
+                    );
                 }
                 $shouldAddOrderPayment = false;
             }

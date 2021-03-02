@@ -16,22 +16,20 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
-
-<div id="js-ps_checkout-express-button-container">
-</div>
-
-{if isset($cart) and $payIn4XisOrderPageEnabled == true}
-  <hr />
-  <div
-    data-pp-message
-    data-pp-placement="cart"
-    data-pp-style-layout="text"
-    data-pp-style-logo-type="inline"
-    data-pp-style-text-color="black"
-    data-pp-amount="{$cart.totals.total.amount}"></div>
-  <script>
-    window.ps_checkoutPayPalSdkInstance
-      && window.ps_checkoutPayPalSdkInstance.Messages
-      && window.ps_checkoutPayPalSdkInstance.Messages().render('[data-pp-message]');
-  </script>
+{if isset($totalCartPrice) and $payIn4XisProductPageEnabled == true}
+  {if not isset($content_only) or $content_only === 0}
+    <div
+      data-pp-message
+      data-pp-placement="product"
+      data-pp-style-layout="text"
+      data-pp-style-logo-type="inline"
+      data-pp-style-text-color="black"
+      data-pp-amount="{$totalCartPrice}"
+    ></div>
+    <script>
+      window.ps_checkoutPayPalSdkInstance
+        && window.ps_checkoutPayPalSdkInstance.Messages
+        && window.ps_checkoutPayPalSdkInstance.Messages().render('[data-pp-message]');
+    </script>
+  {/if}
 {/if}

@@ -152,6 +152,7 @@ class ContextModule implements PresenterInterface
                 'countriesLink' => $this->getGeneratedLink('AdminCountries'),
                 'currenciesLink' => $this->getGeneratedLink('AdminCurrencies'),
                 'paymentPreferencesLink' => $this->getGeneratedLink($this->shopContext->isShop17() ? 'AdminPaymentPreferences' : 'AdminPayment'),
+                'overridesExist' => $this->overridesExist(),
             ],
         ];
     }
@@ -317,5 +318,28 @@ class ContextModule implements PresenterInterface
         $linkAdapter = new LinkAdapter($this->psContext->getLink());
 
         return $linkAdapter->getAdminLink($link);
+    }
+
+    /**
+     * Get bool value if there are overrides for ps_checkout
+     *
+     * @return bool
+     */
+    public function overridesExist()
+    {
+        $result = false;
+
+        $moduleOverridePath = _PS_OVERRIDE_DIR_ . 'modules';
+        $themeModuleOverridePath = _PS_ALL_THEMES_DIR_ . $this->psContext->getCurrentThemeName() . '/modules';
+
+        foreach (scandir($moduleOverridePath) as $directoryName) {
+            $result |= $directoryName === $this->moduleName;
+        }
+
+        foreach (scandir($themeModuleOverridePath) as $directoryName) {
+            $result |= $directoryName === $this->moduleName;
+        }
+
+        return (bool) $result;
     }
 }

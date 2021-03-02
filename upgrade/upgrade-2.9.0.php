@@ -1,4 +1,5 @@
-{**
+<?php
+/**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
@@ -15,23 +16,28 @@
  * @author    PrestaShop SA <contact@prestashop.com>
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- *}
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-<div id="js-ps_checkout-express-button-container">
-</div>
+/**
+ * Update main function for module version 2.9.0
+ *
+ * @param Ps_checkout $module
+ *
+ * @return bool
+ */
+function upgrade_module_2_9_0($module)
+{
+    if (false === (bool) version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+        // Register hooks only for PrestaShop 1.6, used for ExpressCheckout
+        $module->registerHook('actionBeforeCartUpdateQty');
+        $module->registerHook('actionAfterDeleteProductInCart');
+    } else {
+        // Register hook only for PrestaShop 1.7, used for ExpressCheckout
+        $module->registerHook('actionObjectProductInCartDeleteAfter');
+    }
 
-{if isset($cart) and $payIn4XisOrderPageEnabled == true}
-  <hr />
-  <div
-    data-pp-message
-    data-pp-placement="cart"
-    data-pp-style-layout="text"
-    data-pp-style-logo-type="inline"
-    data-pp-style-text-color="black"
-    data-pp-amount="{$cart.totals.total.amount}"></div>
-  <script>
-    window.ps_checkoutPayPalSdkInstance
-      && window.ps_checkoutPayPalSdkInstance.Messages
-      && window.ps_checkoutPayPalSdkInstance.Messages().render('[data-pp-message]');
-  </script>
-{/if}
+    return true;
+}

@@ -393,6 +393,8 @@ $_MODULE['<{ps_checkout}prestashop>translations_02d4482d332e1aef3437cd61c9bcc624
 $_MODULE['<{ps_checkout}prestashop>translations_e1e1ce67de4906765f104f24a4280a1d'] = 'Besoin d\'aide ? Trouvez ici la documentation du module';
 $_MODULE['<{ps_checkout}prestashop>translations_2607298669ace2fc910321afeb9f8a84'] = 'Télécharger le Guide utilisateur';
 $_MODULE['<{ps_checkout}prestashop>translations_a9a01945b27f95d1912a6d17af9429ef'] = 'Pas de FAQ disponible. Veuillez essayer plus tard';
+$_MODULE['<{ps_checkout}prestashop>translations_3c8611cba7dc4293d5c360b6b052574f'] = 'Bannières d\'information Paiement en 4 fois';
+$_MODULE['<{ps_checkout}prestashop>translations_04d5933ab56d1bbac4c85471614d3bd2'] = 'Afficher ces messages a montré un meilleur taux de conversion et un panier moyen plus élevé.';
 $_MODULE['<{ps_checkout}prestashop>translations_7e87484272c2e328136e9d2bba0d8b27'] = 'Limitez votre taux de fraude';
 $_MODULE['<{ps_checkout}prestashop>translations_36d83ae2c209f6fb8e8865584d108d8b'] = 'Les algorithmes de PayPal limite automatiquement le nombre de fraudes. Il existe un outil complet sur l\'interface PayPal pour configurer des règles spécifiques et piloter votre performance concernant la fraude et les surcoûts de recouvrement.';
 $_MODULE['<{ps_checkout}prestashop>translations_934c4326dcfdd3a2f62aaef1c13cb464'] = 'Configurer l\'outil de fraude';

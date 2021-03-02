@@ -22,7 +22,11 @@
       <ActivePayment />
     </b-container>
 
-    <b-container v-if="shopIs17" class="mb-4">
+    <b-container v-if="payIn4XActiveForMerchant" class="mb-4">
+      <PayIn4X />
+    </b-container>
+
+    <b-container class="mb-4">
       <ExpressCheckout />
     </b-container>
 
@@ -39,6 +43,7 @@
 <script>
   import ActivePayment from '@/components/panel/active-payment';
   import ExpressCheckout from '@/components/panel/express-checkout';
+  import PayIn4X from '@/components/panel/pay-in-4x';
   import ButtonCustomization from '@/components/panel/button-customization';
   import FeatureIncoming from '@/components/block/feature-incoming';
 
@@ -46,6 +51,7 @@
     name: 'Customize',
     components: {
       ActivePayment,
+      PayIn4X,
       ExpressCheckout,
       ButtonCustomization,
       FeatureIncoming
@@ -53,6 +59,9 @@
     computed: {
       shopIs17() {
         return this.$store.getters.shopIs17;
+      },
+      payIn4XActiveForMerchant() {
+        return this.$store.state.configuration.payIn4X.activeForMerchant;
       }
     }
   };
