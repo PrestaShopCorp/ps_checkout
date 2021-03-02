@@ -56,6 +56,7 @@ class Ps_checkout extends PaymentModule
         'displayExpressCheckout',
         'displayFooterProduct',
         'displayPersonalInformationTop',
+        'displayProductAdditionalInfo',
         'actionCartUpdateQuantityBefore',
         'header',
         'displayInvoiceLegalFreeText',
@@ -117,7 +118,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.10.0';
+    const VERSION = '2.12.0';
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -138,7 +139,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.10.0';
+        $this->version = '2.12.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->currencies = true;
@@ -192,7 +193,8 @@ class Ps_checkout extends PaymentModule
         $shopContext = $this->getService('ps_checkout.context.shop');
         if ($shopContext->isShop17()) {
             return $this->registerHook(self::HOOK_LIST_17) &&
-                $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1);
+                $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1) &&
+                $this->updatePosition(\Hook::getIdByName('displayProductAdditionalInfo'), false, 1);
         }
 
         // Install specific to prestashop 1.6
@@ -403,18 +405,79 @@ class Ps_checkout extends PaymentModule
     }
 
     /**
-     * Express checkout on the cart page
+     * Express checkout and payment method logo block on the cart page
      */
     public function hookDisplayExpressCheckout()
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
         $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
+        $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
+
+        $count = 0;
+        $paymentOptions = [];
+        foreach ($fundingSourceProvider->getAll() as $fundingSource) {
+            if ($count === 8) break;
+            $count += $fundingSource->name === 'card'
+                ? 3
+                : 1;
+
+            while ($count > 8) {
+                array_pop($paymentOptions);
+                $count--;
+            }
+            $paymentOptions[] = $fundingSource->name;
+        }
+
+        $width = 25;
+        if ($count == 6) $width = 33;
+        if ($count < 6) $width = 20;
+
         $this->context->smarty->assign([
+            'width' => $width,
+            'modulePath' => $this->getPathUri(),
+            'paymentOptions' => $paymentOptions,
             'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageEnabled(),
         ]);
 
         return $this->display(__FILE__, '/views/templates/hook/displayExpressCheckout.tpl');
+    }
+
+    /**
+     * Payment method logo block on product page
+     */
+    public function hookDisplayProductAdditionalInfo()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
+        $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
+        $paymentOptions = [];
+
+        $count = 0;
+        foreach ($fundingSourceProvider->getAll() as $fundingSource) {
+            if ($count === 8) break;
+            $count += $fundingSource->name === 'card'
+                ? 3
+                : 1;
+
+            while ($count > 8) {
+                array_pop($paymentOptions);
+                $count--;
+            }
+            $paymentOptions[] = $fundingSource->name;
+        }
+
+        $width = 25;
+        if ($count == 6) $width = 33;
+        if ($count < 6) $width = 20;
+
+        $this->context->smarty->assign([
+            'width' => $width,
+            'modulePath' => $this->getPathUri(),
+            'paymentOptions' => $paymentOptions,
+        ]);
+
+        return $this->display(__FILE__, '/views/templates/hook/displayProductAdditionalInfo.tpl');
     }
 
     /**

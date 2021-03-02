@@ -20,6 +20,30 @@
 <div id="js-ps_checkout-express-button-container">
 </div>
 
+<div class="ps_checkout payment-method-logo-block">
+  <div class="ps_checkout payment-method-logo-block-title">
+    <img src="{$modulePath}views/img/lock_checkout.svg" alt="">
+    {l s='100% secure payments' mod='ps_checkout'}
+  </div>
+  {foreach from=$paymentOptions item=paymentOption}
+    {if $paymentOption == 'card'}
+      <div class="ps_checkout payment-method-logo w-{$width}">
+        <div class="wrapper"><img class="" src="{$modulePath}views/img/visa.svg" alt=""></div>
+      </div>
+      <div class="ps_checkout payment-method-logo w-{$width}">
+        <div class="wrapper"><img class="" src="{$modulePath}views/img/mastercard.svg" alt=""></div>1
+      </div>
+      <div class="ps_checkout payment-method-logo w-{$width}">
+        <div class="wrapper"><img class="" src="{$modulePath}views/img/amex.svg" alt=""></div>
+      </div>
+    {else}
+      <div class="ps_checkout payment-method-logo w-{$width}">
+          <div class="wrapper"><img class="" src="{$modulePath}views/img/{$paymentOption}.svg" alt=""></div>
+      </div>
+    {/if}
+  {/foreach}
+</div>
+
 {if isset($cart) and $payIn4XisOrderPageEnabled == true}
   <hr />
   <div
