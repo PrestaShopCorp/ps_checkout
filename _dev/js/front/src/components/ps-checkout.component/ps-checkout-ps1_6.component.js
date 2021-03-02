@@ -21,6 +21,7 @@ import { NotificationComponent } from '../1_6/notification.component';
 import { PaymentOptionsComponent } from '../1_6/payment-options.component';
 import { LoaderComponent } from '../common/loader.component';
 import { PaymentOptionsLoaderComponent } from '../common/payment-options-loader.component';
+import { ConditionsCheckboxComponent } from '../1_7/conditions-checkbox.component';
 
 export class PsCheckoutPs1_6Component extends BaseComponent {
   static Inject = {
@@ -33,6 +34,10 @@ export class PsCheckoutPs1_6Component extends BaseComponent {
 
   renderCheckout() {
     this.children.paymentOptionsLoader = new PaymentOptionsLoaderComponent(
+      this.app
+    ).render();
+
+    this.children.conditionsCheckbox = new ConditionsCheckboxComponent(
       this.app
     ).render();
 

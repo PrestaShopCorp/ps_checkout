@@ -26,7 +26,12 @@
         type="checkbox"
         :class="{ indeterminate: isIndeterminate }"
       />
-      <i class="md-checkbox-control" />
+      <i
+        :class="{
+          'md-checkbox-control': true,
+          'md-checkbox-control-center': centered
+        }"
+      />
       <slot />
     </label>
   </div>
@@ -38,6 +43,10 @@
       id: {
         type: String,
         required: true
+      },
+      centered: {
+        type: Boolean,
+        default: false
       },
       isIndeterminate: {
         type: Boolean,
@@ -52,3 +61,15 @@
     }
   };
 </script>
+
+<style>
+  .md-checkbox-control.md-checkbox-control-center:before {
+    margin: auto;
+    right: 0;
+  }
+
+  .md-checkbox-control.md-checkbox-control-center:after {
+    margin: auto;
+    right: 0.2rem;
+  }
+</style>

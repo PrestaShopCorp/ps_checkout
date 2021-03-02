@@ -33,7 +33,7 @@
   </p>
 </div>
 {else}
-  {if $is17 || $isOnePageCheckout16}
+  {if $is17 || ($isOnePageCheckout16 && !$isExpressCheckout)}
   <div id="ps_checkout-loader" class="express-checkout-block mb-2">
     <div class="express-checkout-block-wrapper">
       <p class="express-checkout-spinner-text">

@@ -23,6 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
@@ -41,6 +42,11 @@ class PayPalSdkLinkBuilder
      * @var PayPalConfiguration
      */
     private $configuration;
+
+    /**
+     * @var PayPalPayIn4XConfiguration
+     */
+    private $payIn4XConfiguration;
 
     /**
      * @var FundingSourceConfigurationRepository
@@ -73,14 +79,18 @@ class PayPalSdkLinkBuilder
      *
      * @param PaypalAccountRepository $payPalAccountRepository
      * @param PayPalConfiguration $configuration
+     * @param PayPalPayIn4XConfiguration $payIn4XConfiguration
+     * @param FundingSourceConfigurationRepository $fundingSourceConfigurationRepository
      */
     public function __construct(
         PaypalAccountRepository $payPalAccountRepository,
         PayPalConfiguration $configuration,
+        PayPalPayIn4XConfiguration $payIn4XConfiguration,
         FundingSourceConfigurationRepository $fundingSourceConfigurationRepository
     ) {
         $this->payPalAccountRepository = $payPalAccountRepository;
         $this->configuration = $configuration;
+        $this->payIn4XConfiguration = $payIn4XConfiguration;
         $this->fundingSourceConfigurationRepository = $fundingSourceConfigurationRepository;
     }
 
@@ -96,6 +106,12 @@ class PayPalSdkLinkBuilder
             'marks',
             'funding-eligibility',
         ];
+
+        if ($this->payIn4XConfiguration->isOrderPageEnabled()
+            || $this->payIn4XConfiguration->isProductPageEnabled()
+        ) {
+            $components[] = 'messages';
+        }
 
         if ($this->payPalAccountRepository->cardHostedFieldsIsAvailable()) {
             $components[] = 'hosted-fields';
