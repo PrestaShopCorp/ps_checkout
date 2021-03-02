@@ -31,7 +31,7 @@
         <div class="wrapper"><img class="" src="{$modulePath}views/img/visa.svg" alt=""></div>
       </div>
       <div class="ps_checkout payment-method-logo w-{$width}">
-        <div class="wrapper"><img class="" src="{$modulePath}views/img/mastercard.svg" alt=""></div>1
+        <div class="wrapper"><img class="" src="{$modulePath}views/img/mastercard.svg" alt=""></div>
       </div>
       <div class="ps_checkout payment-method-logo w-{$width}">
         <div class="wrapper"><img class="" src="{$modulePath}views/img/amex.svg" alt=""></div>
