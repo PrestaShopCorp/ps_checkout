@@ -165,6 +165,14 @@
           type: 'updatePaymentMethods',
           paymentMethods: val
         });
+        let paymentMethodList = [];
+        this.list.forEach(element => {
+          paymentMethodList.push(element.name);
+        });
+        this.$segment.track('CKT Change Payment Methods Order', {
+          category: 'ps_checkout',
+          payment_methods: paymentMethodList
+        });
       }
     },
     methods: {
@@ -177,6 +185,13 @@
             isEnabled: value
           }
         });
+        this.$segment.track(
+          value ? 'CKT Enable payment method' : 'CKT Disable payment method',
+          {
+            category: 'ps_checkout',
+            payment_method: id
+          }
+        );
       },
       getLogo(val) {
         if (!val.name) {

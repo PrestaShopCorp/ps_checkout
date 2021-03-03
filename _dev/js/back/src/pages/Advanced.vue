@@ -30,6 +30,7 @@
         linkUrl="https://www.paypal.com/fraud-protection"
         icon="sports"
         :iconTitle="$t('account-settings-deeplink.fraud-tool.icon-title')"
+        identifier="fraud-tool"
       />
       <AccountSettingsDeepLink
         class="mb-4 w-50 d-inline-flex float-right"
@@ -39,6 +40,7 @@
         linkUrl="https://www.paypal.com/businessmanage/account/money"
         icon="account_balance"
         :iconTitle="$t('account-settings-deeplink.bank-account.icon-title')"
+        identifier="bank-account"
       />
       <AccountSettingsDeepLink
         class="mb-4 w-50 d-inline-flex"
@@ -48,6 +50,7 @@
         linkUrl="https://www.paypal.com/businessmanage/account/money"
         icon="euro"
         :iconTitle="$t('account-settings-deeplink.currencies.icon-title')"
+        identifier="currencies"
       />
       <AccountSettingsDeepLink
         class="mb-4 w-50 d-inline-flex float-right"
@@ -59,6 +62,7 @@
         linkUrl="https://www.paypal.com/businessmanage/preferences/payments"
         icon="toll"
         :iconTitle="$t('account-settings-deeplink.conversion-rules.icon-title')"
+        identifier="conversion-rules"
       />
       <AccountSettingsDeepLink
         class="mb-4 w-50 d-inline-flex"
@@ -70,6 +74,7 @@
         linkUrl="https://www.paypal.com/businessprofile/settings/info/edit"
         icon="list_alt"
         :iconTitle="$t('account-settings-deeplink.soft-descriptor.icon-title')"
+        identifier="soft-descriptor"
       />
     </b-container>
   </div>

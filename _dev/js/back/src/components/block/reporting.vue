@@ -60,6 +60,7 @@
             <a
               href="https://www.paypal.com/listing/transactions"
               target="_blank"
+              @click="onClickViewPayPalTransactions()"
             >
               {{ $t('block.reporting.goToPaypal') }}
             </a>
@@ -127,6 +128,11 @@
   export default {
     name: 'Reporting',
     methods: {
+      onClickViewPayPalTransactions() {
+        this.$segment.track('CKT Click Full Transactions', {
+          category: 'ps_checkout'
+        });
+      },
       onRowClicked(item) {
         window.open(item.orderLink);
       },

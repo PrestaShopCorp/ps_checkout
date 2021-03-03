@@ -189,6 +189,9 @@
     },
     methods: {
       paypalUnlink() {
+        this.$segment.track('CKT PayPal use another account', {
+          category: 'ps_checkout'
+        });
         this.$store.dispatch('unlink').then(() => {
           this.$store.dispatch('getOnboardingLink');
           this.sendTrack();
