@@ -292,3 +292,4 @@ services:
     public: true
     arguments:
       - '@ps_checkout.module'
+      - '@ps_checkout.env.sentry'

@@ -149,8 +149,6 @@ class Ps_checkout extends PaymentModule
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = ['min' => '1.6.1.0', 'max' => _PS_VERSION_];
         $this->disableSegment = false;
-
-        $this->loadEnv();
     }
 
     /**
@@ -1274,16 +1272,5 @@ class Ps_checkout extends PaymentModule
         $this->trackModuleAction($track);
 
         return $this->display(__FILE__, $template);
-    }
-
-    /**
-     * Loads ENV variables from module's .env file
-     */
-    private function loadEnv()
-    {
-        if (file_exists($this->getLocalPath() . '/.env')) {
-            $dotenv = Dotenv\Dotenv::create($this->getLocalPath());
-            $dotenv->load();
-        }
     }
 }
