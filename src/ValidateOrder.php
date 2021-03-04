@@ -96,10 +96,17 @@ class ValidateOrder
             $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $payload['cartId']);
 
             $apiOrder = new Order(\Context::getContext()->link);
+
+            $fundingSource = false === $psCheckoutCart ? 'paypal' : $psCheckoutCart->paypal_funding;
+
+            if ($fundingSource === 'card') {
+                $fundingSource .= $psCheckoutCart->isHostedFields ? '-hosted' : '-inline';
+            }
+
             $response = $apiOrder->capture(
                 $order['id'],
                 $this->merchantId,
-                false === $psCheckoutCart ? 'paypal' : $psCheckoutCart->paypal_funding
+                $fundingSource
             ); // API call here
 
             if (false === $response['status']) {
