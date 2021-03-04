@@ -18,10 +18,13 @@
  *}
 
 <div id="ps_checkout-notification-container">
-  <p id="ps_checkout-canceled" class="alert alert-info" style="display:none;">{l s='Processing payment canceled, please choose another payment method or try again.' mod='ps_checkout'}</p>
-  <div id="ps_checkout-error" class="alert alert-danger" style="display:none;">
-    <p><strong>{l s='Processing payment error' mod='ps_checkout'}</strong></p>
-    <div id="ps_checkout-error-text"></div>
+  <div id="ps_checkout-canceled" class="alert alert-warning-custom" style="display:none;">
+    <img src="{$shoppingCartWarningPath|escape:'htmlall':'UTF-8'}" alt="">
+    <strong>{l s='Processing payment canceled, please choose another payment method or try again.' mod='ps_checkout'}</strong>
+  </div>
+  <div id="ps_checkout-error" class="alert alert-danger-custom" style="display:none;">
+    <img src="{$shoppingCartWarningPath|escape:'htmlall':'UTF-8'}" alt="">
+    <strong><span id="ps_checkout-error-text"> Processing payment canceled, please choose another payment method or try again.</span></strong>
   </div>
 </div>
 

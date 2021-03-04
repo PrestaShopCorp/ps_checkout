@@ -453,3 +453,20 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
   from {opacity: 0;}
   to {opacity:1 ;}
 }
+
+#ps_checkout-notification-container .alert {
+  color: #fff;
+}
+
+#ps_checkout-notification-container .alert-warning-custom{
+  background-color: #a3a3a3;
+}
+
+#ps_checkout-notification-container .alert-danger-custom{
+  background-color: #ef808d;
+}
+
+#ps_checkout-canceled:before{
+  padding-left: 50px;
+  background-image: url("http://localhost/PS1.7.7.1/modules/ps_checkout/views/img/shopping-cart-warning.svg");
+}
