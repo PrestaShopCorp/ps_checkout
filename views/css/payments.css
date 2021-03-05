@@ -310,6 +310,10 @@
   margin-top: 6px;
 }
 
+label[for="ps_checkout-hosted-fields-card-cvv"] {
+  white-space: nowrap;
+}
+
 .ps_checkout-payment-option span.custom-radio {
   float: none !important;
   margin-right: 1.0rem !important;
@@ -385,4 +389,66 @@
   height: 100%;
   width: 100%;
   object-fit: contain;
+  
+.ps_checkout-info-wrapper {
+  display: table-cell;
+  width: 100%;
+
+  text-align: right;
+}
+
+.ps_checkout-info-button {
+  display: inline-block;
+  user-select: none;
+
+  font-size: 0.75rem;
+  line-height: 1rem;
+
+  padding-left: 0.415rem;
+  width: 1rem;
+  height: 1rem;
+
+  border-radius: 50%;
+  text-align: left;
+
+  position: relative;
+
+  background-color: #adadad;
+  color: #fff;
+}
+
+.ps_checkout-info-button .popup-content {
+  visibility: hidden;
+  width: 300px;
+  background-color: #adadad;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 16px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -150px;
+  font-weight: normal;
+  font-size: 0.775rem;
+  line-height: 1.25rem;
+}
+
+/* Toggle this class - hide and show the popup */
+.ps_checkout-info-button .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 0.25s;
+  animation: fadeIn 0.25s;
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
 }
