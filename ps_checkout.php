@@ -56,11 +56,19 @@ class Ps_checkout extends PaymentModule
         'displayExpressCheckout',
         'displayFooterProduct',
         'displayPersonalInformationTop',
-        'displayProductAdditionalInfo',
         'actionCartUpdateQuantityBefore',
         'header',
         'displayInvoiceLegalFreeText',
         'actionObjectProductInCartDeleteAfter',
+    ];
+
+    /**
+     * Hook to install for 1.7.1
+     *
+     * @var array
+     */
+    const HOOK_LIST_171 = [
+        'displayProductAdditionalInfo',
     ];
 
     /**
@@ -192,9 +200,16 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService('ps_checkout.context.shop');
         if ($shopContext->isShop17()) {
+            $hook171 = true;
+
+            if ($shopContext->isShop171()) {
+                $hook171 = $this->registerHook(self::HOOK_LIST_171) &&
+                    $this->updatePosition(\Hook::getIdByName('displayProductAdditionalInfo'), false, 1);
+            }
+
             return $this->registerHook(self::HOOK_LIST_17) &&
                 $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1) &&
-                $this->updatePosition(\Hook::getIdByName('displayProductAdditionalInfo'), false, 1);
+                $hook171;
         }
 
         // Install specific to prestashop 1.6

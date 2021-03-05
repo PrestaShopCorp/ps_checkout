@@ -26,7 +26,7 @@
 .product-add-to-cart #ps-checkout-express-button div.paypal-buttons-context-iframe {
   margin-top: 1.25rem;
   width: 45%;
-  margin-left: 75px;
+  margin-left: 78px;
 }
 #checkout-personal-information-step #ps-checkout-express-button {
   display: flex;
@@ -331,11 +331,15 @@
 
 .ps_checkout.payment-method-logo-block.left {
   text-align: left;
+
+  margin-left: 74px;
 }
 
 .ps_checkout.payment-method-logo-block-title {
   margin-bottom: 0.5rem;
-  color: #666
+  color: #666;
+
+  margin-left: 4px;
 }
 
 .ps_checkout.payment-method-logo {
