@@ -100,7 +100,7 @@ class ValidateOrder
             $fundingSource = false === $psCheckoutCart ? 'paypal' : $psCheckoutCart->paypal_funding;
 
             if ($fundingSource === 'card') {
-                $fundingSource .= $psCheckoutCart->isHostedFields ? '-hosted' : '-inline';
+                $fundingSource .= $psCheckoutCart->isHostedFields ? '_hosted' : '_inline';
             }
 
             $response = $apiOrder->capture(
