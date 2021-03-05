@@ -26,7 +26,7 @@
 .product-add-to-cart #ps-checkout-express-button div.paypal-buttons-context-iframe {
   margin-top: 1.25rem;
   width: 45%;
-  margin-left: 75px;
+  margin-left: 78px;
 }
 #checkout-personal-information-step #ps-checkout-express-button {
   display: flex;
@@ -327,6 +327,69 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
   opacity: initial;
 }
 
+.ps_checkout.payment-method-logo-block {
+  margin-top: 1rem;
+
+  text-align: center;
+}
+
+.ps_checkout.payment-method-logo-block.left {
+  text-align: left;
+
+  margin-left: 74px;
+}
+
+.ps_checkout.payment-method-logo-block-title {
+  margin-bottom: 0.5rem;
+  color: #666;
+
+  margin-left: 4px;
+}
+
+.ps_checkout.payment-method-logo {
+  display: inline-block;
+
+  padding: 4px 2px;
+
+  height: 3rem;
+}
+
+.ps_checkout.payment-method-logo.w-fixed {
+  height: 2.5rem;
+  width: 3.5rem;
+}
+
+/* TODO: Check why % dont match ??? */
+.ps_checkout.payment-method-logo.w-25 {
+  width: 20%;
+}
+
+/* TODO: Check why % dont match ??? */
+.ps_checkout.payment-method-logo.w-33 {
+  width: 25%;
+}
+
+/* TODO: Check why % dont match ??? */
+.ps_checkout.payment-method-logo.w-20 {
+  width: 18%;
+}
+
+.ps_checkout.payment-method-logo .wrapper {
+  width: 100%;
+  height: 100%;
+
+  padding: 4px;
+
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #fff;
+}
+
+.ps_checkout.payment-method-logo img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  
 .ps_checkout-info-wrapper {
   display: table-cell;
   width: 100%;
