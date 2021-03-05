@@ -542,10 +542,16 @@ $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_42275e6d860a19342a3943af7d1
 $_MODULE['<{ps_checkout}prestashop>displaypayment_a44217022190f5734b2f72ba1e4f8a79'] = 'Kartennummer';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_95b16127e70e8a90220404fb48343182'] = 'Ablaufdatum';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_5ea7f231296949070013bc43715aae01'] = 'Sicherheitscode';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_fa29fdc19f1d3ac45b09645c15c5312b'] = 'Der Sicherheitscode ist ein';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_1e9307ff80da8e2e7053566f1613cf90'] = 'dreistelliger';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_36883c97eb73307ac86b5ad32abbb49b'] = 'Code auf der Rückseite Ihrer Kreditkarte. In manchen Fällen kann er auch 4-stellig sein oder sich auf der Vorderseite Ihrer Karte befinden.';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_46b9e3665f187c739c55983f757ccda0'] = 'Ich bestätige meine Bestellung';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_a44217022190f5734b2f72ba1e4f8a79'] = 'Kartennummer';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_95b16127e70e8a90220404fb48343182'] = 'Ablaufdatum';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_5ea7f231296949070013bc43715aae01'] = 'Sicherheitscode';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_fa29fdc19f1d3ac45b09645c15c5312b'] = 'The security code is a';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_1e9307ff80da8e2e7053566f1613cf90'] = '3-digits';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_36883c97eb73307ac86b5ad32abbb49b'] = 'code on the back of your credit card. In some cases, it can be 4-digits or on the front of your card.';
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_1d565b9e5303987bb1b1938d5d458bca'] = 'Karte';
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_f990493af3321939ca512f8f2cace108'] = 'Bezahlen mit %s';
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_34ace703adbf14df140d3c02234f67bd'] = 'Bezahlen Sie mit einem PayPal-Konto';

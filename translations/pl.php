@@ -545,10 +545,16 @@ $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_42275e6d860a19342a3943af7d1
 $_MODULE['<{ps_checkout}prestashop>displaypayment_a44217022190f5734b2f72ba1e4f8a79'] = 'Numer karty';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_95b16127e70e8a90220404fb48343182'] = 'Data ważności';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_5ea7f231296949070013bc43715aae01'] = 'Cod. bezpieczeństwa';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_fa29fdc19f1d3ac45b09645c15c5312b'] = 'Kod bezpieczeństwa to';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_1e9307ff80da8e2e7053566f1613cf90'] = '3-cyfrowy';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_36883c97eb73307ac86b5ad32abbb49b'] = 'kod znajdujący się na odwrocie Twojej karty kredytowej. W niektórych przypadkach może to być kod 4-cyfrowy lub znajdujący się na przedniej stronie karty.';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_46b9e3665f187c739c55983f757ccda0'] = 'Potwierdzam moje zamówienie';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_a44217022190f5734b2f72ba1e4f8a79'] = 'Numer karty';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_95b16127e70e8a90220404fb48343182'] = 'Data ważności';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_5ea7f231296949070013bc43715aae01'] = 'Cod. bezpieczeństwa';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_fa29fdc19f1d3ac45b09645c15c5312b'] = 'Kod bezpieczeństwa to';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_1e9307ff80da8e2e7053566f1613cf90'] = '3-cyfrowy';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_36883c97eb73307ac86b5ad32abbb49b'] = 'kod znajdujący się na odwrocie Twojej karty kredytowej. W niektórych przypadkach może to być kod 4-cyfrowy lub znajdujący się na przedniej stronie karty.';
 $_MODULE['<{ps_checkout}prestashop>payment_2471e6ef6ef9018973f1658492115b52'] = 'Zapłać kartą';
 $_MODULE['<{ps_checkout}prestashop>payment_889a2e028c7f9ffb3d0754dab99bd44e'] = 'Zapłać za pomocą konta PayPal lub innych metod płatności';
 $_MODULE['<{ps_checkout}prestashop>promotionblock_565c23511bb8643ac5552fbd5e4ba358'] = 'Jeden moduł, wszystkie metody płatności.';

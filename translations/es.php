@@ -549,10 +549,16 @@ $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_42275e6d860a19342a3943af7d1
 $_MODULE['<{ps_checkout}prestashop>displaypayment_a44217022190f5734b2f72ba1e4f8a79'] = 'Número de tarjeta';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_95b16127e70e8a90220404fb48343182'] = 'Fecha de caducidad';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_5ea7f231296949070013bc43715aae01'] = 'Cód. de seguridad';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_fa29fdc19f1d3ac45b09645c15c5312b'] = 'El código de seguridad es un código de';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_1e9307ff80da8e2e7053566f1613cf90'] = '3 dígitos';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_36883c97eb73307ac86b5ad32abbb49b'] = 'que se encuentra en el reverso de tu tarjeta de crédito. En algunos casos, puede tener 4 dígitos o se sitúa en el frontal de la tarjeta.';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_46b9e3665f187c739c55983f757ccda0'] = 'Confirmar el pedido';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_a44217022190f5734b2f72ba1e4f8a79'] = 'Número de tarjeta';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_95b16127e70e8a90220404fb48343182'] = 'Fecha de caducidad';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_5ea7f231296949070013bc43715aae01'] = 'Cód. de seguridad';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_fa29fdc19f1d3ac45b09645c15c5312b'] = 'El código de seguridad es un código de';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_1e9307ff80da8e2e7053566f1613cf90'] = '3 dígitos';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_36883c97eb73307ac86b5ad32abbb49b'] = 'que se encuentra en el reverso de tu tarjeta de crédito. En algunos casos, puede tener 4 dígitos o se sitúa en el frontal de la tarjeta.';
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_ca7e41a658753c87973936d7ce2429a8'] = 'Si tienes alguna duda, comentario o sugerencia, ponte en contacto con nuestro';
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_66fcf4c223bbf4c7c886d4784e1f62e4'] = 'experimentado servicio de atención al cliente.';
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_a47005f7a79a267052608d713c8cfe8d'] = 'Tu pedido se ha creado correctamente, pero aún no se ha validado. Es posible que haya un problema con el pago o puede que este requiera una acción manual. Ponte en contacto con el servicio de atención al cliente para obtener más información.';

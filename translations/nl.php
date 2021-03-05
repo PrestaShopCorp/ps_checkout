@@ -533,10 +533,16 @@ $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_42275e6d860a19342a3943af7d1
 $_MODULE['<{ps_checkout}prestashop>displaypayment_a44217022190f5734b2f72ba1e4f8a79'] = 'Kaartnummer';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_95b16127e70e8a90220404fb48343182'] = 'Vervaldatum';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_5ea7f231296949070013bc43715aae01'] = 'Veiligheidscode';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_fa29fdc19f1d3ac45b09645c15c5312b'] = 'De beveiligingscode is een code van';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_1e9307ff80da8e2e7053566f1613cf90'] = '3 cijfers';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_36883c97eb73307ac86b5ad32abbb49b'] = 'op de achterkant van uw creditcard. In sommige gevallen kan het een 4-cijferige code zijn of op de voorkant van uw kaart.';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_46b9e3665f187c739c55983f757ccda0'] = 'Ik bevestig mijn bestelling';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_a44217022190f5734b2f72ba1e4f8a79'] = 'Kaartnummer';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_95b16127e70e8a90220404fb48343182'] = 'Vervaldatum';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_5ea7f231296949070013bc43715aae01'] = 'Veiligheidscode';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_fa29fdc19f1d3ac45b09645c15c5312b'] = 'De beveiligingscode is een code van';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_1e9307ff80da8e2e7053566f1613cf90'] = '3 cijfers';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_36883c97eb73307ac86b5ad32abbb49b'] = 'op de achterkant van uw creditcard. In sommige gevallen kan het een 4-cijferige code zijn of op de voorkant van uw kaart.';
 $_MODULE['<{ps_checkout}prestashop>validateorder_2c0a5159b46d2b941c4a508e16ecc207'] = 'Er is een fout opgetreden bij de verwerking van de betaling';
 $_MODULE['<{ps_checkout}prestashop>validateorder_3c79e9f67771d5e278886a2d54f18c29'] = 'De bestelling kan niet worden opgeslagen';
 $_MODULE['<{ps_checkout}prestashop>validateorder_ff74fb308795919496b905a116ae1da6'] = 'Dit betaalmiddel is niet beschikbaar';
