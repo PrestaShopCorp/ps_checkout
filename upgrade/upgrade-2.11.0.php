@@ -22,13 +22,13 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Update main function for module version 2.12.0
+ * Update main function for module version 2.11.0
  *
  * @param Ps_checkout $module
  *
  * @return bool
  */
-function upgrade_module_2_12_0($module)
+function upgrade_module_2_11_0($module)
 {
     if (true === (bool) version_compare(_PS_VERSION_, '1.7.1.0', '>=')) {
         // Register hooks only for PrestaShop 1.7.1, used for payment methods logo block

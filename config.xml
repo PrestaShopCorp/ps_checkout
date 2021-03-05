@@ -2,7 +2,7 @@
 <module>
 	<name>ps_checkout</name>
 	<displayName><![CDATA[PrestaShop Checkout]]></displayName>
-	<version><![CDATA[2.12.0]]></version>
+	<version><![CDATA[2.11.0]]></version>
 	<description><![CDATA[Provide the most commonly used payment methods to your customers in this all-in-one module, and manage all your sales in a centralized interface.]]></description>
 	<author><![CDATA[PrestaShop]]></author>
 	<tab><![CDATA[payments_gateways]]></tab>
