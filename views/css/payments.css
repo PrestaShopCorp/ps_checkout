@@ -310,6 +310,10 @@
   margin-top: 6px;
 }
 
+label[for="ps_checkout-hosted-fields-card-cvv"] {
+  white-space: nowrap;
+}
+
 .ps_checkout-payment-option span.custom-radio {
   float: none !important;
   margin-right: 1.0rem !important;
