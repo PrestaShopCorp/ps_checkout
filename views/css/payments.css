@@ -389,7 +389,8 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
   height: 100%;
   width: 100%;
   object-fit: contain;
-  
+}
+
 .ps_checkout-info-wrapper {
   display: table-cell;
   width: 100%;
