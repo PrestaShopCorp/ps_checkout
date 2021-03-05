@@ -466,7 +466,10 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
   background-color: #ef808d;
 }
 
-#ps_checkout-canceled:before{
-  padding-left: 50px;
-  background-image: url("http://localhost/PS1.7.7.1/modules/ps_checkout/views/img/shopping-cart-warning.svg");
+#ps_checkout-canceled, #ps_checkout-error{
+  display: flex;
+  align-items: center;
+}
+#ps_checkout-canceled img, #ps_checkout-error img{
+  margin-right: 10px;
 }
