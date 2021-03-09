@@ -340,12 +340,12 @@ $_MODULE['<{ps_checkout}prestashop>translations_cbc437a341a40d87fbf327d42e71eef8
 $_MODULE['<{ps_checkout}prestashop>translations_0bb40ba3edbedc8c2775215d4d4aa5ee'] = 'in the meantime, you can sell now up to 500$ in card transactions.';
 $_MODULE['<{ps_checkout}prestashop>translations_bc34c158b938eec639230b7133b92ea3'] = 'in the meantime, you will only accept credit cards payments thought the PayPal branded credit card fields';
 $_MODULE['<{ps_checkout}prestashop>translations_b235ad7b91fbeda6f87ac3d7e6f0ff6d'] = 'We have received the confirmation from PayPal. You can now process all card transactions with no limits.';
-$_MODULE['<{ps_checkout}prestashop>translations_d0b75dc62304bfca259c4d7d1d37f602'] = 'PrestaShop Checkout transactions won\'t work in some of your configurated countries, but there is a solution !';
+$_MODULE['<{ps_checkout}prestashop>translations_d0b75dc62304bfca259c4d7d1d37f602'] = 'PrestaShop Checkout transactions won\'t work in some of your configured countries, but there is a solution !';
 $_MODULE['<{ps_checkout}prestashop>translations_a4e8c4aedf01bae8876d415df3925f65'] = 'Please upgrade your settings for :';
 $_MODULE['<{ps_checkout}prestashop>translations_3f371818d262886c99af519da0cc9548'] = 'Change countries ISO Codes';
 $_MODULE['<{ps_checkout}prestashop>translations_5041c9dced8f0d0a4d319be95b229ea5'] = 'Change countries activation for this payment module';
 $_MODULE['<{ps_checkout}prestashop>translations_cb2afa98a49d1ac44da748a5ee556a8a'] = 'Know more about compliant ISO Codes';
-$_MODULE['<{ps_checkout}prestashop>translations_4769cb3cc107ac928002975bd8802839'] = 'PrestaShop Checkout transactions won\'t work in some of your configurated currencies, but there is a solution !';
+$_MODULE['<{ps_checkout}prestashop>translations_4769cb3cc107ac928002975bd8802839'] = 'PrestaShop Checkout transactions won\'t work in some of your configured currencies, but there is a solution !';
 $_MODULE['<{ps_checkout}prestashop>translations_a3f4f3661e7a8a7e5b1a221f4aecbb5a'] = 'Change currencies ISO Codes';
 $_MODULE['<{ps_checkout}prestashop>translations_487a4ced3865f176965c1571a9f3c0fe'] = 'Change currencies activation for this payment module';
 $_MODULE['<{ps_checkout}prestashop>translations_692b12b3cb0afac724a28d59ec2e7786'] = 'Competitive and transparent fees';
@@ -491,8 +491,8 @@ $_MODULE['<{ps_checkout}prestashop>translations_02d4482d332e1aef3437cd61c9bcc624
 $_MODULE['<{ps_checkout}prestashop>translations_e1e1ce67de4906765f104f24a4280a1d'] = 'Need help? Find here the documentation of this module';
 $_MODULE['<{ps_checkout}prestashop>translations_2607298669ace2fc910321afeb9f8a84'] = 'Download PDF';
 $_MODULE['<{ps_checkout}prestashop>translations_a9a01945b27f95d1912a6d17af9429ef'] = 'No faq available. Try later.';
-$_MODULE['<{ps_checkout}prestashop>translations_3c8611cba7dc4293d5c360b6b052574f'] = 'Pay in 4x messaging banner	';
-$_MODULE['<{ps_checkout}prestashop>translations_04d5933ab56d1bbac4c85471614d3bd2'] = 'Displaying this message has shown a better conversion rate and a raise of Average Order Value.	';
+$_MODULE['<{ps_checkout}prestashop>translations_3c8611cba7dc4293d5c360b6b052574f'] = 'Pay in 4x messaging banner';
+$_MODULE['<{ps_checkout}prestashop>translations_04d5933ab56d1bbac4c85471614d3bd2'] = 'Displaying this message has shown a better conversion rate and a raise of Average Order Value.';
 $_MODULE['<{ps_checkout}prestashop>translations_7e87484272c2e328136e9d2bba0d8b27'] = 'Limit your fraud rate';
 $_MODULE['<{ps_checkout}prestashop>translations_36d83ae2c209f6fb8e8865584d108d8b'] = 'PayPal algorithms automatically limit your fraud rate. There is a complete tool on PayPal to set specific rules and drive your performance concerning fraud and chargeback costs.';
 $_MODULE['<{ps_checkout}prestashop>translations_934c4326dcfdd3a2f62aaef1c13cb464'] = 'Setup fraud tool';
