@@ -39,7 +39,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_edd87c9059d88fea45c0bd6384ce92b9'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_a44217022190f5734b2f72ba1e4f8a79'] = 'Numéro de carte';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_95b16127e70e8a90220404fb48343182'] = 'Date d\'expiration';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_16aefbf48d8803216285343472025aed'] = 'MM/YY';
-$_MODULE['<{ps_checkout}prestashop>ps_checkout_5ea7f231296949070013bc43715aae01'] = 'CVC';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_5ea7f231296949070013bc43715aae01'] = 'Code de sécurité';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_bc9189406be84ec297464a514221406d'] = 'XXX';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_e81c4e4f2b7b93b481e13a8553c2ae1b'] = 'ou';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_2e3e721e530a957f81d5b5dcff0bf0e1'] = 'Achat rapide';
@@ -53,7 +53,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_f212c48fb02b2494070e22184cc8906b'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_dbb50a3167fd387cac23808bd55a9ee4'] = 'Référence de Transaction PayPal';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_fb970bdd962fa85ffc3459b4d5312b10'] = 'La transaction a échoué. Veuillez essayer une carte différente.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_dd9e544a1e050b62561061f3229d5def'] = 'Ce type de carte n\'est pas supporté. Veuillez essayer un autre type de carte.';
-$_MODULE['<{ps_checkout}prestashop>ps_checkout_2fa665589c499e8dead3daa2ee8cc0a4'] = 'La longueur du code CVV est incorrect pour ce type de carte.';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_2fa665589c499e8dead3daa2ee8cc0a4'] = 'La longueur du code de sécurité est incorrect pour ce type de carte.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_aaf5593b992a74786b8a7d942efa40ec'] = 'Votre carte ne peut pas être utilisée pour payer dans cette devise, veuillez essayer un autre moyen de paiement.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_77c9fca2821a98712dab74c2c8148402'] = 'Votre carte ne peut pas être utilisée pour payer dans ce pays, veuillez essayer un autre moyen de paiement.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_4d8364340cc96b2df8772cdec3e1f64c'] = 'Le moyen de paiement a refusé la transaction, veuillez en utiliser un autre.';
@@ -119,7 +119,7 @@ $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_1d565b9e5303
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_f990493af3321939ca512f8f2cace108'] = 'Payer par %s';
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_34ace703adbf14df140d3c02234f67bd'] = 'Payer avec un compte PayPal';
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_983fe12e91079dcb00c74772b50747a3'] = 'Payer par carte - paiements 100% sécurisés';
-$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_60f36bd938597c9e38b669bc6ee7ddb2'] = 'Le numéro de carte, la date d\'expiration ou le CCV est invalide. Vérifiez les et essayez de nouveau.';
+$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_60f36bd938597c9e38b669bc6ee7ddb2'] = 'Le numéro de carte, la date d\'expiration ou le code de sécurité est invalide. Vérifiez les et essayez de nouveau.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_bd21ee92851e4cd9efac7d8c72fb5224'] = 'La date d\'expiration doit être comprise entre maintenant et 2099';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_6b7891d243754e565fc91d307afba03c'] = 'Cette transaction n\'est pas possible. Merci de contacter le service client ou votre gestionnaire de compte pour plus d\'informations.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e39b765a3de4545e91f889374c84535c'] = 'L\'option pour enregistrer la commande est seulement disponible si le \'intent\' est AUTHORIZE et le \"processing_instruction\" est ORDER_SAVED_EXPLICITY. Veuillez changer le \"intent\" en AUTHORIZE, \"processing_instruction\" en \"ORDER_SAVED_EXPLICITY\" et essayer de nouveau.';
@@ -495,7 +495,7 @@ $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_1f87346a16cf80c372065
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_edd87c9059d88fea45c0bd6384ce92b9'] = 'Veuillez finaliser votre commande en cliquant sur \"Je valide ma commande\"';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_a44217022190f5734b2f72ba1e4f8a79'] = 'Numéro de carte';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_95b16127e70e8a90220404fb48343182'] = 'Date d\'expiration';
-$_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_5ea7f231296949070013bc43715aae01'] = 'CVC';
+$_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_5ea7f231296949070013bc43715aae01'] = 'Code de sécurité';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_100e10b5e05d4b3abd2cd52fd12e8789'] = 'Une erreur s\'est produite lors du paiement. Veuillez réessayer ou contacter le support.';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_569fd05bdafa1712c4f6be5b153b8418'] = 'Autres moyens de paiement';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_46b9e3665f187c739c55983f757ccda0'] = 'Je valide ma commande';
@@ -542,7 +542,7 @@ $_MODULE['<{ps_checkout}prestashop>validateorderlegacy_ddd5b53a3ee360450a35db10c
 $_MODULE['<{ps_checkout}prestashop>validateorderlegacy_f1fc574c6bad028c6bf2207ab7e4be35'] = 'Message d\'erreur : ';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_a44217022190f5734b2f72ba1e4f8a79'] = 'Numéro de carte';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_95b16127e70e8a90220404fb48343182'] = 'Date d\'expiration';
-$_MODULE['<{ps_checkout}prestashop>hosted-fields_5ea7f231296949070013bc43715aae01'] = 'CVC';
+$_MODULE['<{ps_checkout}prestashop>hosted-fields_5ea7f231296949070013bc43715aae01'] = 'Code de sécurité';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_100e10b5e05d4b3abd2cd52fd12e8789'] = 'Une erreur s\'est produite lors du paiement. Veuillez réessayer ou contacter le support.';
 $_MODULE['<{ps_checkout}prestashop>paypal_41f7fd5ea9b453e2148bb7bccef861c2'] = 'Vous allez être redirigé vers le portail correspondant pour finaliser le paiement';
 $_MODULE['<{ps_checkout}prestashop>paypal_ba0de86d723de2c4dd08e8b88702c492'] = 'J\'accepte les [1]conditions générales d\'utilisation[/1] et j\'y adhère sans conditions';
@@ -564,11 +564,17 @@ $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_42275e6d860a19342a3943af7d1
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_980f9122ef2d3b8195b5886e0e7fc8f0'] = 'Le paiement a échoué, vous n\'avez pas été débité.';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_a44217022190f5734b2f72ba1e4f8a79'] = 'Numéro de carte';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_95b16127e70e8a90220404fb48343182'] = 'Date d\'expiration';
-$_MODULE['<{ps_checkout}prestashop>displaypayment_5ea7f231296949070013bc43715aae01'] = 'CVC';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_5ea7f231296949070013bc43715aae01'] = 'Code de sécurité';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_fa29fdc19f1d3ac45b09645c15c5312b'] = 'Le code de sécurité et un code à';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_1e9307ff80da8e2e7053566f1613cf90'] = '3 chiffres';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_36883c97eb73307ac86b5ad32abbb49b'] = 'présent sur le dos de votre carte. Dans certains cas, il est composé de 4 chiffres ou se trouve à l\'avant de la carte.';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_46b9e3665f187c739c55983f757ccda0'] = 'Je valide ma commande';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_a44217022190f5734b2f72ba1e4f8a79'] = 'Numéro de carte';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_95b16127e70e8a90220404fb48343182'] = 'Date d\'expiration';
-$_MODULE['<{ps_checkout}prestashop>paymentoptions_5ea7f231296949070013bc43715aae01'] = 'CVC';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_5ea7f231296949070013bc43715aae01'] = 'Code de sécurité';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_fa29fdc19f1d3ac45b09645c15c5312b'] = 'Le code de sécurité et un code à';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_1e9307ff80da8e2e7053566f1613cf90'] = '3 chiffres';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_36883c97eb73307ac86b5ad32abbb49b'] = 'présent sur le dos de votre carte. Dans certains cas, il est composé de 4 chiffres ou se trouve à l\'avant de la carte.';
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_ca7e41a658753c87973936d7ce2429a8'] = 'Si vous avez des questions, commentaires ou problèmes, veuillez contacter notre';
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_66fcf4c223bbf4c7c886d4784e1f62e4'] = 'équipe de support.';
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_a47005f7a79a267052608d713c8cfe8d'] = 'Votre commande n\'a pas encore été validée, elle a seulement été créée. Il y a peut-être un problème avec votre paiement ou votre commande sera peut-être enregistrée plus tard. Veuillez contacter notre service client pour plus d\'informations.';
@@ -584,4 +590,4 @@ $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a4e8c4aedf01bae8876d415df39
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_cb2afa98a49d1ac44da748a5ee556a8a'] = 'En savoir plus sur les ISO Codes conformes';
 $_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_a44217022190f5734b2f72ba1e4f8a79'] = 'Numéro de carte';
 $_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_95b16127e70e8a90220404fb48343182'] = 'Date d\'expiration';
-$_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_5ea7f231296949070013bc43715aae01'] = 'CVC';
+$_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_5ea7f231296949070013bc43715aae01'] = 'Code de sécurité';
