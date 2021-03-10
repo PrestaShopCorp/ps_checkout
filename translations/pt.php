@@ -547,10 +547,16 @@ $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_42275e6d860a19342a3943af7d1
 $_MODULE['<{ps_checkout}prestashop>displaypayment_a44217022190f5734b2f72ba1e4f8a79'] = 'Número do cartão';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_95b16127e70e8a90220404fb48343182'] = 'Data de vencimento';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_5ea7f231296949070013bc43715aae01'] = 'Código de segurança';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_fa29fdc19f1d3ac45b09645c15c5312b'] = 'O código de segurança é um código de';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_1e9307ff80da8e2e7053566f1613cf90'] = '3 dígitos';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_36883c97eb73307ac86b5ad32abbb49b'] = 'no verso do seu cartão de crédito. Em alguns casos, pode ser um código de 4 dígitos ou na frente do seu cartão.';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_46b9e3665f187c739c55983f757ccda0'] = 'Confirmo o meu pedido';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_a44217022190f5734b2f72ba1e4f8a79'] = 'Número do cartão';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_95b16127e70e8a90220404fb48343182'] = 'Data de vencimento';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_5ea7f231296949070013bc43715aae01'] = 'Código de segurança';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_fa29fdc19f1d3ac45b09645c15c5312b'] = 'O código de segurança é um código de';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_1e9307ff80da8e2e7053566f1613cf90'] = '3 dígitos';
+$_MODULE['<{ps_checkout}prestashop>paymentoptions_36883c97eb73307ac86b5ad32abbb49b'] = 'no verso do seu cartão de crédito. Em alguns casos, pode ser um código de 4 dígitos ou na frente do seu cartão.';
 $_MODULE['<{ps_checkout}prestashop>displaypaymentbybinaries_d7467080ec566ee0c6cb59242ee28fa5'] = 'Deverá aceitar os termos e condições para poder processar a sua encomenda.';
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_ca7e41a658753c87973936d7ce2429a8'] = 'Se tiver dúvidas, problemas ou comentários a fazer, entre em contato com nossa';
 $_MODULE['<{ps_checkout}prestashop>orderconfirmation_66fcf4c223bbf4c7c886d4784e1f62e4'] = 'equipe especialista de suporte ao cliente';
