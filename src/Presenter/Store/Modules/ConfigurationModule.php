@@ -86,6 +86,7 @@ class ConfigurationModule implements PresenterInterface
                 'isFundingSourceCardEnabled' => $this->isFundingSourceCardEnabled(),
                 'cardIsEnabled' => $this->paypalConfiguration->isCardPaymentEnabled(),
                 'cardInlinePaypalIsEnabled' => $this->paypalConfiguration->isCardInlinePaypalIsEnabled(),
+                'cardSavePaypalIsEnabled' => $this->paypalConfiguration->isCardSavePaypalIsEnabled(),
                 'logger' => [
                     'levels' => [
                         Logger::DEBUG => 'DEBUG : Detailed debug information',

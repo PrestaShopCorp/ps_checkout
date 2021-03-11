@@ -369,6 +369,13 @@ class Translations
                     'title' => $this->module->l('Pay in 4x messaging banner', 'translations'),
                     'alert-content' => $this->module->l('Displaying this message has shown a better conversion rate and a raise of Average Order Value.', 'translations'),
                 ],
+                'save-credentials' => [
+                    'title' => $this->module->l('Activate save cards'),
+                    'globalSettings' => $this->module->l('Global settings'),
+                    'enableSaveCards' => $this->module->l('Enable save cards'),
+                    'tipsTitle' => $this->module->l('Tips'),
+                    'tipsContent' => $this->module->l("in order to make to make the \"save your credit card\" option fully functional, you need to unlink your PayPal account and connect it again, giving permissions, that way PrestaShop Checkout will have the rights to save credit cards tokens for you."),
+                ]
             ],
             'account-settings-deeplink' => [
                 'fraud-tool' => [

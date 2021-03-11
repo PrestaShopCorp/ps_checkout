@@ -22,6 +22,10 @@
       <ActivePayment />
     </b-container>
 
+    <b-container class="mb-4">
+      <SaveCredentials />
+    </b-container>
+
     <b-container v-if="payIn4XActiveForMerchant" class="mb-4">
       <PayIn4X />
     </b-container>
@@ -46,6 +50,7 @@
   import PayIn4X from '@/components/panel/pay-in-4x';
   import ButtonCustomization from '@/components/panel/button-customization';
   import FeatureIncoming from '@/components/block/feature-incoming';
+  import SaveCredentials from '@/components/panel/save-credentials';
 
   export default {
     name: 'Customize',
@@ -54,7 +59,8 @@
       PayIn4X,
       ExpressCheckout,
       ButtonCustomization,
-      FeatureIncoming
+      FeatureIncoming,
+      SaveCredentials
     },
     computed: {
       shopIs17() {

@@ -155,6 +155,19 @@ export default {
     });
   },
 
+  toggleSaveCreditCards({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'toggleSaveCreditCards',
+      data: {
+        status: payload ? 1 : 0
+      }
+    }).then(() => {
+      commit(types.UPDATE_CARD_SAVE_AVAILABILITY, payload);
+      return Promise.resolve(payload);
+    });
+  },
+
   changeLoggerLevel({ commit, getters }, value) {
     return ajax({
       url: getters.adminController,

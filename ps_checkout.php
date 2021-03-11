@@ -101,6 +101,7 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_PAYPAL_PAYMENT_STATUS' => '',
         'PS_CHECKOUT_CARD_PAYMENT_STATUS' => '',
         'PS_CHECKOUT_CARD_PAYMENT_ENABLED' => true,
+        'PS_CHECKOUT_CARD_SAVE_ENABLED' => true,
         'PS_CHECKOUT_EC_ORDER_PAGE' => false,
         'PS_CHECKOUT_EC_CHECKOUT_PAGE' => false,
         'PS_CHECKOUT_EC_PRODUCT_PAGE' => false,

@@ -38,6 +38,7 @@ class PayPalConfiguration
     const CSP_NONCE = 'PS_CHECKOUT_CSP_NONCE';
     const PS_CHECKOUT_PAYPAL_CB_INLINE = 'PS_CHECKOUT_PAYPAL_CB_INLINE';
     const PS_CHECKOUT_PAYPAL_BUTTON = 'PS_CHECKOUT_PAYPAL_BUTTON';
+    const PS_CHECKOUT_CARD_SAVE_ENABLED = 'PS_CHECKOUT_CARD_SAVE_ENABLED';
 
     /**
      * @var PrestaShopConfiguration
@@ -141,6 +142,24 @@ class PayPalConfiguration
     public function isCardInlinePaypalIsEnabled()
     {
         return (bool) $this->configuration->get(self::PS_CHECKOUT_PAYPAL_CB_INLINE);
+    }
+
+    /**
+     * @param bool $status
+     *
+     * @throws PsCheckoutException
+     */
+    public function setCardSavePaypalEnabled($status)
+    {
+        $this->configuration->set(self::PS_CHECKOUT_CARD_SAVE_ENABLED, (int) $status);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCardSavePaypalIsEnabled()
+    {
+        return (bool) $this->configuration->get(self::PS_CHECKOUT_CARD_SAVE_ENABLED);
     }
 
     /**
