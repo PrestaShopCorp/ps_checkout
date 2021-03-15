@@ -160,7 +160,7 @@ export default {
       url: getters.adminController,
       action: 'toggleSaveCreditCards',
       data: {
-        status: payload ? 1 : 0
+        status: JSON.stringify(payload.cardSavePaypalIsEnabled)
       }
     }).then(() => {
       commit(types.UPDATE_CARD_SAVE_AVAILABILITY, payload);

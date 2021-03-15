@@ -30,21 +30,15 @@
         </b-card-title>
 
         <div class="m-auto pb-3">
-          <div class="d-flex">
+          <div class="d-flex save-card-content">
             <span>{{ $t('panel.save-credentials.enableSaveCards') }}</span>
             <PSSwitch
-              :id="123"
+              id="save-card"
               :position="1"
               text-position="none"
               v-model="cardSavePaypalIsEnabled"
               @input="cardSavePaypalIsEnabled"
             >
-              <template v-if="cardSavePaypalIsEnabled">
-                {{ $t('panel.active-payment.enabled') }}
-              </template>
-              <template v-else>
-                {{ $t('panel.active-payment.disabled') }}
-              </template>
             </PSSwitch>
           </div>
         </div>
@@ -83,12 +77,10 @@
       }
     },
     methods: {
-      toggleSaveCreditCards(value) {
+      toggleSaveCreditCards(val) {
         this.$store.dispatch({
           type: 'toggleSaveCreditCards',
-          paymentOption: {
-            isEnabled: value
-          }
+          cardSavePaypalIsEnabled: val
         });
       },
     },
@@ -96,111 +88,7 @@
 </script>
 
 <style scoped>
-  .handle {
-    cursor: grab;
-    margin-top: 20px;
-  }
-  .handle:hover {
-    color: #25b9d7;
-  }
-  .sortable-chosen .handle {
-    cursor: grabbing;
-  }
-  .move {
-    cursor: grabbing;
-  }
-  .move .position {
-    display: none;
-  }
-  .move .payment-method {
-    cursor: grabbing;
-    margin-left: 40px;
-  }
-  .ghost .payment-method {
-    border: 2px dashed #25b9d7;
-    background-color: #fcfcfc;
-  }
-  .ghost .icon {
-    display: none;
-  }
-  .ghost .content {
-    display: none;
-  }
-  .ghost .ghost-replace-card {
-    display: block !important;
-  }
-  .ghost .ghost-replace-paypal {
-    display: block !important;
-  }
-  .ghost-replace-card {
-    display: none;
-    padding: 20px;
-    height: 64.27px;
-    text-align: center;
-    width: 100%;
-  }
-  .ghost-replace-paypal {
-    display: none;
-    padding: 20px;
-    height: 129.53px;
-    width: 100%;
-    text-align: center;
-    line-height: 6;
-  }
-  .move .number {
-    display: none;
-  }
-  .payment-method-container img {
-    width: 25px;
-  }
-  .payment-method-container .flex-grow-1.content i {
-    color: #25b9d7;
-  }
-  .payment-method {
-    position: relative;
-    display: block;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    background-color: #fff;
-    border: 1px solid #dddddd;
-    border-radius: 3px;
-  }
-  .payment-method.disable {
-    background-color: #fafbfc;
-  }
-  .payment-method.disable .material-icons {
-    color: #759299 !important;
-  }
-  .position {
-    position: absolute;
-    top: 20px;
-    left: 40px;
-  }
-  .payment-method-content {
-    padding: 20px;
-  }
-  .flex-grow-1 {
-    flex-grow: 1;
-  }
-  .separator {
-    border-top: 1px solid #dddddd;
-  }
-  .label {
-    font-weight: 550;
-    color: #000000;
-  }
-  .logo {
-    max-height: 30px;
-    min-width: 60px;
-    max-width: 90px;
-  }
-  .country {
-    font-weight: 600;
-    text-align: right;
-  }
-  @media screen and (min-width: 992px) {
-    .status {
-      min-width: 10em;
-    }
-  }
+.save-card-content {
+  justify-content: space-between;
+}
 </style>

@@ -753,8 +753,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
     public function ajaxProcessToggleSaveCreditCards()
     {
-        $status = (int) Tools::getValue('status');
+        $status = Tools::getValue('status');
         /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
         $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
-        $paypalConfiguration->setCardSavePaypalEnabled($status === 1);    }
+        $paypalConfiguration->setCardSavePaypalEnabled($status === 'true');    }
 }
