@@ -38,7 +38,7 @@ class PayPalConfiguration
     const CSP_NONCE = 'PS_CHECKOUT_CSP_NONCE';
     const PS_CHECKOUT_PAYPAL_CB_INLINE = 'PS_CHECKOUT_PAYPAL_CB_INLINE';
     const PS_CHECKOUT_PAYPAL_BUTTON = 'PS_CHECKOUT_PAYPAL_BUTTON';
-    const PS_CHECKOUT_CARD_SAVE_ENABLED = 'PS_CHECKOUT_CARD_SAVE_ENABLED';
+    const PS_CHECKOUT_SAVE_CARD_ENABLED = 'PS_CHECKOUT_SAVE_CARD_ENABLED';
 
     /**
      * @var PrestaShopConfiguration
@@ -149,17 +149,17 @@ class PayPalConfiguration
      *
      * @throws PsCheckoutException
      */
-    public function setCardSavePaypalEnabled($status)
+    public function setSaveCardPaypalEnabled($status)
     {
-        $this->configuration->set(self::PS_CHECKOUT_CARD_SAVE_ENABLED, (int) $status);
+        $this->configuration->set(self::PS_CHECKOUT_SAVE_CARD_ENABLED, (int) $status);
     }
 
     /**
      * @return bool
      */
-    public function isCardSavePaypalIsEnabled()
+    public function isSaveCardPaypalEnabled()
     {
-        return (bool) $this->configuration->get(self::PS_CHECKOUT_CARD_SAVE_ENABLED);
+        return (bool) $this->configuration->get(self::PS_CHECKOUT_SAVE_CARD_ENABLED);
     }
 
     /**

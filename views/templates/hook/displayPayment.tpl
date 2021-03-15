@@ -78,7 +78,16 @@
                       <div id="ps_checkout-hosted-fields-card-cvv" class="form-control"></div>
                     </div>
                   </div>
-
+                  <div class="row">
+                    <div class="form-group col-xs-12">
+                      <div id="ps_checkout-hosted-fields-save-card" style="display: none">
+                        <label class="form-control-label" for="ps_checkout-hosted-fields-save-card">
+                          <input type="checkbox" name="ps_checkout-hosted-fields-save-card">
+                          {l s='Save card for faster checkout' mod='ps_checkout'}
+                        </label>
+                      </div>
+                    </div>
+                  </div>
                   <div id="payment-confirmation" class="submit hidden">
                     <button id="hosted-fields-validation" class="button btn btn-default button-medium" type="submit">
                       <span>{l s='I confirm my order' mod='ps_checkout'}<i class="icon-chevron-right right"></i></span>

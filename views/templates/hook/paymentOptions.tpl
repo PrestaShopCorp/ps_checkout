@@ -54,6 +54,16 @@
       <div id="ps_checkout-hosted-fields-card-cvv" class="form-control"></div>
     </div>
   </div>
+  <div class="row">
+    <div class="form-group col-xs-12">
+      <div id="ps_checkout-hosted-fields-save-card" style="display: none">
+        <label class="form-control-label" for="ps_checkout-hosted-fields-save-card">
+          <input type="checkbox" name="ps_checkout-hosted-fields-save-card">
+          {l s='Save card for faster checkout' mod='ps_checkout'}
+        </label>
+      </div>
+    </div>
+  </div>
   <div id="payments-sdk__contingency-lightbox"></div>
 </form>
 <script>

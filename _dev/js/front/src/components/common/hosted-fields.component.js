@@ -20,7 +20,7 @@ import { BaseComponent } from '../../core/dependency-injection/base.component';
 
 export class HostedFieldsComponent extends BaseComponent {
   static Inject = {
-    config: 'PsCheckoutconfig',
+    config: 'PsCheckoutConfig',
     payPalService: 'PayPalService',
     psCheckoutApi: 'PsCheckoutApi',
     psCheckoutService: 'PsCheckoutService'
@@ -37,6 +37,7 @@ export class HostedFieldsComponent extends BaseComponent {
     this.data.HTMLElementCardNumber = this.getCardNumber();
     this.data.HTMLElementCardCVV = this.getCardCVV();
     this.data.HTMLElementCardExpirationDate = this.getCardExpirationDate();
+    this.data.HTMLElementSaveCard = this.getSaveCard();
     this.data.HTMLElementSection = this.getSection();
   }
 
@@ -51,19 +52,25 @@ export class HostedFieldsComponent extends BaseComponent {
   }
 
   getCardNumber() {
-    const cardNumberId = '#ps_checkout-hosted-fields-card-number';
+    const cardNumberId = 'ps_checkout-hosted-fields-card-number';
     return document.getElementById(cardNumberId);
   }
 
   getCardCVV() {
-    const cardCVVId = '#ps_checkout-hosted-fields-card-cvv';
+    const cardCVVId = 'ps_checkout-hosted-fields-card-cvv';
     return document.getElementById(cardCVVId);
   }
 
   getCardExpirationDate() {
     const cardExpirationDateId =
-      '#ps_checkout-hosted-fields-card-expiration-date';
+      'ps_checkout-hosted-fields-card-expiration-date';
     return document.getElementById(cardExpirationDateId);
+  }
+
+  getSaveCard() {
+    const saveCardId =
+      'ps_checkout-hosted-fields-save-card';
+    return document.getElementById(saveCardId);
   }
 
   getSection() {
@@ -176,6 +183,10 @@ export class HostedFieldsComponent extends BaseComponent {
     this.data.conditions = this.app.root.children.conditionsCheckbox;
     this.data.notification = this.app.root.children.notification;
     this.data.loader = this.app.root.children.loader;
+
+    if (this.config.hostedFieldsSaveCardEnabled) {
+      this.data.HTMLElementSaveCard.style.display = "block";
+    }
 
     this.renderButton();
     this.renderPayPalHostedFields();

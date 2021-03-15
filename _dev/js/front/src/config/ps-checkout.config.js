@@ -41,6 +41,7 @@ export const PsCheckoutConfig = {
   expressCheckoutUrl: window.ps_checkoutExpressCheckoutUrl,
 
   hostedFieldsEnabled: window.ps_checkoutHostedFieldsEnabled,
+  hostedFieldsSaveCardEnabled: window.ps_checkoutHostedFieldsSaveCardEnabled,
 
   translations: getTranslations(),
 
