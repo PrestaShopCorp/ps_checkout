@@ -374,8 +374,8 @@ class Translations
                     'globalSettings' => $this->module->l('Global settings'),
                     'enableSaveCards' => $this->module->l('Enable save cards'),
                     'tipsTitle' => $this->module->l('Tips'),
-                    'tipsContent' => $this->module->l("in order to make to make the \"save your credit card\" option fully functional, you need to unlink your PayPal account and connect it again, giving permissions, that way PrestaShop Checkout will have the rights to save credit cards tokens for you."),
-                ]
+                    'tipsContent' => $this->module->l('in order to make to make the "save your credit card" option fully functional, you need to unlink your PayPal account and connect it again, giving permissions, that way PrestaShop Checkout will have the rights to save credit cards tokens for you.'),
+                ],
             ],
             'account-settings-deeplink' => [
                 'fraud-tool' => [
