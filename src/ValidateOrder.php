@@ -95,6 +95,16 @@ class ValidateOrder
             /** @var \PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $payload['cartId']);
 
+            // Check if the PayPal order amount is the same than the cart amount
+            // We tolerate a difference of more or less 0.05
+            $context = \Context::getContext();
+            $paypalOrderAmount = number_format($order['purchase_units'][0]['amount']['value'], 2);
+            $cartAmount = number_format($context->cart->getOrderTotal(true, \Cart::BOTH), 2);
+
+            if ($paypalOrderAmount + 0.05 < $cartAmount || $paypalOrderAmount - 0.05 > $cartAmount) {
+                (new PayPalError('DIFFERENCE_BETWEEN_TRANSACTION_AND_CART'))->throwException();
+            }
+
             $apiOrder = new Order(\Context::getContext()->link);
             $response = $apiOrder->capture(
                 $order['id'],

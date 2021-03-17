@@ -329,6 +329,10 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
                 case PayPalException::ORDER_ALREADY_CAPTURED:
                     $exceptionMessageForCustomer = $this->module->l('Order cannot be saved');
                     break;
+                case PayPalException::DIFFERENCE_BETWEEN_TRANSACTION_AND_CART:
+                    $exceptionMessageForCustomer = $this->module->l('The transaction amount doesn\'t match with the cart amount.');
+                    $notifyCustomerService = false;
+                    break;
             }
         }
 
