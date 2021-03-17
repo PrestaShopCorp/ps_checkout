@@ -82,7 +82,7 @@
                     <div class="form-group col-xs-12">
                       <div id="ps_checkout-hosted-fields-save-card" style="display: none">
                         <label class="form-control-label" for="ps_checkout-hosted-fields-save-card">
-                          <input type="checkbox" name="ps_checkout-hosted-fields-save-card">
+                          <input id="ps_checkout-hosted-fields-save-card-checkbox" type="checkbox" name="ps_checkout-hosted-fields-save-card">
                           {l s='Save card for faster checkout' mod='ps_checkout'}
                         </label>
                       </div>

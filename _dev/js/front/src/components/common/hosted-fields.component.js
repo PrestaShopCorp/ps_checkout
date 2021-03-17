@@ -38,6 +38,7 @@ export class HostedFieldsComponent extends BaseComponent {
     this.data.HTMLElementCardCVV = this.getCardCVV();
     this.data.HTMLElementCardExpirationDate = this.getCardExpirationDate();
     this.data.HTMLElementSaveCard = this.getSaveCard();
+    this.data.HTMLElementSaveCardInput = this.getSaveCardInput();
     this.data.HTMLElementSection = this.getSection();
   }
 
@@ -71,6 +72,12 @@ export class HostedFieldsComponent extends BaseComponent {
     const saveCardId =
       'ps_checkout-hosted-fields-save-card';
     return document.getElementById(saveCardId);
+  }
+
+  getSaveCardInput() {
+    const saveCardInputId =
+      'ps_checkout-hosted-fields-save-card-checkbox';
+    return document.getElementById(saveCardInputId);
   }
 
   getSection() {
@@ -135,6 +142,7 @@ export class HostedFieldsComponent extends BaseComponent {
 
             hostedFields
               .submit({
+                vault: this.data.HTMLElementSaveCardInput.checked,
                 contingencies: ['3D_SECURE']
               })
               .then((payload) => {
