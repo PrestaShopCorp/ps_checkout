@@ -717,6 +717,8 @@ class Ps_checkout extends PaymentModule
                     '[PAYPAL_ACCOUNT]' => $this->context->cookie->__get('paypalEmail') ? $this->context->cookie->__get('paypalEmail') : '',
                 ]
             ),
+            'shoppingCartWarningPath' => $this->getPathUri() . 'views/img/shopping-cart-warning.svg',
+            'warningTranslatedText' => $this->l('Warning'),
         ]);
 
         return $this->display(__FILE__, '/views/templates/hook/displayPayment.tpl');
@@ -1390,6 +1392,8 @@ class Ps_checkout extends PaymentModule
                     '[PAYPAL_ACCOUNT]' => $this->context->cookie->__get('paypalEmail') ? $this->context->cookie->__get('paypalEmail') : '',
                 ]
             ),
+            'shoppingCartWarningPath' => $this->getPathUri() . 'views/img/shopping-cart-warning.svg',
+            'warningTranslatedText' => $this->l('Warning'),
         ]);
 
         return $this->display(__FILE__, '/views/templates/hook/displayPaymentTop.tpl');
