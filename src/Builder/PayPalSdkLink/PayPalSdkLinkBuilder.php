@@ -124,7 +124,7 @@ class PayPalSdkLinkBuilder
             'currency' => \Context::getContext()->currency->iso_code,
             'intent' => strtolower($this->configuration->getIntent()),
             'commit' => 'order' === $this->getPageName() ? 'true' : 'false',
-            'vault' => 'false',
+            'vault' => 'true',
             'integration-date' => $this->configuration->getIntegrationDate(),
         ];
 
