@@ -453,3 +453,23 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
   from {opacity: 0;}
   to {opacity:1 ;}
 }
+
+#ps_checkout-notification-container .alert {
+  color: #fff;
+}
+
+#ps_checkout-notification-container .alert-warning-custom{
+  background-color: #a3a3a3;
+}
+
+#ps_checkout-notification-container .alert-danger-custom{
+  background-color: #ef808d;
+}
+
+#ps_checkout-canceled, #ps_checkout-error{
+  display: flex;
+  align-items: center;
+}
+#ps_checkout-canceled img, #ps_checkout-error img{
+  margin-right: 10px;
+}
