@@ -153,6 +153,7 @@ class ContextModule implements PresenterInterface
                 'currenciesLink' => $this->getGeneratedLink('AdminCurrencies'),
                 'paymentPreferencesLink' => $this->getGeneratedLink($this->shopContext->isShop17() ? 'AdminPaymentPreferences' : 'AdminPayment'),
                 'overridesExist' => $this->overridesExist(),
+                'submitIdeaLink' => $this->getSubmitIdeaLink(),
             ],
         ];
     }
@@ -341,5 +342,15 @@ class ContextModule implements PresenterInterface
         }
 
         return (bool) $result;
+    }
+
+    /**
+     * Get URL for
+     *
+     * @return string
+     */
+    private function getSubmitIdeaLink()
+    {
+        return 'https://portal.productboard.com/prestashop/1-prestashop-feedback-the-place-to-share-your-feedback-on-prestashop-s-next-features/tabs/9-prestashop-checkout';
     }
 }
