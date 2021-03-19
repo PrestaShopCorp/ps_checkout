@@ -102,7 +102,7 @@ class ValidateOrder
             $cartAmount = number_format($context->cart->getOrderTotal(true, \Cart::BOTH), 2);
 
             if ($paypalOrderAmount + 0.05 < $cartAmount || $paypalOrderAmount - 0.05 > $cartAmount) {
-                (new PayPalError('DIFFERENCE_BETWEEN_TRANSACTION_AND_CART'))->throwException();
+                throw new PsCheckoutException('The transaction amount doesn\'t match with the cart amount.', PsCheckoutException::DIFFERENCE_BETWEEN_TRANSACTION_AND_CART);
             }
 
             $apiOrder = new Order(\Context::getContext()->link);

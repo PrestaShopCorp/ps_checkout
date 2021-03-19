@@ -267,6 +267,10 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
                 case PsCheckoutException::PRESTASHOP_ORDER_PAYMENT:
                     $exceptionMessageForCustomer = $this->module->l('OrderPayment cannot be saved');
                     break;
+                case PsCheckoutException::DIFFERENCE_BETWEEN_TRANSACTION_AND_CART:
+                    $exceptionMessageForCustomer = $this->module->l('The transaction amount doesn\'t match with the cart amount.');
+                    $notifyCustomerService = false;
+                    break;
             }
         } elseif ('PrestaShop\Module\PrestashopCheckout\Exception\PayPalException' === $exceptionClass) {
             switch ($exception->getCode()) {
@@ -328,10 +332,6 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
                     break;
                 case PayPalException::ORDER_ALREADY_CAPTURED:
                     $exceptionMessageForCustomer = $this->module->l('Order cannot be saved');
-                    break;
-                case PayPalException::DIFFERENCE_BETWEEN_TRANSACTION_AND_CART:
-                    $exceptionMessageForCustomer = $this->module->l('The transaction amount doesn\'t match with the cart amount.');
-                    $notifyCustomerService = false;
                     break;
             }
         }
