@@ -130,6 +130,10 @@ export class HostedFieldsComponent extends BaseComponent {
               .submit({
                 contingencies: ['3D_SECURE']
               })
+              .catch((error) => {
+                this.psCheckoutApi.postLogCaptureCanceled(error);
+                throw error;
+              })
               .then((payload) => {
                 const { liabilityShifted, authenticationReason } = payload;
                 return this.psCheckoutService

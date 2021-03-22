@@ -42,6 +42,7 @@ export class PayPalService extends BaseClass {
   static Inject = {
     config: 'PayPalSdkConfig',
     sdk: 'PayPalSDK',
+    psCheckoutApi: 'PsCheckoutApi',
     $: '$'
   };
 
@@ -175,7 +176,11 @@ export class PayPalService extends BaseClass {
         });
 
         return hostedFields;
-      });
+      })
+      .catch((error) => {
+        this.psCheckoutApi.postLogCaptureCanceled(error);
+        throw error;
+      })
   }
 
   getEligibleFundingSources(cache = false) {

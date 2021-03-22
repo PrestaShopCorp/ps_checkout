@@ -20,6 +20,8 @@
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 
 /**
@@ -81,7 +83,7 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
 
             $this->paypalOrderId = $bodyValues['orderID'];
 
-            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
@@ -103,7 +105,7 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             $currency = $this->context->currency;
             $total = (float) $cart->getOrderTotal(true, Cart::BOTH);
 
-            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $accountRepository */
+            /** @var PaypalAccountRepository $accountRepository */
             $accountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
             $merchandId = $accountRepository->getMerchantId();
             $payment = new ValidateOrder($bodyValues['orderID'], $merchandId);
@@ -349,6 +351,9 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             ));
             $this->sendBadRequestError($exceptionMessageForCustomer, $exception);
         }
+
+        $apiOrder = new \PrestaShop\Module\PrestashopCheckout\Api\Payment\Order(Context::getContext()->link);
+        $apiOrder->logCaptureCanceled($this->paypalOrderId, $exception->getMessage());
 
         $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
         $psCheckoutCartCollection->where('paypal_order', '=', (int) $paypalOrder);

@@ -207,4 +207,19 @@ export class PsCheckoutApi extends BaseClass {
       })
     );
   }
+
+  postLogCaptureCanceled(error) {
+      fetch(this.config.logCaptureCanceledUrl, {
+        method: 'post',
+        credentials: 'same-origin',
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          orderId: this.config.orderId,
+          error: error
+        })
+      }).then(r => {
+      });
+  }
 }

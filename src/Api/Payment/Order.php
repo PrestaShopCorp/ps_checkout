@@ -149,4 +149,24 @@ class Order extends PaymentClient
             ],
         ]);
     }
+
+    /**
+     *
+     * @param int $orderId
+     * @param string $error
+     *
+     * @return array
+     */
+    public function logCaptureCanceled($orderId, $error)
+    {
+        $this->setRoute('/payments/order/order_capture_canceled');
+
+        return $this->post([
+            'json' => [
+                'orderId' => $orderId,
+                'error' => $error,
+                'date' => date('Y-m-d h:i:s')
+            ],
+        ]);
+    }
 }
