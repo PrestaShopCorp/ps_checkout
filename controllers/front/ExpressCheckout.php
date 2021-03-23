@@ -21,6 +21,7 @@
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
+use PrestaShop\Module\PrestashopCheckout\Updater\CustomerUpdater;
 
 /**
  * This controller receive ajax call when customer click on an express checkout button
@@ -166,6 +167,8 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
 
         if (method_exists($this->context, 'updateCustomer')) {
             $this->context->updateCustomer($customer);
+        } else {
+            CustomerUpdater::updateContextCustomer($this->context, $customer);
         }
     }
 
@@ -188,7 +191,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $customer->email = $email;
         $customer->firstname = $firstName;
         $customer->lastname = $lastName;
-        $customer->passwd = Tools::passwdGen();
+        $customer->passwd = md5(time() . _COOKIE_KEY_);
 
         try {
             $customer->save();

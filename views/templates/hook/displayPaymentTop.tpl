@@ -18,10 +18,13 @@
  *}
 
 <div id="ps_checkout-notification-container">
-  <p id="ps_checkout-canceled" class="alert alert-info" style="display:none;">{l s='Processing payment canceled, please choose another payment method or try again.' mod='ps_checkout'}</p>
-  <div id="ps_checkout-error" class="alert alert-danger" style="display:none;">
-    <p><strong>{l s='Processing payment error' mod='ps_checkout'}</strong></p>
-    <div id="ps_checkout-error-text"></div>
+  <div id="ps_checkout-canceled" class="alert alert-warning-custom" style="display:none;">
+    <img src="{$shoppingCartWarningPath|escape:'htmlall':'UTF-8'}" alt="{$warningTranslatedText|escape:'htmlall':'UTF-8'}">
+    <strong>{l s='Processing payment canceled, please choose another payment method or try again.' mod='ps_checkout'}</strong>
+  </div>
+  <div id="ps_checkout-error" class="alert alert-danger-custom" style="display:none;">
+    <img src="{$shoppingCartWarningPath|escape:'htmlall':'UTF-8'}" alt="{$warningTranslatedText|escape:'htmlall':'UTF-8'}">
+    <strong><span id="ps_checkout-error-text"></span></strong>
   </div>
 </div>
 
@@ -33,7 +36,7 @@
   </p>
 </div>
 {else}
-  {if $is17 || $isOnePageCheckout16}
+  {if $is17 || ($isOnePageCheckout16 && !$isExpressCheckout)}
   <div id="ps_checkout-loader" class="express-checkout-block mb-2">
     <div class="express-checkout-block-wrapper">
       <p class="express-checkout-spinner-text">

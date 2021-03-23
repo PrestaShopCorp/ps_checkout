@@ -72,18 +72,24 @@
         :iconTitle="$t('account-settings-deeplink.soft-descriptor.icon-title')"
       />
     </b-container>
+
+    <b-container class="container">
+      <FeatureIncoming />
+    </b-container>
   </div>
 </template>
 
 <script>
   import AccountSettingsDeepLink from '@/components/block/account-settings-deeplink';
   import CbInlineActivate from '@/components/block/cb-inline-activate';
+  import FeatureIncoming from '@/components/block/feature-incoming';
 
   export default {
     name: 'Advanced',
     components: {
       CbInlineActivate,
-      AccountSettingsDeepLink
+      AccountSettingsDeepLink,
+      FeatureIncoming
     }
   };
 </script>

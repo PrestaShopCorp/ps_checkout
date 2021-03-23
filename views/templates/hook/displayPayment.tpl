@@ -17,7 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
-{if !$isOnePageCheckout16}
+{if !$isOnePageCheckout16 && !$isExpressCheckout}
   <div id="ps_checkout-loader" class="express-checkout-block mb-2">
     <div class="express-checkout-block-wrapper">
       <p class="express-checkout-spinner-text">
@@ -67,6 +67,14 @@
                     </div>
                     <div class="form-group col-xs-6">
                       <label class="form-control-label" for="ps_checkout-hosted-fields-card-cvv">{l s='CVC' mod='ps_checkout'}</label>
+                      <div class="ps_checkout-info-wrapper">
+                        <div class="ps_checkout-info-button" onmouseenter="cvvEnter()" onmouseleave="cvvLeave()">i
+                          <div class="popup-content" id="cvv-popup">
+                            <img src="{$modulePath}views/img/cvv.svg" alt="">
+                            {l s='The security code is a' mod='ps_checkout'} <b>{l s='3-digits' mod='ps_checkout'}</b> {l s='code on the back of your credit card. In some cases, it can be 4-digits or on the front of your card.' mod='ps_checkout'}
+                          </div>
+                        </div>
+                      </div>
                       <div id="ps_checkout-hosted-fields-card-cvv" class="form-control"></div>
                     </div>
                   </div>
@@ -88,3 +96,13 @@
     {/foreach}
   </div>
 </section>
+<script>
+function cvvEnter() {
+  var popup = document.getElementById("cvv-popup");
+  popup.classList.add("show");
+}
+function cvvLeave() {
+  var popup = document.getElementById("cvv-popup");
+  popup.classList.remove("show");
+}
+</script>

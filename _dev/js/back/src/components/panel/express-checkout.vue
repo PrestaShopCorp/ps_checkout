@@ -31,12 +31,13 @@
             :label="$t('panel.express-checkout.pageLocation')"
             label-for="express-checkout"
           >
-            <b-form-row class="mr-0 ml-0">
+            <b-form-row class="mr-0 ml-0 text-center">
               <b-col>
                 <PSCheckbox
                   id="order-page"
                   v-model="orderPageIsActive"
                   class="mb-2"
+                  :centered="true"
                 />
                 <img
                   @click="toggleOrderPage()"
@@ -57,11 +58,12 @@
                   ({{ $t('panel.express-checkout.recommended') }})
                 </div>
               </b-col>
-              <b-col>
+              <b-col v-if="shopIs17">
                 <PSCheckbox
                   id="checkout-page"
                   v-model="checkoutPageIsActive"
                   class="mb-2"
+                  :centered="true"
                 />
                 <img
                   @click="toggleCheckoutPage()"
@@ -84,6 +86,7 @@
                   id="product-page"
                   v-model="productPageIsActive"
                   class="mb-2"
+                  :centered="true"
                 />
                 <img
                   @click="toggleProductPage()"
@@ -157,6 +160,9 @@
         set(payload) {
           this.$store.dispatch('toggleECProductPage', payload);
         }
+      },
+      shopIs17() {
+        return this.$store.getters.shopIs17;
       }
     },
     methods: {

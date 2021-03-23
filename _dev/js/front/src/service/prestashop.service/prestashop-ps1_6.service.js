@@ -18,10 +18,24 @@
  */
 export class PrestashopPs1_6Service {
   static getProductDetails() {
-    return {};
+    const id_product = document.getElementById('product_page_product_id');
+    const id_product_attribute = document.getElementById('idCombination');
+    const id_customization = window.customizationId;
+    const quantity_wanted = document.getElementById('quantity_wanted');
+
+    return {
+      id_product: id_product.value || '',
+      id_product_attribute: id_product_attribute.value || '',
+      id_customization: id_customization || '',
+      quantity_wanted: quantity_wanted.value || ''
+    };
   }
 
   static isCartPage() {
+    if (document.body.id === 'order') {
+      return document.querySelector('.step_current.first');
+    }
+
     return false;
   }
 
@@ -34,11 +48,18 @@ export class PrestashopPs1_6Service {
   }
 
   static isOrderPersonalInformationStepPage() {
-    return false;
+    return (
+      document.body.id === 'authentication' ||
+      (document.body.id === 'order-opc' && window.isLogged === false)
+    );
+  }
+
+  static isIframeProductPage() {
+    return new URL(window.location).searchParams.get('content_only') === '1';
   }
 
   static isProductPage() {
-    return false;
+    return document.body.id === 'product';
   }
 
   static onUpdatedCart() {}
@@ -48,6 +69,16 @@ export class PrestashopPs1_6Service {
       const updatePaymentMethods = window['updatePaymentMethods'];
       window['updatePaymentMethods'] = (...args) => {
         updatePaymentMethods(...args);
+        listener(...args);
+      };
+    }
+  }
+
+  static onUpdatedShoppingCartExtra(listener) {
+    if (window['updateHookShoppingCartExtra']) {
+      const updateHookShoppingCartExtra = window['updateHookShoppingCartExtra'];
+      window['updateHookShoppingCartExtra'] = (...args) => {
+        updateHookShoppingCartExtra(...args);
         listener(...args);
       };
     }

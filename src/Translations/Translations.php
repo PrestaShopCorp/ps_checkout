@@ -365,6 +365,10 @@ class Translations
                     'downloadDoc' => $this->module->l('Download PDF', 'translations'),
                     'noFaqAvailable' => $this->module->l('No faq available. Try later.', 'translations'),
                 ],
+                'pay-in-4x' => [
+                    'title' => $this->module->l('Pay in 4x messaging banner', 'translations'),
+                    'alert-content' => $this->module->l('Displaying this message has shown a better conversion rate and a raise of Average Order Value.', 'translations'),
+                ],
             ],
             'account-settings-deeplink' => [
                 'fraud-tool' => [
@@ -407,7 +411,8 @@ class Translations
                     'learnMore' => $this->module->l('Learn more', 'translations'),
                 ],
                 'feature-incoming' => [
-                    'text' => $this->module->l('Checkout customization, transactions list, dispute management ... and more to come!', 'translations'),
+                    'text' => $this->module->l('Pay in 4x, save credit cards, authorize mode, send payments direct link... and more to come! Let us know what you would love to be added to this module: any new feature or behavior improvement!', 'translations'),
+                    'submitIdea' => $this->module->l('Submit idea', 'translations'),
                 ],
                 'dispute' => [
                     'pendingDispute' => '{disputeCount}' . ' ' . $this->module->l('pending dispute(s)', 'translations'),

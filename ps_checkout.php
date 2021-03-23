@@ -42,6 +42,7 @@ class Ps_checkout extends PaymentModule
         'actionAdminControllerSetMedia',
         'displayPaymentTop',
         'displayPaymentByBinaries',
+        'displayProductPriceBlock',
         'actionFrontControllerSetMedia',
     ];
 
@@ -58,6 +59,16 @@ class Ps_checkout extends PaymentModule
         'actionCartUpdateQuantityBefore',
         'header',
         'displayInvoiceLegalFreeText',
+        'actionObjectProductInCartDeleteAfter',
+    ];
+
+    /**
+     * Hook to install for 1.7.1
+     *
+     * @var array
+     */
+    const HOOK_LIST_171 = [
+        'displayProductAdditionalInfo',
     ];
 
     /**
@@ -74,7 +85,10 @@ class Ps_checkout extends PaymentModule
      * @var array
      */
     const HOOK_LIST_16 = [
+        'actionBeforeCartUpdateQty',
+        'actionAfterDeleteProductInCart',
         'displayPayment',
+        'displayCartTotalPriceLabel',
     ];
 
     public $configurationList = [
@@ -90,6 +104,8 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_EC_ORDER_PAGE' => false,
         'PS_CHECKOUT_EC_CHECKOUT_PAGE' => false,
         'PS_CHECKOUT_EC_PRODUCT_PAGE' => false,
+        'PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE' => false,
+        'PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE' => false,
         'PS_PSX_FIREBASE_EMAIL' => '',
         'PS_PSX_FIREBASE_ID_TOKEN' => '',
         'PS_PSX_FIREBASE_LOCAL_ID' => '',
@@ -110,7 +126,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.7.1';
+    const VERSION = '2.12.0';
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -131,7 +147,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.7.1';
+        $this->version = '2.12.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->currencies = true;
@@ -184,8 +200,16 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService('ps_checkout.context.shop');
         if ($shopContext->isShop17()) {
+            $hook171 = true;
+
+            if ($shopContext->isShop171()) {
+                $hook171 = $this->registerHook(self::HOOK_LIST_171) &&
+                    $this->updatePosition(\Hook::getIdByName('displayProductAdditionalInfo'), false, 1);
+            }
+
             return $this->registerHook(self::HOOK_LIST_17) &&
-                $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1);
+                $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1) &&
+                $hook171;
         }
 
         // Install specific to prestashop 1.6
@@ -396,11 +420,97 @@ class Ps_checkout extends PaymentModule
     }
 
     /**
-     * Express checkout on the cart page
+     * Express checkout and payment method logo block on the cart page
      */
     public function hookDisplayExpressCheckout()
     {
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
+        $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
+        $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
+
+        $count = 0;
+        $paymentOptions = [];
+
+        foreach ($fundingSourceProvider->getAll() as $fundingSource) {
+            if ($count === 8) {
+                break;
+            }
+
+            $count += $fundingSource->name === 'card'
+                ? 3
+                : 1;
+
+            while ($count > 8) {
+                array_pop($paymentOptions);
+                --$count;
+            }
+            $paymentOptions[] = $fundingSource->name;
+        }
+
+        $width = 25;
+        if ($count == 6) {
+            $width = 33;
+        }
+
+        if ($count < 6) {
+            $width = 20;
+        }
+
+        $this->context->smarty->assign([
+            'width' => $width,
+            'modulePath' => $this->getPathUri(),
+            'paymentOptions' => $paymentOptions,
+            'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageEnabled(),
+        ]);
+
         return $this->display(__FILE__, '/views/templates/hook/displayExpressCheckout.tpl');
+    }
+
+    /**
+     * Payment method logo block on product page
+     */
+    public function hookDisplayProductAdditionalInfo()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
+        $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
+
+        $count = 0;
+        $paymentOptions = [];
+
+        foreach ($fundingSourceProvider->getAll() as $fundingSource) {
+            if ($count === 8) {
+                break;
+            }
+
+            $count += $fundingSource->name === 'card'
+                ? 3
+                : 1;
+
+            while ($count > 8) {
+                array_pop($paymentOptions);
+                --$count;
+            }
+            $paymentOptions[] = $fundingSource->name;
+        }
+
+        $width = 25;
+        if ($count == 6) {
+            $width = 33;
+        }
+
+        if ($count < 6) {
+            $width = 20;
+        }
+
+        $this->context->smarty->assign([
+            'width' => $width,
+            'modulePath' => $this->getPathUri(),
+            'paymentOptions' => $paymentOptions,
+        ]);
+
+        return $this->display(__FILE__, '/views/templates/hook/displayProductAdditionalInfo.tpl');
     }
 
     /**
@@ -409,6 +519,56 @@ class Ps_checkout extends PaymentModule
     public function hookDisplayFooterProduct()
     {
         return $this->display(__FILE__, '/views/templates/hook/displayFooterProduct.tpl');
+    }
+
+    /**
+     * Pay in 4x banner in the product page
+     */
+    public function hookDisplayProductPriceBlock($params)
+    {
+        if ($params['type'] === 'weight' && 'product' === Tools::getValue('controller')) {
+            if (false === Validate::isLoadedObject($this->context->cart)) {
+                return;
+            }
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+            $shopContext = $this->getService('ps_checkout.context.shop');
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
+            $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
+
+            $totalCartPrice = $this->context->cart->getSummaryDetails();
+            $this->context->smarty->assign([
+                'totalCartPrice' => $totalCartPrice['total_price'],
+                'payIn4XisProductPageEnabled' => $payIn4XService->isProductPageEnabled(),
+            ]);
+
+            return $this->display(__FILE__, '/views/templates/hook/displayProductPriceBlock.tpl');
+        }
+    }
+
+    /**
+     * Pay in 4x banner in the cart page for 1.6
+     */
+    public function hookDisplayCartTotalPriceLabel($params)
+    {
+        if (false === Validate::isLoadedObject($this->context->cart)) {
+            return;
+        }
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
+        $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
+
+        $totalCartPrice = $this->context->cart->getSummaryDetails();
+        $this->context->smarty->assign([
+            'totalCartPrice' => $totalCartPrice['total_price'],
+            'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageEnabled(),
+        ]);
+
+        return $this->display(__FILE__, '/views/templates/hook/displayCartTotalPriceLabel.tpl');
     }
 
     public function getContent()
@@ -442,6 +602,33 @@ class Ps_checkout extends PaymentModule
         return $this->display(__FILE__, '/views/templates/admin/configuration.tpl');
     }
 
+    /**
+     * This hook is called only since PrestaShop 1.7.0.0
+     */
+    public function hookActionObjectProductInCartDeleteAfter()
+    {
+        $this->hookActionCartUpdateQuantityBefore();
+    }
+
+    /**
+     * This hook is called only in PrestaShop 1.6.1 to 1.6.1.24
+     * Deprecated since PrestaShop 1.7.0.0
+     */
+    public function hookActionAfterDeleteProductInCart()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+
+        if ($shopContext->isShop17()) {
+            return;
+        }
+
+        $this->hookActionCartUpdateQuantityBefore();
+    }
+
+    /**
+     * This hook is called only since PrestaShop 1.7.0.0
+     */
     public function hookActionCartUpdateQuantityBefore()
     {
         if (false === Validate::isLoadedObject($this->context->cart)) {
@@ -462,6 +649,22 @@ class Ps_checkout extends PaymentModule
             $psCheckoutCartRepository->remove($psCheckoutCart);
             $this->context->cookie->__unset('paypalEmail');
         }
+    }
+
+    /**
+     * This hook is called only in PrestaShop 1.6.1 to 1.6.1.24
+     * Deprecated since PrestaShop 1.7.0.0
+     */
+    public function hookActionBeforeCartUpdateQty()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+
+        if ($shopContext->isShop17()) {
+            return;
+        }
+
+        $this->hookActionCartUpdateQuantityBefore();
     }
 
     /**
@@ -514,6 +717,8 @@ class Ps_checkout extends PaymentModule
                     '[PAYPAL_ACCOUNT]' => $this->context->cookie->__get('paypalEmail') ? $this->context->cookie->__get('paypalEmail') : '',
                 ]
             ),
+            'shoppingCartWarningPath' => $this->getPathUri() . 'views/img/shopping-cart-warning.svg',
+            'warningTranslatedText' => $this->l('Warning'),
         ]);
 
         return $this->display(__FILE__, '/views/templates/hook/displayPayment.tpl');
@@ -743,7 +948,7 @@ class Ps_checkout extends PaymentModule
     {
         $controller = Tools::getValue('controller');
 
-        if (false === in_array($controller, ['cart', 'product', 'order', 'orderopc'], true)
+        if (false === in_array($controller, ['cart', 'product', 'order', 'orderopc', 'authentication'], true)
             || false === $this->merchantIsValid()
         ) {
             return;
@@ -816,7 +1021,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'ValidateUrl' => $this->context->link->getModuleLink($this->name, 'validate', [], true),
             $this->name . 'CancelUrl' => $this->context->link->getModuleLink($this->name, 'cancel', [], true),
             $this->name . 'ExpressCheckoutUrl' => $this->context->link->getModuleLink($this->name, 'ExpressCheckout', [], true),
-            $this->name . 'CheckoutUrl' => $this->context->link->getPageLink('order', true, $this->context->language->id),
+            $this->name . 'CheckoutUrl' => $this->getCheckoutPageUrl(),
             $this->name . 'ConfirmUrl' => $this->context->link->getPageLink('order-confirmation', true, (int) $this->context->language->id),
             $this->name . 'PayPalSdkUrl' => $payPalSdkLinkBuilder->buildLink(),
             $this->name . 'PayPalClientToken' => $payPalClientToken,
@@ -1187,6 +1392,8 @@ class Ps_checkout extends PaymentModule
                     '[PAYPAL_ACCOUNT]' => $this->context->cookie->__get('paypalEmail') ? $this->context->cookie->__get('paypalEmail') : '',
                 ]
             ),
+            'shoppingCartWarningPath' => $this->getPathUri() . 'views/img/shopping-cart-warning.svg',
+            'warningTranslatedText' => $this->l('Warning'),
         ]);
 
         return $this->display(__FILE__, '/views/templates/hook/displayPaymentTop.tpl');
@@ -1272,5 +1479,43 @@ class Ps_checkout extends PaymentModule
         $this->trackModuleAction($track);
 
         return $this->display(__FILE__, $template);
+    }
+
+    /**
+     * Provide checkout page link
+     *
+     * @return string
+     */
+    private function getCheckoutPageUrl()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+
+        if ($shopContext->isShop17()) {
+            return $this->context->link->getPageLink(
+                'order',
+                true,
+                (int) $this->context->language->id
+            );
+        }
+
+        // PrestaShop 1.6 legacy native one page checkout
+        if (1 === (int) Configuration::get('PS_ORDER_PROCESS_TYPE')) {
+            return $this->context->link->getPageLink(
+                'order-opc',
+                true,
+                (int) $this->context->language->id
+            );
+        }
+
+        // PrestaShop 1.6 standard checkout
+        return $this->context->link->getPageLink(
+            'order',
+            true,
+            (int) $this->context->language->id,
+            [
+                'step' => 1,
+            ]
+        );
     }
 }

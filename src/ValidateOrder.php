@@ -102,10 +102,17 @@ class ValidateOrder
             $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $payload['cartId']);
 
             $apiOrder = new Order(\Context::getContext()->link);
+
+            $fundingSource = false === $psCheckoutCart ? 'paypal' : $psCheckoutCart->paypal_funding;
+
+            if ($fundingSource === 'card') {
+                $fundingSource .= $psCheckoutCart->isHostedFields ? '_hosted' : '_inline';
+            }
+
             $response = $apiOrder->capture(
                 $order['id'],
                 $this->merchantId,
-                false === $psCheckoutCart ? 'paypal' : $psCheckoutCart->paypal_funding
+                $fundingSource
             ); // API call here
 
             if (false === $response['status']) {
@@ -218,13 +225,14 @@ class ValidateOrder
                         $orderPayment = $orderPaymentCollection->getFirst();
 
                         if (false !== $orderPayment) {
-                            $orderPayment->transaction_id = $transactionIdentifier;
-                            $orderPayment->payment_method = $fundingSourceTranslationProvider->getPaymentMethodName($psCheckoutCart->paypal_funding);
-                            try {
-                                $orderPayment->save();
-                            } catch (\Exception $exception) {
-                                $exceptionHandler->handle(new PsCheckoutException('Unable to save PrestaShop OrderPayment', PsCheckoutException::PRESTASHOP_ORDER_PAYMENT, $exception));
-                            }
+                            \Db::getInstance()->update(
+                                'order_payment',
+                                [
+                                    'payment_method' => pSQL($fundingSourceTranslationProvider->getPaymentMethodName($psCheckoutCart->paypal_funding)),
+                                    'transaction_id' => pSQL($transactionIdentifier),
+                                ],
+                                'id_order_payment = ' . (int) $orderPayment->id
+                            );
                         }
                     }
                 }
