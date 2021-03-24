@@ -47,6 +47,10 @@ export class PrestashopPs1_6Service {
     return document.body.id === 'order-opc';
   }
 
+  static isOrderPage() {
+    return document.body.id === 'order' || document.body.id === 'order-opc';
+  }
+
   static isOrderPersonalInformationStepPage() {
     return (
       document.body.id === 'authentication' ||
