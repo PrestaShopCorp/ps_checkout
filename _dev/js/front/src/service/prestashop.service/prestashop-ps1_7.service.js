@@ -32,6 +32,10 @@ export class PrestashopPs1_7Service {
     return document.querySelector('[data-module-name^="ps_checkout"]');
   }
 
+  static isOrderPage() {
+    return document.body.id === 'checkout';
+  }
+
   static isOrderPersonalInformationStepPage() {
     if (document.body.id !== 'checkout') return false;
     const step = document.querySelector('#checkout-personal-information-step');
