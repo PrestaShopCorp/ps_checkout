@@ -49,6 +49,7 @@ class ModuleFilteredRavenClient extends Raven_Client
         */
         if (!isset($data['exception']['values'][0]['stacktrace']['frames'])) {
             dump($data);
+
             return null;
         }
 
@@ -72,24 +73,13 @@ class ModuleFilteredRavenClient extends Raven_Client
         /**
          * Content of $data:
          * array:3 [▼
-        "value" => "Class 'DogeInPsFacebook' not found"
-        "type" => "Error"
-        "stacktrace" => array:1 [▼
-        "frames" => array:4 [▼
-        0 => array:7 [▼
-        "filename" => "index.php"
-        "lineno" => 93
-        "function" => null
-        "pre_context" => array:5 [▶]
-        "context_line" => "    Dispatcher::getInstance()->dispatch();"
-        "post_context" => array:2 [▶]
         "in_app" => false
          */
-
         $atLeastOneFileIsInApp = false;
         foreach ($data['stacktrace']['frames'] as $frame) {
             $atLeastOneFileIsInApp = $atLeastOneFileIsInApp || ((isset($frame['in_app']) && $frame['in_app']));
         }
+
         return $atLeastOneFileIsInApp;
     }
 }
