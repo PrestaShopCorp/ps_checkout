@@ -34,17 +34,11 @@ class ExceptionHandler
 
     public function __construct(Ps_checkout $module, SentryEnv $sentryEnv)
     {
-        $this->client = new Raven_Client(
-            $sentryEnv->getDsn(),
-            [
-                'level' => 'warning',
-                'tags' => [
-                    'php_version' => phpversion(),
-                    'ps_checkout_version' => $module->version,
-                    'prestashop_version' => _PS_VERSION_,
-                ],
-            ]
-        );
+        $this->client = new ModuleFilteredRavenClient($module, $sentryEnv);
+
+        $this->client->setAppPath(realpath(_PS_MODULE_DIR_ . 'ps_checkout/'));
+
+        $this->client->install();
     }
 
     /**
