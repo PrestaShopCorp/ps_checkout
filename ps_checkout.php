@@ -432,6 +432,15 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayExpressCheckout()
     {
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->getService('ps_checkout.repository.prestashop.account');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository */
+        $paypalAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
+
+        if (!$psAccountRepository->onBoardingIsCompleted() || !$paypalAccountRepository->onBoardingIsCompleted()) {
+            return '';
+        }
+
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
         $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
 
@@ -481,6 +490,15 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayProductAdditionalInfo()
     {
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->getService('ps_checkout.repository.prestashop.account');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository */
+        $paypalAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
+
+        if (!$psAccountRepository->onBoardingIsCompleted() || !$paypalAccountRepository->onBoardingIsCompleted()) {
+            return '';
+        }
+
         /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
         $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
 
