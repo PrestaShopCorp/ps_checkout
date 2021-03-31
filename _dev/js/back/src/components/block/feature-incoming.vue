@@ -24,6 +24,16 @@
     <div class="text-muted mt-4">
       {{ $t('block.feature-incoming.text') }}
     </div>
+    <div class="mt-4">
+      <b-button
+        variant="link"
+        :href="submitIdeaLink"
+        target="_blank"
+        class="ml-4 feedback-button"
+      >
+        {{ $t('block.feature-incoming.submitIdea') }}
+      </b-button>
+    </div>
   </div>
 </template>
 
@@ -36,4 +46,21 @@
   .text-muted {
     font-size: 16px;
   }
+  .feature-block .feedback-button {
+    width: 122px;
+    height: 38px;
+    border-radius: 6px !important;
+    background-color: #3730a3 !important;
+    color: #fff !important;
+  }
 </style>
+
+<script>
+export default {
+  computed: {
+    submitIdeaLink() {
+      return this.$store.state.context.submitIdeaLink;
+    },
+  },
+};
+</script>
