@@ -34,7 +34,17 @@ class ExceptionHandler
 
     public function __construct(Ps_checkout $module, SentryEnv $sentryEnv)
     {
-        $this->client = new ModuleFilteredRavenClient($module, $sentryEnv);
+        $this->client = new ModuleFilteredRavenClient(
+            $sentryEnv->getDsn(),
+            [
+                'level' => 'warning',
+                'tags' => [
+                    'php_version' => phpversion(),
+                    'ps_checkout_version' => $module->version,
+                    'prestashop_version' => _PS_VERSION_,
+                ],
+            ]
+        );
 
         $this->client->setAppPath(realpath(_PS_MODULE_DIR_ . 'ps_checkout/'));
 
@@ -44,14 +54,14 @@ class ExceptionHandler
     /**
      * @param Exception $error
      * @param bool $throw
+     * @param mixed $data
      *
      * @return void
      *
-     * @throws Exception
      */
-    public function handle(Exception $error, $throw = true)
+    public function handle(Exception $error, $throw = true, $data = null)
     {
-        $this->client->captureException($error);
+        $this->client->captureException($error, $data);
 
         if ($throw) {
             throw $error;
