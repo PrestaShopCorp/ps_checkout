@@ -51,11 +51,7 @@ class ValidateOrder
     private $merchantId;
 
     /**
-<<<<<<< HEAD
      * @var \Context
-=======
-     * @var \Context;
->>>>>>> dev
      */
     private $context;
 
@@ -115,8 +111,6 @@ class ValidateOrder
             }
 
             $apiOrder = new Order($this->context->link);
-<<<<<<< HEAD
-=======
 
             $fundingSource = false === $psCheckoutCart ? 'paypal' : $psCheckoutCart->paypal_funding;
 
@@ -124,7 +118,6 @@ class ValidateOrder
                 $fundingSource .= $psCheckoutCart->isHostedFields ? '_hosted' : '_inline';
             }
 
->>>>>>> dev
             $response = $apiOrder->capture(
                 $order['id'],
                 $this->merchantId,
