@@ -411,7 +411,8 @@ class Translations
                     'learnMore' => $this->module->l('Learn more', 'translations'),
                 ],
                 'feature-incoming' => [
-                    'text' => $this->module->l('Checkout customization, transactions list, dispute management ... and more to come!', 'translations'),
+                    'text' => $this->module->l('Pay in 4x, save credit cards, authorize mode, send payments direct link... and more to come! Let us know what you would love to be added to this module: any new feature or behavior improvement!', 'translations'),
+                    'submitIdea' => $this->module->l('Submit idea', 'translations'),
                 ],
                 'dispute' => [
                     'pendingDispute' => '{disputeCount}' . ' ' . $this->module->l('pending dispute(s)', 'translations'),
