@@ -41,8 +41,6 @@ export class PaymentOptionsComponent extends BaseComponent {
   }
 
   renderPaymentOptionItems() {
-    console.log('ELIGIBLE SOURCES', this.payPalService
-      .getEligibleFundingSources());
     this.children.paymentOptions = this.payPalService
       .getEligibleFundingSources()
       .map((fundingSource) => {
