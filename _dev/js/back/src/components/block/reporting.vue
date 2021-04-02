@@ -25,7 +25,11 @@
         </h1>
         <p class="subtitle">
           {{ $t('block.reporting.label') }}.
-          <a href="https://www.paypal.com/listing/transactions" target="_blank">
+          <a
+            href="https://www.paypal.com/listing/transactions"
+            target="_blank"
+            @click="onClickViewPayPalTransactions()"
+          >
             {{ $t('block.reporting.subtitleLinkLabel') }}
           </a>
         </p>
