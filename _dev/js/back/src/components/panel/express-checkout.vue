@@ -143,6 +143,12 @@
         },
         set(payload) {
           this.$store.dispatch('toggleECOrderPage', payload);
+          this.$segment.track(
+            payload ? 'CKT Enable Express cart' : 'CKT Disable Express cart',
+            {
+              category: 'ps_checkout'
+            }
+          );
         }
       },
       checkoutPageIsActive: {
@@ -151,6 +157,12 @@
         },
         set(payload) {
           this.$store.dispatch('toggleECCheckoutPage', payload);
+          this.$segment.track(
+            payload ? 'CKT Enable Express Login' : 'CKT Disable Express Login',
+            {
+              category: 'ps_checkout'
+            }
+          );
         }
       },
       productPageIsActive: {
@@ -159,6 +171,14 @@
         },
         set(payload) {
           this.$store.dispatch('toggleECProductPage', payload);
+          this.$segment.track(
+            payload
+              ? 'CKT Enable Express product'
+              : 'CKT Disable Express product',
+            {
+              category: 'ps_checkout'
+            }
+          );
         }
       },
       shopIs17() {
@@ -167,16 +187,34 @@
     },
     methods: {
       toggleOrderPage() {
-        this.$store.dispatch('toggleECOrderPage', !this.orderPageIsActive);
+        let status = !this.orderPageIsActive;
+        this.$store.dispatch('toggleECOrderPage', status);
+        this.$segment.track(
+          status ? 'CKT Enable Express cart' : 'CKT Disable Express cart',
+          {
+            category: 'ps_checkout'
+          }
+        );
       },
       toggleCheckoutPage() {
-        this.$store.dispatch(
-          'toggleECCheckoutPage',
-          !this.checkoutPageIsActive
+        let status = !this.checkoutPageIsActive;
+        this.$store.dispatch('toggleECCheckoutPage', status);
+        this.$segment.track(
+          status ? 'CKT Enable Express Login' : 'CKT Disable Express Login',
+          {
+            category: 'ps_checkout'
+          }
         );
       },
       toggleProductPage() {
-        this.$store.dispatch('toggleECProductPage', !this.productPageIsActive);
+        let status = !this.productPageIsActive;
+        this.$store.dispatch('toggleECProductPage', status);
+        this.$segment.track(
+          status ? 'CKT Enable Express product' : 'CKT Disable Express product',
+          {
+            category: 'ps_checkout'
+          }
+        );
       }
     }
   };

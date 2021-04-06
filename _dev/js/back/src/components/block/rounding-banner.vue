@@ -59,6 +59,9 @@
         this.$store.dispatch('updateRoundingSettings').then(() => {
           this.confirmationAlert = true;
         });
+        this.$segment.track('CKT Click Change Roundings', {
+          category: 'ps_checkout'
+        });
       }
     },
     computed: {
@@ -78,6 +81,13 @@
         setTimeout(() => {
           this.confirmationAlert = false;
         }, 6000);
+      }
+    },
+    mounted() {
+      if (!this.roundingSettingsIsCorrect && !this.isReady) {
+        this.$segment.track('CKT Display Banner Rounding Settings', {
+          category: 'ps_checkout'
+        });
       }
     }
   };

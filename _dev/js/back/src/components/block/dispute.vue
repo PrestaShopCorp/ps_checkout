@@ -31,6 +31,7 @@
             variant="link"
             href="https://www.paypal.com/disputes/"
             target="_blank"
+            @click="onClickViewPayPalDisputes()"
           >
             {{ $t('block.dispute.goToDispute') }}
             <i class="material-icons">arrow_right_alt</i>
@@ -43,6 +44,13 @@
 
 <script>
   export default {
-    name: 'Dispute'
+    name: 'Dispute',
+    methods: {
+      onClickViewPayPalDisputes() {
+        this.$segment.track('CKT Click PayPal Disputes', {
+          category: 'ps_checkout'
+        });
+      }
+    }
   };
 </script>

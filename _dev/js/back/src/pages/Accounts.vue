@@ -149,6 +149,10 @@
                 category: 'ps_checkout'
               }
             );
+          } else if (!this.accountIslinked) {
+            this.$segment.track('CKT PayPal connected but waiting for sync', {
+              category: 'ps_checkout'
+            });
           } else {
             // but need approval
             this.$segment.track(
