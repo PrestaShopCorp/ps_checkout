@@ -44,7 +44,7 @@ class PsxClient extends GenericClient
                     'Shop-Id' => (new ShopUuidManager())->getForShop((int) $context->shop->id),
                     'Module-Version' => \Ps_checkout::VERSION, // version of the module
                     'Prestashop-Version' => _PS_VERSION_, // prestashop version
-                    'Shop-Url' => $context->link->getBaseLink((int) $context->shop->id),
+                    'Shop-Url' => $context->shop->getBaseURL(),
                     'Hook-Url' => $context->link->getModuleLink(
                         'ps_checkout',
                         'DispatchWebHook',
