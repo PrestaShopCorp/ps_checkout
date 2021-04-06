@@ -45,6 +45,12 @@
   padding: 33px 99px 34px 99px;
 }
 
+@media (max-width: 767px) {
+  .ps_checkout-payment-option div.payment_module:last-child a {
+    padding: 10px;
+  }
+}
+
 .ps_checkout-payment-option div.payment_module:first-child a:after {
   display: block;
   content: "\f054";
