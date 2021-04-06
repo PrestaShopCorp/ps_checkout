@@ -33,6 +33,7 @@
           :href="linkUrl"
           target="_blank"
           class="mt-3"
+          @click="onClickTrack(identifier)"
         >
           {{ linkTitle }}
         </b-button>
@@ -68,6 +69,35 @@
       linkUrl: {
         type: String,
         required: true
+      },
+      identifier: {
+        type: String,
+        required: true
+      }
+    },
+    methods: {
+      onClickTrack(identifier) {
+        if ('fraud-tool' === identifier) {
+          this.$segment.track('CKT Click Fraud Tool', {
+            category: 'ps_checkout'
+          });
+        } else if ('bank-account' === identifier) {
+          this.$segment.track('CKT Click Bank Account', {
+            category: 'ps_checkout'
+          });
+        } else if ('currencies' === identifier) {
+          this.$segment.track('CKT Click Manage Currencies', {
+            category: 'ps_checkout'
+          });
+        } else if ('conversion-rules' === identifier) {
+          this.$segment.track('CKT Click Conversion Rules', {
+            category: 'ps_checkout'
+          });
+        } else if ('soft-descriptor' === identifier) {
+          this.$segment.track('CKT Click Short Description', {
+            category: 'ps_checkout'
+          });
+        }
       }
     }
   };

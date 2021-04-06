@@ -396,6 +396,12 @@
           }
         });
         this.dismissCountDown = this.dismissSecs;
+        this.$segment.track('CKT Change customize button', {
+          category: 'ps_checkout',
+          shape: this.selectedShape,
+          label: this.selectedLabel,
+          color: this.selectedColor
+        });
       },
       countDownChanged(dismissCountDown) {
         this.dismissCountDown = dismissCountDown;
