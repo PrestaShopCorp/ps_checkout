@@ -62,7 +62,7 @@ class PaymentClient extends GenericClient
                         'Bn-Code' => (new ShopContext())->getBnCode(),
                         'Module-Version' => \Ps_checkout::VERSION, // version of the module
                         'Prestashop-Version' => _PS_VERSION_, // prestashop version
-                        'Shop-Url' => $this->link->getBaseLink((int) $context->shop->id),
+                        'Shop-Url' => $context->shop->getBaseURL(),
                     ],
                 ],
             ]);

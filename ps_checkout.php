@@ -196,7 +196,8 @@ class Ps_checkout extends PaymentModule
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
             $this->installTabs() &&
             $this->disableIncompatibleCountries() &&
-            $this->disableIncompatibleCurrencies();
+            $this->disableIncompatibleCurrencies() &&
+            (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops();
 
         if (!$defaultInstall) {
             return false;
