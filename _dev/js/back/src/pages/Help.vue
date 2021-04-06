@@ -18,19 +18,25 @@
  *-->
 <template>
   <div>
-    <b-container>
+    <b-container class="mb-4">
       <HelpPanel />
+    </b-container>
+
+    <b-container class="container">
+      <FeatureIncoming />
     </b-container>
   </div>
 </template>
 
 <script>
   import HelpPanel from '@/components/panel/help';
+  import FeatureIncoming from '@/components/block/feature-incoming';
 
   export default {
     name: 'Help',
     components: {
-      HelpPanel
+      HelpPanel,
+      FeatureIncoming
     }
   };
 </script>
