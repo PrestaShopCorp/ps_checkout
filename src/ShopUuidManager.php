@@ -69,6 +69,17 @@ class ShopUuidManager
         return $result;
     }
 
+    public function setForShop($Uuid, $shopId)
+    {
+        return (bool) \Configuration::updateValue(
+            'PS_CHECKOUT_SHOP_UUID_V4',
+            $Uuid,
+            false,
+            null,
+            (int) $shopId
+        );
+    }
+
     /**
      * Used in module installation
      *
