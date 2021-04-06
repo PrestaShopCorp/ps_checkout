@@ -30,6 +30,7 @@ class PsxClient extends GenericClient
 {
     public function __construct()
     {
+        $context = \Context::getContext();
         $client = new Client([
             'base_url' => (new PsxEnv())->getPsxApiUrl(),
             'defaults' => [
@@ -40,9 +41,18 @@ class PsxClient extends GenericClient
                     'Content-Type' => 'application/vnd.psx.v1+json', // api version to use (psl side)
                     'Accept' => 'application/json',
                     'Authorization' => 'Bearer ' . (new Token())->getToken(),
-                    'Shop-Id' => (new ShopUuidManager())->getForShop((int) \Context::getContext()->shop->id),
+                    'Shop-Id' => (new ShopUuidManager())->getForShop((int) $context->shop->id),
                     'Module-Version' => \Ps_checkout::VERSION, // version of the module
                     'Prestashop-Version' => _PS_VERSION_, // prestashop version
+                    'Shop-Url' => $context->link->getBaseLink((int) $context->shop->id),
+                    'Hook-Url' => $context->link->getModuleLink(
+                        'ps_checkout',
+                        'DispatchWebHook',
+                        [],
+                        true,
+                        null,
+                        (int) $context->shop->id
+                    ),
                 ],
             ],
         ]);
