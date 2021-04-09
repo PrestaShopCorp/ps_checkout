@@ -22,7 +22,6 @@ namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder;
-use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 /**
  * Handle onbarding request
@@ -63,17 +62,11 @@ class Onboarding extends PaymentClient
         $this->setRoute('/payments/onboarding/onboard');
         /** @var OnboardingPayloadBuilder $builder */
         $builder = $this->module->getService('ps_checkout.builder.payload.onboarding');
-        /** @var ShopContext $shopContext */
-        $shopContext = $this->module->getService('ps_checkout.context.shop');
         /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager */
         $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
         $openedOnboardingSession = $onboardingSessionManager->getOpened();
 
         $builder->buildFullPayload();
-
-        if ($shopContext->isReady()) {
-            $builder->buildMinimalPayload();
-        }
 
         $response = $this->post([
             'headers' => [
@@ -99,7 +92,7 @@ class Onboarding extends PaymentClient
             return $response;
         }
 
-        if (false === isset($response['body']['links']['1']['href'])) {
+        if (false === isset($response['body']['links']['1']['href']) || '200' !== (string) $response['httpCode']) {
             $response['status'] = false;
 
             return $response;
