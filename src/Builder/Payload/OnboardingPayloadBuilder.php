@@ -207,7 +207,35 @@ class OnboardingPayloadBuilder extends Builder
 
     private function buildIndividualOwnersNode()
     {
+        $psxFormData = $this->psAccount->getPsxForm(true);
 
+        $node['individual_owners'] = array_filter(array_map(
+            function ($individualOwner) {
+                return array_filter(
+                    [
+                        'id' => $individualOwner['id'],
+                        'names' => array_map(function ($name) {
+                            return $this->mapPersonNameDTO($name);
+                        }, $individualOwner['names']),
+                        'citizenship' => $individualOwner['citizenship'],
+                        'addresses' => array_map(function ($address) {
+                            return $this->mapAddressDTO($address);
+                        }, $individualOwner['addresses']),
+                        'phones' => array_map(function ($phones) {
+                            return $this->mapPhoneDTO($phones);
+                        }, $individualOwner['phones']),
+                        'birth_details' => [
+                            'date_of_birth' => $individualOwner['date_of_birth'],
+                        ],
+                        'documents' => array_map(function ($document) {
+                            return $this->mapDocumentDTO($document);
+                        }, $individualOwner['documents']),
+                        'type' => $individualOwner['type'],
+                    ]
+                );
+            }, $psxFormData['business_individual_owners']));
+
+        $this->getPayload()->addAndMergeItems($node);
     }
 
     private function buildBusinessEntityNode()
@@ -281,20 +309,10 @@ class OnboardingPayloadBuilder extends Builder
                     'expiry_date' => $psxFormData['business_document_expiry_date'],
                     'issuing_country_code' => $psxFormData['business_document_issuing_country_code'],
                     'files' => array_map(function ($psxFormFile) {
-                        return array_filter([
-                            'id' => $psxFormFile['id'],
-                            'reference_url' => $psxFormFile['reference_url'],
-                            'content_type' => $psxFormFile['content_type'],
-                            'create_time' => $psxFormFile['create_time'],
-                            'size' => $psxFormFile['size'],
-                        ]);
+                        return $this->mapFileDTO($psxFormFile);
                     }, $psxFormData['business_document_files']),
                     'links' => array_map(function ($psxFormLink) {
-                        return array_filter([
-                            'href' => $psxFormLink['href'],
-                            'rel' => $psxFormLink['rel'],
-                            'method' => $psxFormLink['method'],
-                        ]);
+                        return $this->mapLinkDTO($psxFormLink);
                     }, $psxFormData['business_document_links']),
                     'type' => $psxFormData['business_document_type'],
                 ])
@@ -311,12 +329,7 @@ class OnboardingPayloadBuilder extends Builder
                             return $this->mapAddressDTO($address);
                         }, $psxFormIndividualBeneficialOwner['addresses']),
                         'phones' => array_map(function($phone) {
-                            return array_filter([
-                                'country_code' => $phone['country_code'],
-                                'national_number' => $phone['national_number'],
-                                'extension_number' => $phone['extension_number'],
-                                'type' => $phone['type'],
-                            ]);
+                            return $this->mapPhoneDTO($phone);
                         }, $psxFormIndividualBeneficialOwner['phones']),
                         'birth_details' => [
                             'date_of_birth' => $psxFormIndividualBeneficialOwner['date_of_birth']
@@ -360,12 +373,7 @@ class OnboardingPayloadBuilder extends Builder
                             return $this->mapAddressDTO($address);
                         }, $psxFormBusinessBeneficialOwner['business_addresses'])),
                         'phones' => array_filter(array_map(function ($phone) {
-                            return array_filter([
-                                'country_code' => $phone['country_code'],
-                                'national_number' => $phone['national_number'],
-                                'extension_number' => $phone['extension_number'],
-                                'type' => $phone['type'],
-                            ]);
+                            return $this->mapPhoneDTO($phone);
                         }, $psxFormBusinessBeneficialOwner['business_phones'])),
                         'documents' => array_map(function($document) {
                             return $this->mapDocumentDTO($document);
@@ -436,20 +444,10 @@ class OnboardingPayloadBuilder extends Builder
             'expiry_date' => $document['expiry_date'],
             'issuing_country_code' => $document['issuing_country_code'],
             'files' => array_map(function ($file) {
-                return array_filter([
-                    'id' => $file['id'],
-                    'reference_url' => $file['reference_url'],
-                    'content_type' => $file['content_type'],
-                    'create_time' => $file['create_time'],
-                    'size' => $file['size'],
-                ]);
+                return $this->mapFileDTO($file);
             }, $document['files']),
             'links' => array_map(function ($link) {
-                return array_filter([
-                    'href' => $link['href'],
-                    'rel' => $link['rel'],
-                    'method' => $link['method'],
-                ]);
+                return $this->mapLinkDTO($link);
             }, $document['links']),
             'type' => $document['type'],
         ]);
@@ -496,6 +494,26 @@ class OnboardingPayloadBuilder extends Builder
             'national_number' => $phone['country_code'],
             'extension_number' => $phone['country_code'],
             'type' => $phone['type'],
+        ]);
+    }
+
+    private function mapFileDTO(array $file)
+    {
+        return array_filter([
+            'id' => $file['id'],
+            'reference_url' => $file['reference_url'],
+            'content_type' => $file['content_type'],
+            'create_time' => $file['create_time'],
+            'size' => $file['size'],
+        ]);
+    }
+
+    private function mapLinkDTO(array $link)
+    {
+        return array_filter([
+            'href' => $link['href'],
+            'rel' => $link['rel'],
+            'method' => $link['method'],
         ]);
     }
 }
