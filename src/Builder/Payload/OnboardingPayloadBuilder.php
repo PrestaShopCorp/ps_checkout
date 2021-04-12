@@ -565,5 +565,43 @@ class OnboardingPayloadBuilder extends Builder
                 }, $this->psxFormData['financial_instruments_banks'])
             ),
         ]);
+
+        $this->getPayload()->addAndMergeItems($node);
+    }
+
+    private function buildOperationsNode()
+    {
+        $node['operations'] = array_filter([
+            'banks' => array_filter(array_map(function ($operation) {
+                    return array_filter([
+                        'operation' => $operation['operation'],
+                        'api_integration_preference' => array_filter([
+                            'classic_api_integration' => [],
+                            'rest_api_integration' => array_filter([
+                                'integration_method' => $operation['rest_integration_method'],
+                                'integration_type' => $operation['rest_integration_type'],
+                                'first_party_details' => [
+                                    'features' => $operation['first_party_features'],
+                                    'seller_nonce' => $operation['first_party_seller_nonce'],
+                                ],
+                                'third_party_details' => $operation['third_party_features'],
+                            ])
+                        ]),
+                        'billing_agreement' => [
+                            'description' => $operation['billing_agreement_description'],
+                            'billing_experience_preference' => [
+                                'experience_id' => $operation['billing_agreement_experience_id'],
+                                'billing_context_set' => (bool) $operation['billing_agreement_context_set'],
+                            ],
+                            'merchant_custom_data' => $operation['billing_agreement_merchant_custom_data'],
+                            'approval_url' => $operation['billing_agreement_approval_url'],
+                            'ec_token' => $operation['billing_agreement_ec_token'],
+                        ],
+                    ]);
+                }, $this->psxFormData['operations'])
+            ),
+        ]);
+
+        $this->getPayload()->addAndMergeItems($node);
     }
 }
