@@ -74,7 +74,7 @@ class OnboardingPayloadBuilder extends Builder
         $this->buildIndividualOwnersNode();
         $this->buildBusinessEntityNode();
         $this->buildPartnerConfigOverrideNode();
-        $this->buildFinancialInstrumentsNoce();
+        $this->buildFinancialInstrumentsNode();
         $this->buildOperationsNode();
         $this->buildProductsNode();
         $this->buildLegalConsentsNode();
@@ -485,6 +485,17 @@ class OnboardingPayloadBuilder extends Builder
         ]);
     }
 
+    private function mapAddressPortableDTO(array $address) {
+        return array_filter([
+            'address_line_1' => $address['address_line_1'],
+            'address_line_2' => $address['address_line_2'],
+            'admin_area_1' => $address['admin_area_1'],
+            'admin_area_2' => $address['admin_area_2'],
+            'postal_code' => $address['postal_code'],
+            'country_code' => $address['country_code'],
+        ]);
+    }
+
     private function mapPersonNameDTO(array $name) {
         return array_filter([
             'prefix' => $name['prefix'],
@@ -524,6 +535,35 @@ class OnboardingPayloadBuilder extends Builder
             'href' => $link['href'],
             'rel' => $link['rel'],
             'method' => $link['method'],
+        ]);
+    }
+
+    private function mapBankDTO(array $bank)
+    {
+        return array_filter([
+            'nick_name' => $bank['nick_name'],
+            'account_number' => $bank['account_number'],
+            'account_type' => $bank['account_type'],
+            'identifiers' => array_filter(array_map(function ($identifier) {
+                return array_filter([
+                   'type' => $identifier['type'],
+                   'mandate' => $identifier['mandate'],
+                ]);
+            }, $bank['identifiers'])),
+            'branch_location' => $this->mapAddressPortableDTO($bank['address']),
+            'mandate' => [
+                'accepted' => (bool) $bank['mandate_accepted'],
+            ],
+        ]);
+    }
+
+    private function buildFinancialInstrumentsNode()
+    {
+        $node['financial_instruments'] = array_filter([
+            'banks' => array_filter(array_map(function ($bank) {
+                    return $this->mapBankDTO($bank);
+                }, $this->psxFormData['financial_instruments_banks'])
+            ),
         ]);
     }
 }
