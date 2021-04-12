@@ -43,6 +43,10 @@ class OnboardingPayloadBuilder extends Builder
      * @var \Context
      */
     private $context;
+    /**
+     * @var array
+     */
+    private $psxFormData;
 
     /**
      * @param PsAccountRepository $psAccount
@@ -54,6 +58,7 @@ class OnboardingPayloadBuilder extends Builder
         $this->psAccount = $psAccount;
         $this->languageAdapter = $languageAdapter;
         $this->context = \Context::getContext();
+        $this->psxFormData = $this->psAccount->getPsxForm(true);
     }
 
     /**
@@ -109,14 +114,12 @@ class OnboardingPayloadBuilder extends Builder
      */
     public function buildFullPersonDetailsNode()
     {
-        $psxFormData = $this->psAccount->getPsxForm(true);
-
         $node['person_details'] = array_filter([
             'email_address' => $this->psAccount->getOnboardedAccount()->getEmail(),
             'name' => [
-                'given_name' => $psxFormData['business_contact_first_name'],
-                'surname' => $psxFormData['business_contact_last_name'],
-                'prefix' => $psxFormData['business_contact_gender'],
+                'given_name' => $this->psxFormData['business_contact_first_name'],
+                'surname' => $this->psxFormData['business_contact_last_name'],
+                'prefix' => $this->psxFormData['business_contact_gender'],
             ],
         ]);
 
@@ -140,38 +143,36 @@ class OnboardingPayloadBuilder extends Builder
      */
     public function buildBusinessDetailsNode()
     {
-        $psxFormData = $this->psAccount->getPsxForm(true);
-
         $node['business_details'] = array_filter([
             'business_address' => array_filter([
-                'city' => $psxFormData['business_address_city'],
-                'country_code' => $psxFormData['business_address_country'],
-                'line1' => $psxFormData['business_address_street'],
-                'postal_code' => $psxFormData['business_address_zip'],
-                'state' => $psxFormData['business_address_state'],
+                'city' => $this->psxFormData['business_address_city'],
+                'country_code' => $this->psxFormData['business_address_country'],
+                'line1' => $this->psxFormData['business_address_street'],
+                'postal_code' => $this->psxFormData['business_address_zip'],
+                'state' => $this->psxFormData['business_address_state'],
             ]),
             'phone_contacts' => [
                 0 => [
                 'phone_number_details' => [
-                        'country_code' => (string) $psxFormData['business_phone_country'],
-                        'national_number' => $psxFormData['business_phone'],
+                        'country_code' => (string) $this->psxFormData['business_phone_country'],
+                        'national_number' => $this->psxFormData['business_phone'],
                     ],
                     'phone_type' => 'HOME',
                 ],
             ],
             'names' => [
                 0 => [
-                    'name' => $psxFormData['shop_name'],
+                    'name' => $this->psxFormData['shop_name'],
                     'type' => 'LEGAL',
                 ],
             ],
-            'category' => $psxFormData['business_category'],
-            'sub_category' => $psxFormData['business_sub_category'],
+            'category' => $this->psxFormData['business_category'],
+            'sub_category' => $this->psxFormData['business_sub_category'],
             'website_urls' => array_filter([
-                $psxFormData['business_website'],
+                $this->psxFormData['business_website'],
             ]),
             'business_type' => 'INDIVIDUAL',
-            'average_monthly_volume_range' => (new PsxDataMatrice())->getCompanyEmrToAverageMonthlyVolumeRange($psxFormData['business_company_emr']),
+            'average_monthly_volume_range' => (new PsxDataMatrice())->getCompanyEmrToAverageMonthlyVolumeRange($this->psxFormData['business_company_emr']),
         ]);
 
         $this->getPayload()->addAndMergeItems($node);
@@ -207,8 +208,6 @@ class OnboardingPayloadBuilder extends Builder
 
     private function buildIndividualOwnersNode()
     {
-        $psxFormData = $this->psAccount->getPsxForm(true);
-
         $node['individual_owners'] = array_filter(array_map(
             function ($individualOwner) {
                 return array_filter(
@@ -233,32 +232,30 @@ class OnboardingPayloadBuilder extends Builder
                         'type' => $individualOwner['type'],
                     ]
                 );
-            }, $psxFormData['business_individual_owners']));
+            }, $this->psxFormData['business_individual_owners']));
 
         $this->getPayload()->addAndMergeItems($node);
     }
 
     private function buildBusinessEntityNode()
     {
-        $psxFormData = $this->psAccount->getPsxForm(true);
-
         $node['business_entity'] = array_filter([
             'business_type' => array_filter([
-                'type' => $psxFormData['business_entity_type'],
-                'subtype' => $psxFormData['business_entity_subtype'],
+                'type' => $this->psxFormData['business_entity_type'],
+                'subtype' => $this->psxFormData['business_entity_subtype'],
             ]),
             'business_industry' => array_filter([
-                'category' => $psxFormData['business_category'],
-                'mcc_code' => $psxFormData['business_industry_mcc_code'],
-                'subcategory' => $psxFormData['business_subcategory'],
+                'category' => $this->psxFormData['business_category'],
+                'mcc_code' => $this->psxFormData['business_industry_mcc_code'],
+                'subcategory' => $this->psxFormData['business_subcategory'],
             ]),
             'business_incorporation' => array_filter([
-                'incorporation_country_code' => $psxFormData['business_incorporation_country_code'],
-                'incorporation_date' => $psxFormData['business_incorporation_date']
+                'incorporation_country_code' => $this->psxFormData['business_incorporation_country_code'],
+                'incorporation_date' => $this->psxFormData['business_incorporation_date']
             ]),
             'names' => [
                 0 => array_filter([
-                    'business_name' => $psxFormData['shop_name'],
+                    'business_name' => $this->psxFormData['shop_name'],
                     'id' => '',
                     'type' => 'LEGAL',
                 ])
@@ -272,49 +269,49 @@ class OnboardingPayloadBuilder extends Builder
             'website' => $this->context->shop->getBaseURL(),
             'addresses' => [
                 0 => array_filter([
-                    'address_line_1' => $psxFormData['business_address_line_1'],
-                    'address_line_2' => $psxFormData['business_address_line_2'],
-                    'address_line_3' => $psxFormData['business_address_line_3'],
-                    'admin_area_1' => $psxFormData['business_address_admin_area_1'],
-                    'admin_area_2' => $psxFormData['business_address_admin_area_2'],
-                    'admin_area_3' => $psxFormData['business_address_admin_area_3'],
-                    'admin_area_4' => $psxFormData['business_address_admin_area_4'],
-                    'postal_code' => $psxFormData['business_address_zip'],
+                    'address_line_1' => $this->psxFormData['business_address_line_1'],
+                    'address_line_2' => $this->psxFormData['business_address_line_2'],
+                    'address_line_3' => $this->psxFormData['business_address_line_3'],
+                    'admin_area_1' => $this->psxFormData['business_address_admin_area_1'],
+                    'admin_area_2' => $this->psxFormData['business_address_admin_area_2'],
+                    'admin_area_3' => $this->psxFormData['business_address_admin_area_3'],
+                    'admin_area_4' => $this->psxFormData['business_address_admin_area_4'],
+                    'postal_code' => $this->psxFormData['business_address_zip'],
                     'address_details' => [
-                        'street_number' => $psxFormData['business_address_street_number'],
-                        'street_name' => $psxFormData['business_address_street_name'],
-                        'street_type' => $psxFormData['business_address_street_type'],
-                        'delivery_service' => $psxFormData['business_address_delivery_service'],
-                        'building_name' => $psxFormData['business_address_building_name'],
-                        'sub_building' => $psxFormData['business_address_sub_building'],
+                        'street_number' => $this->psxFormData['business_address_street_number'],
+                        'street_name' => $this->psxFormData['business_address_street_name'],
+                        'street_type' => $this->psxFormData['business_address_street_type'],
+                        'delivery_service' => $this->psxFormData['business_address_delivery_service'],
+                        'building_name' => $this->psxFormData['business_address_building_name'],
+                        'sub_building' => $this->psxFormData['business_address_sub_building'],
                     ],
-                    'type' => $psxFormData['business_address_type'],
+                    'type' => $this->psxFormData['business_address_type'],
                 ])
             ],
             'phones' => [
                 0 => array_filter([
-                    'country_code' => (string) $psxFormData['business_phone_country'],
-                    'national_number' => $psxFormData['business_phone'],
-                    'extension_number' => $psxFormData['business_phone_extension_number'],
+                    'country_code' => (string) $this->psxFormData['business_phone_country'],
+                    'national_number' => $this->psxFormData['business_phone'],
+                    'extension_number' => $this->psxFormData['business_phone_extension_number'],
                     'type' => 'CUSTOMER_SERVICE',
                 ])
             ],
             'documents' => [
                 0 => array_filter([
-                    'id' => $psxFormData['business_document_id'],
-                    'labels' => $psxFormData['business_document_labels'],
-                    'name' => $psxFormData['business_document_name'],
-                    'identification_number' => $psxFormData['business_document_identification_number'],
-                    'issue_date' => $psxFormData['business_document_issue_date'],
-                    'expiry_date' => $psxFormData['business_document_expiry_date'],
-                    'issuing_country_code' => $psxFormData['business_document_issuing_country_code'],
+                    'id' => $this->psxFormData['business_document_id'],
+                    'labels' => $this->psxFormData['business_document_labels'],
+                    'name' => $this->psxFormData['business_document_name'],
+                    'identification_number' => $this->psxFormData['business_document_identification_number'],
+                    'issue_date' => $this->psxFormData['business_document_issue_date'],
+                    'expiry_date' => $this->psxFormData['business_document_expiry_date'],
+                    'issuing_country_code' => $this->psxFormData['business_document_issuing_country_code'],
                     'files' => array_map(function ($psxFormFile) {
                         return $this->mapFileDTO($psxFormFile);
-                    }, $psxFormData['business_document_files']),
+                    }, $this->psxFormData['business_document_files']),
                     'links' => array_map(function ($psxFormLink) {
                         return $this->mapLinkDTO($psxFormLink);
-                    }, $psxFormData['business_document_links']),
-                    'type' => $psxFormData['business_document_type'],
+                    }, $this->psxFormData['business_document_links']),
+                    'type' => $this->psxFormData['business_document_type'],
                 ])
             ],
             'beneficial_owners' => [
@@ -339,7 +336,7 @@ class OnboardingPayloadBuilder extends Builder
                         }, $psxFormIndividualBeneficialOwner['documents']),
                         'percentage_of_ownership' => $psxFormIndividualBeneficialOwner['percentage_of_ownership'],
                     ]);
-                }, $psxFormData['individual_beneficial_owners']),
+                }, $this->psxFormData['individual_beneficial_owners']),
                 'business_beneficial_owners' => array_map(function ($psxFormBusinessBeneficialOwner) {
                     return array_filter([
                         'business_type' => array_filter([
@@ -379,7 +376,7 @@ class OnboardingPayloadBuilder extends Builder
                             return $this->mapDocumentDTO($document);
                         }, $psxFormBusinessBeneficialOwner['documents']),
                     ]);
-                }, $psxFormData['business_beneficial_owners']),
+                }, $this->psxFormData['business_beneficial_owners']),
             ],
             'office_bearers' => array_filter(array_map(function ($bearer) {
                 return array_filter([
@@ -402,33 +399,46 @@ class OnboardingPayloadBuilder extends Builder
                     }, $bearer['documents'])),
                     'role' => $bearer['role'],
                 ]);
-            }, $psxFormData['business_office_bearers'])),
+            }, $this->psxFormData['business_office_bearers'])),
             'annual_sales_volume_range' => array_filter(
                 [
                     'minimum_amount' => array_filter([
-                        'currency_code' => $psxFormData['annual_sales_volume_range_currency_code'],
-                        'value' => $psxFormData['annual_sales_volume_range_min_value'],
+                        'currency_code' => $this->psxFormData['annual_sales_volume_range_currency_code'],
+                        'value' => $this->psxFormData['annual_sales_volume_range_min_value'],
                     ]),
                     'maximum_amount' => array_filter([
-                        'currency_code' => $psxFormData['annual_sales_volume_range_currency_code'],
-                        'value' => $psxFormData['annual_sales_volume_range_max_value'],
+                        'currency_code' => $this->psxFormData['annual_sales_volume_range_currency_code'],
+                        'value' => $this->psxFormData['annual_sales_volume_range_max_value'],
                     ]),
                 ]
             ),
             'average_monthly_volume_range' => array_filter(
                 [
                     'minimum_amount' => array_filter([
-                        'currency_code' => $psxFormData['average_monthly_volume_range_currency_code'],
-                        'value' => $psxFormData['average_monthly_volume_range_min_value'],
+                        'currency_code' => $this->psxFormData['average_monthly_volume_range_currency_code'],
+                        'value' => $this->psxFormData['average_monthly_volume_range_min_value'],
                     ]),
                     'maximum_amount' => array_filter([
-                        'currency_code' => $psxFormData['average_monthly_volume_range_currency_code'],
-                        'value' => $psxFormData['average_monthly_volume_range_max_value'],
+                        'currency_code' => $this->psxFormData['average_monthly_volume_range_currency_code'],
+                        'value' => $this->psxFormData['average_monthly_volume_range_max_value'],
                     ]),
                 ]
             ),
-            'purpose_code' => $psxFormData['business_purpose_code'],
-            'business_description' => $psxFormData['business_description'],
+            'purpose_code' => $this->psxFormData['business_purpose_code'],
+            'business_description' => $this->psxFormData['business_description'],
+        ]);
+
+        $this->getPayload()->addAndMergeItems($node);
+    }
+
+    private function buildPartnerConfigOverrideNode()
+    {
+        $node['partner_config_override'] = array_filter([
+            'partner_logo_url' => $this->psxFormData['partner_logo_url'],
+            'return_url' => $this->psxFormData['return_url'],
+            'return_url_description' => $this->psxFormData['return_url_description'],
+            'action_renewal_url' => $this->psxFormData['action_renewal_url'],
+            'show_add_credit_card' => (bool) $this->psxFormData['show_add_credit_card'],
         ]);
 
         $this->getPayload()->addAndMergeItems($node);
