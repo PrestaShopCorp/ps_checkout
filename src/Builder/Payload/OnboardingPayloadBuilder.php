@@ -604,4 +604,23 @@ class OnboardingPayloadBuilder extends Builder
 
         $this->getPayload()->addAndMergeItems($node);
     }
+
+    private function buildProductsNode()
+    {
+        $node['products'] = array_filter($this->psxFormData['products']);
+
+        $this->getPayload()->addAndMergeItems($node);
+    }
+
+    private function buildLegalConsentsNode()
+    {
+        $node['legal_consents'] = array_filter(array_map(function ($legalConsent) {
+            return array_filter([
+                'type' => $legalConsent['type'],
+                'granted' => (bool) $legalConsent['granted'],
+            ]);
+        }, $this->psxFormData['legal_consents']));
+
+        $this->getPayload()->addAndMergeItems($node);
+    }
 }
