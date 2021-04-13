@@ -69,8 +69,6 @@ class OnboardingPayloadBuilder extends Builder
         parent::buildFullPayload();
 
         $this->buildBaseNode();
-        $this->buildFullPersonDetailsNode();
-        $this->buildBusinessDetailsNode();
         $this->buildIndividualOwnersNode();
         $this->buildBusinessEntityNode();
         $this->buildPartnerConfigOverrideNode();
@@ -85,10 +83,7 @@ class OnboardingPayloadBuilder extends Builder
      */
     public function buildMinimalPayload()
     {
-        parent::buildMinimalPayload();
-
-        $this->buildBaseNode();
-        $this->buildMinimalPersonDetailsNode();
+        $this->buildFullPayload();
     }
 
     /**
@@ -101,79 +96,12 @@ class OnboardingPayloadBuilder extends Builder
         $locale = $language['locale'];
 
         $node = [
-            'url' => $this->getCallBackUrl(),
+            'email' => $this->psAccount->getOnboardedAccount()->getEmail(),
             'preferred_language_code' => $locale,
+            'tracking_id' => $this->psxFormData['tracking_id'],
             'primary_currency_code' => $this->getCurrencyIsoCode(),
+            'url' => $this->getCallBackUrl(),
         ];
-
-        $this->getPayload()->addAndMergeItems($node);
-    }
-
-    /**
-     * Build full persone_details node
-     */
-    public function buildFullPersonDetailsNode()
-    {
-        $node['person_details'] = array_filter([
-            'email_address' => $this->psAccount->getOnboardedAccount()->getEmail(),
-            'name' => [
-                'given_name' => $this->psxFormData['business_contact_first_name'],
-                'surname' => $this->psxFormData['business_contact_last_name'],
-                'prefix' => $this->psxFormData['business_contact_gender'],
-            ],
-        ]);
-
-        $this->getPayload()->addAndMergeItems($node);
-    }
-
-    /**
-     * Build minimal persone_details node
-     */
-    public function buildMinimalPersonDetailsNode()
-    {
-        $node['person_details'] = array_filter([
-            'email_address' => $this->psAccount->getOnboardedAccount()->getEmail(),
-        ]);
-
-        $this->getPayload()->addAndMergeItems($node);
-    }
-
-    /**
-     * Build business_details node
-     */
-    public function buildBusinessDetailsNode()
-    {
-        $node['business_details'] = array_filter([
-            'business_address' => array_filter([
-                'city' => $this->psxFormData['business_address_city'],
-                'country_code' => $this->psxFormData['business_address_country'],
-                'line1' => $this->psxFormData['business_address_street'],
-                'postal_code' => $this->psxFormData['business_address_zip'],
-                'state' => $this->psxFormData['business_address_state'],
-            ]),
-            'phone_contacts' => [
-                0 => [
-                'phone_number_details' => [
-                        'country_code' => (string) $this->psxFormData['business_phone_country'],
-                        'national_number' => $this->psxFormData['business_phone'],
-                    ],
-                    'phone_type' => 'HOME',
-                ],
-            ],
-            'names' => [
-                0 => [
-                    'name' => $this->psxFormData['shop_name'],
-                    'type' => 'LEGAL',
-                ],
-            ],
-            'category' => $this->psxFormData['business_category'],
-            'sub_category' => $this->psxFormData['business_sub_category'],
-            'website_urls' => array_filter([
-                $this->psxFormData['business_website'],
-            ]),
-            'business_type' => 'INDIVIDUAL',
-            'average_monthly_volume_range' => (new PsxDataMatrice())->getCompanyEmrToAverageMonthlyVolumeRange($this->psxFormData['business_company_emr']),
-        ]);
 
         $this->getPayload()->addAndMergeItems($node);
     }
@@ -431,6 +359,73 @@ class OnboardingPayloadBuilder extends Builder
         $this->getPayload()->addAndMergeItems($node);
     }
 
+    private function buildFinancialInstrumentsNode()
+    {
+        $node['financial_instruments'] = array_filter([
+            'banks' => array_filter(array_map(function ($bank) {
+                    return $this->mapBankDTO($bank);
+                }, $this->psxFormData['financial_instruments_banks'])
+            ),
+        ]);
+
+        $this->getPayload()->addAndMergeItems($node);
+    }
+
+    private function buildOperationsNode()
+    {
+        $node['operations'] = array_filter([
+            'banks' => array_filter(array_map(function ($operation) {
+                    return array_filter([
+                        'operation' => $operation['operation'],
+                        'api_integration_preference' => array_filter([
+                            'classic_api_integration' => [],
+                            'rest_api_integration' => array_filter([
+                                'integration_method' => $operation['rest_integration_method'],
+                                'integration_type' => $operation['rest_integration_type'],
+                                'first_party_details' => [
+                                    'features' => $operation['first_party_features'],
+                                    'seller_nonce' => $operation['first_party_seller_nonce'],
+                                ],
+                                'third_party_details' => $operation['third_party_features'],
+                            ])
+                        ]),
+                        'billing_agreement' => [
+                            'description' => $operation['billing_agreement_description'],
+                            'billing_experience_preference' => [
+                                'experience_id' => $operation['billing_agreement_experience_id'],
+                                'billing_context_set' => (bool) $operation['billing_agreement_context_set'],
+                            ],
+                            'merchant_custom_data' => $operation['billing_agreement_merchant_custom_data'],
+                            'approval_url' => $operation['billing_agreement_approval_url'],
+                            'ec_token' => $operation['billing_agreement_ec_token'],
+                        ],
+                    ]);
+                }, $this->psxFormData['operations'])
+            ),
+        ]);
+
+        $this->getPayload()->addAndMergeItems($node);
+    }
+
+    private function buildProductsNode()
+    {
+        $node['products'] = array_filter($this->psxFormData['products']);
+
+        $this->getPayload()->addAndMergeItems($node);
+    }
+
+    private function buildLegalConsentsNode()
+    {
+        $node['legal_consents'] = array_filter(array_map(function ($legalConsent) {
+            return array_filter([
+                'type' => $legalConsent['type'],
+                'granted' => (bool) $legalConsent['granted'],
+            ]);
+        }, $this->psxFormData['legal_consents']));
+
+        $this->getPayload()->addAndMergeItems($node);
+    }
+
     private function buildPartnerConfigOverrideNode()
     {
         $node['partner_config_override'] = array_filter([
@@ -555,72 +550,5 @@ class OnboardingPayloadBuilder extends Builder
                 'accepted' => (bool) $bank['mandate_accepted'],
             ],
         ]);
-    }
-
-    private function buildFinancialInstrumentsNode()
-    {
-        $node['financial_instruments'] = array_filter([
-            'banks' => array_filter(array_map(function ($bank) {
-                    return $this->mapBankDTO($bank);
-                }, $this->psxFormData['financial_instruments_banks'])
-            ),
-        ]);
-
-        $this->getPayload()->addAndMergeItems($node);
-    }
-
-    private function buildOperationsNode()
-    {
-        $node['operations'] = array_filter([
-            'banks' => array_filter(array_map(function ($operation) {
-                    return array_filter([
-                        'operation' => $operation['operation'],
-                        'api_integration_preference' => array_filter([
-                            'classic_api_integration' => [],
-                            'rest_api_integration' => array_filter([
-                                'integration_method' => $operation['rest_integration_method'],
-                                'integration_type' => $operation['rest_integration_type'],
-                                'first_party_details' => [
-                                    'features' => $operation['first_party_features'],
-                                    'seller_nonce' => $operation['first_party_seller_nonce'],
-                                ],
-                                'third_party_details' => $operation['third_party_features'],
-                            ])
-                        ]),
-                        'billing_agreement' => [
-                            'description' => $operation['billing_agreement_description'],
-                            'billing_experience_preference' => [
-                                'experience_id' => $operation['billing_agreement_experience_id'],
-                                'billing_context_set' => (bool) $operation['billing_agreement_context_set'],
-                            ],
-                            'merchant_custom_data' => $operation['billing_agreement_merchant_custom_data'],
-                            'approval_url' => $operation['billing_agreement_approval_url'],
-                            'ec_token' => $operation['billing_agreement_ec_token'],
-                        ],
-                    ]);
-                }, $this->psxFormData['operations'])
-            ),
-        ]);
-
-        $this->getPayload()->addAndMergeItems($node);
-    }
-
-    private function buildProductsNode()
-    {
-        $node['products'] = array_filter($this->psxFormData['products']);
-
-        $this->getPayload()->addAndMergeItems($node);
-    }
-
-    private function buildLegalConsentsNode()
-    {
-        $node['legal_consents'] = array_filter(array_map(function ($legalConsent) {
-            return array_filter([
-                'type' => $legalConsent['type'],
-                'granted' => (bool) $legalConsent['granted'],
-            ]);
-        }, $this->psxFormData['legal_consents']));
-
-        $this->getPayload()->addAndMergeItems($node);
     }
 }
