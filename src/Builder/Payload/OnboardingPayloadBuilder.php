@@ -134,6 +134,9 @@ class OnboardingPayloadBuilder extends Builder
         return $currency['iso_code'];
     }
 
+    /**
+     * @return void
+     */
     private function buildIndividualOwnersNode()
     {
         $node['individual_owners'] = array_filter(array_map(
@@ -165,6 +168,9 @@ class OnboardingPayloadBuilder extends Builder
         $this->getPayload()->addAndMergeItems($node);
     }
 
+    /**
+     * @return void
+     */
     private function buildBusinessEntityNode()
     {
         $node['business_entity'] = array_filter([
@@ -359,6 +365,9 @@ class OnboardingPayloadBuilder extends Builder
         $this->getPayload()->addAndMergeItems($node);
     }
 
+    /**
+     * @return void
+     */
     private function buildFinancialInstrumentsNode()
     {
         $node['financial_instruments'] = array_filter([
@@ -371,6 +380,9 @@ class OnboardingPayloadBuilder extends Builder
         $this->getPayload()->addAndMergeItems($node);
     }
 
+    /**
+     * @return void
+     */
     private function buildOperationsNode()
     {
         $node['operations'] = array_filter([
@@ -407,6 +419,9 @@ class OnboardingPayloadBuilder extends Builder
         $this->getPayload()->addAndMergeItems($node);
     }
 
+    /**
+     * @return void
+     */
     private function buildProductsNode()
     {
         $node['products'] = array_filter($this->psxFormData['products']);
@@ -414,6 +429,9 @@ class OnboardingPayloadBuilder extends Builder
         $this->getPayload()->addAndMergeItems($node);
     }
 
+    /**
+     * @return void
+     */
     private function buildLegalConsentsNode()
     {
         $node['legal_consents'] = array_filter(array_map(function ($legalConsent) {
@@ -439,6 +457,10 @@ class OnboardingPayloadBuilder extends Builder
         $this->getPayload()->addAndMergeItems($node);
     }
 
+    /**
+     * @param array $document
+     * @return array
+     */
     private function mapDocumentDTO(array $document) {
         return array_filter([
             'id' => $document['id'],
@@ -458,6 +480,10 @@ class OnboardingPayloadBuilder extends Builder
         ]);
     }
 
+    /**
+     * @param array $address
+     * @return array
+     */
     private function mapAddressDTO(array $address) {
         return array_filter([
             'address_line_1' => $address['address_line_1'],
@@ -480,6 +506,10 @@ class OnboardingPayloadBuilder extends Builder
         ]);
     }
 
+    /**
+     * @param array $address
+     * @return array
+     */
     private function mapAddressPortableDTO(array $address) {
         return array_filter([
             'address_line_1' => $address['address_line_1'],
@@ -491,6 +521,10 @@ class OnboardingPayloadBuilder extends Builder
         ]);
     }
 
+    /**
+     * @param array $name
+     * @return array
+     */
     private function mapPersonNameDTO(array $name) {
         return array_filter([
             'prefix' => $name['prefix'],
@@ -503,6 +537,10 @@ class OnboardingPayloadBuilder extends Builder
         ]);
     }
 
+    /**
+     * @param array $phone
+     * @return array
+     */
     private function mapPhoneDTO(array $phone)
     {
         return array_filter([
@@ -513,6 +551,10 @@ class OnboardingPayloadBuilder extends Builder
         ]);
     }
 
+    /**
+     * @param array $file
+     * @return array
+     */
     private function mapFileDTO(array $file)
     {
         return array_filter([
@@ -524,6 +566,10 @@ class OnboardingPayloadBuilder extends Builder
         ]);
     }
 
+    /**
+     * @param array $link
+     * @return array
+     */
     private function mapLinkDTO(array $link)
     {
         return array_filter([
@@ -533,6 +579,10 @@ class OnboardingPayloadBuilder extends Builder
         ]);
     }
 
+    /**
+     * @param array $bank
+     * @return array
+     */
     private function mapBankDTO(array $bank)
     {
         return array_filter([
