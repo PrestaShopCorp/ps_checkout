@@ -57,7 +57,6 @@ class ExceptionHandler
      * @param mixed $data
      *
      * @return void
-     *
      */
     public function handle(Exception $error, $throw = true, $data = null)
     {

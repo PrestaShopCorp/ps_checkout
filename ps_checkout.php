@@ -17,6 +17,10 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+
+use Dotenv\Dotenv;
+use PrestaShop\Module\PrestashopCheckout\Handler\ModuleFilteredRavenClient;
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 if (!defined('_PS_VERSION_')) {
@@ -165,6 +169,8 @@ class Ps_checkout extends PaymentModule
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = ['min' => '1.6.1.0', 'max' => _PS_VERSION_];
         $this->disableSegment = false;
+
+        $this->installSentryExceptionLogger();
     }
 
     /**
@@ -1517,5 +1523,41 @@ class Ps_checkout extends PaymentModule
                 'step' => 1,
             ]
         );
+    }
+
+    private function installSentryExceptionLogger()
+    {
+        $envFiles = [
+            'test' => '.env.test',
+            'prod' => '.env',
+        ];
+
+        foreach ($envFiles as $environment => $fileName) {
+            if (!file_exists(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName)) {
+                continue;
+            }
+
+            $dotenv = Dotenv::create(_PS_MODULE_DIR_ . 'ps_checkout/', $fileName);
+            $env = $dotenv->load();
+            break;
+        }
+
+        if (!empty($env) && isset($env['PS_CHECKOUT_SENTRY_DSN_MODULE'])) {
+            $client = new ModuleFilteredRavenClient(
+                $env['PS_CHECKOUT_SENTRY_DSN_MODULE'],
+                [
+                    'level' => 'warning',
+                    'tags' => [
+                        'php_version' => phpversion(),
+                        'ps_checkout_version' => $this->version,
+                        'prestashop_version' => _PS_VERSION_,
+                    ],
+                ]
+            );
+
+            $client->setAppPath(realpath(_PS_MODULE_DIR_ . 'ps_checkout/'));
+
+            $client->install();
+        }
     }
 }
