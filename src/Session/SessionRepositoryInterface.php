@@ -18,42 +18,17 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Environment;
+namespace PrestaShop\Module\PrestashopCheckout\Session;
 
-/**
- * Allow to set the differents api key / api link depending on
- */
-class PsxEnv extends Env
+interface SessionRepositoryInterface
 {
-    /**
-     * Url api maasland (production live by default)
-     *
-     * @var string
-     */
-    private $psxApiUrl;
+    public function save(array $sessionData);
 
-    public function __construct()
-    {
-        parent::__construct();
+    public function get(array $sessionData);
 
-        $this->setPsxApiUrl($this->getEnv('PSX_API_URL'));
-    }
+    public function update(Session $session);
 
-    /**
-     * getter for psxApiUrl
-     */
-    public function getPsxApiUrl()
-    {
-        return $this->psxApiUrl;
-    }
+    public function remove($mode, $userId, $shopId, $isClosed);
 
-    /**
-     * setter for psxApiUrl
-     *
-     * @param string $url
-     */
-    private function setPsxApiUrl($url)
-    {
-        $this->psxApiUrl = $url;
-    }
+    public function close($mode, $userId, $shopId, $isClosed);
 }

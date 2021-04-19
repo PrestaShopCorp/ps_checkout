@@ -57,7 +57,7 @@
           <AccountStatusPayPal v-if="paypalAccountStatus" class="mr-3" />
 
           <div class="text-center float-right" v-if="!paypalAccountStatus">
-            <Onboarding />
+            <Onboarding v-bind:loading="loading" />
           </div>
 
           <div class="text-right" v-else>
@@ -167,6 +167,11 @@
       AccountStatusPayPal,
       Onboarding
     },
+    data() {
+      return {
+        loading: false
+      };
+    },
     props: ['sendTrack'],
     computed: {
       onboardingLinkError() {
@@ -187,13 +192,19 @@
           this.$store.dispatch('updatePaypalStatusViewed');
         }
 
-        return emailMerchant;
+        return (
+          emailMerchant || this.$t('panel.accounts.paypal.loading') + '...'
+        );
       },
       checkoutAccountStatus() {
         return this.$store.state.firebase.onboardingCompleted;
       },
       paypalAccountStatus() {
         return this.$store.state.paypal.onboardingCompleted;
+      },
+      paypalOnboardLink() {
+        return this.$store.state.session?.onboarding?.data?.shop
+          ?.paypal_onboarding_url;
       },
       cardPaymentIsActive() {
         return this.$store.state.paypal.cardIsActive;
@@ -207,13 +218,44 @@
     },
     methods: {
       paypalUnlink() {
+        this.loading = true;
         this.$segment.track('CKT PayPal use another account', {
           category: 'ps_checkout'
         });
         this.$store.dispatch('unlink').then(() => {
-          this.$store.dispatch('getOnboardingLink');
-          this.sendTrack();
+          return this.$store
+            .dispatch({
+              type: 'closeOnboardingSession',
+              session: this.$store.state.session.onboarding
+            })
+            .then(() => {
+              this.pollingPaypalOnboardingUrl();
+              this.sendTrack();
+
+              return this.$store
+                .dispatch('createShop', { form: null })
+                .then(() =>
+                  this.$store
+                    .dispatch('onboard')
+                    .then(response =>
+                      this.$store.dispatch(
+                        'updatePaypalOnboardingUrl',
+                        response
+                      )
+                    )
+                );
+            });
         });
+      },
+      pollingPaypalOnboardingUrl() {
+        this.$store.dispatch('pollingPaypalOnboardingUrl').then(() => {
+          this.loading = false;
+        });
+      }
+    },
+    mounted() {
+      if (this.paypalOnboardLink) {
+        this.pollingPaypalOnboardingUrl();
       }
     }
   };

@@ -53,7 +53,6 @@ class PaypalModule implements PresenterInterface
         return [
             'paypal' => [
                 'idMerchant' => $paypalAccount->getMerchantId(),
-                'paypalOnboardingLink' => '',
                 'onboardingCompleted' => !empty($paypalAccount->getMerchantId()),
                 'accountIslinked' => !empty($paypalAccount->getEmail()) && !empty($paypalAccount->getMerchantId()),
                 'emailMerchant' => $paypalAccount->getEmail(),

@@ -22,7 +22,9 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository;
+use PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager;
 use PrestaShop\Module\PrestashopCheckout\Settings\RoundingSettings;
 
 class PayPalConfiguration
@@ -49,10 +51,26 @@ class PayPalConfiguration
      */
     private $codeRepository;
 
-    public function __construct(PrestaShopConfiguration $configuration, PayPalCodeRepository $codeRepository)
-    {
+    /**
+     * @var OnboardingSessionManager
+     */
+    private $onboardingSessionManager;
+
+    /**
+     * @var PersistentConfiguration
+     */
+    private $persistentConfiguration;
+
+    public function __construct(
+        PrestaShopConfiguration $configuration,
+        PayPalCodeRepository $codeRepository,
+        OnboardingSessionManager $onboardingSessionManager,
+        PersistentConfiguration $persistentConfiguration
+    ) {
         $this->configuration = $configuration;
         $this->codeRepository = $codeRepository;
+        $this->onboardingSessionManager = $onboardingSessionManager;
+        $this->persistentConfiguration = $persistentConfiguration;
     }
 
     /**
@@ -103,6 +121,16 @@ class PayPalConfiguration
         if (!in_array($paymentMode, [Mode::LIVE, Mode::SANDBOX])) {
             throw new \UnexpectedValueException(sprintf('The value should be a Mode constant, %s value sent', $paymentMode));
         }
+
+        // Close onboarding session if existing
+        $openedSession = $this->onboardingSessionManager->getCurrentSession();
+
+        if ($openedSession) {
+            $this->onboardingSessionManager->closeOnboarding($openedSession);
+        }
+
+        // Logout PayPal account
+        $this->persistentConfiguration->resetPayPalAccount();
 
         $this->configuration->set(self::PAYMENT_MODE, $paymentMode);
     }

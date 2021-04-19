@@ -20,9 +20,9 @@
   <div>
     <template v-if="checkoutAccountStatus">
       <button
-        v-show="paypalIsLoaded"
         id="link-to-paypal-account-button"
-        @click.prevent="getOnboardingLink()"
+        v-show="paypalOnboardingLink"
+        @click.prevent="paypalOnboarding()"
         class="btn btn-primary-reverse btn-outline-primary light-button"
       >
         {{ $t('panel.accounts.paypal.linkToPaypal') }}
@@ -36,7 +36,7 @@
       >
         {{ $t('panel.accounts.paypal.linkToPaypal') }}
       </a>
-      <a v-show="!paypalIsLoaded" href="#">
+      <a v-show="!paypalOnboardingLink" href="#">
         <b>{{ $t('panel.accounts.paypal.loading') }} ...</b>
       </a>
     </template>
@@ -54,6 +54,7 @@
 <script>
   export default {
     name: 'Onboarding',
+    props: ['loading'],
     data() {
       return {
         paypalIsLoaded: false
@@ -61,14 +62,24 @@
     },
     computed: {
       paypalOnboardingLink() {
-        return this.$store.state.paypal.paypalOnboardingLink;
+        let onboardingSession = this.$store.state.session.onboarding;
+
+        if (!onboardingSession || this.loading) {
+          return false;
+        }
+
+        let dataShop = onboardingSession.data.shop;
+
+        return dataShop && dataShop.paypal_onboarding_url
+          ? dataShop.paypal_onboarding_url
+          : false;
       },
       checkoutAccountStatus() {
         return this.$store.state.firebase.onboardingCompleted;
       }
     },
     methods: {
-      getOnboardingLink() {
+      paypalOnboarding() {
         if (window && window.analytics) {
           this.$segment.track('Paypal Lightbox triggered', {
             category: 'ps_checkout'
@@ -82,29 +93,6 @@
           this.$refs.paypalButton.click();
           return;
         }
-
-        this.paypalIsLoaded = false;
-
-        this.$store
-          .dispatch('getOnboardingLink')
-          .then(() => {
-            this.$refs.paypalButton.click();
-          })
-          .catch(error => {
-            if (error.response && error.response.data.body) {
-              console.error(error.response.data.body.message);
-            } else if (error.response && error.response.data.exceptionMessage) {
-              console.error(
-                error.response.data.exceptionCode +
-                  ' > ' +
-                  error.response.data.exceptionMessage
-              );
-            } else {
-              throw error;
-            }
-          });
-
-        this.paypalIsLoaded = true;
 
         // TODO put this part in a component
         let time = 0;

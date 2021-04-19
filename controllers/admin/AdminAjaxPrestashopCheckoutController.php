@@ -18,7 +18,9 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 use Monolog\Logger;
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
+use PrestaShop\Module\PrestashopCheckout\Api\Psl\Onboarding;
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
+use PrestaShop\Module\PrestashopCheckout\Dispatcher\ShopDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
@@ -223,12 +225,20 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Get the form Payload for PSX. Check the data and send it to PSL
+     * AJAX: Create a shop on PSL
      */
-    public function ajaxProcessPsxSendData()
+    public function ajaxProcessPslCreateShop()
     {
-        $payload = json_decode(Tools::getValue('payload'), true);
-        $psxForm = (new PsxDataPrepare($payload))->prepareData();
+        /** @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration $psCheckoutConfiguration */
+        $psCheckoutConfiguration = $this->module->getService('ps_checkout.prestashop_checkout.configuration');
+        $formData = json_decode($psCheckoutConfiguration->getShopData()['psxForm'], true);
+
+        if (!$formData) {
+            $formData = json_decode(Tools::getValue('form'), true);
+        }
+
+        // PsxForm validation
+        $psxForm = (new PsxDataPrepare($formData))->prepareData();
         $errors = (new PsxDataValidation())->validateData($psxForm);
 
         if (!empty($errors)) {
@@ -236,8 +246,37 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             $this->ajaxDie(json_encode($errors));
         }
 
-        /** @var PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration $configuration */
-        $configuration = $this->module->getService('ps_checkout.configuration');
+        $onboardingApi = new Onboarding(new PrestaShopContext());
+        $response = $onboardingApi->createShop(array_filter($psxForm));
+
+        if (!$response['status']) {
+            if (isset($response['httpCode'])) {
+                http_response_code((int) $response['httpCode']);
+            }
+
+            if (isset($response['body']['error']['errors'])) {
+                $errors = [];
+
+                foreach ($response['body']['error']['errors'] as $error) {
+                    if (isset($error['data']['details'])) {
+                        foreach ($error['data']['details'] as $detail) {
+                            if (isset($detail['description'])) {
+                                $errors[] = $detail['description'];
+                            }
+                        }
+                    }
+                }
+
+                if ($errors) {
+                    $this->ajaxDie(json_encode($errors));
+                }
+            }
+
+            $this->ajaxDie(json_encode([
+                $response['exceptionMessage'] ?:
+                $response['body']['error'] && $response['body']['error']['message'] ? $response['body']['error']['message'] : $response['body'],
+            ]));
+        }
 
         // Save form in database
         if (false === $this->savePsxForm($psxForm)) {
@@ -245,12 +284,36 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             $this->ajaxDie(json_encode(['Cannot save in database.']));
         }
 
-        /** @var PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding $psxOnboarding */
-        $psxOnboarding = $this->module->getService('ps_checkout.api.psx.onboarding');
+        $this->ajaxDie(json_encode($response));
+    }
 
-        $response = $psxOnboarding->setOnboardingMerchant(array_filter($psxForm));
+    /**
+     * AJAX: Onboard a merchant on PSL
+     */
+    public function ajaxProcessPslOnboard()
+    {
+        // Generate a new link to onboard a new merchant on PayPal
+        $response = (new Onboarding(new PrestaShopContext()))->onboard();
 
-        if (!$response['status'] && isset($response['httpCode'])) {
+        if (isset($response['onboardingLink'])) {
+            (new ShopDispatcher())->dispatchEventType([
+                'resource' => [
+                    'shop' => [
+                        'paypal' => [
+                            'onboard' => [
+                                'links' => [
+                                    1 => [
+                                        'href' => $response['onboardingLink'],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+        }
+
+        if (isset($response['httpCode'])) {
             http_response_code((int) $response['httpCode']);
         }
 
@@ -278,23 +341,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $paypalModule = $this->module->getService('ps_checkout.store.module.paypal');
         $this->ajaxDie(
             json_encode($paypalModule->present())
-        );
-    }
-
-    /**
-     * AJAX: Retrieve the onboarding paypal link
-     */
-    public function ajaxProcessGetOnboardingLink()
-    {
-        // Generate a new onboarding link to lin a new merchant
-        $response = (new Onboarding($this->context->link))->getOnboardingLink();
-
-        if (isset($response['httpCode'])) {
-            http_response_code((int) $response['httpCode']);
-        }
-
-        $this->ajaxDie(
-            json_encode($response)
         );
     }
 
@@ -875,6 +921,64 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             'status' => true,
             'content' => $merchantIntegration,
         ], JSON_PRETTY_PRINT));
+    }
+
+    /**
+     * AJAX: Open onboarding session
+     */
+    public function ajaxProcessOpenOnboardingSession()
+    {
+        $data = json_decode(Tools::getValue('sessionData'));
+        /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
+        $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
+        $session = $onboardingSessionManager->openOnboarding($data)->toArray();
+
+        $this->ajaxDie(json_encode($session));
+    }
+
+    /**
+     * AJAX: Transit onboarding session
+     */
+    public function ajaxProcessTransitOnboardingSession()
+    {
+        $sessionData = json_decode(Tools::getValue('session'), true);
+        $sessionAction = Tools::getValue('sessionAction');
+        /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
+        $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
+        $session = $onboardingSessionManager->apply($sessionAction, $sessionData)->toArray();
+
+        $this->ajaxDie(json_encode($session));
+    }
+
+    /**
+     * AJAX: Close onboarding session
+     */
+    public function ajaxProcessCloseOnboardingSession()
+    {
+        /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
+        $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
+        $openedSession = $onboardingSessionManager->getOpened();
+
+        $onboardingSessionManager->closeOnboarding($openedSession);
+
+        /** @var PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler $onboardingStateHandler */
+        $onboardingStateHandler = $this->module->getService('ps_checkout.onboarding.state.handler');
+        $session = $onboardingStateHandler->handle();
+
+        $this->ajaxDie(json_encode($session));
+    }
+
+    /**
+     * AJAX: Get opened onboarding session
+     */
+    public function ajaxProcessGetOpenedOnboardingSession()
+    {
+        /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
+        $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
+        $openedSession = $onboardingSessionManager->getOpened();
+        $openedSession = $openedSession ? $openedSession->toArray() : null;
+
+        $this->ajaxDie(json_encode($openedSession));
     }
 
     /**
