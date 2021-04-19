@@ -16,25 +16,23 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import Vue from 'vue';
-import Vuex from 'vuex';
 
-import firebase from './modules/firebase';
-import paypal from './modules/paypal';
-import configuration from './modules/configuration';
-import context from './modules/context';
-import psx from './modules/psx';
-import session from './modules/session';
+import * as types from '@/store/modules/session/mutation-types';
+import ajax from './ajax.js';
 
-Vue.use(Vuex);
+export default function update(params) {
+  return ajax({
+    url: params.getters.adminController,
+    action: params.action,
+    data: {
+      session: JSON.stringify(params.payload.session)
+    }
+  }).then(response => {
+    if (!response.status) {
+      throw response;
+    }
 
-export default new Vuex.Store({
-  modules: {
-    context,
-    firebase,
-    paypal,
-    configuration,
-    psx,
-    session
-  }
-});
+    params.commit(types.ONBOARDING_SESSION, response);
+    return Promise.resolve(response);
+  });
+}

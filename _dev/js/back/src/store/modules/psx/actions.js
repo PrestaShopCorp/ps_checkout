@@ -25,13 +25,14 @@ export default {
       url: getters.adminController,
       action: 'PsxSendData',
       data: {
-        payload: JSON.stringify(payload)
+        form: JSON.stringify(payload.form),
+        session: JSON.stringify(payload.session)
       }
     }).then(response => {
       if (response.status === false) {
         throw response;
       }
-      commit(types.UPDATE_FORM_DATA, payload);
+      commit(types.UPDATE_FORM_DATA, payload.form);
       return response;
     });
   },

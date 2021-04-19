@@ -476,9 +476,17 @@
     methods: {
       submitForm() {
         this.$store
-          .dispatch('psxSendData', this.form)
+          .dispatch({
+            type: 'psxSendData',
+            form: this.form,
+            session: this.$store.state.session.onboarding
+          })
           .then(response => {
             if (response.status === true) {
+              this.$store.dispatch({
+                type: 'accountOnboarded',
+                session: this.$store.state.session.onboarding
+              });
               this.$store.dispatch('psxOnboarding', response.status);
               this.$router
                 .push('/authentication')
@@ -529,6 +537,10 @@
       }
     },
     mounted() {
+      this.$store.dispatch({
+        type: 'accountOnboardingStarted',
+        session: this.$store.state.session.onboarding
+      });
       this.$segment.track('View Form Biz Page', {
         category: 'ps_checkout'
       });

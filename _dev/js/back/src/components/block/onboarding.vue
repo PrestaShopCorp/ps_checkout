@@ -70,6 +70,11 @@
     },
     methods: {
       getOnboardingLink() {
+        this.$store.dispatch({
+          type: 'paypalOnboardingStarted',
+          session: this.$store.state.session.onboarding
+        });
+
         if (window && window.analytics) {
           this.$segment.track('Paypal Lightbox triggered', {
             category: 'ps_checkout'
