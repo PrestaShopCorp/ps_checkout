@@ -29,6 +29,7 @@
         "ramsey/uuid": "^3.8",
         "segmentio/analytics-php": "^1.5",
         "sentry/sentry": "^1.0",
+        "symfony/cache": "^3.4",
         "symfony/config": "^3.4",
         "symfony/dependency-injection": "^3.4",
         "symfony/finder": "^3.4",
@@ -60,7 +61,13 @@
             "@php -d date.timezone=UTC ./vendor/bin/phpunit -c tests/Unit/phpunit.xml"
         ],
         "set-license-header": [
-            "@php ./vendor/bin/header-stamp --license=\"assets/afl.txt\" --exclude=\".github,node_modules,vendor,tests,_dev\""
+            "@php ./vendor/bin/header-stamp --license=vendor/prestashop/header-stamp/assets/afl.txt --exclude=.github,node_modules,vendor,tests,_dev"
+        ],
+        "php-cs-fixer:check": [
+            "@php ./vendor/bin/php-cs-fixer fix --dry-run --diff"
+        ],
+        "php-cs-fixer:fix": [
+            "@php ./vendor/bin/php-cs-fixer fix"
         ]
     },
     "author": "PrestaShop"

@@ -16,26 +16,11 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+
 import * as types from './mutation-types';
-import ajax from '@/requests/ajax.js';
 
 export default {
-  psxSendData({ commit, getters }, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'PsxSendData',
-      data: {
-        form: JSON.stringify(payload.form)
-      }
-    }).then(response => {
-      if (response.status === false) {
-        throw response;
-      }
-      commit(types.UPDATE_FORM_DATA, payload.form);
-      return response;
-    });
-  },
-  psxOnboarding({ commit }, payload) {
-    commit(types.UPDATE_ONBOARDING_STATUS, payload);
+  [types.ONBOARDING_SESSION](state, payload) {
+    state.onboarding = payload;
   }
 };

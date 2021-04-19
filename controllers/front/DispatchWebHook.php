@@ -23,6 +23,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\MerchantDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher;
+use PrestaShop\Module\PrestashopCheckout\Dispatcher\ShopDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
@@ -232,6 +233,10 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
                 'payload' => $this->payload,
             ]
         );
+
+        if ('ShopNotificationMerchantShop' === $this->payload['category']) {
+            return (new ShopDispatcher())->dispatchEventType($this->payload);
+        }
 
         if ('ShopNotificationMerchantAccount' === $this->payload['category']) {
             return (new MerchantDispatcher())->dispatchEventType(

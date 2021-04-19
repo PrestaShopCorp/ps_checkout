@@ -52,6 +52,7 @@ const router = new Router({
       component: Accounts,
       beforeEnter: (to, from, next) => {
         if (
+          store.getters.onboarding &&
           store.getters.firebaseOnboardingIsCompleted &&
           !store.getters.paypalOnboardingIsCompleted &&
           !store.getters.psxOnboardingIsCompleted
@@ -105,7 +106,9 @@ const router = new Router({
       beforeEnter: (to, from, next) => {
         if (
           !store.getters.firebaseOnboardingIsCompleted ||
-          store.getters.psxOnboardingIsCompleted
+          store.getters.psxOnboardingIsCompleted ||
+          store.getters.onboarding.status !== 'ONBOARDING_STARTED' ||
+          store.getters.onboarding.status === 'SHOP_CREATED'
         ) {
           next('/authentication');
         } else {
@@ -171,5 +174,4 @@ router.beforeEach((to, from, next) => {
     next(from);
   }
 });
-
 export default router;

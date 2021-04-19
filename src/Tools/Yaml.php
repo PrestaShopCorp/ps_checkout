@@ -1,3 +1,4 @@
+<?php
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -16,26 +17,32 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import * as types from './mutation-types';
-import ajax from '@/requests/ajax.js';
 
-export default {
-  psxSendData({ commit, getters }, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'PsxSendData',
-      data: {
-        form: JSON.stringify(payload.form)
-      }
-    }).then(response => {
-      if (response.status === false) {
-        throw response;
-      }
-      commit(types.UPDATE_FORM_DATA, payload.form);
-      return response;
-    });
-  },
-  psxOnboarding({ commit }, payload) {
-    commit(types.UPDATE_ONBOARDING_STATUS, payload);
-  }
-};
+namespace PrestaShop\Module\PrestashopCheckout\Tools;
+
+use Symfony\Component\Yaml\Yaml as SymfonyYaml;
+
+/**
+ * As we cannot use directly Symfony/Yaml component properly through different PrestaShop versions,
+ * we can use this class instead. It selects existing methods from the component according to the version
+ */
+class Yaml
+{
+    /**
+     * Parse a yaml file
+     *
+     * @param string $file
+     *
+     * @return array
+     */
+    public static function parseFile($file)
+    {
+        if (method_exists(SymfonyYaml::class, 'parseFile')) {
+            $method = 'parseFile';
+        } else {
+            $method = 'parse';
+        }
+
+        return SymfonyYaml::$method($file);
+    }
+}
