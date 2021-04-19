@@ -212,6 +212,10 @@
         });
         this.$store.dispatch('unlink').then(() => {
           this.$store.dispatch('getOnboardingLink');
+          this.$store.dispatch({
+            type: 'restartOnboardingSession',
+            session: this.$store.state.session.onboarding
+          });
           this.sendTrack();
         });
       }

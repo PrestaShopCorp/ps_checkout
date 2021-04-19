@@ -28,14 +28,18 @@ class Onboarding extends PsxClient
      * Collect merchant data during PSX onboarding process. These data are intended to be shared across PSX services.
      *
      * @param array $data
+     * @param string $correlation_id
      *
      * @return array returned by ResponseApiHandler class
      */
-    public function setOnboardingMerchant(array $data)
+    public function setOnboardingMerchant(array $data, string $correlation_id)
     {
         $this->setRoute('/psx/onboarding/merchant');
 
         return $this->post([
+            'headers' => [
+                'X-Correlation-Id' => $correlation_id,
+            ],
             'json' => json_encode($data),
         ]);
     }

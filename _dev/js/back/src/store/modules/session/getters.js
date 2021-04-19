@@ -16,25 +16,7 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import Vue from 'vue';
-import Vuex from 'vuex';
 
-import firebase from './modules/firebase';
-import paypal from './modules/paypal';
-import configuration from './modules/configuration';
-import context from './modules/context';
-import psx from './modules/psx';
-import session from './modules/session';
-
-Vue.use(Vuex);
-
-export default new Vuex.Store({
-  modules: {
-    context,
-    firebase,
-    paypal,
-    configuration,
-    psx,
-    session
-  }
-});
+export default {
+  onboarding: state => state.onboarding
+};

@@ -69,6 +69,10 @@ const router = new Router({
       beforeEnter: (to, from, next) => {
         if (store.getters.firebaseOnboardingIsCompleted) {
           next(from);
+        } else if (
+          store.getters.onboarding.status !== 'FIREBASE_ONBOARDING_STARTED'
+        ) {
+          next('/authentication');
         } else {
           next();
         }
@@ -105,7 +109,9 @@ const router = new Router({
       beforeEnter: (to, from, next) => {
         if (
           !store.getters.firebaseOnboardingIsCompleted ||
-          store.getters.psxOnboardingIsCompleted
+          store.getters.psxOnboardingIsCompleted ||
+          (store.getters.onboarding.status !== 'FIREBASE_ONBOARDED' &&
+            store.getters.onboarding.status !== 'ACCOUNT_ONBOARDING_STARTED')
         ) {
           next('/authentication');
         } else {
@@ -171,5 +177,4 @@ router.beforeEach((to, from, next) => {
     next(from);
   }
 });
-
 export default router;

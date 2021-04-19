@@ -158,10 +158,17 @@
             password: this.password.value
           })
           .then(() => {
-            this.$router
-              .push('/authentication')
-              // eslint-disable-next-line no-console
-              .catch(exception => console.log(exception));
+            this.$store
+              .dispatch({
+                type: 'firebaseOnboarded',
+                session: this.$store.state.session.onboarding
+              })
+              .then(() => {
+                this.$router
+                  .push('/authentication')
+                  // eslint-disable-next-line no-console
+                  .catch(exception => console.log(exception));
+              });
           })
           .catch(response => {
             this.handleResponseError(response);

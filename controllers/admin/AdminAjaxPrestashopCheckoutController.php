@@ -199,8 +199,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessPsxSendData()
     {
-        $payload = json_decode(Tools::getValue('payload'), true);
-        $psxForm = (new PsxDataPrepare($payload))->prepareData();
+        $formData = json_decode(Tools::getValue('form'), true);
+        $session = json_decode(Tools::getValue('session'));
+        $psxForm = (new PsxDataPrepare($formData))->prepareData();
         $errors = (new PsxDataValidation())->validateData($psxForm);
 
         if (!empty($errors)) {
@@ -217,8 +218,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         /** @var PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding $psxOnboarding */
         $psxOnboarding = $this->module->getService('ps_checkout.api.psx.onboarding');
-
-        $response = $psxOnboarding->setOnboardingMerchant(array_filter($psxForm));
+        $response = $psxOnboarding->setOnboardingMerchant(array_filter($psxForm), $session->correlation_id);
 
         $this->ajaxDie(json_encode($response));
     }
@@ -771,5 +771,101 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
         $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
         $paypalConfiguration->setButtonConfiguration(json_decode(Tools::getValue('configuration')));
+    }
+
+    /**
+     * AJAX: Update onboarding session to FIREBASE_ONBOARDING_STARTED
+     */
+    public function ajaxProcessFirebaseOnboardingStarted()
+    {
+        $sessionData = json_decode(Tools::getValue('session'));
+        $session = $this->updateOnboardingSession($sessionData, 'toFirebaseOnboardingStarted');
+
+        $this->ajaxDie(json_encode($session));
+    }
+
+    /**
+     * AJAX: Update onboarding session to FIREBASE_ONBOARDED
+     */
+    public function ajaxProcessFirebaseOnboarded()
+    {
+        $sessionData = json_decode(Tools::getValue('session'));
+        $session = $this->updateOnboardingSession($sessionData, 'toFirebaseOnboarded');
+
+        $this->ajaxDie(json_encode($session));
+    }
+
+    /**
+     * AJAX: Update onboarding session to FIREBASE_ONBOARDING_STARTED
+     */
+    public function ajaxProcessAccountOnboardingStarted()
+    {
+        $sessionData = json_decode(Tools::getValue('session'));
+        $session = $this->updateOnboardingSession($sessionData, 'toAccountOnboardingStarted');
+
+        $this->ajaxDie(json_encode($session));
+    }
+
+    /**
+     * AJAX: Update onboarding session to FIREBASE_ONBOARDED
+     */
+    public function ajaxProcessAccountOnboarded()
+    {
+        $sessionData = json_decode(Tools::getValue('session'));
+        $session = $this->updateOnboardingSession($sessionData, 'toAccountOnboarded');
+
+        $this->ajaxDie(json_encode($session));
+    }
+
+    /**
+     * AJAX: Update onboarding session to FIREBASE_ONBOARDING_STARTED
+     */
+    public function ajaxProcessPaypalOnboardingStarted()
+    {
+        $sessionData = json_decode(Tools::getValue('session'));
+        $session = $this->updateOnboardingSession($sessionData, 'toPaypalOnboardingStarted');
+
+        $this->ajaxDie(json_encode($session));
+    }
+
+    /**
+     * AJAX: Update onboarding session to FIREBASE_ONBOARDED
+     */
+    public function ajaxProcessOnboardingFinished()
+    {
+        $sessionData = json_decode(Tools::getValue('session'));
+        $session = $this->updateOnboardingSession($sessionData, 'toOnboardingFinished');
+
+        $this->ajaxDie(json_encode($session));
+    }
+
+    /**
+     * AJAX: Restart onboarding session
+     */
+    public function ajaxProcessRestartOnboardingSession()
+    {
+        /** @var PrestaShop\Module\PrestashopCheckout\Session\SessionManager $sessionManager */
+        $sessionManager = $this->module->getService('ps_checkout.session.manager');
+        /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
+        $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
+        $sessionData = json_decode(Tools::getValue('session'));
+        $currentSession = $sessionManager->start((array) $sessionData);
+        $session = $onboardingSessionManager->restartOnboarding($currentSession)->toArray();
+
+        $this->ajaxDie(json_encode($session));
+    }
+
+    /**
+     * Update onboarding session to a given status
+     */
+    private function updateOnboardingSession($sessionData, $to)
+    {
+        /** @var PrestaShop\Module\PrestashopCheckout\Session\SessionManager $sessionManager */
+        $sessionManager = $this->module->getService('ps_checkout.session.manager');
+        /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
+        $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
+        $currentSession = $sessionManager->start((array) $sessionData);
+
+        return $onboardingSessionManager->$to($currentSession)->toArray();
     }
 }
