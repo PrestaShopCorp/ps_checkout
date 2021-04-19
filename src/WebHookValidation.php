@@ -25,36 +25,6 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 class WebHookValidation
 {
     /**
-     * Validates the webHook header data
-     *
-     * @param array $headerValues
-     *
-     * @return bool
-     *
-     * @throws PsCheckoutException
-     */
-    public function validateHeaderDatas(array $headerValues)
-    {
-        if (empty($headerValues)) {
-            throw new PsCheckoutException('Header can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_HEADER_EMPTY);
-        }
-
-        if (empty($headerValues['Shop-Id'])) {
-            throw new PsCheckoutException('Shop-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_EMPTY);
-        }
-
-        if (empty($headerValues['Merchant-Id'])) {
-            throw new PsCheckoutException('Merchant-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_MERCHANT_ID_EMPTY);
-        }
-
-        if (empty($headerValues['Psx-Id'])) {
-            throw new PsCheckoutException('Psx-Id can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_PSX_ID_EMPTY);
-        }
-
-        return true;
-    }
-
-    /**
      * Validates the webHook body data
      *
      * @param array $payload
@@ -67,10 +37,6 @@ class WebHookValidation
     {
         if (empty($payload)) {
             throw new PsCheckoutException('Body can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_BODY_EMPTY);
-        }
-
-        if (empty($payload['eventType'])) {
-            throw new PsCheckoutException('eventType can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_EVENT_TYPE_EMPTY);
         }
 
         if (empty($payload['category'])) {

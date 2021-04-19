@@ -484,14 +484,40 @@
     methods: {
       submitForm() {
         this.$store
-          .dispatch('psxSendData', this.form)
+          .dispatch({
+            type: 'createShop',
+            form: {
+              ...this.form,
+              business_category: parseInt(this.form.business_category, 10),
+              business_sub_category: parseInt(
+                this.form.business_sub_category,
+                10
+              )
+            }
+          })
           .then(response => {
             if (response.status) {
-              this.$store.dispatch('psxOnboarding', response.status);
+              let session = this.$store.state.session.onboarding;
+              session.data.form = this.form;
               this.$router
                 .push('/authentication')
                 // eslint-disable-next-line no-console
                 .catch(exception => console.log(exception));
+              this.$store
+                .dispatch('transitOnboardingSession', {
+                  sessionAction: 'collect_shop_data',
+                  session: session
+                })
+                .then(() =>
+                  this.$store
+                    .dispatch('onboard')
+                    .then(response =>
+                      this.$store.dispatch(
+                        'updatePaypalOnboardingUrl',
+                        response
+                      )
+                    )
+                );
             }
           })
           .catch(error => {

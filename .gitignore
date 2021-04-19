@@ -3,7 +3,7 @@
 
 ### Ignore integration settings ###
 .env
-.env.test
+.env.*
 
 ### PrestaShop cache
 config_*.xml

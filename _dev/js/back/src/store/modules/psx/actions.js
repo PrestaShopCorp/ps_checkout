@@ -20,22 +20,37 @@ import * as types from './mutation-types';
 import ajax from '@/requests/ajax.js';
 
 export default {
-  psxSendData({ commit, getters }, payload) {
+  createShop({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: 'PsxSendData',
+      action: 'PslCreateShop',
       data: {
-        payload: JSON.stringify(payload)
+        form: JSON.stringify(payload.form)
       }
     }).then(response => {
       if (response.status === false) {
         throw response;
       }
-      commit(types.UPDATE_FORM_DATA, payload);
+
+      commit(types.UPDATE_FORM_DATA, payload.form);
+      commit(types.UPDATE_ONBOARDING_STATUS, response.status);
+
       return response;
     });
   },
-  psxOnboarding({ commit }, payload) {
-    commit(types.UPDATE_ONBOARDING_STATUS, payload);
+  onboard({ getters }) {
+    return ajax({
+      url: getters.adminController,
+      action: 'PslOnboard'
+    }).then(response => {
+      if (response.status === false) {
+        throw response;
+      }
+
+      return Promise.resolve(response);
+    });
+  },
+  offboard({ commit }) {
+    commit(types.UPDATE_ONBOARDING_STATUS, false);
   }
 };

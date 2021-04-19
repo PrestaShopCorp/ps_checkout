@@ -55,9 +55,24 @@ class PrestaShopContext
         return $this->context->link;
     }
 
+    /**
+     * Get the shop ID from the context
+     *
+     * @return int
+     */
     public function getShopId()
     {
-        return $this->context->shop->id;
+        return (int) $this->context->shop->id;
+    }
+
+    /**
+     * Get the shop url from the context
+     *
+     * @return string
+     */
+    public function getShopUrl()
+    {
+        return $this->context->shop->getBaseURL();
     }
 
     /**
@@ -70,8 +85,23 @@ class PrestaShopContext
         return $this->context->currency !== null ? $this->context->currency->iso_code : 'EUR';
     }
 
+    /**
+     * Get the current theme name from the context
+     *
+     * @return string
+     */
     public function getCurrentThemeName()
     {
         return $this->context->shop->theme_name;
+    }
+
+    /**
+     * Get the employee ID from the context
+     *
+     * @return int
+     */
+    public function getEmployeeId()
+    {
+        return (int) $this->context->employee->id;
     }
 }

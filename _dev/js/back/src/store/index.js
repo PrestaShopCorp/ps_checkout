@@ -24,15 +24,25 @@ import paypal from './modules/paypal';
 import configuration from './modules/configuration';
 import context from './modules/context';
 import psx from './modules/psx';
+import session from './modules/session';
+// import {
+//   onSseOpened,
+//   onSseOpenedWatcher
+// } from '@/store/watchers/on-sse-opened.watcher';
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   modules: {
     context,
     firebase,
     paypal,
     configuration,
-    psx
+    psx,
+    session
   }
 });
+
+// store.watch(onSseOpened, onSseOpenedWatcher(store));
+
+export default store;

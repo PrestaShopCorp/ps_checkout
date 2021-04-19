@@ -18,25 +18,13 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api\Psx;
+namespace PrestaShop\Module\PrestashopCheckout\Exception;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Psx\Client\PsxClient;
-
-class Onboarding extends PsxClient
+class PsCheckoutSessionException extends PsCheckoutException
 {
-    /**
-     * Collect merchant data during PSX onboarding process. These data are intended to be shared across PSX services.
-     *
-     * @param array $data
-     *
-     * @return array returned by ResponseApiHandler class
-     */
-    public function setOnboardingMerchant(array $data)
-    {
-        $this->setRoute('/psx/onboarding/merchant');
-
-        return $this->post([
-            'json' => json_encode($data),
-        ]);
-    }
+    const UNABLE_TO_RETRIEVE_TOKEN = 0;
+    const UNEXISTING_SESSION_TRANSITION = 1;
+    const OPENED_SESSION_NOT_FOUND = 2;
+    const FORBIDDEN_SESSION_TRANSITION = 3;
+    const MISSING_EXPECTED_PARAMETERS = 4;
 }
