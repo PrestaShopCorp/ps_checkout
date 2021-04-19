@@ -81,6 +81,43 @@ class GenericClient
      */
     protected function post(array $options = [])
     {
+        return $this->call('post', $options);
+    }
+
+    /**
+     * Wrapper of method get from guzzle client
+     *
+     * @param array $options payload
+     *
+     * @return array return response or false if no response
+     */
+    protected function get(array $options = [])
+    {
+        return $this->call('get', $options);
+    }
+
+    /**
+     * Wrapper of method patch from guzzle client
+     *
+     * @param array $options payload
+     *
+     * @return array return response or false if no response
+     */
+    protected function patchCall(array $options = [])
+    {
+        return $this->call('patch', $options);
+    }
+
+    /**
+     * Call wrapper for Guzzle client
+     *
+     * @param string $method Http method
+     * @param array $options payload
+     *
+     * @return array return response or false if no response
+     */
+    private function call($method, array $options)
+    {
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
 
@@ -99,7 +136,7 @@ class GenericClient
         }
 
         try {
-            $response = $this->getClient()->post($this->getRoute(), $options);
+            $response = $this->getClient()->$method($this->getRoute(), $options);
         } catch (RequestException $exception) {
             return $this->handleException(
                 new PsCheckoutException(

@@ -202,11 +202,21 @@
             email: this.email.value,
             password: this.password.value
           })
-          .then(() => {
-            this.$router
-              .push('/authentication')
-              // eslint-disable-next-line no-console
-              .catch(exception => console.log(exception));
+          .then(response => {
+            this.$store
+              .dispatch({
+                type: 'openOnboardingSession',
+                sessionData: {
+                  account_id: response.body.localId,
+                  account_email: response.body.email
+                }
+              })
+              .then(() => {
+                this.$router
+                  .push('/authentication')
+                  // eslint-disable-next-line no-console
+                  .catch(exception => console.log(exception));
+              });
           })
           .catch(response => {
             this.handleResponseError(response);

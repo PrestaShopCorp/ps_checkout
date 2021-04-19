@@ -48,7 +48,7 @@
           <AccountStatusPayPal v-if="paypalAccountStatus" class="mr-3" />
 
           <div class="text-center float-right" v-if="!paypalAccountStatus">
-            <Onboarding />
+            <Onboarding v-bind:loading="loading" />
           </div>
 
           <div class="text-right" v-else>
@@ -167,6 +167,11 @@
       AccountStatusPayPal,
       Onboarding
     },
+    data() {
+      return {
+        loading: false
+      };
+    },
     props: ['sendTrack'],
     computed: {
       onboardingLinkError() {
@@ -187,7 +192,7 @@
           this.$store.dispatch('updatePaypalStatusViewed');
         }
 
-        return emailMerchant;
+        return emailMerchant || this.$t('panel.accounts.paypal.loading') + '...';
       },
       checkoutAccountStatus() {
         return this.$store.state.firebase.onboardingCompleted;
@@ -207,11 +212,20 @@
     },
     methods: {
       paypalUnlink() {
+        this.loading = true;
         this.$segment.track('CKT PayPal use another account', {
           category: 'ps_checkout'
         });
         this.$store.dispatch('unlink').then(() => {
-          this.$store.dispatch('getOnboardingLink');
+          // this.$store.dispatch('onboard');
+          this.$store.dispatch({
+            type: 'closeOnboardingSession',
+            session: this.$store.state.session.onboarding
+          }).then(() => {
+            this.$store.dispatch('pollingPaypalOnboardingUrl').then(() => {
+              this.loading = false;
+            });
+          });
           this.sendTrack();
         });
       }

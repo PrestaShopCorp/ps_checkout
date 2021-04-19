@@ -56,11 +56,11 @@
 </style>
 
 <script>
-export default {
-  computed: {
-    submitIdeaLink() {
-      return this.$store.state.context.submitIdeaLink;
-    },
-  },
-};
+  export default {
+    computed: {
+      submitIdeaLink() {
+        return this.$store.state.context.submitIdeaLink;
+      }
+    }
+  };
 </script>

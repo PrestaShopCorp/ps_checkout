@@ -30,19 +30,44 @@ use PrestaShop\Module\PrestashopCheckout\ShopContext;
 class Onboarding extends PaymentClient
 {
     /**
-     * Generate the paypal link to onboard merchant
+     * Create shop on PSL
      *
-     * @return array response (ResponsaApiHandler class)
+     * @param array $data
+     *
+     * @return array (ResponseApiHandler class)
      */
-    public function getOnboardingLink()
+    public function createShop(array $data)
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager */
+        $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
+        $openedOnboardingSession = $onboardingSessionManager->getOpened();
+
+        $this->setRoute('/shops');
+
+        return $this->post([
+            'headers' => [
+                'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),
+                'Session-Token' => $openedOnboardingSession->getAuthToken(),
+            ],
+            'json' => $data,
+        ]);
+    }
+
+    /**
+     * Onboard a merchant on PSL
+     *
+     * @return array (ResponseApiHandler class)
+     */
+    public function onboard()
     {
         $this->setRoute('/payments/onboarding/onboard');
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
         /** @var OnboardingPayloadBuilder $builder */
-        $builder = $module->getService('ps_checkout.builder.payload.onboarding');
+        $builder = $this->module->getService('ps_checkout.builder.payload.onboarding');
         /** @var ShopContext $shopContext */
-        $shopContext = $module->getService('ps_checkout.context.shop');
+        $shopContext = $this->module->getService('ps_checkout.context.shop');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager */
+        $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
+        $openedOnboardingSession = $onboardingSessionManager->getOpened();
 
         $builder->buildFullPayload();
 
@@ -51,14 +76,22 @@ class Onboarding extends PaymentClient
         }
 
         $response = $this->post([
-            'json' => $builder->presentPayload()->getJson(),
+            'headers' => [
+                'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),
+                'Session-Token' => $openedOnboardingSession->getAuthToken(),
+            ],
+            'json' => $builder->presentPayload()->getArray(),
         ]);
 
         // Retry with minimal payload when full payload failed
         if (substr((string) $response['httpCode'], 0, 1) === '4') {
             $builder->buildMinimalPayload();
             $response = $this->post([
-                'json' => $builder->presentPayload()->getJson(),
+                'headers' => [
+                    'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),
+                    'Session-Token' => $openedOnboardingSession->getAuthToken(),
+                ],
+                'json' => $builder->presentPayload()->getArray(),
             ]);
         }
 

@@ -1,0 +1,70 @@
+onboarding:
+  initial_state: ONBOARDING_STARTED
+  states:
+    - ONBOARDING_STARTED
+    - SHOP_DATA_COLLECTED
+    - SHOP_CREATED
+    - PAYPAL_ONBOARD_COMPLETED
+    - MERCHANT_INTEGRATIONS_UPDATED
+    - PAYPAL_ACCOUNT_REVOKED
+    - PAYPAL_ACCOUNT_SUSPENDED
+  transitions:
+    start:
+      to: ONBOARDING_STARTED
+      update:
+        correlation_id:
+        user_id:
+        shop_id:
+        is_closed:
+        auth_token:
+        created_at:
+        updated_at:
+        expires_at:
+        is_sse_opened: false
+        data:
+          account_id:
+          account_email:
+    collect_shop_data:
+      from: ONBOARDING_STARTED
+      to: SHOP_DATA_COLLECTED
+      update:
+        updated_at:
+        is_sse_opened: true
+        data:
+          form:
+    create_shop:
+      from: SHOP_DATA_COLLECTED
+      to: SHOP_CREATED
+      update:
+        updated_at:
+        is_sse_opened: false
+        data:
+          shop:
+            paypal_onboarding_url:
+    onboard_paypal:
+      from: SHOP_CREATED
+      to: PAYPAL_ONBOARD_COMPLETED
+      update:
+        updated_at:
+        expires_at: false
+        is_sse_opened: true
+        data:
+          shop:
+            merchant_id:
+            permissions_granted:
+            consent_status:
+            risk_status:
+            account_status:
+            is_email_confirmed:
+    update_merchant_integrations:
+      from:
+        - PAYPAL_ONBOARD_COMPLETED
+        - MERCHANT_INTEGRATIONS_UPDATED
+      to: MERCHANT_INTEGRATIONS_UPDATED
+      update:
+        updated_at:
+        expires_at: false
+        is_sse_opened: false
+        data:
+          shop:
+            integrations:

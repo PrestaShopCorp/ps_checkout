@@ -29,18 +29,13 @@ export default {
       return true;
     });
   },
-  getOnboardingLink({ commit, getters }) {
+  onboard({ getters }) {
     return ajax({
       url: getters.adminController,
-      action: 'GetOnboardingLink'
+      action: 'Onboard'
     }).then(response => {
       if (response.status === false) {
-        commit(types.UPDATE_ONBOARDING_LINK, false);
         throw response;
-      }
-
-      if (undefined !== response.onboardingLink) {
-        commit(types.UPDATE_ONBOARDING_LINK, response.onboardingLink);
       }
 
       return Promise.resolve(response);

@@ -24,7 +24,6 @@ use GuzzleHttp\Client;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
-use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 
 /**
@@ -32,8 +31,25 @@ use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
  */
 class PaymentClient extends GenericClient
 {
+    /**
+     * @var string
+     */
+    protected $shopUuid;
+
+    /**
+     * @var \Ps_checkout
+     */
+    protected $module;
+
     public function __construct(\Link $link, Client $client = null)
     {
+        $context = \Context::getContext();
+        $shopUuidManager = new ShopUuidManager();
+        $this->shopUuid = $shopUuidManager->getForShop((int) $context->shop->id);
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        $this->module = $module;
+
         $this->setLink($link);
 
         // Client can be provided for tests
@@ -45,21 +61,21 @@ class PaymentClient extends GenericClient
                     'timeout' => $this->timeout,
                     'exceptions' => $this->catchExceptions,
                     'headers' => [
-                        'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
+                        'Content-Type' => 'application/json', // api version to use (psl side)
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer ' . (new Token())->getToken(),
-                        'Shop-Id' => (new ShopUuidManager())->getForShop((int) \Context::getContext()->shop->id),
+                        'Shop-Id' => $this->shopUuid,
                         'Hook-Url' => $this->link->getModuleLink(
                             'ps_checkout',
                             'DispatchWebHook',
                             [],
                             true,
                             null,
-                            (int) \Context::getContext()->shop->id
+                            (int) $context->shop->id
                         ),
-                        'Bn-Code' => (new ShopContext())->getBnCode(),
                         'Module-Version' => \Ps_checkout::VERSION, // version of the module
                         'Prestashop-Version' => _PS_VERSION_, // prestashop version
+                        'Shop-Url' => $context->shop->getBaseURL(),
                     ],
                 ],
             ]);
