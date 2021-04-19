@@ -189,6 +189,32 @@ services:
       - '@ps_checkout.paypal.configuration'
       - '@ps_checkout.funding_source.provider'
 
+  ps_checkout.store.module.context:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule'
+    public: true
+    arguments:
+      - '@=service("ps_checkout.module").name'
+      - '@=service("ps_checkout.module").module_key'
+      - '@ps_checkout.context.prestashop'
+      - '@ps_checkout.paypal.configuration'
+      - '@ps_checkout.step.live'
+      - '@ps_checkout.step.value'
+      - '@ps_checkout.translations.translations'
+      - '@ps_checkout.context.shop'
+      - '@ps_checkout.shop.provider'
+
+  ps_checkout.store.module.session:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\SessionModule'
+    public: true
+    arguments:
+      - '@ps_checkout.session.onboarding.manager'
+
+  ps_checkout.store.store:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter'
+    public: true
+    arguments:
+      - ['@ps_checkout.store.module.context', '@ps_checkout.store.module.firebase', '@ps_checkout.store.module.paypal', '@ps_checkout.store.module.psx', '@ps_checkout.store.module.configuration', '@ps_checkout.store.module.session']
+
   ps_checkout.builder.payload.onboarding:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder'
     public: true
@@ -220,31 +246,11 @@ services:
     arguments:
       - '@ps_checkout.module'
 
-  ps_checkout.store.module.context:
-    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule'
-    public: true
-    arguments:
-      - '@=service("ps_checkout.module").name'
-      - '@=service("ps_checkout.module").module_key'
-      - '@ps_checkout.context.prestashop'
-      - '@ps_checkout.paypal.configuration'
-      - '@ps_checkout.step.live'
-      - '@ps_checkout.step.value'
-      - '@ps_checkout.translations.translations'
-      - '@ps_checkout.context.shop'
-      - '@ps_checkout.shop.provider'
-
   ps_checkout.adapter.language:
     class: 'PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter'
     public: true
     arguments:
       - '@ps_checkout.context.shop'
-
-  ps_checkout.store.store:
-    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter'
-    public: true
-    arguments:
-      - ['@ps_checkout.store.module.context', '@ps_checkout.store.module.firebase', '@ps_checkout.store.module.paypal', '@ps_checkout.store.module.psx', '@ps_checkout.store.module.configuration']
 
   ps_checkout.repository.pscheckoutcart:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
@@ -320,3 +326,30 @@ services:
   ps_checkout.merchant:
     class: 'PrestaShop\Module\PrestashopCheckout\Merchant'
     public: true
+
+  ps_checkout.session:
+    class: 'PrestaShop\Module\PrestashopCheckout\Session\Session'
+    public: true
+
+  ps_checkout.session.repository:
+    class: 'PrestaShop\Module\PrestashopCheckout\Session\SessionRepository'
+    public: true
+
+  ps_checkout.session.manager:
+    class: 'PrestaShop\Module\PrestashopCheckout\Session\SessionManager'
+    public: true
+    arguments:
+      - '@ps_checkout.session.repository'
+
+  ps_checkout.session.onboarding.manager:
+    class: 'PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager'
+    public: true
+    arguments:
+      - '@ps_checkout.session.repository'
+      - '@ps_checkout.session.onboarding.status'
+
+  ps_checkout.session.onboarding.status:
+    class: 'PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingStatus'
+    public: true
+    arguments:
+      - '@ps_checkout.session.repository'
