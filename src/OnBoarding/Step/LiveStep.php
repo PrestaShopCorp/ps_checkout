@@ -24,6 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 
 class LiveStep
 {
+    const VIEWED_LIVE_STEP = 'PS_CHECKOUT_LIVE_STEP_VIEWED';
     const CONFIG_LIVE_STEP = 'PS_CHECKOUT_LIVE_STEP_CONFIRMED';
 
     /**
@@ -52,5 +53,23 @@ class LiveStep
     public function isConfirmed()
     {
         return (bool) $this->configuration->get(static::CONFIG_LIVE_STEP);
+    }
+
+    /**
+     * @param bool $viewed
+     */
+    public function viewed($viewed)
+    {
+        $this->configuration->set(static::VIEWED_LIVE_STEP, (bool) $viewed);
+    }
+
+    /**
+     * Check if the step live is complete and viewed for the first time
+     *
+     * @return bool
+     */
+    public function isViewed()
+    {
+        return (bool) $this->configuration->get(static::VIEWED_LIVE_STEP);
     }
 }

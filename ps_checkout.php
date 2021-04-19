@@ -117,6 +117,7 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_LOGGER_LEVEL' => '400',
         'PS_CHECKOUT_LOGGER_HTTP' => '0',
         'PS_CHECKOUT_LOGGER_HTTP_FORMAT' => 'DEBUG',
+        'PS_CHECKOUT_LIVE_STEP_VIEWED' => false,
         'PS_CHECKOUT_INTEGRATION_DATE' => self::INTEGRATION_DATE,
         'PS_CHECKOUT_SHOP_UUID_V4' => '',
     ];

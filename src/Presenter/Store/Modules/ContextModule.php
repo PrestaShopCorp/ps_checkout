@@ -145,6 +145,7 @@ class ContextModule implements PresenterInterface
                 'cguUrl' => $this->getCgu(),
                 'roundingSettingsIsCorrect' => $this->paypalConfiguration->IsRoundingSettingsCorrect(),
                 'liveStepConfirmed' => $this->liveStep->isConfirmed(),
+                'liveStepViewed' => $this->liveStep->isViewed(),
                 'valueBannerClosed' => $this->valueBanner->isClosed(),
                 'youtubeInstallerLink' => $this->getYoutubeInstallerLink(),
                 'incompatibleCountryCodes' => $this->paypalConfiguration->getIncompatibleCountryCodes(),
