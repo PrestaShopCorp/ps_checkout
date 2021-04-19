@@ -16,32 +16,30 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import Vue from 'vue';
+import * as Sentry from '@sentry/vue';
+import { Integrations } from '@sentry/tracing';
 
-import Sentry from './core/plugins/sentry';
-import Segment from './core/plugins/segment';
+export default {
+  install(Vue, { store }) {
+    const correlationId = Math.random()
+      .toString(36)
+      .substr(2, 9);
 
-import BootstrapVue from 'bootstrap-vue';
-import VueCollapse from 'vue2-collapse';
+    Sentry.init({
+      Vue,
+      dsn: `https://${process.env.VUE_APP_SENTRY_KEY}@${process.env.VUE_APP_SENTRY_ORGANIZATION}.ingest.sentry.io/${process.env.VUE_APP_SENTRY_PROJECT}`,
+      integrations: [new Integrations.BrowserTracing()],
 
-import i18n from './lib/i18n';
-import App from './App.vue';
-import router from './router';
-import store from './store';
+      // We recommend adjusting this value in production, or using tracesSampler
+      // for finer control
+      tracesSampleRate: 1.0,
 
-Vue.use(Sentry, { store });
-Vue.use(Segment, { router });
+      logErrors: process.env.NODE_ENV !== 'production'
+    });
 
-Vue.use(BootstrapVue);
-Vue.use(VueCollapse);
-
-Vue.config.productionTip = process.env.NODE_ENV === 'production';
-
-window.onload = () => {
-  new Vue({
-    router,
-    store,
-    i18n,
-    render: h => h(App)
-  }).$mount('#app');
+    Sentry.configureScope(scope => {
+      scope.setExtras(store.state);
+      scope.setTag('transaction_id', correlationId);
+    });
+  }
 };
