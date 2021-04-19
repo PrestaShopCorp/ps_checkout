@@ -21,6 +21,9 @@ import Vue from 'vue';
 import Sentry from './core/plugins/sentry';
 import Segment from './core/plugins/segment';
 
+Vue.use(Sentry, { store });
+Vue.use(Segment, { router });
+
 import BootstrapVue from 'bootstrap-vue';
 import VueCollapse from 'vue2-collapse';
 
@@ -28,9 +31,6 @@ import i18n from './lib/i18n';
 import App from './App.vue';
 import router from './router';
 import store from './store';
-
-Vue.use(Sentry, { store });
-Vue.use(Segment, { router });
 
 Vue.use(BootstrapVue);
 Vue.use(VueCollapse);
