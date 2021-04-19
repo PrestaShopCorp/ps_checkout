@@ -48,3 +48,5 @@ services:
   ps_checkout.api.psx.client:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Psx\Client\PsxClient'
     public: true
+    arguments:
+      - '@ps_checkout.session.onboarding.manager'

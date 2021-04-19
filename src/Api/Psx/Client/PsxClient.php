@@ -24,12 +24,15 @@ use GuzzleHttp\Client;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PsxEnv;
+use PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 
 class PsxClient extends GenericClient
 {
-    public function __construct()
+    public function __construct(OnboardingSessionManager $onboardingSessionManager)
     {
+        $context = \Context::getContext();
+        $openedOnboardingSession = $onboardingSessionManager->getOpened();
         $client = new Client([
             'base_url' => (new PsxEnv())->getPsxApiUrl(),
             'defaults' => [
@@ -40,9 +43,20 @@ class PsxClient extends GenericClient
                     'Content-Type' => 'application/vnd.psx.v1+json', // api version to use (psl side)
                     'Accept' => 'application/json',
                     'Authorization' => 'Bearer ' . (new Token())->getToken(),
-                    'Shop-Id' => (new ShopUuidManager())->getForShop((int) \Context::getContext()->shop->id),
+                    'Shop-Id' => (new ShopUuidManager())->getForShop((int) $context->shop->id),
                     'Module-Version' => \Ps_checkout::VERSION, // version of the module
                     'Prestashop-Version' => _PS_VERSION_, // prestashop version
+                    'Shop-Url' => $context->shop->getBaseURL(),
+                    'Hook-Url' => $context->link->getModuleLink(
+                        'ps_checkout',
+                        'DispatchWebHook',
+                        [],
+                        true,
+                        null,
+                        (int) $context->shop->id
+                    ),
+                    'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),
+                    'Session-Token' => $openedOnboardingSession->getAuthToken(),
                 ],
             ],
         ]);
