@@ -45,6 +45,12 @@
   padding: 33px 99px 34px 99px;
 }
 
+@media (max-width: 767px) {
+  .ps_checkout-payment-option div.payment_module:last-child a {
+    padding: 10px;
+  }
+}
+
 .ps_checkout-payment-option div.payment_module:first-child a:after {
   display: block;
   content: "\f054";
@@ -358,4 +364,65 @@
 .express-checkout-block .ps_checkout-express-checkout-button button {
   float: right;
   border-radius: 4px;
+}
+
+.ps_checkout-info-wrapper {
+  float: right;
+  padding-top: 0.15em;
+}
+
+.ps_checkout-info-button {
+  user-select: none;
+
+  font-size: 0.9em;
+  line-height: 1em;
+
+  padding-left: 0.375em;
+  width: 1em;
+  height: 1em;
+
+  border-radius: 50%;
+  text-align: left;
+
+  position: relative;
+
+  background-color: #adadad;
+  color: #fff;
+}
+
+.ps_checkout-info-button .popup-content {
+  visibility: hidden;
+  width: 300px;
+  background-color: #adadad;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 16px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -150px;
+  font-weight: normal;
+  font-size: 0.8em;
+  line-height: 1.5em;
+  letter-spacing: normal;
+}
+
+/* Toggle this class - hide and show the popup */
+.ps_checkout-info-button .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 0.25s;
+  animation: fadeIn 0.25s;
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
 }

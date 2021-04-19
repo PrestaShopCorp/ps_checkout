@@ -51,6 +51,11 @@ class ValidateOrder
     private $merchantId;
 
     /**
+     * @var \Context
+     */
+    private $context;
+
+    /**
      * @param string $paypalOrderId
      * @param string $merchantId
      */
@@ -58,6 +63,7 @@ class ValidateOrder
     {
         $this->merchantId = $merchantId;
         $this->paypalOrderId = $paypalOrderId;
+        $this->context = \Context::getContext();
     }
 
     /**
@@ -95,11 +101,27 @@ class ValidateOrder
             /** @var \PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $payload['cartId']);
 
-            $apiOrder = new Order(\Context::getContext()->link);
+            // Check if the PayPal order amount is the same than the cart amount
+            // We tolerate a difference of more or less 0.05
+            $paypalOrderAmount = number_format($order['purchase_units'][0]['amount']['value'], 2);
+            $cartAmount = number_format($this->context->cart->getOrderTotal(true, \Cart::BOTH), 2);
+
+            if ($paypalOrderAmount + 0.05 < $cartAmount || $paypalOrderAmount - 0.05 > $cartAmount) {
+                throw new PsCheckoutException('The transaction amount doesn\'t match with the cart amount.', PsCheckoutException::DIFFERENCE_BETWEEN_TRANSACTION_AND_CART);
+            }
+
+            $apiOrder = new Order($this->context->link);
+
+            $fundingSource = false === $psCheckoutCart ? 'paypal' : $psCheckoutCart->paypal_funding;
+
+            if ($fundingSource === 'card') {
+                $fundingSource .= $psCheckoutCart->isHostedFields ? '_hosted' : '_inline';
+            }
+
             $response = $apiOrder->capture(
                 $order['id'],
                 $this->merchantId,
-                false === $psCheckoutCart ? 'paypal' : $psCheckoutCart->paypal_funding
+                $fundingSource
             ); // API call here
 
             if (false === $response['status']) {

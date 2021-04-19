@@ -22,8 +22,12 @@
       <Dispute />
     </b-container>
 
-    <b-container>
+    <b-container class="mb-4">
       <Reporting />
+    </b-container>
+
+    <b-container class="container">
+      <FeatureIncoming />
     </b-container>
   </div>
 </template>
@@ -31,12 +35,14 @@
 <script>
   import Reporting from '@/components/block/reporting';
   import Dispute from '@/components/block/dispute';
+  import FeatureIncoming from '@/components/block/feature-incoming';
 
   export default {
     name: 'Activity',
     components: {
       Dispute,
-      Reporting
+      Reporting,
+      FeatureIncoming
     }
   };
 </script>

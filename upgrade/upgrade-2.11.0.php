@@ -1,4 +1,5 @@
-<!--**
+<?php
+/**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
@@ -15,28 +16,25 @@
  * @author    PrestaShop SA <contact@prestashop.com>
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- *-->
-<template>
-  <div>
-    <b-container class="mb-4">
-      <HelpPanel />
-    </b-container>
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-    <b-container class="container">
-      <FeatureIncoming />
-    </b-container>
-  </div>
-</template>
-
-<script>
-  import HelpPanel from '@/components/panel/help';
-  import FeatureIncoming from '@/components/block/feature-incoming';
-
-  export default {
-    name: 'Help',
-    components: {
-      HelpPanel,
-      FeatureIncoming
+/**
+ * Update main function for module version 2.11.0
+ *
+ * @param Ps_checkout $module
+ *
+ * @return bool
+ */
+function upgrade_module_2_11_0($module)
+{
+    if (true === (bool) version_compare(_PS_VERSION_, '1.7.1.0', '>=')) {
+        // Register hooks only for PrestaShop 1.7.1, used for payment methods logo block
+        $module->registerHook('displayProductAdditionalInfo');
+        $module->updatePosition(Hook::getIdByName('displayProductAdditionalInfo'), false, 1);
     }
-  };
-</script>
+
+    return true;
+}

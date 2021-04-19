@@ -43,6 +43,8 @@ export class NotificationComponent extends BaseComponent {
     return this;
   }
 
+  hideConditions() {}
+
   hideCancelled() {
     this.notificationPaymentCanceled.style.display = 'none';
   }
@@ -54,6 +56,8 @@ export class NotificationComponent extends BaseComponent {
   showCanceled() {
     this.notificationPaymentCanceled.style.display = 'block';
   }
+
+  showConditions() {}
 
   showError(message) {
     this.notificationPaymentError.style.display = 'block';
