@@ -80,7 +80,10 @@
                   :key="i"
                 >
                   <div class="my-3 question" v-collapse-toggle>
-                    <a href="#" @click.prevent>
+                    <a
+                      href="#"
+                      @click.prevent="onTrackQuestion(item.id_faq_block)"
+                    >
                       <i class="material-icons">keyboard_arrow_right</i>
                       {{ item.question }}
                     </a>
@@ -107,6 +110,7 @@
               :href="readmeUrl"
               target="_blank"
               variant="primary"
+              @click="onClickViewUserGuide()"
             >
               {{ $t('panel.help.downloadDoc') }}
             </b-button>
@@ -119,6 +123,7 @@
                 variant="link"
                 href="https://support.prestashop.com/hc/requests/new?ticket_form_id="
                 target="_blank"
+                @click="onClickContactUs()"
               >
                 {{ $t('panel.help.contactUs') }}
                 <i class="material-icons">arrow_right_alt</i>
@@ -128,6 +133,7 @@
                 variant="link"
                 href="mailto:support-checkout-download@prestashop.com"
                 target="_blank"
+                @click="onClickContactUs()"
               >
                 {{ $t('panel.help.contactUs') }}
                 <i class="material-icons">arrow_right_alt</i>
@@ -159,6 +165,22 @@
     methods: {
       getElementUpdated(payload, index) {
         return this.$refs[index][0].status;
+      },
+      onClickViewUserGuide() {
+        this.$segment.track('CKT Open User Guide', {
+          category: 'ps_checkout'
+        });
+      },
+      onClickContactUs() {
+        this.$segment.track('CKT Contact Support', {
+          category: 'ps_checkout'
+        });
+      },
+      onTrackQuestion(id_faq_block) {
+        this.$segment.track('CKT Read FAQ', {
+          id_faq_block: id_faq_block,
+          category: 'ps_checkout'
+        });
       }
     }
   };

@@ -266,6 +266,10 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                 case PsCheckoutException::PRESTASHOP_ORDER_PAYMENT:
                     $exceptionMessageForCustomer = $this->module->l('OrderPayment cannot be saved');
                     break;
+                case PsCheckoutException::DIFFERENCE_BETWEEN_TRANSACTION_AND_CART:
+                    $exceptionMessageForCustomer = $this->module->l('The transaction amount doesn\'t match with the cart amount.');
+                    $notifyCustomerService = false;
+                    break;
             }
         } elseif ('PrestaShop\Module\PrestashopCheckout\Exception\PayPalException' === $exceptionClass) {
             switch ($exception->getCode()) {
