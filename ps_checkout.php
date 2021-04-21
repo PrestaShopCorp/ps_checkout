@@ -18,9 +18,6 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
-use Dotenv\Dotenv;
-use PrestaShop\Module\PrestashopCheckout\Handler\ModuleFilteredRavenClient;
-
 require_once __DIR__ . '/vendor/autoload.php';
 
 if (!defined('_PS_VERSION_')) {
@@ -1525,6 +1522,11 @@ class Ps_checkout extends PaymentModule
         );
     }
 
+    /**
+     * @return void
+     *
+     * @throws Raven_Exception
+     */
     private function installSentryExceptionLogger()
     {
         $envFiles = [
@@ -1537,13 +1539,13 @@ class Ps_checkout extends PaymentModule
                 continue;
             }
 
-            $dotenv = Dotenv::create(_PS_MODULE_DIR_ . 'ps_checkout/', $fileName);
+            $dotenv = Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'ps_checkout/', $fileName);
             $env = $dotenv->load();
             break;
         }
 
         if (!empty($env) && isset($env['PS_CHECKOUT_SENTRY_DSN_MODULE'])) {
-            $client = new ModuleFilteredRavenClient(
+            $client = new PrestaShop\Module\PrestashopCheckout\Handler\ModuleFilteredRavenClient(
                 $env['PS_CHECKOUT_SENTRY_DSN_MODULE'],
                 [
                     'level' => 'warning',
