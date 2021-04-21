@@ -38,7 +38,10 @@ class LiveStep
     }
 
     /**
+     * Sets the step live flag to know if is complete and the banner closed
+     *
      * @param bool $confirmed
+     * @return void
      */
     public function confirmed($confirmed)
     {
@@ -56,7 +59,10 @@ class LiveStep
     }
 
     /**
+     * Sets the step live flag to know if is complete and viewed for the first time
+     *
      * @param bool $viewed
+     * @return void
      */
     public function viewed($viewed)
     {

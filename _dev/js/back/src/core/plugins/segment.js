@@ -21,9 +21,7 @@ import Segment from '@prestashopcorp/segment-vue';
 export default {
   install(Vue, { router }) {
     Vue.use(Segment, {
-      id:
-        process.env.VUE_APP_SEGMENT_API_KEY ||
-        'BftCN3EnnGD1ETnf4FUBxP1WFMQ80JFZ',
+      id: process.env.VUE_APP_PS_CHECKOUT_SEGMENT_API_KEY,
       router,
       debug: process.env.NODE_ENV !== 'production',
       pageCategory: 'ps_checkout'

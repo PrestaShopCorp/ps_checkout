@@ -27,7 +27,7 @@ export default {
 
     Sentry.init({
       Vue,
-      dsn: `https://${process.env.VUE_APP_SENTRY_KEY}@${process.env.VUE_APP_SENTRY_ORGANIZATION}.ingest.sentry.io/${process.env.VUE_APP_SENTRY_PROJECT}`,
+      dsn: `https://${process.env.VUE_APP_PS_CHECKOUT_SENTRY_KEY}@${process.env.VUE_APP_PS_CHECKOUT_SENTRY_ORGANIZATION}.ingest.sentry.io/${process.env.VUE_APP_PS_CHECKOUT_SENTRY_PROJECT}`,
       integrations: [new Integrations.BrowserTracing()],
 
       // We recommend adjusting this value in production, or using tracesSampler
