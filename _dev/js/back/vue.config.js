@@ -17,6 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 const path = require('path');
+
 module.exports = {
   chainWebpack: config => {
     config.optimization.delete('splitChunks');
@@ -25,6 +26,12 @@ module.exports = {
     config.plugins.delete('prefetch');
     config.resolve.alias.set('@', path.resolve(__dirname, 'src'));
   },
+  configureWebpack:
+    process.env.NODE_ENV === 'production'
+      ? {}
+      : {
+          devtool: 'source-map'
+        },
   css: {
     extract: false
   },
