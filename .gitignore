@@ -14,6 +14,7 @@ config_*.xml
 ### Vuejs ignore build files ###
 /views/js/back/
 /views/js/app.js
+/views/js/app.js.map
 /views/js/front.js
 /views/js/front.js.LICENSE.txt
 /views/img/almost-ready.png

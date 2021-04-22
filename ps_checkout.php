@@ -117,6 +117,7 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_LOGGER_LEVEL' => '400',
         'PS_CHECKOUT_LOGGER_HTTP' => '0',
         'PS_CHECKOUT_LOGGER_HTTP_FORMAT' => 'DEBUG',
+        'PS_CHECKOUT_LIVE_STEP_VIEWED' => false,
         'PS_CHECKOUT_INTEGRATION_DATE' => self::INTEGRATION_DATE,
         'PS_CHECKOUT_SHOP_UUID_V4' => '',
     ];
@@ -126,7 +127,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.13.0';
+    const VERSION = '2.14.0';
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -147,7 +148,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.13.0';
+        $this->version = '2.14.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->currencies = true;

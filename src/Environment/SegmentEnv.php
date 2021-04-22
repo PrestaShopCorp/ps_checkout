@@ -33,7 +33,7 @@ class SegmentEnv extends Env
     {
         parent::__construct();
 
-        $this->setSegmentApiKey($this->getEnv('SEGMENT_API_KEY'));
+        $this->setSegmentApiKey($this->getEnv('PS_CHECKOUT_SEGMENT_API_KEY'));
     }
 
     /**

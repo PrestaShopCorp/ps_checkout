@@ -59,6 +59,19 @@ export default {
       throw resp;
     });
   },
+  updatePaypalStatusViewed({ commit, getters }) {
+    return ajax({
+      url: getters.adminController,
+      action: 'LiveStepViewed'
+    }).then(resp => {
+      if (resp) {
+        commit(types.UPDATE_VIEWED_LIVE_STEP, true);
+        return true;
+      }
+
+      throw resp;
+    });
+  },
   updatePaypalValueBanner({ commit, getters }) {
     return ajax({
       url: getters.adminController,

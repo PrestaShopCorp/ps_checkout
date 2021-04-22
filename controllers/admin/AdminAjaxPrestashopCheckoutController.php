@@ -84,6 +84,18 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
+     * AJAX: Confirm PS Live Step fist time
+     */
+    public function ajaxProcessLiveStepViewed()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep $stepLive */
+        $stepLive = $this->module->getService('ps_checkout.step.live');
+        $stepLive->viewed(true);
+
+        $this->ajaxDie(json_encode(true));
+    }
+
+    /**
      * AJAX: Confirm PS Value Banner closed
      */
     public function ajaxProcessValueBannerClosed()
@@ -136,6 +148,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep $stepLive */
         $stepLive = $this->module->getService('ps_checkout.step.live');
         $stepLive->confirmed(false);
+        $stepLive->viewed(false);
 
         // we reset the Value banner
         /** @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner $valueBanner */
