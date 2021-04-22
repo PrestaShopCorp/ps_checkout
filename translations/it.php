@@ -556,6 +556,7 @@ $_MODULE['<{ps_checkout}prestashop>adminafterheader_88bccdecc2c4b9dcc8afbbc94483
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_91ac9ff2b524dada18330e5104c5e708'] = 'Permetti ai clienti di tutto il mondo di accedere ai metodi di pagamento locali che preferiscono';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_ee2bcefdfd245cabad582bbaa6b38ff5'] = 'Tra cui: ';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_f1206f9fadc5ce41694f69129aecac26'] = 'Configura';
+$_MODULE['<{ps_checkout}prestashop>displayexpresscheckout_2f2401d57093e7d31bf2689fb87f72f6'] = '100% pagamenti sicuri';
 $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_a47005f7a79a267052608d713c8cfe8d'] = ' Potrebbe verificarsi un problema con il pagamento o il pagamento potrebbe essere effettuato in ritardo; contatta il nostro Servizio clienti per maggiori informazioni.';
 $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_32187a5bef114c112c1ef96ca2e3da1a'] = 'Il tuo ordine è stato confermato.';
 $_MODULE['<{ps_checkout}prestashop>displaypaymentbybinaries_d7467080ec566ee0c6cb59242ee28fa5'] = 'È necessario accettare i termini e le condizioni per poter evadere l\'ordine.';
@@ -586,6 +587,7 @@ $_MODULE['<{ps_checkout}prestashop>promotionblock_88bccdecc2c4b9dcc8afbbc9448329
 $_MODULE['<{ps_checkout}prestashop>promotionblock_91ac9ff2b524dada18330e5104c5e708'] = 'Permetti ai clienti di tutto il mondo di accedere ai metodi di pagamento locali che preferiscono';
 $_MODULE['<{ps_checkout}prestashop>promotionblock_ee2bcefdfd245cabad582bbaa6b38ff5'] = 'Tra cui: ';
 $_MODULE['<{ps_checkout}prestashop>promotionblock_f1206f9fadc5ce41694f69129aecac26'] = 'Configura';
+$_MODULE['<{ps_checkout}prestashop>displayproductadditionalinfo_2f2401d57093e7d31bf2689fb87f72f6'] = '100% pagamenti sicuri';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a4e8c4aedf01bae8876d415df3925f65'] = 'Aggiorna le tue impostazioni per:';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_cb2afa98a49d1ac44da748a5ee556a8a'] = 'Ricevere maggiori informazioni sui Codici conformi alla norma ISO';
 $_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_a44217022190f5734b2f72ba1e4f8a79'] = 'Numero carta';
