@@ -155,8 +155,11 @@
 </template>
 
 <script>
+  import * as Sentry from '@sentry/vue';
+
   import AccountStatusPayPal from '@/components/block/account-status-paypal.vue';
   import Onboarding from '@/components/block/onboarding';
+  import { PaypalAccountFalseOnboardingException } from '@/exception/paypal-onboarding.exception';
 
   export default {
     components: {
@@ -169,7 +172,21 @@
         return this.$store.state.paypal.paypalOnboardingLink === false;
       },
       paypalEmail() {
-        return this.$store.state.paypal.emailMerchant;
+        const emailMerchant = this.$store.state.paypal.emailMerchant;
+        if (
+          !this.$store.state.context.liveStepViewed &&
+          this.paypalAccountStatus
+        ) {
+          if (!emailMerchant) {
+            Sentry.captureException(
+              new PaypalAccountFalseOnboardingException()
+            );
+          }
+
+          this.$store.dispatch('updatePaypalStatusViewed');
+        }
+
+        return emailMerchant;
       },
       checkoutAccountStatus() {
         return this.$store.state.firebase.onboardingCompleted;

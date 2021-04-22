@@ -16,27 +16,30 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import * as types from './mutation-types';
+import * as Sentry from '@sentry/vue';
+import { Integrations } from '@sentry/tracing';
 
 export default {
-  [types.UNLINK_ACCOUNT](state) {
-    state.idMerchant = '';
-    state.emailMerchant = '';
-    state.onboardingCompleted = false;
-  },
-  [types.UPDATE_ONBOARDING_LINK](state, onboardingLink) {
-    state.paypalOnboardingLink = onboardingLink;
-  },
-  [types.UPDATE_PAYPAL_ACCOUNT_STATUS](state, paypalAccount) {
-    Object.assign(state, paypalAccount.paypal);
-  },
-  [types.UPDATE_CONFIRMED_LIVE_STEP](state, confirmed) {
-    state.isLiveStepConfirmed = confirmed;
-  },
-  [types.UPDATE_VIEWED_LIVE_STEP](state, viewed) {
-    state.isLiveStepViewed = viewed;
-  },
-  [types.UPDATE_VALUE_BANNER_CLOSED](state, closed) {
-    state.isValueBannerClosed = closed;
+  install(Vue, { store }) {
+    const correlationId = Math.random()
+      .toString(36)
+      .substr(2, 9);
+
+    Sentry.init({
+      Vue,
+      dsn: `https://${process.env.VUE_APP_PS_CHECKOUT_SENTRY_KEY}@${process.env.VUE_APP_PS_CHECKOUT_SENTRY_ORGANIZATION}.ingest.sentry.io/${process.env.VUE_APP_PS_CHECKOUT_SENTRY_PROJECT}`,
+      integrations: [new Integrations.BrowserTracing()],
+
+      // We recommend adjusting this value in production, or using tracesSampler
+      // for finer control
+      tracesSampleRate: 1.0,
+
+      logErrors: process.env.NODE_ENV !== 'production'
+    });
+
+    Sentry.configureScope(scope => {
+      scope.setExtras(store.state);
+      scope.setTag('transaction_id', correlationId);
+    });
   }
 };

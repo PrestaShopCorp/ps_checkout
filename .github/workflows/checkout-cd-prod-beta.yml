@@ -19,19 +19,19 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v2
 
-      - name: Gcloud auth and write env file
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCLOUD_PROJECT_PRODUCTION }}
+          service_account_key: ${{ secrets.G_CREDENTIAL_PRODUCTION }}
+          export_default_credentials: true
+
+      - name: Copy env files
         run: |
-          echo $GOOGLE_APPLICATION_CREDENTIALS > $GCLOUD_TOKEN_PATH
-          gcloud auth activate-service-account --key-file=$GCLOUD_TOKEN_PATH
-          gcloud container clusters get-credentials $GCLOUD_CLUSTER \
-          --zone europe-west1-c --project $GCLOUD_PROJECT
-          gcloud beta secrets versions access latest --project=$GCLOUD_PROJECT --secret="checkout-module" > .env
-          rm $GCLOUD_TOKEN_PATH
+          gcloud components install beta
+          gcloud beta secrets versions access latest --secret="checkout-module" > .env
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_CREDENTIAL_PRODUCTION }}
-          GCLOUD_TOKEN_PATH: ${{ env.GCLOUD_TOKEN_PATH }}
-          GCLOUD_CLUSTER: ${{ secrets.GCLOUD_CLUSTER }}
-          GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT_PRODUCTION }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.G_CREDENTIAL_PRODUCTION }}
 
       - name: Build module
         run: |
@@ -45,7 +45,7 @@ jobs:
           host: ${{ secrets.SSH_HOST_PRODUCTION }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          script: sudo su -c 'docker exec $(docker ps -aqf "name=${{ secrets.CONTAINER_NAME }}") rm -rf modules/${{ env.MODULE_NAME }}'
+          script: sudo su -c 'docker exec $(docker ps -qf "name=${{ secrets.CONTAINER_NAME }}") rm -rf modules/${{ env.MODULE_NAME }}'
 
       - name: Copy module
         uses: appleboy/scp-action@master
@@ -73,7 +73,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            sudo su -c 'docker exec $(docker ps -aqf "name=${{ secrets.CONTAINER_NAME }}") bin/console prestashop:module install ${{ env.MODULE_NAME }}'
+            sudo su -c 'docker exec $(docker ps -qf "name=${{ secrets.CONTAINER_NAME }}") bin/console prestashop:module install ${{ env.MODULE_NAME }}'
 
       - name: Clear cache
         uses: appleboy/ssh-action@master
@@ -82,5 +82,5 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            sudo su -c 'docker exec $(docker ps -aqf "name=${{ secrets.CONTAINER_NAME }}") bin/console cache:cl'
-            sudo su -c 'docker exec $(docker ps -aqf "name=${{ secrets.CONTAINER_NAME }}") chmod -R 777 var/cache var/logs'
+            sudo su -c 'docker exec $(docker ps -qf "name=${{ secrets.CONTAINER_NAME }}") bin/console cache:cl'
+            sudo su -c 'docker exec $(docker ps -qf "name=${{ secrets.CONTAINER_NAME }}") chmod -R 777 var/cache var/logs'

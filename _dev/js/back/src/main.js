@@ -17,41 +17,23 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 import Vue from 'vue';
+
+import Sentry from './core/plugins/sentry';
+import Segment from './core/plugins/segment';
+
+Vue.use(Sentry, { store });
+Vue.use(Segment, { router });
+
 import BootstrapVue from 'bootstrap-vue';
 import VueCollapse from 'vue2-collapse';
-import * as Sentry from '@sentry/browser';
-import { Vue as VueIntegration } from '@sentry/integrations';
 
 import i18n from './lib/i18n';
 import App from './App.vue';
 import router from './router';
 import store from './store';
-import VueSegment from '@prestashopcorp/segment-vue';
 
 Vue.use(BootstrapVue);
 Vue.use(VueCollapse);
-
-Vue.use(VueSegment, {
-  id: 'BftCN3EnnGD1ETnf4FUBxP1WFMQ80JFZ',
-  router,
-  debug: process.env.NODE_ENV !== 'production',
-  pageCategory: 'ps_checkout'
-});
-
-Sentry.init({
-  dsn: `https://${process.env.VUE_APP_SENTRY_KEY}@${process.env.VUE_APP_SENTRY_ORGANIZATION}.ingest.sentry.io/${process.env.VUE_APP_SENTRY_PROJECT}`,
-  integrations: [new VueIntegration({ Vue, attachProps: true })]
-});
-Sentry.configureScope(scope => {
-  scope.setExtra(store.state);
-});
-
-const correlationId = Math.random()
-  .toString(36)
-  .substr(2, 9);
-Sentry.configureScope(scope => {
-  scope.setTag('transaction_id', correlationId);
-});
 
 Vue.config.productionTip = process.env.NODE_ENV === 'production';
 
