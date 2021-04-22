@@ -1024,6 +1024,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'CheckoutUrl' => $this->getCheckoutPageUrl(),
             $this->name . 'ConfirmUrl' => $this->context->link->getPageLink('order-confirmation', true, (int) $this->context->language->id),
             $this->name . 'PayPalSdkUrl' => $payPalSdkLinkBuilder->buildLink(),
+            $this->name . 'CaptureCanceledUrl' => $this->context->link->getModuleLink($this->name, 'api', ['action' => 'captureCanceled']),
             $this->name . 'PayPalClientToken' => $payPalClientToken,
             $this->name . 'PayPalOrderId' => $payPalOrderId,
             $this->name . 'HostedFieldsEnabled' => $isCardAvailable && $payPalConfiguration->isCardPaymentEnabled() && $paypalAccountRepository->cardHostedFieldsIsAllowed(),

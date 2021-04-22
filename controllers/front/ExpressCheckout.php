@@ -115,6 +115,12 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
                 ]
             );
 
+            if (isset($psCheckoutCart) && false !== $psCheckoutCart) {
+                $apiOrder = new \PrestaShop\Module\PrestashopCheckout\Api\Payment\Order(Context::getContext()->link);
+                $apiOrder->logCaptureCanceled($psCheckoutCart->paypal_order, $exception->getMessage());
+            }
+
+
             header('HTTP/1.0 500 Internal Server Error');
 
             echo json_encode([
