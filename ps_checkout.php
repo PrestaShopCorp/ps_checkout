@@ -1551,7 +1551,7 @@ class Ps_checkout extends PaymentModule
                     'level' => 'warning',
                     'tags' => [
                         'php_version' => phpversion(),
-                        'ps_checkout_version' => $this->version,
+                        'module_version' => $this->version,
                         'prestashop_version' => _PS_VERSION_,
                     ],
                 ]

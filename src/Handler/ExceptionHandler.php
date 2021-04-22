@@ -40,7 +40,7 @@ class ExceptionHandler
                 'level' => 'warning',
                 'tags' => [
                     'php_version' => phpversion(),
-                    'ps_checkout_version' => $module->version,
+                    'module_version' => $module->version,
                     'prestashop_version' => _PS_VERSION_,
                 ],
             ]
