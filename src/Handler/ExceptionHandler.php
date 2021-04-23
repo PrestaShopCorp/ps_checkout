@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Handler;
 
 use Exception;
 use PrestaShop\Module\PrestashopCheckout\Environment\SentryEnv;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use Ps_checkout;
 use Raven_Client;
 
@@ -32,7 +33,14 @@ class ExceptionHandler
      */
     protected $client;
 
-    public function __construct(Ps_checkout $module, SentryEnv $sentryEnv)
+    /**
+     * @param Ps_checkout $module
+     * @param SentryEnv $sentryEnv
+     * @param PsAccountRepository $psAccountRepository
+     *
+     * @throws \Raven_Exception
+     */
+    public function __construct(Ps_checkout $module, SentryEnv $sentryEnv, PsAccountRepository $psAccountRepository)
     {
         $this->client = new ModuleFilteredRavenClient(
             $sentryEnv->getDsn(),
@@ -48,15 +56,24 @@ class ExceptionHandler
 
         $this->client->setAppPath(realpath(_PS_MODULE_DIR_ . 'ps_checkout/'));
 
+        if ($psAccountRepository->onBoardingIsCompleted()) {
+            $this->client->user_context([
+                'id' => $psAccountRepository->getLocalId(),
+                'email' => $psAccountRepository->getEmail(),
+            ]);
+        }
+
         $this->client->install();
     }
 
     /**
      * @param Exception $error
      * @param bool $throw
-     * @param mixed $data
+     * @param array|null $data
      *
      * @return void
+     *
+     * @throws Exception
      */
     public function handle(Exception $error, $throw = true, $data = null)
     {
