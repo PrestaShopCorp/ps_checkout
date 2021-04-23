@@ -50,7 +50,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_569fd05bdafa1712c4f6be5b153b8418'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_46b9e3665f187c739c55983f757ccda0'] = 'I confirm my order';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_100e10b5e05d4b3abd2cd52fd12e8789'] = 'There was an error during the payment. Please try again or contact the support.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_72e506c5e5a9308bb3836d539dc4e39e'] = 'Thanks for your purchase!';
-$_MODULE['<{ps_checkout}prestashop>ps_checkout_490098b6f04cb77f81f6e4878f6869f2'] = 'Please wait, we proceed to payment';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_490098b6f04cb77f81f6e4878f6869f2'] = 'Please wait, we are processing your payment';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_78432b718ec482b7211e1a45785087f1'] = 'Card holder authentication canceled, please choose another payment method or try again.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_39dc86ebdd6c930447215d738bc4d15f'] = 'An error occurred on card holder authentication, please choose another payment method or try again.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_816565ccf105493c7b15166627f6fc16'] = 'Card holder authentication failed, please choose another payment method or try again.';
