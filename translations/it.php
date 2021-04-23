@@ -540,7 +540,7 @@ $_MODULE['<{ps_checkout}prestashop>adminafterheader_88bccdecc2c4b9dcc8afbbc94483
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_91ac9ff2b524dada18330e5104c5e708'] = 'Permetti ai clienti di tutto il mondo di accedere ai metodi di pagamento locali che preferiscono';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_ee2bcefdfd245cabad582bbaa6b38ff5'] = 'Tra cui: ';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_f1206f9fadc5ce41694f69129aecac26'] = 'Configura';
-$_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_a47005f7a79a267052608d713c8cfe8d'] = ' Potrebbe verificarsi un problema con il pagamento o il pagamento potrebbe essere effettuato in ritardo; contatta il nostro Servizio clienti per maggiori informazioni.';
+$_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_034347c8ea2ce26879ee1fee0b5e58ca'] = 'Il tuo ordine è in attesa della conferma del pagamento. Riceverai un\'email quando il tuo pagamento sarà stato convalidato. Puoi anche controllare lo stato dell\'ordine nella cronologia degli ordini nel tuo account.';
 $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_32187a5bef114c112c1ef96ca2e3da1a'] = 'Il tuo ordine è stato confermato.';
 $_MODULE['<{ps_checkout}prestashop>displaypaymentbybinaries_d7467080ec566ee0c6cb59242ee28fa5'] = 'È necessario accettare i termini e le condizioni per poter evadere l\'ordine.';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_733ea3e302b9c48da7777481ed50e59a'] = 'Pagamento annullato. Scegli un altro metodo di pagamento o riprova più tardi.';

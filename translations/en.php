@@ -398,7 +398,7 @@ $_MODULE['<{ps_checkout}prestashop>displaypayment_fa29fdc19f1d3ac45b09645c15c531
 $_MODULE['<{ps_checkout}prestashop>displaypayment_1e9307ff80da8e2e7053566f1613cf90'] = '3-digits';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_36883c97eb73307ac86b5ad32abbb49b'] = 'code on the back of your credit card. In some cases, it can be 4-digits or on the front of your card.';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_46b9e3665f187c739c55983f757ccda0'] = 'I confirm my order';
-$_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_a47005f7a79a267052608d713c8cfe8d'] = 'Your order hasn\'t been validated yet, only created. There can be an issue with your payment or it can be captured later, please contact our customer service to have more details about it.';
+$_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_034347c8ea2ce26879ee1fee0b5e58ca'] = 'Your order is waiting for payment confirmation. You will receive an email when your payment has been validated. You can also check the order status in your order history in your account.';
 $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_32187a5bef114c112c1ef96ca2e3da1a'] = 'Your order is confirmed.';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_cb375d61d9ba4f21c2f0e4c1df8143e0'] = 'PayPal Order Id';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_cefbea0303801fa237623a23615f2755'] = 'PayPal Order Status';

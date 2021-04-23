@@ -19,7 +19,7 @@
 <section id="ps_checkout-displayOrderConfirmation">
   {if $status === 'pending' }
     <div class="alert alert-warning">
-      {l s='Your order hasn\'t been validated yet, only created. There can be an issue with your payment or it can be captured later, please contact our customer service to have more details about it.' mod='ps_checkout'}
+      {l s='Your order is waiting for payment confirmation. You will receive an email when your payment has been validated. You can also check the order status in your order history in your account.' mod='ps_checkout'}
     </div>
   {elseif $isShop17 && $isAuthorized }
     {* PrestaShop 1.7 show a confirmation message itself, so we display only a message in case of isAuthorized *}

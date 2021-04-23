@@ -556,7 +556,7 @@ $_MODULE['<{ps_checkout}prestashop>adminafterheader_88bccdecc2c4b9dcc8afbbc94483
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_91ac9ff2b524dada18330e5104c5e708'] = 'Donnez accès à tous les moyens de paiement locaux préférés de vos clients à travers le monde';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_ee2bcefdfd245cabad582bbaa6b38ff5'] = 'Inclus : ';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_f1206f9fadc5ce41694f69129aecac26'] = 'Configurer';
-$_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_a47005f7a79a267052608d713c8cfe8d'] = 'Votre commande n\'a pas encore été validée, elle a seulement été créée. Il y a peut-être un problème avec votre paiement ou votre commande sera peut-être enregistrée plus tard. Veuillez contacter notre service client pour plus d\'informations.';
+$_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_034347c8ea2ce26879ee1fee0b5e58ca'] = 'Votre commande est en attente de confirmation de paiement. Vous recevrez un email lorsque votre paiement aura été validé. Vous pouvez également vérifier le statut de votre commande dans votre historique de commandes dans votre compte.';
 $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_32187a5bef114c112c1ef96ca2e3da1a'] = 'Votre commande est confirmée.';
 $_MODULE['<{ps_checkout}prestashop>displaypaymentbybinaries_d7467080ec566ee0c6cb59242ee28fa5'] = 'Vous devez accepter les conditions générales pour valider votre commande. ';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_733ea3e302b9c48da7777481ed50e59a'] = 'Traitement du paiement annulé, veuillez choisir une autre méthode de paiement ou essayez de nouveau.';
