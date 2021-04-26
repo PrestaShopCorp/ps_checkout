@@ -47,13 +47,12 @@ class AbstractFrontController extends ModuleFrontController
     /**
      * @param array $response
      * @param int $statusCode
-     * @param string $statusMessage
      *
      * @return void
      */
-    protected function exitWithCustomStatus(array $response, $statusCode = 200, $statusMessage = '')
+    protected function exitWithCustomStatus(array $response, $statusCode = 200)
     {
-        header("HTTP/1.0 $statusCode $statusMessage");
+        http_response_code($statusCode);
 
         $this->exitWithResponse($response);
     }

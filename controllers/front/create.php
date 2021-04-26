@@ -73,8 +73,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                             'exceptionCode' => null,
                             'exceptionMessage' => null,
                         ],
-                        400,
-                        'Bad Request'
+                        400
                     );
                 }
 

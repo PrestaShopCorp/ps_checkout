@@ -148,8 +148,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             'exceptionCode' => $exception->getCode(),
             'exceptionMessage' => $exception->getMessage(),
         ],
-            400,
-            'Bad Request');
+            400);
     }
 
     /**
@@ -382,8 +381,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                 'exceptionCode' => $exception->getCode(),
                 'exceptionMessage' => $exception->getMessage(),
             ],
-            500,
-            'Internal Server Error');
+            500);
     }
 
     /**
