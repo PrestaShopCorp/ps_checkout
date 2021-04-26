@@ -141,6 +141,11 @@ class Ps_checkout extends PaymentModule
      */
     private $serviceContainer;
 
+    /**
+     * @var \PrestaShop\Module\PrestashopCheckout\Handler\ModuleFilteredRavenClient
+     */
+    private $sentryClient;
+
     public function __construct()
     {
         $this->name = 'ps_checkout';
@@ -1545,7 +1550,7 @@ class Ps_checkout extends PaymentModule
         }
 
         if (!empty($env) && isset($env['PS_CHECKOUT_SENTRY_DSN_MODULE'])) {
-            $client = new PrestaShop\Module\PrestashopCheckout\Handler\ModuleFilteredRavenClient(
+            $this->sentryClient = new PrestaShop\Module\PrestashopCheckout\Handler\ModuleFilteredRavenClient(
                 $env['PS_CHECKOUT_SENTRY_DSN_MODULE'],
                 [
                     'level' => 'warning',
@@ -1557,9 +1562,17 @@ class Ps_checkout extends PaymentModule
                 ]
             );
 
-            $client->setAppPath(realpath(_PS_MODULE_DIR_ . 'ps_checkout/'));
+            $this->sentryClient->setAppPath(realpath(_PS_MODULE_DIR_ . 'ps_checkout/'));
 
-            $client->install();
+            $this->sentryClient->install();
         }
+    }
+
+    /**
+     * @return \PrestaShop\Module\PrestashopCheckout\Handler\ModuleFilteredRavenClient
+     */
+    public function getSentryClient()
+    {
+        return $this->sentryClient;
     }
 }

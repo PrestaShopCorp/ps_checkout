@@ -42,19 +42,25 @@ class ExceptionHandler
      */
     public function __construct(Ps_checkout $module, SentryEnv $sentryEnv, PsAccountRepository $psAccountRepository)
     {
-        $this->client = new ModuleFilteredRavenClient(
-            $sentryEnv->getDsn(),
-            [
-                'level' => 'warning',
-                'tags' => [
-                    'php_version' => phpversion(),
-                    'module_version' => $module->version,
-                    'prestashop_version' => _PS_VERSION_,
-                ],
-            ]
-        );
+        $this->client = $module->getSentryClient();
 
-        $this->client->setAppPath(realpath(_PS_MODULE_DIR_ . 'ps_checkout/'));
+        if (empty($this->client)) {
+            $this->client = new ModuleFilteredRavenClient(
+                $sentryEnv->getDsn(),
+                [
+                    'level' => 'warning',
+                    'tags' => [
+                        'php_version' => phpversion(),
+                        'module_version' => $module->version,
+                        'prestashop_version' => _PS_VERSION_,
+                    ],
+                ]
+            );
+
+            $this->client->setAppPath(realpath(_PS_MODULE_DIR_ . 'ps_checkout/'));
+
+            $this->client->install();
+        }
 
         if ($psAccountRepository->onBoardingIsCompleted()) {
             $this->client->user_context([
@@ -62,8 +68,6 @@ class ExceptionHandler
                 'email' => $psAccountRepository->getEmail(),
             ]);
         }
-
-        $this->client->install();
     }
 
     /**
