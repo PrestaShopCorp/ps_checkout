@@ -116,16 +116,13 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
                 ]
             );
 
-            $this->exitWithCustomStatus(
-                [
-                    'status' => false,
-                    'httpCode' => 500,
-                    'body' => $this->payload,
-                    'exceptionCode' => $exception->getCode(),
-                    'exceptionMessage' => $exception->getMessage(),
-                ],
-                500
-            );
+            $this->exitWithResponse([
+                'status' => false,
+                'httpCode' => 500,
+                'body' => $this->payload,
+                'exceptionCode' => $exception->getCode(),
+                'exceptionMessage' => $exception->getMessage(),
+            ]);
         }
 
         $this->exitWithResponse([

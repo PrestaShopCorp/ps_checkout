@@ -33,28 +33,13 @@ class AbstractFrontController extends ModuleFrontController
      */
     protected function exitWithExceptionMessage(Exception $exception)
     {
-        $response = [
+        $this->exitWithResponse([
             'status' => false,
             'httpCode' => 500,
             'body' => '',
             'exceptionCode' => $exception->getCode(),
             'exceptionMessage' => $exception->getMessage(),
-        ];
-
-        $this->exitWithCustomStatus($response, 500);
-    }
-
-    /**
-     * @param array $response
-     * @param int $statusCode
-     *
-     * @return void
-     */
-    protected function exitWithCustomStatus(array $response, $statusCode = 200)
-    {
-        http_response_code($statusCode);
-
-        $this->exitWithResponse($response);
+        ]);
     }
 
     /**
@@ -64,8 +49,13 @@ class AbstractFrontController extends ModuleFrontController
      */
     protected function exitWithResponse(array $response = [])
     {
+        ob_end_clean();
         header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
         header('Content-Type: application/json;charset=utf-8');
+
+        if (isset($response['httpCode'])) {
+            http_response_code($response['httpCode']);
+        }
 
         if (!empty($response)) {
             echo json_encode($response, JSON_UNESCAPED_SLASHES);

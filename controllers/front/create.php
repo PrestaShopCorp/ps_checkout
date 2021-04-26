@@ -61,20 +61,17 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 );
 
                 if (!$isQuantityAdded) {
-                    $this->exitWithCustomStatus(
-                        [
-                            'status' => false,
-                            'httpCode' => 400,
-                            'body' => [
-                                'error' => [
-                                    'message' => 'Failed to update cart quantity.',
-                                ],
+                    $this->exitWithResponse([
+                        'status' => false,
+                        'httpCode' => 400,
+                        'body' => [
+                            'error' => [
+                                'message' => 'Failed to update cart quantity.',
                             ],
-                            'exceptionCode' => null,
-                            'exceptionMessage' => null,
                         ],
-                        400
-                    );
+                        'exceptionCode' => null,
+                        'exceptionMessage' => null,
+                    ]);
                 }
 
                 $cart->update();

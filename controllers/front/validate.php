@@ -136,7 +136,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
      */
     private function sendBadRequestError($exceptionMessageForCustomer, Exception $exception)
     {
-        $this->exitWithCustomStatus([
+        $this->exitWithResponse([
             'status' => false,
             'httpCode' => 400,
             'body' => [
@@ -147,8 +147,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             ],
             'exceptionCode' => $exception->getCode(),
             'exceptionMessage' => $exception->getMessage(),
-        ],
-            400);
+        ]);
     }
 
     /**
@@ -369,19 +368,17 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             $this->generateNewCart();
         }
 
-        $this->exitWithCustomStatus(
-            [
-                'status' => false,
-                'httpCode' => 500,
-                'body' => [
-                    'error' => [
-                        'message' => $exceptionMessageForCustomer,
-                    ],
+        $this->exitWithResponse([
+            'status' => false,
+            'httpCode' => 500,
+            'body' => [
+                'error' => [
+                    'message' => $exceptionMessageForCustomer,
                 ],
-                'exceptionCode' => $exception->getCode(),
-                'exceptionMessage' => $exception->getMessage(),
             ],
-            500);
+            'exceptionCode' => $exception->getCode(),
+            'exceptionMessage' => $exception->getMessage(),
+        ]);
     }
 
     /**
