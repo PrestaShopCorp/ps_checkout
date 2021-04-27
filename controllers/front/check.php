@@ -18,13 +18,14 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
+use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 
 /**
  * This controller receive ajax call on customer click on a payment button
  */
-class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
+class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
 {
     /**
      * @var Ps_checkout
@@ -38,8 +39,6 @@ class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
      */
     public function postProcess()
     {
-        header('content-type:application/json');
-
         try {
             if (false === Validate::isLoadedObject($this->context->cart)) {
                 throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
@@ -86,7 +85,7 @@ class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
                 }
             }
 
-            echo json_encode([
+            $this->exitWithResponse([
                 'status' => true,
                 'httpCode' => 200,
                 'body' => $bodyValues,
@@ -94,6 +93,8 @@ class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
+            $this->handleExceptionSendingToSentry($exception);
+
             /* @var \Psr\Log\LoggerInterface logger */
             $logger = $this->module->getService('ps_checkout.logger');
             $logger->error(
@@ -104,17 +105,7 @@ class Ps_CheckoutCheckModuleFrontController extends ModuleFrontController
                 )
             );
 
-            header('HTTP/1.0 500 Internal Server Error');
-
-            echo json_encode([
-                'status' => false,
-                'httpCode' => 500,
-                'body' => '',
-                'exceptionCode' => $exception->getCode(),
-                'exceptionMessage' => $exception->getMessage(),
-            ]);
+            $this->exitWithExceptionMessage($exception);
         }
-
-        exit;
     }
 }

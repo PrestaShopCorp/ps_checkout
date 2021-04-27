@@ -76,6 +76,12 @@ class ValidateOrder
      */
     public function validateOrder($payload)
     {
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler $exceptionHandler */
+        $exceptionHandler = $module->getService('ps_checkout.handler.exception');
+
         // API call here
         $paypalOrder = new PaypalOrder($this->paypalOrderId);
         $order = $paypalOrder->getOrder();
@@ -190,8 +196,9 @@ class ValidateOrder
                 );
             } catch (\ErrorException $exception) {
                 // Notice or warning from PHP
+                $exceptionHandler->handle($exception, false);
             } catch (\Exception $exception) {
-                throw new PsCheckoutException('PrestaShop cannot validate order', PsCheckoutException::PRESTASHOP_VALIDATE_ORDER, $exception);
+                $exceptionHandler->handle(new PsCheckoutException('PrestaShop cannot validate order', PsCheckoutException::PRESTASHOP_VALIDATE_ORDER, $exception));
             }
 
             if (empty($module->currentOrder)) {
@@ -218,8 +225,9 @@ class ValidateOrder
                     } catch (\ErrorException $exception) {
                         // Notice or warning from PHP
                         // For example : https://github.com/PrestaShop/PrestaShop/issues/18837
+                        $exceptionHandler->handle($exception, false);
                     } catch (\Exception $exception) {
-                        throw new PsCheckoutException('Unable to change PrestaShop OrderState', PsCheckoutException::PRESTASHOP_ORDER_STATE_ERROR, $exception);
+                        $exceptionHandler->handle(new PsCheckoutException('Unable to change PrestaShop OrderState', PsCheckoutException::PRESTASHOP_ORDER_STATE_ERROR, $exception));
                     }
 
                     // If new OrderState is PS_OS_PAYMENT PrestaShop create an OrderPayment with no TransactionId and wrong Option Name

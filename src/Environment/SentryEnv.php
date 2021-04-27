@@ -28,17 +28,7 @@ class SentryEnv extends Env
     /**
      * @var string
      */
-    private $key;
-
-    /**
-     * @var string
-     */
-    private $organisation;
-
-    /**
-     * @var string
-     */
-    private $project;
+    private $dsn;
 
     /**
      * SentryEnv constructor.
@@ -47,56 +37,22 @@ class SentryEnv extends Env
     {
         parent::__construct();
 
-        $this->setKey($this->getEnv('PS_CHECKOUT_SENTRY_KEY'));
-        $this->setOrganisation($this->getEnv('PS_CHECKOUT_SENTRY_ORGANIZATION'));
-        $this->setProject($this->getEnv('PS_CHECKOUT_SENTRY_PROJECT'));
+        $this->setDsn($this->getEnv('PS_CHECKOUT_SENTRY_DSN_MODULE'));
     }
 
     /**
      * @return string
      */
-    public function getKey()
+    public function getDsn()
     {
-        return $this->key;
+        return $this->dsn;
     }
 
     /**
-     * @param string $key
+     * @param string $dsn
      */
-    public function setKey($key)
+    public function setDsn($dsn)
     {
-        $this->key = $key;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOrganisation()
-    {
-        return $this->organisation;
-    }
-
-    /**
-     * @param string $organisation
-     */
-    public function setOrganisation($organisation)
-    {
-        $this->organisation = $organisation;
-    }
-
-    /**
-     * @return string
-     */
-    public function getProject()
-    {
-        return $this->project;
-    }
-
-    /**
-     * @param string $project
-     */
-    public function setProject($project)
-    {
-        $this->project = $project;
+        $this->dsn = $dsn;
     }
 }

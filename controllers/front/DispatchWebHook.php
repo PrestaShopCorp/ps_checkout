@@ -20,6 +20,7 @@
 
 use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook;
+use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\MerchantDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
@@ -29,7 +30,7 @@ use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 /**
  * @todo To be refactored
  */
-class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontController
+class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontController
 {
     const PS_CHECKOUT_PAYPAL_ID_LABEL = 'PS_CHECKOUT_PAYPAL_ID_MERCHANT';
 
@@ -222,32 +223,35 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     private function dispatchWebHook()
     {
-        if ('ShopNotificationMerchantAccount' === $this->payload['category']) {
-            $this->module->getLogger()->info(sprintf(
-                'DispatchWebHook %s merchantId : %s',
-                $this->payload['category'],
-                $this->merchantId
-            ));
+        $this->module->getLogger()->info(
+            'DispatchWebHook',
+            [
+                'merchantId' => $this->merchantId,
+                'shopId' => $this->shopId,
+                'firebaseId' => $this->firebaseId,
+                'payload' => $this->payload,
+            ]
+        );
 
+        if ('ShopNotificationMerchantAccount' === $this->payload['category']) {
             return (new MerchantDispatcher())->dispatchEventType(
                 ['merchantId' => $this->merchantId]
             );
         }
 
         if ('ShopNotificationOrderChange' === $this->payload['category']) {
-            $this->module->getLogger()->info(sprintf(
-                'DispatchWebHook %s PayPal Order id : %s',
-                $this->payload['category'],
-                $this->payload['orderId']
-            ));
-
             return (new OrderDispatcher())->dispatchEventType($this->payload);
         }
 
-        $this->module->getLogger()->info(sprintf(
-            'DispatchWebHook %s : ignored',
-            $this->payload['category']
-        ));
+        $this->module->getLogger()->info(
+            'DispatchWebHook ignored',
+            [
+                'merchantId' => $this->merchantId,
+                'shopId' => $this->shopId,
+                'firebaseId' => $this->firebaseId,
+                'payload' => $this->payload,
+            ]
+        );
 
         return true;
     }
@@ -313,13 +317,18 @@ class ps_checkoutDispatchWebHookModuleFrontController extends ModuleFrontControl
      */
     private function handleException(Exception $exception)
     {
+        $this->handleExceptionSendingToSentry($exception);
+
         $this->module->getLogger()->log(
             PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND === $exception->getCode() ? Logger::NOTICE : Logger::ERROR,
-            sprintf(
-                'Webhook exception %s : %s',
-                $exception->getCode(),
-                $exception->getMessage()
-            )
+            'Webhook exception ' . $exception->getCode(),
+            [
+                'merchantId' => $this->merchantId,
+                'shopId' => $this->shopId,
+                'firebaseId' => $this->firebaseId,
+                'payload' => $this->payload,
+                'exception' => $exception,
+            ]
         );
 
         http_response_code($this->getHttpCodeFromExceptionCode($exception->getCode()));

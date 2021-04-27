@@ -18,6 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
+use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
@@ -25,7 +26,7 @@ use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 /**
  * This controller receive ajax call to capture/authorize payment and create a PrestaShop Order
  */
-class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
+class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
 {
     /**
      * @var Ps_checkout
@@ -44,8 +45,6 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
      */
     public function postProcess()
     {
-        header('content-type:application/json');
-
         try {
             if (false === $this->checkIfContextIsValid()) {
                 throw new PsCheckoutException('The context is not valid', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
@@ -94,11 +93,13 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
                 $psCheckoutCartRepository->save($psCheckoutCart);
             }
 
-            $this->module->getLogger()->info(sprintf(
-                'ValidateOrder PayPal Order Id : %s Cart : %s',
-                $bodyValues['orderID'],
-                Validate::isLoadedObject($this->context->cart) ? (int) $this->context->cart->id : 0
-            ));
+            $this->module->getLogger()->info(
+                'ValidateOrder',
+                [
+                    'paypal_order' => $this->paypalOrderId,
+                    'id_cart' => (int) $this->context->cart->id,
+                ]
+            );
 
             $currency = $this->context->currency;
             $total = (float) $cart->getOrderTotal(true, Cart::BOTH);
@@ -135,9 +136,7 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
      */
     private function sendBadRequestError($exceptionMessageForCustomer, Exception $exception)
     {
-        header('HTTP/1.0 400 Bad Request');
-
-        echo json_encode([
+        $this->exitWithResponse([
             'status' => false,
             'httpCode' => 400,
             'body' => [
@@ -149,7 +148,6 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             'exceptionCode' => $exception->getCode(),
             'exceptionMessage' => $exception->getMessage(),
         ]);
-        exit;
     }
 
     /**
@@ -159,7 +157,7 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
      */
     private function sendOkResponse($response)
     {
-        echo json_encode([
+        $this->exitWithResponse([
             'status' => true,
             'httpCode' => 200,
             'body' => [
@@ -174,7 +172,6 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             'exceptionCode' => null,
             'exceptionMessage' => null,
         ]);
-        exit;
     }
 
     /**
@@ -195,9 +192,9 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
      * Check that this payment option is still available in case the customer changed
      * his address just before the end of the checkout process
      *
-     * @todo Move to main module class
-     *
      * @return bool
+     *
+     * @todo Move to main module class
      */
     private function checkIfPaymentOptionIsAvailable()
     {
@@ -338,19 +335,25 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
 
         if (true === $notifyCustomerService) {
             $this->notifyCustomerService($exception);
-            $this->module->getLogger()->error(sprintf(
-                'ValidateOrder - Exception %s Order PayPal %s : %s',
-                $exception->getCode(),
-                $paypalOrder,
-                $exception->getMessage()
-            ));
+
+            $this->module->getLogger()->error(
+                'ValidateOrder - Exception ' . $exception->getCode(),
+                [
+                    'exception' => $exception,
+                    'paypal_order' => $paypalOrder,
+                ]
+            );
+
+            $this->sentryExceptionHandler->handle($exception, false);
         } else {
-            $this->module->getLogger()->notice(sprintf(
-                'ValidateOrder - Exception %s Order PayPal %s : %s',
-                $exception->getCode(),
-                $paypalOrder,
-                $exception->getMessage()
-            ));
+            $this->module->getLogger()->notice(
+                'ValidateOrder - Exception ' . $exception->getCode(),
+                [
+                    'exception' => $exception,
+                    'paypal_order' => $paypalOrder,
+                ]
+            );
+
             $this->sendBadRequestError($exceptionMessageForCustomer, $exception);
         }
 
@@ -365,9 +368,7 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             $this->generateNewCart();
         }
 
-        header('HTTP/1.0 500 Internal Server Error');
-
-        echo json_encode([
+        $this->exitWithResponse([
             'status' => false,
             'httpCode' => 500,
             'body' => [
@@ -378,16 +379,15 @@ class Ps_CheckoutValidateModuleFrontController extends ModuleFrontController
             'exceptionCode' => $exception->getCode(),
             'exceptionMessage' => $exception->getMessage(),
         ]);
-        exit;
     }
 
     /**
      * @param Exception $exception
      *
-     * @todo To be refactored with Service Container in v2.0.0
-     *
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     *
+     * @todo To be refactored with Service Container in v2.0.0
      */
     private function notifyCustomerService(Exception $exception)
     {

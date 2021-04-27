@@ -127,7 +127,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.14.0';
+    const VERSION = '2.15.0';
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -141,6 +141,11 @@ class Ps_checkout extends PaymentModule
      */
     private $serviceContainer;
 
+    /**
+     * @var \PrestaShop\Module\PrestashopCheckout\Handler\ModuleFilteredRavenClient
+     */
+    private $sentryClient;
+
     public function __construct()
     {
         $this->name = 'ps_checkout';
@@ -148,7 +153,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.14.0';
+        $this->version = '2.15.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->currencies = true;
@@ -166,6 +171,8 @@ class Ps_checkout extends PaymentModule
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
         $this->ps_versions_compliancy = ['min' => '1.6.1.0', 'max' => _PS_VERSION_];
         $this->disableSegment = false;
+
+        $this->installSentryExceptionLogger();
     }
 
     /**
@@ -1518,5 +1525,54 @@ class Ps_checkout extends PaymentModule
                 'step' => 1,
             ]
         );
+    }
+
+    /**
+     * @return void
+     *
+     * @throws Raven_Exception
+     */
+    private function installSentryExceptionLogger()
+    {
+        $envFiles = [
+            'test' => '.env.test',
+            'prod' => '.env',
+        ];
+
+        foreach ($envFiles as $environment => $fileName) {
+            if (!file_exists(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName)) {
+                continue;
+            }
+
+            $dotenv = Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'ps_checkout/', $fileName);
+            $env = $dotenv->load();
+            break;
+        }
+
+        if (!empty($env) && isset($env['PS_CHECKOUT_SENTRY_DSN_MODULE'])) {
+            $this->sentryClient = new PrestaShop\Module\PrestashopCheckout\Handler\ModuleFilteredRavenClient(
+                $env['PS_CHECKOUT_SENTRY_DSN_MODULE'],
+                [
+                    'level' => 'warning',
+                    'tags' => [
+                        'php_version' => phpversion(),
+                        'module_version' => $this->version,
+                        'prestashop_version' => _PS_VERSION_,
+                    ],
+                ]
+            );
+
+            $this->sentryClient->setAppPath(realpath(_PS_MODULE_DIR_ . 'ps_checkout/'));
+
+            $this->sentryClient->install();
+        }
+    }
+
+    /**
+     * @return \PrestaShop\Module\PrestashopCheckout\Handler\ModuleFilteredRavenClient
+     */
+    public function getSentryClient()
+    {
+        return $this->sentryClient;
     }
 }
