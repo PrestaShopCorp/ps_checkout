@@ -848,4 +848,23 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         return $onboardingSessionManager->$to($currentSession)->toArray();
     }
+
+    /**
+     * AJAX: Update merchant integrations
+     */
+    public function ajaxProcessUpdateMerchantIntegrations()
+    {
+        /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
+        $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
+
+        $session = $onboardingSessionManager->startOnboarding();
+
+        $integrations = Tools::getValue('integrations');
+
+        $session->setData($integrations);
+
+        $onboardingSessionManager->update($session);
+
+        $this->ajaxDie(json_encode($session));
+    }
 }
