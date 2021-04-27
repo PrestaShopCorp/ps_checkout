@@ -296,10 +296,8 @@ class GenericClient
      */
     protected function getVerify()
     {
-        if (defined('_PS_CACHE_CA_CERT_FILE_')) {
-            \Tools::refreshCACertFile();
-
-            return file_exists(constant('_PS_CACHE_CA_CERT_FILE_')) ? constant('_PS_CACHE_CA_CERT_FILE_') : true;
+        if (defined('_PS_CACHE_CA_CERT_FILE_') && file_exists(constant('_PS_CACHE_CA_CERT_FILE_'))) {
+            return constant('_PS_CACHE_CA_CERT_FILE_');
         }
 
         return true;
