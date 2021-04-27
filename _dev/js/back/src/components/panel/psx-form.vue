@@ -537,10 +537,6 @@
       }
     },
     mounted() {
-      this.$store.dispatch({
-        type: 'accountOnboardingStarted',
-        session: this.$store.state.session.onboarding
-      });
       this.$segment.track('View Form Biz Page', {
         category: 'ps_checkout'
       });

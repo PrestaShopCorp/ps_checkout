@@ -153,7 +153,7 @@
       goToSignIn() {
         this.$store
           .dispatch({
-            type: 'firebaseOnboardingStarted',
+            type: 'accountOnboardingStarted',
             session: this.$store.state.session.onboarding
           })
           .then(() => {

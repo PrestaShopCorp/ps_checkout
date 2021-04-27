@@ -23,12 +23,12 @@ namespace PrestaShop\Module\PrestashopCheckout\Session;
 class SessionManager
 {
     /**
-     * @var PrestaShop\Module\PrestashopCheckout\Session\SessionRepository
+     * @var \PrestaShop\Module\PrestashopCheckout\Session\SessionRepository
      */
     private $repository;
 
     /**
-     * @param PrestaShop\Module\PrestashopCheckout\Session\SessionRepository $sessionRepository
+     * @param \PrestaShop\Module\PrestashopCheckout\Session\SessionRepository $repository
      *
      * @return void
      */
@@ -42,7 +42,7 @@ class SessionManager
      *
      * @param array $sessionData
      *
-     * @return PrestaShop\Module\PrestashopCheckout\Session\Session
+     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
      */
     public function start(array $sessionData)
     {
@@ -61,7 +61,7 @@ class SessionManager
      *
      * @param array $sessionData
      *
-     * @return PrestaShop\Module\PrestashopCheckout\Session\Session|null
+     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session|null
      */
     public function get(array $sessionData)
     {
@@ -79,7 +79,7 @@ class SessionManager
     /**
      * Update an user session
      *
-     * @param PrestaShop\Module\PrestashopCheckout\Session\Session $session
+     * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
      *
      * @return bool
      */
@@ -91,7 +91,7 @@ class SessionManager
     /**
      * Stop an user session
      *
-     * @param PrestaShop\Module\PrestashopCheckout\Session\Session $session
+     * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
      *
      * @return bool
      */

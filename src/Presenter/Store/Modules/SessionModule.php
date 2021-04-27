@@ -34,12 +34,12 @@ class SessionModule implements PresenterInterface
     private $context;
 
     /**
-     * @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager
+     * @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager
      */
     private $onboardingSessionManager;
 
     /**
-     * @param OnboardingSessionManager $onboardingSessionManager
+     * @param \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager
      */
     public function __construct(OnboardingSessionManager $onboardingSessionManager)
     {

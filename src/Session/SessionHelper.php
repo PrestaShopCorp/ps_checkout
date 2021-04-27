@@ -26,7 +26,7 @@ class SessionHelper
     /**
      * Defines is session is expired
      *
-     * @param PrestaShop\Module\PrestashopCheckout\Session\Session $session
+     * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
      *
      * @return bool
      */
@@ -48,7 +48,7 @@ class SessionHelper
      * @param string $refDate
      * @param string $intervalDate 2 hours by default
      *
-     * @return PrestaShop\Module\PrestashopCheckout\Session\Session
+     * @return string
      */
     public static function updateExpirationDate(string $refDate, $intervalDate = '2 hours')
     {

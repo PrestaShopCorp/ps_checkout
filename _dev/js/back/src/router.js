@@ -70,7 +70,7 @@ const router = new Router({
         if (store.getters.firebaseOnboardingIsCompleted) {
           next(from);
         } else if (
-          store.getters.onboarding.status !== 'FIREBASE_ONBOARDING_STARTED'
+          store.getters.onboarding.status !== 'ACCOUNT_ONBOARDING_STARTED'
         ) {
           next('/authentication');
         } else {
@@ -110,8 +110,8 @@ const router = new Router({
         if (
           !store.getters.firebaseOnboardingIsCompleted ||
           store.getters.psxOnboardingIsCompleted ||
-          (store.getters.onboarding.status !== 'FIREBASE_ONBOARDED' &&
-            store.getters.onboarding.status !== 'ACCOUNT_ONBOARDING_STARTED')
+          store.getters.onboarding.status !== 'FIREBASE_ONBOARDED' ||
+          store.getters.onboarding.status === 'ACCOUNT_ONBOARDED'
         ) {
           next('/authentication');
         } else {

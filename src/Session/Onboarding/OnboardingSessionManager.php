@@ -22,7 +22,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Session\Onboarding;
 
 use PrestaShop\Module\PrestashopCheckout\Session\Session;
-use PrestaShop\Module\PrestashopCheckout\Session\SessionHelper;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionManager;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionRepository;
 
@@ -34,7 +33,7 @@ class OnboardingSessionManager extends SessionManager
     private $context;
 
     /**
-     * @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingStatus
+     * @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingStatus
      */
     private $onboardingStatus;
 
@@ -48,39 +47,37 @@ class OnboardingSessionManager extends SessionManager
     /**
      * Start a merchant onboarding session
      *
-     * @param array $sessionData
+     * @param bool $accountOnboarded Start an onboarding session with ACCOUNT_ONBOARDED status
      *
-     * @return PrestaShop\Module\PrestashopCheckout\Session\Session
+     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
      */
-    public function startOnboarding()
+    public function startOnboarding($accountOnboarded = false)
     {
         $sessionData = [
             'user_id' => (int) $this->context->employee->id,
             'shop_id' => (int) $this->context->shop->id,
             'process_type' => 'onboarding',
-            'status' => OnboardingStatus::ONBOARDING_STARTED,
+            'status' => $accountOnboarded ? OnboardingStatus::ACCOUNT_ONBOARDED : OnboardingStatus::ONBOARDING_STARTED,
+            'expiration_date' => null,
         ];
-
-        $sessionData = $this->onboardingStatus->defineStartingStatus($sessionData);
 
         return $this->start($sessionData);
     }
 
     /**
-     * Update a merchant onboarding session status to FIREBASE_ONBOARDING_STARTED
+     * Update a merchant onboarding session status to ACCOUNT_ONBOARDING_STARTED
      *
-     * @param PrestaShop\Module\PrestashopCheckout\Session\Session $session
+     * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
      *
-     * @return PrestaShop\Module\PrestashopCheckout\Session\Session
+     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
      */
-    public function toFirebaseOnboardingStarted(Session $session)
+    public function toAccountOnboardingStarted(Session $session)
     {
         if ($session->getStatus() !== OnboardingStatus::ONBOARDING_STARTED) {
             return $session;
         }
 
-        $session->setStatus(OnboardingStatus::FIREBASE_ONBOARDING_STARTED);
-        $session->setExpirationDate(SessionHelper::updateExpirationDate(date('Y-m-d H:i:s')));
+        $session->setStatus(OnboardingStatus::ACCOUNT_ONBOARDING_STARTED);
         $this->update($session);
 
         return $this->get($session->toArray());
@@ -89,41 +86,17 @@ class OnboardingSessionManager extends SessionManager
     /**
      * Update a merchant onboarding session status to FIREBASE_ONBOARDED
      *
-     * @param PrestaShop\Module\PrestashopCheckout\Session\Session $session
+     * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
      *
-     * @return PrestaShop\Module\PrestashopCheckout\Session\Session
+     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
      */
     public function toFirebaseOnboarded(Session $session)
     {
-        if ($session->getStatus() !== OnboardingStatus::FIREBASE_ONBOARDING_STARTED) {
+        if ($session->getStatus() !== OnboardingStatus::ACCOUNT_ONBOARDING_STARTED) {
             return $session;
         }
 
         $session->setStatus(OnboardingStatus::FIREBASE_ONBOARDED);
-        $session->setExpirationDate(null);
-        $this->update($session);
-
-        return $this->get($session->toArray());
-    }
-
-    /**
-     * Update a merchant onboarding session status to ACCOUNT_ONBOARDING_STARTED
-     *
-     * @param PrestaShop\Module\PrestashopCheckout\Session\Session $session
-     *
-     * @return PrestaShop\Module\PrestashopCheckout\Session\Session
-     */
-    public function toAccountOnboardingStarted(Session $session)
-    {
-        if (
-            $session->getStatus() !== OnboardingStatus::FIREBASE_ONBOARDED &&
-            $session->getStatus() !== OnboardingStatus::ONBOARDING_STARTED
-        ) {
-            return $session;
-        }
-
-        $session->setStatus(OnboardingStatus::ACCOUNT_ONBOARDING_STARTED);
-        $session->setExpirationDate(SessionHelper::updateExpirationDate(date('Y-m-d H:i:s')));
         $this->update($session);
 
         return $this->get($session->toArray());
@@ -132,18 +105,17 @@ class OnboardingSessionManager extends SessionManager
     /**
      * Update a merchant onboarding session status to ACCOUNT_ONBOARDED
      *
-     * @param PrestaShop\Module\PrestashopCheckout\Session\Session $session
+     * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
      *
-     * @return PrestaShop\Module\PrestashopCheckout\Session\Session
+     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
      */
     public function toAccountOnboarded(Session $session)
     {
-        if ($session->getStatus() !== OnboardingStatus::ACCOUNT_ONBOARDING_STARTED) {
+        if ($session->getStatus() !== OnboardingStatus::FIREBASE_ONBOARDED) {
             return $session;
         }
 
         $session->setStatus(OnboardingStatus::ACCOUNT_ONBOARDED);
-        $session->setExpirationDate(null);
         $this->update($session);
 
         return $this->get($session->toArray());
@@ -152,9 +124,9 @@ class OnboardingSessionManager extends SessionManager
     /**
      * Update a merchant onboarding session status to PAYPAL_ONBOARDING_STARTED
      *
-     * @param PrestaShop\Module\PrestashopCheckout\Session\Session $session
+     * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
      *
-     * @return PrestaShop\Module\PrestashopCheckout\Session\Session
+     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
      */
     public function toPaypalOnboardingStarted(Session $session)
     {
@@ -163,7 +135,6 @@ class OnboardingSessionManager extends SessionManager
         }
 
         $session->setStatus(OnboardingStatus::PAYPAL_ONBOARDING_STARTED);
-        $session->setExpirationDate(SessionHelper::updateExpirationDate(date('Y-m-d H:i:s')));
         $this->update($session);
 
         return $this->get($session->toArray());
@@ -172,9 +143,9 @@ class OnboardingSessionManager extends SessionManager
     /**
      * Update a merchant onboarding session status to ONBOARDING_FINISHED
      *
-     * @param PrestaShop\Module\PrestashopCheckout\Session\Session $session
+     * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
      *
-     * @return PrestaShop\Module\PrestashopCheckout\Session\Session
+     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
      */
     public function toOnboardingFinished(Session $session)
     {
@@ -183,7 +154,6 @@ class OnboardingSessionManager extends SessionManager
         }
 
         $session->setStatus(OnboardingStatus::ONBOARDING_FINISHED);
-        $session->setExpirationDate(null);
         $this->update($session);
 
         return $this->get($session->toArray());
@@ -192,14 +162,16 @@ class OnboardingSessionManager extends SessionManager
     /**
      * Restart a merchant onboarding session
      *
-     * @param PrestaShop\Module\PrestashopCheckout\Session\Session $session
+     * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
      *
-     * @return PrestaShop\Module\PrestashopCheckout\Session\Session
+     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
      */
     public function restartOnboarding(Session $session)
     {
+        $accountOnboarded = $session->getStatus() === OnboardingStatus::ONBOARDING_FINISHED ?: false;
+
         $this->stop($session);
 
-        return $this->startOnboarding();
+        return $this->startOnboarding($accountOnboarded);
     }
 }

@@ -767,10 +767,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     /**
      * AJAX: Update onboarding session to FIREBASE_ONBOARDING_STARTED
      */
-    public function ajaxProcessFirebaseOnboardingStarted()
+    public function ajaxProcessAccountOnboardingStarted()
     {
         $sessionData = json_decode(Tools::getValue('session'));
-        $session = $this->updateOnboardingSession($sessionData, 'toFirebaseOnboardingStarted');
+        $session = $this->updateOnboardingSession($sessionData, 'toAccountOnboardingStarted');
 
         $this->ajaxDie(json_encode($session));
     }
@@ -782,17 +782,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         $sessionData = json_decode(Tools::getValue('session'));
         $session = $this->updateOnboardingSession($sessionData, 'toFirebaseOnboarded');
-
-        $this->ajaxDie(json_encode($session));
-    }
-
-    /**
-     * AJAX: Update onboarding session to FIREBASE_ONBOARDING_STARTED
-     */
-    public function ajaxProcessAccountOnboardingStarted()
-    {
-        $sessionData = json_decode(Tools::getValue('session'));
-        $session = $this->updateOnboardingSession($sessionData, 'toAccountOnboardingStarted');
 
         $this->ajaxDie(json_encode($session));
     }

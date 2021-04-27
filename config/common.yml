@@ -345,5 +345,3 @@ services:
   ps_checkout.session.onboarding.status:
     class: 'PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingStatus'
     public: true
-    arguments:
-      - '@ps_checkout.session.repository'

@@ -20,12 +20,12 @@
 import update from '@/requests/session.js';
 
 export default {
-  firebaseOnboardingStarted({ commit, getters }, payload) {
+  accountOnboardingStarted({ commit, getters }, payload) {
     return update({
       commit: commit,
       getters: getters,
       payload: payload,
-      action: 'FirebaseOnboardingStarted'
+      action: 'AccountOnboardingStarted'
     });
   },
   firebaseOnboarded({ commit, getters }, payload) {
@@ -34,14 +34,6 @@ export default {
       getters: getters,
       payload: payload,
       action: 'FirebaseOnboarded'
-    });
-  },
-  accountOnboardingStarted({ commit, getters }, payload) {
-    return update({
-      commit: commit,
-      getters: getters,
-      payload: payload,
-      action: 'AccountOnboardingStarted'
     });
   },
   accountOnboarded({ commit, getters }, payload) {

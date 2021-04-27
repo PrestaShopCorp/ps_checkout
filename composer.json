@@ -61,6 +61,12 @@
     ],
     "set-license-header": [
       "@php ./vendor/bin/header-stamp --license=\"assets/afl.txt\" --exclude=\".github,node_modules,vendor\""
+    ],
+    "php-cs-fixer:check": [
+      "@php ./vendor/bin/php-cs-fixer fix --dry-run --diff"
+    ],
+    "php-cs-fixer:fix": [
+      "@php ./vendor/bin/php-cs-fixer fix"
     ]
   }
 }
