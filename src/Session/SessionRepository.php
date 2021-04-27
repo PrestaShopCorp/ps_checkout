@@ -50,7 +50,9 @@ class SessionRepository
         $accountId = isset($sessionData['account_id']) ? $sessionData['account_id'] : null;
         $data = isset($sessionData['data']) ? $sessionData['data'] : null;
         $creationDate = date('Y-m-d H:i:s');
-        $expirationDate = SessionHelper::updateExpirationDate($creationDate);
+        $expirationDate = key_exists('expiration_date', $sessionData) && empty($sessionData['expiration_date']) ?
+            null :
+            SessionHelper::updateExpirationDate($creationDate);
         $insertData = [
             'user_id' => $sessionData['user_id'],
             'shop_id' => $sessionData['shop_id'],
@@ -71,7 +73,7 @@ class SessionRepository
      *
      * @param array $sessionData
      *
-     * @return PrestaShop\Module\PrestashopCheckout\Session\Session|null
+     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session|null
      */
     public function get(array $sessionData)
     {
@@ -90,7 +92,7 @@ class SessionRepository
     /**
      * Update an user session
      *
-     * @param PrestaShop\Module\PrestashopCheckout\Session\Session $session
+     * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
      *
      * @return bool
      */
@@ -120,7 +122,7 @@ class SessionRepository
      *
      * @return bool
      */
-    public function remove(int $userId, string $shopId, string $processType)
+    public function remove(int $userId, int $shopId, string $processType)
     {
         $where = '
             user_id = ' . $userId . '
