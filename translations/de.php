@@ -535,7 +535,7 @@ $_MODULE['<{ps_checkout}prestashop>adminafterheader_88bccdecc2c4b9dcc8afbbc94483
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_91ac9ff2b524dada18330e5104c5e708'] = 'Gewähren Sie Kunden auf der ganzen Welt Zugriff auf relevante lokale Zahlungsmethoden';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_ee2bcefdfd245cabad582bbaa6b38ff5'] = 'Einschließlich: ';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_f1206f9fadc5ce41694f69129aecac26'] = 'Konfigurieren';
-$_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_a47005f7a79a267052608d713c8cfe8d'] = ' Es liegt möglicherweise ein Problem mit Ihrer Bezahlung vor oder die Bestellung wird später erfasst. Bitte setzen Sie sich mit unserem Kundendienst in Verbindung, um mehr Informationen dazu zu erhalten.';
+$_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_034347c8ea2ce26879ee1fee0b5e58ca'] = 'Ihre Bestellung wartet auf die Zahlungsbestätigung. Sie erhalten eine E-Mail, wenn Ihre Zahlung validiert wurde. Sie können den Bestellstatus auch in Ihrer Bestellhistorie in Ihrem Konto überprüfen.';
 $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_32187a5bef114c112c1ef96ca2e3da1a'] = 'Ihre Bestellung wird bestätigt.';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_733ea3e302b9c48da7777481ed50e59a'] = 'Die Bearbeitung der Zahlung wurde abgebrochen, bitte wählen Sie eine andere Zahlungsmethode oder versuchen Sie es erneut.';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_42275e6d860a19342a3943af7d1e48a0'] = 'Fehler bei der Zahlungsverarbeitung';

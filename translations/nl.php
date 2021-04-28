@@ -526,7 +526,7 @@ $_MODULE['<{ps_checkout}prestashop>adminafterheader_88bccdecc2c4b9dcc8afbbc94483
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_91ac9ff2b524dada18330e5104c5e708'] = 'Geef uw klanten wereldwijd toegang tot alle relevante, lokale betaalmethoden';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_ee2bcefdfd245cabad582bbaa6b38ff5'] = 'Inclusief: ';
 $_MODULE['<{ps_checkout}prestashop>adminafterheader_f1206f9fadc5ce41694f69129aecac26'] = 'Configureren';
-$_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_a47005f7a79a267052608d713c8cfe8d'] = 'Er is mogelijk een fout of vertraging in de betaling opgetreden.  Neem voor meer informatie contact op met onze klantenservice.';
+$_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_034347c8ea2ce26879ee1fee0b5e58ca'] = 'Uw bestelling wacht op bevestiging van betaling. U ontvangt een e-mail wanneer uw betaling is gevalideerd. U kunt de status van uw bestelling ook controleren in uw bestelgeschiedenis in uw account.';
 $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_32187a5bef114c112c1ef96ca2e3da1a'] = 'Uw bestelling is bevestigd.';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_733ea3e302b9c48da7777481ed50e59a'] = 'Verwerking van de betaling geannuleerd, kies alstublieft een andere betaalmethode of probeer het opnieuw.';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_42275e6d860a19342a3943af7d1e48a0'] = 'Fout in de verwerking van de betaling';
