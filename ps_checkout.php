@@ -153,7 +153,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = self::VERSION;
+        $this->version = '2.16.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->currencies = true;

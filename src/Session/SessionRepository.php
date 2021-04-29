@@ -122,7 +122,7 @@ class SessionRepository
      *
      * @return bool
      */
-    public function remove(int $userId, int $shopId, string $processType)
+    public function remove($userId, $shopId, $processType)
     {
         $where = '
             user_id = ' . $userId . '

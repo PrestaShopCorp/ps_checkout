@@ -42,7 +42,7 @@ function upgrade_module_2_16_0($module)
             data TEXT,
             creation_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             expiration_date DATETIME,
-            CONSTRAINT pk_pscheckout_session PRIMARY KEY (user_id, shop_id, process_type)
+            PRIMARY KEY (user_id, shop_id, process_type)
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
     ');
 }
