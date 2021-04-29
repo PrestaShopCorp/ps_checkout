@@ -50,7 +50,7 @@ class SessionHelper
      *
      * @return string
      */
-    public static function updateExpirationDate(string $refDate, $intervalDate = '2 hours')
+    public static function updateExpirationDate($refDate, $intervalDate = '2 hours')
     {
         return date_format(date_add(date_create($refDate), date_interval_create_from_date_string($intervalDate)), 'Y-m-d H:i:s');
     }

@@ -774,7 +774,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Update onboarding session to FIREBASE_ONBOARDING_STARTED
+     * AJAX: Update onboarding session to ACCOUNT_ONBOARDING_STARTED
      */
     public function ajaxProcessAccountOnboardingStarted()
     {
@@ -796,7 +796,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Update onboarding session to FIREBASE_ONBOARDED
+     * AJAX: Update onboarding session to ACCOUNT_ONBOARDED
      */
     public function ajaxProcessAccountOnboarded()
     {
@@ -807,7 +807,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Update onboarding session to FIREBASE_ONBOARDING_STARTED
+     * AJAX: Update onboarding session to PAYPAL_ONBOARDING_STARTED
      */
     public function ajaxProcessPaypalOnboardingStarted()
     {
@@ -818,7 +818,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Update onboarding session to FIREBASE_ONBOARDED
+     * AJAX: Update onboarding session to ONBOARDING_FINISHED
      */
     public function ajaxProcessOnboardingFinished()
     {

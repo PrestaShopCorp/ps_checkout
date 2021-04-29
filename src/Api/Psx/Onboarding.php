@@ -32,7 +32,7 @@ class Onboarding extends PsxClient
      *
      * @return array returned by ResponseApiHandler class
      */
-    public function setOnboardingMerchant(array $data, string $correlation_id)
+    public function setOnboardingMerchant(array $data, $correlation_id)
     {
         $this->setRoute('/psx/onboarding/merchant');
 
