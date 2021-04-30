@@ -59,7 +59,7 @@ class OrderDispatcher implements Dispatcher
         $psOrderId = \Order::getOrderByCartId((int) $this->psCheckoutCart->id_cart);
 
         if (false === $psOrderId) {
-            throw new PsCheckoutException(sprintf('order #%s does not exist', $this->psCheckoutCart->paypal_order), PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
+            throw new PsCheckoutException('No PrestaShop Order associated to this PayPal Order at this time.', PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
         }
 
         if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REFUNED
