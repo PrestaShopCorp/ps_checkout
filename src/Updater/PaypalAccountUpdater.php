@@ -80,11 +80,11 @@ class PaypalAccountUpdater
             return $this->persistentConfiguration->savePaypalAccount($account);
         }
 
-        $account->setEmail($merchantIntegration['primary_email']);
-        $account->setEmailIsVerified($merchantIntegration['primary_email_confirmed']);
-        $account->setPaypalPaymentStatus($merchantIntegration['payments_receivable']);
-        $account->setCardPaymentStatus($this->getCardStatus($merchantIntegration));
-        $account->setMerchantCountry($merchantIntegration['country']);
+        $account->setEmail(isset($merchantIntegration['primary_email']) ? $merchantIntegration['primary_email'] : '');
+        $account->setEmailIsVerified(isset($merchantIntegration['primary_email_confirmed']) ? $merchantIntegration['primary_email_confirmed'] : '');
+        $account->setPaypalPaymentStatus(isset($merchantIntegration['payments_receivable']) ? $merchantIntegration['payments_receivable'] : '');
+        $account->setCardPaymentStatus(isset($merchantIntegration['products']) ? $this->getCardStatus($merchantIntegration) : '');
+        $account->setMerchantCountry(isset($merchantIntegration['country']) ? $merchantIntegration['country'] : '');
 
         return $this->persistentConfiguration->savePaypalAccount($account);
     }
