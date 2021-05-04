@@ -12,6 +12,7 @@ import { PrestashopService } from '../service/prestashop.service';
 import { PsCheckoutService } from '../service/ps-checkout.service';
 import { TranslationService } from '../service/translation.service';
 import { QuerySelectorService } from '../service/query-selector.service';
+import { PaymentOptionsLoaderComponent } from '../components/common/payment-options-loader.component';
 
 function initService(app) {
   return (service) => () => new service(app);
@@ -34,6 +35,7 @@ function initContainer(app) {
   bottle.factory('PsCheckoutApi', serviceFactory(PsCheckoutApi));
   bottle.factory('PsCheckoutService', serviceFactory(PsCheckoutService));
   bottle.factory('TranslationService', serviceFactory(TranslationService));
+  bottle.factory('PaymentOptionsLoaderComponent', serviceFactory(PaymentOptionsLoaderComponent));
 
   bottle.factory('$', (container) => {
     return (id) => container.TranslationService.getTranslationString(id);
@@ -50,6 +52,7 @@ export class App {
 
     this.prestashopService = this.container.PrestashopService;
     this.psCheckoutService = this.container.PsCheckoutService;
+    this.paymentOptionsLoader = this.container.PaymentOptionsLoaderComponent;
 
     this.$ = this.container.$;
 
@@ -110,6 +113,9 @@ export class App {
 
       if (this.prestashopService.isOrderPaymentStepPage()) {
         await this.renderCheckout();
+        return this;
+      } else if(this.prestashopService.isOrderPage()) {
+        this.paymentOptionsLoader.hide();
         return this;
       }
     }
