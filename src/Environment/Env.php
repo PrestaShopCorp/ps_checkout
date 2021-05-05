@@ -61,8 +61,8 @@ class Env
                 continue;
             }
 
-            $dotenv = Dotenv::create(_PS_MODULE_DIR_ . 'ps_checkout/', $fileName);
-            $dotenv->load();
+            $envLoader = new EnvLoader();
+            $envLoader->load(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName, false);
 
             $this->setName($env);
 

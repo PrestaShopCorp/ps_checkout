@@ -1564,13 +1564,15 @@ class Ps_checkout extends PaymentModule
             'prod' => '.env',
         ];
 
+        $envLoader = new \PrestaShop\Module\PrestashopCheckout\Loader\EnvLoader();
+
         foreach ($envFiles as $environment => $fileName) {
             if (!file_exists(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName)) {
                 continue;
             }
 
-            $dotenv = Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'ps_checkout/', $fileName);
-            $env = $dotenv->load();
+            $env = $envLoader->read(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName);
+
             break;
         }
 
