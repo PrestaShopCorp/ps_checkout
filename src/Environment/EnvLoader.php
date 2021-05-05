@@ -12,11 +12,16 @@ class EnvLoader
      * @var bool
      */
     private $putEnvSupported;
+    /**
+     * @var bool
+     */
+    private $quiet;
 
-    public function __construct()
+    public function __construct($quiet = true)
     {
         $this->apacheEnvSupported = $this->apacheSetEnvIsSupported();
         $this->putEnvSupported = $this->putEnvIsSupported();
+        $this->quiet = $quiet;
     }
 
     /**
@@ -44,7 +49,9 @@ class EnvLoader
      */
     public function read($path)
     {
-        $this->checkFile($path);
+        if (!$this->checkFile($path)) {
+            return [];
+        }
 
         $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
@@ -87,6 +94,10 @@ class EnvLoader
      */
     private function checkFile($path)
     {
+        if ($this->quiet && (!file_exists($path) || !is_readable($path))) {
+            return false;
+        }
+
         if(!file_exists($path)) {
             throw new \InvalidArgumentException(sprintf('%s does not exist', $path));
         }
@@ -94,6 +105,8 @@ class EnvLoader
         if (!is_readable($path)) {
             throw new \RuntimeException(sprintf('%s file is not readable', $path));
         }
+
+        return true;
     }
 
     /**

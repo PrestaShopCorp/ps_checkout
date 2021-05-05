@@ -1560,11 +1560,11 @@ class Ps_checkout extends PaymentModule
     private function installSentryExceptionLogger()
     {
         $envFiles = [
-            'test' => '.env.test',
             'prod' => '.env',
+            'test' => '.env.test',
         ];
 
-        $envLoader = new \PrestaShop\Module\PrestashopCheckout\Loader\EnvLoader();
+        $envLoader = new \PrestaShop\Module\PrestashopCheckout\Environment\EnvLoader();
 
         foreach ($envFiles as $environment => $fileName) {
             if (!file_exists(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName)) {
