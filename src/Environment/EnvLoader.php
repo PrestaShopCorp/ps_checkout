@@ -45,6 +45,7 @@ class EnvLoader
      * Returns ENV values as array, but doesn't load them as global variables
      *
      * @param string $path
+     *
      * @return array
      */
     public function read($path)
@@ -58,7 +59,6 @@ class EnvLoader
         $envVariables = [];
 
         foreach ($lines as $line) {
-
             if (strpos(trim($line), '#') === 0) {
                 continue;
             }
@@ -98,7 +98,7 @@ class EnvLoader
             return false;
         }
 
-        if(!file_exists($path)) {
+        if (!file_exists($path)) {
             throw new \InvalidArgumentException(sprintf('%s does not exist', $path));
         }
 

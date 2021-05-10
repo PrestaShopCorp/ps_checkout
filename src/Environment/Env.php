@@ -20,8 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Environment;
 
-use Dotenv\Dotenv;
-
 /**
  * Get the current environment used: prod or test // sandbox or live
  */
