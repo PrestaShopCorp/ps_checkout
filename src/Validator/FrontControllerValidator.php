@@ -52,13 +52,6 @@ class FrontControllerValidator
             case 'authentication':
                 return $this->expressCheckoutConfiguration->isCheckoutPageEnabled();
         }
-        if ($controller === 'order' || $controller === 'orderopc') {
-            return true;
-        }
-
-        if ($controller == 'cart' || $controller === 'product') {
-            return true;
-        }
 
         return false;
     }
