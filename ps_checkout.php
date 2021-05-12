@@ -44,6 +44,8 @@ class Ps_checkout extends PaymentModule
         'displayPaymentByBinaries',
         'displayProductPriceBlock',
         'actionFrontControllerSetMedia',
+        'header',
+        'displayHeader',
     ];
 
     /**
@@ -57,7 +59,6 @@ class Ps_checkout extends PaymentModule
         'displayFooterProduct',
         'displayPersonalInformationTop',
         'actionCartUpdateQuantityBefore',
-        'header',
         'displayInvoiceLegalFreeText',
         'actionObjectProductInCartDeleteAfter',
     ];
@@ -1585,5 +1586,27 @@ class Ps_checkout extends PaymentModule
     public function getSentryClient()
     {
         return $this->sentryClient;
+    }
+
+    public function hookHeader()
+    {
+        $payPalSdkLinkBuilder = $this->getService('ps_checkout.sdk.paypal.linkbuilder');
+        $payPalSdkLink = $payPalSdkLinkBuilder->buildLink();
+
+        $this->context->smarty->assign([
+            'contentToPreload' => [
+                [
+                    'link' => $payPalSdkLink,
+                    'type' => 'script',
+                ],
+            ],
+        ]);
+
+        return $this->context->smarty->fetch('module:ps_checkout/views/templates/hook/displayHeader.tpl');
+    }
+
+    public function hookDisplayHeader()
+    {
+        $this->hookHeader();
     }
 }
