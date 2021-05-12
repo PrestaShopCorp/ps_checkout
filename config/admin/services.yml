@@ -17,10 +17,6 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Environment\SegmentEnv'
     public: true
 
-  ps_checkout.manager.shopuuid:
-    class: 'PrestaShop\Module\PrestashopCheckout\ShopUuidManager'
-    public: true
-
   ps_checkout.segment.tracker:
     class: 'PrestaShop\Module\PrestashopCheckout\Segment\SegmentTracker'
     public: true

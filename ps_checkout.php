@@ -953,18 +953,10 @@ class Ps_checkout extends PaymentModule
      */
     public function merchantIsValid()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $ppAccountRepository */
-        $ppAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $this->getService('ps_checkout.repository.prestashop.account');
-        /** @var \PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext $psContext */
-        $psContext = $this->getService('ps_checkout.context.prestashop');
-        $shopUuid = (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->getForShop((int) $psContext->getShopId());
+        /** @var \PrestaShop\Module\PrestashopCheckout\Validator\MerchantValidator $merchantValidator */
+        $merchantValidator = $this->getService('ps_checkout.validator.merchant');
 
-        return $ppAccountRepository->onBoardingIsCompleted()
-            && $ppAccountRepository->paypalEmailIsValid()
-            && $psAccountRepository->onBoardingIsCompleted()
-            && $shopUuid;
+        return $merchantValidator->merchantIsValid();
     }
 
     /**
@@ -972,11 +964,12 @@ class Ps_checkout extends PaymentModule
      */
     public function hookActionFrontControllerSetMedia()
     {
-        $controller = Tools::getValue('controller');
+        $controller = (string) Tools::getValue('controller');
 
-        if (false === in_array($controller, ['cart', 'product', 'order', 'orderopc', 'authentication'], true)
-            || false === $this->merchantIsValid()
-        ) {
+        /** @var \PrestaShop\Module\PrestashopCheckout\Validator\FrontControllerValidator $frontControllerValidator */
+        $frontControllerValidator = $this->getService('ps_checkout.validator.front_controller');
+
+        if (false === $frontControllerValidator->shouldLoadFrontJS($controller)) {
             return;
         }
 
