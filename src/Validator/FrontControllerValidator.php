@@ -32,6 +32,7 @@ class FrontControllerValidator
 
     /**
      * @param string $controller
+     *
      * @return bool
      */
     public function shouldLoadFrontJS($controller)
