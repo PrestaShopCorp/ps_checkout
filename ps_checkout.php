@@ -45,7 +45,6 @@ class Ps_checkout extends PaymentModule
         'displayProductPriceBlock',
         'actionFrontControllerSetMedia',
         'header',
-        'displayHeader',
     ];
 
     /**
@@ -1602,11 +1601,6 @@ class Ps_checkout extends PaymentModule
             ],
         ]);
 
-        return $this->context->smarty->fetch('module:ps_checkout/views/templates/hook/displayHeader.tpl');
-    }
-
-    public function hookDisplayHeader()
-    {
-        $this->hookHeader();
+        return $this->context->smarty->fetch('module:ps_checkout/views/templates/hook/header.tpl');
     }
 }
