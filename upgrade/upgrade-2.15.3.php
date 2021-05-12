@@ -30,7 +30,6 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_15_3($module)
 {
-    $module->registerHook('displayHeader');
     $module->registerHook('header');
 
     return true;

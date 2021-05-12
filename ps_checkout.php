@@ -1589,18 +1589,18 @@ class Ps_checkout extends PaymentModule
 
     public function hookHeader()
     {
+        /** @var \PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder $payPalSdkLinkBuilder */
         $payPalSdkLinkBuilder = $this->getService('ps_checkout.sdk.paypal.linkbuilder');
-        $payPalSdkLink = $payPalSdkLinkBuilder->buildLink();
 
         $this->context->smarty->assign([
             'contentToPreload' => [
                 [
-                    'link' => $payPalSdkLink,
+                    'link' => $payPalSdkLinkBuilder->buildLink(),
                     'type' => 'script',
                 ],
             ],
         ]);
 
-        return $this->context->smarty->fetch('module:ps_checkout/views/templates/hook/header.tpl');
+        return $this->display(__FILE__, '/views/templates/hook/header.tpl');
     }
 }
