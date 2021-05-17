@@ -1589,6 +1589,10 @@ class Ps_checkout extends PaymentModule
 
     public function hookHeader()
     {
+        if (false === $this->merchantIsValid()) {
+            return '';
+        }
+
         /** @var \PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder $payPalSdkLinkBuilder */
         $payPalSdkLinkBuilder = $this->getService('ps_checkout.sdk.paypal.linkbuilder');
 
