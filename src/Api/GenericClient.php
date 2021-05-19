@@ -296,7 +296,7 @@ class GenericClient
      */
     protected function getVerify()
     {
-        if (defined('_PS_CACHE_CA_CERT_FILE_')) {
+        if (defined('_PS_CACHE_CA_CERT_FILE_') && file_exists(constant('_PS_CACHE_CA_CERT_FILE_'))) {
             return constant('_PS_CACHE_CA_CERT_FILE_');
         }
 
