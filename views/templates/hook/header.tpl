@@ -16,6 +16,6 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
-{foreach $contentToPreload as $content}
-  <link rel="preload" href="{$content.link}" as="{$content.type}">
+{foreach $contentToPrefetch as $content}
+  <link rel="prefetch" href="{$content.link}" as="{$content.type}">
 {/foreach}

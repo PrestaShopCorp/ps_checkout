@@ -969,6 +969,7 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\Validator\FrontControllerValidator $frontControllerValidator */
         $frontControllerValidator = $this->getService('ps_checkout.validator.front_controller');
 
+        var_dump($frontControllerValidator->shouldLoadFrontJS($controller));
         if (false === $frontControllerValidator->shouldLoadFrontJS($controller)) {
             return;
         }
@@ -1597,7 +1598,7 @@ class Ps_checkout extends PaymentModule
         $payPalSdkLinkBuilder = $this->getService('ps_checkout.sdk.paypal.linkbuilder');
 
         $this->context->smarty->assign([
-            'contentToPreload' => [
+            'contentToPrefetch' => [
                 [
                     'link' => $payPalSdkLinkBuilder->buildLink(),
                     'type' => 'script',
