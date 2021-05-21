@@ -33,8 +33,8 @@ class SessionHelper
     public static function isExpired(Session $session)
     {
         if (
-            $session->getExpirationDate() &&
-            date_create(date('Y-m-d H:i:s')) > date_create($session->getExpirationDate())
+            $session->getExpiresAt() &&
+            date_create(date('Y-m-d H:i:s')) > date_create($session->getExpiresAt())
         ) {
             return true;
         }

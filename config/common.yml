@@ -383,22 +383,26 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Session\Session'
     public: true
 
-  ps_checkout.session.repository:
-    class: 'PrestaShop\Module\PrestashopCheckout\Session\SessionRepository'
+  ps_checkout.session.onboarding.repository:
+    class: 'PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionRepository'
     public: true
 
-  ps_checkout.session.manager:
-    class: 'PrestaShop\Module\PrestashopCheckout\Session\SessionManager'
+  ps_checkout.session.payment.repository:
+    class: 'PrestaShop\Module\PrestashopCheckout\Session\Payment\PaymentSessionRepository'
     public: true
-    arguments:
-      - '@ps_checkout.session.repository'
 
   ps_checkout.session.onboarding.manager:
     class: 'PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager'
     public: true
     arguments:
-      - '@ps_checkout.session.repository'
+      - '@ps_checkout.session.onboarding.repository'
       - '@ps_checkout.session.onboarding.status'
+
+  ps_checkout.session.payment.manager:
+    class: 'PrestaShop\Module\PrestashopCheckout\Session\Payment\PaymentSessionManager'
+    public: true
+    arguments:
+      - '@ps_checkout.session.payment.repository'
 
   ps_checkout.session.onboarding.status:
     class: 'PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingStatus'

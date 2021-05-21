@@ -833,12 +833,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessRestartOnboardingSession()
     {
-        /** @var PrestaShop\Module\PrestashopCheckout\Session\SessionManager $sessionManager */
-        $sessionManager = $this->module->getService('ps_checkout.session.manager');
         /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
         $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
         $sessionData = json_decode(Tools::getValue('session'));
-        $currentSession = $sessionManager->start((array) $sessionData);
+        $currentSession = $onboardingSessionManager->start((array) $sessionData);
         $session = $onboardingSessionManager->restartOnboarding($currentSession)->toArray();
 
         $this->ajaxDie(json_encode($session));
@@ -849,11 +847,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     private function updateOnboardingSession($sessionData, $to)
     {
-        /** @var PrestaShop\Module\PrestashopCheckout\Session\SessionManager $sessionManager */
-        $sessionManager = $this->module->getService('ps_checkout.session.manager');
         /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
         $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
-        $currentSession = $sessionManager->start((array) $sessionData);
+        $currentSession = $onboardingSessionManager->start((array) $sessionData);
 
         return $onboardingSessionManager->$to($currentSession)->toArray();
     }

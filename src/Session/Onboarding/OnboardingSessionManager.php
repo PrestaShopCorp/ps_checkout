@@ -23,7 +23,6 @@ namespace PrestaShop\Module\PrestashopCheckout\Session\Onboarding;
 
 use PrestaShop\Module\PrestashopCheckout\Session\Session;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionManager;
-use PrestaShop\Module\PrestashopCheckout\Session\SessionRepository;
 
 class OnboardingSessionManager extends SessionManager
 {
@@ -37,7 +36,7 @@ class OnboardingSessionManager extends SessionManager
      */
     private $onboardingStatus;
 
-    public function __construct(SessionRepository $sessionRepository, OnboardingStatus $onboardingStatus)
+    public function __construct(OnboardingSessionRepository $sessionRepository, OnboardingStatus $onboardingStatus)
     {
         parent::__construct($sessionRepository);
         $this->context = \Context::getContext();
@@ -56,9 +55,9 @@ class OnboardingSessionManager extends SessionManager
         $sessionData = [
             'user_id' => (int) $this->context->employee->id,
             'shop_id' => (int) $this->context->shop->id,
-            'process_type' => 'onboarding',
+            'is_closed' => 0,
             'status' => $accountOnboarded ? OnboardingStatus::ACCOUNT_ONBOARDED : OnboardingStatus::ONBOARDING_STARTED,
-            'expiration_date' => null,
+            'expires_at' => null,
         ];
 
         return $this->start($sessionData);

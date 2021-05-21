@@ -30,19 +30,42 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_16_0($module)
 {
-    // Create session table
-    return Db::getInstance()->execute('
-        CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'pscheckout_session (
+    // Create session tables
+    $result = Db::getInstance()->execute('
+        CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'pscheckout_onboarding_session (
+            correlation_id VARCHAR(255) NOT NULL,
             user_id INT NOT NULL,
             shop_id INT NOT NULL,
-            process_type VARCHAR(255) NOT NULL,
-            account_id VARCHAR(255),
-            correlation_id VARCHAR(255) NOT NULL,
+            is_closed INT NOT NULL,
+            auth_token VARCHAR(255),
             status VARCHAR(255) NOT NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            closed_at DATETIME,
+            expires_at DATETIME,
+            is_sse_opened TINYINT(1) DEFAULT 0,
             data TEXT,
-            creation_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            expiration_date DATETIME,
-            PRIMARY KEY (user_id, shop_id, process_type)
+            PRIMARY KEY (user_id, shop_id, is_closed)
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
     ');
+
+    $result &= Db::getInstance()->execute('
+        CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'pscheckout_payment_session (
+            correlation_id VARCHAR(255) NOT NULL,
+            user_id INT NOT NULL,
+            shop_id INT NOT NULL,
+            is_closed INT NOT NULL,
+            auth_token VARCHAR(255),
+            status VARCHAR(255) NOT NULL,
+            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            closed_at DATETIME,
+            expires_at DATETIME,
+            is_sse_opened TINYINT(1) DEFAULT 0,
+            data TEXT,
+            PRIMARY KEY (user_id, shop_id, is_closed)
+        ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
+    ');
+
+    return $result;
 }

@@ -23,16 +23,16 @@ namespace PrestaShop\Module\PrestashopCheckout\Session;
 class SessionManager
 {
     /**
-     * @var \PrestaShop\Module\PrestashopCheckout\Session\SessionRepository
+     * @var \PrestaShop\Module\PrestashopCheckout\Session\SessionRepositoryInterface
      */
     private $repository;
 
     /**
-     * @param \PrestaShop\Module\PrestashopCheckout\Session\SessionRepository $repository
+     * @param \PrestaShop\Module\PrestashopCheckout\Session\SessionRepositoryInterface $repository
      *
      * @return void
      */
-    public function __construct(SessionRepository $repository)
+    public function __construct(SessionRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }
@@ -97,6 +97,6 @@ class SessionManager
      */
     public function stop(Session $session)
     {
-        return $this->repository->remove($session->getUserId(), $session->getShopId(), $session->getProcessType());
+        return $this->repository->close($session->getUserId(), $session->getShopId(), $session->getIsClosed());
     }
 }

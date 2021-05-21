@@ -23,8 +23,9 @@ namespace PrestaShop\Module\PrestashopCheckout\Session;
 
 use Ramsey\Uuid\Uuid;
 
-class SessionRepository
+class AbstractSessionRepository implements SessionRepositoryInterface
 {
+    protected $table;
     /**
      * @var \Db
      */
@@ -47,25 +48,30 @@ class SessionRepository
      */
     public function save(array $sessionData)
     {
-        $accountId = isset($sessionData['account_id']) ? $sessionData['account_id'] : null;
         $data = isset($sessionData['data']) ? $sessionData['data'] : null;
         $creationDate = date('Y-m-d H:i:s');
         $expirationDate = key_exists('expiration_date', $sessionData) && empty($sessionData['expiration_date']) ?
             null :
             SessionHelper::updateExpirationDate($creationDate);
+        $isSSEOpened = isset($sessionData['is_sse_opened']) ? (int) $sessionData['is_sse_opened'] : 0;
+        $authToken = isset($sessionData['auth_token']) ? pSQL($sessionData['auth_token']) : null;
+
         $insertData = [
+            'correlation_id' => Uuid::uuid4()->toString(),
             'user_id' => $sessionData['user_id'],
             'shop_id' => $sessionData['shop_id'],
-            'process_type' => pSQL($sessionData['process_type']),
-            'account_id' => pSQL($accountId),
-            'correlation_id' => Uuid::uuid4()->toString(),
+            'is_closed' => (int) $sessionData['is_closed'],
+            'auth_token' => $authToken,
             'status' => pSQL($sessionData['status']),
-            'data' => pSQL($data),
-            'creation_date' => pSQL($creationDate),
-            'expiration_date' => pSQL($expirationDate),
+            'created_at' => pSQL($creationDate),
+            'updated_at' => pSQL($creationDate),
+            'closed_at' => '0000-00-00 00:00:00',
+            'expires_at' => pSQL($expirationDate),
+            'is_sse_opened' => $isSSEOpened,
+            'data' => $data,
         ];
 
-        return $this->db->insert('pscheckout_session', $insertData, true);
+        return $this->db->insert($this->table, $insertData, true);
     }
 
     /**
@@ -79,10 +85,10 @@ class SessionRepository
     {
         $query = '
             SELECT *
-            FROM ' . _DB_PREFIX_ . 'pscheckout_session
+            FROM ' . _DB_PREFIX_ . $this->table .'
             WHERE user_id = ' . $sessionData['user_id'] . '
             AND shop_id = ' . $sessionData['shop_id'] . '
-            AND process_type = \'' . pSQL($sessionData['process_type']) . '\';
+            AND is_closed = ' . (int) $sessionData['is_closed'] . ';
         ';
         $result = $this->db->getRow($query);
 
@@ -99,18 +105,19 @@ class SessionRepository
     public function update(Session $session)
     {
         $data = [
-            'account_id' => pSQL($session->getAccountId()),
             'status' => pSQL($session->getStatus()),
             'data' => pSQL($session->getData()),
-            'expiration_date' => pSQL($session->getExpirationDate()),
+            'expires_at' => pSQL($session->getExpiresAt()),
+            'is_sse_opened' => 1 === (int) $session->getIsSSEOpened(),
+            'updated_at' => date('Y-m-d H:i:s'),
+            'auth_token' => $session->getAuthToken(),
         ];
         $where = '
             user_id = ' . $session->getUserId() . '
             AND shop_id = ' . $session->getShopId() . '
-            AND process_type = \'' . pSQL($session->getProcessType()) . '\'
-        ';
+            AND is_closed = ' . $session->getIsClosed();
 
-        return $this->db->update('pscheckout_session', $data, $where, 1, true);
+        return $this->db->update($this->table, $data, $where, 1, true);
     }
 
     /**
@@ -118,18 +125,44 @@ class SessionRepository
      *
      * @param int $userId
      * @param int $shopId
-     * @param string $processType
+     * @param int $isClosed
      *
      * @return bool
      */
-    public function remove($userId, $shopId, $processType)
+    public function remove($userId, $shopId, $isClosed)
     {
         $where = '
             user_id = ' . $userId . '
             AND shop_id = ' . $shopId . '
-            AND process_type = \'' . pSQL($processType) . '\'
-        ';
+            AND is_closed = ' . (int) $isClosed
+        ;
 
-        return $this->db->delete('pscheckout_session', $where);
+        return $this->db->delete($this->table, $where);
+    }
+
+    /**
+     * Remove an user session
+     *
+     * @param int $userId
+     * @param int $shopId
+     * @param int $isClosed
+     *
+     * @return bool
+     */
+    public function close($userId, $shopId, $isClosed)
+    {
+//        $this->db->update($this->table, ['is_closed' => '`is_closed` + 1'], '`is_closed` > 0');
+        $this->db->execute('UPDATE `' ._DB_PREFIX_ . 'pscheckout_onboarding_session` SET `is_closed` = `is_closed` + 1 WHERE `is_closed` > 0');
+
+        $where = '
+            user_id = ' . $userId . '
+            AND shop_id = ' . $shopId . '
+            AND is_closed = ' . (int) $isClosed
+        ;
+        $data = [
+            'is_closed' => 1,
+            'closed_at' => date('Y-m-d H:i:s'),
+        ];
+        return $this->db->update($this->table, $data, $where, 1, true);
     }
 }

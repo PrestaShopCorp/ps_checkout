@@ -36,12 +36,7 @@ class Session
     /**
      * @var string
      */
-    private $processType;
-
-    /**
-     * @var string|null
-     */
-    private $accountId;
+    private $isClosed;
 
     /**
      * @var string
@@ -61,12 +56,32 @@ class Session
     /**
      * @var string
      */
-    private $creationDate;
+    private $createdAt;
 
     /**
      * @var string
      */
-    private $expirationDate;
+    private $expiresAt;
+
+    /**
+     * @var string
+     */
+    private $authToken;
+
+    /**
+     * @var string
+     */
+    private $updatedAt;
+
+    /**
+     * @var string
+     */
+    private $closedAt;
+
+    /**
+     * @var int
+     */
+    private $isSSEOpened;
 
     /**
      * @param array $session
@@ -75,15 +90,18 @@ class Session
      */
     public function __construct(array $session)
     {
+        $this->correlationId = $session['correlation_id'];
         $this->userId = $session['user_id'];
         $this->shopId = $session['shop_id'];
-        $this->processType = $session['process_type'];
-        $this->accountId = $session['account_id'];
-        $this->correlationId = $session['correlation_id'];
+        $this->isClosed = $session['is_closed'];
+        $this->authToken = $session['auth_token'];
         $this->status = $session['status'];
         $this->data = $session['data'];
-        $this->creationDate = $session['creation_date'];
-        $this->expirationDate = $session['expiration_date'];
+        $this->createdAt = $session['created_at'];
+        $this->updatedAt = $session['updated_at'];
+        $this->closedAt = $session['closed_at'];
+        $this->expiresAt = $session['expires_at'];
+        $this->isSSEOpened = (int) $session['is_sse_opened'];
     }
 
     /**
@@ -111,19 +129,9 @@ class Session
      *
      * @return string
      */
-    public function getProcessType()
+    public function getIsClosed()
     {
-        return $this->processType;
-    }
-
-    /**
-     * Get the session account ID
-     *
-     * @return string
-     */
-    public function getAccountId()
-    {
-        return $this->accountId;
+        return $this->isClosed;
     }
 
     /**
@@ -161,9 +169,9 @@ class Session
      *
      * @return string
      */
-    public function getCreationDate()
+    public function getCreatedAt()
     {
-        return $this->creationDate;
+        return $this->createdAt;
     }
 
     /**
@@ -171,21 +179,9 @@ class Session
      *
      * @return string|null
      */
-    public function getExpirationDate()
+    public function getExpiresAt()
     {
-        return $this->expirationDate;
-    }
-
-    /**
-     * Set the session account ID
-     *
-     * @param string $accountId
-     *
-     * @return void
-     */
-    public function setAccountId($accountId)
-    {
-        $this->accountId = $accountId;
+        return $this->expiresAt;
     }
 
     /**
@@ -215,13 +211,77 @@ class Session
     /**
      * Update the session expiration date
      *
-     * @param string $expirationDate
+     * @param string $expiresAt
      *
      * @return void
      */
-    public function setExpirationDate($expirationDate)
+    public function setExpiresAt($expiresAt)
     {
-        $this->expirationDate = $expirationDate;
+        $this->expiresAt = $expiresAt;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAuthToken()
+    {
+        return $this->authToken;
+    }
+
+    /**
+     * @param string $authToken
+     */
+    public function setAuthToken($authToken)
+    {
+        $this->authToken = $authToken;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param string $updatedAt
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClosedAt()
+    {
+        return $this->closedAt;
+    }
+
+    /**
+     * @param string $closedAt
+     */
+    public function setClosedAt($closedAt)
+    {
+        $this->closedAt = $closedAt;
+    }
+
+    /**
+     * @return int
+     */
+    public function getIsSSEOpened()
+    {
+        return $this->isSSEOpened;
+    }
+
+    /**
+     * @param int $isSSEOpened
+     */
+    public function setIsSSEOpened($isSSEOpened)
+    {
+        $this->isSSEOpened = $isSSEOpened;
     }
 
     /**
@@ -232,15 +292,18 @@ class Session
     public function toArray()
     {
         return [
+            'correlation_id' => $this->correlationId,
             'user_id' => $this->userId,
             'shop_id' => $this->shopId,
-            'process_type' => $this->processType,
-            'account_id' => $this->accountId,
-            'correlation_id' => $this->correlationId,
+            'is_closed' => $this->isClosed,
+            'auth_token' => $this->authToken,
             'status' => $this->status,
             'data' => $this->data,
-            'creation_date' => $this->creationDate,
-            'expiration_date' => $this->expirationDate,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->expiresAt,
+            'closed_at' => $this->closedAt,
+            'expires_at' => $this->expiresAt,
+            'is_sse_opened' => $this->isSSEOpened,
         ];
     }
 }
