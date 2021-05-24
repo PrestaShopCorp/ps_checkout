@@ -151,8 +151,12 @@ class AbstractSessionRepository implements SessionRepositoryInterface
      */
     public function close($userId, $shopId, $isClosed)
     {
-//        $this->db->update($this->table, ['is_closed' => '`is_closed` + 1'], '`is_closed` > 0');
-        $this->db->execute('UPDATE `' ._DB_PREFIX_ . 'pscheckout_onboarding_session` SET `is_closed` = `is_closed` + 1 WHERE `is_closed` > 0');
+        $this->db->execute(
+            'UPDATE `' . _DB_PREFIX_ . $this->table . '`
+            SET `is_closed` = `is_closed` + 1
+            WHERE `is_closed` > 0
+            ORDER BY `is_closed` DESC'
+        );
 
         $where = '
             user_id = ' . $userId . '
