@@ -67,6 +67,7 @@
               label-for="reset-password"
             >
               <b-button
+                id="go-to-reset-password-button"
                 variant="link"
                 @click="goToResetPassword()"
                 class="px-0"
@@ -79,19 +80,24 @@
 
         <template v-slot:footer>
           <div class="container-fluid pl-0">
-            <b-button variant="secondary" @click="previous()">
+            <b-button
+              id="back-to-previous-page-button"
+              variant="secondary"
+              @click="previous()"
+            >
               {{ $t('pages.signin.back') }}
             </b-button>
           </div>
           <div class="d-flex">
             <b-button
+              id="go-to-signup-button"
               class="mr-3"
               variant="outline-secondary"
               @click="goToSignUp()"
             >
               {{ $t('pages.signin.signup') }}
             </b-button>
-            <b-button variant="primary" @click="logIn()">
+            <b-button id="login-button" variant="primary" @click="logIn()">
               {{ $t('pages.signin.login') }}
             </b-button>
           </div>

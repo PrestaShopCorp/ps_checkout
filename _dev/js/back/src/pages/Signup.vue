@@ -112,13 +112,14 @@
           </div>
           <div class="d-flex">
             <b-button
+              id="go-to-signin-button"
               class="mr-3"
               variant="outline-secondary"
               @click="goToSignIn()"
             >
               {{ $t('pages.signup.signIn') }}
             </b-button>
-            <b-button variant="primary" @click="signUp()">
+            <b-button id="signup-button" variant="primary" @click="signUp()">
               {{ $t('pages.signup.createAccount') }}
             </b-button>
           </div>

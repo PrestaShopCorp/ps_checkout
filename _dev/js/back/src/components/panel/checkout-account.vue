@@ -49,11 +49,17 @@
           <AccountStatusCheckout v-if="checkoutAccountStatus" class="mr-3" />
 
           <div class="text-center float-right" v-if="!checkoutAccountStatus">
-            <a href="#" @click.prevent="goToSignIn()" class="mr-4">
+            <a
+              id="go-to-signin-link"
+              href="#"
+              @click.prevent="goToSignIn()"
+              class="mr-4"
+            >
               <b>{{ $t('panel.accounts.checkout.logIn') }}</b>
             </a>
 
             <a
+              id="go-to-signup-link"
               href="#"
               @click.prevent="goToSignUp()"
               class="btn btn-primary-reverse btn-outline-primary light-button mb-1"
@@ -65,6 +71,7 @@
           <div class="text-right" v-else>
             <b-button
               v-if="!isReady"
+              id="psx-logout-button"
               href="#"
               data-toggle="modal"
               data-target="#modalLogout"
@@ -114,6 +121,7 @@
 
                   <button
                     @click.prevent="logOut()"
+                    id="modal-confirm-logout-button"
                     type="button"
                     class="btn btn-primary"
                     data-dismiss="modal"
