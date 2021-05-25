@@ -395,7 +395,11 @@
             {{ $t('panel.psx-form.privacyTextPart1') }}
           </p>
           <p>
-            <b-link :href="$t('panel.psx-form.privacyLink')" target="_blank">
+            <b-link
+              id="privacy-link"
+              :href="$t('panel.psx-form.privacyLink')"
+              target="_blank"
+            >
               {{ $t('panel.psx-form.privacyTextPart2') }}
             </b-link>
           </p>
@@ -408,7 +412,11 @@
             {{ $t('panel.psx-form.back') }}
           </b-button>
         </div>
-        <b-button variant="primary" @click="submitForm()">
+        <b-button
+          id="submit-signup-form-button"
+          variant="primary"
+          @click="submitForm()"
+        >
           {{ $t('panel.psx-form.continue') }}
         </b-button>
       </template>

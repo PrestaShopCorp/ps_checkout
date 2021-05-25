@@ -18,7 +18,7 @@
  *-->
 <template>
   <li class="nav-item">
-    <router-link active-class="active" class="nav-link" :to="route">
+    <router-link :id="idTab" active-class="active" class="nav-link" :to="route">
       <slot />
     </router-link>
   </li>
@@ -29,6 +29,10 @@
     name: 'MenuItem',
     props: {
       route: {
+        type: String,
+        default: ''
+      },
+      idTab: {
         type: String,
         default: ''
       }

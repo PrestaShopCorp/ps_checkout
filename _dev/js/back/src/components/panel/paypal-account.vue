@@ -53,6 +53,7 @@
 
           <div class="text-right" v-else>
             <b-button
+              id="paypal-unlink-button"
               variant="outline-secondary"
               @click.prevent="paypalUnlink()"
             >

@@ -19,23 +19,23 @@
 <template>
   <div id="app">
     <Menu>
-      <MenuItem route="/authentication">
+      <MenuItem route="/authentication" idTab="authentication-tab-link">
         {{ $t('menu.authentication') }}
       </MenuItem>
       <template
         v-if="onboardingPaypalIsCompleted && onboardingCheckoutIsCompleted"
       >
-        <MenuItem route="/customize">
+        <MenuItem route="/customize" idTab="customize-tab-link">
           {{ $t('menu.customizeCheckout') }}
         </MenuItem>
-        <MenuItem route="/activity">
+        <MenuItem route="/activity" idTab="activity-tab-link">
           {{ $t('menu.manageActivity') }}
         </MenuItem>
-        <MenuItem route="/advanced">
+        <MenuItem route="/advanced" idTab="advanced-tab-link">
           {{ $t('menu.advancedSettings') }}
         </MenuItem>
       </template>
-      <MenuItem route="/help">
+      <MenuItem route="/help" idTab="help-tab-link">
         {{ $t('menu.help') }}
       </MenuItem>
     </Menu>

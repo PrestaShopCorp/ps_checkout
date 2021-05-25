@@ -29,6 +29,7 @@
       </p>
       <p>
         <b-button
+          id="change-rounding-setting-button"
           target="_blank"
           variant="outline-secondary"
           @click="updateRoundingSettings()"

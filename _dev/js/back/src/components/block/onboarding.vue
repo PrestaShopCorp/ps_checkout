@@ -21,6 +21,7 @@
     <template v-if="checkoutAccountStatus">
       <button
         v-show="paypalIsLoaded"
+        id="link-to-paypal-account-button"
         @click.prevent="getOnboardingLink()"
         class="btn btn-primary-reverse btn-outline-primary light-button"
       >

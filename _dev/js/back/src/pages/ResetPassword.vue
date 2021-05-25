@@ -74,6 +74,7 @@
             </b-button>
             <b-button
               v-if="!emailSent"
+              id="submit-reset-password-form-button"
               variant="primary"
               @click="resetPassword()"
             >
