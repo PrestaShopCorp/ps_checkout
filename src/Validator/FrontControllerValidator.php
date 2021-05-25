@@ -55,4 +55,33 @@ class FrontControllerValidator
 
         return false;
     }
+
+    /**
+     * @param string $controller
+     *
+     * @return bool
+     */
+    public function shouldLoadFrontCss($controller)
+    {
+        if (false === $this->merchantValidator->merchantIsValid()) {
+            return false;
+        }
+
+        switch ($controller) {
+            // Payment step
+            case 'orderopc':
+            case 'order':
+            // Payment methods logos (always if merchant is valid), Payment4X banner, ExpressCheckout button
+            case 'product':
+                return true;
+            // Payment4X banner, ExpressCheckout button
+            case 'cart':
+                return $this->expressCheckoutConfiguration->isOrderPageEnabled() || $this->payIn4XConfiguration->isOrderPageEnabled();
+            // ExpressCheckout button
+            case 'authentication':
+                return $this->expressCheckoutConfiguration->isCheckoutPageEnabled();
+        }
+
+        return false;
+    }
 }
