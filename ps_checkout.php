@@ -1567,7 +1567,8 @@ class Ps_checkout extends PaymentModule
             $this->sentryClient = new PrestaShop\Module\PrestashopCheckout\Handler\ModuleFilteredRavenClient(
                 $env['PS_CHECKOUT_SENTRY_DSN_MODULE'],
                 [
-                    'level' => 'warning',
+                    'level' => 'error',
+                    'error_types' => E_ERROR,
                     'tags' => [
                         'php_version' => phpversion(),
                         'module_version' => $this->version,
@@ -1577,6 +1578,14 @@ class Ps_checkout extends PaymentModule
             );
 
             $this->sentryClient->setAppPath(realpath(_PS_MODULE_DIR_ . 'ps_checkout/'));
+            $this->sentryClient->setExcludedAppPaths([
+                realpath(_PS_MODULE_DIR_ . 'ps_checkout/vendor/'),
+            ]);
+            $this->sentryClient->setExcludedDomains(['127.0.0.1', 'localhost', '.local']);
+
+            if (version_compare(phpversion(), '7.4.0', '>=')) {
+                return;
+            }
 
             $this->sentryClient->install();
         }
