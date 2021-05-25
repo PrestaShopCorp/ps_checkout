@@ -314,3 +314,24 @@ services:
   ps_checkout.merchant:
     class: 'PrestaShop\Module\PrestashopCheckout\Merchant'
     public: true
+
+  ps_checkout.manager.shopuuid:
+    class: 'PrestaShop\Module\PrestashopCheckout\ShopUuidManager'
+    public: true
+
+  ps_checkout.validator.merchant:
+    class: 'PrestaShop\Module\PrestashopCheckout\Validator\MerchantValidator'
+    public: true
+    arguments:
+      - '@ps_checkout.repository.paypal.account'
+      - '@ps_checkout.repository.prestashop.account'
+      - '@ps_checkout.context.prestashop'
+      - '@ps_checkout.manager.shopuuid'
+
+  ps_checkout.validator.front_controller:
+    class: 'PrestaShop\Module\PrestashopCheckout\Validator\FrontControllerValidator'
+    public: true
+    arguments:
+      - '@ps_checkout.validator.merchant'
+      - '@ps_checkout.express_checkout.configuration'
+      - '@ps_checkout.pay_in_4x.configuration'
