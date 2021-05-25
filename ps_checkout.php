@@ -972,6 +972,25 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\Validator\FrontControllerValidator $frontControllerValidator */
         $frontControllerValidator = $this->getService('ps_checkout.validator.front_controller');
 
+        if ($frontControllerValidator->shouldLoadFrontCss($controller)) {
+            if (method_exists($this->context->controller, 'registerStylesheet')) {
+                $this->context->controller->registerStylesheet(
+                    'ps-checkout-css-paymentOptions',
+                    $this->getPathUri() . 'views/css/payments.css?version=' . $this->version,
+                    [
+                        'server' => 'remote',
+                    ]
+                );
+            } else {
+                $this->context->controller->addCss(
+                    $this->getPathUri() . 'views/css/payments16.css?version=' . $this->version,
+                    'all',
+                    null,
+                    false
+                );
+            }
+        }
+
         if (false === $frontControllerValidator->shouldLoadFrontJS($controller)) {
             return;
         }
@@ -1106,23 +1125,6 @@ class Ps_checkout extends PaymentModule
         } else {
             $this->context->controller->addJS(
                 $this->getPathUri() . 'views/js/front.js?version=' . $this->version,
-                false
-            );
-        }
-
-        if (method_exists($this->context->controller, 'registerStylesheet')) {
-            $this->context->controller->registerStylesheet(
-                'ps-checkout-css-paymentOptions',
-                $this->getPathUri() . 'views/css/payments.css?version=' . $this->version,
-                [
-                    'server' => 'remote',
-                ]
-            );
-        } else {
-            $this->context->controller->addCss(
-                $this->getPathUri() . 'views/css/payments16.css?version=' . $this->version,
-                'all',
-                null,
                 false
             );
         }
