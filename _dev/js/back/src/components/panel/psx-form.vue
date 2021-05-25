@@ -33,7 +33,7 @@
       <p>{{ errorException }}</p>
     </b-alert>
 
-    <b-card no-body footer-class="d-flex">
+    <b-card no-body footer-class="d-flex" id="additional-information-form-card">
       <template v-slot:header>
         <i class="material-icons">account_box</i>
         {{ $t('panel.psx-form.additionalDetails') }}
