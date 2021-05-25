@@ -20,7 +20,7 @@
 <template>
   <div>
     <b-container>
-      <b-card no-body footer-class="d-flex">
+      <b-card no-body footer-class="d-flex" id="signup-form-card">
         <b-card-body>
           <h1 class="text-center mb-4">
             {{ $t('pages.signup.createYourPsAccount') }}
