@@ -549,28 +549,31 @@ class Ps_checkout extends PaymentModule
 
     /**
      * Pay in 4x banner in the product page
+     *
+     * @param array $params
+     *
+     * @return string
      */
-    public function hookDisplayProductPriceBlock($params)
+    public function hookDisplayProductPriceBlock(array $params)
     {
-        if ($params['type'] === 'weight' && 'product' === Tools::getValue('controller')) {
-            if (false === Validate::isLoadedObject($this->context->cart)) {
-                return;
-            }
-
-            /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-            $shopContext = $this->getService('ps_checkout.context.shop');
-
-            /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
-            $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
-
-            $totalCartPrice = $this->context->cart->getSummaryDetails();
-            $this->context->smarty->assign([
-                'totalCartPrice' => $totalCartPrice['total_price'],
-                'payIn4XisProductPageEnabled' => $payIn4XService->isProductPageEnabled(),
-            ]);
-
-            return $this->display(__FILE__, '/views/templates/hook/displayProductPriceBlock.tpl');
+        if ('product' !== Tools::getValue('controller')
+            || !isset($params['type'])
+            || $params['type'] !== 'weight'
+            || !Validate::isLoadedObject($this->context->cart)
+        ) {
+            return '';
         }
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
+        $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
+
+        $totalCartPrice = $this->context->cart->getSummaryDetails();
+        $this->context->smarty->assign([
+            'totalCartPrice' => $totalCartPrice['total_price'],
+            'payIn4XisProductPageEnabled' => $payIn4XService->isProductPageEnabled(),
+        ]);
+
+        return $this->display(__FILE__, '/views/templates/hook/displayProductPriceBlock.tpl');
     }
 
     /**
