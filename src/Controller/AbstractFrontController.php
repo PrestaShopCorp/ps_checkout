@@ -21,6 +21,7 @@ class AbstractFrontController extends ModuleFrontController
 
     public function __construct()
     {
+        ob_start();
         parent::__construct();
 
         $this->sentryExceptionHandler = $this->module->getService('ps_checkout.handler.exception');
