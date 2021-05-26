@@ -42,7 +42,7 @@ export class PsCheckoutPs1_6Component extends BaseComponent {
     ).render();
 
     // TODO: Move this to PrestashopService
-    if (window.isLogged) {
+    if (window.isLogged || window.isGuest) {
       // TODO: Move this to HTMLElementService
       const cgv = document.getElementById('cgv');
       if ((cgv && cgv.checked) || !cgv) {
