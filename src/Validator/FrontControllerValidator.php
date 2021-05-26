@@ -73,10 +73,8 @@ class FrontControllerValidator
             case 'order':
             // Payment methods logos (always if merchant is valid), Payment4X banner, ExpressCheckout button
             case 'product':
-                return true;
-            // Payment4X banner, ExpressCheckout button
             case 'cart':
-                return $this->expressCheckoutConfiguration->isOrderPageEnabled() || $this->payIn4XConfiguration->isOrderPageEnabled();
+                return true;
             // ExpressCheckout button
             case 'authentication':
                 return $this->expressCheckoutConfiguration->isCheckoutPageEnabled();
