@@ -1583,7 +1583,7 @@ class Ps_checkout extends PaymentModule
             ]);
             $this->sentryClient->setExcludedDomains(['127.0.0.1', 'localhost', '.local']);
 
-            if (version_compare(phpversion(), '7.4.0', '>=')) {
+            if (version_compare(phpversion(), '7.4.0', '>=') && version_compare(_PS_VERSION_, '1.7.8.0', '<')) {
                 return;
             }
 
