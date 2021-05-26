@@ -17,6 +17,11 @@ use Raven_Client;
 class ModuleFilteredRavenClient extends Raven_Client
 {
     /**
+     * @var string[]|null
+     */
+    protected $excluded_domains;
+
+    /**
      * @param string $dsn
      * @param array $options
      */
@@ -38,6 +43,10 @@ class ModuleFilteredRavenClient extends Raven_Client
             return null;
         }
 
+        if ($this->isErrorFilteredByContext()) {
+            return null;
+        }
+
         $allowCapture = false;
         foreach ($data['exception']['values'] as $errorValues) {
             $allowCapture = $allowCapture || $this->isErrorInApp($errorValues);
@@ -48,6 +57,16 @@ class ModuleFilteredRavenClient extends Raven_Client
         }
 
         return parent::capture($data, $stack, $vars);
+    }
+
+    /**
+     * @return self
+     */
+    public function setExcludedDomains(array $domains)
+    {
+        $this->excluded_domains = $domains;
+
+        return $this;
     }
 
     /**
@@ -63,5 +82,23 @@ class ModuleFilteredRavenClient extends Raven_Client
         }
 
         return $atLeastOneFileIsInApp;
+    }
+
+    /**
+     * Check the conditions in which the error is thrown, so we can apply filters
+     *
+     * @return bool
+     */
+    private function isErrorFilteredByContext()
+    {
+        if ($this->excluded_domains && !empty($_SERVER['REMOTE_ADDR'])) {
+            foreach ($this->excluded_domains as $domain) {
+                if (false !== strpos($_SERVER['REMOTE_ADDR'], $domain)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

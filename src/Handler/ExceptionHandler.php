@@ -48,7 +48,8 @@ class ExceptionHandler
             $this->client = new ModuleFilteredRavenClient(
                 $sentryEnv->getDsn(),
                 [
-                    'level' => 'warning',
+                    'level' => 'error',
+                    'error_types' => E_ERROR,
                     'tags' => [
                         'php_version' => phpversion(),
                         'module_version' => $module->version,
@@ -58,6 +59,14 @@ class ExceptionHandler
             );
 
             $this->client->setAppPath(realpath(_PS_MODULE_DIR_ . 'ps_checkout/'));
+            $this->client->setExcludedAppPaths([
+                realpath(_PS_MODULE_DIR_ . 'ps_checkout/vendor/'),
+            ]);
+            $this->client->setExcludedDomains(['127.0.0.1', 'localhost', '.local']);
+
+            if (version_compare(phpversion(), '7.4.0', '>=') && version_compare(_PS_VERSION_, '1.7.8.0', '<')) {
+                return;
+            }
 
             $this->client->install();
         }
