@@ -283,6 +283,7 @@
                     <b-col sm="8" md="8" lg="8" class="px-0">
                       <b-form-input
                         v-model="form.business_phone"
+                        id="business-phone-number"
                         :class="[
                           form.business_phone !== '' ? '' : 'has-danger'
                         ]"
