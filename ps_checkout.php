@@ -205,6 +205,8 @@ class Ps_checkout extends PaymentModule
         // We must doing that here because before module is not installed so Service Container cannot be used
         $this->trackModuleAction('Install');
 
+        $this->getService('ps_accounts.installer')->install();
+
         // Install specific to prestashop 1.7
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService('ps_checkout.context.shop');
@@ -620,8 +622,15 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter $storePresenter */
         $storePresenter = $this->getService('ps_checkout.store.store');
 
+        /** @var \PrestaShop\Module\PsAccounts\Service\PsAccountsService $psAccountsService */
+        $psAccountsService = $this->getService('ps_accounts.facade')->getPsAccountsService();
+        /** @var \PrestaShop\Module\PsAccounts\Presenter\PsAccountsPresenter $psAccountsPresenter */
+        $psAccountsPresenter = $this->getService('ps_accounts.facade')->getPsAccountsPresenter();
+
         Media::addJsDef([
             'store' => $storePresenter->present(),
+            'contextPsAccounts' => $psAccountsPresenter->present($this->name),
+            'token' => $psAccountsService->getOrRefreshToken(),
         ]);
 
         $this->context->controller->addJS(
