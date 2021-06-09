@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Firebase;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Client\FirebaseClient;
+use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 
 /**
  * Handle authentication firebase requests
@@ -137,7 +138,7 @@ class Token extends FirebaseClient
         }
 
         return \Configuration::get(
-            'PS_PSX_FIREBASE_ID_TOKEN',
+            PsAccount::PS_PSX_FIREBASE_ID_TOKEN,
             null,
             null,
             (int) \Context::getContext()->shop->id
