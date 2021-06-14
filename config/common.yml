@@ -462,3 +462,10 @@ services:
     public: true
     arguments:
       - '@ps_accounts.installer'
+
+  ps_checkout.onboarding.status_helper:
+    class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper'
+    public: true
+    arguments:
+      - '@ps_checkout.configuration'
+      - '@ps_accounts.facade'
