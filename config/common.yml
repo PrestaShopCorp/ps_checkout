@@ -168,6 +168,8 @@ services:
     public: true
     arguments:
       - '@ps_checkout.configuration'
+      - '@ps_checkout.onboarding.status_helper'
+      - '@ps_accounts.facade'
 
   ps_checkout.store.module.psx:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule'
@@ -187,6 +189,8 @@ services:
     public: true
     arguments:
       - '@ps_checkout.configuration'
+      - '@ps_checkout.onboarding.status_helper'
+      - '@ps_accounts.facade'
 
   ps_checkout.store.module.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule'
