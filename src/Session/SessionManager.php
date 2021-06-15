@@ -20,8 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Session;
 
-use PrestaShop\Module\PrestashopCheckout\Session\SessionRepositoryInterface;
-
 class SessionManager
 {
     /**
@@ -65,7 +63,7 @@ class SessionManager
         $session = $this->repository->get($sessionData);
 
         if ($session && SessionHelper::isExpired($session)) {
-            $this->stop($session);
+            $this->close($session);
 
             return null;
         }

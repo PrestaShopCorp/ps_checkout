@@ -26,7 +26,6 @@ use PrestaShop\Module\PrestashopCheckout\Session\Session;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionHelper;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionManager;
-use PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionRepository;
 
 class OnboardingSessionManager extends SessionManager
 {
@@ -36,7 +35,7 @@ class OnboardingSessionManager extends SessionManager
     private $context;
 
     /**
-     * @var \PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration
+     * @var array
      */
     private $configuration;
 
@@ -51,7 +50,7 @@ class OnboardingSessionManager extends SessionManager
     private $transitions;
 
     /**
-     * @param \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionRepository $sessionRepository
+     * @param \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionRepository $repository
      * @param \PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration $configuration
      *
      * @return void
@@ -122,31 +121,19 @@ class OnboardingSessionManager extends SessionManager
         $genericErrorMsg = 'Unable to transit this session : ';
 
         if (!$nextTransition) {
-            throw new PsCheckoutSessionException(
-                $genericErrorMsg . 'Unexisting session transition',
-                PsCheckoutSessionException::UNEXISTING_SESSION_TRANSITION
-            );
+            throw new PsCheckoutSessionException($genericErrorMsg . 'Unexisting session transition', PsCheckoutSessionException::UNEXISTING_SESSION_TRANSITION);
         }
 
         if (!$this->getOpened()) {
-            throw new PsCheckoutSessionException(
-                $genericErrorMsg . 'Unable to find an opened session',
-                PsCheckoutSessionException::OPENED_SESSION_NOT_FOUND
-            );
+            throw new PsCheckoutSessionException($genericErrorMsg . 'Unable to find an opened session', PsCheckoutSessionException::OPENED_SESSION_NOT_FOUND);
         }
 
         if ($this->getOpened()->getStatus() !== $nextTransition['from']) {
-            throw new PsCheckoutSessionException(
-                $genericErrorMsg . 'The session is not authorized to transit from ' . $this->getOpened()->getStatus() . ' to ' . $nextTransition['to'],
-                PsCheckoutSessionException::FORBIDDEN_SESSION_TRANSITION
-            );
+            throw new PsCheckoutSessionException($genericErrorMsg . 'The session is not authorized to transit from ' . $this->getOpened()->getStatus() . ' to ' . $nextTransition['to'], PsCheckoutSessionException::FORBIDDEN_SESSION_TRANSITION);
         }
 
         if ($updateIntersect !== $sortedUpdateConfiguration) {
-            throw new PsCheckoutSessionException(
-                $genericErrorMsg . 'Missing expected update session parameters.',
-                PsCheckoutSessionException::MISSING_EXPECTED_PARAMETERS
-            );
+            throw new PsCheckoutSessionException($genericErrorMsg . 'Missing expected update session parameters.', PsCheckoutSessionException::MISSING_EXPECTED_PARAMETERS);
         }
     }
 
@@ -160,18 +147,19 @@ class OnboardingSessionManager extends SessionManager
      *
      * @throws \Exception
      */
-    public function apply($next, array $update) {
+    public function apply($next, array $update)
+    {
         $this->can($next, $update);
 
         $nextTransition = $this->transitions[$next];
         $session = $this->getOpened();
 
-        foreach($update as $updateKey => $updateValue) {
-            foreach($nextTransition['update'] as $updateConfigKey => $updateConfigValue) {
+        foreach ($update as $updateKey => $updateValue) {
+            foreach ($nextTransition['update'] as $updateConfigKey => $updateConfigValue) {
                 if ($updateKey === $updateConfigKey) {
                     if ($updateKey === 'data') {
                         $value = json_encode($updateValue);
-                    } else if ($updateConfigValue !== null) {
+                    } elseif ($updateConfigValue !== null) {
                         $value = $updateConfigValue;
                     } else {
                         $value = $updateValue;

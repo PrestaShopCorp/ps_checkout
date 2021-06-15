@@ -71,7 +71,7 @@ class Onboarding extends PaymentClient
 
             return $response;
         }
-        
+
         $response['onboardingLink'] = $response['body']['links']['1']['href'];
 
         return $response;

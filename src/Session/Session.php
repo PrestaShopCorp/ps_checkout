@@ -287,7 +287,7 @@ class Session
     /**
      * Set the session SSE opening state
      *
-     * @param bool $isSSEOpened
+     * @param bool $isSseOpened
      *
      * @return void
      */

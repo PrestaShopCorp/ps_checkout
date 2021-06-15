@@ -20,7 +20,6 @@
 use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
 use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
-use PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager;
 
 class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminController
 {

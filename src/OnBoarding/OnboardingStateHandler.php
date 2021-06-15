@@ -22,7 +22,6 @@ namespace PrestaShop\Module\PrestashopCheckout\OnBoarding;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration;
-use PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingState;
 use PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager;
 
 class OnboardingStateHandler
@@ -43,7 +42,7 @@ class OnboardingStateHandler
     private $psCheckoutConfiguration;
 
     /**
-     * @var PrestaShop\Module\PrestashopCheckout\Session\Session|null
+     * @var \PrestaShop\Module\PrestashopCheckout\Session\Session|null
      */
     private $onboardingSession;
 
@@ -56,8 +55,7 @@ class OnboardingStateHandler
         OnboardingSessionManager $onboardingSessionManager,
         OnboardingState $onboardingState,
         PrestashopCheckoutConfiguration $psCheckoutConfiguration
-    )
-    {
+    ) {
         $this->onboardingSessionManager = $onboardingSessionManager;
         $this->onboardingState = $onboardingState;
         $this->psCheckoutConfiguration = $psCheckoutConfiguration;
@@ -66,7 +64,7 @@ class OnboardingStateHandler
     /**
      * Handle onboarding session state
      *
-     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session|null
+     * @return array|null
      */
     public function handle()
     {
@@ -89,12 +87,12 @@ class OnboardingStateHandler
     {
         if ($this->onboardingState->isFirebaseOnboarded()) {
             $firebaseConfiguration = $this->psCheckoutConfiguration->getFirebase();
-            $data = [
+            $data = json_decode(json_encode([
                 'account_id' => $firebaseConfiguration['accountId'],
                 'account_email' => $firebaseConfiguration['email'],
-            ];
+            ]));
 
-            $this->onboardingSession = $this->onboardingSessionManager->startOnboarding($data);
+            $this->onboardingSession = $this->onboardingSessionManager->openOnboarding($data);
         }
     }
 

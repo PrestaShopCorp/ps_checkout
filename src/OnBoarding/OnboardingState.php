@@ -26,7 +26,7 @@ use PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfigu
 class OnboardingState
 {
     /**
-     * @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration $psCheckoutConfiguration
+     * @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration
      */
     private $psCheckoutConfiguration;
 

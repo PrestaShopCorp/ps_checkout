@@ -25,9 +25,14 @@ use PrestaShop\Module\PrestashopCheckout\Session\SessionManager;
 
 class PaymentSessionManager extends SessionManager
 {
-    public function __construct(PaymentSessionRepository $sessionRepository)
+    /**
+     * @var \Context
+     */
+    private $context;
+    
+    public function __construct(PaymentSessionRepository $repository)
     {
-        parent::__construct($sessionRepository);
+        parent::__construct($repository);
         $this->context = \Context::getContext();
     }
 }

@@ -20,8 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
-use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler;
+use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
  * Construct the session module

@@ -91,7 +91,7 @@ class AbstractSessionRepository implements SessionRepositoryInterface
     {
         $query = '
             SELECT *
-            FROM ' . _DB_PREFIX_ . $this->table .'
+            FROM ' . _DB_PREFIX_ . $this->table . '
             WHERE user_id = ' . $sessionData['user_id'] . '
             AND shop_id = ' . $sessionData['shop_id'] . '
             AND is_closed = ' . (int) $sessionData['is_closed'] . ';
@@ -173,6 +173,7 @@ class AbstractSessionRepository implements SessionRepositoryInterface
             'is_closed' => 1,
             'closed_at' => date('Y-m-d H:i:s'),
         ];
+
         return $this->db->update($this->table, $data, $where, 1, true);
     }
 }
