@@ -29,7 +29,7 @@ class PaymentSessionManager extends SessionManager
      * @var \Context
      */
     private $context;
-    
+
     public function __construct(PaymentSessionRepository $repository)
     {
         parent::__construct($repository);
