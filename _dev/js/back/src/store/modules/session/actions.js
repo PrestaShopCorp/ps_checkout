@@ -17,55 +17,60 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
-import update from '@/requests/session.js';
+import ajax from '@/requests/ajax.js';
+import * as types from './mutation-types';
 
 export default {
-  accountOnboardingStarted({ commit, getters }, payload) {
-    return update({
-      commit: commit,
-      getters: getters,
-      payload: payload,
-      action: 'AccountOnboardingStarted'
+  openOnboardingSession({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'OpenOnboardingSession',
+      data: {
+        sessionData: JSON.stringify(payload.sessionData)
+      }
+    }).then(response => {
+      if (!response.status) {
+        throw response;
+      }
+
+      commit(types.ONBOARDING_SESSION, response);
+
+      return Promise.resolve(response);
     });
   },
-  firebaseOnboarded({ commit, getters }, payload) {
-    return update({
-      commit: commit,
-      getters: getters,
-      payload: payload,
-      action: 'FirebaseOnboarded'
+  transitOnboardingSession({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'TransitOnboardingSession',
+      data: {
+        sessionAction: payload.sessionAction,
+        session: JSON.stringify(payload.session)
+      }
+    }).then(response => {
+      if (!response.status) {
+        throw response;
+      }
+
+      commit(types.ONBOARDING_SESSION, response);
+
+      return Promise.resolve(response);
     });
   },
-  accountOnboarded({ commit, getters }, payload) {
-    return update({
-      commit: commit,
-      getters: getters,
-      payload: payload,
-      action: 'AccountOnboarded'
-    });
-  },
-  paypalOnboardingStarted({ commit, getters }, payload) {
-    return update({
-      commit: commit,
-      getters: getters,
-      payload: payload,
-      action: 'PaypalOnboardingStarted'
-    });
-  },
-  onboardingFinished({ commit, getters }, payload) {
-    return update({
-      commit: commit,
-      getters: getters,
-      payload: payload,
-      action: 'OnboardingFinished'
-    });
-  },
-  restartOnboardingSession({ commit, getters }, payload) {
-    return update({
-      commit: commit,
-      getters: getters,
-      payload: payload,
-      action: 'RestartOnboardingSession'
+  closeOnboardingSession({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'CloseOnboardingSession',
+      data: {
+        session: JSON.stringify(payload.session)
+      }
+    }).then(response => {
+      if (!response.status) {
+        throw response;
+      }
+
+      commit(types.ONBOARDING_SESSION, response);
+
+      return Promise.resolve(response);
     });
   }
 };

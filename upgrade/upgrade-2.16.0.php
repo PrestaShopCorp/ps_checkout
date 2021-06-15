@@ -37,13 +37,13 @@ function upgrade_module_2_16_0($module)
             user_id INT NOT NULL,
             shop_id INT NOT NULL,
             is_closed INT NOT NULL,
-            auth_token VARCHAR(255),
+            auth_token VARCHAR(255) NOT NULL,
             status VARCHAR(255) NOT NULL,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             closed_at DATETIME,
             expires_at DATETIME,
-            is_sse_opened TINYINT(1) DEFAULT 0,
+            is_sse_opened TINYINT(1) NOT NULL DEFAULT 0,
             data TEXT,
             PRIMARY KEY (user_id, shop_id, is_closed)
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
@@ -55,13 +55,13 @@ function upgrade_module_2_16_0($module)
             user_id INT NOT NULL,
             shop_id INT NOT NULL,
             is_closed INT NOT NULL,
-            auth_token VARCHAR(255),
+            auth_token VARCHAR(255) NOT NULL,
             status VARCHAR(255) NOT NULL,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             closed_at DATETIME,
             expires_at DATETIME,
-            is_sse_opened TINYINT(1) DEFAULT 0,
+            is_sse_opened TINYINT(1) NOT NULL DEFAULT 0,
             data TEXT,
             PRIMARY KEY (user_id, shop_id, is_closed)
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;

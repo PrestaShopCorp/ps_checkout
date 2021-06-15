@@ -159,17 +159,10 @@
     },
     methods: {
       goToSignIn() {
-        this.$store
-          .dispatch({
-            type: 'accountOnboardingStarted',
-            session: this.$store.state.session.onboarding
-          })
-          .then(() => {
-            this.$router
-              .push('/authentication/signin')
-              // eslint-disable-next-line no-console
-              .catch(exception => console.log(exception));
-          });
+        this.$router
+          .push('/authentication/signin')
+          // eslint-disable-next-line no-console
+          .catch(exception => console.log(exception));
       },
       goToSignUp() {
         this.$router
@@ -182,7 +175,7 @@
           this.$store.dispatch('unlink');
           this.$store.dispatch('psxOnboarding', false);
           this.$store.dispatch({
-            type: 'restartOnboardingSession',
+            type: 'closeOnboardingSession',
             session: this.$store.state.session.onboarding
           });
           this.sendTrack();

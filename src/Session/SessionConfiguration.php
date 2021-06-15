@@ -19,14 +19,29 @@
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Session\Onboarding;
+namespace PrestaShop\Module\PrestashopCheckout\Session;
 
-class OnboardingStatus
+use Symfony\Component\Yaml\Yaml;
+
+class SessionConfiguration
 {
-    const ONBOARDING_STARTED = 'ONBOARDING_STARTED';
-    const ACCOUNT_ONBOARDING_STARTED = 'ACCOUNT_ONBOARDING_STARTED';
-    const FIREBASE_ONBOARDED = 'FIREBASE_ONBOARDED';
-    const ACCOUNT_ONBOARDED = 'ACCOUNT_ONBOARDED';
-    const PAYPAL_ONBOARDING_STARTED = 'PAYPAL_ONBOARDING_STARTED';
-    const ONBOARDING_FINISHED = 'ONBOARDING_FINISHED';
+    /**
+     * Get the whole session configuration
+     *
+     * @return array
+     */
+    public function get()
+    {
+        return Yaml::parseFile(_PS_MODULE_DIR_ . '/ps_checkout/config/session.yml');
+    }
+
+    /**
+     * Get the onboarding session configuration
+     *
+     * @return array
+     */
+    public function getOnboarding()
+    {
+        return $this->get()['onboarding'];
+    }
 }

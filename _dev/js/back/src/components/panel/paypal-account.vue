@@ -213,7 +213,7 @@
         this.$store.dispatch('unlink').then(() => {
           this.$store.dispatch('getOnboardingLink');
           this.$store.dispatch({
-            type: 'restartOnboardingSession',
+            type: 'closeOnboardingSession',
             session: this.$store.state.session.onboarding
           });
           this.sendTrack();

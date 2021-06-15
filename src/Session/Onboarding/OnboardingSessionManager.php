@@ -21,8 +21,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Session\Onboarding;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutSessionException;
 use PrestaShop\Module\PrestashopCheckout\Session\Session;
+use PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Session\SessionHelper;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionManager;
+use PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionRepository;
 
 class OnboardingSessionManager extends SessionManager
 {
@@ -32,145 +36,169 @@ class OnboardingSessionManager extends SessionManager
     private $context;
 
     /**
-     * @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingStatus
+     * @var \PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration
      */
-    private $onboardingStatus;
+    private $configuration;
 
-    public function __construct(OnboardingSessionRepository $sessionRepository, OnboardingStatus $onboardingStatus)
+    /**
+     * @var array
+     */
+    private $states;
+
+    /**
+     * @var array
+     */
+    private $transitions;
+
+    /**
+     * @param \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionRepository $sessionRepository
+     * @param \PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration $configuration
+     *
+     * @return void
+     */
+    public function __construct(OnboardingSessionRepository $repository, SessionConfiguration $configuration)
     {
-        parent::__construct($sessionRepository);
+        parent::__construct($repository);
         $this->context = \Context::getContext();
-        $this->onboardingStatus = $onboardingStatus;
+        $this->configuration = $configuration->getOnboarding();
+        $this->states = $this->configuration['states'];
+        $this->transitions = $this->configuration['transitions'];
     }
 
     /**
-     * Start a merchant onboarding session
+     * Open a merchant onboarding session
      *
-     * @param bool $accountOnboarded Start an onboarding session with ACCOUNT_ONBOARDED status
+     * @param object $data
+     * @param bool $isShopCreated Start an onboarding session with SHOP_CREATED status
      *
      * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
      */
-    public function startOnboarding($accountOnboarded = false)
+    public function openOnboarding($data, $isShopCreated = false)
     {
         $sessionData = [
             'user_id' => (int) $this->context->employee->id,
             'shop_id' => (int) $this->context->shop->id,
-            'is_closed' => 0,
-            'status' => $accountOnboarded ? OnboardingStatus::ACCOUNT_ONBOARDED : OnboardingStatus::ONBOARDING_STARTED,
-            'expires_at' => null,
+            'is_closed' => false,
+            'status' => $isShopCreated ? $this->states['SHOP_CREATED'] : $this->configuration['initial_state'],
+            'is_sse_opened' => false,
+            'data' => json_encode($data),
         ];
 
-        return $this->start($sessionData);
+        return $this->open($sessionData);
     }
 
     /**
-     * Update a merchant onboarding session status to ACCOUNT_ONBOARDING_STARTED
+     * Get an opened merchant onboarding session
      *
-     * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
-     *
-     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
+     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session|null
      */
-    public function toAccountOnboardingStarted(Session $session)
+    public function getOpened()
     {
-        if ($session->getStatus() !== OnboardingStatus::ONBOARDING_STARTED) {
-            return $session;
+        $sessionData = [
+            'user_id' => (int) $this->context->employee->id,
+            'shop_id' => (int) $this->context->shop->id,
+            'is_closed' => false,
+        ];
+
+        return $this->get($sessionData);
+    }
+
+    /**
+     * Check if an onboarding session transition is authorized from a state to another
+     *
+     * @param string $next Next state to transit
+     * @param array $update Session data to update
+     *
+     * @return void
+     *
+     * @throws \PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutSessionException
+     */
+    public function can($next, array $update)
+    {
+        $nextTransition = $this->transitions[$next];
+        $updateConfiguration = $nextTransition['update'];
+        $updateIntersect = SessionHelper::recursiveArrayIntersectKey($update, $updateConfiguration);
+        $sortedUpdateConfiguration = SessionHelper::sortMultidimensionalArray($updateConfiguration);
+        $genericErrorMsg = 'Unable to transit this session : ';
+
+        if (!$nextTransition) {
+            throw new PsCheckoutSessionException(
+                $genericErrorMsg . 'Unexisting session transition',
+                PsCheckoutSessionException::UNEXISTING_SESSION_TRANSITION
+            );
         }
 
-        $session->setStatus(OnboardingStatus::ACCOUNT_ONBOARDING_STARTED);
+        if (!$this->getOpened()) {
+            throw new PsCheckoutSessionException(
+                $genericErrorMsg . 'Unable to find an opened session',
+                PsCheckoutSessionException::OPENED_SESSION_NOT_FOUND
+            );
+        }
+
+        if ($this->getOpened()->getStatus() !== $nextTransition['from']) {
+            throw new PsCheckoutSessionException(
+                $genericErrorMsg . 'The session is not authorized to transit from ' . $this->getOpened()->getStatus() . ' to ' . $nextTransition['to'],
+                PsCheckoutSessionException::FORBIDDEN_SESSION_TRANSITION
+            );
+        }
+
+        if ($updateIntersect !== $sortedUpdateConfiguration) {
+            throw new PsCheckoutSessionException(
+                $genericErrorMsg . 'Missing expected update session parameters.',
+                PsCheckoutSessionException::MISSING_EXPECTED_PARAMETERS
+            );
+        }
+    }
+
+    /**
+     * Apply the onboarding session transition
+     *
+     * @param string $next Next state to transit
+     * @param array $update Session data to update
+     *
+     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
+     *
+     * @throws \Exception
+     */
+    public function apply($next, array $update) {
+        $this->can($next, $update);
+
+        $nextTransition = $this->transitions[$next];
+        $session = $this->getOpened();
+
+        foreach($update as $updateKey => $updateValue) {
+            foreach($nextTransition['update'] as $updateConfigKey => $updateConfigValue) {
+                if ($updateKey === $updateConfigKey) {
+                    if ($updateKey === 'data') {
+                        $value = json_encode($updateValue);
+                    } else if ($updateConfigValue !== null) {
+                        $value = $updateConfigValue;
+                    } else {
+                        $value = $updateValue;
+                    }
+
+                    $set = 'set' . SessionHelper::snakeToPascalCase($updateKey);
+
+                    $session->$set($value);
+                }
+            }
+        }
+
+        $session->setStatus($nextTransition['to']);
         $this->update($session);
 
         return $this->get($session->toArray());
     }
 
     /**
-     * Update a merchant onboarding session status to FIREBASE_ONBOARDED
+     * Close a merchant onboarding session
      *
      * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
      *
-     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
+     * @return bool
      */
-    public function toFirebaseOnboarded(Session $session)
+    public function closeOnboarding(Session $session)
     {
-        if ($session->getStatus() !== OnboardingStatus::ACCOUNT_ONBOARDING_STARTED) {
-            return $session;
-        }
-
-        $session->setStatus(OnboardingStatus::FIREBASE_ONBOARDED);
-        $this->update($session);
-
-        return $this->get($session->toArray());
-    }
-
-    /**
-     * Update a merchant onboarding session status to ACCOUNT_ONBOARDED
-     *
-     * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
-     *
-     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
-     */
-    public function toAccountOnboarded(Session $session)
-    {
-        if ($session->getStatus() !== OnboardingStatus::FIREBASE_ONBOARDED) {
-            return $session;
-        }
-
-        $session->setStatus(OnboardingStatus::ACCOUNT_ONBOARDED);
-        $this->update($session);
-
-        return $this->get($session->toArray());
-    }
-
-    /**
-     * Update a merchant onboarding session status to PAYPAL_ONBOARDING_STARTED
-     *
-     * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
-     *
-     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
-     */
-    public function toPaypalOnboardingStarted(Session $session)
-    {
-        if ($session->getStatus() !== OnboardingStatus::ACCOUNT_ONBOARDED) {
-            return $session;
-        }
-
-        $session->setStatus(OnboardingStatus::PAYPAL_ONBOARDING_STARTED);
-        $this->update($session);
-
-        return $this->get($session->toArray());
-    }
-
-    /**
-     * Update a merchant onboarding session status to ONBOARDING_FINISHED
-     *
-     * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
-     *
-     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
-     */
-    public function toOnboardingFinished(Session $session)
-    {
-        if ($session->getStatus() !== OnboardingStatus::PAYPAL_ONBOARDING_STARTED) {
-            return $session;
-        }
-
-        $session->setStatus(OnboardingStatus::ONBOARDING_FINISHED);
-        $this->update($session);
-
-        return $this->get($session->toArray());
-    }
-
-    /**
-     * Restart a merchant onboarding session
-     *
-     * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
-     *
-     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
-     */
-    public function restartOnboarding(Session $session)
-    {
-        $accountOnboarded = $session->getStatus() === OnboardingStatus::ONBOARDING_FINISHED ?: false;
-
-        $this->stop($session);
-
-        return $this->startOnboarding($accountOnboarded);
+        return $this->close($session);
     }
 }

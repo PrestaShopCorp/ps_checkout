@@ -774,84 +774,48 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Update onboarding session to ACCOUNT_ONBOARDING_STARTED
+     * AJAX: Open onboarding session
      */
-    public function ajaxProcessAccountOnboardingStarted()
+    public function ajaxProcessOpenOnboardingSession()
     {
-        $sessionData = json_decode(Tools::getValue('session'));
-        $session = $this->updateOnboardingSession($sessionData, 'toAccountOnboardingStarted');
+        $data = json_decode(Tools::getValue('sessionData'));
+        /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
+        $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
+        $session = $onboardingSessionManager->openOnboarding($data)->toArray();
 
         $this->ajaxDie(json_encode($session));
     }
 
     /**
-     * AJAX: Update onboarding session to FIREBASE_ONBOARDED
+     * AJAX: Transit onboarding session
      */
-    public function ajaxProcessFirebaseOnboarded()
+    public function ajaxProcessTransitOnboardingSession()
     {
-        $sessionData = json_decode(Tools::getValue('session'));
-        $session = $this->updateOnboardingSession($sessionData, 'toFirebaseOnboarded');
+        $sessionData = json_decode(Tools::getValue('session'), true);
+        $sessionAction = Tools::getValue('sessionAction');
+        /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
+        $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
+        $session = $onboardingSessionManager->apply($sessionAction, $sessionData)->toArray();
 
         $this->ajaxDie(json_encode($session));
     }
 
     /**
-     * AJAX: Update onboarding session to ACCOUNT_ONBOARDED
+     * AJAX: Close onboarding session
      */
-    public function ajaxProcessAccountOnboarded()
-    {
-        $sessionData = json_decode(Tools::getValue('session'));
-        $session = $this->updateOnboardingSession($sessionData, 'toAccountOnboarded');
-
-        $this->ajaxDie(json_encode($session));
-    }
-
-    /**
-     * AJAX: Update onboarding session to PAYPAL_ONBOARDING_STARTED
-     */
-    public function ajaxProcessPaypalOnboardingStarted()
-    {
-        $sessionData = json_decode(Tools::getValue('session'));
-        $session = $this->updateOnboardingSession($sessionData, 'toPaypalOnboardingStarted');
-
-        $this->ajaxDie(json_encode($session));
-    }
-
-    /**
-     * AJAX: Update onboarding session to ONBOARDING_FINISHED
-     */
-    public function ajaxProcessOnboardingFinished()
-    {
-        $sessionData = json_decode(Tools::getValue('session'));
-        $session = $this->updateOnboardingSession($sessionData, 'toOnboardingFinished');
-
-        $this->ajaxDie(json_encode($session));
-    }
-
-    /**
-     * AJAX: Restart onboarding session
-     */
-    public function ajaxProcessRestartOnboardingSession()
+    public function ajaxProcessCloseOnboardingSession()
     {
         /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
         $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
-        $sessionData = json_decode(Tools::getValue('session'));
-        $currentSession = $onboardingSessionManager->start((array) $sessionData);
-        $session = $onboardingSessionManager->restartOnboarding($currentSession)->toArray();
+        $openedSession = $onboardingSessionManager->getOpened();
+
+        $onboardingSessionManager->closeOnboarding($openedSession);
+
+        /** @var PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler $onboardingStateHandler */
+        $onboardingStateHandler = $this->module->getService('ps_checkout.onboarding.state.handler');
+        $session = $onboardingStateHandler->handle();
 
         $this->ajaxDie(json_encode($session));
-    }
-
-    /**
-     * Update onboarding session to a given status
-     */
-    private function updateOnboardingSession($sessionData, $to)
-    {
-        /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
-        $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
-        $currentSession = $onboardingSessionManager->start((array) $sessionData);
-
-        return $onboardingSessionManager->$to($currentSession)->toArray();
     }
 
     /**

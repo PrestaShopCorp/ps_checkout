@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Session;
 
+use PrestaShop\Module\PrestashopCheckout\Session\SessionRepositoryInterface;
+
 class SessionManager
 {
     /**
@@ -38,22 +40,17 @@ class SessionManager
     }
 
     /**
-     * Start an user session
+     * Open an user session
      *
      * @param array $sessionData
      *
      * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
      */
-    public function start(array $sessionData)
+    public function open(array $sessionData)
     {
-        $session = $this->get($sessionData);
+        $this->repository->save($sessionData);
 
-        if (!$session) {
-            $this->repository->save($sessionData);
-            $session = $this->get($sessionData);
-        }
-
-        return $session;
+        return $this->get($sessionData);
     }
 
     /**
@@ -89,13 +86,13 @@ class SessionManager
     }
 
     /**
-     * Stop an user session
+     * Close an user session
      *
      * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
      *
      * @return bool
      */
-    public function stop(Session $session)
+    public function close(Session $session)
     {
         return $this->repository->close($session->getUserId(), $session->getShopId(), $session->getIsClosed());
     }

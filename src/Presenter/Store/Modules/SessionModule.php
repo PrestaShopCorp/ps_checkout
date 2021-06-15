@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
-use PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager;
+use PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler;
 
 /**
  * Construct the session module
@@ -29,22 +29,16 @@ use PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionMan
 class SessionModule implements PresenterInterface
 {
     /**
-     * @var \Context
+     * @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler
      */
-    private $context;
+    private $onboardingStateHandler;
 
     /**
-     * @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager
+     * @param \PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler $onboardingStateHandler
      */
-    private $onboardingSessionManager;
-
-    /**
-     * @param \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager
-     */
-    public function __construct(OnboardingSessionManager $onboardingSessionManager)
+    public function __construct(OnboardingStateHandler $onboardingStateHandler)
     {
-        $this->context = \Context::getContext();
-        $this->onboardingSessionManager = $onboardingSessionManager;
+        $this->onboardingStateHandler = $onboardingStateHandler;
     }
 
     /**
@@ -56,7 +50,7 @@ class SessionModule implements PresenterInterface
     {
         return [
             'session' => [
-                'onboarding' => $this->onboardingSessionManager->startOnboarding()->toArray(),
+                'onboarding' => $this->onboardingStateHandler->handle(),
             ],
         ];
     }

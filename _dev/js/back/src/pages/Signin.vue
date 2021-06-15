@@ -157,11 +157,14 @@
             email: this.email.value,
             password: this.password.value
           })
-          .then(() => {
+          .then(response => {
             this.$store
               .dispatch({
-                type: 'firebaseOnboarded',
-                session: this.$store.state.session.onboarding
+                type: 'openOnboardingSession',
+                sessionData: {
+                  account_id: response.body.localId,
+                  account_email: response.body.email
+                }
               })
               .then(() => {
                 this.$router

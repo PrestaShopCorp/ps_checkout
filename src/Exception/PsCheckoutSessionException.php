@@ -1,3 +1,4 @@
+<?php
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -16,8 +17,13 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-export const UNLINK_ACCOUNT = 'UNLINK_ACCOUNT';
-export const UPDATE_PAYPAL_ACCOUNT_STATUS = 'UPDATE_PAYPAL_ACCOUNT_STATUS';
-export const UPDATE_CONFIRMED_LIVE_STEP = 'UPDATE_CONFIRMED_LIVE_STEP';
-export const UPDATE_VIEWED_LIVE_STEP = 'UPDATE_VIEWED_LIVE_STEP';
-export const UPDATE_VALUE_BANNER_CLOSED = 'UPDATE_VALUE_BANNER_CLOSED';
+
+namespace PrestaShop\Module\PrestashopCheckout\Exception;
+
+class PsCheckoutSessionException extends PsCheckoutException
+{
+    const UNEXISTING_SESSION_TRANSITION = 1;
+    const OPENED_SESSION_NOT_FOUND = 2;
+    const FORBIDDEN_SESSION_TRANSITION = 3;
+    const MISSING_EXPECTED_PARAMETERS = 4;
+}

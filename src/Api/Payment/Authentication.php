@@ -1,3 +1,4 @@
+<?php
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -17,22 +18,24 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
-import * as types from '@/store/modules/session/mutation-types';
-import ajax from './ajax.js';
+namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
-export default function update(params) {
-  return ajax({
-    url: params.getters.adminController,
-    action: params.action,
-    data: {
-      session: JSON.stringify(params.payload.session)
-    }
-  }).then(response => {
-    if (!response.status) {
-      throw response;
-    }
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
 
-    params.commit(types.ONBOARDING_SESSION, response);
-    return Promise.resolve(response);
-  });
+/**
+ * Handle dispute calls
+ */
+class Authentication extends PaymentClient
+{
+    /**
+     * Get an auth token from PSL
+     *
+     * @return array
+     */
+    public function getAuthToken()
+    {
+        $this->setRoute('/auth');
+
+        return $this->post();
+    }
 }

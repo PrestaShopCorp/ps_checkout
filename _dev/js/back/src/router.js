@@ -52,6 +52,7 @@ const router = new Router({
       component: Accounts,
       beforeEnter: (to, from, next) => {
         if (
+          store.getters.onboarding &&
           store.getters.firebaseOnboardingIsCompleted &&
           !store.getters.paypalOnboardingIsCompleted &&
           !store.getters.psxOnboardingIsCompleted
@@ -69,10 +70,6 @@ const router = new Router({
       beforeEnter: (to, from, next) => {
         if (store.getters.firebaseOnboardingIsCompleted) {
           next(from);
-        } else if (
-          store.getters.onboarding.status !== 'ACCOUNT_ONBOARDING_STARTED'
-        ) {
-          next('/authentication');
         } else {
           next();
         }
@@ -110,8 +107,8 @@ const router = new Router({
         if (
           !store.getters.firebaseOnboardingIsCompleted ||
           store.getters.psxOnboardingIsCompleted ||
-          store.getters.onboarding.status !== 'FIREBASE_ONBOARDED' ||
-          store.getters.onboarding.status === 'ACCOUNT_ONBOARDED'
+          store.getters.onboarding.status !== 'ONBOARDING_STARTED' ||
+          store.getters.onboarding.status === 'SHOP_CREATED'
         ) {
           next('/authentication');
         } else {

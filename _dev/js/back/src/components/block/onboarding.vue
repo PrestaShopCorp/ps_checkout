@@ -20,9 +20,9 @@
   <div>
     <template v-if="checkoutAccountStatus">
       <button
-        v-show="paypalIsLoaded"
         id="link-to-paypal-account-button"
-        @click.prevent="getOnboardingLink()"
+        v-show="paypalOnboardingLink"
+        @click.prevent="paypalOnboarding()"
         class="btn btn-primary-reverse btn-outline-primary light-button"
       >
         {{ $t('panel.accounts.paypal.linkToPaypal') }}
@@ -36,7 +36,7 @@
       >
         {{ $t('panel.accounts.paypal.linkToPaypal') }}
       </a>
-      <a v-show="!paypalIsLoaded" href="#">
+      <a v-show="!paypalOnboardingLink" href="#">
         <b>{{ $t('panel.accounts.paypal.loading') }} ...</b>
       </a>
     </template>
@@ -63,19 +63,24 @@
     },
     computed: {
       paypalOnboardingLink() {
-        return this.$store.state.paypal.paypalOnboardingLink;
+        let onboardingSession = this.$store.state.session.onboarding;
+
+        if (!onboardingSession) {
+          return null;
+        }
+
+        let dataShop = onboardingSession.data.shop;
+
+        return dataShop && dataShop.paypal_onboarding_url
+          ? dataShop.paypal_onboarding_url
+          : null;
       },
       checkoutAccountStatus() {
         return this.$store.state.firebase.onboardingCompleted;
       }
     },
     methods: {
-      getOnboardingLink() {
-        this.$store.dispatch({
-          type: 'paypalOnboardingStarted',
-          session: this.$store.state.session.onboarding
-        });
-
+      paypalOnboarding() {
         if (window && window.analytics) {
           this.$segment.track('Paypal Lightbox triggered', {
             category: 'ps_checkout'
@@ -89,22 +94,6 @@
           this.$refs.paypalButton.click();
           return;
         }
-
-        this.paypalIsLoaded = false;
-
-        this.$store
-          .dispatch('getOnboardingLink')
-          .then(() => {
-            this.$refs.paypalButton.click();
-          })
-          .catch(response => {
-            Sentry.captureException(response);
-
-            // eslint-disable-next-line no-console
-            console.log(response);
-          });
-
-        this.paypalIsLoaded = true;
 
         // TODO put this part in a component
         let time = 0;

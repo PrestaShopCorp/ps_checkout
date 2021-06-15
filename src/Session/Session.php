@@ -24,6 +24,11 @@ namespace PrestaShop\Module\PrestashopCheckout\Session;
 class Session
 {
     /**
+     * @var string
+     */
+    private $correlationId;
+
+    /**
      * @var int
      */
     private $userId;
@@ -34,14 +39,14 @@ class Session
     private $shopId;
 
     /**
-     * @var string
+     * @var int
      */
     private $isClosed;
 
     /**
      * @var string
      */
-    private $correlationId;
+    private $authToken;
 
     /**
      * @var string
@@ -51,22 +56,7 @@ class Session
     /**
      * @var string
      */
-    private $data;
-
-    /**
-     * @var string
-     */
     private $createdAt;
-
-    /**
-     * @var string
-     */
-    private $expiresAt;
-
-    /**
-     * @var string
-     */
-    private $authToken;
 
     /**
      * @var string
@@ -79,9 +69,19 @@ class Session
     private $closedAt;
 
     /**
-     * @var int
+     * @var string
      */
-    private $isSSEOpened;
+    private $expiresAt;
+
+    /**
+     * @var bool
+     */
+    private $isSseOpened;
+
+    /**
+     * @var string
+     */
+    private $data;
 
     /**
      * @param array $session
@@ -96,12 +96,22 @@ class Session
         $this->isClosed = $session['is_closed'];
         $this->authToken = $session['auth_token'];
         $this->status = $session['status'];
-        $this->data = $session['data'];
         $this->createdAt = $session['created_at'];
         $this->updatedAt = $session['updated_at'];
         $this->closedAt = $session['closed_at'];
         $this->expiresAt = $session['expires_at'];
-        $this->isSSEOpened = (int) $session['is_sse_opened'];
+        $this->isSseOpened = $session['is_sse_opened'];
+        $this->data = $session['data'];
+    }
+
+    /**
+     * Get the session correlation ID
+     *
+     * @return string
+     */
+    public function getCorrelationId()
+    {
+        return $this->correlationId;
     }
 
     /**
@@ -125,9 +135,9 @@ class Session
     }
 
     /**
-     * Get the session process type
+     * Get the session closing state
      *
-     * @return string
+     * @return int
      */
     public function getIsClosed()
     {
@@ -135,13 +145,13 @@ class Session
     }
 
     /**
-     * Get the session correlation ID
+     * Get the session auth token
      *
      * @return string
      */
-    public function getCorrelationId()
+    public function getAuthToken()
     {
-        return $this->correlationId;
+        return $this->authToken;
     }
 
     /**
@@ -155,16 +165,6 @@ class Session
     }
 
     /**
-     * Get the session data
-     *
-     * @return string|null
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    /**
      * Get the session creation date
      *
      * @return string
@@ -175,6 +175,26 @@ class Session
     }
 
     /**
+     * Get the session update date
+     *
+     * @return string
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * Get the session closing date
+     *
+     * @return string
+     */
+    public function getClosedAt()
+    {
+        return $this->closedAt;
+    }
+
+    /**
      * Get the session expiration date
      *
      * @return string|null
@@ -182,6 +202,38 @@ class Session
     public function getExpiresAt()
     {
         return $this->expiresAt;
+    }
+
+    /**
+     * Get the session SSE opening state
+     *
+     * @return bool
+     */
+    public function getIsSseOpened()
+    {
+        return $this->isSseOpened;
+    }
+
+    /**
+     * Get the session data
+     *
+     * @return string|null
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Set the session auth token
+     *
+     * @param string $authToken
+     *
+     * @return void
+     */
+    public function setAuthToken($authToken)
+    {
+        $this->authToken = $authToken;
     }
 
     /**
@@ -197,6 +249,54 @@ class Session
     }
 
     /**
+     * Set the session update date
+     *
+     * @param string $updatedAt
+     *
+     * @return void
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * Set the session closing date
+     *
+     * @param string $closedAt
+     *
+     * @return void
+     */
+    public function setClosedAt($closedAt)
+    {
+        $this->closedAt = $closedAt;
+    }
+
+    /**
+     * Set the session expiration date
+     *
+     * @param string $expiresAt
+     *
+     * @return void
+     */
+    public function setExpiresAt($expiresAt)
+    {
+        $this->expiresAt = $expiresAt;
+    }
+
+    /**
+     * Set the session SSE opening state
+     *
+     * @param bool $isSSEOpened
+     *
+     * @return void
+     */
+    public function setIsSseOpened($isSseOpened)
+    {
+        $this->isSseOpened = $isSseOpened;
+    }
+
+    /**
      * Set the session data
      *
      * @param string $data
@@ -209,87 +309,13 @@ class Session
     }
 
     /**
-     * Update the session expiration date
-     *
-     * @param string $expiresAt
-     *
-     * @return void
-     */
-    public function setExpiresAt($expiresAt)
-    {
-        $this->expiresAt = $expiresAt;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAuthToken()
-    {
-        return $this->authToken;
-    }
-
-    /**
-     * @param string $authToken
-     */
-    public function setAuthToken($authToken)
-    {
-        $this->authToken = $authToken;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param string $updatedAt
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-    }
-
-    /**
-     * @return string
-     */
-    public function getClosedAt()
-    {
-        return $this->closedAt;
-    }
-
-    /**
-     * @param string $closedAt
-     */
-    public function setClosedAt($closedAt)
-    {
-        $this->closedAt = $closedAt;
-    }
-
-    /**
-     * @return int
-     */
-    public function getIsSSEOpened()
-    {
-        return $this->isSSEOpened;
-    }
-
-    /**
-     * @param int $isSSEOpened
-     */
-    public function setIsSSEOpened($isSSEOpened)
-    {
-        $this->isSSEOpened = $isSSEOpened;
-    }
-
-    /**
      * Convert the session to array
+     *
+     * @param bool $dataIsArray When this parameter is set to true, data will be an array
      *
      * @return array
      */
-    public function toArray()
+    public function toArray($dataIsArray = false)
     {
         return [
             'correlation_id' => $this->correlationId,
@@ -298,12 +324,12 @@ class Session
             'is_closed' => $this->isClosed,
             'auth_token' => $this->authToken,
             'status' => $this->status,
-            'data' => $this->data,
             'created_at' => $this->createdAt,
-            'updated_at' => $this->expiresAt,
+            'updated_at' => $this->updatedAt,
             'closed_at' => $this->closedAt,
             'expires_at' => $this->expiresAt,
-            'is_sse_opened' => $this->isSSEOpened,
+            'is_sse_opened' => $this->isSseOpened,
+            'data' => json_decode($this->data, $dataIsArray),
         ];
     }
 }

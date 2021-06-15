@@ -492,10 +492,30 @@
           })
           .then(response => {
             if (response.status === true) {
+              let session = this.$store.state.session.onboarding;
+              session.data.form = this.form;
+
               this.$store.dispatch({
-                type: 'accountOnboarded',
-                session: this.$store.state.session.onboarding
+                type: 'transitOnboardingSession',
+                sessionAction: 'collect_shop_data',
+                session: session
               });
+              this.$store
+                .dispatch({
+                  type: 'getOnboardingLink'
+                })
+                .then(response => {
+                  let session = this.$store.state.session.onboarding;
+                  session.data.shop = {};
+                  session.data.shop.paypal_onboarding_url =
+                    response.onboardingLink;
+
+                  this.$store.dispatch({
+                    type: 'transitOnboardingSession',
+                    sessionAction: 'create_shop',
+                    session: session
+                  });
+                });
               this.$store.dispatch('psxOnboarding', response.status);
               this.$router
                 .push('/authentication')

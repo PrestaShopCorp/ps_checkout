@@ -21,11 +21,16 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Session;
 
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Authentication;
 use Ramsey\Uuid\Uuid;
 
 class AbstractSessionRepository implements SessionRepositoryInterface
 {
+    /**
+     * @var string
+     */
     protected $table;
+
     /**
      * @var \Db
      */
@@ -48,26 +53,27 @@ class AbstractSessionRepository implements SessionRepositoryInterface
      */
     public function save(array $sessionData)
     {
+        $paymentAuthentication = new Authentication(\Context::getContext()->link);
+        $authToken = $paymentAuthentication->getAuthToken();
+        $createdAt = date('Y-m-d H:i:s');
+        $authToken = [
+            'auth_token' => Uuid::uuid4()->toString(),
+            'expires_at' => SessionHelper::updateExpirationDate($createdAt),
+        ];
         $data = isset($sessionData['data']) ? $sessionData['data'] : null;
-        $creationDate = date('Y-m-d H:i:s');
-        $expirationDate = key_exists('expiration_date', $sessionData) && empty($sessionData['expiration_date']) ?
-            null :
-            SessionHelper::updateExpirationDate($creationDate);
-        $isSSEOpened = isset($sessionData['is_sse_opened']) ? (int) $sessionData['is_sse_opened'] : 0;
-        $authToken = isset($sessionData['auth_token']) ? pSQL($sessionData['auth_token']) : null;
 
         $insertData = [
             'correlation_id' => Uuid::uuid4()->toString(),
             'user_id' => $sessionData['user_id'],
             'shop_id' => $sessionData['shop_id'],
-            'is_closed' => (int) $sessionData['is_closed'],
-            'auth_token' => $authToken,
+            'is_closed' => $sessionData['is_closed'],
+            'auth_token' => pSQL($authToken['auth_token']),
             'status' => pSQL($sessionData['status']),
-            'created_at' => pSQL($creationDate),
-            'updated_at' => pSQL($creationDate),
-            'closed_at' => '0000-00-00 00:00:00',
-            'expires_at' => pSQL($expirationDate),
-            'is_sse_opened' => $isSSEOpened,
+            'created_at' => pSQL($createdAt),
+            'updated_at' => pSQL($createdAt),
+            'closed_at' => null,
+            'expires_at' => pSQL($authToken['expires_at']),
+            'is_sse_opened' => $sessionData['is_sse_opened'],
             'data' => $data,
         ];
 
@@ -75,7 +81,7 @@ class AbstractSessionRepository implements SessionRepositoryInterface
     }
 
     /**
-     * Get an user session by unique constraint (user_id, shop_uuid, process_type)
+     * Get an user session by unique constraint (user_id, shop_uuid, is_closed)
      *
      * @param array $sessionData
      *
@@ -108,7 +114,7 @@ class AbstractSessionRepository implements SessionRepositoryInterface
             'status' => pSQL($session->getStatus()),
             'data' => pSQL($session->getData()),
             'expires_at' => pSQL($session->getExpiresAt()),
-            'is_sse_opened' => 1 === (int) $session->getIsSSEOpened(),
+            'is_sse_opened' => 1 === (int) $session->getIsSseOpened(),
             'updated_at' => date('Y-m-d H:i:s'),
             'auth_token' => $session->getAuthToken(),
         ];
@@ -141,7 +147,7 @@ class AbstractSessionRepository implements SessionRepositoryInterface
     }
 
     /**
-     * Remove an user session
+     * Close an user session
      *
      * @param int $userId
      * @param int $shopId
