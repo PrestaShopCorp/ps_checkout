@@ -77,7 +77,7 @@ class FirebaseModule implements PresenterInterface
             $firebaseModule = [
                 'firebase' => [
                     'email' => $psAccountsService->getEmail(),
-                    'idToken' => $idToken,
+                    'idToken' => (string) $idToken,
                     'localId' => null,
                     'refreshToken' => $psAccountsService->getRefreshToken(),
                     'onboardingCompleted' => $this->onBoardingStatusHelper->isPsAccountsOnboarded(),
@@ -96,7 +96,6 @@ class FirebaseModule implements PresenterInterface
                 ],
             ];
         }
-
 
         return $firebaseModule;
     }

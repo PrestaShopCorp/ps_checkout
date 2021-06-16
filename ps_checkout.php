@@ -606,6 +606,19 @@ class Ps_checkout extends PaymentModule
 
     public function getContent()
     {
+        /** @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper $onBoardingStatusHelper */
+        $onBoardingStatusHelper = $this->getService('ps_checkout.onboarding.status_helper');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $sessionManager */
+        $sessionManager = $this->getService('ps_checkout.session.onboarding.manager');
+
+        if (
+            $onBoardingStatusHelper->isPsAccountsOnboarded() &&
+            !$onBoardingStatusHelper->isPsCheckoutOnboarded() &&
+            !$sessionManager->getOpened()
+        ) {
+            $sessionManager->openOnboarding(null);
+        }
+
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
         $paypalAccount = $this->getService('ps_checkout.repository.paypal.account');
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
