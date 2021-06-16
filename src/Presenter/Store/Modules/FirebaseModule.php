@@ -42,9 +42,9 @@ class FirebaseModule implements PresenterInterface
      */
     private $onBoardingStatusHelper;
     /**
-     * @var PsAccountsService
+     * @var PsAccounts
      */
-    private $psAccountsService;
+    private $psAccountsFacade;
 
     /**
      * @param PrestaShopConfiguration $configuration
@@ -56,7 +56,7 @@ class FirebaseModule implements PresenterInterface
     ) {
         $this->configuration = $configuration;
         $this->onBoardingStatusHelper = $onBoardingStatusHelper;
-        $this->psAccountsService = $psAccountsFacade->getPsAccountsService();
+        $this->psAccountsFacade = $psAccountsFacade;
     }
 
     /**
@@ -70,13 +70,16 @@ class FirebaseModule implements PresenterInterface
             $this->onBoardingStatusHelper->isPsAccountsOnboarded() &&
             !$this->onBoardingStatusHelper->isPsCheckoutOnboarded()
         ) {
-            $idToken = $this->psAccountsService->getOrRefreshToken();
+            $psAccountsService = $this->psAccountsFacade->getPsAccountsService();
+
+            $idToken = $psAccountsService->getOrRefreshToken();
+
             $firebaseModule = [
                 'firebase' => [
-                    'email' => $this->psAccountsService->getEmail(),
+                    'email' => $psAccountsService->getEmail(),
                     'idToken' => $idToken,
                     'localId' => null,
-                    'refreshToken' => $this->psAccountsService->getRefreshToken(),
+                    'refreshToken' => $psAccountsService->getRefreshToken(),
                     'onboardingCompleted' => $this->onBoardingStatusHelper->isPsAccountsOnboarded(),
                 ],
             ];
@@ -92,7 +95,6 @@ class FirebaseModule implements PresenterInterface
                     'onboardingCompleted' => !empty($idToken),
                 ],
             ];
-
         }
 
 

@@ -44,15 +44,22 @@ class PsAccountRepository
     private $psAccountsService;
 
     private $usePSAccountsData = null;
+    /**
+     * @var PsAccounts
+     */
+    private $psAccountsFacade;
 
     /**
      * @param PrestaShopConfiguration $configuration
      */
-    public function __construct(PrestaShopConfiguration $configuration, OnBoardingStatusHelper $onBoardingStatusHelper, PsAccounts $psAccountsFacade)
-    {
+    public function __construct(
+        PrestaShopConfiguration $configuration,
+        OnBoardingStatusHelper $onBoardingStatusHelper,
+        PsAccounts $psAccountsFacade
+    ) {
         $this->configuration = $configuration;
         $this->onBoardingStatusHelper = $onBoardingStatusHelper;
-        $this->psAccountsService = $psAccountsFacade->getPsAccountsService();
+        $this->psAccountsFacade = $psAccountsFacade;
     }
 
     /**
@@ -194,6 +201,12 @@ class PsAccountRepository
             $this->usePSAccountsData =
                 $this->onBoardingStatusHelper->isPsAccountsOnboarded() &&
                 !$this->onBoardingStatusHelper->isPsCheckoutOnboarded();
+
+            try {
+                $this->psAccountsService = $this->psAccountsFacade->getPsAccountsService();
+            } catch (\Exception $exception) {
+                $this->usePSAccountsData = false;
+            }
         }
 
         return $this->usePSAccountsData;
