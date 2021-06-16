@@ -6,15 +6,17 @@ use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PsAccounts\Service\PsAccountsService;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
+use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
-class OnBoardingStatusHelper
+
+class OnBoardingStatusHelper implements PresenterInterface
 {
     /** @var PrestaShopConfiguration */
     private $configuration;
     /**
-     * @var PsAccountsService
+     * @var PsAccounts
      */
-    private $psAccountsService;
+    private $psAccountsFacade;
 
     /**
      * @param PrestaShopConfiguration $configuration
@@ -22,7 +24,7 @@ class OnBoardingStatusHelper
     public function __construct(PrestaShopConfiguration $configuration, PsAccounts $psAccountsFacade)
     {
         $this->configuration = $configuration;
-        $this->psAccountsService = $psAccountsFacade->getPsAccountsService();
+        $this->psAccountsFacade = $psAccountsFacade;
     }
 
     public function isPsCheckoutOnboarded()
@@ -32,6 +34,21 @@ class OnBoardingStatusHelper
 
     public function isPsAccountsOnboarded()
     {
-        return $this->psAccountsService->isAccountLinked();
+        try {
+            $psAccountsService = $this->psAccountsFacade->getPsAccountsService();
+            return $psAccountsService->isAccountLinked();
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
+
+    public function present()
+    {
+        return [
+            'onboarding' => [
+                'isPsAccountsOnboarded' => $this->isPsAccountsOnboarded(),
+                'isPsCheckoutOnboarded' => $this->isPsCheckoutOnboarded(),
+            ]
+        ];
     }
 }

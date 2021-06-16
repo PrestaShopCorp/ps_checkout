@@ -622,12 +622,8 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter $storePresenter */
         $storePresenter = $this->getService('ps_checkout.store.store');
 
-        /** @var \PrestaShop\Module\PsAccounts\Presenter\PsAccountsPresenter $psAccountsPresenter */
-        $psAccountsPresenter = $this->getService('ps_accounts.facade')->getPsAccountsPresenter();
-
         Media::addJsDef([
             'store' => $storePresenter->present(),
-            'contextPsAccounts' => $psAccountsPresenter->present($this->name),
         ]);
 
         $this->context->controller->addJS(
