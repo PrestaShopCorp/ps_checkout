@@ -2,13 +2,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
-use PrestaShop\Module\PsAccounts\Service\PsAccountsService;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
-use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
-
 
 class OnBoardingStatusHelper
 {
@@ -35,7 +31,7 @@ class OnBoardingStatusHelper
      */
     public function isPsCheckoutOnboarded()
     {
-        return !empty($this->configuration->get(PsAccount::PS_ACCOUNTS_FIREBASE_ID_TOKEN));
+        return !empty($this->configuration->get(PsAccount::PS_PSX_FIREBASE_ID_TOKEN));
     }
 
     /**
