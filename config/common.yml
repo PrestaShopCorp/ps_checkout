@@ -221,11 +221,18 @@ services:
     arguments:
       - '@ps_checkout.onboarding.state.handler'
 
+  ps_checkout.store.module.onboarding:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\OnboardingModule'
+    public: true
+    arguments:
+      - '@ps_checkout.onboarding.status_helper'
+
+
   ps_checkout.store.store:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter'
     public: true
     arguments:
-      - ['@ps_checkout.store.module.context', '@ps_checkout.store.module.firebase', '@ps_checkout.store.module.paypal', '@ps_checkout.store.module.psx', '@ps_checkout.store.module.configuration', '@ps_checkout.store.module.session']
+      - ['@ps_checkout.store.module.context', '@ps_checkout.store.module.firebase', '@ps_checkout.store.module.paypal', '@ps_checkout.store.module.psx', '@ps_checkout.store.module.configuration', '@ps_checkout.store.module.session', '@ps_checkout.store.module.onboarding']
 
   ps_checkout.builder.payload.onboarding:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder'
