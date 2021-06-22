@@ -159,30 +159,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: SignIn firebase account
-     */
-    public function ajaxProcessSignIn()
-    {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Api\Firebase\AuthFactory $firebaseAuth */
-        $firebaseAuth = $this->module->getService('ps_checkout.api.firebase.auth.factory');
-        $response = $firebaseAuth->signIn(Tools::getValue('email'), Tools::getValue('password'));
-
-        $this->ajaxDie(json_encode($response));
-    }
-
-    /**
-     * AJAX: SignUp firebase account
-     */
-    public function ajaxProcessSignUp()
-    {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Api\Firebase\AuthFactory $firebaseAuth */
-        $firebaseAuth = $this->module->getService('ps_checkout.api.firebase.auth.factory');
-        $response = $firebaseAuth->signUp(Tools::getValue('email'), Tools::getValue('password'));
-
-        $this->ajaxDie(json_encode($response));
-    }
-
-    /**
      * AJAX: Send email to reset firebase password
      */
     public function ajaxProcessSendPasswordResetEmail()
@@ -288,7 +264,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\PersistentConfiguration $persistentConfiguration */
         $persistentConfiguration = $this->module->getService('ps_checkout.persistent.configuration');
 
-        return $persistentConfiguration->savePsAccount($psAccount);
+        return $persistentConfiguration->savePSXForm($psAccount);
     }
 
     /**

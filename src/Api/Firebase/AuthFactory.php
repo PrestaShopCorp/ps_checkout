@@ -33,49 +33,9 @@ class AuthFactory
      */
     private $auth;
 
-    /**
-     * @var PersistentConfiguration
-     */
-    private $configuration;
-
-    public function __construct(Auth $auth, PersistentConfiguration $configuration)
+    public function __construct(Auth $auth)
     {
         $this->auth = $auth;
-        $this->configuration = $configuration;
-    }
-
-    /**
-     * @param string $email
-     * @param string $password
-     *
-     * @return array
-     */
-    public function signIn($email, $password)
-    {
-        $response = $this->auth->signInWithEmailAndPassword($email, $password);
-        // if there is no error, save the account tokens in database
-        if (true === $response['status']) {
-            $this->savePsAccount($response);
-        }
-
-        return $response;
-    }
-
-    /**
-     * @param string $email
-     * @param string $password
-     *
-     * @return array
-     */
-    public function signUp($email, $password)
-    {
-        $response = $this->auth->signUpWithEmailAndPassword($email, $password);
-        // if there is no error, save the account tokens in database
-        if (true === $response['status']) {
-            $this->savePsAccount($response);
-        }
-
-        return $response;
     }
 
     /**
@@ -86,22 +46,5 @@ class AuthFactory
     public function resetPassword($email)
     {
         return $this->auth->sendPasswordResetEmail($email);
-    }
-
-    /**
-     * @param array $response
-     *
-     * @throws \PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException
-     */
-    private function savePsAccount(array $response)
-    {
-        $psAccount = new PsAccount(
-            $response['body']['idToken'],
-            $response['body']['refreshToken'],
-            $response['body']['email'],
-            $response['body']['localId']
-        );
-
-        $this->configuration->savePsAccount($psAccount);
     }
 }
