@@ -48,6 +48,14 @@
 
           <AccountStatusCheckout v-if="checkoutAccountStatus" class="mr-3" />
 
+          <div class="text-center float-right" v-if="!loggedInWithPsAccountsAccount && !loggedInWithPsCheckoutAccount">
+<!--            TODO: Add link to PsAccounts configuation page-->
+            <a href="#" @click.prevent="goToSignIn()" class="mr-4">
+              <b>Setup your PrestaShop account here!</b>
+<!--              <b>{{ $t('panel.accounts.checkout.logIn') }}</b>-->
+            </a>
+          </div>
+
           <div class="text-right" v-if="checkoutAccountStatus && loggedInWithPsCheckoutAccount">
             <b-button
               v-if="!isReady"
@@ -144,18 +152,6 @@
       }
     },
     methods: {
-      goToSignIn() {
-        this.$router
-          .push('/authentication/signin')
-          // eslint-disable-next-line no-console
-          .catch(exception => console.log(exception));
-      },
-      goToSignUp() {
-        this.$router
-          .push('/authentication/signup')
-          // eslint-disable-next-line no-console
-          .catch(exception => console.log(exception));
-      },
       logOut() {
         this.$store.dispatch('logOut').then(() => {
           this.$store.dispatch('unlink');
