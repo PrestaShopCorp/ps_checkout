@@ -335,3 +335,25 @@ services:
       - '@ps_checkout.validator.merchant'
       - '@ps_checkout.express_checkout.configuration'
       - '@ps_checkout.pay_in_4x.configuration'
+
+  ps_checkout.cache.directory:
+    class: 'PrestaShop\ModuleLibCacheDirectoryProvider\Cache\CacheDirectoryProvider'
+    public: true
+    arguments:
+      - !php/const _PS_VERSION_
+      - !php/const _PS_ROOT_DIR_
+      - !php/const _PS_MODE_DEV_
+
+  ps_checkout.cache.paypal.order:
+    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
+    public: true
+    arguments:
+      - 'paypal-orders'
+      - 3600
+      - '@=service("ps_checkout.cache.directory").getPath()'
+
+  ps_checkout.paypal.provider.order:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider'
+    public: true
+    arguments:
+      - '@ps_checkout.cache.paypal.order'
