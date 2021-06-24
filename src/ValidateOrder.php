@@ -109,8 +109,8 @@ class ValidateOrder
 
             // Check if the PayPal order amount is the same than the cart amount
             // We tolerate a difference of more or less 0.05
-            $paypalOrderAmount = number_format($order['purchase_units'][0]['amount']['value'], 2);
-            $cartAmount = number_format($this->context->cart->getOrderTotal(true, \Cart::BOTH), 2);
+            $paypalOrderAmount = sprintf('%01.2f', $order['purchase_units'][0]['amount']['value']);
+            $cartAmount = sprintf('%01.2f', $this->context->cart->getOrderTotal(true, \Cart::BOTH));
 
             if ($paypalOrderAmount + 0.05 < $cartAmount || $paypalOrderAmount - 0.05 > $cartAmount) {
                 throw new PsCheckoutException('The transaction amount doesn\'t match with the cart amount.', PsCheckoutException::DIFFERENCE_BETWEEN_TRANSACTION_AND_CART);
