@@ -58,7 +58,7 @@
                   ({{ $t('panel.express-checkout.recommended') }})
                 </div>
               </b-col>
-              <b-col v-if="shopIs17">
+              <b-col>
                 <PSCheckbox
                   id="checkout-page"
                   v-model="checkoutPageIsActive"

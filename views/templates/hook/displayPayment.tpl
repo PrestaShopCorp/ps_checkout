@@ -17,7 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  *}
 
-{if !$isOnePageCheckout16 && !$isExpressCheckout}
+{if !$isExpressCheckout}
   <div id="ps_checkout-loader" class="express-checkout-block mb-2">
     <div class="express-checkout-block-wrapper">
       <p class="express-checkout-spinner-text">
@@ -37,6 +37,11 @@
     <p class="express-checkout-label">
       {$translatedText|escape:'htmlall':'UTF-8'}
     </p>
+    <div id="button-paypal" class="ps_checkout-express-checkout-button">
+      <button id="ps_checkout-express-checkout-submit-button" class="button btn btn-default button-medium" type="button" disabled>
+        <span>{l s='I confirm my order' mod='ps_checkout'}<i class="icon-chevron-right right"></i></span>
+      </button>
+    </div>
   </div>
   {/if}
   <div class="payment-options">

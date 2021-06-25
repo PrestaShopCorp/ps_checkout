@@ -30,7 +30,7 @@ export class PaymentOptionsComponent extends BaseComponent {
   created() {
     this.data.HTMLElement = this.querySelectorService.getPaymentOptions();
 
-    this.data.HTMLBasePaymentConfirmation = this.querySelectorService.getBasePaymentConfirmation();
+    this.data.HTMLExpressCheckoutPaymentConfirmation = this.querySelectorService.getBasePaymentConfirmation();
 
     this.data.HTMLElementHookPayment = document.querySelector('#HOOK_PAYMENT');
   }
@@ -95,10 +95,7 @@ export class PaymentOptionsComponent extends BaseComponent {
   }
 
   renderExpressCheckoutPaymentButton() {
-    const paymentButton = this.data.HTMLBasePaymentConfirmation.cloneNode(true);
-
-    paymentButton.id = 'ps_checkout-hosted-submit-button';
-    paymentButton.type = 'button';
+    const paymentButton = this.data.HTMLExpressCheckoutPaymentConfirmation;
 
     paymentButton.addEventListener('click', (event) => {
       event.preventDefault();
@@ -127,13 +124,6 @@ export class PaymentOptionsComponent extends BaseComponent {
         });
     });
 
-    this.children.expressCheckoutButton = document.createElement('div');
-
-    this.children.expressCheckoutButton.id = 'button-paypal';
-    this.children.expressCheckoutButton.classList.add(
-      'ps_checkout-express-checkout-button'
-    );
-
     paymentButton.disabled = !this.data.conditions.isChecked();
     this.data.conditions.onChange(() => {
       paymentButton.disabled = !this.data.conditions.isChecked();
@@ -144,12 +134,6 @@ export class PaymentOptionsComponent extends BaseComponent {
         element.style.display = 'none';
       }
     });
-
-    // document.querySelector('.cart_navigation').append(paymentButton);
-    this.children.expressCheckoutButton.append(paymentButton);
-    document
-      .querySelector('.express-checkout-block')
-      .append(this.children.expressCheckoutButton);
   }
 
   render() {
