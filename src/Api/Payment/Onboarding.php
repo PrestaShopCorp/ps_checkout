@@ -43,6 +43,9 @@ class Onboarding extends PaymentClient
         $builder = $module->getService('ps_checkout.builder.payload.onboarding');
         /** @var ShopContext $shopContext */
         $shopContext = $module->getService('ps_checkout.context.shop');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager */
+        $onboardingSessionManager = $module->getService('ps_checkout.session.onboarding.manager');
+        $openedOnboardingSession = $onboardingSessionManager->getOpened();
 
         $builder->buildFullPayload();
 
@@ -51,6 +54,10 @@ class Onboarding extends PaymentClient
         }
 
         $response = $this->post([
+            'headers' => [
+                'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),
+                'Session-Token' => $openedOnboardingSession->getAuthToken(),
+            ],
             'json' => $builder->presentPayload()->getJson(),
         ]);
 

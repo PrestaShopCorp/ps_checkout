@@ -487,8 +487,7 @@
         this.$store
           .dispatch({
             type: 'psxSendData',
-            form: this.form,
-            session: this.$store.state.session.onboarding
+            form: this.form
           })
           .then(response => {
             if (response.status === true) {

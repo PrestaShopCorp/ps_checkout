@@ -19,29 +19,31 @@
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Session;
+namespace PrestaShop\Module\PrestashopCheckout\Tools;
 
-use PrestaShop\Module\PrestashopCheckout\Tools\Yaml;
+use Symfony\Component\Yaml\Yaml as SymfonyYaml;
 
-class SessionConfiguration
+/**
+ * As we cannot use directly Symfony/Yaml component properly through different PrestaShop versions,
+ * we can use this class instead. It selects existing methods from the component according to the version
+*/
+class Yaml
 {
     /**
-     * Get the whole session configuration
+     * Parse a yaml file
+     *
+     * @param string $file
      *
      * @return array
      */
-    public function get()
+    public static function parseFile($file)
     {
-        return Yaml::parseFile(_PS_MODULE_DIR_ . '/ps_checkout/config/session.yml');
-    }
+        if (method_exists(SymfonyYaml::class, 'parseFile')) {
+            $method = 'parseFile';
+        } else {
+            $method = 'parse';
+        }
 
-    /**
-     * Get the onboarding session configuration
-     *
-     * @return array
-     */
-    public function getOnboarding()
-    {
-        return $this->get()['onboarding'];
+        return SymfonyYaml::$method($file);
     }
 }

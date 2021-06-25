@@ -30,8 +30,10 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_16_0($module)
 {
+    $db = Db::getInstance();
+
     // Create session tables
-    $result = Db::getInstance()->execute('
+    return $db->execute('
         CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'pscheckout_onboarding_session (
             correlation_id VARCHAR(255) NOT NULL,
             user_id INT NOT NULL,
@@ -47,9 +49,7 @@ function upgrade_module_2_16_0($module)
             data TEXT,
             PRIMARY KEY (user_id, shop_id, is_closed)
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-    ');
-
-    $result &= Db::getInstance()->execute('
+    ') && $db->execute('
         CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'pscheckout_payment_session (
             correlation_id VARCHAR(255) NOT NULL,
             user_id INT NOT NULL,
@@ -66,6 +66,4 @@ function upgrade_module_2_16_0($module)
             PRIMARY KEY (user_id, shop_id, is_closed)
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
     ');
-
-    return $result;
 }

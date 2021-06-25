@@ -200,16 +200,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessPsxSendData()
     {
         $formData = json_decode(Tools::getValue('form'), true);
-        $session = json_decode(Tools::getValue('session'));
         $psxForm = (new PsxDataPrepare($formData))->prepareData();
         $errors = (new PsxDataValidation())->validateData($psxForm);
 
         if (!empty($errors)) {
             $this->ajaxDie(json_encode($errors));
         }
-
-        /** @var PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration $configuration */
-        $configuration = $this->module->getService('ps_checkout.configuration');
 
         // Save form in database
         if (false === $this->savePsxForm($psxForm)) {
@@ -218,7 +214,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         /** @var PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding $psxOnboarding */
         $psxOnboarding = $this->module->getService('ps_checkout.api.psx.onboarding');
-        $response = $psxOnboarding->setOnboardingMerchant(array_filter($psxForm), $session->correlation_id);
+        $response = $psxOnboarding->setOnboardingMerchant(array_filter($psxForm));
 
         $this->ajaxDie(json_encode($response));
     }

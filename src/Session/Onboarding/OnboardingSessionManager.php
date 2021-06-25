@@ -21,11 +21,13 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Session\Onboarding;
 
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Authentication;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutSessionException;
 use PrestaShop\Module\PrestashopCheckout\Session\Session;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionHelper;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionManager;
+use Ramsey\Uuid\Uuid;
 
 class OnboardingSessionManager extends SessionManager
 {
@@ -74,11 +76,19 @@ class OnboardingSessionManager extends SessionManager
      */
     public function openOnboarding($data, $isShopCreated = false)
     {
+        $paymentAuthentication = new Authentication(\Context::getContext()->link);
+        $authToken = $paymentAuthentication->getAuthToken();
+        $authToken = [
+            'auth_token' => Uuid::uuid4()->toString(),
+            'expires_at' => SessionHelper::updateExpirationDate(date('Y-m-d H:i:s')),
+        ];
         $sessionData = [
             'user_id' => (int) $this->context->employee->id,
             'shop_id' => (int) $this->context->shop->id,
             'is_closed' => false,
+            'auth_token' => $authToken['auth_token'],
             'status' => $isShopCreated ? $this->states['SHOP_CREATED'] : $this->configuration['initial_state'],
+            'expires_at' => $authToken['expires_at'],
             'is_sse_opened' => false,
             'data' => json_encode($data),
         ];
@@ -188,5 +198,20 @@ class OnboardingSessionManager extends SessionManager
     public function closeOnboarding(Session $session)
     {
         return $this->close($session);
+    }
+
+    /**
+     * Get latest opened onboarding session for webhooks
+     *
+     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session|null
+     */
+    public function getLatestOpenedSession()
+    {
+        $sessionData = [
+            'shop_id' => (int) $this->context->shop->id,
+            'is_closed' => false,
+        ];
+
+        return $this->get($sessionData);
     }
 }

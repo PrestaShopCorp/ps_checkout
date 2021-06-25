@@ -21,7 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Session;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Authentication;
 use Ramsey\Uuid\Uuid;
 
 class AbstractSessionRepository implements SessionRepositoryInterface
@@ -34,7 +33,7 @@ class AbstractSessionRepository implements SessionRepositoryInterface
     /**
      * @var \Db
      */
-    private $db;
+    protected $db;
 
     /**
      * @return void
@@ -53,13 +52,7 @@ class AbstractSessionRepository implements SessionRepositoryInterface
      */
     public function save(array $sessionData)
     {
-        $paymentAuthentication = new Authentication(\Context::getContext()->link);
-        $authToken = $paymentAuthentication->getAuthToken();
         $createdAt = date('Y-m-d H:i:s');
-        $authToken = [
-            'auth_token' => Uuid::uuid4()->toString(),
-            'expires_at' => SessionHelper::updateExpirationDate($createdAt),
-        ];
         $data = isset($sessionData['data']) ? $sessionData['data'] : null;
 
         $insertData = [
@@ -67,12 +60,12 @@ class AbstractSessionRepository implements SessionRepositoryInterface
             'user_id' => $sessionData['user_id'],
             'shop_id' => $sessionData['shop_id'],
             'is_closed' => $sessionData['is_closed'],
-            'auth_token' => pSQL($authToken['auth_token']),
+            'auth_token' => pSQL($sessionData['auth_token']),
             'status' => pSQL($sessionData['status']),
             'created_at' => pSQL($createdAt),
             'updated_at' => pSQL($createdAt),
             'closed_at' => null,
-            'expires_at' => pSQL($authToken['expires_at']),
+            'expires_at' => pSQL($sessionData['expires_at']),
             'is_sse_opened' => $sessionData['is_sse_opened'],
             'data' => $data,
         ];
@@ -89,13 +82,18 @@ class AbstractSessionRepository implements SessionRepositoryInterface
      */
     public function get(array $sessionData)
     {
-        $query = '
-            SELECT *
-            FROM ' . _DB_PREFIX_ . $this->table . '
-            WHERE user_id = ' . $sessionData['user_id'] . '
-            AND shop_id = ' . $sessionData['shop_id'] . '
-            AND is_closed = ' . (int) $sessionData['is_closed'] . ';
-        ';
+        $query = new \DbQuery();
+        $query->select('*');
+        $query->from($this->table);
+        $query->where('shop_id = ' . (int) $sessionData['shop_id']);
+        $query->where('is_closed = ' . (int) $sessionData['is_closed']);
+        $query->orderBy('updated_at DESC');
+
+        // Webhook are not in employee context
+        if (!empty($sessionData['user_id'])) {
+            $query->where('user_id = ' . (int) $sessionData['user_id']);
+        }
+
         $result = $this->db->getRow($query);
 
         return $result ? new Session($result) : null;
@@ -161,6 +159,8 @@ class AbstractSessionRepository implements SessionRepositoryInterface
             'UPDATE `' . _DB_PREFIX_ . $this->table . '`
             SET `is_closed` = `is_closed` + 1
             WHERE `is_closed` > 0
+            AND `user_id` = ' . $userId . '
+            AND `shop_id` = ' . $shopId . '
             ORDER BY `is_closed` DESC'
         );
 

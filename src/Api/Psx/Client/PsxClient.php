@@ -24,13 +24,15 @@ use GuzzleHttp\Client;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PsxEnv;
+use PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 
 class PsxClient extends GenericClient
 {
-    public function __construct()
+    public function __construct(OnboardingSessionManager $onboardingSessionManager)
     {
         $context = \Context::getContext();
+        $openedOnboardingSession = $onboardingSessionManager->getOpened();
         $client = new Client([
             'base_url' => (new PsxEnv())->getPsxApiUrl(),
             'defaults' => [
@@ -53,6 +55,8 @@ class PsxClient extends GenericClient
                         null,
                         (int) $context->shop->id
                     ),
+                    'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),
+                    'Session-Token' => $openedOnboardingSession->getAuthToken(),
                 ],
             ],
         ]);

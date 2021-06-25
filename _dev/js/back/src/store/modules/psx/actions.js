@@ -25,8 +25,7 @@ export default {
       url: getters.adminController,
       action: 'PsxSendData',
       data: {
-        form: JSON.stringify(payload.form),
-        session: JSON.stringify(payload.session)
+        form: JSON.stringify(payload.form)
       }
     }).then(response => {
       if (response.status === false) {
