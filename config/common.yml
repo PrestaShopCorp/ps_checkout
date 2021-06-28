@@ -226,7 +226,7 @@ services:
     public: true
     arguments:
       - '@ps_checkout.onboarding.status_helper'
-
+      - '@ps_checkout.context.prestashop'
 
   ps_checkout.store.store:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter'
