@@ -56,6 +56,6 @@ class ShopDispatcher implements Dispatcher
 
         $openedSession->setData(json_encode($data));
 
-        return (bool)$onboardingSessionManager->apply('create_shop', $openedSession->toArray(true));
+        return (bool) $onboardingSessionManager->apply('create_shop', $openedSession->toArray(true));
     }
 }

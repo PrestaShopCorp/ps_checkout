@@ -26,7 +26,7 @@ use Symfony\Component\Yaml\Yaml as SymfonyYaml;
 /**
  * As we cannot use directly Symfony/Yaml component properly through different PrestaShop versions,
  * we can use this class instead. It selects existing methods from the component according to the version
-*/
+ */
 class Yaml
 {
     /**
