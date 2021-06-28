@@ -130,7 +130,7 @@ export class PaymentOptionsComponent extends BaseComponent {
     });
 
     this.getHookPaymentElements().forEach((element) => {
-      if (element.id !== 'ps_checkout-displayPayment') {
+      if (element.id !== 'ps_checkout-displayPayment' && element.id !== 'ps_checkout-notification-container') {
         element.style.display = 'none';
       }
     });
