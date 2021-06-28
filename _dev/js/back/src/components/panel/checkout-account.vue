@@ -49,10 +49,8 @@
           <AccountStatusCheckout v-if="checkoutAccountStatus" class="mr-3" />
 
           <div class="text-center float-right" v-if="!loggedInWithPsAccountsAccount && !loggedInWithPsCheckoutAccount">
-<!--            TODO: Add link to PsAccounts configuation page-->
-            <a href="#" @click.prevent="goToSignIn()" class="mr-4">
-              <b>Setup your PrestaShop account here!</b>
-<!--              <b>{{ $t('panel.accounts.checkout.logIn') }}</b>-->
+            <a :href="configurePsAccountsURL" class="mr-4">
+              <b>{{ $t('panel.accounts.checkout.logIn') }}</b>
             </a>
           </div>
 
@@ -149,6 +147,9 @@
       },
       loggedInWithPsAccountsAccount() {
         return this.$store.state.onboarding.psAccountsOnboarded;
+      },
+      configurePsAccountsURL() {
+        return this.$store.state.onboarding.psAccountsConfigureURL;
       }
     },
     methods: {
