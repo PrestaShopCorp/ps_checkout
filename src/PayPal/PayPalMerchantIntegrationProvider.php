@@ -20,10 +20,10 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
-use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop;
 use Psr\SimpleCache\CacheInterface;
 
-class PayPalOrderProvider
+class PayPalMerchantIntegrationProvider
 {
     /**
      * @var CacheInterface
@@ -39,7 +39,7 @@ class PayPalOrderProvider
     }
 
     /**
-     * @param string $id PayPal Order Id
+     * @param string $id PayPal Merchant Id
      *
      * @return array|false
      */
@@ -49,13 +49,13 @@ class PayPalOrderProvider
             return $this->cache->get($id);
         }
 
-        $orderPayPal = new PaypalOrder($id);
+        $response = (new Shop(\Context::getContext()->link))->getMerchantIntegration($id);
 
-        if (!$orderPayPal->isLoaded()) {
+        if (false === $response['status'] || empty($response['body']['merchant_integrations'])) {
             return false;
         }
 
-        $data = $orderPayPal->getOrder();
+        $data = $response['body']['merchant_integrations'];
 
         $this->cache->set($id, $data);
 

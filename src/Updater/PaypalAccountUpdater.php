@@ -20,9 +20,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Updater;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop;
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalMerchantIntegrationProvider;
 use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
 
 /**
@@ -46,9 +46,15 @@ class PaypalAccountUpdater
      */
     private $persistentConfiguration;
 
-    public function __construct(PersistentConfiguration $persistentConfiguration)
+    /**
+     * @var PayPalMerchantIntegrationProvider
+     */
+    private $merchantIntegrationProvider;
+
+    public function __construct(PersistentConfiguration $persistentConfiguration, PayPalMerchantIntegrationProvider $merchantIntegrationProvider)
     {
         $this->persistentConfiguration = $persistentConfiguration;
+        $this->merchantIntegrationProvider = $merchantIntegrationProvider;
     }
 
     /**
@@ -68,7 +74,7 @@ class PaypalAccountUpdater
             throw new PsCheckoutException('MerchantId cannot be empty', PsCheckoutException::PSCHECKOUT_MERCHANT_IDENTIFIER_MISSING);
         }
 
-        $merchantIntegration = $this->getMerchantIntegration($merchantId);
+        $merchantIntegration = $this->merchantIntegrationProvider->getById($merchantId);
 
         if (false === $merchantIntegration) {
             $account->setEmail('');
@@ -153,23 +159,5 @@ class PaypalAccountUpdater
         }
 
         return self::SUBSCRIBED;
-    }
-
-    /**
-     * Get the merchant integration
-     *
-     * @param string $merchantId
-     *
-     * @return false|mixed
-     */
-    private function getMerchantIntegration($merchantId)
-    {
-        $response = (new Shop(\Context::getContext()->link))->getMerchantIntegration($merchantId);
-
-        if (false === $response['status']) {
-            return false;
-        }
-
-        return $response['body']['merchant_integrations'];
     }
 }

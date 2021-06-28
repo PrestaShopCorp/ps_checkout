@@ -23,6 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
+use Psr\SimpleCache\CacheInterface;
 
 class MerchantDispatcher implements Dispatcher
 {
@@ -39,6 +40,20 @@ class MerchantDispatcher implements Dispatcher
 
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
+
+        /** @var CacheInterface $merchantIntegrationCache */
+        $merchantIntegrationCache = $module->getService('ps_checkout.cache.paypal.merchant_integration');
+
+        // Webhook inform we need to retrieve fresh data
+        if ($merchantIntegrationCache->has($payload['merchantId'])) {
+            $merchantIntegrationCache->delete($payload['merchantId']);
+        }
+
+        // Cache used provide pruning (deletion) of all expired cache items to reduce cache size
+        if (method_exists($merchantIntegrationCache, 'prune')) {
+            $merchantIntegrationCache->prune();
+        }
+
         /** @var PaypalAccountUpdater $accountUpdater */
         $accountUpdater = $module->getService('ps_checkout.updater.paypal.account');
 

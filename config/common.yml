@@ -187,6 +187,7 @@ services:
     public: true
     arguments:
       - '@ps_checkout.persistent.configuration'
+      - '@ps_checkout.paypal.provider.merchant_integration'
 
   ps_checkout.step.live:
     class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep'
@@ -357,3 +358,17 @@ services:
     public: true
     arguments:
       - '@ps_checkout.cache.paypal.order'
+
+  ps_checkout.cache.paypal.merchant_integration:
+    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
+    public: true
+    arguments:
+      - 'merchant-integration'
+      - 86400
+      - '@=service("ps_checkout.cache.directory").getPath()'
+
+  ps_checkout.paypal.provider.merchant_integration:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalMerchantIntegrationProvider'
+    public: true
+    arguments:
+      - '@ps_checkout.cache.paypal.merchant_integration'
