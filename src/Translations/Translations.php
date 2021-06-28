@@ -225,6 +225,7 @@ class Translations
                         'titleLogout' => $this->module->l('Are you sure you want to logout ?', 'translations'),
                         'descriptionLogout' => $this->module->l('Logging out will deactivate all payment methods. You will no longer be able to receive payments with PrestaShop Checkout.', 'translations'),
                         'cancel' => $this->module->l('Cancel', 'translations'),
+                        'enablePsAccounts' => $this->module->l('Please enable PrestaShop Account module in order to login', 'translations'),
                     ],
                 ],
                 'psx-form' => [
