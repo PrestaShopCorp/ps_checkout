@@ -21,8 +21,8 @@
 namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Date\DatePresenter;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
+use Psr\SimpleCache\CacheInterface;
 
 class OrderDispatcher implements Dispatcher
 {
@@ -151,46 +151,15 @@ class OrderDispatcher implements Dispatcher
             }
         }
 
-        $orderPaymentCollection = $order->getOrderPaymentCollection();
-        $orderPaymentCollection->where('amount', '=', $resource['amount']['value']);
-        $shouldAddOrderPayment = true;
-
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider $fundingSourceTranslationProvider */
-        $fundingSourceTranslationProvider = $module->getService('ps_checkout.funding_source.translation');
+        /** @var CacheInterface $paypalOrderCache */
+        $paypalOrderCache = $module->getService('ps_checkout.cache.paypal.order');
 
-        /** @var \OrderPayment[] $orderPayments */
-        $orderPayments = $orderPaymentCollection->getAll();
-        foreach ($orderPayments as $orderPayment) {
-            if (\Validate::isLoadedObject($orderPayment)) {
-                if ($orderPayment->transaction_id !== $resource['id']) {
-                    \Db::getInstance()->update(
-                        'order_payment',
-                        [
-                            'payment_method' => pSQL($fundingSourceTranslationProvider->getPaymentMethodName($this->psCheckoutCart->paypal_funding)),
-                            'transaction_id' => pSQL($resource['id']),
-                        ],
-                        'id_order_payment = ' . (int) $orderPayment->id
-                    );
-                }
-                $shouldAddOrderPayment = false;
-            }
-        }
-
-        if (true === $shouldAddOrderPayment) {
-            try {
-                $order->addOrderPayment(
-                    $resource['amount']['value'],
-                    $fundingSourceTranslationProvider->getPaymentMethodName($this->psCheckoutCart->paypal_funding),
-                    $resource['id'],
-                    \Currency::getCurrencyInstance(\Currency::getIdByIsoCode($resource['amount']['currency_code'])),
-                    (new DatePresenter($resource['create_time'], 'Y-m-d H:i:s'))->present()
-                );
-            } catch (\Exception $exception) {
-                throw new PsCheckoutException('Cannot add OrderPayment', PsCheckoutException::PRESTASHOP_ORDER_PAYMENT, $exception);
-            }
+        // Cache used provide pruning (deletion) of all expired cache items to reduce cache size
+        if (method_exists($paypalOrderCache, 'prune')) {
+            $paypalOrderCache->prune();
         }
 
         return true;

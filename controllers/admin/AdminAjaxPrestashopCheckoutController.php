@@ -23,11 +23,11 @@ use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
-use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPresenter;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
 use PrestaShop\Module\PrestashopCheckout\Settings\RoundingSettings;
+use Psr\SimpleCache\CacheInterface;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {
@@ -436,9 +436,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             ]));
         }
 
-        $orderPayPal = new PaypalOrder($psCheckoutCart->paypal_order);
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider $paypalOrderProvider */
+        $paypalOrderProvider = $this->module->getService('ps_checkout.paypal.provider.order');
 
-        if (false === $orderPayPal->isLoaded()) {
+        $paypalOrder = $paypalOrderProvider->getById($psCheckoutCart->paypal_order);
+
+        if (empty($paypalOrder)) {
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -452,7 +455,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             ]));
         }
 
-        $presenter = new OrderPresenter($this->module, $orderPayPal->getOrder());
+        $presenter = new OrderPresenter($this->module, $paypalOrder);
 
         $this->context->smarty->assign([
             'moduleName' => $this->module->displayName,
@@ -538,6 +541,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         ]);
 
         if (isset($response['httpCode']) && $response['httpCode'] === 200) {
+            /** @var CacheInterface $paypalOrderCache */
+            $paypalOrderCache = $this->module->getService('ps_checkout.cache.paypal.order');
+            if ($paypalOrderCache->has($orderPayPalId)) {
+                $paypalOrderCache->delete($orderPayPalId);
+            }
+
             $this->ajaxDie(json_encode([
                 'status' => true,
                 'content' => $this->l('Refund has been processed by PayPal.', 'translations'),

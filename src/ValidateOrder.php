@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * Class that allow to validate an order
@@ -162,6 +163,10 @@ class ValidateOrder
                 }
             }
 
+            /** @var CacheInterface $paypalOrderCache */
+            $paypalOrderCache = $module->getService('ps_checkout.cache.paypal.order');
+            $paypalOrderCache->set($response['body']['id'], $response['body']);
+
             if (false === $psCheckoutCart) {
                 $psCheckoutCart = new \PsCheckoutCart();
                 $psCheckoutCart->id_cart = (int) $payload['cartId'];
@@ -179,7 +184,6 @@ class ValidateOrder
                 throw new PsCheckoutException(sprintf('Transaction declined by PayPal : %s', false === empty($response['body']['details']['description']) ? $response['body']['details']['description'] : 'No detail'), PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
             }
 
-            // If OrderState here is not PS_OS_PAYMENT PrestaShop will not create OrderPayment and not save Transaction Id and right Option Name
             try {
                 $module->validateOrder(
                     $payload['cartId'],
@@ -228,27 +232,6 @@ class ValidateOrder
                         $exceptionHandler->handle($exception, false);
                     } catch (\Exception $exception) {
                         $exceptionHandler->handle(new PsCheckoutException('Unable to change PrestaShop OrderState', PsCheckoutException::PRESTASHOP_ORDER_STATE_ERROR, $exception));
-                    }
-
-                    // If new OrderState is PS_OS_PAYMENT PrestaShop create an OrderPayment with no TransactionId and wrong Option Name
-                    // So we have to update it
-                    if ($newOrderState === (int) \Configuration::getGlobalValue('PS_OS_PAYMENT')) {
-                        $orderPaymentCollection = new \PrestaShopCollection('OrderPayment');
-                        $orderPaymentCollection->where('order_reference', '=', $orderPS->reference);
-
-                        /** @var \OrderPayment|false $orderPayment */
-                        $orderPayment = $orderPaymentCollection->getFirst();
-
-                        if (false !== $orderPayment) {
-                            \Db::getInstance()->update(
-                                'order_payment',
-                                [
-                                    'payment_method' => pSQL($fundingSourceTranslationProvider->getPaymentMethodName($psCheckoutCart->paypal_funding)),
-                                    'transaction_id' => pSQL($transactionIdentifier),
-                                ],
-                                'id_order_payment = ' . (int) $orderPayment->id
-                            );
-                        }
                     }
                 }
             }

@@ -45,6 +45,8 @@ class Ps_checkout extends PaymentModule
         'displayProductPriceBlock',
         'actionFrontControllerSetMedia',
         'header',
+        'actionObjectOrderPaymentAddAfter',
+        'actionObjectOrderPaymentUpdateAfter',
     ];
 
     /**
@@ -127,7 +129,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.15.3';
+    const VERSION = '2.15.4';
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -153,7 +155,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.15.3';
+        $this->version = '2.15.4';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
         $this->currencies = true;
@@ -1620,5 +1622,109 @@ class Ps_checkout extends PaymentModule
         ]);
 
         return $this->display(__FILE__, '/views/templates/hook/header.tpl');
+    }
+
+    /**
+     * When an OrderPayment is created we should update fields payment_method and transaction_id
+     *
+     * @param array $params
+     */
+    public function hookActionObjectOrderPaymentAddAfter(array $params)
+    {
+        $this->processHookActionObjectOrderPayment($params);
+    }
+
+    /**
+     * When an OrderPayment is updated we should update fields payment_method and transaction_id
+     *
+     * @param array $params
+     */
+    public function hookActionObjectOrderPaymentUpdateAfter(array $params)
+    {
+        $this->processHookActionObjectOrderPayment($params);
+    }
+
+    /**
+     * When an OrderPayment is created or updated we should update fields payment_method and transaction_id
+     *
+     * @param array $params
+     *
+     * @return void
+     */
+    private function processHookActionObjectOrderPayment($params)
+    {
+        if (!isset($params['object'])) {
+            return;
+        }
+
+        /** @var \OrderPayment $orderPayment */
+        $orderPayment = $params['object'];
+
+        if (!Validate::isLoadedObject($orderPayment)
+            || empty($orderPayment->order_reference)
+            || !empty($orderPayment->transaction_id)
+            || 1 !== count(OrderPayment::getByOrderReference($orderPayment->order_reference))
+        ) {
+            return;
+        }
+
+        /** @var Order[] $orderCollection */
+        $orderCollection = Order::getByReference($orderPayment->order_reference);
+        $id_cart = 0;
+
+        foreach ($orderCollection as $order) {
+            if ($this->name !== $order->module) {
+                return;
+            }
+            $id_cart = (int) $order->id_cart;
+        }
+
+        if (!$id_cart) {
+            return;
+        }
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $repository */
+        $repository = $this->getService('ps_checkout.repository.pscheckoutcart');
+
+        $psCheckoutCart = $repository->findOneByCartId($id_cart);
+
+        if (!$psCheckoutCart) {
+            return;
+        }
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider $paypalOrderProvider */
+        $paypalOrderProvider = $this->getService('ps_checkout.paypal.provider.order');
+
+        $paypalOrder = $paypalOrderProvider->getById($psCheckoutCart->paypal_order);
+
+        if (!empty($paypalOrder['purchase_units'][0]['payments']['captures'])) {
+            $transactionId = $paypalOrder['purchase_units'][0]['payments']['captures'][0]['id'];
+        } elseif (!empty($paypalOrder['purchase_units'][0]['payments']['authorizations'])) {
+            $transactionId = $paypalOrder['purchase_units'][0]['payments']['authorizations'][0]['id'];
+        } else {
+            return;
+        }
+
+        $cardNumber = '';
+        $cardBrand = '';
+
+        if (!empty($paypalOrder['payment_source']['card'])) {
+            $cardNumber = sprintf('#### #### #### %d', $paypalOrder['payment_source']['card']['last_digits']);
+            $cardBrand = $paypalOrder['payment_source']['card']['brand'];
+        }
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider $fundingSourceTranslationProvider */
+        $fundingSourceTranslationProvider = $this->getService('ps_checkout.funding_source.translation');
+
+        \Db::getInstance()->update(
+            'order_payment',
+            [
+                'payment_method' => pSQL($fundingSourceTranslationProvider->getPaymentMethodName($psCheckoutCart->paypal_funding)),
+                'transaction_id' => pSQL($transactionId),
+                'card_number' => pSQL($cardNumber),
+                'card_brand' => pSQL($cardBrand),
+            ],
+            'id_order_payment = ' . (int) $orderPayment->id
+        );
     }
 }
