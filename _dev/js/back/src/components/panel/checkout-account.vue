@@ -48,10 +48,18 @@
 
           <AccountStatusCheckout v-if="checkoutAccountStatus" class="mr-3" />
 
-          <div class="text-center float-right" v-if="!loggedInWithPsAccountsAccount && !loggedInWithPsCheckoutAccount">
-            <a :href="configurePsAccountsURL" class="mr-4">
+          <div
+            class="text-center float-right"
+            v-if="!loggedInWithPsAccountsAccount && !loggedInWithPsCheckoutAccount">
+            <a
+              v-if="isPsAccountsEnabled"
+              :href="configurePsAccountsURL"
+              class="mr-4">
               <b>{{ $t('panel.accounts.checkout.logIn') }}</b>
             </a>
+            <span v-else>
+              {{ $t('panel.accounts.checkout.enablePsAccounts') }}
+            </span>
           </div>
 
           <div class="text-right" v-if="checkoutAccountStatus && loggedInWithPsCheckoutAccount">
@@ -150,6 +158,9 @@
       },
       configurePsAccountsURL() {
         return this.$store.state.onboarding.psAccountsConfigureURL;
+      },
+      isPsAccountsEnabled() {
+        return this.$store.state.onboarding.psAccountsEnabled;
       }
     },
     methods: {
