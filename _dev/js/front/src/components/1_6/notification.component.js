@@ -20,7 +20,8 @@ import { BaseComponent } from '../../core/dependency-injection/base.component';
 
 export class NotificationComponent extends BaseComponent {
   static Inject = {
-    htmlElementService: 'HTMLElementService'
+    htmlElementService: 'HTMLElementService',
+    prestashopService: 'PrestashopService',
   };
 
   constructor(app, props) {
@@ -36,9 +37,11 @@ export class NotificationComponent extends BaseComponent {
   }
 
   render() {
-    this.notificationPaymentContainerTarget.prepend(
-      this.notificationPaymentContainer
-    );
+    if (!this.prestashopService.isNativeOnePageCheckoutPage()) {
+      this.notificationPaymentContainerTarget.prepend(
+        this.notificationPaymentContainer
+      );
+    }
 
     return this;
   }

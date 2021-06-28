@@ -676,7 +676,7 @@ class Ps_checkout extends PaymentModule
             return;
         }
 
-        if ($psCheckoutCart->isExpressCheckout) {
+        if ($psCheckoutCart->isExpressCheckout || !$this->context->cart->nbProducts()) {
             $psCheckoutCartRepository->remove($psCheckoutCart);
             $this->context->cookie->__unset('paypalEmail');
         }
@@ -1029,9 +1029,11 @@ class Ps_checkout extends PaymentModule
         $payPalClientToken = '';
         $payPalOrderId = '';
         $psCheckoutCart = false;
+        $cartProductCount = 0;
 
         // Sometimes we can be in Front Office without a cart...
         if (Validate::isLoadedObject($this->context->cart)) {
+            $cartProductCount = (int) $this->context->cart->nbProducts();
             /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
             $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
 
@@ -1077,6 +1079,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'ExpressCheckoutOrderEnabled' => $expressCheckoutConfiguration->isCheckoutPageEnabled(),
             $this->name . '3dsEnabled' => $payPalConfiguration->is3dSecureEnabled(),
             $this->name . 'CspNonce' => $payPalConfiguration->getCSPNonce(),
+            $this->name . 'CartProductCount' => $cartProductCount,
             $this->name . 'FundingSourcesSorted' => $fundingSourcesSorted,
             $this->name . 'PayWithTranslations' => $payWithTranslations,
             $this->name . 'CheckoutTranslations' => [

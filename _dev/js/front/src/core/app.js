@@ -108,6 +108,11 @@ export class App {
         this.prestashopService.isProductPage()
       ) {
         await this.renderExpressCheckout();
+
+        if (this.prestashopService.isOrderPersonalInformationStepPage()) {
+          await this.renderCheckout();
+        }
+
         return this;
       }
 

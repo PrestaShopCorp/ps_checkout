@@ -51,10 +51,14 @@ export class PrestashopPs1_6Service {
     return document.body.id === 'order' || document.body.id === 'order-opc';
   }
 
+  static isNativeOnePageCheckoutPage() {
+    return document.body.id === 'order-opc';
+  }
+
   static isOrderPersonalInformationStepPage() {
     return (
       document.body.id === 'authentication' ||
-      (document.body.id === 'order-opc' && window.isLogged === false)
+      (document.body.id === 'order-opc' && !window.isLogged && !window.isGuest)
     );
   }
 
@@ -64,6 +68,10 @@ export class PrestashopPs1_6Service {
 
   static isProductPage() {
     return document.body.id === 'product';
+  }
+
+  static isLogged() {
+    return !!window.isLogged || !!window.isGuest;
   }
 
   static onUpdatedCart() {}

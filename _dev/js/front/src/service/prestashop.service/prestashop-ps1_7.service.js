@@ -36,6 +36,10 @@ export class PrestashopPs1_7Service {
     return document.body.id === 'checkout';
   }
 
+  static isNativeOnePageCheckoutPage() {
+    return false; // This doesn't exist in PrestaShop 1.7
+  }
+
   static isOrderPersonalInformationStepPage() {
     if (document.body.id !== 'checkout') return false;
     const step = document.querySelector('#checkout-personal-information-step');
@@ -49,6 +53,10 @@ export class PrestashopPs1_7Service {
 
   static isProductPage() {
     return document.body.id === 'product';
+  }
+
+  static isLogged() {
+    return window.prestashop.customer.is_logged;
   }
 
   static onUpdatedCart(listener) {

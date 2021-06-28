@@ -17,9 +17,9 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 export const DefaultSelectors1_6 = {
-  BASE_PAYMENT_CONFIRMATION: '#payment-confirmation [type="submit"]',
+  BASE_PAYMENT_CONFIRMATION: '#ps_checkout-express-checkout-submit-button',
 
-  CONDITIONS_CHECKBOXES: '#conditions-to-approve input[type="checkbox"]',
+  CONDITIONS_CHECKBOXES: 'input[name="cgv"]',
 
   LOADER_PARENT: 'body',
 

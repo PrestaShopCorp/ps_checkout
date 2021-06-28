@@ -52,12 +52,20 @@ export class PrestashopService {
     return this.instance.isOrderPage();
   }
 
+  isNativeOnePageCheckoutPage() {
+    return this.instance.isNativeOnePageCheckoutPage();
+  }
+
   isIframeProductPage() {
     return !!this.instance.isIframeProductPage();
   }
 
   isProductPage() {
     return !!this.instance.isProductPage();
+  }
+
+  isLogged() {
+    return this.instance.isLogged();
   }
 
   getVersion() {

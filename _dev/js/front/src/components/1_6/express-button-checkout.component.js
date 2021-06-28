@@ -22,13 +22,21 @@ import { ExpressCheckoutButtonComponent } from '../common/express-checkout-butto
 export class ExpressButtonCheckoutComponent extends BaseComponent {
   static Inject = {
     htmlElementService: 'HTMLElementService',
-    PsCheckoutApi: 'PsCheckoutApi',
+    prestashopService: 'PrestashopService',
+    psCheckoutApi: 'PsCheckoutApi',
     $: '$'
   };
 
   getButtonContainer() {
-    const selector = '#opc_account_form';
-    return document.querySelector(selector);
+    if (this.prestashopService.isOrderPersonalInformationStepPage() && !this.prestashopService.isNativeOnePageCheckoutPage()) {
+      return document.querySelector('#create-account_form');
+    }
+
+    if (this.prestashopService.isNativeOnePageCheckoutPage()) {
+      return document.querySelector('#opc_account_choice .opc-button');
+    }
+
+    return document.querySelector('#opc_account_form');
   }
 
   created() {
@@ -65,6 +73,17 @@ export class ExpressButtonCheckoutComponent extends BaseComponent {
           })
       }
     ).render();
+
+    if (this.prestashopService.isNativeOnePageCheckoutPage()) {
+      const separatorText = document.createElement('div');
+      separatorText.classList.add('ps_checkout-express-separator');
+      separatorText.innerText = this.$('express-button.cart.separator');
+
+      this.buttonContainer.append(separatorText);
+      this.buttonContainer.append(this.checkoutExpressButton);
+
+      return this;
+    }
 
     this.buttonContainer.prepend(this.checkoutExpressButton);
 

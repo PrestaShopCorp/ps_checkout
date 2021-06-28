@@ -35,8 +35,7 @@
     {$translatedText|escape:'htmlall':'UTF-8'}
   </p>
 </div>
-{else}
-  {if $is17 || ($isOnePageCheckout16 && !$isExpressCheckout)}
+{elseif $is17}
   <div id="ps_checkout-loader" class="express-checkout-block mb-2">
     <div class="express-checkout-block-wrapper">
       <p class="express-checkout-spinner-text">
@@ -47,7 +46,6 @@
       </div>
     </div>
   </div>
-  {/if}
 {/if}
 
 {if $is17}

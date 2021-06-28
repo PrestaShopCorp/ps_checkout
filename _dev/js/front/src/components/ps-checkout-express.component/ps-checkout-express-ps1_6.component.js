@@ -58,7 +58,7 @@ export class PsCheckoutExpressPs1_6Component extends BaseComponent {
 
     if (this.prestashopService.isCartPage()) {
       if (!this.config.expressCheckout.enabled.cart) return this;
-      if (document.body.classList.contains('cart-empty')) return this;
+      if (!window.ps_checkoutCartProductCount) return this;
 
       this.children.expressButton = new ExpressButtonCartComponent(
         this.app
@@ -69,6 +69,7 @@ export class PsCheckoutExpressPs1_6Component extends BaseComponent {
 
     if (this.prestashopService.isOrderPersonalInformationStepPage()) {
       if (!this.config.expressCheckout.enabled.order) return this;
+      if (!window.ps_checkoutCartProductCount) return this;
       this.children.expressButton = new ExpressButtonCheckoutComponent(
         this.app
       ).render();
