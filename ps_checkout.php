@@ -398,7 +398,7 @@ class Ps_checkout extends PaymentModule
             $this->disableSegment = false;
         }
 
-        return parent::disable($force_all);
+        return parent::disable();
     }
 
     /**
