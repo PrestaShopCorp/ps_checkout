@@ -51,6 +51,10 @@ export class HTMLElementService extends BaseClass {
     return this.instance.getBasePaymentConfirmation();
   }
 
+  getCheckoutExpressCartButtonContainer() {
+    return this.instance.getCheckoutExpressCartButtonContainer();
+  }
+
   getCheckoutExpressCheckoutButtonContainer() {
     return this.instance.getCheckoutExpressCheckoutButtonContainer();
   }
