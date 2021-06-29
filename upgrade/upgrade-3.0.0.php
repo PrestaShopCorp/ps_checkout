@@ -22,13 +22,13 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Update main function for module version 2.16.0
+ * Update main function for module version 3.0.0
  *
  * @param Ps_checkout $module
  *
  * @return bool
  */
-function upgrade_module_2_16_0($module)
+function upgrade_module_3_0_0($module)
 {
     $db = Db::getInstance();
 
