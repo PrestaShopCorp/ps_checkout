@@ -49,7 +49,7 @@ class OnboardingModule implements PresenterInterface
                         'configure' => 'ps_accounts',
                     ]
                 ),
-            ]
+            ],
         ];
     }
 }
