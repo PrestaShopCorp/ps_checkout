@@ -22,7 +22,6 @@ namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
 use PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter;
 use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
-use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataMatrice;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
 /**
@@ -185,20 +184,20 @@ class OnboardingPayloadBuilder extends Builder
             ]),
             'business_incorporation' => array_filter([
                 'incorporation_country_code' => $this->psxFormData['business_incorporation_country_code'],
-                'incorporation_date' => $this->psxFormData['business_incorporation_date']
+                'incorporation_date' => $this->psxFormData['business_incorporation_date'],
             ]),
             'names' => [
                 0 => array_filter([
                     'business_name' => $this->psxFormData['shop_name'],
                     'id' => '',
                     'type' => 'LEGAL',
-                ])
+                ]),
             ],
             'emails' => [
                 0 => array_filter([
                     'type' => 'CUSTOMER_SERVICE',
                     'email' => $this->psAccount->getOnboardedAccount()->getEmail(),
-                ])
+                ]),
             ],
             'website' => $this->context->shop->getBaseURL(),
             'addresses' => [
@@ -220,7 +219,7 @@ class OnboardingPayloadBuilder extends Builder
                         'sub_building' => $this->psxFormData['business_address_sub_building'],
                     ],
                     'type' => $this->psxFormData['business_address_type'],
-                ])
+                ]),
             ],
             'phones' => [
                 0 => array_filter([
@@ -228,7 +227,7 @@ class OnboardingPayloadBuilder extends Builder
                     'national_number' => $this->psxFormData['business_phone'],
                     'extension_number' => $this->psxFormData['business_phone_extension_number'],
                     'type' => 'CUSTOMER_SERVICE',
-                ])
+                ]),
             ],
             'documents' => [
                 0 => array_filter([
@@ -246,26 +245,26 @@ class OnboardingPayloadBuilder extends Builder
                         return $this->mapLinkDTO($psxFormLink);
                     }, $this->psxFormData['business_document_links']),
                     'type' => $this->psxFormData['business_document_type'],
-                ])
+                ]),
             ],
             'beneficial_owners' => [
                 'individual_beneficial_owners' => array_map(function ($psxFormIndividualBeneficialOwner) {
                     return array_filter([
                         'id' => $psxFormIndividualBeneficialOwner['id'],
-                        'names' => array_map(function($name) {
+                        'names' => array_map(function ($name) {
                             return $this->mapPersonNameDTO($name);
                         }, $psxFormIndividualBeneficialOwner['names']),
                         'citizenship' => $psxFormIndividualBeneficialOwner['citizenship'],
-                        'addresses' => array_map(function($address) {
+                        'addresses' => array_map(function ($address) {
                             return $this->mapAddressDTO($address);
                         }, $psxFormIndividualBeneficialOwner['addresses']),
-                        'phones' => array_map(function($phone) {
+                        'phones' => array_map(function ($phone) {
                             return $this->mapPhoneDTO($phone);
                         }, $psxFormIndividualBeneficialOwner['phones']),
                         'birth_details' => [
-                            'date_of_birth' => $psxFormIndividualBeneficialOwner['date_of_birth']
+                            'date_of_birth' => $psxFormIndividualBeneficialOwner['date_of_birth'],
                         ],
-                        'documents' => array_map(function($document) {
+                        'documents' => array_map(function ($document) {
                             return $this->mapDocumentDTO($document);
                         }, $psxFormIndividualBeneficialOwner['documents']),
                         'percentage_of_ownership' => $psxFormIndividualBeneficialOwner['percentage_of_ownership'],
@@ -306,7 +305,7 @@ class OnboardingPayloadBuilder extends Builder
                         'phones' => array_filter(array_map(function ($phone) {
                             return $this->mapPhoneDTO($phone);
                         }, $psxFormBusinessBeneficialOwner['business_phones'])),
-                        'documents' => array_map(function($document) {
+                        'documents' => array_map(function ($document) {
                             return $this->mapDocumentDTO($document);
                         }, $psxFormBusinessBeneficialOwner['documents']),
                     ]);
@@ -326,7 +325,7 @@ class OnboardingPayloadBuilder extends Builder
                         return $this->mapPhoneDTO($phone);
                     }, $bearer['phones'])),
                     'birth_details' => [
-                        'date_of_birth' => $bearer['date_of_birth']
+                        'date_of_birth' => $bearer['date_of_birth'],
                     ],
                     'documents' => array_filter(array_map(function ($document) {
                         return $this->mapDocumentDTO($document);
@@ -372,8 +371,8 @@ class OnboardingPayloadBuilder extends Builder
     {
         $node['financial_instruments'] = array_filter([
             'banks' => array_filter(array_map(function ($bank) {
-                    return $this->mapBankDTO($bank);
-                }, $this->psxFormData['financial_instruments_banks'])
+                return $this->mapBankDTO($bank);
+            }, $this->psxFormData['financial_instruments_banks'])
             ),
         ]);
 
@@ -387,7 +386,7 @@ class OnboardingPayloadBuilder extends Builder
     {
         $node['operations'] = array_filter([
             'banks' => array_filter(array_map(function ($operation) {
-                    return array_filter([
+                return array_filter([
                         'operation' => $operation['operation'],
                         'api_integration_preference' => array_filter([
                             'classic_api_integration' => [],
@@ -399,7 +398,7 @@ class OnboardingPayloadBuilder extends Builder
                                     'seller_nonce' => $operation['first_party_seller_nonce'],
                                 ],
                                 'third_party_details' => $operation['third_party_features'],
-                            ])
+                            ]),
                         ]),
                         'billing_agreement' => [
                             'description' => $operation['billing_agreement_description'],
@@ -412,7 +411,7 @@ class OnboardingPayloadBuilder extends Builder
                             'ec_token' => $operation['billing_agreement_ec_token'],
                         ],
                     ]);
-                }, $this->psxFormData['operations'])
+            }, $this->psxFormData['operations'])
             ),
         ]);
 
@@ -459,9 +458,11 @@ class OnboardingPayloadBuilder extends Builder
 
     /**
      * @param array $document
+     *
      * @return array
      */
-    private function mapDocumentDTO(array $document) {
+    private function mapDocumentDTO(array $document)
+    {
         return array_filter([
             'id' => $document['id'],
             'labels' => $document['labels'],
@@ -482,9 +483,11 @@ class OnboardingPayloadBuilder extends Builder
 
     /**
      * @param array $address
+     *
      * @return array
      */
-    private function mapAddressDTO(array $address) {
+    private function mapAddressDTO(array $address)
+    {
         return array_filter([
             'address_line_1' => $address['address_line_1'],
             'address_line_2' => $address['address_line_2'],
@@ -508,9 +511,11 @@ class OnboardingPayloadBuilder extends Builder
 
     /**
      * @param array $address
+     *
      * @return array
      */
-    private function mapAddressPortableDTO(array $address) {
+    private function mapAddressPortableDTO(array $address)
+    {
         return array_filter([
             'address_line_1' => $address['address_line_1'],
             'address_line_2' => $address['address_line_2'],
@@ -523,9 +528,11 @@ class OnboardingPayloadBuilder extends Builder
 
     /**
      * @param array $name
+     *
      * @return array
      */
-    private function mapPersonNameDTO(array $name) {
+    private function mapPersonNameDTO(array $name)
+    {
         return array_filter([
             'prefix' => $name['prefix'],
             'given_name' => $name['given_name'],
@@ -539,6 +546,7 @@ class OnboardingPayloadBuilder extends Builder
 
     /**
      * @param array $phone
+     *
      * @return array
      */
     private function mapPhoneDTO(array $phone)
@@ -553,6 +561,7 @@ class OnboardingPayloadBuilder extends Builder
 
     /**
      * @param array $file
+     *
      * @return array
      */
     private function mapFileDTO(array $file)
@@ -568,6 +577,7 @@ class OnboardingPayloadBuilder extends Builder
 
     /**
      * @param array $link
+     *
      * @return array
      */
     private function mapLinkDTO(array $link)
@@ -581,6 +591,7 @@ class OnboardingPayloadBuilder extends Builder
 
     /**
      * @param array $bank
+     *
      * @return array
      */
     private function mapBankDTO(array $bank)
