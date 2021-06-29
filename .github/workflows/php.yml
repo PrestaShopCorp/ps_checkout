@@ -63,6 +63,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Setup PHP 7.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+
       - name: Cache vendor folder
         uses: actions/cache@v1
         with:
