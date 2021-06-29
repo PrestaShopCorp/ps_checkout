@@ -25,7 +25,6 @@ use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
-use PrestaShop\Module\PsAccounts\Service\PsAccountsService;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 
 /**

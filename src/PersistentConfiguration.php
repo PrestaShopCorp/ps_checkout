@@ -106,6 +106,7 @@ class PersistentConfiguration
 
     /**
      * @param PsAccount $psAccount
+     *
      * @return bool
      */
     public function savePSXForm(PsAccount $psAccount)

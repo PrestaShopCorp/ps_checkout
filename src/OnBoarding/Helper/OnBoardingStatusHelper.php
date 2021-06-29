@@ -41,6 +41,7 @@ class OnBoardingStatusHelper
     {
         try {
             $psAccountsService = $this->psAccountsFacade->getPsAccountsService();
+
             return $psAccountsService->isAccountLinked();
         } catch (\Exception $exception) {
             return false;
