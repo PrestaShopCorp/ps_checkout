@@ -102,7 +102,7 @@
           </div>
         </div>
         <div class="right-block">
-          <div class="doc">
+          <div class="doc" style="display: none;">
             <b class="text-muted">{{ $t('panel.help.needHelp') }}</b>
             <br />
             <b-button
