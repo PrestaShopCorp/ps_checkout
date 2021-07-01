@@ -93,7 +93,7 @@
                 </p>
                 <p>
                   <b-link
-                    :href="$t('pages.signup.mentionsTermsLinkPart2')"
+                    :href="privacyPolicyUrl"
                     target="_blank"
                   >
                     {{ $t('pages.signup.mentionsTermsLinkTextPart2') }}
@@ -185,6 +185,9 @@
           return this.terms.errorMessage;
         }
         return '';
+      },
+      privacyPolicyUrl() {
+        return this.$store.state.context.privacyPolicyUrl;
       }
     },
     methods: {
