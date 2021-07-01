@@ -63,10 +63,10 @@
             }}
 
             <a
-              href="https://www.prestashop.com/en/prestashop-checkout"
+              :href="pricingUrl"
               target="_blank"
             >
-              www.prestashop.com/en/prestashop-checkout
+              {{pricingUrl}}
             </a>
 
             {{
@@ -76,7 +76,7 @@
             }}
 
             <a href="#" @click.prevent="goToAuthenticate()">
-              Authentication tab
+              {{ $t('menu.authentication') }}
             </a>
 
             <br />
@@ -151,6 +151,9 @@
             value: !this.isHostedFieldsEnabled
           }
         ];
+      },
+      pricingUrl() {
+        return this.$store.state.context.pricingUrl;
       }
     }
   };
