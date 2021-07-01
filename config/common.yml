@@ -316,6 +316,10 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Merchant'
     public: true
 
+  ps_checkout.env_loader:
+    class: 'PrestaShop\Module\PrestashopCheckout\Environment\EnvLoader'
+    public: true
+
   ps_checkout.manager.shopuuid:
     class: 'PrestaShop\Module\PrestashopCheckout\ShopUuidManager'
     public: true
