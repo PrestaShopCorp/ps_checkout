@@ -34,12 +34,23 @@ class ShopUuidManager
      */
     public function getForShop($idShop)
     {
-        return \Configuration::get(
+        $UUIDV4 = \Configuration::get(
             'PS_CHECKOUT_SHOP_UUID_V4',
             null,
             null,
             (int) $idShop
         );
+
+        if (empty($UUIDV4)) {
+            $UUIDV4 = \Configuration::get(
+                'PSX_UUID_V4',
+                null,
+                null,
+                (int) $idShop
+            );
+        }
+
+        return $UUIDV4;
     }
 
     /**
@@ -67,17 +78,6 @@ class ShopUuidManager
         }
 
         return $result;
-    }
-
-    public function setForShop($Uuid, $shopId)
-    {
-        return (bool) \Configuration::updateValue(
-            'PS_CHECKOUT_SHOP_UUID_V4',
-            $Uuid,
-            false,
-            null,
-            (int) $shopId
-        );
     }
 
     /**
