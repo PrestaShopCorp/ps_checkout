@@ -196,8 +196,7 @@ class Ps_checkout extends PaymentModule
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
             $this->installTabs() &&
             $this->disableIncompatibleCountries() &&
-            $this->disableIncompatibleCurrencies() &&
-            (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops();
+            $this->disableIncompatibleCurrencies();
 
         if (!$defaultInstall) {
             return false;
@@ -1337,7 +1336,6 @@ class Ps_checkout extends PaymentModule
         /** @var Shop $shop */
         $shop = $params['object'];
 
-        (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForShop((int) $shop->id);
         $this->installConfiguration();
         $this->addCheckboxCarrierRestrictionsForModule([(int) $shop->id]);
         $this->addCheckboxCountryRestrictionsForModule([(int) $shop->id]);

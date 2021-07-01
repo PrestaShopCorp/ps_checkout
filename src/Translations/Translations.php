@@ -170,7 +170,6 @@ class Translations
                     ],
                     'checkout' => [
                         'title' => $this->module->l('PrestaShop Checkout account', 'translations'),
-                        'title2' => $this->module->l('PrestaShop account', 'translations'),
                         'connectedWith' => $this->module->l('You are now logged in with your', 'translations'),
                         'account' => $this->module->l('account', 'translations'),
                         'createNewAccount' => $this->module->l('Sign in or login to provide every payment method to your customer.', 'translations'),
