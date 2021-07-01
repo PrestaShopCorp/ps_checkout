@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder;
+use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 /**
  * Handle onbarding request
@@ -31,7 +32,7 @@ class Onboarding extends PaymentClient
     /**
      * Generate the paypal link to onboard merchant
      *
-     * @return array response (ResponseApiHandler class)
+     * @return array response (ResponsaApiHandler class)
      */
     public function getOnboardingLink()
     {
@@ -40,11 +41,17 @@ class Onboarding extends PaymentClient
         $module = \Module::getInstanceByName('ps_checkout');
         /** @var OnboardingPayloadBuilder $builder */
         $builder = $module->getService('ps_checkout.builder.payload.onboarding');
+        /** @var ShopContext $shopContext */
+        $shopContext = $module->getService('ps_checkout.context.shop');
         /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager */
         $onboardingSessionManager = $module->getService('ps_checkout.session.onboarding.manager');
         $openedOnboardingSession = $onboardingSessionManager->getOpened();
 
         $builder->buildFullPayload();
+
+        if ($shopContext->isReady()) {
+            $builder->buildMinimalPayload();
+        }
 
         $response = $this->post([
             'headers' => [
@@ -54,7 +61,19 @@ class Onboarding extends PaymentClient
             'json' => $builder->presentPayload()->getJson(),
         ]);
 
-        if (false === isset($response['body']['links']['1']['href']) || '200' !== (string) $response['httpCode']) {
+        // Retry with minimal payload when full payload failed
+        if (substr((string) $response['httpCode'], 0, 1) === '4') {
+            $builder->buildMinimalPayload();
+            $response = $this->post([
+                'json' => $builder->presentPayload()->getJson(),
+            ]);
+        }
+
+        if (false === $response['status']) {
+            return $response;
+        }
+
+        if (false === isset($response['body']['links']['1']['href'])) {
             $response['status'] = false;
 
             return $response;
