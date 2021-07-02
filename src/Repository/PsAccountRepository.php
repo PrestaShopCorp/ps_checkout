@@ -141,7 +141,7 @@ class PsAccountRepository
     public function getLocalId()
     {
         if ($this->shouldUsePsAccountsData()) {
-            return null;
+            return false;
         }
 
         return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_LOCAL_ID);

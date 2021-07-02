@@ -615,7 +615,7 @@ class Ps_checkout extends PaymentModule
             !$onBoardingStatusHelper->isPsCheckoutOnboarded() &&
             !$sessionManager->getOpened()
         ) {
-            $sessionManager->openOnboarding(null);
+            $sessionManager->openOnboarding((object) null);
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
