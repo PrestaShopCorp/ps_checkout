@@ -23,6 +23,11 @@ parameters:
 		- '#Access to an undefined property PaymentModule::\$currentOrderReference.#'
 		- '#Property CustomerCore::\$passwd \(int\) does not accept bool\|string.#'
 		- '#Parameter \#4 \$ssl of method LinkCore::getModuleLink\(\) expects null, true given.#'
+		- '#Property PrestaShop\\Module\\PrestashopCheckout\\Repository\\PsAccountRepository::\$psAccountsService has unknown class PrestaShop\\Module\\PsAccounts\\Service\\PsAccountsService as its type.#'
+		- '#Call to method getEmail\(\) on an unknown class PrestaShop\\Module\\PsAccounts\\Service\\PsAccountsService.#'
+		- '#Call to method getOrRefreshToken\(\) on an unknown class PrestaShop\\Module\\PsAccounts\\Service\\PsAccountsService.#'
+		- '#Call to method getRefreshToken\(\) on an unknown class PrestaShop\\Module\\PsAccounts\\Service\\PsAccountsService.#'
+		- '#Call to method getShopUuidV4\(\) on an unknown class PrestaShop\\Module\\PsAccounts\\Service\\PsAccountsService.#'
 
 		# Ignore errors with classes from PS 1.7
 		- '#CheckoutPaymentStep#'
