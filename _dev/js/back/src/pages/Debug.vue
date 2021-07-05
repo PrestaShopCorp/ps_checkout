@@ -59,6 +59,18 @@
       </b-card>
     </b-container>
 
+    <b-container v-if="merchantId" class="mt-4">
+      <b-card class="mt-10">
+        <template v-slot:header>
+          <i class="material-icons">feedback</i>
+          Merchant Integration
+        </template>
+        <b-card-body>
+          <pre>{{ merchantIntegration }}</pre>
+        </b-card-body>
+      </b-card>
+    </b-container>
+
     <b-container class="mt-4">
       <b-card class="mt-10">
         <template v-slot:header>
@@ -268,6 +280,7 @@
     },
     mounted() {
       this.getLogFileNames();
+      this.getMerchantIntegration();
     },
     data() {
       return {
@@ -275,7 +288,8 @@
         logFileNames: {},
         logFileNameSelected: '',
         logFileReaderOffset: 0,
-        logFileReaderLimit: 500
+        logFileReaderLimit: 500,
+        merchantIntegration: ''
       };
     },
     methods: {
@@ -327,6 +341,16 @@
       },
       onChangeLogFileReaderLimit(logFileReaderLimit) {
         this.logFileReaderLimit = logFileReaderLimit;
+      },
+      getMerchantIntegration() {
+        ajax({
+          url: this.$store.getters.adminController,
+          action: 'GetMerchantIntegration'
+        }).then(response => {
+          if (typeof response === 'object' && response.status === true) {
+            this.merchantIntegration = response.content;
+          }
+        });
       }
     }
   };
