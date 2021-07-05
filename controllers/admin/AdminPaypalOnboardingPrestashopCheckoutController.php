@@ -29,9 +29,7 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
     public $module;
 
     /**
-     * @see FrontController::postProcess()
-     *
-     * @todo Move logic to a Service and refactor
+     * {@inheritdoc}
      */
     public function postProcess()
     {
@@ -39,11 +37,15 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
             $idMerchant = Tools::getValue('merchantIdInPayPal');
 
             if (true === empty($idMerchant)) {
-                throw new PrestaShopException('merchantIdInPayPal parameter is missing');
+                $this->errors[] = $this->module->l('We didn\'t receive your PayPal Merchant identifier.');
+
+                return false;
             }
 
-            if (PaypalAccountUpdater::MIN_ID_LENGTH > strlen($idMerchant)) {
-                throw new PrestaShopException('merchantIdInPayPal parameter length must be at least 13 characters long');
+            if (!Validate::isGenericName($idMerchant) || PaypalAccountUpdater::MIN_ID_LENGTH > strlen($idMerchant)) {
+                $this->errors[] = $this->module->l('Your PayPal Merchant identifier seems invalid.');
+
+                return false;
             }
 
             $paypalAccount = new PaypalAccount($idMerchant);
@@ -76,5 +78,75 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function initCursedPage()
+    {
+        if (!$this->checkToken()) {
+            $this->errors[] = $this->module->l('It seems your employee token is invalid.');
+        }
+
+        $this->addCSS(__PS_BASE_URI__ . $this->admin_webpath . '/themes/' . $this->bo_theme . '/public/theme.css', 'all', 0);
+
+        $this->context->smarty->assign([
+            'img_dir' => _PS_IMG_,
+            'iso' => $this->context->language->iso_code,
+            'shop_name' => Configuration::get('PS_SHOP_NAME'),
+            'meta_title' => $this->module->displayName,
+            'navigationPipe' => Configuration::get('PS_NAVIGATION_PIPE') ? Configuration::get('PS_NAVIGATION_PIPE') : '>',
+            'css_files' => $this->css_files,
+            'js_files' => array_unique($this->js_files),
+            'errors' => $this->errors,
+            'logoSrc' => $this->module->getPathUri() . 'logo.png',
+            'moduleLink' => (new LinkAdapter($this->context->link))->getAdminLink(
+                'AdminModules',
+                true,
+                [],
+                [
+                    'configure' => 'ps_checkout',
+                ]
+            ),
+        ]);
+
+        echo $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/cursedPage.tpl');
+
+        exit;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function init()
+    {
+        if (!isset($this->context->employee) || !$this->context->employee->isLoggedBack()) {
+            // Avoid redirection to Login page because we want display additional information
+            $this->errors[] = $this->module->l('It seems you are logged out.');
+            $this->initCursedPage();
+        }
+
+        parent::init();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function isAnonymousAllowed()
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function display()
+    {
+        if ($this->errors) {
+            $this->initCursedPage();
+        }
+
+        parent::display();
     }
 }

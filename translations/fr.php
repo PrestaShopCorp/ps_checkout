@@ -591,3 +591,9 @@ $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_cb2afa98a49d1ac44da748a5ee5
 $_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_a44217022190f5734b2f72ba1e4f8a79'] = 'Numéro de carte';
 $_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_95b16127e70e8a90220404fb48343182'] = 'Date d\'expiration';
 $_MODULE['<{ps_checkout}prestashop>paymentoptionbuttonsadditionalinformation_5ea7f231296949070013bc43715aae01'] = 'Code de sécurité';
+$_MODULE['<{ps_checkout}prestashop>adminpaypalonboardingprestashopcheckoutcontroller_f54c8c9ec6eb9489f860c4b04206c0db'] = 'Nous n\'avons pas reçu votre identifiant commerçant PayPal.';
+$_MODULE['<{ps_checkout}prestashop>adminpaypalonboardingprestashopcheckoutcontroller_dc2e69fd425dc6984d9bc8671c475350'] = 'Votre identifiant commerçant PayPal est invalide.';
+$_MODULE['<{ps_checkout}prestashop>adminpaypalonboardingprestashopcheckoutcontroller_3f3813d918b5a7fa072490daba788485'] = 'Votre token d\'authentification employé est expiré.';
+$_MODULE['<{ps_checkout}prestashop>adminpaypalonboardingprestashopcheckoutcontroller_696306162008efe5a5db815d5014b611'] = 'Vous n\'êtes plus connecté.';
+$_MODULE['<{ps_checkout}prestashop>cursedpage_df2183ab7d5bfd58187077969f08c7f8'] = 'La connexion a votre compte PayPal a échoué.';
+$_MODULE['<{ps_checkout}prestashop>cursedpage_960567c486a23f5e75891b735928c8ba'] = 'Retourner à la configuration du module';
