@@ -28,43 +28,53 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
      */
     public $module;
 
-    public function init()
+    /**
+     * @see FrontController::postProcess()
+     *
+     * @todo Move logic to a Service and refactor
+     */
+    public function postProcess()
     {
-        parent::init();
-        $idMerchant = Tools::getValue('merchantIdInPayPal');
+        try {
+            $idMerchant = Tools::getValue('merchantIdInPayPal');
 
-        if (true === empty($idMerchant)) {
-            throw new PrestaShopException('merchantId cannot be empty');
+            if (true === empty($idMerchant)) {
+                throw new PrestaShopException('merchantIdInPayPal parameter is missing');
+            }
+
+            if (PaypalAccountUpdater::MIN_ID_LENGTH > strlen($idMerchant)) {
+                throw new PrestaShopException('merchantIdInPayPal parameter length must be at least 13 characters long');
+            }
+
+            $paypalAccount = new PaypalAccount($idMerchant);
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\PersistentConfiguration $persistentConfiguration */
+            $persistentConfiguration = $this->module->getService('ps_checkout.persistent.configuration');
+            $persistentConfiguration->savePaypalAccount($paypalAccount);
+
+            /** @var PaypalAccountUpdater $accountUpdater */
+            $accountUpdater = $this->module->getService('ps_checkout.updater.paypal.account');
+            $accountUpdater->update($paypalAccount);
+
+            if ($paypalAccount->getCardPaymentStatus() === PaypalAccountUpdater::SUBSCRIBED) {
+                // track account paypal fully approved
+                $this->module->getService('ps_checkout.segment.tracker')->track('Account Paypal Fully Approved', Shop::getContextListShopID());
+            }
+
+            Tools::redirect(
+                (new LinkAdapter($this->context->link))->getAdminLink(
+                    'AdminModules',
+                    true,
+                    [],
+                    [
+                        'configure' => 'ps_checkout',
+                    ]
+                )
+            );
+        } catch (Exception $e) {
+            $this->errors[] = $e->getMessage();
         }
 
-        if (PaypalAccountUpdater::MIN_ID_LENGTH > strlen($idMerchant)) {
-            throw new PrestaShopException('merchantId length must be at least 13 characters long');
-        }
-
-        $paypalAccount = new PaypalAccount($idMerchant);
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\PersistentConfiguration $persistentConfiguration */
-        $persistentConfiguration = $this->module->getService('ps_checkout.persistent.configuration');
-        $persistentConfiguration->savePaypalAccount($paypalAccount);
-
-        /** @var PaypalAccountUpdater $accountUpdater */
-        $accountUpdater = $this->module->getService('ps_checkout.updater.paypal.account');
-        $accountUpdater->update($paypalAccount);
-
-        if ($paypalAccount->getCardPaymentStatus() === PaypalAccountUpdater::SUBSCRIBED) {
-            // track account paypal fully approved
-            $this->module->getService('ps_checkout.segment.tracker')->track('Account Paypal Fully Approved', Shop::getContextListShopID());
-        }
-
-        Tools::redirect(
-            (new LinkAdapter($this->context->link))->getAdminLink(
-                'AdminModules',
-                true,
-                [],
-                [
-                    'configure' => 'ps_checkout',
-                ]
-            )
-        );
+        return false;
     }
 }
