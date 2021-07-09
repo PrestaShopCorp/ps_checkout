@@ -120,9 +120,38 @@ const {$} = window;
           refundModal.modal('show');
         });
 
-        $(document).on('change', 'input[name="orderPayPalRefundAmount"]', function () {
+        $(document).on('change keyup', 'input[name="orderPayPalRefundAmount"]', function () {
           const refundModal = $(this).parents(config.orderPayPalModalContainer);
+          const transactionCurrency = refundModal.find(config.orderPayPalRefundButtonValue).data('transaction-currency');
+          const refundValue = $(this).val();
+
           refundModal.find(config.orderPayPalModalNotificationsContainer).empty();
+
+          if (refundValue > 0) {
+            refundModal.find(config.orderPayPalRefundSubmitButton).attr('disabled', false);
+            refundModal.find(config.orderPayPalRefundButtonValue).text( `${refundValue} ${transactionCurrency}`);
+          } else {
+            refundModal.find(config.orderPayPalRefundSubmitButton).attr('disabled', true);
+            refundModal.find(config.orderPayPalRefundButtonValue).text('');
+          }
+        });
+
+        $(document).on('click', config.orderPayPalRefundSubmitButton, function () {
+          const refundModal = $(this).parents(config.orderPayPalModalContainer);
+          $('input[name="orderPayPalRefundAmount"]').attr('disabled', true);
+          refundModal.find(config.orderPayPalRefundSubmitButton).attr('hidden', 'hidden');
+          refundModal.find(config.orderPayPalRefundConfirmButton).attr('hidden', false);
+        });
+
+        $(document).on('click', '.modal.ps-checkout-refund [data-dismiss="modal"]', function () {
+          const refundModal = $(this).parents(config.orderPayPalModalContainer);
+          const refundAmountInput = $('input[name="orderPayPalRefundAmount"]');
+          refundAmountInput.attr('disabled', false);
+          refundAmountInput.val('');
+          refundModal.find(config.orderPayPalRefundConfirmButton).attr('hidden', 'hidden');
+          refundModal.find(config.orderPayPalRefundSubmitButton).attr('hidden', false);
+          refundModal.find(config.orderPayPalRefundSubmitButton).attr('disabled', true);
+          refundModal.find(config.orderPayPalRefundButtonValue).text('');
         });
 
         $(document).on('submit', config.orderPayPalModalRefundForm, function (event) {
@@ -132,6 +161,11 @@ const {$} = window;
           const refundModalLoaderContainer = refundModal.find(config.orderPayPalModalLoaderContainer);
           const refundModalSubmitButton = $(this).find('button[type="submit"]');
           const payPalOrderNotification = new PayPalOrderNotification(config);
+          const refundAmountInput = $('input[name="orderPayPalRefundAmount"]');
+          // Disabled input are excluded from formData
+          refundAmountInput.attr('disabled', false);
+          const formData = $(this).serialize();
+          refundAmountInput.attr('disabled', true);
 
           $(refundModalNotificationContainer).empty();
           $(refundModalLoaderContainer).show();
@@ -143,7 +177,7 @@ const {$} = window;
             cache: false,
             dataType: 'json',
             url: `${config.orderPayPalBaseUrl}&rand=${new Date().getTime()}`,
-            data: $(this).serialize(),
+            data: formData,
           });
 
           payPalRefundRequest.done(function(data) {
@@ -226,6 +260,35 @@ const {$} = window;
     }
   };
 
+  let PayPalTransactions = function()
+  {
+    this.initialize = function() {
+      $(document).on('click', '#ps_checkout button[role="tab"]', function () {
+        let tabIdentifier = $(this).attr('aria-controls');
+        switchDisplayedTab(tabIdentifier);
+        switchSelectDropdown(tabIdentifier);
+      });
+
+      $(document).on('change', '#ps_checkout select#select-transaction', function() {
+        let tabIdentifier = $(this).val();
+        switchDisplayedTab(tabIdentifier)
+      })
+
+      function switchDisplayedTab(tabIdentifier)
+      {
+        $(`#ps_checkout button[role="tab"][aria-controls="${tabIdentifier}"]`).attr('aria-selected', true);
+        $('#ps_checkout button[role="tab"]').not(`[aria-controls="${tabIdentifier}"]`).attr('aria-selected', false);
+        $('#ps_checkout div[role="tabpanel"]').not(`#${tabIdentifier}`).attr('hidden', 'hidden');
+        $(`#ps_checkout #${tabIdentifier}[role="tabpanel"]`).attr('hidden', false);
+      }
+
+      function switchSelectDropdown(tabIdentifier)
+      {
+        $('#ps_checkout select#select-transaction').val(tabIdentifier);
+      }
+    }
+  }
+
   /**
    * Initialize ps_checkout
    *
@@ -250,5 +313,8 @@ const {$} = window;
 
     let payPalOrderRefund = new PayPalOrderRefund(config);
     payPalOrderRefund.initialize();
+
+    let payPalTransactions = new PayPalTransactions();
+    payPalTransactions.initialize();
   };
 })();
