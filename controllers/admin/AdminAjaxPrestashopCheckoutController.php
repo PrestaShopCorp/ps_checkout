@@ -516,12 +516,17 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             ]));
         }
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider $fundingSourceTranslationProvider */
+        $fundingSourceTranslationProvider = $this->module->getService('ps_checkout.funding_source.translation');
         $presenter = new OrderPresenter($this->module, $paypalOrder);
 
         $this->context->smarty->assign([
             'moduleName' => $this->module->displayName,
             'orderPayPal' => $presenter->present(),
             'orderPayPalBaseUrl' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
+            'moduleLogoUri' => $this->module->getPathUri() . 'logo.png',
+            'orderPaymentDisplayName' => $fundingSourceTranslationProvider->getPaymentMethodName($psCheckoutCart->paypal_funding),
+            'orderPaymentLogoUri' => $this->module->getPathUri() . 'views/img/' . $psCheckoutCart->paypal_funding . '.svg',
         ]);
 
         $this->ajaxDie(json_encode([
