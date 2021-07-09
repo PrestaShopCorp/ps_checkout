@@ -150,7 +150,7 @@
         ) {
           this.$store.dispatch('getOpenedOnboardingSession');
         }
-    }, 10000);
+      }, 10000);
     },
     mounted() {
       const interval = setInterval(() => {

@@ -47,7 +47,7 @@ class OnboardingState
     {
         $firebaseToken = new Token();
 
-        return !empty($firebaseToken->getToken()) ?: false;
+        return !empty($firebaseToken->getToken());
     }
 
     /**
@@ -57,6 +57,6 @@ class OnboardingState
      */
     public function isShopDataCollected()
     {
-        return !empty($this->psCheckoutConfiguration->getShopData()['psxForm']) ?: false;
+        return !empty($this->psCheckoutConfiguration->getShopData()['psxForm']);
     }
 }

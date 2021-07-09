@@ -46,6 +46,7 @@ class Webhook extends PaymentClient
             $openedOnboardingSession = $onboardingSessionManager->getLatestOpenedSession();
 
             $this->setRoute("/webhooks/${payload['id']}/verify");
+
             return $this->get([
                 'headers' => [
                     'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),

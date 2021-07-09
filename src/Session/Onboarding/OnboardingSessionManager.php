@@ -151,12 +151,13 @@ class OnboardingSessionManager extends SessionManager
 
             if (is_array($nextTransition['from'])) {
                 foreach ($nextTransition['from'] as $transition) {
-                    if ($this->getCurrentSession()->getStatus()  === $transition) {
+                    if ($this->getCurrentSession()->getStatus() === $transition) {
                         $authorizedTransition = true;
                         break;
                     }
                 }
-            } if ($this->getCurrentSession()->getStatus() === $nextTransition['from']) {
+            }
+            if ($this->getCurrentSession()->getStatus() === $nextTransition['from']) {
                 $authorizedTransition = true;
             }
 
