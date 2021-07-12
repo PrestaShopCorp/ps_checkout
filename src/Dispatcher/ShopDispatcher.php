@@ -66,7 +66,7 @@ class ShopDispatcher implements Dispatcher
 
         $data = json_decode($openedSession->getData());
         $payloadShop = $payload['resource']['shop'];
-        $payloadIntegrations = isset($payloadShop['integrations']) ? $payloadShop['integrations'] : [];
+        $payloadIntegrations = isset($payloadShop['paypal']['integrations']) ? $payloadShop['paypal']['integrations'] : [];
         $data->shop = [
             'paypal_onboarding_url' => $payloadShop['paypal']['onboard']['links'][1]['href'],
             'integrations' => !empty($payloadIntegrations) ? $payloadIntegrations : null,
