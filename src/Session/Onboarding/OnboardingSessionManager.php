@@ -136,15 +136,21 @@ class OnboardingSessionManager extends SessionManager
         $sortedUpdateConfiguration = SessionHelper::sortMultidimensionalArray($updateConfiguration);
         $action = $next === 'start' ? 'open' : 'transit';
         $genericErrorMsg = 'Unable to ' . $action . ' this session : ';
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
 
         if (!$nextTransition) {
-            throw new PsCheckoutSessionException($genericErrorMsg . 'Unexisting session transition', PsCheckoutSessionException::UNEXISTING_SESSION_TRANSITION);
+            $exception = new PsCheckoutSessionException($genericErrorMsg . 'Unexisting session transition', PsCheckoutSessionException::UNEXISTING_SESSION_TRANSITION);
+            $module->getLogger()->error('Unexisting session transition', ['exception' => $exception, 'trace' => $exception->getTraceAsString()]);
+            throw $exception;
         }
 
         // Exceptions only for transit actions
         if ($action === 'transit') {
             if (!$this->getCurrentSession()) {
-                throw new PsCheckoutSessionException($genericErrorMsg . 'Unable to find an opened session', PsCheckoutSessionException::OPENED_SESSION_NOT_FOUND);
+                $exception = new PsCheckoutSessionException($genericErrorMsg . 'Unable to find an opened session', PsCheckoutSessionException::OPENED_SESSION_NOT_FOUND);
+                $module->getLogger()->error('Unable to find an opened session', ['exception' => $exception, 'trace' => $exception->getTraceAsString()]);
+                throw $exception;
             }
 
             $authorizedTransition = false;
@@ -162,13 +168,17 @@ class OnboardingSessionManager extends SessionManager
             }
 
             if (!$authorizedTransition) {
-                throw new PsCheckoutSessionException($genericErrorMsg . 'The session is not authorized to transit from ' . $this->getCurrentSession()->getStatus() . ' to ' . $nextTransition['to'], PsCheckoutSessionException::FORBIDDEN_SESSION_TRANSITION);
+                $exception = new PsCheckoutSessionException($genericErrorMsg . 'The session is not authorized to transit from ' . $this->getCurrentSession()->getStatus() . ' to ' . $nextTransition['to'], PsCheckoutSessionException::FORBIDDEN_SESSION_TRANSITION);
+                $module->getLogger()->error('The session transition is not authorized', ['from' => $this->getCurrentSession()->getStatus(), 'to' => $nextTransition['to'], 'exception' => $exception, 'trace' => $exception->getTraceAsString()]);
+                throw $exception;
             }
         }
 
         if ($updateIntersect !== $sortedUpdateConfiguration) {
+            $exception = new PsCheckoutSessionException($genericErrorMsg . 'Missing expected update session parameters.', PsCheckoutSessionException::MISSING_EXPECTED_PARAMETERS);
+            $module->getLogger()->error($exception->getMessage(), ['updateIntersect' => $updateIntersect, 'sortedUpdateConfiguration' => $sortedUpdateConfiguration, 'exception' => $exception, 'trace' => $exception->getTraceAsString()]);
             var_dump($updateIntersect);
-            throw new PsCheckoutSessionException($genericErrorMsg . 'Missing expected update session parameters.', PsCheckoutSessionException::MISSING_EXPECTED_PARAMETERS);
+            throw $exception;
         }
     }
 
