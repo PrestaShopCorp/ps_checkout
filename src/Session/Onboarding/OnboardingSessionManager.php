@@ -176,8 +176,7 @@ class OnboardingSessionManager extends SessionManager
 
         if ($updateIntersect !== $sortedUpdateConfiguration) {
             $exception = new PsCheckoutSessionException($genericErrorMsg . 'Missing expected update session parameters.', PsCheckoutSessionException::MISSING_EXPECTED_PARAMETERS);
-            $module->getLogger()->error($exception->getMessage(), ['updateIntersect' => $updateIntersect, 'sortedUpdateConfiguration' => $sortedUpdateConfiguration, 'exception' => $exception, 'trace' => $exception->getTraceAsString()]);
-            var_dump($updateIntersect);
+            $module->getLogger()->error($exception->getMessage(), ['update' => $update, 'updateIntersect' => $updateIntersect, 'sortedUpdateConfiguration' => $sortedUpdateConfiguration, 'exception' => $exception, 'trace' => $exception->getTraceAsString()]);
             throw $exception;
         }
     }

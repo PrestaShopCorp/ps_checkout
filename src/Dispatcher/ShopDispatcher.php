@@ -64,7 +64,7 @@ class ShopDispatcher implements Dispatcher
             throw new PsCheckoutSessionException('Unable to find an opened onboarding session', PsCheckoutSessionException::OPENED_SESSION_NOT_FOUND);
         }
 
-        $data = json_decode($openedSession->getData(), true);
+        $data = json_decode($openedSession->getData());
         $payloadShop = $payload['resource']['shop'];
         $payloadIntegrations = isset($payloadShop['integrations']) ? $payloadShop['integrations'] : [];
         $data->shop = [
