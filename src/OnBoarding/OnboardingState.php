@@ -20,8 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\OnBoarding;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration;
+use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 class OnboardingState
@@ -30,6 +30,10 @@ class OnboardingState
      * @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration
      */
     private $psCheckoutConfiguration;
+    /**
+     * @var OnBoardingStatusHelper
+     */
+    private $onBoardingStatusHelper;
 
     /**
      * @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository
@@ -40,10 +44,14 @@ class OnboardingState
      * @param \PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration $psCheckoutConfiguration
      * @param \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository
      */
-    public function __construct(PrestashopCheckoutConfiguration $psCheckoutConfiguration, PaypalAccountRepository $paypalAccountRepository)
-    {
+    public function __construct(
+        PrestashopCheckoutConfiguration $psCheckoutConfiguration,
+        PaypalAccountRepository $paypalAccountRepository,
+        OnBoardingStatusHelper $onBoardingStatusHelper
+    ) {
         $this->psCheckoutConfiguration = $psCheckoutConfiguration;
         $this->paypalAccountRepository = $paypalAccountRepository;
+        $this->onBoardingStatusHelper = $onBoardingStatusHelper;
     }
 
     /**
@@ -53,9 +61,8 @@ class OnboardingState
      */
     public function isFirebaseOnboarded()
     {
-        $firebaseToken = new Token();
-
-        return !empty($firebaseToken->getToken());
+        return $this->onBoardingStatusHelper->isPsCheckoutOnboarded()
+            || $this->onBoardingStatusHelper->isPsAccountsOnboarded();
     }
 
     /**

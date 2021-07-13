@@ -188,9 +188,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\FirebaseModule'
     public: true
     arguments:
-      - '@ps_checkout.configuration'
-      - '@ps_checkout.onboarding.status_helper'
-      - '@ps_accounts.facade'
+      - '@ps_checkout.repository.prestashop.account'
 
   ps_checkout.store.module.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule'
@@ -453,6 +451,7 @@ services:
     arguments:
       - '@ps_checkout.prestashop_checkout.configuration'
       - '@ps_checkout.repository.paypal.account'
+      - '@ps_checkout.onboarding.status_helper'
 
   ps_checkout.onboarding.state.handler:
     class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler'

@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
 use GuzzleHttp\Client;
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
