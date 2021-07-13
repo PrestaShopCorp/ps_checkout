@@ -626,7 +626,6 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
         $paypalAccount = $this->getService('ps_checkout.repository.paypal.account');
 
-
         // update merchant status only if the merchant onboarding is completed
         if ($paypalAccount->onBoardingIsCompleted()
             && $psAccount->onBoardingIsCompleted()) {

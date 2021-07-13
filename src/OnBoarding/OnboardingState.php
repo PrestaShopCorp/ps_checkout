@@ -20,8 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\OnBoarding;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration;
+use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper;
 
 class OnboardingState
 {
@@ -29,13 +29,20 @@ class OnboardingState
      * @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration
      */
     private $psCheckoutConfiguration;
+    /**
+     * @var OnBoardingStatusHelper
+     */
+    private $onBoardingStatusHelper;
 
     /**
      * @param \PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration $psCheckoutConfiguration
      */
-    public function __construct(PrestashopCheckoutConfiguration $psCheckoutConfiguration)
-    {
+    public function __construct(
+        PrestashopCheckoutConfiguration $psCheckoutConfiguration,
+        OnBoardingStatusHelper $onBoardingStatusHelper
+    ) {
         $this->psCheckoutConfiguration = $psCheckoutConfiguration;
+        $this->onBoardingStatusHelper = $onBoardingStatusHelper;
     }
 
     /**
@@ -45,9 +52,8 @@ class OnboardingState
      */
     public function isFirebaseOnboarded()
     {
-        $firebaseToken = new Token();
-
-        return !empty($firebaseToken->getToken());
+        return $this->onBoardingStatusHelper->isPsCheckoutOnboarded()
+            || $this->onBoardingStatusHelper->isPsAccountsOnboarded();
     }
 
     /**

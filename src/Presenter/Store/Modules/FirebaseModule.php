@@ -25,7 +25,7 @@ use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
-use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
 /**
  * Construct the firebase module
@@ -33,29 +33,15 @@ use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 class FirebaseModule implements PresenterInterface
 {
     /**
-     * @var PrestaShopConfiguration
+     * @var PsAccountRepository
      */
-    private $configuration;
-    /**
-     * @var OnBoardingStatusHelper
-     */
-    private $onBoardingStatusHelper;
-    /**
-     * @var PsAccounts
-     */
-    private $psAccountsFacade;
+    private $psAccountsRepository;
 
     /**
      * @param PrestaShopConfiguration $configuration
      */
-    public function __construct(
-        PrestaShopConfiguration $configuration,
-        OnBoardingStatusHelper $onBoardingStatusHelper,
-        PsAccounts $psAccountsFacade
-    ) {
-        $this->configuration = $configuration;
-        $this->onBoardingStatusHelper = $onBoardingStatusHelper;
-        $this->psAccountsFacade = $psAccountsFacade;
+    public function __construct(PsAccountRepository $psAccountsRepository) {
+        $this->psAccountsRepository = $psAccountsRepository;
     }
 
     /**
@@ -65,37 +51,14 @@ class FirebaseModule implements PresenterInterface
      */
     public function present()
     {
-        if (
-            $this->onBoardingStatusHelper->isPsAccountsOnboarded() &&
-            !$this->onBoardingStatusHelper->isPsCheckoutOnboarded()
-        ) {
-            $psAccountsService = $this->psAccountsFacade->getPsAccountsService();
-
-            $idToken = $psAccountsService->getOrRefreshToken();
-
-            $firebaseModule = [
-                'firebase' => [
-                    'email' => $psAccountsService->getEmail(),
-                    'idToken' => (string) $idToken,
-                    'localId' => null,
-                    'refreshToken' => $psAccountsService->getRefreshToken(),
-                    'onboardingCompleted' => $this->onBoardingStatusHelper->isPsAccountsOnboarded(),
-                ],
-            ];
-        } else {
-            $idToken = (new Token())->getToken();
-
-            $firebaseModule = [
-                'firebase' => [
-                    'email' => $this->configuration->get(PsAccount::PS_PSX_FIREBASE_EMAIL),
-                    'idToken' => $idToken,
-                    'localId' => $this->configuration->get(PsAccount::PS_PSX_FIREBASE_LOCAL_ID),
-                    'refreshToken' => $this->configuration->get(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN),
-                    'onboardingCompleted' => !empty($idToken),
-                ],
-            ];
-        }
-
-        return $firebaseModule;
+        return [
+            'firebase' => [
+                'email' => $this->psAccountsRepository->getEmail(),
+                'idToken' => $this->psAccountsRepository->getIdToken(),
+                'localId' => $this->psAccountsRepository->getLocalId(),
+                'refreshToken' => $this->psAccountsRepository->getRefreshToken(),
+                'onboardingCompleted' => !empty($this->psAccountsRepository->getIdToken()),
+            ],
+        ];
     }
 }
