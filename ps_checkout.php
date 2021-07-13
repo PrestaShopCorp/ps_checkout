@@ -608,19 +608,23 @@ class Ps_checkout extends PaymentModule
         $onBoardingStatusHelper = $this->getService('ps_checkout.onboarding.status_helper');
         /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $sessionManager */
         $sessionManager = $this->getService('ps_checkout.session.onboarding.manager');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
+        $psAccount = $this->getService('ps_checkout.repository.prestashop.account');
 
         if (
             $onBoardingStatusHelper->isPsAccountsOnboarded() &&
             !$onBoardingStatusHelper->isPsCheckoutOnboarded() &&
             !$sessionManager->getOpened()
         ) {
-            $sessionManager->openOnboarding((object) null);
+            $sessionManager->openOnboarding((object) [
+                'account_email' => $psAccount->getEmail(),
+                'account_id' => $psAccount->getShopUuid(),
+            ]);
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
         $paypalAccount = $this->getService('ps_checkout.repository.paypal.account');
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
-        $psAccount = $this->getService('ps_checkout.repository.prestashop.account');
+
 
         // update merchant status only if the merchant onboarding is completed
         if ($paypalAccount->onBoardingIsCompleted()
