@@ -127,7 +127,7 @@ class PsAccountRepository
     public function getIdToken()
     {
         if ($this->shouldUsePsAccountsData()) {
-            return $this->psAccountsService->getOrRefreshToken();
+            return (string) $this->psAccountsService->getOrRefreshToken();
         }
 
         return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_ID_TOKEN);
