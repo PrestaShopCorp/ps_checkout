@@ -20,10 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
-use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
-use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
-use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
@@ -35,13 +31,11 @@ class FirebaseModule implements PresenterInterface
     /**
      * @var PsAccountRepository
      */
-    private $psAccountsRepository;
+    private $psAccountRepository;
 
-    /**
-     * @param PrestaShopConfiguration $configuration
-     */
-    public function __construct(PsAccountRepository $psAccountsRepository) {
-        $this->psAccountsRepository = $psAccountsRepository;
+    public function __construct(PsAccountRepository $psAccountRepository)
+    {
+        $this->psAccountRepository = $psAccountRepository;
     }
 
     /**
@@ -53,11 +47,11 @@ class FirebaseModule implements PresenterInterface
     {
         return [
             'firebase' => [
-                'email' => $this->psAccountsRepository->getEmail(),
-                'idToken' => $this->psAccountsRepository->getIdToken(),
-                'localId' => $this->psAccountsRepository->getLocalId(),
-                'refreshToken' => $this->psAccountsRepository->getRefreshToken(),
-                'onboardingCompleted' => !empty($this->psAccountsRepository->getIdToken()),
+                'email' => $this->psAccountRepository->getEmail(),
+                'idToken' => $this->psAccountRepository->getIdToken(),
+                'localId' => $this->psAccountRepository->getLocalId(),
+                'refreshToken' => $this->psAccountRepository->getRefreshToken(),
+                'onboardingCompleted' => !empty($this->psAccountRepository->getIdToken()),
             ],
         ];
     }

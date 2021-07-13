@@ -43,7 +43,7 @@ class PaymentClient extends GenericClient
     /**
      * @var PsAccountRepository
      */
-    private $psAccountsRepository;
+    private $psAccountRepository;
 
     public function __construct(\Link $link, Client $client = null)
     {
@@ -56,9 +56,8 @@ class PaymentClient extends GenericClient
 
         $this->setLink($link);
 
-        /** @var PsAccountRepository psAccountsRepository */
-        $this->psAccountsRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
-        $token = $this->psAccountsRepository->getIdToken();
+        $this->psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+        $token = $this->psAccountRepository->getIdToken();
 
         // Client can be provided for tests
         if (null === $client) {
