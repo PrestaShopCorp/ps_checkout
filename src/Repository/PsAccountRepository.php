@@ -24,6 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper;
+use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use PrestaShop\Module\PsAccounts\Service\PsAccountsService;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 
@@ -48,6 +49,14 @@ class PsAccountRepository
      * @var PsAccounts
      */
     private $psAccountsFacade;
+    /**
+     * @var PrestaShopContext
+     */
+    private $psContext;
+    /**
+     * @var ShopUuidManager
+     */
+    private $shopUuidManager;
 
     /**
      * @param PrestaShopConfiguration $configuration
@@ -55,11 +64,15 @@ class PsAccountRepository
     public function __construct(
         PrestaShopConfiguration $configuration,
         OnBoardingStatusHelper $onBoardingStatusHelper,
-        PsAccounts $psAccountsFacade
+        PsAccounts $psAccountsFacade,
+        PrestaShopContext $psContext,
+        ShopUuidManager $shopUuidManager
     ) {
         $this->configuration = $configuration;
         $this->onBoardingStatusHelper = $onBoardingStatusHelper;
         $this->psAccountsFacade = $psAccountsFacade;
+        $this->psContext = $psContext;
+        $this->shopUuidManager = $shopUuidManager;
     }
 
     /**
@@ -141,7 +154,7 @@ class PsAccountRepository
     public function getLocalId()
     {
         if ($this->shouldUsePsAccountsData()) {
-            return false;
+            return $this->configuration->get('PS_ACCOUNTS_FIREBASE_LOCAL_ID');
         }
 
         return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_LOCAL_ID);
@@ -186,10 +199,7 @@ class PsAccountRepository
             return $this->psAccountsService->getShopUuidV4();
         }
 
-        $psContext = new PrestaShopContext();
-        $shopUuidManager = new \PrestaShop\Module\PrestashopCheckout\ShopUuidManager();
-
-        return $shopUuidManager->getForShop((int) $psContext->getShopId());
+        return $this->shopUuidManager->getForShop((int) $this->psContext->getShopId());
     }
 
     /**

@@ -170,6 +170,8 @@ services:
       - '@ps_checkout.configuration'
       - '@ps_checkout.onboarding.status_helper'
       - '@ps_accounts.facade'
+      - '@ps_checkout.context.prestashop'
+      - '@ps_checkout.manager.shopuuid'
 
   ps_checkout.store.module.psx:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule'
