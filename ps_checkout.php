@@ -196,8 +196,7 @@ class Ps_checkout extends PaymentModule
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
             $this->installTabs() &&
             $this->disableIncompatibleCountries() &&
-            $this->disableIncompatibleCurrencies() &&
-            (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops();
+            $this->disableIncompatibleCurrencies();
 
         if (!$defaultInstall) {
             return false;
@@ -205,6 +204,8 @@ class Ps_checkout extends PaymentModule
 
         // We must doing that here because before module is not installed so Service Container cannot be used
         $this->trackModuleAction('Install');
+
+        $this->getService('ps_accounts.installer')->install();
 
         // Install specific to prestashop 1.7
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
@@ -604,10 +605,26 @@ class Ps_checkout extends PaymentModule
 
     public function getContent()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
-        $paypalAccount = $this->getService('ps_checkout.repository.paypal.account');
+        /** @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper $onBoardingStatusHelper */
+        $onBoardingStatusHelper = $this->getService('ps_checkout.onboarding.status_helper');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $sessionManager */
+        $sessionManager = $this->getService('ps_checkout.session.onboarding.manager');
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
         $psAccount = $this->getService('ps_checkout.repository.prestashop.account');
+
+        if (
+            $onBoardingStatusHelper->isPsAccountsOnboarded() &&
+            !$onBoardingStatusHelper->isPsCheckoutOnboarded() &&
+            !$sessionManager->getOpened()
+        ) {
+            $sessionManager->openOnboarding((object) [
+                'account_email' => $psAccount->getEmail(),
+                'account_id' => $psAccount->getShopUuid(),
+            ]);
+        }
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
+        $paypalAccount = $this->getService('ps_checkout.repository.paypal.account');
 
         // update merchant status only if the merchant onboarding is completed
         if ($paypalAccount->onBoardingIsCompleted()
@@ -1322,7 +1339,6 @@ class Ps_checkout extends PaymentModule
         /** @var Shop $shop */
         $shop = $params['object'];
 
-        (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForShop((int) $shop->id);
         $this->installConfiguration();
         $this->addCheckboxCarrierRestrictionsForModule([(int) $shop->id]);
         $this->addCheckboxCountryRestrictionsForModule([(int) $shop->id]);

@@ -40,7 +40,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration'
     public: true
     arguments:
-      - '@ps_checkout.configuration'
+      - '@ps_checkout.repository.prestashop.account'
 
   ps_checkout.logger.directory:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory'
@@ -121,17 +121,6 @@ services:
       - '@ps_checkout.customer'
       - '@ps_checkout.merchant'
 
-  ps_checkout.api.firebase.auth:
-    class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth'
-    public: true
-
-  ps_checkout.api.firebase.auth.factory:
-    class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\AuthFactory'
-    public: true
-    arguments:
-      - '@ps_checkout.api.firebase.auth'
-      - '@ps_checkout.persistent.configuration'
-
   ps_checkout.repository.paypal.account:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository'
     public: true
@@ -152,6 +141,10 @@ services:
     public: true
     arguments:
       - '@ps_checkout.configuration'
+      - '@ps_checkout.onboarding.status_helper'
+      - '@ps_accounts.facade'
+      - '@ps_checkout.context.prestashop'
+      - '@ps_checkout.manager.shopuuid'
 
   ps_checkout.store.module.psx:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule'
@@ -170,7 +163,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\FirebaseModule'
     public: true
     arguments:
-      - '@ps_checkout.configuration'
+      - '@ps_checkout.repository.prestashop.account'
 
   ps_checkout.store.module.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule'
@@ -201,11 +194,19 @@ services:
     arguments:
       - '@ps_checkout.onboarding.state.handler'
 
+  ps_checkout.store.module.onboarding:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\OnboardingModule'
+    public: true
+    arguments:
+      - '@ps_checkout.onboarding.status_helper'
+      - '@ps_checkout.context.prestashop'
+      - '@ps_accounts.installer'
+
   ps_checkout.store.store:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter'
     public: true
     arguments:
-      - ['@ps_checkout.store.module.context', '@ps_checkout.store.module.firebase', '@ps_checkout.store.module.paypal', '@ps_checkout.store.module.psx', '@ps_checkout.store.module.configuration', '@ps_checkout.store.module.session']
+      - ['@ps_checkout.store.module.context', '@ps_checkout.store.module.firebase', '@ps_checkout.store.module.paypal', '@ps_checkout.store.module.psx', '@ps_checkout.store.module.configuration', '@ps_checkout.store.module.session', '@ps_checkout.store.module.onboarding']
 
   ps_checkout.builder.payload.onboarding:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder'
@@ -423,6 +424,7 @@ services:
     public: true
     arguments:
       - '@ps_checkout.prestashop_checkout.configuration'
+      - '@ps_checkout.onboarding.status_helper'
 
   ps_checkout.onboarding.state.handler:
     class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler'
@@ -431,3 +433,22 @@ services:
       - '@ps_checkout.session.onboarding.manager'
       - '@ps_checkout.onboarding.state'
       - '@ps_checkout.prestashop_checkout.configuration'
+
+  ps_accounts.installer:
+    class: 'PrestaShop\PsAccountsInstaller\Installer\Installer'
+    public: true
+    arguments:
+      - '4.0.0'
+
+  ps_accounts.facade:
+    class: 'PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts'
+    public: true
+    arguments:
+      - '@ps_accounts.installer'
+
+  ps_checkout.onboarding.status_helper:
+    class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper'
+    public: true
+    arguments:
+      - '@ps_checkout.configuration'
+      - '@ps_accounts.facade'

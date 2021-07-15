@@ -48,27 +48,21 @@
 
           <AccountStatusCheckout v-if="checkoutAccountStatus" class="mr-3" />
 
-          <div class="text-center float-right" v-if="!checkoutAccountStatus">
+          <div
+            class="text-center float-right"
+            v-if="!loggedInWithPsAccountsAccount && !loggedInWithPsCheckoutAccount">
             <a
-              id="go-to-signin-link"
-              href="#"
-              @click.prevent="goToSignIn()"
-              class="mr-4"
-            >
+              v-if="isPsAccountsEnabled"
+              :href="configurePsAccountsURL"
+              class="mr-4">
               <b>{{ $t('panel.accounts.checkout.logIn') }}</b>
             </a>
-
-            <a
-              id="go-to-signup-link"
-              href="#"
-              @click.prevent="goToSignUp()"
-              class="btn btn-primary-reverse btn-outline-primary light-button mb-1"
-            >
-              {{ $t('panel.accounts.checkout.createAccount') }}
-            </a>
+            <span v-else>
+              {{ $t('panel.accounts.checkout.enablePsAccounts') }}
+            </span>
           </div>
 
-          <div class="text-right" v-else>
+          <div class="text-right" v-if="checkoutAccountStatus && loggedInWithPsCheckoutAccount">
             <b-button
               v-if="!isReady"
               id="psx-logout-button"
@@ -155,21 +149,21 @@
       },
       checkoutAccountStatus() {
         return this.$store.state.firebase.onboardingCompleted;
+      },
+      loggedInWithPsCheckoutAccount() {
+        return this.$store.state.onboarding.psCheckoutOnboarded;
+      },
+      loggedInWithPsAccountsAccount() {
+        return this.$store.state.onboarding.psAccountsOnboarded;
+      },
+      configurePsAccountsURL() {
+        return this.$store.state.onboarding.psAccountsConfigureURL;
+      },
+      isPsAccountsEnabled() {
+        return this.$store.state.onboarding.psAccountsEnabled;
       }
     },
     methods: {
-      goToSignIn() {
-        this.$router
-          .push('/authentication/signin')
-          // eslint-disable-next-line no-console
-          .catch(exception => console.log(exception));
-      },
-      goToSignUp() {
-        this.$router
-          .push('/authentication/signup')
-          // eslint-disable-next-line no-console
-          .catch(exception => console.log(exception));
-      },
       logOut() {
         this.$store.dispatch('logOut').then(() => {
           this.$store.dispatch('unlink');

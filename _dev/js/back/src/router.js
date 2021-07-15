@@ -22,9 +22,6 @@ import store from './store';
 
 import Customize from '@/pages/Customize';
 import Accounts from '@/pages/Accounts';
-import Signin from '@/pages/Signin';
-import Signup from '@/pages/Signup';
-import ResetPassword from '@/pages/ResetPassword';
 import PsxAdditionalDetails from '@/pages/PsxAdditionalDetails';
 import Activity from '@/pages/Activity';
 import Advanced from '@/pages/Advanced';
@@ -58,42 +55,6 @@ const router = new Router({
           !store.getters.psxOnboardingIsCompleted
         ) {
           next('/authentication/additional');
-        } else {
-          next();
-        }
-      }
-    },
-    {
-      path: '/authentication/signin',
-      name: 'Click PS Account Login',
-      component: Signin,
-      beforeEnter: (to, from, next) => {
-        if (store.getters.firebaseOnboardingIsCompleted) {
-          next(from);
-        } else {
-          next();
-        }
-      }
-    },
-    {
-      path: '/authentication/signup',
-      name: 'Click PS Account Sign Up',
-      component: Signup,
-      beforeEnter: (to, from, next) => {
-        if (store.getters.firebaseOnboardingIsCompleted) {
-          next(from);
-        } else {
-          next();
-        }
-      }
-    },
-    {
-      path: '/authentication/reset',
-      name: 'ResetPassword',
-      component: ResetPassword,
-      beforeEnter: (to, from, next) => {
-        if (store.getters.firebaseOnboardingIsCompleted) {
-          next(from);
         } else {
           next();
         }
@@ -153,9 +114,6 @@ const router = new Router({
 const guestPages = [
   '/authentication',
   '/authentication/additional',
-  '/authentication/signin',
-  '/authentication/signup',
-  '/authentication/reset',
   '/experimental',
   '/debug',
   '/help'
@@ -170,7 +128,7 @@ router.beforeEach((to, from, next) => {
     // if the merchant is not onboarded: only autorize to navigate to authentication tab or help tab
     next();
   } else {
-    // redirect always on the previous tab if the merchant is trying to acces to an another tab
+    // redirect always on the previous tab if the merchant is trying to access to an another tab
     next(from);
   }
 });

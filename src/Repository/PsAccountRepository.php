@@ -23,6 +23,10 @@ namespace PrestaShop\Module\PrestashopCheckout\Repository;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
+use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper;
+use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
+use PrestaShop\Module\PsAccounts\Service\PsAccountsService;
+use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 
 /**
  * Repository for PsAccount class
@@ -31,13 +35,44 @@ class PsAccountRepository
 {
     /** @var PrestaShopConfiguration */
     private $configuration;
+    /**
+     * @var OnBoardingStatusHelper
+     */
+    private $onBoardingStatusHelper;
+    /**
+     * @var PsAccountsService
+     */
+    private $psAccountsService;
+
+    private $usePSAccountsData = null;
+    /**
+     * @var PsAccounts
+     */
+    private $psAccountsFacade;
+    /**
+     * @var PrestaShopContext
+     */
+    private $psContext;
+    /**
+     * @var ShopUuidManager
+     */
+    private $shopUuidManager;
 
     /**
      * @param PrestaShopConfiguration $configuration
      */
-    public function __construct(PrestaShopConfiguration $configuration)
-    {
+    public function __construct(
+        PrestaShopConfiguration $configuration,
+        OnBoardingStatusHelper $onBoardingStatusHelper,
+        PsAccounts $psAccountsFacade,
+        PrestaShopContext $psContext,
+        ShopUuidManager $shopUuidManager
+    ) {
         $this->configuration = $configuration;
+        $this->onBoardingStatusHelper = $onBoardingStatusHelper;
+        $this->psAccountsFacade = $psAccountsFacade;
+        $this->psContext = $psContext;
+        $this->shopUuidManager = $shopUuidManager;
     }
 
     /**
@@ -90,6 +125,10 @@ class PsAccountRepository
      */
     public function getEmail()
     {
+        if ($this->shouldUsePsAccountsData()) {
+            return $this->psAccountsService->getEmail();
+        }
+
         return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_EMAIL);
     }
 
@@ -100,6 +139,10 @@ class PsAccountRepository
      */
     public function getIdToken()
     {
+        if ($this->shouldUsePsAccountsData()) {
+            return (string) $this->psAccountsService->getOrRefreshToken();
+        }
+
         return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_ID_TOKEN);
     }
 
@@ -110,6 +153,10 @@ class PsAccountRepository
      */
     public function getLocalId()
     {
+        if ($this->shouldUsePsAccountsData()) {
+            return $this->configuration->get('PS_ACCOUNTS_FIREBASE_LOCAL_ID');
+        }
+
         return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_LOCAL_ID);
     }
 
@@ -120,6 +167,10 @@ class PsAccountRepository
      */
     public function getRefreshToken()
     {
+        if ($this->shouldUsePsAccountsData()) {
+            return $this->psAccountsService->getRefreshToken();
+        }
+
         return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN);
     }
 
@@ -144,9 +195,30 @@ class PsAccountRepository
      */
     public function getShopUuid()
     {
-        $psContext = new PrestaShopContext();
-        $shopUuidManager = new \PrestaShop\Module\PrestashopCheckout\ShopUuidManager();
+        if ($this->shouldUsePsAccountsData()) {
+            return $this->psAccountsService->getShopUuidV4();
+        }
 
-        return $shopUuidManager->getForShop((int) $psContext->getShopId());
+        return $this->shopUuidManager->getForShop((int) $this->psContext->getShopId());
+    }
+
+    /**
+     * @return bool
+     */
+    private function shouldUsePsAccountsData()
+    {
+        if (null === $this->usePSAccountsData) {
+            $this->usePSAccountsData =
+                $this->onBoardingStatusHelper->isPsAccountsOnboarded() &&
+                !$this->onBoardingStatusHelper->isPsCheckoutOnboarded();
+
+            try {
+                $this->psAccountsService = $this->psAccountsFacade->getPsAccountsService();
+            } catch (\Exception $exception) {
+                $this->usePSAccountsData = false;
+            }
+        }
+
+        return $this->usePSAccountsData;
     }
 }

@@ -31,5 +31,10 @@ parameters:
 		- '#Left side of \&\& is always true.#'
 		- '#Parameter \#7 \$currency_special of method PaymentModuleCore::validateOrder\(\) expects null, int given.#'
 		- '#Parameter \#9 \$secure_key of method PaymentModuleCore::validateOrder\(\) expects bool, string given.#'
+		- '#Property PrestaShop\\Module\\PrestashopCheckout\\Repository\\PsAccountRepository::\$psAccountsService has unknown class PrestaShop\\Module\\PsAccounts\\Service\\PsAccountsService as its type.#'
+		- '#Call to method getEmail\(\) on an unknown class PrestaShop\\Module\\PsAccounts\\Service\\PsAccountsService.#'
+		- '#Call to method getOrRefreshToken\(\) on an unknown class PrestaShop\\Module\\PsAccounts\\Service\\PsAccountsService.#'
+		- '#Call to method getRefreshToken\(\) on an unknown class PrestaShop\\Module\\PsAccounts\\Service\\PsAccountsService.#'
+		- '#Call to method getShopUuidV4\(\) on an unknown class PrestaShop\\Module\\PsAccounts\\Service\\PsAccountsService.#'
 
 	level: 5
