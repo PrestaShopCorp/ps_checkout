@@ -126,7 +126,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
         $response = (new Webhook($context->link))->getShopSignature($bodyValues);
 
         // data return false if no error
-        if (200 === $response['httpCode']) {
+        if (200 === $response['httpCode'] || 204 === $response['httpCode']) {
             return true;
         }
 
