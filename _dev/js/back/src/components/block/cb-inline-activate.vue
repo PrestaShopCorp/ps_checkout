@@ -62,11 +62,8 @@
               )
             }}
 
-            <a
-              :href="pricingUrl"
-              target="_blank"
-            >
-              {{pricingUrl}}
+            <a :href="pricingUrl" target="_blank">
+              {{ pricingUrl }}
             </a>
 
             {{

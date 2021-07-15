@@ -34,7 +34,6 @@ export default function ajax(params) {
     .post(params.url, form)
     .then(res => res.data)
     .catch(error => {
-      // eslint-disable-next-line no-console
-      console.log(error);
+      throw error;
     });
 }
