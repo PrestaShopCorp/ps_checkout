@@ -52,8 +52,6 @@
 </template>
 
 <script>
-  import * as Sentry from '@sentry/vue';
-
   export default {
     name: 'Onboarding',
     data() {
@@ -92,11 +90,18 @@
           .then(() => {
             this.$refs.paypalButton.click();
           })
-          .catch(response => {
-            Sentry.captureException(response);
-
-            // eslint-disable-next-line no-console
-            console.log(response);
+          .catch(error => {
+            if (error.response && error.response.data.body) {
+              console.error(error.response.data.body.message);
+            } else if (error.response && error.response.data.exceptionMessage) {
+              console.error(
+                error.response.data.exceptionCode +
+                  ' > ' +
+                  error.response.data.exceptionMessage
+              );
+            } else {
+              throw error;
+            }
           });
 
         this.paypalIsLoaded = true;

@@ -396,11 +396,7 @@
             {{ $t('panel.psx-form.privacyTextPart1') }}
           </p>
           <p>
-            <b-link
-              id="privacy-link"
-              :href="privacyPolicyUrl"
-              target="_blank"
-            >
+            <b-link id="privacy-link" :href="privacyPolicyUrl" target="_blank">
               {{ $t('panel.psx-form.privacyTextPart2') }}
             </b-link>
           </p>
@@ -490,29 +486,38 @@
         this.$store
           .dispatch('psxSendData', this.form)
           .then(response => {
-            if (response.status === true) {
+            if (response.status) {
               this.$store.dispatch('psxOnboarding', response.status);
               this.$router
                 .push('/authentication')
                 // eslint-disable-next-line no-console
                 .catch(exception => console.log(exception));
             }
-            this.errorForm = response;
-            this.errorException = '';
-            window.scrollTo({
-              top: 0,
-              left: 0,
-              behavior: 'smooth'
-            });
           })
-          .catch(response => {
-            this.handleResponseError(response);
+          .catch(error => {
+            if (error.response) {
+              this.handleResponseError(error.response.data);
+            } else {
+              throw error;
+            }
           });
       },
       handleResponseError(response) {
-        if (undefined !== response.body) {
-          this.errorException = response.body;
+        if (
+          undefined !== response.exceptionMessage &&
+          response.exceptionMessage
+        ) {
+          this.errorException =
+            response.exceptionCode + ' > ' + response.exceptionMessage;
           this.errorForm = null;
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+          });
+        } else {
+          this.errorForm = response;
+          this.errorException = '';
           window.scrollTo({
             top: 0,
             left: 0,

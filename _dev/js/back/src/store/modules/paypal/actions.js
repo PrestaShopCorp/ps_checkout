@@ -33,18 +33,23 @@ export default {
     return ajax({
       url: getters.adminController,
       action: 'GetOnboardingLink'
-    }).then(response => {
-      if (response.status === false) {
+    })
+      .then(response => {
+        if (response.status === false) {
+          commit(types.UPDATE_ONBOARDING_LINK, false);
+          throw response;
+        }
+
+        if (undefined !== response.onboardingLink) {
+          commit(types.UPDATE_ONBOARDING_LINK, response.onboardingLink);
+        }
+
+        return Promise.resolve(response);
+      })
+      .catch(error => {
         commit(types.UPDATE_ONBOARDING_LINK, false);
-        throw response;
-      }
-
-      if (undefined !== response.onboardingLink) {
-        commit(types.UPDATE_ONBOARDING_LINK, response.onboardingLink);
-      }
-
-      return Promise.resolve(response);
-    });
+        throw error;
+      });
   },
   updatePaypalStatusSettings({ commit, getters }) {
     return ajax({
