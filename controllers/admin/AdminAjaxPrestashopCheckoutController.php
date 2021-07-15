@@ -37,6 +37,16 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public $module;
 
     /**
+     * @var bool
+     */
+    public $ajax = true;
+
+    /**
+     * @var bool
+     */
+    protected $json = true;
+
+    /**
      * AJAX: Update payment method order
      */
     public function ajaxProcessUpdatePaymentMethodsOrder()
@@ -819,31 +829,48 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Get merchant integration
+     * {@inheritdoc}
      */
-    public function ajaxProcessGetMerchantIntegration()
+    public function initCursedPage()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
-        $paypalAccount = $this->module->getService('ps_checkout.repository.paypal.account');
+        http_response_code(401);
+        exit;
+    }
 
-        if (!$paypalAccount->getMerchantId()) {
+    /**
+     * {@inheritdoc}
+     */
+    public function init()
+    {
+        if (!isset($this->context->employee) || !$this->context->employee->isLoggedBack()) {
+            // Avoid redirection to Login page because Ajax doesn't support it
+            $this->initCursedPage();
+        }
+
+        parent::init();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function isAnonymousAllowed()
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function display()
+    {
+        if ($this->errors) {
+            http_response_code(400);
             $this->ajaxDie(json_encode([
                 'status' => false,
-                'errors' => [
-                    'No merchant id found.',
-                ],
+                'errors' => $this->errors,
             ]));
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalMerchantIntegrationProvider $payPalMerchantIntegrationProvider */
-        $payPalMerchantIntegrationProvider = $this->module->getService('ps_checkout.paypal.provider.merchant_integration');
-
-        $merchantIntegration = $payPalMerchantIntegrationProvider->getById($paypalAccount->getMerchantId());
-        unset($merchantIntegration['oauth_integrations']);
-
-        $this->ajaxDie(json_encode([
-            'status' => true,
-            'content' => $merchantIntegration,
-        ], JSON_PRETTY_PRINT));
+        parent::display();
     }
 }
