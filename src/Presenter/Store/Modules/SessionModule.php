@@ -20,45 +20,37 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
+use PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
- * Construct the paypal module
+ * Construct the session module
  */
-class PaypalModule implements PresenterInterface
+class SessionModule implements PresenterInterface
 {
     /**
-     * @var PaypalAccountRepository
+     * @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler
      */
-    private $paypalAccount;
+    private $onboardingStateHandler;
 
     /**
-     * @param PaypalAccountRepository $paypalAccountRepository
+     * @param \PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler $onboardingStateHandler
      */
-    public function __construct(PaypalAccountRepository $paypalAccountRepository)
+    public function __construct(OnboardingStateHandler $onboardingStateHandler)
     {
-        $this->paypalAccount = $paypalAccountRepository;
+        $this->onboardingStateHandler = $onboardingStateHandler;
     }
 
     /**
-     * Present the paypal module (vuex)
+     * Present the session module (vuex)
      *
      * @return array
      */
     public function present()
     {
-        $paypalAccount = $this->paypalAccount->getOnboardedAccount();
-
         return [
-            'paypal' => [
-                'idMerchant' => $paypalAccount->getMerchantId(),
-                'onboardingCompleted' => !empty($paypalAccount->getMerchantId()),
-                'accountIslinked' => !empty($paypalAccount->getEmail()) && !empty($paypalAccount->getMerchantId()),
-                'emailMerchant' => $paypalAccount->getEmail(),
-                'emailIsValid' => $paypalAccount->getEmailIsVerified(),
-                'cardIsActive' => $paypalAccount->getCardPaymentStatus(),
-                'paypalIsActive' => $paypalAccount->getPaypalPaymentStatus(),
+            'session' => [
+                'onboarding' => $this->onboardingStateHandler->handle(),
             ],
         ];
     }

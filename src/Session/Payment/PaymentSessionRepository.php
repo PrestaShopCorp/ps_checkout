@@ -18,25 +18,11 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api\Psx;
+namespace PrestaShop\Module\PrestashopCheckout\Session\Payment;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Psx\Client\PsxClient;
+use PrestaShop\Module\PrestashopCheckout\Session\AbstractSessionRepository;
 
-class Onboarding extends PsxClient
+class PaymentSessionRepository extends AbstractSessionRepository
 {
-    /**
-     * Collect merchant data during PSX onboarding process. These data are intended to be shared across PSX services.
-     *
-     * @param array $data
-     *
-     * @return array returned by ResponseApiHandler class
-     */
-    public function setOnboardingMerchant(array $data)
-    {
-        $this->setRoute('/psx/onboarding/merchant');
-
-        return $this->post([
-            'json' => json_encode($data),
-        ]);
-    }
+    protected $table = 'pscheckout_payment_session';
 }

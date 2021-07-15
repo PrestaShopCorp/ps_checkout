@@ -45,7 +45,23 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
 
         /** @var \PrestaShop\Module\PrestashopCheckout\PersistentConfiguration $persistentConfiguration */
         $persistentConfiguration = $this->module->getService('ps_checkout.persistent.configuration');
-        $persistentConfiguration->savePaypalAccount($paypalAccount);
+
+        if ($persistentConfiguration->savePaypalAccount($paypalAccount)) {
+            // Update onboarding session
+            /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
+            $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
+            $openedSession = $onboardingSessionManager->getOpened();
+            $data = json_decode($openedSession->getData());
+            $data->shop->merchant_id = $idMerchant;
+            $data->shop->permissions_granted = Tools::getValue('permissionsGranted');
+            $data->shop->consent_status = Tools::getValue('consentStatus');
+            $data->shop->risk_status = Tools::getValue('riskStatus');
+            $data->shop->account_status = Tools::getValue('accountStatus');
+            $data->shop->is_email_confirmed = Tools::getValue('isEmailConfirmed');
+
+            $openedSession->setData(json_encode($data));
+            $onboardingSessionManager->apply('onboard_paypal', $openedSession->toArray(true));
+        }
 
         /** @var PaypalAccountUpdater $accountUpdater */
         $accountUpdater = $this->module->getService('ps_checkout.updater.paypal.account');

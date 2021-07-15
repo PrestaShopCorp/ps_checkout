@@ -49,12 +49,12 @@ class PaypalAccountUpdater
     /**
      * @var PayPalMerchantIntegrationProvider
      */
-    private $merchantIntegrationProvider;
+    //private $merchantIntegrationProvider;
 
-    public function __construct(PersistentConfiguration $persistentConfiguration, PayPalMerchantIntegrationProvider $merchantIntegrationProvider)
+    public function __construct(PersistentConfiguration $persistentConfiguration/**, PayPalMerchantIntegrationProvider $merchantIntegrationProvider**/)
     {
         $this->persistentConfiguration = $persistentConfiguration;
-        $this->merchantIntegrationProvider = $merchantIntegrationProvider;
+        // $this->merchantIntegrationProvider = $merchantIntegrationProvider;
     }
 
     /**
@@ -74,23 +74,23 @@ class PaypalAccountUpdater
             throw new PsCheckoutException('MerchantId cannot be empty', PsCheckoutException::PSCHECKOUT_MERCHANT_IDENTIFIER_MISSING);
         }
 
-        $merchantIntegration = $this->merchantIntegrationProvider->getById($merchantId);
-
-        if (false === $merchantIntegration) {
-            $account->setEmail('');
-            $account->setEmailIsVerified('');
-            $account->setPaypalPaymentStatus('');
-            $account->setCardPaymentStatus('');
-            $account->setMerchantCountry('');
-
-            return $this->persistentConfiguration->savePaypalAccount($account);
-        }
-
-        $account->setEmail(isset($merchantIntegration['primary_email']) ? $merchantIntegration['primary_email'] : '');
-        $account->setEmailIsVerified(isset($merchantIntegration['primary_email_confirmed']) ? $merchantIntegration['primary_email_confirmed'] : '');
-        $account->setPaypalPaymentStatus(isset($merchantIntegration['payments_receivable']) ? $merchantIntegration['payments_receivable'] : '');
-        $account->setCardPaymentStatus(isset($merchantIntegration['products']) ? $this->getCardStatus($merchantIntegration) : '');
-        $account->setMerchantCountry(isset($merchantIntegration['country']) ? $merchantIntegration['country'] : '');
+        // $merchantIntegration = $this->merchantIntegrationProvider->getById($merchantId);
+        //
+        // if (false === $merchantIntegration) {
+        //     $account->setEmail('');
+        //     $account->setEmailIsVerified('');
+        //     $account->setPaypalPaymentStatus('');
+        //     $account->setCardPaymentStatus('');
+        //     $account->setMerchantCountry('');
+        //
+        //     return $this->persistentConfiguration->savePaypalAccount($account);
+        // }
+        //
+        // $account->setEmail(isset($merchantIntegration['primary_email']) ? $merchantIntegration['primary_email'] : '');
+        // $account->setEmailIsVerified(isset($merchantIntegration['primary_email_confirmed']) ? $merchantIntegration['primary_email_confirmed'] : '');
+        // $account->setPaypalPaymentStatus(isset($merchantIntegration['payments_receivable']) ? $merchantIntegration['payments_receivable'] : '');
+        // $account->setCardPaymentStatus(isset($merchantIntegration['products']) ? $this->getCardStatus($merchantIntegration) : '');
+        // $account->setMerchantCountry(isset($merchantIntegration['country']) ? $merchantIntegration['country'] : '');
 
         return $this->persistentConfiguration->savePaypalAccount($account);
     }
