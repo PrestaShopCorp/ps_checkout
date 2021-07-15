@@ -152,12 +152,16 @@
         ajax({
           url: this.$store.getters.adminController,
           action: 'GetReportingDatas'
-        }).then(response => {
-          this.orders = response.orders;
-          this.transactions = response.transactions;
-          this.orderTotalRows = this.orders.length;
-          this.transactionTotalRows = this.transactions.length;
-        });
+        })
+          .then(response => {
+            this.orders = response.orders;
+            this.transactions = response.transactions;
+            this.orderTotalRows = this.orders.length;
+            this.transactionTotalRows = this.transactions.length;
+          })
+          .catch(error => {
+            console.error(error);
+          });
       },
       setBadgeColor(color) {
         return {

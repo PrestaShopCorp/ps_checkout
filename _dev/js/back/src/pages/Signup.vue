@@ -92,10 +92,7 @@
                   )
                 </p>
                 <p>
-                  <b-link
-                    :href="$t('pages.signup.mentionsTermsLinkPart2')"
-                    target="_blank"
-                  >
+                  <b-link :href="privacyPolicyUrl" target="_blank">
                     {{ $t('pages.signup.mentionsTermsLinkTextPart2') }}
                   </b-link>
                 </p>
@@ -185,6 +182,9 @@
           return this.terms.errorMessage;
         }
         return '';
+      },
+      privacyPolicyUrl() {
+        return this.$store.state.context.privacyPolicyUrl;
       }
     },
     methods: {
@@ -218,8 +218,12 @@
                   .catch(exception => console.log(exception));
               });
           })
-          .catch(response => {
-            this.handleResponseError(response);
+          .catch(error => {
+            if (error.response) {
+              this.handleResponseError(error.response.data);
+            } else {
+              throw error;
+            }
           });
       },
       goToSignIn() {
@@ -234,6 +238,7 @@
           undefined !== response.body.error &&
           undefined !== response.body.error.message
         ) {
+          this.errorException = '';
           switch (response.body.error.message) {
             case error.EMAIL_EXISTS:
               this.setEmailError(false, this.$t('firebase.error.emailExists'));
@@ -264,8 +269,14 @@
           }
         }
 
-        if (undefined !== response.body) {
-          this.errorException = response.body;
+        if (
+          undefined !== response.exceptionMessage &&
+          response.exceptionMessage
+        ) {
+          this.resetEmailError();
+          this.resetPasswordError();
+          this.errorException =
+            response.exceptionCode + ' > ' + response.exceptionMessage;
         }
       },
       setPasswordError(hasError, message) {

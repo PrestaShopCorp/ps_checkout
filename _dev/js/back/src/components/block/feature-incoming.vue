@@ -43,9 +43,11 @@
     border-radius: 3px;
     text-align: center;
   }
+
   .text-muted {
     font-size: 16px;
   }
+
   .feature-block .feedback-button {
     width: 122px;
     height: 38px;

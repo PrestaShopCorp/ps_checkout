@@ -24,6 +24,15 @@
       </h3>
 
       <div class="card-body">
+        <b-alert
+          v-if="onboardingLinkError"
+          class="col-12"
+          variant="danger"
+          show
+        >
+          <p>{{ $t('panel.accounts.paypal.onboardingLinkError') }}</p>
+        </b-alert>
+
         <div class="d-flex align-items-center">
           <img
             src="@/assets/images/paypal-logo-thumbnail.png"
@@ -61,15 +70,6 @@
             </b-button>
           </div>
         </div>
-
-        <b-alert
-          v-if="onboardingLinkError"
-          class="col-12"
-          variant="danger"
-          show
-        >
-          <p>{{ $t('panel.accounts.paypal.onboardingLinkError') }}</p>
-        </b-alert>
 
         <b-container v-if="checkoutAccountStatus && paypalAccountStatus">
           <b-alert v-if="!accountIslinked" variant="info" show>
@@ -238,6 +238,7 @@
     border: unset;
     border-radius: unset;
   }
+
   .nobootstrap .table tr:first-child td {
     border-top: 0 !important;
   }
@@ -253,25 +254,33 @@
     background: #6b868f;
     border-bottom: 2px solid #6b868f;
   }
+
   #app .modal {
     background: rgba(0, 0, 0, 0.4);
   }
+
   #app .modal-content {
     border-radius: unset;
   }
+
   #app .modal-body {
     font-size: 14px;
   }
+
   #app #modalLogout .modal-dialog {
     top: 35%;
   }
+
   .fade-enter-active,
   .fade-leave-active {
     transition: opacity 0.2s;
   }
-  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */
+ {
     opacity: 0;
   }
+
   .fs-14 {
     font-size: 14px;
   }

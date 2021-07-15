@@ -396,11 +396,7 @@
             {{ $t('panel.psx-form.privacyTextPart1') }}
           </p>
           <p>
-            <b-link
-              id="privacy-link"
-              :href="$t('panel.psx-form.privacyLink')"
-              target="_blank"
-            >
+            <b-link id="privacy-link" :href="privacyPolicyUrl" target="_blank">
               {{ $t('panel.psx-form.privacyTextPart2') }}
             </b-link>
           </p>
@@ -480,6 +476,9 @@
         return `${this.$t('panel.psx-form.businessSubCategory')} (${this.$t(
           'panel.psx-form.optional'
         )})`;
+      },
+      privacyPolicyUrl() {
+        return this.$store.state.context.privacyPolicyUrl;
       }
     },
     methods: {
