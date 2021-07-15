@@ -7,13 +7,13 @@ use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
-use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use PrestaShop\Module\PsAccounts\Service\PsAccountsService;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
+use Tests\Unit\Mock\MockedPsAccountsServiceTestCase;
 use Tests\Unit\PHPUnitUtil;
 
-class PsAccountRepositoryTest extends TestCase
+class PsAccountRepositoryTest extends MockedPsAccountsServiceTestCase
 {
     /**
      * @var PHPUnit_Framework_MockObject_MockObject|PrestaShopConfiguration
@@ -60,13 +60,15 @@ class PsAccountRepositoryTest extends TestCase
                 $this->psContext,
                 $this->shopUuidManager
         );
+
+        $this->psAccountsService = $this->getPsAccountsServiceMock();
     }
 
     public function testUsesPsCheckoutFirebaseAuthenticationData()
     {
         $this->onBoardingStatusHelper->method('isPsAccountsOnboarded')->willReturn(true);
         $this->onBoardingStatusHelper->method('isPsCheckoutOnboarded')->willReturn(true);
-        $this->psAccountsFacade->method('getPsAccountsService')->willReturn(true);
+        $this->psAccountsFacade->method('getPsAccountsService')->willReturn($this->psAccountsService);
 
         $this->assertFalse(PHPUnitUtil::callMethod($this->psAccountRepository, 'shouldUsePsAccountsData', []));
     }
@@ -84,8 +86,32 @@ class PsAccountRepositoryTest extends TestCase
     {
         $this->onBoardingStatusHelper->method('isPsAccountsOnboarded')->willReturn(true);
         $this->onBoardingStatusHelper->method('isPsCheckoutOnboarded')->willReturn(false);
-        $this->psAccountsFacade->method('getPsAccountsService')->willReturn(true);
+        $this->psAccountsFacade->method('getPsAccountsService')->willReturn($this->psAccountsService);
 
         $this->assertTrue(PHPUnitUtil::callMethod($this->psAccountRepository, 'shouldUsePsAccountsData', []));
+    }
+
+    public function testGetsPsCheckoutShopUUIDV4()
+    {
+        $this->onBoardingStatusHelper->method('isPsAccountsOnboarded')->willReturn(true);
+        $this->onBoardingStatusHelper->method('isPsCheckoutOnboarded')->willReturn(true);
+        $this->psAccountsFacade->method('getPsAccountsService')->willReturn($this->psAccountsService);
+
+        $this->psAccountsService->method('getShopUuidV4')->willReturn('PSACCOUNTSUUID');
+        $this->shopUuidManager->method('getForShop')->willReturn('PSCHECKOUTUUID');
+
+        $this->assertEquals('PSCHECKOUTUUID', $this->psAccountRepository->getShopUuid());
+    }
+
+    public function testGetsPsAccountsShopUUIDV4()
+    {
+        $this->onBoardingStatusHelper->method('isPsAccountsOnboarded')->willReturn(true);
+        $this->onBoardingStatusHelper->method('isPsCheckoutOnboarded')->willReturn(false);
+        $this->psAccountsFacade->method('getPsAccountsService')->willReturn($this->psAccountsService);
+
+        $this->psAccountsService->method('getShopUuidV4')->willReturn('PSACCOUNTSUUID');
+        $this->shopUuidManager->method('getForShop')->willReturn('PSCHECKOUTUUID');
+
+        $this->assertEquals('PSACCOUNTSUUID', $this->psAccountRepository->getShopUuid());
     }
 }
