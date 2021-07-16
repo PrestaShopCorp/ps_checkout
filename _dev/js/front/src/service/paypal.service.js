@@ -54,7 +54,11 @@ export class PayPalService extends BaseClass {
    * @param {PaypalButtonEvents} events
    */
   getButtonExpress(fundingSource, events) {
-    const style = this.config.buttonCustomization || { label: 'pay' };
+    const style = {
+      ...{ label: 'checkout' },
+      ...(this.config.expressCheckoutButtonCustomization || {}),
+      ...(window.ps_checkout.PayPalExpressCheckoutButtonCustomization || {})
+    };
     return this.sdk.Buttons({
       fundingSource: fundingSource,
       style: fundingSource === 'paypal' ? style : { shape: style.shape },
@@ -68,7 +72,11 @@ export class PayPalService extends BaseClass {
    * @param {PaypalButtonEvents} events
    */
   getButtonPayment(fundingSource, events) {
-    const style = this.config.buttonCustomization || { label: 'pay' };
+    const style = {
+      ...{ label: 'pay' },
+      ...(this.config.buttonCustomization || {}),
+      ...(window.ps_checkout.PayPalButtonCustomization || {})
+    };
     return this.sdk.Buttons({
       fundingSource: fundingSource,
       style: fundingSource === 'paypal' ? style : { shape: style.shape },
@@ -114,7 +122,7 @@ export class PayPalService extends BaseClass {
       },
       ...events
     })
-      .then((hostedFields) => {
+      .then(hostedFields => {
         const numberField = document.querySelector(fieldSelectors.number);
         const cvvField = document.querySelector(fieldSelectors.cvv);
         const expirationDateField = document.querySelector(
@@ -139,7 +147,7 @@ export class PayPalService extends BaseClass {
 
         return hostedFields;
       })
-      .then((hostedFields) => {
+      .then(hostedFields => {
         hostedFields.on('cardTypeChange', ({ cards }) => {
           // Change card bg depending on card type
           if (cards.length === 1) {
@@ -185,9 +193,9 @@ export class PayPalService extends BaseClass {
         this.config.fundingSourcesSorted || paypalFundingSources
       )
         .filter(
-          (fundingSource) => paypalFundingSources.indexOf(fundingSource) >= 0
+          fundingSource => paypalFundingSources.indexOf(fundingSource) >= 0
         )
-        .map((fundingSource) => ({
+        .map(fundingSource => ({
           name: fundingSource,
           mark: this.sdk.Marks({ fundingSource })
         }))

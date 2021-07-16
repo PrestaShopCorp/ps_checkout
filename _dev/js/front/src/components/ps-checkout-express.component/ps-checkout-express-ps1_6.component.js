@@ -41,7 +41,7 @@ export class PsCheckoutExpressPs1_6Component extends BaseComponent {
 
     this.children.expressButton = new ExpressCheckoutButtonComponent(this.app, {
       querySelector: `.ps_checkout-express-button[express-button-id="${PsCheckoutExpressPs1_6Component.ID++}"]`,
-      createOrder: (data) =>
+      createOrder: data =>
         this.psCheckoutApi.postCreateOrder({
           ...(this.props.productData || data),
           fundingSource: 'paypal',
@@ -58,7 +58,7 @@ export class PsCheckoutExpressPs1_6Component extends BaseComponent {
 
     if (this.prestashopService.isCartPage()) {
       if (!this.config.expressCheckout.enabled.cart) return this;
-      if (!window.ps_checkoutCartProductCount) return this;
+      if (!this.prestashopService.hasProductInCart()) return this;
 
       this.children.expressButton = new ExpressButtonCartComponent(
         this.app
@@ -69,7 +69,7 @@ export class PsCheckoutExpressPs1_6Component extends BaseComponent {
 
     if (this.prestashopService.isOrderPersonalInformationStepPage()) {
       if (!this.config.expressCheckout.enabled.order) return this;
-      if (!window.ps_checkoutCartProductCount) return this;
+      if (!this.prestashopService.hasProductInCart()) return this;
       this.children.expressButton = new ExpressButtonCheckoutComponent(
         this.app
       ).render();

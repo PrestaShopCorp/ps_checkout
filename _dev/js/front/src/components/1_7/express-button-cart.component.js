@@ -23,13 +23,12 @@ export class ExpressButtonCartComponent extends BaseComponent {
   static Inject = {
     htmlElementService: 'HTMLElementService',
     psCheckoutApi: 'PsCheckoutApi',
+    querySelectorService: 'QuerySelectorService',
     $: '$'
   };
 
   created() {
-    this.buttonContainer = this.htmlElementService.getCheckoutExpressCartButtonContainer(
-      true
-    );
+    this.buttonContainer = this.querySelectorService.getCheckoutExpressCheckoutButtonContainerCart();
   }
 
   render() {
@@ -50,7 +49,7 @@ export class ExpressButtonCartComponent extends BaseComponent {
       {
         // TODO: Move this to constant when ExpressCheckoutButton component is created
         querySelector: '#ps-checkout-express-button',
-        createOrder: (data) =>
+        createOrder: data =>
           this.psCheckoutApi.postCreateOrder({
             ...data,
             fundingSource: 'paypal',

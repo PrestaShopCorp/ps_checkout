@@ -59,6 +59,14 @@ export class PrestashopPs1_7Service {
     return window.prestashop.customer.is_logged;
   }
 
+  static isGuestCheckoutEnabled() {
+    return !!document.querySelector('#checkout-guest-form');
+  }
+
+  static hasProductInCart() {
+    return !!window.ps_checkoutCartProductCount;
+  }
+
   static onUpdatedCart(listener) {
     if (window['prestashop'] && window['prestashop'].on) {
       window['prestashop'].on('updatedCart', listener);

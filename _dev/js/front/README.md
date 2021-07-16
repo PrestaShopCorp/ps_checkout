@@ -75,7 +75,15 @@ window.ps_checkout.selectors = {
   // Radio buttons of each payment option. This will be used to add a listener that hides the notifications
   // on payment option selection change.
   PAYMENT_OPTION_RADIOS:
-    '.payment-options input[type="radio"][name="payment-option"]'
+    '.payment-options input[type="radio"][name="payment-option"]',
+  
+  // Container where the ExpressCheckout button will be appended.
+  EXPRESS_CHECKOUT_CONTAINER_PRODUCT_PAGE:
+    '#product .product-add-to-cart .product-quantity',
+  EXPRESS_CHECKOUT_CONTAINER_CART_PAGE:
+    '#cart .cart-summary .cart-detailed-actions',
+  EXPRESS_CHECKOUT_CONTAINER_CHECKOUT_PAGE:
+    '#checkout-personal-information-step .content',
 }
 ```
 
@@ -156,6 +164,21 @@ window.ps_checkout.events.addEventListener('payment-option-active', ({detail}) =
 
     myHTMLElementContainer.style.display = '';
 });
+```
+
+### Styling ExpressCheckout PayPal Button
+If you want to use your
+own style, you can define a `window.ps_checkout.PayPalExpressCheckoutButtonCustomization` object before loading **PrestaShop Checkout** module,
+so that configuration will be merged with the default one.
+
+```js
+// In a .js file loaded before PrestaShop Checkout main file (front.js)
+window.ps_checkout.PayPalExpressCheckoutButtonCustomization = {
+  layout: 'vertical',
+  color: 'blue',
+  shape: 'pill',
+  label: 'checkout'
+};
 ```
 
 ### Manual Rendering of Payment Tunnel

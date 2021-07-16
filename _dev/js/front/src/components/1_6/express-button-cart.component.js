@@ -23,12 +23,12 @@ export class ExpressButtonCartComponent extends BaseComponent {
   static Inject = {
     prestashopService: 'PrestashopService',
     psCheckoutApi: 'PsCheckoutApi',
+    querySelectorService: 'QuerySelectorService',
     $: '$'
   };
 
   getButtonContainer() {
-    const selector = '#HOOK_SHOPPING_CART_EXTRA';
-    return document.querySelector(selector);
+    return this.querySelectorService.getCheckoutExpressCheckoutButtonContainerCart();
   }
 
   created() {
@@ -55,7 +55,7 @@ export class ExpressButtonCartComponent extends BaseComponent {
       {
         // TODO: Move this to constant when ExpressCheckoutButton component is created
         querySelector: '#ps_checkout-express-button-cart',
-        createOrder: (data) =>
+        createOrder: data =>
           this.psCheckoutApi.postCreateOrder({
             ...data,
             fundingSource: 'paypal',

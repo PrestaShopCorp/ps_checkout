@@ -24,19 +24,12 @@ export class ExpressButtonCheckoutComponent extends BaseComponent {
     htmlElementService: 'HTMLElementService',
     prestashopService: 'PrestashopService',
     psCheckoutApi: 'PsCheckoutApi',
+    querySelectorService: 'QuerySelectorService',
     $: '$'
   };
 
   getButtonContainer() {
-    if (this.prestashopService.isOrderPersonalInformationStepPage() && !this.prestashopService.isNativeOnePageCheckoutPage()) {
-      return document.querySelector('#create-account_form');
-    }
-
-    if (this.prestashopService.isNativeOnePageCheckoutPage()) {
-      return document.querySelector('#opc_account_choice .opc-button');
-    }
-
-    return document.querySelector('#opc_account_form');
+    return this.querySelectorService.getCheckoutExpressCheckoutButtonContainerCheckout();
   }
 
   created() {
@@ -54,6 +47,8 @@ export class ExpressButtonCheckoutComponent extends BaseComponent {
   }
 
   render() {
+    if (!this.buttonContainer) return;
+
     this.checkoutExpressButton = document.createElement('div');
     this.checkoutExpressButton.id = 'ps_checkout-express-button-checkout';
     this.checkoutExpressButton.classList.add(
@@ -65,7 +60,7 @@ export class ExpressButtonCheckoutComponent extends BaseComponent {
       this.app,
       {
         querySelector: '#ps_checkout-express-button-checkout',
-        createOrder: (data) =>
+        createOrder: data =>
           this.psCheckoutApi.postCreateOrder({
             ...data,
             fundingSource: 'paypal',
@@ -74,20 +69,28 @@ export class ExpressButtonCheckoutComponent extends BaseComponent {
       }
     ).render();
 
-    if (this.prestashopService.isNativeOnePageCheckoutPage()) {
+    if (
+      this.prestashopService.isNativeOnePageCheckoutPage() &&
+      this.prestashopService.isGuestCheckoutEnabled()
+    ) {
       const separatorText = document.createElement('div');
       separatorText.classList.add('ps_checkout-express-separator');
       separatorText.innerText = this.$('express-button.cart.separator');
 
       this.buttonContainer.append(separatorText);
       this.buttonContainer.append(this.checkoutExpressButton);
+    } else if (this.prestashopService.isNativeOnePageCheckoutPage()) {
+      const separatorText = document.createElement('div');
+      separatorText.classList.add('ps_checkout-express-separator');
+      separatorText.innerText = this.$('express-button.cart.separator');
 
-      return this;
+      this.buttonContainer.prepend(separatorText);
+      this.buttonContainer.prepend(this.checkoutExpressButton);
+    } else {
+      this.buttonContainer.prepend(this.checkoutExpressButton);
+
+      this.renderTitle();
     }
-
-    this.buttonContainer.prepend(this.checkoutExpressButton);
-
-    this.renderTitle();
 
     return this;
   }
