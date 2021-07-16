@@ -24,5 +24,7 @@ export const PayPalSdkConfig = {
   cspNonce: window.ps_checkoutCspNonce,
   orderId: window.ps_checkoutPayPalOrderId,
   clientToken: window.ps_checkoutPayPalClientToken,
-  buttonCustomization: window.ps_checkoutPayPalButtonConfiguration
+  buttonCustomization: window.ps_checkoutPayPalButtonConfiguration,
+  hostedFieldsCustomization:
+    window.ps_checkoutHostedFieldsCustomizationConfiguration
 };

@@ -68,7 +68,11 @@ export class PayPalService extends BaseClass {
    * @param {PaypalButtonEvents} events
    */
   getButtonPayment(fundingSource, events) {
-    const style = this.config.buttonCustomization || { label: 'pay' };
+    const style = {
+      ...{ label: 'pay' },
+      ...(this.config.buttonCustomization || {}),
+      ...(window.ps_checkout.PayPalButtonCustomization || {})
+    };
     return this.sdk.Buttons({
       fundingSource: fundingSource,
       style: fundingSource === 'paypal' ? style : { shape: style.shape },
@@ -85,8 +89,8 @@ export class PayPalService extends BaseClass {
    * @returns {*}
    */
   getHostedFields(fieldSelectors, events) {
-    return this.sdk.HostedFields.render({
-      styles: {
+    const style = {
+      ...{
         input: {
           'font-size': '17px',
           'font-family': 'helvetica, tahoma, calibri, sans-serif',
@@ -96,6 +100,12 @@ export class PayPalService extends BaseClass {
           color: 'black'
         }
       },
+      ...(this.config.hostedFieldsCustomization || {}),
+      ...(window.ps_checkout.hostedFieldsCustomization || {})
+    };
+
+    return this.sdk.HostedFields.render({
+      styles: style,
       fields: {
         number: {
           selector: fieldSelectors.number,
@@ -114,7 +124,7 @@ export class PayPalService extends BaseClass {
       },
       ...events
     })
-      .then((hostedFields) => {
+      .then(hostedFields => {
         const numberField = document.querySelector(fieldSelectors.number);
         const cvvField = document.querySelector(fieldSelectors.cvv);
         const expirationDateField = document.querySelector(
@@ -139,21 +149,69 @@ export class PayPalService extends BaseClass {
 
         return hostedFields;
       })
-      .then((hostedFields) => {
-        hostedFields.on('cardTypeChange', ({ cards }) => {
+      .then(hostedFields => {
+        hostedFields.on('focus', event => {
+          window.ps_checkout.events.dispatchEvent(
+            new CustomEvent('hostedFieldsFocus', {
+              detail: { ps_checkout: window.ps_checkout, event: event }
+            })
+          );
+        });
+        hostedFields.on('blur', event => {
+          window.ps_checkout.events.dispatchEvent(
+            new CustomEvent('hostedFieldsBlur', {
+              detail: { ps_checkout: window.ps_checkout, event: event }
+            })
+          );
+        });
+        hostedFields.on('empty', event => {
+          window.ps_checkout.events.dispatchEvent(
+            new CustomEvent('hostedFieldsEmpty', {
+              detail: { ps_checkout: window.ps_checkout, event: event }
+            })
+          );
+        });
+        hostedFields.on('notEmpty', event => {
+          window.ps_checkout.events.dispatchEvent(
+            new CustomEvent('hostedFieldsNotEmpty', {
+              detail: { ps_checkout: window.ps_checkout, event: event }
+            })
+          );
+        });
+        hostedFields.on('validityChange', event => {
+          window.ps_checkout.events.dispatchEvent(
+            new CustomEvent('hostedFieldsValidityChange', {
+              detail: { ps_checkout: window.ps_checkout, event: event }
+            })
+          );
+        });
+        hostedFields.on('inputSubmitRequest', () => {
+          window.ps_checkout.events.dispatchEvent(
+            new CustomEvent('hostedFieldsInputSubmitRequest', {
+              detail: { ps_checkout: window.ps_checkout }
+            })
+          );
+        });
+        hostedFields.on('cardTypeChange', event => {
+          window.ps_checkout.events.dispatchEvent(
+            new CustomEvent('hostedFieldsCardTypeChange', {
+              detail: { ps_checkout: window.ps_checkout, event: event }
+            })
+          );
+
           // Change card bg depending on card type
-          if (cards.length === 1) {
+          if (event.cards.length === 1) {
             document.querySelector('.defautl-credit-card').style.display =
               'none';
 
             const cardImage = document.getElementById('card-image');
             cardImage.className = '';
-            cardImage.classList.add(cards[0].type);
+            cardImage.classList.add(event.cards[0].type);
 
             document.querySelector('header').classList.add('header-slide');
 
             // Change the CVV length for AmericanExpress cards
-            if (cards[0].code.size === 4) {
+            if (event.cards[0].code.size === 4) {
               hostedFields.setAttribute({
                 field: 'cvv',
                 attribute: 'placeholder',
@@ -185,9 +243,9 @@ export class PayPalService extends BaseClass {
         this.config.fundingSourcesSorted || paypalFundingSources
       )
         .filter(
-          (fundingSource) => paypalFundingSources.indexOf(fundingSource) >= 0
+          fundingSource => paypalFundingSources.indexOf(fundingSource) >= 0
         )
-        .map((fundingSource) => ({
+        .map(fundingSource => ({
           name: fundingSource,
           mark: this.sdk.Marks({ fundingSource })
         }))
