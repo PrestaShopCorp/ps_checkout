@@ -21,7 +21,9 @@
 namespace PrestaShop\Module\PrestashopCheckout\Shop;
 
 use Context;
+use PrestaShop\Module\PrestashopCheckout\Adapter\ToolsAdapter;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Repository\ShopRepository;
 use Shop;
 
 /**
@@ -30,6 +32,26 @@ use Shop;
 class ShopProvider
 {
     /**
+     * @var Context
+     */
+    private $context;
+    /**
+     * @var ShopRepository
+     */
+    private $shopRepository;
+    /**
+     * @var ToolsAdapter
+     */
+    private $toolsAdapter;
+
+    public function __construct(Context $context, ShopRepository $shopRepository, ToolsAdapter $toolsAdapter)
+    {
+        $this->context = $context;
+        $this->shopRepository = $shopRepository;
+        $this->toolsAdapter = $toolsAdapter;
+    }
+
+    /**
      * @return int
      *
      * @throws PsCheckoutException
@@ -37,10 +59,10 @@ class ShopProvider
     public function getIdentifier()
     {
         /** @var Shop|null $shop */
-        $shop = Context::getContext()->shop;
+        $shop = $this->context->shop;
 
         if ($shop instanceof Shop) {
-            return (int) Context::getContext()->shop->id;
+            return (int) $this->context->shop->id;
         }
 
         throw new PsCheckoutException('Unable to retrieve current shop identifier.');
@@ -54,10 +76,10 @@ class ShopProvider
     public function getGroupIdentifier()
     {
         /** @var Shop|null $shop */
-        $shop = Context::getContext()->shop;
+        $shop = $this->context->shop;
 
         if ($shop instanceof Shop) {
-            return (int) Context::getContext()->shop->id_shop_group;
+            return (int) $this->context->shop->id_shop_group;
         }
 
         throw new PsCheckoutException('Unable to retrieve current shop group identifier.');
@@ -72,7 +94,7 @@ class ShopProvider
      */
     public function getShopUrl($shopId)
     {
-        return (new \Shop($shopId))->getBaseURL();
+        return $this->shopRepository->getShopUrl($shopId);
     }
 
     /**
@@ -82,7 +104,7 @@ class ShopProvider
      */
     public function getShopsUrl()
     {
-        $shopList = \Shop::getShops();
+        $shopList = $this->shopRepository->getShops();
         $protocol = $this->getShopsProtocolInformations();
         $urlList = [];
 
@@ -103,7 +125,7 @@ class ShopProvider
      */
     protected function getShopsProtocolInformations()
     {
-        if (true === \Tools::usingSecureMode()) {
+        if (true === $this->toolsAdapter->usingSecureMode()) {
             return [
                 'domain_type' => 'domain_ssl',
                 'protocol' => 'https://',

@@ -12,6 +12,10 @@ services:
     arguments:
       - 'ps_checkout'
 
+  ps_checkout.context:
+    class: 'Context'
+    factory: [ 'Context', 'getContext' ]
+
   ps_checkout.context.prestashop:
     class: 'PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
     public: true
@@ -23,6 +27,10 @@ services:
   ps_checkout.shop.provider:
     class: 'PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider'
     public: true
+    arguments:
+      - '@ps_eventbus.context'
+      - '@ps_checkout.repository.shop'
+      - '@ps_checkout.adapter.tools'
 
   ps_checkout.configuration.options.resolver:
     class: 'PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfigurationOptionsResolver'
@@ -265,6 +273,10 @@ services:
     arguments:
       - '@ps_checkout.context.shop'
 
+  ps_checkout.adapter.tools:
+    class: 'PrestaShop\Module\PrestashopCheckout\Adapter\ToolsAdapter'
+    public: true
+
   ps_checkout.repository.pscheckoutcart:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
     public: true
@@ -418,10 +430,6 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionRepository'
     public: true
 
-  ps_checkout.session.onboarding.status:
-    class: 'PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingStatus'
-    public: true
-
   ps_checkout.session.onboarding.manager:
     class: 'PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager'
     public: true
@@ -464,3 +472,7 @@ services:
       - 'session'
       - 86400
       - '@=service("ps_checkout.cache.directory").getPath()'
+
+  ps_checkout.repository.shop:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\ShopRepository'
+    public: true
