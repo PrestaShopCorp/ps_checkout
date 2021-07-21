@@ -28,7 +28,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider'
     public: true
     arguments:
-      - '@ps_eventbus.context'
+      - '@ps_checkout.context'
       - '@ps_checkout.repository.shop'
       - '@ps_checkout.adapter.tools'
 
@@ -112,6 +112,7 @@ services:
       - '@ps_checkout.repository.paypal.code'
       - '@ps_checkout.session.onboarding.manager'
       - '@ps_checkout.persistent.configuration'
+      - '@ps_checkout.context'
 
   ps_checkout.persistent.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\PersistentConfiguration'
@@ -448,6 +449,7 @@ services:
     public: true
     arguments:
       - '@ps_checkout.session.payment.repository'
+      - '@ps_checkout.context'
 
   ps_checkout.onboarding.state:
     class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingState'

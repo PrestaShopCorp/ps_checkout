@@ -20,18 +20,19 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Session\Payment;
 
+use Context;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionManager;
 
 class PaymentSessionManager extends SessionManager
 {
     /**
-     * @var \Context
+     * @var Context
      */
     private $context;
 
-    public function __construct(PaymentSessionRepository $repository)
+    public function __construct(PaymentSessionRepository $repository, Context $context)
     {
         parent::__construct($repository);
-        $this->context = \Context::getContext();
+        $this->context = $context;
     }
 }

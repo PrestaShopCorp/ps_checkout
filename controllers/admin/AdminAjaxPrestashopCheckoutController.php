@@ -427,7 +427,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
         $ecConfiguration->setOrderPage((bool) Tools::getValue('status'));
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop($this->context->link))->updateSettings();
 
         $this->ajaxDie(json_encode(true));
     }
@@ -441,7 +441,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
         $ecConfiguration->setCheckoutPage(Tools::getValue('status') ? true : false);
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop($this->context->link))->updateSettings();
 
         $this->ajaxDie(json_encode(true));
     }
@@ -455,7 +455,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
         $ecConfiguration->setProductPage(Tools::getValue('status') ? true : false);
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop($this->context->link))->updateSettings();
 
         $this->ajaxDie(json_encode(true));
     }
@@ -471,7 +471,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
         $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop($this->context->link))->updateSettings();
     }
 
     /**
@@ -485,7 +485,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
         $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
+        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop($this->context->link))->updateSettings();
 
         $this->ajaxDie(json_encode(true));
     }
@@ -651,7 +651,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                     'PS_SHOP_NAME',
                     null,
                     null,
-                    (int) Context::getContext()->shop->id
+                    (int) $this->context->shop->id
                 ),
         ]);
 

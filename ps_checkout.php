@@ -302,7 +302,7 @@ class Ps_checkout extends PaymentModule
                 DELETE FROM ' . _DB_PREFIX_ . 'module_country
                 WHERE id_country = (SELECT id_country FROM ' . _DB_PREFIX_ . 'country WHERE iso_code = "' . $incompatibleCode . '")
                 AND id_module = ' . $this->id . '
-                AND id_shop = ' . \Context::getContext()->shop->id
+                AND id_shop = ' . $this->context->shop->id
                 );
         }
 
@@ -328,7 +328,7 @@ class Ps_checkout extends PaymentModule
                 DELETE FROM ' . _DB_PREFIX_ . 'module_currency
                 WHERE id_currency = (SELECT id_currency FROM ' . _DB_PREFIX_ . 'currency WHERE iso_code = "' . $incompatibleCode . '")
                 AND id_module = ' . $this->id . '
-                AND id_shop = ' . \Context::getContext()->shop->id
+                AND id_shop = ' . $this->context->shop->id
                 );
         }
 
@@ -1187,7 +1187,7 @@ class Ps_checkout extends PaymentModule
         }
 
         $shopsList = empty($shopsList) ? Shop::getShops(true, null, true) : $shopsList;
-        $carriersList = Carrier::getCarriers((int) Context::getContext()->language->id, false, false, false, null, Carrier::ALL_CARRIERS);
+        $carriersList = Carrier::getCarriers((int) $this->context->language->id, false, false, false, null, Carrier::ALL_CARRIERS);
         $allCarriers = array_column($carriersList, 'id_reference');
         $dataToInsert = [];
 

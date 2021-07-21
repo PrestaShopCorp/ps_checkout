@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
+use Context;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
@@ -50,6 +51,10 @@ class PayPalConfiguration
      * @var PayPalCodeRepository
      */
     private $codeRepository;
+    /**
+     * @var Context
+     */
+    private $context;
 
     /**
      * @var OnboardingSessionManager
@@ -65,12 +70,14 @@ class PayPalConfiguration
         PrestaShopConfiguration $configuration,
         PayPalCodeRepository $codeRepository,
         OnboardingSessionManager $onboardingSessionManager,
-        PersistentConfiguration $persistentConfiguration
+        PersistentConfiguration $persistentConfiguration,
+        Context $context
     ) {
         $this->configuration = $configuration;
         $this->codeRepository = $codeRepository;
         $this->onboardingSessionManager = $onboardingSessionManager;
         $this->persistentConfiguration = $persistentConfiguration;
+        $this->context = $context;
     }
 
     /**
@@ -274,7 +281,7 @@ class PayPalConfiguration
             JOIN ' . _DB_PREFIX_ . 'module_country mc ON mc.id_country = c.id_country
             JOIN ' . _DB_PREFIX_ . 'module m ON m.id_module = mc.id_module
             WHERE m.name = "ps_checkout"
-            AND mc.id_shop = ' . \Context::getContext()->shop->id
+            AND mc.id_shop = ' . $this->context->shop->id
             . $active
         );
         $paypalCodes = $this->codeRepository->getCountryCodes();
@@ -303,7 +310,7 @@ class PayPalConfiguration
             JOIN ' . _DB_PREFIX_ . 'module_currency mc ON mc.id_currency = c.id_currency
             JOIN ' . _DB_PREFIX_ . 'module m ON m.id_module = mc.id_module
             WHERE m.name = "ps_checkout"
-            AND mc.id_shop = ' . \Context::getContext()->shop->id
+            AND mc.id_shop = ' . $this->context->shop->id
             . $active
         );
         $paypalCodes = $this->codeRepository->getCurrencyCodes();
