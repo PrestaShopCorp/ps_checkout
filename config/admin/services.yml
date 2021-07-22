@@ -8,6 +8,7 @@ services:
     arguments:
       - '@ps_checkout.logger.directory'
       - '@ps_checkout.logger.filename'
+      - '@ps_checkout.context'
 
   ps_checkout.logger.file.reader:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader'
@@ -35,7 +36,21 @@ services:
   ps_checkout.presenter.order.pending:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter'
     public: true
+    arguments:
+      - '@ps_checkout.context'
+      - '@ps_checkout.repository.order'
+      - '@ps_checkout.adapter.link'
+      - '@ps_checkout.adapter.tools'
+      - '@ps_checkout.adapter.currency'
+      - '@ps_checkout.adapter.configuration'
 
   ps_checkout.presenter.transaction:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter'
     public: true
+    arguments:
+      - '@ps_checkout.module'
+      - '@ps_checkout.context'
+      - '@ps_checkout.repository.orderpayment'
+      - '@ps_checkout.adapter.link'
+      - '@ps_checkout.adapter.tools'
+      - '@ps_checkout.adapter.currency'

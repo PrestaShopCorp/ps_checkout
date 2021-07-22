@@ -1,3 +1,6 @@
+imports:
+  - { resource: adapter.yml }
+
 services:
   # From PS 1.7.0 to PS 1.7.3, the bundled version of Symfony is 2.x on which the _defaults
   # key is invalid. To prevent error on these versions, each service has to be specifically
@@ -19,6 +22,8 @@ services:
   ps_checkout.context.prestashop:
     class: 'PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
     public: true
+    arguments:
+      - '@ps_checkout.context'
 
   ps_checkout.context.shop:
     class: 'PrestaShop\Module\PrestashopCheckout\ShopContext'
@@ -175,6 +180,7 @@ services:
       - '@ps_checkout.paypal.configuration'
       - '@ps_checkout.pay_in_4x.configuration'
       - '@ps_checkout.funding_source.configuration.repository'
+      - '@ps_checkout.context'
 
   ps_checkout.repository.prestashop.account:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
@@ -223,6 +229,7 @@ services:
       - '@ps_checkout.translations.translations'
       - '@ps_checkout.context.shop'
       - '@ps_checkout.shop.provider'
+      - '@ps_checkout.manager.shopuuid'
 
   ps_checkout.store.module.session:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\SessionModule'
@@ -243,6 +250,7 @@ services:
     arguments:
       - '@ps_checkout.repository.prestashop.account'
       - '@ps_checkout.adapter.language'
+      - '@ps_checkout.context'
 
   ps_checkout.updater.paypal.account:
     class: 'PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater'
@@ -267,16 +275,7 @@ services:
     public: true
     arguments:
       - '@ps_checkout.module'
-
-  ps_checkout.adapter.language:
-    class: 'PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter'
-    public: true
-    arguments:
-      - '@ps_checkout.context.shop'
-
-  ps_checkout.adapter.tools:
-    class: 'PrestaShop\Module\PrestashopCheckout\Adapter\ToolsAdapter'
-    public: true
+      - '@ps_checkout.context'
 
   ps_checkout.repository.pscheckoutcart:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
@@ -318,6 +317,9 @@ services:
   ps_checkout.repository.country:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository'
     public: true
+    arguments:
+      - '@ps_checkout.context'
+      - '@ps_checkout.adapter.country'
 
   ps_checkout.funding_source.presenter:
     class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourcePresenter'
@@ -418,6 +420,7 @@ services:
     arguments:
       - '@ps_checkout.cache.paypal.merchant_integration'
       - '@ps_checkout.session.onboarding.manager'
+      - '@ps_checkout.context'
 
   ps_checkout.session:
     class: 'PrestaShop\Module\PrestashopCheckout\Session\Session'
@@ -439,6 +442,7 @@ services:
       - '@ps_checkout.session.configuration'
       - '@ps_checkout.configuration'
       - '@ps_checkout.cache.session'
+      - '@ps_checkout.context.prestashop'
 
   ps_checkout.session.payment.repository:
     class: 'PrestaShop\Module\PrestashopCheckout\Session\Payment\PaymentSessionRepository'
@@ -466,6 +470,7 @@ services:
       - '@ps_checkout.onboarding.state'
       - '@ps_checkout.prestashop_checkout.configuration'
       - '@ps_checkout.api.psl.onboarding'
+      - '@ps_checkout.context'
 
   ps_checkout.cache.session:
     class: 'Symfony\Component\Cache\Simple\FilesystemCache'

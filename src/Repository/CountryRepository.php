@@ -20,18 +20,25 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
+use Context;
+use Country;
+use PrestaShop\Module\PrestashopCheckout\Adapter\CountryAdapter;
+
 class CountryRepository
 {
     /**
-     * Get country by ISO
-     *
-     * @param string $country
-     *
-     * @return int
+     * @var Context
      */
-    public function getByIso($country)
+    private $context;
+    /**
+     * @var CountryAdapter
+     */
+    private $countryAdapter;
+
+    public function __construct(Context $context, CountryAdapter $countryAdapter)
     {
-        return (int) \Country::getByIso($country);
+        $this->context = $context;
+        $this->countryAdapter = $countryAdapter;
     }
 
     /**
@@ -44,7 +51,10 @@ class CountryRepository
         $names = [];
 
         foreach ($countries as $country) {
-            $names[] = \Country::getNameById((int) \Context::getContext()->language->id, $this->getByIso($country));
+            $names[] = Country::getNameById(
+                (int) $this->context->language->id,
+                (int) $this->countryAdapter->getByIso($country)
+            );
         }
 
         return $names;

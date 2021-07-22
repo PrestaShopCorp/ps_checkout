@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Logger;
 
+use Context;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Date\DatePresenter;
 use Symfony\Component\Finder\Finder;
 
@@ -37,15 +38,20 @@ class LoggerFileFinder
      * @var LoggerFilename
      */
     private $loggerFilename;
+    /**
+     * @var Context
+     */
+    private $context;
 
     /**
      * @param LoggerDirectory $loggerDirectory
      * @param LoggerFilename $loggerFilename
      */
-    public function __construct($loggerDirectory, LoggerFilename $loggerFilename)
+    public function __construct($loggerDirectory, LoggerFilename $loggerFilename, Context $context)
     {
         $this->loggerDirectory = $loggerDirectory;
         $this->loggerFilename = $loggerFilename;
+        $this->context = $context;
     }
 
     /**
@@ -62,7 +68,7 @@ class LoggerFileFinder
         $fileNamePrefix = $this->loggerFilename->get() . '-';
 
         foreach ($finder->files()->in($this->loggerDirectory->getPath())->name($fileNamePrefix . '*')->sortByName() as $file) {
-            $fileNames[$file->getFilename()] = (new DatePresenter(str_replace($fileNamePrefix, '', $file->getFilename()), \Context::getContext()->language->date_format_lite))->present();
+            $fileNames[$file->getFilename()] = (new DatePresenter(str_replace($fileNamePrefix, '', $file->getFilename()), $this->context->language->date_format_lite))->present();
         }
 
         return $fileNames;

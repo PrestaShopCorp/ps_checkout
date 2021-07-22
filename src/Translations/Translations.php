@@ -26,13 +26,18 @@ class Translations
      * @var \Module
      */
     private $module = null;
+    /**
+     * @var \Context
+     */
+    private $context;
 
     /**
      * @param \Module $module
      */
-    public function __construct(\Module $module)
+    public function __construct(\Module $module, \Context $context)
     {
         $this->module = $module;
+        $this->context = $context;
     }
 
     /**
@@ -42,7 +47,7 @@ class Translations
      */
     public function getTranslations()
     {
-        $locale = \Context::getContext()->language->iso_code;
+        $locale = $this->context->language->iso_code;
         $linkTranslations = new LinksTranslations($locale);
 
         $translations[$locale] = [

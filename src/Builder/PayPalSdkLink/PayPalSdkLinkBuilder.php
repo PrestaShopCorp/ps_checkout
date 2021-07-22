@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink;
 
+use Context;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
@@ -73,6 +74,10 @@ class PayPalSdkLinkBuilder
      * @var bool
      */
     private $isDisplayOnlySmartButtons = false;
+    /**
+     * @var Context
+     */
+    private $context;
 
     /**
      * @todo To be refactored with Service Container and Dependency Injection
@@ -86,12 +91,14 @@ class PayPalSdkLinkBuilder
         PaypalAccountRepository $payPalAccountRepository,
         PayPalConfiguration $configuration,
         PayPalPayIn4XConfiguration $payIn4XConfiguration,
-        FundingSourceConfigurationRepository $fundingSourceConfigurationRepository
+        FundingSourceConfigurationRepository $fundingSourceConfigurationRepository,
+        Context $context
     ) {
         $this->payPalAccountRepository = $payPalAccountRepository;
         $this->configuration = $configuration;
         $this->payIn4XConfiguration = $payIn4XConfiguration;
         $this->fundingSourceConfigurationRepository = $fundingSourceConfigurationRepository;
+        $this->context = $context;
     }
 
     /**
@@ -121,7 +128,7 @@ class PayPalSdkLinkBuilder
             'components' => implode(',', $components),
             'client-id' => (new PaypalEnv())->getPaypalClientId(),
             'merchant-id' => $this->payPalAccountRepository->getMerchantId(),
-            'currency' => \Context::getContext()->currency->iso_code,
+            'currency' => $this->context->currency->iso_code,
             'intent' => strtolower($this->configuration->getIntent()),
             'commit' => 'order' === $this->getPageName() ? 'true' : 'false',
             'vault' => 'false',
@@ -130,7 +137,7 @@ class PayPalSdkLinkBuilder
 
         if ('SANDBOX' === $this->configuration->getPaymentMode()) {
             $params['debug'] = 'true';
-            // $params['buyer-country'] = \Context::getContext()->country->iso_code;
+            // $params['buyer-country'] = $this->context->country->iso_code;
             // $params['locale'] = 'es_ES'; //@todo retrieve locale from PayPalContext
         }
 
@@ -193,7 +200,7 @@ class PayPalSdkLinkBuilder
 
     private function getPageName()
     {
-        $controller = \Context::getContext()->controller;
+        $controller = $this->context->controller;
 
         if (empty($controller)) {
             return '';

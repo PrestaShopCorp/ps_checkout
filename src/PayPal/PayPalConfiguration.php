@@ -51,10 +51,6 @@ class PayPalConfiguration
      * @var PayPalCodeRepository
      */
     private $codeRepository;
-    /**
-     * @var Context
-     */
-    private $context;
 
     /**
      * @var OnboardingSessionManager
@@ -65,6 +61,11 @@ class PayPalConfiguration
      * @var PersistentConfiguration
      */
     private $persistentConfiguration;
+
+    /**
+     * @var Context
+     */
+    private $context;
 
     public function __construct(
         PrestaShopConfiguration $configuration,

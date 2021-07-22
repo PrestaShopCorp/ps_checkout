@@ -1,0 +1,26 @@
+services:
+  ps_checkout.adapter.language:
+    class: 'PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter'
+    public: true
+    arguments:
+      - '@ps_checkout.context.shop'
+
+  ps_checkout.adapter.tools:
+    class: 'PrestaShop\Module\PrestashopCheckout\Adapter\ToolsAdapter'
+    public: true
+
+  ps_checkout.adapter.link:
+    class: 'PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter'
+    public: true
+
+  ps_checkout.adapter.currency:
+    class: 'PrestaShop\Module\PrestashopCheckout\Adapter\CurrencyAdapter'
+    public: true
+
+  ps_checkout.adapter.configuration:
+    class: 'PrestaShop\Module\PrestashopCheckout\Adapter\ConfigurationAdapter'
+    public: true
+
+  ps_checkout.adapter.country:
+    class: 'PrestaShop\Module\PrestashopCheckout\Adapter\CountryAdapter'
+    public: true

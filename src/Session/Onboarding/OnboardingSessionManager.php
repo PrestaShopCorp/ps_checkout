@@ -40,11 +40,6 @@ class OnboardingSessionManager extends SessionManager
     const SHOP_SESSION = 'shop';
 
     /**
-     * @var \Context
-     */
-    private $context;
-
-    /**
      * @var array
      */
     private $configuration;
@@ -68,6 +63,10 @@ class OnboardingSessionManager extends SessionManager
      * @var CacheInterface
      */
     private $cache;
+    /**
+     * @var PrestaShopContext
+     */
+    private $prestaShopContext;
 
     /**
      * @param OnboardingSessionRepository $repository
@@ -81,15 +80,16 @@ class OnboardingSessionManager extends SessionManager
         OnboardingSessionRepository $repository,
         SessionConfiguration $configuration,
         PrestaShopConfiguration $prestashopConfiguration,
-        CacheInterface $cache
+        CacheInterface $cache,
+        PrestaShopContext $prestaShopContext
     ) {
         parent::__construct($repository);
-        $this->context = \Context::getContext();
         $this->configuration = $configuration->getOnboarding();
         $this->states = $this->configuration['states'];
         $this->transitions = $this->configuration['transitions'];
         $this->mode = Mode::LIVE === $prestashopConfiguration->get(PayPalConfiguration::PAYMENT_MODE) ? Mode::LIVE : Mode::SANDBOX;
         $this->cache = $cache;
+        $this->prestaShopContext = $prestaShopContext;
     }
 
     /**
@@ -106,14 +106,14 @@ class OnboardingSessionManager extends SessionManager
         $correlationId = Uuid::uuid4()->toString();
 
         // Shop UUID generation from PSL
-        $onboardingApi = new Onboarding(new PrestaShopContext(), null, $this->cache);
+        $onboardingApi = new Onboarding($this->prestaShopContext, null, $this->cache);
         $createShopUuid = $onboardingApi->createShopUuid($correlationId);
 
         if (!$createShopUuid) {
             return null;
         }
 
-        $authenticationApi = new Authentication(new PrestaShopContext(), null, $this->cache);
+        $authenticationApi = new Authentication($this->prestaShopContext, null, $this->cache);
         $authToken = $authenticationApi->getAuthToken(self::SHOP_SESSION, $correlationId);
 
         if (!$authToken) {
@@ -124,7 +124,7 @@ class OnboardingSessionManager extends SessionManager
         $sessionData = [
             'correlation_id' => $correlationId,
             'mode' => $this->mode,
-            'shop_id' => (int) $this->context->shop->id,
+            'shop_id' => $this->prestaShopContext->getShopId(),
             'is_closed' => false,
             'auth_token' => $authToken['token'],
             'status' => $this->configuration['initial_state'],
@@ -149,7 +149,7 @@ class OnboardingSessionManager extends SessionManager
     {
         $sessionData = [
             'mode' => $this->mode,
-            'shop_id' => (int) $this->context->shop->id,
+            'shop_id' => $this->prestaShopContext->getShopId(),
             'is_closed' => false,
         ];
 

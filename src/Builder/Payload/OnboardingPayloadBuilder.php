@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
+use Context;
 use PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter;
 use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataMatrice;
@@ -39,16 +40,21 @@ class OnboardingPayloadBuilder extends Builder
      * @var LanguageAdapter
      */
     private $languageAdapter;
+    /**
+     * @var Context
+     */
+    private $context;
 
     /**
      * @param PsAccountRepository $psAccount
      * @param LanguageAdapter $languageAdapter
      */
-    public function __construct(PsAccountRepository $psAccount, LanguageAdapter $languageAdapter)
+    public function __construct(PsAccountRepository $psAccount, LanguageAdapter $languageAdapter, Context $context)
     {
         parent::__construct();
         $this->psAccount = $psAccount;
         $this->languageAdapter = $languageAdapter;
+        $this->context = $context;
     }
 
     /**
@@ -79,7 +85,7 @@ class OnboardingPayloadBuilder extends Builder
      */
     public function buildBaseNode()
     {
-        $language = $this->languageAdapter->getLanguage((int) \Context::getContext()->employee->id_lang);
+        $language = $this->languageAdapter->getLanguage((int) $this->context->employee->id_lang);
 
         $locale = $language['locale'];
 
@@ -186,7 +192,7 @@ class OnboardingPayloadBuilder extends Builder
             'PS_CURRENCY_DEFAULT',
             null,
             null,
-            (int) \Context::getContext()->shop->id
+            (int) $this->context->shop->id
         );
         $currency = \Currency::getCurrency($currencyId);
 
