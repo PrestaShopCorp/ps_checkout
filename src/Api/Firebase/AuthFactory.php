@@ -63,23 +63,6 @@ class AuthFactory
 
     /**
      * @param string $email
-     * @param string $password
-     *
-     * @return array
-     */
-    public function signUp($email, $password)
-    {
-        $response = $this->auth->signUpWithEmailAndPassword($email, $password);
-        // if there is no error, save the account tokens in database
-        if (true === $response['status']) {
-            $this->savePsAccount($response);
-        }
-
-        return $response;
-    }
-
-    /**
-     * @param string $email
      *
      * @return array
      */

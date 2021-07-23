@@ -61,30 +61,5 @@ export default {
 
       return response;
     });
-  },
-
-  signUp({ commit, getters }, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'SignUp',
-      data: {
-        email: payload.email,
-        password: payload.password
-      }
-    }).then(response => {
-      if (response.status === false) {
-        throw response;
-      }
-
-      commit(types.UPDATE_ACCOUNT, {
-        email: response.body.email,
-        idToken: response.body.idToken,
-        localId: response.body.localId,
-        refreshToken: response.body.refreshToken,
-        onboardingCompleted: true
-      });
-
-      return response;
-    });
   }
 };

@@ -5,7 +5,6 @@ namespace Tests\Unit\Helper;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper;
-use PHPUnit\Framework\TestCase;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 use Tests\Unit\Mock\MockedPsAccountsServiceTestCase;
 
