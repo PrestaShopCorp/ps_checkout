@@ -8,6 +8,6 @@
 	<tab><![CDATA[payments_gateways]]></tab>
 	<confirmUninstall><![CDATA[Are you sure you want to uninstall this module?]]></confirmUninstall>
 	<is_configurable>1</is_configurable>
-	<need_instance>0</need_instance>
+	<need_instance>1</need_instance>
 	<limited_countries></limited_countries>
 </module>
