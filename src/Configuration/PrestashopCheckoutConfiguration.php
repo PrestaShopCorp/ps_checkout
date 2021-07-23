@@ -20,17 +20,11 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Configuration;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
 class PrestashopCheckoutConfiguration
 {
-    /**
-     * @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration
-     */
-    private $prestashopConfiguration;
-
     /**
      * @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository
      */
@@ -39,21 +33,18 @@ class PrestashopCheckoutConfiguration
     /**
      * @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository
      */
-    private $psAccount;
+    private $psAccountRepository;
 
     /**
-     * @param PrestaShopConfiguration $prestashopConfiguration
      * @param PaypalAccountRepository $paypalAccount
-     * @param PsAccountRepository $psAccount
+     * @param PsAccountRepository $psAccountRepository
      */
     public function __construct(
-        PrestaShopConfiguration $prestashopConfiguration,
         PaypalAccountRepository $paypalAccount,
-        PsAccountRepository $psAccount
+        PsAccountRepository $psAccountRepository
     ) {
-        $this->prestashopConfiguration = $prestashopConfiguration;
         $this->paypalAccount = $paypalAccount;
-        $this->psAccount = $psAccount;
+        $this->psAccountRepository = $psAccountRepository;
     }
 
     /**
@@ -63,13 +54,11 @@ class PrestashopCheckoutConfiguration
      */
     public function getFirebase()
     {
-        $token = new Token();
-
         return [
-            'email' => $this->psAccount->getEmail(),
-            'token' => $token->getToken(),
-            'accountId' => $this->psAccount->getLocalId(),
-            'refreshToken' => $this->psAccount->getRefreshToken(),
+            'email' => $this->psAccountRepository->getEmail(),
+            'token' => $this->psAccountRepository->getIdToken(),
+            'accountId' => $this->psAccountRepository->getLocalId(),
+            'refreshToken' => $this->psAccountRepository->getRefreshToken(),
         ];
     }
 
@@ -81,7 +70,7 @@ class PrestashopCheckoutConfiguration
     public function getShopData()
     {
         return [
-            'psxForm' => $this->psAccount->getPsxForm(),
+            'psxForm' => $this->psAccountRepository->getPsxForm(),
         ];
     }
 

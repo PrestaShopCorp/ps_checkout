@@ -67,7 +67,8 @@ class PsAccountRepository
         PsAccounts $psAccountsFacade,
         PrestaShopContext $psContext,
         ShopUuidManager $shopUuidManager
-    ) {
+    )
+    {
         $this->configuration = $configuration;
         $this->onBoardingStatusHelper = $onBoardingStatusHelper;
         $this->psAccountsFacade = $psAccountsFacade;
@@ -140,7 +141,7 @@ class PsAccountRepository
     public function getIdToken()
     {
         if ($this->shouldUsePsAccountsData()) {
-            return (string) $this->psAccountsService->getOrRefreshToken();
+            return (string)$this->psAccountsService->getOrRefreshToken();
         }
 
         return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_ID_TOKEN);
@@ -199,7 +200,7 @@ class PsAccountRepository
             return $this->psAccountsService->getShopUuidV4();
         }
 
-        return $this->shopUuidManager->getForShop((int) $this->psContext->getShopId());
+        return $this->shopUuidManager->getForShop((int)$this->psContext->getShopId());
     }
 
     /**
@@ -208,9 +209,9 @@ class PsAccountRepository
     private function shouldUsePsAccountsData()
     {
         if (null === $this->usePSAccountsData) {
-            $this->usePSAccountsData =
-                $this->onBoardingStatusHelper->isPsAccountsOnboarded() &&
-                !$this->onBoardingStatusHelper->isPsCheckoutOnboarded();
+            $allowPsCheckoutLogin = (int) $this->configuration->get(PsAccount::ALLOW_PS_CHECKOUT_LOGIN) == 1;
+
+            $this->usePSAccountsData = !$allowPsCheckoutLogin;
 
             try {
                 $this->psAccountsService = $this->psAccountsFacade->getPsAccountsService();

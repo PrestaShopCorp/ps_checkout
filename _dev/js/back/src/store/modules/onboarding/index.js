@@ -16,35 +16,12 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import Vue from 'vue';
-import Vuex from 'vuex';
+import getGlobal from 'globalthis';
 
-import firebase from './modules/firebase';
-import paypal from './modules/paypal';
-import configuration from './modules/configuration';
-import context from './modules/context';
-import psx from './modules/psx';
-import session from './modules/session';
-import onboarding from './modules/onboarding';
-// import {
-//   onSseOpened,
-//   onSseOpenedWatcher
-// } from '@/store/watchers/on-sse-opened.watcher';
+const { store } = getGlobal();
 
-Vue.use(Vuex);
+const state = store.onboarding;
 
-const store = new Vuex.Store({
-  modules: {
-    context,
-    firebase,
-    paypal,
-    configuration,
-    psx,
-    session,
-    onboarding
-  }
-});
-
-// store.watch(onSseOpened, onSseOpenedWatcher(store));
-
-export default store;
+export default {
+  state
+};

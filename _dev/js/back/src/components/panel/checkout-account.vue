@@ -51,100 +51,95 @@
           <div class="d-flex align-items-center">
             <AccountStatusCheckout v-if="checkoutAccountStatus" class="mr-3" />
 
-            <div class="text-center float-right" v-if="!checkoutAccountStatus">
+            <div class="text-center float-right">
               <a
                 id="go-to-signin-link"
                 href="#"
                 @click.prevent="goToSignIn()"
                 class="mr-4"
+                v-if="!checkoutAccountStatus && loginWithPsCheckoutAvailable"
               >
                 <b>{{ $t('panel.accounts.checkout.logIn') }}</b>
               </a>
-
-              <a
-                id="go-to-signup-link"
-                href="#"
-                @click.prevent="goToSignUp()"
-                class="btn btn-primary-reverse btn-outline-primary light-button mb-1"
+              <b-button
+                @click.prevent="goToModify()"
+                v-if="checkoutAccountStatus && !isReady"
+                variant="outline-secondary"
               >
-                {{ $t('panel.accounts.checkout.createAccount') }}
+                {{ $t('panel.accounts.checkout.manageInfo') }}
+              </b-button>
+              <b-button
+                v-if="checkoutAccountStatus && loggedInWithPsCheckoutAccount && !isReady"
+                class="mr-3"
+                id="psx-logout-button"
+                href="#"
+                data-toggle="modal"
+                data-target="#modalLogout"
+                variant="outline-secondary"
+              >
+                {{ $t('panel.accounts.checkout.logOut') }}
+              </b-button>
+              <a
+                v-if="isPsAccountsEnabled && !loggedInWithPsAccountsAccount"
+                :href="configurePsAccountsURL"
+                class="mr-4"
+              >
+                <b>{{ $t('panel.accounts.checkout.configurePsAccounts') }}</b>
               </a>
+              <span v-if="!isPsAccountsEnabled">
+                {{ $t('panel.accounts.checkout.enablePsAccounts') }}
+              </span>
             </div>
-
-            <template v-else>
-              <div class="text-center">
-                <b-button
-                  v-if="!isReady"
-                  class="mr-3"
-                  id="psx-logout-button"
-                  href="#"
-                  data-toggle="modal"
-                  data-target="#modalLogout"
-                  variant="outline-secondary"
-                >
-                  {{ $t('panel.accounts.checkout.logOut') }}
-                </b-button>
-              </div>
-              <div class="text-center">
-                <b-button
-                  @click.prevent="goToModify()"
-                  v-if="!isReady"
-                  variant="outline-secondary"
-                >
-                  {{ $t('panel.accounts.checkout.manageInfo') }}
-                </b-button>
-              </div>
-            </template>
           </div>
-        </div>
 
-        <!-- modal -->
-        <div
-          class="modal"
-          id="modalLogout"
-          tabindex="-1"
-          role="dialog"
-          aria-labelledby="psxModalLogout"
-        >
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="psxModalLogout">
-                  {{ $t('panel.accounts.checkout.titleLogout') }}
-                </h5>
+          <!-- modal -->
+          <div
+            class="modal"
+            id="modalLogout"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="psxModalLogout"
+          >
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="psxModalLogout">
+                    {{ $t('panel.accounts.checkout.titleLogout') }}
+                  </h5>
 
-                <button
-                  type="button"
-                  class="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                >
-                  <span aria-hidden="true">×</span>
-                </button>
-              </div>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">×</span>
+                  </button>
+                </div>
 
-              <div class="modal-body">
-                <p>{{ $t('panel.accounts.checkout.descriptionLogout') }}</p>
-              </div>
+                <div class="modal-body">
+                  <p>{{ $t('panel.accounts.checkout.descriptionLogout') }}</p>
+                </div>
 
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary"
-                  data-dismiss="modal"
-                >
-                  {{ $t('panel.accounts.checkout.cancel') }}
-                </button>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    data-dismiss="modal"
+                  >
+                    {{ $t('panel.accounts.checkout.cancel') }}
+                  </button>
 
-                <button
-                  @click.prevent="logOut()"
-                  id="modal-confirm-logout-button"
-                  type="button"
-                  class="btn btn-primary"
-                  data-dismiss="modal"
-                >
-                  {{ $t('panel.accounts.checkout.logOut') }}
-                </button>
+                  <button
+                    @click.prevent="logOut()"
+                    id="modal-confirm-logout-button"
+                    type="button"
+                    class="btn btn-primary"
+                    data-dismiss="modal"
+                  >
+                    {{ $t('panel.accounts.checkout.logOut') }}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -183,18 +178,15 @@
       },
       isPsAccountsEnabled() {
         return this.$store.state.onboarding.psAccountsEnabled;
+      },
+      loginWithPsCheckoutAvailable() {
+        return this.$store.state.onboarding.loginWithPsCheckoutAvailable;
       }
     },
     methods: {
       goToSignIn() {
         this.$router
           .push('/authentication/signin')
-          // eslint-disable-next-line no-console
-          .catch(exception => console.log(exception));
-      },
-      goToSignUp() {
-        this.$router
-          .push('/authentication/signup')
           // eslint-disable-next-line no-console
           .catch(exception => console.log(exception));
       },

@@ -23,7 +23,6 @@ import store from './store';
 import Customize from '@/pages/Customize';
 import Accounts from '@/pages/Accounts';
 import Signin from '@/pages/Signin';
-import Signup from '@/pages/Signup';
 import ResetPassword from '@/pages/ResetPassword';
 import PsxAdditionalDetails from '@/pages/PsxAdditionalDetails';
 import Activity from '@/pages/Activity';
@@ -68,18 +67,6 @@ const router = new Router({
       path: '/authentication/signin',
       name: 'Click PS Account Login',
       component: Signin,
-      beforeEnter: (to, from, next) => {
-        if (store.getters.firebaseOnboardingIsCompleted) {
-          next(from);
-        } else {
-          next();
-        }
-      }
-    },
-    {
-      path: '/authentication/signup',
-      name: 'Click PS Account Sign Up',
-      component: Signup,
       beforeEnter: (to, from, next) => {
         if (store.getters.firebaseOnboardingIsCompleted) {
           next(from);
@@ -155,7 +142,6 @@ const guestPages = [
   '/authentication',
   '/authentication/additional',
   '/authentication/signin',
-  '/authentication/signup',
   '/authentication/reset',
   '/experimental',
   '/debug',

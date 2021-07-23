@@ -89,14 +89,6 @@
             </b-button>
           </div>
           <div class="d-flex">
-            <b-button
-              id="go-to-signup-button"
-              class="mr-3"
-              variant="outline-secondary"
-              @click="goToSignUp()"
-            >
-              {{ $t('pages.signin.signup') }}
-            </b-button>
             <b-button id="login-button" variant="primary" @click="logIn()">
               {{ $t('pages.signin.login') }}
             </b-button>
@@ -180,12 +172,6 @@
               throw error;
             }
           });
-      },
-      goToSignUp() {
-        this.$router
-          .push('/authentication/signup')
-          // eslint-disable-next-line no-console
-          .catch(exception => console.log(exception));
       },
       goToResetPassword() {
         this.$router

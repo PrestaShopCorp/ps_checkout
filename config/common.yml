@@ -40,9 +40,9 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration'
     public: true
     arguments:
-      - '@ps_checkout.configuration'
       - '@ps_checkout.repository.paypal.account'
       - '@ps_checkout.repository.prestashop.account'
+
 
   ps_checkout.logger.directory:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory'
@@ -228,6 +228,7 @@ services:
       - '@ps_checkout.onboarding.status_helper'
       - '@ps_checkout.context.prestashop'
       - '@ps_accounts.installer'
+      - '@ps_checkout.configuration'
 
   ps_checkout.store.store:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter'
