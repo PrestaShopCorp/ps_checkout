@@ -157,7 +157,6 @@ class Ps_checkout extends PaymentModule
         // when the zip is uploaded
         $this->version = '2.15.4';
         $this->author = 'PrestaShop';
-        $this->need_instance = 0;
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
 
