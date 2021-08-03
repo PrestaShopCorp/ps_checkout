@@ -143,6 +143,8 @@ class ContextModule implements PresenterInterface
                 'translations' => $this->translations->getTranslations(),
                 'readmeUrl' => $this->getReadme(),
                 'cguUrl' => $this->getCgu(),
+                'privacyPolicyUrl' => $this->getPrivacyPolicyUrl(),
+                'pricingUrl' => $this->getPricingUrl(),
                 'roundingSettingsIsCorrect' => $this->paypalConfiguration->IsRoundingSettingsCorrect(),
                 'liveStepConfirmed' => $this->liveStep->isConfirmed(),
                 'liveStepViewed' => $this->liveStep->isViewed(),
@@ -251,7 +253,7 @@ class ContextModule implements PresenterInterface
             $isoCode = 'en';
         }
 
-        return _MODULE_DIR_ . $this->moduleName . '/docs/readme_' . $isoCode . '.pdf';
+        return ''; // @todo To complete with new links
     }
 
     /**
@@ -353,5 +355,45 @@ class ContextModule implements PresenterInterface
     private function getSubmitIdeaLink()
     {
         return 'https://portal.productboard.com/prestashop/1-prestashop-feedback-the-place-to-share-your-feedback-on-prestashop-s-next-features/tabs/9-prestashop-checkout';
+    }
+
+    /**
+     * @return string
+     */
+    private function getPrivacyPolicyUrl()
+    {
+        $isoCode = $this->psContext->getLanguageIsoCode();
+
+        switch ($isoCode) {
+            case 'fr':
+                return 'https://www.prestashop.com/fr/politique-protection-donnees-prestashop-download';
+            default:
+                return 'https://www.prestashop.com/en/personal-data-protection-policy-prestashop-download';
+        }
+    }
+
+    /**
+     * @return string
+     */
+    private function getPricingUrl()
+    {
+        $isoCode = $this->psContext->getLanguageIsoCode();
+
+        switch ($isoCode) {
+            case 'fr':
+                return 'https://www.prestashop.com/fr/prestashop-checkout';
+            case 'es':
+                return 'https://www.prestashop.com/es/prestashop-checkout';
+            case 'it':
+                return 'https://www.prestashop.com/it/prestashop-checkout';
+            case 'nl':
+                return 'https://www.prestashop.com/nl/prestashop-checkout';
+            case 'pt':
+                return 'https://www.prestashop.com/pt/prestashop-checkout';
+            case 'pl':
+                return 'https://www.prestashop.com/pl/prestashop-checkout';
+            default:
+                return 'https://www.prestashop.com/en/prestashop-checkout';
+        }
     }
 }
