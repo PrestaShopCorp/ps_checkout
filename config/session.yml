@@ -64,3 +64,4 @@ onboarding:
         data:
           shop:
             integrations:
+            is_email_confirmed:
