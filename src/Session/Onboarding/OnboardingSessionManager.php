@@ -21,7 +21,10 @@
 namespace PrestaShop\Module\PrestashopCheckout\Session\Onboarding;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Authentication;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutSessionException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Session\Session;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionHelper;
@@ -54,18 +57,25 @@ class OnboardingSessionManager extends SessionManager
     private $transitions;
 
     /**
+     * @var string
+     */
+    private $mode;
+
+    /**
      * @param \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionRepository $repository
      * @param \PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration $configuration
+     * @param \PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration $prestashopConfiguration
      *
      * @return void
      */
-    public function __construct(OnboardingSessionRepository $repository, SessionConfiguration $configuration)
+    public function __construct(OnboardingSessionRepository $repository, SessionConfiguration $configuration, PrestaShopConfiguration $prestashopConfiguration)
     {
         parent::__construct($repository);
         $this->context = \Context::getContext();
         $this->configuration = $configuration->getOnboarding();
         $this->states = $this->configuration['states'];
         $this->transitions = $this->configuration['transitions'];
+        $this->mode = Mode::LIVE === $prestashopConfiguration->get(PayPalConfiguration::PAYMENT_MODE) ? Mode::LIVE : Mode::SANDBOX;
     }
 
     /**
@@ -85,6 +95,7 @@ class OnboardingSessionManager extends SessionManager
         $createdAt = date('Y-m-d H:i:s');
         $sessionData = [
             'correlation_id' => $correlationId,
+            'mode' => $this->mode,
             'user_id' => (int) $this->context->employee->id,
             'shop_id' => (int) $this->context->shop->id,
             'is_closed' => false,
@@ -110,6 +121,7 @@ class OnboardingSessionManager extends SessionManager
     public function getOpened()
     {
         $sessionData = [
+            'mode' => $this->mode,
             'user_id' => (int) $this->context->employee->id,
             'shop_id' => (int) $this->context->shop->id,
             'is_closed' => false,
@@ -242,6 +254,7 @@ class OnboardingSessionManager extends SessionManager
     public function getLatestOpenedSession()
     {
         $sessionData = [
+            'mode' => $this->mode,
             'shop_id' => (int) $this->context->shop->id,
             'is_closed' => false,
         ];

@@ -82,6 +82,7 @@ class TableManager
         ') && $this->db->execute('
             CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'pscheckout_onboarding_session (
                 correlation_id VARCHAR(255) NOT NULL,
+                mode VARCHAR(255) NOT NULL,
                 user_id INT NOT NULL,
                 shop_id INT NOT NULL,
                 is_closed INT NOT NULL,
@@ -93,11 +94,12 @@ class TableManager
                 expires_at DATETIME,
                 is_sse_opened TINYINT(1) NOT NULL DEFAULT 0,
                 data TEXT,
-                PRIMARY KEY (user_id, shop_id, is_closed)
+                PRIMARY KEY (mode, user_id, shop_id, is_closed)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ') && $this->db->execute('
             CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'pscheckout_payment_session (
                 correlation_id VARCHAR(255) NOT NULL,
+                mode VARCHAR(255) NOT NULL,
                 user_id INT NOT NULL,
                 shop_id INT NOT NULL,
                 is_closed INT NOT NULL,
@@ -109,7 +111,7 @@ class TableManager
                 expires_at DATETIME,
                 is_sse_opened TINYINT(1) NOT NULL DEFAULT 0,
                 data TEXT,
-                PRIMARY KEY (user_id, shop_id, is_closed)
+                PRIMARY KEY (mode, user_id, shop_id, is_closed)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');
     }

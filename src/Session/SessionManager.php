@@ -92,6 +92,6 @@ class SessionManager
      */
     public function close(Session $session)
     {
-        return $this->repository->close($session->getUserId(), $session->getShopId(), $session->getIsClosed());
+        return $this->repository->close($session->getMode(), $session->getUserId(), $session->getShopId(), $session->getIsClosed());
     }
 }

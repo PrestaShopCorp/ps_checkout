@@ -52,6 +52,7 @@ class AbstractSessionRepository implements SessionRepositoryInterface
         $data = isset($sessionData['data']) ? json_encode($sessionData['data']) : null;
         $insertData = [
             'correlation_id' => pSQL($sessionData['correlation_id']),
+            'mode' => pSQL($sessionData['mode']),
             'user_id' => $sessionData['user_id'],
             'shop_id' => $sessionData['shop_id'],
             'is_closed' => $sessionData['is_closed'],
@@ -80,6 +81,7 @@ class AbstractSessionRepository implements SessionRepositoryInterface
         $query = new \DbQuery();
         $query->select('*');
         $query->from($this->table);
+        $query->where('mode = "' . $sessionData['mode'] . '"');
         $query->where('shop_id = ' . (int) $sessionData['shop_id']);
         $query->where('is_closed = ' . (int) $sessionData['is_closed']);
         $query->orderBy('updated_at DESC');
@@ -112,7 +114,8 @@ class AbstractSessionRepository implements SessionRepositoryInterface
             'auth_token' => $session->getAuthToken(),
         ];
         $where = '
-            user_id = ' . $session->getUserId() . '
+            mode = "' . $session->getMode() . '"
+            AND user_id = ' . $session->getUserId() . '
             AND shop_id = ' . $session->getShopId() . '
             AND is_closed = ' . $session->getIsClosed();
 
@@ -122,16 +125,18 @@ class AbstractSessionRepository implements SessionRepositoryInterface
     /**
      * Remove an user session
      *
+     * @param string $mode
      * @param int $userId
      * @param int $shopId
      * @param int $isClosed
      *
      * @return bool
      */
-    public function remove($userId, $shopId, $isClosed)
+    public function remove($mode, $userId, $shopId, $isClosed)
     {
         $where = '
-            user_id = ' . $userId . '
+            mode = "' . $mode . '"
+            AND user_id = ' . $userId . '
             AND shop_id = ' . $shopId . '
             AND is_closed = ' . (int) $isClosed
         ;
@@ -142,25 +147,28 @@ class AbstractSessionRepository implements SessionRepositoryInterface
     /**
      * Close an user session
      *
+     * @param string $mode
      * @param int $userId
      * @param int $shopId
      * @param int $isClosed
      *
      * @return bool
      */
-    public function close($userId, $shopId, $isClosed)
+    public function close($mode, $userId, $shopId, $isClosed)
     {
         $this->db->execute(
             'UPDATE `' . _DB_PREFIX_ . $this->table . '`
             SET `is_closed` = `is_closed` + 1
             WHERE `is_closed` > 0
+            AND `mode` = "' . pSQL($mode) . '"
             AND `user_id` = ' . $userId . '
             AND `shop_id` = ' . $shopId . '
             ORDER BY `is_closed` DESC'
         );
 
         $where = '
-            user_id = ' . $userId . '
+            mode = "' . pSQL($mode) . '"
+            AND user_id = ' . $userId . '
             AND shop_id = ' . $shopId . '
             AND is_closed = ' . (int) $isClosed
         ;

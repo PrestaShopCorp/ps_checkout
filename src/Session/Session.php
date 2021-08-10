@@ -28,6 +28,11 @@ class Session
     private $correlationId;
 
     /**
+     * @var string
+     */
+    private $mode;
+
+    /**
      * @var int
      */
     private $userId;
@@ -90,6 +95,7 @@ class Session
     public function __construct(array $session)
     {
         $this->correlationId = $session['correlation_id'];
+        $this->mode = $session['mode'];
         $this->userId = $session['user_id'];
         $this->shopId = $session['shop_id'];
         $this->isClosed = $session['is_closed'];
@@ -111,6 +117,16 @@ class Session
     public function getCorrelationId()
     {
         return $this->correlationId;
+    }
+
+    /**
+     * Get the session mode (LIVE/SANDBOX)
+     *
+     * @return string
+     */
+    public function getMode()
+    {
+        return $this->mode;
     }
 
     /**
@@ -318,6 +334,7 @@ class Session
     {
         return [
             'correlation_id' => $this->correlationId,
+            'mode' => $this->mode,
             'user_id' => $this->userId,
             'shop_id' => $this->shopId,
             'is_closed' => $this->isClosed,

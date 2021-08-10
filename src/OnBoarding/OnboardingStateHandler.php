@@ -116,16 +116,6 @@ class OnboardingStateHandler
             // TODO : Remove this part after implement SSE + Full CQRS
             $onboarding = new Onboarding(\Context::getContext()->link);
             $onboarding->onboard();
-            // $data = [
-            //     'shop' => [
-            //         'paypal_onboarding_url' => $onboarding->onboard()['onboardingLink'],
-            //     ],
-            // ];
-            // $data = array_merge(json_decode($this->onboardingSession->getData(), true), $data);
-            //
-            // $this->onboardingSession->setData(json_encode($data));
-            //
-            // $this->onboardingSession = $this->onboardingSessionManager->apply('create_shop', $this->onboardingSession->toArray(true));
         }
     }
 }

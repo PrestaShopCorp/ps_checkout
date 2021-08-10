@@ -100,6 +100,8 @@ services:
     arguments:
       - '@ps_checkout.configuration'
       - '@ps_checkout.repository.paypal.code'
+      - '@ps_checkout.session.onboarding.manager'
+      - '@ps_checkout.persistent.configuration'
 
   ps_checkout.persistent.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\PersistentConfiguration'
@@ -219,7 +221,6 @@ services:
     public: true
     arguments:
       - '@ps_checkout.persistent.configuration'
-      - '@ps_checkout.paypal.provider.merchant_integration'
 
   ps_checkout.step.live:
     class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep'
@@ -407,6 +408,7 @@ services:
     arguments:
       - '@ps_checkout.session.onboarding.repository'
       - '@ps_checkout.session.configuration'
+      - '@ps_checkout.configuration'
 
   ps_checkout.session.payment.repository:
     class: 'PrestaShop\Module\PrestashopCheckout\Session\Payment\PaymentSessionRepository'

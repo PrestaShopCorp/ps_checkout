@@ -192,7 +192,9 @@
           this.$store.dispatch('updatePaypalStatusViewed');
         }
 
-        return emailMerchant || this.$t('panel.accounts.paypal.loading') + '...';
+        return (
+          emailMerchant || this.$t('panel.accounts.paypal.loading') + '...'
+        );
       },
       checkoutAccountStatus() {
         return this.$store.state.firebase.onboardingCompleted;
@@ -218,17 +220,25 @@
         });
         this.$store.dispatch('unlink').then(() => {
           // this.$store.dispatch('onboard');
-          this.$store.dispatch({
-            type: 'closeOnboardingSession',
-            session: this.$store.state.session.onboarding
-          }).then(() => {
-            this.$store.dispatch('pollingPaypalOnboardingUrl').then(() => {
-              this.loading = false;
+          this.$store
+            .dispatch({
+              type: 'closeOnboardingSession',
+              session: this.$store.state.session.onboarding
+            })
+            .then(() => {
+              this.pollingPaypalOnboardingUrl();
             });
-          });
           this.sendTrack();
         });
+      },
+      pollingPaypalOnboardingUrl() {
+        this.$store.dispatch('pollingPaypalOnboardingUrl').then(() => {
+          this.loading = false;
+        });
       }
+    },
+    mounted() {
+      this.pollingPaypalOnboardingUrl();
     }
   };
 </script>

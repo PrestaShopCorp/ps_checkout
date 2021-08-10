@@ -13,6 +13,7 @@ onboarding:
       to: ONBOARDING_STARTED
       update:
         correlation_id:
+        mode:
         user_id:
         shop_id:
         is_closed:
