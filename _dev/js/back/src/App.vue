@@ -180,7 +180,8 @@
           name: this.$store.state.context.shopUri,
           psVersion: this.$store.state.context.psVersion,
           moduleVersion: this.$store.state.context.moduleVersion,
-          context: { userAgent: navigator.userAgent }
+          context: { userAgent: navigator.userAgent },
+          merchant_order_count: this.$store.state.context.orderTotal
         });
       }
       if (!this.onboardingPaypalIsCompleted || this.accountIslinked) {

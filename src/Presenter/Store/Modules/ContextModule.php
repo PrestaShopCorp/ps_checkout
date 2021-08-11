@@ -27,6 +27,7 @@ use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\Repository\OrderRepository;
 use PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
@@ -157,6 +158,7 @@ class ContextModule implements PresenterInterface
                 'paymentPreferencesLink' => $this->getGeneratedLink($this->shopContext->isShop17() ? 'AdminPaymentPreferences' : 'AdminPayment'),
                 'overridesExist' => $this->overridesExist(),
                 'submitIdeaLink' => $this->getSubmitIdeaLink(),
+                'orderTotal' => (new OrderRepository())->count($this->psContext->getShopId()),
             ],
         ];
     }
