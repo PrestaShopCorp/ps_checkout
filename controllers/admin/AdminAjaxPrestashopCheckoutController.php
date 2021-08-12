@@ -240,14 +240,32 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $response = $onboardingApi->createShop(array_filter($psxForm));
 
         if (!$response['status']) {
+            if (isset($response['httpCode'])) {
+                http_response_code((int) $response['httpCode']);
+            }
+
+            if (isset($response['body']['error']['errors'])) {
+                $errors = [];
+
+                foreach ($response['body']['error']['errors'] as $error) {
+                    if (isset($error['data']['details'])) {
+                        foreach ($error['data']['details'] as $detail) {
+                            if (isset($detail['description'])) {
+                                $errors[] = $detail['description'];
+                            }
+                        }
+                    }
+                }
+
+                if ($errors) {
+                    $this->ajaxDie(json_encode($errors));
+                }
+            }
+
             $this->ajaxDie(json_encode([
                 $response['exceptionMessage'] ?:
                 $response['body']['error'] && $response['body']['error']['message'] ? $response['body']['error']['message'] : $response['body'],
             ]));
-        }
-
-        if (!$response['status'] && isset($response['httpCode'])) {
-            http_response_code((int) $response['httpCode']);
         }
 
         $this->ajaxDie(json_encode($response));
