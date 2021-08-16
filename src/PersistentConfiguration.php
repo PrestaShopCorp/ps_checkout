@@ -113,6 +113,12 @@ class PersistentConfiguration
      */
     public function savePsAccount(PsAccount $psAccount)
     {
+        if ((int) $this->configuration->get(PsAccount::ALLOW_PS_CHECKOUT_LOGIN) !== 1) {
+            $this->configuration->set(PsAccount::PS_CHECKOUT_PSX_FORM, $psAccount->getPsxForm());
+
+            return true;
+        }
+
         // Generate a new PS Checkout shop UUID if PS Account and Checkout shop UUID are identicals
         $psContext = new \PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext();
         $shopUuidManager = new \PrestaShop\Module\PrestashopCheckout\ShopUuidManager();

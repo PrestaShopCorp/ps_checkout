@@ -22,18 +22,17 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Update main function for module version 4.0.0
+ * Update main function for module version 3.2.0
  *
  * @param Ps_checkout $module
  *
  * @return bool
  */
-function upgrade_module_4_0_0($module)
+function upgrade_module_3_2_0($module)
 {
     $localId = Configuration::get('PS_PSX_FIREBASE_LOCAL_ID');
-    if (!empty($localId)) {
-        Configuration::updateValue('ALLOW_PS_CHECKOUT_LOGIN', '1', false, 0, 0);
-    }
+
+    Configuration::updateValue('ALLOW_PS_CHECKOUT_LOGIN', (int) !empty($localId), false, 0, 0);
 
     return true;
 }

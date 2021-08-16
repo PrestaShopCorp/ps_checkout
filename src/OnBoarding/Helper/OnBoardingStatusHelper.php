@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper;
 
+use Exception;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
@@ -61,8 +62,13 @@ class OnBoardingStatusHelper
             $psAccountsService = $this->psAccountsFacade->getPsAccountsService();
 
             return $psAccountsService->isAccountLinked();
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return false;
         }
+    }
+
+    public function isPsCheckoutLoginAllowed()
+    {
+        return (int) $this->configuration->get(PsAccount::ALLOW_PS_CHECKOUT_LOGIN) == 1;
     }
 }

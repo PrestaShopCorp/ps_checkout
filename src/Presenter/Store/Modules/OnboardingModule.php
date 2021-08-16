@@ -22,7 +22,6 @@ namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
-use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\PsAccountsInstaller\Installer\Installer;
@@ -65,7 +64,7 @@ class OnboardingModule implements PresenterInterface
                 'psAccountsOnboarded' => $this->onBoardingStatusHelper->isPsAccountsOnboarded(),
                 'psCheckoutOnboarded' => $this->onBoardingStatusHelper->isPsCheckoutOnboarded(),
                 'psAccountsEnabled' => $this->installer->isModuleEnabled(),
-                'loginWithPsCheckoutAvailable' => (int) $this->configuration->get(PsAccount::ALLOW_PS_CHECKOUT_LOGIN) === 1,
+                'loginWithPsCheckoutAvailable' => $this->onBoardingStatusHelper->isPsCheckoutLoginAllowed(),
                 'psAccountsConfigureURL' => $this->prestaShopContext->getLink()->getAdminLink(
                     'adminModules',
                     true,

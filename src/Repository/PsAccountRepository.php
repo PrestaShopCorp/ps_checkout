@@ -208,9 +208,7 @@ class PsAccountRepository
     private function shouldUsePsAccountsData()
     {
         if (null === $this->usePSAccountsData) {
-            $allowPsCheckoutLogin = (int) $this->configuration->get(PsAccount::ALLOW_PS_CHECKOUT_LOGIN) == 1;
-
-            $this->usePSAccountsData = !$allowPsCheckoutLogin;
+            $this->usePSAccountsData = !$this->onBoardingStatusHelper->isPsCheckoutLoginAllowed();
 
             try {
                 $this->psAccountsService = $this->psAccountsFacade->getPsAccountsService();
