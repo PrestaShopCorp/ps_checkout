@@ -44,7 +44,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     /**
      * @var bool
      */
-    protected $json = true;
+    // Bug when we switch live/sandbox mode
+    // protected $json = true;
 
     /**
      * AJAX: Update payment method order
