@@ -41,10 +41,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public $ajax = true;
 
-    /**
-     * @var bool
-     */
     // Bug when we switch live/sandbox mode
+    // /**
+    //  * @var bool
+    //  */
     // protected $json = true;
 
     /**
