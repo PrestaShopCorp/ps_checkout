@@ -79,8 +79,11 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
                 $this->module->getService('ps_checkout.segment.tracker')->track('Account Paypal Fully Approved', Shop::getContextListShopID());
             }
 
+            /** @var LinkAdapter $linkAdapter */
+            $linkAdapter = $this->module->getService('ps_checkout.adapter.link');
+
             Tools::redirect(
-                (new LinkAdapter($this->context->link))->getAdminLink(
+                $linkAdapter->getAdminLink(
                     'AdminModules',
                     true,
                     [],
@@ -101,6 +104,9 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
      */
     public function initCursedPage()
     {
+        /** @var LinkAdapter $linkAdapter */
+        $linkAdapter = $this->module->getService('ps_checkout.adapter.link');
+
         if (!$this->checkToken()) {
             $this->errors[] = $this->module->l('It seems your employee token is invalid.');
         }
@@ -123,7 +129,7 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
             'js_files' => array_unique($this->js_files),
             'errors' => $this->errors,
             'logoSrc' => $this->module->getPathUri() . 'logo.png',
-            'moduleLink' => (new LinkAdapter($this->context->link))->getAdminLink(
+            'moduleLink' => $linkAdapter->getAdminLink(
                 'AdminModules',
                 true,
                 [],

@@ -87,6 +87,10 @@ class ContextModule implements PresenterInterface
      * @var ShopUuidManager
      */
     private $shopUuidManager;
+    /**
+     * @var LinkAdapter
+     */
+    private $linkAdapter;
 
     /**
      * @param string $moduleName
@@ -109,7 +113,8 @@ class ContextModule implements PresenterInterface
         Translations $translations,
         ShopContext $shopContext,
         ShopProvider $shopProvider,
-        ShopUuidManager $shopUuidManager
+        ShopUuidManager $shopUuidManager,
+        LinkAdapter $linkAdapter
     ) {
         $this->moduleName = $moduleName;
         $this->moduleKey = $moduleKey;
@@ -121,6 +126,7 @@ class ContextModule implements PresenterInterface
         $this->shopContext = $shopContext;
         $this->shopProvider = $shopProvider;
         $this->shopUuidManager = $shopUuidManager;
+        $this->linkAdapter = $linkAdapter;
     }
 
     /**
@@ -149,7 +155,7 @@ class ContextModule implements PresenterInterface
                 'shopsTree' => $this->getShopsTree(),
                 'faq' => $this->getFaq(),
                 'language' => $this->psContext->getLanguage(),
-                'prestashopCheckoutAjax' => (new LinkAdapter($this->psContext->getLink()))->getAdminLink('AdminAjaxPrestashopCheckout'),
+                'prestashopCheckoutAjax' => $this->linkAdapter->getAdminLink('AdminAjaxPrestashopCheckout'),
                 'prestashopCheckoutSse' => $sseUrl,
                 'prestashopCheckoutWebHook' => $this->psContext->getLink()->getModuleLink('ps_checkout', 'DispatchWebHook', [], true, null, $shopId),
                 'translations' => $this->translations->getTranslations(),
@@ -200,8 +206,6 @@ class ContextModule implements PresenterInterface
             return $shopList;
         }
 
-        $linkAdapter = new LinkAdapter($this->psContext->getLink());
-
         foreach (\Shop::getTree() as $groupId => $groupData) {
             $shops = [];
 
@@ -209,7 +213,7 @@ class ContextModule implements PresenterInterface
                 $shops[] = [
                     'id' => $shopId,
                     'name' => $shopData['name'],
-                    'url' => $linkAdapter->getAdminLink(
+                    'url' => $this->linkAdapter->getAdminLink(
                         'AdminModules',
                         true,
                         [],
@@ -321,9 +325,7 @@ class ContextModule implements PresenterInterface
      */
     private function getCountriesLink()
     {
-        $linkAdapter = new LinkAdapter($this->psContext->getLink());
-
-        return $linkAdapter->getAdminLink('AdminCountries');
+        return $this->linkAdapter->getAdminLink('AdminCountries');
     }
 
     /**
@@ -338,9 +340,7 @@ class ContextModule implements PresenterInterface
      */
     public function getGeneratedLink($link, $params = [], $withToken = true, $sfRouteParams = [])
     {
-        $linkAdapter = new LinkAdapter($this->psContext->getLink());
-
-        return $linkAdapter->getAdminLink($link, $withToken, $sfRouteParams, $params);
+        return $this->linkAdapter->getAdminLink($link, $withToken, $sfRouteParams, $params);
     }
 
     /**

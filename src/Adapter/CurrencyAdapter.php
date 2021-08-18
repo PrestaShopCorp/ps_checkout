@@ -10,4 +10,9 @@ class CurrencyAdapter
     {
         return Currency::getCurrencyInstance($id);
     }
+
+    public function getCurrency($idCurrency)
+    {
+        return Currency::getCurrency((int) $idCurrency);
+    }
 }

@@ -230,6 +230,7 @@ services:
       - '@ps_checkout.context.shop'
       - '@ps_checkout.shop.provider'
       - '@ps_checkout.manager.shopuuid'
+      - '@ps_checkout.adapter.link'
 
   ps_checkout.store.module.session:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\SessionModule'
@@ -249,8 +250,11 @@ services:
     public: true
     arguments:
       - '@ps_checkout.repository.prestashop.account'
-      - '@ps_checkout.adapter.language'
       - '@ps_checkout.context'
+      - '@ps_checkout.adapter.language'
+      - '@ps_checkout.adapter.link'
+      - '@ps_checkout.adapter.configuration'
+      - '@ps_checkout.adapter.currency'
 
   ps_checkout.updater.paypal.account:
     class: 'PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater'

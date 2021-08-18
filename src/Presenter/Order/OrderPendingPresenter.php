@@ -29,7 +29,6 @@ use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Repository\OrderRepository;
 use PrestaShop\Module\PrestashopCheckout\Translations\OrderStatesTranslations;
-use Ps_checkout;
 
 /**
  * Present the pending orders for the reporting

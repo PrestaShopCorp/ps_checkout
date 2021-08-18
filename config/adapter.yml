@@ -12,6 +12,9 @@ services:
   ps_checkout.adapter.link:
     class: 'PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter'
     public: true
+    arguments:
+      - '@ps_checkout.context.shop'
+      - '@ps_checkout.context'
 
   ps_checkout.adapter.currency:
     class: 'PrestaShop\Module\PrestashopCheckout\Adapter\CurrencyAdapter'

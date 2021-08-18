@@ -21,6 +21,8 @@
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
 use Context;
+use PrestaShop\Module\PrestashopCheckout\Adapter\ConfigurationAdapter;
+use PrestaShop\Module\PrestashopCheckout\Adapter\CurrencyAdapter;
 use PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter;
 use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataMatrice;
@@ -35,7 +37,6 @@ class OnboardingPayloadBuilder extends Builder
      * @var PsAccountRepository
      */
     private $psAccount;
-
     /**
      * @var LanguageAdapter
      */
@@ -44,17 +45,38 @@ class OnboardingPayloadBuilder extends Builder
      * @var Context
      */
     private $context;
+    /**
+     * @var LinkAdapter
+     */
+    private $linkAdapter;
+    /**
+     * @var ConfigurationAdapter
+     */
+    private $configurationAdapter;
+    /**
+     * @var CurrencyAdapter
+     */
+    private $currencyAdapter;
 
     /**
      * @param PsAccountRepository $psAccount
      * @param LanguageAdapter $languageAdapter
      */
-    public function __construct(PsAccountRepository $psAccount, LanguageAdapter $languageAdapter, Context $context)
-    {
+    public function __construct(
+        PsAccountRepository $psAccount,
+        Context $context,
+        LanguageAdapter $languageAdapter,
+        LinkAdapter $linkAdapter,
+        ConfigurationAdapter $configurationAdapter,
+        CurrencyAdapter $currencyAdapter
+    ) {
         parent::__construct();
         $this->psAccount = $psAccount;
-        $this->languageAdapter = $languageAdapter;
         $this->context = $context;
+        $this->languageAdapter = $languageAdapter;
+        $this->linkAdapter = $linkAdapter;
+        $this->configurationAdapter = $configurationAdapter;
+        $this->currencyAdapter = $currencyAdapter;
     }
 
     /**
@@ -178,7 +200,7 @@ class OnboardingPayloadBuilder extends Builder
      */
     private function getCallBackUrl()
     {
-        return (new LinkAdapter())->getAdminLink('AdminPaypalOnboardingPrestashopCheckout');
+        return $this->linkAdapter->getAdminLink('AdminPaypalOnboardingPrestashopCheckout');
     }
 
     /**
@@ -188,13 +210,14 @@ class OnboardingPayloadBuilder extends Builder
      */
     private function getCurrencyIsoCode()
     {
-        $currencyId = (int) \Configuration::get(
+        $currencyId = (int) $this->configurationAdapter->get(
             'PS_CURRENCY_DEFAULT',
             null,
             null,
-            (int) $this->context->shop->id
+            $this->context->shop->id
         );
-        $currency = \Currency::getCurrency($currencyId);
+
+        $currency = $this->currencyAdapter->getCurrency($currencyId);
 
         return $currency['iso_code'];
     }

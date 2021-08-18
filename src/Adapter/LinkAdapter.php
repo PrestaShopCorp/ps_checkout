@@ -20,7 +20,11 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Adapter;
 
+use Context;
+use Link;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
+use PrestaShopException;
+use Tools;
 
 /**
  * Link adapter
@@ -30,17 +34,18 @@ class LinkAdapter
     /**
      * Link object
      *
-     * @var \Link
+     * @var Link
      */
     private $link;
+    /**
+     * @var ShopContext
+     */
+    private $shopContext;
 
-    public function __construct(\Link $link = null)
+    public function __construct(ShopContext $shopContext, Context $context)
     {
-        if (null === $link) {
-            $link = new \Link();
-        }
-
-        $this->link = $link;
+        $this->link = $context->link;
+        $this->shopContext = $shopContext;
     }
 
     /**
@@ -53,11 +58,11 @@ class LinkAdapter
      *
      * @return string
      *
-     * @throws \PrestaShopException
+     * @throws PrestaShopException
      */
     public function getAdminLink($controller, $withToken = true, $sfRouteParams = [], $params = [])
     {
-        if ((new ShopContext())->isShop17()) {
+        if ($this->shopContext->isShop17()) {
             return $this->link->getAdminLink($controller, $withToken, $sfRouteParams, $params);
         }
 
@@ -66,6 +71,6 @@ class LinkAdapter
             $paramsAsString .= "&$key=$value";
         }
 
-        return \Tools::getShopDomainSsl(true) . __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_) . '/' . $this->link->getAdminLink($controller, $withToken) . $paramsAsString;
+        return Tools::getShopDomainSsl(true) . __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_) . '/' . $this->link->getAdminLink($controller, $withToken) . $paramsAsString;
     }
 }

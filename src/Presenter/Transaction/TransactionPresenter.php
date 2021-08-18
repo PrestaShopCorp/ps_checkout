@@ -21,8 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Transaction;
 
 use Context;
-use Currency;
-use Module;
 use PrestaShop\Module\PrestashopCheckout\Adapter\CurrencyAdapter;
 use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Adapter\ToolsAdapter;
@@ -30,7 +28,6 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Repository\OrderPaymentRepository;
 use PrestaShopDatabaseException;
 use Ps_checkout;
-use Tools;
 
 /**
  * Present the pending orders for the reporting
