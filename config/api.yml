@@ -1,0 +1,5 @@
+services:
+#  ps_checkout.api.payment.authentication:
+#    class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\Authentication'
+#    arguments:
+#      - '@=service("ps_checkout.context").link'

@@ -1,5 +1,6 @@
 imports:
   - { resource: adapter.yml }
+  - { resource: api.yml }
 
 services:
   # From PS 1.7.0 to PS 1.7.3, the bundled version of Symfony is 2.x on which the _defaults
@@ -447,6 +448,7 @@ services:
       - '@ps_checkout.configuration'
       - '@ps_checkout.cache.session'
       - '@ps_checkout.context.prestashop'
+      - '@ps_checkout.module'
 
   ps_checkout.session.payment.repository:
     class: 'PrestaShop\Module\PrestashopCheckout\Session\Payment\PaymentSessionRepository'
