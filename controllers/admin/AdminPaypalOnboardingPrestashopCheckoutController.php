@@ -28,43 +28,125 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
      */
     public $module;
 
-    public function init()
+    /**
+     * {@inheritdoc}
+     */
+    public function postProcess()
     {
-        parent::init();
-        $idMerchant = Tools::getValue('merchantIdInPayPal');
+        try {
+            $idMerchant = Tools::getValue('merchantIdInPayPal');
 
-        if (true === empty($idMerchant)) {
-            throw new PrestaShopException('merchantId cannot be empty');
+            if (true === empty($idMerchant)) {
+                $this->errors[] = $this->module->l('We didn\'t receive your PayPal Merchant identifier.');
+
+                return false;
+            }
+
+            if (!Validate::isGenericName($idMerchant) || PaypalAccountUpdater::MIN_ID_LENGTH > strlen($idMerchant)) {
+                $this->errors[] = $this->module->l('Your PayPal Merchant identifier seems invalid.');
+
+                return false;
+            }
+
+            $paypalAccount = new PaypalAccount($idMerchant);
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\PersistentConfiguration $persistentConfiguration */
+            $persistentConfiguration = $this->module->getService('ps_checkout.persistent.configuration');
+            $persistentConfiguration->savePaypalAccount($paypalAccount);
+
+            /** @var PaypalAccountUpdater $accountUpdater */
+            $accountUpdater = $this->module->getService('ps_checkout.updater.paypal.account');
+            $accountUpdater->update($paypalAccount);
+
+            if ($paypalAccount->getCardPaymentStatus() === PaypalAccountUpdater::SUBSCRIBED) {
+                // track account paypal fully approved
+                $this->module->getService('ps_checkout.segment.tracker')->track('Account Paypal Fully Approved', Shop::getContextListShopID());
+            }
+
+            Tools::redirect(
+                (new LinkAdapter($this->context->link))->getAdminLink(
+                    'AdminModules',
+                    true,
+                    [],
+                    [
+                        'configure' => 'ps_checkout',
+                    ]
+                )
+            );
+        } catch (Exception $e) {
+            $this->errors[] = $e->getMessage();
         }
 
-        if (PaypalAccountUpdater::MIN_ID_LENGTH > strlen($idMerchant)) {
-            throw new PrestaShopException('merchantId length must be at least 13 characters long');
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function initCursedPage()
+    {
+        if (!$this->checkToken()) {
+            $this->errors[] = $this->module->l('It seems your employee token is invalid.');
         }
 
-        $paypalAccount = new PaypalAccount($idMerchant);
+        $this->addCSS(__PS_BASE_URI__ . $this->admin_webpath . '/themes/' . $this->bo_theme . '/public/theme.css', 'all', 0);
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\PersistentConfiguration $persistentConfiguration */
-        $persistentConfiguration = $this->module->getService('ps_checkout.persistent.configuration');
-        $persistentConfiguration->savePaypalAccount($paypalAccount);
-
-        /** @var PaypalAccountUpdater $accountUpdater */
-        $accountUpdater = $this->module->getService('ps_checkout.updater.paypal.account');
-        $accountUpdater->update($paypalAccount);
-
-        if ($paypalAccount->getCardPaymentStatus() === PaypalAccountUpdater::SUBSCRIBED) {
-            // track account paypal fully approved
-            $this->module->getService('ps_checkout.segment.tracker')->track('Account Paypal Fully Approved', Shop::getContextListShopID());
-        }
-
-        Tools::redirect(
-            (new LinkAdapter($this->context->link))->getAdminLink(
+        $this->context->smarty->assign([
+            'img_dir' => _PS_IMG_,
+            'iso' => $this->context->language->iso_code,
+            'shop_name' => Configuration::get('PS_SHOP_NAME'),
+            'meta_title' => $this->module->displayName,
+            'navigationPipe' => Configuration::get('PS_NAVIGATION_PIPE') ? Configuration::get('PS_NAVIGATION_PIPE') : '>',
+            'css_files' => $this->css_files,
+            'js_files' => array_unique($this->js_files),
+            'errors' => $this->errors,
+            'logoSrc' => $this->module->getPathUri() . 'logo.png',
+            'moduleLink' => (new LinkAdapter($this->context->link))->getAdminLink(
                 'AdminModules',
                 true,
                 [],
                 [
                     'configure' => 'ps_checkout',
                 ]
-            )
-        );
+            ),
+        ]);
+
+        echo $this->context->smarty->fetch($this->module->getLocalPath() . 'views/templates/admin/cursedPage.tpl');
+
+        exit;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function init()
+    {
+        if (!isset($this->context->employee) || !$this->context->employee->isLoggedBack()) {
+            // Avoid redirection to Login page because we want display additional information
+            $this->errors[] = $this->module->l('It seems you are logged out.');
+            $this->initCursedPage();
+        }
+
+        parent::init();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function isAnonymousAllowed()
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function display()
+    {
+        if ($this->errors) {
+            $this->initCursedPage();
+        }
+
+        parent::display();
     }
 }
