@@ -772,33 +772,4 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
         $paypalConfiguration->setButtonConfiguration(json_decode(Tools::getValue('configuration')));
     }
-
-    /**
-     * AJAX: Get merchant integration
-     */
-    public function ajaxProcessGetMerchantIntegration()
-    {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
-        $paypalAccount = $this->module->getService('ps_checkout.repository.paypal.account');
-
-        if (!$paypalAccount->getMerchantId()) {
-            $this->ajaxDie(json_encode([
-                'status' => false,
-                'errors' => [
-                    'No merchant id found.',
-                ],
-            ]));
-        }
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalMerchantIntegrationProvider $payPalMerchantIntegrationProvider */
-        $payPalMerchantIntegrationProvider = $this->module->getService('ps_checkout.paypal.provider.merchant_integration');
-
-        $merchantIntegration = $payPalMerchantIntegrationProvider->getById($paypalAccount->getMerchantId());
-        unset($merchantIntegration['oauth_integrations']);
-
-        $this->ajaxDie(json_encode([
-            'status' => true,
-            'content' => $merchantIntegration,
-        ], JSON_PRETTY_PRINT));
-    }
 }
