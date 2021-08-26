@@ -24,8 +24,6 @@ use GuzzleHttp\Client;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
-use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 
@@ -68,60 +66,5 @@ class PaymentClient extends GenericClient
         }
 
         $this->setClient($client);
-    }
-
-    /**
-     * @param array $options
-     *
-     * @return array
-     */
-    protected function post(array $options = [])
-    {
-        $delay = isset($options['delay']) ? (int) $options['delay'] : 2;
-        $retries = isset($options['retries']) ? (int) $options['retries'] : 2;
-        unset($options['delay'], $options['retries']);
-
-        return $this->postWithRetry($options, $delay, $retries);
-    }
-
-    /**
-     * @param array $options
-     * @param int $delay
-     * @param int $retries
-     *
-     * @return array
-     */
-    private function postWithRetry(array $options, $delay = 2, $retries = 2)
-    {
-        try {
-            $response = parent::post($options);
-
-            if (false !== $response['status']) {
-                return $response;
-            }
-
-            if (isset($response['exceptionCode'])
-                && $response['exceptionCode'] === PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION
-                && false !== strpos($response['exceptionMessage'], 'cURL error 28')
-            ) {
-                throw new HttpTimeoutException($response['exceptionMessage'], PsCheckoutException::PSL_TIMEOUT);
-            }
-
-            if (isset($response['body']['message'])
-                && ($response['body']['message'] === 'Error: ETIMEDOUT' || $response['body']['message'] === 'Error: ESOCKETTIMEDOUT')
-            ) {
-                throw new HttpTimeoutException($response['body']['message'], PsCheckoutException::PSL_TIMEOUT);
-            }
-        } catch (HttpTimeoutException $exception) {
-            if ($retries > 0) {
-                sleep($delay);
-
-                return $this->postWithRetry($options, $delay, $retries - 1);
-            }
-
-            throw $exception;
-        }
-
-        return $response;
     }
 }
