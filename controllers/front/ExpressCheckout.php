@@ -99,7 +99,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends ModuleFrontControl
                 $this->payload['order']['shipping']['address']['postal_code'],
                 $this->payload['order']['shipping']['address']['admin_area_2'],
                 $this->payload['order']['shipping']['address']['country_code'],
-                false === empty($bodyValues['order']['payer']['phone']) ? $this->payload['order']['payer']['phone']['phone_number']['national_number'] : ''
+                false === empty($this->payload['order']['payer']['phone']) ? $this->payload['order']['payer']['phone']['phone_number']['national_number'] : ''
             );
         } catch (Exception $exception) {
             /* @var \Psr\Log\LoggerInterface logger */
