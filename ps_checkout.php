@@ -678,6 +678,8 @@ class Ps_checkout extends PaymentModule
         if ($psCheckoutCart->isExpressCheckout || !$this->context->cart->nbProducts()) {
             $psCheckoutCartRepository->remove($psCheckoutCart);
             $this->context->cookie->__unset('paypalEmail');
+        } elseif ($psCheckoutCart->paypal_status === PsCheckoutCart::STATUS_CREATED) {
+            $psCheckoutCartRepository->remove($psCheckoutCart);
         }
     }
 
@@ -1044,7 +1046,7 @@ class Ps_checkout extends PaymentModule
         // If paypal_token_expire is in future, token is not expired
         if (false !== $psCheckoutCart
             && false === empty($psCheckoutCart->paypal_order)
-            && in_array($psCheckoutCart->paypal_status, ['CREATED', 'APPROVED'], true)
+            && in_array($psCheckoutCart->paypal_status, [PsCheckoutCart::STATUS_CREATED, PsCheckoutCart::STATUS_APPROVED], true)
             && false === empty($psCheckoutCart->paypal_token_expire)
             && strtotime($psCheckoutCart->paypal_token_expire) > time()
         ) {
