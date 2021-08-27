@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
+use PrestaShop\Module\PrestashopCheckout\Environment\PsxEnv;
 use PrestaShop\Module\PrestashopCheckout\Faq\Faq;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner;
@@ -122,8 +123,10 @@ class ContextModule implements PresenterInterface
      */
     public function present()
     {
-        $shopUuid = new ShopUuidManager();
         $shopId = (int) \Context::getContext()->shop->id;
+        $shopUuid = (new ShopUuidManager())->getForShop($shopId);
+
+        $sseUrl = (new PsxEnv())->getPsxApiUrl() . 'webhooks/sse/onboarding/' . $shopUuid;
 
         return [
             'context' => [
@@ -132,7 +135,7 @@ class ContextModule implements PresenterInterface
                 'phpVersion' => phpversion(),
                 'shopIs17' => $this->shopContext->isShop17(),
                 'moduleKey' => $this->moduleKey,
-                'shopId' => $shopUuid->getForShop($shopId),
+                'shopId' => $shopUuid,
                 'shopUri' => $this->shopProvider->getShopUrl($shopId),
                 'isReady' => $this->shopContext->isReady(),
                 'isShopContext' => $this->isShopContext(),
@@ -140,6 +143,8 @@ class ContextModule implements PresenterInterface
                 'faq' => $this->getFaq(),
                 'language' => $this->psContext->getLanguage(),
                 'prestashopCheckoutAjax' => (new LinkAdapter($this->psContext->getLink()))->getAdminLink('AdminAjaxPrestashopCheckout'),
+                'prestashopCheckoutSse' => $sseUrl,
+                'prestashopCheckoutWebHook' => $this->psContext->getLink()->getModuleLink('ps_checkout', 'DispatchWebHook', [], true, null, $shopId),
                 'translations' => $this->translations->getTranslations(),
                 'readmeUrl' => $this->getReadme(),
                 'cguUrl' => $this->getCgu(),

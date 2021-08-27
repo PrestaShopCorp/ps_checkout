@@ -19,6 +19,7 @@
 
 export default {
   adminController: state => state.prestashopCheckoutAjax,
+  webhookController: state => state.prestashopCheckoutWebHook,
   locale: state => state.language.iso_code,
   shopIs17: state => state.shopIs17,
   translations: state => state.translations,

@@ -16,33 +16,40 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import Vue from 'vue';
-import Vuex from 'vuex';
+const onMessage = (eventSource, store) => event => {
+  const { data: dataString } = event;
+  eventSource.close();
 
-import firebase from './modules/firebase';
-import paypal from './modules/paypal';
-import configuration from './modules/configuration';
-import context from './modules/context';
-import psx from './modules/psx';
-import session from './modules/session';
-// import {
-//   onSseOpened,
-//   onSseOpenedWatcher
-// } from '@/store/watchers/on-sse-opened.watcher';
+  store.dispatch({
+    type: 'sendSseOnboardingWebhook',
+    data: JSON.parse(dataString)
+  });
+};
 
-Vue.use(Vuex);
-
-const store = new Vuex.Store({
-  modules: {
-    context,
-    firebase,
-    paypal,
-    configuration,
-    psx,
-    session
+const onError = eventSource => event => {
+  const { type, data } = event;
+  if (type === 'error' && !data) {
+    eventSource.close();
   }
-});
+};
 
-// store.watch(onSseOpened, onSseOpenedWatcher(store));
+export class SseOnboardingService {
+  eventSource;
+  store;
 
-export default store;
+  constructor(store) {
+    this.store = store;
+  }
+
+  open() {
+    const { prestashopCheckoutSse } = this.store.state.context;
+    this.eventSource = new EventSource(prestashopCheckoutSse);
+
+    this.eventSource.onmessage = onMessage(this.eventSource, this.store);
+    this.eventSource.onerror = onError(this.eventSource, this.store);
+  }
+
+  close() {
+    this.eventSource.close();
+  }
+}

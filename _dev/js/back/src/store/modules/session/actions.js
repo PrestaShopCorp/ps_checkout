@@ -18,6 +18,7 @@
  */
 
 import ajax from '@/requests/ajax.js';
+import ajaxWebhook from '@/requests/webhook';
 import * as types from './mutation-types';
 
 export default {
@@ -38,8 +39,9 @@ export default {
       return Promise.resolve(response);
     });
   },
-  pollingPaypalOnboardingUrl({getters, dispatch} ) {
-    const canBeActivated = () => getters.firebaseOnboardingIsCompleted && !getters.hasOnboardingUrl;
+  pollingPaypalOnboardingUrl({ getters, dispatch }) {
+    const canBeActivated = () =>
+      getters.firebaseOnboardingIsCompleted && !getters.hasOnboardingUrl;
     dispatch('getOpenedOnboardingSession').then(() => {
       if (!canBeActivated()) {
         return;
@@ -69,6 +71,18 @@ export default {
       commit(types.ONBOARDING_SESSION, response);
 
       return Promise.resolve(response);
+    });
+  },
+  sendSseOnboardingWebhook({ getters, state }, { data }) {
+    const { correlation_id: correlationId } = state.onboarding;
+    return ajaxWebhook({
+      url: getters.webhookController,
+      data: data,
+      headers: {
+        // PrestaShop Core does not understand well 'application/json'
+        Accept: '*/*',
+        'Correlation-Id': correlationId
+      }
     });
   },
   closeOnboardingSession({ commit, getters }, payload) {

@@ -16,33 +16,14 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-import Vue from 'vue';
-import Vuex from 'vuex';
+import axios from 'axios';
 
-import firebase from './modules/firebase';
-import paypal from './modules/paypal';
-import configuration from './modules/configuration';
-import context from './modules/context';
-import psx from './modules/psx';
-import session from './modules/session';
-// import {
-//   onSseOpened,
-//   onSseOpenedWatcher
-// } from '@/store/watchers/on-sse-opened.watcher';
-
-Vue.use(Vuex);
-
-const store = new Vuex.Store({
-  modules: {
-    context,
-    firebase,
-    paypal,
-    configuration,
-    psx,
-    session
-  }
-});
-
-// store.watch(onSseOpened, onSseOpenedWatcher(store));
-
-export default store;
+export default function ajaxWebhook(params) {
+  return axios
+    .post(params.url, params.data, {
+      headers: params.headers
+    })
+    .catch(error => {
+      throw error;
+    });
+}
