@@ -33,7 +33,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {
     /**
      * @var Ps_checkout
-     */git
+     */
     public $module;
 
     /**
