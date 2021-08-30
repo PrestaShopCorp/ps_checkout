@@ -19,6 +19,12 @@
  */
 class PsCheckoutCart extends ObjectModel
 {
+    const STATUS_CREATED = 'CREATED';
+    const STATUS_SAVED = 'SAVED';
+    const STATUS_APPROVED = 'APPROVED';
+    const STATUS_COMPLETED = 'COMPLETED';
+    const STATUS_VOIDED = 'VOIDED';
+
     /**
      * @var int Cart Identifier
      */

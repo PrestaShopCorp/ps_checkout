@@ -856,6 +856,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             'content' => $merchantIntegration,
         ], JSON_PRETTY_PRINT));
     }
+<<<<<<< HEAD
 
     /**
      * {@inheritdoc}
@@ -902,4 +903,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         parent::display();
     }
+=======
+>>>>>>> 773658e992a517c277f312fed1ba286b62a6eabd
 }
