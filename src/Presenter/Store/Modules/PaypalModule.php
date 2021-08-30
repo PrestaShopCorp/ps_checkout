@@ -60,6 +60,7 @@ class PaypalModule implements PresenterInterface
                 'emailIsValid' => $paypalAccount->getEmailIsVerified(),
                 'cardIsActive' => $paypalAccount->getCardPaymentStatus(),
                 'paypalIsActive' => $paypalAccount->getPaypalPaymentStatus(),
+                'countryMerchant' => $paypalAccount->getMerchantCountry(),
             ],
         ];
     }

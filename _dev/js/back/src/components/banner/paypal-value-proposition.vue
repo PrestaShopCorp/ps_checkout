@@ -65,7 +65,11 @@
                       <p class="fees-title">
                         {{ $t('banner.paypalValueProposition.fees.title') }}
                       </p>
-                      <p class="fees-value">
+                      <p class="fees-value" v-if="isUSMerchant">
+                        <span>2.59%</span>
+                        + $0.49
+                      </p>
+                      <p class="fees-value" v-else>
                         <span>1,2%</span>
                         + 0,35€
                       </p>
@@ -276,6 +280,11 @@
         this.$segment.track('Click on Fees info', {
           category: 'ps_checkout'
         });
+      }
+    },
+    computed: {
+      isUSMerchant() {
+        return this.$store.state.paypal.countryMerchant === 'US';
       }
     }
   };
