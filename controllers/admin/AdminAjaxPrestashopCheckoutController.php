@@ -33,18 +33,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {
     /**
      * @var Ps_checkout
-     */
+     */git
     public $module;
-
-    /**
-     * @var bool
-     */
-    public $ajax = true;
-
-    /**
-     * @var bool
-     */
-    protected $json = true;
 
     /**
      * AJAX: Update payment method order
@@ -177,10 +167,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $firebaseAuth = $this->module->getService('ps_checkout.api.firebase.auth.factory');
         $response = $firebaseAuth->signIn(Tools::getValue('email'), Tools::getValue('password'));
 
-        if (isset($response['httpCode'])) {
-            http_response_code((int) $response['httpCode']);
-        }
-
         $this->ajaxDie(json_encode($response));
     }
 
@@ -193,10 +179,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $firebaseAuth = $this->module->getService('ps_checkout.api.firebase.auth.factory');
         $response = $firebaseAuth->signUp(Tools::getValue('email'), Tools::getValue('password'));
 
-        if (isset($response['httpCode'])) {
-            http_response_code((int) $response['httpCode']);
-        }
-
         $this->ajaxDie(json_encode($response));
     }
 
@@ -208,10 +190,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\Api\Firebase\AuthFactory $firebaseAuth */
         $firebaseAuth = $this->module->getService('ps_checkout.api.firebase.auth.factory');
         $response = $firebaseAuth->resetPassword(Tools::getValue('email'));
-
-        if (isset($response['httpCode'])) {
-            http_response_code((int) $response['httpCode']);
-        }
 
         $this->ajaxDie(json_encode($response));
     }
@@ -226,7 +204,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $errors = (new PsxDataValidation())->validateData($psxForm);
 
         if (!empty($errors)) {
-            http_response_code(400);
             $this->ajaxDie(json_encode($errors));
         }
 
@@ -235,7 +212,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         // Save form in database
         if (false === $this->savePsxForm($psxForm)) {
-            http_response_code(500);
             $this->ajaxDie(json_encode(['Cannot save in database.']));
         }
 
@@ -243,10 +219,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $psxOnboarding = $this->module->getService('ps_checkout.api.psx.onboarding');
 
         $response = $psxOnboarding->setOnboardingMerchant(array_filter($psxForm));
-
-        if (!$response['status'] && isset($response['httpCode'])) {
-            http_response_code((int) $response['httpCode']);
-        }
 
         $this->ajaxDie(json_encode($response));
     }
@@ -281,14 +253,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessGetOnboardingLink()
     {
         // Generate a new onboarding link to lin a new merchant
-        $response = (new Onboarding($this->context->link))->getOnboardingLink();
-
-        if (isset($response['httpCode'])) {
-            http_response_code((int) $response['httpCode']);
-        }
-
         $this->ajaxDie(
-            json_encode($response)
+            json_encode((new Onboarding($this->context->link))->getOnboardingLink())
         );
     }
 
@@ -297,21 +263,16 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessGetReportingDatas()
     {
-        try {
-            /** @var PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter $pendingOrder */
-            $pendingOrder = $this->module->getService('ps_checkout.presenter.order.pending');
-            /** @var PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter $transactionOrder */
-            $transactionOrder = $this->module->getService('ps_checkout.presenter.transaction');
-            $this->ajaxDie(
-                json_encode([
-                    'orders' => $pendingOrder->present(),
-                    'transactions' => $transactionOrder->present(),
-                ])
-            );
-        } catch (Exception $exception) {
-            http_response_code(500);
-            $this->ajaxDie(json_encode(strip_tags($exception->getMessage())));
-        }
+        /** @var PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter $pendingOrder */
+        $pendingOrder = $this->module->getService('ps_checkout.presenter.order.pending');
+        /** @var PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter $transactionOrder */
+        $transactionOrder = $this->module->getService('ps_checkout.presenter.transaction');
+        $this->ajaxDie(
+            json_encode([
+                'orders' => $pendingOrder->present(),
+                'transactions' => $transactionOrder->present(),
+            ])
+        );
     }
 
     /**
@@ -431,7 +392,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $id_order = (int) Tools::getValue('id_order');
 
         if (empty($id_order)) {
-            http_response_code(400);
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -443,7 +403,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $order = new Order($id_order);
 
         if ($order->module !== $this->module->name) {
-            http_response_code(400);
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -464,7 +423,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $psCheckoutCart = $psCheckoutCartCollection->getFirst();
 
         if (false === $psCheckoutCart) {
-            http_response_code(500);
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -484,7 +442,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $paypalOrder = $paypalOrderProvider->getById($psCheckoutCart->paypal_order);
 
         if (empty($paypalOrder)) {
-            http_response_code(500);
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -525,7 +482,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $currency = Tools::getValue('orderPayPalRefundCurrency');
 
         if (empty($orderPayPalId) || false === Validate::isGenericName($orderPayPalId)) {
-            http_response_code(400);
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -535,7 +491,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         }
 
         if (empty($transactionPayPalId) || false === Validate::isGenericName($transactionPayPalId)) {
-            http_response_code(400);
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -545,7 +500,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         }
 
         if (empty($amount) || false === Validate::isPrice($amount) || $amount <= 0) {
-            http_response_code(400);
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -556,7 +510,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         if (empty($currency) || false === in_array($currency, ['AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'INR', 'ILS', 'JPY', 'MYR', 'MXN', 'TWD', 'NZD', 'NOK', 'PHP', 'PLN', 'GBP', 'RUB', 'SGD', 'SEK', 'CHF', 'THB', 'USD'])) {
             // https://developer.paypal.com/docs/api/reference/currency-codes/
-            http_response_code(400);
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -599,7 +552,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 'content' => $this->l('Refund has been processed by PayPal.', 'translations'),
             ]));
         } else {
-            http_response_code(isset($response['httpCode']) ? (int) $response['httpCode'] : 500);
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -627,7 +579,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $level = (int) Tools::getValue('level');
 
         if (false === in_array($level, $levels, true)) {
-            http_response_code(400);
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -637,7 +588,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         }
 
         if (false === (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_LEVEL, $level)) {
-            http_response_code(500);
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -700,7 +650,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $isEnabled = (bool) Tools::getValue('isEnabled');
 
         if (false === (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP, (int) $isEnabled)) {
-            http_response_code(500);
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -725,7 +674,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $maxFiles = (int) Tools::getValue('maxFiles');
 
         if ($maxFiles < 0 || $maxFiles > 30) {
-            http_response_code(400);
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -735,7 +683,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         }
 
         if (false === (bool) Configuration::updateGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_MAX_FILES, $maxFiles)) {
-            http_response_code(500);
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -776,7 +723,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $limit = (int) Tools::getValue('limit');
 
         if (empty($filename) || false === Validate::isFileName($filename)) {
-            http_response_code(400);
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -798,7 +744,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 $limit
             );
         } catch (Exception $exception) {
-            http_response_code(500);
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
@@ -856,53 +801,4 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             'content' => $merchantIntegration,
         ], JSON_PRETTY_PRINT));
     }
-<<<<<<< HEAD
-
-    /**
-     * {@inheritdoc}
-     */
-    public function initCursedPage()
-    {
-        http_response_code(401);
-        exit;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function init()
-    {
-        if (!isset($this->context->employee) || !$this->context->employee->isLoggedBack()) {
-            // Avoid redirection to Login page because Ajax doesn't support it
-            $this->initCursedPage();
-        }
-
-        parent::init();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function isAnonymousAllowed()
-    {
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function display()
-    {
-        if ($this->errors) {
-            http_response_code(400);
-            $this->ajaxDie(json_encode([
-                'status' => false,
-                'errors' => $this->errors,
-            ]));
-        }
-
-        parent::display();
-    }
-=======
->>>>>>> 773658e992a517c277f312fed1ba286b62a6eabd
 }
