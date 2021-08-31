@@ -679,8 +679,6 @@ class Ps_checkout extends PaymentModule
         if ($psCheckoutCart->isExpressCheckout || !$this->context->cart->nbProducts()) {
             $psCheckoutCartRepository->remove($psCheckoutCart);
             $this->context->cookie->__unset('paypalEmail');
-        } elseif ($psCheckoutCart->paypal_status === PsCheckoutCart::STATUS_CREATED) {
-            $psCheckoutCartRepository->remove($psCheckoutCart);
         }
     }
 
