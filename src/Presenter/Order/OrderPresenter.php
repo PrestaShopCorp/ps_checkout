@@ -67,7 +67,7 @@ class OrderPresenter
         $translated = '';
         $class = '';
 
-        if (PsCheckoutCart::STATUS_APPROVED === $this->orderPayPal['status']) {
+        if (PsCheckoutCart::STATUS_CREATED === $this->orderPayPal['status']) {
             $translated = $this->module->l('Created', 'translations');
             $class = 'info';
         }
