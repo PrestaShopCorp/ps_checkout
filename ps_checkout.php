@@ -47,7 +47,6 @@ class Ps_checkout extends PaymentModule
         'header',
         'actionObjectOrderPaymentAddAfter',
         'actionObjectOrderPaymentUpdateAfter',
-        'actionObjectCartUpdateAfter',
     ];
 
     /**
@@ -677,7 +676,6 @@ class Ps_checkout extends PaymentModule
         }
 
         if ($psCheckoutCart->isExpressCheckout || !$this->context->cart->nbProducts()) {
-            $psCheckoutCartRepository->remove($psCheckoutCart);
             $this->context->cookie->__unset('paypalEmail');
         }
     }
@@ -696,35 +694,6 @@ class Ps_checkout extends PaymentModule
         }
 
         $this->hookActionCartUpdateQuantityBefore();
-    }
-
-    /**
-     * @param array $parameters
-     */
-    public function hookActionObjectCartUpdateAfter(array $parameters)
-    {
-        try {
-            $cart = $parameters['object'];
-
-            if (false === Validate::isLoadedObject($cart)) {
-                return;
-            }
-
-            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
-            $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
-
-            /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $cart->id);
-
-            if (
-                true === Validate::isLoadedObject($psCheckoutCart)
-                && $psCheckoutCart->paypal_status === PsCheckoutCart::STATUS_CREATED
-            ) {
-                $psCheckoutCartRepository->remove($psCheckoutCart);
-            }
-        } catch (\Exception $exception) {
-            return;
-        }
     }
 
     /**
