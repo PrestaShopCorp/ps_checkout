@@ -30,5 +30,5 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_15_5($module)
 {
-    return (bool) $module->registerHook('actionObjectOrderCartUpdateAfter');
+    return (bool) $module->registerHook('actionObjectCartUpdateAfter');
 }
