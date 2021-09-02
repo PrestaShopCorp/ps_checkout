@@ -89,7 +89,13 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
             $this->errors[] = $this->module->l('It seems your employee token is invalid.');
         }
 
-        $this->addCSS(__PS_BASE_URI__ . $this->admin_webpath . '/themes/' . $this->bo_theme . '/public/theme.css', 'all', 0);
+        if (file_exists(_PS_ROOT_DIR_ . '/' . $this->admin_webpath . '/themes/' . $this->bo_theme . '/public/theme.css')) {
+            $this->addCSS(__PS_BASE_URI__ . $this->admin_webpath . '/themes/' . $this->bo_theme . '/public/theme.css', 'all', 0);
+        } elseif (file_exists(_PS_ROOT_DIR_ . '/' . $this->admin_webpath . '/themes/new-theme/public/theme.css')) {
+            $this->addCSS(__PS_BASE_URI__ . $this->admin_webpath . '/themes/new-theme/public/theme.css', 'all', 1);
+        } elseif (isset($this->bo_css) && file_exists(_PS_ROOT_DIR_ . '/' . $this->admin_webpath . '/themes/' . $this->bo_theme . '/css/' . $this->bo_css)) {
+            $this->addCSS(__PS_BASE_URI__ . $this->admin_webpath . '/themes/' . $this->bo_theme . '/css/' . $this->bo_css, 'all', 0);
+        }
 
         $this->context->smarty->assign([
             'img_dir' => _PS_IMG_,
