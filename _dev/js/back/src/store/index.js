@@ -25,10 +25,10 @@ import configuration from './modules/configuration';
 import context from './modules/context';
 import psx from './modules/psx';
 import session from './modules/session';
-// import {
-//   onSseOpened,
-//   onSseOpenedWatcher
-// } from '@/store/watchers/on-sse-opened.watcher';
+import {
+  onSseOpened,
+  onSseOpenedWatcher
+} from '@/store/watchers/on-sse-opened.watcher';
 
 Vue.use(Vuex);
 
@@ -43,6 +43,6 @@ const store = new Vuex.Store({
   }
 });
 
-// store.watch(onSseOpened, onSseOpenedWatcher(store));
+store.watch(onSseOpened, onSseOpenedWatcher(store));
 
 export default store;

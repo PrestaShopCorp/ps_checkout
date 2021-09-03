@@ -19,6 +19,7 @@
  */
 use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Onboarding;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
@@ -218,28 +219,34 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Get the form Payload for PSX. Check the data and send it to PSL
+     * AJAX: Create a shop on PSL
      */
-    public function ajaxProcessPsxSendData()
+    public function ajaxProcessPslCreateShop()
     {
-        $formData = json_decode(Tools::getValue('form'), true);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration $psCheckoutConfiguration */
+        $psCheckoutConfiguration = $this->module->getService('ps_checkout.prestashop_checkout.configuration');
+        $formData = json_decode($psCheckoutConfiguration->getShopData()['psxForm'], true);
+
+        if (!$formData) {
+            $formData = json_decode(Tools::getValue('form'), true);
+        }
+
+        // PsxForm validation
         $psxForm = (new PsxDataPrepare($formData))->prepareData();
         $errors = (new PsxDataValidation())->validateData($psxForm);
 
         if (!empty($errors)) {
-            http_response_code(400);
+            // http_response_code(400);
             $this->ajaxDie(json_encode($errors));
         }
 
-        // Save form in database
-        if (false === $this->savePsxForm($psxForm)) {
-            http_response_code(500);
-            $this->ajaxDie(json_encode(['Cannot save in database.']));
-        }
-
+        // PSL Call
         $onboardingApi = new Onboarding($this->context->link);
         $response = $onboardingApi->createShop(array_filter($psxForm));
 
+        // var_dump($response);
+
+        // Check PSL response
         if (!$response['status']) {
             if (isset($response['httpCode'])) {
                 http_response_code((int) $response['httpCode']);
@@ -259,6 +266,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 }
 
                 if ($errors) {
+                    http_response_code(200);
                     $this->ajaxDie(json_encode($errors));
                 }
             }
@@ -267,6 +275,27 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 $response['exceptionMessage'] ?:
                 $response['body']['error'] && $response['body']['error']['message'] ? $response['body']['error']['message'] : $response['body'],
             ]));
+        }
+
+        // Save form in database
+        if (false === $this->savePsxForm($psxForm)) {
+            http_response_code(500);
+            $this->ajaxDie(json_encode(['Cannot save in database.']));
+        }
+
+        $this->ajaxDie(json_encode($response));
+    }
+
+    /**
+     * AJAX: Onboard a merchant on PSL
+     */
+    public function ajaxProcessPslOnboard()
+    {
+        // Generate a new link to onboard a new merchant on PayPal
+        $response = (new Onboarding($this->context->link))->onboard();
+
+        if (isset($response['httpCode'])) {
+            http_response_code((int) $response['httpCode']);
         }
 
         $this->ajaxDie(json_encode($response));
@@ -293,23 +322,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $paypalModule = $this->module->getService('ps_checkout.store.module.paypal');
         $this->ajaxDie(
             json_encode($paypalModule->present())
-        );
-    }
-
-    /**
-     * AJAX: Onboard a merchant on PSL
-     */
-    public function ajaxProcessOnboard()
-    {
-        // Generate a new onboarding link to lin a new merchant
-        $response = (new Onboarding($this->context->link))->onboard();
-
-        if (isset($response['httpCode'])) {
-            http_response_code((int) $response['httpCode']);
-        }
-
-        $this->ajaxDie(
-            json_encode($response)
         );
     }
 
@@ -901,7 +913,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
         $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
-        $openedSession = $onboardingSessionManager->getOpened()->toArray();
+        $openedSession = $onboardingSessionManager->getOpened();
+        $openedSession = $openedSession ? $openedSession->toArray() : null;
 
         $this->ajaxDie(json_encode($openedSession));
     }

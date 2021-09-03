@@ -219,7 +219,6 @@
           category: 'ps_checkout'
         });
         this.$store.dispatch('unlink').then(() => {
-          // this.$store.dispatch('onboard');
           this.$store
             .dispatch({
               type: 'closeOnboardingSession',
@@ -227,8 +226,17 @@
             })
             .then(() => {
               this.pollingPaypalOnboardingUrl();
+
+              this.$store
+                .dispatch({
+                  type: 'createShop',
+                  form: null
+                })
+                .then(() => {
+                  this.$store.dispatch('onboard');
+                });
+              this.sendTrack();
             });
-          this.sendTrack();
         });
       },
       pollingPaypalOnboardingUrl() {

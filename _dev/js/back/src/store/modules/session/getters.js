@@ -19,5 +19,6 @@
 
 export default {
   onboarding: state => state.onboarding,
-  hasOnboardingUrl: state => !!state?.onboarding?.data?.shop?.paypal_onboarding_url,
+  hasOnboardingUrl: state =>
+    !!state?.onboarding?.data?.shop?.paypal_onboarding_url
 };

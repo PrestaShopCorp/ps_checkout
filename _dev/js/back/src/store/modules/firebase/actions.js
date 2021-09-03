@@ -25,6 +25,9 @@ export default {
       url: getters.adminController,
       action: 'LogOutPsAccount'
     }).then(() => {
+      dispatch('unlink');
+      dispatch('offboard');
+
       return dispatch({
         type: 'closeOnboardingSession',
         session: getters.onboarding

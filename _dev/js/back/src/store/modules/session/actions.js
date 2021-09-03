@@ -46,13 +46,23 @@ export default {
       if (!canBeActivated()) {
         return;
       }
-      const poll = setInterval(() => {
-        if (!canBeActivated()) {
+      let time = 0;
+      let poll = setInterval(() => {
+        time++;
+
+        if (!canBeActivated() || time >= 30) {
           clearInterval(poll);
+          poll = setInterval(() => {
+            if (!canBeActivated()) {
+              clearInterval(poll);
+            } else {
+              dispatch('getOpenedOnboardingSession');
+            }
+          }, 30000);
         } else {
           dispatch('getOpenedOnboardingSession');
         }
-      }, 200);
+      }, 1000);
     });
   },
   transitOnboardingSession({ commit, getters }, payload) {

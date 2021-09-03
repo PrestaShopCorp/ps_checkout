@@ -29,18 +29,6 @@ export default {
       return true;
     });
   },
-  onboard({ getters }) {
-    return ajax({
-      url: getters.adminController,
-      action: 'Onboard'
-    }).then(response => {
-      if (response.status === false) {
-        throw response;
-      }
-
-      return Promise.resolve(response);
-    });
-  },
   updatePaypalStatusSettings({ commit, getters }) {
     return ajax({
       url: getters.adminController,
