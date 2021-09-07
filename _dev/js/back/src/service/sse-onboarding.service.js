@@ -43,13 +43,22 @@ export class SseOnboardingService {
 
   open() {
     const { prestashopCheckoutSse } = this.store.state.context;
-    this.eventSource = new EventSource(prestashopCheckoutSse);
+    const { idToken } = this.store.state.firebase;
 
-    this.eventSource.onmessage = onMessage(this.eventSource, this.store);
-    this.eventSource.onerror = onError(this.eventSource, this.store);
+    if (idToken) {
+      const sseUrl = `${prestashopCheckoutSse}?access_token=${idToken}`;
+      this.eventSource = new EventSource(sseUrl);
+
+      this.eventSource.onmessage = onMessage(this.eventSource, this.store);
+      this.eventSource.onerror = onError(this.eventSource, this.store);
+    } else {
+      this.eventSource = null;
+    }
   }
 
   close() {
-    this.eventSource.close();
+    if (this.eventSource) {
+      this.eventSource.close();
+    }
   }
 }

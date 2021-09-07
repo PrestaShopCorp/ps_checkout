@@ -126,7 +126,7 @@ class ContextModule implements PresenterInterface
         $shopId = (int) \Context::getContext()->shop->id;
         $shopUuid = (new ShopUuidManager())->getForShop($shopId);
 
-        $sseUrl = (new PsxEnv())->getPsxApiUrl() . 'webhooks/sse/onboarding/' . $shopUuid;
+        $sseUrl = (new PsxEnv())->getPsxApiUrl() . '/webhooks/sse/onboarding/' . $shopUuid;
 
         return [
             'context' => [
