@@ -22,7 +22,8 @@ class SessionHelperTest extends TestCase
     /**
      * @dataProvider getArraysToSort
      *
-     * @param array $data
+     * @param array $array
+     * @param array $result
      */
     public function testSortMultidimensionalArray(array $array, array $result)
     {
