@@ -275,10 +275,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessPslOnboard()
     {
         try {
+            /** @var PrestaShopContext $prestaShopContext */
+            $prestaShopContext = $this->module->getService('ps_checkout.context.prestashop');
             // Generate a new link to onboard a new merchant on PayPal
             /** @var Symfony\Component\Cache\Simple\FilesystemCache $cache */
             $cache = $this->module->getService('ps_checkout.cache.session');
-            $response = (new Onboarding(new PrestaShopContext(), null, $cache))->onboard();
+            $response = (new Onboarding($prestaShopContext, null, $cache))->onboard();
 
             if (isset($response['onboardingLink'])) {
                 (new ShopDispatcher())->dispatchEventType([
@@ -1097,7 +1099,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         /** @var Symfony\Component\Cache\Simple\FilesystemCache $cache */
         $cache = $this->module->getService('ps_checkout.cache.session');
-        $onboardingApi = new Onboarding(new PrestaShopContext(), null, $cache);
+        /** @var PrestaShopContext $prestaShopContext */
+        $prestaShopContext = $this->module->getService('ps_checkout.context.prestashop');
+        $onboardingApi = new Onboarding($prestaShopContext, null, $cache);
 
         if ($action == 'update') {
             /** @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration $configuration */

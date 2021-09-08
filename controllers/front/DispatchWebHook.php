@@ -137,11 +137,13 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
     private function checkPSLSignature(array $bodyValues)
     {
         $context = Context::getContext();
+        /** @var PrestaShopContext $prestaShopContext */
+        $prestaShopContext = $this->module->getService('ps_checkout.context.prestashop');
 
         if ($bodyValues['category'] === self::CATEGORY['SHOP']) {
             /** @var Symfony\Component\Cache\Simple\FilesystemCache $cache */
             $cache = $this->module->getService('ps_checkout.cache.session');
-            $webhook = new PslWebhook(new PrestaShopContext(), null, $cache);
+            $webhook = new PslWebhook($prestaShopContext, null, $cache);
         } else {
             $webhook = new PaymentWebhook($context->link);
         }

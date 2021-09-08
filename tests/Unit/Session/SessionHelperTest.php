@@ -1,9 +1,8 @@
 <?php
 
-
-use PrestaShop\Module\PrestashopCheckout\Session\SessionHelper;
-use PrestaShop\Module\PrestashopCheckout\Session\Session;
 use PHPUnit\Framework\TestCase;
+use PrestaShop\Module\PrestashopCheckout\Session\Session;
+use PrestaShop\Module\PrestashopCheckout\Session\SessionHelper;
 
 class SessionHelperTest extends TestCase
 {
@@ -52,7 +51,7 @@ class SessionHelperTest extends TestCase
                     'is_sse_opened' => '',
                     'data' => '',
                 ],
-                'result' => true
+                'result' => true,
             ],
             [
                 'sessionData' => [
@@ -70,8 +69,8 @@ class SessionHelperTest extends TestCase
                     'is_sse_opened' => '',
                     'data' => '',
                 ],
-                'result' => false
-            ]
+                'result' => false,
+            ],
         ];
     }
 
@@ -80,14 +79,14 @@ class SessionHelperTest extends TestCase
      */
     public function getArraysToSort()
     {
-        return array(
+        return [
             [
                 'array' => [
                     'z' => [
                         'expires_at' => true,
                         'data' => [
                             'closed' => true,
-                        ]
+                        ],
                     ],
                     'a' => true,
                 ],
@@ -99,7 +98,7 @@ class SessionHelperTest extends TestCase
                         ],
                         'expires_at' => true,
                     ],
-                ]
+                ],
             ],
             [
                 'array' => [
@@ -119,8 +118,8 @@ class SessionHelperTest extends TestCase
                         ],
                         'expires_at' => true,
                     ],
-                ]
+                ],
             ],
-        );
+        ];
     }
 }

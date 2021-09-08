@@ -1,8 +1,7 @@
 <?php
 
-
-use PrestaShop\Module\PrestashopCheckout\Session\SessionManager;
 use PHPUnit\Framework\TestCase;
+use PrestaShop\Module\PrestashopCheckout\Session\SessionManager;
 
 class SessionManagerTest extends TestCase
 {
@@ -25,7 +24,7 @@ class SessionManagerTest extends TestCase
      * @dataProvider getData
      *
      * @param array $sessionData
-     * @param boolean $expired
+     * @param bool $expired
      */
     public function testGet(array $sessionData, $expired)
     {
@@ -57,7 +56,7 @@ class SessionManagerTest extends TestCase
                     'is_sse_opened' => '',
                     'data' => '',
                 ],
-                'expired' => true
+                'expired' => true,
             ],
             [
                 'sessionData' => [
@@ -75,8 +74,8 @@ class SessionManagerTest extends TestCase
                     'is_sse_opened' => '',
                     'data' => '',
                 ],
-                'expired' => false
-            ]
+                'expired' => false,
+            ],
         ];
     }
 }

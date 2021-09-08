@@ -31,8 +31,8 @@ use PrestaShop\Module\PrestashopCheckout\Session\Session;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionHelper;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionManager;
-use Psr\SimpleCache\CacheInterface;
 use Ps_checkout;
+use Psr\SimpleCache\CacheInterface;
 use Ramsey\Uuid\Uuid;
 
 class OnboardingSessionManager extends SessionManager

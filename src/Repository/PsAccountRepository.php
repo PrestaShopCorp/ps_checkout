@@ -31,13 +31,18 @@ class PsAccountRepository
 {
     /** @var PrestaShopConfiguration */
     private $configuration;
+    /**
+     * @var PrestaShopContext
+     */
+    private $prestaShopContext;
 
     /**
      * @param PrestaShopConfiguration $configuration
      */
-    public function __construct(PrestaShopConfiguration $configuration)
+    public function __construct(PrestaShopConfiguration $configuration, PrestaShopContext $prestaShopContext)
     {
         $this->configuration = $configuration;
+        $this->prestaShopContext = $prestaShopContext;
     }
 
     /**
@@ -144,9 +149,8 @@ class PsAccountRepository
      */
     public function getShopUuid()
     {
-        $psContext = new PrestaShopContext();
         $shopUuidManager = new \PrestaShop\Module\PrestashopCheckout\ShopUuidManager();
 
-        return $shopUuidManager->getForShop((int) $psContext->getShopId());
+        return $shopUuidManager->getForShop($this->prestaShopContext->getShopId());
     }
 }
