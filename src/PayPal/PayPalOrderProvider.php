@@ -45,6 +45,10 @@ class PayPalOrderProvider
      */
     public function getById($id)
     {
+        if (empty($id)) {
+            return false;
+        }
+
         if ($this->cache->has($id)) {
             return $this->cache->get($id);
         }
