@@ -163,8 +163,12 @@
               // eslint-disable-next-line no-console
               .catch(exception => console.log(exception));
           })
-          .catch(response => {
-            this.handleResponseError(response);
+          .catch(error => {
+            if (error.response) {
+              this.handleResponseError(error.response.data);
+            } else {
+              throw error;
+            }
           });
       },
       goToSignUp() {
@@ -185,6 +189,7 @@
           undefined !== response.body.error &&
           undefined !== response.body.error.message
         ) {
+          this.errorException = '';
           switch (response.body.error.message) {
             case error.EMAIL_NOT_FOUND:
               this.setEmailError(
@@ -220,8 +225,14 @@
               break;
           }
         }
-        if (undefined !== response.body) {
-          this.errorException = response.body;
+        if (
+          undefined !== response.exceptionMessage &&
+          response.exceptionMessage
+        ) {
+          this.resetEmailError();
+          this.resetPasswordError();
+          this.errorException =
+            response.exceptionCode + ' > ' + response.exceptionMessage;
         }
       },
       setPasswordError(hasError, message) {

@@ -128,37 +128,54 @@
           data: {
             email: this.email.value
           }
-        }).then(response => {
-          if (
-            undefined !== response.body &&
-            undefined !== response.body.error &&
-            undefined !== response.body.error.message
-          ) {
-            this.handleResponseError(response.body.error.message);
-            return;
-          }
-          if (undefined !== response.body) {
-            this.errorException = response.body;
-            return;
-          }
-          this.resetEmailError();
-          this.emailSent = true;
-        });
+        })
+          .then(response => {
+            if (response.status) {
+              this.resetEmailError();
+              this.emailSent = true;
+            }
+          })
+          .catch(error => {
+            if (error.response) {
+              this.handleResponseError(error.response.data);
+            } else {
+              throw error;
+            }
+          });
       },
-      handleResponseError(err) {
-        switch (err) {
-          case error.INVALID_EMAIL:
-            this.setEmailError(false, this.$t('firebase.error.invalidEmail'));
-            break;
-          case error.MISSING_EMAIL:
-            this.setEmailError(false, this.$t('firebase.error.missingEmail'));
-            break;
-          case error.EMAIL_NOT_FOUND:
-            this.setEmailError(false, this.$t('firebase.error.emailNotFound'));
-            break;
-          default:
-            this.setEmailError(false, this.$t('firebase.error.defaultError'));
-            break;
+      handleResponseError(response) {
+        if (
+          undefined !== response.body &&
+          undefined !== response.body.error &&
+          undefined !== response.body.error.message
+        ) {
+          this.errorException = '';
+          switch (response.body.error.message) {
+            case error.INVALID_EMAIL:
+              this.setEmailError(false, this.$t('firebase.error.invalidEmail'));
+              break;
+            case error.MISSING_EMAIL:
+              this.setEmailError(false, this.$t('firebase.error.missingEmail'));
+              break;
+            case error.EMAIL_NOT_FOUND:
+              this.setEmailError(
+                false,
+                this.$t('firebase.error.emailNotFound')
+              );
+              break;
+            default:
+              this.setEmailError(false, this.$t('firebase.error.defaultError'));
+              break;
+          }
+        }
+
+        if (
+          undefined !== response.exceptionMessage &&
+          response.exceptionMessage
+        ) {
+          this.resetEmailError();
+          this.errorException =
+            response.exceptionCode + ' > ' + response.exceptionMessage;
         }
       },
       setEmailError(hasError, message) {
