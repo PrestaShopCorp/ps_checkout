@@ -72,6 +72,28 @@ class Token extends FirebaseClient
                 null,
                 (int) \Context::getContext()->shop->id
             );
+        } elseif (isset($response['httpCode']) && 400 === $response['httpCode']) {
+            \Configuration::updateValue(
+                'PS_PSX_FIREBASE_ID_TOKEN',
+                '',
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            );
+            \Configuration::updateValue(
+                'PS_PSX_FIREBASE_REFRESH_TOKEN',
+                '',
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            );
+            \Configuration::updateValue(
+                'PS_PSX_FIREBASE_REFRESH_DATE',
+                '',
+                false,
+                null,
+                (int) \Context::getContext()->shop->id
+            );
         }
 
         return $response;
