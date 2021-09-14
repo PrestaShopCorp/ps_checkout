@@ -98,23 +98,13 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             /** @var PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
 
-            // If we have a PayPal Order Id with a status CREATED or APPROVED and a not expired PayPal Client Token, we can use it
-            // If paypal_token_expire is in future, token is not expired
-            if (false !== $psCheckoutCart
-                && false === empty($psCheckoutCart->paypal_order)
-                && in_array($psCheckoutCart->paypal_status, ['CREATED', 'APPROVED'], true)
-                && false === empty($psCheckoutCart->paypal_token_expire)
-                && strtotime($psCheckoutCart->paypal_token_expire) > time()
+            // If we have a PayPal Order Id with a status CREATED or APPROVED we delete it and create new one
+            // This is needed because cart gets updated so we need to update paypal order too
+            if (
+                false !== $psCheckoutCart
             ) {
-                $this->exitWithResponse([
-                    'status' => true,
-                    'httpCode' => 200,
-                    'body' => [
-                        'orderID' => $psCheckoutCart->paypal_order,
-                    ],
-                    'exceptionCode' => null,
-                    'exceptionMessage' => null,
-                ]);
+                $psCheckoutCartRepository->remove($psCheckoutCart);
+                $psCheckoutCart = false;
             }
 
             $isExpressCheckout = (isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout']) || empty($this->context->cart->id_address_delivery);
@@ -148,7 +138,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 'status' => true,
                 'httpCode' => 200,
                 'body' => [
-                    'orderID' => $response['body']['id'],
+                    'orderID' => $psCheckoutCart->paypal_order,
                 ],
                 'exceptionCode' => null,
                 'exceptionMessage' => null,

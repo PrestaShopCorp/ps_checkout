@@ -54,4 +54,21 @@ class OrderRepository
 
         return $orders;
     }
+
+    /**
+     * Returns total orders
+     *
+     * @param int $shopId
+     *
+     * @return int
+     */
+    public function count($shopId)
+    {
+        return (int) \Db::getInstance()->getValue('
+            SELECT COUNT(id_order)
+            FROM `' . _DB_PREFIX_ . 'orders`
+            WHERE module = "ps_checkout"
+            AND id_shop = ' . (int) $shopId
+        );
+    }
 }

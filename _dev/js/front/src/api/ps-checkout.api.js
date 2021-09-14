@@ -28,16 +28,24 @@ export class PsCheckoutApi extends BaseClass {
       method: 'post',
       credentials: 'same-origin',
       headers: {
-        'content-type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify(data)
     }).then((response) => {
+      const contentType = response.headers.get('content-type');
+      const isJsonResponse = contentType && contentType.indexOf('application/json') !== -1;
+
       if (false === response.ok) {
-        return response.json().then((response) => {
-          throw response.body && response.body.error
-            ? response.body.error
-            : { message: 'Unknown error' };
-        });
+        if(isJsonResponse) {
+          return response.json().then((response) => {
+            throw response.body && response.body.error
+              ? response.body.error
+              : { message: 'Unknown error' };
+          });
+        }
+
+        throw new Error('Invalid response');
       }
     });
   }
@@ -48,20 +56,28 @@ export class PsCheckoutApi extends BaseClass {
           method: 'post',
           credentials: 'same-origin',
           headers: {
-            'content-type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
           },
           body: JSON.stringify(data)
         })
           .then((response) => {
-            if (false === response.ok) {
-              return response.json().then((response) => {
-                throw response.body && response.body.error
-                  ? response.body.error
-                  : { message: 'Unknown error' };
-              });
+            const contentType = response.headers.get('content-type');
+            const isJsonResponse = contentType && contentType.indexOf('application/json') !== -1;
+
+            if (isJsonResponse) {
+              if (false === response.ok) {
+                return response.json().then((response) => {
+                  throw response.body && response.body.error
+                    ? response.body.error
+                    : {message: 'Unknown error'};
+                });
+              }
+
+              return response.json();
             }
 
-            return response.json();
+            throw new Error('Invalid response');
           })
           .then((data) => {
             if (!data) {
@@ -82,20 +98,28 @@ export class PsCheckoutApi extends BaseClass {
       method: 'post',
       credentials: 'same-origin',
       headers: {
-        'content-type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       ...(data ? { body: JSON.stringify(data) } : {})
     })
       .then((response) => {
-        if (false === response.ok) {
-          return response.json().then((response) => {
-            throw response.body && response.body.error
-              ? response.body.error
-              : { message: 'Unknown error' };
-          });
+        const contentType = response.headers.get('content-type');
+        const isJsonResponse = contentType && contentType.indexOf('application/json') !== -1;
+
+        if (isJsonResponse) {
+          if (false === response.ok) {
+            return response.json().then((response) => {
+              throw response.body && response.body.error
+                ? response.body.error
+                : {message: 'Unknown error'};
+            });
+          }
+
+          return response.json();
         }
 
-        return response.json();
+        throw new Error('Invalid response');
       })
       .then(({ body: { orderID } }) => orderID);
   }
@@ -106,19 +130,27 @@ export class PsCheckoutApi extends BaseClass {
         method: 'get',
         credentials: 'same-origin',
         headers: {
-          'content-type': 'application/json'
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         }
       })
         .then((response) => {
-          if (false === response.ok) {
-            return response.json().then((response) => {
-              throw response.body && response.body.error
-                ? response.body.error
-                : { message: 'Unknown error' };
-            });
+          const contentType = response.headers.get('content-type');
+          const isJsonResponse = contentType && contentType.indexOf('application/json') !== -1;
+
+          if (isJsonResponse) {
+            if (false === response.ok) {
+              return response.json().then((response) => {
+                throw response.body && response.body.error
+                  ? response.body.error
+                  : {message: 'Unknown error'};
+              });
+            }
+
+            return response.json();
           }
 
-          return response.json();
+          throw new Error('Invalid response');
         })
         .then(({ body: { token } }) => token)
         // TODO: Handle error
@@ -131,20 +163,28 @@ export class PsCheckoutApi extends BaseClass {
       method: 'post',
       credentials: 'same-origin',
       headers: {
-        'content-type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify(data)
     })
       .then((response) => {
-        if (false === response.ok) {
-          return response.json().then((response) => {
-            throw response.body && response.body.error
-              ? response.body.error
-              : { message: 'Unknown error' };
-          });
+        const contentType = response.headers.get('content-type');
+        const isJsonResponse = contentType && contentType.indexOf('application/json') !== -1;
+
+        if (isJsonResponse) {
+          if (false === response.ok) {
+            return response.json().then((response) => {
+              throw response.body && response.body.error
+                ? response.body.error
+                : {message: 'Unknown error'};
+            });
+          }
+
+          return response.json();
         }
 
-        return response.json();
+        throw new Error('Invalid response');
       })
       .then((response) => {
         if (response.body && 'COMPLETED' === response.body.paypal_status) {
@@ -183,7 +223,8 @@ export class PsCheckoutApi extends BaseClass {
         method: 'post',
         credentials: 'same-origin',
         headers: {
-          'content-type': 'application/json'
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({
           ...data,
@@ -193,17 +234,24 @@ export class PsCheckoutApi extends BaseClass {
           }
         })
       }).then((response) => {
-        if (false === response.ok) {
-          return response.json().then((response) => {
-            throw response.body && response.body.error
-              ? response.body.error
-              : { message: 'Unknown error' };
-          });
+        const contentType = response.headers.get('content-type');
+        const isJsonResponse = contentType && contentType.indexOf('application/json') !== -1;
+
+        if (isJsonResponse) {
+          if (false === response.ok) {
+            return response.json().then((response) => {
+              throw response.body && response.body.error
+                ? response.body.error
+                : {message: 'Unknown error'};
+            });
+          }
+
+          window.location.href = new URL(
+            this.config.checkoutCheckoutUrl
+          ).toString();
         }
 
-        window.location.href = new URL(
-          this.config.checkoutCheckoutUrl
-        ).toString();
+        throw new Error('Invalid response');
       })
     );
   }

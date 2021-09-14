@@ -20,12 +20,14 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Order;
 
+use Module;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Date\DatePresenter;
+use PsCheckoutCart;
 
 class OrderPresenter
 {
     /**
-     * @var \Module
+     * @var Module
      */
     private $module;
 
@@ -35,10 +37,10 @@ class OrderPresenter
     private $orderPayPal;
 
     /**
-     * @param \Module $module
+     * @param Module $module
      * @param array $orderPayPal
      */
-    public function __construct(\Module $module, array $orderPayPal)
+    public function __construct(Module $module, array $orderPayPal)
     {
         $this->module = $module;
         $this->orderPayPal = $orderPayPal;
@@ -65,27 +67,27 @@ class OrderPresenter
         $translated = '';
         $class = '';
 
-        if ('CREATED' === $this->orderPayPal['status']) {
+        if (PsCheckoutCart::STATUS_CREATED === $this->orderPayPal['status']) {
             $translated = $this->module->l('Created', 'translations');
             $class = 'info';
         }
 
-        if ('SAVED' === $this->orderPayPal['status']) {
+        if (PsCheckoutCart::STATUS_SAVED === $this->orderPayPal['status']) {
             $translated = $this->module->l('Saved', 'translations');
             $class = 'info';
         }
 
-        if ('APPROVED' === $this->orderPayPal['status']) {
+        if (PsCheckoutCart::STATUS_APPROVED === $this->orderPayPal['status']) {
             $translated = $this->module->l('Approved', 'translations');
             $class = 'info';
         }
 
-        if ('VOIDED' === $this->orderPayPal['status']) {
+        if (PsCheckoutCart::STATUS_VOIDED === $this->orderPayPal['status']) {
             $translated = $this->module->l('Voided', 'translations');
             $class = 'warning';
         }
 
-        if ('COMPLETED' === $this->orderPayPal['status']) {
+        if (PsCheckoutCart::STATUS_COMPLETED === $this->orderPayPal['status']) {
             $translated = $this->module->l('Completed', 'translations');
             $class = 'success';
         }

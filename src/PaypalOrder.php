@@ -49,11 +49,13 @@ class PaypalOrder
     {
         $response = (new Order(\Context::getContext()->link))->fetch($id);
 
-        if (false === $response['status']) {
-            return;
+        if (false === $response['status'] && isset($response['body']['message']) && $response['body']['message'] === 'INVALID_RESOURCE_ID') {
+            \Db::getInstance()->delete(\PsCheckoutCart::$definition['table'], 'paypal_order = "' . pSQL($id) . '"');
         }
 
-        $this->setOrder($response['body']);
+        if (true === $response['status'] && !empty($response['body'])) {
+            $this->setOrder($response['body']);
+        }
     }
 
     /**

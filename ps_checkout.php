@@ -129,7 +129,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.15.4';
+    const VERSION = '2.15.5';
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -155,9 +155,8 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.15.4';
+        $this->version = '2.15.5';
         $this->author = 'PrestaShop';
-        $this->need_instance = 0;
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
 
@@ -677,7 +676,6 @@ class Ps_checkout extends PaymentModule
         }
 
         if ($psCheckoutCart->isExpressCheckout || !$this->context->cart->nbProducts()) {
-            $psCheckoutCartRepository->remove($psCheckoutCart);
             $this->context->cookie->__unset('paypalEmail');
         }
     }
@@ -1045,7 +1043,7 @@ class Ps_checkout extends PaymentModule
         // If paypal_token_expire is in future, token is not expired
         if (false !== $psCheckoutCart
             && false === empty($psCheckoutCart->paypal_order)
-            && in_array($psCheckoutCart->paypal_status, ['CREATED', 'APPROVED'], true)
+            && in_array($psCheckoutCart->paypal_status, [PsCheckoutCart::STATUS_CREATED, PsCheckoutCart::STATUS_APPROVED], true)
             && false === empty($psCheckoutCart->paypal_token_expire)
             && strtotime($psCheckoutCart->paypal_token_expire) > time()
         ) {

@@ -43,9 +43,11 @@
     border-radius: 3px;
     text-align: center;
   }
+
   .text-muted {
     font-size: 16px;
   }
+
   .feature-block .feedback-button {
     width: 122px;
     height: 38px;
@@ -56,11 +58,11 @@
 </style>
 
 <script>
-export default {
-  computed: {
-    submitIdeaLink() {
-      return this.$store.state.context.submitIdeaLink;
-    },
-  },
-};
+  export default {
+    computed: {
+      submitIdeaLink() {
+        return this.$store.state.context.submitIdeaLink;
+      }
+    }
+  };
 </script>
