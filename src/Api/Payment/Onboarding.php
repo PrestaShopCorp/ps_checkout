@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder;
+use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 
 /**
  * Handle onbarding request
@@ -59,46 +60,34 @@ class Onboarding extends PaymentClient
      */
     public function onboard()
     {
-        $this->setRoute('/payments/onboarding/onboard');
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
         /** @var OnboardingPayloadBuilder $builder */
         $builder = $this->module->getService('ps_checkout.builder.payload.onboarding');
         /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager */
         $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
         $openedOnboardingSession = $onboardingSessionManager->getOpened();
 
-        $builder->buildFullPayload();
+        $context = \Context::getContext();
 
-        $response = $this->post([
+        $shopUUID = (new ShopUuidManager())->getForShop($context->shop->id);
+
+        $this->setRoute("/shops/$shopUUID/onboard");
+
+        $builder->buildMinimalPayload();
+
+        $payload = $builder->presentPayload()->getJson();
+
+        $response = $this->patch([
             'headers' => [
                 'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),
                 'Session-Token' => $openedOnboardingSession->getAuthToken(),
+                'Content-Type' => 'application/json',
             ],
-            'json' => $builder->presentPayload()->getArray(),
+            'body' => $payload,
         ]);
 
-        // Retry with minimal payload when full payload failed
-        if (substr((string) $response['httpCode'], 0, 1) === '4') {
-            $builder->buildMinimalPayload();
-            $response = $this->post([
-                'headers' => [
-                    'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),
-                    'Session-Token' => $openedOnboardingSession->getAuthToken(),
-                ],
-                'json' => $builder->presentPayload()->getArray(),
-            ]);
-        }
-
-        if (false === $response['status']) {
-            return $response;
-        }
-
-        if (false === isset($response['body']['links']['1']['href']) || '200' !== (string) $response['httpCode']) {
-            $response['status'] = false;
-
-            return $response;
-        }
-
-        $response['onboardingLink'] = $response['body']['links']['1']['href'];
+        $response['success'] = '204' === (string) $response['httpCode'];
 
         return $response;
     }

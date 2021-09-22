@@ -367,16 +367,13 @@
             <b-row>
               <b-col sm="12" md="12" lg="12">
                 <b-form-group
-                  :label="subCategoryLabel"
+                  :label="$t('panel.psx-form.businessSubCategory')"
                   label-for="business-subcategory"
                 >
                   <b-form-select
                     id="business-subcategory"
                     v-model="form.business_sub_category"
                   >
-                    <option value="">
-                      --
-                    </option>
                     <option
                       v-for="(value, key) in subCategory"
                       :key="key"
@@ -449,7 +446,7 @@
           business_website: null,
           business_company_emr: null,
           business_category: null,
-          business_sub_category: ''
+          business_sub_category: null
         }
       };
     },
@@ -471,11 +468,6 @@
       },
       getCompanyCategories() {
         return this.$store.state.psx.businessDetails.business_categories;
-      },
-      subCategoryLabel() {
-        return `${this.$t('panel.psx-form.businessSubCategory')} (${this.$t(
-          'panel.psx-form.optional'
-        )})`;
       },
       privacyPolicyUrl() {
         return this.$store.state.context.privacyPolicyUrl;

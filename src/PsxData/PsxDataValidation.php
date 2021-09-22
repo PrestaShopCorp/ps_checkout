@@ -146,9 +146,7 @@ class PsxDataValidation
             $errors[] = self::CATEGORY;
         }
 
-        if (!empty($data['business_sub_category'])
-            && ($data['business_sub_category'] < 2000 || $data['business_sub_category'] > 2297)
-        ) {
+        if (empty($data['business_sub_category']) || $data['business_sub_category'] < 2000 || $data['business_sub_category'] > 2297) {
             $errors[] = self::SUB_CATEGORY;
         }
 
