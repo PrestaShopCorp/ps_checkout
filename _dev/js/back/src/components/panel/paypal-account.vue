@@ -231,6 +231,19 @@
             .then(() => {
               this.pollingPaypalOnboardingUrl();
               this.sendTrack();
+
+              return this.$store
+                .dispatch('createShop', { form: null })
+                .then(() =>
+                  this.$store
+                    .dispatch('onboard')
+                    .then(response =>
+                      this.$store.dispatch(
+                        'updatePaypalOnboardingUrl',
+                        response
+                      )
+                    )
+                );
             });
         });
       },
