@@ -480,7 +480,7 @@ services:
       - '@ps_accounts.installer'
 
   ps_checkout.onboarding.status_helper:
-    class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper'
+    class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnboardingStatusHelper'
     public: true
     arguments:
       - '@ps_checkout.configuration'

@@ -4,7 +4,7 @@ namespace Tests\Unit\Helper;
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
-use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper;
+use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnboardingStatusHelper;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 use Tests\Unit\Mock\MockedPsAccountsServiceTestCase;
 
@@ -23,7 +23,7 @@ class OnBoardingStatusHelperTest extends MockedPsAccountsServiceTestCase
      */
     private $psAccountsService;
     /**
-     * @var OnBoardingStatusHelper
+     * @var OnboardingStatusHelper
      */
     private $onBoardingStatusHelper;
 
@@ -35,7 +35,7 @@ class OnBoardingStatusHelperTest extends MockedPsAccountsServiceTestCase
         $this->psAccountsFacade = $this->createMock(PsAccounts::class);
         $this->psAccountsService = $this->getPsAccountsServiceMock();
 
-        $this->onBoardingStatusHelper = new OnBoardingStatusHelper($this->configuration, $this->psAccountsFacade);
+        $this->onBoardingStatusHelper = new OnboardingStatusHelper($this->configuration, $this->psAccountsFacade);
     }
 
     public function testPsCheckoutOnboarded()

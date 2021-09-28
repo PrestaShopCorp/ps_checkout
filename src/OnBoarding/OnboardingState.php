@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\OnBoarding;
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration;
-use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper;
+use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnboardingStatusHelper;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 class OnboardingState
@@ -31,7 +31,7 @@ class OnboardingState
      */
     private $psCheckoutConfiguration;
     /**
-     * @var OnBoardingStatusHelper
+     * @var OnboardingStatusHelper
      */
     private $onBoardingStatusHelper;
 
@@ -47,7 +47,7 @@ class OnboardingState
     public function __construct(
         PrestashopCheckoutConfiguration $psCheckoutConfiguration,
         PaypalAccountRepository $paypalAccountRepository,
-        OnBoardingStatusHelper $onBoardingStatusHelper
+        OnboardingStatusHelper $onBoardingStatusHelper
     ) {
         $this->psCheckoutConfiguration = $psCheckoutConfiguration;
         $this->paypalAccountRepository = $paypalAccountRepository;

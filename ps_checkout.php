@@ -604,7 +604,7 @@ class Ps_checkout extends PaymentModule
 
     public function getContent()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper $onBoardingStatusHelper */
+        /** @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnboardingStatusHelper $onBoardingStatusHelper */
         $onBoardingStatusHelper = $this->getService('ps_checkout.onboarding.status_helper');
         /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $sessionManager */
         $sessionManager = $this->getService('ps_checkout.session.onboarding.manager');

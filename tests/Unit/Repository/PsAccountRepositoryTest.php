@@ -5,7 +5,7 @@ namespace Tests\Unit\Repository;
 use PHPUnit_Framework_MockObject_MockObject;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
-use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper;
+use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnboardingStatusHelper;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use PrestaShop\Module\PsAccounts\Service\PsAccountsService;
@@ -20,7 +20,7 @@ class PsAccountRepositoryTest extends MockedPsAccountsServiceTestCase
      */
     private $prestaShopConfiguration;
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|OnBoardingStatusHelper
+     * @var PHPUnit_Framework_MockObject_MockObject|OnboardingStatusHelper
      */
     private $onBoardingStatusHelper;
     /**
@@ -48,7 +48,7 @@ class PsAccountRepositoryTest extends MockedPsAccountsServiceTestCase
     {
         parent::setUp();
         $this->prestaShopConfiguration = $this->createMock(PrestaShopConfiguration::class);
-        $this->onBoardingStatusHelper = $this->createMock(OnBoardingStatusHelper::class);
+        $this->onBoardingStatusHelper = $this->createMock(OnboardingStatusHelper::class);
         $this->psAccountsFacade = $this->createMock(PsAccounts::class);
         $this->psContext = $this->createMock(PrestaShopContext::class);
         $this->shopUuidManager = $this->createMock(ShopUuidManager::class);

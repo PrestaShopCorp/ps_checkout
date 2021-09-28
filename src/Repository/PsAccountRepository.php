@@ -24,7 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
-use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper;
+use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnboardingStatusHelper;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use PrestaShop\Module\PsAccounts\Service\PsAccountsService;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
@@ -37,7 +37,7 @@ class PsAccountRepository
     /** @var PrestaShopConfiguration */
     private $configuration;
     /**
-     * @var OnBoardingStatusHelper
+     * @var OnboardingStatusHelper
      */
     private $onBoardingStatusHelper;
     /**
@@ -62,9 +62,9 @@ class PsAccountRepository
     /**
      * @param PrestaShopConfiguration $configuration
      */
-    public function __construct(
+    public function __construct (
         PrestaShopConfiguration $configuration,
-        OnBoardingStatusHelper $onBoardingStatusHelper,
+        OnboardingStatusHelper $onBoardingStatusHelper,
         PsAccounts $psAccountsFacade,
         PrestaShopContext $psContext,
         ShopUuidManager $shopUuidManager
@@ -137,6 +137,7 @@ class PsAccountRepository
      * Get firebase idToken from database
      *
      * @return string
+     *
      * @throws \Exception
      */
     public function getIdToken()

@@ -22,14 +22,14 @@ namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
-use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper;
+use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnboardingStatusHelper;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\PsAccountsInstaller\Installer\Installer;
 
 class OnboardingModule implements PresenterInterface
 {
     /**
-     * @var OnBoardingStatusHelper
+     * @var OnboardingStatusHelper
      */
     private $onBoardingStatusHelper;
     /**
@@ -46,7 +46,7 @@ class OnboardingModule implements PresenterInterface
     private $configuration;
 
     public function __construct(
-        OnBoardingStatusHelper $onBoardingStatusHelper,
+        OnboardingStatusHelper $onBoardingStatusHelper,
         PrestaShopContext $prestaShopContext,
         Installer $installer,
         PrestaShopConfiguration $configuration

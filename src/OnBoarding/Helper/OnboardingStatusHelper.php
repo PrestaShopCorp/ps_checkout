@@ -26,7 +26,7 @@ use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 
-class OnBoardingStatusHelper
+class OnboardingStatusHelper
 {
     /** @var PrestaShopConfiguration */
     private $configuration;

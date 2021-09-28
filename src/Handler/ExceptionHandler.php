@@ -24,7 +24,7 @@ use Exception;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\Environment\SentryEnv;
-use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper;
+use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnboardingStatusHelper;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 use Ps_checkout;
 use Raven_Client;
@@ -40,14 +40,14 @@ class ExceptionHandler
      * @param Ps_checkout $module
      * @param SentryEnv $sentryEnv
      * @param PrestaShopConfiguration $prestaShopConfiguration
-     * @param OnBoardingStatusHelper $onboardingStatusHelper
+     * @param OnboardingStatusHelper $onboardingStatusHelper
      * @param PsAccounts $accountsFacade
      */
     public function __construct(
         Ps_checkout $module,
         SentryEnv $sentryEnv,
         PrestaShopConfiguration $prestaShopConfiguration,
-        OnBoardingStatusHelper $onboardingStatusHelper,
+        OnboardingStatusHelper $onboardingStatusHelper,
         PsAccounts $accountsFacade
     ) {
         $this->client = $module->getSentryClient();
