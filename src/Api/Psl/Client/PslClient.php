@@ -25,6 +25,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Environment\PslEnv;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 
 /**
@@ -56,6 +57,8 @@ class PslClient extends GenericClient
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
         $this->module = $module;
+        /** @var PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
 
         $this->setLink($context->getLink());
 
@@ -70,7 +73,7 @@ class PslClient extends GenericClient
                     'headers' => [
                         'Content-Type' => 'application/json', // api version to use (psl side)
                         'Accept' => 'application/json',
-                        'Authorization' => 'Bearer ' . (new Token())->getToken(),
+                        'Authorization' => 'Bearer ' . $psAccountRepository->getIdToken(),
                         'Shop-Id' => $this->shopUuid,
                         'Hook-Url' => $this->link->getModuleLink(
                             'ps_checkout',

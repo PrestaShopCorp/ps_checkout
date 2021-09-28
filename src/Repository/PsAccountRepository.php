@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
+use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
@@ -135,7 +136,8 @@ class PsAccountRepository
     /**
      * Get firebase idToken from database
      *
-     * @return string|bool
+     * @return string
+     * @throws \Exception
      */
     public function getIdToken()
     {
@@ -143,7 +145,7 @@ class PsAccountRepository
             return (string) $this->psAccountsService->getOrRefreshToken();
         }
 
-        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_ID_TOKEN);
+        return (new Token())->getToken();
     }
 
     /**
@@ -205,7 +207,7 @@ class PsAccountRepository
     /**
      * @return bool
      */
-    private function shouldUsePsAccountsData()
+    public function shouldUsePsAccountsData()
     {
         if (null === $this->usePSAccountsData) {
             $this->usePSAccountsData = !$this->onBoardingStatusHelper->isPsCheckoutLoginAllowed();

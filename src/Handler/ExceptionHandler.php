@@ -21,8 +21,11 @@
 namespace PrestaShop\Module\PrestashopCheckout\Handler;
 
 use Exception;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\Environment\SentryEnv;
-use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper\OnBoardingStatusHelper;
+use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 use Ps_checkout;
 use Raven_Client;
 
@@ -36,12 +39,17 @@ class ExceptionHandler
     /**
      * @param Ps_checkout $module
      * @param SentryEnv $sentryEnv
-     * @param PsAccountRepository $psAccountRepository
-     *
-     * @throws \Raven_Exception
+     * @param PrestaShopConfiguration $prestaShopConfiguration
+     * @param OnBoardingStatusHelper $onboardingStatusHelper
+     * @param PsAccounts $accountsFacade
      */
-    public function __construct(Ps_checkout $module, SentryEnv $sentryEnv, PsAccountRepository $psAccountRepository)
-    {
+    public function __construct(
+        Ps_checkout $module,
+        SentryEnv $sentryEnv,
+        PrestaShopConfiguration $prestaShopConfiguration,
+        OnBoardingStatusHelper $onboardingStatusHelper,
+        PsAccounts $accountsFacade
+    ) {
         $this->client = $module->getSentryClient();
 
         if (empty($this->client)) {
@@ -71,11 +79,20 @@ class ExceptionHandler
             $this->client->install();
         }
 
-        if ($psAccountRepository->onBoardingIsCompleted()) {
-            $this->client->user_context([
-                'id' => $psAccountRepository->getLocalId(),
-                'email' => $psAccountRepository->getEmail(),
-            ]);
+        if ($onboardingStatusHelper->isPayPalOnboarded()) {
+            if ($onboardingStatusHelper->isPsAccountsOnboarded()) {
+                /** @var PrestaShop\Module\PsAccounts\Service\PsAccountsService $accountsService */
+                $accountsService = $accountsFacade->getPsAccountsService();
+                $this->client->user_context([
+                    'id' => $accountsService->getShopUuidV4(),
+                    'email' => $accountsService->getEmail(),
+                ]);
+            } else {
+                $this->client->user_context([
+                    'id' => $prestaShopConfiguration->get(PsAccount::PS_PSX_FIREBASE_LOCAL_ID),
+                    'email' => $prestaShopConfiguration->get(PsAccount::PS_PSX_FIREBASE_EMAIL),
+                ]);
+            }
         }
     }
 

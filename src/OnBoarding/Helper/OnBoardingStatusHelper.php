@@ -23,6 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout\OnBoarding\Helper;
 use Exception;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 
 class OnBoardingStatusHelper
@@ -33,14 +34,24 @@ class OnBoardingStatusHelper
      * @var PsAccounts
      */
     private $psAccountsFacade;
+    /**
+     * @var PaypalAccountRepository
+     */
+    private $paypalAccountRepository;
 
     /**
      * @param PrestaShopConfiguration $configuration
+     * @param PsAccounts $psAccountsFacade
+     * @param PaypalAccountRepository $paypalAccountRepository
      */
-    public function __construct(PrestaShopConfiguration $configuration, PsAccounts $psAccountsFacade)
-    {
+    public function __construct(
+        PrestaShopConfiguration $configuration,
+        PsAccounts $psAccountsFacade,
+        PaypalAccountRepository $paypalAccountRepository
+    ) {
         $this->configuration = $configuration;
         $this->psAccountsFacade = $psAccountsFacade;
+        $this->paypalAccountRepository = $paypalAccountRepository;
     }
 
     /**
@@ -59,6 +70,7 @@ class OnBoardingStatusHelper
     public function isPsAccountsOnboarded()
     {
         try {
+            /** @var PrestaShop\Module\PsAccounts\Service\PsAccountsService $psAccountsService */
             $psAccountsService = $this->psAccountsFacade->getPsAccountsService();
 
             return $psAccountsService->isAccountLinked();
@@ -67,8 +79,27 @@ class OnBoardingStatusHelper
         }
     }
 
+    /**
+     * @return bool
+     */
+    public function isPayPalOnboarded()
+    {
+        return $this->paypalAccountRepository->onBoardingIsCompleted();
+    }
+
+    /**
+     * @return bool
+     */
     public function isPsCheckoutLoginAllowed()
     {
         return (int) $this->configuration->get(PsAccount::ALLOW_PS_CHECKOUT_LOGIN) == 1;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFullyOnboarded()
+    {
+        return $this->isPayPalOnboarded() && ($this->isPsCheckoutOnboarded() || $this->isPsAccountsOnboarded());
     }
 }
