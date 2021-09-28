@@ -95,6 +95,15 @@ class PsxDataMatrice
         ];
     }
 
+    /**
+     * Returns merchant category code (mcc_code) based on selected store sub-category
+     * See: https://developer.paypal.com/docs/api/partner-referrals/v2/#definition-business_industry
+     * See: https://developer.paypal.com/docs/archive/adaptive-accounts/integration-guide/ACBusinessCategories/#sub-categories
+     *
+     * @param string $subcategory
+     *
+     * @return string
+     */
     public function getMerchantCategoryCodeByBusinessSubcategory($subcategory)
     {
         $merchantCategories = [
@@ -396,6 +405,6 @@ class PsxDataMatrice
             '2297' => '5533',
         ];
 
-        return $merchantCategories[(string) $subcategory] ?: null;
+        return isset($merchantCategories[(string) $subcategory]) ? $merchantCategories[(string) $subcategory] : '0';
     }
 }

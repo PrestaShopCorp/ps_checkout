@@ -167,63 +167,6 @@ class GenericClient
     }
 
     /**
-     * Wrapper of method post from guzzle client
-     *
-     * @param array $options payload
-     *
-     * @return array return response or false if no response
-     */
-    protected function patch(array $options = [])
-    {
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler $exceptionHandler */
-        $exceptionHandler = $module->getService('ps_checkout.handler.exception');
-
-        if (true === (bool) $this->getConfiguration(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP, true)) {
-            /** @var LoggerInterface $logger */
-            $logger = $module->getService('ps_checkout.logger');
-
-            $subscriber = new LogSubscriber(
-                $logger,
-                $this->getLogFormatter()
-            );
-            $this->client->getEmitter()->attach($subscriber);
-        }
-
-        try {
-            $response = $this->getClient()->patch($this->getRoute(), $options);
-        } catch (RequestException $exception) {
-            return $this->handleException(
-                new PsCheckoutException(
-                    $exception->getMessage(),
-                    PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION,
-                    $exception
-                )
-            );
-        } catch (RingException $exception) {
-            $e = new PsCheckoutException(
-                $exception->getMessage(),
-                PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION,
-                $exception
-            );
-            $exceptionHandler->handle($e, false);
-
-            return $this->handleException($e);
-        } catch (\Exception $exception) {
-            $exceptionHandler->handle($exception, false);
-
-            return $this->handleException($exception);
-        }
-
-        $responseHandler = new ResponseApiHandler();
-        $response = $responseHandler->handleResponse($response);
-
-        return $response;
-    }
-
-    /**
      * Setter for route
      *
      * @param string $route
