@@ -66,11 +66,9 @@ class OnboardingModule implements PresenterInterface
                 'psAccountsEnabled' => $this->installer->isModuleEnabled(),
                 'loginWithPsCheckoutAvailable' => $this->onBoardingStatusHelper->isPsCheckoutLoginAllowed(),
                 'psAccountsConfigureURL' => $this->prestaShopContext->getLink()->getAdminLink(
-                    'adminModules',
+                    'AdminModules',
                     true,
-                    [
-                        'configure' => 'ps_accounts',
-                    ],
+                    [],
                     [
                         'configure' => 'ps_accounts',
                     ]
