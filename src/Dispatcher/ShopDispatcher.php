@@ -69,15 +69,18 @@ class ShopDispatcher implements Dispatcher
         $data = json_decode($openedSession->getData());
         $payloadShop = $payload['resource']['shop'];
         $payloadIntegrations = isset($payloadShop['paypal']['integrations']) ? $payloadShop['paypal']['integrations'] : [];
+        $payloadRedirect = isset($payloadShop['paypal']['redirect']) ? $payloadShop['paypal']['redirect'] : [];
         $data->shop = [
             'paypal_onboarding_url' => $payloadShop['paypal']['onboard']['links'][1]['href'],
             'integrations' => !empty($payloadIntegrations) ? $payloadIntegrations : null,
-            'permissions_granted' => isset($payloadIntegrations['has_granted_permissions']) ? $payloadIntegrations['has_granted_permissions'] : null,
-            'consent_status' => isset($payloadIntegrations['has_consented_credentials']) ? $payloadIntegrations['has_consented_credentials'] : null,
-            'risk_status' => isset($payloadIntegrations['risk_status']) ? $payloadIntegrations['risk_status'] : null,
-            'account_status' => isset($payloadIntegrations['account_status']) ? $payloadIntegrations['account_status'] : null,
-            'is_email_confirmed' => isset($payloadIntegrations['is_email_confirmed']) ? $payloadIntegrations['is_email_confirmed'] : null,
-            'merchant_id' => isset($payloadIntegrations['merchant_id']) ? $payloadIntegrations['merchant_id'] : null,
+            'merchant_id' => isset($payloadIntegrations['merchant_id']) ? $payloadIntegrations['merchant_id']
+                : (isset($payloadRedirect['merchant_id']) ? $payloadRedirect['merchant_id'] : null),
+            'is_email_confirmed' => isset($payloadIntegrations['primary_email_confirmed']) ? $payloadIntegrations['primary_email_confirmed']
+                : (isset($payloadRedirect['is_email_confirmed']) ? $payloadRedirect['is_email_confirmed'] : null),
+            'permissions_granted' => isset($payloadRedirect['has_granted_permissions']) ? $payloadRedirect['has_granted_permissions'] : null,
+            'consent_status' => isset($payloadRedirect['has_consented_credentials']) ? $payloadRedirect['has_consented_credentials'] : null,
+            'risk_status' => isset($payloadRedirect['risk_status']) ? $payloadRedirect['risk_status'] : null,
+            'account_status' => isset($payloadRedirect['account_status']) ? $payloadRedirect['account_status'] : null,
         ];
 
         $openedSession->setData(json_encode($data));
@@ -85,9 +88,9 @@ class ShopDispatcher implements Dispatcher
         if (!empty($payloadIntegrations)) {
             $action = 'update_merchant_integrations';
             $paypalAccount = new PaypalAccount(
-                isset($payloadIntegrations['merchant_id']) ? $payloadIntegrations['merchant_id'] : null,
+                $data->shop['merchant_id'],
                 isset($payloadIntegrations['primary_email']) ? $payloadIntegrations['primary_email'] : null,
-                isset($payloadIntegrations['primary_email_confirmed']) ? $payloadIntegrations['primary_email_confirmed'] : null,
+                $data->shop['is_email_confirmed'],
                 isset($payloadIntegrations['payments_receivable']) ? $payloadIntegrations['payments_receivable'] : null,
                 $this->getCardStatus($payloadIntegrations),
                 isset($payloadIntegrations['country']) ? $payloadIntegrations['country'] : null
