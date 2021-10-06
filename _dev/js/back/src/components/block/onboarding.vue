@@ -18,7 +18,7 @@
  *-->
 <template>
   <div>
-    <template v-if="checkoutAccountStatus">
+    <template v-if="checkoutAccountStatus && isModuleEnabled">
       <button
         id="link-to-paypal-account-button"
         v-show="paypalOnboardingLink"
@@ -61,6 +61,9 @@
       };
     },
     computed: {
+      isModuleEnabled() {
+        return this.$store.state.configuration.isModuleEnabled;
+      },
       paypalOnboardingLink() {
         let onboardingSession = this.$store.state.session.onboarding;
 

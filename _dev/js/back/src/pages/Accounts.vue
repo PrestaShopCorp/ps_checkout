@@ -61,6 +61,24 @@
     <b-container>
       <CheckoutAccount class="mb-3" :sendTrack="sendTrack" />
 
+      <div v-if="!isModuleEnabled">
+        <b-alert variant="danger" show>
+          <p>
+            {{ $t('panel.accounts.moduleDisabled.message') }}
+
+            <br />
+
+            {{ $t('panel.accounts.moduleDisabled.pleaseGo') }}
+
+            <a class="link" :href="modulesManagerLink">
+              {{ $t('panel.accounts.moduleDisabled.modulesManager') }}
+            </a>
+
+            {{ $t('panel.accounts.moduleDisabled.enableModule') }}
+          </p>
+        </b-alert>
+      </div>
+
       <PaypalAccount :sendTrack="sendTrack" />
     </b-container>
 
@@ -98,6 +116,12 @@
       PaypalIncompatibleCurrency
     },
     computed: {
+      isModuleEnabled() {
+        return this.$store.state.configuration.isModuleEnabled;
+      },
+      modulesManagerLink() {
+        return this.$store.state.context.modulesManagerLink;
+      },
       checkoutAccountStatus() {
         return this.$store.state.firebase.onboardingCompleted;
       },

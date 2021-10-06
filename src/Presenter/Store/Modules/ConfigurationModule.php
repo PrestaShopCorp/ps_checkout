@@ -35,6 +35,11 @@ use Ps_checkout;
 class ConfigurationModule implements PresenterInterface
 {
     /**
+     * @var \Ps_checkout
+     */
+    public $module;
+
+    /**
      * @var PayPalPayIn4XConfiguration
      */
     private $payIn4XConfiguration;
@@ -85,8 +90,13 @@ class ConfigurationModule implements PresenterInterface
      */
     public function present()
     {
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        $this->module = $module;
+
         return [
             'config' => [
+                'isModuleEnabled' => $this->module->isEnabledForShopContext(),
                 'paymentMethods' => $this->getPaymentMethods(),
                 'captureMode' => $this->paypalConfiguration->getIntent(),
                 'paymentMode' => $this->paypalConfiguration->getPaymentMode(),
