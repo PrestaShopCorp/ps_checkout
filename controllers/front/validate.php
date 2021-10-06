@@ -454,7 +454,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
         $customerMessage->message = $message;
         $customerMessage->ip_address = (int) ip2long(Tools::getRemoteAddr());
         $customerMessage->user_agent = $_SERVER['HTTP_USER_AGENT'];
-        $customerMessage->private = 1;
+        $customerMessage->private = true;
         $customerMessage->read = false;
         $customerMessage->add();
     }
