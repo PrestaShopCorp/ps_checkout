@@ -140,6 +140,7 @@ class Onboarding extends PslClient
         /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager */
         $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
 
-        return $onboardingSessionManager->getOpened();
+        return $onboardingSessionManager->getOpened() ?:
+            $onboardingSessionManager->getLatestOpenedSession();
     }
 }
