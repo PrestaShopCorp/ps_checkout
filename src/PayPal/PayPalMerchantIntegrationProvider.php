@@ -20,7 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop;
+use PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager;
 use Psr\SimpleCache\CacheInterface;
 
 class PayPalMerchantIntegrationProvider
@@ -31,11 +31,20 @@ class PayPalMerchantIntegrationProvider
     private $cache;
 
     /**
-     * @param CacheInterface $cache
+     * @var OnboardingSessionManager
      */
-    public function __construct(CacheInterface $cache)
-    {
+    private $onboardingSessionManager;
+
+    /**
+     * @param CacheInterface $cache
+     * @param OnboardingSessionManager $onboardingSessionManager
+     */
+    public function __construct(
+        CacheInterface $cache,
+        OnboardingSessionManager $onboardingSessionManager
+    ) {
         $this->cache = $cache;
+        $this->onboardingSessionManager = $onboardingSessionManager;
     }
 
     /**
@@ -49,16 +58,24 @@ class PayPalMerchantIntegrationProvider
             return $this->cache->get($id);
         }
 
-        $response = (new Shop(\Context::getContext()->link))->getMerchantIntegration($id);
+        $openedOnboardingSession = $this->onboardingSessionManager->getOpened() ?:
+            $this->onboardingSessionManager->getLatestOpenedSession();
+        $sessionData = $openedOnboardingSession ?
+            json_decode($openedOnboardingSession->getData()) :
+            null;
+        $shopData = $sessionData && isset($sessionData->shop) ?
+            $sessionData->shop :
+            null;
+        $merchantIntegrations = $shopData && isset($shopData->integrations) ?
+            (array) $shopData->integrations :
+            null;
 
-        if (false === $response['status'] || empty($response['body']['merchant_integrations'])) {
+        if (!$merchantIntegrations) {
             return false;
         }
 
-        $data = $response['body']['merchant_integrations'];
+        $this->cache->set($id, $merchantIntegrations);
 
-        $this->cache->set($id, $data);
-
-        return $data;
+        return $merchantIntegrations;
     }
 }

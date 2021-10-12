@@ -57,7 +57,8 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
                 // Update onboarding session
                 /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
                 $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
-                $openedSession = $onboardingSessionManager->getOpened();
+                $openedSession = $onboardingSessionManager->getOpened() ?:
+                    $onboardingSessionManager->getLatestOpenedSession();
                 $data = json_decode($openedSession->getData());
                 $data->shop->merchant_id = $idMerchant;
                 $data->shop->permissions_granted = Tools::getValue('permissionsGranted');

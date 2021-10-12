@@ -273,6 +273,8 @@ class OnboardingSessionManager extends SessionManager
      */
     public function getCurrentSession()
     {
-        return \Validate::isLoadedObject($this->context->employee) ? $this->getOpened() : $this->getLatestOpenedSession();
+        return \Validate::isLoadedObject($this->context->employee) ?
+            $this->getOpened() :
+            $this->getLatestOpenedSession();
     }
 }

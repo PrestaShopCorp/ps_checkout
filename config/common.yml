@@ -404,6 +404,7 @@ services:
     public: true
     arguments:
       - '@ps_checkout.cache.paypal.merchant_integration'
+      - '@ps_checkout.session.onboarding.manager'
 
   ps_checkout.session:
     class: 'PrestaShop\Module\PrestashopCheckout\Session\Session'
