@@ -30,9 +30,13 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_3_2_0($module)
 {
-    $localId = Configuration::get('PS_PSX_FIREBASE_LOCAL_ID');
+    $shops = Shop::getShops();
 
-    Configuration::updateValue('ALLOW_PS_CHECKOUT_LOGIN', (int) !empty($localId), false, 0, 0);
+    foreach ($shops as $shop) {
+        $localId = Configuration::get('PS_PSX_FIREBASE_LOCAL_ID', null, null, $shop['id_shop']);
+
+        Configuration::updateValue('ALLOW_PS_CHECKOUT_LOGIN', (int) !empty($localId), false, null, $shop['id_shop']);
+    }
 
     return true;
 }
