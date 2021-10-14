@@ -20,10 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Validator;
 
-use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
-use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 
 class MerchantValidator
 {
@@ -35,30 +33,18 @@ class MerchantValidator
      * @var PsAccountRepository
      */
     private $psAccountRepository;
-    /**
-     * @var PrestaShopContext
-     */
-    private $prestaShopContext;
-    /**
-     * @var ShopUuidManager
-     */
-    private $shopUuidManager;
 
     public function __construct(
         PaypalAccountRepository $paypalAccountRepository,
-        PsAccountRepository $psAccountRepository,
-        PrestaShopContext $prestaShopContext,
-        ShopUuidManager $shopUuidManager
+        PsAccountRepository $psAccountRepository
     ) {
         $this->paypalAccountRepository = $paypalAccountRepository;
         $this->psAccountRepository = $psAccountRepository;
-        $this->prestaShopContext = $prestaShopContext;
-        $this->shopUuidManager = $shopUuidManager;
     }
 
     public function merchantIsValid()
     {
-        $shopUuid = $this->shopUuidManager->getForShop((int) $this->prestaShopContext->getShopId());
+        $shopUuid = $this->psAccountRepository->getShopUuid();
 
         return $this->paypalAccountRepository->onBoardingIsCompleted()
             && $this->paypalAccountRepository->paypalEmailIsValid()

@@ -48,8 +48,6 @@ class PaymentClient extends GenericClient
     public function __construct(\Link $link, Client $client = null)
     {
         $context = \Context::getContext();
-        $shopUuidManager = new ShopUuidManager();
-        $this->shopUuid = $shopUuidManager->getForShop((int) $context->shop->id);
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
         $this->module = $module;
@@ -58,6 +56,7 @@ class PaymentClient extends GenericClient
 
         $this->psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
         $token = $this->psAccountRepository->getIdToken();
+        $this->shopUuid = $this->psAccountRepository->getShopUuid();
 
         // Client can be provided for tests
         if (null === $client) {

@@ -51,13 +51,12 @@ class PslClient extends GenericClient
     {
         $this->context = $context;
         $shopId = (int) $context->getShopId();
-        $shopUuidManager = new ShopUuidManager();
-        $this->shopUuid = $shopUuidManager->getForShop($shopId);
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
         $this->module = $module;
         /** @var PsAccountRepository $psAccountRepository */
         $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+        $this->shopUuid = $psAccountRepository->getShopUuid();
 
         $this->setLink($context->getLink());
 

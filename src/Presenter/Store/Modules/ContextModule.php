@@ -29,6 +29,7 @@ use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Repository\OrderRepository;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
@@ -83,6 +84,10 @@ class ContextModule implements PresenterInterface
      * @var ShopProvider
      */
     private $shopProvider;
+    /**
+     * @var PsAccountRepository
+     */
+    private $psAccountRepository;
 
     /**
      * @param string $moduleName
@@ -94,6 +99,7 @@ class ContextModule implements PresenterInterface
      * @param Translations $translations
      * @param ShopContext $shopContext
      * @param ShopProvider $shopProvider
+     * @param PsAccountRepository $psAccountRepository
      */
     public function __construct(
         $moduleName,
@@ -104,7 +110,8 @@ class ContextModule implements PresenterInterface
         ValueBanner $valueBanner,
         Translations $translations,
         ShopContext $shopContext,
-        ShopProvider $shopProvider
+        ShopProvider $shopProvider,
+        PsAccountRepository $psAccountRepository
     ) {
         $this->moduleName = $moduleName;
         $this->moduleKey = $moduleKey;
@@ -115,6 +122,7 @@ class ContextModule implements PresenterInterface
         $this->translations = $translations;
         $this->shopContext = $shopContext;
         $this->shopProvider = $shopProvider;
+        $this->psAccountRepository = $psAccountRepository;
     }
 
     /**
@@ -124,8 +132,8 @@ class ContextModule implements PresenterInterface
      */
     public function present()
     {
-        $shopId = (int) \Context::getContext()->shop->id;
-        $shopUuid = (new ShopUuidManager())->getForShop($shopId);
+        $shopId = (int) $this->psContext->getShopId();
+        $shopUuid = $this->psAccountRepository->getShopUuid();
 
         $sseUrl = (new PslEnv())->getPslApiUrl() . '/webhooks/sse/onboarding/' . $shopUuid;
 

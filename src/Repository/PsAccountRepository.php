@@ -105,7 +105,7 @@ class PsAccountRepository
             return true;
         }
 
-        return !empty($this->getPsxForm());
+        return !empty(json_decode($this->getPsxForm()));
     }
 
     /**
@@ -199,7 +199,7 @@ class PsAccountRepository
     public function getShopUuid()
     {
         if ($this->shouldUsePsAccountsData()) {
-            return $this->psAccountsService->getShopUuidV4();
+            return $this->psAccountsService->getShopUuid();
         }
 
         return $this->shopUuidManager->getForShop((int) $this->psContext->getShopId());

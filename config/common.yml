@@ -214,6 +214,7 @@ services:
       - '@ps_checkout.translations.translations'
       - '@ps_checkout.context.shop'
       - '@ps_checkout.shop.provider'
+      - '@ps_checkout.repository.prestashop.account'
 
   ps_checkout.store.module.session:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\SessionModule'
@@ -368,8 +369,6 @@ services:
     arguments:
       - '@ps_checkout.repository.paypal.account'
       - '@ps_checkout.repository.prestashop.account'
-      - '@ps_checkout.context.prestashop'
-      - '@ps_checkout.manager.shopuuid'
 
   ps_checkout.validator.front_controller:
     class: 'PrestaShop\Module\PrestashopCheckout\Validator\FrontControllerValidator'
