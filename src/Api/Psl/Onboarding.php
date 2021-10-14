@@ -22,6 +22,8 @@ namespace PrestaShop\Module\PrestashopCheckout\Api\Psl;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Psl\Client\PslClient;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder;
+use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutSessionException;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 /**
@@ -30,7 +32,45 @@ use PrestaShop\Module\PrestashopCheckout\ShopContext;
 class Onboarding extends PslClient
 {
     /**
-     * Create shop on PSL
+     * Create shop UUID from PSL
+     *
+     * @return array (ResponseApiHandler class)
+     */
+    public function createShopUuid($correlationId)
+    {
+        $this->setRoute('/accounts');
+
+        $response = $this->post([
+            'headers' => [
+                'X-Correlation-Id' => $correlationId,
+            ],
+            'json' => [],
+        ]);
+
+        if (!$response['status']) {
+            $this->module->getLogger()->error(
+                'Unable to create shop UUID from PSL',
+                [
+                    'response' => $response,
+                ]
+            );
+
+            throw new PsCheckoutSessionException('Unable to create shop UUID from PSL', PsCheckoutSessionException::UNABLE_TO_RETRIEVE_SHOP_UUID);
+        }
+
+        $shopUuid = $response['body']['account_id'];
+
+        // Update the shop UUID in DB
+        /** @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration */
+        $configuration = $this->module->getService('ps_checkout.configuration');
+
+        $configuration->set(PsAccount::PS_CHECKOUT_SHOP_UUID_V4, $shopUuid);
+
+        return $shopUuid;
+    }
+
+    /**
+     * Create shop from PSL
      *
      * @param array $data
      *

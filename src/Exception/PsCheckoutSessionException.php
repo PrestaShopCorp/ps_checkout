@@ -27,4 +27,5 @@ class PsCheckoutSessionException extends PsCheckoutException
     const OPENED_SESSION_NOT_FOUND = 2;
     const FORBIDDEN_SESSION_TRANSITION = 3;
     const MISSING_EXPECTED_PARAMETERS = 4;
+    const UNABLE_TO_RETRIEVE_SHOP_UUID = 5;
 }

@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Session\Onboarding;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Psl\Authentication;
+use PrestaShop\Module\PrestashopCheckout\Api\Psl\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutSessionException;
@@ -94,6 +95,13 @@ class OnboardingSessionManager extends SessionManager
     public function openOnboarding($data)
     {
         $correlationId = Uuid::uuid4()->toString();
+
+
+        // Shop UUID generation from PSL
+        $onboardingApi = new Onboarding(new PrestaShopContext());
+
+        $onboardingApi->createShopUuid($correlationId);
+
         $authenticationApi = new Authentication(new PrestaShopContext());
         $authToken = $authenticationApi->getAuthToken(self::SHOP_SESSION, $correlationId);
         $createdAt = date('Y-m-d H:i:s');
@@ -113,6 +121,11 @@ class OnboardingSessionManager extends SessionManager
         ];
 
         $this->can('start', $sessionData);
+
+        // Shop UUID generation from PSL
+        $onboardingApi = new Onboarding(new PrestaShopContext());
+
+        $onboardingApi->createShopUuid();
 
         return $this->open($sessionData);
     }
