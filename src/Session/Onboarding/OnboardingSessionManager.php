@@ -99,7 +99,6 @@ class OnboardingSessionManager extends SessionManager
 
         // Shop UUID generation from PSL
         $onboardingApi = new Onboarding(new PrestaShopContext());
-
         $onboardingApi->createShopUuid($correlationId);
 
         $authenticationApi = new Authentication(new PrestaShopContext());
@@ -121,12 +120,6 @@ class OnboardingSessionManager extends SessionManager
         ];
 
         $this->can('start', $sessionData);
-
-        // Shop UUID generation from PSL
-        $onboardingApi = new Onboarding(new PrestaShopContext());
-
-        $onboardingApi->createShopUuid();
-
         return $this->open($sessionData);
     }
 
