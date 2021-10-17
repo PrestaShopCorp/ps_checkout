@@ -57,7 +57,7 @@ class ShopDispatcher implements Dispatcher
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
         $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
-        $openedSession = $onboardingSessionManager->getLatestOpenedSession();
+        $openedSession = $onboardingSessionManager->getOpened();
         /** @var \PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration $sessionConfiguration */
         $sessionConfiguration = $this->module->getService('ps_checkout.session.configuration');
         $onboardingSessionConfiguration = $sessionConfiguration->getOnboarding();

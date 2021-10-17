@@ -79,8 +79,7 @@ class OnboardingStateHandler
      */
     public function handle()
     {
-        $this->onboardingSession = $this->onboardingSessionManager->getOpened() ?:
-            $this->onboardingSessionManager->getLatestOpenedSession();
+        $this->onboardingSession = $this->onboardingSessionManager->getOpened();
 
         if (!$this->onboardingSession) {
             $this->handleFirebaseOnboarding();

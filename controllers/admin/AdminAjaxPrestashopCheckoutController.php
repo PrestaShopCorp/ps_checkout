@@ -957,8 +957,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
         $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
-        $openedSession = $onboardingSessionManager->getOpened() ?:
-            $onboardingSessionManager->getLatestOpenedSession();
+        $openedSession = $onboardingSessionManager->getOpened();
 
         $onboardingSessionManager->closeOnboarding($openedSession);
 
@@ -976,8 +975,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
         $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
-        $openedSession = $onboardingSessionManager->getOpened() ?:
-            $onboardingSessionManager->getLatestOpenedSession();
+        $openedSession = $onboardingSessionManager->getOpened();
         $openedSession = $openedSession ? $openedSession->toArray() : null;
 
         $this->ajaxDie(json_encode($openedSession));
