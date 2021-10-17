@@ -45,7 +45,7 @@ class Authentication extends PslClient
                 'X-Correlation-Id' => $correlationId,
             ],
         ]);
-        // var_dump($response);
+
         if (!$response['status']) {
             $this->module->getLogger()->error(
                 'Unable to retrieve token from PSL',

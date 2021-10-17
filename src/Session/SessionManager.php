@@ -38,7 +38,7 @@ class SessionManager
     }
 
     /**
-     * Open an user session
+     * Open a session
      *
      * @param array $sessionData
      *
@@ -52,7 +52,7 @@ class SessionManager
     }
 
     /**
-     * Get an user session
+     * Get a session
      *
      * @param array $sessionData
      *
@@ -72,7 +72,7 @@ class SessionManager
     }
 
     /**
-     * Update an user session
+     * Update a session
      *
      * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
      *
@@ -84,7 +84,7 @@ class SessionManager
     }
 
     /**
-     * Close an user session
+     * Close a session
      *
      * @param \PrestaShop\Module\PrestashopCheckout\Session\Session $session
      *
@@ -92,6 +92,6 @@ class SessionManager
      */
     public function close(Session $session)
     {
-        return $this->repository->close($session->getMode(), $session->getUserId(), $session->getShopId(), $session->getIsClosed());
+        return $this->repository->close($session->getMode(), $session->getShopId(), $session->getIsClosed());
     }
 }

@@ -84,7 +84,7 @@ class OnboardingSessionManager extends SessionManager
     }
 
     /**
-     * Open a merchant onboarding session
+     * Open a onboarding session
      *
      * @param object $data
      *
@@ -96,7 +96,6 @@ class OnboardingSessionManager extends SessionManager
     {
         $correlationId = Uuid::uuid4()->toString();
 
-
         // Shop UUID generation from PSL
         $onboardingApi = new Onboarding(new PrestaShopContext());
         $onboardingApi->createShopUuid($correlationId);
@@ -107,7 +106,6 @@ class OnboardingSessionManager extends SessionManager
         $sessionData = [
             'correlation_id' => $correlationId,
             'mode' => $this->mode,
-            'user_id' => (int) $this->context->employee->id,
             'shop_id' => (int) $this->context->shop->id,
             'is_closed' => false,
             'auth_token' => $authToken['token'],
@@ -120,11 +118,12 @@ class OnboardingSessionManager extends SessionManager
         ];
 
         $this->can('start', $sessionData);
+
         return $this->open($sessionData);
     }
 
     /**
-     * Get an opened merchant onboarding session
+     * Get the opened onboarding session
      *
      * @return \PrestaShop\Module\PrestashopCheckout\Session\Session|null
      */
@@ -132,7 +131,6 @@ class OnboardingSessionManager extends SessionManager
     {
         $sessionData = [
             'mode' => $this->mode,
-            'user_id' => (int) $this->context->employee->id,
             'shop_id' => (int) $this->context->shop->id,
             'is_closed' => false,
         ];
@@ -169,7 +167,7 @@ class OnboardingSessionManager extends SessionManager
 
         // Exceptions only for transit actions
         if ($action === 'transit') {
-            if (!$this->getCurrentSession()) {
+            if (!$this->getOpened()) {
                 $exception = new PsCheckoutSessionException($genericErrorMsg . 'Unable to find an opened session', PsCheckoutSessionException::OPENED_SESSION_NOT_FOUND);
                 $module->getLogger()->error('Unable to find an opened session', ['exception' => $exception, 'trace' => $exception->getTraceAsString()]);
                 throw $exception;
@@ -179,19 +177,20 @@ class OnboardingSessionManager extends SessionManager
 
             if (is_array($nextTransition['from'])) {
                 foreach ($nextTransition['from'] as $transition) {
-                    if ($this->getCurrentSession()->getStatus() === $transition) {
+                    if ($this->getOpened()->getStatus() === $transition) {
                         $authorizedTransition = true;
                         break;
                     }
                 }
             }
-            if ($this->getCurrentSession()->getStatus() === $nextTransition['from']) {
+
+            if ($this->getOpened()->getStatus() === $nextTransition['from']) {
                 $authorizedTransition = true;
             }
 
             if (!$authorizedTransition) {
-                $exception = new PsCheckoutSessionException($genericErrorMsg . 'The session is not authorized to transit from ' . $this->getCurrentSession()->getStatus() . ' to ' . $nextTransition['to'], PsCheckoutSessionException::FORBIDDEN_SESSION_TRANSITION);
-                $module->getLogger()->error('The session transition is not authorized', ['from' => $this->getCurrentSession()->getStatus(), 'to' => $nextTransition['to'], 'exception' => $exception, 'trace' => $exception->getTraceAsString()]);
+                $exception = new PsCheckoutSessionException($genericErrorMsg . 'The session is not authorized to transit from ' . $this->getOpened()->getStatus() . ' to ' . $nextTransition['to'], PsCheckoutSessionException::FORBIDDEN_SESSION_TRANSITION);
+                $module->getLogger()->error('The session transition is not authorized', ['from' => $this->getOpened()->getStatus(), 'to' => $nextTransition['to'], 'exception' => $exception, 'trace' => $exception->getTraceAsString()]);
                 throw $exception;
             }
         }
@@ -218,7 +217,7 @@ class OnboardingSessionManager extends SessionManager
         $this->can($next, $update);
 
         $nextTransition = $this->transitions[$next];
-        $session = $this->getCurrentSession();
+        $session = $this->getOpened();
 
         foreach ($update as $updateKey => $updateValue) {
             foreach ($nextTransition['update'] as $updateConfigKey => $updateConfigValue) {
@@ -256,31 +255,31 @@ class OnboardingSessionManager extends SessionManager
         return $this->close($session);
     }
 
-    /**
-     * Get latest opened onboarding session for webhooks
-     *
-     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session|null
-     */
-    public function getLatestOpenedSession()
-    {
-        $sessionData = [
-            'mode' => $this->mode,
-            'shop_id' => (int) $this->context->shop->id,
-            'is_closed' => false,
-        ];
-
-        return $this->get($sessionData);
-    }
-
-    /**
-     * Get the opened session according to PrestaShop context
-     *
-     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session|null
-     */
-    public function getCurrentSession()
-    {
-        return \Validate::isLoadedObject($this->context->employee) ?
-            $this->getOpened() :
-            $this->getLatestOpenedSession();
-    }
+    // /**
+    //  * Get latest opened onboarding session for webhooks
+    //  *
+    //  * @return \PrestaShop\Module\PrestashopCheckout\Session\Session|null
+    //  */
+    // public function getLatestOpenedSession()
+    // {
+    //     $sessionData = [
+    //         'mode' => $this->mode,
+    //         'shop_id' => (int) $this->context->shop->id,
+    //         'is_closed' => false,
+    //     ];
+    //
+    //     return $this->get($sessionData);
+    // }
+    //
+    // /**
+    //  * Get the opened session according to PrestaShop context
+    //  *
+    //  * @return \PrestaShop\Module\PrestashopCheckout\Session\Session|null
+    //  */
+    // public function getCurrentSession()
+    // {
+    //     return \Validate::isLoadedObject($this->context->employee) ?
+    //         $this->getOpened() :
+    //         $this->getLatestOpenedSession();
+    // }
 }

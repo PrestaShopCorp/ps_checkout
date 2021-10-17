@@ -35,11 +35,6 @@ class Session
     /**
      * @var int
      */
-    private $userId;
-
-    /**
-     * @var int
-     */
     private $shopId;
 
     /**
@@ -96,7 +91,6 @@ class Session
     {
         $this->correlationId = $session['correlation_id'];
         $this->mode = $session['mode'];
-        $this->userId = $session['user_id'];
         $this->shopId = $session['shop_id'];
         $this->isClosed = $session['is_closed'];
         $this->authToken = $session['auth_token'];
@@ -127,16 +121,6 @@ class Session
     public function getMode()
     {
         return $this->mode;
-    }
-
-    /**
-     * Get the session user ID
-     *
-     * @return int
-     */
-    public function getUserId()
-    {
-        return $this->userId;
     }
 
     /**
@@ -335,7 +319,6 @@ class Session
         return [
             'correlation_id' => $this->correlationId,
             'mode' => $this->mode,
-            'user_id' => $this->userId,
             'shop_id' => $this->shopId,
             'is_closed' => $this->isClosed,
             'auth_token' => $this->authToken,

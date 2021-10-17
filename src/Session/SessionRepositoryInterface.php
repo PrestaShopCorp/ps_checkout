@@ -28,7 +28,7 @@ interface SessionRepositoryInterface
 
     public function update(Session $session);
 
-    public function remove($mode, $userId, $shopId, $isClosed);
+    public function remove($mode, $shopId, $isClosed);
 
-    public function close($mode, $userId, $shopId, $isClosed);
+    public function close($mode, $shopId, $isClosed);
 }
