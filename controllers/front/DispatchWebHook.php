@@ -23,7 +23,6 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook as PaymentWebhook;
 use PrestaShop\Module\PrestashopCheckout\Api\Psl\Webhook as PslWebhook;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
-use PrestaShop\Module\PrestashopCheckout\Dispatcher\MerchantDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\ShopDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
