@@ -33,5 +33,7 @@ export default {
   merchantIsFullyOnboarded: (state, getters) =>
     getters.paypalOnboardingIsCompleted &&
     getters.firebaseOnboardingIsCompleted &&
-    getters.psxOnboardingIsCompleted
+    getters.psxOnboardingIsCompleted,
+  merchantIsPsxOnboarded: (state, getters) =>
+    getters.firebaseOnboardingIsCompleted && getters.psxOnboardingIsCompleted
 };

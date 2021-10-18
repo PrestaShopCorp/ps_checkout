@@ -25,110 +25,126 @@
 
       <div class="card-body">
         <div class="d-flex align-items-center">
-          <img
-            src="@/assets/images/logo.png"
-            width="50"
-            alt="Checkout"
-            class="ml-1"
-          />
+          <div class="d-flex align-items-center mr-auto">
+            <img
+              src="@/assets/images/logo.png"
+              width="50"
+              alt="Checkout"
+              class="ml-1"
+            />
 
-          <p class="text-muted fs-14 mb-0 ml-3 mr-auto">
-            <template v-if="checkoutAccountStatus">
-              {{ $t('panel.accounts.checkout.connectedWith') }}
+            <p class="text-muted fs-14 mb-0 ml-3">
+              <template v-if="checkoutAccountStatus">
+                {{ $t('panel.accounts.checkout.connectedWith') }}
 
-              <b>{{ checkoutEmail }}</b>
+                <b>{{ checkoutEmail }}</b>
 
-              {{ $t('panel.accounts.checkout.account') }}
-            </template>
+                {{ $t('panel.accounts.checkout.account') }}
+              </template>
+
+              <template v-else>
+                {{ $t('panel.accounts.checkout.createNewAccount') }}
+              </template>
+            </p>
+          </div>
+
+          <div class="d-flex align-items-center">
+            <AccountStatusCheckout v-if="checkoutAccountStatus" class="mr-3" />
+
+            <div class="text-center float-right" v-if="!checkoutAccountStatus">
+              <a
+                id="go-to-signin-link"
+                href="#"
+                @click.prevent="goToSignIn()"
+                class="mr-4"
+              >
+                <b>{{ $t('panel.accounts.checkout.logIn') }}</b>
+              </a>
+
+              <a
+                id="go-to-signup-link"
+                href="#"
+                @click.prevent="goToSignUp()"
+                class="btn btn-primary-reverse btn-outline-primary light-button mb-1"
+              >
+                {{ $t('panel.accounts.checkout.createAccount') }}
+              </a>
+            </div>
 
             <template v-else>
-              {{ $t('panel.accounts.checkout.createNewAccount') }}
+              <div class="text-center">
+                <b-button
+                  v-if="!isReady"
+                  class="mr-3"
+                  id="psx-logout-button"
+                  href="#"
+                  data-toggle="modal"
+                  data-target="#modalLogout"
+                  variant="outline-secondary"
+                >
+                  {{ $t('panel.accounts.checkout.logOut') }}
+                </b-button>
+              </div>
+              <div class="text-center">
+                <b-button
+                  @click.prevent="goToModify()"
+                  v-if="!isReady"
+                  variant="outline-secondary"
+                >
+                  {{ $t('panel.accounts.checkout.manageInfo') }}
+                </b-button>
+              </div>
             </template>
-          </p>
-
-          <AccountStatusCheckout v-if="checkoutAccountStatus" class="mr-3" />
-
-          <div class="text-center float-right" v-if="!checkoutAccountStatus">
-            <a
-              id="go-to-signin-link"
-              href="#"
-              @click.prevent="goToSignIn()"
-              class="mr-4"
-            >
-              <b>{{ $t('panel.accounts.checkout.logIn') }}</b>
-            </a>
-
-            <a
-              id="go-to-signup-link"
-              href="#"
-              @click.prevent="goToSignUp()"
-              class="btn btn-primary-reverse btn-outline-primary light-button mb-1"
-            >
-              {{ $t('panel.accounts.checkout.createAccount') }}
-            </a>
           </div>
+        </div>
 
-          <div class="text-right" v-else>
-            <b-button
-              v-if="!isReady"
-              id="psx-logout-button"
-              href="#"
-              data-toggle="modal"
-              data-target="#modalLogout"
-              variant="outline-secondary"
-            >
-              {{ $t('panel.accounts.checkout.logOut') }}
-            </b-button>
-          </div>
+        <!-- modal -->
+        <div
+          class="modal"
+          id="modalLogout"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="psxModalLogout"
+        >
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="psxModalLogout">
+                  {{ $t('panel.accounts.checkout.titleLogout') }}
+                </h5>
 
-          <!-- modal -->
-          <div
-            class="modal"
-            id="modalLogout"
-            tabindex="-1"
-            role="dialog"
-            aria-labelledby="psxModalLogout"
-          >
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="psxModalLogout">
-                    {{ $t('panel.accounts.checkout.titleLogout') }}
-                  </h5>
+                <button
+                  type="button"
+                  class="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
 
-                  <button
-                    type="button"
-                    class="close"
-                    data-dismiss="modal"
-                    aria-label="Close"
-                  >
-                    <span aria-hidden="true">×</span>
-                  </button>
-                </div>
+              <div class="modal-body">
+                <p>{{ $t('panel.accounts.checkout.descriptionLogout') }}</p>
+              </div>
 
-                <div class="modal-body">
-                  <p>{{ $t('panel.accounts.checkout.descriptionLogout') }}</p>
-                </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  data-dismiss="modal"
+                >
+                  {{ $t('panel.accounts.checkout.cancel') }}
+                </button>
 
-                <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="btn btn-outline-secondary"
-                    data-dismiss="modal"
-                  >
-                    {{ $t('panel.accounts.checkout.cancel') }}
-                  </button>
-
-                  <button
-                    @click.prevent="logOut()"
-                    id="modal-confirm-logout-button"
-                    type="button"
-                    class="btn btn-primary"
-                    data-dismiss="modal"
-                  >
-                    {{ $t('panel.accounts.checkout.logOut') }}
-                  </button>
-                </div>
+                <button
+                  @click.prevent="logOut()"
+                  id="modal-confirm-logout-button"
+                  type="button"
+                  class="btn btn-primary"
+                  data-dismiss="modal"
+                >
+                  {{ $t('panel.accounts.checkout.logOut') }}
+                </button>
               </div>
             </div>
           </div>
@@ -169,6 +185,9 @@
           .push('/authentication/signup')
           // eslint-disable-next-line no-console
           .catch(exception => console.log(exception));
+      },
+      goToModify() {
+        this.$router.push('/authentication/additional');
       },
       logOut() {
         this.$store.dispatch('logOut').then(() => {
