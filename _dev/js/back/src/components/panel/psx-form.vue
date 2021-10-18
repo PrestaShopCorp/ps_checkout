@@ -40,13 +40,52 @@
       </template>
 
       <b-card-body>
-        <h1 class="text-muted font-weight-light text-center">
+        <h1
+          class="text-muted font-weight-light text-center py-2"
+          v-if="merchantIsPsxOnboarded"
+        >
+          {{ $t('panel.psx-form.businessDetails') }}
+        </h1>
+
+        <h1 class="text-muted font-weight-light text-center py-2" v-else>
           {{ $t('panel.psx-form.fillUp') }}
         </h1>
 
         <b-form>
           <b-col sm="12" md="10" lg="8" class="m-auto">
-            <b-card-title class="py-4">
+            <div>
+              {{ $t('panel.psx-form.businessDetailsSubtitle') }}
+            </div>
+
+            <b-alert
+              class="mt-4"
+              variant="info"
+              show=""
+              v-if="merchantIsFullyOnboarded"
+            >
+              <p>
+                {{
+                  $t('panel.psx-form.businessDetailsNotificationFullyOnboarded')
+                }}
+              </p>
+            </b-alert>
+
+            <b-alert
+              class="mt-4"
+              variant="info"
+              show=""
+              v-else-if="merchantIsPsxOnboarded"
+            >
+              <p>
+                {{
+                  $t(
+                    'panel.psx-form.businessDetailsNotificationPartialOnboarded'
+                  )
+                }}
+              </p>
+            </b-alert>
+
+            <b-card-title class="py-3" title-tag="h3">
               {{ $t('panel.psx-form.personalInformation') }}
             </b-card-title>
 
@@ -150,7 +189,7 @@
               </b-col>
             </b-row>
 
-            <b-card-title class="py-4">
+            <b-card-title class="py-3" title-tag="h3">
               {{ $t('panel.psx-form.billingAddress') }}
             </b-card-title>
 
@@ -259,10 +298,14 @@
               </b-col>
             </b-row>
 
+            <b-card-title class="py-3" title-tag="h3">
+              {{ $t('panel.psx-form.businessPhone') }}
+            </b-card-title>
+
             <b-row>
               <b-col sm="6" md="6" lg="6">
                 <b-form-group
-                  :label="$t('panel.psx-form.businessPhone')"
+                  :label="$t('panel.psx-form.phoneNumber')"
                   label-for="phone-country"
                 >
                   <b-input-group>
@@ -294,7 +337,7 @@
               </b-col>
             </b-row>
 
-            <b-card-title class="py-4">
+            <b-card-title class="py-3" title-tag="h3">
               {{ $t('panel.psx-form.businessInformation') }}
             </b-card-title>
 
@@ -406,7 +449,11 @@
       <template v-slot:footer>
         <div class="container-fluid pl-0">
           <b-button variant="secondary" @click="back()">
-            {{ $t('panel.psx-form.back') }}
+            {{
+              merchantIsPsxOnboarded
+                ? $t('panel.psx-form.back')
+                : $t('panel.accounts.logout')
+            }}
           </b-button>
         </div>
         <b-button
@@ -414,7 +461,11 @@
           variant="primary"
           @click="submitForm()"
         >
-          {{ $t('panel.psx-form.continue') }}
+          {{
+            merchantIsPsxOnboarded
+              ? $t('panel.psx-form.update')
+              : $t('panel.psx-form.continue')
+          }}
         </b-button>
       </template>
     </b-card>
@@ -423,6 +474,7 @@
 
 <script>
   import { orderBy, uniqBy } from 'lodash';
+  import { mapGetters } from 'vuex';
 
   export default {
     name: 'PsxForm',
@@ -432,28 +484,11 @@
         subCategory: null,
         statesList: null,
         errorForm: null,
-        form: {
-          business_contact_gender: 'Mr',
-          business_contact_first_name: null,
-          business_contact_last_name: null,
-          business_contact_language: null,
-          qualification: '',
-          shop_name: null,
-          business_address_street: null,
-          business_address_zip: null,
-          business_address_city: null,
-          business_address_country: null,
-          business_address_state: null,
-          business_phone_country: '1',
-          business_phone: null,
-          business_website: null,
-          business_company_emr: null,
-          business_category: null,
-          business_sub_category: ''
-        }
+        form: this.getFormData()
       };
     },
     computed: {
+      ...mapGetters(['merchantIsFullyOnboarded', 'merchantIsPsxOnboarded']),
       getLanguagesDetails() {
         return orderBy(this.$store.state.psx.languagesDetails, 'name');
       },
@@ -482,6 +517,32 @@
       }
     },
     methods: {
+      getFormData() {
+        return Object.fromEntries(
+          Object.entries({
+            business_contact_gender: 'Mr',
+            business_contact_first_name: null,
+            business_contact_last_name: null,
+            business_contact_language: null,
+            qualification: '',
+            shop_name: null,
+            business_address_street: null,
+            business_address_zip: null,
+            business_address_city: null,
+            business_address_country: null,
+            business_address_state: null,
+            business_phone_country: '1',
+            business_phone: null,
+            business_website: null,
+            business_company_emr: null,
+            business_category: null,
+            business_sub_category: ''
+          }).map(([key, value]) => [
+            key,
+            (this.$store.state.psx.psxFormData || {})[key] || value
+          ])
+        );
+      },
       submitForm() {
         this.$store
           .dispatch({
@@ -552,6 +613,10 @@
         }
       },
       back() {
+        if (this.$store.getters.merchantIsPsxOnboarded) {
+          return this.$router.push('/authentication');
+        }
+
         this.$store.dispatch('logOut').then(() => {
           this.$router
             .push('/authentication')
