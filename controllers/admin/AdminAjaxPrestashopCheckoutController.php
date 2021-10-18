@@ -1126,6 +1126,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         }
 
         if (!$response['status']) {
+            /** @var \PrestaShop\Module\PrestashopCheckout\Translations\Translations $translationService */
+            $translationService = $this->module->getService('ps_checkout.translations.translations');
+            $errorTranslations = $translationService->getErrorTranslations()['psx_form'];
+
             if (isset($response['httpCode'])) {
                 http_response_code((int) $response['httpCode']);
             }
@@ -1136,7 +1140,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 foreach ($response['body']['error']['errors'] as $error) {
                     if (isset($error['data']['details'])) {
                         foreach ($error['data']['details'] as $detail) {
-                            if (isset($detail['description'])) {
+                            if (isset($errorTranslations[$detail['field']][$detail['issue']])) {
+                                $errors[] = $errorTranslations[$detail['field']][$detail['issue']];
+                            } elseif (isset($detail['description'])) {
                                 $errors[] = $detail['description'];
                             }
                         }
