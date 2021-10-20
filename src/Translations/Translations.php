@@ -211,6 +211,8 @@ class Translations
                         'cancel' => $this->module->l('Cancel', 'translations'),
                         'enablePsAccounts' => $this->module->l('Please enable PrestaShop Account module in order to login', 'translations'),
                         'configurePsAccounts' => $this->module->l('Please Setup PrestaShop Account module here', 'translations'),
+                        'manageAccount' => $this->module->l('Manage your account', 'translations'),
+                        'manageInfo' => $this->module->l('Manage your information', 'translations'),
                     ],
                 ],
                 'psx-form' => [
