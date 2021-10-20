@@ -123,7 +123,7 @@ class PayPalConfiguration
         }
 
         // Close onboarding session if existing
-        $openedSession = $this->onboardingSessionManager->getCurrentSession();
+        $openedSession = $this->onboardingSessionManager->getOpened();
 
         if ($openedSession) {
             $this->onboardingSessionManager->closeOnboarding($openedSession);

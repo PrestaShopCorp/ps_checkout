@@ -85,11 +85,6 @@ class AbstractSessionRepository implements SessionRepositoryInterface
         $query->where('is_closed = ' . (int) $sessionData['is_closed']);
         $query->orderBy('updated_at DESC');
 
-        // // Webhook are not in employee context
-        // if (!empty($sessionData['user_id'])) {
-        //     $query->where('user_id = ' . (int) $sessionData['user_id']);
-        // }
-
         $result = $this->db->getRow($query);
 
         return $result ? new Session($result) : null;
