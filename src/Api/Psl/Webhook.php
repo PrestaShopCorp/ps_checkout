@@ -38,7 +38,7 @@ class Webhook extends PslClient
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager */
         $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
-        $openedOnboardingSession = $onboardingSessionManager->getLatestOpenedSession();
+        $openedOnboardingSession = $onboardingSessionManager->getOpened();
 
         $this->setRoute("/webhooks/${payload['id']}/verify");
 

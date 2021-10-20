@@ -254,32 +254,4 @@ class OnboardingSessionManager extends SessionManager
     {
         return $this->close($session);
     }
-
-    // /**
-    //  * Get latest opened onboarding session for webhooks
-    //  *
-    //  * @return \PrestaShop\Module\PrestashopCheckout\Session\Session|null
-    //  */
-    // public function getLatestOpenedSession()
-    // {
-    //     $sessionData = [
-    //         'mode' => $this->mode,
-    //         'shop_id' => (int) $this->context->shop->id,
-    //         'is_closed' => false,
-    //     ];
-    //
-    //     return $this->get($sessionData);
-    // }
-    //
-    // /**
-    //  * Get the opened session according to PrestaShop context
-    //  *
-    //  * @return \PrestaShop\Module\PrestashopCheckout\Session\Session|null
-    //  */
-    // public function getCurrentSession()
-    // {
-    //     return \Validate::isLoadedObject($this->context->employee) ?
-    //         $this->getOpened() :
-    //         $this->getLatestOpenedSession();
-    // }
 }

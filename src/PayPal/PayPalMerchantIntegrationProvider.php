@@ -58,8 +58,7 @@ class PayPalMerchantIntegrationProvider
             return $this->cache->get($id);
         }
 
-        $openedOnboardingSession = $this->onboardingSessionManager->getOpened() ?:
-            $this->onboardingSessionManager->getLatestOpenedSession();
+        $openedOnboardingSession = $this->onboardingSessionManager->getOpened();
         $sessionData = $openedOnboardingSession ?
             json_decode($openedOnboardingSession->getData()) :
             null;
