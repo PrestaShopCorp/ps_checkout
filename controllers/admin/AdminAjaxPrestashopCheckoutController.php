@@ -18,7 +18,6 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 use Monolog\Logger;
-use PrestaShop\Module\PrestashopCheckout\Dispatcher\ShopDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Api\Psl\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\ShopDispatcher;
@@ -238,54 +237,17 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             $formData = json_decode(Tools::getValue('form'), true);
         }
 
-        // PsxForm validation
-        $psxForm = (new PsxDataPrepare($formData))->prepareData();
-        $errors = (new PsxDataValidation())->validateData($psxForm);
+        $this->validateBusinessData('create', $formData);
+    }
 
-        if (!empty($errors)) {
-            http_response_code(400);
-            $this->ajaxDie(json_encode($errors));
-        }
+    /**
+     * AJAX: Update a shop on PSL
+     */
+    public function ajaxProcessPslUpdateShop()
+    {
+        $formData = json_decode(Tools::getValue('form'), true);
 
-        $onboardingApi = new Onboarding(new PrestaShopContext());
-        $response = $onboardingApi->createShop(array_filter($psxForm));
-
-        if (!$response['status']) {
-            if (isset($response['httpCode'])) {
-                http_response_code((int) $response['httpCode']);
-            }
-
-            if (isset($response['body']['error']['errors'])) {
-                $errors = [];
-
-                foreach ($response['body']['error']['errors'] as $error) {
-                    if (isset($error['data']['details'])) {
-                        foreach ($error['data']['details'] as $detail) {
-                            if (isset($detail['description'])) {
-                                $errors[] = $detail['description'];
-                            }
-                        }
-                    }
-                }
-
-                if ($errors) {
-                    $this->ajaxDie(json_encode($errors));
-                }
-            }
-
-            $this->ajaxDie(json_encode([
-                $response['exceptionMessage'] ?:
-                $response['body']['error'] && $response['body']['error']['message'] ? $response['body']['error']['message'] : $response['body'],
-            ]));
-        }
-
-        // Save form in database
-        if (false === $this->savePsxForm($psxForm)) {
-            http_response_code(500);
-            $this->ajaxDie(json_encode(['Cannot save in database.']));
-        }
-
-        $this->ajaxDie(json_encode($response));
+        $this->validateBusinessData('update', $formData);
     }
 
     /**
@@ -1026,5 +988,66 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         }
 
         parent::display();
+    }
+
+    /**
+     * Validation and save process for business form
+     *
+     * @param string $action (create|update)
+     * @param array $formData
+     *
+     * @return void
+     */
+    private function validateBusinessData($action, $formData)
+    {
+        // PsxForm validation
+        $psxForm = (new PsxDataPrepare($formData))->prepareData();
+        $errors = (new PsxDataValidation())->validateData($psxForm);
+
+        if (!empty($errors)) {
+            http_response_code(400);
+            $this->ajaxDie(json_encode($errors));
+        }
+
+        $onboardingApi = new Onboarding(new PrestaShopContext());
+        $call = $action . 'Shop';
+        $response = $onboardingApi->$call(array_filter($psxForm));
+
+        if (!$response['status']) {
+            if (isset($response['httpCode'])) {
+                http_response_code((int) $response['httpCode']);
+            }
+
+            if (isset($response['body']['error']['errors'])) {
+                $errors = [];
+
+                foreach ($response['body']['error']['errors'] as $error) {
+                    if (isset($error['data']['details'])) {
+                        foreach ($error['data']['details'] as $detail) {
+                            if (isset($detail['description'])) {
+                                $errors[] = $detail['description'];
+                            }
+                        }
+                    }
+                }
+
+                if ($errors) {
+                    $this->ajaxDie(json_encode($errors));
+                }
+            }
+
+            $this->ajaxDie(json_encode([
+                $response['exceptionMessage'] ?:
+                $response['body']['error'] && $response['body']['error']['message'] ? $response['body']['error']['message'] : $response['body'],
+            ]));
+        }
+
+        // Save form in database
+        if (false === $this->savePsxForm($psxForm)) {
+            http_response_code(500);
+            $this->ajaxDie(json_encode(['Cannot save in database.']));
+        }
+
+        $this->ajaxDie(json_encode($response));
     }
 }

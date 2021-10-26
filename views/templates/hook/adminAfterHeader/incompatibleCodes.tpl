@@ -20,8 +20,8 @@
 {if $incompatibleCodes}
     <div class="container">
         {if $isShop17}
-            <div class="banner-alert">
-                <div class="banner-icon">
+            <div class="banner-alert banner-alert-warning">
+                <div class="banner-icon banner-icon-warning">
                     <i class="material-icons">error_outline</i>
                 </div>
         {else}

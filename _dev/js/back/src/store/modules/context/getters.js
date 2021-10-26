@@ -35,5 +35,6 @@ export default {
     getters.firebaseOnboardingIsCompleted &&
     getters.psxOnboardingIsCompleted,
   merchantIsPsxOnboarded: (state, getters) =>
-    getters.firebaseOnboardingIsCompleted && getters.psxOnboardingIsCompleted
+    getters.firebaseOnboardingIsCompleted && getters.psxOnboardingIsCompleted,
+  businessDataCheck: state => state.businessDataCheck
 };

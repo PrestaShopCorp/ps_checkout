@@ -865,8 +865,41 @@ class Ps_checkout extends PaymentModule
         $shopContext = $this->getService('ps_checkout.context.shop');
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule $moduleContext */
         $moduleContext = $this->getService('ps_checkout.store.module.context');
+        /** @var PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingState $onboardingState */
+        $onboardingState = $this->getService('ps_checkout.onboarding.state');
         $isShop17 = $shopContext->isShop17();
         $isFullyOnboarded = $psAccount->onBoardingIsCompleted() && $paypalAccount->onBoardingIsCompleted();
+
+        // Display business data check message on every BO page (except PS Checkout configuration)
+        if (
+            'AdminModules' !== Tools::getValue('controller') &&
+            'ps_checkout' !== Tools::getValue('configure') &&
+            $onboardingState->isFirebaseOnboarded() &&
+            $onboardingState->isShopDataCollected() &&
+            $moduleContext->getBusinessDataCheckValue() &&
+            $moduleContext->getDataCheckMsgDisplayValue()
+        ) {
+            $params = [
+                'isShop17' => $isShop17,
+                'onboardingState' => 'isPsCheckoutOnboarded',
+                'configurationLink' => $moduleContext->getGeneratedLink(
+                    'AdminModules',
+                    ['configure' => 'ps_checkout']
+                ),
+                'ajaxController' => $moduleContext->getGeneratedLink(
+                    'AdminAjaxPrestashopCheckout'
+                ),
+            ];
+
+            if ($onboardingState->isPayPalOnboarded()) {
+                $params['onboardingState'] = 'isPayPalOnboarded';
+            }
+
+            $this->context->smarty->assign($params);
+            $this->context->smarty->display(
+                __DIR__ . '/views/templates/hook/adminAfterHeader/businessDataCheck.tpl'
+            );
+        }
 
         if ('AdminPayment' === Tools::getValue('controller') && $isShop17) { // Display on PrestaShop 1.7.x.x only
             $params = [
@@ -914,14 +947,12 @@ class Ps_checkout extends PaymentModule
      */
     public function hookActionAdminControllerSetMedia()
     {
-        if ('AdminPayment' === Tools::getValue('controller')) {
-            $this->context->controller->addCss(
-                $this->_path . 'views/css/adminAfterHeader.css?version=' . $this->version,
-                'all',
-                null,
-                false
-            );
-        }
+        $this->context->controller->addCss(
+            $this->_path . 'views/css/adminAfterHeader.css?version=' . $this->version,
+            'all',
+            null,
+            false
+        );
 
         if ('AdminCountries' === Tools::getValue('controller')) {
             $this->context->controller->addCss(

@@ -24,6 +24,7 @@
     background-repeat: no-repeat;
     background-size: contain;
 }
+
 @media screen and (max-width: 768px) {
     .img {
         width: 34px;
@@ -31,7 +32,92 @@
         background-image: url('../img/logo.png');
     }
 }
+
 .payment-icon {
     border-radius: 2px;
     border: 1px solid #DDDCDC;
+}
+
+.banner-alert {
+    padding: .75rem 0 .75rem 2.875rem;
+    background-color: #fff;
+    position: relative;
+    margin-bottom: 15px;
+}
+
+@media screen and (max-width: 992px) {
+    .banner-alert {
+        margin-top: 45px;
+    }
+}
+
+.banner-alert-warning {
+    border: solid 2px #cd9321;
+}
+
+.banner-alert-info {
+    border: solid 2px #25b9d7;
+}
+
+.banner-icon {
+    font-family: Material Icons;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 24px;
+    font-size: 1.5rem;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    vertical-align: middle;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "liga";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 46px;
+    width: 2.875rem;
+    height: 100%;
+    text-align: center;
+    font-size: 25.008px;
+    font-size: 1.563rem;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.banner-icon-warning {
+    background-color: #f5e9d3;
+    color: #cd9321;
+}
+
+.banner-icon-info {
+    background-color: #dff5f9;
+    color: #25b9d7;
+}
+
+.banner-text {
+    font-family: Open Sans,Helvetica,Arial,sans-serif;
+    padding: 0 .625rem;
+    font-size: .875rem;
+    margin: 0;
+}
+
+.button-link {
+    /* margin-top: 1.5rem !important; */
+    background-color: #25b9d7;
+    padding: .375rem .838rem;
+    color: #ffffff !important;
+    font-size: .875rem;
+    font-weight: 600;
+}
+
+.ml-5 {
+    margin-left: 5px;
 }

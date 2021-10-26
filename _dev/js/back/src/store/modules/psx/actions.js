@@ -38,6 +38,23 @@ export default {
       return response;
     });
   },
+  updateShop({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'PslUpdateShop',
+      data: {
+        form: JSON.stringify(payload.form)
+      }
+    }).then(response => {
+      if (response.status === false) {
+        throw response;
+      }
+
+      commit(types.UPDATE_FORM_DATA, payload.form);
+
+      return response;
+    });
+  },
   onboard({ getters }) {
     return ajax({
       url: getters.adminController,

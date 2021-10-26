@@ -52,10 +52,11 @@ const router = new Router({
       component: Accounts,
       beforeEnter: (to, from, next) => {
         if (
-          store.getters.onboarding &&
-          store.getters.firebaseOnboardingIsCompleted &&
-          !store.getters.paypalOnboardingIsCompleted &&
-          !store.getters.psxOnboardingIsCompleted
+          (store.getters.onboarding &&
+            store.getters.firebaseOnboardingIsCompleted &&
+            !store.getters.paypalOnboardingIsCompleted &&
+            !store.getters.psxOnboardingIsCompleted) ||
+          store.getters.businessDataCheck
         ) {
           next('/authentication/additional');
         } else {

@@ -165,6 +165,8 @@ class ContextModule implements PresenterInterface
                 'overridesExist' => $this->overridesExist(),
                 'submitIdeaLink' => $this->getSubmitIdeaLink(),
                 'orderTotal' => (new OrderRepository())->count($this->psContext->getShopId()),
+                'businessDataCheck' => $this->getBusinessDataCheckValue(),
+                'displayDataCheckMsg' => $this->getDataCheckMsgDisplayValue(),
             ],
         ];
     }
@@ -322,14 +324,17 @@ class ContextModule implements PresenterInterface
      * Get a generated link
      *
      * @param string $link
+     * @param array $params
+     * @param bool $withToken include or not the token in the url
+     * @param array $sfRouteParams
      *
      * @return string
      */
-    public function getGeneratedLink($link)
+    public function getGeneratedLink($link, $params = [], $withToken = true, $sfRouteParams = [])
     {
         $linkAdapter = new LinkAdapter($this->psContext->getLink());
 
-        return $linkAdapter->getAdminLink($link);
+        return $linkAdapter->getAdminLink($link, $withToken, $sfRouteParams, $params);
     }
 
     /**
@@ -403,5 +408,35 @@ class ContextModule implements PresenterInterface
             default:
                 return 'https://www.prestashop.com/en/prestashop-checkout';
         }
+    }
+
+    /**
+     * Get business data check value to inform the merchant to check/update it
+     *
+     * @return bool
+     */
+    public function getBusinessDataCheckValue()
+    {
+        return (bool) \Configuration::get(
+            'PS_CHECKOUT_BUSINESS_DATA_CHECK',
+            null,
+            null,
+            (int) $this->psContext->getShopId()
+        );
+    }
+
+    /**
+     * Get business data check message display value
+     *
+     * @return bool
+     */
+    public function getDataCheckMsgDisplayValue()
+    {
+        return (bool) \Configuration::get(
+            'PS_CHECKOUT_DISPLAY_DATA_CHECK_MSG',
+            null,
+            null,
+            (int) $this->psContext->getShopId()
+        );
     }
 }

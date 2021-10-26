@@ -92,6 +92,28 @@ class Onboarding extends PslClient
     }
 
     /**
+     * Update shop from PSL
+     *
+     * @param array $data
+     *
+     * @return array (ResponseApiHandler class)
+     */
+    public function updateShop(array $data)
+    {
+        $openedOnboardingSession = $this->getOpenedSession();
+
+        $this->setRoute('/shops/' . $this->shopUuid);
+
+        return $this->patchCall([
+            'headers' => [
+                'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),
+                'Session-Token' => $openedOnboardingSession->getAuthToken(),
+            ],
+            'json' => $data,
+        ]);
+    }
+
+    /**
      * Onboard a merchant on PSL
      *
      * @return array (ResponseApiHandler class)
