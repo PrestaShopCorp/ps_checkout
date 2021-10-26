@@ -31,9 +31,44 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_3_0_0($module)
 {
     $db = Db::getInstance();
+    $result = true;
+
+    // Mark as business data check
+    foreach (\Shop::getShops(false, null, true) as $shopId) {
+        $isFirebaseOnboarded = (bool) Configuration::get(
+            'PS_PSX_FIREBASE_ID_TOKEN',
+            null,
+            null,
+            (int) $shopId
+        );
+        $shopDataCollected = (bool) Configuration::get(
+            'PS_CHECKOUT_PSX_FORM',
+            null,
+            null,
+            (int) $shopId
+        );
+        $psCheckoutOnboarded = $isFirebaseOnboarded() && $shopDataCollected();
+        $businessDataCheck = $psCheckoutOnboarded ? 1 : 0;
+
+        $result = $result &&
+            (bool) Configuration::updateValue(
+                'PS_CHECKOUT_BUSINESS_DATA_CHECK',
+                $businessDataCheck,
+                false,
+                null,
+                (int) $shopId
+            ) &&
+            (bool) Configuration::updateValue(
+                'PS_CHECKOUT_DISPLAY_DATA_CHECK_MSG',
+                1,
+                false,
+                null,
+                (int) $shopId
+            );
+    }
 
     // Create session tables
-    return $db->execute('
+    return $result && $db->execute('
         CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'pscheckout_onboarding_session (
             correlation_id VARCHAR(255) NOT NULL,
             mode VARCHAR(255) NOT NULL,

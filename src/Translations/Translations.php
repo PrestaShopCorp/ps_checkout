@@ -194,6 +194,11 @@ class Translations
                         'title' => $this->module->l('Higher conversions', 'translations'),
                     ],
                 ],
+                'businessDataCheck' => [
+                    'infoMsg' => $this->module->l('Prestashop Checkout: thank you for downloading the newest version, we need to ensure periodically that your business informations are up to date. You can review them by following the link below.', 'translations'),
+                    'check' => $this->module->l('Check your data', 'translations'),
+                    'close' => $this->module->l('Close this message', 'translations'),
+                ],
             ],
             'panel' => [
                 'accounts' => [
@@ -232,8 +237,8 @@ class Translations
                     'additionalDetails' => $this->module->l('Additional Details', 'translations'),
                     'businessDetails' => $this->module->l('Your business details', 'translations'),
                     'businessDetailsSubtitle' => $this->module->l('The data below is transmitted to PayPal. Please make sure your business details are up to date. Remember to review them on occasion.', 'translations'),
-                    'businessDetailsNotificationPartialOnboarded' => $this->module->l('You need your data to be validated to continue configuring the module', 'translations'),
-                    'businessDetailsNotificationFullyOnboarded' => $this->module->l('Even without the data validation, PrestaShop Checkout will still be functional. However, the module configuration will remain inaccessible', 'translations'),
+                    'businessDetailsNotificationPartialOnboarded' => $this->module->l('For security reasons, please ensure that your informations are up to date. You need your data to be validated to continue configuring the module.', 'translations'),
+                    'businessDetailsNotificationFullyOnboarded' => $this->module->l('PrestaShop Checkout is still functional, only the module configuration section remains inaccessible without verifying your data.', 'translations'),
                     'fillUp' => $this->module->l('Fill out the form to complete registration:', 'translations'),
                     'personalInformation' => $this->module->l('Personal information', 'translations'),
                     'genderMr' => $this->module->l('Mr', 'translations'),

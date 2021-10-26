@@ -53,17 +53,24 @@
 
         <b-form>
           <b-col sm="12" md="10" lg="8" class="m-auto">
-            <div>
+            <div class="mb-4">
               {{ $t('panel.psx-form.businessDetailsSubtitle') }}
             </div>
 
             <b-alert
-              class="mt-4"
+              v-if="merchantIsFullyOnboarded && businessDataCheck"
               variant="info"
-              show=""
-              v-if="merchantIsFullyOnboarded"
+              show
             >
               <p>
+                {{
+                  $t(
+                    'panel.psx-form.businessDetailsNotificationPartialOnboarded'
+                  )
+                }}
+
+                <br />
+
                 {{
                   $t('panel.psx-form.businessDetailsNotificationFullyOnboarded')
                 }}
@@ -71,10 +78,9 @@
             </b-alert>
 
             <b-alert
-              class="mt-4"
+              v-else-if="merchantIsPsxOnboarded && businessDataCheck"
               variant="info"
-              show=""
-              v-else-if="merchantIsPsxOnboarded"
+              show
             >
               <p>
                 {{
@@ -448,7 +454,11 @@
 
       <template v-slot:footer>
         <div class="container-fluid pl-0">
-          <b-button variant="secondary" @click="back()">
+          <b-button
+            variant="secondary"
+            @click="back()"
+            v-if="!businessDataCheck"
+          >
             {{
               merchantIsPsxOnboarded
                 ? $t('panel.psx-form.back')
@@ -488,7 +498,11 @@
       };
     },
     computed: {
-      ...mapGetters(['merchantIsFullyOnboarded', 'merchantIsPsxOnboarded']),
+      ...mapGetters([
+        'merchantIsFullyOnboarded',
+        'merchantIsPsxOnboarded',
+        'businessDataCheck'
+      ]),
       getLanguagesDetails() {
         return orderBy(this.$store.state.psx.languagesDetails, 'name');
       },
@@ -544,9 +558,11 @@
         );
       },
       submitForm() {
+        let action = this.merchantIsPsxOnboarded ? 'updateShop' : 'createShop';
+
         this.$store
           .dispatch({
-            type: 'createShop',
+            type: action,
             form: {
               ...this.form,
               business_category: parseInt(this.form.business_category, 10),
@@ -564,21 +580,24 @@
                 .push('/authentication')
                 // eslint-disable-next-line no-console
                 .catch(exception => console.log(exception));
-              this.$store
-                .dispatch('transitOnboardingSession', {
-                  sessionAction: 'collect_shop_data',
-                  session: session
-                })
-                .then(() =>
-                  this.$store
-                    .dispatch('onboard')
-                    .then(response =>
-                      this.$store.dispatch(
-                        'updatePaypalOnboardingUrl',
-                        response
+
+              if (action === 'createShop') {
+                this.$store
+                  .dispatch('transitOnboardingSession', {
+                    sessionAction: 'collect_shop_data',
+                    session: session
+                  })
+                  .then(() =>
+                    this.$store
+                      .dispatch('onboard')
+                      .then(response =>
+                        this.$store.dispatch(
+                          'updatePaypalOnboardingUrl',
+                          response
+                        )
                       )
-                    )
-                );
+                  );
+              }
             }
           })
           .catch(error => {

@@ -59,7 +59,7 @@ class OnboardingState
     }
 
     /**
-     * Check if the shop data are already collected (Form business)
+     * Check if the shop data is already collected (Business form)
      *
      * @return bool
      */
