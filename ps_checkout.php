@@ -610,6 +610,8 @@ class Ps_checkout extends PaymentModule
         $sessionManager = $this->getService('ps_checkout.session.onboarding.manager');
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
         $psAccount = $this->getService('ps_checkout.repository.prestashop.account');
+        /** @var \PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts $psAccountsFacade */
+        $psAccountsFacade = $this->getService('ps_accounts.facade');
 
         if (
             !$sessionManager->getOpened() &&
@@ -639,6 +641,7 @@ class Ps_checkout extends PaymentModule
 
         Media::addJsDef([
             'store' => $storePresenter->present(),
+            'contextPsAccounts' => $psAccountsFacade->getPsAccountsPresenter()->present(),
         ]);
 
         $this->context->controller->addJS(
