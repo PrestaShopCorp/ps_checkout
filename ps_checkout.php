@@ -872,12 +872,14 @@ class Ps_checkout extends PaymentModule
 
         // Display business data check message on every BO page (except PS Checkout configuration)
         if (
-            'AdminModules' !== Tools::getValue('controller') &&
-            'ps_checkout' !== Tools::getValue('configure') &&
-            $onboardingState->isFirebaseOnboarded() &&
-            $onboardingState->isShopDataCollected() &&
-            $moduleContext->getBusinessDataCheckValue() &&
-            $moduleContext->getDataCheckMsgDisplayValue()
+            'AdminModules' !== Tools::getValue('controller')
+            && 'ps_checkout' !== Tools::getValue('configure')
+            && $onboardingState->isFirebaseOnboarded()
+            && $onboardingState->isShopDataCollected()
+            && $moduleContext->getBusinessDataCheckValue()
+            && $moduleContext->getDataCheckMsgDisplayValue()
+            && Validate::isLoadedObject($this->context->employee)
+            && $this->context->employee->isSuperAdmin()
         ) {
             $params = [
                 'isShop17' => $isShop17,

@@ -47,20 +47,18 @@ function upgrade_module_3_0_0($module)
             null,
             (int) $shopId
         );
-        $psCheckoutOnboarded = $isFirebaseOnboarded() && $shopDataCollected();
-        $businessDataCheck = $psCheckoutOnboarded ? 1 : 0;
 
         $result = $result &&
             (bool) Configuration::updateValue(
                 'PS_CHECKOUT_BUSINESS_DATA_CHECK',
-                $businessDataCheck,
+                $isFirebaseOnboarded && $shopDataCollected ? '1' : '0',
                 false,
                 null,
                 (int) $shopId
             ) &&
             (bool) Configuration::updateValue(
                 'PS_CHECKOUT_DISPLAY_DATA_CHECK_MSG',
-                1,
+                '1',
                 false,
                 null,
                 (int) $shopId

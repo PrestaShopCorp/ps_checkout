@@ -103,7 +103,7 @@ const router = new Router({
     {
       path: '/authentication/additional',
       name: 'View Form Biz',
-      component: PsxAdditionalDetails,
+      component: PsxAdditionalDetails
       // beforeEnter: (to, from, next) => {
       //   if (
       //     !store.getters.firebaseOnboardingIsCompleted ||

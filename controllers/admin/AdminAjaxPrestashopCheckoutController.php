@@ -350,6 +350,16 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
+     * AJAX: Dismissed business data check notification
+     */
+    public function ajaxProcessDismissBusinessDataCheck()
+    {
+        Configuration::set('PS_CHECKOUT_BUSINESS_DATA_CHECK', '0', null, (int) $this->context->shop->id);
+
+        $this->ajaxDie(json_encode(true));
+    }
+
+    /**
      * AJAX: Toggle payment option hosted fields availability
      */
     public function ajaxProcessTogglePaymentOptionAvailability()
