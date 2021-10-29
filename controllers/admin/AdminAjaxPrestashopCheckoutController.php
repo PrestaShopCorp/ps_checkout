@@ -1012,16 +1012,48 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         // PsxForm validation
         $psxForm = (new PsxDataPrepare($formData))->prepareData();
-        $errors = (new PsxDataValidation())->validateData($psxForm);
-
-        if (!empty($errors)) {
-            http_response_code(400);
-            $this->ajaxDie(json_encode($errors));
-        }
+        // $errors = (new PsxDataValidation())->validateData($psxForm);
+        //
+        // if (!empty($errors)) {
+        //     http_response_code(400);
+        //     $this->ajaxDie(json_encode($errors));
+        // }
 
         $onboardingApi = new Onboarding(new PrestaShopContext());
-        $call = $action . 'Shop';
-        $response = $onboardingApi->$call(array_filter($psxForm));
+
+        if ($action == 'update') {
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
+            $paypalAccount = $this->module->getService('ps_checkout.repository.paypal.account');
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalMerchantIntegrationProvider $payPalMerchantIntegrationProvider */
+            $payPalMerchantIntegrationProvider = $this->module->getService('ps_checkout.paypal.provider.merchant_integration');
+
+            /** @var PrestaShopConfiguration $configuration */
+            $configuration = $this->module->getService('ps_checkout.configuration');
+
+            /** @var ExpressCheckoutConfiguration $ecConfiguration */
+            $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
+
+            $response = $onboardingApi->updateShop([
+                'account' => array_filter($psxForm),
+
+                'settings' => [
+                    'credit_card_is_active' => (bool) $configuration->get('PS_CHECKOUT_CARD_PAYMENT_ENABLED'),
+                    'express_in_product_is_active' => (bool) $ecConfiguration->isProductPageEnabled(),
+                    'express_in_cart_is_active' => (bool) $ecConfiguration->isOrderPageEnabled(),
+                    'express_in_checkout_is_active' => (bool) $ecConfiguration->isCheckoutPageEnabled(),
+                ],
+            ]);
+
+            if (!empty($paypalAccount->getMerchantId())) {
+                $response['paypal'] = [
+                    'integrations' => $payPalMerchantIntegrationProvider->getById($paypalAccount->getMerchantId())
+                ];
+            }
+        } else {
+            $response = $onboardingApi->createShop(array_filter($psxForm));
+        }
+
 
         if (!$response['status']) {
             if (isset($response['httpCode'])) {
