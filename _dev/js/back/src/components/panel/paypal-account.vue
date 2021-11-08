@@ -248,15 +248,15 @@
         });
       },
       pollingPaypalOnboardingUrl() {
-        this.$store.dispatch('pollingPaypalOnboardingUrl').then(() => {
-          this.loading = false;
-        });
+        if (this.paypalOnboardLink) {
+          this.$store.dispatch('pollingPaypalOnboardingUrl').then(() => {
+            this.loading = false;
+          });
+        }
       }
     },
     mounted() {
-      if (this.paypalOnboardLink) {
-        this.pollingPaypalOnboardingUrl();
-      }
+      this.pollingPaypalOnboardingUrl();
     }
   };
 </script>

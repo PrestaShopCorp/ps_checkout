@@ -462,7 +462,7 @@
             {{
               merchantIsPsxOnboarded
                 ? $t('panel.psx-form.back')
-                : $t('panel.accounts.logout')
+                : $t('panel.accounts.checkout.logOut')
             }}
           </b-button>
         </div>

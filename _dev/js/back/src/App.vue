@@ -45,6 +45,18 @@
 
     <div class="pt-5 d-md-none" />
 
+    <div class="container" v-if="sessionError">
+      <b-alert variant="danger" show>
+        <p v-if="sessionError.exceptionCode === 5">
+          {{ $t('general.session.error.shopNotFound') }}
+        </p>
+
+        <p v-else-if="sessionError.exceptionCode === 6">
+          {{ $t('general.session.error.networkIssue') }}
+        </p>
+      </b-alert>
+    </div>
+
     <PaypalValueProposition
       v-if="isAuthenticationRoute && !isValueBannerClosed"
       :closeable="onboardingPaypalIsCompleted"
@@ -197,6 +209,9 @@
       },
       paymentPreferencesLink() {
         return this.$store.getters.paymentPreferencesLink;
+      },
+      sessionError() {
+        return this.$store.getters.sessionError;
       }
     },
     watch: {
@@ -223,6 +238,11 @@
       }
 
       this.updater();
+    },
+    mounted() {
+      if (this.sessionError) {
+        this.$store.dispatch('flashSessionError');
+      }
     }
   };
 </script>

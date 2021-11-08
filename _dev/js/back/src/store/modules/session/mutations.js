@@ -22,5 +22,8 @@ import * as types from './mutation-types';
 export default {
   [types.ONBOARDING_SESSION](state, payload) {
     state.onboarding = payload;
+  },
+  [types.ERROR_SESSION](state, payload) {
+    state.error = payload;
   }
 };

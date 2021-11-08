@@ -31,6 +31,7 @@ use PrestaShop\Module\PrestashopCheckout\Session\Session;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionHelper;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionManager;
+use Psr\SimpleCache\CacheInterface;
 use Ramsey\Uuid\Uuid;
 
 class OnboardingSessionManager extends SessionManager
@@ -64,16 +65,23 @@ class OnboardingSessionManager extends SessionManager
     private $mode;
 
     /**
+     * @var CacheInterface
+     */
+    private $cache;
+
+    /**
      * @param OnboardingSessionRepository $repository
      * @param SessionConfiguration $configuration
      * @param PrestaShopConfiguration $prestashopConfiguration
+     * @param CacheInterface $cache
      *
      * @return void
      */
     public function __construct(
         OnboardingSessionRepository $repository,
         SessionConfiguration $configuration,
-        PrestaShopConfiguration $prestashopConfiguration
+        PrestaShopConfiguration $prestashopConfiguration,
+        CacheInterface $cache
     ) {
         parent::__construct($repository);
         $this->context = \Context::getContext();
@@ -81,6 +89,7 @@ class OnboardingSessionManager extends SessionManager
         $this->states = $this->configuration['states'];
         $this->transitions = $this->configuration['transitions'];
         $this->mode = Mode::LIVE === $prestashopConfiguration->get(PayPalConfiguration::PAYMENT_MODE) ? Mode::LIVE : Mode::SANDBOX;
+        $this->cache = $cache;
     }
 
     /**
@@ -88,7 +97,7 @@ class OnboardingSessionManager extends SessionManager
      *
      * @param object $data
      *
-     * @return Session
+     * @return Session|null
      *
      * @throws PsCheckoutSessionException
      */
@@ -97,11 +106,20 @@ class OnboardingSessionManager extends SessionManager
         $correlationId = Uuid::uuid4()->toString();
 
         // Shop UUID generation from PSL
-        $onboardingApi = new Onboarding(new PrestaShopContext());
-        $onboardingApi->createShopUuid($correlationId);
+        $onboardingApi = new Onboarding(new PrestaShopContext(), null, $this->cache);
+        $createShopUuid = $onboardingApi->createShopUuid($correlationId);
 
-        $authenticationApi = new Authentication(new PrestaShopContext());
+        if (!$createShopUuid) {
+            return null;
+        }
+
+        $authenticationApi = new Authentication(new PrestaShopContext(), null, $this->cache);
         $authToken = $authenticationApi->getAuthToken(self::SHOP_SESSION, $correlationId);
+
+        if (!$authToken) {
+            return null;
+        }
+
         $createdAt = date('Y-m-d H:i:s');
         $sessionData = [
             'correlation_id' => $correlationId,

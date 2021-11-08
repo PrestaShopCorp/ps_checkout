@@ -93,7 +93,16 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             $bodyContent = file_get_contents('php://input');
 
             if (empty($bodyContent)) {
-                throw new PsCheckoutException('Body can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_BODY_EMPTY);
+                $exception = new PsCheckoutException('Body can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_BODY_EMPTY);
+
+                $this->module->getLogger()->error(
+                    'Webhook Exception',
+                    [
+                        'exception' => $exception,
+                    ]
+                );
+
+                throw $exception;
             }
 
             $bodyValues = json_decode($bodyContent, true);
@@ -130,7 +139,9 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
         $context = Context::getContext();
 
         if ($bodyValues['category'] === self::CATEGORY['SHOP']) {
-            $webhook = new PslWebhook(new PrestaShopContext());
+            /** @var Symfony\Component\Cache\Simple\FilesystemCache $cache */
+            $cache = $this->module->getService('ps_checkout.cache.session');
+            $webhook = new PslWebhook(new PrestaShopContext(), null, $cache);
         } else {
             $webhook = new PaymentWebhook($context->link);
         }

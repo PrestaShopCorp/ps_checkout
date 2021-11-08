@@ -23,7 +23,6 @@ namespace PrestaShop\Module\PrestashopCheckout\Api\Psl;
 use PrestaShop\Module\PrestashopCheckout\Api\Psl\Client\PslClient;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutSessionException;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 /**
@@ -34,7 +33,7 @@ class Onboarding extends PslClient
     /**
      * Create shop UUID from PSL
      *
-     * @return array (ResponseApiHandler class)
+     * @return array|false (ResponseApiHandler class)
      */
     public function createShopUuid($correlationId)
     {
@@ -47,15 +46,8 @@ class Onboarding extends PslClient
             'json' => [],
         ]);
 
-        if (!$response['status']) {
-            $this->module->getLogger()->error(
-                'Unable to create shop UUID from PSL',
-                [
-                    'response' => $response,
-                ]
-            );
-
-            throw new PsCheckoutSessionException('Unable to create shop UUID from PSL', PsCheckoutSessionException::UNABLE_TO_RETRIEVE_SHOP_UUID);
+        if (!$this->checkResponse('createShopUuid', $response)) {
+            return false;
         }
 
         $shopUuid = $response['body']['account_id'];
@@ -74,7 +66,7 @@ class Onboarding extends PslClient
      *
      * @param array $data
      *
-     * @return array (ResponseApiHandler class)
+     * @return array|false (ResponseApiHandler class)
      */
     public function createShop(array $data)
     {
@@ -82,13 +74,19 @@ class Onboarding extends PslClient
 
         $this->setRoute('/shops');
 
-        return $this->post([
+        $response = $this->post([
             'headers' => [
                 'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),
                 'Session-Token' => $openedOnboardingSession->getAuthToken(),
             ],
             'json' => $data,
         ]);
+
+        if (!$this->checkResponse('createShop', $response)) {
+            return false;
+        }
+
+        return $response;
     }
 
     /**
@@ -96,7 +94,7 @@ class Onboarding extends PslClient
      *
      * @param array $data
      *
-     * @return array (ResponseApiHandler class)
+     * @return array|false (ResponseApiHandler class)
      */
     public function updateShop(array $data)
     {
@@ -104,19 +102,25 @@ class Onboarding extends PslClient
 
         $this->setRoute('/shops/' . $this->shopUuid);
 
-        return $this->patchCall([
+        $response = $this->patchCall([
             'headers' => [
                 'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),
                 'Session-Token' => $openedOnboardingSession->getAuthToken(),
             ],
             'json' => $data,
         ]);
+
+        if (!$this->checkResponse('updateShop', $response)) {
+            return false;
+        }
+
+        return $response;
     }
 
     /**
-     * Onboard a merchant on PSL
+     * Onboard a merchant on PSL (get PayPal onboarding link)
      *
-     * @return array (ResponseApiHandler class)
+     * @return array|false (ResponseApiHandler class)
      */
     public function onboard()
     {
@@ -153,14 +157,14 @@ class Onboarding extends PslClient
             ]);
         }
 
-        if (false === $response['status']) {
-            return $response;
-        }
-
         if (false === isset($response['body']['links']['1']['href'])) {
             $response['status'] = false;
 
             return $response;
+        }
+
+        if (!$this->checkResponse('onboard', $response)) {
+            return false;
         }
 
         $response['onboardingLink'] = $response['body']['links']['1']['href'];
@@ -173,7 +177,7 @@ class Onboarding extends PslClient
      *
      * @param string $merchantId
      *
-     * @return array (ResponseApiHandler class)
+     * @return array|false (ResponseApiHandler class)
      */
     public function forceUpdateMerchantIntegrations($merchantId)
     {
@@ -181,7 +185,7 @@ class Onboarding extends PslClient
 
         $this->setRoute('/shops/' . $this->shopUuid . '/force-update-merchant-integrations');
 
-        return $this->post([
+        $response = $this->post([
             'headers' => [
                 'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),
                 'Session-Token' => $openedOnboardingSession->getAuthToken(),
@@ -190,6 +194,12 @@ class Onboarding extends PslClient
                 'merchant_id' => $merchantId,
             ],
         ]);
+
+        if (!$this->checkResponse('forceUpdateMerchantIntegrations', $response)) {
+            return false;
+        }
+
+        return $response;
     }
 
     /**
