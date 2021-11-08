@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Psl;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Psl\Client\PslClient;
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutSessionException;
 
 /**
  * Handle dispute calls
@@ -34,7 +33,7 @@ class Authentication extends PslClient
      * @param string $type
      * @param string $correlationId
      *
-     * @return array
+     * @return array|false
      */
     public function getAuthToken($type, $correlationId)
     {
@@ -46,15 +45,8 @@ class Authentication extends PslClient
             ],
         ]);
 
-        if (!$response['status']) {
-            $this->module->getLogger()->error(
-                'Unable to retrieve token from PSL',
-                [
-                    'response' => $response,
-                ]
-            );
-
-            throw new PsCheckoutSessionException('Unable to retrieve ' . $type . ' authentication token from PSL', PsCheckoutSessionException::UNABLE_TO_RETRIEVE_TOKEN);
+        if (!$this->checkResponse('getAuthToken', $response)) {
+            return false;
         }
 
         // Set token expiration date to server timezone

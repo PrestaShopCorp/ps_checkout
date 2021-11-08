@@ -22,7 +22,7 @@ import ajaxWebhook from '@/requests/webhook';
 import * as types from './mutation-types';
 
 export default {
-  openOnboardingSession({ commit, getters }, payload) {
+  openOnboardingSession({ commit, dispatch, getters }, payload) {
     return ajax({
       url: getters.adminController,
       action: 'OpenOnboardingSession',
@@ -30,7 +30,9 @@ export default {
         sessionData: JSON.stringify(payload.sessionData)
       }
     }).then(response => {
-      if (!response.status) {
+      dispatch('getSessionError');
+
+      if ((!response && !response.status) || getters.sessionError) {
         throw response;
       }
 
@@ -132,6 +134,29 @@ export default {
     }).then(response => {
       commit(types.ONBOARDING_SESSION, response);
 
+      return Promise.resolve(response);
+    });
+  },
+  getSessionError({ commit, dispatch, getters }) {
+    return ajax({
+      url: getters.adminController,
+      action: 'GetSessionError'
+    }).then(response => {
+      commit(types.ERROR_SESSION, response);
+
+      if (response !== null) {
+        dispatch('logOut');
+        dispatch('flashSessionError');
+      }
+
+      return Promise.resolve(response);
+    });
+  },
+  flashSessionError({ getters }) {
+    return ajax({
+      url: getters.adminController,
+      action: 'FlashSessionError'
+    }).then(response => {
       return Promise.resolve(response);
     });
   }

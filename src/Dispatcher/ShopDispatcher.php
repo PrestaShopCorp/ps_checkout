@@ -51,6 +51,7 @@ class ShopDispatcher implements Dispatcher
                 'integrations' => isset($payload['resource']['shop']['integrations']) ? $payload['resource']['shop']['integrations'] : null,
             ]
         );
+
         if (empty($payload['resource']['shop'])) {
             throw new PsCheckoutException('Unable to find shop aggregate', PsCheckoutException::UNKNOWN);
         }
@@ -63,7 +64,15 @@ class ShopDispatcher implements Dispatcher
         $onboardingSessionConfiguration = $sessionConfiguration->getOnboarding();
 
         if (!$openedSession) {
-            throw new PsCheckoutSessionException('Unable to find an opened onboarding session', PsCheckoutSessionException::OPENED_SESSION_NOT_FOUND);
+            $this->module->getLogger()->error(
+                'Session exception',
+                [
+                    'message' => 'Unable to find an opened onboarding session',
+                    'code' => PsCheckoutSessionException::OPENED_SESSION_NOT_FOUND,
+                ]
+            );
+
+            return true;
         }
 
         $data = json_decode($openedSession->getData());
@@ -115,6 +124,10 @@ class ShopDispatcher implements Dispatcher
                 'action' => $action,
             ]
         );
+
+        if ($action === 'create_shop' && $openedSession->getStatus() === 'SHOP_CREATED') {
+            return true;
+        }
 
         return (bool) $onboardingSessionManager->apply($action, $openedSession->toArray(true));
     }

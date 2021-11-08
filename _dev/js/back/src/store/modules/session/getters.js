@@ -19,6 +19,7 @@
 
 export default {
   onboarding: state => state.onboarding,
+  sessionError: state => state.error,
   hasOnboardingUrl: state =>
     !!state?.onboarding?.data?.shop?.paypal_onboarding_url
 };

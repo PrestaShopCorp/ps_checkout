@@ -89,7 +89,7 @@ class OnboardingStateHandler
             }
         }
 
-        return $this->onboardingSession ? $this->onboardingSession->toArray() : null;
+        return $session['onboarding'] = $this->onboardingSession ? $this->onboardingSession->toArray() : null;
     }
 
     /**
@@ -154,6 +154,8 @@ class OnboardingStateHandler
                             ],
                         ],
                     ]);
+
+                    $this->onboardingSession = $this->onboardingSessionManager->getOpened();
                 }
 
                 return $onboard['status'];
@@ -172,7 +174,6 @@ class OnboardingStateHandler
     {
         if ($this->onboardingState->isPaypalOnboarded()) {
             $merchantId = $this->psCheckoutConfiguration->getPaypal()['merchantId'];
-            $onboardingSession = json_decode($this->onboardingSession->getData(), true);
             $data = [
                 'shop' => [
                     'merchantId' => $merchantId,

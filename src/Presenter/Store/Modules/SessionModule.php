@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * Construct the session module
@@ -29,16 +30,25 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 class SessionModule implements PresenterInterface
 {
     /**
-     * @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler
+     * @var OnboardingStateHandler
      */
     private $onboardingStateHandler;
 
     /**
-     * @param \PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler $onboardingStateHandler
+     * @var CacheInterface
      */
-    public function __construct(OnboardingStateHandler $onboardingStateHandler)
-    {
+    private $cache;
+
+    /**
+     * @param OnboardingStateHandler $onboardingStateHandler
+     * @param CacheInterface $cache
+     */
+    public function __construct(
+        OnboardingStateHandler $onboardingStateHandler,
+        CacheInterface $cache
+    ) {
         $this->onboardingStateHandler = $onboardingStateHandler;
+        $this->cache = $cache;
     }
 
     /**
@@ -51,6 +61,7 @@ class SessionModule implements PresenterInterface
         return [
             'session' => [
                 'onboarding' => $this->onboardingStateHandler->handle(),
+                'error' => $this->cache->get('session-error'),
             ],
         ];
     }

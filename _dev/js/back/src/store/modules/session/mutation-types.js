@@ -18,3 +18,4 @@
  */
 
 export const ONBOARDING_SESSION = 'ONBOARDING_SESSION';
+export const ERROR_SESSION = 'ERROR_SESSION';

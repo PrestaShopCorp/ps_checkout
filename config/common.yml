@@ -141,12 +141,16 @@ services:
     public: true
     arguments:
       - '@ps_checkout.context.prestashop'
+      - null
+      - '@ps_checkout.cache.session'
 
   ps_checkout.api.psl.onboarding:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Psl\Onboarding'
     public: true
     arguments:
       - '@ps_checkout.context.prestashop'
+      - null
+      - '@ps_checkout.cache.session'
 
   ps_checkout.repository.paypal.account:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository'
@@ -216,6 +220,7 @@ services:
     public: true
     arguments:
       - '@ps_checkout.onboarding.state.handler'
+      - '@ps_checkout.cache.session'
 
   ps_checkout.store.store:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter'
@@ -424,6 +429,7 @@ services:
       - '@ps_checkout.session.onboarding.repository'
       - '@ps_checkout.session.configuration'
       - '@ps_checkout.configuration'
+      - '@ps_checkout.cache.session'
 
   ps_checkout.session.payment.repository:
     class: 'PrestaShop\Module\PrestashopCheckout\Session\Payment\PaymentSessionRepository'
@@ -450,3 +456,11 @@ services:
       - '@ps_checkout.onboarding.state'
       - '@ps_checkout.prestashop_checkout.configuration'
       - '@ps_checkout.api.psl.onboarding'
+
+  ps_checkout.cache.session:
+    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
+    public: true
+    arguments:
+      - 'session'
+      - 86400
+      - '@=service("ps_checkout.cache.directory").getPath()'

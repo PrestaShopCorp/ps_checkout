@@ -25,7 +25,9 @@ use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Environment\PslEnv;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutSessionException;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * Construct the client used to make call to PSL API
@@ -43,13 +45,27 @@ class PslClient extends GenericClient
     protected $module;
 
     /**
-     * @var \PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
+     * @var PrestaShopContext;
      */
     protected $context;
 
-    public function __construct(PrestaShopContext $context, Client $client = null)
-    {
+    /**
+     * @var CacheInterface;
+     */
+    protected $cache;
+
+    /**
+     * @param PrestaShopContext $context
+     * @param Client $client
+     * @param CacheInterface $cache
+     */
+    public function __construct(
+        PrestaShopContext $context,
+        Client $client = null,
+        CacheInterface $cache
+    ) {
         $this->context = $context;
+        $this->cache = $cache;
         $shopId = (int) $context->getShopId();
         $shopUuidManager = new ShopUuidManager();
         $this->shopUuid = $shopUuidManager->getForShop($shopId);
@@ -89,5 +105,67 @@ class PslClient extends GenericClient
         }
 
         $this->setClient($client);
+    }
+
+    /**
+     * Check PSl response
+     *
+     * @param string $callType
+     * @param array $response
+     *
+     * @return bool
+     */
+    public function checkResponse($callType, $response)
+    {
+        if (!$response || !$response['status']) {
+            $exceptionMessage = null;
+            $exceptionCode = null;
+
+            if (!$response) {
+                $exceptionMessage = 'Unable to contatct PSL';
+                $exceptionCode = PsCheckoutSessionException::UNABLE_TO_CONTACT_PSL;
+            } elseif (!$response['status']) {
+                switch ($callType) {
+                    case 'createShopUuid':
+                        $exceptionMessage = 'Unable to retrieve shop UUID from PSL';
+                        $exceptionCode = PsCheckoutSessionException::UNABLE_TO_RETRIEVE_SHOP_UUID;
+                        break;
+                    case 'getAuthToken':
+                        $exceptionMessage = 'Unable to retrieve authentication token from PSL';
+                        $exceptionCode = PsCheckoutSessionException::UNABLE_TO_RETRIEVE_TOKEN;
+                        break;
+                    case 'createShop':
+                    case 'updateShop':
+                        $exceptionMessage = 'Unable to retrieve shop from PSL';
+                        $exceptionCode = PsCheckoutSessionException::UNABLE_TO_RETRIEVE_SHOP;
+                        break;
+                    case 'forceUpdateMerchantIntegrations':
+                        $exceptionMessage = 'Unable to force update merchant integrations from PSL';
+                        $exceptionCode = PsCheckoutSessionException::UNABLE_TO_FORCE_UPDATE_MERCHANT_INTEGRATIONS;
+                        break;
+                    default:
+                        $exceptionMessage = 'Unable to retrieve authentication token from PSL';
+                        $exceptionCode = PsCheckoutSessionException::UNABLE_TO_RETRIEVE_SHOP_UUID;
+                }
+            }
+
+            $this->module->getLogger()->error(
+                $exceptionMessage,
+                [
+                    'response' => $response,
+                ]
+            );
+
+            $error = [
+                'exceptionCode' => $exceptionCode,
+                'exceptionMessage' => $exceptionMessage,
+            ];
+
+            $this->cache->set('session-error', $error);
+
+            return false;
+        }
+
+        return true;
     }
 }

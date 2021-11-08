@@ -276,7 +276,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         try {
             // Generate a new link to onboard a new merchant on PayPal
-            $response = (new Onboarding(new PrestaShopContext()))->onboard();
+            /** @var Symfony\Component\Cache\Simple\FilesystemCache $cache */
+            $cache = $this->module->getService('ps_checkout.cache.session');
+            $response = (new Onboarding(new PrestaShopContext(), null, $cache))->onboard();
 
             if (isset($response['onboardingLink'])) {
                 (new ShopDispatcher())->dispatchEventType([
@@ -935,7 +937,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         try {
             /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
             $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
-            $session = $onboardingSessionManager->openOnboarding($data)->toArray();
+            $session = $onboardingSessionManager->getOpened() ?: $onboardingSessionManager->openOnboarding($data);
+            $session = $session ? $session->toArray() : $session;
+
+            $this->ajaxDie(json_encode($session));
         } catch (Exception $exception) {
             http_response_code(500);
             $this->ajaxDie(json_encode([
@@ -944,10 +949,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                     $exception->getMessage(),
                 ],
             ]));
-        }
-
-        if (!empty($session)) {
-            $this->ajaxDie(json_encode($session));
         }
     }
 
@@ -963,6 +964,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
             $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
             $session = $onboardingSessionManager->apply($sessionAction, $sessionData)->toArray();
+
+            $this->ajaxDie(json_encode($session));
         } catch (Exception $exception) {
             http_response_code(500);
             $this->ajaxDie(json_encode([
@@ -971,10 +974,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                     $exception->getMessage(),
                 ],
             ]));
-        }
-
-        if (!empty($session)) {
-            $this->ajaxDie(json_encode($session));
         }
     }
 
@@ -986,13 +985,17 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         try {
             /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
             $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
-            $openedSession = $onboardingSessionManager->getOpened();
+            $session = $onboardingSessionManager->getOpened();
 
-            $onboardingSessionManager->closeOnboarding($openedSession);
+            if ($session) {
+                $onboardingSessionManager->closeOnboarding($session);
 
-            /** @var PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler $onboardingStateHandler */
-            $onboardingStateHandler = $this->module->getService('ps_checkout.onboarding.state.handler');
-            $session = $onboardingStateHandler->handle();
+                /** @var PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler $onboardingStateHandler */
+                $onboardingStateHandler = $this->module->getService('ps_checkout.onboarding.state.handler');
+                $session = $onboardingStateHandler->handle();
+            }
+
+            $this->ajaxDie(json_encode($session));
         } catch (Exception $exception) {
             http_response_code(500);
             $this->ajaxDie(json_encode([
@@ -1001,10 +1004,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                     $exception->getMessage(),
                 ],
             ]));
-        }
-
-        if (!empty($session)) {
-            $this->ajaxDie(json_encode($session));
         }
     }
 
@@ -1018,6 +1017,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
             $openedSession = $onboardingSessionManager->getOpened();
             $openedSession = $openedSession ? $openedSession->toArray() : null;
+
+            $this->ajaxDie(json_encode($openedSession));
         } catch (Exception $exception) {
             http_response_code(500);
             $this->ajaxDie(json_encode([
@@ -1026,10 +1027,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                     $exception->getMessage(),
                 ],
             ]));
-        }
-
-        if (!empty($openedSession)) {
-            $this->ajaxDie(json_encode($openedSession));
         }
     }
 
@@ -1098,7 +1095,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         //     $this->ajaxDie(json_encode($errors));
         // }
 
-        $onboardingApi = new Onboarding(new PrestaShopContext());
+        /** @var Symfony\Component\Cache\Simple\FilesystemCache $cache */
+        $cache = $this->module->getService('ps_checkout.cache.session');
+        $onboardingApi = new Onboarding(new PrestaShopContext(), null, $cache);
 
         if ($action == 'update') {
             /** @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration $configuration */
@@ -1162,5 +1161,27 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         }
 
         $this->ajaxDie(json_encode($response));
+    }
+
+    /**
+     * AJAX: Get session error
+     */
+    public function ajaxProcessGetSessionError()
+    {
+        /** @var Symfony\Component\Cache\Simple\FilesystemCache $cache */
+        $cache = $this->module->getService('ps_checkout.cache.session');
+
+        $this->ajaxDie(json_encode($cache->get('session-error')));
+    }
+
+    /**
+     * AJAX: Flash session error
+     */
+    public function ajaxProcessFlashSessionError()
+    {
+        /** @var Symfony\Component\Cache\Simple\FilesystemCache $cache */
+        $cache = $this->module->getService('ps_checkout.cache.session');
+
+        $this->ajaxDie(json_encode($cache->delete('session-error')));
     }
 }
