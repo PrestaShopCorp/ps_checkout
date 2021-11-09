@@ -108,6 +108,11 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             }
 
             $isExpressCheckout = (isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout']) || empty($this->context->cart->id_address_delivery);
+
+            if ($isExpressCheckout) {
+                $this->validateCartForExpressCheckout($this->context->cart);
+            }
+
             $paypalOrder = new PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler($this->context);
             $response = $paypalOrder->handle($isExpressCheckout);
 
@@ -156,6 +161,35 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             );
 
             $this->exitWithExceptionMessage($exception);
+        }
+    }
+
+    private function validateCartForExpressCheckout(Cart $cart)
+    {
+        if (!$cart->checkAllProductsHaveMinimalQuantities()) {
+            $this->exitWithResponse([
+                'status' => false,
+                'httpCode' => 400,
+                'body' => [
+                    'error' => [
+                        'message' => 'Not all products have minimal quantities',
+                    ],
+                ],
+                'exceptionCode' => null,
+                'exceptionMessage' => null,
+            ]);
+        } elseif (!$cart->isAllProductsInStock()) {
+            $this->exitWithResponse([
+                'status' => false,
+                'httpCode' => 400,
+                'body' => [
+                    'error' => [
+                        'message' => 'Some products are out of stock',
+                    ],
+                ],
+                'exceptionCode' => null,
+                'exceptionMessage' => null,
+            ]);
         }
     }
 }
