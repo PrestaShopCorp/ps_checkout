@@ -491,4 +491,58 @@ class Translations
 
         return $translations;
     }
+
+    /**
+     * @return array
+     */
+    public function getErrorTranslations()
+    {
+        return [
+            'psx_form' => [
+                'shop_name' => [
+                    'maxLength' => $this->module->l('Shop name must be shorter than or equal to 255 characters', 'translations'),
+                    'isNotEmpty' => $this->module->l('Shop name should not be empty', 'translations'),
+                ],
+                'business_contact_first_name' => [
+                    'maxLength' => $this->module->l('First name must be shorter than or equal to 127 characters', 'translations'),
+                    'isNotEmpty' => $this->module->l('First name should not be empty', 'translations'),
+                ],
+                'business_contact_last_name' => [
+                    'maxLength' => $this->module->l('Last name must be shorter than or equal to 127 characters', 'translations'),
+                    'isNotEmpty' => $this->module->l('Last name should not be empty', 'translations'),
+                ],
+                'business_contact_language' => [
+                    'maxLength' => $this->module->l('Language must be shorter than or equal to 2 characters', 'translations'),
+                    'isNotEmpty' => $this->module->l('Language should not be empty', 'translations'),
+                ],
+                'business_address_street' => [
+                    'maxLength' => $this->module->l('Address must be shorter than or equal to 255 characters', 'translations'),
+                    'isNotEmpty' => $this->module->l('Address should not be empty', 'translations'),
+                ],
+                'business_address_city' => [
+                    'maxLength' => $this->module->l('City must be shorter than or equal to 127 characters', 'translations'),
+                    'isNotEmpty' => $this->module->l('City should not be empty', 'translations'),
+                ],
+                'business_address_country' => [
+                    'isISO31661Alpha2' => $this->module->l('Country must be a valid ISO31661 Alpha2 code', 'translations'),
+                ],
+                'business_address_zip' => [
+                    'maxLength' => $this->module->l('Postcode must be shorter than or equal to 31 characters', 'translations'),
+                    'isNotEmpty' => $this->module->l('Postcode should not be empty', 'translations'),
+                ],
+                'business_phone' => [
+                    'isPaypalPhoneNumber' => $this->module->l('The phone number must be a valid Paypal phone number.', 'translations'),
+                    'isNotEmpty' => $this->module->l('Business phone should not be empty', 'translations'),
+                ],
+                'business_company_emr' => [
+                    'isIn' => $this->module->l('Business category is incorrect', 'translations'),
+                ],
+                'business_category' => [
+                    'isNumber' => $this->module->l('Business category must be a number conforming to the specified constraints', 'translations'),
+                    'max' => $this->module->l('Business category must not be greater than 1025', 'translations'),
+                    'min' => $this->module->l('Business category must not be less than 1000', 'translations'),
+                ],
+            ],
+        ];
+    }
 }
