@@ -946,6 +946,12 @@ class Ps_checkout extends PaymentModule
                 $this->getPathUri() . 'views/js/adminOrderView.js?version=' . $this->version,
                 false
             );
+            $this->context->controller->addCss(
+                $this->_path . 'views/css/adminOrderView.css?version=' . $this->version,
+                'all',
+                null,
+                false
+            );
         }
     }
 
