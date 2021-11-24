@@ -425,7 +425,7 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayPersonalInformationTop()
     {
-        return $this->display(__FILE__, '/views/templates/hook/displayPersonalInformationTop.tpl');
+        return $this->display(__FILE__, 'views/templates/hook/displayPersonalInformationTop.tpl');
     }
 
     /**
@@ -483,7 +483,7 @@ class Ps_checkout extends PaymentModule
             'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageEnabled(),
         ]);
 
-        return $this->display(__FILE__, '/views/templates/hook/displayExpressCheckout.tpl');
+        return $this->display(__FILE__, 'views/templates/hook/displayExpressCheckout.tpl');
     }
 
     /**
@@ -537,7 +537,7 @@ class Ps_checkout extends PaymentModule
             'paymentOptions' => $paymentOptions,
         ]);
 
-        return $this->display(__FILE__, '/views/templates/hook/displayProductAdditionalInfo.tpl');
+        return $this->display(__FILE__, 'views/templates/hook/displayProductAdditionalInfo.tpl');
     }
 
     /**
@@ -545,7 +545,7 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayFooterProduct()
     {
-        return $this->display(__FILE__, '/views/templates/hook/displayFooterProduct.tpl');
+        return $this->display(__FILE__, 'views/templates/hook/displayFooterProduct.tpl');
     }
 
     /**
@@ -574,7 +574,7 @@ class Ps_checkout extends PaymentModule
             'payIn4XisProductPageEnabled' => $payIn4XService->isProductPageEnabled(),
         ]);
 
-        return $this->display(__FILE__, '/views/templates/hook/displayProductPriceBlock.tpl');
+        return $this->display(__FILE__, 'views/templates/hook/displayProductPriceBlock.tpl');
     }
 
     /**
@@ -598,7 +598,7 @@ class Ps_checkout extends PaymentModule
             'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageEnabled(),
         ]);
 
-        return $this->display(__FILE__, '/views/templates/hook/displayCartTotalPriceLabel.tpl');
+        return $this->display(__FILE__, 'views/templates/hook/displayCartTotalPriceLabel.tpl');
     }
 
     public function getContent()
@@ -629,7 +629,7 @@ class Ps_checkout extends PaymentModule
             false
         );
 
-        return $this->display(__FILE__, '/views/templates/admin/configuration.tpl');
+        return $this->display(__FILE__, 'views/templates/admin/configuration.tpl');
     }
 
     /**
@@ -750,7 +750,7 @@ class Ps_checkout extends PaymentModule
             'warningTranslatedText' => $this->l('Warning'),
         ]);
 
-        return $this->display(__FILE__, '/views/templates/hook/displayPayment.tpl');
+        return $this->display(__FILE__, 'views/templates/hook/displayPayment.tpl');
     }
 
     /**
@@ -820,7 +820,7 @@ class Ps_checkout extends PaymentModule
             'isAuthorized' => 'AUTHORIZE' === Configuration::get('PS_CHECKOUT_INTENT'),
         ]);
 
-        return $this->display(__FILE__, '/views/templates/hook/displayOrderConfirmation.tpl');
+        return $this->display(__FILE__, 'views/templates/hook/displayOrderConfirmation.tpl');
     }
 
     /**
@@ -1353,7 +1353,7 @@ class Ps_checkout extends PaymentModule
             'orderPayPalBaseUrl' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
         ]);
 
-        return $this->display(__FILE__, '/views/templates/hook/displayAdminOrderLeft.tpl');
+        return $this->display(__FILE__, 'views/templates/hook/displayAdminOrderLeft.tpl');
     }
 
     /**
@@ -1378,7 +1378,7 @@ class Ps_checkout extends PaymentModule
             'orderPayPalBaseUrl' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
         ]);
 
-        return $this->display(__FILE__, '/views/templates/hook/displayAdminOrderMainBottom.tpl');
+        return $this->display(__FILE__, 'views/templates/hook/displayAdminOrderMainBottom.tpl');
     }
 
     /**
@@ -1423,7 +1423,7 @@ class Ps_checkout extends PaymentModule
             'warningTranslatedText' => $this->l('Warning'),
         ]);
 
-        return $this->display(__FILE__, '/views/templates/hook/displayPaymentTop.tpl');
+        return $this->display(__FILE__, 'views/templates/hook/displayPaymentTop.tpl');
     }
 
     /**
@@ -1473,7 +1473,7 @@ class Ps_checkout extends PaymentModule
             'paymentOptions' => $paymentOptions,
         ]);
 
-        return $this->display(__FILE__, '/views/templates/hook/displayPaymentByBinaries.tpl');
+        return $this->display(__FILE__, 'views/templates/hook/displayPaymentByBinaries.tpl');
     }
 
     /**
@@ -1622,7 +1622,7 @@ class Ps_checkout extends PaymentModule
             ],
         ]);
 
-        return $this->display(__FILE__, '/views/templates/hook/header.tpl');
+        return $this->display(__FILE__, 'views/templates/hook/header.tpl');
     }
 
     /**
