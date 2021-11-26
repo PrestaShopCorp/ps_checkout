@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 
@@ -34,10 +35,23 @@ class PersistentConfiguration
      * @var PrestaShopConfiguration
      */
     private $configuration;
+    /**
+     * @var PrestaShopContext
+     */
+    private $prestaShopContext;
+    /**
+     * @var ShopUuidManager
+     */
+    private $uuidManager;
 
-    public function __construct(PrestaShopConfiguration $configuration)
-    {
+    public function __construct(
+        PrestaShopConfiguration $configuration,
+        PrestaShopContext $prestaShopContext,
+        ShopUuidManager $uuidManager
+    ) {
         $this->configuration = $configuration;
+        $this->prestaShopContext = $prestaShopContext;
+        $this->uuidManager = $uuidManager;
     }
 
     /**
@@ -113,17 +127,14 @@ class PersistentConfiguration
      */
     public function savePsAccount(PsAccount $psAccount)
     {
-        // Generate a new PS Checkout shop UUID if PS Account and Checkout shop UUID are identicals
-        $psContext = new \PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext(\Context::getContext());
-        $shopUuidManager = new \PrestaShop\Module\PrestashopCheckout\ShopUuidManager();
-        $shopId = (int) $psContext->getShopId();
-        $shopUuid = $shopUuidManager->getForShop($shopId);
+        $shopId = $this->prestaShopContext->getShopId();
+        $shopUuid = $this->uuidManager->getForShop($shopId);
         $psAccountsShopUuid = $this->configuration->get('PSX_UUID_V4');
 
         if (!$shopUuid || $shopUuid === $psAccountsShopUuid) {
             $this->configuration->set(PsAccount::PS_CHECKOUT_SHOP_UUID_V4, '');
-            $shopUuidManager->generateForShop($shopId);
-            $shopUuid = $shopUuidManager->getForShop($shopId);
+            $this->uuidManager->generateForShop($shopId);
+            $shopUuid = $this->uuidManager->getForShop($shopId);
         }
 
         try {

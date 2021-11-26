@@ -125,6 +125,8 @@ services:
     public: true
     arguments:
       - '@ps_checkout.configuration'
+      - '@ps_checkout.context.prestashop'
+      - '@ps_checkout.manager.shopuuid'
 
   ps_checkout.express_checkout.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration'
