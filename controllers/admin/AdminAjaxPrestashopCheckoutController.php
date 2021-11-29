@@ -275,15 +275,17 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessPslOnboard()
     {
         try {
-            /** @var PrestaShopContext $prestaShopContext */
-            $prestaShopContext = $this->module->getService('ps_checkout.context.prestashop');
+            /** @var ShopDispatcher $shopDispatcher */
+            $shopDispatcher = $this->module->getService('ps_checkout.dispatcher.shop');
             // Generate a new link to onboard a new merchant on PayPal
-            /** @var Symfony\Component\Cache\Simple\FilesystemCache $cache */
-            $cache = $this->module->getService('ps_checkout.cache.session');
-            $response = (new Onboarding($prestaShopContext, null, $cache))->onboard();
+
+            /** @var Onboarding $onboardingApi */
+            $onboardingApi = $this->module->getService('ps_checkout.api.psl.onboarding');
+
+            $response = $onboardingApi->onboard();
 
             if (isset($response['onboardingLink'])) {
-                (new ShopDispatcher())->dispatchEventType([
+                $shopDispatcher->dispatchEventType([
                     'resource' => [
                         'shop' => [
                             'paypal' => [
@@ -1097,11 +1099,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         //     $this->ajaxDie(json_encode($errors));
         // }
 
-        /** @var Symfony\Component\Cache\Simple\FilesystemCache $cache */
-        $cache = $this->module->getService('ps_checkout.cache.session');
-        /** @var PrestaShopContext $prestaShopContext */
-        $prestaShopContext = $this->module->getService('ps_checkout.context.prestashop');
-        $onboardingApi = new Onboarding($prestaShopContext, null, $cache);
+        $onboardingApi = $this->module->getService('ps_checkout.api.psl.onboarding');
 
         if ($action == 'update') {
             /** @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration $configuration */

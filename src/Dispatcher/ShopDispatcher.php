@@ -33,10 +33,8 @@ class ShopDispatcher implements Dispatcher
      */
     private $module;
 
-    public function __construct()
+    public function __construct(\Ps_Checkout $module)
     {
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
         $this->module = $module;
     }
 

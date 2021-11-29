@@ -4,9 +4,11 @@ namespace PrestaShop\Module\PrestashopCheckout\Session\Onboarding;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutSessionException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration;
+use Symfony\Component\Cache\Simple\FilesystemCache;
 
 class OnboardingSessionManagerTest extends TestCase
 {
@@ -40,7 +42,8 @@ class OnboardingSessionManagerTest extends TestCase
         $this->onboardingSessionRepository = $this->createMock(OnboardingSessionRepository::class);
         $this->sessionConfiguration = new SessionConfiguration();
         $this->prestaShopConfiguration = $this->createMock(PrestaShopConfiguration::class);
-        $this->context = $this->createMock(\Context::class);
+        $this->context = $this->createMock(PrestaShopContext::class);
+        $this->cache = $this->createMock(FilesystemCache::class);
         $this->context->shop->id = 1;
         $this->module = $this->createConfiguredMock(
             \Ps_checkout::class,
@@ -55,6 +58,7 @@ class OnboardingSessionManagerTest extends TestCase
             $this->onboardingSessionRepository,
             $this->sessionConfiguration,
             $this->prestaShopConfiguration,
+            $this->cache,
             $this->context,
             $this->module
         );

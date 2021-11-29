@@ -53,6 +53,10 @@ class OnboardingStateHandler
      * @var \PrestaShop\Module\PrestashopCheckout\Session\Session|null
      */
     private $onboardingSession;
+    /**
+     * @var ShopDispatcher
+     */
+    private $shopDispatcher;
 
     /**
      * @param OnboardingSessionManager $onboardingSessionManager
@@ -64,12 +68,14 @@ class OnboardingStateHandler
         OnboardingSessionManager $onboardingSessionManager,
         OnboardingState $onboardingState,
         PrestashopCheckoutConfiguration $psCheckoutConfiguration,
-        Onboarding $onboardingApi
+        Onboarding $onboardingApi,
+        ShopDispatcher $shopDispatcher
     ) {
         $this->onboardingSessionManager = $onboardingSessionManager;
         $this->onboardingState = $onboardingState;
         $this->psCheckoutConfiguration = $psCheckoutConfiguration;
         $this->onboardingApi = $onboardingApi;
+        $this->shopDispatcher = $shopDispatcher;
     }
 
     /**
@@ -130,7 +136,6 @@ class OnboardingStateHandler
 
             // PsxForm validation
             $psxForm = (new PsxDataPrepare($psxForm))->prepareData();
-            $errors = (new PsxDataValidation())->validateData($psxForm);
 
             // TODO : Remove this part after implement SSE + Full CQRS
             $createShop = $this->onboardingApi->createShop(array_filter($psxForm));
@@ -139,7 +144,7 @@ class OnboardingStateHandler
                 $onboard = $this->onboardingApi->onboard();
 
                 if (isset($onboard['onboardingLink'])) {
-                    (new ShopDispatcher())->dispatchEventType([
+                    $this->shopDispatcher->dispatchEventType([
                         'resource' => [
                             'shop' => [
                                 'paypal' => [

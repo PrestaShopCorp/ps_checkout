@@ -72,6 +72,14 @@ class OnboardingSessionManager extends SessionManager
      * @var PrestaShopContext
      */
     private $prestaShopContext;
+    /**
+     * @var Onboarding
+     */
+    private $onboardingApi;
+    /**
+     * @var Authentication
+     */
+    private $authenticationApi;
 
     /**
      * @param OnboardingSessionRepository $repository
@@ -87,7 +95,9 @@ class OnboardingSessionManager extends SessionManager
         PrestaShopConfiguration $prestashopConfiguration,
         CacheInterface $cache,
         PrestaShopContext $prestaShopContext,
-        Ps_checkout $module
+        Ps_checkout $module,
+        Onboarding $onboardingApi,
+        Authentication $authenticationApi
     ) {
         parent::__construct($repository);
         $this->configuration = $configuration->getOnboarding();
@@ -97,6 +107,8 @@ class OnboardingSessionManager extends SessionManager
         $this->cache = $cache;
         $this->prestaShopContext = $prestaShopContext;
         $this->module = $module;
+        $this->onboardingApi = $onboardingApi;
+        $this->authenticationApi = $authenticationApi;
     }
 
     /**
@@ -113,15 +125,13 @@ class OnboardingSessionManager extends SessionManager
         $correlationId = Uuid::uuid4()->toString();
 
         // Shop UUID generation from PSL
-        $onboardingApi = new Onboarding($this->prestaShopContext, null, $this->cache);
-        $createShopUuid = $onboardingApi->createShopUuid($correlationId);
+        $createShopUuid = $this->onboardingApi->createShopUuid($correlationId);
 
         if (!$createShopUuid) {
             return null;
         }
 
-        $authenticationApi = new Authentication($this->prestaShopContext, null, $this->cache);
-        $authToken = $authenticationApi->getAuthToken(self::SHOP_SESSION, $correlationId);
+        $authToken = $this->authenticationApi->getAuthToken(self::SHOP_SESSION, $correlationId);
 
         if (!$authToken) {
             return null;

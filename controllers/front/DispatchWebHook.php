@@ -85,8 +85,10 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
     public function display()
     {
         try {
+            /** @var WebHookValidation $webHookValidation */
+            $webHookValidation = $this->module->getService('ps_checkout.validation.webhook');
+
             $headerValues = $this->getHeaderValues();
-            $validationValues = new WebHookValidation();
 
             $this->setAtributesHeaderValues($headerValues);
 
@@ -111,7 +113,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
                 throw new PsCheckoutException('Body can\'t be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_BODY_EMPTY);
             }
 
-            $validationValues->validateBodyDatas($bodyValues);
+            $webHookValidation->validateBodyDatas($bodyValues);
 
             if (false === $this->checkPSLSignature($bodyValues)) {
                 throw new PsCheckoutException('Invalid PSL signature', PsCheckoutException::PSCHECKOUT_WEBHOOK_PSL_SIGNATURE_INVALID);
@@ -234,7 +236,9 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
         );
 
         if (self::CATEGORY['SHOP'] === $this->payload['category']) {
-            return (new ShopDispatcher())->dispatchEventType($this->payload);
+            /** @var ShopDispatcher $shopDispatcher */
+            $shopDispatcher = $this->module->getService('ps_checkout.dispatcher.shop');
+            return $shopDispatcher->dispatchEventType($this->payload);
         }
 
         if ('ShopNotificationMerchantAccount' === $this->payload['category']) {
@@ -242,7 +246,9 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
         }
 
         if ('ShopNotificationOrderChange' === $this->payload['category']) {
-            return (new OrderDispatcher())->dispatchEventType($this->payload);
+            /** @var OrderDispatcher $shopDispatcher */
+            $orderDispatcher = $this->module->getService('ps_checkout.dispatcher.order');
+            return $orderDispatcher->dispatchEventType($this->payload);
         }
 
         $this->module->getLogger()->info(

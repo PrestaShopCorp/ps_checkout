@@ -20,8 +20,10 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 
+use PrestaShop\Module\PrestashopCheckout\Adapter\ConfigurationAdapter;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
+use Ps_checkout;
 use Psr\SimpleCache\CacheInterface;
 
 class OrderDispatcher implements Dispatcher
@@ -37,6 +39,28 @@ class OrderDispatcher implements Dispatcher
      * @var \PsCheckoutCart
      */
     private $psCheckoutCart;
+    /**
+     * @var WebHookValidation
+     */
+    private $webHookValidation;
+    /**
+     * @var Ps_checkout
+     */
+    private $module;
+    /**
+     * @var ConfigurationAdapter
+     */
+    private $configurationAdapter;
+
+    public function __construct(
+        WebHookValidation $webHookValidation,
+        Ps_checkout $module,
+        ConfigurationAdapter $configurationAdapter
+    ) {
+        $this->webHookValidation = $webHookValidation;
+        $this->module = $module;
+        $this->configurationAdapter = $configurationAdapter;
+    }
 
     /**
      * Dispatch the Event Type to manage the merchant status
@@ -94,7 +118,7 @@ class OrderDispatcher implements Dispatcher
      */
     private function dispatchPaymentAction($eventType, $resource, $orderId)
     {
-        (new WebHookValidation())->validateRefundResourceValues($resource);
+        $this->webHookValidation->validateRefundResourceValues($resource);
 
         return true;
 
@@ -123,7 +147,7 @@ class OrderDispatcher implements Dispatcher
      */
     private function dispatchPaymentStatus($eventType, $resource, $orderId)
     {
-        (new WebHookValidation())->validateRefundOrderIdValue($orderId);
+        $this->webHookValidation->validateRefundOrderIdValue($orderId);
 
         $order = new \Order($orderId);
         $currentOrderStateId = (int) $order->getCurrentState();
@@ -151,11 +175,8 @@ class OrderDispatcher implements Dispatcher
             }
         }
 
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-
         /** @var CacheInterface $paypalOrderCache */
-        $paypalOrderCache = $module->getService('ps_checkout.cache.paypal.order');
+        $paypalOrderCache = $this->module->getService('ps_checkout.cache.paypal.order');
 
         // Cache used provide pruning (deletion) of all expired cache items to reduce cache size
         if (method_exists($paypalOrderCache, 'prune')) {
@@ -174,7 +195,7 @@ class OrderDispatcher implements Dispatcher
     private function getNewState($eventType, $currentOrderStateId)
     {
         if (static::PS_CHECKOUT_PAYMENT_AUTH_VOIDED === $eventType) {
-            return (int) \Configuration::getGlobalValue('PS_OS_CANCELED');
+            return (int) $this->configurationAdapter->getGlobalValue('PS_OS_CANCELED');
         }
 
         if (static::PS_CHECKOUT_PAYMENT_COMPLETED === $eventType) {
@@ -182,7 +203,7 @@ class OrderDispatcher implements Dispatcher
         }
 
         if (static::PS_CHECKOUT_PAYMENT_DENIED === $eventType) {
-            return (int) \Configuration::getGlobalValue('PS_OS_ERROR');
+            return (int) $this->configurationAdapter->getGlobalValue('PS_OS_ERROR');
         }
 
         return $this->getPendingStatusId();
@@ -195,11 +216,11 @@ class OrderDispatcher implements Dispatcher
      */
     private function getPaidStatusId($currentOrderStateId)
     {
-        if ($currentOrderStateId === (int) \Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_UNPAID')) {
-            return (int) \Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_PAID');
+        if ($currentOrderStateId === (int) $this->configurationAdapter->getGlobalValue('PS_OS_OUTOFSTOCK_UNPAID')) {
+            return (int) $this->configurationAdapter->getGlobalValue('PS_OS_OUTOFSTOCK_PAID');
         }
 
-        return (int) \Configuration::getGlobalValue('PS_OS_PAYMENT');
+        return (int) $this->configurationAdapter->getGlobalValue('PS_OS_PAYMENT');
     }
 
     /**
@@ -209,13 +230,13 @@ class OrderDispatcher implements Dispatcher
     {
         switch ($this->psCheckoutCart->paypal_funding) {
             case 'card':
-                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
+                $orderStateId = (int) $this->configurationAdapter->get('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
                 break;
             case 'paypal':
-                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
+                $orderStateId = (int) $this->configurationAdapter->get('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
                 break;
             default:
-                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT');
+                $orderStateId = (int) $this->configurationAdapter->get('PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT');
         }
 
         return $orderStateId;
