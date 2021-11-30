@@ -27,6 +27,7 @@ use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
+use Ps_checkout;
 
 /**
  * Construct the configuration module
@@ -63,17 +64,20 @@ class ConfigurationModule implements PresenterInterface
      * @param ExpressCheckoutConfiguration $ecConfiguration
      * @param PayPalConfiguration $paypalConfiguration
      * @param FundingSourceProvider $fundingSourceProvider
+     * @param Ps_checkout $module
      */
     public function __construct(
         PayPalPayIn4XConfiguration $payIn4XConfiguration,
         ExpressCheckoutConfiguration $ecConfiguration,
         PayPalConfiguration $paypalConfiguration,
-        FundingSourceProvider $fundingSourceProvider)
-    {
+        FundingSourceProvider $fundingSourceProvider,
+        Ps_checkout $module
+    ) {
         $this->payIn4XConfiguration = $payIn4XConfiguration;
         $this->ecConfiguration = $ecConfiguration;
         $this->paypalConfiguration = $paypalConfiguration;
         $this->fundingSourceProvider = $fundingSourceProvider;
+        $this->module = $module;
     }
 
     /**
@@ -83,10 +87,6 @@ class ConfigurationModule implements PresenterInterface
      */
     public function present()
     {
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-        $this->module = $module;
-
         return [
             'config' => [
                 'isModuleEnabled' => $this->module->isEnabledForShopContext(),

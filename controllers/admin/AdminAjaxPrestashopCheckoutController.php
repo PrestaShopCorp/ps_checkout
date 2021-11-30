@@ -277,12 +277,13 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         try {
             /** @var ShopDispatcher $shopDispatcher */
             $shopDispatcher = $this->module->getService('ps_checkout.dispatcher.shop');
-            // Generate a new link to onboard a new merchant on PayPal
-
             /** @var Onboarding $onboardingApi */
             $onboardingApi = $this->module->getService('ps_checkout.api.psl.onboarding');
+            /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
+            $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
 
-            $response = $onboardingApi->onboard();
+            // Generate a new link to onboard a new merchant on PayPal
+            $response = $onboardingApi->onboard($onboardingSessionManager->getOpened());
 
             if (isset($response['onboardingLink'])) {
                 $shopDispatcher->dispatchEventType([

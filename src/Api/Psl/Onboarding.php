@@ -20,16 +20,40 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Psl;
 
+use GuzzleHttp\Client;
 use PrestaShop\Module\PrestashopCheckout\Api\Psl\Client\PslClient;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
+use PrestaShop\Module\PrestashopCheckout\Session\Session;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
+use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
+use Ps_checkout;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * Handle onbarding request
  */
 class Onboarding extends PslClient
 {
+    /**
+     * @var PrestaShopConfiguration
+     */
+    private $prestaShopConfiguration;
+
+    public function __construct(
+        PrestaShopContext $context,
+        Client $client = null,
+        CacheInterface $cache,
+        ShopUuidManager $shopUuidManager,
+        Ps_checkout $module,
+        PrestaShopConfiguration $prestaShopConfiguration
+    ) {
+        $this->prestaShopConfiguration = $prestaShopConfiguration;
+        parent::__construct($context, $client, $cache, $shopUuidManager, $module);
+    }
+
     /**
      * Create shop UUID from PSL
      *
@@ -53,10 +77,7 @@ class Onboarding extends PslClient
         $shopUuid = $response['body']['account_id'];
 
         // Update the shop UUID in DB
-        /** @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration */
-        $configuration = $this->module->getService('ps_checkout.configuration');
-
-        $configuration->set(PsAccount::PS_CHECKOUT_SHOP_UUID_V4, $shopUuid);
+        $this->prestaShopConfiguration->set(PsAccount::PS_CHECKOUT_SHOP_UUID_V4, $shopUuid);
 
         return $shopUuid;
     }
@@ -68,16 +89,14 @@ class Onboarding extends PslClient
      *
      * @return array|false (ResponseApiHandler class)
      */
-    public function createShop(array $data)
+    public function createShop(Session $session, array $data)
     {
-        $openedOnboardingSession = $this->getOpenedSession();
-
         $this->setRoute('/shops');
 
         $response = $this->post([
             'headers' => [
-                'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),
-                'Session-Token' => $openedOnboardingSession->getAuthToken(),
+                'X-Correlation-Id' => $session->getCorrelationId(),
+                'Session-Token' => $session->getAuthToken(),
             ],
             'json' => $data,
         ]);
@@ -96,16 +115,14 @@ class Onboarding extends PslClient
      *
      * @return array|false (ResponseApiHandler class)
      */
-    public function updateShop(array $data)
+    public function updateShop(Session $session, array $data)
     {
-        $openedOnboardingSession = $this->getOpenedSession();
-
         $this->setRoute('/shops/' . $this->shopUuid);
 
         $response = $this->patchCall([
             'headers' => [
-                'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),
-                'Session-Token' => $openedOnboardingSession->getAuthToken(),
+                'X-Correlation-Id' => $session->getCorrelationId(),
+                'Session-Token' => $session->getAuthToken(),
             ],
             'json' => $data,
         ]);
@@ -122,14 +139,13 @@ class Onboarding extends PslClient
      *
      * @return array|false (ResponseApiHandler class)
      */
-    public function onboard()
+    public function onboard(Session $session)
     {
         $this->setRoute('/payments/onboarding/onboard');
         /** @var OnboardingPayloadBuilder $builder */
         $builder = $this->module->getService('ps_checkout.builder.payload.onboarding');
         /** @var ShopContext $shopContext */
         $shopContext = $this->module->getService('ps_checkout.context.shop');
-        $openedOnboardingSession = $this->getOpenedSession();
 
         $builder->buildFullPayload();
 
@@ -139,8 +155,8 @@ class Onboarding extends PslClient
 
         $response = $this->post([
             'headers' => [
-                'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),
-                'Session-Token' => $openedOnboardingSession->getAuthToken(),
+                'X-Correlation-Id' => $session->getCorrelationId(),
+                'Session-Token' => $session->getAuthToken(),
             ],
             'json' => $builder->presentPayload()->getArray(),
         ]);
@@ -150,8 +166,8 @@ class Onboarding extends PslClient
             $builder->buildMinimalPayload();
             $response = $this->post([
                 'headers' => [
-                    'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),
-                    'Session-Token' => $openedOnboardingSession->getAuthToken(),
+                    'X-Correlation-Id' => $session->getCorrelationId(),
+                    'Session-Token' => $session->getAuthToken(),
                 ],
                 'json' => $builder->presentPayload()->getArray(),
             ]);
@@ -179,16 +195,14 @@ class Onboarding extends PslClient
      *
      * @return array|false (ResponseApiHandler class)
      */
-    public function forceUpdateMerchantIntegrations($merchantId)
+    public function forceUpdateMerchantIntegrations(Session $session, $merchantId)
     {
-        $openedOnboardingSession = $this->getOpenedSession();
-
         $this->setRoute('/shops/' . $this->shopUuid . '/force-update-merchant-integrations');
 
         $response = $this->post([
             'headers' => [
-                'X-Correlation-Id' => $openedOnboardingSession->getCorrelationId(),
-                'Session-Token' => $openedOnboardingSession->getAuthToken(),
+                'X-Correlation-Id' => $session->getCorrelationId(),
+                'Session-Token' => $session->getAuthToken(),
             ],
             'json' => [
                 'merchant_id' => $merchantId,
@@ -200,18 +214,5 @@ class Onboarding extends PslClient
         }
 
         return $response;
-    }
-
-    /**
-     * Get opened onboarding session
-     *
-     * @return \PrestaShop\Module\PrestashopCheckout\Session\Session
-     */
-    private function getOpenedSession()
-    {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager */
-        $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
-
-        return $onboardingSessionManager->getOpened();
     }
 }

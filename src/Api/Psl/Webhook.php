@@ -20,13 +20,36 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Psl;
 
+use GuzzleHttp\Client;
 use PrestaShop\Module\PrestashopCheckout\Api\Psl\Client\PslClient;
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
+use PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager;
+use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
+use Ps_checkout;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * Handle Webhook requests
  */
 class Webhook extends PslClient
 {
+    /**
+     * @var OnboardingSessionManager
+     */
+    private $onboardingSessionManager;
+
+    public function __construct(
+        PrestaShopContext $context,
+        Client $client = null,
+        CacheInterface $cache,
+        ShopUuidManager $shopUuidManager,
+        Ps_checkout $module,
+        OnboardingSessionManager $onboardingSessionManager
+    ) {
+        parent::__construct($context, $client, $cache, $shopUuidManager, $module);
+        $this->onboardingSessionManager = $onboardingSessionManager;
+    }
+
     /**
      * Tells if the webhook came from the PSL
      *
@@ -36,9 +59,7 @@ class Webhook extends PslClient
      */
     public function getShopSignature(array $payload)
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager */
-        $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
-        $openedOnboardingSession = $onboardingSessionManager->getOpened();
+        $openedOnboardingSession = $this->onboardingSessionManager->getOpened();
 
         $this->setRoute("/webhooks/${payload['id']}/verify");
 

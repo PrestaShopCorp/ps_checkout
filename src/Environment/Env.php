@@ -21,6 +21,9 @@
 namespace PrestaShop\Module\PrestashopCheckout\Environment;
 
 use Dotenv\Dotenv;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
+use Configuration;
 
 /**
  * Get the current environment used: prod or test // sandbox or live
@@ -69,10 +72,9 @@ class Env
             break;
         }
 
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-
-        $this->setMode($module->getService('ps_checkout.paypal.configuration')->getPaymentMode());
+        $this->setMode(
+            Mode::LIVE === Configuration::get(PayPalConfiguration::PAYMENT_MODE) ? Mode::LIVE : Mode::SANDBOX
+        );
     }
 
     /**

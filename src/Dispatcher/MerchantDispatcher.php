@@ -20,13 +20,32 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 
+use Module;
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
+use Ps_checkout;
 use Psr\SimpleCache\CacheInterface;
 
 class MerchantDispatcher implements Dispatcher
 {
+    /**
+     * @var CacheInterface
+     */
+    private $merchantIntegrationCache;
+    /**
+     * @var PaypalAccountUpdater
+     */
+    private $paypalAccountUpdater;
+
+    public function __construct(
+        CacheInterface $merchantIntegrationCache,
+        PaypalAccountUpdater $paypalAccountUpdater
+    ) {
+        $this->merchantIntegrationCache = $merchantIntegrationCache;
+        $this->paypalAccountUpdater = $paypalAccountUpdater;
+    }
+
     /**
      * Dispatch the Event Type to manage the merchant status
      *
@@ -38,25 +57,16 @@ class MerchantDispatcher implements Dispatcher
     {
         $paypalAccount = new PaypalAccount($payload['merchantId']);
 
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-
-        /** @var CacheInterface $merchantIntegrationCache */
-        $merchantIntegrationCache = $module->getService('ps_checkout.cache.paypal.merchant_integration');
-
         // Webhook inform we need to retrieve fresh data
-        if ($merchantIntegrationCache->has($payload['merchantId'])) {
-            $merchantIntegrationCache->delete($payload['merchantId']);
+        if ($this->merchantIntegrationCache->has($payload['merchantId'])) {
+            $this->merchantIntegrationCache->delete($payload['merchantId']);
         }
 
         // Cache used provide pruning (deletion) of all expired cache items to reduce cache size
-        if (method_exists($merchantIntegrationCache, 'prune')) {
-            $merchantIntegrationCache->prune();
+        if (method_exists($this->merchantIntegrationCache, 'prune')) {
+            $this->merchantIntegrationCache->prune();
         }
 
-        /** @var PaypalAccountUpdater $accountUpdater */
-        $accountUpdater = $module->getService('ps_checkout.updater.paypal.account');
-
-        return $accountUpdater->update($paypalAccount);
+        return $this->paypalAccountUpdater->update($paypalAccount);
     }
 }

@@ -1,5 +1,43 @@
 services:
-#  ps_checkout.api.payment.authentication:
-#    class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\Authentication'
-#    arguments:
-#      - '@=service("ps_checkout.context").link'
+  ps_checkout.api.firebase.auth:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth'
+    public: true
+
+  ps_checkout.api.firebase.auth.factory:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\AuthFactory'
+    public: true
+    arguments:
+      - '@ps_checkout.api.firebase.auth'
+      - '@ps_checkout.persistent.configuration'
+
+  ps_checkout.api.psl.authentication:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Psl\Authentication'
+    public: true
+    arguments:
+      - '@ps_checkout.context.prestashop'
+      - null
+      - '@ps_checkout.cache.session'
+      - '@ps_checkout.manager.shopuuid'
+      - '@ps_checkout.module'
+
+  ps_checkout.api.psl.onboarding:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Psl\Onboarding'
+    public: true
+    arguments:
+      - '@ps_checkout.context.prestashop'
+      - null
+      - '@ps_checkout.cache.session'
+      - '@ps_checkout.manager.shopuuid'
+      - '@ps_checkout.module'
+      - '@ps_checkout.configuration'
+
+  ps_checkout.api.psl.webhook:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Psl\Webhook'
+    public: true
+    arguments:
+      - '@ps_checkout.context.prestashop'
+      - null
+      - '@ps_checkout.cache.session'
+      - '@ps_checkout.manager.shopuuid'
+      - '@ps_checkout.module'
+      - '@ps_checkout.session.onboarding.manager'

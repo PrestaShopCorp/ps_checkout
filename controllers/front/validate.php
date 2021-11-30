@@ -21,6 +21,7 @@
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 
 /**
@@ -104,10 +105,11 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             $currency = $this->context->currency;
             $total = (float) $cart->getOrderTotal(true, Cart::BOTH);
 
-            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $accountRepository */
+            /** @var PaypalAccountRepository $accountRepository */
             $accountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
             $merchandId = $accountRepository->getMerchantId();
-            $payment = new ValidateOrder($bodyValues['orderID'], $merchandId);
+            /** @var ValidateOrder $payment */
+            $payment = $this->module->getService('ps_checkout.validate.order');
 
             $dataOrder = [
                 'cartId' => (int) $cart->id,
@@ -118,7 +120,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
 
             // If the payment is rejected redirect the client to the last checkout step (422 error)
             // API call here
-            $response = $payment->validateOrder($dataOrder);
+            $response = $payment->validateOrder($bodyValues['orderID'], $merchandId, $dataOrder);
 
             $this->context->cookie->__unset('paypalEmail');
 

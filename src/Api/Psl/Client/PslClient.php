@@ -27,6 +27,7 @@ use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Environment\PslEnv;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutSessionException;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
+use Ps_checkout;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -40,11 +41,6 @@ class PslClient extends GenericClient
     protected $shopUuid;
 
     /**
-     * @var \Ps_checkout
-     */
-    protected $module;
-
-    /**
      * @var PrestaShopContext;
      */
     protected $context;
@@ -55,23 +51,36 @@ class PslClient extends GenericClient
     protected $cache;
 
     /**
+     * @var ShopUuidManager;
+     */
+    protected $shopUuidManager;
+
+    /**
+     * @var Ps_checkout
+     */
+    protected $module;
+
+    /**
      * @param PrestaShopContext $context
      * @param Client $client
      * @param CacheInterface $cache
+     * @param ShopUuidManager $shopUuidManager
+     * @param Ps_checkout $module
      */
     public function __construct(
         PrestaShopContext $context,
         Client $client = null,
-        CacheInterface $cache
+        CacheInterface $cache,
+        ShopUuidManager $shopUuidManager,
+        Ps_checkout $module
     ) {
         $this->context = $context;
         $this->cache = $cache;
-        $shopId = (int) $context->getShopId();
-        $shopUuidManager = new ShopUuidManager();
-        $this->shopUuid = $shopUuidManager->getForShop($shopId);
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
+        $this->shopUuidManager = $shopUuidManager;
         $this->module = $module;
+
+        $shopId = (int) $context->getShopId();
+        $this->shopUuid = $this->shopUuidManager->getForShop($shopId);
 
         $this->setLink($context->getLink());
 
@@ -96,7 +105,7 @@ class PslClient extends GenericClient
                             null,
                             $shopId
                         ),
-                        'Module-Version' => \Ps_checkout::VERSION, // version of the module
+                        'Module-Version' => Ps_checkout::VERSION, // version of the module
                         'Prestashop-Version' => _PS_VERSION_, // prestashop version
                         'Shop-Url' => $context->getShopUrl(),
                     ],
@@ -105,6 +114,8 @@ class PslClient extends GenericClient
         }
 
         $this->setClient($client);
+        $this->shopUuidManager = $shopUuidManager;
+        $this->client = $client;
     }
 
     /**

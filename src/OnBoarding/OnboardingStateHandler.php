@@ -24,7 +24,6 @@ use PrestaShop\Module\PrestashopCheckout\Api\Psl\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\ShopDispatcher;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
-use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
 use PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager;
 
 class OnboardingStateHandler
@@ -132,16 +131,22 @@ class OnboardingStateHandler
             $data = array_merge(json_decode($this->onboardingSession->getData(), true), $data);
 
             $this->onboardingSession->setData(json_encode($data));
-            $this->onboardingSession = $this->onboardingSessionManager->apply('collect_shop_data', $this->onboardingSession->toArray(true));
+            $this->onboardingSession = $this->onboardingSessionManager->apply(
+                'collect_shop_data',
+                $this->onboardingSession->toArray(true)
+            );
 
             // PsxForm validation
             $psxForm = (new PsxDataPrepare($psxForm))->prepareData();
 
             // TODO : Remove this part after implement SSE + Full CQRS
-            $createShop = $this->onboardingApi->createShop(array_filter($psxForm));
+            $createShop = $this->onboardingApi->createShop(
+                $this->onboardingSessionManager->getOpened(),
+                array_filter($psxForm)
+            );
 
             if ($createShop['status']) {
-                $onboard = $this->onboardingApi->onboard();
+                $onboard = $this->onboardingApi->onboard($this->onboardingSessionManager->getOpened());
 
                 if (isset($onboard['onboardingLink'])) {
                     $this->shopDispatcher->dispatchEventType([
@@ -187,7 +192,10 @@ class OnboardingStateHandler
             $data = array_merge(json_decode($this->onboardingSession->getData(), true), $data);
 
             $this->onboardingSession->setData(json_encode($data));
-            $this->onboardingApi->forceUpdateMerchantIntegrations($merchantId);
+            $this->onboardingApi->forceUpdateMerchantIntegrations(
+                $this->onboardingSessionManager->getOpened(),
+                $merchantId
+            );
         }
     }
 }
