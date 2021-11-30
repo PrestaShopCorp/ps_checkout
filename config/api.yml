@@ -1,8 +1,4 @@
 services:
-  ps_checkout.api.firebase.auth:
-    class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth'
-    public: true
-
   ps_checkout.api.firebase.auth.factory:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\AuthFactory'
     public: true
@@ -10,34 +6,87 @@ services:
       - '@ps_checkout.api.firebase.auth'
       - '@ps_checkout.persistent.configuration'
 
+  ps_checkout.api.generic_client:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\GenericClient'
+    arguments:
+      - '@ps_checkout.handler.exception'
+      - '@ps_checkout.logger'
+      - '@ps_checkout.configuration'
+      - '@ps_checkout.context.prestashop'
+      - '@ps_checkout.manager.shopuuid'
+
+  ps_checkout.api.firebase_client:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\Client\FirebaseClient'
+    parent: 'ps_checkout.api.generic_client'
+
+  ps_checkout.api.payment_client:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient'
+    parent: 'ps_checkout.api.generic_client'
+    arguments:
+      - '@ps_checkout.api.firebase.token'
+
+  ps_checkout.api.psl_client:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Psl\Client\PslClient'
+    parent: 'ps_checkout.api.generic_client'
+    arguments:
+      - '@ps_checkout.cache.session'
+      - '@ps_checkout.api.firebase.token'
+      - null
+
+#  PSL CLIENTS
+
   ps_checkout.api.psl.authentication:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Psl\Authentication'
+    parent: 'ps_checkout.api.psl_client'
     public: true
-    arguments:
-      - '@ps_checkout.context.prestashop'
-      - null
-      - '@ps_checkout.cache.session'
-      - '@ps_checkout.manager.shopuuid'
-      - '@ps_checkout.module'
 
   ps_checkout.api.psl.onboarding:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Psl\Onboarding'
+    parent: 'ps_checkout.api.psl_client'
     public: true
     arguments:
-      - '@ps_checkout.context.prestashop'
-      - null
-      - '@ps_checkout.cache.session'
-      - '@ps_checkout.manager.shopuuid'
-      - '@ps_checkout.module'
-      - '@ps_checkout.configuration'
+      - '@ps_checkout.builder.payload.onboarding'
+      - '@ps_checkout.context.shop'
 
   ps_checkout.api.psl.webhook:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Psl\Webhook'
+    parent: 'ps_checkout.api.psl_client'
     public: true
     arguments:
-      - '@ps_checkout.context.prestashop'
-      - null
-      - '@ps_checkout.cache.session'
-      - '@ps_checkout.manager.shopuuid'
-      - '@ps_checkout.module'
       - '@ps_checkout.session.onboarding.manager'
+
+#  PAYMENT CLIENTS
+
+  ps_checkout.api.payment.webhook:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook'
+    parent: 'ps_checkout.api.payment_client'
+    public: true
+
+  ps_checkout.api.payment.order:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\Order'
+    parent: 'ps_checkout.api.payment_client'
+    public: true
+
+  ps_checkout.api.payment.shop:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop'
+    parent: 'ps_checkout.api.payment_client'
+    public: true
+    arguments:
+      - '@ps_checkout.express_checkout.configuration'
+
+  ps_checkout.api.payment.dispute:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\Dispute'
+    parent: 'ps_checkout.api.payment_client'
+    public: true
+
+#  FIREBASE CLIENTS
+
+  ps_checkout.api.firebase.auth:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth'
+    parent: 'ps_checkout.api.firebase_client'
+    public: true
+
+  ps_checkout.api.firebase.token:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token'
+    parent: 'ps_checkout.api.firebase_client'
+    public: true

@@ -640,8 +640,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $accountRepository */
         $accountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
+        /** @var PrestaShop\Module\PrestashopCheckout\Api\Payment\Order $orderApi */
+        $orderApi = $this->module->getService('ps_checkout.api.payment.order');
 
-        $response = (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order($this->context->link))->refund([
+        $response = $orderApi->refund([
             'orderId' => $orderPayPalId,
             'captureId' => $transactionPayPalId,
             'payee' => [

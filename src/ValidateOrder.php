@@ -84,6 +84,10 @@ class ValidateOrder
      * @var Ps_checkout
      */
     private $module;
+    /**
+     * @var Order
+     */
+    private $orderApi;
 
     public function __construct(
         Ps_checkout $module,
@@ -92,7 +96,8 @@ class ValidateOrder
         ConfigurationAdapter $configurationAdapter,
         FundingSourceTranslationProvider $fundingSourceTranslationProvider,
         PsCheckoutCartRepository $psCheckoutCartRepository,
-        CacheInterface $payPalOrderCache
+        CacheInterface $payPalOrderCache,
+        Order $orderApi
     ) {
         $this->context = $context;
         $this->exceptionHandler = $exceptionHandler;
@@ -101,6 +106,7 @@ class ValidateOrder
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
         $this->payPalOrderCache = $payPalOrderCache;
         $this->module = $module;
+        $this->orderApi = $orderApi;
     }
 
     /**
@@ -138,15 +144,13 @@ class ValidateOrder
                 throw new PsCheckoutException('The transaction amount doesn\'t match with the cart amount.', PsCheckoutException::DIFFERENCE_BETWEEN_TRANSACTION_AND_CART);
             }
 
-            $apiOrder = new Order($this->context->link);
-
             $fundingSource = false === $psCheckoutCart ? 'paypal' : $psCheckoutCart->paypal_funding;
 
             if ($fundingSource === 'card') {
                 $fundingSource .= $psCheckoutCart->isHostedFields ? '_hosted' : '_inline';
             }
 
-            $response = $apiOrder->capture(
+            $response = $this->orderApi->capture(
                 $order['id'],
                 $merchantId,
                 $fundingSource

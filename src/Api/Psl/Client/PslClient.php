@@ -23,11 +23,14 @@ namespace PrestaShop\Module\PrestashopCheckout\Api\Psl\Client;
 use GuzzleHttp\Client;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Environment\PslEnv;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutSessionException;
+use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use Ps_checkout;
+use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -39,50 +42,39 @@ class PslClient extends GenericClient
      * @var string
      */
     protected $shopUuid;
-
-    /**
-     * @var PrestaShopContext;
-     */
-    protected $context;
-
     /**
      * @var CacheInterface;
      */
     protected $cache;
-
     /**
      * @var ShopUuidManager;
      */
     protected $shopUuidManager;
-
     /**
-     * @var Ps_checkout
+     * @var Token
      */
-    protected $module;
+    private $token;
 
-    /**
-     * @param PrestaShopContext $context
-     * @param Client $client
-     * @param CacheInterface $cache
-     * @param ShopUuidManager $shopUuidManager
-     * @param Ps_checkout $module
-     */
     public function __construct(
-        PrestaShopContext $context,
-        Client $client = null,
-        CacheInterface $cache,
+        ExceptionHandler $exceptionHandler,
+        LoggerInterface $logger,
+        PrestaShopConfiguration $prestaShopConfiguration,
+        PrestaShopContext $prestaShopContext,
         ShopUuidManager $shopUuidManager,
-        Ps_checkout $module
+        CacheInterface $cache,
+        Token $token,
+        Client $client = null
     ) {
-        $this->context = $context;
+        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager);
+
         $this->cache = $cache;
         $this->shopUuidManager = $shopUuidManager;
-        $this->module = $module;
+        $this->token = $token;
 
-        $shopId = (int) $context->getShopId();
+        $shopId = $this->prestaShopContext->getShopId();
         $this->shopUuid = $this->shopUuidManager->getForShop($shopId);
 
-        $this->setLink($context->getLink());
+        $this->setLink($this->prestaShopContext->getLink());
 
         // Client can be provided for tests
         if (null === $client) {
@@ -95,7 +87,7 @@ class PslClient extends GenericClient
                     'headers' => [
                         'Content-Type' => 'application/json', // api version to use (psl side)
                         'Accept' => 'application/json',
-                        'Authorization' => 'Bearer ' . (new Token())->getToken(),
+                        'Authorization' => 'Bearer ' . $this->token->getToken(),
                         'Shop-Id' => $this->shopUuid,
                         'Hook-Url' => $this->link->getModuleLink(
                             'ps_checkout',
@@ -107,15 +99,13 @@ class PslClient extends GenericClient
                         ),
                         'Module-Version' => Ps_checkout::VERSION, // version of the module
                         'Prestashop-Version' => _PS_VERSION_, // prestashop version
-                        'Shop-Url' => $context->getShopUrl(),
+                        'Shop-Url' => $this->prestaShopContext->getShopUrl(),
                     ],
                 ],
             ]);
         }
 
         $this->setClient($client);
-        $this->shopUuidManager = $shopUuidManager;
-        $this->client = $client;
     }
 
     /**
@@ -160,7 +150,7 @@ class PslClient extends GenericClient
                 }
             }
 
-            $this->module->getLogger()->error(
+            $this->logger->error(
                 $exceptionMessage,
                 [
                     'response' => $response,

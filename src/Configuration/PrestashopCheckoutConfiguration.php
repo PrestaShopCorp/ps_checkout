@@ -27,33 +27,32 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 class PrestashopCheckoutConfiguration
 {
     /**
-     * @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration
-     */
-    private $prestashopConfiguration;
-
-    /**
-     * @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository
+     * @var PaypalAccountRepository
      */
     private $paypalAccount;
 
     /**
-     * @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository
+     * @var PsAccountRepository
      */
     private $psAccount;
+    /**
+     * @var Token
+     */
+    private $firebaseToken;
 
     /**
-     * @param PrestaShopConfiguration $prestashopConfiguration
      * @param PaypalAccountRepository $paypalAccount
      * @param PsAccountRepository $psAccount
+     * @param Token $firebaseToken
      */
     public function __construct(
-        PrestaShopConfiguration $prestashopConfiguration,
         PaypalAccountRepository $paypalAccount,
-        PsAccountRepository $psAccount
+        PsAccountRepository $psAccount,
+        Token $firebaseToken
     ) {
-        $this->prestashopConfiguration = $prestashopConfiguration;
         $this->paypalAccount = $paypalAccount;
         $this->psAccount = $psAccount;
+        $this->firebaseToken = $firebaseToken;
     }
 
     /**
@@ -63,11 +62,9 @@ class PrestashopCheckoutConfiguration
      */
     public function getFirebase()
     {
-        $token = new Token();
-
         return [
             'email' => $this->psAccount->getEmail(),
-            'token' => $token->getToken(),
+            'token' => $this->firebaseToken->getToken(),
             'accountId' => $this->psAccount->getLocalId(),
             'refreshToken' => $this->psAccount->getRefreshToken(),
         ];

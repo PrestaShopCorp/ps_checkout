@@ -23,8 +23,12 @@ namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 use GuzzleHttp\Client;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
+use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
+use Psr\Log\LoggerInterface;
 
 /**
  * Construct the client used to make call to maasland
@@ -35,22 +39,29 @@ class PaymentClient extends GenericClient
      * @var string
      */
     protected $shopUuid;
-
     /**
-     * @var \Ps_checkout
+     * @var Token
      */
-    protected $module;
+    private $firebaseToken;
 
-    public function __construct(\Link $link, Client $client = null)
-    {
-        $context = \Context::getContext();
-        $shopUuidManager = new ShopUuidManager();
-        $this->shopUuid = $shopUuidManager->getForShop((int) $context->shop->id);
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-        $this->module = $module;
+    public function __construct(
+        ExceptionHandler $exceptionHandler,
+        LoggerInterface $logger,
+        PrestaShopConfiguration $prestaShopConfiguration,
+        PrestaShopContext $prestaShopContext,
+        ShopUuidManager $shopUuidManager,
+        Token $firebaseToken,
+        Client $client = null
+    ) {
+        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager);
 
-        $this->setLink($link);
+        $this->prestaShopContext = $prestaShopContext;
+        $this->shopUuidManager = $shopUuidManager;
+        $this->firebaseToken = $firebaseToken;
+
+        $this->shopUuid = $this->shopUuidManager->getForShop($this->prestaShopContext->getShopId());
+
+        $this->setLink($this->prestaShopContext->getLink());
 
         // Client can be provided for tests
         if (null === $client) {
@@ -63,7 +74,7 @@ class PaymentClient extends GenericClient
                     'headers' => [
                         'Content-Type' => 'application/json', // api version to use (psl side)
                         'Accept' => 'application/json',
-                        'Authorization' => 'Bearer ' . (new Token())->getToken(),
+                        'Authorization' => 'Bearer ' . $this->firebaseToken->getToken(),
                         'Shop-Id' => $this->shopUuid,
                         'Hook-Url' => $this->link->getModuleLink(
                             'ps_checkout',
@@ -71,11 +82,11 @@ class PaymentClient extends GenericClient
                             [],
                             true,
                             null,
-                            (int) $context->shop->id
+                            (int) $this->prestaShopContext->getShopId()
                         ),
                         'Module-Version' => \Ps_checkout::VERSION, // version of the module
                         'Prestashop-Version' => _PS_VERSION_, // prestashop version
-                        'Shop-Url' => $context->shop->getBaseURL(),
+                        'Shop-Url' => $this->prestaShopContext->getShopUrl(),
                     ],
                 ],
             ]);

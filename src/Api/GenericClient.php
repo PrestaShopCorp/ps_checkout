@@ -20,14 +20,20 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api;
 
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Ring\Exception\RingException;
 use GuzzleHttp\Subscriber\Log\Formatter;
 use GuzzleHttp\Subscriber\Log\LogSubscriber;
+use Link;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
+use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -36,19 +42,33 @@ use Psr\Log\LoggerInterface;
 class GenericClient
 {
     /**
+     * @var ExceptionHandler
+     */
+    protected $exceptionHandler;
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+    /**
+     * @var PrestaShopConfiguration
+     */
+    protected $prestaShopConfiguration;
+    /**
+     * @var PrestaShopContext
+     */
+    protected $prestaShopContext;
+    /**
      * Guzzle Client
      *
      * @var Client
      */
     protected $client;
-
     /**
      * Class Link in order to generate module link
      *
-     * @var \Link
+     * @var Link
      */
     protected $link;
-
     /**
      * Enable or disable the catch of Maasland 400 error
      * If set to false, you will not be able to catch the error of maasland
@@ -57,20 +77,36 @@ class GenericClient
      * @var bool
      */
     protected $catchExceptions = false;
-
     /**
      * Set how long guzzle will wait a response before end it up
      *
      * @var int
      */
     protected $timeout = 10;
-
     /**
      * Api route
      *
      * @var string
      */
     protected $route;
+    /**
+     * @var ShopUuidManager
+     */
+    protected $shopUuidManager;
+
+    public function __construct(
+        ExceptionHandler $exceptionHandler,
+        LoggerInterface $logger,
+        PrestaShopConfiguration $prestaShopConfiguration,
+        PrestaShopContext $prestaShopContext,
+        ShopUuidManager $shopUuidManager
+    ) {
+        $this->exceptionHandler = $exceptionHandler;
+        $this->logger = $logger;
+        $this->prestaShopConfiguration = $prestaShopConfiguration;
+        $this->prestaShopContext = $prestaShopContext;
+        $this->shopUuidManager = $shopUuidManager;
+    }
 
     /**
      * Wrapper of method post from guzzle client
@@ -118,18 +154,9 @@ class GenericClient
      */
     private function call($method, array $options)
     {
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler $exceptionHandler */
-        $exceptionHandler = $module->getService('ps_checkout.handler.exception');
-
         if (true === (bool) $this->getConfiguration(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP, true)) {
-            /** @var LoggerInterface $logger */
-            $logger = $module->getService('ps_checkout.logger');
-
             $subscriber = new LogSubscriber(
-                $logger,
+                $this->logger,
                 $this->getLogFormatter()
             );
             $this->client->getEmitter()->attach($subscriber);
@@ -151,11 +178,11 @@ class GenericClient
                 PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION,
                 $exception
             );
-            $exceptionHandler->handle($e, false);
+            $this->exceptionHandler->handle($e, false);
 
             return $this->handleException($e);
-        } catch (\Exception $exception) {
-            $exceptionHandler->handle($exception, false);
+        } catch (Exception $exception) {
+            $this->exceptionHandler->handle($exception, false);
 
             return $this->handleException($exception);
         }
@@ -189,9 +216,9 @@ class GenericClient
     /**
      * Setter for link
      *
-     * @param \Link $link
+     * @param Link $link
      */
-    protected function setLink(\Link $link)
+    protected function setLink(Link $link)
     {
         $this->link = $link;
     }
@@ -239,7 +266,7 @@ class GenericClient
     /**
      * Getter for Link
      *
-     * @return \Link
+     * @return Link
      */
     protected function getLink()
     {
@@ -276,16 +303,23 @@ class GenericClient
      */
     private function getConfiguration($key, $defaultValue)
     {
-        if (false === \Configuration::hasKey($key)) {
+        if (false === $this->prestaShopConfiguration->has($key)) {
             return $defaultValue;
         }
 
-        return \Configuration::get(
+        return $this->prestaShopConfiguration->get(
             $key,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
+            [
+                'idShop' => $this->prestaShopContext->getShopId()
+            ]
         );
+
+//        return Configuration::get(
+//            $key,
+//            null,
+//            null,
+//            (int) $this->context->shop->id
+//        );
     }
 
     /**
@@ -306,7 +340,7 @@ class GenericClient
         return Formatter::DEBUG;
     }
 
-    private function handleException(\Exception $exception)
+    private function handleException(Exception $exception)
     {
         $body = '';
         $httpCode = 500;

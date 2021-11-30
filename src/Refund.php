@@ -20,9 +20,23 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use Configuration;
+use Context;
+use Db;
+use DbQuery;
+use Exception;
+use Module;
+use OrderDetail;
+use OrderHistory;
+use OrderPayment;
+use OrderSlip;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
+use PrestaShopCollection;
+use PrestaShopDatabaseException;
+use PrestaShopException;
+use Ps_checkout;
 
 /**
  * Handle the refund of a paypal order
@@ -40,21 +54,22 @@ class Refund
      * @var float
      */
     private $amount;
-
     /**
      * @var string
      */
     private $paypalOrderId;
-
     /**
      * @var bool
      */
     private $refundFromWebhook;
-
     /**
      * @var string
      */
     private $currencyCode;
+    /**
+     * @var Context
+     */
+    private $context;
 
     /**
      * @param bool $refundFromWebhook
@@ -68,6 +83,14 @@ class Refund
         $this->setPaypalOrderId($paypalOrderId);
         $this->setCurrencyCode($currencyCode);
         $this->setRefundFromWebhook($refundFromWebhook);
+
+        /** @var Ps_checkout $module */
+        $module = Module::getInstanceByName('ps_checkout');
+        $this->context = Context::getContext();
+        /** @var PaypalAccountRepository accountRepository */
+        $this->accountRepository = $module->getService('ps_checkout.repository.paypal.account');
+        /** @var Order orderApi */
+        $this->orderApi = $module->getService('ps_checkout.api.payment.order');
     }
 
     /**
@@ -91,7 +114,7 @@ class Refund
         }
 
         // API call here
-        $response = (new Order(\Context::getContext()->link))->refund($payload);
+        $response = $this->orderApi->refund($payload);
 
         if (422 === $response['httpCode']) {
             return $this->handleCallbackErrors($response['body']['message']);
@@ -142,27 +165,22 @@ class Refund
             return [];
         }
 
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-        /** @var PaypalAccountRepository $accountRepository */
-        $accountRepository = $module->getService('ps_checkout.repository.paypal.account');
-
         $payload = [
             'orderId' => $this->getPaypalOrderId(),
             'captureId' => $captureId,
             'payee' => [
-                'merchant_id' => $accountRepository->getMerchantId(),
+                'merchant_id' => $this->accountRepository->getMerchantId(),
             ],
             'amount' => [
                 'currency_code' => $this->getCurrencyCode(),
                 'value' => $this->getAmount(),
             ],
             'note_to_payer' => 'Refund by '
-                . \Configuration::get(
+                . Configuration::get(
                 'PS_SHOP_NAME',
                     null,
                     null,
-                    (int) \Context::getContext()->shop->id
+                    $this->context->shop->id
                 ),
         ];
 
@@ -187,7 +205,7 @@ class Refund
             $orderProductList[$key]['unit_price'] = $value['unit_price_tax_incl'];
         }
 
-        $refundOrderStateId = (int) \Configuration::get('PS_OS_REFUND');
+        $refundOrderStateId = (int) Configuration::get('PS_OS_REFUND');
 
         return $this->refundPrestashopOrder($order, $orderProductList, $refundOrderStateId, $transactionId);
     }
@@ -226,7 +244,7 @@ class Refund
         return $this->refundPrestashopOrder(
             $order,
             $orderDetailList,
-            (int) \Configuration::getGlobalValue(self::REFUND_STATE),
+            (int) Configuration::getGlobalValue(self::REFUND_STATE),
             $transactionId
         );
     }
@@ -268,7 +286,7 @@ class Refund
 
         // If all products have already been refunded, that catch
         try {
-            $refundOrder = (bool) \OrderSlip::create(
+            $refundOrder = (bool) OrderSlip::create(
                 $order,
                 $orderProductList,
                 $refundShipping,
@@ -276,7 +294,7 @@ class Refund
                 $refundVoucherChoosen,
                 $refundAddTax
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $refundOrder = false;
         }
 
@@ -292,7 +310,7 @@ class Refund
             return true;
         }
 
-        $orderHistory = new \OrderHistory();
+        $orderHistory = new OrderHistory();
         $orderHistory->id_order = $order->id;
         $orderHistory->changeIdOrderState(
             $orderStateId,
@@ -315,7 +333,7 @@ class Refund
     public function addOrderPayment(\Order $order, $paypalTransactionId)
     {
         //@todo Quickfix to prevent duplicate OrderPayment
-        /** @var \OrderPayment[] $orderPayments */
+        /** @var OrderPayment[] $orderPayments */
         $orderPayments = $order->getOrderPaymentCollection();
         foreach ($orderPayments as $orderPayment) {
             if ($orderPayment->transaction_id === $paypalTransactionId) {
@@ -382,8 +400,8 @@ class Refund
      *
      * @return bool
      *
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function cancelPsRefund($orderId)
     {
@@ -394,12 +412,12 @@ class Refund
         // foreach order slip detail - revert the quantity refunded in the order detail
         if (!empty($orderSlipDetails)) {
             foreach ($orderSlipDetails as $orderSlipDetail) {
-                $orderDetail = new \OrderDetail($orderSlipDetail['id_order_detail']);
+                $orderDetail = new OrderDetail($orderSlipDetail['id_order_detail']);
                 $orderDetail->product_quantity_refunded = $orderDetail->product_quantity_refunded - $orderSlipDetail['product_quantity'];
                 $orderDetail->save();
 
                 // delete the order slip detail
-                \Db::getInstance()->delete('order_slip_detail', 'id_order_detail = ' . (int) $orderSlipDetail['id_order_detail']);
+                Db::getInstance()->delete('order_slip_detail', 'id_order_detail = ' . (int) $orderSlipDetail['id_order_detail']);
             }
         }
 
@@ -413,11 +431,11 @@ class Refund
      *
      * @return object OrderSlip
      *
-     * @throws \PrestaShopException
+     * @throws PrestaShopException
      */
     private function getOrderSlip($orderId)
     {
-        $orderSlip = new \PrestaShopCollection('OrderSlip');
+        $orderSlip = new PrestaShopCollection('OrderSlip');
         $orderSlip->where('id_order', '=', $orderId);
         $orderSlip->orderBy('date_add', 'desc');
 
@@ -431,16 +449,16 @@ class Refund
      *
      * @return array list of order slip detail associated to the order slip
      *
-     * @throws \PrestaShopDatabaseException
+     * @throws PrestaShopDatabaseException
      */
     private function getOrderSlipDetail($orderSlipId)
     {
-        $sql = new \DbQuery();
+        $sql = new DbQuery();
         $sql->select('id_order_detail, product_quantity');
         $sql->from('order_slip_detail', 'od');
         $sql->where('od.id_order_slip = ' . (int) $orderSlipId);
 
-        return \Db::getInstance()->executeS($sql);
+        return Db::getInstance()->executeS($sql);
     }
 
     /**

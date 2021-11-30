@@ -34,13 +34,20 @@ class FirebaseModule implements PresenterInterface
      * @var PrestaShopConfiguration
      */
     private $configuration;
+    /**
+     * @var Token
+     */
+    private $firebaseToken;
 
     /**
      * @param PrestaShopConfiguration $configuration
      */
-    public function __construct(PrestaShopConfiguration $configuration)
-    {
+    public function __construct(
+        PrestaShopConfiguration $configuration,
+        Token $firebaseToken
+    ) {
         $this->configuration = $configuration;
+        $this->firebaseToken = $firebaseToken;
     }
 
     /**
@@ -50,7 +57,7 @@ class FirebaseModule implements PresenterInterface
      */
     public function present()
     {
-        $idToken = (new Token())->getToken();
+        $idToken = $this->firebaseToken->getToken();
 
         $firebaseModule = [
             'firebase' => [

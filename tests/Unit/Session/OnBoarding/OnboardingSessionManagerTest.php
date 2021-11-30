@@ -3,6 +3,8 @@
 namespace PrestaShop\Module\PrestashopCheckout\Session\Onboarding;
 
 use PHPUnit\Framework\TestCase;
+use PrestaShop\Module\PrestashopCheckout\Api\Psl\Authentication;
+use PrestaShop\Module\PrestashopCheckout\Api\Psl\Onboarding;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutSessionException;
@@ -44,6 +46,8 @@ class OnboardingSessionManagerTest extends TestCase
         $this->prestaShopConfiguration = $this->createMock(PrestaShopConfiguration::class);
         $this->context = $this->createMock(PrestaShopContext::class);
         $this->cache = $this->createMock(FilesystemCache::class);
+        $this->onboarding = $this->createMock(Onboarding::class);
+        $this->authenticationApi = $this->createMock(Authentication::class);
         $this->context->shop->id = 1;
         $this->module = $this->createConfiguredMock(
             \Ps_checkout::class,
@@ -60,7 +64,9 @@ class OnboardingSessionManagerTest extends TestCase
             $this->prestaShopConfiguration,
             $this->cache,
             $this->context,
-            $this->module
+            $this->module,
+            $this->onboarding,
+            $this->authenticationApi
         );
     }
 

@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Cart;
 
+use Context;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 
 /**
@@ -27,6 +28,16 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
  */
 class CartPresenter implements PresenterInterface
 {
+    /**
+     * @var Context
+     */
+    private $context;
+
+    public function __construct(Context $context)
+    {
+        $this->context = $context;
+    }
+
     /**
      * Present improved cart
      *
@@ -36,33 +47,32 @@ class CartPresenter implements PresenterInterface
      */
     public function present()
     {
-        $context = \Context::getContext();
-        $productList = $context->cart->getProducts();
+        $productList = $this->context->cart->getProducts();
 
-        $cart = (array) $context->cart;
+        $cart = (array) $this->context->cart;
 
         if (class_exists('\PrestaShop\PrestaShop\Adapter\Cart\CartPresenter')) {
             $cart = new \PrestaShop\PrestaShop\Adapter\Cart\CartPresenter();
-            $cart = $cart->present($context->cart);
+            $cart = $cart->present($this->context->cart);
         }
 
         if (false === isset($cart['totals']['total_including_tax']['amount'])) {
             // Handle native CartPresenter before 1.7.2
-            $cart['totals']['total_including_tax']['amount'] = $context->cart->getOrderTotal(true);
+            $cart['totals']['total_including_tax']['amount'] = $this->context->cart->getOrderTotal(true);
         }
 
         $shippingAddress = \Address::initialize((int) $cart['id_address_delivery']);
         $invoiceAddress = \Address::initialize((int) $cart['id_address_invoice']);
-        $currency = \Currency::getCurrencyInstance((int) $context->cart->id_currency);
+        $currency = \Currency::getCurrencyInstance((int) $this->context->cart->id_currency);
 
         return [
             'cart' => array_merge(
                 $cart,
-                ['id' => $context->cart->id],
-                ['shipping_cost' => $context->cart->getTotalShippingCost(null, true)]
+                ['id' => $this->context->cart->id],
+                ['shipping_cost' => $this->context->cart->getTotalShippingCost(null, true)]
             ),
-            'customer' => \Validate::isLoadedObject($context->customer) ? $context->customer : new \Customer((int) $context->cart->id_customer),
-            'language' => $context->language,
+            'customer' => \Validate::isLoadedObject($this->context->customer) ? $this->context->customer : new \Customer((int) $this->context->cart->id_customer),
+            'language' => $this->context->language,
             'products' => $productList,
             'addresses' => [
                 'shipping' => $shippingAddress,

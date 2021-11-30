@@ -20,15 +20,40 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
+use GuzzleHttp\Client;
+use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
+use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
+use Psr\Log\LoggerInterface;
 
 /**
  * Handle request to maasland regarding the shop/merchant status
  */
 class Shop extends PaymentClient
 {
+    /**
+     * @var ExpressCheckoutConfiguration
+     */
+    protected $expressCheckoutConfiguration;
+
+    public function __construct(
+        ExceptionHandler $exceptionHandler,
+        LoggerInterface $logger,
+        PrestaShopConfiguration $prestaShopConfiguration,
+        PrestaShopContext $prestaShopContext,
+        ShopUuidManager $shopUuidManager,
+        Token $firebaseToken,
+        Client $client = null,
+        ExpressCheckoutConfiguration $expressCheckoutConfiguration
+    ) {
+        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager, $firebaseToken, $client);
+        $this->expressCheckoutConfiguration = $expressCheckoutConfiguration;
+    }
+
     /**
      * Used to notify PSL on settings update
      *
@@ -38,20 +63,13 @@ class Shop extends PaymentClient
     {
         $this->setRoute('/payments/shop/update_settings');
 
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-        /** @var PrestaShopConfiguration $configuration */
-        $configuration = $module->getService('ps_checkout.configuration');
-        /** @var ExpressCheckoutConfiguration $ecConfiguration */
-        $ecConfiguration = $module->getService('ps_checkout.express_checkout.configuration');
-
         return $this->post([
             'json' => json_encode([
                 'settings' => [
-                    'cb' => (bool) $configuration->get('PS_CHECKOUT_CARD_PAYMENT_ENABLED'),
-                    'express_in_product' => (bool) $ecConfiguration->isProductPageEnabled(),
-                    'express_in_cart' => (bool) $ecConfiguration->isOrderPageEnabled(),
-                    'express_in_checkout' => (bool) $ecConfiguration->isCheckoutPageEnabled(),
+                    'cb' => (bool) $this->prestaShopConfiguration->get('PS_CHECKOUT_CARD_PAYMENT_ENABLED'),
+                    'express_in_product' => $this->expressCheckoutConfiguration->isProductPageEnabled(),
+                    'express_in_cart' => $this->expressCheckoutConfiguration->isOrderPageEnabled(),
+                    'express_in_checkout' => $this->expressCheckoutConfiguration->isCheckoutPageEnabled(),
                 ],
             ]),
         ]);

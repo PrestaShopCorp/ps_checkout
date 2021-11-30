@@ -21,11 +21,14 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Psl;
 
 use GuzzleHttp\Client;
+use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\Psl\Client\PslClient;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
+use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
 use PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
-use Ps_checkout;
+use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -39,14 +42,17 @@ class Webhook extends PslClient
     private $onboardingSessionManager;
 
     public function __construct(
-        PrestaShopContext $context,
-        Client $client = null,
-        CacheInterface $cache,
+        ExceptionHandler $exceptionHandler,
+        LoggerInterface $logger,
+        PrestaShopConfiguration $prestaShopConfiguration,
+        PrestaShopContext $prestaShopContext,
         ShopUuidManager $shopUuidManager,
-        Ps_checkout $module,
+        CacheInterface $cache,
+        Token $token,
+        Client $client = null,
         OnboardingSessionManager $onboardingSessionManager
     ) {
-        parent::__construct($context, $client, $cache, $shopUuidManager, $module);
+        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager, $cache, $token, $client);
         $this->onboardingSessionManager = $onboardingSessionManager;
     }
 

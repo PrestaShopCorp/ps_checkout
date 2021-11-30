@@ -2,6 +2,7 @@ imports:
   - { resource: adapter.yml }
   - { resource: api.yml }
   - { resource: presenter.yml }
+  - { resource: repository.yml }
 
 services:
   # From PS 1.7.0 to PS 1.7.3, the bundled version of Symfony is 2.x on which the _defaults
@@ -55,9 +56,9 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration'
     public: true
     arguments:
-      - '@ps_checkout.configuration'
       - '@ps_checkout.repository.paypal.account'
       - '@ps_checkout.repository.prestashop.account'
+      - '@ps_checkout.api.firebase.token'
 
   ps_checkout.logger.directory:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory'
@@ -143,12 +144,6 @@ services:
       - '@ps_checkout.customer'
       - '@ps_checkout.merchant'
 
-  ps_checkout.repository.paypal.account:
-    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository'
-    public: true
-    arguments:
-      - '@ps_checkout.configuration'
-
   ps_checkout.sdk.paypal.linkbuilder:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder'
     public: true
@@ -158,13 +153,6 @@ services:
       - '@ps_checkout.pay_in_4x.configuration'
       - '@ps_checkout.funding_source.configuration.repository'
       - '@ps_checkout.context'
-
-  ps_checkout.repository.prestashop.account:
-    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
-    public: true
-    arguments:
-      - '@ps_checkout.configuration'
-      - '@ps_checkout.context.prestashop'
 
   ps_checkout.builder.payload.onboarding:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder'
@@ -202,10 +190,6 @@ services:
       - '@ps_checkout.module'
       - '@ps_checkout.context'
 
-  ps_checkout.repository.pscheckoutcart:
-    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
-    public: true
-
   ps_checkout.funding_source.configuration.repository:
     class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository'
     public: true
@@ -235,17 +219,6 @@ services:
     arguments:
       - '@ps_checkout.module'
 
-  ps_checkout.funding_source.entity:
-    class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceEntity'
-    public: true
-
-  ps_checkout.repository.country:
-    class: 'PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository'
-    public: true
-    arguments:
-      - '@ps_checkout.context'
-      - '@ps_checkout.adapter.country'
-
   ps_checkout.funding_source.presenter:
     class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourcePresenter'
     public: true
@@ -265,10 +238,6 @@ services:
     arguments:
       - '@ps_checkout.funding_source.collection.builder'
       - '@ps_checkout.funding_source.presenter'
-
-  ps_checkout.repository.paypal.code:
-    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository'
-    public: true
 
   ps_checkout.handler.exception:
     class: 'PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler'
@@ -355,10 +324,6 @@ services:
       - '@ps_checkout.session.onboarding.manager'
       - '@ps_checkout.context'
 
-  ps_checkout.session:
-    class: 'PrestaShop\Module\PrestashopCheckout\Session\Session'
-    public: true
-
   ps_checkout.session.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration'
     public: true
@@ -397,6 +362,7 @@ services:
     arguments:
       - '@ps_checkout.prestashop_checkout.configuration'
       - '@ps_checkout.repository.paypal.account'
+      - '@ps_checkout.api.firebase.token'
 
   ps_checkout.onboarding.state.handler:
     class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler'
@@ -407,10 +373,6 @@ services:
       - '@ps_checkout.prestashop_checkout.configuration'
       - '@ps_checkout.api.psl.onboarding'
       - '@ps_checkout.dispatcher.shop'
-
-  ps_checkout.repository.shop:
-    class: 'PrestaShop\Module\PrestashopCheckout\Repository\ShopRepository'
-    public: true
 
   ps_checkout.dispatcher.shop:
     class: 'PrestaShop\Module\PrestashopCheckout\Dispatcher\ShopDispatcher'
@@ -443,3 +405,12 @@ services:
       - '@ps_checkout.funding_source.translation'
       - '@ps_checkout.repository.pscheckoutcart'
       - '@ps_checkout.cache.paypal.order'
+
+  ps_checkout.handler.create.paypal.order:
+    class: 'PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler'
+    arguments:
+      - '@ps_checkout.presenter.cart'
+      - '@ps_checkout.api.payment.order'
+      - '@ps_checkout.context.shop'
+      - '@ps_checkout.context'
+      - '@ps_checkout.logger'

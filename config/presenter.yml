@@ -17,6 +17,7 @@ services:
     public: true
     arguments:
       - '@ps_checkout.configuration'
+      - '@ps_checkout.api.firebase.token'
 
   ps_checkout.store.module.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule'
@@ -56,3 +57,6 @@ services:
     public: true
     arguments:
       - [ '@ps_checkout.store.module.context', '@ps_checkout.store.module.firebase', '@ps_checkout.store.module.paypal', '@ps_checkout.store.module.psx', '@ps_checkout.store.module.configuration', '@ps_checkout.store.module.session' ]
+
+  ps_checkout.presenter.cart:
+    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter'

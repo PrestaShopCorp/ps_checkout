@@ -19,9 +19,6 @@
  */
 
 use Monolog\Logger;
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook as PaymentWebhook;
-use PrestaShop\Module\PrestashopCheckout\Api\Psl\Webhook as PslWebhook;
-use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\ShopDispatcher;
@@ -138,16 +135,12 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
      */
     private function checkPSLSignature(array $bodyValues)
     {
-        $context = Context::getContext();
-        /** @var PrestaShopContext $prestaShopContext */
-        $prestaShopContext = $this->module->getService('ps_checkout.context.prestashop');
-
         if ($bodyValues['category'] === self::CATEGORY['SHOP']) {
-            /** @var Symfony\Component\Cache\Simple\FilesystemCache $cache */
-            $cache = $this->module->getService('ps_checkout.cache.session');
-            $webhook = new PslWebhook($prestaShopContext, null, $cache);
+            /** @var \PrestaShop\Module\PrestashopCheckout\Api\Psl\Webhook $webhook */
+            $webhook = $this->module->getService('ps_checkout.api.psl.webhook');
         } else {
-            $webhook = new PaymentWebhook($context->link);
+            /** @var \PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook $webhook */
+            $webhook = $this->module->getService('ps_checkout.api.payment.webhook');
         }
 
         $response = $webhook->getShopSignature($bodyValues);

@@ -20,7 +20,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use Context;
+use Db;
+use Module;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
+use Ps_checkout;
+use PsCheckoutCart;
 
 /**
  * Allow to instantiate a paypal order
@@ -47,10 +52,15 @@ class PaypalOrder
      */
     private function loadOrder($id)
     {
-        $response = (new Order(\Context::getContext()->link))->fetch($id);
+        /** @var Ps_checkout $module */
+        $module = Module::getInstanceByName('ps_checkout');
+        /** @var Order $orderApi */
+        $orderApi = $module->getService('ps_checkout.api.payment.order');
+
+        $response = $orderApi->fetch($id);
 
         if (false === $response['status'] && isset($response['body']['message']) && $response['body']['message'] === 'INVALID_RESOURCE_ID') {
-            \Db::getInstance()->delete(\PsCheckoutCart::$definition['table'], 'paypal_order = "' . pSQL($id) . '"');
+            Db::getInstance()->delete(PsCheckoutCart::$definition['table'], 'paypal_order = "' . pSQL($id) . '"');
         }
 
         if (true === $response['status'] && !empty($response['body'])) {

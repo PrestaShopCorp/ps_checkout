@@ -21,15 +21,18 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Psl;
 
 use GuzzleHttp\Client;
+use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\Psl\Client\PslClient;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
+use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
 use PrestaShop\Module\PrestashopCheckout\Session\Session;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use Ps_checkout;
+use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -38,20 +41,30 @@ use Psr\SimpleCache\CacheInterface;
 class Onboarding extends PslClient
 {
     /**
-     * @var PrestaShopConfiguration
+     * @var OnboardingPayloadBuilder
      */
-    private $prestaShopConfiguration;
+    private $onboardingPayloadBuilder;
+    /**
+     * @var ShopContext
+     */
+    private $shopContext;
 
     public function __construct(
-        PrestaShopContext $context,
-        Client $client = null,
-        CacheInterface $cache,
+        ExceptionHandler $exceptionHandler,
+        LoggerInterface $logger,
+        PrestaShopConfiguration $prestaShopConfiguration,
+        PrestaShopContext $prestaShopContext,
         ShopUuidManager $shopUuidManager,
-        Ps_checkout $module,
-        PrestaShopConfiguration $prestaShopConfiguration
+        CacheInterface $cache,
+        Token $token,
+        Client $client = null,
+        OnboardingPayloadBuilder $onboardingPayloadBuilder,
+        ShopContext $shopContext
     ) {
-        $this->prestaShopConfiguration = $prestaShopConfiguration;
-        parent::__construct($context, $client, $cache, $shopUuidManager, $module);
+        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager, $cache , $token, $client);
+
+        $this->onboardingPayloadBuilder = $onboardingPayloadBuilder;
+        $this->shopContext = $shopContext;
     }
 
     /**
@@ -142,15 +155,11 @@ class Onboarding extends PslClient
     public function onboard(Session $session)
     {
         $this->setRoute('/payments/onboarding/onboard');
-        /** @var OnboardingPayloadBuilder $builder */
-        $builder = $this->module->getService('ps_checkout.builder.payload.onboarding');
-        /** @var ShopContext $shopContext */
-        $shopContext = $this->module->getService('ps_checkout.context.shop');
 
-        $builder->buildFullPayload();
+        $this->onboardingPayloadBuilder->buildFullPayload();
 
-        if ($shopContext->isReady()) {
-            $builder->buildMinimalPayload();
+        if ($this->shopContext->isReady()) {
+            $this->onboardingPayloadBuilder->buildMinimalPayload();
         }
 
         $response = $this->post([
@@ -158,18 +167,18 @@ class Onboarding extends PslClient
                 'X-Correlation-Id' => $session->getCorrelationId(),
                 'Session-Token' => $session->getAuthToken(),
             ],
-            'json' => $builder->presentPayload()->getArray(),
+            'json' =>  $this->onboardingPayloadBuilder->presentPayload()->getArray(),
         ]);
 
         // Retry with minimal payload when full payload failed
         if (substr((string) $response['httpCode'], 0, 1) === '4') {
-            $builder->buildMinimalPayload();
+            $this->onboardingPayloadBuilder->buildMinimalPayload();
             $response = $this->post([
                 'headers' => [
                     'X-Correlation-Id' => $session->getCorrelationId(),
                     'Session-Token' => $session->getAuthToken(),
                 ],
-                'json' => $builder->presentPayload()->getArray(),
+                'json' =>  $this->onboardingPayloadBuilder->presentPayload()->getArray(),
             ]);
         }
 

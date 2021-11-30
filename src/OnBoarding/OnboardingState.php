@@ -27,23 +27,33 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 class OnboardingState
 {
     /**
-     * @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration
+     * @var PrestashopCheckoutConfiguration
      */
     private $psCheckoutConfiguration;
 
     /**
-     * @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository
+     * @var PaypalAccountRepository
      */
     private $paypalAccountRepository;
+    /**
+     * @var Token
+     */
+    private $firebaseToken;
 
     /**
-     * @param \PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration $psCheckoutConfiguration
-     * @param \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository
+     * @param PrestashopCheckoutConfiguration $psCheckoutConfiguration
+     * @param PaypalAccountRepository $paypalAccountRepository
+     * @param Token $firebaseToken
      */
-    public function __construct(PrestashopCheckoutConfiguration $psCheckoutConfiguration, PaypalAccountRepository $paypalAccountRepository)
+    public function __construct(
+        PrestashopCheckoutConfiguration $psCheckoutConfiguration,
+        PaypalAccountRepository $paypalAccountRepository,
+        Token $firebaseToken
+    )
     {
         $this->psCheckoutConfiguration = $psCheckoutConfiguration;
         $this->paypalAccountRepository = $paypalAccountRepository;
+        $this->firebaseToken = $firebaseToken;
     }
 
     /**
@@ -53,9 +63,7 @@ class OnboardingState
      */
     public function isFirebaseOnboarded()
     {
-        $firebaseToken = new Token();
-
-        return !empty($firebaseToken->getToken());
+        return !empty($this->firebaseToken->getToken());
     }
 
     /**

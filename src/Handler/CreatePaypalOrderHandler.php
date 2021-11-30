@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Handler;
 
+use Context;
+use Psr\Log\LoggerInterface;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
@@ -29,19 +31,39 @@ use PrestaShop\Module\PrestashopCheckout\ShopContext;
 class CreatePaypalOrderHandler
 {
     /**
-     * Prestashop context object
-     *
-     * @var \Context
+     * @var CartPresenter
+     */
+    private $cartPresenter;
+    /**
+     * @var Order
+     */
+    private $orderApi;
+    /**
+     * @var ShopContext
+     */
+    private $shopContext;
+    /**
+     * @var Context
      */
     private $context;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
-    public function __construct(\Context $context = null)
-    {
-        if (null === $context) {
-            $context = \Context::getContext();
-        }
+    public function __construct(
+        CartPresenter $cartPresenter,
+        Order $orderApi,
+        ShopContext $shopContext,
+        Context $context,
+        LoggerInterface $logger
+    ) {
 
+        $this->cartPresenter = $cartPresenter;
+        $this->orderApi = $orderApi;
+        $this->shopContext = $shopContext;
         $this->context = $context;
+        $this->logger = $logger;
     }
 
     /**
@@ -56,18 +78,12 @@ class CreatePaypalOrderHandler
     public function handle($expressCheckout = false, $updateOrder = false, $paypalOrderId = null)
     {
         // Present an improved cart in order to create the payload
-        $cartPresenter = (new CartPresenter())->present();
+        $presentedCart = $this->cartPresenter->present();
 
-        $builder = new OrderPayloadBuilder($cartPresenter, true);
-
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-
-        /** @var ShopContext $shopContext */
-        $shopContext = $module->getService('ps_checkout.context.shop');
+        $builder = new OrderPayloadBuilder($presentedCart, true);
 
         // Build full payload in 1.7
-        if ($shopContext->isShop17()) {
+        if ($this->shopContext->isShop17()) {
             // enable express checkout mode if in express checkout
             if (true === $expressCheckout) {
                 $builder->setExpressCheckout(true);
@@ -100,25 +116,25 @@ class CreatePaypalOrderHandler
 
         // Create the paypal order or update it
         if (true === $updateOrder) {
-            $paypalOrder = (new Order($this->context->link))->patch($payload);
+            $paypalOrder = $this->orderApi->patch($payload);
         } else {
-            $paypalOrder = (new Order($this->context->link))->create($payload);
+            $paypalOrder = $this->orderApi->create($payload);
         }
 
         // Retry with minimal payload when full payload failed (only on 1.7)
-        if (substr((string) $paypalOrder['httpCode'], 0, 1) === '4' && $shopContext->isShop17()) {
+        if (substr((string) $paypalOrder['httpCode'], 0, 1) === '4' && $this->shopContext->isShop17()) {
             $builder->buildMinimalPayload();
             $payload = $builder->presentPayload()->getJson();
 
             if (true === $updateOrder) {
-                $paypalOrder = (new Order($this->context->link))->patch($payload);
+                $paypalOrder = $this->orderApi->patch($payload);
             } else {
-                $paypalOrder = (new Order($this->context->link))->create($payload);
+                $paypalOrder = $this->orderApi->create($payload);
             }
         }
 
         if (isset($paypalOrder['body']['id'])) {
-            $module->getLogger()->info(
+            $this->logger->info(
                 sprintf(
                     '%s PayPal Order',
                     $updateOrder ? 'Update' : 'Create'

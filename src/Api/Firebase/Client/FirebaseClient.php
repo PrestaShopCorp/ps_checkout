@@ -22,7 +22,12 @@ namespace PrestaShop\Module\PrestashopCheckout\Api\Firebase\Client;
 
 use GuzzleHttp\Client;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Environment\FirebaseEnv;
+use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
+use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
+use Psr\Log\LoggerInterface;
 
 /**
  * Handle firebase signIn/signUp
@@ -36,13 +41,16 @@ class FirebaseClient extends GenericClient
      */
     protected $apiKey;
 
-    public function __construct(array $params = [])
-    {
-        if (isset($params['api_key'])) {
-            $this->apiKey = $params['api_key'];
-        } else {
-            $this->apiKey = (new FirebaseEnv())->getFirebaseApiKey();
-        }
+    public function __construct(
+        ExceptionHandler $exceptionHandler,
+        LoggerInterface $logger,
+        PrestaShopConfiguration $prestaShopConfiguration,
+        PrestaShopContext $prestaShopContext,
+        ShopUuidManager $shopUuidManager
+    ) {
+        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager);
+
+        $this->apiKey = (new FirebaseEnv())->getFirebaseApiKey();
 
         $client = new Client([
             'defaults' => [

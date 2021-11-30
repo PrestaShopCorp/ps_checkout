@@ -1,0 +1,32 @@
+services:
+  ps_checkout.repository.country:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository'
+    public: true
+    arguments:
+      - '@ps_checkout.context'
+      - '@ps_checkout.adapter.country'
+
+  ps_checkout.repository.paypal.code:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository'
+    public: true
+
+  ps_checkout.repository.pscheckoutcart:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
+    public: true
+
+  ps_checkout.repository.prestashop.account:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
+    public: true
+    arguments:
+      - '@ps_checkout.configuration'
+      - '@ps_checkout.context.prestashop'
+
+  ps_checkout.repository.paypal.account:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository'
+    public: true
+    arguments:
+      - '@ps_checkout.configuration'
+
+  ps_checkout.repository.shop:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\ShopRepository'
+    public: true
