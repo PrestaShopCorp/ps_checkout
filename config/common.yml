@@ -24,6 +24,13 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider'
     public: true
 
+  ps_checkout.configuration.checkout_service:
+    class: 'PrestaShop\Module\PrestashopCheckout\Configuration\CheckoutServiceConfiguration'
+    public: true
+    arguments:
+      - '@ps_checkout.repository.paypal.account'
+      - '@ps_checkout.paypal.configuration'
+
   ps_checkout.configuration.options.resolver:
     class: 'PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfigurationOptionsResolver'
     public: true

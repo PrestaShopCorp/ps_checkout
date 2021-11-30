@@ -50,7 +50,7 @@ export class PsCheckoutApi extends BaseClass {
     });
   }
 
-  postCheckCartOrder(data, actions) {
+  postCheckCartOrder(data) {
     return this.config.orderId
       ? fetch(this.config.checkCartUrl, {
           method: 'post',
@@ -81,12 +81,12 @@ export class PsCheckoutApi extends BaseClass {
           })
           .then((data) => {
             if (!data) {
-              return actions.reject();
+              return Promise.reject();
             } else {
-              return actions.resolve();
+              return Promise.resolve();
             }
           })
-      : Promise.resolve().then(() => actions.resolve());
+      : Promise.resolve();
   }
 
   /**
@@ -158,7 +158,7 @@ export class PsCheckoutApi extends BaseClass {
     );
   }
 
-  postValidateOrder(data, actions) {
+  postValidateOrder(data) {
     return fetch(this.config.validateOrderUrl, {
       method: 'post',
       credentials: 'same-origin',
@@ -212,7 +212,7 @@ export class PsCheckoutApi extends BaseClass {
         }
 
         if (response.error && 'INSTRUMENT_DECLINED' === response.error) {
-          return actions.restart();
+          return Promise.reject();
         }
       });
   }

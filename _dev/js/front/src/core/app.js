@@ -3,6 +3,7 @@ import Bottle from 'bottlejs';
 import { PsCheckoutApi } from '../api/ps-checkout.api';
 import { PayPalSdkConfig } from '../config/paypal-sdk.config';
 import { PsCheckoutConfig } from '../config/ps-checkout.config';
+import { CheckoutSdkComponent } from '../components/common/checkout-sdk.component';
 import { PayPalSdkComponent } from '../components/common/paypal-sdk.component';
 import { PsCheckoutComponent } from '../components/ps-checkout.component';
 import { PsCheckoutExpressComponent } from '../components/ps-checkout-express.component';
@@ -88,13 +89,27 @@ export class App {
     }
   }
 
+  async initCheckoutSDK() {
+    if (!this.container.CheckoutSDK) {
+      try {
+        const sdk = await new CheckoutSdkComponent(this).render().promise;
+
+        this.bottle.value('CheckoutSDK', sdk);
+      } catch (e) {
+        throw new Error(this.$('error.paypal-sdk'));
+      }
+    }
+  }
+
   async renderCheckout() {
     await this.initPayPalService(this.psCheckoutConfig.hostedFieldsEnabled);
+    await this.initCheckoutSDK();
     new PsCheckoutComponent(this).render();
   }
 
   async renderExpressCheckout(props) {
     await this.initPayPalService();
+    await this.initCheckoutSDK();
     new PsCheckoutExpressComponent(this, props).render();
   }
 

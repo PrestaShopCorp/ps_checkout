@@ -122,6 +122,10 @@
   border-radius: 5px;
 }
 
+.js-payment-binary.js-payment-ps_checkout.disabled {
+  opacity: initial;
+}
+
 #card-image {
   position: absolute;
   top: 7px;
@@ -323,10 +327,6 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
   display: inline-block !important;
 }
 
-.js-payment-ps_checkout.disabled .ps_checkout-button[data-funding-source="card"] button:disabled {
-  opacity: initial;
-}
-
 .ps_checkout.payment-method-logo-block {
   margin-top: 1rem;
 
@@ -472,4 +472,14 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
 }
 #ps_checkout-canceled img, #ps_checkout-error img{
   margin-right: 10px;
+}
+
+.payment-option-frame {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100vw;
+  height: 100vh;
 }

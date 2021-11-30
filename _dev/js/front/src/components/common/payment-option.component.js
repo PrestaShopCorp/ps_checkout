@@ -18,9 +18,7 @@
  */
 import { BaseComponent } from '../../core/dependency-injection/base.component';
 
-import { HostedFieldsComponent } from './hosted-fields.component';
 import { MarkComponent } from './marker.component';
-import { SmartButtonComponent } from './smart-button.component';
 
 /**
  * @typedef PaymentOptionComponentProps
@@ -30,10 +28,11 @@ import { SmartButtonComponent } from './smart-button.component';
  *
  * @param {HTMLElement} HTMLElement
  */
-
 export class PaymentOptionComponent extends BaseComponent {
   static Inject = {
     config: 'PsCheckoutConfig',
+    psCheckoutApi: 'PsCheckoutApi',
+    psCheckoutService: 'PsCheckoutService',
     $: '$'
   };
 
@@ -41,26 +40,27 @@ export class PaymentOptionComponent extends BaseComponent {
     this.data.name = this.props.fundingSource.name;
 
     this.data.HTMLElement = this.props.HTMLElement;
+    this.data.HTMLElementBaseButton = this.getBaseButton();
+    this.data.HTMLElementButton = null;
+    this.data.HTMLElementButtonWrapper = this.getButtonWrapper();
     this.data.HTMLElementContainer = this.getContainer();
     this.data.HTMLElementLabel = this.getLabel();
     this.data.HTMLElementMark = this.props.HTMLElementMark || null;
+  }
 
-    this.data.HTMLElementHostedFields = this.getHostedFields();
-    this.data.HTMLElementSmartButton = this.getSmartButton();
+  getBaseButton() {
+    const buttonSelector = `#payment-confirmation button`;
+    return document.querySelector(buttonSelector);
+  }
+
+  getButtonWrapper() {
+    const buttonWrapper = `.ps_checkout-button[data-funding-source=${this.data.name}]`;
+    return document.querySelector(buttonWrapper);
   }
 
   getContainer() {
     const wrapperId = `${this.data.HTMLElement.id}-container`;
     return document.getElementById(wrapperId);
-  }
-
-  getHostedFields() {
-    const hostedFieldsFormId = 'ps_checkout-hosted-fields-form';
-    return (
-      this.data.name === 'card' &&
-      this.config.hostedFieldsEnabled &&
-      document.getElementById(hostedFieldsFormId)
-    );
   }
 
   getLabel() {
@@ -72,16 +72,11 @@ export class PaymentOptionComponent extends BaseComponent {
 
     return Array.prototype.slice
       .call(this.data.HTMLElementContainer.querySelectorAll('*'))
-      .find(item => item.innerHTML.trim() === label.trim());
-  }
-
-  getSmartButton() {
-    const smartButtonSelector = `.ps_checkout-button[data-funding-source=${this.data.name}]`;
-    return document.querySelector(smartButtonSelector);
+      .find((item) => item.innerHTML.trim() === label.trim());
   }
 
   onLabelClick(listener) {
-    this.data.HTMLElementLabel.addEventListener('click', event => {
+    this.data.HTMLElementLabel.addEventListener('click', (event) => {
       event.preventDefault();
       listener(this, event);
     });
@@ -111,33 +106,98 @@ export class PaymentOptionComponent extends BaseComponent {
     }).render();
   }
 
+  renderButton() {
+    this.data.HTMLElementButton =
+      this.data.HTMLElementBaseButton.cloneNode(true);
+
+    this.data.HTMLElementButtonWrapper.append(this.data.HTMLElementButton);
+    this.data.HTMLElementButton.disabled = !this.data.conditions.isChecked();
+
+    this.data.conditions &&
+      this.data.conditions.onChange(() => {
+        this.data.HTMLElementButton.disabled =
+          !this.data.conditions.isChecked();
+      });
+  }
+
   render() {
+    this.data.conditions = this.app.root.children.conditionsCheckbox;
+
     this.renderWrapper();
     this.renderMark();
+    // this.renderButton();
 
-    if (this.data.HTMLElementHostedFields) {
-      this.children.hostedFields = new HostedFieldsComponent(this.app, {
-        fundingSource: this.props.fundingSource,
+    window.ps_checkout.cta = window.ps_checkout.cta || {};
+    window.ps_checkout.cta[this.data.name] = () => {
+      // console.log(new Error().stack);
+      // console.log(event);
 
-        HTMLElement: this.data.HTMLElementHostedFields
-      }).render();
-    } else {
-      this.children.smartButton = new SmartButtonComponent(this.app, {
-        fundingSource: this.props.fundingSource,
+      if (window.ps_checkout.config.hostedFields.enabled && this.data.name === "card") {
+        return window['csdk'].CheckoutHostedFields.render({
+          paypal: window.ps_checkout.config.paypal,
 
-        HTMLElement: this.data.HTMLElementSmartButton
-      }).render();
-    }
+          hostedFields: {
+            onOrderCreate: () => this.psCheckoutApi
+                .postCreateOrder({
+                  fundingSource: this.data.name,
+                  isHostedFields: true
+                }),
+
+            onContingencyValidation: (data) => {
+              const { liabilityShifted, authenticationReason } = data;
+
+              return this.psCheckoutService
+                .validateContingency(liabilityShifted, authenticationReason)
+                .then(() => {
+                  // Backend requirement
+                  data.orderID = data.orderId;
+                  delete data.orderId;
+
+                  return this.psCheckoutApi.postValidateOrder({
+                    ...data,
+                    fundingSource: this.data.name,
+                    isHostedFields: true
+                  });
+                });
+            }
+          },
+        });
+      }
+
+      return window['csdk'].CheckoutPaymentButton.render({
+        paypal: window.ps_checkout.config.paypal,
+
+        paymentButton: {
+          fundingSource: this.data.name,
+          ...(window.ps_checkout.config.paymentButton || {}),
+          onOrderCreate: (data) => this.psCheckoutApi
+            .postCreateOrder({
+              ...data,
+              fundingSource: this.data.name
+            }),
+
+          onClick: (data) => this.psCheckoutApi
+            .postCheckCartOrder(
+              { ...data, fundingSource: this.data.name }
+            ),
+
+          onApprove: (data) => this.psCheckoutApi
+            .postValidateOrder(
+              { ...data, fundingSource: this.data.name }
+            ),
+        },
+      });
+    };
 
     window.ps_checkout.events.dispatchEvent(
       new CustomEvent('payment-option-active', {
         detail: {
-          fundingSource: this.data.name,
-          HTMLElement: this.data.HTMLElement,
-          HTMLElementContainer: this.data.HTMLElementContainer,
-          HTMLElementBinary: this.data.HTMLElementHostedFields
-            ? this.children.hostedFields.data.HTMLElementButton.parentElement
-            : this.data.HTMLElementSmartButton
+          // fundingSource: this.data.name,
+          // HTMLElement: this.data.HTMLElement,
+          // HTMLElementContainer: this.data.HTMLElementContainer,
+          // HTMLElementBinary: this.data.HTMLElementHostedFields
+          //   ? this.children.hostedFields.data.HTMLElementButton.parentElement
+          //   : this.data.HTMLElementSmartButton
         }
       })
     );

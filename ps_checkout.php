@@ -783,7 +783,7 @@ class Ps_checkout extends PaymentModule
             $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
             $paymentOption->setModuleName($this->name . '-' . $fundingSource->name);
             $paymentOption->setCallToActionText($fundingSource->label);
-            $paymentOption->setBinary(true);
+            $paymentOption->setAction('javascript:void(ps_checkout.cta.' . $fundingSource->name . '())');
 
             if ('card' === $fundingSource->name && $paypalAccountRepository->cardHostedFieldsIsAvailable()) {
                 $this->context->smarty->assign('modulePath', $this->getPathUri());
@@ -1052,7 +1052,12 @@ class Ps_checkout extends PaymentModule
         }
         // END To be refactored in services
 
+        $checkoutServiceConfiguration = $this->getService('ps_checkout.configuration.checkout_service');
+
         Media::addJsDef([
+            $this->name => [
+                'config' => $checkoutServiceConfiguration->getConfiguration()
+            ],
             $this->name . 'Version' => self::VERSION,
             $this->name . 'AutoRenderDisabled' => (bool) Configuration::get('PS_CHECKOUT_AUTO_RENDER_DISABLED'),
             $this->name . 'LoaderImage' => $this->getPathUri() . 'views/img/loader.svg',
