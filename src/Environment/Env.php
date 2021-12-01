@@ -20,10 +20,10 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Environment;
 
+use Configuration;
 use Dotenv\Dotenv;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
-use Configuration;
 
 /**
  * Get the current environment used: prod or test // sandbox or live

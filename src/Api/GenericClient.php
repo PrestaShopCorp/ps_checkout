@@ -310,7 +310,7 @@ class GenericClient
         return $this->prestaShopConfiguration->get(
             $key,
             [
-                'idShop' => $this->prestaShopContext->getShopId()
+                'idShop' => $this->prestaShopContext->getShopId(),
             ]
         );
 

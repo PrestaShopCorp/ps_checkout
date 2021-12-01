@@ -231,6 +231,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
         if (self::CATEGORY['SHOP'] === $this->payload['category']) {
             /** @var ShopDispatcher $shopDispatcher */
             $shopDispatcher = $this->module->getService('ps_checkout.dispatcher.shop');
+
             return $shopDispatcher->dispatchEventType($this->payload);
         }
 
@@ -239,8 +240,9 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
         }
 
         if ('ShopNotificationOrderChange' === $this->payload['category']) {
-            /** @var OrderDispatcher $shopDispatcher */
+            /** @var OrderDispatcher $orderDispatcher */
             $orderDispatcher = $this->module->getService('ps_checkout.dispatcher.order');
+
             return $orderDispatcher->dispatchEventType($this->payload);
         }
 

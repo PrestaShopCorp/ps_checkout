@@ -49,8 +49,7 @@ class OnboardingState
         PrestashopCheckoutConfiguration $psCheckoutConfiguration,
         PaypalAccountRepository $paypalAccountRepository,
         Token $firebaseToken
-    )
-    {
+    ) {
         $this->psCheckoutConfiguration = $psCheckoutConfiguration;
         $this->paypalAccountRepository = $paypalAccountRepository;
         $this->firebaseToken = $firebaseToken;

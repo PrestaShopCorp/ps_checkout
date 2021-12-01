@@ -188,7 +188,7 @@ class ValidateOrder
                 }
             }
 
-            /** @var CacheInterface $paypalOrderCache */
+            /* @var CacheInterface $paypalOrderCache */
             $this->payPalOrderCache->set($response['body']['id'], $response['body']);
 
             if (false === $psCheckoutCart) {
@@ -229,26 +229,26 @@ class ValidateOrder
                 $this->exceptionHandler->handle(new PsCheckoutException('PrestaShop cannot validate order', PsCheckoutException::PRESTASHOP_VALIDATE_ORDER, $exception));
             }
 
-            if (empty($module->currentOrder)) {
+            if (empty($this->module->currentOrder)) {
                 throw new PsCheckoutException(sprintf('PrestaShop was unable to returns Prestashop Order ID for Prestashop Cart ID : %s  - Paypal Order ID : %s. This happens when PrestaShop take too long time to create an Order due to heavy processes in hooks actionValidateOrder and/or actionOrderStatusUpdate and/or actionOrderStatusPostUpdate', $payload['cartId'], $paypalOrderId), PsCheckoutException::PRESTASHOP_ORDER_ID_MISSING);
             }
 
-            if (false === $this->setOrdersMatrice($module->currentOrder, $paypalOrderId)) {
-                throw new PsCheckoutException(sprintf('Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s', $module->currentOrder, $paypalOrderId), PsCheckoutException::PSCHECKOUT_ORDER_MATRICE_ERROR);
+            if (false === $this->setOrdersMatrice($this->module->currentOrder, $paypalOrderId)) {
+                throw new PsCheckoutException(sprintf('Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s', $this->module->currentOrder, $paypalOrderId), PsCheckoutException::PSCHECKOUT_ORDER_MATRICE_ERROR);
             }
 
             if (in_array($transactionStatus, [static::CAPTURE_STATUS_COMPLETED, static::CAPTURE_STATUS_DECLINED])) {
-                $newOrderState = static::CAPTURE_STATUS_COMPLETED === $transactionStatus ? $this->getPaidStatusId($module->currentOrder) : (int) $this->configurationAdapter->getGlobalValue('PS_OS_ERROR');
+                $newOrderState = static::CAPTURE_STATUS_COMPLETED === $transactionStatus ? $this->getPaidStatusId($this->module->currentOrder) : (int) $this->configurationAdapter->getGlobalValue('PS_OS_ERROR');
 
-                $orderPS = new \Order($module->currentOrder);
+                $orderPS = new \Order($this->module->currentOrder);
                 $currentOrderStateId = (int) $orderPS->getCurrentState();
 
                 // If have to change current OrderState from Waiting to Paid or Canceled
                 if ($currentOrderStateId !== $newOrderState) {
                     $orderHistory = new OrderHistory();
-                    $orderHistory->id_order = $module->currentOrder;
+                    $orderHistory->id_order = $this->module->currentOrder;
                     try {
-                        $orderHistory->changeIdOrderState($newOrderState, $module->currentOrder);
+                        $orderHistory->changeIdOrderState($newOrderState, $this->module->currentOrder);
                         $orderHistory->addWithemail();
                     } catch (ErrorException $exception) {
                         // Notice or warning from PHP

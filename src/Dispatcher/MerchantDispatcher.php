@@ -20,11 +20,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 
-use Module;
 use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
-use Ps_checkout;
 use Psr\SimpleCache\CacheInterface;
 
 class MerchantDispatcher implements Dispatcher

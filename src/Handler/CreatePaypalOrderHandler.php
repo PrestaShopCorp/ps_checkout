@@ -21,12 +21,12 @@
 namespace PrestaShop\Module\PrestashopCheckout\Handler;
 
 use Context;
-use Psr\Log\LoggerInterface;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
+use Psr\Log\LoggerInterface;
 
 class CreatePaypalOrderHandler
 {
@@ -58,7 +58,6 @@ class CreatePaypalOrderHandler
         Context $context,
         LoggerInterface $logger
     ) {
-
         $this->cartPresenter = $cartPresenter;
         $this->orderApi = $orderApi;
         $this->shopContext = $shopContext;

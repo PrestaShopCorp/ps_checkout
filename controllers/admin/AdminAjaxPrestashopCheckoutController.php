@@ -19,7 +19,6 @@
  */
 use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Api\Psl\Onboarding;
-use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\ShopDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
@@ -430,9 +429,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
+        /** @var PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop $shopApi */
+        $shopApi = $this->module->getService('ps_checkout.api.payment.shop');
+
         $ecConfiguration->setOrderPage((bool) Tools::getValue('status'));
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop($this->context->link))->updateSettings();
+        $shopApi->updateSettings();
 
         $this->ajaxDie(json_encode(true));
     }
@@ -444,9 +446,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
+        /** @var PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop $shopApi */
+        $shopApi = $this->module->getService('ps_checkout.api.payment.shop');
+
         $ecConfiguration->setCheckoutPage(Tools::getValue('status') ? true : false);
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop($this->context->link))->updateSettings();
+        $shopApi->updateSettings();
 
         $this->ajaxDie(json_encode(true));
     }
@@ -459,8 +464,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
         $ecConfiguration->setProductPage(Tools::getValue('status') ? true : false);
+        /** @var PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop $shopApi */
+        $shopApi = $this->module->getService('ps_checkout.api.payment.shop');
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop($this->context->link))->updateSettings();
+        $shopApi->updateSettings();
 
         $this->ajaxDie(json_encode(true));
     }
@@ -475,8 +482,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $payIn4XConfiguration->setOrderPage(Tools::getValue('status') ? true : false);
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
         $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+        /** @var PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop $shopApi */
+        $shopApi = $this->module->getService('ps_checkout.api.payment.shop');
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop($this->context->link))->updateSettings();
+        $shopApi->updateSettings();
     }
 
     /**
@@ -489,8 +498,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $payIn4XConfiguration->setProductPage(Tools::getValue('status') ? true : false);
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
         $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+        /** @var PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop $shopApi */
+        $shopApi = $this->module->getService('ps_checkout.api.payment.shop');
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop($this->context->link))->updateSettings();
+        $shopApi->updateSettings();
 
         $this->ajaxDie(json_encode(true));
     }

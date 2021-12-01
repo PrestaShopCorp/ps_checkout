@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use Context;
 use Db;
 use Module;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;

@@ -70,6 +70,14 @@ class Refund
      * @var Context
      */
     private $context;
+    /**
+     * @var object|null
+     */
+    private $accountRepository;
+    /**
+     * @var object|null
+     */
+    private $orderApi;
 
     /**
      * @param bool $refundFromWebhook
@@ -87,9 +95,9 @@ class Refund
         /** @var Ps_checkout $module */
         $module = Module::getInstanceByName('ps_checkout');
         $this->context = Context::getContext();
-        /** @var PaypalAccountRepository accountRepository */
+        /* @var PaypalAccountRepository accountRepository */
         $this->accountRepository = $module->getService('ps_checkout.repository.paypal.account');
-        /** @var Order orderApi */
+        /* @var Order orderApi */
         $this->orderApi = $module->getService('ps_checkout.api.payment.order');
     }
 

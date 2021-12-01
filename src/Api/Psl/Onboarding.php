@@ -31,7 +31,6 @@ use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
 use PrestaShop\Module\PrestashopCheckout\Session\Session;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
-use Ps_checkout;
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 
@@ -61,7 +60,7 @@ class Onboarding extends PslClient
         OnboardingPayloadBuilder $onboardingPayloadBuilder,
         ShopContext $shopContext
     ) {
-        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager, $cache , $token, $client);
+        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager, $cache, $token, $client);
 
         $this->onboardingPayloadBuilder = $onboardingPayloadBuilder;
         $this->shopContext = $shopContext;
@@ -167,7 +166,7 @@ class Onboarding extends PslClient
                 'X-Correlation-Id' => $session->getCorrelationId(),
                 'Session-Token' => $session->getAuthToken(),
             ],
-            'json' =>  $this->onboardingPayloadBuilder->presentPayload()->getArray(),
+            'json' => $this->onboardingPayloadBuilder->presentPayload()->getArray(),
         ]);
 
         // Retry with minimal payload when full payload failed
@@ -178,7 +177,7 @@ class Onboarding extends PslClient
                     'X-Correlation-Id' => $session->getCorrelationId(),
                     'Session-Token' => $session->getAuthToken(),
                 ],
-                'json' =>  $this->onboardingPayloadBuilder->presentPayload()->getArray(),
+                'json' => $this->onboardingPayloadBuilder->presentPayload()->getArray(),
             ]);
         }
 

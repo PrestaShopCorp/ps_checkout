@@ -20,6 +20,7 @@
 
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 
 /**
  * This controller receive ajax call to create a PayPal Order
@@ -108,8 +109,10 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             }
 
             $isExpressCheckout = (isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout']) || empty($this->context->cart->id_address_delivery);
-            $paypalOrder = new PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler($this->context);
-            $response = $paypalOrder->handle($isExpressCheckout);
+            /** @var CreatePaypalOrderHandler $createPaypalOrderHandler */
+            $createPaypalOrderHandler = $this->module->getService('ps_checkout.handler.create.paypal.order');
+
+            $response = $createPaypalOrderHandler->handle($isExpressCheckout);
 
             if (false === $response['status']) {
                 throw new PsCheckoutException($response['exceptionMessage'], (int) $response['exceptionCode']);

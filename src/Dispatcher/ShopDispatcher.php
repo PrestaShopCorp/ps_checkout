@@ -24,16 +24,19 @@ use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutSessionException;
 use PrestaShop\Module\PrestashopCheckout\PersistentConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager;
+use PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
+use Ps_checkout;
 
 class ShopDispatcher implements Dispatcher
 {
     /**
-     * @var \Ps_checkout
+     * @var Ps_checkout
      */
     private $module;
 
-    public function __construct(\Ps_Checkout $module)
+    public function __construct(Ps_checkout $module)
     {
         $this->module = $module;
     }
@@ -54,10 +57,10 @@ class ShopDispatcher implements Dispatcher
             throw new PsCheckoutException('Unable to find shop aggregate', PsCheckoutException::UNKNOWN);
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
+        /** @var OnboardingSessionManager $onboardingSessionManager */
         $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
         $openedSession = $onboardingSessionManager->getOpened();
-        /** @var \PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration $sessionConfiguration */
+        /** @var SessionConfiguration $sessionConfiguration */
         $sessionConfiguration = $this->module->getService('ps_checkout.session.configuration');
         $onboardingSessionConfiguration = $sessionConfiguration->getOnboarding();
 
