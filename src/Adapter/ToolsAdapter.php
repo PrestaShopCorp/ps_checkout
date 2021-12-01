@@ -33,6 +33,14 @@ class ToolsAdapter
         return Tools::usingSecureMode();
     }
 
+    /**
+     * @param float $price
+     * @param int|Currency|array|null $currency
+     * @param bool $no_utf8
+     * @param Context|null $context
+     *
+     * @return string
+     */
     public function displayPrice($price, $currency = null, $no_utf8 = false, Context $context = null)
     {
         return Tools::displayPrice($price, $currency, $no_utf8, $context);

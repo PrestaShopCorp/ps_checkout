@@ -24,11 +24,26 @@ use Configuration;
 
 class ConfigurationAdapter
 {
+    /**
+     * @param string $key Key wanted
+     * @param int|null $idLang
+     * @param int|null $idShopGroup
+     * @param int|null $idShop
+     * @param bool $default
+     *
+     * @return mixed
+     */
     public function get($key, $idLang = null, $idShopGroup = null, $idShop = null, $default = false)
     {
         return Configuration::get($key, $idLang, $idShopGroup, $idShop, $default);
     }
 
+    /**
+     * @param string $key
+     * @param int|null
+     *
+     * @return mixed
+     */
     public function getGlobalValue($key, $idLang = null)
     {
         return Configuration::getGlobalValue($key, $idLang);

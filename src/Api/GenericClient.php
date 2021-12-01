@@ -313,13 +313,6 @@ class GenericClient
                 'idShop' => $this->prestaShopContext->getShopId(),
             ]
         );
-
-//        return Configuration::get(
-//            $key,
-//            null,
-//            null,
-//            (int) $this->context->shop->id
-//        );
     }
 
     /**

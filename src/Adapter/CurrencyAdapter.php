@@ -24,11 +24,21 @@ use Currency;
 
 class CurrencyAdapter
 {
+    /**
+     * @param int $id
+     *
+     * @return Currency
+     */
     public function getCurrencyInstance($id)
     {
         return Currency::getCurrencyInstance($id);
     }
 
+    /**
+     * @param int $idCurrency Currency ID
+     *
+     * @return array|bool
+     */
     public function getCurrency($idCurrency)
     {
         return Currency::getCurrency((int) $idCurrency);

@@ -36,8 +36,8 @@ class ShopRepository
 
     /**
      * @param bool $active
-     * @param null $idShopGroup
-     * @param false $getAsList
+     * @param int|null $idShopGroup
+     * @param bool $getAsList
      *
      * @return array
      */

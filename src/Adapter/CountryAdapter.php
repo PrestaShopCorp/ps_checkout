@@ -24,6 +24,12 @@ use Country;
 
 class CountryAdapter
 {
+    /**
+     * @param string $isoCode
+     * @param bool $active
+     *
+     * @return int
+     */
     public function getByIso($isoCode, $active = false)
     {
         return Country::getByIso($isoCode, $active);
