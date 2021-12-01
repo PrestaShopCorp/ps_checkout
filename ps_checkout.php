@@ -1056,7 +1056,7 @@ class Ps_checkout extends PaymentModule
 
         Media::addJsDef([
             $this->name => [
-                'config' => $checkoutServiceConfiguration->getConfiguration()
+                'config' => $checkoutServiceConfiguration->getConfiguration(),
             ],
             $this->name . 'Version' => self::VERSION,
             $this->name . 'AutoRenderDisabled' => (bool) Configuration::get('PS_CHECKOUT_AUTO_RENDER_DISABLED'),

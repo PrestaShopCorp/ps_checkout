@@ -17,6 +17,7 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+
 namespace PrestaShop\Module\PrestashopCheckout\Configuration;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
@@ -38,7 +39,7 @@ class CheckoutServiceConfiguration
 
     /**
      * @param PaypalAccountRepository $paypalAccountRepository
-     * @param PayPalConfiguration paypalConfiguration
+     * @param PayPalConfiguration $paypalConfiguration
      */
     public function __construct(
         PaypalAccountRepository $paypalAccountRepository,
@@ -56,7 +57,8 @@ class CheckoutServiceConfiguration
         return 'order' === $pageName ? 'true' : 'false';
     }
 
-    public function getPaypalComponents() {
+    public function getPaypalComponents()
+    {
         $components = [
             'buttons',
             'funding-eligibility',
@@ -69,23 +71,26 @@ class CheckoutServiceConfiguration
         return $components;
     }
 
-    public function getPaypalDataClientToken() {
+    public function getPaypalDataClientToken()
+    {
         $apiOrder = new Order(\Context::getContext()->link);
         $response = $apiOrder->generateClientToken($this->paypalAccountRepository->getMerchantId());
 
         if (empty($response['body']) || empty($response['body']['client_token'])) {
-            throw new Exception('Unable to retrieve PayPal Client Token');
+            throw new \Exception('Unable to retrieve PayPal Client Token');
         }
 
         return $response['body']['client_token'];
     }
 
-    public function getPaypalHostedFieldsEnabled() {
+    public function getPaypalHostedFieldsEnabled()
+    {
         return $this->paypalConfiguration->isCardPaymentEnabled() &&
             $this->paypalAccountRepository->cardHostedFieldsIsAllowed();
     }
 
-    public function getConfiguration() {
+    public function getConfiguration()
+    {
         $config = [
             'paypal' => [
                 'clientId' => (new PaypalEnv())->getPaypalClientId(),
