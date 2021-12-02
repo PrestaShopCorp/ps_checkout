@@ -73,4 +73,29 @@ class LinkAdapter
 
         return Tools::getShopDomainSsl(true) . __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_) . '/' . $this->link->getAdminLink($controller, $withToken) . $paramsAsString;
     }
+
+    /**
+     * Create a link to a module.
+     *
+     * @param string $module Module name
+     * @param string $controller
+     * @param array $params
+     * @param bool|null $ssl
+     * @param int|null $idLang
+     * @param int|null $idShop
+     * @param bool $relativeProtocol
+     *
+     * @return string
+     */
+    public function getModuleLink(
+        $module,
+        $controller = 'default',
+        array $params = [],
+        $ssl = null,
+        $idLang = null,
+        $idShop = null,
+        $relativeProtocol = false
+    ) {
+        return $this->link->getModuleLink($module, $controller, $params, $ssl, $idLang, $idShop, $relativeProtocol);
+    }
 }

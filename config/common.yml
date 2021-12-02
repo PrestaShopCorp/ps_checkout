@@ -283,14 +283,7 @@ services:
     public: true
     arguments:
       - '@ps_checkout.cache.paypal.order'
-
-  ps_checkout.cache.paypal.merchant_integration:
-    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
-    public: true
-    arguments:
-      - 'merchant-integration'
-      - 86400
-      - '@=service("ps_checkout.cache.directory").getPath()'
+      - '@ps_checkout.api.payment.order'
 
   ps_checkout.cache.directory:
     class: 'PrestaShop\ModuleLibCacheDirectoryProvider\Cache\CacheDirectoryProvider'
@@ -299,6 +292,14 @@ services:
       - !php/const _PS_VERSION_
       - !php/const _PS_ROOT_DIR_
       - !php/const _PS_MODE_DEV_
+
+  ps_checkout.cache.paypal.merchant_integration:
+    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
+    public: true
+    arguments:
+      - 'merchant-integration'
+      - 86400
+      - '@=service("ps_checkout.cache.directory").getPath()'
 
   ps_checkout.cache.paypal.order:
     class: 'Symfony\Component\Cache\Simple\FilesystemCache'
@@ -339,9 +340,8 @@ services:
       - '@ps_checkout.session.onboarding.repository'
       - '@ps_checkout.session.configuration'
       - '@ps_checkout.configuration'
-      - '@ps_checkout.cache.session'
       - '@ps_checkout.context.prestashop'
-      - '@ps_checkout.module'
+      - '@ps_checkout.logger'
       - '@ps_checkout.api.psl.onboarding'
       - '@ps_checkout.api.psl.authentication'
 
@@ -405,6 +405,8 @@ services:
       - '@ps_checkout.funding_source.translation'
       - '@ps_checkout.repository.pscheckoutcart'
       - '@ps_checkout.cache.paypal.order'
+      - '@ps_checkout.api.payment.order'
+      - '@?'
 
   ps_checkout.handler.create.paypal.order:
     class: 'PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler'

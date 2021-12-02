@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
 use GuzzleHttp\Client;
+use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
@@ -46,11 +47,12 @@ class Shop extends PaymentClient
         PrestaShopConfiguration $prestaShopConfiguration,
         PrestaShopContext $prestaShopContext,
         ShopUuidManager $shopUuidManager,
+        LinkAdapter $linkAdapter,
         Token $firebaseToken,
         Client $client = null,
         ExpressCheckoutConfiguration $expressCheckoutConfiguration
     ) {
-        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager, $firebaseToken, $client);
+        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager, $linkAdapter, $firebaseToken, $client);
         $this->expressCheckoutConfiguration = $expressCheckoutConfiguration;
     }
 

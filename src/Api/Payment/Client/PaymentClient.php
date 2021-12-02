@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
 use GuzzleHttp\Client;
+use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
@@ -50,18 +51,17 @@ class PaymentClient extends GenericClient
         PrestaShopConfiguration $prestaShopConfiguration,
         PrestaShopContext $prestaShopContext,
         ShopUuidManager $shopUuidManager,
+        LinkAdapter $linkAdapter,
         Token $firebaseToken,
         Client $client = null
     ) {
-        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager);
+        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager, $linkAdapter);
 
         $this->prestaShopContext = $prestaShopContext;
         $this->shopUuidManager = $shopUuidManager;
         $this->firebaseToken = $firebaseToken;
 
         $this->shopUuid = $this->shopUuidManager->getForShop($this->prestaShopContext->getShopId());
-
-        $this->setLink($this->prestaShopContext->getLink());
 
         // Client can be provided for tests
         if (null === $client) {
@@ -76,7 +76,7 @@ class PaymentClient extends GenericClient
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer ' . $this->firebaseToken->getToken(),
                         'Shop-Id' => $this->shopUuid,
-                        'Hook-Url' => $this->link->getModuleLink(
+                        'Hook-Url' => $this->linkAdapter->getModuleLink(
                             'ps_checkout',
                             'DispatchWebHook',
                             [],

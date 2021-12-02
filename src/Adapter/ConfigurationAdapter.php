@@ -25,7 +25,7 @@ use Configuration;
 class ConfigurationAdapter
 {
     /**
-     * @param string $key Key wanted
+     * @param string $key
      * @param int|null $idLang
      * @param int|null $idShopGroup
      * @param int|null $idShop
@@ -40,7 +40,7 @@ class ConfigurationAdapter
 
     /**
      * @param string $key
-     * @param int|null
+     * @param int|null $idLang
      *
      * @return mixed
      */

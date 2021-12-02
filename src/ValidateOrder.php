@@ -31,6 +31,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
 use PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShopDatabaseException;
 use PrestaShopException;
@@ -88,6 +89,10 @@ class ValidateOrder
      * @var Order
      */
     private $orderApi;
+    /**
+     * @var PayPalOrderProvider
+     */
+    private $payPalOrderProvider;
 
     public function __construct(
         Ps_checkout $module,
@@ -97,7 +102,8 @@ class ValidateOrder
         FundingSourceTranslationProvider $fundingSourceTranslationProvider,
         PsCheckoutCartRepository $psCheckoutCartRepository,
         CacheInterface $payPalOrderCache,
-        Order $orderApi
+        Order $orderApi,
+        PayPalOrderProvider $payPalOrderProvider
     ) {
         $this->context = $context;
         $this->exceptionHandler = $exceptionHandler;
@@ -107,6 +113,7 @@ class ValidateOrder
         $this->payPalOrderCache = $payPalOrderCache;
         $this->module = $module;
         $this->orderApi = $orderApi;
+        $this->payPalOrderProvider = $payPalOrderProvider;
     }
 
     /**
@@ -120,7 +127,7 @@ class ValidateOrder
     public function validateOrder($paypalOrderId, $merchantId, $payload)
     {
         // API call here
-        $paypalOrder = new PaypalOrder($paypalOrderId);
+        $paypalOrder = $this->payPalOrderProvider->fetchOrder($paypalOrderId);
         $order = $paypalOrder->getOrder();
 
         if (empty($order)) {

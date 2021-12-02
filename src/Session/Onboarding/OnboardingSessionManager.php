@@ -31,8 +31,7 @@ use PrestaShop\Module\PrestashopCheckout\Session\Session;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionHelper;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionManager;
-use Ps_checkout;
-use Psr\SimpleCache\CacheInterface;
+use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 
 class OnboardingSessionManager extends SessionManager
@@ -60,14 +59,9 @@ class OnboardingSessionManager extends SessionManager
      */
     private $mode;
     /**
-     * @var Ps_checkout
+     * @var LoggerInterface
      */
-    private $module;
-
-    /**
-     * @var CacheInterface
-     */
-    private $cache;
+    private $logger;
     /**
      * @var PrestaShopContext
      */
@@ -85,17 +79,17 @@ class OnboardingSessionManager extends SessionManager
      * @param OnboardingSessionRepository $repository
      * @param SessionConfiguration $configuration
      * @param PrestaShopConfiguration $prestashopConfiguration
-     * @param CacheInterface $cache
-     *
-     * @return void
+     * @param PrestaShopContext $prestaShopContext
+     * @param LoggerInterface $logger
+     * @param Onboarding $onboardingApi
+     * @param Authentication $authenticationApi
      */
     public function __construct(
         OnboardingSessionRepository $repository,
         SessionConfiguration $configuration,
         PrestaShopConfiguration $prestashopConfiguration,
-        CacheInterface $cache,
         PrestaShopContext $prestaShopContext,
-        Ps_checkout $module,
+        LoggerInterface $logger,
         Onboarding $onboardingApi,
         Authentication $authenticationApi
     ) {
@@ -104,9 +98,8 @@ class OnboardingSessionManager extends SessionManager
         $this->states = $this->configuration['states'];
         $this->transitions = $this->configuration['transitions'];
         $this->mode = Mode::LIVE === $prestashopConfiguration->get(PayPalConfiguration::PAYMENT_MODE) ? Mode::LIVE : Mode::SANDBOX;
-        $this->cache = $cache;
         $this->prestaShopContext = $prestaShopContext;
-        $this->module = $module;
+        $this->logger = $logger;
         $this->onboardingApi = $onboardingApi;
         $this->authenticationApi = $authenticationApi;
     }
@@ -194,7 +187,7 @@ class OnboardingSessionManager extends SessionManager
 
         if (!$nextTransition) {
             $exception = new PsCheckoutSessionException($genericErrorMsg . 'Unexisting session transition', PsCheckoutSessionException::UNEXISTING_SESSION_TRANSITION);
-            $this->module->getLogger()->error('Unexisting session transition', ['exception' => $exception, 'trace' => $exception->getTraceAsString()]);
+            $this->logger->error('Unexisting session transition', ['exception' => $exception, 'trace' => $exception->getTraceAsString()]);
             throw $exception;
         }
 
@@ -202,7 +195,7 @@ class OnboardingSessionManager extends SessionManager
         if ($action === 'transit') {
             if (!$this->getOpened()) {
                 $exception = new PsCheckoutSessionException($genericErrorMsg . 'Unable to find an opened session', PsCheckoutSessionException::OPENED_SESSION_NOT_FOUND);
-                $this->module->getLogger()->error('Unable to find an opened session', ['exception' => $exception, 'trace' => $exception->getTraceAsString()]);
+                $this->logger->error('Unable to find an opened session', ['exception' => $exception, 'trace' => $exception->getTraceAsString()]);
                 throw $exception;
             }
 
@@ -223,14 +216,14 @@ class OnboardingSessionManager extends SessionManager
 
             if (!$authorizedTransition) {
                 $exception = new PsCheckoutSessionException($genericErrorMsg . 'The session is not authorized to transit from ' . $this->getOpened()->getStatus() . ' to ' . $nextTransition['to'], PsCheckoutSessionException::FORBIDDEN_SESSION_TRANSITION);
-                $this->module->getLogger()->error('The session transition is not authorized', ['from' => $this->getOpened()->getStatus(), 'to' => $nextTransition['to'], 'exception' => $exception, 'trace' => $exception->getTraceAsString()]);
+                $this->logger->error('The session transition is not authorized', ['from' => $this->getOpened()->getStatus(), 'to' => $nextTransition['to'], 'exception' => $exception, 'trace' => $exception->getTraceAsString()]);
                 throw $exception;
             }
         }
 
         if ($updateIntersect !== $sortedUpdateConfiguration) {
             $exception = new PsCheckoutSessionException($genericErrorMsg . 'Missing expected update session parameters.' . PHP_EOL . 'Transition : ' . $next, PsCheckoutSessionException::MISSING_EXPECTED_PARAMETERS);
-            $this->module->getLogger()->error($exception->getMessage(), ['transition' => $nextTransition, 'update' => $update, 'updateIntersect' => $updateIntersect, 'sortedUpdateConfiguration' => $sortedUpdateConfiguration, 'exception' => $exception, 'trace' => $exception->getTraceAsString()]);
+            $this->logger->error($exception->getMessage(), ['transition' => $nextTransition, 'update' => $update, 'updateIntersect' => $updateIntersect, 'sortedUpdateConfiguration' => $sortedUpdateConfiguration, 'exception' => $exception, 'trace' => $exception->getTraceAsString()]);
             throw $exception;
         }
     }

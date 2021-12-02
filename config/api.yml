@@ -14,6 +14,7 @@ services:
       - '@ps_checkout.configuration'
       - '@ps_checkout.context.prestashop'
       - '@ps_checkout.manager.shopuuid'
+      - '@ps_checkout.adapter.link'
 
   ps_checkout.api.firebase_client:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\Client\FirebaseClient'

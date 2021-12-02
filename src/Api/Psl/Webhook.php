@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Psl;
 
 use GuzzleHttp\Client;
+use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\Psl\Client\PslClient;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
@@ -47,12 +48,13 @@ class Webhook extends PslClient
         PrestaShopConfiguration $prestaShopConfiguration,
         PrestaShopContext $prestaShopContext,
         ShopUuidManager $shopUuidManager,
+        LinkAdapter $linkAdapter,
         CacheInterface $cache,
         Token $token,
         Client $client = null,
         OnboardingSessionManager $onboardingSessionManager
     ) {
-        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager, $cache, $token, $client);
+        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager, $linkAdapter, $cache, $token, $client);
         $this->onboardingSessionManager = $onboardingSessionManager;
     }
 

@@ -26,7 +26,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Ring\Exception\RingException;
 use GuzzleHttp\Subscriber\Log\Formatter;
 use GuzzleHttp\Subscriber\Log\LogSubscriber;
-use Link;
+use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
@@ -64,12 +64,6 @@ class GenericClient
      */
     protected $client;
     /**
-     * Class Link in order to generate module link
-     *
-     * @var Link
-     */
-    protected $link;
-    /**
      * Enable or disable the catch of Maasland 400 error
      * If set to false, you will not be able to catch the error of maasland
      * guzzle will show a different error message.
@@ -93,19 +87,25 @@ class GenericClient
      * @var ShopUuidManager
      */
     protected $shopUuidManager;
+    /**
+     * @var LinkAdapter
+     */
+    protected $linkAdapter;
 
     public function __construct(
         ExceptionHandler $exceptionHandler,
         LoggerInterface $logger,
         PrestaShopConfiguration $prestaShopConfiguration,
         PrestaShopContext $prestaShopContext,
-        ShopUuidManager $shopUuidManager
+        ShopUuidManager $shopUuidManager,
+        LinkAdapter $linkAdapter
     ) {
         $this->exceptionHandler = $exceptionHandler;
         $this->logger = $logger;
         $this->prestaShopConfiguration = $prestaShopConfiguration;
         $this->prestaShopContext = $prestaShopContext;
         $this->shopUuidManager = $shopUuidManager;
+        $this->linkAdapter = $linkAdapter;
     }
 
     /**
@@ -214,16 +214,6 @@ class GenericClient
     }
 
     /**
-     * Setter for link
-     *
-     * @param Link $link
-     */
-    protected function setLink(Link $link)
-    {
-        $this->link = $link;
-    }
-
-    /**
      * Setter for timeout
      *
      * @param int $timeout
@@ -261,16 +251,6 @@ class GenericClient
     protected function getClient()
     {
         return $this->client;
-    }
-
-    /**
-     * Getter for Link
-     *
-     * @return Link
-     */
-    protected function getLink()
-    {
-        return $this->link;
     }
 
     /**

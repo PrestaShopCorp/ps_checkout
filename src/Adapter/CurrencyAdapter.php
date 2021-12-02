@@ -35,7 +35,7 @@ class CurrencyAdapter
     }
 
     /**
-     * @param int $idCurrency Currency ID
+     * @param int $idCurrency
      *
      * @return array|bool
      */

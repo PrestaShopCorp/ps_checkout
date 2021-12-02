@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Firebase\Client;
 
 use GuzzleHttp\Client;
+use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
@@ -46,9 +47,10 @@ class FirebaseClient extends GenericClient
         LoggerInterface $logger,
         PrestaShopConfiguration $prestaShopConfiguration,
         PrestaShopContext $prestaShopContext,
-        ShopUuidManager $shopUuidManager
+        ShopUuidManager $shopUuidManager,
+        LinkAdapter $linkAdapter
     ) {
-        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager);
+        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager, $linkAdapter);
 
         $this->apiKey = (new FirebaseEnv())->getFirebaseApiKey();
 

@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Psl;
 
 use GuzzleHttp\Client;
+use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\Psl\Client\PslClient;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder;
@@ -54,13 +55,14 @@ class Onboarding extends PslClient
         PrestaShopConfiguration $prestaShopConfiguration,
         PrestaShopContext $prestaShopContext,
         ShopUuidManager $shopUuidManager,
+        LinkAdapter $linkAdapter,
         CacheInterface $cache,
         Token $token,
         Client $client = null,
         OnboardingPayloadBuilder $onboardingPayloadBuilder,
         ShopContext $shopContext
     ) {
-        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager, $cache, $token, $client);
+        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager, $linkAdapter, $cache, $token, $client);
 
         $this->onboardingPayloadBuilder = $onboardingPayloadBuilder;
         $this->shopContext = $shopContext;

@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Adapter;
 
 use Context;
+use Currency;
 use Tools;
 
 class ToolsAdapter

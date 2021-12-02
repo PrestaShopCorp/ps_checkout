@@ -51,9 +51,9 @@ class CountryRepository
         $names = [];
 
         foreach ($countries as $country) {
-            $names[] = Country::getNameById(
-                (int) $this->context->language->id,
-                (int) $this->countryAdapter->getByIso($country)
+            $names[] = $this->countryAdapter->getNameById(
+                $this->context->language->id,
+                $this->countryAdapter->getByIso($country)
             );
         }
 

@@ -6,10 +6,6 @@ services:
       - '@ps_checkout.context'
       - '@ps_checkout.adapter.country'
 
-  ps_checkout.repository.paypal.code:
-    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository'
-    public: true
-
   ps_checkout.repository.pscheckoutcart:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
     public: true
@@ -20,6 +16,10 @@ services:
     arguments:
       - '@ps_checkout.configuration'
       - '@ps_checkout.context.prestashop'
+
+  ps_checkout.repository.paypal.code:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository'
+    public: true
 
   ps_checkout.repository.paypal.account:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository'

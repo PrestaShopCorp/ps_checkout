@@ -20,12 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use Db;
-use Module;
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
-use Ps_checkout;
-use PsCheckoutCart;
-
 /**
  * Allow to instantiate a paypal order
  */
@@ -35,37 +29,6 @@ class PaypalOrder
      * @var array
      */
     private $order;
-
-    /**
-     * @param string $id
-     */
-    public function __construct($id)
-    {
-        $this->loadOrder($id);
-    }
-
-    /**
-     * Load paypal order data
-     *
-     * @param string $id PayPal Order identifier
-     */
-    private function loadOrder($id)
-    {
-        /** @var Ps_checkout $module */
-        $module = Module::getInstanceByName('ps_checkout');
-        /** @var Order $orderApi */
-        $orderApi = $module->getService('ps_checkout.api.payment.order');
-
-        $response = $orderApi->fetch($id);
-
-        if (false === $response['status'] && isset($response['body']['message']) && $response['body']['message'] === 'INVALID_RESOURCE_ID') {
-            Db::getInstance()->delete(PsCheckoutCart::$definition['table'], 'paypal_order = "' . pSQL($id) . '"');
-        }
-
-        if (true === $response['status'] && !empty($response['body'])) {
-            $this->setOrder($response['body']);
-        }
-    }
 
     /**
      * Getter the intent of an order (CAPTURE or AUTHORIZE)

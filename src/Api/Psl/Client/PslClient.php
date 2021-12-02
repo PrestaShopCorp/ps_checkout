@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Psl\Client;
 
 use GuzzleHttp\Client;
+use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
@@ -61,11 +62,12 @@ class PslClient extends GenericClient
         PrestaShopConfiguration $prestaShopConfiguration,
         PrestaShopContext $prestaShopContext,
         ShopUuidManager $shopUuidManager,
+        LinkAdapter $linkAdapter,
         CacheInterface $cache,
         Token $token,
         Client $client = null
     ) {
-        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager);
+        parent::__construct($exceptionHandler, $logger, $prestaShopConfiguration, $prestaShopContext, $shopUuidManager, $linkAdapter);
 
         $this->cache = $cache;
         $this->shopUuidManager = $shopUuidManager;
@@ -73,8 +75,6 @@ class PslClient extends GenericClient
 
         $shopId = $this->prestaShopContext->getShopId();
         $this->shopUuid = $this->shopUuidManager->getForShop($shopId);
-
-        $this->setLink($this->prestaShopContext->getLink());
 
         // Client can be provided for tests
         if (null === $client) {
@@ -89,7 +89,7 @@ class PslClient extends GenericClient
                         'Accept' => 'application/json',
                         'Authorization' => 'Bearer ' . $this->token->getToken(),
                         'Shop-Id' => $this->shopUuid,
-                        'Hook-Url' => $this->link->getModuleLink(
+                        'Hook-Url' => $this->linkAdapter->getModuleLink(
                             'ps_checkout',
                             'DispatchWebHook',
                             [],

@@ -34,4 +34,9 @@ class CountryAdapter
     {
         return Country::getByIso($isoCode, $active);
     }
+
+    public function getNameById($idLang, $idCountry)
+    {
+        return Country::getNameById((int) $idLang, (int) $idCountry);
+    }
 }

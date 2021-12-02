@@ -20,7 +20,10 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
+use Db;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
+use PsCheckoutCart;
 use Psr\SimpleCache\CacheInterface;
 
 class PayPalOrderProvider
@@ -29,13 +32,18 @@ class PayPalOrderProvider
      * @var CacheInterface
      */
     private $cache;
+    /**
+     * @var Order
+     */
+    private $orderApi;
 
     /**
      * @param CacheInterface $cache
      */
-    public function __construct(CacheInterface $cache)
+    public function __construct(CacheInterface $cache, Order $orderApi)
     {
         $this->cache = $cache;
+        $this->orderApi = $orderApi;
     }
 
     /**
@@ -53,7 +61,7 @@ class PayPalOrderProvider
             return $this->cache->get($id);
         }
 
-        $orderPayPal = new PaypalOrder($id);
+        $orderPayPal = $this->fetchOrder($id);
 
         if (!$orderPayPal->isLoaded()) {
             return false;
@@ -64,5 +72,27 @@ class PayPalOrderProvider
         $this->cache->set($id, $data);
 
         return $data;
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return PaypalOrder
+     */
+    public function fetchOrder($id)
+    {
+        $payPalOrder = new PaypalOrder();
+
+        $response = $this->orderApi->fetch($id);
+
+        if (false === $response['status'] && isset($response['body']['message']) && $response['body']['message'] === 'INVALID_RESOURCE_ID') {
+            Db::getInstance()->delete(PsCheckoutCart::$definition['table'], 'paypal_order = "' . pSQL($id) . '"');
+        }
+
+        if (true === $response['status'] && !empty($response['body'])) {
+            $payPalOrder->setOrder($response['body']);
+        }
+
+        return $payPalOrder;
     }
 }

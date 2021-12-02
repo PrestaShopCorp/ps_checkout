@@ -32,6 +32,7 @@ use OrderPayment;
 use OrderSlip;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShopCollection;
 use PrestaShopDatabaseException;
@@ -71,13 +72,17 @@ class Refund
      */
     private $context;
     /**
-     * @var object|null
+     * @var PaypalAccountRepository
      */
     private $accountRepository;
     /**
-     * @var object|null
+     * @var Order
      */
     private $orderApi;
+    /**
+     * @var PayPalOrderProvider
+     */
+    private $orderProvider;
 
     /**
      * @param bool $refundFromWebhook
@@ -99,6 +104,8 @@ class Refund
         $this->accountRepository = $module->getService('ps_checkout.repository.paypal.account');
         /* @var Order orderApi */
         $this->orderApi = $module->getService('ps_checkout.api.payment.order');
+        /* @var PayPalOrderProvider accountRepository */
+        $this->orderProvider = $module->getService('ps_checkout.paypal.provider.order');
     }
 
     /**
@@ -139,7 +146,7 @@ class Refund
     public function getCaptureId()
     {
         // API call here
-        $response = (new PaypalOrder($this->getPaypalOrderId()))->getOrder();
+        $response = $this->orderProvider->fetchOrder($this->getPaypalOrderId())->getOrder();
 
         if (false === $response['status']) {
             return false;
