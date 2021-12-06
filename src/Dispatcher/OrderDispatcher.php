@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 
 use PrestaShop\Module\PrestashopCheckout\Adapter\ConfigurationAdapter;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Repository\OrderRepository;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 use Ps_checkout;
 use Psr\SimpleCache\CacheInterface;
@@ -51,15 +52,21 @@ class OrderDispatcher implements Dispatcher
      * @var ConfigurationAdapter
      */
     private $configurationAdapter;
+    /**
+     * @var OrderRepository
+     */
+    private $orderRepository;
 
     public function __construct(
         WebHookValidation $webHookValidation,
         Ps_checkout $module,
-        ConfigurationAdapter $configurationAdapter
+        ConfigurationAdapter $configurationAdapter,
+        OrderRepository $orderRepository
     ) {
         $this->webHookValidation = $webHookValidation;
         $this->module = $module;
         $this->configurationAdapter = $configurationAdapter;
+        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -80,7 +87,7 @@ class OrderDispatcher implements Dispatcher
         $this->assignPsCheckoutCart($payload['orderId']);
 
         /** @var int|false $psOrderId */
-        $psOrderId = \Order::getOrderByCartId((int) $this->psCheckoutCart->id_cart);
+        $psOrderId = $this->orderRepository->getOrderByCartId($this->psCheckoutCart->id_cart);
 
         if (false === $psOrderId) {
             throw new PsCheckoutException('No PrestaShop Order associated to this PayPal Order at this time.', PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);

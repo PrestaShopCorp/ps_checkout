@@ -389,6 +389,7 @@ services:
       - '@ps_checkout.validation.webhook'
       - '@ps_checkout.module'
       - '@ps_checkout.adapter.configuration'
+      - '@ps_checkout.repository.order'
 
   ps_checkout.dispatcher.merchant:
     class: 'PrestaShop\Module\PrestashopCheckout\Dispatcher\MerchantDispatcher'

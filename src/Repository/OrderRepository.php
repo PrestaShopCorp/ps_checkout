@@ -20,6 +20,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
+use Db;
+use mysqli_result;
+use Order;
+use PDOStatement;
+use PrestaShopDatabaseException;
+
 /**
  * Class OrderRepository used to interact with the DB order table
  */
@@ -31,13 +37,13 @@ class OrderRepository
      * @param int $shopId
      * @param array $idStates
      *
-     * @return array|bool|\mysqli_result|\PDOStatement|resource
+     * @return array|bool|mysqli_result|PDOStatement|resource
      *
-     * @throws \PrestaShopDatabaseException
+     * @throws PrestaShopDatabaseException
      */
     public function findByStates($shopId, array $idStates)
     {
-        $orders = \Db::getInstance()->executeS('
+        $orders = Db::getInstance()->executeS('
             SELECT o.id_order, o.id_currency, o.current_state, o.total_paid, o.date_add, c.id_customer, c.firstname, c.lastname
             FROM `' . _DB_PREFIX_ . 'orders` o
             INNER JOIN `' . _DB_PREFIX_ . 'customer` c ON (o.id_customer = c.id_customer)
@@ -64,11 +70,20 @@ class OrderRepository
      */
     public function count($shopId)
     {
-        return (int) \Db::getInstance()->getValue('
+        return (int) Db::getInstance()->getValue('
             SELECT COUNT(id_order)
             FROM `' . _DB_PREFIX_ . 'orders`
             WHERE module = "ps_checkout"
             AND id_shop = ' . (int) $shopId
         );
+    }
+
+    /**
+     * @param int $id_cart
+     * @return false|int
+     */
+    public function getOrderByCartId($id_cart)
+    {
+        return Order::getOrderByCartId($id_cart);
     }
 }
