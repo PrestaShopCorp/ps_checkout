@@ -28,6 +28,7 @@ services:
       - '@ps_checkout.paypal.configuration'
       - '@ps_checkout.funding_source.provider'
       - '@ps_checkout.module'
+      - '@ps_checkout.configuration'
 
   ps_checkout.store.module.context:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule'
@@ -44,6 +45,7 @@ services:
       - '@ps_checkout.shop.provider'
       - '@ps_checkout.manager.shopuuid'
       - '@ps_checkout.adapter.link'
+      - '@ps_checkout.configuration'
 
   ps_checkout.store.module.session:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\SessionModule'

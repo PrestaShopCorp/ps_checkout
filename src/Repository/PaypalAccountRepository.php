@@ -331,7 +331,7 @@ class PaypalAccountRepository
      */
     private function isPaymentMethodEnabled($paymentMethod)
     {
-        if (false === \Configuration::hasKey($paymentMethod)) {
+        if (false === $this->configuration->has($paymentMethod)) {
             return true;
         }
 

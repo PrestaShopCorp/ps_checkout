@@ -130,4 +130,11 @@ class PrestaShopConfiguration
 
         return $this;
     }
+
+    public function getGlobalValue($key, array $options = [])
+    {
+        $settings = $this->optionsResolver->resolve($options);
+
+        return Configuration::getGlobalValue($key, $settings['id_lang']);
+    }
 }

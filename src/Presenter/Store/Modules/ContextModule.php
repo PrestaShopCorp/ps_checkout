@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Environment\PslEnv;
 use PrestaShop\Module\PrestashopCheckout\Faq\Faq;
@@ -91,6 +92,10 @@ class ContextModule implements PresenterInterface
      * @var LinkAdapter
      */
     private $linkAdapter;
+    /**
+     * @var PrestaShopConfiguration
+     */
+    private $prestaShopConfiguration;
 
     /**
      * @param string $moduleName
@@ -114,7 +119,8 @@ class ContextModule implements PresenterInterface
         ShopContext $shopContext,
         ShopProvider $shopProvider,
         ShopUuidManager $shopUuidManager,
-        LinkAdapter $linkAdapter
+        LinkAdapter $linkAdapter,
+        PrestaShopConfiguration $prestaShopConfiguration
     ) {
         $this->moduleName = $moduleName;
         $this->moduleKey = $moduleKey;
@@ -127,6 +133,7 @@ class ContextModule implements PresenterInterface
         $this->shopProvider = $shopProvider;
         $this->shopUuidManager = $shopUuidManager;
         $this->linkAdapter = $linkAdapter;
+        $this->prestaShopConfiguration = $prestaShopConfiguration;
     }
 
     /**
@@ -423,11 +430,9 @@ class ContextModule implements PresenterInterface
      */
     public function getBusinessDataCheckValue()
     {
-        return (bool) \Configuration::get(
+        return (bool) $this->prestaShopConfiguration->get(
             'PS_CHECKOUT_BUSINESS_DATA_CHECK',
-            null,
-            null,
-            (int) $this->psContext->getShopId()
+            ['id_shop' => $this->psContext->getShopId()]
         );
     }
 
@@ -438,11 +443,9 @@ class ContextModule implements PresenterInterface
      */
     public function getDataCheckMsgDisplayValue()
     {
-        return (bool) \Configuration::get(
+        return (bool) $this->prestaShopConfiguration->get(
             'PS_CHECKOUT_DISPLAY_DATA_CHECK_MSG',
-            null,
-            null,
-            (int) $this->psContext->getShopId()
+            ['id_shop' => $this->psContext->getShopId()]
         );
     }
 }

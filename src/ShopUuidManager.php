@@ -20,6 +20,10 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Repository\ShopRepository;
+use PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -28,18 +32,36 @@ use Ramsey\Uuid\Uuid;
 class ShopUuidManager
 {
     /**
+     * @var PrestaShopConfiguration
+     */
+    private $prestaShopConfiguration;
+    /**
+     * @var ShopProvider
+     */
+    private $shopProvider;
+    /**
+     * @var ShopRepository
+     */
+    private $shopRepository;
+
+    public function __construct(
+        PrestaShopConfiguration $prestaShopConfiguration,
+        ShopProvider $shopProvider,
+        ShopRepository $shopRepository
+    ) {
+        $this->prestaShopConfiguration = $prestaShopConfiguration;
+        $this->shopProvider = $shopProvider;
+        $this->shopRepository = $shopRepository;
+    }
+
+    /**
      * @param int $idShop
      *
      * @return string
      */
     public function getForShop($idShop)
     {
-        return \Configuration::get(
-            'PS_CHECKOUT_SHOP_UUID_V4',
-            null,
-            null,
-            (int) $idShop
-        );
+        return $this->prestaShopConfiguration->get('PS_CHECKOUT_SHOP_UUID_V4', ['id_shop' => (int) $idShop]);
     }
 
     /**
@@ -57,13 +79,15 @@ class ShopUuidManager
 
         if (false === $this->isSetForShop($idShop)) {
             $uuid4 = Uuid::uuid4();
-            $result = $result && (bool) \Configuration::updateValue(
-                'PS_CHECKOUT_SHOP_UUID_V4',
-                $uuid4->toString(),
-                false,
-                null,
-                (int) $idShop
-            );
+            try {
+                $this->prestaShopConfiguration->set(
+                    'PS_CHECKOUT_SHOP_UUID_V4',
+                    $uuid4->toString(),
+                    ['id_shop' => (int)$idShop]
+                );
+            } catch (PsCheckoutException $exception) {
+                $result = false;
+            }
         }
 
         return $result;
@@ -71,13 +95,19 @@ class ShopUuidManager
 
     public function setForShop($Uuid, $shopId)
     {
-        return (bool) \Configuration::updateValue(
-            'PS_CHECKOUT_SHOP_UUID_V4',
-            $Uuid,
-            false,
-            null,
-            (int) $shopId
-        );
+        $result = true;
+
+        try {
+            $this->prestaShopConfiguration->set(
+                'PS_CHECKOUT_SHOP_UUID_V4',
+                $Uuid,
+                ['id_shop' => (int) $shopId]
+            );
+        } catch (PsCheckoutException $exception) {
+            $result = false;
+        }
+
+        return $result;
     }
 
     /**
@@ -89,7 +119,7 @@ class ShopUuidManager
     {
         $result = true;
 
-        foreach (\Shop::getShops(false, null, true) as $shopId) {
+        foreach ($this->shopRepository->getShops(false, null, true) as $shopId) {
             $result = $result && $this->generateForShop($shopId);
         }
 
@@ -103,14 +133,14 @@ class ShopUuidManager
      */
     public function isSetForShop($idShop)
     {
-        if (true === \Shop::isFeatureActive()
-            && false === \Configuration::hasKey('PS_CHECKOUT_SHOP_UUID_V4', null, null, (int) $idShop)
+        if (true === $this->shopProvider->isFeatureActive()
+            && false === $this->prestaShopConfiguration->has('PS_CHECKOUT_SHOP_UUID_V4', ['id_shop' => (int) $idShop])
         ) {
             return false;
         }
 
-        if (false === \Shop::isFeatureActive()
-            && false === \Configuration::hasKey('PS_CHECKOUT_SHOP_UUID_V4')
+        if (false === $this->shopProvider->isFeatureActive()
+            && false === $this->prestaShopConfiguration->has('PS_CHECKOUT_SHOP_UUID_V4')
         ) {
             return false;
         }

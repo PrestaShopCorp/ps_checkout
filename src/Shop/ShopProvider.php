@@ -119,6 +119,14 @@ class ShopProvider
     }
 
     /**
+     * @return bool|null
+     */
+    public function isFeatureActive()
+    {
+        return Shop::isFeatureActive();
+    }
+
+    /**
      * getShopsProtocol
      *
      * @return array

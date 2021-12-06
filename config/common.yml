@@ -260,6 +260,10 @@ services:
   ps_checkout.manager.shopuuid:
     class: 'PrestaShop\Module\PrestashopCheckout\ShopUuidManager'
     public: true
+    arguments:
+      - '@ps_checkout.configuration'
+      - '@ps_checkout.shop.provider'
+      - '@ps_checkout.repository.shop'
 
   ps_checkout.validator.merchant:
     class: 'PrestaShop\Module\PrestashopCheckout\Validator\MerchantValidator'

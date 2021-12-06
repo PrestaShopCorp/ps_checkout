@@ -10,6 +10,7 @@ use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutSessionException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
 use PrestaShop\Module\PrestashopCheckout\Session\SessionConfiguration;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Simple\FilesystemCache;
 
 class OnboardingSessionManagerTest extends TestCase
@@ -27,13 +28,9 @@ class OnboardingSessionManagerTest extends TestCase
      */
     private $prestaShopConfiguration;
     /**
-     * @var \Context|\PHPUnit_Framework_MockObject_MockObject
+     * @var PrestaShopContext|\PHPUnit_Framework_MockObject_MockObject
      */
     private $context;
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Ps_checkout
-     */
-    private $module;
     /**
      * @var OnboardingSessionManager
      */
@@ -44,15 +41,14 @@ class OnboardingSessionManagerTest extends TestCase
         $this->onboardingSessionRepository = $this->createMock(OnboardingSessionRepository::class);
         $this->sessionConfiguration = new SessionConfiguration();
         $this->prestaShopConfiguration = $this->createMock(PrestaShopConfiguration::class);
-        $this->context = $this->createMock(PrestaShopContext::class);
-        $this->cache = $this->createMock(FilesystemCache::class);
-        $this->onboarding = $this->createMock(Onboarding::class);
+        $this->onboardingApi = $this->createMock(Onboarding::class);
         $this->authenticationApi = $this->createMock(Authentication::class);
-        $this->context->shop->id = 1;
-        $this->module = $this->createConfiguredMock(
-            \Ps_checkout::class,
+        $this->logger = $this->createMock(LoggerInterface::class);
+
+        $this->context = $this->createConfiguredMock(
+            PrestaShopContext::class,
             [
-                'getLogger' => $this->createMock(\Psr\Log\LoggerInterface::class),
+                'getShopId' => 1,
             ]
         );
 
@@ -62,10 +58,9 @@ class OnboardingSessionManagerTest extends TestCase
             $this->onboardingSessionRepository,
             $this->sessionConfiguration,
             $this->prestaShopConfiguration,
-            $this->cache,
             $this->context,
-            $this->module,
-            $this->onboarding,
+            $this->logger,
+            $this->onboardingApi,
             $this->authenticationApi
         );
     }

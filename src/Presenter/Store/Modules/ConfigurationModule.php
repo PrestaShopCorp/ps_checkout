@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use Monolog\Logger;
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
@@ -58,6 +59,10 @@ class ConfigurationModule implements PresenterInterface
      * @var FundingSourceProvider
      */
     private $fundingSourceProvider;
+    /**
+     * @var PrestaShopConfiguration
+     */
+    private $prestaShopConfiguration;
 
     /**
      * @param PayPalPayIn4XConfiguration $payIn4XConfiguration
@@ -65,19 +70,22 @@ class ConfigurationModule implements PresenterInterface
      * @param PayPalConfiguration $paypalConfiguration
      * @param FundingSourceProvider $fundingSourceProvider
      * @param Ps_checkout $module
+     * @param PrestaShopConfiguration $prestaShopConfiguration
      */
     public function __construct(
         PayPalPayIn4XConfiguration $payIn4XConfiguration,
         ExpressCheckoutConfiguration $ecConfiguration,
         PayPalConfiguration $paypalConfiguration,
         FundingSourceProvider $fundingSourceProvider,
-        Ps_checkout $module
+        Ps_checkout $module,
+        PrestaShopConfiguration $prestaShopConfiguration
     ) {
         $this->payIn4XConfiguration = $payIn4XConfiguration;
         $this->ecConfiguration = $ecConfiguration;
         $this->paypalConfiguration = $paypalConfiguration;
         $this->fundingSourceProvider = $fundingSourceProvider;
         $this->module = $module;
+        $this->prestaShopConfiguration = $prestaShopConfiguration;
     }
 
     /**
@@ -112,10 +120,10 @@ class ConfigurationModule implements PresenterInterface
                         'DEBUG' => 'Debug format',
                         'SHORT' => 'Short format',
                     ],
-                    'level' => (int) \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_LEVEL),
-                    'maxFiles' => (int) \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_MAX_FILES),
-                    'http' => (int) \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP),
-                    'httpFormat' => \Configuration::getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP_FORMAT),
+                    'level' => (int) $this->prestaShopConfiguration->getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_LEVEL),
+                    'maxFiles' => (int) $this->prestaShopConfiguration->getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_MAX_FILES),
+                    'http' => (int) $this->prestaShopConfiguration->getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP),
+                    'httpFormat' => $this->prestaShopConfiguration->getGlobalValue(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP_FORMAT),
                 ],
                 'expressCheckout' => [
                     'orderPage' => (bool) $this->ecConfiguration->isOrderPageEnabled(),
