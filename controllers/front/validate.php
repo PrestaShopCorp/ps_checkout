@@ -435,7 +435,9 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
         $message .= $this->module->l('Cart identifier:') . ' ' . (int) $this->context->cart->id . PHP_EOL;
         $message .= $this->module->l('PayPal order identifier:') . ' ' . Tools::safeOutput($paypalOrderId) . PHP_EOL;
         $message .= $this->module->l('Exception identifier:') . ' ' . (int) $exception->getCode() . PHP_EOL;
-        $message .= $this->module->l('Exception detail:') . ' ' . Tools::safeOutput($exception->getMessage()) . PHP_EOL . PHP_EOL;
+        $message .= $this->module->l('Exception detail:') . ' ' . Tools::safeOutput($exception->getMessage())
+            . ($exception->getPrevious() !== null ? ': ' . Tools::safeOutput($exception->getPrevious()->getMessage()) : '')
+            . PHP_EOL . PHP_EOL;
         $message .= $this->module->l('If you need assistance, please contact our Support Team on PrestaShop Checkout configuration page on Help subtab.') . PHP_EOL;
 
         $customerThread = new CustomerThread();
