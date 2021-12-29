@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Repository\OrderRepository;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -214,24 +215,30 @@ class ValidateOrder
             }
 
             if (in_array($transactionStatus, [static::CAPTURE_STATUS_COMPLETED, static::CAPTURE_STATUS_DECLINED])) {
-                $newOrderState = static::CAPTURE_STATUS_COMPLETED === $transactionStatus ? $this->getPaidStatusId($module->currentOrder) : (int) \Configuration::getGlobalValue('PS_OS_ERROR');
-
+                /** @var OrderRepository $orderRepository */
+                $orderRepository = $module->getService('ps_checkout.repository.order');
                 $orderPS = new \Order($module->currentOrder);
-                $currentOrderStateId = (int) $orderPS->getCurrentState();
+                $orderIds = $orderRepository->getOrderIdsByCartId((int) $orderPS->id_cart);
 
-                // If have to change current OrderState from Waiting to Paid or Canceled
-                if ($currentOrderStateId !== $newOrderState) {
-                    $orderHistory = new \OrderHistory();
-                    $orderHistory->id_order = $module->currentOrder;
-                    try {
-                        $orderHistory->changeIdOrderState($newOrderState, $module->currentOrder);
-                        $orderHistory->addWithemail();
-                    } catch (\ErrorException $exception) {
-                        // Notice or warning from PHP
-                        // For example : https://github.com/PrestaShop/PrestaShop/issues/18837
-                        $exceptionHandler->handle($exception, false);
-                    } catch (\Exception $exception) {
-                        $exceptionHandler->handle(new PsCheckoutException('Unable to change PrestaShop OrderState', PsCheckoutException::PRESTASHOP_ORDER_STATE_ERROR, $exception));
+                foreach ($orderIds as $orderId) {
+                    $orderPS = new \Order((int) $orderId);
+                    $newOrderState = static::CAPTURE_STATUS_COMPLETED === $transactionStatus ? $this->getPaidStatusId($orderId) : (int) \Configuration::getGlobalValue('PS_OS_ERROR');
+                    $currentOrderStateId = (int) $orderPS->getCurrentState();
+
+                    // If have to change current OrderState from Waiting to Paid or Canceled
+                    if ($currentOrderStateId !== $newOrderState) {
+                        $orderHistory = new \OrderHistory();
+                        $orderHistory->id_order = $orderId;
+                        try {
+                            $orderHistory->changeIdOrderState($newOrderState, $orderId);
+                            $orderHistory->addWithemail();
+                        } catch (\ErrorException $exception) {
+                            // Notice or warning from PHP
+                            // For example : https://github.com/PrestaShop/PrestaShop/issues/18837
+                            $exceptionHandler->handle($exception, false);
+                        } catch (\Exception $exception) {
+                            $exceptionHandler->handle(new PsCheckoutException('Unable to change PrestaShop OrderState', PsCheckoutException::PRESTASHOP_ORDER_STATE_ERROR, $exception));
+                        }
                     }
                 }
             }

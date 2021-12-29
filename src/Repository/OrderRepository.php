@@ -71,4 +71,29 @@ class OrderRepository
             AND id_shop = ' . (int) $shopId
         );
     }
+
+    /**
+     * @param int $cartId
+     *
+     * @return array|bool|\mysqli_result|\PDOStatement|resource|null
+     *
+     * @throws \PrestaShopDatabaseException
+     */
+    public function getOrderIdsByCartId($cartId)
+    {
+        $query = new \DbQuery();
+        $query->select('id_order')
+            ->from('orders')
+            ->where('id_cart = ' . (int) $cartId);
+
+        $result = \Db::getInstance()->executeS($query);
+
+        if (!empty($result)) {
+            return array_map(function ($orderDetails) {
+                return (int) $orderDetails['id_order'];
+            }, $result);
+        }
+
+        return [];
+    }
 }

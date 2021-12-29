@@ -1,0 +1,4 @@
+services:
+  ps_checkout.repository.order:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\OrderRepository'
+    public: true

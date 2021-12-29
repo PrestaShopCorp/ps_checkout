@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Repository\OrderRepository;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 use Psr\SimpleCache\CacheInterface;
 
@@ -55,30 +56,38 @@ class OrderDispatcher implements Dispatcher
 
         $this->assignPsCheckoutCart($payload['orderId']);
 
-        /** @var int|false $psOrderId */
-        $psOrderId = \Order::getOrderByCartId((int) $this->psCheckoutCart->id_cart);
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        /** @var OrderRepository $orderRepository */
+        $orderRepository = $module->getService('ps_checkout.repository.order');
 
-        if (false === $psOrderId) {
+        $psOrderIds = $orderRepository->getOrderIdsByCartId((int) $this->psCheckoutCart->id_cart);
+
+        if (empty($psOrderIds)) {
             throw new PsCheckoutException('No PrestaShop Order associated to this PayPal Order at this time.', PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
         }
 
-        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REFUNED
-            || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REVERSED) {
-            return $this->dispatchPaymentAction($payload['eventType'], $payload['resource'], $psOrderId);
+        $result = true;
+
+        foreach ($psOrderIds as $psOrderId) {
+            if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REFUNED
+                || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REVERSED) {
+                $result &= $this->dispatchPaymentAction($payload['eventType'], $payload['resource'], $psOrderId);
+            }
+
+            if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_COMPLETED
+                || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_DENIED
+                || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED) {
+                $result &= $this->dispatchPaymentStatus($payload['eventType'], $payload['resource'], $psOrderId);
+            }
+
+//            // For now, if pending, do not change anything
+//            if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_PENDING) {
+//                return true;
+//            }
         }
 
-        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_COMPLETED
-            || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_DENIED
-            || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED) {
-            return $this->dispatchPaymentStatus($payload['eventType'], $payload['resource'], $psOrderId);
-        }
-
-        // For now, if pending, do not change anything
-        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_PENDING) {
-            return true;
-        }
-
-        return true;
+        return $result;
     }
 
     /**
