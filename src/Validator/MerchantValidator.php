@@ -62,7 +62,7 @@ class MerchantValidator
 
         return $this->paypalAccountRepository->onBoardingIsCompleted()
             && $this->paypalAccountRepository->paypalEmailIsValid()
-            && (int) $this->paypalAccountRepository->getPaypalPaymentStatus()
+            && $this->paypalAccountRepository->paypalPaymentMethodIsValid()
             && $this->psAccountRepository->onBoardingIsCompleted()
             && $shopUuid;
     }
