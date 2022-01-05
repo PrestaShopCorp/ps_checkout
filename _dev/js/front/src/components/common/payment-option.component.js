@@ -127,10 +127,17 @@ export class PaymentOptionComponent extends BaseComponent {
     this.renderMark();
     // this.renderButton();
 
-    window.ps_checkout.cta = window.ps_checkout.cta || {};
-    window.ps_checkout.cta[this.data.name] = () => {
-      // console.log(new Error().stack);
-      // console.log(event);
+    const form = document
+      .querySelector(`form[action^="javascript:void('PS_CHECKOUT/${this.data.name}"]`);
+
+    const submitButton = document
+      .querySelector('#payment-confirmation button');
+
+    window.$(form).submit(() => {
+      if (submitButton) {
+        submitButton.removeAttribute('disabled')
+        submitButton.classList.remove('disabled');
+      }
 
       if (window.ps_checkout.config.hostedFields.enabled && this.data.name === "card") {
         return window['csdk'].CheckoutHostedFields.render({
@@ -187,7 +194,7 @@ export class PaymentOptionComponent extends BaseComponent {
             ),
         },
       });
-    };
+    });
 
     window.ps_checkout.events.dispatchEvent(
       new CustomEvent('payment-option-active', {

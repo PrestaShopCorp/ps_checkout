@@ -783,7 +783,7 @@ class Ps_checkout extends PaymentModule
             $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
             $paymentOption->setModuleName($this->name . '-' . $fundingSource->name);
             $paymentOption->setCallToActionText($fundingSource->label);
-            $paymentOption->setAction('javascript:void(ps_checkout.cta.' . $fundingSource->name . '())');
+            $paymentOption->setAction('javascript:void(\'PS_CHECKOUT/' . $fundingSource->name . '\')');
 
             if ('card' === $fundingSource->name && $paypalAccountRepository->cardHostedFieldsIsAvailable()) {
                 $this->context->smarty->assign('modulePath', $this->getPathUri());
