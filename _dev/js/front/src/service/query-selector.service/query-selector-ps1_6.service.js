@@ -67,4 +67,8 @@ export class QuerySelectorPs1_6Service {
       document.querySelectorAll(SELECTORS.PAYMENT_OPTION_RADIOS)
     );
   }
+
+  static getNotificationsContainer() {
+    return document.querySelector(SELECTORS.NOTIFICATIONS_CONTAINER);
+  }
 }

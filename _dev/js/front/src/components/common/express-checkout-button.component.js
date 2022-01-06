@@ -17,6 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 import { BaseComponent } from '../../core/dependency-injection/base.component';
+import { NotificationComponent } from './notification.component';
 
 export class ExpressCheckoutButtonComponent extends BaseComponent {
   static Inject = {
@@ -43,6 +44,10 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
   }
 
   onError(error) {
+    console.log('PRESTAAAAA', this.app, this.props.querySelector);
+    // this.data.notification.showError(error.message);
+    // prestashop.emit('showErrorNextToAddtoCartButton', { errorMessage: error.message});
+    this.notification.showError(error.message);
     return console.error(error);
   }
 
@@ -90,8 +95,12 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
       })
       .render(this.props.querySelector);
   }
+  created() {
+    this.app.root = this;
+  }
 
   render() {
+    this.notification = new NotificationComponent(this.app).render();
     this.renderPayPalButton();
     return this;
   }

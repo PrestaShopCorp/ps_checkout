@@ -78,4 +78,8 @@ export class QuerySelectorService extends BaseClass {
   getPaymentOptionRadios() {
     return this.instance.getPaymentOptionRadios();
   }
+
+  getNotificationsContainer() {
+    return this.instance.getNotificationsContainer();
+  }
 }

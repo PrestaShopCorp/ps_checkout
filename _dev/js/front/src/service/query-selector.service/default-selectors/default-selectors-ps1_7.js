@@ -31,5 +31,6 @@ export const DefaultSelectors1_7 = {
   PAYMENT_OPTIONS: '.payment-options',
   PAYMENT_OPTIONS_LOADER: '#ps_checkout-loader',
   PAYMENT_OPTION_RADIOS:
-    '.payment-options input[type="radio"][name="payment-option"]'
+    '.payment-options input[type="radio"][name="payment-option"]',
+  NOTIFICATIONS_CONTAINER: '#notifications .container'
 };
