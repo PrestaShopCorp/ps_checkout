@@ -66,7 +66,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                         'httpCode' => 400,
                         'body' => [
                             'error' => [
-                                'message' => 'Failed to update cart quantity.',
+                                'message' => $this->module->l("Can't add item to cart."),
                             ],
                         ],
                         'exceptionCode' => null,
@@ -110,7 +110,21 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             $isExpressCheckout = (isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout']) || empty($this->context->cart->id_address_delivery);
 
             if ($isExpressCheckout) {
-                $this->validateCartForExpressCheckout($this->context->cart);
+                /** @var \PrestaShop\Module\PrestashopCheckout\Validator\CartValidator $cartValidator */
+                $cartValidator = $this->module->getService('ps_checkout.validator.cart');
+                if (!$cartValidator->validateCartForExpressCheckout($this->context->cart)) {
+                    $this->exitWithResponse([
+                        'status' => false,
+                        'httpCode' => 400,
+                        'body' => [
+                            'error' => [
+                                'message' => $this->module->l('Not all product are available. Please check product quantities in your cart.'),
+                            ],
+                        ],
+                        'exceptionCode' => null,
+                        'exceptionMessage' => null,
+                    ]);
+                }
             }
 
             $paypalOrder = new PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler($this->context);
@@ -161,35 +175,6 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             );
 
             $this->exitWithExceptionMessage($exception);
-        }
-    }
-
-    private function validateCartForExpressCheckout(Cart $cart)
-    {
-        if (!$cart->checkAllProductsHaveMinimalQuantities()) {
-            $this->exitWithResponse([
-                'status' => false,
-                'httpCode' => 400,
-                'body' => [
-                    'error' => [
-                        'message' => 'Not all products have minimal quantities',
-                    ],
-                ],
-                'exceptionCode' => null,
-                'exceptionMessage' => null,
-            ]);
-        } elseif (!$cart->isAllProductsInStock()) {
-            $this->exitWithResponse([
-                'status' => false,
-                'httpCode' => 400,
-                'body' => [
-                    'error' => [
-                        'message' => 'Some products are out of stock',
-                    ],
-                ],
-                'exceptionCode' => null,
-                'exceptionMessage' => null,
-            ]);
         }
     }
 }

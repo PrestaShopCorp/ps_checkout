@@ -337,6 +337,10 @@ services:
       - '@ps_checkout.express_checkout.configuration'
       - '@ps_checkout.pay_in_4x.configuration'
 
+  ps_checkout.validator.cart:
+    class: 'PrestaShop\Module\PrestashopCheckout\Validator\CartValidator'
+    public: true
+
   ps_checkout.cache.directory:
     class: 'PrestaShop\ModuleLibCacheDirectoryProvider\Cache\CacheDirectoryProvider'
     public: true
