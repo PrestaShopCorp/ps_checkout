@@ -82,6 +82,21 @@ class AbstractFrontController extends ModuleFrontController
         exit;
     }
 
+    protected function exitWithErrorMessage($message, $httpCode, $exceptionCode = null, $exceptionMessage = null)
+    {
+        $this->exitWithResponse([
+            'status' => false,
+            'httpCode' => $httpCode,
+            'body' => [
+                'error' => [
+                    'message' => $message,
+                ],
+            ],
+            'exceptionCode' => null,
+            'exceptionMessage' => null,
+        ]);
+    }
+
     protected function handleExceptionSendingToSentry(Exception $exception)
     {
         $exceptionClass = get_class($exception);

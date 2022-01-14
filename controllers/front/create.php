@@ -61,17 +61,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 );
 
                 if (!$isQuantityAdded) {
-                    $this->exitWithResponse([
-                        'status' => false,
-                        'httpCode' => 400,
-                        'body' => [
-                            'error' => [
-                                'message' => $this->module->l("Can't add item to cart."),
-                            ],
-                        ],
-                        'exceptionCode' => null,
-                        'exceptionMessage' => null,
-                    ]);
+                    $this->exitWithErrorMessage($this->module->l('Could not add item to cart.'), 400);
                 }
 
                 $cart->update();
@@ -113,17 +103,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 /** @var \PrestaShop\Module\PrestashopCheckout\Validator\CartValidator $cartValidator */
                 $cartValidator = $this->module->getService('ps_checkout.validator.cart');
                 if (!$cartValidator->validateCartForExpressCheckout($this->context->cart)) {
-                    $this->exitWithResponse([
-                        'status' => false,
-                        'httpCode' => 400,
-                        'body' => [
-                            'error' => [
-                                'message' => $this->module->l('Not all product are available. Please check product quantities in your cart.'),
-                            ],
-                        ],
-                        'exceptionCode' => null,
-                        'exceptionMessage' => null,
-                    ]);
+                    $this->exitWithErrorMessage($this->module->l('Some products are unavailable. Please update your cart.'), 400);
                 }
             }
 
