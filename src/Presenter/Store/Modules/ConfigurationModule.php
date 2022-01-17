@@ -179,7 +179,7 @@ class ConfigurationModule implements PresenterInterface
         return [
             'showError' => !empty($misConfiguredCurrencies),
             'errorMessage' => sprintf(
-                $this->module->l('Attention: you have activated %s currencies, you need to configure those currencies to use 0 decimals as Paypal does not support decimals for those currencies'),
+                $this->module->l('Attention: you have activated %s currencies, you need to configure those currencies to use 0 decimals as Paypal does not support decimals for those currencies', 'configurationmodule'),
                 implode(', ', $misConfiguredCurrencies)
             ),
         ];
