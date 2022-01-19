@@ -45,7 +45,6 @@ class CreateOrderPayloadBuilder extends Builder
 
         $this->buildBaseNode();
         $this->buildAmountBreakdownNode();
-        $this->buildItemsNode();
 
         if (empty($this->data['ps_checkout']['isExpressCheckout'])) {
             $this->buildShippingNode();
@@ -92,12 +91,12 @@ class CreateOrderPayloadBuilder extends Builder
             'custom_id' => (string) $this->data['cart']['id'],
             'invoice_id' => '',
             'description' => $this->truncate(
-                'Checking out with your cart from ' . $this->data['shop']['name'],
+                'Checking out with your cart ' . $this->data['cart']['id'] . ' from ' . $this->data['shop']['name'],
                 127
             ),
             'amount' => [
                 'currency_code' => $this->data['currency']['iso_code'],
-                'value' => $this->data['totalWithTaxes'],
+                'value' => $this->formatAmount($this->data['totalWithTaxes']),
             ],
             'payee' => [
                 'merchant_id' => $this->data['ps_checkout']['merchant_id'],
@@ -188,16 +187,28 @@ class CreateOrderPayloadBuilder extends Builder
     }
 
     /**
-     * Build the paypal items node
+     * Build the amount breakdown node
      */
-    public function buildItemsNode()
+    public function buildAmountBreakdownNode()
     {
         $node = [];
+        $amountTotal = $this->data['totalWithTaxes'];
+        $breakdownItemTotal = 0;
+        $breakdownTaxTotal = 0;
+        $breakdownShipping = $this->data['totalShippingWithTaxes'];
+        $breakdownHandling = 0;
+        $breakdownDiscount = 0;
 
         foreach ($this->data['products'] as $product) {
-            $paypalItem = [];
-
             $sku = '';
+            $totalWithoutTax = $product['total'];
+            $totalWithTax = $product['total_wt'];
+            $totalTax = $totalWithTax - $totalWithoutTax;
+            $quantity = $product['quantity'];
+            $unitPriceWithoutTax = $this->formatAmount($totalWithoutTax / $quantity);
+            $unitTax = $this->formatAmount($totalTax / $quantity);
+            $breakdownItemTotal += $unitPriceWithoutTax * $quantity;
+            $breakdownTaxTotal += $unitTax * $quantity;
 
             if (false === empty($product['reference'])) {
                 $sku = $product['reference'];
@@ -215,12 +226,7 @@ class CreateOrderPayloadBuilder extends Builder
                 $sku = $product['upc'];
             }
 
-            $totalWithoutTax = $product['total'];
-            $totalWithTax = $product['total_wt'];
-            $quantity = $product['quantity'];
-            $unitPriceWithoutTax = $totalWithoutTax / $quantity;
-            $unitTax = ($totalWithTax - $totalWithoutTax) / $quantity;
-
+            $paypalItem = [];
             $paypalItem['name'] = $this->truncate($product['name'], 127);
             $paypalItem['description'] = false === empty($product['attributes']) ? $this->truncate($product['attributes'], 127) : '';
             $paypalItem['sku'] = $this->truncate($sku, 127);
@@ -234,95 +240,72 @@ class CreateOrderPayloadBuilder extends Builder
             $node['items'][] = $paypalItem;
         }
 
-        $this->getPayload()->addAndMergeItems($node);
-    }
-
-    /**
-     * Build the amount breakdown node
-     */
-    public function buildAmountBreakdownNode()
-    {
-        // define by default the handling at 0
-        $handlingValue = 0;
-        $totalProductWithoutTax = $this->calcTotalProductWithoutTax();
-        $totalTax = $this->calcTotalTax();
-        $totalWithTaxes = $this->data['totalWithTaxes'];
-        $totalShippingWithTaxes = $this->data['totalShippingWithTaxes'];
-
         $node['amount']['breakdown'] = [
             'item_total' => [
                 'currency_code' => $this->data['currency']['iso_code'],
-                'value' => $totalProductWithoutTax,
+                'value' => $this->formatAmount($breakdownItemTotal),
             ],
             'shipping' => [
                 'currency_code' => $this->data['currency']['iso_code'],
-                'value' => $totalShippingWithTaxes,
+                'value' => $this->formatAmount($breakdownShipping),
             ],
             'tax_total' => [
                 'currency_code' => $this->data['currency']['iso_code'],
-                'value' => $totalTax,
+                'value' => $this->formatAmount($breakdownTaxTotal),
             ],
         ];
 
         // set handling cost id needed -> principally used in case of gift_wrapping
         if (!empty($this->data['totalGiftWrappingWithTaxes'])) {
-            $handlingValue += $this->data['totalGiftWrappingWithTaxes'];
-
-            $node['amount']['breakdown']['handling'] = [
-                'currency_code' => $this->data['currency']['iso_code'],
-                'value' => $handlingValue,
-            ];
+            $breakdownHandling += $this->data['totalGiftWrappingWithTaxes'];
         }
 
-        // Calc the discount value. Dicount value can also be used in case of a rounding issue.
-        // PrestaShop and PayPal doesn't handle rounding in the same way. In some cases (eg: amount ended with .35, .55 etc ... with a 10% discount),
-        // the amount value of PrestaShop is different of the value calc by PayPal (paypal always has .1 or .2 more than prestashop).
-        // In order to avoid this difference, we put it into the discount field in order to get the correct value.
-        // (the surplus value (calc by paypal) is deducts from the total amount in order to get the same amount of prestashop)
-        $discount = $totalWithTaxes - $totalProductWithoutTax - $totalTax - $totalShippingWithTaxes - $handlingValue;
+        $remainderValue = $amountTotal - $breakdownItemTotal - $breakdownTaxTotal - $breakdownShipping - $breakdownHandling;
+
+        // In case of rounding issue, if remainder value is negative we use discount value to deduct remainder and if remainder value is positive we use handling value to add remainder
+        if ($remainderValue < 0) {
+            $breakdownDiscount += abs($remainderValue);
+        } else {
+            $breakdownHandling += $remainderValue;
+        }
 
         $node['amount']['breakdown']['discount'] = [
             'currency_code' => $this->data['currency']['iso_code'],
-            'value' => abs($discount),
+            'value' => $this->formatAmount($breakdownDiscount),
+        ];
+
+        $node['amount']['breakdown']['handling'] = [
+            'currency_code' => $this->data['currency']['iso_code'],
+            'value' => $this->formatAmount($breakdownHandling),
         ];
 
         $this->getPayload()->addAndMergeItems($node);
     }
 
     /**
-     * Calc products total amount without tax
+     * Get decimal to round correspondent to the payment currency used
+     * Advise from PayPal: Always round to 2 decimals except for HUF, JPY and TWD
+     * currencies which require a round with 0 decimal
      *
-     * @return float
+     * @return int
      */
-    private function calcTotalProductWithoutTax()
+    private function getNbDecimalToRound()
     {
-        $totalProductsWithoutTax = 0;
-
-        foreach ($this->data['products'] as $product) {
-            $totalWithoutTaxes = $product['total'];
-            $totalProductsWithoutTax += $totalWithoutTaxes;
+        if (in_array($this->data['currency']['iso_code'], ['HUF', 'JPY', 'TWD'], true)) {
+            return 0;
         }
 
-        return $totalProductsWithoutTax;
+        return 2;
     }
 
     /**
-     * Calc the total tax
+     * @param float|int|string $amount
      *
-     * @return float
+     * @return string
      */
-    private function calcTotalTax()
+    private function formatAmount($amount)
     {
-        $totalTax = 0;
-
-        foreach ($this->data['products'] as $product) {
-            $totalWithoutTax = $product['total'];
-            $totalWithTax = $product['total_wt'];
-            $totalTaxAmount = $totalWithTax - $totalWithoutTax;
-            $totalTax += $totalTaxAmount;
-        }
-
-        return $totalTax;
+        return sprintf("%01.{$this->getNbDecimalToRound()}f", $amount);
     }
 
     /**

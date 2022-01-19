@@ -50,6 +50,14 @@ class CreateOrderPayloadBuilderTest extends TestCase
     {
         $itemTotalAmount = 0;
         $itemTotalTax = 0;
+        $amount = $payload['amount']['value'];
+        $breakdownItemTotal = $payload['amount']['breakdown']['item_total']['value'];
+        $breakdownTaxTotal = $payload['amount']['breakdown']['tax_total']['value'];
+        $breakdownShipping = $payload['amount']['breakdown']['shipping']['value'];
+        $breakdownHandling = isset($payload['amount']['breakdown']['handling']['value']) ? $payload['amount']['breakdown']['handling']['value'] : 0;
+        $breakdownInsurance = isset($payload['amount']['breakdown']['insurance']['value']) ? $payload['amount']['breakdown']['insurance']['value'] : 0;
+        $breakdownShippingDiscount = isset($payload['amount']['breakdown']['shipping_discount']['value']) ? $payload['amount']['breakdown']['shipping_discount']['value'] : 0;
+        $breakdownDiscount = $payload['amount']['breakdown']['discount']['value'];
 
         foreach ($payload['items'] as $key => $item) {
             $this->assertTrue($item['unit_amount']['value'] > 0, sprintf('Item %s unit_amount value must be >= 0', var_export($key, true)));
@@ -59,34 +67,25 @@ class CreateOrderPayloadBuilderTest extends TestCase
             $itemTotalTax += $item['tax']['value'] * $item['quantity'];
         }
 
-        $this->assertTrue($payload['amount']['breakdown']['item_total']['value'] > 0, 'amount breakdown item_total value must be > 0');
-        $this->assertTrue($payload['amount']['breakdown']['shipping']['value'] >= 0, 'amount breakdown shipping value must be >= 0');
-        $this->assertTrue($payload['amount']['breakdown']['tax_total']['value'] >= 0, 'amount breakdown tax_total value must be >= 0');
-        $this->assertTrue($payload['amount']['breakdown']['discount']['value'] >= 0, 'amount breakdown discount value must be >= 0 given ' . $payload['amount']['breakdown']['discount']['value']);
-        $this->assertEquals($payload['amount']['breakdown']['item_total']['value'], $itemTotalAmount, 'amount breakdown item_total value not equals');
-        $this->assertEquals($payload['amount']['breakdown']['tax_total']['value'], $itemTotalTax, 'amount breakdown tax_total value not equals');
-
-        if (isset($payload['amount']['breakdown']['insurance']['value'])) {
-            $this->assertTrue($payload['amount']['breakdown']['insurance']['value'] >= 0, 'amount breakdown insurance value must be >= 0');
-        }
-
-        if (isset($payload['amount']['breakdown']['shipping_discount']['value'])) {
-            $this->assertTrue($payload['amount']['breakdown']['shipping_discount']['value'] >= 0, 'amount breakdown shipping_discount value must be >= 0');
-        }
-
-        if (isset($payload['amount']['breakdown']['handling']['value'])) {
-            $this->assertTrue($payload['amount']['breakdown']['handling']['value'] >= 0, 'amount breakdown handling value must be >= 0');
-        }
+        $this->assertTrue($breakdownItemTotal > 0, 'amount breakdown item_total value must be > 0 given ' . $breakdownItemTotal);
+        $this->assertTrue($breakdownShipping >= 0, 'amount breakdown shipping value must be >= 0 given ' . $breakdownShipping);
+        $this->assertTrue($breakdownTaxTotal >= 0, 'amount breakdown tax_total value must be >= 0 given ' . $breakdownTaxTotal);
+        $this->assertTrue($breakdownDiscount >= 0, 'amount breakdown discount value must be >= 0 given ' . $breakdownDiscount);
+        $this->assertEquals($breakdownItemTotal, $itemTotalAmount, 'amount breakdown item_total value not equals given ' . $breakdownItemTotal . ' and ' . $itemTotalAmount);
+        $this->assertEquals($breakdownTaxTotal, $itemTotalTax, 'amount breakdown tax_total value not equals given ' . $breakdownTaxTotal . ' and ' . $itemTotalTax);
+        $this->assertTrue($breakdownInsurance >= 0, 'amount breakdown insurance value must be >= 0 given ' . $breakdownInsurance);
+        $this->assertTrue($breakdownShippingDiscount >= 0, 'amount breakdown shipping_discount value must be >= 0 given ' . $breakdownShippingDiscount);
+        $this->assertTrue($breakdownHandling >= 0, 'amount breakdown handling value must be >= 0 given ' . $breakdownHandling);
 
         $this->assertEquals(
-            $payload['amount']['value'],
-            $payload['amount']['breakdown']['item_total']['value']
-            + $payload['amount']['breakdown']['tax_total']['value']
-            + $payload['amount']['breakdown']['shipping']['value']
-            + (isset($payload['amount']['breakdown']['handling']['value']) ? $payload['amount']['breakdown']['handling']['value'] : 0)
-            + (isset($payload['amount']['breakdown']['insurance']['value']) ? $payload['amount']['breakdown']['insurance']['value'] : 0)
-            - (isset($payload['amount']['breakdown']['shipping_discount']['value']) ? $payload['amount']['breakdown']['shipping_discount']['value'] : 0)
-            - $payload['amount']['breakdown']['discount']['value'],
+            $amount,
+            $breakdownItemTotal
+            + $breakdownTaxTotal
+            + $breakdownShipping
+            + $breakdownHandling
+            + $breakdownInsurance
+            - $breakdownShippingDiscount
+            - $breakdownDiscount,
             'amount value not equals'
         );
     }
@@ -572,7 +571,7 @@ class CreateOrderPayloadBuilderTest extends TestCase
                         'manufacturer_name' => 'Graphic Corner',
                         'on_sale' => '0',
                         'ecotax' => '0.000000',
-                        'additional_shipping_cost' => '0.000000',
+                        'additional_shipping_cost' => '10.000000',
                         'available_for_order' => '1',
                         'show_price' => '1',
                         'price' => 0.37,
