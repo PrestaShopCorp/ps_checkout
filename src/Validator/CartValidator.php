@@ -26,6 +26,6 @@ class CartValidator
 {
     public function validateCartForExpressCheckout(Cart $cart)
     {
-        return $cart->checkProductsAccess() && $cart->isAllProductsInStock() && $cart->checkQuantities();
+        return !$cart->checkProductsAccess() && $cart->isAllProductsInStock() && $cart->checkQuantities();
     }
 }
