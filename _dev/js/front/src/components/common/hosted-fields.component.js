@@ -169,7 +169,10 @@ export class HostedFieldsComponent extends BaseComponent {
 
     this.data.conditions &&
       this.data.conditions.onChange(() => {
-        this.data.HTMLElementButton.disabled = !this.isSubmittable();
+        // In some PS versions, the handler fails to disable the button because of the timing.
+        setTimeout(() => {
+          this.data.HTMLElementButton.disabled = !this.isSubmittable();
+        }, 0);
       });
   }
 

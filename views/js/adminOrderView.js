@@ -214,10 +214,21 @@ const {$} = window;
           });
 
           payPalRefundRequest.fail(function(jqXHR, textStatus, errorThrown) {
-            $(refundModalNotificationContainer).append(payPalOrderNotification.createErrorHTMLElement({
-              text: errorThrown,
-              class: 'danger',
-            }));
+            if (undefined !== errorThrown && errorThrown) {
+              $(refundModalNotificationContainer).append(payPalOrderNotification.createErrorHTMLElement({
+                text: errorThrown,
+                class: 'danger',
+              }));
+            }
+
+            if (undefined !== jqXHR.responseJSON && undefined !== jqXHR.responseJSON.errors) {
+              jqXHR.responseJSON.errors.forEach(function (error) {
+                $(refundModalNotificationContainer).append(payPalOrderNotification.createErrorHTMLElement({
+                  text: error,
+                  class: 'danger',
+                }));
+              });
+            }
 
             if (undefined !== jqXHR.responseJSON && undefined !== jqXHR.responseJSON.content) {
               $(refundModalNotificationContainer).append(payPalOrderNotification.createErrorHTMLElement({
@@ -227,6 +238,7 @@ const {$} = window;
             }
 
             $(refundModalLoaderContainer).hide();
+            refundModalSubmitButton.prop('disabled', false);
           });
         });
       });
