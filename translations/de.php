@@ -84,7 +84,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_f5d74ea75357b5e139854c1
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_fc9aab144255fe59fc53dea649cff88b'] = 'Rückerstattung bestätigen';
 $_MODULE['<{ps_checkout}prestashop>cursedpage_960567c486a23f5e75891b735928c8ba'] = 'Gehen Sie zurück zur Modulkonfiguration';
 $_MODULE['<{ps_checkout}prestashop>cursedpage_df2183ab7d5bfd58187077969f08c7f8'] = 'Bei PayPal-Onboarding ist ein Fehler aufgetreten, bitte versuchen Sie es erneut.';
-$_MODULE['<{ps_checkout}prestashop>displayexpresscheckout_2f2401d57093e7d31bf2689fb87f72f6'] = '100 % sichere Zahlungen';
+$_MODULE['<{ps_checkout}prestashop>displayexpresscheckout_2f2401d57093e7d31bf2689fb87f72f6'] = '100 % sichere Zahlungen';
 $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_034347c8ea2ce26879ee1fee0b5e58ca'] = 'Ihre Bestellung wartet auf die Zahlungsbestätigung. Sie erhalten eine E-Mail, wenn Ihre Zahlung validiert wurde. Sie können den Bestellstatus auch in Ihrer Bestellhistorie in Ihrem Konto überprüfen.';
 $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_32187a5bef114c112c1ef96ca2e3da1a'] = 'Ihre Bestellung wird bestätigt.';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_1e9307ff80da8e2e7053566f1613cf90'] = 'dreistelliger';
@@ -96,7 +96,7 @@ $_MODULE['<{ps_checkout}prestashop>displaypayment_a44217022190f5734b2f72ba1e4f8a
 $_MODULE['<{ps_checkout}prestashop>displaypayment_fa29fdc19f1d3ac45b09645c15c5312b'] = 'Der Sicherheitscode ist ein';
 $_MODULE['<{ps_checkout}prestashop>displaypaymentbybinaries_d7467080ec566ee0c6cb59242ee28fa5'] = 'Um Ihre Bestellung bearbeiten zu können, müssen Sie die Allgemeinen Geschäftsbedingungen akzeptieren.';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_733ea3e302b9c48da7777481ed50e59a'] = 'Die Bearbeitung der Zahlung wurde abgebrochen, bitte wählen Sie eine andere Zahlungsmethode oder versuchen Sie es erneut.';
-$_MODULE['<{ps_checkout}prestashop>displayproductadditionalinfo_2f2401d57093e7d31bf2689fb87f72f6'] = '100 % sichere Zahlungen';
+$_MODULE['<{ps_checkout}prestashop>displayproductadditionalinfo_2f2401d57093e7d31bf2689fb87f72f6'] = '100 % sichere Zahlungen';
 $_MODULE['<{ps_checkout}prestashop>expresscheckout_26a07aefd353e71a3ea90ef991d812ae'] = 'Schneller Checkout';
 $_MODULE['<{ps_checkout}prestashop>expresscheckout_e81c4e4f2b7b93b481e13a8553c2ae1b'] = 'oder';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_100e10b5e05d4b3abd2cd52fd12e8789'] = 'Bei der Bezahlung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder wenden Sie sich an das Support-Team.';
@@ -396,7 +396,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_7e87484272c2e328136e9d2bba0d8b27
 $_MODULE['<{ps_checkout}prestashop>translations_7ec35321dd6ed2f0c30fccee83d15a2a'] = 'Bankverbindung';
 $_MODULE['<{ps_checkout}prestashop>translations_7f2a1b59ac1ab6d2d892dbbf4f132c40'] = 'Frau';
 $_MODULE['<{ps_checkout}prestashop>translations_7f79b3c1755a6eaf27e27a183a675477'] = 'Verfügbarkeit von Kreditkarten auf Eis gelegt';
-$_MODULE['<{ps_checkout}prestashop>translations_807235d3474190247606812059b87a5f'] = 'Sobald PayPal alle Dokumente erhalten hat, müssen Sie 48 Stunden auf die endgültige Genehmigung warten.';
+$_MODULE['<{ps_checkout}prestashop>translations_807235d3474190247606812059b87a5f'] = 'Sobald PayPal alle Dokumente erhalten hat, müssen Sie 48 Stunden auf die endgültige Genehmigung warten.';
 $_MODULE['<{ps_checkout}prestashop>translations_8102d556eface36002bd4e3aef4f4acd'] = 'Alle Transaktionen';
 $_MODULE['<{ps_checkout}prestashop>translations_8215900bbe4e4ddcac7968eefb28256d'] = 'Sie können Kartentransaktionen im Wert von';
 $_MODULE['<{ps_checkout}prestashop>translations_829cfbd41011647bf986de5c30a808d3'] = 'Melden Sie sich an, um alle Zahlungsmethoden für Ihre Kunden bereitzustellen.  ';
