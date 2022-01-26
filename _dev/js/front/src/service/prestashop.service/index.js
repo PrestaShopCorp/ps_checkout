@@ -68,6 +68,14 @@ export class PrestashopService {
     return this.instance.isLogged();
   }
 
+  isGuestCheckoutEnabled() {
+    return this.instance.isGuestCheckoutEnabled();
+  }
+
+  hasProductInCart() {
+    return this.instance.hasProductInCart();
+  }
+
   getVersion() {
     if (!window.prestashop) {
       return PS_VERSION_1_6;

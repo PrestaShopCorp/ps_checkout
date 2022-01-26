@@ -31,5 +31,12 @@ export const DefaultSelectors1_7 = {
   PAYMENT_OPTIONS: '.payment-options',
   PAYMENT_OPTIONS_LOADER: '#ps_checkout-loader',
   PAYMENT_OPTION_RADIOS:
-    '.payment-options input[type="radio"][name="payment-option"]'
+    '.payment-options input[type="radio"][name="payment-option"]',
+
+  EXPRESS_CHECKOUT_CONTAINER_PRODUCT_PAGE:
+    '#product .product-add-to-cart .product-quantity',
+  EXPRESS_CHECKOUT_CONTAINER_CART_PAGE:
+    '#cart .cart-summary .cart-detailed-actions',
+  EXPRESS_CHECKOUT_CONTAINER_CHECKOUT_PAGE:
+    '#checkout-personal-information-step .content'
 };
