@@ -61,6 +61,12 @@
       </b-alert>
     </div>
 
+    <div class="container" v-if="showMisconfiguredCurrenciesError">
+      <b-alert variant="danger" show>
+        <p>{{ misconfiguredCurrenciesErrorMessage }}</p>
+      </b-alert>
+    </div>
+
     <div class="container" v-if="isTestMode">
       <b-alert variant="warning" show>
         <p>{{ $t('general.testModeOn') }}</p>
@@ -172,6 +178,13 @@
       },
       paypalIsActive() {
         return this.$store.state.paypal.paypalIsActive;
+      },
+      showMisconfiguredCurrenciesError() {
+        return this.$store.state.configuration.nonDecimalCurrencies.showError;
+      },
+      misconfiguredCurrenciesErrorMessage() {
+        return this.$store.state.configuration.nonDecimalCurrencies
+          .errorMessage;
       }
     },
     watch: {
