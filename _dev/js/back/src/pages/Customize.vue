@@ -19,6 +19,21 @@
 <template>
   <div>
     <b-container class="mb-4">
+      <b-alert variant="warning" :show="shopIsUsingCustomTheme">
+        <p>
+          {{ $t('pages.customize.customThemeWarningMessage1') }}
+          <a
+            href="https://github.com/PrestaShopCorp/ps_checkout/wiki"
+            target="_blank"
+            class="link-underline"
+          >
+            {{ $t('pages.customize.customThemeWarningMessage2') }}
+          </a>.
+        </p>
+      </b-alert>
+    </b-container>
+
+    <b-container class="mb-4">
       <ActivePayment />
     </b-container>
 
@@ -62,7 +77,18 @@
       },
       payIn4XActiveForMerchant() {
         return this.$store.state.configuration.payIn4X.activeForMerchant;
+      },
+      shopIsUsingCustomTheme() {
+        return this.$store.state.context.isCustomTheme;
       }
     }
   };
 </script>
+
+<style scoped>
+  #app a.link-underline {
+    color: inherit;
+    text-decoration: underline;
+    font-weight: bold;
+  }
+</style>

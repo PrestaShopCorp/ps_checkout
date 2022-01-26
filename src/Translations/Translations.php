@@ -132,6 +132,10 @@ class Translations
                     'goBackToLogin' => $this->module->l('Go back to login', 'translations'),
                     'reset' => $this->module->l('Reset', 'translations'),
                 ],
+                'customize' => [
+                    'customThemeWarningMessage1' => $this->module->l('All custom themes might not be fully compatible. To avoid potential integration issues on payment page,', 'translations'),
+                    'customThemeWarningMessage2' => $this->module->l('please check our list of customizable settings', 'translations'),
+                ],
             ],
             'firebase' => [
                 'error' => [

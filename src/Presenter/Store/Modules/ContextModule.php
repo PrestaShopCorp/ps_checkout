@@ -159,6 +159,7 @@ class ContextModule implements PresenterInterface
                 'overridesExist' => $this->overridesExist(),
                 'submitIdeaLink' => $this->getSubmitIdeaLink(),
                 'orderTotal' => (new OrderRepository())->count($this->psContext->getShopId()),
+                'isCustomTheme' => $this->shopUsesCustomTheme(),
             ],
         ];
     }
@@ -397,5 +398,10 @@ class ContextModule implements PresenterInterface
             default:
                 return 'https://www.prestashop.com/en/prestashop-checkout';
         }
+    }
+
+    private function shopUsesCustomTheme()
+    {
+        return !in_array($this->psContext->getCurrentThemeName(), ['classic', 'default-bootstrap']);
     }
 }
