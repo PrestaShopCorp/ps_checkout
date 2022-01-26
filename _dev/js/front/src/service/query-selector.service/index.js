@@ -78,4 +78,16 @@ export class QuerySelectorService extends BaseClass {
   getPaymentOptionRadios() {
     return this.instance.getPaymentOptionRadios();
   }
+
+  getCheckoutExpressCheckoutButtonContainerCart() {
+    return this.instance.getCheckoutExpressCheckoutButtonContainerCart();
+  }
+
+  getCheckoutExpressCheckoutButtonContainerCheckout() {
+    return this.instance.getCheckoutExpressCheckoutButtonContainerCheckout();
+  }
+
+  getCheckoutExpressCheckoutButtonContainerProduct() {
+    return this.instance.getCheckoutExpressCheckoutButtonContainerProduct();
+  }
 }

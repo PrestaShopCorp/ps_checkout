@@ -285,6 +285,7 @@
 
 #order-opc .ps_checkout-express-separator {
   padding: 10px 0;
+  width: 270px;
 }
 
 .ps_checkout-express-separator:before, .ps_checkout-express-separator:after{

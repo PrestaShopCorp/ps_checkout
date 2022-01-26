@@ -25,6 +25,8 @@ export const PayPalSdkConfig = {
   orderId: window.ps_checkoutPayPalOrderId,
   clientToken: window.ps_checkoutPayPalClientToken,
   buttonCustomization: window.ps_checkoutPayPalButtonConfiguration,
+  expressCheckoutButtonCustomization:
+    window.ps_checkoutExpressCheckoutButtonCustomization,
   hostedFieldsCustomization:
     window.ps_checkoutHostedFieldsCustomizationConfiguration
 };
