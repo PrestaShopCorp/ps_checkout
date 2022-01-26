@@ -550,17 +550,30 @@ class Ps_checkout extends PaymentModule
         if ('product' !== Tools::getValue('controller')
             || !isset($params['type'])
             || $params['type'] !== 'weight'
-            || !Validate::isLoadedObject($this->context->cart)
+            || empty($params['product'])
         ) {
             return '';
+        }
+
+        $price = 0;
+
+        if (isset($params['product']->price_amount)) {
+            // $params['product'] is a ProductLazyArray since PrestaShop 1.7.5.0
+            $price = $params['product']->price_amount;
+        } elseif ($params['product'] instanceof Product) {
+            // $params['product'] is an instance of Product before 1.7.5.0
+            $id_product_attribute = Tools::getValue('id_product_attribute', null);
+            $price = $params['product']->getPrice(
+                Product::$_taxCalculationMethod == PS_TAX_INC,
+                null !== $id_product_attribute ? (int) $id_product_attribute : null
+            );
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
         $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
 
-        $totalCartPrice = $this->context->cart->getSummaryDetails();
         $this->context->smarty->assign([
-            'totalCartPrice' => $totalCartPrice['total_price'],
+            'totalCartPrice' => sprintf('%01.2f', $price),
             'payIn4XisProductPageEnabled' => $payIn4XService->isProductPageEnabled(),
         ]);
 
