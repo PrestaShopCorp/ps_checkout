@@ -890,7 +890,7 @@ class Ps_checkout extends PaymentModule
                 ),
             ];
             $track = 'View Payment Methods PS Page';
-            $template = '/views/templates/hook/adminAfterHeader/promotionBlock.tpl';
+            $template = 'views/templates/hook/adminAfterHeader/promotionBlock.tpl';
         } elseif ('AdminCountries' === Tools::getValue('controller') && $isFullyOnboarded) {
             $params = [
                 'isShop17' => $isShop17,
@@ -900,7 +900,7 @@ class Ps_checkout extends PaymentModule
                 'paymentPreferencesLink' => $moduleContext->getGeneratedLink($isShop17 ? 'AdminPaymentPreferences' : 'AdminPayment'),
             ];
             $track = 'View Countries PS Page';
-            $template = '/views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
+            $template = 'views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
         } elseif ('AdminCurrencies' === Tools::getValue('controller') && $isFullyOnboarded) {
             $params = [
                 'isShop17' => $isShop17,
@@ -910,7 +910,7 @@ class Ps_checkout extends PaymentModule
                 'paymentPreferencesLink' => $moduleContext->getGeneratedLink($isShop17 ? 'AdminPaymentPreferences' : 'AdminPayment'),
             ];
             $track = 'View Currencies PS Page';
-            $template = '/views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
+            $template = 'views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
         } else {
             return false;
         }
