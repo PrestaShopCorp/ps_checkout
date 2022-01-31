@@ -171,7 +171,7 @@ class ConfigurationModule implements PresenterInterface
         $misConfiguredCurrencies = [];
 
         foreach ($currencies as $currency) {
-            if (in_array($currency['iso_code'], $nonDecimalCurrencies) && (int) $currency['precision'] !== 0) {
+            if (in_array($currency['iso_code'], $nonDecimalCurrencies) && $this->checkCurrencyPrecision($currency)) {
                 $misConfiguredCurrencies[] = $currency['iso_code'];
             }
         }
@@ -179,9 +179,23 @@ class ConfigurationModule implements PresenterInterface
         return [
             'showError' => !empty($misConfiguredCurrencies),
             'errorMessage' => sprintf(
-                $this->module->l('Attention: you have activated %s currencies, you need to configure those currencies to use 0 decimals as Paypal does not support decimals for those currencies', 'configurationmodule'),
+                $this->module->l('Attention: you have activated %s currencies, you need to configure those currencies to use 0 decimals as PayPal does not support decimals for those currencies', 'configurationmodule'),
                 implode(', ', $misConfiguredCurrencies)
             ),
         ];
+    }
+
+    /**
+     * @param array $currency
+     *
+     * @return bool
+     */
+    private function checkCurrencyPrecision($currency)
+    {
+        if (isset($currency['precision'])) {
+            return (int) $currency['precision'] !== 0;
+        }
+
+        return (int) $currency['decimals'] !== 0;
     }
 }
