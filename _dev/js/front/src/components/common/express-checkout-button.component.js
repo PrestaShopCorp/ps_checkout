@@ -44,7 +44,7 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
   }
 
   onError(error) {
-    this.notification.showError(error.message);
+    this.errorModal.showError(error.message);
     return console.error(error);
   }
 
@@ -97,7 +97,7 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
   }
 
   render() {
-    this.notification = new ErrorModalComponent(this.app, this.props).render();
+    this.errorModal = new ErrorModalComponent(this.app, this.props);
     this.renderPayPalButton();
     return this;
   }

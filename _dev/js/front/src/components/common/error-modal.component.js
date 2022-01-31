@@ -40,7 +40,7 @@ export class ErrorModalComponent extends BaseComponent {
     this.overlay.classList.add('ps-checkout', 'overlay');
 
     this.popup = document.createElement('div');
-    this.popup.classList.add('ps-checkout', 'popup', 'alert', 'alert-danger');
+    this.popup.classList.add('ps-checkout', 'popup');
 
     this.text = document.createElement('h1');
     this.text.classList.add('ps-checkout', 'text');
@@ -50,7 +50,7 @@ export class ErrorModalComponent extends BaseComponent {
     this.subtext.classList.add('ps-checkout', 'subtext');
 
     this.refreshButton = document.createElement('button');
-    this.refreshButton.classList.add('btn', 'btn-danger');
+    this.refreshButton.classList.add('btn', 'btn-primary');
     this.refreshButton.innerHTML = this.$('error-modal.component.button.label');
     this.refreshButton.setAttribute('onClick', 'window.location.reload();')
 
@@ -69,8 +69,8 @@ export class ErrorModalComponent extends BaseComponent {
     document.body.style.overflow = 'hidden';
   }
 
-  hide() {
-    this.overlay.classList.remove('visible');
+  remove() {
+    this.overlay.remove();
     document.body.style.overflow = '';
   }
 }
