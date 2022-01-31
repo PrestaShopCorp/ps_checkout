@@ -50,7 +50,7 @@ class Onboarding extends PslClient
             return false;
         }
 
-        $shopUuid = $response['body']['account_id'];
+        $shopUuid = $response['body']['shop_uid'];
 
         // Update the shop UUID in DB
         /** @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration */
@@ -62,17 +62,17 @@ class Onboarding extends PslClient
     }
 
     /**
-     * Create shop from PSL
+     * Collects acount data for shop from PSL
      *
      * @param array $data
      *
      * @return array|false (ResponseApiHandler class)
      */
-    public function createShop(array $data)
+    public function collectAccountData(array $data)
     {
         $openedOnboardingSession = $this->getOpenedSession();
 
-        $this->setRoute('/shops');
+        $this->setRoute('/accounts/' . $this->shopUuid . '/collect-data');
 
         $response = $this->post([
             'headers' => [

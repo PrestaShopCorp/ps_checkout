@@ -133,7 +133,7 @@ class OnboardingStateHandler
             $errors = (new PsxDataValidation())->validateData($psxForm);
 
             // TODO : Remove this part after implement SSE + Full CQRS
-            $createShop = $this->onboardingApi->createShop(array_filter($psxForm));
+            $createShop = $this->onboardingApi->collectAccountData(array_filter($psxForm));
 
             if ($createShop['status']) {
                 $onboard = $this->onboardingApi->onboard();

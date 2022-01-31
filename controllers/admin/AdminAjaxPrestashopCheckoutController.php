@@ -1121,7 +1121,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 ],
             ]);
         } else {
-            $response = $onboardingApi->createShop(array_filter($psxForm));
+            $response = $onboardingApi->collectAccountData(array_filter($psxForm));
         }
 
         if (!$response['status']) {
