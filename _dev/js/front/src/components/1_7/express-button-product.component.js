@@ -21,26 +21,22 @@ import { ExpressCheckoutButtonComponent } from '../common/express-checkout-butto
 
 export class ExpressButtonProductComponent extends BaseComponent {
   static Inject = {
-    htmlElementService: 'HTMLElementService',
+    querySelectorService: 'QuerySelectorService',
     psCheckoutApi: 'PsCheckoutApi',
     prestashopService: 'PrestashopService'
   };
 
   created() {
-    this.buttonContainer = this.htmlElementService.getCheckoutExpressProductButtonContainer(
-      true
-    );
+    this.buttonReferenceContainer = this.querySelectorService.getCheckoutExpressCheckoutButtonContainerProduct();
   }
 
   render() {
     this.checkoutExpressButton = document.createElement('div');
     this.checkoutExpressButton.id = 'ps-checkout-express-button';
 
-    const productQuantityHTMLElement = this.buttonContainer.querySelector(
-      '.product-quantity'
-    ).nextElementSibling;
+    const productQuantityHTMLElement = this.buttonReferenceContainer.nextElementSibling;
 
-    this.buttonContainer.insertBefore(
+    this.buttonReferenceContainer.parentNode.insertBefore(
       this.checkoutExpressButton,
       productQuantityHTMLElement
     );
