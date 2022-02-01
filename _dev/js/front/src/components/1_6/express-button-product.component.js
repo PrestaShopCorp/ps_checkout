@@ -21,10 +21,14 @@ import { ExpressCheckoutButtonComponent } from '../common/express-checkout-butto
 
 export class ExpressButtonProductComponent extends BaseComponent {
   static Inject = {
-    htmlElementService: 'HTMLElementService',
+    querySelectorService: 'QuerySelectorService',
     psCheckoutApi: 'PsCheckoutApi',
     prestashopService: 'PrestashopService'
   };
+
+  created() {
+    this.buttonReferenceContainer = this.querySelectorService.getCheckoutExpressCheckoutButtonContainerProduct();
+  }
 
   render() {
     this.checkoutExpressButton = document.createElement('p');
@@ -34,8 +38,7 @@ export class ExpressButtonProductComponent extends BaseComponent {
       'no-print'
     );
 
-    const buttonContainer = document.querySelector('#add_to_cart')
-      .parentElement;
+    const buttonContainer = this.buttonReferenceContainer.parentNode;
 
     buttonContainer.append(this.checkoutExpressButton);
 
