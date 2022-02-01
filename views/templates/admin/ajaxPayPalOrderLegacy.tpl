@@ -117,9 +117,9 @@
                       {l s='See on PayPal' mod='ps_checkout'}
                   </a>
                     {if $orderPayPalTransaction.isRefundable}
-                      <button type="button" class="btn btn-primary btn-sm refund" data-transaction-id="{$orderPayPalTransaction.id|escape:'html':'UTF-8'}">
+                      <a class="btn btn-primary btn-sm refund" data-transaction-id="{$orderPayPalTransaction.id|escape:'html':'UTF-8'}">
                           {l s='Refund' mod='ps_checkout'}
-                      </button>
+                      </a>
                     {/if}
                 </div>
               </div>
