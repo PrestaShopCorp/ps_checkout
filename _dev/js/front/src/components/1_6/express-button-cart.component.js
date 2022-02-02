@@ -21,18 +21,14 @@ import { ExpressCheckoutButtonComponent } from '../common/express-checkout-butto
 
 export class ExpressButtonCartComponent extends BaseComponent {
   static Inject = {
+    querySelectorService: 'QuerySelectorService',
     prestashopService: 'PrestashopService',
     psCheckoutApi: 'PsCheckoutApi',
     $: '$'
   };
 
-  getButtonContainer() {
-    const selector = '#HOOK_SHOPPING_CART_EXTRA';
-    return document.querySelector(selector);
-  }
-
   created() {
-    this.buttonContainer = this.getButtonContainer();
+    this.buttonReferenceContainer = this.querySelectorService.getCheckoutExpressCheckoutButtonContainerCart();
   }
 
   renderComponent() {
@@ -47,8 +43,8 @@ export class ExpressButtonCartComponent extends BaseComponent {
     separatorText.classList.add('ps_checkout-express-separator');
     separatorText.innerText = this.$('express-button.cart.separator');
 
-    this.buttonContainer.append(separatorText);
-    this.buttonContainer.append(this.checkoutExpressButton);
+    this.buttonReferenceContainer.append(separatorText);
+    this.buttonReferenceContainer.append(this.checkoutExpressButton);
 
     this.children.expressCheckoutButton = new ExpressCheckoutButtonComponent(
       this.app,
@@ -66,7 +62,7 @@ export class ExpressButtonCartComponent extends BaseComponent {
   }
 
   render() {
-    if (!this.buttonContainer) return;
+    if (!this.buttonReferenceContainer) return;
 
     this.renderComponent();
     this.prestashopService.onUpdatedShoppingCartExtra(() =>

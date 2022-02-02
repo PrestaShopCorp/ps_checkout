@@ -21,26 +21,14 @@ import { ExpressCheckoutButtonComponent } from '../common/express-checkout-butto
 
 export class ExpressButtonCheckoutComponent extends BaseComponent {
   static Inject = {
-    htmlElementService: 'HTMLElementService',
+    querySelectorService: 'QuerySelectorService',
     prestashopService: 'PrestashopService',
     psCheckoutApi: 'PsCheckoutApi',
     $: '$'
   };
 
-  getButtonContainer() {
-    if (this.prestashopService.isOrderPersonalInformationStepPage() && !this.prestashopService.isNativeOnePageCheckoutPage()) {
-      return document.querySelector('#create-account_form');
-    }
-
-    if (this.prestashopService.isNativeOnePageCheckoutPage()) {
-      return document.querySelector('#opc_account_choice .opc-button');
-    }
-
-    return document.querySelector('#opc_account_form');
-  }
-
   created() {
-    this.buttonContainer = this.getButtonContainer();
+    this.buttonReferenceContainer = this.querySelectorService.getCheckoutExpressCheckoutButtonContainerCheckout();
   }
 
   renderTitle() {
@@ -50,7 +38,7 @@ export class ExpressButtonCheckoutComponent extends BaseComponent {
       'express-button.checkout.express-checkout'
     );
 
-    this.buttonContainer.prepend(this.checkoutExpressTitle);
+    this.buttonReferenceContainer.prepend(this.checkoutExpressTitle);
   }
 
   render() {
@@ -79,13 +67,13 @@ export class ExpressButtonCheckoutComponent extends BaseComponent {
       separatorText.classList.add('ps_checkout-express-separator');
       separatorText.innerText = this.$('express-button.cart.separator');
 
-      this.buttonContainer.append(separatorText);
-      this.buttonContainer.append(this.checkoutExpressButton);
+      this.buttonReferenceContainer.append(separatorText);
+      this.buttonReferenceContainer.append(this.checkoutExpressButton);
 
       return this;
     }
 
-    this.buttonContainer.prepend(this.checkoutExpressButton);
+    this.buttonReferenceContainer.prepend(this.checkoutExpressButton);
 
     this.renderTitle();
 
