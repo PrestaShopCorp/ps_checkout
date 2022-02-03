@@ -96,6 +96,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
                 $this->payload['order']['shipping']['address']['address_line_1'],
                 false === empty($this->payload['order']['shipping']['address']['address_line_2']) ? $this->payload['order']['shipping']['address']['address_line_2'] : '',
                 $this->payload['order']['shipping']['address']['postal_code'],
+                false === empty($this->payload['order']['shipping']['address']['admin_area_1']) ? $this->payload['order']['shipping']['address']['admin_area_1'] : '',
                 $this->payload['order']['shipping']['address']['admin_area_2'],
                 $this->payload['order']['shipping']['address']['country_code'],
                 false === empty($this->payload['order']['payer']['phone']) ? $this->payload['order']['payer']['phone']['phone_number']['national_number'] : ''
@@ -193,7 +194,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         try {
             $customer->save();
         } catch (Exception $exception) {
-            throw new PsCheckoutException($exception->getMessage(), PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_CANNOT_SAVE_CUSTOMER);
+            throw new PsCheckoutException($exception->getMessage(), PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_CANNOT_SAVE_CUSTOMER, $exception);
         }
 
         return $customer;
@@ -209,6 +210,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
      * @param string $address1
      * @param string $address2
      * @param string $postcode
+     * @param string $state
      * @param string $city
      * @param string $countryIsoCode
      * @param string $phone
@@ -223,6 +225,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $address1,
         $address2,
         $postcode,
+        $state,
         $city,
         $countryIsoCode,
         $phone
@@ -233,9 +236,14 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
 
         $country = new Country((int) $idCountry);
 
-        if (0 === (int) $country->active) {
+        if (!$country->active || Country::isNeedDniByCountryId($idCountry)) {
             return false;
         }
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository $countryRepository */
+        $countryRepository = $this->module->getService('ps_checkout.repository.country');
+
+        $idState = $countryRepository->getStateId($state);
 
         // check if a paypal address already exist for the customer
         $paypalAddress = $this->addressAlreadyExist('PayPal', $this->context->customer->id);
@@ -257,10 +265,18 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $address->id_country = $idCountry;
         $address->phone = $phone;
 
+        if ($idState) {
+            $address->id_state = $idState;
+        }
+
+        if ($address->validateFields(false)) {
+            return false;
+        }
+
         try {
             $address->save();
         } catch (Exception $exception) {
-            throw new PsCheckoutException($exception->getMessage(), PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_CANNOT_SAVE_ADDRESS);
+            throw new PsCheckoutException($exception->getMessage(), PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_CANNOT_SAVE_ADDRESS, $exception);
         }
 
         $this->context->cart->id_address_delivery = $address->id;
