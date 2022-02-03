@@ -188,9 +188,9 @@ class Ps_checkout extends PaymentModule
         $this->disableSegment = true;
 
         // Install for both 1.7 and 1.6
-        $defaultInstall = parent::install() &&
+        $result = (bool) parent::install() &&
             $this->installConfiguration() &&
-            $this->registerHook(self::HOOK_LIST) &&
+            $this->installHooks() &&
             (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
             $this->installTabs() &&
@@ -198,32 +198,43 @@ class Ps_checkout extends PaymentModule
             $this->disableIncompatibleCurrencies() &&
             (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops();
 
-        if (!$defaultInstall) {
+        if (!$result) {
             return false;
         }
 
         // We must doing that here because before module is not installed so Service Container cannot be used
         $this->trackModuleAction('Install');
 
-        // Install specific to prestashop 1.7
+        return $result;
+    }
+
+    public function installHooks()
+    {
+        $result = (bool) $this->registerHook(self::HOOK_LIST);
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService('ps_checkout.context.shop');
-        if ($shopContext->isShop17()) {
-            $hook171 = true;
-
-            if ($shopContext->isShop171()) {
-                $hook171 = $this->registerHook(self::HOOK_LIST_171) &&
-                    $this->updatePosition(\Hook::getIdByName('displayProductAdditionalInfo'), false, 1);
-            }
-
-            return $this->registerHook(self::HOOK_LIST_17) &&
-                $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1) &&
-                $hook171;
-        }
 
         // Install specific to prestashop 1.6
-        return $this->registerHook(self::HOOK_LIST_16) &&
+        if (!$shopContext->isShop17()) {
+            $result = $result && $this->registerHook(self::HOOK_LIST_16);
             $this->updatePosition(\Hook::getIdByName('payment'), false, 1);
+
+            return $result;
+        }
+
+        // Install specific to prestashop 1.7
+        if ($shopContext->isShop17()) {
+            $result = $result && (bool) $this->registerHook(self::HOOK_LIST_17);
+            $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1);
+        }
+
+        // Install specific to prestashop 1.7.1
+        if ($shopContext->isShop171()) {
+            $result = $result && (bool) $this->registerHook(self::HOOK_LIST_171);
+            $this->updatePosition(\Hook::getIdByName('displayProductAdditionalInfo'), false, 1);
+        }
+
+        return $result;
     }
 
     /**
