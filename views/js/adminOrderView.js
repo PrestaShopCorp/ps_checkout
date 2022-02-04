@@ -86,6 +86,15 @@ const {$} = window;
           }));
         }
 
+        if (undefined !== jqXHR.responseJSON && undefined !== jqXHR.responseJSON.errors) {
+          for (const error of jqXHR.responseJSON.errors) {
+            $(config.orderPayPalContainer).append(payPalOrderNotification.createErrorHTMLElement({
+              text: error,
+              class: 'danger',
+            }));
+          }
+        }
+
         $(config.orderPayPalLoaderContainer).hide();
       });
     };
@@ -235,6 +244,15 @@ const {$} = window;
                 text: jqXHR.responseJSON.content,
                 class: 'danger',
               }));
+            }
+
+            if (undefined !== jqXHR.responseJSON && undefined !== jqXHR.responseJSON.errors) {
+              for (const error of jqXHR.responseJSON.errors) {
+                $(refundModalNotificationContainer).append(payPalOrderNotification.createErrorHTMLElement({
+                  text: error,
+                  class: 'danger',
+                }));
+              }
             }
 
             $(refundModalLoaderContainer).hide();

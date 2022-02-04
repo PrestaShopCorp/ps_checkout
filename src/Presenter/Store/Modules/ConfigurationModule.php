@@ -27,6 +27,7 @@ use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
+use Ps_checkout;
 
 /**
  * Construct the configuration module
@@ -52,6 +53,10 @@ class ConfigurationModule implements PresenterInterface
      * @var FundingSourceProvider
      */
     private $fundingSourceProvider;
+    /**
+     * @var Ps_checkout
+     */
+    private $module;
 
     /**
      * @param PayPalPayIn4XConfiguration $payIn4XConfiguration
@@ -63,12 +68,14 @@ class ConfigurationModule implements PresenterInterface
         PayPalPayIn4XConfiguration $payIn4XConfiguration,
         ExpressCheckoutConfiguration $ecConfiguration,
         PayPalConfiguration $paypalConfiguration,
-        FundingSourceProvider $fundingSourceProvider)
-    {
+        FundingSourceProvider $fundingSourceProvider,
+        Ps_checkout $module
+    ) {
         $this->payIn4XConfiguration = $payIn4XConfiguration;
         $this->ecConfiguration = $ecConfiguration;
         $this->paypalConfiguration = $paypalConfiguration;
         $this->fundingSourceProvider = $fundingSourceProvider;
+        $this->module = $module;
     }
 
     /**
@@ -118,6 +125,7 @@ class ConfigurationModule implements PresenterInterface
                     'productPage' => (bool) $this->payIn4XConfiguration->isProductPageActive(),
                 ],
                 'paypalButton' => $this->paypalConfiguration->getButtonConfiguration(),
+                'nonDecimalCurrencies' => $this->checkNonDecimalCurrencies(),
             ],
         ];
     }
@@ -146,5 +154,48 @@ class ConfigurationModule implements PresenterInterface
         }
 
         return false;
+    }
+
+    /**
+     * Checks if any currencies are enabled for which PayPal doesn't support decimal values
+     * Returns error message with listed currencies that have to be configured correctly
+     *
+     * @return array
+     */
+    private function checkNonDecimalCurrencies()
+    {
+        $nonDecimalCurrencies = ['HUF', 'JPY', 'TWD'];
+
+        $currencies = \Currency::getCurrencies(false, true);
+
+        $misConfiguredCurrencies = [];
+
+        foreach ($currencies as $currency) {
+            if (in_array($currency['iso_code'], $nonDecimalCurrencies) && $this->checkCurrencyPrecision($currency)) {
+                $misConfiguredCurrencies[] = $currency['iso_code'];
+            }
+        }
+
+        return [
+            'showError' => !empty($misConfiguredCurrencies),
+            'errorMessage' => sprintf(
+                $this->module->l('Attention: you have activated %s currencies, you need to configure those currencies to use 0 decimals as PayPal does not support decimals for those currencies', 'configurationmodule'),
+                implode(', ', $misConfiguredCurrencies)
+            ),
+        ];
+    }
+
+    /**
+     * @param array $currency
+     *
+     * @return bool
+     */
+    private function checkCurrencyPrecision($currency)
+    {
+        if (isset($currency['precision'])) {
+            return (int) $currency['precision'] !== 0;
+        }
+
+        return (int) $currency['decimals'] !== 0;
     }
 }

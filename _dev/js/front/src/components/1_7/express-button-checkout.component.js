@@ -21,15 +21,13 @@ import { ExpressCheckoutButtonComponent } from '../common/express-checkout-butto
 
 export class ExpressButtonCheckoutComponent extends BaseComponent {
   static Inject = {
-    htmlElementService: 'HTMLElementService',
+    querySelectorService: 'QuerySelectorService',
     psCheckoutApi: 'PsCheckoutApi',
     $: '$'
   };
 
   created() {
-    this.buttonContainer = this.htmlElementService.getCheckoutExpressCheckoutButtonContainer(
-      true
-    );
+    this.buttonReferenceContainer = this.querySelectorService.getCheckoutExpressCheckoutButtonContainerCheckout();
   }
 
   renderTitle() {
@@ -55,8 +53,8 @@ export class ExpressButtonCheckoutComponent extends BaseComponent {
 
     this.renderTitle();
 
-    this.buttonContainer.prepend(this.checkoutExpressButton);
-    this.buttonContainer.prepend(this.checkoutExpressTitle);
+    this.buttonReferenceContainer.prepend(this.checkoutExpressButton);
+    this.buttonReferenceContainer.prepend(this.checkoutExpressTitle);
 
     this.children.expressCheckoutButton = new ExpressCheckoutButtonComponent(
       this.app,

@@ -67,4 +67,22 @@ export class QuerySelectorPs1_7Service {
       document.querySelectorAll(SELECTORS.PAYMENT_OPTION_RADIOS)
     );
   }
+
+  static getCheckoutExpressCheckoutButtonContainerCart() {
+    return document.querySelector(
+      SELECTORS.EXPRESS_CHECKOUT_CONTAINER_CART_PAGE
+    );
+  }
+
+  static getCheckoutExpressCheckoutButtonContainerCheckout() {
+    return document.querySelector(
+      SELECTORS.EXPRESS_CHECKOUT_CONTAINER_CHECKOUT_PAGE
+    );
+  }
+
+  static getCheckoutExpressCheckoutButtonContainerProduct() {
+    return document.querySelector(
+      SELECTORS.EXPRESS_CHECKOUT_CONTAINER_PRODUCT_PAGE
+    );
+  }
 }

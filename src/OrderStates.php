@@ -82,7 +82,7 @@ class OrderStates
         $stateId = (int) \Configuration::getGlobalValue($state);
 
         // Is state ID already existing in the Configuration table ?
-        if (0 === $stateId || false === \OrderState::existsInDatabase($stateId, self::ORDER_STATE_TABLE)) {
+        if (0 === $stateId || false === $this->stateAlreadyExists($stateId)) {
             return $this->createPaypalStateId($state, $color);
         }
 
@@ -236,5 +236,23 @@ class OrderStates
         }
 
         return true;
+    }
+
+    /**
+     * Check if OrderState already exists in the table
+     *
+     * @param int $orderStateId
+     *
+     * @return bool
+     */
+    private function stateAlreadyExists($orderStateId)
+    {
+        $query = new \DbQuery();
+        $query->select('id_order_state');
+        $query->from(self::ORDER_STATE_TABLE);
+        $query->where('id_order_state = ' . (int) $orderStateId);
+        $query->where('module_name = "' . self::MODULE_NAME . '"');
+
+        return (bool) \Db::getInstance()->getValue($query);
     }
 }

@@ -87,7 +87,7 @@ class GenericClient
         /** @var \PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler $exceptionHandler */
         $exceptionHandler = $module->getService('ps_checkout.handler.exception');
 
-        if (true === (bool) $this->getConfiguration(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP, true)) {
+        if (method_exists($this->client, 'getEmitter') && true === (bool) $this->getConfiguration(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP, true)) {
             /** @var LoggerInterface $logger */
             $logger = $module->getService('ps_checkout.logger');
 
@@ -95,6 +95,7 @@ class GenericClient
                 $logger,
                 $this->getLogFormatter()
             );
+
             $this->client->getEmitter()->attach($subscriber);
         }
 

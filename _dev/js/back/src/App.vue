@@ -55,6 +55,18 @@
       <RoundingBanner />
     </div>
 
+    <div class="container" v-if="accountIslinked && !paypalIsActive">
+      <b-alert variant="danger" show>
+        <p>{{ $t('general.cantReceivePayments') }}</p>
+      </b-alert>
+    </div>
+
+    <div class="container" v-if="showMisconfiguredCurrenciesError">
+      <b-alert variant="danger" show>
+        <p>{{ misconfiguredCurrenciesErrorMessage }}</p>
+      </b-alert>
+    </div>
+
     <div class="container" v-if="isTestMode">
       <b-alert variant="warning" show>
         <p>{{ $t('general.testModeOn') }}</p>
@@ -163,6 +175,16 @@
       },
       hasShopId() {
         return this.$store.state.context.shopId;
+      },
+      paypalIsActive() {
+        return this.$store.state.paypal.paypalIsActive;
+      },
+      showMisconfiguredCurrenciesError() {
+        return this.$store.state.configuration.nonDecimalCurrencies.showError;
+      },
+      misconfiguredCurrenciesErrorMessage() {
+        return this.$store.state.configuration.nonDecimalCurrencies
+          .errorMessage;
       }
     },
     watch: {

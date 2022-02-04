@@ -129,7 +129,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.16.0';
+    const VERSION = '2.17.0';
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -155,7 +155,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.16.0';
+        $this->version = '2.17.0';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -188,9 +188,9 @@ class Ps_checkout extends PaymentModule
         $this->disableSegment = true;
 
         // Install for both 1.7 and 1.6
-        $defaultInstall = parent::install() &&
+        $result = (bool) parent::install() &&
             $this->installConfiguration() &&
-            $this->registerHook(self::HOOK_LIST) &&
+            $this->installHooks() &&
             (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
             $this->installTabs() &&
@@ -198,32 +198,43 @@ class Ps_checkout extends PaymentModule
             $this->disableIncompatibleCurrencies() &&
             (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops();
 
-        if (!$defaultInstall) {
+        if (!$result) {
             return false;
         }
 
         // We must doing that here because before module is not installed so Service Container cannot be used
         $this->trackModuleAction('Install');
 
-        // Install specific to prestashop 1.7
+        return $result;
+    }
+
+    public function installHooks()
+    {
+        $result = (bool) $this->registerHook(self::HOOK_LIST);
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService('ps_checkout.context.shop');
-        if ($shopContext->isShop17()) {
-            $hook171 = true;
-
-            if ($shopContext->isShop171()) {
-                $hook171 = $this->registerHook(self::HOOK_LIST_171) &&
-                    $this->updatePosition(\Hook::getIdByName('displayProductAdditionalInfo'), false, 1);
-            }
-
-            return $this->registerHook(self::HOOK_LIST_17) &&
-                $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1) &&
-                $hook171;
-        }
 
         // Install specific to prestashop 1.6
-        return $this->registerHook(self::HOOK_LIST_16) &&
+        if (!$shopContext->isShop17()) {
+            $result = $result && $this->registerHook(self::HOOK_LIST_16);
             $this->updatePosition(\Hook::getIdByName('payment'), false, 1);
+
+            return $result;
+        }
+
+        // Install specific to prestashop 1.7
+        if ($shopContext->isShop17()) {
+            $result = $result && (bool) $this->registerHook(self::HOOK_LIST_17);
+            $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1);
+        }
+
+        // Install specific to prestashop 1.7.1
+        if ($shopContext->isShop171()) {
+            $result = $result && (bool) $this->registerHook(self::HOOK_LIST_171);
+            $this->updatePosition(\Hook::getIdByName('displayProductAdditionalInfo'), false, 1);
+        }
+
+        return $result;
     }
 
     /**
@@ -433,12 +444,7 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayExpressCheckout()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $this->getService('ps_checkout.repository.prestashop.account');
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository */
-        $paypalAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
-
-        if (!$psAccountRepository->onBoardingIsCompleted() || !$paypalAccountRepository->onBoardingIsCompleted()) {
+        if (!$this->merchantIsValid()) {
             return '';
         }
 
@@ -491,12 +497,7 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayProductAdditionalInfo()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $this->getService('ps_checkout.repository.prestashop.account');
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository */
-        $paypalAccountRepository = $this->getService('ps_checkout.repository.paypal.account');
-
-        if (!$psAccountRepository->onBoardingIsCompleted() || !$paypalAccountRepository->onBoardingIsCompleted()) {
+        if (!$this->merchantIsValid()) {
             return '';
         }
 
@@ -551,7 +552,7 @@ class Ps_checkout extends PaymentModule
     /**
      * Pay in 4x banner in the product page
      *
-     * @param array $params
+     * @param array{cookie: Cookie, cart: Cart, altern: int, type: string, product: mixed} $params
      *
      * @return string
      */
@@ -560,17 +561,30 @@ class Ps_checkout extends PaymentModule
         if ('product' !== Tools::getValue('controller')
             || !isset($params['type'])
             || $params['type'] !== 'weight'
-            || !Validate::isLoadedObject($this->context->cart)
+            || empty($params['product'])
         ) {
             return '';
+        }
+
+        $price = 0;
+
+        if (isset($params['product']->price_amount)) {
+            // $params['product'] is a ProductLazyArray since PrestaShop 1.7.5.0
+            $price = $params['product']->price_amount;
+        } elseif ($params['product'] instanceof Product) {
+            // $params['product'] is an instance of Product before 1.7.5.0
+            $id_product_attribute = Tools::getValue('id_product_attribute', null);
+            $price = $params['product']->getPrice(
+                Product::$_taxCalculationMethod == PS_TAX_INC,
+                null !== $id_product_attribute ? (int) $id_product_attribute : null
+            );
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
         $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
 
-        $totalCartPrice = $this->context->cart->getSummaryDetails();
         $this->context->smarty->assign([
-            'totalCartPrice' => $totalCartPrice['total_price'],
+            'totalCartPrice' => sprintf('%01.2f', $price),
             'payIn4XisProductPageEnabled' => $payIn4XService->isProductPageEnabled(),
         ]);
 
@@ -579,10 +593,16 @@ class Ps_checkout extends PaymentModule
 
     /**
      * Pay in 4x banner in the cart page for 1.6
+     *
+     * @param array{cookie: Cookie, cart: Cart, altern: int} $params
+     *
+     * @return string|void
      */
-    public function hookDisplayCartTotalPriceLabel($params)
+    public function hookDisplayCartTotalPriceLabel(array $params)
     {
-        if (false === Validate::isLoadedObject($this->context->cart)) {
+        $cart = $params['cart'];
+
+        if (false === Validate::isLoadedObject($cart)) {
             return;
         }
 
@@ -592,7 +612,7 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
         $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
 
-        $totalCartPrice = $this->context->cart->getSummaryDetails();
+        $totalCartPrice = $cart->getSummaryDetails();
         $this->context->smarty->assign([
             'totalCartPrice' => $totalCartPrice['total_price'],
             'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageEnabled(),
@@ -756,11 +776,11 @@ class Ps_checkout extends PaymentModule
     /**
      * Add payment option at the checkout in the front office (prestashop 1.7)
      *
-     * @param array $params
+     * @param array{cookie: Cookie, cart: Cart, altern: int} $params
      *
      * @return array
      */
-    public function hookPaymentOptions($params)
+    public function hookPaymentOptions(array $params)
     {
         /** @var Cart $cart */
         $cart = $params['cart'];
@@ -799,7 +819,7 @@ class Ps_checkout extends PaymentModule
     /**
      * Hook executed at the order confirmation
      *
-     * @param array $params
+     * @param array{cookie: Cookie, cart: Cart, altern: int, order: Order, objOrder: Order} $params
      *
      * @return string
      */
@@ -881,7 +901,7 @@ class Ps_checkout extends PaymentModule
                 ),
             ];
             $track = 'View Payment Methods PS Page';
-            $template = '/views/templates/hook/adminAfterHeader/promotionBlock.tpl';
+            $template = 'views/templates/hook/adminAfterHeader/promotionBlock.tpl';
         } elseif ('AdminCountries' === Tools::getValue('controller') && $isFullyOnboarded) {
             $params = [
                 'isShop17' => $isShop17,
@@ -891,7 +911,7 @@ class Ps_checkout extends PaymentModule
                 'paymentPreferencesLink' => $moduleContext->getGeneratedLink($isShop17 ? 'AdminPaymentPreferences' : 'AdminPayment'),
             ];
             $track = 'View Countries PS Page';
-            $template = '/views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
+            $template = 'views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
         } elseif ('AdminCurrencies' === Tools::getValue('controller') && $isFullyOnboarded) {
             $params = [
                 'isShop17' => $isShop17,
@@ -901,7 +921,7 @@ class Ps_checkout extends PaymentModule
                 'paymentPreferencesLink' => $moduleContext->getGeneratedLink($isShop17 ? 'AdminPaymentPreferences' : 'AdminPayment'),
             ];
             $track = 'View Currencies PS Page';
-            $template = '/views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
+            $template = 'views/templates/hook/adminAfterHeader/incompatibleCodes.tpl';
         } else {
             return false;
         }
@@ -1258,7 +1278,7 @@ class Ps_checkout extends PaymentModule
     /**
      * This hook allows to add PayPal OrderId and TransactionId on PDF invoice
      *
-     * @param array $params
+     * @param array{cookie: Cookie, cart: Cart, altern: int, order: Order} $params
      *
      * @return string HTML is not allowed in this hook
      */
@@ -1319,7 +1339,7 @@ class Ps_checkout extends PaymentModule
     /**
      * This hook called after a new Shop is created
      *
-     * @param array $params
+     * @param array{cookie: Cookie, cart: Cart, altern: int, object: Shop} $params
      */
     public function hookActionObjectShopAddAfter(array $params)
     {
@@ -1340,7 +1360,7 @@ class Ps_checkout extends PaymentModule
     /**
      * This hook called on BO Order view page before 1.7.7
      *
-     * @param array $params
+     * @param array{cookie: Cookie, cart: Cart, altern: int, id_order: int} $params
      *
      * @return string
      */
@@ -1365,7 +1385,7 @@ class Ps_checkout extends PaymentModule
     /**
      * This hook called on BO Order view page after 1.7.7
      *
-     * @param array $params
+     * @param array{cookie: Cookie, cart: Cart, altern: int, id_order: int} $params
      *
      * @return string
      */
@@ -1452,16 +1472,17 @@ class Ps_checkout extends PaymentModule
     /**
      * This hook displays form generated by binaries during the checkout
      *
-     * @param array $params
+     * @param array{cookie: Cookie, cart: Cart, altern: int} $params
      *
      * @return string
-     *
-     * @throws SmartyException
      */
     public function hookDisplayPaymentByBinaries(array $params)
     {
-        if (false === Validate::isLoadedObject($this->context->cart)
-            || false === $this->checkCurrency($this->context->cart)
+        /** @var Cart $cart */
+        $cart = $params['cart'];
+
+        if (false === Validate::isLoadedObject($cart)
+            || false === $this->checkCurrency($cart)
             || false === $this->merchantIsValid()
         ) {
             return '';
@@ -1560,17 +1581,19 @@ class Ps_checkout extends PaymentModule
     private function installSentryExceptionLogger()
     {
         $envFiles = [
-            'test' => '.env.test',
             'prod' => '.env',
+            'test' => '.env.test',
         ];
+
+        $envLoader = new \PrestaShop\Module\PrestashopCheckout\Environment\EnvLoader();
 
         foreach ($envFiles as $environment => $fileName) {
             if (!file_exists(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName)) {
                 continue;
             }
 
-            $dotenv = Dotenv\Dotenv::create(_PS_MODULE_DIR_ . 'ps_checkout/', $fileName);
-            $env = $dotenv->load();
+            $env = $envLoader->read(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName);
+
             break;
         }
 
@@ -1634,7 +1657,7 @@ class Ps_checkout extends PaymentModule
     /**
      * When an OrderPayment is created we should update fields payment_method and transaction_id
      *
-     * @param array $params
+     * @param array{cookie: Cookie, cart: Cart, altern: int, object: OrderPayment} $params
      */
     public function hookActionObjectOrderPaymentAddAfter(array $params)
     {
@@ -1644,7 +1667,7 @@ class Ps_checkout extends PaymentModule
     /**
      * When an OrderPayment is updated we should update fields payment_method and transaction_id
      *
-     * @param array $params
+     * @param array{cookie: Cookie, cart: Cart, altern: int, object: OrderPayment} $params
      */
     public function hookActionObjectOrderPaymentUpdateAfter(array $params)
     {
@@ -1654,7 +1677,7 @@ class Ps_checkout extends PaymentModule
     /**
      * When an OrderPayment is created or updated we should update fields payment_method and transaction_id
      *
-     * @param array $params
+     * @param array{cookie: Cookie, cart: Cart, altern: int, object: OrderPayment} $params
      *
      * @return void
      */

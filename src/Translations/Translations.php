@@ -65,6 +65,7 @@ class Translations
                     'configure' => 'Configure',
                     'tips' => $this->module->l('Once you are done with the first shop, you can configure the others: select them one by one with the shop selector, in the horizontal menu.', 'translations'),
                 ],
+                'cantReceivePayments' => $this->module->l('You can not receive Payments in PayPal at this moment, please contact PayPal to solve this problem', 'translations'),
             ],
             'pages' => [
                 'accounts' => [
@@ -130,6 +131,10 @@ class Translations
                     'email' => $this->module->l('Email', 'translations'),
                     'goBackToLogin' => $this->module->l('Go back to login', 'translations'),
                     'reset' => $this->module->l('Reset', 'translations'),
+                ],
+                'customize' => [
+                    'customThemeWarningMessage1' => $this->module->l('All custom themes might not be fully compatible. To avoid potential integration issues on payment page,', 'translations'),
+                    'customThemeWarningMessage2' => $this->module->l('please check our list of customizable settings', 'translations'),
                 ],
             ],
             'firebase' => [

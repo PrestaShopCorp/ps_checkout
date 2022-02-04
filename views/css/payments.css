@@ -473,3 +473,11 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
 #ps_checkout-canceled img, #ps_checkout-error img{
   margin-right: 10px;
 }
+
+#ps_checkout-hosted-fields-form label{
+  display: table-cell;
+}
+
+#cart .ps-checkout-express-separator {
+  text-align: center;
+}
