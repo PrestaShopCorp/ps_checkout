@@ -26,7 +26,6 @@ use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 
 /**

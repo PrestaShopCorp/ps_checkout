@@ -58,10 +58,6 @@ class ConfigurationModule implements PresenterInterface
      * @var FundingSourceProvider
      */
     private $fundingSourceProvider;
-    /**
-     * @var Ps_checkout
-     */
-    private $module;
 
     /**
      * @param PayPalPayIn4XConfiguration $payIn4XConfiguration
