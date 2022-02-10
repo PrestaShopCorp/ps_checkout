@@ -122,7 +122,7 @@ class PslClient extends GenericClient
             $exceptionCode = null;
 
             if (!$response) {
-                $exceptionMessage = 'Unable to contatct PSL';
+                $exceptionMessage = 'Unable to contact PSL';
                 $exceptionCode = PsCheckoutSessionException::UNABLE_TO_CONTACT_PSL;
             } elseif (!$response['status']) {
                 switch ($callType) {
