@@ -166,21 +166,25 @@ class ConfigurationModule implements PresenterInterface
     {
         $nonDecimalCurrencies = ['HUF', 'JPY', 'TWD'];
 
-        $currencies = \Currency::getCurrencies(false, true);
+        // Enabled currencies for PrestaShop Checkout
+        $enabledCurrencies = \Currency::getPaymentCurrencies($this->module->id);
 
         $misConfiguredCurrencies = [];
 
-        foreach ($currencies as $currency) {
-            if (in_array($currency['iso_code'], $nonDecimalCurrencies) && $this->checkCurrencyPrecision($currency)) {
+        foreach ($enabledCurrencies as $currency) {
+            if (in_array($currency['iso_code'], $nonDecimalCurrencies)) {
                 $misConfiguredCurrencies[] = $currency['iso_code'];
             }
         }
 
+        $implodedMisconfiguredCurrencies = implode(', ', $misConfiguredCurrencies);
+
         return [
             'showError' => !empty($misConfiguredCurrencies),
             'errorMessage' => sprintf(
-                $this->module->l('Attention: you have activated %s currencies, you need to configure those currencies to use 0 decimals as PayPal does not support decimals for those currencies', 'configurationmodule'),
-                implode(', ', $misConfiguredCurrencies)
+                $this->module->l('Warning : the currencies you have activated : %s are not currently supported by PrestaShop Checkout. Please deactivate %s for PrestaShop Checkout in your ', 'configurationmodule'),
+                $implodedMisconfiguredCurrencies,
+                $implodedMisconfiguredCurrencies
             ),
         ];
     }

@@ -82,6 +82,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_ec53a8c4f07baed5d882507
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_ef93d2efbc5c9bdb02f807dd2c9337fb'] = 'Importo netto al rimborso';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_f5d74ea75357b5e139854c14f8e24fe3'] = 'Dettagli ordine';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_fc9aab144255fe59fc53dea649cff88b'] = 'Confermare il rimborso';
+$_MODULE['<{ps_checkout}prestashop>configurationmodule_6017aa60accb3ba69278852888ab02be'] = 'Attenzione : alcune delle valute che hai attivato : %s al momento non funzionano con PrestaShop Checkout. Prego disattiva %s per PrestaShop Checkout nelle tue';
 $_MODULE['<{ps_checkout}prestashop>cursedpage_960567c486a23f5e75891b735928c8ba'] = 'Il tuo identificatore commerciante PayPal sembra non valido.';
 $_MODULE['<{ps_checkout}prestashop>cursedpage_df2183ab7d5bfd58187077969f08c7f8'] = 'Non abbiamo ricevuto il tuo identificativo commerciante Paypal.';
 $_MODULE['<{ps_checkout}prestashop>displayexpresscheckout_2f2401d57093e7d31bf2689fb87f72f6'] = 'Pagamenti sicuri al 100%';
@@ -459,6 +460,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_ae7bd6527c89645a15c3b5e5f1f22dbd
 $_MODULE['<{ps_checkout}prestashop>translations_af37d2248a1fa9c60e8df22938255f05'] = 'Non è possibile accettare i pagamenti tramite carta per te in questo momento.';
 $_MODULE['<{ps_checkout}prestashop>translations_b235ad7b91fbeda6f87ac3d7e6f0ff6d'] = 'Abbiamo ricevuto la conferma da PayPal. Ora è possibile elaborare tutte le transazioni con carta senza limiti.';
 $_MODULE['<{ps_checkout}prestashop>translations_b3a3bef1143977b9be6f9058641b1035'] = 'E-mail non trovata.';
+$_MODULE['<{ps_checkout}prestashop>translations_b52a626dee6ab468117342c9292a45b6'] = 'Preferenze di pagamento';
 $_MODULE['<{ps_checkout}prestashop>translations_b6d4223e60986fa4c9af77ee5f7149c5'] = 'Accedi';
 $_MODULE['<{ps_checkout}prestashop>translations_b79585fa23346ba2a5a030c65d79d4c0'] = 'Gestisci il conto corrente';
 $_MODULE['<{ps_checkout}prestashop>translations_b7f41477baf42a89b6c905148b2e9f9a'] = 'Accedi o registrati a PayPal';
