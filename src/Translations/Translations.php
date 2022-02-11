@@ -66,6 +66,7 @@ class Translations
                     'tips' => $this->module->l('Once you are done with the first shop, you can configure the others: select them one by one with the shop selector, in the horizontal menu.', 'translations'),
                 ],
                 'cantReceivePayments' => $this->module->l('You can not receive Payments in PayPal at this moment, please contact PayPal to solve this problem', 'translations'),
+                'paymentPreferences' => $this->module->l('Payment preferences', 'translations'),
             ],
             'pages' => [
                 'accounts' => [

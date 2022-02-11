@@ -82,6 +82,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_ec53a8c4f07baed5d882507
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_ef93d2efbc5c9bdb02f807dd2c9337fb'] = 'Net amount to refund';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_f5d74ea75357b5e139854c14f8e24fe3'] = 'Order details';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_fc9aab144255fe59fc53dea649cff88b'] = 'Confirm refund';
+$_MODULE['<{ps_checkout}prestashop>configurationmodule_6017aa60accb3ba69278852888ab02be'] = 'Warning : the currencies you have activated : %s are not currently supported by PrestaShop Checkout. Please deactivate %s for PrestaShop Checkout in your ';
 $_MODULE['<{ps_checkout}prestashop>cursedpage_960567c486a23f5e75891b735928c8ba'] = 'Go back to module configuration';
 $_MODULE['<{ps_checkout}prestashop>cursedpage_df2183ab7d5bfd58187077969f08c7f8'] = 'An error occurred on PayPal Onboarding, please try again.';
 $_MODULE['<{ps_checkout}prestashop>displayexpresscheckout_2f2401d57093e7d31bf2689fb87f72f6'] = '100% secure payments';
@@ -359,6 +360,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_526d688f37a86d3c3f27d0c5016eb71d
 $_MODULE['<{ps_checkout}prestashop>translations_54c1127bed31e947d0951af3263522cf'] = 'Configure your bank statements description';
 $_MODULE['<{ps_checkout}prestashop>translations_5579726f3f99842c8bd6aa672b0ba1df'] = 'Pill';
 $_MODULE['<{ps_checkout}prestashop>translations_55926e741046f094a5597085b9a329bb'] = 'Note that you cannot collect payments with test mode';
+$_MODULE['<{ps_checkout}prestashop>translations_55c93629a14e52832a2a4b1c989140f4'] = 'please check our list of customizable settings';
 $_MODULE['<{ps_checkout}prestashop>translations_56396cec5c858be914156d159a387592'] = 'Business type';
 $_MODULE['<{ps_checkout}prestashop>translations_565c23511bb8643ac5552fbd5e4ba358'] = 'One module, all payments methods.';
 $_MODULE['<{ps_checkout}prestashop>translations_57e46658fd7e21e0377d342fd9743dd4'] = 'No confirmation email?';
@@ -457,8 +459,10 @@ $_MODULE['<{ps_checkout}prestashop>translations_ad69e733ebae8d264bccaa38d68830e8
 $_MODULE['<{ps_checkout}prestashop>translations_adf6671e843f2afa12ff0da097e2cdbf'] = 'Email validation needed';
 $_MODULE['<{ps_checkout}prestashop>translations_ae7bd6527c89645a15c3b5e5f1f22dbd'] = 'No redirection when paying by credit card';
 $_MODULE['<{ps_checkout}prestashop>translations_af37d2248a1fa9c60e8df22938255f05'] = 'We cannot process credit card payments for you at the moment.';
+$_MODULE['<{ps_checkout}prestashop>translations_b03623c3f090d1119f44d3191397acb1'] = 'All custom themes might not be fully compatible. To avoid potential integration issues on payment page,';
 $_MODULE['<{ps_checkout}prestashop>translations_b235ad7b91fbeda6f87ac3d7e6f0ff6d'] = 'We have received the confirmation from PayPal. You can now process all card transactions with no limits.';
 $_MODULE['<{ps_checkout}prestashop>translations_b3a3bef1143977b9be6f9058641b1035'] = 'The email is not found.';
+$_MODULE['<{ps_checkout}prestashop>translations_b52a626dee6ab468117342c9292a45b6'] = 'Payment preferences';
 $_MODULE['<{ps_checkout}prestashop>translations_b6d4223e60986fa4c9af77ee5f7149c5'] = 'Sign in';
 $_MODULE['<{ps_checkout}prestashop>translations_b79585fa23346ba2a5a030c65d79d4c0'] = 'Manage bank account';
 $_MODULE['<{ps_checkout}prestashop>translations_b7f41477baf42a89b6c905148b2e9f9a'] = 'Log in or sign up to PayPal';
@@ -473,6 +477,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_bba6519ffd7fb775c8bb15dc78c34296
 $_MODULE['<{ps_checkout}prestashop>translations_bc294136fea992290d8b3b12a36fddfa'] = 'Direct Sale';
 $_MODULE['<{ps_checkout}prestashop>translations_bc34c158b938eec639230b7133b92ea3'] = 'in the meantime, you will only accept credit cards payments thought the PayPal branded credit card fields';
 $_MODULE['<{ps_checkout}prestashop>translations_bccbffbcbc3942d59b232727c1ae32cb'] = 'See the full list of transactions on your PayPal account';
+$_MODULE['<{ps_checkout}prestashop>translations_bd3b4dbe1e543ba62b7cf56abf8c26b1'] = 'You can not receive Payments in PayPal at this moment, please contact PayPal to solve this problem';
 $_MODULE['<{ps_checkout}prestashop>translations_bd9be8329aa7e6f55266c06298e18e39'] = 'Select the shape';
 $_MODULE['<{ps_checkout}prestashop>translations_bffe9a3c9a7e00ba00a11749e022d911'] = 'Log in';
 $_MODULE['<{ps_checkout}prestashop>translations_c1053fd298c615d9bb6e45a1d9d763d6'] = 'PayPal branded Credit Card Fields';

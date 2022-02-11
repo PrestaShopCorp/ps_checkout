@@ -62,8 +62,17 @@
     </div>
 
     <div class="container" v-if="showMisconfiguredCurrenciesError">
-      <b-alert variant="danger" show>
-        <p>{{ misconfiguredCurrenciesErrorMessage }}</p>
+      <b-alert variant="warning" show>
+        <p>
+          {{ misconfiguredCurrenciesErrorMessage }}
+
+          <a
+            :href="paymentPreferencesLink"
+            target="_blank"
+          >
+            {{ $t('general.paymentPreferences') }}
+          </a>
+        </p>
       </b-alert>
     </div>
 
@@ -185,6 +194,9 @@
       misconfiguredCurrenciesErrorMessage() {
         return this.$store.state.configuration.nonDecimalCurrencies
           .errorMessage;
+      },
+      paymentPreferencesLink() {
+        return this.$store.getters.paymentPreferencesLink;
       }
     },
     watch: {
