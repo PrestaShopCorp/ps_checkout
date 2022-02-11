@@ -112,8 +112,12 @@ export class PaymentOptionsComponent extends BaseComponent {
     );
 
     paymentButton.disabled = !this.data.conditions.isChecked();
+    paymentButton.classList.remove('disabled');
+
     this.data.conditions.onChange(() => {
-      paymentButton.disabled = !this.data.conditions.isChecked();
+      setTimeout(() => {
+        paymentButton.disabled = !this.data.conditions.isChecked();
+      }, 0);
     });
 
     this.children.expressCheckoutButton.append(paymentButton);
