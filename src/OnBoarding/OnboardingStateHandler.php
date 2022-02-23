@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\OnBoarding;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Psl\Onboarding;
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\ShopDispatcher;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
@@ -80,11 +81,18 @@ class OnboardingStateHandler
     public function handle()
     {
         $this->onboardingSession = $this->onboardingSessionManager->getOpened();
+        $psContext = new PrestaShopContext();
+        $businessDataCheck = (bool) \Configuration::get(
+            'PS_CHECKOUT_BUSINESS_DATA_CHECK',
+            null,
+            null,
+            (int) $psContext->getShopId()
+        );
 
         if (!$this->onboardingSession) {
             $this->handleFirebaseOnboarding();
 
-            if (true === $this->handleShopDataCollect()) {
+            if (!$businessDataCheck && true === $this->handleShopDataCollect()) {
                 $this->handlePaypalOnboarding();
             }
         }
