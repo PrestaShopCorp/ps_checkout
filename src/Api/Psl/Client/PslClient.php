@@ -35,11 +35,6 @@ use Psr\SimpleCache\CacheInterface;
 class PslClient extends GenericClient
 {
     /**
-     * @var string
-     */
-    protected $shopUuid;
-
-    /**
      * @var \Ps_checkout
      */
     protected $module;
@@ -66,9 +61,6 @@ class PslClient extends GenericClient
     ) {
         $this->context = $context;
         $this->cache = $cache;
-        $shopId = (int) $context->getShopId();
-        $shopUuidManager = new ShopUuidManager();
-        $this->shopUuid = $shopUuidManager->getForShop($shopId);
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
         $this->module = $module;
@@ -76,35 +68,45 @@ class PslClient extends GenericClient
         $this->setLink($context->getLink());
 
         // Client can be provided for tests
-        if (null === $client) {
-            $client = new Client([
-                'base_url' => (new PslEnv())->getPslApiUrl(),
-                'defaults' => [
-                    'verify' => $this->getVerify(),
-                    'timeout' => $this->timeout,
-                    'exceptions' => $this->catchExceptions,
-                    'headers' => [
-                        'Content-Type' => 'application/json', // api version to use (psl side)
-                        'Accept' => 'application/json',
-                        'Authorization' => 'Bearer ' . (new Token())->getToken(),
-                        'Shop-Id' => $this->shopUuid,
-                        'Hook-Url' => $this->link->getModuleLink(
-                            'ps_checkout',
-                            'DispatchWebHook',
-                            [],
-                            true,
-                            null,
-                            $shopId
-                        ),
-                        'Module-Version' => \Ps_checkout::VERSION, // version of the module
-                        'Prestashop-Version' => _PS_VERSION_, // prestashop version
-                        'Shop-Url' => $context->getShopUrl(),
-                    ],
-                ],
-            ]);
+        if (null !== $client) {
+            $this->setClient($client);
         }
+    }
 
-        $this->setClient($client);
+    private function generateNewClient() {
+        $shopId = (int) $this->context->getShopId();
+        $shopUuid = (new ShopUuidManager())->getForShop($shopId);
+
+        return new Client([
+            'base_url' => (new PslEnv())->getPslApiUrl(),
+            'defaults' => [
+                'verify' => $this->getVerify(),
+                'timeout' => $this->timeout,
+                'exceptions' => $this->catchExceptions,
+                'headers' => [
+                    'Content-Type' => 'application/json', // api version to use (psl side)
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer ' . (new Token())->getToken(),
+                    'Shop-Id' => $shopUuid,
+                    'Hook-Url' => $this->link->getModuleLink(
+                        'ps_checkout',
+                        'DispatchWebHook',
+                        [],
+                        true,
+                        null,
+                        $shopId
+                    ),
+                    'Module-Version' => \Ps_checkout::VERSION, // version of the module
+                    'Prestashop-Version' => _PS_VERSION_, // prestashop version
+                    'Shop-Url' => $this->context->getShopUrl(),
+                ],
+            ],
+        ]);
+    }
+
+    public function getClient()
+    {
+        return $this->generateNewClient();
     }
 
     /**
