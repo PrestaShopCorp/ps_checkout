@@ -57,6 +57,7 @@ class Onboarding extends PslClient
         $configuration = $this->module->getService('ps_checkout.configuration');
 
         $configuration->set(PsAccount::PS_CHECKOUT_SHOP_UUID_V4, $shopUuid);
+        $this->loadShopUuid();
 
         return $shopUuid;
     }
