@@ -73,7 +73,7 @@ class Onboarding extends PslClient
     {
         $openedOnboardingSession = $this->getOpenedSession();
 
-        $this->setRoute('/accounts/' . $this->shopUuid . '/collect-data');
+        $this->setRoute('/accounts/' . $this->getShopUuid() . '/collect-data');
 
         $response = $this->post([
             'headers' => [
@@ -101,7 +101,7 @@ class Onboarding extends PslClient
     {
         $openedOnboardingSession = $this->getOpenedSession();
 
-        $this->setRoute('/shops/' . $this->shopUuid);
+        $this->setRoute('/shops/' . $this->getShopUuid());
 
         $response = $this->patchCall([
             'headers' => [
@@ -184,7 +184,7 @@ class Onboarding extends PslClient
     {
         $openedOnboardingSession = $this->getOpenedSession();
 
-        $this->setRoute('/shops/' . $this->shopUuid . '/force-update-merchant-integrations');
+        $this->setRoute('/shops/' . $this->getShopUuid() . '/force-update-merchant-integrations');
 
         $response = $this->post([
             'headers' => [

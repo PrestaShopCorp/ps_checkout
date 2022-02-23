@@ -90,6 +90,10 @@ class PslClient extends GenericClient
         return $this;
     }
 
+    public function getShopUuid() {
+        return $this->shopUuid;
+    }
+
     private function generateNewClient() {
         return new Client([
             'base_url' => (new PslEnv())->getPslApiUrl(),
@@ -101,7 +105,7 @@ class PslClient extends GenericClient
                     'Content-Type' => 'application/json', // api version to use (psl side)
                     'Accept' => 'application/json',
                     'Authorization' => 'Bearer ' . (new Token())->getToken(),
-                    'Shop-Id' => $this->shopUuid,
+                    'Shop-Id' => $this->getShopUuid(),
                     'Hook-Url' => $this->link->getModuleLink(
                         'ps_checkout',
                         'DispatchWebHook',
