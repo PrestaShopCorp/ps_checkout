@@ -102,12 +102,12 @@
           </div>
         </div>
         <div class="right-block">
-          <div class="doc" style="display: none;">
+          <div class="doc">
             <b class="text-muted">{{ $t('panel.help.needHelp') }}</b>
             <br />
             <b-button
               class="mt-3"
-              :href="readmeUrl"
+              href="https://storage.googleapis.com/psessentials-documentation/ps_checkout/User-Guide-PrestaShop-Checkout-EN.pdf"
               target="_blank"
               variant="primary"
               @click="onClickViewUserGuide()"
