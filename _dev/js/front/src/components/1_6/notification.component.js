@@ -34,6 +34,9 @@ export class NotificationComponent extends BaseComponent {
 
     this.notificationPaymentError = this.htmlElementService.getNotificationPaymentError();
     this.notificationPaymentErrorText = this.htmlElementService.getNotificationPaymentErrorText();
+
+    this.notificationPaymentNotice = this.htmlElementService.getNotificationPaymentNotice();
+    this.notificationPaymentNoticeText = this.htmlElementService.getNotificationPaymentNoticeText();
   }
 
   render() {
@@ -65,5 +68,10 @@ export class NotificationComponent extends BaseComponent {
   showError(message) {
     this.notificationPaymentError.style.display = 'block';
     this.notificationPaymentErrorText.textContent = message;
+  }
+
+  showNotice(message) {
+    this.notificationPaymentNotice.style.display = 'block';
+    this.notificationPaymentNoticeText.textContent = message;
   }
 }

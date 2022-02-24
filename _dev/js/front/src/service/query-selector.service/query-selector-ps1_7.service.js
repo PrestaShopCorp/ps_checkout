@@ -54,6 +54,14 @@ export class QuerySelectorPs1_7Service {
     return document.querySelector(SELECTORS.NOTIFICATION_PAYMENT_ERROR_TEXT);
   }
 
+  static getNotificationPaymentNotice() {
+    return document.querySelector(SELECTORS.NOTIFICATION_PAYMENT_NOTICE);
+  }
+
+  static getNotificationPaymentNoticeText() {
+    return document.querySelector(SELECTORS.NOTIFICATION_PAYMENT_NOTICE_TEXT);
+  }
+
   static getPaymentOptions() {
     return document.querySelector(SELECTORS.PAYMENT_OPTIONS);
   }

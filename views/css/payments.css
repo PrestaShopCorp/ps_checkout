@@ -466,6 +466,11 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
   background-color: #ef808d;
 }
 
+#ps_checkout-notification-container .alert-notice-custom{
+  background-color: #fdf9d1;
+  color: #000;
+}
+
 #ps_checkout-canceled, #ps_checkout-error{
   display: flex;
   align-items: center;

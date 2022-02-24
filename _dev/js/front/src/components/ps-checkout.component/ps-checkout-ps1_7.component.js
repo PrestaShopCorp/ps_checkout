@@ -24,6 +24,11 @@ import { LoaderComponent } from '../common/loader.component';
 import { PaymentOptionsLoaderComponent } from '../common/payment-options-loader.component';
 
 export class PsCheckoutPs1_7Component extends BaseComponent {
+  static Inject = {
+    config: 'PsCheckoutConfig',
+    $: '$'
+  };
+
   created() {
     this.app.root = this;
   }
@@ -44,6 +49,10 @@ export class PsCheckoutPs1_7Component extends BaseComponent {
     ).render();
 
     this.children.paymentOptionsLoader.hide();
+
+    if (!this.config.paymentsReceivable) {
+      this.children.notification.showNotice(this.$('error.paymentsNotReceivable'));
+    }
 
     return this;
   }

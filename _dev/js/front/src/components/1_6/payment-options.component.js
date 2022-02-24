@@ -57,35 +57,37 @@ export class PaymentOptionsComponent extends BaseComponent {
   }
 
   renderPaymentOptionListener() {
-    const HTMLListenerElements = this.children.paymentOptions.map(
-      (paymentOption) => {
-        const HTMLElement = paymentOption.data.HTMLElementContainer;
-        const [button, form] = Array.prototype.slice.call(
-          HTMLElement.querySelectorAll('.payment_module')
-        );
+    if (this.config.paymentsReceivable) {
+      const HTMLListenerElements = this.children.paymentOptions.map(
+        (paymentOption) => {
+          const HTMLElement = paymentOption.data.HTMLElementContainer;
+          const [button, form] = Array.prototype.slice.call(
+            HTMLElement.querySelectorAll('.payment_module')
+          );
 
-        return { button, form };
-      }
-    );
+          return {button, form};
+        }
+      );
 
-    this.children.paymentOptions.forEach((paymentOption, index) => {
-      paymentOption.onLabelClick(() => {
-        HTMLListenerElements.forEach(({ button, form }) => {
-          button.classList.add('closed');
-          form.classList.add('closed');
-          button.classList.remove('open');
-          form.classList.remove('open');
+      this.children.paymentOptions.forEach((paymentOption, index) => {
+        paymentOption.onLabelClick(() => {
+          HTMLListenerElements.forEach(({button, form}) => {
+            button.classList.add('closed');
+            form.classList.add('closed');
+            button.classList.remove('open');
+            form.classList.remove('open');
 
-          this.data.notification.hideCancelled();
-          this.data.notification.hideError();
+            this.data.notification.hideCancelled();
+            this.data.notification.hideError();
+          });
+
+          HTMLListenerElements[index].button.classList.add('open');
+          HTMLListenerElements[index].button.classList.remove('closed');
+          HTMLListenerElements[index].form.classList.add('open');
+          HTMLListenerElements[index].form.classList.remove('closed');
         });
-
-        HTMLListenerElements[index].button.classList.add('open');
-        HTMLListenerElements[index].button.classList.remove('closed');
-        HTMLListenerElements[index].form.classList.add('open');
-        HTMLListenerElements[index].form.classList.remove('closed');
       });
-    });
+    }
   }
 
   getHookPaymentElements() {

@@ -29,6 +29,9 @@ export class NotificationComponent extends BaseComponent {
     this.notificationPaymentCanceled = this.querySelectorService.getNotificationPaymentCanceled();
     this.notificationPaymentError = this.querySelectorService.getNotificationPaymentError();
     this.notificationPaymentErrorText = this.querySelectorService.getNotificationPaymentErrorText();
+
+    this.notificationPaymentNotice = this.querySelectorService.getNotificationPaymentNotice();
+    this.notificationPaymentNoticeText = this.querySelectorService.getNotificationPaymentNoticeText();
   }
 
   hideCancelled() {
@@ -54,5 +57,10 @@ export class NotificationComponent extends BaseComponent {
   showError(message) {
     this.notificationPaymentError.style.display = 'block';
     this.notificationPaymentErrorText.textContent = message;
+  }
+
+  showNotice(message) {
+    this.notificationPaymentNotice.style.display = 'block';
+    this.notificationPaymentNoticeText.textContent = message;
   }
 }

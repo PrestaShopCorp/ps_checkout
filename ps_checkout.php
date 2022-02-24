@@ -767,6 +767,7 @@ class Ps_checkout extends PaymentModule
                 ]
             ),
             'shoppingCartWarningPath' => $this->getPathUri() . 'views/img/shopping-cart-warning.svg',
+            'shoppingCartNoticePath' => $this->getPathUri() . 'views/img/shopping-cart-notice.svg',
             'warningTranslatedText' => $this->l('Warning'),
         ]);
 
@@ -1106,6 +1107,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'CartProductCount' => $cartProductCount,
             $this->name . 'FundingSourcesSorted' => $fundingSourcesSorted,
             $this->name . 'PayWithTranslations' => $payWithTranslations,
+            $this->name . 'PaymentsReceivable' => $paypalAccountRepository->paypalPaymentMethodIsValid(),
             $this->name . 'CheckoutTranslations' => [
                 'checkout.go.back.link.title' => $this->l('Go back to the Checkout'),
                 'checkout.go.back.label' => $this->l('Checkout'),
@@ -1138,6 +1140,7 @@ class Ps_checkout extends PaymentModule
                 'error.paypal-sdk.contingency.error' => $this->l('An error occurred on card holder authentication, please choose another payment method or try again.'),
                 'error.paypal-sdk.contingency.failure' => $this->l('Card holder authentication failed, please choose another payment method or try again.'),
                 'error.paypal-sdk.contingency.unknown' => $this->l('Card holder authentication cannot be checked, please choose another payment method or try again.'),
+                'error.paymentsNotReceivable' => $this->l('Currently some payment methods are unavailable. For more information please contact customer service.'),
             ],
         ]);
 
@@ -1446,6 +1449,7 @@ class Ps_checkout extends PaymentModule
                 ]
             ),
             'shoppingCartWarningPath' => $this->getPathUri() . 'views/img/shopping-cart-warning.svg',
+            'shoppingCartNoticePath' => $this->getPathUri() . 'views/img/shopping-cart-notice.svg',
             'warningTranslatedText' => $this->l('Warning'),
         ]);
 

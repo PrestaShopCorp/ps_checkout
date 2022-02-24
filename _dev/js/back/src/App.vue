@@ -57,7 +57,15 @@
 
     <div class="container" v-if="accountIslinked && !paypalIsActive">
       <b-alert variant="danger" show>
-        <p>{{ $t('general.cantReceivePayments') }}</p>
+        <p>
+          {{ $t('general.cantReceivePayments') }}
+          <a
+            href="replace.com"
+            target="_blank"
+          >
+            {{ $t('general.contactPaypalCustomerService') }}
+          </a>
+        </p>
       </b-alert>
     </div>
 

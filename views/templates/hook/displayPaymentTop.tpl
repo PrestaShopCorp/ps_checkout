@@ -26,6 +26,10 @@
     <img src="{$shoppingCartWarningPath|escape:'htmlall':'UTF-8'}" alt="{$warningTranslatedText|escape:'htmlall':'UTF-8'}">
     <strong><span id="ps_checkout-error-text"></span></strong>
   </div>
+  <div id="ps_checkout-notice" class="alert alert-notice-custom" style="display:none;">
+    <img src="{$shoppingCartNoticePath|escape:'htmlall':'UTF-8'}" alt="{$warningTranslatedText|escape:'htmlall':'UTF-8'}">
+    <span id="ps_checkout-notice-text"></span>
+  </div>
 </div>
 
 {if $is17 && $isExpressCheckout}

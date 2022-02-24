@@ -38,6 +38,8 @@ export const HtmlSelectorsPs1_7Constants = {
   NOTIFICATION_PAYMENT_CANCELED_ID: 'ps_checkout-canceled',
   NOTIFICATION_PAYMENT_ERROR_ID: 'ps_checkout-error',
   NOTIFICATION_PAYMENT_ERROR_TEXT_ID: 'ps_checkout-error-text',
+  NOTIFICATION_PAYMENT_NOTICE_ID: 'ps_checkout-notice',
+  NOTIFICATION_PAYMENT_NOTICE_TEXT_ID: 'ps_checkout-notice-text',
 
   PAYMENT_OPTION: '[name="payment-option"]',
   PAYMENT_OPTION_LABEL: id => `label[for="${id}"]`,

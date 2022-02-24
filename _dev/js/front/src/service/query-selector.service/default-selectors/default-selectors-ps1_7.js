@@ -27,6 +27,8 @@ export const DefaultSelectors1_7 = {
   NOTIFICATION_PAYMENT_CANCELLED: '#ps_checkout-canceled',
   NOTIFICATION_PAYMENT_ERROR: '#ps_checkout-error',
   NOTIFICATION_PAYMENT_ERROR_TEXT: '#ps_checkout-error-text',
+  NOTIFICATION_PAYMENT_NOTICE: '#ps_checkout-notice',
+  NOTIFICATION_PAYMENT_NOTICE_TEXT: '#ps_checkout-notice-text',
 
   PAYMENT_OPTIONS: '.payment-options',
   PAYMENT_OPTIONS_LOADER: '#ps_checkout-loader',

@@ -60,6 +60,7 @@ export const PsCheckoutConfig = {
   },
 
   fundingSourcesSorted: window.ps_checkoutFundingSourcesSorted,
+  paymentsReceivable: window.ps_checkoutPaymentsReceivable,
 
   orderId: window.ps_checkoutPayPalOrderId
 };

@@ -99,6 +99,14 @@ export class HTMLElementService extends BaseClass {
     return this.instance.getNotificationPaymentErrorText();
   }
 
+  getNotificationPaymentNotice() {
+    return this.instance.getNotificationPaymentNotice();
+  }
+
+  getNotificationPaymentNoticeText() {
+    return this.instance.getNotificationPaymentNoticeText();
+  }
+
   getPaymentOption(container) {
     return this.instance.getPaymentOption(container);
   }

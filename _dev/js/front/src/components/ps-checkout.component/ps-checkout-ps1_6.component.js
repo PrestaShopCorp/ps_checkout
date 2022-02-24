@@ -25,7 +25,9 @@ import { ConditionsCheckboxComponent } from '../1_7/conditions-checkbox.componen
 
 export class PsCheckoutPs1_6Component extends BaseComponent {
   static Inject = {
-    prestashopService: 'PrestashopService'
+    prestashopService: 'PrestashopService',
+    config: 'PsCheckoutConfig',
+    $: '$'
   };
 
   created() {
@@ -61,6 +63,10 @@ export class PsCheckoutPs1_6Component extends BaseComponent {
     this.prestashopService.onUpdatePaymentMethods(() => {
       this.renderCheckout();
     });
+
+    if (!this.config.paymentsReceivable) {
+      this.children.notification.showNotice(this.$('error.paymentsNotReceivable'));
+    }
 
     return this;
   }

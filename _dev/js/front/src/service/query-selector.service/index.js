@@ -67,6 +67,14 @@ export class QuerySelectorService extends BaseClass {
     return this.instance.getNotificationPaymentErrorText();
   }
 
+  getNotificationPaymentNotice() {
+    return this.instance.getNotificationPaymentNotice();
+  }
+
+  getNotificationPaymentNoticeText() {
+    return this.instance.getNotificationPaymentNoticeText();
+  }
+
   getPaymentOptions() {
     return this.instance.getPaymentOptions();
   }

@@ -85,6 +85,26 @@ export class HtmlElementPs1_6Service {
     return this.notificationPaymentErrorText;
   }
 
+  getNotificationPaymentNotice(cache = false) {
+    if (!this.notificationPaymentNotice || cache) {
+      this.notificationPaymentNotice = document.getElementById(
+        this.selectors.NOTIFICATION_PAYMENT_NOTICE_ID
+      );
+    }
+
+    return this.notificationPaymentNotice;
+  }
+
+  getNotificationPaymentNoticeText(cache = false) {
+    if (!this.notificationPaymentNoticeText || cache) {
+      this.notificationPaymentNoticeText = document.getElementById(
+        this.selectors.NOTIFICATION_PAYMENT_NOTICE_TEXT_ID
+      );
+    }
+
+    return this.notificationPaymentNoticeText;
+  }
+
   getPaymentOptionsContainer() {
     return document.getElementById(this.selectors.PAYMENT_OPTIONS_CONTAINER);
   }
