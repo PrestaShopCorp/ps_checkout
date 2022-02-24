@@ -20,7 +20,7 @@ import { BaseComponent } from '../../core/dependency-injection/base.component';
 
 export class HostedFieldsComponent extends BaseComponent {
   static Inject = {
-    config: 'PsCheckoutconfig',
+    config: 'PsCheckoutConfig',
     payPalService: 'PayPalService',
     psCheckoutApi: 'PsCheckoutApi',
     psCheckoutService: 'PsCheckoutService'
@@ -69,6 +69,18 @@ export class HostedFieldsComponent extends BaseComponent {
   getSection() {
     const sectionSelector = `.js-payment-ps_checkout-${this.data.name}`;
     return document.querySelector(sectionSelector);
+  }
+
+  getContingencies() {
+    switch (this.config.hostedFieldsContingencies) {
+      case '3D_SECURE':
+      case 'SCA_ALWAYS':
+        return ['SCA_ALWAYS'];
+      case 'NONE':
+        return undefined;
+      default:
+        return ['SCA_WHEN_REQUIRED'];
+    }
   }
 
   isSubmittable() {
@@ -128,7 +140,7 @@ export class HostedFieldsComponent extends BaseComponent {
 
             hostedFields
               .submit({
-                contingencies: ['SCA_WHEN_REQUIRED']
+                contingencies: this.getContingencies()
               })
               .then(payload => {
                 const { liabilityShift } = payload;
