@@ -56,7 +56,11 @@ export class PaymentOptionComponent extends BaseComponent {
 
     if (!this.config.paymentsReceivable) {
       paymentElement.style.setProperty('opacity', '0.6');
-      paymentElement.querySelector('input').setAttribute('disabled', true);
+
+      const paymentInput = paymentElement.querySelector('input');
+      if (paymentInput !== null) {
+        paymentInput.setAttribute('disabled', true)
+      }
     }
 
     return paymentElement;
