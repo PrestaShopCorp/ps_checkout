@@ -558,7 +558,9 @@
         );
       },
       submitForm() {
-        let action = this.merchantIsPsxOnboarded ? 'updateShop' : 'createShop';
+        let action = this.merchantIsPsxOnboarded
+          ? 'updateShop'
+          : 'collectAccountData';
 
         this.$store
           .dispatch({
@@ -581,23 +583,21 @@
                 // eslint-disable-next-line no-console
                 .catch(exception => console.log(exception));
 
-              if (action === 'createShop') {
-                this.$store
-                  .dispatch('transitOnboardingSession', {
-                    sessionAction: 'collect_shop_data',
-                    session: session
-                  })
-                  .then(() =>
-                    this.$store
-                      .dispatch('onboard')
-                      .then(response =>
-                        this.$store.dispatch(
-                          'updatePaypalOnboardingUrl',
-                          response
-                        )
+              this.$store
+                .dispatch('transitOnboardingSession', {
+                  sessionAction: 'collect_account_data',
+                  session: session
+                })
+                .then(() =>
+                  this.$store
+                    .dispatch('generateOnboardUrl')
+                    .then(response =>
+                      this.$store.dispatch(
+                        'updatePaypalOnboardingUrl',
+                        response
                       )
-                  );
-              }
+                    )
+                );
             }
           })
           .catch(error => {

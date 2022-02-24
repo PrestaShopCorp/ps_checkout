@@ -21,5 +21,8 @@ import mutation from './mutation-types';
 export default {
   [mutation.UPDATE_ROUNDING_SETTINGS_STATUS](state) {
     state.roundingSettingsIsCorrect = true;
+  },
+  [mutation.UPDATE_BUSINESS_DATA_CHECK](state) {
+    state.businessDataCheck = false;
   }
 };

@@ -63,7 +63,7 @@ class Onboarding extends PslClient
     }
 
     /**
-     * Collects acount data for shop from PSL
+     * Collect acount data
      *
      * @param array $data
      *
@@ -83,7 +83,7 @@ class Onboarding extends PslClient
             'json' => $data,
         ]);
 
-        if (!$this->checkResponse('createShop', $response)) {
+        if (!$this->checkResponse('collectAccountData', $response)) {
             return false;
         }
 
@@ -91,7 +91,7 @@ class Onboarding extends PslClient
     }
 
     /**
-     * Update shop from PSL
+     * Update shop
      *
      * @param array $data
      *
@@ -119,11 +119,11 @@ class Onboarding extends PslClient
     }
 
     /**
-     * Onboard a merchant on PSL (get PayPal onboarding link)
+     * Generate PayPal onboard URL
      *
      * @return array|false (ResponseApiHandler class)
      */
-    public function onboard()
+    public function generateOnboardUrl()
     {
         $this->setRoute('/payments/onboarding/onboard');
         /** @var OnboardingPayloadBuilder $builder */

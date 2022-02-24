@@ -104,18 +104,6 @@ const router = new Router({
       path: '/authentication/additional',
       name: 'View Form Biz',
       component: PsxAdditionalDetails
-      // beforeEnter: (to, from, next) => {
-      //   if (
-      //     !store.getters.firebaseOnboardingIsCompleted ||
-      //     store.getters.psxOnboardingIsCompleted ||
-      //     store.getters.onboarding.status !== 'ONBOARDING_STARTED' ||
-      //     store.getters.onboarding.status === 'SHOP_CREATED'
-      //   ) {
-      //     next('/authentication');
-      //   } else {
-      //     next();
-      //   }
-      // }
     },
     {
       path: '/customize',

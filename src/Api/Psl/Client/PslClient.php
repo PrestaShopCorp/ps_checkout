@@ -80,21 +80,27 @@ class PslClient extends GenericClient
         }
     }
 
-    private function fetchShopUuid() {
+    private function fetchShopUuid()
+    {
         $shopId = (int) $this->context->getShopId();
+
         return (new ShopUuidManager())->getForShop($shopId);
     }
 
-    protected function loadShopUuid() {
+    protected function loadShopUuid()
+    {
         $this->shopUuid = $this->fetchShopUuid();
+
         return $this;
     }
 
-    public function getShopUuid() {
+    public function getShopUuid()
+    {
         return $this->shopUuid;
     }
 
-    private function generateNewClient() {
+    private function generateNewClient()
+    {
         return new Client([
             'base_url' => (new PslEnv())->getPslApiUrl(),
             'defaults' => [
@@ -154,7 +160,7 @@ class PslClient extends GenericClient
                         $exceptionMessage = 'Unable to retrieve authentication token from PSL';
                         $exceptionCode = PsCheckoutSessionException::UNABLE_TO_RETRIEVE_TOKEN;
                         break;
-                    case 'createShop':
+                    case 'collectAccountData':
                     case 'updateShop':
                         $exceptionMessage = 'Unable to retrieve shop from PSL';
                         $exceptionCode = PsCheckoutSessionException::UNABLE_TO_RETRIEVE_SHOP;

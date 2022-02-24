@@ -233,10 +233,10 @@
               this.sendTrack();
 
               return this.$store
-                .dispatch('createShop', { form: null })
+                .dispatch('collectAccountData', { form: null })
                 .then(() =>
                   this.$store
-                    .dispatch('onboard')
+                    .dispatch('generateOnboardUrl')
                     .then(response =>
                       this.$store.dispatch(
                         'updatePaypalOnboardingUrl',

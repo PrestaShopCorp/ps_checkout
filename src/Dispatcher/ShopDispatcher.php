@@ -42,7 +42,7 @@ class ShopDispatcher implements Dispatcher
 
     public function dispatchEventType($payload)
     {
-        $action = 'create_shop';
+        $action = 'generate_onboard_url';
 
         $this->module->getLogger()->debug(
             'Integrations',
@@ -125,7 +125,7 @@ class ShopDispatcher implements Dispatcher
             ]
         );
 
-        if ($action === 'create_shop' && $openedSession->getStatus() === 'SHOP_CREATED') {
+        if ($action === 'generate_onboard_url' && $openedSession->getStatus() === 'ONBOARD_URL_GENERATED') {
             return true;
         }
 

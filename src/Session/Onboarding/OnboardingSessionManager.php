@@ -105,6 +105,8 @@ class OnboardingSessionManager extends SessionManager
     {
         $correlationId = Uuid::uuid4()->toString();
 
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
         // Shop UUID generation from PSL
         $onboardingApi = new Onboarding(new PrestaShopContext(), null, $this->cache);
         $createShopUuid = $onboardingApi->createShopUuid($correlationId);

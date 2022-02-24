@@ -32,5 +32,10 @@ export default {
 
       throw resp;
     });
+  },
+  updateBusinessDataCheck({ commit }) {
+    commit(mutation.UPDATE_BUSINESS_DATA_CHECK);
+
+    return true;
   }
 };

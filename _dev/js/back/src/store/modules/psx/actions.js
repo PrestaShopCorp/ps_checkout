@@ -20,10 +20,10 @@ import * as types from './mutation-types';
 import ajax from '@/requests/ajax.js';
 
 export default {
-  createShop({ commit, getters }, payload) {
+  collectAccountData({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: 'PslCreateShop',
+      action: 'PslCollectAccountData',
       data: {
         form: JSON.stringify(payload.form)
       }
@@ -38,7 +38,7 @@ export default {
       return response;
     });
   },
-  updateShop({ commit, getters }, payload) {
+  updateShop({ commit, getters, dispatch }, payload) {
     return ajax({
       url: getters.adminController,
       action: 'PslUpdateShop',
@@ -51,14 +51,15 @@ export default {
       }
 
       commit(types.UPDATE_FORM_DATA, payload.form);
+      dispatch('updateBusinessDataCheck');
 
       return response;
     });
   },
-  onboard({ getters }) {
+  generateOnboardUrl({ getters }) {
     return ajax({
       url: getters.adminController,
-      action: 'PslOnboard'
+      action: 'PslGenerateOnboardUrl'
     }).then(response => {
       if (response.status === false) {
         throw response;

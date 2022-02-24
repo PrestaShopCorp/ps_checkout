@@ -286,6 +286,10 @@
     right: 10px;
   }
 
+  .bootstrap .page-head {
+    height: 100px;
+  }
+
   .nobootstrap {
     background-color: unset !important;
     padding: 100px 10px 100px;

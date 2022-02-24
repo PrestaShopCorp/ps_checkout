@@ -225,9 +225,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Create a shop on PSL
+     * AJAX: Collect account data on PSL
      */
-    public function ajaxProcessPslCreateShop()
+    public function ajaxProcessPslCollectAccountData()
     {
         try {
             /** @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration $psCheckoutConfiguration */
@@ -251,7 +251,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Update a shop on PSL
+     * AJAX: Update shop on PSL
      */
     public function ajaxProcessPslUpdateShop()
     {
@@ -270,15 +270,15 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Onboard a merchant on PSL
+     * AJAX: Generate PayPal onboard URL
      */
-    public function ajaxProcessPslOnboard()
+    public function ajaxProcessPslGenerateOnboardUrl()
     {
         try {
             // Generate a new link to onboard a new merchant on PayPal
             /** @var Symfony\Component\Cache\Simple\FilesystemCache $cache */
             $cache = $this->module->getService('ps_checkout.cache.session');
-            $response = (new Onboarding(new PrestaShopContext(), null, $cache))->onboard();
+            $response = (new Onboarding(new PrestaShopContext(), null, $cache))->generateOnboardUrl();
 
             if (isset($response['onboardingLink'])) {
                 (new ShopDispatcher())->dispatchEventType([
@@ -385,7 +385,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessDismissBusinessDataCheck()
     {
-        Configuration::set('PS_CHECKOUT_BUSINESS_DATA_CHECK', '0', null, (int) $this->context->shop->id);
+        Configuration::updateValue('PS_CHECKOUT_DISPLAY_DATA_CHECK_MSG', '0', false, null, (int) $this->context->shop->id);
 
         $this->ajaxDie(json_encode(true));
     }
@@ -1104,7 +1104,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $cache = $this->module->getService('ps_checkout.cache.session');
         $onboardingApi = new Onboarding(new PrestaShopContext(), null, $cache);
 
-        if ($action == 'update') {
+        if ($action === 'update') {
             /** @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration $configuration */
             $configuration = $this->module->getService('ps_checkout.configuration');
 
@@ -1163,6 +1163,30 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         if (false === $this->savePsxForm($psxForm)) {
             http_response_code(500);
             $this->ajaxDie(json_encode(['Cannot save in database.']));
+        }
+
+        if ($action === 'update') {
+            Configuration::updateValue('PS_CHECKOUT_BUSINESS_DATA_CHECK', '0', false, null, (int) $this->context->shop->id);
+
+            $paypalMerchantId = Configuration::get(
+                'PS_CHECKOUT_PAYPAL_ID_MERCHANT',
+                null,
+                null,
+                (int) Context::getContext()->shop->id
+            );
+
+            if ($paypalMerchantId) {
+                /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
+                $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
+                $openedSession = $onboardingSessionManager->getOpened();
+                $data = json_decode($openedSession->getData());
+                $data->shop = json_decode(json_encode([
+                    'merchant_id' => $paypalMerchantId,
+                ]));
+
+                $openedSession->setData(json_encode($data));
+                $onboardingSessionManager->apply('onboard_paypal', $openedSession->toArray(true));
+            }
         }
 
         $this->ajaxDie(json_encode($response));

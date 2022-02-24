@@ -2,8 +2,8 @@ onboarding:
   initial_state: ONBOARDING_STARTED
   states:
     - ONBOARDING_STARTED
-    - SHOP_DATA_COLLECTED
-    - SHOP_CREATED
+    - ACCOUNT_DATA_COLLECTED
+    - ONBOARD_URL_GENERATED
     - PAYPAL_ONBOARD_COMPLETED
     - MERCHANT_INTEGRATIONS_UPDATED
     - PAYPAL_ACCOUNT_REVOKED
@@ -24,17 +24,17 @@ onboarding:
         data:
           account_id:
           account_email:
-    collect_shop_data:
+    collect_account_data:
       from: ONBOARDING_STARTED
-      to: SHOP_DATA_COLLECTED
+      to: ACCOUNT_DATA_COLLECTED
       update:
         updated_at:
         is_sse_opened: true
         data:
           form:
-    create_shop:
-      from: SHOP_DATA_COLLECTED
-      to: SHOP_CREATED
+    generate_onboard_url:
+      from: ACCOUNT_DATA_COLLECTED
+      to: ONBOARD_URL_GENERATED
       update:
         updated_at:
         is_sse_opened: false
@@ -42,7 +42,7 @@ onboarding:
           shop:
             paypal_onboarding_url:
     onboard_paypal:
-      from: SHOP_CREATED
+      from: ONBOARD_URL_GENERATED
       to: PAYPAL_ONBOARD_COMPLETED
       update:
         updated_at:

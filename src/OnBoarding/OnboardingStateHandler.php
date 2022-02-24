@@ -21,8 +21,8 @@
 namespace PrestaShop\Module\PrestashopCheckout\OnBoarding;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Psl\Onboarding;
-use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestashopCheckoutConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\ShopDispatcher;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
@@ -134,17 +134,17 @@ class OnboardingStateHandler
             $data = array_merge(json_decode($this->onboardingSession->getData(), true), $data);
 
             $this->onboardingSession->setData(json_encode($data));
-            $this->onboardingSession = $this->onboardingSessionManager->apply('collect_shop_data', $this->onboardingSession->toArray(true));
+            $this->onboardingSession = $this->onboardingSessionManager->apply('collect_account_data', $this->onboardingSession->toArray(true));
 
             // PsxForm validation
             $psxForm = (new PsxDataPrepare($psxForm))->prepareData();
             $errors = (new PsxDataValidation())->validateData($psxForm);
 
             // TODO : Remove this part after implement SSE + Full CQRS
-            $createShop = $this->onboardingApi->collectAccountData(array_filter($psxForm));
+            $account = $this->onboardingApi->collectAccountData(array_filter($psxForm));
 
-            if ($createShop['status']) {
-                $onboard = $this->onboardingApi->onboard();
+            if ($account['status']) {
+                $onboard = $this->onboardingApi->generateOnboardUrl();
 
                 if (isset($onboard['onboardingLink'])) {
                     (new ShopDispatcher())->dispatchEventType([
