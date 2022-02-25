@@ -51,6 +51,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_a3b5cc0972c85b9c5b05d6c0f8ff2
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_a6f74fff2223803369009919e94f2f96'] = 'Importo totale che riceverai sul tuo conto bancario: l\'importo dell\'ordine, meno commissioni di transazione, meno rimborsi potenziali';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d59048f21fd887ad520398ce677be586'] = 'Per saperne di più';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d7366120e49ccb980dac7e7aefae85e3'] = 'Importi della transazione';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_bf00d04ec6f8f2ca6ca1e5e9e8e4c1f1'] = 'Massimo [AMOUNT_MAX] [CURRENCY] (IVA inclusa)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d8f8973f9878eb09f5f5a6f2afbf00ef'] = 'Importo (tasse incl.)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_ea4788705e6873b424c65e91c2846b19'] = 'Annulla';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_ea620d61461a00502599f2e6a064b931'] = 'Metodo di pagamento';
@@ -100,6 +101,10 @@ $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_733ea3e302b9c48da7777481ed5
 $_MODULE['<{ps_checkout}prestashop>displayproductadditionalinfo_2f2401d57093e7d31bf2689fb87f72f6'] = 'Pagamenti sicuri al 100%';
 $_MODULE['<{ps_checkout}prestashop>expresscheckout_26a07aefd353e71a3ea90ef991d812ae'] = 'Acquisto rapido';
 $_MODULE['<{ps_checkout}prestashop>expresscheckout_e81c4e4f2b7b93b481e13a8553c2ae1b'] = 'o';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_1d565b9e5303987bb1b1938d5d458bca'] = 'Carta';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_f990493af3321939ca512f8f2cace108'] = 'Paga tramite %s';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_34ace703adbf14df140d3c02234f67bd'] = 'Paga con un conto PayPal';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_983fe12e91079dcb00c74772b50747a3'] = 'Paga tramite carta - pagamenti 100% sicuri';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_100e10b5e05d4b3abd2cd52fd12e8789'] = 'Si è verificato un errore durante il pagamento. Riprova o contatta il team di supporto.';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_5ea7f231296949070013bc43715aae01'] = 'Cod. di sicurezza';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_95b16127e70e8a90220404fb48343182'] = 'Data di scadenza';
@@ -151,6 +156,8 @@ $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_ecb1bec859ca59e1f4cf693574
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_fd62bf85c1f7c9f7bb4257cafcb0e944'] = 'L\'ordine è stato creato con un &quot;intent&quot; impostato su `AUTHORIZE`. Per completare l\'autorizzazione, usa `/v2/checkout/orders/{order_id}/authorize`. Oppure, in alternativa, crea un ordine con un &quot;intent&quot; impostato su `CAPTURE`.';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a4e8c4aedf01bae8876d415df3925f65'] = 'Aggiorna le tue impostazioni per:';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_cb2afa98a49d1ac44da748a5ee556a8a'] = 'Ricevere maggiori informazioni sui Codici conformi alla norma ISO';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_102c3c2bd444bb970f12b2f22560709f'] = 'Change {$codesType} activation for this payment module';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a841f3841c6b7c77fa7e2e1c20e284fc'] = 'PrestaShop Checkout transactions won\'t work in some of your configured {$codesType}, but there is a solution !';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_07ca5050e697392c9ed47e6453f1453f'] = 'Completata';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_0eceeb45861f9585dd7a97a3e36f85c6'] = 'Creata';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_248336101b461380a4b2391a7625493d'] = 'Registrata';
@@ -249,6 +256,8 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_edd87c9059d88fea45c0bd6384ce92b9'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f1d3b424cd68795ecaa552883759aceb'] = 'Riepilogo dell’ordine';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f212c48fb02b2494070e22184cc8906b'] = 'Numero ordine PayPal';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f2e984154b51f09b97cd60a1b8396059'] = 'No PayPal Javascript SDK Instance';
+$_MODULE['<{ps_checkout}prestashop>transactionpresenter_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Pagamento';
+$_MODULE['<{ps_checkout}prestashop>transactionpresenter_76f0ed934de85cc7131910b32ede7714'] = 'Rimborso';
 $_MODULE['<{ps_checkout}prestashop>translations_0010d7e47c9ef468ccad1dde3b4536c5'] = 'Accetta i pagamenti tramite il pulsante PayPal sulla tua pagina di pagamento';
 $_MODULE['<{ps_checkout}prestashop>translations_005b798ad83c6496b7a1a29cb9edad5c'] = 'La versione gold offre risultati migliori in termini di conversioni';
 $_MODULE['<{ps_checkout}prestashop>translations_0084da4633913f4fef24e40cec0e38e5'] = 'Express Checkout Shortcut consente di riunire la creazione di un account e il pagamento per semplificare gli acquisti dei tuoi clienti.';
