@@ -583,21 +583,23 @@
                 // eslint-disable-next-line no-console
                 .catch(exception => console.log(exception));
 
-              this.$store
-                .dispatch('transitOnboardingSession', {
-                  sessionAction: 'collect_account_data',
-                  session: session
-                })
-                .then(() =>
-                  this.$store
-                    .dispatch('generateOnboardUrl')
-                    .then(response =>
-                      this.$store.dispatch(
-                        'updatePaypalOnboardingUrl',
-                        response
-                      )
-                    )
-                );
+              if (action !== 'updateShop') {
+                return this.$store
+                  .dispatch('transitOnboardingSession', {
+                    sessionAction: 'collect_account_data',
+                    session: session
+                  })
+                  .then(() => {
+                    return this.$store
+                      .dispatch('generateOnboardUrl')
+                      .then(response => {
+                        return this.$store.dispatch(
+                          'updatePaypalOnboardingUrl',
+                          response
+                        );
+                      });
+                  });
+              }
             }
           })
           .catch(error => {

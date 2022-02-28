@@ -56,7 +56,7 @@ export default {
       return response;
     });
   },
-  generateOnboardUrl({ getters }) {
+  generateOnboardUrl({ getters, dispatch }) {
     return ajax({
       url: getters.adminController,
       action: 'PslGenerateOnboardUrl'
@@ -65,7 +65,7 @@ export default {
         throw response;
       }
 
-      return Promise.resolve(response);
+      return dispatch('getOpenedOnboardingSession').then(() => response);
     });
   },
   offboard({ commit }) {

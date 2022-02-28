@@ -80,7 +80,7 @@ class ShopDispatcher implements Dispatcher
         $payloadIntegrations = isset($payloadShop['paypal']['integrations']) ? $payloadShop['paypal']['integrations'] : [];
         $payloadRedirect = isset($payloadShop['paypal']['redirect']) ? $payloadShop['paypal']['redirect'] : [];
         $data->shop = [
-            'paypal_onboarding_url' => $payloadShop['paypal']['onboard']['links'][1]['href'],
+            'paypal_onboarding_url' => isset($payloadShop['paypal']['onboard']['links'][1]['href']) ? $payloadShop['paypal']['onboard']['links'][1]['href'] : null,
             'integrations' => !empty($payloadIntegrations) ? $payloadIntegrations : null,
             'merchant_id' => isset($payloadIntegrations['merchant_id']) ? $payloadIntegrations['merchant_id']
                 : (isset($payloadRedirect['merchant_id']) ? $payloadRedirect['merchant_id'] : null),

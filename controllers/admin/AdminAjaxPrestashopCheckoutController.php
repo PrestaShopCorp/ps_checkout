@@ -1166,8 +1166,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         }
 
         if ($action === 'update') {
-            Configuration::updateValue('PS_CHECKOUT_BUSINESS_DATA_CHECK', '0', false, null, (int) $this->context->shop->id);
-
+            $businessDataCheck = Configuration::get(
+                'PS_CHECKOUT_BUSINESS_DATA_CHECK',
+                null,
+                null,
+                (int) Context::getContext()->shop->id
+            );
             $paypalMerchantId = Configuration::get(
                 'PS_CHECKOUT_PAYPAL_ID_MERCHANT',
                 null,
@@ -1175,18 +1179,33 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 (int) Context::getContext()->shop->id
             );
 
-            if ($paypalMerchantId) {
+            if ($businessDataCheck && $paypalMerchantId) {
                 /** @var PrestaShop\Module\PrestashopCheckout\Session\Onboarding\OnboardingSessionManager $onboardingSessionManager */
                 $onboardingSessionManager = $this->module->getService('ps_checkout.session.onboarding.manager');
                 $openedSession = $onboardingSessionManager->getOpened();
                 $data = json_decode($openedSession->getData());
+                $businessForm = json_decode(
+                    Configuration::get(
+                    'PS_CHECKOUT_PSX_FORM',
+                        null,
+                        null,
+                        (int) Context::getContext()->shop->id
+                    )
+                );
+                $data->form = $businessForm;
                 $data->shop = json_decode(json_encode([
+                    'paypal_onboarding_url' => null,
                     'merchant_id' => $paypalMerchantId,
                 ]));
 
                 $openedSession->setData(json_encode($data));
+                $onboardingSessionManager->apply('collect_account_data', $openedSession->toArray(true));
+                $onboardingSessionManager->apply('generate_onboard_url', $openedSession->toArray(true));
                 $onboardingSessionManager->apply('onboard_paypal', $openedSession->toArray(true));
+                (new Onboarding(new PrestaShopContext(), null, $cache))->forceUpdateMerchantIntegrations($paypalMerchantId);
             }
+
+            Configuration::updateValue('PS_CHECKOUT_BUSINESS_DATA_CHECK', '0', false, null, (int) $this->context->shop->id);
         }
 
         $this->ajaxDie(json_encode($response));
