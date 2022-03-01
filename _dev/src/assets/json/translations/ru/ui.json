@@ -1,0 +1,15 @@
+{
+  "general": {
+    "menu": {
+      "authentication": "Authentication",
+      "customizeCheckout": "Customize checkout experience",
+      "manageActivity": "Manage Activity",
+      "advancedSettings": "Advanced settings",
+      "help": "Помощь"
+    },
+    "errors": {
+      "cantReceivePayments": "There are no payment methods available. You can't receive payments from PayPal right now and your customers can't proceed to payments anymore via the payment methods provided by PrestaShop Checkout.",
+      "contactPaypalCustomerService": "{0}Please contact PayPal Customer Service{1}"
+    }
+  }
+}
