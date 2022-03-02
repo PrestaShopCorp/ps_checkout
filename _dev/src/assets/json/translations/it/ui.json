@@ -1,0 +1,433 @@
+{
+  "menu": {
+    "authentication": "Authentication",
+    "customizeCheckout": "Customize checkout experience",
+    "manageActivity": "Manage Activity",
+    "advancedSettings": "Advanced settings",
+    "help": "Assistenza"
+  },
+  "general": {
+    "save": "Salva",
+    "testModeOn": "Test mode is turned on",
+    "wrongConfiguration": "An error during configuration was detected. Please reset the PrestaShop Checkout module and configure it again.",
+    "multiShop": {
+      "title": "Multistore detected",
+      "subtitle": "Each shop must be configured separately, even if you configure the same account on all of them.",
+      "chooseOne": "Please select the first shop to configure from the list below :",
+      "group": "Group:",
+      "configure": "Configura",
+      "tips": "Once you are done with the first shop, you can configure the others: select them one by one with the shop selector, in the horizontal menu."
+    },
+    "paymentPreferences": "Payment preferences",
+    "errors": {
+      "cantReceivePayments": "There are no payment methods available. You can't receive payments from PayPal right now and your customers can't proceed to payments anymore via the payment methods provided by PrestaShop Checkout.",
+      "contactPaypalCustomerService": "{0}Please contact PayPal Customer Service{1}"
+    }
+  },
+  "pages": {
+    "accounts": {
+      "approved": "Approvato",
+      "approvalPending": "Approval pending",
+      "accountLinkingInProgress": "Account Linking in progress",
+      "waitingPaypalLinkingTitle": "Onboarding almost done!",
+      "waitingPaypalLinking": "Synchronization between your store and your PayPal account is in progress. Please wait.",
+      "emailValidationNeeded": "Email validation needed",
+      "waitingEmail": "A confirmation email has been sent. Check your inbox and click on the link to activate your account.",
+      "didntReceiveEmail": "No confirmation email?",
+      "sendEmailAgain": "Send it again",
+      "documentNeeded": "Information needed",
+      "additionalDocumentsNeeded": "Additional information is required to complete background check. Please go on your www.paypal.com account and check the notification bell on the top right to know which documents are needed. It could be:",
+      "photoIds": "Credit Card information, bank account information and ID card",
+      "knowMoreAboutAccount": "Know more about my account approval",
+      "undergoingCheck": "Background check is currently undergoing",
+      "severalDays": "It can take several days. If further information is needed, you will be notified. Please check your emails or your notification bell on the top right of your www.paypal.com account and follow the instructions.",
+      "youCanProcess": "You can process",
+      "upTo": "up to $500",
+      "transactionsUntil": "in card transactions until your account is fully approved",
+      "accountDeclined": "Account declined",
+      "cannotProcessCreditCard": "Unfortunately, credit card payments cannot be processed for you at the moment. You will be able to reapply after 90 days. In the meantime, you can still receive payments via PayPal",
+      "accountDeclinedLink": "Account declined FAQs",
+      "suspendedAlertTitle": "Credit Card availability suspended",
+      "suspendedAlertLabel": "Unfortunately, credit card payments cannot be processed for you at the moment. In the meantime, you can still receive payments via PayPal. Please proceed to some actions from your PayPal account, where you should have received a notification. If not, please contact PayPal help center.",
+      "suspendedButton": "Manage your account",
+      "revokedAlertTitle": "Credit Card availability revoked",
+      "revokedAlertLabel": "Unfortunately, you have revoked PrestaShop Checkout permissions. Credit card payments cannot be processed for you. You can still receive payments via PayPal. Please, log out your PayPal account just below and link your account giving permission again. You can contact PayPal help center to have more information about your account.",
+      "revokedButton": "Manage your account"
+    },
+    "signin": {
+      "logInWithYourPsAccount": "Log in with your PrestaShop Checkout account",
+      "email": "E-mail",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "back": "Indietro",
+      "signup": "Sign up",
+      "login": "Log in"
+    },
+    "signup": {
+      "createYourPsAccount": "Create your PrestaShop Checkout account",
+      "email": "E-mail",
+      "password": "Password",
+      "termsOfUse": "I agree to the ",
+      "termsOfUseLinkText": "Terms and Conditions of Use of PrestaShop Checkout",
+      "termsOfUseLink": "https://www.prestashop.com/en/personal-data-protection-policy-prestashop-download",
+      "termsOfUseError": "I accept the terms of use",
+      "mentionsTermsText": "By submitting this form, I agree that the data provided may be collected by PrestaShop S.A to create your PrestaShop Checkout account. By creating your account, you will receive commercial prospecting from PrestaShop",
+      "mentionsTermsLinkTextPart1": "except opposition here",
+      "mentionsTermsLinkTextPart2": "Learn more about managing your data and rights.",
+      "mentionsTermsLinkPart2": "https://www.prestashop.com/en/personal-data-protection-policy-prestashop-download",
+      "back": "Indietro",
+      "signIn": "Sign in",
+      "createAccount": "Crea un account"
+    },
+    "resetPassword": {
+      "resetPassword": "Reset password",
+      "youGotEmail": "You've got an email.",
+      "sendEmail": "We sent you an email with instructions to reset your password. Please check your inbox.",
+      "sendLink": "We will send you a link to reset your password.",
+      "email": "E-mail",
+      "goBackToLogin": "Go back to login",
+      "reset": "Reset"
+    },
+    "customize": {
+      "customThemeWarningMessage1": "All custom themes might not be fully compatible. To avoid potential integration issues on payment page,",
+      "customThemeWarningMessage2": "please check our list of customizable settings"
+    }
+  },
+  "firebase": {
+    "error": {
+      "emailExists": "Email already exist.",
+      "missingEmail": "The email is missing.",
+      "missingPassword": "The password is missing.",
+      "invalidEmail": "The email address is badly formatted.",
+      "invalidPassword": "The password is invalid.",
+      "emailNotFound": "The email is not found.",
+      "defaultError": "Error, try later."
+    }
+  },
+  "banner": {
+    "paypalStatus": {
+      "buttonSuccess": "Thank you, close this message",
+      "buttonLegal": "Send my legal documents now",
+      "allSet": "You're all set !",
+      "congrats": "Congrats ! You can start selling online now.",
+      "waitingFinalApprove": "As soon as PayPal gets all your documents, you'll have to wait 48h for final approval.",
+      "oneMoreThing": "One more thing : send documents to be fully approved by PayPal",
+      "psAccountConnected": "Collega il tuo account PrestaShop",
+      "paypalAccountConnected": "Link your PayPal account",
+      "legalDocumentsSent": "Send your legal documents to PayPal : ",
+      "upTo": "in the meantime, you can sell now up to 500$ in card transactions.",
+      "onlyCC": "in the meantime, you will only accept credit cards payments thought the PayPal branded credit card fields",
+      "confirmation": "We have received the confirmation from PayPal. You can now process all card transactions with no limits."
+    },
+    "paypalIncompatibleCountry": {
+      "title": "PrestaShop Checkout transactions won't work in some of your configured countries, but there is a solution !",
+      "content": "Please upgrade your settings for :",
+      "changeCodes": "Change countries ISO Codes",
+      "changeActivation": "Change countries activation for this payment module",
+      "more": "Know more about compliant ISO Codes"
+    },
+    "paypalIncompatibleCurrency": {
+      "title": "PrestaShop Checkout transactions won't work in some of your configured currencies, but there is a solution !",
+      "content": "Please upgrade your settings for :",
+      "changeCodes": "Change currencies ISO Codes",
+      "changeActivation": "Change currencies activation for this payment module",
+      "more": "Know more about compliant ISO Codes"
+    },
+    "paypalValueProposition": {
+      "titleFees": "Competitive and transparent fees",
+      "titlePaymentMethods": "10 payment methods included all-in-one",
+      "titleConversions": "No redirection when paying by credit card",
+      "fees": {
+        "title": "Starting from",
+        "subtitle": "per transaction depending on your country. ",
+        "linkLabel": "Know more",
+        "linkHref": "https://www.prestashop.com/en/prestashop-checkout",
+        "popup": "For more informations about your fees please visit this page:",
+        "popupLinkLabel": "PrestaShop Checkout 2.0"
+      },
+      "conversions": {
+        "title": "Higher conversions"
+      }
+    }
+  },
+  "panel": {
+    "accounts": {
+      "activateAllPayment": "You need to connect to both PrestaShop and PayPal accounts to activate all payment methods",
+      "paypal": {
+        "title": "PayPal account",
+        "activate": "Log in or sign up to PayPal",
+        "isLinked": "Your PrestaShop account is linked to your PayPal account",
+        "useAnotherAccount": "Use another account",
+        "linkToPaypal": "Link to PayPal account",
+        "linkToPsCheckoutFirst": "Link to PrestaShop Checkout first",
+        "loading": "Caricamento",
+        "onboardingLinkError": "An error occured, the PayPal sign up or login window can't be opened. Please wait a bit and click again."
+      },
+      "checkout": {
+        "title": "PrestaShop Checkout account",
+        "connectedWith": "You are now logged in with your",
+        "account": "account",
+        "createNewAccount": "Sign in or login to provide every payment method to your customer.",
+        "logIn": "Log in",
+        "createAccount": "Sign up",
+        "logOut": "Log out",
+        "titleLogout": "Are you sure you want to logout ?",
+        "descriptionLogout": "Logging out will deactivate all payment methods. You will no longer be able to receive payments with PrestaShop Checkout.",
+        "cancel": "Cancella"
+      }
+    },
+    "psx-form": {
+      "additionalDetails": "Additional Details",
+      "fillUp": "Fill out the form to complete registration:",
+      "personalInformation": "Personal information",
+      "genderMr": "Mr",
+      "genderMrs": "Mrs",
+      "firstName": "First name",
+      "language": "Lingua",
+      "lastName": "Last name",
+      "qualification": "Are you",
+      "merchant": "A merchant",
+      "agency": "An agency",
+      "freelancer": "A freelancer",
+      "billingAddress": "Billing address",
+      "storeName": "Nome del negozio",
+      "address": "Address",
+      "postCode": "Postcode",
+      "town": "Town",
+      "country": "Nazione",
+      "state": "State",
+      "businessPhone": "Business phone",
+      "businessType": "Business type",
+      "businessInformation": "Informazioni sull'azienda",
+      "website": "Website",
+      "companyTurnover": "Company estimated monthly turnover",
+      "businessCategory": "Business category",
+      "businessSubCategory": "Business subcategory",
+      "optional": "Opzionale",
+      "continue": "Continua",
+      "back": "Indietro",
+      "errors": "Errors",
+      "privacyTextPart1": "By submitting this form, I agree that the data provided may be collected by PrestaShop S.A to permit (i) the use of our services (ii) to improve your customer experience. Your data can be transmitted to our partner Paypal if you do not already have an account.",
+      "privacyTextPart2": "Learn more about managing your data and rights.",
+      "privacyLink": "https://www.prestashop.com/en/personal-data-protection-policy-prestashop-download"
+    },
+    "active-payment": {
+      "activePaymentMethods": "Activate payment methods",
+      "changeOrder": "Change payment methods order",
+      "enabled": "Abilitato",
+      "disabled": "Disabilitato",
+      "available": "Available",
+      "notAvailable": "Non Disponibile",
+      "restricted": "Restricted",
+      "creditCard": "Credit card",
+      "paypal": "PayPal",
+      "availableIn": "available in :",
+      "allCountries": "All countries",
+      "localPaymentMethods": "Local payment methods",
+      "tipsTitle": "TIPS",
+      "tipsContent": "Boost your conversion rate by displaying PayPal as the first choice in the list of payment methods"
+    },
+    "payment-acceptance": {
+      "paymentMethod": "Payment method",
+      "availability": "Availability",
+      "activationStatus": "Activation status",
+      "paymentAcceptanceTitle": "Payment methods acceptance",
+      "creditCardsLabel": "Credit and Debit Cards",
+      "tips": "Tips",
+      "alertInfo": "To test your payment method you can make a real transaction (prefer small amount), and once you have observed the money on your account, make a refund on the corresponding order page. Warning, you will not recover the fees."
+    },
+    "payment-mode": {
+      "title": "Payment methods activation",
+      "paymentAction": "Transaction type",
+      "capture": "Direct Sale",
+      "authorize": "Capture at shipping",
+      "helpBoxPaymentMode": "Authorize process holds all payments on customers' account. Mark the order as « Shipped » or « Payment accepted » to capture payments. Local Payment Methods are not compatible with Authorize process.",
+      "infoAlertText": "We recommend « Capture at shipping » if you are a lean manufacturer or a craft products seller",
+      "environment": "Environment",
+      "sandboxMode": "Test mode",
+      "useSandboxMode": "Switch to test mode?",
+      "tipSandboxMode": "Note that you cannot collect payments with test mode",
+      "productionMode": "Production mode",
+      "useProductionMode": "Use production mode",
+      "tipProductionMode": "Production mode enables you to collect your payments."
+    },
+    "payment-method-activation": {
+      "title": "Alternative Credit Card Fields activation",
+      "label": "PayPal Branded Credit Card Fields",
+      "disable": "You can choose the type of credit card fields only if Credit card is activated in « Customize checkout experience » tab.",
+      "popover-difference-question": "What is the difference between Integrated Credit Card fields and PayPal branded Credit Card Fields ?",
+      "popover-when-question": "When to use PayPal branded Credit Card fields ?",
+      "popover-difference-answer-begin": "Integrated Credit Card fields provide the best payment experience you can find in PrestaShop. Well integrated in your checkout process, not branded, with the fewest number of fields, and lowest fee rates (see them on ",
+      "popover-difference-answer-end": " ) : we highly recommend to use these ones, by default. But you need PayPal full approval for accepting Credit Cards payment with the fields. You can see the status of this approval in the ",
+      "popover-when-answer": "If approval is pending or issues are encountered with the Integrated fields, you can activate these fields as a backup, only if Integrated fields are not available or deactivated. The fees are the same as PayPal payment method.",
+      "integrated-credit-card-fields": "Integrated Credit Card Fields",
+      "paypal-branded-credit-card-fields": "PayPal branded Credit Card Fields"
+    },
+    "express-checkout": {
+      "title": "Define PayPal express checkout flow",
+      "pageLocation": "Choose page location",
+      "orderPage": "Order summary page",
+      "checkoutPage": "Sign up on order page",
+      "productPage": "Product page",
+      "recommended": "Recommended",
+      "shippingCost": "Shipping costs, if any, will be estimated in basket total. Delivery method selected by default will be the one set in first position on Carriers page.",
+      "alertTitle": "TIPS",
+      "alertContent": "Express Checkout Shortcut allows merging account creation and payment, to make your customers purchases effortless."
+    },
+    "button-customization": {
+      "title": "Design smart payment buttons",
+      "shape": {
+        "title": "Adjust shape for all buttons",
+        "select": "Select the shape",
+        "pill": "Pill",
+        "rect": "Rectangle"
+      },
+      "customize": {
+        "title": "Customize PayPal button",
+        "label": {
+          "select": "Choose label",
+          "pay": "Pay with",
+          "checkout": "Checkout",
+          "buynow": "Buy Now"
+        },
+        "color": {
+          "select": "Select background color",
+          "gold": "Gold",
+          "blue": "Blue",
+          "silver": "Silver",
+          "white": "White",
+          "black": "Black"
+        },
+        "tips": {
+          "title": "TIPS",
+          "content": "Gold version shows better results on conversion rate"
+        },
+        "save": "Salva",
+        "savedConfiguration": "Button configuration saved with success !"
+      },
+      "preview": {
+        "title": "Preview",
+        "paypal-button": "PayPal button",
+        "local-payment-buttons": "Local payment buttons",
+        "notice": "As for local payment methods, buttons will be displayed according to the purchase context: country, amount, device, etc."
+      }
+    },
+    "help": {
+      "faq": "FAQ",
+      "title": "Help for PrestaShop Checkout",
+      "allowsYou": "Questo modulo ti permette di:",
+      "tip1": "Connect your PrestaShop Checkout account and link your PayPal Account or create one if needed",
+      "tip2": "Offer the widest range of payment methods: cards, PayPal, etc...",
+      "tip3": "Benefit from all PayPal expertise and advantages",
+      "tip4": "Give access to relevant local payment methods for customers around the globe",
+      "couldntFindAnswer": "Non hai ancora trovato le risposte che cercavi?",
+      "contactUs": "Contattaci",
+      "needHelp": "Need help? Find here the documentation of this module",
+      "downloadDoc": "Scarica PDF",
+      "noFaqAvailable": "No faq available. Try later."
+    },
+    "pay-in-4x": {
+      "title": "Pay in 4x messaging banner",
+      "alert-content": "Displaying this message has shown a better conversion rate and a raise of Average Order Value."
+    }
+  },
+  "account-settings-deeplink": {
+    "fraud-tool": {
+      "title": "Limit your fraud rate",
+      "description": "PayPal algorithms automatically limit your fraud rate. There is a complete tool on PayPal to set specific rules and drive your performance concerning fraud and chargeback costs.",
+      "link-title": "Setup fraud tool",
+      "icon-title": "Fraud tool"
+    },
+    "bank-account": {
+      "title": "Adjust your bank account",
+      "description": "Within your PayPal account, you can add a bank account to be beneficiary of your money transfer.",
+      "link-title": "Manage bank account",
+      "icon-title": "Bank account"
+    },
+    "currencies": {
+      "title": "Match currencies",
+      "description": "You can manage the currencies of your PayPal account. Ideally, make them match with the available currencies of your store.",
+      "link-title": "Manage currencies",
+      "icon-title": "Currencies"
+    },
+    "conversion-rules": {
+      "title": "Define the currency conversion rules",
+      "description": "Let's choose the conversion rules for any transaction in a currency other than those activated on your account, should they be automatically converted or request your validation.",
+      "link-title": "Manage conversion rules",
+      "icon-title": "Conversion rules"
+    },
+    "soft-descriptor": {
+      "title": "Configure your bank statements description",
+      "description": "You can choose the short or long description that appears on your customer's bank statements. Let's make them sure to understand their transaction!",
+      "link-title": "Set up description",
+      "icon-title": "Details for Bank statements"
+    }
+  },
+  "block": {
+    "reassurance": {
+      "title": "One module, all payments methods.",
+      "label1": "Offer the widest range of payment methods: cards, PayPal, etc.",
+      "label2": "Benefit from all PayPal expertise and advantages",
+      "label3": "Give access to relevant local payment methods for customers around the globe",
+      "learnMore": "Learn more"
+    },
+    "feature-incoming": {
+      "text": "Pay in 4x, save credit cards, authorize mode, send payments direct link... and more to come! Let us know what you would love to be added to this module: any new feature or behavior improvement!",
+      "submitIdea": "Submit idea"
+    },
+    "dispute": {
+      "pendingDispute": "{disputeCount} pending dispute(s)",
+      "goToDispute": "Go to the dispute management platform"
+    },
+    "payment-status": {
+      "live": "Live",
+      "approvalPending": "Approval pending",
+      "limited": "Limited to $500",
+      "denied": "Account declined",
+      "disabled": "Disabilitato",
+      "revoked": "Revoked",
+      "suspended": "Sospeso",
+      "paypalLabel": "Accept payments through PayPal buttons on your checkout page.",
+      "paypalLabelEmailNotValid": "Your account needs to be validated to accept PayPal payments. Please check your inbox for any email confirmation.",
+      "creditCardLabelLimited": "You can process a limited amount in card transactions.",
+      "creditCardLabelSuspended": "The capability can no longer be used, but there are remediation steps to regain access to the corresponding functionality.",
+      "creditCardLabelRevoked": "The capability can no longer be used and there are no remediation steps available to regain the functionality.",
+      "creditCardLabelDenied": "We cannot process credit card payments for you at the moment.",
+      "creditCardLabelLive": "Process unlimited card payments. You can accept either credit or debit card.",
+      "creditCardLabelPending": "Your account needs further checks to accept Credit and Debit Cards payment."
+    },
+    "rounding-banner": {
+      "title": "Roundings settings to change",
+      "content": "Be careful, your roundings settings are not fully compatible with PrestaShop Checkout transaction processing. Some of the transactions could fail. But it is easy, your setting Round mode and Round type should be set on « Round up away from zero, when it is half way there » and « Round on each item » or click on the button bellow to make it automatically !",
+      "button": "Change rounding settings",
+      "confirmationTitle": "Settings updated !",
+      "confirmationLabel": "Your rounding settings are now fully compatible"
+    },
+    "reporting": {
+      "pending": "pending",
+      "title": "All transactions",
+      "subTitle1": "pending transaction(s)",
+      "subTitle2": "transaction(s)",
+      "label": "See below the transactions processed with PrestaShop Checkout, limited to the last 1000 to load them faster.",
+      "subtitleLinkLabel": "See the full list of transactions on your PayPal account",
+      "goToPaypal": "Go to PayPal",
+      "goToTransaction": "Go to PayPal",
+      "orderPendingTableTitle": "Pending transaction",
+      "transactionTableTitle": "All transactions",
+      "type": {
+        "payment": "Payment",
+        "refund": "Refund"
+      },
+      "column": {
+        "date": "Data",
+        "orderId": "Order Id",
+        "customer": "Customer",
+        "type": "Type",
+        "beforeCommission": "Before commission",
+        "commission": "Commission",
+        "total": "Total",
+        "actions": "Azioni"
+      }
+    }
+  }
+}
