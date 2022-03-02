@@ -1,10 +1,10 @@
 {
   "general": {
     "menu": {
-      "authentication": "Authentication",
-      "customizeCheckout": "Customize checkout experience",
-      "manageActivity": "Manage Activity",
-      "advancedSettings": "Advanced settings",
+      "authentication": "Authentification",
+      "customizeCheckout": "Personnaliser l'experience d'achat",
+      "manageActivity": "Gérer l'activité",
+      "advancedSettings": "Options avancées",
       "help": "Aide"
     },
     "errors": {
