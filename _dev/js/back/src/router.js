@@ -108,12 +108,26 @@ const router = new Router({
     {
       path: '/customize',
       name: 'View Customize Checkout Tab',
-      component: Customize
+      component: Customize,
+      beforeEnter: (to, from, next) => {
+        if (store.getters.businessDataCheck) {
+          next('/authentication/additional');
+        } else {
+          next();
+        }
+      }
     },
     {
       path: '/activity',
       name: 'View Manage Activity Tab',
-      component: Activity
+      component: Activity,
+      beforeEnter: (to, from, next) => {
+        if (store.getters.businessDataCheck) {
+          next('/authentication/additional');
+        } else {
+          next();
+        }
+      }
     },
     {
       path: '/debug',
@@ -128,7 +142,14 @@ const router = new Router({
     {
       path: '/advanced',
       name: 'View Advanced Settings Tab',
-      component: Advanced
+      component: Advanced,
+      beforeEnter: (to, from, next) => {
+        if (store.getters.businessDataCheck) {
+          next('/authentication/additional');
+        } else {
+          next();
+        }
+      }
     },
     {
       path: '/help',

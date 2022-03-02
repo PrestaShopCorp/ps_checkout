@@ -25,13 +25,25 @@
       <template
         v-if="onboardingPaypalIsCompleted && onboardingCheckoutIsCompleted"
       >
-        <MenuItem route="/customize" idTab="customize-tab-link">
+        <MenuItem
+          route="/customize"
+          idTab="customize-tab-link"
+          :isDisabled="businessDataCheck"
+        >
           {{ $t('menu.customizeCheckout') }}
         </MenuItem>
-        <MenuItem route="/activity" idTab="activity-tab-link">
+        <MenuItem
+          route="/activity"
+          idTab="activity-tab-link"
+          :isDisabled="businessDataCheck"
+        >
           {{ $t('menu.manageActivity') }}
         </MenuItem>
-        <MenuItem route="/advanced" idTab="advanced-tab-link">
+        <MenuItem
+          route="/advanced"
+          idTab="advanced-tab-link"
+          :isDisabled="businessDataCheck"
+        >
           {{ $t('menu.advancedSettings') }}
         </MenuItem>
       </template>
@@ -78,10 +90,7 @@
         <p>
           {{ misconfiguredCurrenciesErrorMessage }}
 
-          <a
-            :href="paymentPreferencesLink"
-            target="_blank"
-          >
+          <a :href="paymentPreferencesLink" target="_blank">
             {{ $t('general.paymentPreferences') }}
           </a>
         </p>
@@ -212,6 +221,9 @@
       },
       sessionError() {
         return this.$store.getters.sessionError;
+      },
+      businessDataCheck() {
+        return this.$store.getters.businessDataCheck;
       }
     },
     watch: {

@@ -18,7 +18,13 @@
  *-->
 <template>
   <li class="nav-item">
-    <router-link :id="idTab" active-class="active" class="nav-link" :to="route">
+    <router-link
+      :id="idTab"
+      active-class="active"
+      class="nav-link"
+      :class="{ disabled: isDisabled }"
+      :to="route"
+    >
       <slot />
     </router-link>
   </li>
@@ -35,10 +41,18 @@
       idTab: {
         type: String,
         default: ''
+      },
+      isDisabled: {
+        type: Boolean,
+        default: false
       }
     },
     methods: {}
   };
 </script>
 
-<style scoped></style>
+<style scoped>
+  .disabled {
+    cursor: not-allowed;
+  }
+</style>
