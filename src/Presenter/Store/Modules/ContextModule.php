@@ -69,11 +69,6 @@ class ContextModule implements PresenterInterface
     private $valueBanner;
 
     /**
-     * @var Translations
-     */
-    private $translations;
-
-    /**
      * @var ShopContext
      */
     private $shopContext;
@@ -90,7 +85,6 @@ class ContextModule implements PresenterInterface
      * @param PayPalConfiguration $payPalConfiguration
      * @param LiveStep $liveStep
      * @param ValueBanner $valueBanner
-     * @param Translations $translations
      * @param ShopContext $shopContext
      * @param ShopProvider $shopProvider
      */
@@ -101,7 +95,6 @@ class ContextModule implements PresenterInterface
         PayPalConfiguration $payPalConfiguration,
         LiveStep $liveStep,
         ValueBanner $valueBanner,
-        Translations $translations,
         ShopContext $shopContext,
         ShopProvider $shopProvider
     ) {
@@ -111,7 +104,6 @@ class ContextModule implements PresenterInterface
         $this->paypalConfiguration = $payPalConfiguration;
         $this->liveStep = $liveStep;
         $this->valueBanner = $valueBanner;
-        $this->translations = $translations;
         $this->shopContext = $shopContext;
         $this->shopProvider = $shopProvider;
     }
@@ -141,7 +133,6 @@ class ContextModule implements PresenterInterface
                 'faq' => $this->getFaq(),
                 'language' => $this->psContext->getLanguage(),
                 'prestashopCheckoutAjax' => (new LinkAdapter($this->psContext->getLink()))->getAdminLink('AdminAjaxPrestashopCheckout'),
-                'translations' => $this->translations->getTranslations(),
                 'readmeUrl' => $this->getReadme(),
                 'cguUrl' => $this->getCgu(),
                 'privacyPolicyUrl' => $this->getPrivacyPolicyUrl(),

@@ -58,12 +58,9 @@
     <div class="container" v-if="accountIslinked && !paypalIsActive">
       <b-alert variant="danger" show>
         <p>
-          {{ $t('general.cantReceivePayments') }}
-          <a
-            href="replace.com"
-            target="_blank"
-          >
-            {{ $t('general.contactPaypalCustomerService') }}
+          {{ $t('general.errors.cantReceivePayments') }}
+          <a href="replace.com">
+            {{ $t('general.errors.contactPaypalCustomerService') }}
           </a>
         </p>
       </b-alert>
@@ -72,12 +69,12 @@
     <div class="container" v-if="showMisconfiguredCurrenciesError">
       <b-alert variant="warning" show>
         <p>
-          {{ misconfiguredCurrenciesErrorMessage }}
-
-          <a
-            :href="paymentPreferencesLink"
-            target="_blank"
-          >
+          {{
+            $t('general.errors.decimalCurrenciesError', [
+              misconfiguredCurrencies
+            ])
+          }}
+          <a :href="paymentPreferencesLink" target="_blank">
             {{ $t('general.paymentPreferences') }}
           </a>
         </p>
@@ -199,9 +196,8 @@
       showMisconfiguredCurrenciesError() {
         return this.$store.state.configuration.nonDecimalCurrencies.showError;
       },
-      misconfiguredCurrenciesErrorMessage() {
-        return this.$store.state.configuration.nonDecimalCurrencies
-          .errorMessage;
+      misconfiguredCurrencies() {
+        return this.$store.state.configuration.nonDecimalCurrencies.currencies;
       },
       paymentPreferencesLink() {
         return this.$store.getters.paymentPreferencesLink;

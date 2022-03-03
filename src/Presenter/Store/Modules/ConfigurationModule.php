@@ -181,11 +181,7 @@ class ConfigurationModule implements PresenterInterface
 
         return [
             'showError' => !empty($misConfiguredCurrencies),
-            'errorMessage' => sprintf(
-                $this->module->l('Warning : the currencies you have activated : %s are not currently supported by PrestaShop Checkout. Please deactivate %s for PrestaShop Checkout in your ', 'configurationmodule'),
-                $implodedMisconfiguredCurrencies,
-                $implodedMisconfiguredCurrencies
-            ),
+            'currencies' => $implodedMisconfiguredCurrencies,
         ];
     }
 

@@ -25,6 +25,7 @@ module.exports = {
     config.plugins.delete('preload');
     config.plugins.delete('prefetch');
     config.resolve.alias.set('@', path.resolve(__dirname, 'src'));
+    config.resolve.alias.set('@Common', path.resolve(__dirname, '../../src'));
   },
   configureWebpack:
     process.env.NODE_ENV === 'production'

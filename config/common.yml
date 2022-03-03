@@ -218,7 +218,6 @@ services:
       - '@ps_checkout.paypal.configuration'
       - '@ps_checkout.step.live'
       - '@ps_checkout.step.value'
-      - '@ps_checkout.translations.translations'
       - '@ps_checkout.context.shop'
       - '@ps_checkout.shop.provider'
 

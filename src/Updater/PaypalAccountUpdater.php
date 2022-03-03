@@ -76,6 +76,13 @@ class PaypalAccountUpdater
 
         $merchantIntegration = $this->merchantIntegrationProvider->getById($merchantId);
 
+        $merchantIntegration = [
+            'primary_email' => 'test@test.com',
+            'primary_email_confirmed' => true,
+            'payments_receivable' => false,
+            'country' => 'FR',
+        ];
+
         if (false === $merchantIntegration) {
             $account->setEmail('');
             $account->setEmailIsVerified('');
@@ -89,6 +96,7 @@ class PaypalAccountUpdater
         $account->setEmail(isset($merchantIntegration['primary_email']) ? $merchantIntegration['primary_email'] : '');
         $account->setEmailIsVerified(isset($merchantIntegration['primary_email_confirmed']) ? $merchantIntegration['primary_email_confirmed'] : '');
         $account->setPaypalPaymentStatus(isset($merchantIntegration['payments_receivable']) ? $merchantIntegration['payments_receivable'] : '');
+//        $account->setPaypalPaymentStatus(false);
         $account->setCardPaymentStatus(isset($merchantIntegration['products']) ? $this->getCardStatus($merchantIntegration) : '');
         $account->setMerchantCountry(isset($merchantIntegration['country']) ? $merchantIntegration['country'] : '');
 
