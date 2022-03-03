@@ -4,7 +4,7 @@
     "customizeCheckout": "Customize checkout experience",
     "manageActivity": "Manage Activity",
     "advancedSettings": "Advanced settings",
-    "help": "Ajuda"
+    "help": "HelpA"
   },
   "general": {
     "save": "Guardar",
@@ -21,7 +21,8 @@
     "paymentPreferences": "Payment preferences",
     "errors": {
       "cantReceivePayments": "There are no payment methods available. You can't receive payments from PayPal right now and your customers can't proceed to payments anymore via the payment methods provided by PrestaShop Checkout.",
-      "contactPaypalCustomerService": "{0}Please contact PayPal Customer Service{1}"
+      "contactPaypalCustomerService": "Please contact PayPal Customer Service",
+      "decimalCurrenciesError": "Warning : the currencies you have activated : {0} are not currently supported by PrestaShop Checkout. Please deactivate {0} for PrestaShop Checkout in your"
     }
   },
   "pages": {
