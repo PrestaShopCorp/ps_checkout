@@ -65,8 +65,12 @@ class Translations
                     'configure' => 'Configure',
                     'tips' => $this->module->l('Once you are done with the first shop, you can configure the others: select them one by one with the shop selector, in the horizontal menu.', 'translations'),
                 ],
-                'cantReceivePayments' => $this->module->l('You can not receive Payments in PayPal at this moment, please contact PayPal to solve this problem', 'translations'),
-                'paymentPreferences' => $this->module->l('Payment preferences', 'translations'),
+                'errors' => [
+                    'cantReceivePayments' => $this->module->l('There are no payment methods available. You can\'t receive payments from PayPal right now and your customers can\'t proceed to payments anymore via the payment methods provided by PrestaShop Checkout.', 'translations'),
+                    'contactPaypalCustomerService' => $this->module->l('Please contact PayPal Customer Service', 'translations'),
+                    'decimalCurrenciesError' => $this->module->l('Warning : the currencies you have activated : {0} are not currently supported by PrestaShop Checkout. Please deactivate {0} for PrestaShop Checkout in your', 'translations'),
+                    'paymentPreferences' => $this->module->l('Payment preferences', 'translations'),
+                ],
             ],
             'pages' => [
                 'accounts' => [

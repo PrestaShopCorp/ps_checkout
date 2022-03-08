@@ -83,7 +83,6 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_ec53a8c4f07baed5d882507
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_ef93d2efbc5c9bdb02f807dd2c9337fb'] = 'Nettobetrag zur Erstattung';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_f5d74ea75357b5e139854c14f8e24fe3'] = 'Bestelldetails';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_fc9aab144255fe59fc53dea649cff88b'] = 'Rückerstattung bestätigen';
-$_MODULE['<{ps_checkout}prestashop>configurationmodule_6017aa60accb3ba69278852888ab02be'] = 'Vorsicht : die Währungen, dass Sie haben aktivieren : %s mit PrestaShop Checkout zur Zeit nicht funktionieren. Bitte deaktivieren Sie %s für PrestaShop Checkout in Ihren';
 $_MODULE['<{ps_checkout}prestashop>cursedpage_960567c486a23f5e75891b735928c8ba'] = 'Gehen Sie zurück zur Modulkonfiguration';
 $_MODULE['<{ps_checkout}prestashop>cursedpage_df2183ab7d5bfd58187077969f08c7f8'] = 'Bei PayPal-Onboarding ist ein Fehler aufgetreten, bitte versuchen Sie es erneut.';
 $_MODULE['<{ps_checkout}prestashop>displayexpresscheckout_2f2401d57093e7d31bf2689fb87f72f6'] = '100 % sichere Zahlungen';
@@ -477,6 +476,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_ae7bd6527c89645a15c3b5e5f1f22dbd
 $_MODULE['<{ps_checkout}prestashop>translations_af37d2248a1fa9c60e8df22938255f05'] = 'Wir können für Sie derzeit keine Kartenzahlungen abwickeln.';
 $_MODULE['<{ps_checkout}prestashop>translations_b235ad7b91fbeda6f87ac3d7e6f0ff6d'] = 'Wir haben die Bestätigung von PayPal erhalten. Sie können nun alle Kartentransaktionen ohne Limits verarbeiten.';
 $_MODULE['<{ps_checkout}prestashop>translations_b3a3bef1143977b9be6f9058641b1035'] = 'Diese E-Mail-Adresse konnte nicht gefunden werden.';
+$_MODULE['<{ps_checkout}prestashop>translations_e1b74123fdda2fd3b4a98308ef5dd782'] = 'Vorsicht : die Währungen, dass Sie haben aktivieren : {0} mit PrestaShop Checkout zur Zeit nicht funktionieren. Bitte deaktivieren Sie {0} für PrestaShop Checkout in Ihren';
 $_MODULE['<{ps_checkout}prestashop>translations_b52a626dee6ab468117342c9292a45b6'] = 'Zahlungseinstellungen';
 $_MODULE['<{ps_checkout}prestashop>translations_b6d4223e60986fa4c9af77ee5f7149c5'] = 'Anmelden';
 $_MODULE['<{ps_checkout}prestashop>translations_b79585fa23346ba2a5a030c65d79d4c0'] = 'Bankkonto verwalten';
