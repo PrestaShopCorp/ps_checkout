@@ -145,11 +145,11 @@ $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_bd972c54e30277bb235fa34b5d
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_c180c7c7be6f58fde50feae89c97c0a0'] = 'De Caller account API is niet geconfigureerd om betalingen met creditcard te accepteren. Neem contact op met de klantenservice van PayPal.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_c4cdc3c3b50c0a7aa017266797228972'] = 'De verwerking van dit type kaart wordt niet ondersteund. Gebruik een ander type kaart.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_cba316dfd19bdaf1c654cd84d82688fe'] = 'Deze transactie wordt geweigerd op grond van een compliance-overtreding.';
-$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_d00df53f04b51b8bba7060021a13250a'] = 'Deze klant mag het object &quot;payment_instriction&quot; niet gebruiken.';
-$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_dddf233eaa8da4b85ebc33661ca4fe94'] = 'De valuta van de betalingsautorisatie moet dezelfde zijn als de valuta die wordt gebruikt voor het aanmaken van de bestelling en die door de klant is geautoriseerd. Controleer de &quot;currency_code&quot; en probeer het opnieuw.';
+$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_d00df53f04b51b8bba7060021a13250a'] = 'Deze klant mag het object &amp;amp;amp;quot;payment_instriction&amp;amp;amp;quot; niet gebruiken.';
+$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_dddf233eaa8da4b85ebc33661ca4fe94'] = 'De valuta van de betalingsautorisatie moet dezelfde zijn als de valuta die wordt gebruikt voor het aanmaken van de bestelling en die door de klant is geautoriseerd. Controleer de &amp;amp;amp;quot;currency_code&amp;amp;amp;quot; en probeer het opnieuw.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_df5bf45d0c1e09ae5e724072d361410f'] = 'De klant heeft de betaling niet goedgekeurd.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e229686c76660524e7c83d4fda4a2b48'] = 'De betaler heeft de betalingsopdracht nog niet goedgekeurd. Gelieve de betaler door te sturen naar de `rel`:`approve` url die is teruggestuurd als onderdeel van de HATEOAS links binnen de Create Order call of geef een geldige payment_source in de aanvraag.';
-$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e39b765a3de4545e91f889374c84535c'] = 'De optie om de bestelling op te slaan is alleen beschikbaar als de &quot;intent&quot; AUTHORIZE is en de &quot;processing_instruction&quot; ORDER_SAVED_EXPLICITY is. Verander de &quot;intent&quot; in AUTHORIZE, &quot;processing_instruction&quot; in &quot;ORDER_SAVED_EXPLICITY&quot; en probeer het opnieuw.';
+$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e39b765a3de4545e91f889374c84535c'] = 'De optie om de bestelling op te slaan is alleen beschikbaar als de &amp;amp;amp;quot;intent&amp;amp;amp;quot; AUTHORIZE is en de &amp;amp;amp;quot;processing_instruction&amp;amp;amp;quot; ORDER_SAVED_EXPLICITY is. Verander de &amp;amp;amp;quot;intent&amp;amp;amp;quot; in AUTHORIZE, &amp;amp;amp;quot;processing_instruction&amp;amp;amp;quot; in &amp;amp;amp;quot;ORDER_SAVED_EXPLICITY&amp;amp;amp;quot; en probeer het opnieuw.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e447d4a6087d64d98201ba94eacc6696'] = 'Ongeldig kaartnummer. Controleer het kaartnummer en probeer het opnieuw.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e765f8d5cab9d172c3522849bdd37334'] = 'Het leveringsadres is vereist. Controleer de leveringsadresvelden en probeer het opnieuw.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_ecb1bec859ca59e1f4cf6935743ddad4'] = 'Een autorisatiebedrag kan alleen worden opgegeven als een Bestelling is opgeslagen door /v2/checkout/orders/{order_id}/save op te roepen. Sla de bestelling alstublieft  op en probeer het opnieuw.';
@@ -188,7 +188,7 @@ $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_95b16127e70e8a9022040
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_a44217022190f5734b2f72ba1e4f8a79'] = 'Kaartnummer';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_bc9189406be84ec297464a514221406d'] = 'XXX';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_c884ed19483d45970c5bf23a681e2dd2'] = 'Hier vindt u een kort overzicht van uw bestelling:';
-$_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_edd87c9059d88fea45c0bd6384ce92b9'] = 'Klik op &quot;Ik bevestig mijn bestelling&quot; om uw bestelling te bevestigen.';
+$_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_edd87c9059d88fea45c0bd6384ce92b9'] = 'Klik op &amp;amp;amp;quot;Ik bevestig mijn bestelling&amp;amp;amp;quot; om uw bestelling te bevestigen.';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_f1d3b424cd68795ecaa552883759aceb'] = 'Besteloverzicht';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_1e9307ff80da8e2e7053566f1613cf90'] = '3 cijfers';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_36883c97eb73307ac86b5ad32abbb49b'] = 'op de achterkant van uw creditcard. In sommige gevallen kan het een 4-cijferige code zijn of op de voorkant van uw kaart.';
@@ -254,7 +254,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_bc9189406be84ec297464a514221406d'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_c884ed19483d45970c5bf23a681e2dd2'] = 'Hier vindt u een kort overzicht van uw bestelling:';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_dbb50a3167fd387cac23808bd55a9ee4'] = 'PayPal transactienr: ';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_e81c4e4f2b7b93b481e13a8553c2ae1b'] = 'of';
-$_MODULE['<{ps_checkout}prestashop>ps_checkout_edd87c9059d88fea45c0bd6384ce92b9'] = 'Klik op &quot;Ik bevestig mijn bestelling&quot; om uw bestelling te bevestigen.';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_edd87c9059d88fea45c0bd6384ce92b9'] = 'Klik op &amp;amp;amp;quot;Ik bevestig mijn bestelling&amp;amp;amp;quot; om uw bestelling te bevestigen.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f1d3b424cd68795ecaa552883759aceb'] = 'Besteloverzicht';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f212c48fb02b2494070e22184cc8906b'] = 'PayPal Bestelreferentie:';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f2e984154b51f09b97cd60a1b8396059'] = 'No PayPal Javascript SDK Instance';
@@ -319,7 +319,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_25d76826f85d2bb976027066e6fcc522
 $_MODULE['<{ps_checkout}prestashop>translations_2607298669ace2fc910321afeb9f8a84'] = 'Pdf downloaden';
 $_MODULE['<{ps_checkout}prestashop>translations_26a180e6da68731b08a94399789ff518'] = 'Gefeliciteerd! U kunt nu online gaan verkopen.';
 $_MODULE['<{ps_checkout}prestashop>translations_26d56092353c630f9ad92df134d3708d'] = 'Opzetten van de beschrijving';
-$_MODULE['<{ps_checkout}prestashop>translations_26ec71edbfce31656c47a66bf830ed1c'] = 'Opgelet: uw instellingen voor afrondingen zijn niet volledig compatibel met de transactiebehandeling van PrestaShop Checkout. Sommige transacties kunnen mogelijk niet worden verwerkt. U kunt dit echter eenvoudig aanpassen. Maar het is gemakkelijk, uw &quot;Afrondingsregel&quot; en &quot;Afrondingstype&quot; instellingen moeten worden ingesteld op &quot;Afronden tot oneindig wanneer halverwege de waarde&quot; en &quot;Afronden voor elk artikel&quot; of klik op de knop hieronder om het automatisch te doen!';
+$_MODULE['<{ps_checkout}prestashop>translations_26ec71edbfce31656c47a66bf830ed1c'] = 'Opgelet: uw instellingen voor afrondingen zijn niet volledig compatibel met de transactiebehandeling van PrestaShop Checkout. Sommige transacties kunnen mogelijk niet worden verwerkt. U kunt dit echter eenvoudig aanpassen. Maar het is gemakkelijk, uw &amp;amp;amp;quot;Afrondingsregel&amp;amp;amp;quot; en &amp;amp;amp;quot;Afrondingstype&amp;amp;amp;quot; instellingen moeten worden ingesteld op &amp;amp;amp;quot;Afronden tot oneindig wanneer halverwege de waarde&amp;amp;amp;quot; en &amp;amp;amp;quot;Afronden voor elk artikel&amp;amp;amp;quot; of klik op de knop hieronder om het automatisch te doen!';
 $_MODULE['<{ps_checkout}prestashop>translations_29ac026d29c538244f7b8a7505213750'] = 'TIPS';
 $_MODULE['<{ps_checkout}prestashop>translations_2bd63f8a40a2830f6e7c4043bb534137'] = 'Multistore gevonden';
 $_MODULE['<{ps_checkout}prestashop>translations_2c3d0d52cd44ea478c6e2a6586632239'] = 'PayPal knop aanpassen';
@@ -426,7 +426,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_8634bddac0c61abde83ce1debdc1892c
 $_MODULE['<{ps_checkout}prestashop>translations_88bccdecc2c4b9dcc8afbbc94483293c'] = 'Geniet van alle PayPal-expertise en -voordelen';
 $_MODULE['<{ps_checkout}prestashop>translations_8ac88d38d8b578d5b10bf4cf0cf50076'] = 'Kies de pagina\'s waarop de knoppen worden weergegeven';
 $_MODULE['<{ps_checkout}prestashop>translations_8a9f98e889a0de9caf2feb4b9b382284'] = 'Logt u uit, dan worden alle betaalmethoden gedeactiveerd. U kunt dan geen betalingen via PrestaShop Checkout meer ontvangen.';
-$_MODULE['<{ps_checkout}prestashop>translations_8acc0bc61a5f75b13cea7e27bbcd51af'] = 'U kunt het type creditcardvelden alleen kiezen als de creditcard is geactiveerd in het tabblad &quot;Kassa-ervaring aanpassen&quot;.';
+$_MODULE['<{ps_checkout}prestashop>translations_8acc0bc61a5f75b13cea7e27bbcd51af'] = 'U kunt het type creditcardvelden alleen kiezen als de creditcard is geactiveerd in het tabblad &amp;amp;amp;quot;Kassa-ervaring aanpassen&amp;amp;amp;quot;.';
 $_MODULE['<{ps_checkout}prestashop>translations_8bcdc441379cbf584638b0589a3f9adb'] = 'Postcode';
 $_MODULE['<{ps_checkout}prestashop>translations_8bf906833cc7aea8084f552217ed9c1d'] = 'Geschorst';
 $_MODULE['<{ps_checkout}prestashop>translations_8d3d326e52dae2640dc2e2143062e078'] = 'Er wordt momenteel een achtergrondonderzoek uitgevoerd';
@@ -477,7 +477,6 @@ $_MODULE['<{ps_checkout}prestashop>translations_af37d2248a1fa9c60e8df22938255f05
 $_MODULE['<{ps_checkout}prestashop>translations_b235ad7b91fbeda6f87ac3d7e6f0ff6d'] = 'We hebben de bevestiging van PayPal ontvangen. U kunt nu alle kaarttransacties zonder beperkingen verwerken.';
 $_MODULE['<{ps_checkout}prestashop>translations_b3a3bef1143977b9be6f9058641b1035'] = 'De e-mail is niet gevonden.';
 $_MODULE['<{ps_checkout}prestashop>translations_b52a626dee6ab468117342c9292a45b6'] = 'betalingsvoorkeuren';
-$_MODULE['<{ps_checkout}prestashop>translations_e1b74123fdda2fd3b4a98308ef5dd782'] = 'Opgelet : de valuta\'s die u heeft geactiveerd : {0} worden momenteel niet ondersteund door PrestaShop Checkout. Alsjeblieft deactiveer {0} voor PrestaShop Checkout in uw';
 $_MODULE['<{ps_checkout}prestashop>translations_b6d4223e60986fa4c9af77ee5f7149c5'] = 'Inloggen';
 $_MODULE['<{ps_checkout}prestashop>translations_b79585fa23346ba2a5a030c65d79d4c0'] = 'Beheer uw bankrekening';
 $_MODULE['<{ps_checkout}prestashop>translations_b7f41477baf42a89b6c905148b2e9f9a'] = 'Log in of registreer u op PayPal';
@@ -531,6 +530,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_dc43994c00f8f208f0c649524a9bcd46
 $_MODULE['<{ps_checkout}prestashop>translations_dc647eb65e6711e155375218212b3964'] = 'Wachtwoord';
 $_MODULE['<{ps_checkout}prestashop>translations_dd7bf230fde8d4836917806aff6a6b27'] = 'Adres';
 $_MODULE['<{ps_checkout}prestashop>translations_dfcfc43722eef1eab1e4a12e50a068b1'] = 'Valuta\'s';
+$_MODULE['<{ps_checkout}prestashop>translations_e1b74123fdda2fd3b4a98308ef5dd782'] = 'Opgelet : de valuta\'s die u heeft geactiveerd : {0} worden momenteel niet ondersteund door PrestaShop Checkout. Alsjeblieft deactiveer {0} voor PrestaShop Checkout in uw';
 $_MODULE['<{ps_checkout}prestashop>translations_e1e1ce67de4906765f104f24a4280a1d'] = 'Hulp nodig? Hier vindt u de documentatie bij deze module';
 $_MODULE['<{ps_checkout}prestashop>translations_e268443e43d93dab7ebef303bbe9642f'] = 'account';
 $_MODULE['<{ps_checkout}prestashop>translations_e2e372415a8b8d36f4d86d9fc86bc608'] = 'Voor meer informatie over uw tarieven kunt u terecht op deze pagina:';

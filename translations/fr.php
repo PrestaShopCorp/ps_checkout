@@ -145,11 +145,11 @@ $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_bd972c54e30277bb235fa34b5d
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_c180c7c7be6f58fde50feae89c97c0a0'] = 'Le API Caller account n\'est pas configuré pour accepter les paiements par carte. Veuillez contacter le service client PayPal.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_c4cdc3c3b50c0a7aa017266797228972'] = 'Le traitement de ce type de carte n\'est pas pris en charge. Veuillez utiliser un autre type de carte.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_cba316dfd19bdaf1c654cd84d82688fe'] = 'Cette transaction est refusée pour des raisons de violation de conformité.';
-$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_d00df53f04b51b8bba7060021a13250a'] = 'Ce client n\'est pas autorisé à utiliser  l\'objet &quot;payment_instriction&quot;.';
-$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_dddf233eaa8da4b85ebc33661ca4fe94'] = 'La devise de l\'autorisation de paiement doit être la même que la devise utilisée pour créer la commande et autorisée par le client. Vérifier le &quot;currency_code&quot; et essayer de nouveau.';
+$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_d00df53f04b51b8bba7060021a13250a'] = 'Ce client n\'est pas autorisé à utiliser  l\'objet &amp;amp;amp;quot;payment_instriction&amp;amp;amp;quot;.';
+$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_dddf233eaa8da4b85ebc33661ca4fe94'] = 'La devise de l\'autorisation de paiement doit être la même que la devise utilisée pour créer la commande et autorisée par le client. Vérifier le &amp;amp;amp;quot;currency_code&amp;amp;amp;quot; et essayer de nouveau.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_df5bf45d0c1e09ae5e724072d361410f'] = 'Le client n\'a pas approuvé le paiement.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e229686c76660524e7c83d4fda4a2b48'] = 'Payer has not yet approved the Order for payment. Please redirect the payer to the `rel`:`approve` url returned as part of the HATEOAS links within the Create Order call or provide a valid payment_source in the request.';
-$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e39b765a3de4545e91f889374c84535c'] = 'L\'option pour enregistrer la commande est seulement disponible si le \'intent\' est AUTHORIZE et le &quot;processing_instruction&quot; est ORDER_SAVED_EXPLICITY. Veuillez changer le &quot;intent&quot; en AUTHORIZE, &quot;processing_instruction&quot; en &quot;ORDER_SAVED_EXPLICITY&quot; et essayer de nouveau.';
+$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e39b765a3de4545e91f889374c84535c'] = 'L\'option pour enregistrer la commande est seulement disponible si le \'intent\' est AUTHORIZE et le &amp;amp;amp;quot;processing_instruction&amp;amp;amp;quot; est ORDER_SAVED_EXPLICITY. Veuillez changer le &amp;amp;amp;quot;intent&amp;amp;amp;quot; en AUTHORIZE, &amp;amp;amp;quot;processing_instruction&amp;amp;amp;quot; en &amp;amp;amp;quot;ORDER_SAVED_EXPLICITY&amp;amp;amp;quot; et essayer de nouveau.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e447d4a6087d64d98201ba94eacc6696'] = 'Numéro de carte invalide. Vérifiez le numéro de carte et essayer de nouveau.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e765f8d5cab9d172c3522849bdd37334'] = 'L\'adresse de livraison est requis. Veuillez vérifier les champs d\'adresse de livraison et essayer de nouveau.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_ecb1bec859ca59e1f4cf6935743ddad4'] = 'An authorization amount can only be specified if an Order has been saved by calling /v2/checkout/orders/{order_id}/save. Please save the order and try again.';
@@ -188,7 +188,7 @@ $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_95b16127e70e8a9022040
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_a44217022190f5734b2f72ba1e4f8a79'] = 'Numéro de carte';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_bc9189406be84ec297464a514221406d'] = 'XXX';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_c884ed19483d45970c5bf23a681e2dd2'] = 'Voici un résumé de votre commande :';
-$_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_edd87c9059d88fea45c0bd6384ce92b9'] = 'Veuillez finaliser votre commande en cliquant sur &quot;Je valide ma commande&quot;';
+$_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_edd87c9059d88fea45c0bd6384ce92b9'] = 'Veuillez finaliser votre commande en cliquant sur &amp;amp;amp;quot;Je valide ma commande&amp;amp;amp;quot;';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_f1d3b424cd68795ecaa552883759aceb'] = 'Résumé de commande';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_1e9307ff80da8e2e7053566f1613cf90'] = '3 chiffres';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_36883c97eb73307ac86b5ad32abbb49b'] = 'présent sur le dos de votre carte. Dans certains cas, il est composé de 4 chiffres ou se trouve à l\'avant de la carte.';
@@ -254,7 +254,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_bc9189406be84ec297464a514221406d'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_c884ed19483d45970c5bf23a681e2dd2'] = 'Voici un résumé de votre commande :';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_dbb50a3167fd387cac23808bd55a9ee4'] = 'Référence de Transaction PayPal';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_e81c4e4f2b7b93b481e13a8553c2ae1b'] = 'ou';
-$_MODULE['<{ps_checkout}prestashop>ps_checkout_edd87c9059d88fea45c0bd6384ce92b9'] = 'Veuillez finaliser votre commande en cliquant sur &quot;Je valide ma commande&quot;';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_edd87c9059d88fea45c0bd6384ce92b9'] = 'Veuillez finaliser votre commande en cliquant sur &amp;amp;amp;quot;Je valide ma commande&amp;amp;amp;quot;';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f1d3b424cd68795ecaa552883759aceb'] = 'Résumé de commande';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f212c48fb02b2494070e22184cc8906b'] = 'Référence de commande PayPal';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f2e984154b51f09b97cd60a1b8396059'] = 'No PayPal Javascript SDK Instance';
@@ -476,7 +476,6 @@ $_MODULE['<{ps_checkout}prestashop>translations_ae7bd6527c89645a15c3b5e5f1f22dbd
 $_MODULE['<{ps_checkout}prestashop>translations_af37d2248a1fa9c60e8df22938255f05'] = 'Nous ne pouvons pas accepter les paiements par carte pour vous pour le moment.';
 $_MODULE['<{ps_checkout}prestashop>translations_b235ad7b91fbeda6f87ac3d7e6f0ff6d'] = 'Nous avons reçu la confirmation de PayPal. Vous pouvez maintenant accepter tous les paiements par cartes sans aucune limite.';
 $_MODULE['<{ps_checkout}prestashop>translations_b3a3bef1143977b9be6f9058641b1035'] = 'L\'email n\'a pas été trouvé.';
-$_MODULE['<{ps_checkout}prestashop>translations_e1b74123fdda2fd3b4a98308ef5dd782'] = 'Attention : les monnaies que vous avez activées :{0} ne sont pas actuellement supportées par PrestaShop Checkout. Veuillez désactiver {0} pour PrestaShop Checkout dans vos';
 $_MODULE['<{ps_checkout}prestashop>translations_b52a626dee6ab468117342c9292a45b6'] = 'Préférences Paiement';
 $_MODULE['<{ps_checkout}prestashop>translations_b6d4223e60986fa4c9af77ee5f7149c5'] = 'Se connecter';
 $_MODULE['<{ps_checkout}prestashop>translations_b79585fa23346ba2a5a030c65d79d4c0'] = 'Gérer votre compte en banque';
@@ -531,6 +530,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_dc43994c00f8f208f0c649524a9bcd46
 $_MODULE['<{ps_checkout}prestashop>translations_dc647eb65e6711e155375218212b3964'] = 'Mot de passe';
 $_MODULE['<{ps_checkout}prestashop>translations_dd7bf230fde8d4836917806aff6a6b27'] = 'Adresse';
 $_MODULE['<{ps_checkout}prestashop>translations_dfcfc43722eef1eab1e4a12e50a068b1'] = 'Devises';
+$_MODULE['<{ps_checkout}prestashop>translations_e1b74123fdda2fd3b4a98308ef5dd782'] = 'Attention : les monnaies que vous avez activées :{0} ne sont pas actuellement supportées par PrestaShop Checkout. Veuillez désactiver {0} pour PrestaShop Checkout dans vos';
 $_MODULE['<{ps_checkout}prestashop>translations_e1e1ce67de4906765f104f24a4280a1d'] = 'Besoin d\'aide ? Trouvez ici la documentation du module';
 $_MODULE['<{ps_checkout}prestashop>translations_e268443e43d93dab7ebef303bbe9642f'] = '  ';
 $_MODULE['<{ps_checkout}prestashop>translations_e2e372415a8b8d36f4d86d9fc86bc608'] = 'Pour plus d\'informations sur les frais, visitez la page : ';

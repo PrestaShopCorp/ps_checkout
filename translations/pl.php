@@ -188,7 +188,7 @@ $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_95b16127e70e8a9022040
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_a44217022190f5734b2f72ba1e4f8a79'] = 'Numer karty';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_bc9189406be84ec297464a514221406d'] = 'XXX';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_c884ed19483d45970c5bf23a681e2dd2'] = 'Oto krótkie podsumowanie Twojego zamówienia:';
-$_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_edd87c9059d88fea45c0bd6384ce92b9'] = 'Prosimy o potwierdzenie zamówienia, klikając opcję &quot;Potwierdzam moje zamówienie&quot;';
+$_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_edd87c9059d88fea45c0bd6384ce92b9'] = 'Prosimy o potwierdzenie zamówienia, klikając opcję &amp;amp;amp;quot;Potwierdzam moje zamówienie&amp;amp;amp;quot;';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_f1d3b424cd68795ecaa552883759aceb'] = 'Podsumowanie zamówienia';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_1e9307ff80da8e2e7053566f1613cf90'] = '3-cyfrowy';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_36883c97eb73307ac86b5ad32abbb49b'] = 'kod znajdujący się na odwrocie Twojej karty kredytowej. W niektórych przypadkach może to być kod 4-cyfrowy lub znajdujący się na przedniej stronie karty.';
@@ -426,7 +426,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_8634bddac0c61abde83ce1debdc1892c
 $_MODULE['<{ps_checkout}prestashop>translations_88bccdecc2c4b9dcc8afbbc94483293c'] = 'Korzystaj z całego doświadczenia i wszystkich zalet serwisu PayPal';
 $_MODULE['<{ps_checkout}prestashop>translations_8ac88d38d8b578d5b10bf4cf0cf50076'] = 'Wybierz strony, na których będą wyświetlane przyciski';
 $_MODULE['<{ps_checkout}prestashop>translations_8a9f98e889a0de9caf2feb4b9b382284'] = 'Wylogowanie się spowoduje dezaktywację wszystkich metod płatności. Nie będziesz już móc otrzymywać płatności za pomocą PrestaShop Checkout.';
-$_MODULE['<{ps_checkout}prestashop>translations_8acc0bc61a5f75b13cea7e27bbcd51af'] = 'Możesz wybrać typ pola karty kredytowej tylko wtedy, gdy karta kredytowa jest aktywna w zakładce „Zindywidualizuj proces płatności&quot;.';
+$_MODULE['<{ps_checkout}prestashop>translations_8acc0bc61a5f75b13cea7e27bbcd51af'] = 'Możesz wybrać typ pola karty kredytowej tylko wtedy, gdy karta kredytowa jest aktywna w zakładce „Zindywidualizuj proces płatności&amp;amp;amp;quot;.';
 $_MODULE['<{ps_checkout}prestashop>translations_8bcdc441379cbf584638b0589a3f9adb'] = 'Kod pocztowy';
 $_MODULE['<{ps_checkout}prestashop>translations_8bf906833cc7aea8084f552217ed9c1d'] = 'Zawieszono';
 $_MODULE['<{ps_checkout}prestashop>translations_8d3d326e52dae2640dc2e2143062e078'] = 'Trwa kontrola sytuacji';
@@ -476,7 +476,6 @@ $_MODULE['<{ps_checkout}prestashop>translations_ae7bd6527c89645a15c3b5e5f1f22dbd
 $_MODULE['<{ps_checkout}prestashop>translations_af37d2248a1fa9c60e8df22938255f05'] = 'Nie możemy w tej chwili przetwarzać płatności kartami płatniczymi dla Ciebie.';
 $_MODULE['<{ps_checkout}prestashop>translations_b235ad7b91fbeda6f87ac3d7e6f0ff6d'] = 'Otrzymaliśmy potwierdzenie z PayPal. Teraz możesz przetwarzać wszystkie transakcje kartą bez limitów.';
 $_MODULE['<{ps_checkout}prestashop>translations_b3a3bef1143977b9be6f9058641b1035'] = 'Nie znaleziono adresu e-mail.';
-$_MODULE['<{ps_checkout}prestashop>translations_e1b74123fdda2fd3b4a98308ef5dd782'] = 'Ostrzeżenie : waluty, które aktywowałeś : {0} nie są obecnie obsługiwane przez PrestaShop Checkout. Proszę dezaktywować {0} dla PrestaShop Checkout w swoich';
 $_MODULE['<{ps_checkout}prestashop>translations_b52a626dee6ab468117342c9292a45b6'] = 'preferencjach płatności';
 $_MODULE['<{ps_checkout}prestashop>translations_b6d4223e60986fa4c9af77ee5f7149c5'] = 'Zaloguj się';
 $_MODULE['<{ps_checkout}prestashop>translations_b79585fa23346ba2a5a030c65d79d4c0'] = 'Zarządzaj rachunkiem bankowym';
@@ -531,6 +530,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_dc43994c00f8f208f0c649524a9bcd46
 $_MODULE['<{ps_checkout}prestashop>translations_dc647eb65e6711e155375218212b3964'] = 'Hasło';
 $_MODULE['<{ps_checkout}prestashop>translations_dd7bf230fde8d4836917806aff6a6b27'] = 'Adres';
 $_MODULE['<{ps_checkout}prestashop>translations_dfcfc43722eef1eab1e4a12e50a068b1'] = 'Waluty';
+$_MODULE['<{ps_checkout}prestashop>translations_e1b74123fdda2fd3b4a98308ef5dd782'] = 'Ostrzeżenie : waluty, które aktywowałeś : {0} nie są obecnie obsługiwane przez PrestaShop Checkout. Proszę dezaktywować {0} dla PrestaShop Checkout w swoich';
 $_MODULE['<{ps_checkout}prestashop>translations_e1e1ce67de4906765f104f24a4280a1d'] = 'Potrzebujesz pomocy? Tutaj znajdziesz dokumentację tego modułu';
 $_MODULE['<{ps_checkout}prestashop>translations_e268443e43d93dab7ebef303bbe9642f'] = 'konto';
 $_MODULE['<{ps_checkout}prestashop>translations_e2e372415a8b8d36f4d86d9fc86bc608'] = 'Więcej informacji na temat opłat można znaleźć na tej stronie:';
