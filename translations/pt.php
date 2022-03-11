@@ -154,9 +154,9 @@ $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e447d4a6087d64d98201ba94ea
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e765f8d5cab9d172c3522849bdd37334'] = 'O endereço de entrega é obrigatório. Por favor, verifique os campos do endereço de entrega e tente novamente.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_ecb1bec859ca59e1f4cf6935743ddad4'] = 'Um montante de autorização só pode ser especificado se um Pedido tiver sido gravada ligando /v2/checkout/orders/{order_id}/save. Por favor, guarde o pedido e tente novamente.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_fd62bf85c1f7c9f7bb4257cafcb0e944'] = 'O pedido foi criado com a intenção de `AUTORIZAR`. Para concluir a autorização, utilize `/v2/checkout/orders/{order_id}/authorize\'. Ou, em alternativa, crie um pedido com a intenção de `CAPTURAR`.';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_102c3c2bd444bb970f12b2f22560709f'] = 'Change {$codesType} activation for this payment module';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_102c3c2bd444bb970f12b2f22560709f'] = 'Altere a ativação de {$codesType} para este módulo de pagamento ';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a4e8c4aedf01bae8876d415df3925f65'] = 'Por favor, atualize as suas definições para:';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a841f3841c6b7c77fa7e2e1c20e284fc'] = 'PrestaShop Checkout transactions won\'t work in some of your configured {$codesType}, but there is a solution !';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a841f3841c6b7c77fa7e2e1c20e284fc'] = 'As transações do PrestaShop Checkout não funcionarão em alguns de seus {$codesType} configurados, mas há uma solução! ';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_cb2afa98a49d1ac44da748a5ee556a8a'] = 'Saiba mais sobre os Códigos ISO compatíveis';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_07ca5050e697392c9ed47e6453f1453f'] = 'Concluído';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_0eceeb45861f9585dd7a97a3e36f85c6'] = 'Criado em';

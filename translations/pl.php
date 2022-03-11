@@ -154,9 +154,9 @@ $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e447d4a6087d64d98201ba94ea
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e765f8d5cab9d172c3522849bdd37334'] = 'Adres dostawy jest wymagany. Prosimy sprawdzić pola adresu dostawy i spróbować ponownie.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_ecb1bec859ca59e1f4cf6935743ddad4'] = 'Kwota autoryzacji może być określona tylko wtedy, gdy zamówienie zostało zapisane przez wybranie /v2/checkout/orders/{order_id}/save. Prosimy zapisać zamówienie i spróbować ponownie.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_fd62bf85c1f7c9f7bb4257cafcb0e944'] = 'Zamówienie zostało stworzone z zamiarem „ZATWIERDZENIA”. Aby zakończyć autoryzację, wybierz „/v2/checkout/orders/{order_id}/authorize”. Możesz też utworzyć zamówienie z zamiarem „ZAPISANIA”.';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_102c3c2bd444bb970f12b2f22560709f'] = 'Change {$codesType} activation for this payment module';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_102c3c2bd444bb970f12b2f22560709f'] = 'Zmień aktywację {$codesType} dla tego modułu płatności';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a4e8c4aedf01bae8876d415df3925f65'] = 'Zaktualizuj ustawienia dla:';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a841f3841c6b7c77fa7e2e1c20e284fc'] = 'PrestaShop Checkout transactions won\'t work in some of your configured {$codesType}, but there is a solution !';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a841f3841c6b7c77fa7e2e1c20e284fc'] = 'Transakcje PrestaShop Checkout nie będą działać w niektórych skonfigurowanych przez Ciebie {$codesType}, ale istnieje rozwiązanie!';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_cb2afa98a49d1ac44da748a5ee556a8a'] = 'Dowiedz się więcej o kodach zgodnych z ISO';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_07ca5050e697392c9ed47e6453f1453f'] = 'Ukończona';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_0eceeb45861f9585dd7a97a3e36f85c6'] = 'Stworzona';

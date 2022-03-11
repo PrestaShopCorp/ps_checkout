@@ -154,7 +154,7 @@ $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e447d4a6087d64d98201ba94ea
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e765f8d5cab9d172c3522849bdd37334'] = 'La dirección de entrega es obligatoria. Comprueba los campos de la dirección de entrega e inténtalo de nuevo.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_ecb1bec859ca59e1f4cf6935743ddad4'] = 'Solo se puede especificar una autorización de importe si se ha guardado un pedido con el nombre /v2/checkout/orders/{order_id}/save. Guarda el pedido e inténtalo de nuevo.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_fd62bf85c1f7c9f7bb4257cafcb0e944'] = 'El pedido se ha creado con la intención de &quot;AUTORIZAR&quot;. Para completar la autorización, usa &quot;/v2/checkout/orders/{order_id}/authorize&quot;. O crea un pedido con intención de &quot;GUARDAR&quot;.';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_102c3c2bd444bb970f12b2f22560709f'] = 'Change {$codesType} activation for this payment module';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_102c3c2bd444bb970f12b2f22560709f'] = 'Cambiar la activación de {$codesType} para este módulo de pago';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a4e8c4aedf01bae8876d415df3925f65'] = 'Actualiza tu configuración para:';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a841f3841c6b7c77fa7e2e1c20e284fc'] = 'Las transacciones de PrestaShop Checkout no funcionarán en algunos de sus {$codesType} configurados, ¡pero hay una solución!';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_cb2afa98a49d1ac44da748a5ee556a8a'] = 'Obtener más información sobre los códigos ISO';
