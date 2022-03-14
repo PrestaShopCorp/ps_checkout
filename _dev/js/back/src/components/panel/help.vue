@@ -119,17 +119,6 @@
             <div>{{ $t('panel.help.couldntFindAnswer') }}</div>
             <div class="mt-2">
               <b-button
-                v-if="isReady"
-                variant="link"
-                href="https://support.prestashop.com/hc/requests/new?ticket_form_id="
-                target="_blank"
-                @click="onClickContactUs()"
-              >
-                {{ $t('panel.help.contactUs') }}
-                <i class="material-icons">arrow_right_alt</i>
-              </b-button>
-              <b-button
-                v-else
                 variant="link"
                 href="mailto:support-checkout-download@prestashop.com"
                 target="_blank"
@@ -149,14 +138,8 @@
 <script>
   export default {
     computed: {
-      isReady() {
-        return this.$store.state.context.isReady;
-      },
       faq() {
         return this.$store.state.context.faq;
-      },
-      readmeUrl() {
-        return this.$store.state.context.readmeUrl;
       },
       youtubeLink() {
         return this.$store.state.context.youtubeInstallerLink;
