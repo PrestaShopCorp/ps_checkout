@@ -35,4 +35,6 @@
  * @property {object} HostedFields
  * @property {function} HostedFields.isEligible
  * @property {function} HostedFields.render
+ * @property {object} Messages
+ * @property {function} Messages.render
  */

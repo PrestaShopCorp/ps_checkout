@@ -14,9 +14,10 @@ import { PsCheckoutService } from '../service/ps-checkout.service';
 import { TranslationService } from '../service/translation.service';
 import { QuerySelectorService } from '../service/query-selector.service';
 import { PaymentOptionsLoaderComponent } from '../components/common/payment-options-loader.component';
+import { PayLaterOffersComponent } from '../components/common/pay-later-offers.component';
 
 function initService(app) {
-  return (service) => () => new service(app);
+  return service => () => new service(app);
 }
 
 /**
@@ -36,10 +37,13 @@ function initContainer(app) {
   bottle.factory('PsCheckoutApi', serviceFactory(PsCheckoutApi));
   bottle.factory('PsCheckoutService', serviceFactory(PsCheckoutService));
   bottle.factory('TranslationService', serviceFactory(TranslationService));
-  bottle.factory('PaymentOptionsLoaderComponent', serviceFactory(PaymentOptionsLoaderComponent));
+  bottle.factory(
+    'PaymentOptionsLoaderComponent',
+    serviceFactory(PaymentOptionsLoaderComponent)
+  );
 
-  bottle.factory('$', (container) => {
-    return (id) => container.TranslationService.getTranslationString(id);
+  bottle.factory('$', container => {
+    return id => container.TranslationService.getTranslationString(id);
   });
 }
 
@@ -65,8 +69,12 @@ export class App {
       return this.renderCheckout();
     };
 
-    window.ps_checkout.renderExpressCheckout = (props) => {
+    window.ps_checkout.renderExpressCheckout = props => {
       return this.renderExpressCheckout(props);
+    };
+
+    window.ps_checkout.renderPayLaterOfferMessage = props => {
+      return this.renderPayLaterOfferMessage(props);
     };
   }
 
@@ -107,10 +115,48 @@ export class App {
     }
   }
 
+  async renderPayLaterOfferMessage(props) {
+    await this.initPayPalService();
+    new PayLaterOffersComponent(this, props).render();
+  }
+
   async render() {
     this.exposeAPI();
 
     if (!this.psCheckoutConfig.autoRenderDisabled) {
+      console.log('ps_checkout autoRenderDisabled');
+
+      if (document.body.id === 'product') {
+        console.log('ps_checkout product page call renderPayLaterOfferMessage');
+        await this.renderPayLaterOfferMessage({
+          querySelector: '.product-prices'
+        });
+      }
+
+      if (document.body.id === 'index') {
+        await this.renderPayLaterOfferMessage({
+          querySelector: '.page-home'
+        });
+      }
+
+      if (document.body.id === 'category') {
+        await this.renderPayLaterOfferMessage({
+          querySelector: '.page-home'
+        });
+      }
+
+      if (document.body.id === 'cart') {
+        await this.renderPayLaterOfferMessage({
+          querySelector: '.cart-grid-right'
+        });
+      }
+
+      if (document.body.id === 'checkout') {
+        await this.renderPayLaterOfferMessage({
+          querySelector: '.cart-grid-right'
+        });
+      }
+
       if (
         this.prestashopService.isCartPage() ||
         this.prestashopService.isOrderPersonalInformationStepPage() ||
@@ -129,7 +175,7 @@ export class App {
       if (this.prestashopService.isOrderPaymentStepPage()) {
         await this.renderCheckout();
         return this;
-      } else if(this.prestashopService.isOrderPage()) {
+      } else if (this.prestashopService.isOrderPage()) {
         this.paymentOptionsLoader.hide();
         return this;
       }

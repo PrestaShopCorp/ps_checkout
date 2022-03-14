@@ -29,6 +29,15 @@
  * @property {function} createOrder
  */
 
+/**
+ * @typedef PaypalPayLaterOfferMessageEvents
+ * @type {*}
+ *
+ * @property {function} onRender
+ * @property {function} onClick
+ * @property {function} onApply
+ */
+
 import { BaseClass } from '../core/dependency-injection/base.class';
 
 /**
@@ -286,6 +295,34 @@ export class PayPalService extends BaseClass {
   }
 
   isHostedFieldsEligible() {
+    console.log(this.sdk.HostedFields && this.sdk.HostedFields.isEligible());
     return this.sdk.HostedFields && this.sdk.HostedFields.isEligible();
+  }
+
+  /**
+   * @param {string} placement
+   * @param {string} amount
+   * @param {PaypalPayLaterOfferMessageEvents} events
+   */
+  getPayLaterOfferMessage(placement, amount, events) {
+    const style = {
+      ...{
+        layout: 'flex',
+        logo: {
+          type: 'inline'
+        }
+      },
+      ...(this.config.payLaterOfferMessageCustomization || {}),
+      ...(window.ps_checkout.payLaterOfferMessageCustomization || {})
+    };
+    return (
+      this.sdk.Messages &&
+      this.sdk.Messages({
+        placement: placement,
+        amount: amount,
+        style: style,
+        ...events
+      })
+    );
   }
 }
