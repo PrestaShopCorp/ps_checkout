@@ -381,3 +381,7 @@ services:
   ps_checkout.paypal.provider.country:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalCountryProvider'
     public: true
+
+  ps_checkout.paypal.provider.currency:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalCurrencyProvider'
+    public: true
