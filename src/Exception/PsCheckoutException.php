@@ -66,6 +66,7 @@ class PsCheckoutException extends \Exception
     const PRESTASHOP_CART_NOT_FOUND = 42;
     const DIFFERENCE_BETWEEN_TRANSACTION_AND_CART = 43;
     const PSL_TIMEOUT = 44;
+    const UNSUPPORTED_COUNTRY = 45;
 
     const EXCEPTIONS_IGNORED_BY_SENTRY = [
         self::PRESTASHOP_CART_NOT_FOUND,
