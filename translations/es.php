@@ -101,7 +101,7 @@ $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_733ea3e302b9c48da7777481ed5
 $_MODULE['<{ps_checkout}prestashop>displayproductadditionalinfo_2f2401d57093e7d31bf2689fb87f72f6'] = 'Pagos 100% seguros';
 $_MODULE['<{ps_checkout}prestashop>expresscheckout_26a07aefd353e71a3ea90ef991d812ae'] = 'Compra rápida';
 $_MODULE['<{ps_checkout}prestashop>expresscheckout_e81c4e4f2b7b93b481e13a8553c2ae1b'] = 'o';
-$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_1d565b9e5303987bb1b1938d5d458bca'] = 'Pagar con tarjeta';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_1d565b9e5303987bb1b1938d5d458bca'] = 'Tarjeta';
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_34ace703adbf14df140d3c02234f67bd'] = 'Pagar con PayPal';
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_983fe12e91079dcb00c74772b50747a3'] = 'Pagar con tarjeta - pagos 100% seguros';
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_f990493af3321939ca512f8f2cace108'] = 'Pagar con %s';
