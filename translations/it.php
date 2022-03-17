@@ -154,10 +154,12 @@ $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e447d4a6087d64d98201ba94ea
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e765f8d5cab9d172c3522849bdd37334'] = 'Devi fornire un indirizzo di consegna. Inserisci un indirizzo di consegna corretto e riprova.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_ecb1bec859ca59e1f4cf6935743ddad4'] = 'Un importo di autorizzazione può essere indicato solo se un ordine è stato salvato chiamando la funzione &quot;/v2/checkout/orders/{order_id}/save&quot;. Ti preghiamo di salvare l\'ordine e riprovare.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_fd62bf85c1f7c9f7bb4257cafcb0e944'] = 'L\'ordine è stato creato con un &quot;intent&quot; impostato su `AUTHORIZE`. Per completare l\'autorizzazione, usa `/v2/checkout/orders/{order_id}/authorize`. Oppure, in alternativa, crea un ordine con un &quot;intent&quot; impostato su `CAPTURE`.';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_102c3c2bd444bb970f12b2f22560709f'] = 'Modifica l\'attivazione di {$codesType} per questo modulo di pagamento';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_3cff569d2e78602b63755abd743a0f76'] = 'Le transazioni PrestaShop Checkout non funzioneranno in alcuni dei tuoi di paesi configurati, ma c\'è una soluzione!';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_487a4ced3865f176965c1571a9f3c0fe'] = 'Modifica l\'attivazione di valute  per questo modulo di pagamento';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_5041c9dced8f0d0a4d319be95b229ea5'] = 'Modifica l\'attivazione di paesi per questo modulo di pagamento';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a4e8c4aedf01bae8876d415df3925f65'] = 'Aggiorna le tue impostazioni per:';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a841f3841c6b7c77fa7e2e1c20e284fc'] = 'Le transazioni PrestaShop Checkout non funzioneranno in alcuni dei tuoi {$codesType} configurati, ma c\'è una soluzione!';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_cb2afa98a49d1ac44da748a5ee556a8a'] = 'Ricevere maggiori informazioni sui Codici conformi alla norma ISO';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_d1d64497037adbbc778d6b23f4552952'] = 'Le transazioni PrestaShop Checkout non funzioneranno in alcuni dei tuoi di valute configurati, ma c\'è una soluzione!';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_07ca5050e697392c9ed47e6453f1453f'] = 'Completata';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_0eceeb45861f9585dd7a97a3e36f85c6'] = 'Creata';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_248336101b461380a4b2391a7625493d'] = 'Registrata';

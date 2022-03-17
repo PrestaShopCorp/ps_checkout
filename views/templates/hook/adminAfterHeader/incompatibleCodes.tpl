@@ -29,7 +29,13 @@
         {/if}
 
             <div class="banner-text">
-                <h2>{l s="PrestaShop Checkout transactions won't work in some of your configured {$codesType}, but there is a solution !" mod='ps_checkout'}</h2>
+                <h2>
+                  {if $codesType === 'countries'}
+                    {l s='PrestaShop Checkout transactions won\'t work in some of your configured countries, but there is a solution !' mod='ps_checkout'}
+                  {else if $codesType === 'currencies'}
+                    {l s='PrestaShop Checkout transactions won\'t work in some of your configured currencies, but there is a solution !' mod='ps_checkout'}
+                  {/if}
+                </h2>
 
                 <p class="banner-upgrade-info">
                     {l s='Please upgrade your settings for :' mod='ps_checkout'}

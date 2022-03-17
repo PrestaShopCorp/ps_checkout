@@ -154,10 +154,12 @@ $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e447d4a6087d64d98201ba94ea
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e765f8d5cab9d172c3522849bdd37334'] = 'Het leveringsadres is vereist. Controleer de leveringsadresvelden en probeer het opnieuw.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_ecb1bec859ca59e1f4cf6935743ddad4'] = 'Een autorisatiebedrag kan alleen worden opgegeven als een Bestelling is opgeslagen door /v2/checkout/orders/{order_id}/save op te roepen. Sla de bestelling alstublieft  op en probeer het opnieuw.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_fd62bf85c1f7c9f7bb4257cafcb0e944'] = 'De volgorde is gemaakt met de intent `AUTHORIZE`. Gebruik `/v2/checkout/orders/{order_id}/authorize` om de autorisatie te voltooien. Of maak anders een bestelling met de intent `CAPTURE`.';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_102c3c2bd444bb970f12b2f22560709f'] = 'Wijzig {$codesType} activering voor deze betalingsmodule';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_3cff569d2e78602b63755abd743a0f76'] = 'PrestaShop Checkout-transacties werken niet in sommige van uw geconfigureerde landen, maar er is een oplossing!';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_487a4ced3865f176965c1571a9f3c0fe'] = 'Wijzig valuta\'s activering voor deze betalingsmodule';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_5041c9dced8f0d0a4d319be95b229ea5'] = 'Wijzig landen activering voor deze betalingsmodule';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a4e8c4aedf01bae8876d415df3925f65'] = 'Gelieve uw instellingen te upgraden voor:';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a841f3841c6b7c77fa7e2e1c20e284fc'] = 'PrestaShop Checkout-transacties werken niet in sommige van uw geconfigureerde {$codesType}, maar er is een oplossing!';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_cb2afa98a49d1ac44da748a5ee556a8a'] = 'Meer weten over conforme ISO-codes';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_d1d64497037adbbc778d6b23f4552952'] = 'PrestaShop Checkout-transacties werken niet in sommige van uw geconfigureerde valuta\'s, maar er is een oplossing!';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_07ca5050e697392c9ed47e6453f1453f'] = 'Voltooid';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_0eceeb45861f9585dd7a97a3e36f85c6'] = 'Gemaakt op';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_248336101b461380a4b2391a7625493d'] = 'Geregistreerd';

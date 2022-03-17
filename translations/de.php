@@ -154,10 +154,12 @@ $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e447d4a6087d64d98201ba94ea
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e765f8d5cab9d172c3522849bdd37334'] = 'Lieferadresse ist erforderlich. Bitte überprüfen Sie die Felder der Lieferadresse und versuchen Sie es erneut.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_ecb1bec859ca59e1f4cf6935743ddad4'] = 'Ein Autorisierungsbetrag kann nur angegeben werden, wenn eine Bestellung durch Aufruf von /v2/checkout/orders/{order_id}/save gespeichert wurde. Bitte speichern Sie die Bestellung und versuchen Sie es erneut.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_fd62bf85c1f7c9f7bb4257cafcb0e944'] = 'Der Orden wurde mit der Absicht der `AUTORISIERUNG` geschaffen. Um die Autorisierung abzuschließen, verwenden Sie `/v2/checkout/orders/{order_id}/authorize`. Oder erstellen Sie abwechselnd eine Ordnung mit der Absicht &quot;KAPITUR&quot;.';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_102c3c2bd444bb970f12b2f22560709f'] = 'Ändern Sie die {$codesType}-Aktivierung für dieses Zahlungsmodul';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_3cff569d2e78602b63755abd743a0f76'] = 'PrestaShop Checkout-Transaktionen funktionieren in einigen Ihrer konfigurierten Länder nicht, aber es gibt eine Lösung!';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_487a4ced3865f176965c1571a9f3c0fe'] = 'Ändern Sie die Währungen-Aktivierung für dieses Zahlungsmodul';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_5041c9dced8f0d0a4d319be95b229ea5'] = 'Ändern Sie die Länder-Aktivierung für dieses Zahlungsmodul';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a4e8c4aedf01bae8876d415df3925f65'] = 'Bitte aktualisieren Sie Ihre Einstellungen für:';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a841f3841c6b7c77fa7e2e1c20e284fc'] = 'PrestaShop Checkout-Transaktionen funktionieren in einigen Ihrer konfigurierten {$codesType} nicht, aber es gibt eine Lösung!';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_cb2afa98a49d1ac44da748a5ee556a8a'] = 'Erfahren Sie mehr über ISO-konforme Codes';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_d1d64497037adbbc778d6b23f4552952'] = 'PrestaShop Checkout-Transaktionen funktionieren in einigen Ihrer konfigurierten Währungen nicht, aber es gibt eine Lösung!';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_07ca5050e697392c9ed47e6453f1453f'] = 'Abgeschlossen';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_0eceeb45861f9585dd7a97a3e36f85c6'] = 'Erstellt';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_248336101b461380a4b2391a7625493d'] = 'Registriert';

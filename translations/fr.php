@@ -154,10 +154,12 @@ $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e447d4a6087d64d98201ba94ea
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e765f8d5cab9d172c3522849bdd37334'] = 'L\'adresse de livraison est requis. Veuillez vérifier les champs d\'adresse de livraison et essayer de nouveau.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_ecb1bec859ca59e1f4cf6935743ddad4'] = 'An authorization amount can only be specified if an Order has been saved by calling /v2/checkout/orders/{order_id}/save. Please save the order and try again.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_fd62bf85c1f7c9f7bb4257cafcb0e944'] = 'The order was created with an intent of `AUTHORIZE`. To complete authorization, use `/v2/checkout/orders/{order_id}/authorize`. Or, alternately create an order with an intent of `CAPTURE`.';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_102c3c2bd444bb970f12b2f22560709f'] = 'Décocher les cases pour {$codesType} dans les préférences de paiement';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_3cff569d2e78602b63755abd743a0f76'] = 'PrestaShop Checkout ne fonctionnera pas dans certains de vos pays configurés, mais il y a une solution !';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_487a4ced3865f176965c1571a9f3c0fe'] = 'Modifier l’activation des devises pour ce module de paiement';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_5041c9dced8f0d0a4d319be95b229ea5'] = 'Modifier l’activation des pays pour ce module de paiement';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a4e8c4aedf01bae8876d415df3925f65'] = 'Veuillez modifier votre configuration pour :';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a841f3841c6b7c77fa7e2e1c20e284fc'] = 'Les transactions via PrestaShop Checkout ne fonctionneront pas avec les codes suivants : {$codesType}, mais il y a une solution !';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_cb2afa98a49d1ac44da748a5ee556a8a'] = 'En savoir plus sur les ISO Codes conformes';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_d1d64497037adbbc778d6b23f4552952'] = 'PrestaShop Checkout ne fonctionnera pas dans certains de vos devises configurées, mais il y a une solution !';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_07ca5050e697392c9ed47e6453f1453f'] = 'Terminée';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_0eceeb45861f9585dd7a97a3e36f85c6'] = 'Créée';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_248336101b461380a4b2391a7625493d'] = 'Enregistrée';
@@ -506,7 +508,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_ce8ae9da5b7cd6c3df2929543a9af92d
 $_MODULE['<{ps_checkout}prestashop>translations_ce9291906a4c3b042650b70d7f3b152e'] = 'Rectangle';
 $_MODULE['<{ps_checkout}prestashop>translations_cfd338be25e344b232995cae39398540'] = 'Malheureusement, les cartes de crédit ne peuvent pas être acceptées pour le moment. Vous pourrez postuler à nouveau dans 90 jours. Entre temps, vous pouvez accepter les paiements par PayPal.';
 $_MODULE['<{ps_checkout}prestashop>translations_d14a8aa0420b7f7de59091398a53fcd9'] = 'Choisissez les règles de conversions pour les transactions dans une monnaie autre que celles configurées sur votre compte, pour qu\'elles soient automatiquement converties ou qu\'elles nécessitent une approbation de votre part.';
-$_MODULE['<{ps_checkout}prestashop>translations_d1d64497037adbbc778d6b23f4552952'] = 'PrestaShop Checkout ne fonctionnera pas avec certaines de vos monnaies configurées, mais il y a une solution !';
+$_MODULE['<{ps_checkout}prestashop>translations_d1d64497037adbbc778d6b23f4552952'] = 'PrestaShop Checkout ne fonctionnera pas avec certaines de vos devises configurées, mais il y a une solution !';
 $_MODULE['<{ps_checkout}prestashop>translations_d2947ae0e864eb5c9c00080602c9b45e'] = 'Choisir une couleur de fond';
 $_MODULE['<{ps_checkout}prestashop>translations_d4222f5cc5b8395e93fa678bc7215381'] = 'transaction(s) en attente';
 $_MODULE['<{ps_checkout}prestashop>translations_d434eccb7674d461f562616696955b7d'] = 'Méthodes de paiement locales';
