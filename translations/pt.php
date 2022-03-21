@@ -154,12 +154,12 @@ $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e447d4a6087d64d98201ba94ea
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e765f8d5cab9d172c3522849bdd37334'] = 'O endereço de entrega é obrigatório. Por favor, verifique os campos do endereço de entrega e tente novamente.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_ecb1bec859ca59e1f4cf6935743ddad4'] = 'Um montante de autorização só pode ser especificado se um Pedido tiver sido gravada ligando /v2/checkout/orders/{order_id}/save. Por favor, guarde o pedido e tente novamente.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_fd62bf85c1f7c9f7bb4257cafcb0e944'] = 'O pedido foi criado com a intenção de `AUTORIZAR`. Para concluir a autorização, utilize `/v2/checkout/orders/{order_id}/authorize\'. Ou, em alternativa, crie um pedido com a intenção de `CAPTURAR`.';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_3cff569d2e78602b63755abd743a0f76'] = 'As transações do PrestaShop Checkout não funcionarão em alguns de seus países configurados, mas há uma solução! ';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_487a4ced3865f176965c1571a9f3c0fe'] = 'Alterar a ativação de moedas para este módulo de pagamento';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_5041c9dced8f0d0a4d319be95b229ea5'] = 'Altere a ativação de países para este módulo de pagamento ';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_3cff569d2e78602b63755abd743a0f76'] = 'As transações com PrestaShop Checkout não funcionarão em alguns dos países configurados por si, mas existe uma solução!';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_487a4ced3865f176965c1571a9f3c0fe'] = 'Alterar ativação das divisas para este módulo de pagamento';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_5041c9dced8f0d0a4d319be95b229ea5'] = 'Alterar ativação de países para este módulo de pagamento';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a4e8c4aedf01bae8876d415df3925f65'] = 'Por favor, atualize as suas definições para:';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_cb2afa98a49d1ac44da748a5ee556a8a'] = 'Saiba mais sobre os Códigos ISO compatíveis';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_d1d64497037adbbc778d6b23f4552952'] = 'As transações do PrestaShop Checkout não funcionarão em alguns de seus moedas configurados, mas há uma solução! ';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_d1d64497037adbbc778d6b23f4552952'] = 'As transações do PrestaShop Checkout não funcionarão em alguns de seus divisas configurados, mas há uma solução!';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_07ca5050e697392c9ed47e6453f1453f'] = 'Concluído';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_0eceeb45861f9585dd7a97a3e36f85c6'] = 'Criado em';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_248336101b461380a4b2391a7625493d'] = 'Registado em';
@@ -508,7 +508,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_ce8ae9da5b7cd6c3df2929543a9af92d
 $_MODULE['<{ps_checkout}prestashop>translations_ce9291906a4c3b042650b70d7f3b152e'] = 'Retângulo';
 $_MODULE['<{ps_checkout}prestashop>translations_cfd338be25e344b232995cae39398540'] = 'Infelizmente, pagamentos por cartão de crédito não podem ser processados por você no momento. Você poderá enviar um novo pedido depois de 90 dias. Enquanto isso, ainda é possível receber pagamentos por PayPal';
 $_MODULE['<{ps_checkout}prestashop>translations_d14a8aa0420b7f7de59091398a53fcd9'] = 'Vamos escolher as regras de conversão para qualquer transação numa moeda diferente daquelas ativadas na sua conta, caso sejam automaticamente convertidas ou peça a sua validação.';
-$_MODULE['<{ps_checkout}prestashop>translations_d1d64497037adbbc778d6b23f4552952'] = 'As transações com PrestaShop Checkout não funcionarão em alguns dos países configurados por si, mas existe uma solução!';
+$_MODULE['<{ps_checkout}prestashop>translations_d1d64497037adbbc778d6b23f4552952'] = 'As transações do PrestaShop Checkout não funcionarão em alguns de seus divisas configurados, mas há uma solução!';
 $_MODULE['<{ps_checkout}prestashop>translations_d2947ae0e864eb5c9c00080602c9b45e'] = 'Selecionar cor de fundo';
 $_MODULE['<{ps_checkout}prestashop>translations_d4222f5cc5b8395e93fa678bc7215381'] = 'transação(ões) pendente(s)';
 $_MODULE['<{ps_checkout}prestashop>translations_d434eccb7674d461f562616696955b7d'] = 'Botões de pagamento local';

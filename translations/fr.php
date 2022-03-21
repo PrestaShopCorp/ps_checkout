@@ -155,11 +155,11 @@ $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e765f8d5cab9d172c3522849bd
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_ecb1bec859ca59e1f4cf6935743ddad4'] = 'An authorization amount can only be specified if an Order has been saved by calling /v2/checkout/orders/{order_id}/save. Please save the order and try again.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_fd62bf85c1f7c9f7bb4257cafcb0e944'] = 'The order was created with an intent of `AUTHORIZE`. To complete authorization, use `/v2/checkout/orders/{order_id}/authorize`. Or, alternately create an order with an intent of `CAPTURE`.';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_3cff569d2e78602b63755abd743a0f76'] = 'PrestaShop Checkout ne fonctionnera pas dans certains de vos pays configurés, mais il y a une solution !';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_487a4ced3865f176965c1571a9f3c0fe'] = 'Modifier l’activation des devises pour ce module de paiement';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_5041c9dced8f0d0a4d319be95b229ea5'] = 'Modifier l’activation des pays pour ce module de paiement';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_487a4ced3865f176965c1571a9f3c0fe'] = 'Changer les devises activées pour ce module de paiement';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_5041c9dced8f0d0a4d319be95b229ea5'] = 'Changer les pays activés pour ce module de paiement';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a4e8c4aedf01bae8876d415df3925f65'] = 'Veuillez modifier votre configuration pour :';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_cb2afa98a49d1ac44da748a5ee556a8a'] = 'En savoir plus sur les ISO Codes conformes';
-$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_d1d64497037adbbc778d6b23f4552952'] = 'PrestaShop Checkout ne fonctionnera pas dans certains de vos devises configurées, mais il y a une solution !';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_d1d64497037adbbc778d6b23f4552952'] = 'PrestaShop Checkout ne fonctionnera pas avec certaines de vos devises configurées, mais il y a une solution !';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_07ca5050e697392c9ed47e6453f1453f'] = 'Terminée';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_0eceeb45861f9585dd7a97a3e36f85c6'] = 'Créée';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_248336101b461380a4b2391a7625493d'] = 'Enregistrée';
@@ -360,7 +360,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_44749712dbec183e983dcd78a7736c41
 $_MODULE['<{ps_checkout}prestashop>translations_461af1b437e5d9684f1e3df305d2bc7d'] = 'Chaque boutique doit être configurée séparemment, même si vous utiliser le même compte pour chacune d\'entres elles.';
 $_MODULE['<{ps_checkout}prestashop>translations_46a2a41cc6e552044816a2d04634545d'] = 'Etat';
 $_MODULE['<{ps_checkout}prestashop>translations_4826f26ca366291a89abd1f29680202d'] = 'Compte PrestaShop Checkout';
-$_MODULE['<{ps_checkout}prestashop>translations_487a4ced3865f176965c1571a9f3c0fe'] = 'Changer les monnaies activées pour ce module de paiement';
+$_MODULE['<{ps_checkout}prestashop>translations_487a4ced3865f176965c1571a9f3c0fe'] = 'Changer les devises activées pour ce module de paiement';
 $_MODULE['<{ps_checkout}prestashop>translations_48d7a08b6950878e840a3009ef9ec6e4'] = 'Le mode Prélever à l\'expédition conserve l\'argent sur le compte du client. Marquez la commande comme Expediée ou Paiement accepté pour prélever l\'argent. Les moyens de paiement locaux ne sont pas compatibles avec le mode Prélever à l\'expédition';
 $_MODULE['<{ps_checkout}prestashop>translations_49409b9de3fc13f7835c406653c1bcf8'] = 'Vous devez connecter des comptes PrestaShop et PayPal pour activer tous les moyens de paiement';
 $_MODULE['<{ps_checkout}prestashop>translations_4994a8ffeba4ac3140beb89e8d41f174'] = 'Langue';
@@ -453,7 +453,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_a0fc2c9aa33a67d83ee99e0aeb474883
 $_MODULE['<{ps_checkout}prestashop>translations_a1fa27779242b4902f7ae3bdd5c6d508'] = 'Type';
 $_MODULE['<{ps_checkout}prestashop>translations_a390cb45733734e47c45d8ba62f2b0e9'] = 'Avant commission';
 $_MODULE['<{ps_checkout}prestashop>translations_a3aded1cd454ea681a722b1d803e9c3f'] = 'Cela peut prendre plusieurs jours. Si de plus amples informations sont requises, vous serez notifié. Veuillez suivre vos emails ou la cloche de notification sur votre compte www.paypal.com en haut à droite, et suivez les instructions.';
-$_MODULE['<{ps_checkout}prestashop>translations_a3f4f3661e7a8a7e5b1a221f4aecbb5a'] = 'Changer les ISO code monnaies';
+$_MODULE['<{ps_checkout}prestashop>translations_a3f4f3661e7a8a7e5b1a221f4aecbb5a'] = 'Changer les ISO codes devises';
 $_MODULE['<{ps_checkout}prestashop>translations_a427950fee816e9fc83db48c8c02c1d0'] = 'Vous êtes certain de vouloir vous déconnecter ?';
 $_MODULE['<{ps_checkout}prestashop>translations_a4e8c4aedf01bae8876d415df3925f65'] = 'Veuillez modifier votre configuration pour :';
 $_MODULE['<{ps_checkout}prestashop>translations_a554f9c8bbc30f4e2bdc6eabea0963f3'] = 'Le mot de passe est manquant.';
