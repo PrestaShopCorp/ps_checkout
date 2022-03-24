@@ -53,7 +53,7 @@ class TransactionPresenter implements PresenterInterface
             $transaction['userProfileLink'] = $link->getAdminLink('AdminCustomers', true, [], ['id_customer' => $transaction['id_customer'], 'viewcustomer' => 1]);
             $transaction['before_commission'] = \Tools::displayPrice($transaction['amount'], \Currency::getCurrencyInstance((int) $transaction['id_currency']));
             $transaction['type'] = strpos($transaction['amount'], '-') !== false ? 'Refund' : 'Payment';
-            $transaction['typeForDisplay'] = ($transaction['type'] === 'Refund') ? $module->l('Refund', 'translations') : $module->l('Payment', 'translations');
+            $transaction['typeForDisplay'] = ($transaction['type'] === 'Refund') ? $module->l('Refund', 'transactionpresenter') : $module->l('Payment', 'transactionpresenter');
             $transaction['commission'] = '-';
             $transaction['total_paid'] = '-';
         }

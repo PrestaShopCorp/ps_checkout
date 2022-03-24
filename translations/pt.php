@@ -51,6 +51,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_a3b5cc0972c85b9c5b05d6c0f8ff2
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_a6f74fff2223803369009919e94f2f96'] = 'Montante total que você receberá em sua conta bancária: o valor do pedido, menos taxas de transação, menos reembolsos potenciais';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d59048f21fd887ad520398ce677be586'] = 'Saiba mais';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d7366120e49ccb980dac7e7aefae85e3'] = 'Montantes de transação';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d7a33669a0339e4ddf767d4ce80488eb'] = 'Máximo [AMOUNT_MAX] [CURRENCY] (incl. IVA)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_d8f8973f9878eb09f5f5a6f2afbf00ef'] = 'Montante (IVA incl.)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_ea4788705e6873b424c65e91c2846b19'] = 'Cancelar';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_ea620d61461a00502599f2e6a064b931'] = 'Modo de pagamento';
@@ -74,7 +75,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_a3b5cc0972c85b9c5b05d6c
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_a6f74fff2223803369009919e94f2f96'] = 'Montante total que você receberá em sua conta bancária: o valor do pedido, menos taxas de transação, menos reembolsos potenciais';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_d59048f21fd887ad520398ce677be586'] = 'Saiba mais';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_d7366120e49ccb980dac7e7aefae85e3'] = 'Montantes de transação';
-$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_d7a33669a0339e4ddf767d4ce80488eb'] = 'Máximo [AMOUNT_MAX] [MOEDA] (incl. IVA)';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_d7a33669a0339e4ddf767d4ce80488eb'] = 'Máximo [AMOUNT_MAX] [CURRENCY] (incl. IVA)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_d8f8973f9878eb09f5f5a6f2afbf00ef'] = 'Montante (IVA incl.)';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_ea4788705e6873b424c65e91c2846b19'] = 'Cancelar';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_ea620d61461a00502599f2e6a064b931'] = 'Modo de pagamento';
@@ -100,6 +101,10 @@ $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_733ea3e302b9c48da7777481ed5
 $_MODULE['<{ps_checkout}prestashop>displayproductadditionalinfo_2f2401d57093e7d31bf2689fb87f72f6'] = 'Pagamentos 100% seguros';
 $_MODULE['<{ps_checkout}prestashop>expresscheckout_26a07aefd353e71a3ea90ef991d812ae'] = 'Pagamento rápido';
 $_MODULE['<{ps_checkout}prestashop>expresscheckout_e81c4e4f2b7b93b481e13a8553c2ae1b'] = 'ou';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_1d565b9e5303987bb1b1938d5d458bca'] = 'Cartão';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_34ace703adbf14df140d3c02234f67bd'] = 'Pagar com PayPal';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_983fe12e91079dcb00c74772b50747a3'] = 'Pagar com cartão - pagamentos 100% seguros';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_f990493af3321939ca512f8f2cace108'] = 'Pagar com %s';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_100e10b5e05d4b3abd2cd52fd12e8789'] = 'Ocorreu um erro durante o pagamento. Tente novamente ou entre em contato com o suporte.';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_5ea7f231296949070013bc43715aae01'] = 'Código de segurança';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_95b16127e70e8a90220404fb48343182'] = 'Data de vencimento';
@@ -149,8 +154,12 @@ $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e447d4a6087d64d98201ba94ea
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e765f8d5cab9d172c3522849bdd37334'] = 'O endereço de entrega é obrigatório. Por favor, verifique os campos do endereço de entrega e tente novamente.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_ecb1bec859ca59e1f4cf6935743ddad4'] = 'Um montante de autorização só pode ser especificado se um Pedido tiver sido gravada ligando /v2/checkout/orders/{order_id}/save. Por favor, guarde o pedido e tente novamente.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_fd62bf85c1f7c9f7bb4257cafcb0e944'] = 'O pedido foi criado com a intenção de `AUTORIZAR`. Para concluir a autorização, utilize `/v2/checkout/orders/{order_id}/authorize\'. Ou, em alternativa, crie um pedido com a intenção de `CAPTURAR`.';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_3cff569d2e78602b63755abd743a0f76'] = 'As transações com PrestaShop Checkout não funcionarão em alguns dos países configurados por si, mas existe uma solução!';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_487a4ced3865f176965c1571a9f3c0fe'] = 'Alterar ativação das divisas para este módulo de pagamento';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_5041c9dced8f0d0a4d319be95b229ea5'] = 'Alterar ativação de países para este módulo de pagamento';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a4e8c4aedf01bae8876d415df3925f65'] = 'Por favor, atualize as suas definições para:';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_cb2afa98a49d1ac44da748a5ee556a8a'] = 'Saiba mais sobre os Códigos ISO compatíveis';
+$_MODULE['<{ps_checkout}prestashop>incompatiblecodes_d1d64497037adbbc778d6b23f4552952'] = 'As transações do PrestaShop Checkout não funcionarão em alguns de seus divisas configurados, mas há uma solução!';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_07ca5050e697392c9ed47e6453f1453f'] = 'Concluído';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_0eceeb45861f9585dd7a97a3e36f85c6'] = 'Criado em';
 $_MODULE['<{ps_checkout}prestashop>orderpresenter_248336101b461380a4b2391a7625493d'] = 'Registado em';
@@ -249,6 +258,8 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_edd87c9059d88fea45c0bd6384ce92b9'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f1d3b424cd68795ecaa552883759aceb'] = 'Resumo do pedido';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f212c48fb02b2494070e22184cc8906b'] = 'Referência do pedido PayPal:';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f2e984154b51f09b97cd60a1b8396059'] = 'No PayPal Javascript SDK Instance';
+$_MODULE['<{ps_checkout}prestashop>transactionpresenter_76f0ed934de85cc7131910b32ede7714'] = 'Reembolso';
+$_MODULE['<{ps_checkout}prestashop>transactionpresenter_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Pagamento';
 $_MODULE['<{ps_checkout}prestashop>translations_0010d7e47c9ef468ccad1dde3b4536c5'] = 'Aceite pagamentos por meio de botões do PayPal na sua página de checkout.';
 $_MODULE['<{ps_checkout}prestashop>translations_005b798ad83c6496b7a1a29cb9edad5c'] = 'A versão dourada mostra melhores resultados na taxa de conversão';
 $_MODULE['<{ps_checkout}prestashop>translations_0084da4633913f4fef24e40cec0e38e5'] = 'O Express Checkout Shortcut possibilita mesclar a criação da conta e o pagamento, para que os seus clientes comprem facilmente.';
@@ -497,7 +508,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_ce8ae9da5b7cd6c3df2929543a9af92d
 $_MODULE['<{ps_checkout}prestashop>translations_ce9291906a4c3b042650b70d7f3b152e'] = 'Retângulo';
 $_MODULE['<{ps_checkout}prestashop>translations_cfd338be25e344b232995cae39398540'] = 'Infelizmente, pagamentos por cartão de crédito não podem ser processados por você no momento. Você poderá enviar um novo pedido depois de 90 dias. Enquanto isso, ainda é possível receber pagamentos por PayPal';
 $_MODULE['<{ps_checkout}prestashop>translations_d14a8aa0420b7f7de59091398a53fcd9'] = 'Vamos escolher as regras de conversão para qualquer transação numa moeda diferente daquelas ativadas na sua conta, caso sejam automaticamente convertidas ou peça a sua validação.';
-$_MODULE['<{ps_checkout}prestashop>translations_d1d64497037adbbc778d6b23f4552952'] = 'As transações com PrestaShop Checkout não funcionarão em alguns dos países configurados por si, mas existe uma solução!';
+$_MODULE['<{ps_checkout}prestashop>translations_d1d64497037adbbc778d6b23f4552952'] = 'As transações do PrestaShop Checkout não funcionarão em alguns de seus divisas configurados, mas há uma solução!';
 $_MODULE['<{ps_checkout}prestashop>translations_d2947ae0e864eb5c9c00080602c9b45e'] = 'Selecionar cor de fundo';
 $_MODULE['<{ps_checkout}prestashop>translations_d4222f5cc5b8395e93fa678bc7215381'] = 'transação(ões) pendente(s)';
 $_MODULE['<{ps_checkout}prestashop>translations_d434eccb7674d461f562616696955b7d'] = 'Botões de pagamento local';

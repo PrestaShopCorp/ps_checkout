@@ -200,7 +200,7 @@
                                 >
                               </div>
                               <p class="text-muted">
-                                {l s='Max [AMOUNT_MAX] [CURRENCY] (tax incl.)' sprintf=['[AMOUNT_MAX]' => $orderPayPalTransaction.maxAmountRefundable|escape:'html':'UTF-8'|string_format:"%.2f", '[CURRENCY]' => $orderPayPalTransaction.currency|escape:'html':'UTF-8'] mod='ps_checkout'}
+                                {l s='Maximum [AMOUNT_MAX] [CURRENCY] (tax included)' sprintf=['[AMOUNT_MAX]' => $orderPayPalTransaction.maxAmountRefundable|escape:'html':'UTF-8'|string_format:"%.2f", '[CURRENCY]' => $orderPayPalTransaction.currency|escape:'html':'UTF-8'] mod='ps_checkout'}
                                 <a href="#">
                                     {l s='Learn more' mod='ps_checkout'}
                                 </a>
