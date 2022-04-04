@@ -27,7 +27,6 @@ use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPresenter;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
-use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
 use PrestaShop\Module\PrestashopCheckout\Settings\RoundingSettings;
 use Psr\SimpleCache\CacheInterface;
 
@@ -1030,6 +1029,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             ]));
         }
     }
+
     /**
      * AJAX: Handle onboarding session
      */

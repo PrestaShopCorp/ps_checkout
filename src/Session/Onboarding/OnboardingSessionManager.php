@@ -281,6 +281,6 @@ class OnboardingSessionManager extends SessionManager
      */
     private function getPaypalPaymentMode()
     {
-        return Mode::LIVE === $this->prestashopConfiguration->get(PayPalConfiguration::PAYMENT_MODE) ? Mode::LIVE : Mode::SANDBOX;;
+        return Mode::LIVE === $this->prestashopConfiguration->get(PayPalConfiguration::PAYMENT_MODE) ? Mode::LIVE : Mode::SANDBOX;
     }
 }
