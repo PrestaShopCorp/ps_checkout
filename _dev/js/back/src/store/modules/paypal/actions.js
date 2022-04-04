@@ -20,13 +20,15 @@ import * as types from './mutation-types';
 import ajax from '@/requests/ajax.js';
 
 export default {
-  unlink({ commit, getters }) {
+  unlink({ commit, getters, dispatch }) {
     return ajax({
       url: getters.adminController,
       action: 'LogOutPaypalAccount'
     }).then(() => {
-      commit(types.UNLINK_ACCOUNT);
-      return true;
+      dispatch('closeOnboardingSession').then(() => {
+        commit(types.UNLINK_ACCOUNT);
+        return true;
+      });
     });
   },
   updatePaypalStatusSettings({ commit, getters }) {

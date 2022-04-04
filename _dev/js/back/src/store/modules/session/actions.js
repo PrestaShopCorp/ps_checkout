@@ -114,13 +114,10 @@ export default {
       }
     });
   },
-  closeOnboardingSession({ commit, getters }, payload) {
+  closeOnboardingSession({ commit, getters }) {
     return ajax({
       url: getters.adminController,
-      action: 'CloseOnboardingSession',
-      data: {
-        session: JSON.stringify(payload.session)
-      }
+      action: 'CloseOnboardingSession'
     }).then(response => {
       commit(types.ONBOARDING_SESSION, response);
 
@@ -157,6 +154,16 @@ export default {
       url: getters.adminController,
       action: 'FlashSessionError'
     }).then(response => {
+      return Promise.resolve(response);
+    });
+  },
+  handleOnboardingSession({ getters, commit }) {
+    return ajax({
+      url: getters.adminController,
+      action: 'HandleOnboardingSession'
+    }).then(response => {
+      commit(types.ONBOARDING_SESSION, response);
+
       return Promise.resolve(response);
     });
   }

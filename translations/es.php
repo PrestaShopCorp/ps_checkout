@@ -270,18 +270,23 @@ $_MODULE['<{ps_checkout}prestashop>translations_019d235906cab8dd39702ff1ed63b0ce
 $_MODULE['<{ps_checkout}prestashop>translations_026a5d3352c03f2a4161b6378c4cf74c'] = 'Mayores conversiones';
 $_MODULE['<{ps_checkout}prestashop>translations_02d4482d332e1aef3437cd61c9bcc624'] = 'Ponte en contacto con nosotros';
 $_MODULE['<{ps_checkout}prestashop>translations_03146ba7e70c9ea593096c7ab4831512'] = 'Definir las reglas de conversión de divisas';
+$_MODULE['<{ps_checkout}prestashop>translations_03306f8ffb3780351e4a622223367b5c'] = 'Estamos experimentando problemas con nuestros servicios de autenticación, por favor inténtelo de nuevo en unos minutos, estamos trabajando en ello.';
 $_MODULE['<{ps_checkout}prestashop>translations_03b2e60183759732ca220f3c42c90a4a'] = 'Transacción(es) pendiente(s)';
+$_MODULE['<{ps_checkout}prestashop>translations_03cd4fad85da2f4218f0182e7b63b97c'] = 'Gestionar la información';
 $_MODULE['<{ps_checkout}prestashop>translations_0495fce7da4eaf5a10243de38e8376c3'] = 'Ayuda para PrestaShop Checkout';
 $_MODULE['<{ps_checkout}prestashop>translations_04d5933ab56d1bbac4c85471614d3bd2'] = 'La visualización de este mensaje ha demostrado una mejor tasa de conversión y un aumento del valor medio de los pedidos.';
 $_MODULE['<{ps_checkout}prestashop>translations_0557fa923dcee4d0f86b1409f5c2167f'] = 'Atrás';
 $_MODULE['<{ps_checkout}prestashop>translations_05a75ed73f5cbb95cd94d4aa1a4d4a2f'] = 'Datos de la empresa';
+$_MODULE['<{ps_checkout}prestashop>translations_06933067aafd48425d67bcb01bba5cb6'] = 'Actualización';
 $_MODULE['<{ps_checkout}prestashop>translations_06df33001c1d7187fdd81ea1f5b277aa'] = 'Acciones';
 $_MODULE['<{ps_checkout}prestashop>translations_075be76b45904588f54c99aa5860bbb1'] = 'El correo electrónico ya existe.';
 $_MODULE['<{ps_checkout}prestashop>translations_081d8c5739e6266fddfb202afd722324'] = 'Una cosa más: envía la documentación para que sea aprobada por PayPal.';
 $_MODULE['<{ps_checkout}prestashop>translations_0955255f71799451e116070471313b5b'] = 'Falta el correo electrónico.';
+$_MODULE['<{ps_checkout}prestashop>translations_0b7ce7093b2a198445be8a83a3488940'] = 'Los datos que aparecen a continuación se transmiten a PayPal. Asegúrese de que los datos de su empresa están actualizados. Recuerde revisarlos de vez en cuando.';
 $_MODULE['<{ps_checkout}prestashop>translations_0ba29c6a1afacf586b03a26162c72274'] = 'Entorno';
 $_MODULE['<{ps_checkout}prestashop>translations_0bb40ba3edbedc8c2775215d4d4aa5ee'] = 'Mientras tanto, puedes aceptar pagos con tarjeta hasta 500 €.';
 $_MODULE['<{ps_checkout}prestashop>translations_0c6755da915b75e43e9cfdf1f0382e82'] = 'Tarjetas bancarias';
+$_MODULE['<{ps_checkout}prestashop>translations_0ca51e21ac67cf91029887e1254c8c57'] = 'Por razones de seguridad, asegúrese de que sus datos están actualizados. Es necesario que sus datos estén validados para poder seguir configurando el módulo.';
 $_MODULE['<{ps_checkout}prestashop>translations_0daf2583d30c61242d1b36d66909e8d2'] = 'Desafortunadamente, en estos momentos no es posible procesar pagos con tarjeta de crédito. Mientras tanto, puedes seguir recibiendo pagos mediante PayPal. Configura tu cuenta de PayPal, donde puede que hayas recibido una notificación. Si no es así, ponte en contacto con el servicio de atención al cliente de PayPal.';
 $_MODULE['<{ps_checkout}prestashop>translations_0dd48299c95102f75579da47ee1aceff'] = 'Tu cuenta PrestaShop está vinculada a tu cuenta PayPal';
 $_MODULE['<{ps_checkout}prestashop>translations_0eb1f8746fd4f892627727adf4a1a35c'] = 'en transacciones con tarjeta mientras la cuenta se encuentre en curso de validación';
@@ -305,6 +310,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_1d5d8cab58801226ceed46a3f53fc07d
 $_MODULE['<{ps_checkout}prestashop>translations_1d8881f50fe101293c99242fbaab59fe'] = 'Tu cuenta necesita estar confirmada para aceptar los pagos a través de PayPal. Comprueba si has recibido un correo de confirmación en tu bandeja de entrada.';
 $_MODULE['<{ps_checkout}prestashop>translations_1ea2d7969cb7f07cff0433fcd96c8763'] = 'Mejora tu tasa de conversión mostrando PayPal como primera opción en la lista de métodos de pago';
 $_MODULE['<{ps_checkout}prestashop>translations_1f6f681876c65177b4cfbb7c583d9619'] = 'Tienes un correo electrónico.';
+$_MODULE['<{ps_checkout}prestashop>translations_1f8261d17452a959e013666c5df45e07'] = 'Número de teléfono';
 $_MODULE['<{ps_checkout}prestashop>translations_1fbc7e5f1b92c7ec072397b59a0bb5da'] = 'Dirección de facturación';
 $_MODULE['<{ps_checkout}prestashop>translations_1fe500f831a0d0e2b7fda563b0c28b6d'] = 'El botón de PayPal';
 $_MODULE['<{ps_checkout}prestashop>translations_1fe917b01f9a3f87fa2d7d3b7643fac1'] = 'Preguntas frecuentes sobre cuentas rechazadas';
@@ -339,6 +345,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_384036f8b0067ec3bb710a92f8734b3b
 $_MODULE['<{ps_checkout}prestashop>translations_396df27a404efda7df64c37895a845a9'] = 'Cambiar el orden de los métodos de pago';
 $_MODULE['<{ps_checkout}prestashop>translations_3a8d21886ccb1e466803db375c15aae9'] = 'Proponer la mayor selección de métodos de pago: tarjetas, PayPal, etc.';
 $_MODULE['<{ps_checkout}prestashop>translations_3a8e02212752fecc2b5eb72111cdc40d'] = '): recomendamos encarecidamente utilizar estos, por defecto. Pero necesitas la aprobación completa de PayPal para aceptar el pago con tarjetas de crédito con los campos. Puedes ver el estado de esta aprobación en ';
+$_MODULE['<{ps_checkout}prestashop>translations_3a9f8fa3216676b19bc4cc8e61a919cd'] = 'Su módulo PrestaShop Checkout está desactivado para esta tienda.';
 $_MODULE['<{ps_checkout}prestashop>translations_3ac5bf8a648deff04ff5e08ade3ada40'] = 'Selecciona la primera tienda de la siguiente lista para configurarla:';
 $_MODULE['<{ps_checkout}prestashop>translations_3b1278d88b9db123d87a2e644afbda97'] = 'El modo de prueba está activado';
 $_MODULE['<{ps_checkout}prestashop>translations_3b5b0f1e26d98a827ef82af202c2e85b'] = 'Restablecer contraseña';
@@ -368,6 +375,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_4cb668c4f89af857decf3d6ce310cd77
 $_MODULE['<{ps_checkout}prestashop>translations_4ed439fd8ada46dc68dc84e0b57a3046'] = 'Consulta a continuación las transacciones procesadas con PrestaShop Checkout, limitadas a las 1000 últimas para cargarlas más deprisa.';
 $_MODULE['<{ps_checkout}prestashop>translations_5041c9dced8f0d0a4d319be95b229ea5'] = 'Cambiar la activación de países para este módulo de pago';
 $_MODULE['<{ps_checkout}prestashop>translations_526d688f37a86d3c3f27d0c5016eb71d'] = 'Reiniciar';
+$_MODULE['<{ps_checkout}prestashop>translations_527bec23160f56b4fae3d14e3df58a60'] = 'Los datos de su empresa';
 $_MODULE['<{ps_checkout}prestashop>translations_54c1127bed31e947d0951af3263522cf'] = 'Configura la descripción de tus extractos bancarios';
 $_MODULE['<{ps_checkout}prestashop>translations_5579726f3f99842c8bd6aa672b0ba1df'] = 'Píldora';
 $_MODULE['<{ps_checkout}prestashop>translations_55926e741046f094a5597085b9a329bb'] = 'Ten en cuenta que en el modo de prueba no puedes cobrar ningún importe';
@@ -375,6 +383,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_56396cec5c858be914156d159a387592
 $_MODULE['<{ps_checkout}prestashop>translations_565c23511bb8643ac5552fbd5e4ba358'] = 'Un solo módulo para todos los métodos de pago.';
 $_MODULE['<{ps_checkout}prestashop>translations_57e46658fd7e21e0377d342fd9743dd4'] = '¿El email de confirmación no ha llegado?';
 $_MODULE['<{ps_checkout}prestashop>translations_59716c97497eb9694541f7c3d37b1a4d'] = 'País';
+$_MODULE['<{ps_checkout}prestashop>translations_59ac3e56b163524ce73d647b21956a8f'] = 'PrestaShop Checkout sigue funcionando, sólo la sección de configuración del módulo permanece inaccesible sin verificar sus datos.';
 $_MODULE['<{ps_checkout}prestashop>translations_5d4023dba17f36ce69357d25cbe4fbad'] = 'Cuenta PayPal';
 $_MODULE['<{ps_checkout}prestashop>translations_5d5c6682ffcf6b3a46c564762e3b9ff4'] = 'Te recomendamos la opción Pago al momento de si vendes productos artesanales o producidos bajo pedido  ';
 $_MODULE['<{ps_checkout}prestashop>translations_5edab47a4928d49ab1d6742796462020'] = 'Para probar tu método de pago puedes realizar una transacción real (preferiblemente una cantidad pequeña), y una vez que hayas confirmado el dinero en tu cuenta, realizar un reembolso en la página de pedido correspondiente. Atención, no recuperarás los costes.';
@@ -396,6 +405,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_6f266e3508d20d99c079e0130c679208
 $_MODULE['<{ps_checkout}prestashop>translations_6f8063417ab31f38d864c28302f3de2f'] = 'Aprobado';
 $_MODULE['<{ps_checkout}prestashop>translations_6ff063fbc860a79759a7369ac32cee22'] = 'Pagar';
 $_MODULE['<{ps_checkout}prestashop>translations_70bdce46b416665976a87b1a13fb20c5'] = 'Conéctate con tu cuenta PrestaShop Checkout';
+$_MODULE['<{ps_checkout}prestashop>translations_725af196622e5a65aebce17ac8e73d0e'] = 'para habilitar PrestaShop Checkout si desea utilizarlo en esta tienda.';
 $_MODULE['<{ps_checkout}prestashop>translations_735a9fd0d8c04893638d407721ec4601'] = 'Más información acerca de la aprobación de mi cuenta';
 $_MODULE['<{ps_checkout}prestashop>translations_74cd3a6cbf54c04a5634352d476f2b2f'] = 'Error, vuelve a intentarlo más tarde.';
 $_MODULE['<{ps_checkout}prestashop>translations_76f0ed934de85cc7131910b32ede7714'] = 'Reembolso';
@@ -403,6 +413,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_78945de8de090e90045d299651a68a9b
 $_MODULE['<{ps_checkout}prestashop>translations_79d0c6669f615687e6a265f73e989d5d'] = 'Acepto las ';
 $_MODULE['<{ps_checkout}prestashop>translations_79f10e23fabf1720054a5fe16a62f760'] = 'Detalles para los extractos bancarios';
 $_MODULE['<{ps_checkout}prestashop>translations_7c6c2e5d48ab37a007cbf70d3ea25fa4'] = 'pendiente';
+$_MODULE['<{ps_checkout}prestashop>translations_7cf288734d8266128f1c67e5700d5361'] = 'Modules Manager';
 $_MODULE['<{ps_checkout}prestashop>translations_7d6395b374d009ee9cae645ecf8556d0'] = 'Detalles adicionales';
 $_MODULE['<{ps_checkout}prestashop>translations_7e87484272c2e328136e9d2bba0d8b27'] = 'Limita tu tasa de fraude';
 $_MODULE['<{ps_checkout}prestashop>translations_7ec35321dd6ed2f0c30fccee83d15a2a'] = 'Cuenta bancaria';
@@ -435,6 +446,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_91ac9ff2b524dada18330e5104c5e708
 $_MODULE['<{ps_checkout}prestashop>translations_92562ee48b9002afceb07f5b3defd7e6'] = 'Te enviaremos un enlace para restablecer tu contraseña.';
 $_MODULE['<{ps_checkout}prestashop>translations_9345d00abe16aac0416b99818a56aabc'] = 'PrestaShop Checkout 2.0';
 $_MODULE['<{ps_checkout}prestashop>translations_934c4326dcfdd3a2f62aaef1c13cb464'] = 'Configurar la herramienta contra el fraude';
+$_MODULE['<{ps_checkout}prestashop>translations_93d14b780a34fe7e303defc7f3233ae4'] = 'Compruebe sus datos';
 $_MODULE['<{ps_checkout}prestashop>translations_955ad3298db330b5ee880c2c9e6f23a0'] = 'Activo';
 $_MODULE['<{ps_checkout}prestashop>translations_9594eec95be70e7b1710f730fdda33d9'] = 'Azul';
 $_MODULE['<{ps_checkout}prestashop>translations_96b0141273eabab320119c467cdcaf17'] = 'Total';
@@ -457,6 +469,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_a3f4f3661e7a8a7e5b1a221f4aecbb5a
 $_MODULE['<{ps_checkout}prestashop>translations_a427950fee816e9fc83db48c8c02c1d0'] = '¿Estás seguro de que deseas desconectarte?';
 $_MODULE['<{ps_checkout}prestashop>translations_a4e8c4aedf01bae8876d415df3925f65'] = 'Actualiza tu configuración para:';
 $_MODULE['<{ps_checkout}prestashop>translations_a554f9c8bbc30f4e2bdc6eabea0963f3'] = 'Falta la contraseña.';
+$_MODULE['<{ps_checkout}prestashop>translations_a5be1515dfedb6508ea44e238e8564cf'] = 'Parece que el identificador de autentificación de su tienda ha sido duplicado. Para generar uno nuevo, por favor, intente reiniciar el módulo y volver a embarcarlo. Puede contactar con el soporte si el problema persiste.';
 $_MODULE['<{ps_checkout}prestashop>translations_a60e65f4e09379d60910e84d5a272c8e'] = 'Puedes gestionar las divisas de tu cuenta de PayPal. Lo ideal sería hacerlas coincidir con las divisas disponibles en tu tienda.';
 $_MODULE['<{ps_checkout}prestashop>translations_a6192b5f0d39b96622f52bceba16da10'] = 'Puedes aceptar una cantidad total limitada en las transacciones con tarjeta bancaria.';
 $_MODULE['<{ps_checkout}prestashop>translations_a6613b067cf99cf85bec0c26aacf70b9'] = 'Activar métodos de pago';
@@ -492,15 +505,18 @@ $_MODULE['<{ps_checkout}prestashop>translations_c1053fd298c615d9bb6e45a1d9d763d6
 $_MODULE['<{ps_checkout}prestashop>translations_c16dac173aa8377a1c07aed8e0472f7c'] = 'Ciudad';
 $_MODULE['<{ps_checkout}prestashop>translations_c1f52fba179ff982b10e3881670b61ef'] = 'Comprar ahora';
 $_MODULE['<{ps_checkout}prestashop>translations_c3987e4cac14a8456515f0d200da04ee'] = 'Todos los paises';
+$_MODULE['<{ps_checkout}prestashop>translations_c3f11cf9f8467d5b29bec48a2b67cee5'] = 'Prestashop Checkout: gracias por descargar la nueva versión, necesitamos asegurarnos periódicamente de que las informaciones de su negocio están actualizadas. Puede revisarlos siguiendo el enlace de abajo.';
 $_MODULE['<{ps_checkout}prestashop>translations_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Compras';
 $_MODULE['<{ps_checkout}prestashop>translations_c496b9718a821f176a0087143d926468'] = 'Para obtener más información, consulta nuestra Política de protección de datos. ';
 $_MODULE['<{ps_checkout}prestashop>translations_c68602e0447844f23896ab6904f8fd06'] = 'Pagar en 4x, guardar las tarjetas de crédito, autorizar el modo, enviar el enlace directo de los pagos... ¡y más próximamente! Cuéntanos qué te gustaría que se añadiera a este módulo: ¡cualquier nueva función o mejora del comportamiento!';
+$_MODULE['<{ps_checkout}prestashop>translations_c6c61567ca4a514008f748b2acb9c1df'] = 'Por favor, diríjase a';
 $_MODULE['<{ps_checkout}prestashop>translations_c75f7811d70d17dbcd88e9d03752cbed'] = 'Autenticación';
 $_MODULE['<{ps_checkout}prestashop>translations_c7ab53436bfc19fb87789b804d3c608e'] = 'Un profesional freelance';
 $_MODULE['<{ps_checkout}prestashop>translations_c7b5d73ffc406b56966f030ac1b1da10'] = 'Ir a la plataforma de gestión de litigios';
 $_MODULE['<{ps_checkout}prestashop>translations_c84a973ad6bd1079ae08b4f3d3584e0b'] = 'Enviar mi documentación legal ahora';
 $_MODULE['<{ps_checkout}prestashop>translations_c9cc8cce247e49bae79f15173ce97354'] = 'Guardar';
 $_MODULE['<{ps_checkout}prestashop>translations_cb2afa98a49d1ac44da748a5ee556a8a'] = 'Obtener más información sobre los códigos ISO';
+$_MODULE['<{ps_checkout}prestashop>translations_cb5e2753da28dc5ebd90a8250faed627'] = 'Cerrar este mensaje';
 $_MODULE['<{ps_checkout}prestashop>translations_cbc437a341a40d87fbf327d42e71eef8'] = 'Enviar tu documentación legal a PayPal: ';
 $_MODULE['<{ps_checkout}prestashop>translations_cce676d37389a592457002f1e8a0c6c0'] = '10 métodos de pago incluidos todo en uno';
 $_MODULE['<{ps_checkout}prestashop>translations_ce26601dac0dea138b7295f02b7620a7'] = 'Cliente';

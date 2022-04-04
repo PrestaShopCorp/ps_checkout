@@ -96,6 +96,8 @@ class PslClient extends GenericClient
 
     public function getShopUuid()
     {
+        $this->loadShopUuid();
+
         return $this->shopUuid;
     }
 
@@ -150,6 +152,8 @@ class PslClient extends GenericClient
             if (!$response) {
                 $exceptionMessage = 'Unable to contact PSL';
                 $exceptionCode = PsCheckoutSessionException::UNABLE_TO_CONTACT_PSL;
+            } elseif (!$response['status'] && ($callType === 'collectAccountData' || $callType === 'updateShop') && $response['httpCode'] === 400) {
+                return true;
             } elseif (!$response['status']) {
                 switch ($callType) {
                     case 'createShopUuid':

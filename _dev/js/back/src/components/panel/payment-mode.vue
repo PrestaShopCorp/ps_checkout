@@ -112,7 +112,7 @@
         }
 
         this.$store.dispatch('updatePaymentMode', mode).then(() => {
-          this.$store.dispatch('getOnboardingLink');
+          this.$store.dispatch('handleOnboardingSession');
         });
       }
     },

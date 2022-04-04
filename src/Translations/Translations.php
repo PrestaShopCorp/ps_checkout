@@ -210,10 +210,10 @@ class Translations
                 'accounts' => [
                     'activateAllPayment' => $this->module->l('You need to connect to both PrestaShop and PayPal accounts to activate all payment methods', 'translations'),
                     'moduleDisabled' => [
-                        'message' => $this->module->l('Your PrestaShop Checkout module is disabled for this shop. You can\'t onboard on PayPal and it won\'t be active as payment option until it will be enabled.'),
+                        'message' => $this->module->l('Your PrestaShop Checkout module is disabled for this shop.'),
                         'pleaseGo' => $this->module->l('Please go to'),
                         'modulesManager' => $this->module->l('Modules Manager'),
-                        'enableModule' => $this->module->l('to enable PrestaShop Checkout.'),
+                        'enableModule' => $this->module->l('to enable PrestaShop Checkout if you want to use it on this shop.'),
                     ],
                     'paypal' => [
                         'title' => $this->module->l('PayPal account', 'translations'),

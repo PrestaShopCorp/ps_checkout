@@ -223,36 +223,20 @@
           category: 'ps_checkout'
         });
         this.$store.dispatch('unlink').then(() => {
-          return this.$store
-            .dispatch({
-              type: 'closeOnboardingSession',
-              session: this.$store.state.session.onboarding
-            })
-            .then(() => {
-              this.pollingPaypalOnboardingUrl();
-              this.sendTrack();
-
-              return this.$store
-                .dispatch('collectAccountData', { form: null })
-                .then(() =>
-                  this.$store
-                    .dispatch('generateOnboardUrl')
-                    .then(response =>
-                      this.$store.dispatch(
-                        'updatePaypalOnboardingUrl',
-                        response
-                      )
-                    )
-                );
-            });
+          return this.$store.dispatch('handleOnboardingSession').then(() => {
+            this.pollingPaypalOnboardingUrl();
+            this.sendTrack();
+          });
         });
       },
       pollingPaypalOnboardingUrl() {
-        if (this.paypalOnboardLink) {
-          this.$store.dispatch('pollingPaypalOnboardingUrl').then(() => {
-            this.loading = false;
-          });
-        }
+        this.$store.dispatch('pollingPaypalOnboardingUrl').then(() => {
+          if (!this.$store.getters.hasOnboardingUrl) {
+            this.$store.dispatch('generateOnboardUrl');
+          }
+
+          this.loading = false;
+        });
       }
     },
     mounted() {

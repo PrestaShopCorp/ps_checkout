@@ -33,16 +33,18 @@ export default {
     });
   },
 
-  updatePaymentMode({ commit, getters }, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'UpdatePaymentMode',
-      data: {
-        paymentMode: payload
-      }
-    }).then(() => {
-      commit(types.UPDATE_PAYMENT_MODE, payload);
-      return Promise.resolve(true);
+  updatePaymentMode({ commit, getters, dispatch }, payload) {
+    return dispatch('unlink').then(() => {
+      return ajax({
+        url: getters.adminController,
+        action: 'UpdatePaymentMode',
+        data: {
+          paymentMode: payload
+        }
+      }).then(() => {
+        commit(types.UPDATE_PAYMENT_MODE, payload);
+        return Promise.resolve(true);
+      });
     });
   },
 

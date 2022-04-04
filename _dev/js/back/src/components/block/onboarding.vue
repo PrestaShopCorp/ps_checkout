@@ -71,11 +71,7 @@
           return false;
         }
 
-        let dataShop = onboardingSession.data.shop;
-
-        return dataShop && dataShop.paypal_onboarding_url
-          ? dataShop.paypal_onboarding_url
-          : false;
+        return onboardingSession?.data?.shop?.paypal_onboarding_url ?? false;
       },
       checkoutAccountStatus() {
         return this.$store.state.firebase.onboardingCompleted;

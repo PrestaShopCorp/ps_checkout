@@ -102,8 +102,6 @@ services:
     arguments:
       - '@ps_checkout.configuration'
       - '@ps_checkout.repository.paypal.code'
-      - '@ps_checkout.session.onboarding.manager'
-      - '@ps_checkout.persistent.configuration'
 
   ps_checkout.persistent.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\PersistentConfiguration'

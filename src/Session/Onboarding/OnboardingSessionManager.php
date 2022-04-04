@@ -60,14 +60,14 @@ class OnboardingSessionManager extends SessionManager
     private $transitions;
 
     /**
-     * @var string
-     */
-    private $mode;
-
-    /**
      * @var CacheInterface
      */
     private $cache;
+
+    /**
+     * @var PrestaShopConfiguration
+     */
+    private $prestashopConfiguration;
 
     /**
      * @param OnboardingSessionRepository $repository
@@ -84,11 +84,12 @@ class OnboardingSessionManager extends SessionManager
         CacheInterface $cache
     ) {
         parent::__construct($repository);
+
         $this->context = \Context::getContext();
         $this->configuration = $configuration->getOnboarding();
         $this->states = $this->configuration['states'];
         $this->transitions = $this->configuration['transitions'];
-        $this->mode = Mode::LIVE === $prestashopConfiguration->get(PayPalConfiguration::PAYMENT_MODE) ? Mode::LIVE : Mode::SANDBOX;
+        $this->prestashopConfiguration = $prestashopConfiguration;
         $this->cache = $cache;
     }
 
@@ -105,8 +106,6 @@ class OnboardingSessionManager extends SessionManager
     {
         $correlationId = Uuid::uuid4()->toString();
 
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
         // Shop UUID generation from PSL
         $onboardingApi = new Onboarding(new PrestaShopContext(), null, $this->cache);
         $createShopUuid = $onboardingApi->createShopUuid($correlationId);
@@ -125,7 +124,7 @@ class OnboardingSessionManager extends SessionManager
         $createdAt = date('Y-m-d H:i:s');
         $sessionData = [
             'correlation_id' => $correlationId,
-            'mode' => $this->mode,
+            'mode' => $this->getPaypalPaymentMode(),
             'shop_id' => (int) $this->context->shop->id,
             'is_closed' => false,
             'auth_token' => $authToken['token'],
@@ -150,7 +149,7 @@ class OnboardingSessionManager extends SessionManager
     public function getOpened()
     {
         $sessionData = [
-            'mode' => $this->mode,
+            'mode' => $this->getPaypalPaymentMode(),
             'shop_id' => (int) $this->context->shop->id,
             'is_closed' => false,
         ];
@@ -273,5 +272,15 @@ class OnboardingSessionManager extends SessionManager
     public function closeOnboarding(Session $session)
     {
         return $this->close($session);
+    }
+
+    /**
+     * Get PayPal payment mode
+     *
+     * @return string LIVE|SANDBOX
+     */
+    private function getPaypalPaymentMode()
+    {
+        return Mode::LIVE === $this->prestashopConfiguration->get(PayPalConfiguration::PAYMENT_MODE) ? Mode::LIVE : Mode::SANDBOX;;
     }
 }

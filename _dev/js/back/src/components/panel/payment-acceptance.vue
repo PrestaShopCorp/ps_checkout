@@ -38,18 +38,20 @@
             </thead>
             <tbody>
               <tr>
-                <td class="text-left d-flex">
-                  <div class="paypal-icon">
-                    <img
-                      src="@/assets/images/paypal-logo-thumbnail.png"
-                      alt=""
-                    />
-                  </div>
-                  <div>
-                    <h3 class="mt-2">
-                      PayPal
-                    </h3>
-                    <PaypalStatus :display-labels="true" />
+                <td>
+                  <div class="text-left d-flex">
+                    <div class="paypal-icon">
+                      <img
+                        src="@/assets/images/paypal-logo-thumbnail.png"
+                        alt=""
+                      />
+                    </div>
+                    <div>
+                      <h3 class="mt-2">
+                        PayPal
+                      </h3>
+                      <PaypalStatus :display-labels="true" />
+                    </div>
                   </div>
                 </td>
                 <td>
@@ -61,15 +63,17 @@
               </tr>
 
               <tr>
-                <td class="text-left d-flex">
-                  <div class="card-icon">
-                    <i class="material-icons">credit_card</i>
-                  </div>
-                  <div>
-                    <h3 class="mt-2">
-                      {{ $t('panel.payment-acceptance.creditCardsLabel') }}
-                    </h3>
-                    <CardStatus :display-labels="true" />
+                <td>
+                  <div class="text-left d-flex">
+                    <div class="card-icon">
+                      <i class="material-icons">credit_card</i>
+                    </div>
+                    <div>
+                      <h3 class="mt-2">
+                        {{ $t('panel.payment-acceptance.creditCardsLabel') }}
+                      </h3>
+                      <CardStatus :display-labels="true" />
+                    </div>
                   </div>
                 </td>
                 <td>

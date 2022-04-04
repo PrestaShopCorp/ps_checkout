@@ -25,14 +25,10 @@ export default {
       url: getters.adminController,
       action: 'LogOutPsAccount'
     }).then(() => {
-      dispatch('unlink');
-      dispatch('offboard');
-
-      return dispatch({
-        type: 'closeOnboardingSession',
-        session: getters.onboarding
-      }).then(() => {
+      dispatch('unlink').then(() => {
+        dispatch('offboard');
         commit(types.LOGOUT_ACCOUNT);
+
         return true;
       });
     });

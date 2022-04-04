@@ -994,13 +994,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
             if ($session) {
                 $onboardingSessionManager->closeOnboarding($session);
-
-                /** @var PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler $onboardingStateHandler */
-                $onboardingStateHandler = $this->module->getService('ps_checkout.onboarding.state.handler');
-                $session = $onboardingStateHandler->handle();
             }
 
-            $this->ajaxDie(json_encode($session));
+            $this->ajaxDie(json_encode(true));
         } catch (Exception $exception) {
             http_response_code(500);
             $this->ajaxDie(json_encode([
@@ -1024,6 +1020,26 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             $openedSession = $openedSession ? $openedSession->toArray() : null;
 
             $this->ajaxDie(json_encode($openedSession));
+        } catch (Exception $exception) {
+            http_response_code(500);
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    $exception->getMessage(),
+                ],
+            ]));
+        }
+    }
+    /**
+     * AJAX: Handle onboarding session
+     */
+    public function ajaxProcessHandleOnboardingSession()
+    {
+        try {
+            /** @var PrestaShop\Module\PrestashopCheckout\OnBoarding\OnboardingStateHandler $onboardingStateHandler */
+            $onboardingStateHandler = $this->module->getService('ps_checkout.onboarding.state.handler');
+
+            $this->ajaxDie(json_encode($onboardingStateHandler->handle()));
         } catch (Exception $exception) {
             http_response_code(500);
             $this->ajaxDie(json_encode([
@@ -1093,12 +1109,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         // PsxForm validation
         $psxForm = (new PsxDataPrepare($formData))->prepareData();
-        // $errors = (new PsxDataValidation())->validateData($psxForm);
-        //
-        // if (!empty($errors)) {
-        //     http_response_code(400);
-        //     $this->ajaxDie(json_encode($errors));
-        // }
 
         /** @var Symfony\Component\Cache\Simple\FilesystemCache $cache */
         $cache = $this->module->getService('ps_checkout.cache.session');
@@ -1124,7 +1134,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             $response = $onboardingApi->collectAccountData(array_filter($psxForm));
         }
 
-        if (!$response['status']) {
+        if (!$response['status'] && $response['httpCode'] === 400) {
             /** @var \PrestaShop\Module\PrestashopCheckout\Translations\Translations $translationService */
             $translationService = $this->module->getService('ps_checkout.translations.translations');
             $errorTranslations = $translationService->getErrorTranslations()['psx_form'];

@@ -125,7 +125,7 @@ class OnboardingStateHandler
      */
     private function handleShopDataCollect()
     {
-        if ($this->onboardingState->isShopDataCollected()) {
+        if ($this->onboardingSession && $this->onboardingState->isShopDataCollected()) {
             $shopDataConfiguration = $this->psCheckoutConfiguration->getShopData();
             $psxForm = json_decode($shopDataConfiguration['psxForm'], true);
             $data = [
