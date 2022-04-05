@@ -277,7 +277,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_0495fce7da4eaf5a10243de38e8376c3
 $_MODULE['<{ps_checkout}prestashop>translations_04d5933ab56d1bbac4c85471614d3bd2'] = 'Die Anzeige dieser Nachricht hat eine bessere Konversionsrate und einen Anstieg des durchschnittlichen Bestellwerts gezeigt.';
 $_MODULE['<{ps_checkout}prestashop>translations_0557fa923dcee4d0f86b1409f5c2167f'] = 'Zurück';
 $_MODULE['<{ps_checkout}prestashop>translations_05a75ed73f5cbb95cd94d4aa1a4d4a2f'] = 'Informationen zu Ihrem Unternehmen';
-$_MODULE['<{ps_checkout}prestashop>translations_06933067aafd48425d67bcb01bba5cb6'] = 'Aktualisierung';
+$_MODULE['<{ps_checkout}prestashop>translations_06933067aafd48425d67bcb01bba5cb6'] = 'Aktualisieren';
 $_MODULE['<{ps_checkout}prestashop>translations_06df33001c1d7187fdd81ea1f5b277aa'] = 'Aktionen';
 $_MODULE['<{ps_checkout}prestashop>translations_075be76b45904588f54c99aa5860bbb1'] = 'Diese E-Mail-Adresse existiert bereits.';
 $_MODULE['<{ps_checkout}prestashop>translations_081d8c5739e6266fddfb202afd722324'] = 'Noch eine Sache: Senden Sie Dokumente zur vollständigen Genehmigung durch PayPal';

@@ -277,7 +277,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_0495fce7da4eaf5a10243de38e8376c3
 $_MODULE['<{ps_checkout}prestashop>translations_04d5933ab56d1bbac4c85471614d3bd2'] = 'A exibição desta mensagem mostrou uma melhor taxa de conversão e um aumento do Valor Médio do Pedido.';
 $_MODULE['<{ps_checkout}prestashop>translations_0557fa923dcee4d0f86b1409f5c2167f'] = 'Voltar';
 $_MODULE['<{ps_checkout}prestashop>translations_05a75ed73f5cbb95cd94d4aa1a4d4a2f'] = 'Informações da empresa';
-$_MODULE['<{ps_checkout}prestashop>translations_06933067aafd48425d67bcb01bba5cb6'] = 'Actualização';
+$_MODULE['<{ps_checkout}prestashop>translations_06933067aafd48425d67bcb01bba5cb6'] = 'Atualizar';
 $_MODULE['<{ps_checkout}prestashop>translations_06df33001c1d7187fdd81ea1f5b277aa'] = 'Ações';
 $_MODULE['<{ps_checkout}prestashop>translations_075be76b45904588f54c99aa5860bbb1'] = 'O e-mail já existe.';
 $_MODULE['<{ps_checkout}prestashop>translations_081d8c5739e6266fddfb202afd722324'] = 'Mais uma coisa: envie documentos para serem totalmente aprovados pelo PayPal';

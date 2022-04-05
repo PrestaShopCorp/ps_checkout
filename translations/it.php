@@ -277,7 +277,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_0495fce7da4eaf5a10243de38e8376c3
 $_MODULE['<{ps_checkout}prestashop>translations_04d5933ab56d1bbac4c85471614d3bd2'] = 'Visualizzare questo messaggio ha consentito di ottenere un migliore tasso di conversione e un aumento del valore medio dell\'ordine.';
 $_MODULE['<{ps_checkout}prestashop>translations_0557fa923dcee4d0f86b1409f5c2167f'] = 'Indietro';
 $_MODULE['<{ps_checkout}prestashop>translations_05a75ed73f5cbb95cd94d4aa1a4d4a2f'] = 'Informazioni sull’azienda';
-$_MODULE['<{ps_checkout}prestashop>translations_06933067aafd48425d67bcb01bba5cb6'] = 'Aggiornamento';
+$_MODULE['<{ps_checkout}prestashop>translations_06933067aafd48425d67bcb01bba5cb6'] = 'Aggiornare';
 $_MODULE['<{ps_checkout}prestashop>translations_06df33001c1d7187fdd81ea1f5b277aa'] = 'Azioni';
 $_MODULE['<{ps_checkout}prestashop>translations_075be76b45904588f54c99aa5860bbb1'] = 'E-mail in uso.';
 $_MODULE['<{ps_checkout}prestashop>translations_081d8c5739e6266fddfb202afd722324'] = 'Un\'ultima cosa: ricorda di inviare i tuoi documenti per far sì che il tuo conto PayPal riceva una convalida totale da parte di PayPal';
