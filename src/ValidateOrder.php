@@ -51,7 +51,7 @@ class ValidateOrder
      */
     private $payPalOrderDataProvider;
     /**
-     * @var \PayPalOrderCaptureHandler
+     * @var \PayPalOrderCaptureCommandHandler
      */
     private $payPalOrderCaptureHandler;
     /**
@@ -63,7 +63,7 @@ class ValidateOrder
      * @param string $paypalOrderId
      * @param string $merchantId
      */
-    public function __construct(\PayPalOrderDataProvider $payPalOrderDataProvider, \PayPalOrderCaptureHandler $payPalOrderCaptureHandler, FundingSourceTranslationProvider $fundingSourceTranslationProvider)
+    public function __construct(\PayPalOrderDataProvider $payPalOrderDataProvider, \PayPalOrderCaptureCommandHandler $payPalOrderCaptureHandler, FundingSourceTranslationProvider $fundingSourceTranslationProvider)
     {
         $this->context = \Context::getContext();
         $this->payPalOrderDataProvider = $payPalOrderDataProvider;
@@ -114,7 +114,8 @@ class ValidateOrder
                 throw new PsCheckoutException('The transaction amount doesn\'t match with the cart amount.', PsCheckoutException::DIFFERENCE_BETWEEN_TRANSACTION_AND_CART);
             }
 
-            $captureResult = $this->payPalOrderCaptureHandler->capture((int) $payload['cartId'], $order['id'], $merchantId, $order['intent']);
+            $orderCaptureCommand = new \PayPalOrderCaptureCommand((int) $payload['cartId'], $order['id'], $merchantId, $order['intent']);
+            $captureResult = $this->payPalOrderCaptureHandler->handle($orderCaptureCommand);
 
             $transactionStatus = empty($captureResult['transactionStatus']) ? $order['transactionStatus'] : $captureResult['transactionStatus'];
             $transactionIdentifier = empty($captureResult['transactionIdentifier']) ? $order['transactionIdentifier'] : $captureResult['transactionIdentifier'];

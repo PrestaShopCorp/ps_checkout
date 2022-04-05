@@ -5,7 +5,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPalError;
 use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 
-class PayPalOrderCaptureHandler
+class PayPalOrderCaptureCommandHandler
 {
     const CAPTURE_STATUS_PENDING = 'PENDING';
     const CAPTURE_STATUS_DENIED = 'DENIED';
@@ -48,10 +48,10 @@ class PayPalOrderCaptureHandler
      * @throws PsCheckoutException
      * @throws \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException
      */
-    public function capture($cartId, $orderId, $merchantId, $intent)
+    public function handle(PayPalOrderCaptureCommand $command)
     {
         /** @var \PsCheckoutCart|false $psCheckoutCart */
-        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByCartId((int) $cartId);
+        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByCartId($command->getCartId());
 
         $fundingSource = !$psCheckoutCart ? 'paypal' : $psCheckoutCart->paypal_funding;
 
@@ -60,8 +60,8 @@ class PayPalOrderCaptureHandler
         }
 
         $response = $this->orderApi->capture(
-            $orderId,
-            $merchantId,
+            $command->getOrderId(),
+            $command->getMerchantId(),
             $fundingSource
         );
 
@@ -101,8 +101,8 @@ class PayPalOrderCaptureHandler
 
         if (!$psCheckoutCart) {
             $psCheckoutCart = new \PsCheckoutCart();
-            $psCheckoutCart->id_cart = (int) $cartId;
-            $psCheckoutCart->paypal_intent = $intent;
+            $psCheckoutCart->id_cart = $command->getCartId();
+            $psCheckoutCart->paypal_intent = $command->getIntent();
             $psCheckoutCart->paypal_order = $response['body']['id'];
             $psCheckoutCart->paypal_status = $response['body']['status'];
             $this->psCheckoutCartRepository->save($psCheckoutCart);
