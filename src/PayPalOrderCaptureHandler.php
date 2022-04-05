@@ -3,46 +3,88 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPalError;
 use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 
 class PayPalOrderCaptureHandler
 {
+    const CAPTURE_STATUS_PENDING = 'PENDING';
+    const CAPTURE_STATUS_DENIED = 'DENIED';
+    const CAPTURE_STATUS_VOIDED = 'VOIDED';
+    const CAPTURE_STATUS_COMPLETED = 'COMPLETED';
+    const CAPTURE_STATUS_DECLINED = 'DECLINED';
+
     /**
      * @var \PayPal\Api\Order
      */
     private $orderApi;
 
-    public function __construct(Order $orderApi)
+    /**
+     * @var CacheInterface
+     */
+    private $paypalOrderCache;
+
+    /**
+     * @var PsCheckoutCartRepository
+     */
+    private $psCheckoutCartRepository;
+
+    public function __construct(Order $orderApi, CacheInterface $paypalOrderCache, PsCheckoutCartRepository $psCheckoutCartRepository)
     {
         $this->orderApi = $orderApi;
+        $this->paypalOrderCache = $paypalOrderCache;
+        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
     }
 
-    public function capture($orderId, $merchantId, $fundingSource) {
+    /**
+     * @param int $cartId
+     * @param string $orderId
+     * @param string $merchantId
+     * @param string $intent
+     *
+     * @return array
+     *
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
+     * @throws PsCheckoutException
+     * @throws \PrestaShop\Module\PrestashopCheckout\Exception\PayPalException
+     */
+    public function capture($cartId, $orderId, $merchantId, $intent)
+    {
+        /** @var \PsCheckoutCart|false $psCheckoutCart */
+        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByCartId((int) $cartId);
+
+        $fundingSource = !$psCheckoutCart ? 'paypal' : $psCheckoutCart->paypal_funding;
+
+        if ($fundingSource === 'card') {
+            $fundingSource .= $psCheckoutCart->isHostedFields ? '_hosted' : '_inline';
+        }
+
         $response = $this->orderApi->capture(
             $orderId,
             $merchantId,
             $fundingSource
         );
 
-        if (false === $response['status']) {
-            if (false === empty($response['body']['message'])) {
+        if (!$response['status']) {
+            if (!empty($response['body']['message'])) {
                 (new PayPalError($response['body']['message']))->throwException();
             }
 
-            if (false === empty($response['exceptionMessage']) && false === empty($response['exceptionCode'])) {
+            if (!empty($response['exceptionMessage']) && !empty($response['exceptionCode'])) {
                 throw new PsCheckoutException($response['exceptionMessage'], (int) $response['exceptionCode']);
             }
 
             throw new PsCheckoutException(isset($response['body']['error']) ? $response['body']['error'] : 'Unknown error', PsCheckoutException::UNKNOWN);
         }
 
-        if (false === empty($response['body']['purchase_units'][0]['payments']['captures'])) {
+        if (!empty($response['body']['purchase_units'][0]['payments']['captures'])) {
             $transactionIdentifier = $response['body']['purchase_units'][0]['payments']['captures'][0]['id'];
             $transactionStatus = $response['body']['purchase_units'][0]['payments']['captures'][0]['status'];
 
             if (self::CAPTURE_STATUS_DECLINED === $transactionStatus
-                && false === empty($response['body']['payment_source'])
-                && false === empty($response['body']['payment_source'][0]['card'])
-                && false === empty($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response'])
+                && !empty($response['body']['payment_source'])
+                && !empty($response['body']['payment_source'][0]['card'])
+                && !empty($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response'])
             ) {
                 $payPalProcessorResponse = new PayPalProcessorResponse(
                     isset($response['body']['payment_source'][0]['card']['brand']) ? $response['body']['payment_source'][0]['card']['brand'] : null,
@@ -54,5 +96,27 @@ class PayPalOrderCaptureHandler
                 $payPalProcessorResponse->throwException();
             }
         }
+
+        $this->paypalOrderCache->set($response['body']['id'], $response['body']);
+
+        if (!$psCheckoutCart) {
+            $psCheckoutCart = new \PsCheckoutCart();
+            $psCheckoutCart->id_cart = (int) $cartId;
+            $psCheckoutCart->paypal_intent = $intent;
+            $psCheckoutCart->paypal_order = $response['body']['id'];
+            $psCheckoutCart->paypal_status = $response['body']['status'];
+            $this->psCheckoutCartRepository->save($psCheckoutCart);
+        } else {
+            $psCheckoutCart->paypal_order = $response['body']['id'];
+            $psCheckoutCart->paypal_status = $response['body']['status'];
+            $this->psCheckoutCartRepository->save($psCheckoutCart);
+        }
+
+        return [
+            'id' => $psCheckoutCart->paypal_order,
+            'status' => $psCheckoutCart->paypal_status,
+            'transactionIdentifier' => !empty($transactionIdentifier) ? $transactionIdentifier : false,
+            'transactionStatus' => !empty($transactionStatus) ? $transactionStatus : false,
+        ];
     }
 }
