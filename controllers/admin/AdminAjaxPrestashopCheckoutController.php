@@ -418,10 +418,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XConfiguration */
         $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_in_4x.configuration');
         $payIn4XConfiguration->setOrderPage(Tools::getValue('status') ? true : false);
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+//        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+//        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+//
+//        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
 
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
+        $this->ajaxDie(json_encode(true));
     }
 
     /**
@@ -432,10 +434,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XConfiguration */
         $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_in_4x.configuration');
         $payIn4XConfiguration->setProductPage(Tools::getValue('status') ? true : false);
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
-
-        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
+//        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+//        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+//
+//        (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
 
         $this->ajaxDie(json_encode(true));
     }
