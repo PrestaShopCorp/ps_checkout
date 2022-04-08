@@ -136,6 +136,7 @@ class Translations
                 'customize' => [
                     'customThemeWarningMessage1' => $this->module->l('All custom themes might not be fully compatible. To avoid potential integration issues on payment page,', 'translations'),
                     'customThemeWarningMessage2' => $this->module->l('please check our list of customizable settings', 'translations'),
+                    'pay4xEligibilityWarning' => $this->module->l('This feature is enabled based on a eligibility criteria. You can check this criteria on:', 'translations'),
                 ],
             ],
             'firebase' => [

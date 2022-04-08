@@ -27,9 +27,13 @@
       data-pp-amount="{$totalCartPrice}"
     ></div>
     <script>
-      window.ps_checkoutPayPalSdkInstance
+      if (
+        window.ps_checkoutPayPalSdkInstance
         && window.ps_checkoutPayPalSdkInstance.Messages
-        && window.ps_checkoutPayPalSdkInstance.Messages().render('[data-pp-message]');
+        && window.ps_checkoutPayPalSdkInstance.isFundingEligible('paylater')
+      ) {
+        window.ps_checkoutPayPalSdkInstance.Messages().render('[data-pp-message]');
+      }
     </script>
   {/if}
 {/if}

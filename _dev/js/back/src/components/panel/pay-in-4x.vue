@@ -126,6 +126,18 @@
             {{ $t('panel.pay-in-4x.alert-content') }}
           </p>
         </b-alert>
+        <b-alert variant="warning" show>
+          <p>
+            {{ $t('pages.customize.pay4xEligibilityWarning') }}
+            <a
+              href="https://developer.paypal.com/docs/checkout/pay-later/us/"
+              target="_blank"
+              class="link-underline"
+            >
+              https://developer.paypal.com/docs/checkout/pay-later/us/
+            </a>.
+          </p>
+        </b-alert>
       </b-col>
     </b-card-body>
   </b-card>

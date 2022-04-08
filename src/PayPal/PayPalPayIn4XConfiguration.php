@@ -89,9 +89,7 @@ class PayPalPayIn4XConfiguration
 
     public function isOrderPageActive()
     {
-        return $this->isActiveForMerchant()
-            ? (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE)
-            : false;
+        return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE);
     }
 
     public function isOrderPageEnabled()
@@ -103,9 +101,7 @@ class PayPalPayIn4XConfiguration
 
     public function isProductPageActive()
     {
-        return $this->isActiveForMerchant()
-            ? (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE)
-            : false;
+        return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE);
     }
 
     public function isProductPageEnabled()
@@ -122,9 +118,7 @@ class PayPalPayIn4XConfiguration
      */
     public function setProductPage($status)
     {
-        if ($this->isActiveForMerchant()) {
-            $this->configuration->set(self::PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE, $status);
-        }
+        $this->configuration->set(self::PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE, $status);
     }
 
     /**
@@ -134,8 +128,6 @@ class PayPalPayIn4XConfiguration
      */
     public function setOrderPage($status)
     {
-        if ($this->isActiveForMerchant()) {
-            $this->configuration->set(self::PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE, $status);
-        }
+        $this->configuration->set(self::PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE, $status);
     }
 }
