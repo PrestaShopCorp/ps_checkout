@@ -18,13 +18,43 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
 
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-
-class PayPalOrderException extends PsCheckoutException
+class CapturePayPalOrderCommand
 {
-    const CANNOT_RETRIEVE_ORDER = 0;
-    const EMPTY_ORDER_DATA = 0;
-    const CANNOT_CAPTURE_ORDER = 0;
+    /**
+     * @var string
+     */
+    private $orderId;
+
+    /**
+     * @var string
+     */
+    private $fundingSource;
+
+    /**
+     * @param string $orderId
+     * @param string $fundingSource
+     */
+    public function __construct($orderId, $fundingSource)
+    {
+        $this->orderId = $orderId;
+        $this->fundingSource = $fundingSource;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrderId()
+    {
+        return $this->orderId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFundingSource()
+    {
+        return $this->fundingSource;
+    }
 }

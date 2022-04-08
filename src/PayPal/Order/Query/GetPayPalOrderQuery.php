@@ -23,12 +23,12 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query;
 class GetPayPalOrderQuery
 {
     /**
-     * @var int
+     * @var string
      */
     private $orderId;
 
     /**
-     * @param int $orderId
+     * @param string $orderId
      */
     public function __construct($orderId)
     {
@@ -36,7 +36,7 @@ class GetPayPalOrderQuery
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getOrderId()
     {
