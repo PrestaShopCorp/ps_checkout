@@ -486,7 +486,7 @@ class Ps_checkout extends PaymentModule
             'width' => $width,
             'modulePath' => $this->getPathUri(),
             'paymentOptions' => $paymentOptions,
-            'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageEnabled(),
+            'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageActive(),
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/displayExpressCheckout.tpl');
@@ -585,7 +585,7 @@ class Ps_checkout extends PaymentModule
 
         $this->context->smarty->assign([
             'totalCartPrice' => sprintf('%01.2f', $price),
-            'payIn4XisProductPageEnabled' => $payIn4XService->isProductPageEnabled(),
+            'payIn4XisProductPageEnabled' => $payIn4XService->isProductPageActive(),
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/displayProductPriceBlock.tpl');
@@ -615,7 +615,7 @@ class Ps_checkout extends PaymentModule
         $totalCartPrice = $cart->getSummaryDetails();
         $this->context->smarty->assign([
             'totalCartPrice' => $totalCartPrice['total_price'],
-            'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageEnabled(),
+            'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageActive(),
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/displayCartTotalPriceLabel.tpl');

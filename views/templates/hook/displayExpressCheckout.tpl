@@ -52,7 +52,9 @@
     data-pp-style-layout="text"
     data-pp-style-logo-type="inline"
     data-pp-style-text-color="black"
-    data-pp-amount="{$cart.totals.total.amount}"></div>
+    data-pp-amount="{$cart.totals.total.amount}"
+  ></div>
+
   <script>
     if (
       window.ps_checkoutPayPalSdkInstance
