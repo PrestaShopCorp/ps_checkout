@@ -101,6 +101,11 @@ class FundingSourceCollectionBuilder
         $sofort->setIsEnabled($this->configuration->isEnabled('sofort'));
         $sofort->setCountries($this->eligibilityConstraint->getCountries('sofort'));
 
-        return [$paypal, $card, $bancontact, $eps, $giropay, $ideal, $mybank, $p24, $sofort];
+        // PayLater
+        $paylater = new FundingSourceEntity('paylater');
+        $paylater->setPosition($this->configuration->getPosition('paylater', 10));
+        $paylater->setIsEnabled(true);
+
+        return [$paypal, $paylater, $card, $bancontact, $eps, $giropay, $ideal, $mybank, $p24, $sofort];
     }
 }

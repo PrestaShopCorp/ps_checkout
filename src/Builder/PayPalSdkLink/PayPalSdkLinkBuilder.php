@@ -128,6 +128,8 @@ class PayPalSdkLinkBuilder
             'integration-date' => $this->configuration->getIntegrationDate(),
         ];
 
+        $params['buyer-country'] = 'FR';
+
         if ('SANDBOX' === $this->configuration->getPaymentMode()) {
             $params['debug'] = 'true';
             // $params['buyer-country'] = \Context::getContext()->country->iso_code;
@@ -138,6 +140,10 @@ class PayPalSdkLinkBuilder
 
         if (false === empty($fundingSourcesDisabled)) {
             $params['disable-funding'] = implode(',', $fundingSourcesDisabled);
+        }
+
+        if ($this->payIn4XConfiguration->isOrderPageActive() || $this->payIn4XConfiguration->isProductPageActive()) {
+            $params['enable-funding'] = 'paylater';
         }
 
         return self::BASE_LINK . '?' . urldecode(http_build_query($params));
