@@ -78,7 +78,7 @@ class Translations
                     'newMajorAvailable' => $this->module->l('A new major version is available for PrestaShop Checkout !', 'translations'),
                     'newMinorPatchAvailable' => $this->module->l('A new minor version is available for PrestaShop Checkout !', 'translations'),
                     'thinkToUpdate' => $this->module->l('Do not forget to keep your module up to date !', 'translations'),
-                    'upgradeToOnboard' => $this->module->l('Please upgrade your module first if you want to use PS Checkout.', 'translations'),
+                    'upgradeToOnboard' => $this->module->l('Please upgrade your module first if you want to use PrestaShop Checkout.', 'translations'),
                     'installedVersion' => $this->module->l('Installed version', 'translations'),
                     'latestVersion' => $this->module->l('Latest version', 'translations'),
                     'upgrade' => $this->module->l('Upgrade now', 'translations'),

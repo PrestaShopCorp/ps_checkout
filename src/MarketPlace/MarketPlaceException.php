@@ -24,6 +24,6 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
 class MarketPlaceException extends PsCheckoutException
 {
-    const CANNOT_RETRIEVE_MODULE_DATA = 0;
-    const EMPTY_MODULE_DATA = 0;
+    const CANNOT_RETRIEVE_MODULE_DATA = 1;
+    const EMPTY_MODULE_DATA = 2;
 }

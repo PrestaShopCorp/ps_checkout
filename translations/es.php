@@ -378,7 +378,6 @@ $_MODULE['<{ps_checkout}prestashop>translations_5041c9dced8f0d0a4d319be95b229ea5
 $_MODULE['<{ps_checkout}prestashop>translations_526d688f37a86d3c3f27d0c5016eb71d'] = 'Reiniciar';
 $_MODULE['<{ps_checkout}prestashop>translations_527bec23160f56b4fae3d14e3df58a60'] = 'Los datos de su empresa';
 $_MODULE['<{ps_checkout}prestashop>translations_54c1127bed31e947d0951af3263522cf'] = 'Configura la descripción de tus extractos bancarios';
-$_MODULE['<{ps_checkout}prestashop>translations_550178dd9fb4774cbbe49d281e6a2574'] = 'Actualice el módulo primero si desea utilizar PS Checkout.';
 $_MODULE['<{ps_checkout}prestashop>translations_5579726f3f99842c8bd6aa672b0ba1df'] = 'Píldora';
 $_MODULE['<{ps_checkout}prestashop>translations_55926e741046f094a5597085b9a329bb'] = 'Ten en cuenta que en el modo de prueba no puedes cobrar ningún importe';
 $_MODULE['<{ps_checkout}prestashop>translations_56396cec5c858be914156d159a387592'] = 'Tipo de empresa';
@@ -458,6 +457,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_96b0141273eabab320119c467cdcaf17
 $_MODULE['<{ps_checkout}prestashop>translations_973264e36926ecc4ec496403c3425d93'] = 'Teléfono de la empresa';
 $_MODULE['<{ps_checkout}prestashop>translations_9768feb3fdb1f267b06093bc572952dd'] = 'Dorado';
 $_MODULE['<{ps_checkout}prestashop>translations_977b9a69632398e1d00aaf9fabedfd95'] = 'Usar otra cuenta';
+$_MODULE['<{ps_checkout}prestashop>translations_9a0460f3098c2a85e0e23b7b890fa14a'] = 'Actualice el módulo primero si desea utilizar PrestaShop Checkout.';
 $_MODULE['<{ps_checkout}prestashop>translations_9a2e255d065b9445b1a6f56ab54b5ae5'] = 'Has iniciado sesión con tu cuenta ';
 $_MODULE['<{ps_checkout}prestashop>translations_9c9f75fecc9e80c7bf8f139d84f47cd3'] = 'Una agencia';
 $_MODULE['<{ps_checkout}prestashop>translations_9ca445b9db010a99239196af5ac3a8b9'] = 'Ùltima versión';

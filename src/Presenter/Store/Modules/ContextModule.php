@@ -153,7 +153,7 @@ class ContextModule implements PresenterInterface
                 'shopsTree' => $this->getShopsTree(),
                 'faq' => $this->getFaq(),
                 'language' => $this->psContext->getLanguage(),
-                'prestashopCheckoutAjax' => (new LinkAdapter($this->psContext->getLink()))->getAdminLink('AdminAjaxPrestashopCheckout'),
+                'prestashopCheckoutAjax' => $this->getGeneratedLink('AdminAjaxPrestashopCheckout'),
                 'prestashopCheckoutSse' => $sseUrl,
                 'prestashopCheckoutWebHook' => $this->psContext->getLink()->getModuleLink('ps_checkout', 'DispatchWebHook', [], true, null, $shopId),
                 'translations' => $this->translations->getTranslations(),

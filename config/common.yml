@@ -468,3 +468,45 @@ services:
       - 'session'
       - 86400
       - '@=service("ps_checkout.cache.directory").getPath()'
+
+  ps_checkout.guzzle.client:
+    class: 'GuzzleHttp\Client'
+    public: true
+
+  ps_checkout.cache.marketplace:
+    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
+    public: true
+    arguments:
+      - 'marketplace'
+      - 604800
+      - '@=service("ps_checkout.cache.directory").getPath()'
+
+  ps_checkout.marketplace.provider:
+    class: 'PrestaShop\Module\PrestashopCheckout\MarketPlace\MarketPlaceModuleDataProvider'
+    public: true
+    arguments:
+      - '@ps_checkout.guzzle.client'
+      - '@ps_checkout.cache.marketplace'
+
+  ps_checkout.marketplace.handler:
+    class: 'PrestaShop\Module\PrestashopCheckout\MarketPlace\GetMarketPlaceModuleDataQueryHandler'
+    public: true
+    arguments:
+      - '@ps_checkout.marketplace.provider'
+
+  ps_checkout.marketplace.query:
+    class: 'PrestaShop\Module\PrestashopCheckout\MarketPlace\GetMarketPlaceModuleDataQuery'
+    public: true
+    arguments:
+      - '46347' # PrestaShop Addons module id
+      - !php/const _PS_VERSION_
+      - '@=service("ps_checkout.context.prestashop").getLanguage().language_code'
+      - '@=service("ps_checkout.context.prestashop").getLanguage().iso_code'
+
+  ps_checkout.marketplace.module_version_checker:
+    class: 'PrestaShop\Module\PrestashopCheckout\MarketPlace\ModuleVersionChecker'
+    public: true
+    arguments:
+      - '@ps_checkout.marketplace.handler'
+      - '@ps_checkout.marketplace.query'
+      - '@ps_checkout.module'
