@@ -470,6 +470,7 @@
           id="submit-signup-form-button"
           variant="primary"
           @click="submitForm()"
+          :disabled="hasNewMajorVersionAvailable && !merchantIsPsxOnboarded"
         >
           {{
             merchantIsPsxOnboarded
@@ -501,7 +502,8 @@
       ...mapGetters([
         'merchantIsFullyOnboarded',
         'merchantIsPsxOnboarded',
-        'businessDataCheck'
+        'businessDataCheck',
+        'hasNewMajorVersionAvailable'
       ]),
       getLanguagesDetails() {
         return orderBy(this.$store.state.psx.languagesDetails, 'name');

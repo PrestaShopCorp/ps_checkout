@@ -69,7 +69,10 @@ const router = new Router({
       name: 'Click PS Account Login',
       component: Signin,
       beforeEnter: (to, from, next) => {
-        if (store.getters.firebaseOnboardingIsCompleted) {
+        if (
+          store.getters.firebaseOnboardingIsCompleted ||
+          store.getters.hasNewMajorVersionAvailable
+        ) {
           next(from);
         } else {
           next();
@@ -81,7 +84,10 @@ const router = new Router({
       name: 'Click PS Account Sign Up',
       component: Signup,
       beforeEnter: (to, from, next) => {
-        if (store.getters.firebaseOnboardingIsCompleted) {
+        if (
+          store.getters.firebaseOnboardingIsCompleted ||
+          store.getters.hasNewMajorVersionAvailable
+        ) {
           next(from);
         } else {
           next();

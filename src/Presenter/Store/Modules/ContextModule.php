@@ -24,6 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Environment\PslEnv;
 use PrestaShop\Module\PrestashopCheckout\Faq\Faq;
+use PrestaShop\Module\PrestashopCheckout\MarketPlace\ModuleVersionChecker;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
@@ -85,6 +86,11 @@ class ContextModule implements PresenterInterface
     private $shopProvider;
 
     /**
+     * @var ModuleVersionChecker
+     */
+    private $moduleVersionChecker;
+
+    /**
      * @param string $moduleName
      * @param string $moduleKey
      * @param PrestaShopContext $psContext
@@ -94,6 +100,7 @@ class ContextModule implements PresenterInterface
      * @param Translations $translations
      * @param ShopContext $shopContext
      * @param ShopProvider $shopProvider
+     * @param ModuleVersionChecker $moduleVersionChecker
      */
     public function __construct(
         $moduleName,
@@ -104,7 +111,8 @@ class ContextModule implements PresenterInterface
         ValueBanner $valueBanner,
         Translations $translations,
         ShopContext $shopContext,
-        ShopProvider $shopProvider
+        ShopProvider $shopProvider,
+        ModuleVersionChecker $moduleVersionChecker
     ) {
         $this->moduleName = $moduleName;
         $this->moduleKey = $moduleKey;
@@ -115,6 +123,7 @@ class ContextModule implements PresenterInterface
         $this->translations = $translations;
         $this->shopContext = $shopContext;
         $this->shopProvider = $shopProvider;
+        $this->moduleVersionChecker = $moduleVersionChecker;
     }
 
     /**
@@ -128,6 +137,7 @@ class ContextModule implements PresenterInterface
         $shopUuid = (new ShopUuidManager())->getForShop($shopId);
 
         $sseUrl = (new PslEnv())->getPslApiUrl() . '/webhooks/sse/onboarding/' . $shopUuid;
+        $modulesManagerLink = $this->getGeneratedLink('AdminModules');
 
         return [
             'context' => [
@@ -160,7 +170,8 @@ class ContextModule implements PresenterInterface
                 'incompatibleCurrencyCodes' => $this->paypalConfiguration->getIncompatibleCurrencyCodes(),
                 'countriesLink' => $this->getGeneratedLink('AdminCountries'),
                 'currenciesLink' => $this->getGeneratedLink('AdminCurrencies'),
-                'modulesManagerLink' => $this->getGeneratedLink('AdminModules'),
+                'modulesManagerLink' => $modulesManagerLink,
+                'upgradeModuleLink' => $modulesManagerLink . '&checkAndUpdate=1&module_name=' . $this->moduleName,
                 'paymentPreferencesLink' => $this->getGeneratedLink($this->shopContext->isShop17() ? 'AdminPaymentPreferences' : 'AdminPayment'),
                 'overridesExist' => $this->overridesExist(),
                 'submitIdeaLink' => $this->getSubmitIdeaLink(),
@@ -168,6 +179,11 @@ class ContextModule implements PresenterInterface
                 'isCustomTheme' => $this->shopUsesCustomTheme(),
                 'businessDataCheck' => $this->getBusinessDataCheckValue(),
                 'displayDataCheckMsg' => $this->getDataCheckMsgDisplayValue(),
+                'upgradeVersionAvailable' => $this->moduleVersionChecker->upgradeVersionAvailable(),
+                'hasNewMajorVersionAvailable' => $this->moduleVersionChecker->hasNewMajorVersionAvailable(),
+                'hasNewMinorVersionAvailable' => $this->moduleVersionChecker->hasNewMinorVersionAvailable(),
+                'hasNewPatchVersionAvailable' => $this->moduleVersionChecker->hasNewPatchVersionAvailable(),
+                'lastAvailableVersion' => $this->moduleVersionChecker->lastAvalaibleVersion,
             ],
         ];
     }

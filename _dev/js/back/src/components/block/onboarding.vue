@@ -19,14 +19,16 @@
 <template>
   <div>
     <template v-if="checkoutAccountStatus && isModuleEnabled">
-      <button
+      <b-button
         id="link-to-paypal-account-button"
+        variant="outline-primary"
         v-show="paypalOnboardingLink"
         @click.prevent="paypalOnboarding()"
-        class="btn btn-primary-reverse btn-outline-primary light-button"
+        :disabled="this.$store.getters.hasNewMajorVersionAvailable"
       >
         {{ $t('panel.accounts.paypal.linkToPaypal') }}
-      </button>
+      </b-button>
+
       <a
         class="btn btn-primary-reverse btn-outline-primary light-button d-none"
         data-paypal-button="true"

@@ -1,11 +1,11 @@
-<!--**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+<?php
+/**
+ * 2007-2020 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
- * that is bundled with this package in the file LICENSE.md.
+ * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
@@ -13,24 +13,17 @@
  * to license@prestashop.com so we can send you a copy immediately.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright Since 2007 PrestaShop SA and Contributors
+ * @copyright 2007-2020 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- *-->
-<template>
-  <div>
-    <b-container>
-      <PsxForm />
-    </b-container>
-  </div>
-</template>
+ * International Registered Trademark & Property of PrestaShop SA
+ */
 
-<script>
-  import PsxForm from '@/components/panel/psx-form';
+namespace PrestaShop\Module\PrestashopCheckout\MarketPlace;
 
-  export default {
-    name: 'PsxAdditionalDetails',
-    components: {
-      PsxForm
-    }
-  };
-</script>
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+
+class MarketPlaceException extends PsCheckoutException
+{
+    const CANNOT_RETRIEVE_MODULE_DATA = 0;
+    const EMPTY_MODULE_DATA = 0;
+}

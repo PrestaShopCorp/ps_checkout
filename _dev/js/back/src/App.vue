@@ -103,6 +103,56 @@
       </b-alert>
     </div>
 
+    <div class="container" v-if="upgradeVersionAvailable">
+      <b-alert
+        v-bind:variant="
+          hasNewMajorVersionAvailable && !merchantIsFullyOnboarded
+            ? 'danger'
+            : 'warning'
+        "
+        show
+      >
+        <h2>
+          {{ $t('general.version.upgradeAvailable') }}
+        </h2>
+
+        <div v-if="hasNewMajorVersionAvailable">
+          <p>
+            {{ $t('general.version.newMajorAvailable') }}
+            {{ $t('general.version.thinkToUpdate') }}
+          </p>
+          <p v-if="!merchantIsFullyOnboarded">
+            <b>{{ $t('general.version.upgradeToOnboard') }}</b>
+          </p>
+        </div>
+
+        <p v-if="hasNewMinorPatchVersionAvailable">
+          {{ $t('general.version.newMinorPatchAvailable') }}
+          {{ $t('general.version.thinkToUpdate') }}
+        </p>
+
+        <p class="mt-1">
+          {{
+            $t('general.version.installedVersion') +
+              ' : ' +
+              moduleVersion +
+              ' -> ' +
+              $t('general.version.latestVersion') +
+              ' : ' +
+              lastAvailableVersion
+          }}
+        </p>
+
+        <b-button
+          variant="primary"
+          class="mt-2 ml-2"
+          @click.prevent="upgradeModule()"
+        >
+          {{ $t('general.version.upgrade') }}
+        </b-button>
+      </b-alert>
+    </div>
+
     <div class="container" v-if="onboardingCheckoutIsCompleted && !hasShopId">
       <b-alert variant="danger" show>
         <p>{{ $t('general.wrongConfiguration') }}</p>
@@ -144,6 +194,7 @@
   import MenuItem from '@/components/menu/menu-item';
   import PaypalValueProposition from '@/components/banner/paypal-value-proposition';
   import RoundingBanner from '@/components/block/rounding-banner';
+  import { mapGetters } from 'vuex';
 
   export default {
     name: 'Home',
@@ -169,9 +220,19 @@
         this.$store.dispatch('updatePaypalValueBanner').then(() => {
           this.displayValueBanner = false;
         });
+      },
+      upgradeModule() {
+        window.location = this.$store.state.context.upgradeModuleLink;
       }
     },
     computed: {
+      ...mapGetters([
+        'businessDataCheck',
+        'hasNewMajorVersionAvailable',
+        'merchantIsFullyOnboarded',
+        'paymentPreferencesLink',
+        'sessionError'
+      ]),
       isValueBannerClosed() {
         return (
           this.onboardingPaypalIsCompleted &&
@@ -216,14 +277,20 @@
         return this.$store.state.configuration.nonDecimalCurrencies
           .errorMessage;
       },
-      paymentPreferencesLink() {
-        return this.$store.getters.paymentPreferencesLink;
+      upgradeVersionAvailable() {
+        return this.$store.state.context.upgradeVersionAvailable;
       },
-      sessionError() {
-        return this.$store.getters.sessionError;
+      hasNewMinorPatchVersionAvailable() {
+        return (
+          this.$store.state.context.hasNewMinorVersionAvailable ||
+          this.$store.state.context.hasNewPatchVersionAvailable
+        );
       },
-      businessDataCheck() {
-        return this.$store.getters.businessDataCheck;
+      moduleVersion() {
+        return this.$store.state.context.moduleVersion;
+      },
+      lastAvailableVersion() {
+        return this.$store.state.context.lastAvailableVersion;
       }
     },
     watch: {

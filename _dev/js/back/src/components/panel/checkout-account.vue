@@ -52,23 +52,25 @@
             <AccountStatusCheckout v-if="checkoutAccountStatus" class="mr-3" />
 
             <div class="text-center float-right" v-if="!checkoutAccountStatus">
-              <a
+              <b-button
                 id="go-to-signin-link"
-                href="#"
                 @click.prevent="goToSignIn()"
+                variant="link"
                 class="mr-4"
+                :disabled="hasNewMajorVersionAvailable"
               >
                 <b>{{ $t('panel.accounts.checkout.logIn') }}</b>
-              </a>
+              </b-button>
 
-              <a
+              <b-button
                 id="go-to-signup-link"
-                href="#"
                 @click.prevent="goToSignUp()"
-                class="btn btn-primary-reverse btn-outline-primary light-button mb-1"
+                variant="outline-primary"
+                class="mb-1"
+                :disabled="hasNewMajorVersionAvailable"
               >
                 {{ $t('panel.accounts.checkout.createAccount') }}
-              </a>
+              </b-button>
             </div>
 
             <template v-else>
@@ -171,6 +173,9 @@
       },
       checkoutAccountStatus() {
         return this.$store.state.firebase.onboardingCompleted;
+      },
+      hasNewMajorVersionAvailable() {
+        return this.$store.getters.hasNewMajorVersionAvailable;
       }
     },
     methods: {

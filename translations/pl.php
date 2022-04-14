@@ -302,6 +302,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_15c52cd080705793a4aef0f321a0f592
 $_MODULE['<{ps_checkout}prestashop>translations_16bfbf9c462762cf1cba4134ec53c504'] = 'Ładowanie';
 $_MODULE['<{ps_checkout}prestashop>translations_190fcd96a9ebae0593cd777c8797b43b'] = 'Połączyć Twoje konto PrestaShop Checkout i powiązać konto PayPal lub je założyć';
 $_MODULE['<{ps_checkout}prestashop>translations_19146f30e246bba7235f1f052711fe74'] = 'Jaka jest różnica między polami Zintegrowanej karty kredytowej a polami Karty kredytowej z logo PayPal?';
+$_MODULE['<{ps_checkout}prestashop>translations_1a6096f372c1f8e7b6353e0e3b7ab67d'] = 'Nowa wersja dostępna dla PrestaShop Checkout !';
 $_MODULE['<{ps_checkout}prestashop>translations_1b4c17532f2e6390cadc07e662079870'] = 'Zasady przeliczania walut';
 $_MODULE['<{ps_checkout}prestashop>translations_1bfec4b29ea54ba7f9334d7f7deddc4a'] = 'Przetwarzaj dowolną liczbę płatności kartą. Możesz akceptować karty kredytowe lub debetowe.';
 $_MODULE['<{ps_checkout}prestashop>translations_1c00ee2b952cd6707b90767c2177f313'] = 'Nie można dalej korzystać z funkcji, lecz można podjąć kroki zmierzające do uzyskania dostępu do odpowiednich funkcji';
@@ -377,13 +378,16 @@ $_MODULE['<{ps_checkout}prestashop>translations_5041c9dced8f0d0a4d319be95b229ea5
 $_MODULE['<{ps_checkout}prestashop>translations_526d688f37a86d3c3f27d0c5016eb71d'] = 'Resetuj';
 $_MODULE['<{ps_checkout}prestashop>translations_527bec23160f56b4fae3d14e3df58a60'] = 'Szczegóły dotyczące Twojej firmy';
 $_MODULE['<{ps_checkout}prestashop>translations_54c1127bed31e947d0951af3263522cf'] = 'Skonfiguruj opis wyciągów bankowych';
+$_MODULE['<{ps_checkout}prestashop>translations_550178dd9fb4774cbbe49d281e6a2574'] = 'Zaktualizuj najpierw swój formularz, jeśli chcesz korzystać z PS Checkout.';
 $_MODULE['<{ps_checkout}prestashop>translations_5579726f3f99842c8bd6aa672b0ba1df'] = 'Okrągły';
 $_MODULE['<{ps_checkout}prestashop>translations_55926e741046f094a5597085b9a329bb'] = 'Pamiętaj, że w trybie testowym nie możesz pobierać płatności';
 $_MODULE['<{ps_checkout}prestashop>translations_56396cec5c858be914156d159a387592'] = 'Typ firmy';
 $_MODULE['<{ps_checkout}prestashop>translations_565c23511bb8643ac5552fbd5e4ba358'] = 'Jeden moduł, wszystkie metody płatności.';
+$_MODULE['<{ps_checkout}prestashop>translations_569df326497fb0d637986f21ddcb378f'] = 'Zainstalowana wersja';
 $_MODULE['<{ps_checkout}prestashop>translations_57e46658fd7e21e0377d342fd9743dd4'] = 'E-mail z potwierdzeniem nie dotarł?';
 $_MODULE['<{ps_checkout}prestashop>translations_59716c97497eb9694541f7c3d37b1a4d'] = 'Kraj';
 $_MODULE['<{ps_checkout}prestashop>translations_59ac3e56b163524ce73d647b21956a8f'] = 'PrestaShop Checkout jest nadal funkcjonalny, jedynie sekcja konfiguracji modułu pozostaje niedostępna bez weryfikacji danych.';
+$_MODULE['<{ps_checkout}prestashop>translations_5c1b6a4f7b977e2df04204f054771e95'] = 'Pobierz aktualizację';
 $_MODULE['<{ps_checkout}prestashop>translations_5d4023dba17f36ce69357d25cbe4fbad'] = 'Konto PayPal';
 $_MODULE['<{ps_checkout}prestashop>translations_5d5c6682ffcf6b3a46c564762e3b9ff4'] = 'Zalecamy „Przechwytywanie przy wysyłce”, jeśli jesteś drobnym producentem lub sprzedawcą produktów rzemieślniczych  ';
 $_MODULE['<{ps_checkout}prestashop>translations_5edab47a4928d49ab1d6742796462020'] = 'Aby przetestować metodę płatności, możesz dokonać prawdziwej transakcji (najlepiej na niewielką kwotę), a po zaobserwowaniu pieniędzy na koncie, dokonać zwrotu na odpowiedniej stronie zamówienia. Ostrzeżenie: nie odzyskasz opłat.';
@@ -440,6 +444,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_8d3d326e52dae2640dc2e2143062e078
 $_MODULE['<{ps_checkout}prestashop>translations_8d3f5eff9c40ee315d452392bed5309b'] = 'Nazwisko';
 $_MODULE['<{ps_checkout}prestashop>translations_8dba7aac659de6fa805458de3861c36f'] = 'Zarejestruj się na stronie zamówienia';
 $_MODULE['<{ps_checkout}prestashop>translations_8dd3857cf665ec993675dfa427008164'] = 'Numer zamówienia';
+$_MODULE['<{ps_checkout}prestashop>translations_8e80c83a7e1e7b2c08fce99e24bf0d8d'] = 'Uma nova versão principal está disponível para o Checkout PrestaShop!';
 $_MODULE['<{ps_checkout}prestashop>translations_906c903762f7ff4fb10d428be297a729'] = 'Wypełnij formularz, aby dokończyć rejestrację:';
 $_MODULE['<{ps_checkout}prestashop>translations_9180f9a5a138e11f11e569e1e1680d4e'] = 'Prowizja';
 $_MODULE['<{ps_checkout}prestashop>translations_91ac9ff2b524dada18330e5104c5e708'] = 'Zapewnij klientom z całego świata dostęp do ich lokalnych metod płatności';
@@ -455,10 +460,12 @@ $_MODULE['<{ps_checkout}prestashop>translations_9768feb3fdb1f267b06093bc572952dd
 $_MODULE['<{ps_checkout}prestashop>translations_977b9a69632398e1d00aaf9fabedfd95'] = 'Użyj innego konta';
 $_MODULE['<{ps_checkout}prestashop>translations_9a2e255d065b9445b1a6f56ab54b5ae5'] = 'Jesteś teraz zalogowany do konta ';
 $_MODULE['<{ps_checkout}prestashop>translations_9c9f75fecc9e80c7bf8f139d84f47cd3'] = 'Agencją';
+$_MODULE['<{ps_checkout}prestashop>translations_9ca445b9db010a99239196af5ac3a8b9'] = 'Najnowsza wersja';
 $_MODULE['<{ps_checkout}prestashop>translations_9cb7f08469a52068a24e2827b8bff107'] = 'Wszystko gotowe!';
 $_MODULE['<{ps_checkout}prestashop>translations_9d5a474aaa552210ff0298949aeb6c0a'] = 'Potrzebna informacja';
 $_MODULE['<{ps_checkout}prestashop>translations_9e67f7c55ebde9258ce8526e702f2337'] = 'Twoje konfiguracje zaokrąglania są teraz kompatybilne';
 $_MODULE['<{ps_checkout}prestashop>translations_a08ce63bd16ad2f81f57385b53686960'] = 'Po ukończeniu konfiguracji pierwszego sklepu możesz zająć się następnymi: wybieraj je kolejno za pomocą narzędzia wyboru sklepu w poziomym menu.';
+$_MODULE['<{ps_checkout}prestashop>translations_a09dc9445a2337313a9b5c5545dfbb58'] = 'Pomyśl, aby Twój moduł był aktualny !';
 $_MODULE['<{ps_checkout}prestashop>translations_a0bfb8e59e6c13fc8d990781f77694fe'] = 'Kontynuuj';
 $_MODULE['<{ps_checkout}prestashop>translations_a0d4cc0f54602c3f247c72f15a7d2dbf'] = 'Wskazówki';
 $_MODULE['<{ps_checkout}prestashop>translations_a0fc2c9aa33a67d83ee99e0aeb474883'] = 'Nie można dalej korzystać z tych funkcji i nie ma rozwiązania pozwalającego na odzyskanie tych uprawnień.';
@@ -563,6 +570,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_f32ab23beaebcf43250a00685e0593e3
 $_MODULE['<{ps_checkout}prestashop>translations_f367b9c00a9870296e60afbd3bd2a52a'] = 'Wdrożenie prawie gotowe!';
 $_MODULE['<{ps_checkout}prestashop>translations_f40be703dee22a1ce61f7b75190687b3'] = 'Przesyłając ten formularz, wyrażam zgodę na gromadzenie podanych danych przez PrestaShop S.A. w celu założenia konta PrestaShop Checkout. W przypadku założeniu konta będziesz otrzymywać informacje handlowe od PrestaShop';
 $_MODULE['<{ps_checkout}prestashop>translations_f55d7f720fdc5e3ff693e4b82d4b6a72'] = 'transakcja(-y)';
+$_MODULE['<{ps_checkout}prestashop>translations_f5f8e0aff27985fea3df1d8db07548d9'] = 'Nowa wersja mniejsza jest dostępna dla PrestaShop Checkout !';
 $_MODULE['<{ps_checkout}prestashop>translations_f74f3e145bac6c4950fc843725e4ced6'] = 'Aktywacja metod płatności';
 $_MODULE['<{ps_checkout}prestashop>translations_f792caf3a7d71e20c9b8c64a40e8807e'] = 'Przechwytywanie przy wysyłce';
 $_MODULE['<{ps_checkout}prestashop>translations_f7b94d969ddb6d79bdf2d70668ae43fa'] = 'Łączenie konta w toku';

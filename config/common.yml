@@ -213,6 +213,7 @@ services:
       - '@ps_checkout.translations.translations'
       - '@ps_checkout.context.shop'
       - '@ps_checkout.shop.provider'
+      - '@ps_checkout.marketplace.module_version_checker'
 
   ps_checkout.store.module.session:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\SessionModule'

@@ -73,6 +73,16 @@ class Translations
                         'networkIssue' => $this->module->l('We are experiencing issues with our authentication services, please try again in a few minutes, we are working on it.', 'translations'),
                     ],
                 ],
+                'version' => [
+                    'upgradeAvailable' => $this->module->l('New version available for PrestaShop Checkout !', 'translations'),
+                    'newMajorAvailable' => $this->module->l('A new major version is available for PrestaShop Checkout !', 'translations'),
+                    'newMinorPatchAvailable' => $this->module->l('A new minor version is available for PrestaShop Checkout !', 'translations'),
+                    'thinkToUpdate' => $this->module->l('Do not forget to keep your module up to date !', 'translations'),
+                    'upgradeToOnboard' => $this->module->l('Please upgrade your module first if you want to use PS Checkout.', 'translations'),
+                    'installedVersion' => $this->module->l('Installed version', 'translations'),
+                    'latestVersion' => $this->module->l('Latest version', 'translations'),
+                    'upgrade' => $this->module->l('Upgrade now', 'translations')
+                ],
             ],
             'pages' => [
                 'accounts' => [

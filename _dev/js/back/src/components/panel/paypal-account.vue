@@ -231,7 +231,10 @@
       },
       pollingPaypalOnboardingUrl() {
         this.$store.dispatch('pollingPaypalOnboardingUrl').then(() => {
-          if (!this.$store.getters.hasOnboardingUrl) {
+          if (
+            this.$store.state.session.onboarding &&
+            !this.$store.getters.hasOnboardingUrl
+          ) {
             this.$store.dispatch('generateOnboardUrl');
           }
 
