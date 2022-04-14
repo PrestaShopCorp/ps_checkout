@@ -81,7 +81,7 @@ class Translations
                     'upgradeToOnboard' => $this->module->l('Please upgrade your module first if you want to use PS Checkout.', 'translations'),
                     'installedVersion' => $this->module->l('Installed version', 'translations'),
                     'latestVersion' => $this->module->l('Latest version', 'translations'),
-                    'upgrade' => $this->module->l('Upgrade now', 'translations')
+                    'upgrade' => $this->module->l('Upgrade now', 'translations'),
                 ],
             ],
             'pages' => [
