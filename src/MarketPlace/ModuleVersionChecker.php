@@ -100,7 +100,7 @@ class ModuleVersionChecker
      *
      * @param string $version
      *
-     * @return string
+     * @return array
      */
     private function explodeVersion($version)
     {
@@ -120,7 +120,7 @@ class ModuleVersionChecker
      * @param string $version1
      * @param string $version2
      *
-     * @return string
+     * @return bool
      */
     private function compareSpecificVersion($level, $version1, $version2)
     {

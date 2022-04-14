@@ -50,7 +50,7 @@ class MarketPlaceModuleDataProvider
     }
 
     /**
-     * @param string $getModuleId
+     * @param int $getModuleId
      * @param string $getPsVersion
      * @param string $getLanguageCode
      * @param string $getCountryCode
