@@ -19,7 +19,7 @@
 import { BaseComponent } from '../../core/dependency-injection/base.component';
 import { ExpressCheckoutButtonComponent } from '../common/express-checkout-button.component';
 
-export class ExpressButtonProductComponent extends BaseComponent {
+export class PayLaterExpressButtonProductComponent extends BaseComponent {
   static Inject = {
     querySelectorService: 'QuerySelectorService',
     psCheckoutApi: 'PsCheckoutApi',
@@ -31,22 +31,23 @@ export class ExpressButtonProductComponent extends BaseComponent {
   }
 
   render() {
-    this.checkoutExpressButton = document.createElement('div');
-    this.checkoutExpressButton.id = 'ps-checkout-express-button';
+    if (!document.getElementById('ps-checkout-express-button')) {
+      this.checkoutExpressButton = document.createElement('p');
+      this.checkoutExpressButton.id = 'ps-checkout-express-button';
+      this.checkoutExpressButton.classList.add(
+        'buttons_bottom_block',
+        'no-print'
+      );
 
-    const productQuantityHTMLElement = this.buttonReferenceContainer.nextElementSibling;
+      const buttonContainer = this.buttonReferenceContainer.parentNode;
 
-    this.buttonReferenceContainer.parentNode.insertBefore(
-      this.checkoutExpressButton,
-      productQuantityHTMLElement
-    );
-
-    console.log('PROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOPS     ORG', this.props);
+      buttonContainer.append(this.checkoutExpressButton);
+    }
 
     this.children.expressCheckoutButton = new ExpressCheckoutButtonComponent(
       this.app,
       {
-        fundingSource: 'paypal',
+        fundingSource: 'paylater',
         // TODO: Move this to constant when ExpressCheckoutButton component is created
         querySelector: '#ps-checkout-express-button',
         createOrder: () => {
@@ -62,7 +63,7 @@ export class ExpressButtonProductComponent extends BaseComponent {
             id_product_attribute,
             id_customization,
             quantity_wanted,
-            fundingSource: 'paypal',
+            fundingSource: 'paylater',
             isExpressCheckout: true
           });
         }

@@ -107,9 +107,7 @@ class PayPalSdkLinkBuilder
             'funding-eligibility',
         ];
 
-        if ($this->payIn4XConfiguration->isOrderPageActive()
-            || $this->payIn4XConfiguration->isProductPageActive()
-        ) {
+        if ($this->payIn4XConfiguration->isOrderPageActive() || $this->payIn4XConfiguration->isProductPageActive()) {
             $components[] = 'messages';
         }
 
@@ -142,7 +140,7 @@ class PayPalSdkLinkBuilder
             $params['disable-funding'] = implode(',', $fundingSourcesDisabled);
         }
 
-        if ($this->payIn4XConfiguration->isOrderPageActive() || $this->payIn4XConfiguration->isProductPageActive()) {
+        if ($this->isPayLaterEnabled()) {
             $params['enable-funding'] = 'paylater';
         }
 
@@ -210,5 +208,11 @@ class PayPalSdkLinkBuilder
         }
 
         return '';
+    }
+
+    private function isPayLaterEnabled() {
+        $payLaterConfig = $this->fundingSourceConfigurationRepository->get('paylater');
+
+        return !empty($payLaterConfig) && (int)$payLaterConfig['active'] === 1;
     }
 }

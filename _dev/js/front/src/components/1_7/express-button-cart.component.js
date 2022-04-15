@@ -46,6 +46,7 @@ export class ExpressButtonCartComponent extends BaseComponent {
     this.children.expressCheckoutButton = new ExpressCheckoutButtonComponent(
       this.app,
       {
+        fundingSource: 'paypal',
         // TODO: Move this to constant when ExpressCheckoutButton component is created
         querySelector: '#ps-checkout-express-button',
         createOrder: (data) =>
