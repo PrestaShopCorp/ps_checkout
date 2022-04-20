@@ -126,8 +126,6 @@ class PayPalSdkLinkBuilder
             'integration-date' => $this->configuration->getIntegrationDate(),
         ];
 
-        $params['buyer-country'] = 'FR';
-
         if ('SANDBOX' === $this->configuration->getPaymentMode()) {
             $params['debug'] = 'true';
             // $params['buyer-country'] = \Context::getContext()->country->iso_code;
