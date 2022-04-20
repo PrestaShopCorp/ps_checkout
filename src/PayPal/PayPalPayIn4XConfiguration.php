@@ -36,6 +36,10 @@ class PayPalPayIn4XConfiguration
     const PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE = 'PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE';
     const PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE = 'PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE';
 
+    const PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE_BUTTON = 'PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE_BUTTON';
+    const PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE_BUTTON = 'PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE_BUTTON';
+    const PS_CHECKOUT_PAY_IN_4X_CART_PAGE_BUTTON = 'PS_CHECKOUT_PAY_IN_4X_CART_PAGE_BUTTON';
+
     /**
      * @var PrestaShopConfiguration
      */
@@ -129,5 +133,47 @@ class PayPalPayIn4XConfiguration
     public function setOrderPage($status)
     {
         $this->configuration->set(self::PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE, $status);
+    }
+
+    /**
+     * @param bool $status
+     *
+     * @throws PsCheckoutException
+     */
+    public function setCartPageButton($status) {
+        $this->configuration->set(self::PS_CHECKOUT_PAY_IN_4X_CART_PAGE_BUTTON, $status);
+    }
+
+    /**
+     * @param bool $status
+     *
+     * @throws PsCheckoutException
+     */
+    public function setOrderPageButton($status) {
+        $this->configuration->set(self::PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE_BUTTON, $status);
+    }
+
+    /**
+     * @param bool $status
+     *
+     * @throws PsCheckoutException
+     */
+    public function setProductPageButton($status) {
+        $this->configuration->set(self::PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE_BUTTON, $status);
+    }
+
+    public function isOrderPageButtonActive()
+    {
+        return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE_BUTTON);
+    }
+
+    public function isCartPageButtonActive()
+    {
+        return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_CART_PAGE_BUTTON);
+    }
+
+    public function isProductPageButtonActive()
+    {
+        return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE_BUTTON);
     }
 }

@@ -43,6 +43,15 @@ export default {
   [types.UPDATE_PAY_IN_4X_PRODUCT_PAGE](state, payload) {
     state.payIn4X.productPage = payload;
   },
+  [types.UPDATE_PAY_IN_4X_CART_PAGE_BUTTON](state, payload) {
+    state.payIn4X.cartPageButton = payload;
+  },
+  [types.UPDATE_PAY_IN_4X_ORDER_PAGE_BUTTON](state, payload) {
+    state.payIn4X.orderPageButton = payload;
+  },
+  [types.UPDATE_PAY_IN_4X_PRODUCT_PAGE_BUTTON](state, payload) {
+    state.payIn4X.productPageButton = payload;
+  },
   [types.UPDATE_EC_ORDER_PAGE](state, payload) {
     state.expressCheckout.orderPage = payload;
   },

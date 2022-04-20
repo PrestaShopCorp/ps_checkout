@@ -118,6 +118,95 @@
     </b-card-body>
     <b-card-body>
       <b-col sm="12" md="10" lg="10" class="m-auto">
+        <b-form>
+          <b-form-group
+            id="fieldset-1"
+            :label="$t('panel.express-checkout.pageLocationPay4xButton')"
+            label-for="express-checkout"
+          >
+            <b-form-row class="mr-0 ml-0 text-center">
+              <b-col>
+                <PSCheckbox
+                  id="cart-page"
+                  v-model="cartPageButtonIsActive"
+                  class="mb-2"
+                  :centered="true"
+                />
+                <img
+                  @click="toggleCartPageButton()"
+                  v-if="cartPageButtonIsActive"
+                  class="active-img mb-2"
+                  src="@/assets/images/preview_cart-page_active.png"
+                  alt=""
+                />
+                <img
+                  @click="toggleCartPageButton()"
+                  v-else
+                  class="mb-2"
+                  src="@/assets/images/preview_cart-page_inactive.png"
+                  alt=""
+                />
+                <div>{{ $t('panel.express-checkout.orderPage') }}</div>
+                <div class="text-muted">
+                  ({{ $t('panel.express-checkout.recommended') }})
+                </div>
+              </b-col>
+              <b-col>
+                <PSCheckbox
+                  id="order-page"
+                  v-model="orderPageButtonIsActive"
+                  class="mb-2"
+                  :centered="true"
+                />
+                <img
+                  @click="toggleOrderPageButton()"
+                  v-if="orderPageButtonIsActive"
+                  class="active-img mb-2"
+                  src="@/assets/images/preview_checkout-page_active.png"
+                  alt=""
+                />
+                <img
+                  @click="toggleOrderPageButton()"
+                  v-else
+                  class="mb-2"
+                  src="@/assets/images/preview_checkout-page_inactive.png"
+                  alt=""
+                />
+                <div>{{ $t('panel.express-checkout.checkoutPage') }}</div>
+              </b-col>
+              <b-col>
+                <PSCheckbox
+                  id="product-page"
+                  v-model="productPageButtonIsActive"
+                  class="mb-2"
+                  :centered="true"
+                />
+                <img
+                  @click="toggleProductPageButton()"
+                  v-if="productPageButtonIsActive"
+                  class="active-img mb-2"
+                  src="@/assets/images/preview_product-page_active.png"
+                  alt=""
+                />
+                <img
+                  @click="toggleProductPageButton()"
+                  v-else
+                  class="mb-2"
+                  src="@/assets/images/preview_product-page_inactive.png"
+                  alt=""
+                />
+                <div>{{ $t('panel.express-checkout.productPage') }}</div>
+                <div class="text-muted">
+                  ({{ $t('panel.express-checkout.recommended') }})
+                </div>
+              </b-col>
+            </b-form-row>
+          </b-form-group>
+        </b-form>
+      </b-col>
+    </b-card-body>
+    <b-card-body>
+      <b-col sm="12" md="10" lg="10" class="m-auto">
         <b-alert variant="info" show>
           <h4 class="alert-heading">
             {{ $t('panel.express-checkout.alertTitle') }}
@@ -167,6 +256,30 @@
         set(payload) {
           this.$store.dispatch('togglePayIn4XProductPage', payload);
         }
+      },
+      cartPageButtonIsActive: {
+        get() {
+          return this.$store.state.configuration.payIn4X.cartPageButton;
+        },
+        set(payload) {
+          this.$store.dispatch('togglePayIn4XCartPageButton', payload);
+        }
+      },
+      orderPageButtonIsActive: {
+        get() {
+          return this.$store.state.configuration.payIn4X.orderPageButton;
+        },
+        set(payload) {
+          this.$store.dispatch('togglePayIn4XOrderPageButton', payload);
+        }
+      },
+      productPageButtonIsActive: {
+        get() {
+          return this.$store.state.configuration.payIn4X.productPageButton;
+        },
+        set(payload) {
+          this.$store.dispatch('togglePayIn4XProductPageButton', payload);
+        }
       }
     },
     methods: {
@@ -177,6 +290,24 @@
         this.$store.dispatch(
           'togglePayIn4XProductPage',
           !this.productPageIsActive
+        );
+      },
+      toggleCartPageButton() {
+        this.$store.dispatch(
+          'togglePayIn4XCartPageButton',
+          !this.cartPageButtonIsActive
+        );
+      },
+      toggleOrderPageButton() {
+        this.$store.dispatch(
+          'togglePayIn4XOrderPageButton',
+          !this.orderPageButtonIsActive
+        );
+      },
+      toggleProductPageButton() {
+        this.$store.dispatch(
+          'togglePayIn4XProductPageButton',
+          !this.productPageButtonIsActive
         );
       }
     }
