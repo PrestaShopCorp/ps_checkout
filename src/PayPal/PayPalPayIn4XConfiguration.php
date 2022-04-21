@@ -140,7 +140,8 @@ class PayPalPayIn4XConfiguration
      *
      * @throws PsCheckoutException
      */
-    public function setCartPageButton($status) {
+    public function setCartPageButton($status)
+    {
         $this->configuration->set(self::PS_CHECKOUT_PAY_IN_4X_CART_PAGE_BUTTON, $status);
     }
 
@@ -149,7 +150,8 @@ class PayPalPayIn4XConfiguration
      *
      * @throws PsCheckoutException
      */
-    public function setOrderPageButton($status) {
+    public function setOrderPageButton($status)
+    {
         $this->configuration->set(self::PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE_BUTTON, $status);
     }
 
@@ -158,7 +160,8 @@ class PayPalPayIn4XConfiguration
      *
      * @throws PsCheckoutException
      */
-    public function setProductPageButton($status) {
+    public function setProductPageButton($status)
+    {
         $this->configuration->set(self::PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE_BUTTON, $status);
     }
 

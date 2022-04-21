@@ -208,9 +208,10 @@ class PayPalSdkLinkBuilder
         return '';
     }
 
-    private function isPayLaterEnabled() {
+    private function isPayLaterEnabled()
+    {
         $payLaterConfig = $this->fundingSourceConfigurationRepository->get('paylater');
 
-        return !empty($payLaterConfig) && (int)$payLaterConfig['active'] === 1;
+        return !empty($payLaterConfig) && (int) $payLaterConfig['active'] === 1;
     }
 }
