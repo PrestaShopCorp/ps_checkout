@@ -640,12 +640,8 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter $storePresenter */
         $storePresenter = $this->getService('ps_checkout.store.store');
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder $payPalSdkLinkBuilder */
-        $payPalSdkLinkBuilder = $this->getService('ps_checkout.sdk.paypal.linkbuilder');
-
         Media::addJsDef([
             'store' => $storePresenter->present(),
-            'payPalSDKLink' => $payPalSdkLinkBuilder->buildLink(),
         ]);
 
         $this->context->controller->addJS(
