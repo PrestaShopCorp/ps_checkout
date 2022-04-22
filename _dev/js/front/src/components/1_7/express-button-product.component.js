@@ -41,8 +41,6 @@ export class ExpressButtonProductComponent extends BaseComponent {
       productQuantityHTMLElement
     );
 
-    console.log('PROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOPS     ORG', this.props);
-
     this.children.expressCheckoutButton = new ExpressCheckoutButtonComponent(
       this.app,
       {

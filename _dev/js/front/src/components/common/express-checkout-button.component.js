@@ -30,7 +30,6 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
   }
 
   onClick(data, actions) {
-    console.log('ON CLICK', data, this.props.fundingSource);
     return (
       this.psCheckoutApi
         .postCheckCartOrder(

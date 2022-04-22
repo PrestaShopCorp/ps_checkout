@@ -122,7 +122,7 @@
           <b-form-group
             id="fieldset-1"
             :label="$t('panel.express-checkout.pageLocationPay4xButton')"
-            label-for="express-checkout"
+            label-for="paylater-buttons"
           >
             <b-form-row class="mr-0 ml-0 text-center">
               <b-col>

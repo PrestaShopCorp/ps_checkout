@@ -78,7 +78,6 @@ export class PaymentOptionsComponent extends BaseComponent {
     paymentButton.type = 'button';
 
     paymentButton.addEventListener('click', (event) => {
-      console.log(this.payPalService);
       event.preventDefault();
       this.data.loader.show();
 
