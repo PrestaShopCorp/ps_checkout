@@ -70,7 +70,7 @@ export class PsCheckoutExpressPayLaterPs1_7Component extends BaseComponent {
 
     if (this.prestashopService.isOrderPersonalInformationStepPage()) {
       if (!this.config.expressCheckout.enabled.order || !this.config.paylater.enabled.order) return this;
-      this.children.expressButton = new ExpressButtonCheckoutComponent(
+      this.children.expressButton = new PayLaterExpressButtonCheckoutComponent(
         this.app
       ).render();
 
