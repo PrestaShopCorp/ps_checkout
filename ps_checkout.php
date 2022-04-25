@@ -1036,6 +1036,9 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
         $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4xConfiguration */
+        $payIn4xConfiguration = $this->getService('ps_checkout.pay_in_4x.configuration');
+
         $fundingSourcesSorted = [];
         $payWithTranslations = [];
         $isCardAvailable = false;
@@ -1052,6 +1055,7 @@ class Ps_checkout extends PaymentModule
         // BEGIN To be refactored in services
         $payPalClientToken = '';
         $payPalOrderId = '';
+        $cartFundingSource = 'paypal';
         $psCheckoutCart = false;
         $cartProductCount = 0;
 
@@ -1075,6 +1079,7 @@ class Ps_checkout extends PaymentModule
         ) {
             $payPalOrderId = $psCheckoutCart->paypal_order;
             $payPalClientToken = $psCheckoutCart->paypal_token;
+            $cartFundingSource = $psCheckoutCart->paypal_funding;
         }
         // END To be refactored in services
 
@@ -1095,12 +1100,16 @@ class Ps_checkout extends PaymentModule
             $this->name . 'PayPalSdkUrl' => $payPalSdkLinkBuilder->buildLink(),
             $this->name . 'PayPalClientToken' => $payPalClientToken,
             $this->name . 'PayPalOrderId' => $payPalOrderId,
+            $this->name . 'FundingSource' => $cartFundingSource,
             $this->name . 'HostedFieldsEnabled' => $isCardAvailable && $payPalConfiguration->isCardPaymentEnabled() && $paypalAccountRepository->cardHostedFieldsIsAllowed(),
             $this->name . 'HostedFieldsSelected' => false !== $psCheckoutCart ? (bool) $psCheckoutCart->isHostedFields : false,
             $this->name . 'ExpressCheckoutSelected' => false !== $psCheckoutCart ? (bool) $psCheckoutCart->isExpressCheckout : false,
             $this->name . 'ExpressCheckoutProductEnabled' => $expressCheckoutConfiguration->isProductPageEnabled(),
             $this->name . 'ExpressCheckoutCartEnabled' => $expressCheckoutConfiguration->isOrderPageEnabled(),
             $this->name . 'ExpressCheckoutOrderEnabled' => $expressCheckoutConfiguration->isCheckoutPageEnabled(),
+            $this->name . 'PayLaterProductPageButtonEnabled' => $payIn4xConfiguration->isProductPageButtonActive(),
+            $this->name . 'PayLaterCartPageButtonEnabled' => $payIn4xConfiguration->isCartPageButtonActive(),
+            $this->name . 'PayLaterOrderPageButtonEnabled' => $payIn4xConfiguration->isOrderPageButtonActive(),
             $this->name . '3dsEnabled' => $payPalConfiguration->is3dSecureEnabled(),
             $this->name . 'CspNonce' => $payPalConfiguration->getCSPNonce(),
             $this->name . 'CartProductCount' => $cartProductCount,

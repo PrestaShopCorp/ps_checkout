@@ -6,6 +6,7 @@ import { PsCheckoutConfig } from '../config/ps-checkout.config';
 import { PayPalSdkComponent } from '../components/common/paypal-sdk.component';
 import { PsCheckoutComponent } from '../components/ps-checkout.component';
 import { PsCheckoutExpressComponent } from '../components/ps-checkout-express.component';
+import { PsCheckoutExpressPayLaterComponent } from '../components/ps-checkout-express-paylater.component';
 import { HTMLElementService } from '../service/html-element.service';
 import { PayPalService } from '../service/paypal.service';
 import { PrestashopService } from '../service/prestashop.service';
@@ -98,6 +99,11 @@ export class App {
     new PsCheckoutExpressComponent(this, props).render();
   }
 
+  async renderExpressCheckoutPayLater(props) {
+    await this.initPayPalService();
+    new PsCheckoutExpressPayLaterComponent(this, props).render();
+  }
+
   async render() {
     this.exposeAPI();
 
@@ -108,6 +114,7 @@ export class App {
         this.prestashopService.isProductPage()
       ) {
         await this.renderExpressCheckout();
+        await this.renderExpressCheckoutPayLater();
 
         if (this.prestashopService.isOrderPersonalInformationStepPage()) {
           await this.renderCheckout();

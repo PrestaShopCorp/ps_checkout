@@ -19,53 +19,58 @@
 import { BaseComponent } from '../../core/dependency-injection/base.component';
 import { ExpressCheckoutButtonComponent } from '../common/express-checkout-button.component';
 
-export class ExpressButtonProductComponent extends BaseComponent {
+export class PayLaterExpressButtonCartComponent extends BaseComponent {
   static Inject = {
     querySelectorService: 'QuerySelectorService',
+    prestashopService: 'PrestashopService',
     psCheckoutApi: 'PsCheckoutApi',
-    prestashopService: 'PrestashopService'
+    $: '$'
   };
 
   created() {
-    this.buttonReferenceContainer = this.querySelectorService.getCheckoutExpressCheckoutButtonContainerProduct();
+    this.buttonReferenceContainer = this.querySelectorService.getCheckoutExpressCheckoutButtonContainerCart();
   }
 
-  render() {
-    this.checkoutExpressButton = document.createElement('div');
-    this.checkoutExpressButton.id = 'ps-checkout-express-button';
+  renderComponent() {
+    if (!document.getElementById('ps_checkout-express-button-cart')) {
+      this.checkoutExpressButton = document.createElement('div');
+      this.checkoutExpressButton.id = 'ps_checkout-express-button-cart';
+      this.checkoutExpressButton.classList.add(
+        'ps_checkout-express-button',
+        'ps_checkout-express-button-cart'
+      );
 
-    const productQuantityHTMLElement = this.buttonReferenceContainer.nextElementSibling;
+      const separatorText = document.createElement('div');
+      separatorText.classList.add('ps_checkout-express-separator');
+      separatorText.innerText = this.$('express-button.cart.separator');
 
-    this.buttonReferenceContainer.parentNode.insertBefore(
-      this.checkoutExpressButton,
-      productQuantityHTMLElement
-    );
+      this.buttonReferenceContainer.append(separatorText);
+      this.buttonReferenceContainer.append(this.checkoutExpressButton);
+    }
 
     this.children.expressCheckoutButton = new ExpressCheckoutButtonComponent(
       this.app,
       {
-        fundingSource: 'paypal',
+        fundingSource: 'paylater',
         // TODO: Move this to constant when ExpressCheckoutButton component is created
-        querySelector: '#ps-checkout-express-button',
-        createOrder: () => {
-          const {
-            id_product,
-            id_product_attribute,
-            id_customization,
-            quantity_wanted
-          } = this.prestashopService.getProductDetails();
-
-          return this.psCheckoutApi.postCreateOrder({
-            id_product,
-            id_product_attribute,
-            id_customization,
-            quantity_wanted,
-            fundingSource: 'paypal',
+        querySelector: '#ps_checkout-express-button-cart',
+        createOrder: (data) =>
+          this.psCheckoutApi.postCreateOrder({
+            ...data,
+            fundingSource: 'paylater',
             isExpressCheckout: true
-          });
-        }
+          })
       }
     ).render();
+  }
+
+  render() {
+    if (!this.buttonReferenceContainer) return;
+
+    this.renderComponent();
+    this.prestashopService.onUpdatedShoppingCartExtra(() =>
+      this.renderComponent()
+    );
 
     return this;
   }

@@ -116,6 +116,45 @@ export default {
     });
   },
 
+  togglePayIn4XCartPageButton({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'TogglePayIn4XCartPageButton',
+      data: {
+        status: payload ? 1 : 0
+      }
+    }).then(() => {
+      commit(types.UPDATE_PAY_IN_4X_CART_PAGE_BUTTON, payload);
+      return Promise.resolve(payload);
+    });
+  },
+
+  togglePayIn4XOrderPageButton({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'TogglePayIn4XOrderPageButton',
+      data: {
+        status: payload ? 1 : 0
+      }
+    }).then(() => {
+      commit(types.UPDATE_PAY_IN_4X_ORDER_PAGE_BUTTON, payload);
+      return Promise.resolve(payload);
+    });
+  },
+
+  togglePayIn4XProductPageButton({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'TogglePayIn4XProductPageButton',
+      data: {
+        status: payload ? 1 : 0
+      }
+    }).then(() => {
+      commit(types.UPDATE_PAY_IN_4X_PRODUCT_PAGE_BUTTON, payload);
+      return Promise.resolve(payload);
+    });
+  },
+
   toggleECOrderPage({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,

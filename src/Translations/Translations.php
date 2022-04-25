@@ -312,6 +312,7 @@ class Translations
                 'express-checkout' => [
                     'title' => $this->module->l('Define PayPal express checkout flow', 'translations'),
                     'pageLocation' => $this->module->l('Choose page location', 'translations'),
+                    'pageLocationPay4xButton' => $this->module->l('Choose page location for Pay in 4x Buttons', 'translations'),
                     'orderPage' => $this->module->l('Order summary page', 'translations'),
                     'checkoutPage' => $this->module->l('Sign up on order page', 'translations'),
                     'productPage' => $this->module->l('Product page', 'translations'),

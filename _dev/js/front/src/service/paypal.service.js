@@ -49,6 +49,10 @@ export class PayPalService extends BaseClass {
     return this.config.orderId;
   }
 
+  getFundingSource() {
+    return this.config.fundingSource;
+  }
+
   /**
    * @param {string} fundingSource
    * @param {PaypalButtonEvents} events

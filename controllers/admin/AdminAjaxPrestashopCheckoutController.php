@@ -443,6 +443,42 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
+     * AJAX: Toggle pay in 4x on product page
+     */
+    public function ajaxProcessTogglePayIn4XCartPageButton()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XConfiguration */
+        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_in_4x.configuration');
+        $payIn4XConfiguration->setCartPageButton(Tools::getValue('status') ? true : false);
+
+        $this->ajaxDie(json_encode(true));
+    }
+
+    /**
+     * AJAX: Toggle pay in 4x on product page
+     */
+    public function ajaxProcessTogglePayIn4XOrderPageButton()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XConfiguration */
+        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_in_4x.configuration');
+        $payIn4XConfiguration->setOrderPageButton(Tools::getValue('status') ? true : false);
+
+        $this->ajaxDie(json_encode(true));
+    }
+
+    /**
+     * AJAX: Toggle pay in 4x on product page
+     */
+    public function ajaxProcessTogglePayIn4XProductPageButton()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XConfiguration */
+        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_in_4x.configuration');
+        $payIn4XConfiguration->setProductPageButton(Tools::getValue('status') ? true : false);
+
+        $this->ajaxDie(json_encode(true));
+    }
+
+    /**
      * @todo To be refactored with Service Container
      */
     public function ajaxProcessFetchOrder()
