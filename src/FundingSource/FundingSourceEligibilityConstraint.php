@@ -40,7 +40,7 @@ class FundingSourceEligibilityConstraint
             'mybank' => ['IT'],
             'p24' => ['PL'],
             'sofort' => ['AT', 'BE', 'DE', 'IT', 'NL', 'ES'],
-            'paylater' => ['FR', 'GB', 'US'],
+            'paylater' => ['FR', 'GB', 'US', 'ES', 'IT'],
         ];
 
         return $countries[$fundingSourceName];
