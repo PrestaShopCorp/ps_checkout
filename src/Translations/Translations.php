@@ -374,7 +374,7 @@ class Translations
                     'noFaqAvailable' => $this->module->l('No faq available. Try later.', 'translations'),
                 ],
                 'pay-in-4x' => [
-                    'title' => $this->module->l('Pay in 4x messaging banner', 'translations'),
+                    'title' => $this->module->l('Pay in 4x', 'translations'),
                     'alert-content' => $this->module->l('Displaying this message has shown a better conversion rate and a raise of Average Order Value.', 'translations'),
                 ],
             ],

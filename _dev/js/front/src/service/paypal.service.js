@@ -61,7 +61,7 @@ export class PayPalService extends BaseClass {
     const style = this.config.buttonCustomization || { label: 'pay' };
     return this.sdk.Buttons({
       fundingSource: fundingSource,
-      style: fundingSource === 'paypal' ? style : { shape: style.shape },
+      style: fundingSource === 'paypal' || fundingSource === 'paylater' ? style : { shape: style.shape },
       commit: false,
       ...events
     });
@@ -79,7 +79,7 @@ export class PayPalService extends BaseClass {
     };
     return this.sdk.Buttons({
       fundingSource: fundingSource,
-      style: fundingSource === 'paypal' ? style : { shape: style.shape },
+      style: fundingSource === 'paypal' || fundingSource === 'paylater' ? style : { shape: style.shape },
       ...events
     });
   }
