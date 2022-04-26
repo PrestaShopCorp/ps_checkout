@@ -30,8 +30,21 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_18_0($module)
 {
-    /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository $fundingSourceConfiguration */
-    $fundingSourceConfiguration = $module->getService('ps_checkout.funding_source.configuration.repository');
+    $db = Db::getInstance();
 
-    return $fundingSourceConfiguration->save(['name' => 'paylater', 'position' => 10, 'isEnabled' => 1]);
+    $shopsList = \Shop::getShops(false, null, true);
+
+    foreach ($shopsList as $shopId) {
+       $db->insert(
+            'pscheckout_funding_source',
+            [
+                'name' => 'paylater',
+                'position' => 10,
+                'active' => 1,
+                'id_shop' => (int) $shopId,
+            ]
+        );
+    }
+
+    return true;
 }
