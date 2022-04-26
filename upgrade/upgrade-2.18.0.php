@@ -22,7 +22,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Update main function for module version 2.15.4
+ * Update main function for module version 2.18.0
  *
  * @param Ps_checkout $module
  *
@@ -31,7 +31,7 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_2_18_0($module)
 {
     /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository $fundingSourceConfiguration */
-    $fundingSourceConfiguration = $module->get('ps_checkout.funding_source.configuration.repository');
+    $fundingSourceConfiguration = $module->getService('ps_checkout.funding_source.configuration.repository');
 
     return $fundingSourceConfiguration->save(['name' => 'paylater', 'position' => 10, 'isEnabled' => 1]);
 }
