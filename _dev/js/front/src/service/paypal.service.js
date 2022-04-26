@@ -58,10 +58,14 @@ export class PayPalService extends BaseClass {
    * @param {PaypalButtonEvents} events
    */
   getButtonExpress(fundingSource, events) {
-    const style = this.config.buttonCustomization || { label: 'pay' };
+    const style = {
+      ...{ label: 'pay', color: 'gold', shape: 'pill' },
+      ...(this.config.buttonCustomization || {})
+    };
+
     return this.sdk.Buttons({
       fundingSource: fundingSource,
-      style: fundingSource === 'paypal' || fundingSource === 'paylater' ? style : { shape: style.shape },
+      style: fundingSource === 'paypal' ? style : { shape: style.shape, color: style.color },
       commit: false,
       ...events
     });
@@ -73,13 +77,13 @@ export class PayPalService extends BaseClass {
    */
   getButtonPayment(fundingSource, events) {
     const style = {
-      ...{ label: 'pay' },
+      ...{ label: 'pay', color: 'gold', shape: 'pill' },
       ...(this.config.buttonCustomization || {}),
       ...(window.ps_checkout.PayPalButtonCustomization || {})
     };
     return this.sdk.Buttons({
       fundingSource: fundingSource,
-      style: fundingSource === 'paypal' || fundingSource === 'paylater' ? style : { shape: style.shape },
+      style: fundingSource === 'paypal' ? style : { shape: style.shape, color: style.color },
       ...events
     });
   }
