@@ -56,7 +56,6 @@
       if (
         window.ps_checkoutPayPalSdkInstance
         && window.ps_checkoutPayPalSdkInstance.Messages
-        // window.ps_checkoutPayPalSdkInstance.isFundingEligible('paylater')
         && window.ps_checkoutPayPalSdkInstance.Marks({ fundingSource: 'paylater' }).isEligible()
       ) {
         window.ps_checkoutPayPalSdkInstance.Messages().render('[data-pp-message]');
