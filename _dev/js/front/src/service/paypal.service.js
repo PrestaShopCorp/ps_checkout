@@ -262,6 +262,8 @@ export class PayPalService extends BaseClass {
                   false);
             }
           }
+          //TODO: REMOVE AFTER TESTING
+          console.log(name, mark.isEligible());
 
           return mark.isEligible();
         });
