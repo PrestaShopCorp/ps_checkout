@@ -35,7 +35,7 @@ function upgrade_module_2_18_0($module)
     $shopsList = \Shop::getShops(false, null, true);
 
     foreach ($shopsList as $shopId) {
-       $db->insert(
+        $db->insert(
             'pscheckout_funding_source',
             [
                 'name' => 'paylater',
