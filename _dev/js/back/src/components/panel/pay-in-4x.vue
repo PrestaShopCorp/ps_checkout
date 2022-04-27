@@ -116,6 +116,7 @@
         </b-form>
       </b-col>
     </b-card-body>
+    <!--
     <b-card-body>
       <b-col sm="12" md="10" lg="10" class="m-auto">
         <b-form>
@@ -205,6 +206,7 @@
         </b-form>
       </b-col>
     </b-card-body>
+    -->
     <b-card-body>
       <b-col sm="12" md="10" lg="10" class="m-auto">
         <b-alert variant="info" show>

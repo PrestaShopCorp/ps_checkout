@@ -483,3 +483,7 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
 #cart .ps-checkout-express-separator {
   text-align: center;
 }
+
+.cart-detailed-totals + #ps-checkout-pp-message-container{
+  padding: 0 1rem 1rem;
+}

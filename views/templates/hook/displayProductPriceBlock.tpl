@@ -18,8 +18,7 @@
  *}
 {if isset($totalCartPrice) and $payIn4XisProductPageEnabled == true}
   {if not isset($content_only) or $content_only === 0}
-    <div
-      data-pp-message
+    <div id="ps-checkout-pp-message-container"
       data-pp-placement="product"
       data-pp-style-layout="text"
       data-pp-style-logo-type="inline"
@@ -27,12 +26,14 @@
       data-pp-amount="{$totalCartPrice}"
     ></div>
     <script>
-      if (
-        window.ps_checkoutPayPalSdkInstance
-        && window.ps_checkoutPayPalSdkInstance.Messages
-        && window.ps_checkoutPayPalSdkInstance.Marks({ fundingSource: 'paylater' }).isEligible()
-      ) {
-        window.ps_checkoutPayPalSdkInstance.Messages().render('[data-pp-message]');
+      window.onload = function () {
+        if (
+          window.ps_checkoutPayPalSdkInstance
+          && window.ps_checkoutPayPalSdkInstance.Messages
+          && window.ps_checkoutPayPalSdkInstance.Marks({ fundingSource: 'paylater' }).isEligible()
+        ) {
+          document.getElementById('ps-checkout-pp-message-container').setAttribute('data-pp-message', true);
+        }
       }
     </script>
   {/if}
