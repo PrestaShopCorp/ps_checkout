@@ -1,4 +1,5 @@
-{**
+<?php
+/**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
@@ -15,26 +16,35 @@
  * @author    PrestaShop SA and Contributors <contact@prestashop.com>
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
- *}
-{if isset($totalCartPrice) and $payIn4XisProductPageEnabled == true}
-  {if not isset($content_only) or $content_only === 0}
-    <div id="ps-checkout-pp-message-container"
-      data-pp-placement="product"
-      data-pp-style-layout="text"
-      data-pp-style-logo-type="inline"
-      data-pp-style-text-color="black"
-      data-pp-amount="{$totalCartPrice}"
-    ></div>
-    <script>
-      window.onload = function () {
-        if (
-          window.ps_checkoutPayPalSdkInstance
-          && window.ps_checkoutPayPalSdkInstance.Messages
-          && window.ps_checkoutPayPalSdkInstance.Marks({ fundingSource: 'paylater' }).isEligible()
-        ) {
-          document.getElementById('ps-checkout-pp-message-container').setAttribute('data-pp-message', true);
-        }
-      }
-    </script>
-  {/if}
-{/if}
+ */
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Update main function for module version 2.18.0
+ *
+ * @param Ps_checkout $module
+ *
+ * @return bool
+ */
+function upgrade_module_2_18_0($module)
+{
+    $db = Db::getInstance();
+
+    $shopsList = \Shop::getShops(false, null, true);
+
+    foreach ($shopsList as $shopId) {
+        $db->insert(
+            'pscheckout_funding_source',
+            [
+                'name' => 'paylater',
+                'position' => 10,
+                'active' => 1,
+                'id_shop' => (int) $shopId,
+            ]
+        );
+    }
+
+    return true;
+}

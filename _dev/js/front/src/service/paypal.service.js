@@ -49,15 +49,18 @@ export class PayPalService extends BaseClass {
     return this.config.orderId;
   }
 
+  getFundingSource() {
+    return this.config.fundingSource;
+  }
+
   /**
    * @param {string} fundingSource
    * @param {PaypalButtonEvents} events
    */
   getButtonExpress(fundingSource, events) {
-    const style = this.config.buttonCustomization || { label: 'pay' };
     return this.sdk.Buttons({
       fundingSource: fundingSource,
-      style: fundingSource === 'paypal' ? style : { shape: style.shape },
+      style: this.getButtonCustomizationStyle(fundingSource),
       commit: false,
       ...events
     });
@@ -68,16 +71,30 @@ export class PayPalService extends BaseClass {
    * @param {PaypalButtonEvents} events
    */
   getButtonPayment(fundingSource, events) {
+    return this.sdk.Buttons({
+      fundingSource: fundingSource,
+      style: this.getButtonCustomizationStyle(fundingSource),
+      ...events
+    });
+  }
+
+  /**
+   * @param {string} fundingSource
+   */
+  getButtonCustomizationStyle(fundingSource) {
     const style = {
-      ...{ label: 'pay' },
+      ...{ label: 'pay', color: 'gold', shape: 'pill' },
       ...(this.config.buttonCustomization || {}),
       ...(window.ps_checkout.PayPalButtonCustomization || {})
     };
-    return this.sdk.Buttons({
-      fundingSource: fundingSource,
-      style: fundingSource === 'paypal' ? style : { shape: style.shape },
-      ...events
-    });
+
+    if (fundingSource === 'paypal') {
+      return style;
+    } else if(fundingSource === 'paylater') {
+      return { shape: style.shape, color: style.color };
+    }
+
+    return {};
   }
 
   /**
@@ -258,6 +275,8 @@ export class PayPalService extends BaseClass {
                   false);
             }
           }
+          //TODO: REMOVE AFTER TESTING
+          console.log(name, mark.isEligible());
 
           return mark.isEligible();
         });

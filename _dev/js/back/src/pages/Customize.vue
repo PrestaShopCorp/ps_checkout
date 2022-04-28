@@ -37,7 +37,7 @@
       <ActivePayment />
     </b-container>
 
-    <b-container v-if="payIn4XActiveForMerchant" class="mb-4">
+    <b-container class="mb-4">
       <PayIn4X />
     </b-container>
 
@@ -74,9 +74,6 @@
     computed: {
       shopIs17() {
         return this.$store.getters.shopIs17;
-      },
-      payIn4XActiveForMerchant() {
-        return this.$store.state.configuration.payIn4X.activeForMerchant;
       },
       shopIsUsingCustomTheme() {
         return this.$store.state.context.isCustomTheme;

@@ -30,6 +30,7 @@
 }
 #checkout-personal-information-step #ps-checkout-express-button {
   display: flex;
+  flex-flow: row wrap;
 }
 @media screen and (min-width: 768px) {
   #checkout-personal-information-step #ps-checkout-express-button div.paypal-buttons-context-iframe {
@@ -37,6 +38,7 @@
     width: 50%;
     padding: 15px 0;
     margin-left: 25%;
+    margin-top: 1%;
   }
 }
 
@@ -480,4 +482,8 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
 
 #cart .ps-checkout-express-separator {
   text-align: center;
+}
+
+.cart-detailed-totals + #ps-checkout-pp-message-container{
+  padding: 0 1rem 1rem;
 }

@@ -129,7 +129,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.17.1';
+    const VERSION = '2.18.0';
 
     const INTEGRATION_DATE = '2020-07-30';
 
@@ -155,7 +155,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.17.1';
+        $this->version = '2.18.0';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -486,7 +486,7 @@ class Ps_checkout extends PaymentModule
             'width' => $width,
             'modulePath' => $this->getPathUri(),
             'paymentOptions' => $paymentOptions,
-            'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageEnabled(),
+            'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageActive(),
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/displayExpressCheckout.tpl');
@@ -585,7 +585,7 @@ class Ps_checkout extends PaymentModule
 
         $this->context->smarty->assign([
             'totalCartPrice' => sprintf('%01.2f', $price),
-            'payIn4XisProductPageEnabled' => $payIn4XService->isProductPageEnabled(),
+            'payIn4XisProductPageEnabled' => $payIn4XService->isProductPageActive(),
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/displayProductPriceBlock.tpl');
@@ -615,7 +615,7 @@ class Ps_checkout extends PaymentModule
         $totalCartPrice = $cart->getSummaryDetails();
         $this->context->smarty->assign([
             'totalCartPrice' => $totalCartPrice['total_price'],
-            'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageEnabled(),
+            'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageActive(),
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/displayCartTotalPriceLabel.tpl');
@@ -1036,6 +1036,9 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
         $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4xConfiguration */
+        $payIn4xConfiguration = $this->getService('ps_checkout.pay_in_4x.configuration');
+
         $fundingSourcesSorted = [];
         $payWithTranslations = [];
         $isCardAvailable = false;
@@ -1052,6 +1055,7 @@ class Ps_checkout extends PaymentModule
         // BEGIN To be refactored in services
         $payPalClientToken = '';
         $payPalOrderId = '';
+        $cartFundingSource = 'paypal';
         $psCheckoutCart = false;
         $cartProductCount = 0;
 
@@ -1075,6 +1079,7 @@ class Ps_checkout extends PaymentModule
         ) {
             $payPalOrderId = $psCheckoutCart->paypal_order;
             $payPalClientToken = $psCheckoutCart->paypal_token;
+            $cartFundingSource = $psCheckoutCart->paypal_funding;
         }
         // END To be refactored in services
 
@@ -1095,12 +1100,16 @@ class Ps_checkout extends PaymentModule
             $this->name . 'PayPalSdkUrl' => $payPalSdkLinkBuilder->buildLink(),
             $this->name . 'PayPalClientToken' => $payPalClientToken,
             $this->name . 'PayPalOrderId' => $payPalOrderId,
+            $this->name . 'FundingSource' => $cartFundingSource,
             $this->name . 'HostedFieldsEnabled' => $isCardAvailable && $payPalConfiguration->isCardPaymentEnabled() && $paypalAccountRepository->cardHostedFieldsIsAllowed(),
             $this->name . 'HostedFieldsSelected' => false !== $psCheckoutCart ? (bool) $psCheckoutCart->isHostedFields : false,
             $this->name . 'ExpressCheckoutSelected' => false !== $psCheckoutCart ? (bool) $psCheckoutCart->isExpressCheckout : false,
             $this->name . 'ExpressCheckoutProductEnabled' => $expressCheckoutConfiguration->isProductPageEnabled(),
             $this->name . 'ExpressCheckoutCartEnabled' => $expressCheckoutConfiguration->isOrderPageEnabled(),
             $this->name . 'ExpressCheckoutOrderEnabled' => $expressCheckoutConfiguration->isCheckoutPageEnabled(),
+            $this->name . 'PayLaterProductPageButtonEnabled' => $payIn4xConfiguration->isProductPageButtonActive(),
+            $this->name . 'PayLaterCartPageButtonEnabled' => $payIn4xConfiguration->isCartPageButtonActive(),
+            $this->name . 'PayLaterOrderPageButtonEnabled' => $payIn4xConfiguration->isOrderPageButtonActive(),
             $this->name . '3dsEnabled' => $payPalConfiguration->is3dSecureEnabled(),
             $this->name . 'CspNonce' => $payPalConfiguration->getCSPNonce(),
             $this->name . 'CartProductCount' => $cartProductCount,
