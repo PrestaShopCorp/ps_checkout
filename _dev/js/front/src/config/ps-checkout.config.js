@@ -59,6 +59,14 @@ export const PsCheckoutConfig = {
     }
   },
 
+  paylater: {
+    enabled: {
+      cart: window.ps_checkoutPayLaterCartPageButtonEnabled,
+      order: window.ps_checkoutPayLaterOrderPageButtonEnabled,
+      product: window.ps_checkoutPayLaterProductPageButtonEnabled
+    }
+  },
+
   fundingSourcesSorted: window.ps_checkoutFundingSourcesSorted,
 
   orderId: window.ps_checkoutPayPalOrderId

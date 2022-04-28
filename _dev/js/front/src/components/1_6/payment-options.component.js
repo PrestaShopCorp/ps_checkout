@@ -105,7 +105,7 @@ export class PaymentOptionsComponent extends BaseComponent {
         .postCheckCartOrder(
           {
             orderID: this.payPalService.getOrderId(),
-            fundingSource: 'paypal',
+            fundingSource: this.payPalService.getFundingSource(),
             isExpressCheckout: true
           },
           { resolve: () => {}, reject: () => {} }
@@ -113,7 +113,7 @@ export class PaymentOptionsComponent extends BaseComponent {
         .then(() =>
           this.psCheckoutApi.postValidateOrder({
             orderID: this.payPalService.getOrderId(),
-            fundingSource: 'paypal',
+            fundingSource: this.payPalService.getFundingSource(),
             isExpressCheckout: true
           })
         )

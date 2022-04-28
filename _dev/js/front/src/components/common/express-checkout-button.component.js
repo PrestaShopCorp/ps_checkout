@@ -33,7 +33,7 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
     return (
       this.psCheckoutApi
         .postCheckCartOrder(
-          { ...data, fundingSource: 'paypal', isExpressCheckout: true },
+          { ...data, fundingSource: this.props.fundingSource, isExpressCheckout: true },
           actions
         )
         // TODO: Error notification
@@ -50,7 +50,7 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
     return this.psCheckoutApi.postExpressCheckoutOrder(
       {
         ...data,
-        fundingSource: 'paypal',
+        fundingSource: this.props.fundingSource,
         isExpressCheckout: true
       },
       actions
@@ -60,7 +60,7 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
   onCancel(data) {
     return this.psCheckoutApi.postCancelOrder({
       ...data,
-      fundingSource: 'paypal',
+      fundingSource: this.props.fundingSource,
       isExpressCheckout: true
     });
   }
@@ -75,12 +75,12 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
     if (
       !this.payPalService
         .getEligibleFundingSources()
-        .filter(({ name }) => name === 'paypal').length > 0
+        .filter(({ name }) => name === this.props.fundingSource).length > 0
     )
       return;
 
     return this.payPalService
-      .getButtonExpress('paypal', {
+      .getButtonExpress(this.props.fundingSource, {
         onInit: (data, actions) => this.onInit(data, actions),
         onClick: (data, actions) => this.onClick(data, actions),
         onError: (error) => this.onError(error),
