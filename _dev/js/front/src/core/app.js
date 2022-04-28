@@ -110,7 +110,10 @@ export class App {
 
   async renderExpressCheckoutPayLater(props) {
     await this.initPayPalService();
-    new PsCheckoutExpressPayLaterComponent(this, props).render();
+
+    if (this.container.PayPalSDK.Marks({ fundingSource: 'paylater' }).isEligible()) {
+      new PsCheckoutExpressPayLaterComponent(this, props).render();
+    }
   }
 
   async renderPayLaterOfferMessage(props) {
