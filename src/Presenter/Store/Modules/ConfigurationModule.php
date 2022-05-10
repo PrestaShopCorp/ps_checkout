@@ -120,9 +120,8 @@ class ConfigurationModule implements PresenterInterface
                     'productPage' => (bool) $this->ecConfiguration->isProductPageEnabled(),
                 ],
                 'payIn4X' => [
-                    'activeForMerchant' => (bool) $this->payIn4XConfiguration->isActiveForMerchant(),
-                    'orderPage' => (bool) $this->payIn4XConfiguration->isOrderPageActive(),
-                    'productPage' => (bool) $this->payIn4XConfiguration->isProductPageActive(),
+                    'orderPage' => (bool) $this->payIn4XConfiguration->isOrderPageMessageActive(),
+                    'productPage' => (bool) $this->payIn4XConfiguration->isProductPageMessageActive(),
                     'orderPageButton' => (bool) $this->payIn4XConfiguration->isOrderPageButtonActive(),
                     'cartPageButton' => (bool) $this->payIn4XConfiguration->isCartPageButtonActive(),
                     'productPageButton' => (bool) $this->payIn4XConfiguration->isProductPageButtonActive(),

@@ -91,24 +91,24 @@ class PayPalPayIn4XConfiguration
         return $active;
     }
 
-    public function isOrderPageActive()
+    public function isOrderPageMessageActive()
     {
         return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE);
     }
 
-    public function isOrderPageEnabled()
+    public function isOrderPageMessageEnabled()
     {
         return $this->isActiveForCustomer() && $this->isActiveForMerchant()
             ? (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE)
             : false;
     }
 
-    public function isProductPageActive()
+    public function isProductPageMessageActive()
     {
         return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE);
     }
 
-    public function isProductPageEnabled()
+    public function isProductPageMessageEnabled()
     {
         return $this->isActiveForCustomer() && $this->isActiveForMerchant()
             ? (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE)
