@@ -27,12 +27,8 @@
         <b-alert variant="warning" show>
           <p>
             {{ $t('pages.customize.payLater.eligibilityWarning') }}
-            <a
-              href="https://developer.paypal.com/docs/checkout/pay-later/us/"
-              target="_blank"
-              class="link-underline"
-            >
-              https://developer.paypal.com/docs/checkout/pay-later/us/
+            <a :href="eligibilityLink" target="_blank" class="link-underline">
+              {{ $t('pages.customize.payLater.eligibilityLink') }}
             </a>
             .
           </p>
@@ -379,6 +375,26 @@
         },
         set(payload) {
           this.$store.dispatch('togglePayLaterProductPageButton', payload);
+        }
+      },
+      eligibilityLink() {
+        switch (this.$store.state.paypal.countryMerchant) {
+          case 'FR':
+            return 'https://developer.paypal.com/docs/checkout/pay-later/fr/';
+          case 'GB':
+            return 'https://developer.paypal.com/docs/checkout/pay-later/gb/';
+          case 'ES':
+            return 'https://developer.paypal.com/docs/checkout/pay-later/es/';
+          case 'IT':
+            return 'https://developer.paypal.com/docs/checkout/pay-later/it/';
+          case 'US':
+            return 'https://developer.paypal.com/docs/checkout/pay-later/us/';
+          case 'DE':
+            return 'https://developer.paypal.com/docs/checkout/pay-later/de/';
+          case 'AU':
+            return 'https://developer.paypal.com/docs/checkout/pay-later/au/';
+          default:
+            return 'https://developer.paypal.com/docs/checkout/pay-later/gb/';
         }
       }
     },
