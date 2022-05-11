@@ -286,6 +286,9 @@
     <b-card-body>
       <b-col sm="12" md="10" lg="10" class="m-auto">
         <b-alert variant="info" show>
+          <h4 class="alert-heading">
+            {{ $t('panel.express-checkout.alertTitle') }}
+          </h4>
           <p>
             {{ $t('pages.customize.payLater.adviceContent') }}
           </p>
