@@ -287,14 +287,15 @@
           </b-form-group>
         </b-form>
       </b-col>
-      <b-alert variant="info" show>
-        <h4 class="alert-heading">
-          {{ $t('pages.customize.payLater.adviceTitle') }}
-        </h4>
-        <p>
-          {{ $t('pages.customize.payLater.adviceContent') }}
-        </p>
-      </b-alert>
+    </b-card-body>
+    <b-card-body>
+      <b-col sm="12" md="10" lg="10" class="m-auto">
+        <b-alert variant="info" show>
+          <p>
+            {{ $t('pages.customize.payLater.adviceContent') }}
+          </p>
+        </b-alert>
+      </b-col>
     </b-card-body>
   </b-card>
 </template>

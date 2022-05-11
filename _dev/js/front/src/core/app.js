@@ -130,10 +130,8 @@ export class App {
     this.exposeAPI();
 
     if (!this.psCheckoutConfig.autoRenderDisabled) {
-      console.log('ps_checkout autoRenderDisabled');
 
       if (document.body.id === 'product') {
-        console.log('ps_checkout product page call renderPayLaterOfferMessage');
         await this.renderPayLaterOfferMessage({
           placement: 'product',
           querySelector: '.product-prices'

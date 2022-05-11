@@ -27,23 +27,20 @@ export class PayLaterMessageComponent extends BaseComponent {
   };
 
   onRender(...args) {
-    console.log('payLaterOfferMessageOnRender', args);
     window.ps_checkout.events.dispatchEvent(
-      new CustomEvent('payLaterOfferMessageOnRender')
+      new CustomEvent('payLaterOfferMessageOnRender', args)
     );
   }
 
   onClick(...args) {
-    console.log('payLaterOfferMessageOnClick', args);
     window.ps_checkout.events.dispatchEvent(
-      new CustomEvent('payLaterOfferMessageOnClick')
+      new CustomEvent('payLaterOfferMessageOnClick', args)
     );
   }
 
   onApply(...args) {
-    console.log('payLaterOfferMessageOnApply', args);
     window.ps_checkout.events.dispatchEvent(
-      new CustomEvent('payLaterOfferMessageOnApply')
+      new CustomEvent('payLaterOfferMessageOnApply', args)
     );
   }
 
@@ -58,7 +55,6 @@ export class PayLaterMessageComponent extends BaseComponent {
   }
 
   render() {
-    console.log('renderPayLaterOfferMessage');
     this.renderPayLaterOfferMessage();
     return this;
   }

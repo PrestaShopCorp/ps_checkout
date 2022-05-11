@@ -27,23 +27,20 @@ export class PayLaterBannerComponent extends BaseComponent {
   };
 
   onRender(...args) {
-    console.log('payLaterOfferBannerOnRender', args);
     window.ps_checkout.events.dispatchEvent(
-      new CustomEvent('payLaterOfferBannerOnRender')
+      new CustomEvent('payLaterOfferBannerOnRender', args)
     );
   }
 
   onClick(...args) {
-    console.log('payLaterOfferBannerOnClick', args);
     window.ps_checkout.events.dispatchEvent(
-      new CustomEvent('payLaterOfferBannerOnClick')
+      new CustomEvent('payLaterOfferBannerOnClick', args)
     );
   }
 
   onApply(...args) {
-    console.log('payLaterOfferBannerOnApply', args);
     window.ps_checkout.events.dispatchEvent(
-      new CustomEvent('payLaterOfferBannerOnApply')
+      new CustomEvent('payLaterOfferBannerOnApply', args)
     );
   }
 
@@ -58,7 +55,6 @@ export class PayLaterBannerComponent extends BaseComponent {
   }
 
   render() {
-    console.log('renderpayLaterOfferBanner');
     this.renderPayLaterOfferBanner();
     return this;
   }

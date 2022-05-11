@@ -321,7 +321,6 @@ export class PayPalService extends BaseClass {
    * @param {PaypalPayLaterOfferEvents} events
    */
   getPayLaterOfferMessage(placement, amount, events) {
-    console.log('getPayLaterOfferMessage placement = ' + placement);
     const style = {
       ...{
         layout: 'text',
@@ -349,7 +348,6 @@ export class PayPalService extends BaseClass {
    * @param {PaypalPayLaterOfferEvents} events
    */
   getPayLaterOfferBanner(placement, amount, events) {
-    console.log('getPayLaterOfferBanner placement = ' + placement);
     const style = {
       ...{
         layout: 'flex',

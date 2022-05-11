@@ -139,7 +139,6 @@ class Translations
                     'payLater' => [
                         'title' => $this->module->l('PayPal Pay Later', 'translations'),
                         'eligibilityWarning' => $this->module->l('This feature is enabled based on a eligibility criteria. You can check this criteria on:', 'translations'),
-                        'adviceTitle' => $this->module->l('Pay in 4x', 'translations'),
                         'adviceContent' => $this->module->l('Displaying this message has shown a better conversion rate and a raise of Average Order Value.', 'translations'),
                         'homePage' => $this->module->l('Homepage', 'translations'),
                         'categoryPage' => $this->module->l('Category page', 'translations'),
