@@ -107,7 +107,7 @@ class PayPalSdkLinkBuilder
             'funding-eligibility',
         ];
 
-        if ($this->payIn4XConfiguration->isOrderPageActive() || $this->payIn4XConfiguration->isProductPageActive()) {
+        if ($this->payIn4XConfiguration->isOrderPageMessageActive() || $this->payIn4XConfiguration->isProductPageMessageActive()) {
             $components[] = 'messages';
         }
 

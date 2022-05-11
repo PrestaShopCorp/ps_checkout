@@ -68,7 +68,8 @@ class FrontControllerValidator
             case 'cart':
                 return $this->expressCheckoutConfiguration->isOrderPageEnabled() || $this->payIn4XConfiguration->isOrderPageActive();
             case 'authentication':
-                return $this->expressCheckoutConfiguration->isCheckoutPageEnabled();
+                return $this->expressCheckoutConfiguration->isCheckoutPageEnabled()
+                    || $this->payIn4XConfiguration->isOrderPageButtonActive();
         }
 
         return false;
@@ -95,7 +96,8 @@ class FrontControllerValidator
                 return true;
             // ExpressCheckout button
             case 'authentication':
-                return $this->expressCheckoutConfiguration->isCheckoutPageEnabled();
+                return $this->expressCheckoutConfiguration->isCheckoutPageEnabled()
+                    || $this->payIn4XConfiguration->isOrderPageButtonActive();
         }
 
         return false;
