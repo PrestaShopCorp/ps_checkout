@@ -43,31 +43,3 @@
     {/if}
   {/foreach}
 </div>
-
-{if isset($cart) and $payIn4XisOrderPageEnabled == true}
-  <hr />
-  <div id="ps-checkout-pp-message-container"
-    data-pp-placement="cart"
-    data-pp-style-layout="text"
-    data-pp-style-logo-type="inline"
-    data-pp-style-text-color="black"
-    data-pp-amount="{$cart.totals.total.amount}"
-  ></div>
-
-  <script>
-    window.onload = function () {
-      if (
-        window.ps_checkoutPayPalSdkInstance
-        && window.ps_checkoutPayPalSdkInstance.Messages
-        && window.ps_checkoutPayPalSdkInstance.Marks({ fundingSource: 'paylater' }).isEligible()
-      ) {
-        const messageBlock = document.getElementById('ps-checkout-pp-message-container');
-        const cartTotalBlock = document.getElementsByClassName('cart-detailed-totals');
-        if (cartTotalBlock.length) {
-          cartTotalBlock[0].after(messageBlock);
-        }
-        messageBlock.setAttribute('data-pp-message', true);
-      }
-    }
-  </script>
-{/if}

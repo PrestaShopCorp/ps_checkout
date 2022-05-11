@@ -14,7 +14,8 @@ import { PsCheckoutService } from '../service/ps-checkout.service';
 import { TranslationService } from '../service/translation.service';
 import { QuerySelectorService } from '../service/query-selector.service';
 import { PaymentOptionsLoaderComponent } from '../components/common/payment-options-loader.component';
-import { PayLaterOffersComponent } from '../components/common/pay-later-offers.component';
+import { PayLaterMessageComponent } from '../components/common/pay-later-message.component';
+import { PayLaterBannerComponent } from '../components/common/pay-later-banner.component';
 
 function initService(app) {
   return service => () => new service(app);
@@ -117,7 +118,12 @@ export class App {
 
   async renderPayLaterOfferMessage(props) {
     await this.initPayPalService();
-    new PayLaterOffersComponent(this, props).render();
+    new PayLaterMessageComponent(this, props).render();
+  }
+
+  async renderPayLaterOfferBanner(props) {
+    await this.initPayPalService();
+    new PayLaterBannerComponent(this, props).render();
   }
 
   async render() {
@@ -129,31 +135,48 @@ export class App {
       if (document.body.id === 'product') {
         console.log('ps_checkout product page call renderPayLaterOfferMessage');
         await this.renderPayLaterOfferMessage({
+          placement: 'product',
           querySelector: '.product-prices'
+        });
+        await this.renderPayLaterOfferBanner({
+          placement: 'product',
+          querySelector: '#notifications .container'
         });
       }
 
       if (document.body.id === 'index') {
-        await this.renderPayLaterOfferMessage({
-          querySelector: '.page-home'
+        await this.renderPayLaterOfferBanner({
+          placement: 'home',
+          querySelector: '#notifications .container'
         });
       }
 
       if (document.body.id === 'category') {
-        await this.renderPayLaterOfferMessage({
-          querySelector: '.page-home'
+        await this.renderPayLaterOfferBanner({
+          placement: 'category',
+          querySelector: '#notifications .container'
         });
       }
 
       if (document.body.id === 'cart') {
         await this.renderPayLaterOfferMessage({
-          querySelector: '.cart-grid-right'
+          placement: 'cart',
+          querySelector: '.cart-summary-totals'
+        });
+        await this.renderPayLaterOfferBanner({
+          placement: 'cart',
+          querySelector: '#notifications .container'
         });
       }
 
       if (document.body.id === 'checkout') {
         await this.renderPayLaterOfferMessage({
-          querySelector: '.cart-grid-right'
+          placement: 'payment',
+          querySelector: '.cart-summary-totals'
+        });
+        await this.renderPayLaterOfferBanner({
+          placement: 'cart',
+          querySelector: '#notifications .container'
         });
       }
 

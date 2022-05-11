@@ -16,25 +16,3 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  *}
-{if isset($totalCartPrice) and $payIn4XisProductPageEnabled == true}
-  {if not isset($content_only) or $content_only === 0}
-    <div id="ps-checkout-pp-message-container"
-      data-pp-placement="product"
-      data-pp-style-layout="text"
-      data-pp-style-logo-type="inline"
-      data-pp-style-text-color="black"
-      data-pp-amount="{$totalCartPrice}"
-    ></div>
-    <script>
-      window.onload = function () {
-        if (
-          window.ps_checkoutPayPalSdkInstance
-          && window.ps_checkoutPayPalSdkInstance.Messages
-          && window.ps_checkoutPayPalSdkInstance.Marks({ fundingSource: 'paylater' }).isEligible()
-        ) {
-          document.getElementById('ps-checkout-pp-message-container').setAttribute('data-pp-message', true);
-        }
-      }
-    </script>
-  {/if}
-{/if}

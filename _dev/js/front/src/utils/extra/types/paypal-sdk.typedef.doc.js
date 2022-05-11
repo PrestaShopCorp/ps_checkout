@@ -25,7 +25,12 @@
  * @typedef PayPalSdk
  * @type {object}
  *
+ * @property {string} version
+ * @property {string[]} FUNDING
+ * @property {function} getCorrelationID
  * @property {function} getFundingSources
+ * @property {function} isFundingEligible
+ * @property {function} rememberFunding
  * @property {object} Buttons
  * @property {function} Buttons.isEligible
  * @property {function} Buttons.render

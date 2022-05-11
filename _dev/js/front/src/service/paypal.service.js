@@ -30,7 +30,23 @@
  */
 
 /**
- * @typedef PaypalPayLaterOfferMessageEvents
+ * @typedef PaypalPayLaterOfferStyle
+ * @type {*}
+ *
+ * @property {string} layout
+ * @property {string} color
+ * @property {string} ratio
+ * @property {object} logo
+ * @property {string} logo.type
+ * @property {string} logo.position
+ * @property {object} text
+ * @property {string} text.color
+ * @property {string} text.size
+ * @property {string} text.align
+ */
+
+/**
+ * @typedef PaypalPayLaterOfferEvents
  * @type {*}
  *
  * @property {function} onRender
@@ -302,18 +318,45 @@ export class PayPalService extends BaseClass {
   /**
    * @param {string} placement
    * @param {string} amount
-   * @param {PaypalPayLaterOfferMessageEvents} events
+   * @param {PaypalPayLaterOfferEvents} events
    */
   getPayLaterOfferMessage(placement, amount, events) {
+    console.log('getPayLaterOfferMessage placement = ' + placement);
     const style = {
       ...{
-        layout: 'flex',
+        layout: 'text',
         logo: {
           type: 'inline'
         }
       },
       ...(this.config.payLaterOfferMessageCustomization || {}),
       ...(window.ps_checkout.payLaterOfferMessageCustomization || {})
+    };
+    return (
+      this.sdk.Messages &&
+      this.sdk.Messages({
+        placement: placement,
+        amount: amount,
+        style: style,
+        ...events
+      })
+    );
+  }
+
+  /**
+   * @param {string} placement
+   * @param {string} amount
+   * @param {PaypalPayLaterOfferEvents} events
+   */
+  getPayLaterOfferBanner(placement, amount, events) {
+    console.log('getPayLaterOfferBanner placement = ' + placement);
+    const style = {
+      ...{
+        layout: 'flex',
+        ratio: '20x1'
+      },
+      ...(this.config.payLaterOfferBannerCustomization || {}),
+      ...(window.ps_checkout.payLaterOfferBannerCustomization || {})
     };
     return (
       this.sdk.Messages &&

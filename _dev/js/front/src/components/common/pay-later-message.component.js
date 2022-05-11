@@ -18,7 +18,7 @@
  */
 import { BaseComponent } from '../../core/dependency-injection/base.component';
 
-export class PayLaterOffersComponent extends BaseComponent {
+export class PayLaterMessageComponent extends BaseComponent {
   static Inject = {
     config: 'PsCheckoutconfig',
     payPalService: 'PayPalService',
@@ -49,7 +49,7 @@ export class PayLaterOffersComponent extends BaseComponent {
 
   renderPayLaterOfferMessage() {
     return this.payPalService
-      .getPayLaterOfferMessage('paypal', '37.80', {
+      .getPayLaterOfferMessage(this.props.placement, this.props.amount, {
         onRender: (...args) => this.onRender(...args),
         onClick: (...args) => this.onClick(...args),
         onApply: (...args) => this.onApply(...args)
