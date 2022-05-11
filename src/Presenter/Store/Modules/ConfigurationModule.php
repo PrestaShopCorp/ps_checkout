@@ -25,7 +25,7 @@ use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfigur
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
-use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use Ps_checkout;
 
@@ -35,7 +35,7 @@ use Ps_checkout;
 class ConfigurationModule implements PresenterInterface
 {
     /**
-     * @var PayPalPayIn4XConfiguration
+     * @var PayPalPayLaterConfiguration
      */
     private $payIn4XConfiguration;
 
@@ -59,17 +59,17 @@ class ConfigurationModule implements PresenterInterface
     private $module;
 
     /**
-     * @param PayPalPayIn4XConfiguration $payIn4XConfiguration
+     * @param PayPalPayLaterConfiguration $payIn4XConfiguration
      * @param ExpressCheckoutConfiguration $ecConfiguration
      * @param PayPalConfiguration $paypalConfiguration
      * @param FundingSourceProvider $fundingSourceProvider
      */
     public function __construct(
-        PayPalPayIn4XConfiguration $payIn4XConfiguration,
+        PayPalPayLaterConfiguration  $payIn4XConfiguration,
         ExpressCheckoutConfiguration $ecConfiguration,
-        PayPalConfiguration $paypalConfiguration,
-        FundingSourceProvider $fundingSourceProvider,
-        Ps_checkout $module
+        PayPalConfiguration          $paypalConfiguration,
+        FundingSourceProvider        $fundingSourceProvider,
+        Ps_checkout                  $module
     ) {
         $this->payIn4XConfiguration = $payIn4XConfiguration;
         $this->ecConfiguration = $ecConfiguration;

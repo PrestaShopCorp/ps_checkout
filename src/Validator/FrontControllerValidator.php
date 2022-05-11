@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Validator;
 
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
-use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
 
 class FrontControllerValidator
 {
@@ -34,14 +34,14 @@ class FrontControllerValidator
      */
     private $expressCheckoutConfiguration;
     /**
-     * @var PayPalPayIn4XConfiguration
+     * @var PayPalPayLaterConfiguration
      */
     private $payIn4XConfiguration;
 
     public function __construct(
         MerchantValidator $merchantValidator,
         ExpressCheckoutConfiguration $expressCheckoutConfiguration,
-        PayPalPayIn4XConfiguration $payIn4XConfiguration
+        PayPalPayLaterConfiguration $payIn4XConfiguration
     ) {
         $this->merchantValidator = $merchantValidator;
         $this->expressCheckoutConfiguration = $expressCheckoutConfiguration;

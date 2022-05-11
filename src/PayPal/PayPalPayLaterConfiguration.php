@@ -25,7 +25,7 @@ use PrestaShop\Module\PrestashopCheckout\Customer;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Merchant;
 
-class PayPalPayIn4XConfiguration
+class PayPalPayLaterConfiguration
 {
     const AVAILABLE_FOR_MERCHANT = ['FR'];
     const AVAILABLE_FOR_CUSTOMER = [[
@@ -98,9 +98,7 @@ class PayPalPayIn4XConfiguration
 
     public function isOrderPageMessageEnabled()
     {
-        return $this->isActiveForCustomer() && $this->isActiveForMerchant()
-            ? (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE)
-            : false;
+        return $this->isActiveForCustomer() && $this->isActiveForMerchant() && $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE);
     }
 
     public function isProductPageMessageActive()
@@ -110,9 +108,7 @@ class PayPalPayIn4XConfiguration
 
     public function isProductPageMessageEnabled()
     {
-        return $this->isActiveForCustomer() && $this->isActiveForMerchant()
-            ? (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE)
-            : false;
+        return $this->isActiveForCustomer() && $this->isActiveForMerchant() && $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE);
     }
 
     /**

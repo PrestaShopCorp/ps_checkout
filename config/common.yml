@@ -107,8 +107,8 @@ services:
     arguments:
       - '@ps_checkout.configuration'
 
-  ps_checkout.pay_in_4x.configuration:
-    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration'
+  ps_checkout.pay_later.configuration:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration'
     public: true
     arguments:
       - '@ps_checkout.configuration'
@@ -138,7 +138,7 @@ services:
     arguments:
       - '@ps_checkout.repository.paypal.account'
       - '@ps_checkout.paypal.configuration'
-      - '@ps_checkout.pay_in_4x.configuration'
+      - '@ps_checkout.pay_later.configuration'
       - '@ps_checkout.funding_source.configuration.repository'
 
   ps_checkout.repository.prestashop.account:
@@ -170,7 +170,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule'
     public: true
     arguments:
-      - '@ps_checkout.pay_in_4x.configuration'
+      - '@ps_checkout.pay_later.configuration'
       - '@ps_checkout.express_checkout.configuration'
       - '@ps_checkout.paypal.configuration'
       - '@ps_checkout.funding_source.provider'
@@ -340,7 +340,7 @@ services:
     arguments:
       - '@ps_checkout.validator.merchant'
       - '@ps_checkout.express_checkout.configuration'
-      - '@ps_checkout.pay_in_4x.configuration'
+      - '@ps_checkout.pay_later.configuration'
 
   ps_checkout.cache.directory:
     class: 'PrestaShop\ModuleLibCacheDirectoryProvider\Cache\CacheDirectoryProvider'

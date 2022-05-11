@@ -448,8 +448,8 @@ class Ps_checkout extends PaymentModule
             return '';
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
-        $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payIn4XService */
+        $payIn4XService = $this->getService('ps_checkout.pay_later.configuration');
 
         /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
         $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
@@ -580,8 +580,8 @@ class Ps_checkout extends PaymentModule
             );
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
-        $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payIn4XService */
+        $payIn4XService = $this->getService('ps_checkout.pay_later.configuration');
 
         $this->context->smarty->assign([
             'totalCartPrice' => sprintf('%01.2f', $price),
@@ -609,8 +609,8 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService('ps_checkout.context.shop');
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
-        $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payIn4XService */
+        $payIn4XService = $this->getService('ps_checkout.pay_later.configuration');
 
         $totalCartPrice = $cart->getSummaryDetails();
         $this->context->smarty->assign([
@@ -1036,8 +1036,8 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
         $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4xConfiguration */
-        $payIn4xConfiguration = $this->getService('ps_checkout.pay_in_4x.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payIn4xConfiguration */
+        $payIn4xConfiguration = $this->getService('ps_checkout.pay_later.configuration');
 
         $fundingSourcesSorted = [];
         $payWithTranslations = [];

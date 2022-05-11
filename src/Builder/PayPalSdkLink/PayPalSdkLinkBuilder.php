@@ -23,7 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
-use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
@@ -44,7 +44,7 @@ class PayPalSdkLinkBuilder
     private $configuration;
 
     /**
-     * @var PayPalPayIn4XConfiguration
+     * @var PayPalPayLaterConfiguration
      */
     private $payIn4XConfiguration;
 
@@ -75,17 +75,18 @@ class PayPalSdkLinkBuilder
     private $isDisplayOnlySmartButtons = false;
 
     /**
-     * @todo To be refactored with Service Container and Dependency Injection
-     *
      * @param PaypalAccountRepository $payPalAccountRepository
      * @param PayPalConfiguration $configuration
-     * @param PayPalPayIn4XConfiguration $payIn4XConfiguration
+     * @param PayPalPayLaterConfiguration $payIn4XConfiguration
      * @param FundingSourceConfigurationRepository $fundingSourceConfigurationRepository
+     *
+     *@todo To be refactored with Service Container and Dependency Injection
+     *
      */
     public function __construct(
-        PaypalAccountRepository $payPalAccountRepository,
-        PayPalConfiguration $configuration,
-        PayPalPayIn4XConfiguration $payIn4XConfiguration,
+        PaypalAccountRepository              $payPalAccountRepository,
+        PayPalConfiguration                  $configuration,
+        PayPalPayLaterConfiguration          $payIn4XConfiguration,
         FundingSourceConfigurationRepository $fundingSourceConfigurationRepository
     ) {
         $this->payPalAccountRepository = $payPalAccountRepository;

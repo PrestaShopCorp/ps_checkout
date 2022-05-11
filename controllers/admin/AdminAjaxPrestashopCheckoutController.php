@@ -415,8 +415,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessTogglePayIn4XOrderPage()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XConfiguration */
-        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_in_4x.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payIn4XConfiguration */
+        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
         $payIn4XConfiguration->setOrderPage(Tools::getValue('status') ? true : false);
 //        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
 //        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
@@ -431,8 +431,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessTogglePayIn4XProductPage()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XConfiguration */
-        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_in_4x.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payIn4XConfiguration */
+        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
         $payIn4XConfiguration->setProductPage(Tools::getValue('status') ? true : false);
 //        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
 //        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
@@ -447,8 +447,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessTogglePayIn4XCartPageButton()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XConfiguration */
-        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_in_4x.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payIn4XConfiguration */
+        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
         $payIn4XConfiguration->setCartPageButton(Tools::getValue('status') ? true : false);
 
         $this->ajaxDie(json_encode(true));
@@ -459,8 +459,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessTogglePayIn4XOrderPageButton()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XConfiguration */
-        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_in_4x.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payIn4XConfiguration */
+        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
         $payIn4XConfiguration->setOrderPageButton(Tools::getValue('status') ? true : false);
 
         $this->ajaxDie(json_encode(true));
@@ -471,8 +471,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessTogglePayIn4XProductPageButton()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XConfiguration */
-        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_in_4x.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payIn4XConfiguration */
+        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
         $payIn4XConfiguration->setProductPageButton(Tools::getValue('status') ? true : false);
 
         $this->ajaxDie(json_encode(true));
