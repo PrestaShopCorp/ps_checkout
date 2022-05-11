@@ -36,6 +36,11 @@ class PayPalPayLaterConfiguration
     const PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE = 'PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE';
     const PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE = 'PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE';
 
+    const PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER = 'PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER';
+    const PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER = 'PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER';
+    const PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER = 'PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER';
+    const PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER = 'PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER';
+
     const PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE_BUTTON = 'PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE_BUTTON';
     const PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE_BUTTON = 'PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE_BUTTON';
     const PS_CHECKOUT_PAY_IN_4X_CART_PAGE_BUTTON = 'PS_CHECKOUT_PAY_IN_4X_CART_PAGE_BUTTON';
@@ -116,7 +121,7 @@ class PayPalPayLaterConfiguration
      *
      * @throws PsCheckoutException
      */
-    public function setProductPage($status)
+    public function setProductPageMessage($status)
     {
         $this->configuration->set(self::PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE, $status);
     }
@@ -126,9 +131,49 @@ class PayPalPayLaterConfiguration
      *
      * @throws PsCheckoutException
      */
-    public function setOrderPage($status)
+    public function setOrderPageMessage($status)
     {
         $this->configuration->set(self::PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE, $status);
+    }
+
+    /**
+     * @param bool $status
+     *
+     * @throws PsCheckoutException
+     */
+    public function setProductPageBanner($status)
+    {
+        $this->configuration->set(self::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER, $status);
+    }
+
+    /**
+     * @param bool $status
+     *
+     * @throws PsCheckoutException
+     */
+    public function setOrderPageBanner($status)
+    {
+        $this->configuration->set(self::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER, $status);
+    }
+
+    /**
+     * @param bool $status
+     *
+     * @throws PsCheckoutException
+     */
+    public function setHomePageBanner($status)
+    {
+        $this->configuration->set(self::PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER, $status);
+    }
+
+    /**
+     * @param bool $status
+     *
+     * @throws PsCheckoutException
+     */
+    public function setCategoryPageBanner($status)
+    {
+        $this->configuration->set(self::PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER, $status);
     }
 
     /**
@@ -161,18 +206,59 @@ class PayPalPayLaterConfiguration
         $this->configuration->set(self::PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE_BUTTON, $status);
     }
 
+    /**
+     * @return bool
+     */
     public function isOrderPageButtonActive()
     {
         return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE_BUTTON);
     }
 
+    /**
+     * @return bool
+     */
     public function isCartPageButtonActive()
     {
         return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_CART_PAGE_BUTTON);
     }
 
+    /**
+     * @return bool
+     */
     public function isProductPageButtonActive()
     {
         return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE_BUTTON);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOrderPageBannerActive()
+    {
+        return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isProductPageBannerActive()
+    {
+        return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHomePageBannerActive()
+    {
+        return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCategoryPageBannerActive()
+    {
+        return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER);
     }
 }

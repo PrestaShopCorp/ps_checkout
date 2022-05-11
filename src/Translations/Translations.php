@@ -136,7 +136,23 @@ class Translations
                 'customize' => [
                     'customThemeWarningMessage1' => $this->module->l('All custom themes might not be fully compatible. To avoid potential integration issues on payment page,', 'translations'),
                     'customThemeWarningMessage2' => $this->module->l('please check our list of customizable settings', 'translations'),
-                    'pay4xEligibilityWarning' => $this->module->l('This feature is enabled based on a eligibility criteria. You can check this criteria on:', 'translations'),
+                    'payLater' => [
+                        'title' => $this->module->l('PayPal Pay Later', 'translations'),
+                        'eligibilityWarning' => $this->module->l('This feature is enabled based on a eligibility criteria. You can check this criteria on:', 'translations'),
+                        'adviceTitle' => $this->module->l('Pay in 4x', 'translations'),
+                        'adviceContent' => $this->module->l('Displaying this message has shown a better conversion rate and a raise of Average Order Value.', 'translations'),
+                        'homePage' => $this->module->l('Homepage', 'translations'),
+                        'categoryPage' => $this->module->l('Category page', 'translations'),
+                        'message' => [
+                            'title' => $this->module->l('Choose page location for messages', 'translations'),
+                        ],
+                        'banner' => [
+                            'title' => $this->module->l('Choose page location for banners', 'translations'),
+                        ],
+                        'button' => [
+                            'title' => $this->module->l('Choose page location for buttons', 'translations'),
+                        ],
+                    ],
                 ],
             ],
             'firebase' => [
@@ -312,7 +328,6 @@ class Translations
                 'express-checkout' => [
                     'title' => $this->module->l('Define PayPal express checkout flow', 'translations'),
                     'pageLocation' => $this->module->l('Choose page location', 'translations'),
-                    'pageLocationPay4xButton' => $this->module->l('Choose page location for Pay in 4x Buttons', 'translations'),
                     'orderPage' => $this->module->l('Order summary page', 'translations'),
                     'checkoutPage' => $this->module->l('Sign up on order page', 'translations'),
                     'productPage' => $this->module->l('Product page', 'translations'),
@@ -372,10 +387,6 @@ class Translations
                     'needHelp' => $this->module->l('Need help? Find here the documentation of this module', 'translations'),
                     'downloadDoc' => $this->module->l('Download PDF', 'translations'),
                     'noFaqAvailable' => $this->module->l('No faq available. Try later.', 'translations'),
-                ],
-                'pay-in-4x' => [
-                    'title' => $this->module->l('Pay in 4x', 'translations'),
-                    'alert-content' => $this->module->l('Displaying this message has shown a better conversion rate and a raise of Average Order Value.', 'translations'),
                 ],
             ],
             'account-settings-deeplink' => [

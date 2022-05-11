@@ -81,12 +81,11 @@ class PayPalSdkLinkBuilder
      * @param FundingSourceConfigurationRepository $fundingSourceConfigurationRepository
      *
      *@todo To be refactored with Service Container and Dependency Injection
-     *
      */
     public function __construct(
-        PaypalAccountRepository              $payPalAccountRepository,
-        PayPalConfiguration                  $configuration,
-        PayPalPayLaterConfiguration          $payIn4XConfiguration,
+        PaypalAccountRepository $payPalAccountRepository,
+        PayPalConfiguration $configuration,
+        PayPalPayLaterConfiguration $payIn4XConfiguration,
         FundingSourceConfigurationRepository $fundingSourceConfigurationRepository
     ) {
         $this->payPalAccountRepository = $payPalAccountRepository;

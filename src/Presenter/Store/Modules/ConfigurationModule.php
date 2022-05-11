@@ -37,7 +37,7 @@ class ConfigurationModule implements PresenterInterface
     /**
      * @var PayPalPayLaterConfiguration
      */
-    private $payIn4XConfiguration;
+    private $payLaterConfiguration;
 
     /**
      * @var ExpressCheckoutConfiguration
@@ -59,19 +59,19 @@ class ConfigurationModule implements PresenterInterface
     private $module;
 
     /**
-     * @param PayPalPayLaterConfiguration $payIn4XConfiguration
+     * @param PayPalPayLaterConfiguration $payLaterConfiguration
      * @param ExpressCheckoutConfiguration $ecConfiguration
      * @param PayPalConfiguration $paypalConfiguration
      * @param FundingSourceProvider $fundingSourceProvider
      */
     public function __construct(
-        PayPalPayLaterConfiguration  $payIn4XConfiguration,
+        PayPalPayLaterConfiguration $payLaterConfiguration,
         ExpressCheckoutConfiguration $ecConfiguration,
-        PayPalConfiguration          $paypalConfiguration,
-        FundingSourceProvider        $fundingSourceProvider,
-        Ps_checkout                  $module
+        PayPalConfiguration $paypalConfiguration,
+        FundingSourceProvider $fundingSourceProvider,
+        Ps_checkout $module
     ) {
-        $this->payIn4XConfiguration = $payIn4XConfiguration;
+        $this->payLaterConfiguration = $payLaterConfiguration;
         $this->ecConfiguration = $ecConfiguration;
         $this->paypalConfiguration = $paypalConfiguration;
         $this->fundingSourceProvider = $fundingSourceProvider;
@@ -119,12 +119,26 @@ class ConfigurationModule implements PresenterInterface
                     'checkoutPage' => (bool) $this->ecConfiguration->isCheckoutPageEnabled(),
                     'productPage' => (bool) $this->ecConfiguration->isProductPageEnabled(),
                 ],
-                'payIn4X' => [
-                    'orderPage' => (bool) $this->payIn4XConfiguration->isOrderPageMessageActive(),
-                    'productPage' => (bool) $this->payIn4XConfiguration->isProductPageMessageActive(),
-                    'orderPageButton' => (bool) $this->payIn4XConfiguration->isOrderPageButtonActive(),
-                    'cartPageButton' => (bool) $this->payIn4XConfiguration->isCartPageButtonActive(),
-                    'productPageButton' => (bool) $this->payIn4XConfiguration->isProductPageButtonActive(),
+                'payLater' => [
+                    'orderPage' => [
+                        'message' => $this->payLaterConfiguration->isOrderPageMessageActive(),
+                        'banner' => $this->payLaterConfiguration->isOrderPageBannerActive(),
+                        'button' => $this->payLaterConfiguration->isOrderPageButtonActive(),
+                    ],
+                    'cartPage' => [
+                        'button' => $this->payLaterConfiguration->isCartPageButtonActive(),
+                    ],
+                    'productPage' => [
+                        'message' => $this->payLaterConfiguration->isProductPageMessageActive(),
+                        'banner' => $this->payLaterConfiguration->isProductPageBannerActive(),
+                        'button' => $this->payLaterConfiguration->isProductPageButtonActive(),
+                    ],
+                    'categoryPage' => [
+                        'banner' => $this->payLaterConfiguration->isCategoryPageBannerActive(),
+                    ],
+                    'homePage' => [
+                        'banner' => $this->payLaterConfiguration->isHomePageBannerActive(),
+                    ],
                 ],
                 'paypalButton' => $this->paypalConfiguration->getButtonConfiguration(),
                 'nonDecimalCurrencies' => $this->checkNonDecimalCurrencies(),

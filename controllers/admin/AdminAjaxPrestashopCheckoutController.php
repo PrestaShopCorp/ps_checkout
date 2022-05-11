@@ -411,13 +411,13 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Toggle pay in 4x on order page
+     * AJAX: Toggle pay later message on order page
      */
-    public function ajaxProcessTogglePayIn4XOrderPage()
+    public function ajaxProcessTogglePayLaterOrderPageMessage()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payIn4XConfiguration */
-        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
-        $payIn4XConfiguration->setOrderPage(Tools::getValue('status') ? true : false);
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
+        $payLaterConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
+        $payLaterConfiguration->setOrderPageMessage(Tools::getValue('status') ? true : false);
 //        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
 //        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
 //
@@ -427,13 +427,13 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Toggle pay in 4x on product page
+     * AJAX: Toggle pay later message on product page
      */
-    public function ajaxProcessTogglePayIn4XProductPage()
+    public function ajaxProcessTogglePayLaterProductPageMessage()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payIn4XConfiguration */
-        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
-        $payIn4XConfiguration->setProductPage(Tools::getValue('status') ? true : false);
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
+        $payLaterConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
+        $payLaterConfiguration->setProductPageMessage(Tools::getValue('status') ? true : false);
 //        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
 //        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
 //
@@ -443,37 +443,85 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Toggle pay in 4x on product page
+     * AJAX: Toggle pay later button on cart page
      */
-    public function ajaxProcessTogglePayIn4XCartPageButton()
+    public function ajaxProcessTogglePayLaterCartPageButton()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payIn4XConfiguration */
-        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
-        $payIn4XConfiguration->setCartPageButton(Tools::getValue('status') ? true : false);
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
+        $payLaterConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
+        $payLaterConfiguration->setCartPageButton(Tools::getValue('status') ? true : false);
 
         $this->ajaxDie(json_encode(true));
     }
 
     /**
-     * AJAX: Toggle pay in 4x on product page
+     * AJAX: Toggle pay later banner on cart page
      */
-    public function ajaxProcessTogglePayIn4XOrderPageButton()
+    public function ajaxProcessTogglePayLaterOrderPageBanner()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payIn4XConfiguration */
-        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
-        $payIn4XConfiguration->setOrderPageButton(Tools::getValue('status') ? true : false);
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
+        $payLaterConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
+        $payLaterConfiguration->setOrderPageBanner(Tools::getValue('status') ? true : false);
 
         $this->ajaxDie(json_encode(true));
     }
 
     /**
-     * AJAX: Toggle pay in 4x on product page
+     * AJAX: Toggle pay later banner on product page
      */
-    public function ajaxProcessTogglePayIn4XProductPageButton()
+    public function ajaxProcessTogglePayLaterProductPageBanner()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payIn4XConfiguration */
-        $payIn4XConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
-        $payIn4XConfiguration->setProductPageButton(Tools::getValue('status') ? true : false);
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
+        $payLaterConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
+        $payLaterConfiguration->setProductPageBanner(Tools::getValue('status') ? true : false);
+
+        $this->ajaxDie(json_encode(true));
+    }
+
+    /**
+     * AJAX: Toggle pay later banner on home page
+     */
+    public function ajaxProcessTogglePayLaterHomePageBanner()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
+        $payLaterConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
+        $payLaterConfiguration->setHomePageBanner(Tools::getValue('status') ? true : false);
+
+        $this->ajaxDie(json_encode(true));
+    }
+
+    /**
+     * AJAX: Toggle pay later banner on category page
+     */
+    public function ajaxProcessTogglePayLaterCategoryPageBanner()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
+        $payLaterConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
+        $payLaterConfiguration->setCategoryPageBanner(Tools::getValue('status') ? true : false);
+
+        $this->ajaxDie(json_encode(true));
+    }
+
+    /**
+     * AJAX: Toggle pay later button on order page
+     */
+    public function ajaxProcessTogglePayLaterOrderPageButton()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
+        $payLaterConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
+        $payLaterConfiguration->setOrderPageButton(Tools::getValue('status') ? true : false);
+
+        $this->ajaxDie(json_encode(true));
+    }
+
+    /**
+     * AJAX: Toggle pay later button on product page
+     */
+    public function ajaxProcessTogglePayLaterProductPageButton()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
+        $payLaterConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
+        $payLaterConfiguration->setProductPageButton(Tools::getValue('status') ? true : false);
 
         $this->ajaxDie(json_encode(true));
     }

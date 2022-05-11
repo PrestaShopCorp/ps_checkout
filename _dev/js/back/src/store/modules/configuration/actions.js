@@ -90,67 +90,119 @@ export default {
     });
   },
 
-  togglePayIn4XOrderPage({ commit, getters }, payload) {
+  togglePayLaterOrderPageMessage({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: 'TogglePayIn4XOrderPage',
+      action: 'TogglePayLaterOrderPageMessage',
       data: {
         status: payload ? 1 : 0
       }
     }).then(() => {
-      commit(types.UPDATE_PAY_IN_4X_ORDER_PAGE, payload);
+      commit(types.UPDATE_PAY_LATER_ORDER_PAGE_MESSAGE, payload);
       return Promise.resolve(payload);
     });
   },
 
-  togglePayIn4XProductPage({ commit, getters }, payload) {
+  togglePayLaterProductPageMessage({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: 'TogglePayIn4XProductPage',
+      action: 'TogglePayLaterProductPageMessage',
       data: {
         status: payload ? 1 : 0
       }
     }).then(() => {
-      commit(types.UPDATE_PAY_IN_4X_PRODUCT_PAGE, payload);
+      commit(types.UPDATE_PAY_LATER_PRODUCT_PAGE_MESSAGE, payload);
       return Promise.resolve(payload);
     });
   },
 
-  togglePayIn4XCartPageButton({ commit, getters }, payload) {
+  togglePayLaterOrderPageBanner({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: 'TogglePayIn4XCartPageButton',
+      action: 'TogglePayLaterOrderPageBanner',
       data: {
         status: payload ? 1 : 0
       }
     }).then(() => {
-      commit(types.UPDATE_PAY_IN_4X_CART_PAGE_BUTTON, payload);
+      commit(types.UPDATE_PAY_LATER_ORDER_PAGE_BANNER, payload);
       return Promise.resolve(payload);
     });
   },
 
-  togglePayIn4XOrderPageButton({ commit, getters }, payload) {
+  togglePayLaterProductPageBanner({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: 'TogglePayIn4XOrderPageButton',
+      action: 'TogglePayLaterProductPageBanner',
       data: {
         status: payload ? 1 : 0
       }
     }).then(() => {
-      commit(types.UPDATE_PAY_IN_4X_ORDER_PAGE_BUTTON, payload);
+      commit(types.UPDATE_PAY_LATER_PRODUCT_PAGE_BANNER, payload);
       return Promise.resolve(payload);
     });
   },
 
-  togglePayIn4XProductPageButton({ commit, getters }, payload) {
+  togglePayLaterHomePageBanner({ commit, getters }, payload) {
     return ajax({
       url: getters.adminController,
-      action: 'TogglePayIn4XProductPageButton',
+      action: 'TogglePayLaterHomePageBanner',
       data: {
         status: payload ? 1 : 0
       }
     }).then(() => {
-      commit(types.UPDATE_PAY_IN_4X_PRODUCT_PAGE_BUTTON, payload);
+      commit(types.UPDATE_PAY_LATER_HOME_PAGE_BANNER, payload);
+      return Promise.resolve(payload);
+    });
+  },
+
+  togglePayLaterCategoryPageBanner({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'TogglePayLaterCategoryPageBanner',
+      data: {
+        status: payload ? 1 : 0
+      }
+    }).then(() => {
+      commit(types.UPDATE_PAY_LATER_CATEGORY_PAGE_BANNER, payload);
+      return Promise.resolve(payload);
+    });
+  },
+
+  togglePayLaterCartPageButton({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'TogglePayLaterCartPageButton',
+      data: {
+        status: payload ? 1 : 0
+      }
+    }).then(() => {
+      commit(types.UPDATE_PAY_LATER_CART_PAGE_BUTTON, payload);
+      return Promise.resolve(payload);
+    });
+  },
+
+  togglePayLaterOrderPageButton({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'TogglePayLaterOrderPageButton',
+      data: {
+        status: payload ? 1 : 0
+      }
+    }).then(() => {
+      commit(types.UPDATE_PAY_LATER_ORDER_PAGE_BUTTON, payload);
+      return Promise.resolve(payload);
+    });
+  },
+
+  togglePayLaterProductPageButton({ commit, getters }, payload) {
+    return ajax({
+      url: getters.adminController,
+      action: 'TogglePayLaterProductPageButton',
+      data: {
+        status: payload ? 1 : 0
+      }
+    }).then(() => {
+      commit(types.UPDATE_PAY_LATER_PRODUCT_PAGE_BUTTON, payload);
       return Promise.resolve(payload);
     });
   },
