@@ -58,7 +58,7 @@ export class PsCheckoutPayLaterButtonPs1_6Component extends BaseComponent {
     }
 
     if (this.prestashopService.isCartPage()) {
-      if (!this.config.expressCheckout.enabled.cart || !this.config.payLater.button.cart) return this;
+      if (!this.config.payLater.button.cart) return this;
       if (!window.ps_checkoutCartProductCount) return this;
 
       this.children.expressButton = new PayLaterButtonCartComponent(
@@ -69,7 +69,7 @@ export class PsCheckoutPayLaterButtonPs1_6Component extends BaseComponent {
     }
 
     if (this.prestashopService.isOrderPersonalInformationStepPage()) {
-      if (!this.config.expressCheckout.enabled.order || !this.config.payLater.button.order) return this;
+      if (!this.config.payLater.button.order) return this;
       if (!window.ps_checkoutCartProductCount) return this;
       this.children.expressButton = new PayLaterButtonCheckoutComponent(
         this.app
@@ -82,7 +82,7 @@ export class PsCheckoutPayLaterButtonPs1_6Component extends BaseComponent {
       this.prestashopService.isProductPage() &&
       !this.prestashopService.isIframeProductPage()
     ) {
-      if (!this.config.expressCheckout.enabled.product|| !this.config.payLater.button.product) return;
+      if (!this.config.payLater.button.product) return;
       if (
         this.children.expressButton &&
         this.children.expressButton.checkoutExpressButton &&

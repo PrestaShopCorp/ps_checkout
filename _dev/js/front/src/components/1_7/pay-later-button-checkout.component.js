@@ -56,9 +56,6 @@ export class PayLaterButtonCheckoutComponent extends BaseComponent {
 
       this.buttonReferenceContainer.prepend(this.checkoutExpressButton);
       this.buttonReferenceContainer.prepend(this.checkoutExpressTitle);
-    } else {
-      document.getElementById('ps-checkout-express-button').append(document.createElement('br'))
-      // this.buttonReferenceContainer.append(document.createElement('br'));
     }
 
     this.children.expressCheckoutButton = new ExpressCheckoutButtonComponent(

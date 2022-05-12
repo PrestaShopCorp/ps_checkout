@@ -75,7 +75,7 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
     if (
       !this.payPalService
         .getEligibleFundingSources()
-        .filter(({ name }) => name === this.props.fundingSource).length > 0
+        .filter(( name ) => name === this.props.fundingSource).length > 0
     )
       return;
 

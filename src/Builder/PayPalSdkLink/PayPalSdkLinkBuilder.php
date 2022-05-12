@@ -139,7 +139,8 @@ class PayPalSdkLinkBuilder
         if ('SANDBOX' === $this->configuration->getPaymentMode()) {
             $params['debug'] = 'true';
             $params['buyer-country'] = $this->getCountry();
-            $params['locale'] = $this->getLocale();
+            $params['buyer-country'] = 'IT';
+//            $params['locale'] = $this->getLocale();
         }
 
         $fundingSourcesDisabled = $this->getFundingSourcesDisabled();
@@ -230,11 +231,22 @@ class PayPalSdkLinkBuilder
      */
     private function shouldIncludeButtonsComponent()
     {
-        if ('cart' === $this->getPageName() && ($this->expressCheckoutConfiguration->isOrderPageEnabled() || $this->expressCheckoutConfiguration->isCheckoutPageEnabled())) {
+        if ('cart' === $this->getPageName()
+            && (
+                $this->expressCheckoutConfiguration->isOrderPageEnabled()
+                || $this->expressCheckoutConfiguration->isCheckoutPageEnabled()
+                || $this->payLaterConfiguration->isCartPageButtonActive()
+            )
+        ) {
             return true;
         }
 
-        if ('product' === $this->getPageName() && $this->expressCheckoutConfiguration->isProductPageEnabled()) {
+        if ('product' === $this->getPageName()
+            && (
+                $this->expressCheckoutConfiguration->isProductPageEnabled()
+                || $this->payLaterConfiguration->isProductPageButtonActive()
+            )
+        ) {
             return true;
         }
 
