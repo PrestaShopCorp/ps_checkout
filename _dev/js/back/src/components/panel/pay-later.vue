@@ -114,14 +114,14 @@
                   @click="toggleHomePageBanner()"
                   v-if="homePageBannerIsActive"
                   class="active-img mb-2"
-                  src="@/assets/images/banner_homepage_selected.png"
+                  src="@/assets/images/banner_homepage_active.png"
                   alt=""
                 />
                 <img
                   @click="toggleHomePageBanner()"
                   v-else
                   class="mb-2"
-                  src="@/assets/images/banner_homepage_normal.png"
+                  src="@/assets/images/banner_homepage_inactive.png"
                   alt=""
                 />
                 <div>{{ $t('pages.customize.payLater.homePage') }}</div>
@@ -137,14 +137,14 @@
                   @click="toggleCategoryPageBanner()"
                   v-if="categoryPageBannerIsActive"
                   class="active-img mb-2"
-                  src="@/assets/images/banner_homepage_selected.png"
+                  src="@/assets/images/banner_homepage_active.png"
                   alt=""
                 />
                 <img
                   @click="toggleCategoryPageBanner()"
                   v-else
                   class="mb-2"
-                  src="@/assets/images/banner_homepage_normal.png"
+                  src="@/assets/images/banner_homepage_inactive.png"
                   alt=""
                 />
                 <div>{{ $t('pages.customize.payLater.categoryPage') }}</div>
@@ -160,14 +160,14 @@
                   @click="toggleOrderPageBanner()"
                   v-if="orderPageBannerIsActive"
                   class="active-img mb-2"
-                  src="@/assets/images/banner_cart_page_selected.png"
+                  src="@/assets/images/banner_cart_page_active.png"
                   alt=""
                 />
                 <img
                   @click="toggleOrderPageBanner()"
                   v-else
                   class="mb-2"
-                  src="@/assets/images/banner_cart_page_normal.png"
+                  src="@/assets/images/banner_cart_page_inactive.png"
                   alt=""
                 />
                 <div>{{ $t('panel.express-checkout.orderPage') }}</div>
@@ -183,14 +183,14 @@
                   @click="toggleProductPageBanner()"
                   v-if="productPageBannerIsActive"
                   class="active-img mb-2"
-                  src="@/assets/images/banner_product_page_selected.png"
+                  src="@/assets/images/banner_product_page_active.png"
                   alt=""
                 />
                 <img
                   @click="toggleProductPageBanner()"
                   v-else
                   class="mb-2"
-                  src="@/assets/images/banner_product_page_normal.png"
+                  src="@/assets/images/banner_product_page_inactive.png"
                   alt=""
                 />
                 <div>{{ $t('panel.express-checkout.productPage') }}</div>
