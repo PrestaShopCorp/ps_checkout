@@ -139,8 +139,7 @@ class PayPalSdkLinkBuilder
         if ('SANDBOX' === $this->configuration->getPaymentMode()) {
             $params['debug'] = 'true';
             $params['buyer-country'] = $this->getCountry();
-            $params['buyer-country'] = 'IT';
-//            $params['locale'] = $this->getLocale();
+            $params['locale'] = $this->getLocale();
         }
 
         $fundingSourcesDisabled = $this->getFundingSourcesDisabled();
