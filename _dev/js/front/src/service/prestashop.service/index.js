@@ -88,6 +88,10 @@ export class PrestashopService {
     this.instance.onUpdatedCart(listener);
   }
 
+  onUpdatedProduct(listener) {
+    this.instance.onUpdatedProduct(listener);
+  }
+
   onUpdatePaymentMethods(listener) {
     this.instance.onUpdatePaymentMethods(listener);
   }

@@ -75,6 +75,14 @@ export class PrestashopPs1_7Service {
     }
   }
 
+  static onUpdatedProduct(listener) {
+    if (window['prestashop'] && window['prestashop'].on) {
+      window['prestashop'].on('updatedProduct', listener);
+    } else {
+      console.error('');
+    }
+  }
+
   static onUpdatePaymentMethods() {}
 
   static onUpdatedShoppingCartExtra() {}

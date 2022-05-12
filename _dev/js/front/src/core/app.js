@@ -14,8 +14,8 @@ import { PsCheckoutService } from '../service/ps-checkout.service';
 import { TranslationService } from '../service/translation.service';
 import { QuerySelectorService } from '../service/query-selector.service';
 import { PaymentOptionsLoaderComponent } from '../components/common/payment-options-loader.component';
-import { PayLaterMessageComponent } from '../components/common/pay-later-message.component';
-import { PayLaterBannerComponent } from '../components/common/pay-later-banner.component';
+import { PayLaterMessageComponent } from '../components/ps-checkout-pay-later-message.component';
+import { PayLaterBannerComponent } from '../components/ps-checkout-pay-later-banner.component';
 
 function initService(app) {
   return service => () => new service(app);

@@ -84,6 +84,8 @@ export class PrestashopPs1_6Service {
 
   static onUpdatedCart() {}
 
+  static onUpdatedProduct() {}
+
   static onUpdatePaymentMethods(listener) {
     if (window['updatePaymentMethods']) {
       const updatePaymentMethods = window['updatePaymentMethods'];

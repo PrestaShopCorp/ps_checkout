@@ -17,53 +17,61 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 import { BaseComponent } from '../../core/dependency-injection/base.component';
+import {
+  PS_VERSION_1_6,
+  PS_VERSION_1_7
+} from '../../constants/ps-version.constants';
 
-export class PayLaterBannerComponent extends BaseComponent {
+import { PayLaterMessagePs1_6Component } from './pay-later-message-ps1_6.component';
+import { PayLaterMessagePs1_7Component } from './pay-later-message-ps1_7.component';
+
+export class PayLaterMessageComponent extends BaseComponent {
   static Inject = {
-    config: 'PsCheckoutconfig',
+    prestashopService: 'PrestashopService',
+    config: 'PsCheckoutConfig',
     payPalService: 'PayPalService',
     psCheckoutApi: 'PsCheckoutApi',
     $: '$'
   };
 
+  constructor(app, props) {
+    super(app, props);
+
+    this.instance = new {
+      [PS_VERSION_1_6]: PayLaterMessagePs1_6Component,
+      [PS_VERSION_1_7]: PayLaterMessagePs1_7Component
+    }[this.prestashopService.getVersion()](app, props);
+  }
+
   onRender(...args) {
     window.ps_checkout.events.dispatchEvent(
-      new CustomEvent('payLaterOfferBannerOnRender', args)
+      new CustomEvent('payLaterOfferMessageOnRender', args)
     );
   }
 
   onClick(...args) {
     window.ps_checkout.events.dispatchEvent(
-      new CustomEvent('payLaterOfferBannerOnClick', args)
+      new CustomEvent('payLaterOfferMessageOnClick', args)
     );
   }
 
   onApply(...args) {
     window.ps_checkout.events.dispatchEvent(
-      new CustomEvent('payLaterOfferBannerOnApply', args)
+      new CustomEvent('payLaterOfferMessageOnApply', args)
     );
   }
 
   getContainerIdentifier(placement) {
-    return '#ps_checkout-paypal-pay-later-banner-' + placement;
+    return `#ps_checkout-paypal-pay-later-message-${placement}`;
   }
 
-  createContainer(containerIdentifier, querySelector) {
-    if (null === document.querySelector(containerIdentifier)) {
-      let containerElement = document.createElement('div');
-      containerElement.id = containerIdentifier.slice(1);
-      containerElement.classList.add('mb-2');
-      document.querySelector(querySelector).append(containerElement);
-    }
-  }
-
-  renderPayLaterOfferBanner() {
+  renderPayLaterOfferMessage() {
     let containerIdentifier = this.getContainerIdentifier(this.props.placement);
 
-    this.createContainer(containerIdentifier, this.props.querySelector);
+    this.instance.createContainer(containerIdentifier, this.props.querySelector);
 
     return this.payPalService
-      .getPayLaterOfferBanner(this.props.placement, this.props.amount, {
+      .getPayLaterOfferMessage(this.props.placement, this.props.amount, {
         onRender: (...args) => this.onRender(...args),
         onClick: (...args) => this.onClick(...args),
         onApply: (...args) => this.onApply(...args)
@@ -72,7 +80,13 @@ export class PayLaterBannerComponent extends BaseComponent {
   }
 
   render() {
-    this.renderPayLaterOfferBanner();
+    this.renderPayLaterOfferMessage();
+    this.prestashopService.onUpdatedCart(() => {
+      return this.renderPayLaterOfferMessage();
+    });
+    this.prestashopService.onUpdatedProduct(() => {
+      return this.renderPayLaterOfferMessage();
+    });
     return this;
   }
 }
