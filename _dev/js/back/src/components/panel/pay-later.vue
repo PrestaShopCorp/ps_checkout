@@ -65,6 +65,9 @@
                   alt=""
                 />
                 <div>{{ $t('panel.express-checkout.orderPage') }}</div>
+                <div class="text-muted">
+                  ({{ $t('panel.express-checkout.recommended') }})
+                </div>
               </b-col>
               <b-col>
                 <PSCheckbox
@@ -88,6 +91,9 @@
                   alt=""
                 />
                 <div>{{ $t('panel.express-checkout.productPage') }}</div>
+                <div class="text-muted">
+                  ({{ $t('panel.express-checkout.recommended') }})
+                </div>
               </b-col>
             </b-form-row>
           </b-form-group>
@@ -231,6 +237,9 @@
                   alt=""
                 />
                 <div>{{ $t('panel.express-checkout.orderPage') }}</div>
+                <div class="text-muted">
+                  ({{ $t('panel.express-checkout.recommended') }})
+                </div>
               </b-col>
               <b-col>
                 <PSCheckbox
@@ -254,6 +263,9 @@
                   alt=""
                 />
                 <div>{{ $t('panel.express-checkout.checkoutPage') }}</div>
+                <div class="text-muted">
+                  ({{ $t('panel.express-checkout.recommended') }})
+                </div>
               </b-col>
               <b-col>
                 <PSCheckbox
@@ -277,6 +289,9 @@
                   alt=""
                 />
                 <div>{{ $t('panel.express-checkout.productPage') }}</div>
+                <div class="text-muted">
+                  ({{ $t('panel.express-checkout.recommended') }})
+                </div>
               </b-col>
             </b-form-row>
           </b-form-group>
