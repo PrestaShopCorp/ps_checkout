@@ -22,8 +22,8 @@ import {
   PS_VERSION_1_7
 } from '../../constants/ps-version.constants';
 
-import { PsCheckoutExpressPayLaterPs1_6Component } from './ps-checkout-express-paylater-ps1_6.component';
-import { PsCheckoutExpressPayLaterPs1_7Component } from './ps-checkout-express-paylater-ps1_7.component';
+import { PsCheckoutPayLaterButtonPs1_6Component } from './ps-checkout-pay-later-button-ps1_6.component';
+import { PsCheckoutPayLaterButtonPs1_7Component } from './ps-checkout-pay-later-button-ps1_7.component';
 
 export class PsCheckoutExpressPayLaterComponent extends BaseComponent {
   static Inject = {
@@ -34,8 +34,8 @@ export class PsCheckoutExpressPayLaterComponent extends BaseComponent {
     super(app, props);
 
     this.instance = new {
-      [PS_VERSION_1_6]: PsCheckoutExpressPayLaterPs1_6Component,
-      [PS_VERSION_1_7]: PsCheckoutExpressPayLaterPs1_7Component
+      [PS_VERSION_1_6]: PsCheckoutPayLaterButtonPs1_6Component,
+      [PS_VERSION_1_7]: PsCheckoutPayLaterButtonPs1_7Component
     }[this.prestashopService.getVersion()](app, props);
   }
 

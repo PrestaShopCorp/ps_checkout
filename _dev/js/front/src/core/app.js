@@ -6,7 +6,7 @@ import { PsCheckoutConfig } from '../config/ps-checkout.config';
 import { PayPalSdkComponent } from '../components/common/paypal-sdk.component';
 import { PsCheckoutComponent } from '../components/ps-checkout.component';
 import { PsCheckoutExpressComponent } from '../components/ps-checkout-express.component';
-import { PsCheckoutExpressPayLaterComponent } from '../components/ps-checkout-express-paylater.component';
+import { PsCheckoutExpressPayLaterComponent } from '../components/ps-checkout-pay-later.component';
 import { HTMLElementService } from '../service/html-element.service';
 import { PayPalService } from '../service/paypal.service';
 import { PrestashopService } from '../service/prestashop.service';
@@ -110,10 +110,7 @@ export class App {
 
   async renderExpressCheckoutPayLater(props) {
     await this.initPayPalService();
-
-    if (this.container.PayPalSDK.Marks({ fundingSource: 'paylater' }).isEligible()) {
-      new PsCheckoutExpressPayLaterComponent(this, props).render();
-    }
+    new PsCheckoutExpressPayLaterComponent(this, props).render();
   }
 
   async renderPayLaterOfferMessage(props) {
@@ -133,10 +130,12 @@ export class App {
 
       if (document.body.id === 'product') {
         await this.renderPayLaterOfferMessage({
+          amount: window.prestashop.cart.totals.total.amount,
           placement: 'product',
           querySelector: '.product-prices'
         });
         await this.renderPayLaterOfferBanner({
+          amount: window.prestashop.cart.totals.total.amount,
           placement: 'product',
           querySelector: '#notifications .container'
         });
@@ -144,6 +143,7 @@ export class App {
 
       if (document.body.id === 'index') {
         await this.renderPayLaterOfferBanner({
+          amount: window.prestashop.cart.totals.total.amount,
           placement: 'home',
           querySelector: '#notifications .container'
         });
@@ -151,6 +151,7 @@ export class App {
 
       if (document.body.id === 'category') {
         await this.renderPayLaterOfferBanner({
+          amount: window.prestashop.cart.totals.total.amount,
           placement: 'category',
           querySelector: '#notifications .container'
         });
@@ -158,10 +159,12 @@ export class App {
 
       if (document.body.id === 'cart') {
         await this.renderPayLaterOfferMessage({
+          amount: window.prestashop.cart.totals.total.amount,
           placement: 'cart',
           querySelector: '.cart-summary-totals'
         });
         await this.renderPayLaterOfferBanner({
+          amount: window.prestashop.cart.totals.total.amount,
           placement: 'cart',
           querySelector: '#notifications .container'
         });
@@ -169,10 +172,12 @@ export class App {
 
       if (document.body.id === 'checkout') {
         await this.renderPayLaterOfferMessage({
+          amount: window.prestashop.cart.totals.total.amount,
           placement: 'payment',
           querySelector: '.cart-summary-totals'
         });
         await this.renderPayLaterOfferBanner({
+          amount: window.prestashop.cart.totals.total.amount,
           placement: 'cart',
           querySelector: '#notifications .container'
         });

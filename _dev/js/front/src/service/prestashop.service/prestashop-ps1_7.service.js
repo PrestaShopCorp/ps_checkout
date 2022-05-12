@@ -52,7 +52,6 @@ export class PrestashopPs1_7Service {
   }
 
   static isProductPage() {
-    console.log('on Product page');
     return document.body.id === 'product';
   }
 

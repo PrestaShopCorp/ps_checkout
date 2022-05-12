@@ -44,14 +44,31 @@ export class PayLaterBannerComponent extends BaseComponent {
     );
   }
 
+  getContainerIdentifier(placement) {
+    return '#ps_checkout-paypal-pay-later-banner-' + placement;
+  }
+
+  createContainer(containerIdentifier, querySelector) {
+    if (null === document.querySelector(containerIdentifier)) {
+      let containerElement = document.createElement('div');
+      containerElement.id = containerIdentifier.slice(1);
+      containerElement.classList.add('mb-2');
+      document.querySelector(querySelector).append(containerElement);
+    }
+  }
+
   renderPayLaterOfferBanner() {
+    let containerIdentifier = this.getContainerIdentifier(this.props.placement);
+
+    this.createContainer(containerIdentifier, this.props.querySelector);
+
     return this.payPalService
       .getPayLaterOfferBanner(this.props.placement, this.props.amount, {
         onRender: (...args) => this.onRender(...args),
         onClick: (...args) => this.onClick(...args),
         onApply: (...args) => this.onApply(...args)
       })
-      .render(this.props.querySelector);
+      .render(containerIdentifier);
   }
 
   render() {

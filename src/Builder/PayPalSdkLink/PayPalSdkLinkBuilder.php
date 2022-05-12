@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink;
 
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
+use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
@@ -46,12 +47,15 @@ class PayPalSdkLinkBuilder
     /**
      * @var PayPalPayLaterConfiguration
      */
-    private $payIn4XConfiguration;
+    private $payLaterConfiguration;
 
     /**
      * @var FundingSourceConfigurationRepository
      */
     private $fundingSourceConfigurationRepository;
+
+    /** @var ExpressCheckoutConfiguration */
+    private $expressCheckoutConfiguration;
 
     /**
      * @todo To be removed
@@ -77,21 +81,22 @@ class PayPalSdkLinkBuilder
     /**
      * @param PaypalAccountRepository $payPalAccountRepository
      * @param PayPalConfiguration $configuration
-     * @param PayPalPayLaterConfiguration $payIn4XConfiguration
+     * @param PayPalPayLaterConfiguration $payLaterConfiguration
      * @param FundingSourceConfigurationRepository $fundingSourceConfigurationRepository
-     *
-     *@todo To be refactored with Service Container and Dependency Injection
+     * @param ExpressCheckoutConfiguration $expressCheckoutConfiguration
      */
     public function __construct(
         PaypalAccountRepository $payPalAccountRepository,
         PayPalConfiguration $configuration,
-        PayPalPayLaterConfiguration $payIn4XConfiguration,
-        FundingSourceConfigurationRepository $fundingSourceConfigurationRepository
+        PayPalPayLaterConfiguration $payLaterConfiguration,
+        FundingSourceConfigurationRepository $fundingSourceConfigurationRepository,
+        ExpressCheckoutConfiguration $expressCheckoutConfiguration
     ) {
         $this->payPalAccountRepository = $payPalAccountRepository;
         $this->configuration = $configuration;
-        $this->payIn4XConfiguration = $payIn4XConfiguration;
+        $this->payLaterConfiguration = $payLaterConfiguration;
         $this->fundingSourceConfigurationRepository = $fundingSourceConfigurationRepository;
+        $this->expressCheckoutConfiguration = $expressCheckoutConfiguration;
     }
 
     /**
@@ -101,18 +106,23 @@ class PayPalSdkLinkBuilder
      */
     public function buildLink()
     {
-        $components = [
-            'buttons',
-            'marks',
-            'funding-eligibility',
-        ];
+        $components = [];
 
-        if ($this->payIn4XConfiguration->isOrderPageMessageActive() || $this->payIn4XConfiguration->isProductPageMessageActive()) {
+        if ($this->shouldIncludeButtonsComponent()) {
+            $components[] = 'buttons';
+        }
+
+        if ($this->shouldIncludeHostedFieldsComponent()) {
+            $components[] = 'hosted-fields';
+        }
+
+        if ($this->shouldIncludeMessagesComponent()) {
             $components[] = 'messages';
         }
 
-        if ($this->payPalAccountRepository->cardHostedFieldsIsAvailable()) {
-            $components[] = 'hosted-fields';
+        if (!empty($components)) {
+            $components[] = 'marks';
+            $components[] = 'funding-eligibility';
         }
 
         $params = [
@@ -128,8 +138,8 @@ class PayPalSdkLinkBuilder
 
         if ('SANDBOX' === $this->configuration->getPaymentMode()) {
             $params['debug'] = 'true';
-            // $params['buyer-country'] = \Context::getContext()->country->iso_code;
-            // $params['locale'] = 'es_ES'; //@todo retrieve locale from PayPalContext
+            $params['buyer-country'] = $this->getCountry();
+            $params['locale'] = $this->getLocale();
         }
 
         $fundingSourcesDisabled = $this->getFundingSourcesDisabled();
@@ -202,7 +212,7 @@ class PayPalSdkLinkBuilder
         }
 
         if (isset($controller->php_self)) {
-            return $controller->php_self;
+            return 'order-opc' === $controller->php_self ? 'order' : $controller->php_self;
         }
 
         return '';
@@ -213,5 +223,156 @@ class PayPalSdkLinkBuilder
         $payLaterConfig = $this->fundingSourceConfigurationRepository->get('paylater');
 
         return !empty($payLaterConfig) && (int) $payLaterConfig['active'] === 1;
+    }
+
+    /**
+     * @return bool
+     */
+    private function shouldIncludeButtonsComponent()
+    {
+        if ('cart' === $this->getPageName() && ($this->expressCheckoutConfiguration->isOrderPageEnabled() || $this->expressCheckoutConfiguration->isCheckoutPageEnabled())) {
+            return true;
+        }
+
+        if ('product' === $this->getPageName() && $this->expressCheckoutConfiguration->isProductPageEnabled()) {
+            return true;
+        }
+
+        return 'order' === $this->getPageName();
+    }
+
+    /**
+     * @return bool
+     */
+    private function shouldIncludeHostedFieldsComponent()
+    {
+        if ('order' !== $this->getPageName()) {
+            return false;
+        }
+
+        return $this->payPalAccountRepository->cardHostedFieldsIsAvailable();
+    }
+
+    /**
+     * @return bool
+     */
+    private function shouldIncludeMessagesComponent()
+    {
+        if ('index' === $this->getPageName() && $this->payLaterConfiguration->isHomePageBannerActive()) {
+            return true;
+        }
+
+        if ('category' === $this->getPageName() && $this->payLaterConfiguration->isCategoryPageBannerActive()) {
+            return true;
+        }
+
+        if ('cart' === $this->getPageName() && ($this->payLaterConfiguration->isOrderPageMessageActive() || $this->payLaterConfiguration->isOrderPageBannerActive())) {
+            return true;
+        }
+
+        if ('order' === $this->getPageName() && ($this->payLaterConfiguration->isOrderPageMessageActive() || $this->payLaterConfiguration->isOrderPageBannerActive())) {
+            return true;
+        }
+
+        if ('product' === $this->getPageName() && ($this->payLaterConfiguration->isProductPageMessageActive() || $this->payLaterConfiguration->isProductPageBannerActive())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @todo Used only on sandbox, to be removed when CountryProvider will be available or provide a way to use a ENV value
+     *
+     * @return string
+     */
+    private function getCountry()
+    {
+        $context = \Context::getContext();
+        $code = '';
+
+        if (\Validate::isLoadedObject($context->cart) && $context->cart->id_address_invoice) {
+            $address = new \Address($context->cart->id_address_invoice);
+            $country = new \Country($address->id_country);
+
+            $code = strtoupper($country->iso_code);
+        }
+
+        if (\Validate::isLoadedObject($context->country)) {
+            $code = strtoupper($context->country->iso_code);
+        }
+
+        if ($code === 'UK') {
+            $code = 'GB';
+        }
+
+        return $code;
+    }
+
+    /**
+     * @todo Used only on sandbox, to be removed when LanguageProvider will be available or provide a way to use a ENV value
+     *
+     * @return string
+     */
+    private function getLanguage()
+    {
+        $context = \Context::getContext();
+        $code = '';
+
+        if (\Validate::isLoadedObject($context->language)) {
+            $code = strtoupper($context->language->iso_code);
+        }
+
+        return $code;
+    }
+
+    /**
+     * @todo Used only on sandbox, to be removed when LocaleProvider will be available or provide a way to use a ENV value
+     *
+     * @return string
+     */
+    private function getLocale()
+    {
+        if ('DE' === $this->getCountry()) {
+            return 'DE' === $this->getLanguage() ? 'de_DE' : 'en_DE';
+        }
+
+        if ('US' === $this->getCountry()) {
+            return 'en_US';
+        }
+
+        if ('GB' === $this->getCountry()) {
+            return 'en_GB';
+        }
+
+        if ('ES' === $this->getCountry()) {
+            return 'ES' === $this->getLanguage() ? 'es_ES' : 'en_ES';
+        }
+
+        if ('FR' === $this->getCountry()) {
+            return 'FR' === $this->getLanguage() ? 'fr_FR' : 'en_FR';
+        }
+
+        if ('IT' === $this->getCountry()) {
+            return 'IT' === $this->getLanguage() ? 'it_IT' : 'en_IT';
+        }
+
+        if ('NL' === $this->getCountry()) {
+            return 'NL' === $this->getLanguage() ? 'nl_NL' : 'en_NL';
+        }
+
+        if ('PL' === $this->getCountry()) {
+            return 'PL' === $this->getLanguage() ? 'pl_PL' : 'en_PL';
+        }
+
+        if ('PT' === $this->getCountry()) {
+            return 'PT' === $this->getLanguage() ? 'pt_PT' : 'en_PT';
+        }
+
+        if ('AU' === $this->getCountry()) {
+            return 'en_AU';
+        }
+
+        return '';
     }
 }

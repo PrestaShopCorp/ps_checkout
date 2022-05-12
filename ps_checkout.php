@@ -1036,8 +1036,8 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
         $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payIn4xConfiguration */
-        $payIn4xConfiguration = $this->getService('ps_checkout.pay_later.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
+        $payLaterConfiguration = $this->getService('ps_checkout.pay_later.configuration');
 
         $fundingSourcesSorted = [];
         $payWithTranslations = [];
@@ -1107,9 +1107,15 @@ class Ps_checkout extends PaymentModule
             $this->name . 'ExpressCheckoutProductEnabled' => $expressCheckoutConfiguration->isProductPageEnabled(),
             $this->name . 'ExpressCheckoutCartEnabled' => $expressCheckoutConfiguration->isOrderPageEnabled(),
             $this->name . 'ExpressCheckoutOrderEnabled' => $expressCheckoutConfiguration->isCheckoutPageEnabled(),
-            $this->name . 'PayLaterProductPageButtonEnabled' => $payIn4xConfiguration->isProductPageButtonActive(),
-            $this->name . 'PayLaterCartPageButtonEnabled' => $payIn4xConfiguration->isCartPageButtonActive(),
-            $this->name . 'PayLaterOrderPageButtonEnabled' => $payIn4xConfiguration->isOrderPageButtonActive(),
+            $this->name . 'PayLaterProductPageMessageEnabled' => $payLaterConfiguration->isProductPageMessageActive(),
+            $this->name . 'PayLaterOrderPageMessageEnabled' => $payLaterConfiguration->isOrderPageMessageActive(),
+            $this->name . 'PayLaterHomePageBannerEnabled' => $payLaterConfiguration->isHomePageBannerActive(),
+            $this->name . 'PayLaterCategoryPageBannerEnabled' => $payLaterConfiguration->isCategoryPageBannerActive(),
+            $this->name . 'PayLaterProductPageBannerEnabled' => $payLaterConfiguration->isProductPageBannerActive(),
+            $this->name . 'PayLaterOrderPageBannerEnabled' => $payLaterConfiguration->isOrderPageBannerActive(),
+            $this->name . 'PayLaterProductPageButtonEnabled' => $payLaterConfiguration->isProductPageButtonActive(),
+            $this->name . 'PayLaterCartPageButtonEnabled' => $payLaterConfiguration->isCartPageButtonActive(),
+            $this->name . 'PayLaterOrderPageButtonEnabled' => $payLaterConfiguration->isOrderPageButtonActive(),
             $this->name . '3dsEnabled' => $payPalConfiguration->is3dSecureEnabled(),
             $this->name . 'CspNonce' => $payPalConfiguration->getCSPNonce(),
             $this->name . 'CartProductCount' => $cartProductCount,

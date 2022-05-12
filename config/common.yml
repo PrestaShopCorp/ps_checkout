@@ -140,6 +140,7 @@ services:
       - '@ps_checkout.paypal.configuration'
       - '@ps_checkout.pay_later.configuration'
       - '@ps_checkout.funding_source.configuration.repository'
+      - '@ps_checkout.express_checkout.configuration'
 
   ps_checkout.repository.prestashop.account:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'

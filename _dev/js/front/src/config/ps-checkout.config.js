@@ -59,8 +59,18 @@ export const PsCheckoutConfig = {
     }
   },
 
-  paylater: {
-    enabled: {
+  payLater: {
+    message: {
+      order: window.ps_checkoutPayLaterOrderPageMessageEnabled,
+      product: window.ps_checkoutPayLaterProductPageMessageEnabled
+    },
+    banner: {
+      home: window.ps_checkoutPayLaterHomePageBannerEnabled,
+      category: window.ps_checkoutPayLaterCategoryPageBannerEnabled,
+      order: window.ps_checkoutPayLaterOrderPageBannerEnabled,
+      product: window.ps_checkoutPayLaterProductPageBannerEnabled
+    },
+    button: {
       cart: window.ps_checkoutPayLaterCartPageButtonEnabled,
       order: window.ps_checkoutPayLaterOrderPageButtonEnabled,
       product: window.ps_checkoutPayLaterProductPageButtonEnabled

@@ -19,7 +19,7 @@
 import { BaseComponent } from '../../core/dependency-injection/base.component';
 import { ExpressCheckoutButtonComponent } from '../common/express-checkout-button.component';
 
-export class PayLaterExpressButtonCartComponent extends BaseComponent {
+export class PayLaterButtonCartComponent extends BaseComponent {
   static Inject = {
     querySelectorService: 'QuerySelectorService',
     psCheckoutApi: 'PsCheckoutApi',

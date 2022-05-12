@@ -36,16 +36,16 @@ class FrontControllerValidator
     /**
      * @var PayPalPayLaterConfiguration
      */
-    private $payIn4XConfiguration;
+    private $payLaterConfiguration;
 
     public function __construct(
         MerchantValidator $merchantValidator,
         ExpressCheckoutConfiguration $expressCheckoutConfiguration,
-        PayPalPayLaterConfiguration $payIn4XConfiguration
+        PayPalPayLaterConfiguration $palPayLaterConfiguration
     ) {
         $this->merchantValidator = $merchantValidator;
         $this->expressCheckoutConfiguration = $expressCheckoutConfiguration;
-        $this->payIn4XConfiguration = $payIn4XConfiguration;
+        $this->payLaterConfiguration = $palPayLaterConfiguration;
     }
 
     /**
@@ -60,16 +60,29 @@ class FrontControllerValidator
         }
 
         switch ($controller) {
+            // Homepage
+            case 'index':
+                return $this->payLaterConfiguration->isHomePageBannerActive();
+            // Category
+            case 'category':
+                return $this->payLaterConfiguration->isCategoryPageBannerActive();
             case 'orderopc':
             case 'order':
                 return true;
             case 'product':
-                return $this->expressCheckoutConfiguration->isProductPageEnabled() || $this->payIn4XConfiguration->isProductPageMessageActive();
+                return $this->payLaterConfiguration->isProductPageMessageActive()
+                    || $this->payLaterConfiguration->isProductPageBannerActive()
+                    || $this->payLaterConfiguration->isProductPageButtonActive()
+                    || $this->expressCheckoutConfiguration->isProductPageEnabled();
             case 'cart':
-                return $this->expressCheckoutConfiguration->isOrderPageEnabled() || $this->payIn4XConfiguration->isOrderPageMessageActive();
+                return $this->payLaterConfiguration->isOrderPageMessageActive()
+                    || $this->payLaterConfiguration->isOrderPageBannerActive()
+                    || $this->payLaterConfiguration->isOrderPageButtonActive()
+                    || $this->expressCheckoutConfiguration->isOrderPageEnabled()
+                    || $this->expressCheckoutConfiguration->isCheckoutPageEnabled();
             case 'authentication':
                 return $this->expressCheckoutConfiguration->isCheckoutPageEnabled()
-                    || $this->payIn4XConfiguration->isOrderPageButtonActive();
+                    || $this->payLaterConfiguration->isOrderPageButtonActive();
         }
 
         return false;
@@ -87,6 +100,12 @@ class FrontControllerValidator
         }
 
         switch ($controller) {
+            // Homepage
+            case 'index':
+                return $this->payLaterConfiguration->isHomePageBannerActive();
+            // Category
+            case 'category':
+                return $this->payLaterConfiguration->isCategoryPageBannerActive();
             // Payment step
             case 'orderopc':
             case 'order':
@@ -97,7 +116,7 @@ class FrontControllerValidator
             // ExpressCheckout button
             case 'authentication':
                 return $this->expressCheckoutConfiguration->isCheckoutPageEnabled()
-                    || $this->payIn4XConfiguration->isOrderPageButtonActive();
+                    || $this->payLaterConfiguration->isOrderPageButtonActive();
         }
 
         return false;

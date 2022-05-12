@@ -65,17 +65,18 @@ import { BaseClass } from '../core/dependency-injection/base.class';
 
 export class PayPalService extends BaseClass {
   static Inject = {
-    config: 'PayPalSdkConfig',
+    configPayPal: 'PayPalSdkConfig',
+    configPrestaShop: 'PsCheckoutConfig',
     sdk: 'PayPalSDK',
     $: '$'
   };
 
   getOrderId() {
-    return this.config.orderId;
+    return this.configPayPal.orderId;
   }
 
   getFundingSource() {
-    return this.config.fundingSource;
+    return this.configPayPal.fundingSource;
   }
 
   /**
@@ -109,7 +110,7 @@ export class PayPalService extends BaseClass {
   getButtonCustomizationStyle(fundingSource) {
     const style = {
       ...{ label: 'pay', color: 'gold', shape: 'pill' },
-      ...(this.config.buttonCustomization || {}),
+      ...(this.configPayPal.buttonCustomization || {}),
       ...(window.ps_checkout.PayPalButtonCustomization || {})
     };
 
@@ -142,7 +143,7 @@ export class PayPalService extends BaseClass {
           color: 'black'
         }
       },
-      ...(this.config.hostedFieldsCustomization || {}),
+      ...(this.configPayPal.hostedFieldsCustomization || {}),
       ...(window.ps_checkout.hostedFieldsCustomization || {})
     };
 
@@ -282,36 +283,36 @@ export class PayPalService extends BaseClass {
     if (!this.eligibleFundingSources || cache) {
       const paypalFundingSources = this.sdk.getFundingSources();
       this.eligibleFundingSources = (
-        this.config.fundingSourcesSorted || paypalFundingSources
+        this.configPrestaShop.fundingSourcesSorted || paypalFundingSources
       )
         .filter(
           fundingSource => paypalFundingSources.indexOf(fundingSource) >= 0
         )
-        .map(fundingSource => ({
-          name: fundingSource,
-          mark: this.sdk.Marks({ fundingSource })
-        }))
-        .filter(({ name, mark }) => {
-          if (name === 'card') {
-            if (this.config.hostedFieldsEnabled) {
+        .filter(fundingSource => {
+          if (fundingSource === 'card') {
+            if (this.configPrestaShop.hostedFieldsEnabled) {
               return this.isHostedFieldsEligible()
                 ? true
                 : (console.error('Hosted Fields eligibility is declined'),
                   false);
             }
           }
-          //TODO: REMOVE AFTER TESTING
-          console.log(name, mark.isEligible());
 
-          return mark.isEligible();
+          //TODO: REMOVE AFTER TESTING
+          console.log(fundingSource, this.sdk.isFundingEligible(fundingSource));
+
+          return this.sdk.isFundingEligible(fundingSource);
         });
     }
 
     return this.eligibleFundingSources;
   }
 
+  isFundingEligible(fundingSource) {
+    return this.getEligibleFundingSources(true).contains(fundingSource);
+  }
+
   isHostedFieldsEligible() {
-    console.log(this.sdk.HostedFields && this.sdk.HostedFields.isEligible());
     return this.sdk.HostedFields && this.sdk.HostedFields.isEligible();
   }
 
@@ -328,7 +329,7 @@ export class PayPalService extends BaseClass {
           type: 'inline'
         }
       },
-      ...(this.config.payLaterOfferMessageCustomization || {}),
+      ...(this.configPayPal.payLaterOfferMessageCustomization || {}),
       ...(window.ps_checkout.payLaterOfferMessageCustomization || {})
     };
     return (
@@ -353,7 +354,7 @@ export class PayPalService extends BaseClass {
         layout: 'flex',
         ratio: '20x1'
       },
-      ...(this.config.payLaterOfferBannerCustomization || {}),
+      ...(this.configPayPal.payLaterOfferBannerCustomization || {}),
       ...(window.ps_checkout.payLaterOfferBannerCustomization || {})
     };
     return (
