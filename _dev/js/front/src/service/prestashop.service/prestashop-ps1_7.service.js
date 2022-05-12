@@ -23,6 +23,14 @@ export class PrestashopPs1_7Service {
     );
   }
 
+  static isHomePage() {
+    return document.body.id === 'index';
+  }
+
+  static isCategoryPage() {
+    return document.body.id === 'category';
+  }
+
   static isCartPage() {
     return document.body.id === 'cart';
   }
@@ -65,6 +73,14 @@ export class PrestashopPs1_7Service {
 
   static hasProductInCart() {
     return !!window.ps_checkoutCartProductCount;
+  }
+
+  static getCartAmount() {
+    return window.prestashop.cart.totals.total.amount || '';
+  }
+
+  static getProductPrice() {
+    return document.querySelector('.current-price .current-price-value').getAttribute('content') || '';
   }
 
   static onUpdatedCart(listener) {

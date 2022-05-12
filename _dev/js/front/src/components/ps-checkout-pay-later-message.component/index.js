@@ -28,6 +28,7 @@ import { PayLaterMessagePs1_7Component } from './pay-later-message-ps1_7.compone
 export class PayLaterMessageComponent extends BaseComponent {
   static Inject = {
     prestashopService: 'PrestashopService',
+    querySelectorService: 'QuerySelectorService',
     config: 'PsCheckoutConfig',
     payPalService: 'PayPalService',
     psCheckoutApi: 'PsCheckoutApi',
@@ -67,11 +68,17 @@ export class PayLaterMessageComponent extends BaseComponent {
 
   renderPayLaterOfferMessage() {
     let containerIdentifier = this.getContainerIdentifier(this.props.placement);
+    let amount = 'product' === this.props.placement ? this.prestashopService.getProductPrice() : this.prestashopService.getCartAmount();
+    let containerQuerySelector = this.querySelectorService.getPayLaterOfferMessageContainerSelector(this.props.placement);
 
-    this.instance.createContainer(containerIdentifier, this.props.querySelector);
+    if (null === document.querySelector(containerQuerySelector)) {
+      return;
+    }
+
+    this.instance.createContainer(containerIdentifier, containerQuerySelector);
 
     return this.payPalService
-      .getPayLaterOfferMessage(this.props.placement, this.props.amount, {
+      .getPayLaterOfferMessage(this.props.placement, amount, {
         onRender: (...args) => this.onRender(...args),
         onClick: (...args) => this.onClick(...args),
         onApply: (...args) => this.onApply(...args)

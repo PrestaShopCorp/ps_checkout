@@ -127,59 +127,45 @@ export class App {
     this.exposeAPI();
 
     if (!this.psCheckoutConfig.autoRenderDisabled) {
-
-      if (document.body.id === 'product') {
+      // Pay Later Message on Product Page
+      if (this.psCheckoutConfig.payLater.message.product && this.prestashopService.isProductPage()) {
         await this.renderPayLaterOfferMessage({
-          amount: window.prestashop.cart.totals.total.amount,
-          placement: 'product',
-          querySelector: '.product-prices'
-        });
-        await this.renderPayLaterOfferBanner({
-          amount: window.prestashop.cart.totals.total.amount,
-          placement: 'product',
-          querySelector: '#notifications .container'
+          placement: 'product'
         });
       }
 
-      if (document.body.id === 'index') {
-        await this.renderPayLaterOfferBanner({
-          amount: window.prestashop.cart.totals.total.amount,
-          placement: 'home',
-          querySelector: '#notifications .container'
-        });
-      }
-
-      if (document.body.id === 'category') {
-        await this.renderPayLaterOfferBanner({
-          amount: window.prestashop.cart.totals.total.amount,
-          placement: 'category',
-          querySelector: '#notifications .container'
-        });
-      }
-
-      if (document.body.id === 'cart') {
+      // Pay Later Message on Cart & Order Page
+      if (this.psCheckoutConfig.payLater.message.order && (this.prestashopService.isOrderPage() || this.prestashopService.isCartPage())) {
         await this.renderPayLaterOfferMessage({
-          amount: window.prestashop.cart.totals.total.amount,
-          placement: 'cart',
-          querySelector: '.cart-summary-totals'
-        });
-        await this.renderPayLaterOfferBanner({
-          amount: window.prestashop.cart.totals.total.amount,
-          placement: 'cart',
-          querySelector: '#notifications .container'
+          placement: 'cart'
         });
       }
 
-      if (document.body.id === 'checkout') {
-        await this.renderPayLaterOfferMessage({
-          amount: window.prestashop.cart.totals.total.amount,
-          placement: 'payment',
-          querySelector: '.cart-summary-totals'
-        });
+      // Pay Later Banner on Homepage
+      if (this.psCheckoutConfig.payLater.banner.home && this.prestashopService.isHomePage()) {
         await this.renderPayLaterOfferBanner({
-          amount: window.prestashop.cart.totals.total.amount,
-          placement: 'cart',
-          querySelector: '#notifications .container'
+          placement: 'home'
+        });
+      }
+
+      // Pay Later Banner on Category Page
+      if (this.psCheckoutConfig.payLater.banner.category && this.prestashopService.isCategoryPage()) {
+        await this.renderPayLaterOfferBanner({
+          placement: 'category'
+        });
+      }
+
+      // Pay Later Message on Cart & Order Page
+      if (this.psCheckoutConfig.payLater.banner.order && (this.prestashopService.isOrderPage() || this.prestashopService.isCartPage())) {
+        await this.renderPayLaterOfferBanner({
+          placement: 'cart'
+        });
+      }
+
+      // Pay Later Message on Product Page
+      if (this.psCheckoutConfig.payLater.banner.product && this.prestashopService.isProductPage()) {
+        await this.renderPayLaterOfferBanner({
+          placement: 'product'
         });
       }
 

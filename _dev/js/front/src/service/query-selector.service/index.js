@@ -90,4 +90,12 @@ export class QuerySelectorService extends BaseClass {
   getCheckoutExpressCheckoutButtonContainerProduct() {
     return this.instance.getCheckoutExpressCheckoutButtonContainerProduct();
   }
+
+  getPayLaterOfferMessageContainerSelector(placement) {
+    return this.instance.getPayLaterOfferMessageContainerSelector(placement);
+  }
+
+  getPayLaterOfferBannerContainerSelector(placement) {
+    return this.instance.getPayLaterOfferBannerContainerSelector(placement);
+  }
 }

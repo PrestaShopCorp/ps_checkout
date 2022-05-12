@@ -31,6 +31,14 @@ export class PrestashopPs1_6Service {
     };
   }
 
+  static isHomePage() {
+    return document.body.id === 'index';
+  }
+
+  static isCategoryPage() {
+    return document.body.id === 'category';
+  }
+
   static isCartPage() {
     if (document.body.id === 'order') {
       return document.querySelector('.step_current.first');
@@ -80,6 +88,15 @@ export class PrestashopPs1_6Service {
 
   static hasProductInCart() {
     return !!window.ps_checkoutCartProductCount;
+  }
+
+  static getCartAmount() {
+    let totalPrice = document.querySelector('.cart_block_total').textContent || '';
+    return totalPrice.replace(',', '.').replace(/[^.\d]/g, '');
+  }
+
+  static getProductPrice() {
+    return Number.parseFloat(window.productPrice).toFixed(2) || '';
   }
 
   static onUpdatedCart() {}

@@ -36,6 +36,14 @@ export class PrestashopService {
     return this.instance.getProductDetails();
   }
 
+  isHomePage() {
+    return !!this.instance.isHomePage();
+  }
+
+  isCategoryPage() {
+    return !!this.instance.isCategoryPage();
+  }
+
   isCartPage() {
     return !!this.instance.isCartPage();
   }
@@ -74,6 +82,14 @@ export class PrestashopService {
 
   hasProductInCart() {
     return this.instance.hasProductInCart();
+  }
+
+  getCartAmount() {
+    return this.instance.getCartAmount();
+  }
+
+  getProductPrice() {
+    return this.instance.getProductPrice();
   }
 
   getVersion() {

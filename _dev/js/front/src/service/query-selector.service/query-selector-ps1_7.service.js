@@ -85,4 +85,29 @@ export class QuerySelectorPs1_7Service {
       SELECTORS.EXPRESS_CHECKOUT_CONTAINER_PRODUCT_PAGE
     );
   }
+
+  static getPayLaterOfferMessageContainerSelector(placement) {
+    switch (placement) {
+      case 'product':
+        return '.product-prices';
+      case 'cart':
+      case 'order':
+        return '.cart-summary-totals';
+      default:
+        return;
+    }
+  }
+
+  static getPayLaterOfferBannerContainerSelector(placement) {
+    switch (placement) {
+      case 'product':
+      case 'cart':
+      case 'home':
+      case 'order':
+      case 'category':
+        return '#notifications .container';
+      default:
+        return;
+    }
+  }
 }

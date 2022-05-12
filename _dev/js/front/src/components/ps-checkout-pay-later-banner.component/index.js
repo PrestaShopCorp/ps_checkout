@@ -29,6 +29,7 @@ export class PayLaterBannerComponent extends BaseComponent {
 
   static Inject = {
     prestashopService: 'PrestashopService',
+    querySelectorService: 'QuerySelectorService',
     config: 'PsCheckoutConfig',
     payPalService: 'PayPalService',
     psCheckoutApi: 'PsCheckoutApi',
@@ -68,11 +69,17 @@ export class PayLaterBannerComponent extends BaseComponent {
 
   renderPayLaterOfferBanner() {
     let containerIdentifier = this.getContainerIdentifier(this.props.placement);
+    let amount = 'product' === this.props.placement ? this.prestashopService.getProductPrice() : this.prestashopService.getCartAmount();
+    let containerQuerySelector = this.querySelectorService.getPayLaterOfferBannerContainerSelector(this.props.placement);
 
-    this.instance.createContainer(containerIdentifier, this.props.querySelector);
+    if (null === document.querySelector(containerQuerySelector)) {
+      return;
+    }
+
+    this.instance.createContainer(containerIdentifier, containerQuerySelector);
 
     return this.payPalService
-      .getPayLaterOfferBanner(this.props.placement, this.props.amount, {
+      .getPayLaterOfferBanner(this.props.placement, amount, {
         onRender: (...args) => this.onRender(...args),
         onClick: (...args) => this.onClick(...args),
         onApply: (...args) => this.onApply(...args)
