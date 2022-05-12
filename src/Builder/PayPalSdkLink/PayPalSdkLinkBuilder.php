@@ -106,7 +106,10 @@ class PayPalSdkLinkBuilder
      */
     public function buildLink()
     {
-        $components = [];
+        $components = [
+            'marks',
+            'funding-eligibility',
+        ];
 
         if ($this->shouldIncludeButtonsComponent()) {
             $components[] = 'buttons';
@@ -118,11 +121,6 @@ class PayPalSdkLinkBuilder
 
         if ($this->shouldIncludeMessagesComponent()) {
             $components[] = 'messages';
-        }
-
-        if (!empty($components)) {
-            $components[] = 'marks';
-            $components[] = 'funding-eligibility';
         }
 
         $params = [
