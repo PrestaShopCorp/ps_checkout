@@ -220,7 +220,7 @@ class PayPalSdkLinkBuilder
     {
         $payLaterConfig = $this->fundingSourceConfigurationRepository->get('paylater');
 
-        return !empty($payLaterConfig) && (int) $payLaterConfig['active'] === 1;
+        return $payLaterConfig === null || !empty($payLaterConfig) && (int) $payLaterConfig['active'] === 1;
     }
 
     /**

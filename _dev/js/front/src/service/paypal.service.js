@@ -288,8 +288,12 @@ export class PayPalService extends BaseClass {
         .filter(
           fundingSource => paypalFundingSources.indexOf(fundingSource) >= 0
         )
-        .filter(fundingSource => {
-          if (fundingSource === 'card') {
+        .map(fundingSource => ({
+          name: fundingSource,
+          mark: this.sdk.Marks({ fundingSource })
+        }))
+        .filter(({ name, mark }) => {
+          if (name === 'card') {
             if (this.configPrestaShop.hostedFieldsEnabled) {
               return this.isHostedFieldsEligible()
                 ? true
@@ -297,11 +301,10 @@ export class PayPalService extends BaseClass {
                   false);
             }
           }
-
           //TODO: REMOVE AFTER TESTING
-          console.log(fundingSource, this.sdk.isFundingEligible(fundingSource));
+          console.log(name, mark.isEligible());
 
-          return this.sdk.isFundingEligible(fundingSource);
+          return mark.isEligible();
         });
     }
 
