@@ -889,6 +889,13 @@ class Ps_checkout extends PaymentModule
         $isFullyOnboarded = $psAccount->onBoardingIsCompleted() && $paypalAccount->onBoardingIsCompleted();
 
         if ('AdminPayment' === Tools::getValue('controller') && $isShop17) { // Display on PrestaShop 1.7.x.x only
+            if (in_array($this->getShopDefaultCountryCode(), ['FR', 'IT'])
+                && Module::isEnabled('ps_checkout')
+                && Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT')
+            ) {
+                return false;
+            }
+
             $params = [
                 'imgPath' => $this->_path . 'views/img/',
                 'configureLink' => (new PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter($this->context->link))->getAdminLink(
@@ -1771,5 +1778,19 @@ class Ps_checkout extends PaymentModule
             ],
             'id_order_payment = ' . (int) $orderPayment->id
         );
+    }
+
+    /**
+     * @return string
+     */
+    private function getShopDefaultCountryCode()
+    {
+        $defaultCountry = '';
+
+        if (empty($defaultCountry) && Configuration::hasKey('PS_COUNTRY_DEFAULT')) {
+            $defaultCountry = (new Country((int) Configuration::get('PS_COUNTRY_DEFAULT')))->iso_code;
+        }
+
+        return $defaultCountry ? strtoupper($defaultCountry) : '';
     }
 }
