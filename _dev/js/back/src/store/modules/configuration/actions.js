@@ -18,6 +18,7 @@
  */
 import * as types from './mutation-types';
 import ajax from '@/requests/ajax.js';
+import { toggleConfiguration } from '@/requests/toggle-configuration';
 
 export default {
   updatePaymentMethods({ commit, getters }, payload) {
@@ -90,160 +91,112 @@ export default {
     });
   },
 
-  togglePayLaterOrderPageMessage({ commit, getters }, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'TogglePayLaterOrderPageMessage',
-      data: {
-        status: payload ? 1 : 0
-      }
-    }).then(() => {
-      commit(types.UPDATE_PAY_LATER_ORDER_PAGE_MESSAGE, payload);
-      return Promise.resolve(payload);
-    });
+  togglePayLaterOrderPageMessage(store, payload) {
+    return toggleConfiguration(
+      store,
+      payload,
+      'TogglePayLaterOrderPageMessage',
+      types.UPDATE_PAY_LATER_ORDER_PAGE_MESSAGE
+    );
   },
 
-  togglePayLaterProductPageMessage({ commit, getters }, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'TogglePayLaterProductPageMessage',
-      data: {
-        status: payload ? 1 : 0
-      }
-    }).then(() => {
-      commit(types.UPDATE_PAY_LATER_PRODUCT_PAGE_MESSAGE, payload);
-      return Promise.resolve(payload);
-    });
+  togglePayLaterProductPageMessage(store, payload) {
+    return toggleConfiguration(
+      store,
+      payload,
+      'TogglePayLaterProductPageMessage',
+      types.UPDATE_PAY_LATER_PRODUCT_PAGE_MESSAGE
+    );
   },
 
-  togglePayLaterOrderPageBanner({ commit, getters }, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'TogglePayLaterOrderPageBanner',
-      data: {
-        status: payload ? 1 : 0
-      }
-    }).then(() => {
-      commit(types.UPDATE_PAY_LATER_ORDER_PAGE_BANNER, payload);
-      return Promise.resolve(payload);
-    });
+  togglePayLaterOrderPageBanner(store, payload) {
+    return toggleConfiguration(
+      store,
+      payload,
+      'TogglePayLaterOrderPageBanner',
+      types.UPDATE_PAY_LATER_ORDER_PAGE_BANNER
+    );
   },
 
-  togglePayLaterProductPageBanner({ commit, getters }, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'TogglePayLaterProductPageBanner',
-      data: {
-        status: payload ? 1 : 0
-      }
-    }).then(() => {
-      commit(types.UPDATE_PAY_LATER_PRODUCT_PAGE_BANNER, payload);
-      return Promise.resolve(payload);
-    });
+  togglePayLaterProductPageBanner(store, payload) {
+    return toggleConfiguration(
+      store,
+      payload,
+      'TogglePayLaterProductPageBanner',
+      types.UPDATE_PAY_LATER_PRODUCT_PAGE_BANNER
+    );
   },
 
-  togglePayLaterHomePageBanner({ commit, getters }, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'TogglePayLaterHomePageBanner',
-      data: {
-        status: payload ? 1 : 0
-      }
-    }).then(() => {
-      commit(types.UPDATE_PAY_LATER_HOME_PAGE_BANNER, payload);
-      return Promise.resolve(payload);
-    });
+  togglePayLaterHomePageBanner(store, payload) {
+    return toggleConfiguration(
+      store,
+      payload,
+      'TogglePayLaterHomePageBanner',
+      types.UPDATE_PAY_LATER_HOME_PAGE_BANNER
+    );
   },
 
-  togglePayLaterCategoryPageBanner({ commit, getters }, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'TogglePayLaterCategoryPageBanner',
-      data: {
-        status: payload ? 1 : 0
-      }
-    }).then(() => {
-      commit(types.UPDATE_PAY_LATER_CATEGORY_PAGE_BANNER, payload);
-      return Promise.resolve(payload);
-    });
+  togglePayLaterCategoryPageBanner(store, payload) {
+    return toggleConfiguration(
+      store,
+      payload,
+      'TogglePayLaterCategoryPageBanner',
+      types.UPDATE_PAY_LATER_CATEGORY_PAGE_BANNER
+    );
   },
 
-  togglePayLaterCartPageButton({ commit, getters }, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'TogglePayLaterCartPageButton',
-      data: {
-        status: payload ? 1 : 0
-      }
-    }).then(() => {
-      commit(types.UPDATE_PAY_LATER_CART_PAGE_BUTTON, payload);
-      return Promise.resolve(payload);
-    });
+  togglePayLaterCartPageButton(store, payload) {
+    return toggleConfiguration(
+      store,
+      payload,
+      'TogglePayLaterCartPageButton',
+      types.UPDATE_PAY_LATER_CART_PAGE_BUTTON
+    );
   },
 
-  togglePayLaterOrderPageButton({ commit, getters }, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'TogglePayLaterOrderPageButton',
-      data: {
-        status: payload ? 1 : 0
-      }
-    }).then(() => {
-      commit(types.UPDATE_PAY_LATER_ORDER_PAGE_BUTTON, payload);
-      return Promise.resolve(payload);
-    });
+  togglePayLaterOrderPageButton(store, payload) {
+    return toggleConfiguration(
+      store,
+      payload,
+      'TogglePayLaterOrderPageButton',
+      types.UPDATE_PAY_LATER_ORDER_PAGE_BUTTON
+    );
   },
 
-  togglePayLaterProductPageButton({ commit, getters }, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'TogglePayLaterProductPageButton',
-      data: {
-        status: payload ? 1 : 0
-      }
-    }).then(() => {
-      commit(types.UPDATE_PAY_LATER_PRODUCT_PAGE_BUTTON, payload);
-      return Promise.resolve(payload);
-    });
+  togglePayLaterProductPageButton(store, payload) {
+    return toggleConfiguration(
+      store,
+      payload,
+      'TogglePayLaterProductPageButton',
+      types.UPDATE_PAY_LATER_PRODUCT_PAGE_BUTTON
+    );
   },
 
-  toggleECOrderPage({ commit, getters }, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'ToggleECOrderPage',
-      data: {
-        status: payload ? 1 : 0
-      }
-    }).then(() => {
-      commit(types.UPDATE_EC_ORDER_PAGE, payload);
-      return Promise.resolve(payload);
-    });
+  toggleECOrderPage(store, payload) {
+    return toggleConfiguration(
+      store,
+      payload,
+      'ToggleECOrderPage',
+      types.UPDATE_EC_ORDER_PAGE
+    );
   },
 
-  toggleECCheckoutPage({ commit, getters }, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'ToggleECCheckoutPage',
-      data: {
-        status: payload ? 1 : 0
-      }
-    }).then(() => {
-      commit(types.UPDATE_EC_CHECKOUT_PAGE, payload);
-      return Promise.resolve(payload);
-    });
+  toggleECCheckoutPage(store, payload) {
+    return toggleConfiguration(
+      store,
+      payload,
+      'ToggleECCheckoutPage',
+      types.UPDATE_EC_CHECKOUT_PAGE
+    );
   },
 
-  toggleECProductPage({ commit, getters }, payload) {
-    return ajax({
-      url: getters.adminController,
-      action: 'ToggleECProductPage',
-      data: {
-        status: payload ? 1 : 0
-      }
-    }).then(() => {
-      commit(types.UPDATE_EC_PRODUCT_PAGE, payload);
-      return Promise.resolve(payload);
-    });
+  toggleECProductPage(store, payload) {
+    return toggleConfiguration(
+      store,
+      payload,
+      'ToggleECProductPage',
+      types.UPDATE_EC_CHECKOUT_PAGE
+    );
   },
 
   changeLoggerLevel({ commit, getters }, value) {
