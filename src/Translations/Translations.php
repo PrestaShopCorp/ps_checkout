@@ -144,13 +144,13 @@ class Translations
                         'homePage' => $this->module->l('Homepage', 'translations'),
                         'categoryPage' => $this->module->l('Category page', 'translations'),
                         'message' => [
-                            'title' => $this->module->l('Choose where to display messages', 'translations'),
+                            'title' => $this->module->l('Choose page location for messages', 'translations'),
                         ],
                         'banner' => [
-                            'title' => $this->module->l('Choose where to display the banner', 'translations'),
+                            'title' => $this->module->l('Choose page location for banners', 'translations'),
                         ],
                         'button' => [
-                            'title' => $this->module->l('Choose where to display buttons', 'translations'),
+                            'title' => $this->module->l('Choose page location for buttons', 'translations'),
                         ],
                     ],
                 ],
