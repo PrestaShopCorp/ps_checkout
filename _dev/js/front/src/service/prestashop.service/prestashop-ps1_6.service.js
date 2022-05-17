@@ -99,6 +99,18 @@ export class PrestashopPs1_6Service {
     return Number.parseFloat(window.productPrice).toFixed(2) || '';
   }
 
+  static isAddToCartButtonDisabled() {
+    let productIsAvailableForOrder = window.productAvailableForOrder || false;
+    let productAllowBuyWhenOutOfStock = window.allowBuyWhenOutOfStock || false;
+    let productQuantityAvailable = window.quantityAvailable || 0;
+    let productMinimalQuantity = window.minimalQuantity || 0;
+    let productQuantityWanted = parseInt(document.querySelector('#quantity_wanted').value) || 0;
+
+    return !productIsAvailableForOrder
+      || (!productAllowBuyWhenOutOfStock && (productQuantityAvailable <= 0 || productQuantityWanted > productQuantityAvailable))
+      || productQuantityWanted < productMinimalQuantity;
+  }
+
   static onUpdatedCart() {}
 
   static onUpdatedProduct() {}

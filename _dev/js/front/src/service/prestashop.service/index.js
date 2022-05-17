@@ -92,6 +92,10 @@ export class PrestashopService {
     return this.instance.getProductPrice();
   }
 
+  isAddToCartButtonDisabled() {
+    return this.instance.isAddToCartButtonDisabled();
+  }
+
   getVersion() {
     if (!window.prestashop) {
       return PS_VERSION_1_6;
