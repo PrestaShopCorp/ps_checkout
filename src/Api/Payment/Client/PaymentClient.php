@@ -74,6 +74,8 @@ class PaymentClient extends GenericClient
      * @param array $options
      *
      * @return array
+     *
+     * @throws HttpTimeoutException
      */
     protected function post(array $options = [])
     {
@@ -90,6 +92,8 @@ class PaymentClient extends GenericClient
      * @param int $retries
      *
      * @return array
+     *
+     * @throws HttpTimeoutException
      */
     private function postWithRetry(array $options, $delay = 2, $retries = 2)
     {
