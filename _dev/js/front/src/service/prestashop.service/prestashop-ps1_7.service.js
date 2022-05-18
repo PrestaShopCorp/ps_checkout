@@ -80,7 +80,13 @@ export class PrestashopPs1_7Service {
   }
 
   static getProductPrice() {
-    return document.querySelector('.current-price .current-price-value').getAttribute('content') || '';
+    let productPrice = document.querySelector('.current-price .current-price-value');
+
+    if (!productPrice) {
+      productPrice = document.querySelector('.current-price [itemprop="price"]');
+    }
+
+    return productPrice.getAttribute('content') || '';
   }
 
   static isAddToCartButtonDisabled() {

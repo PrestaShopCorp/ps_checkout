@@ -32,6 +32,9 @@
   display: flex;
   flex-flow: row wrap;
 }
+.product-add-to-cart #ps-checkout-express-button.disabled{
+  display: none!important;
+}
 @media screen and (min-width: 768px) {
   #checkout-personal-information-step #ps-checkout-express-button div.paypal-buttons-context-iframe {
     float: left;
