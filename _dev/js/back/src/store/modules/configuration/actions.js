@@ -195,7 +195,7 @@ export default {
       store,
       payload,
       'ToggleECProductPage',
-      types.UPDATE_EC_CHECKOUT_PAGE
+      types.UPDATE_EC_PRODUCT_PAGE
     );
   },
 

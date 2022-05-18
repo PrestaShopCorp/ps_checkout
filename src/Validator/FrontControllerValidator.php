@@ -77,7 +77,7 @@ class FrontControllerValidator
             case 'cart':
                 return $this->payLaterConfiguration->isOrderPageMessageActive()
                     || $this->payLaterConfiguration->isOrderPageBannerActive()
-                    || $this->payLaterConfiguration->isOrderPageButtonActive()
+                    || $this->payLaterConfiguration->isCartPageButtonActive()
                     || $this->expressCheckoutConfiguration->isOrderPageEnabled()
                     || $this->expressCheckoutConfiguration->isCheckoutPageEnabled();
             case 'authentication':
