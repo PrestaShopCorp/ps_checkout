@@ -45,7 +45,7 @@ class FundingSourceTranslationProvider
             'venmo' => 'Venmo',
             'itau' => 'Itau',
             'credit' => 'PayPal Credit',
-            'paylater' => 'Pay Later',
+            'paylater' => 'PayPal Pay Later',
             'ideal' => 'iDEAL',
             'bancontact' => 'Bancontact',
             'giropay' => 'Giropay',
