@@ -45,7 +45,7 @@ class FundingSourceTranslationProvider
             'venmo' => 'Venmo',
             'itau' => 'Itau',
             'credit' => 'PayPal Credit',
-            'paylater' => 'PayLater',
+            'paylater' => 'Pay Later',
             'ideal' => 'iDEAL',
             'bancontact' => 'Bancontact',
             'giropay' => 'Giropay',
@@ -69,14 +69,18 @@ class FundingSourceTranslationProvider
         $payByTranslation = $module->l('Pay by %s', 'fundingsourcetranslationprovider');
 
         foreach ($this->fundingSourceNames as $fundingSource => $name) {
-            if ('paypal' === $fundingSource) {
-                // Specific translation
-                $this->paymentOptionNames[$fundingSource] = $module->l('Pay with a PayPal account', 'fundingsourcetranslationprovider');
-            } elseif ('card' === $fundingSource) {
-                // Specific translation
-                $this->paymentOptionNames[$fundingSource] = $module->l('Pay by Card - 100% secure payments', 'fundingsourcetranslationprovider');
-            } else {
-                $this->paymentOptionNames[$fundingSource] = sprintf($payByTranslation, $name);
+            switch ($fundingSource) {
+                case 'paypal':
+                    $this->paymentOptionNames[$fundingSource] = $module->l('Pay with a PayPal account', 'fundingsourcetranslationprovider');
+                    break;
+                case 'card':
+                    $this->paymentOptionNames[$fundingSource] = $module->l('Pay by Card - 100% secure payments', 'fundingsourcetranslationprovider');
+                    break;
+                case 'paylater':
+                    $this->paymentOptionNames[$fundingSource] = $module->l('Pay in installments with PayPal Pay Later', 'fundingsourcetranslationprovider');
+                    break;
+                default:
+                    $this->paymentOptionNames[$fundingSource] = sprintf($payByTranslation, $name);
             }
         }
 
