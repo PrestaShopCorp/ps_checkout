@@ -41,6 +41,12 @@ export class ExpressButtonProductComponent extends BaseComponent {
       productQuantityHTMLElement
     );
 
+    this.updateButtonContainerVisibility();
+
+    this.prestashopService.onUpdatedProduct(() => {
+      this.updateButtonContainerVisibility();
+    });
+
     this.children.expressCheckoutButton = new ExpressCheckoutButtonComponent(
       this.app,
       {
@@ -68,5 +74,14 @@ export class ExpressButtonProductComponent extends BaseComponent {
     ).render();
 
     return this;
+  }
+
+  updateButtonContainerVisibility()
+  {
+    if (this.prestashopService.isAddToCartButtonDisabled()) {
+      document.getElementById('ps-checkout-express-button').classList.add('disabled');
+    } else {
+      document.getElementById('ps-checkout-express-button').classList.remove('disabled');
+    }
   }
 }
