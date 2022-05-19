@@ -77,7 +77,7 @@ class FundingSourceTranslationProvider
                     $this->paymentOptionNames[$fundingSource] = $module->l('Pay by Card - 100% secure payments', 'fundingsourcetranslationprovider');
                     break;
                 case 'paylater':
-                    $this->paymentOptionNames[$fundingSource] = $module->l('Pay in installments with PayPal Pay Later', 'translations');
+                    $this->paymentOptionNames[$fundingSource] = $module->l('Pay in installments with PayPal Pay Later', 'fundingsourcetranslationprovider');
                     break;
                 default:
                     $this->paymentOptionNames[$fundingSource] = sprintf($payByTranslation, $name);
