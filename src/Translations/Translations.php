@@ -137,8 +137,8 @@ class Translations
                     'customThemeWarningMessage1' => $this->module->l('All custom themes might not be fully compatible. To avoid potential integration issues on payment page,', 'translations'),
                     'customThemeWarningMessage2' => $this->module->l('please check our list of customizable settings', 'translations'),
                     'payLater' => [
-                        'title' => $this->module->l('PayPal Pay Later', 'translations'),
-                        'eligibilityWarning' => $this->module->l('This feature availability is based on a eligibility criteria.', 'translations'),
+                        'title' => $this->module->l('Pay in installments with PayPal Pay Later', 'translations'),
+                        'eligibilityWarning' => $this->module->l('This feature availability is based on eligibility criteria.', 'translations'),
                         'eligibilityLink' => $this->module->l('Read more', 'translations'),
                         'adviceContent' => $this->module->l('Displaying this message has shown a better conversion rate and a raise of Average Order Value.', 'translations'),
                         'homePage' => $this->module->l('Homepage', 'translations'),
