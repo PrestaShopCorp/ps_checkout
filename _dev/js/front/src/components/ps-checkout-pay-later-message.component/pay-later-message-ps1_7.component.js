@@ -23,7 +23,7 @@ export class PayLaterMessagePs1_7Component extends BaseComponent {
     if (null === document.querySelector(containerIdentifier)) {
       let containerElement = document.createElement('div');
       containerElement.id = containerIdentifier.slice(1);
-      document.querySelector(querySelector).append(containerElement);
+      querySelector.append(containerElement);
     }
   }
 }

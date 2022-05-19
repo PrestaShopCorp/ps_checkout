@@ -68,19 +68,19 @@ export class QuerySelectorPs1_7Service {
     );
   }
 
-  static getCheckoutExpressCheckoutButtonContainerCart() {
+  static getExpressCheckoutButtonContainerCart() {
     return document.querySelector(
       SELECTORS.EXPRESS_CHECKOUT_CONTAINER_CART_PAGE
     );
   }
 
-  static getCheckoutExpressCheckoutButtonContainerCheckout() {
+  static getExpressCheckoutButtonContainerCheckout() {
     return document.querySelector(
       SELECTORS.EXPRESS_CHECKOUT_CONTAINER_CHECKOUT_PAGE
     );
   }
 
-  static getCheckoutExpressCheckoutButtonContainerProduct() {
+  static getExpressCheckoutButtonContainerProduct() {
     return document.querySelector(
       SELECTORS.EXPRESS_CHECKOUT_CONTAINER_PRODUCT_PAGE
     );
@@ -89,10 +89,10 @@ export class QuerySelectorPs1_7Service {
   static getPayLaterOfferMessageContainerSelector(placement) {
     switch (placement) {
       case 'product':
-        return '.product-prices';
+        return document.querySelector(SELECTORS.PAY_LATER_OFFER_MESSAGE_CONTAINER_PRODUCT);
       case 'cart':
       case 'order':
-        return '.cart-summary-totals';
+        return document.querySelector(SELECTORS.PAY_LATER_OFFER_MESSAGE_CONTAINER_CART_SUMMARY);
       default:
         return;
     }
@@ -105,7 +105,7 @@ export class QuerySelectorPs1_7Service {
       case 'home':
       case 'order':
       case 'category':
-        return '#notifications .container';
+        return document.querySelector(SELECTORS.PAY_LATER_BANNER_CONTAINER);
       default:
         return;
     }

@@ -72,7 +72,7 @@ export class PayLaterBannerComponent extends BaseComponent {
     let amount = 'product' === this.props.placement ? this.prestashopService.getProductPrice() : this.prestashopService.getCartAmount();
     let containerQuerySelector = this.querySelectorService.getPayLaterOfferBannerContainerSelector(this.props.placement);
 
-    if (null === document.querySelector(containerQuerySelector)) {
+    if (null === containerQuerySelector) {
       return;
     }
 

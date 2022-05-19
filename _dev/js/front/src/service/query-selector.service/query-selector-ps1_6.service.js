@@ -68,19 +68,19 @@ export class QuerySelectorPs1_6Service {
     );
   }
 
-  static getCheckoutExpressCheckoutButtonContainerCart() {
+  static getExpressCheckoutButtonContainerCart() {
     return document.querySelector(
       SELECTORS.EXPRESS_CHECKOUT_CONTAINER_CART_PAGE
     );
   }
 
-  static getCheckoutExpressCheckoutButtonContainerCheckout() {
+  static getExpressCheckoutButtonContainerCheckout() {
     return document.querySelector(
       SELECTORS.EXPRESS_CHECKOUT_CONTAINER_CHECKOUT_PAGE
     );
   }
 
-  static getCheckoutExpressCheckoutButtonContainerProduct() {
+  static getExpressCheckoutButtonContainerProduct() {
     return document.querySelector(
       SELECTORS.EXPRESS_CHECKOUT_CONTAINER_PRODUCT_PAGE
     );
@@ -89,10 +89,10 @@ export class QuerySelectorPs1_6Service {
   static getPayLaterOfferMessageContainerSelector(placement) {
     switch (placement) {
       case 'product':
-        return '.content_prices';
+        return document.querySelector(SELECTORS.PAY_LATER_OFFER_MESSAGE_CONTAINER_PRODUCT);
       case 'cart':
-      case 'payment':
-        return '#total_price_container';
+      case 'order':
+        return document.querySelector(SELECTORS.PAY_LATER_OFFER_MESSAGE_CONTAINER_CART_SUMMARY);
       default:
         return;
     }
@@ -100,12 +100,12 @@ export class QuerySelectorPs1_6Service {
 
   static getPayLaterOfferBannerContainerSelector(placement) {
     switch (placement) {
-      case 'home':
-      case 'category':
       case 'product':
       case 'cart':
-      case 'payment':
-        return '.header-container';
+      case 'home':
+      case 'order':
+      case 'category':
+        return document.querySelector(SELECTORS.PAY_LATER_BANNER_CONTAINER);
       default:
         return;
     }
