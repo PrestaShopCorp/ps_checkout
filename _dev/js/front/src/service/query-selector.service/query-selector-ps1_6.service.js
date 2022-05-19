@@ -91,7 +91,7 @@ export class QuerySelectorPs1_6Service {
       case 'product':
         return document.querySelector(SELECTORS.PAY_LATER_OFFER_MESSAGE_CONTAINER_PRODUCT);
       case 'cart':
-      case 'order':
+      case 'payment':
         return document.querySelector(SELECTORS.PAY_LATER_OFFER_MESSAGE_CONTAINER_CART_SUMMARY);
       default:
         return;
@@ -103,7 +103,7 @@ export class QuerySelectorPs1_6Service {
       case 'product':
       case 'cart':
       case 'home':
-      case 'order':
+      case 'payment':
       case 'category':
         return document.querySelector(SELECTORS.PAY_LATER_BANNER_CONTAINER);
       default:
