@@ -41,11 +41,11 @@ class FrontControllerValidator
     public function __construct(
         MerchantValidator $merchantValidator,
         ExpressCheckoutConfiguration $expressCheckoutConfiguration,
-        PayPalPayLaterConfiguration $palPayLaterConfiguration
+        PayPalPayLaterConfiguration $payLaterConfiguration
     ) {
         $this->merchantValidator = $merchantValidator;
         $this->expressCheckoutConfiguration = $expressCheckoutConfiguration;
-        $this->payLaterConfiguration = $palPayLaterConfiguration;
+        $this->payLaterConfiguration = $payLaterConfiguration;
     }
 
     /**
@@ -78,8 +78,7 @@ class FrontControllerValidator
                 return $this->payLaterConfiguration->isOrderPageMessageActive()
                     || $this->payLaterConfiguration->isOrderPageBannerActive()
                     || $this->payLaterConfiguration->isCartPageButtonActive()
-                    || $this->expressCheckoutConfiguration->isOrderPageEnabled()
-                    || $this->expressCheckoutConfiguration->isCheckoutPageEnabled();
+                    || $this->expressCheckoutConfiguration->isOrderPageEnabled();
             case 'authentication':
                 return $this->expressCheckoutConfiguration->isCheckoutPageEnabled()
                     || $this->payLaterConfiguration->isOrderPageButtonActive();

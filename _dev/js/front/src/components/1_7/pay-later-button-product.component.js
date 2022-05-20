@@ -19,6 +19,8 @@
 import { BaseComponent } from '../../core/dependency-injection/base.component';
 import { ExpressCheckoutButtonComponent } from '../common/express-checkout-button.component';
 
+const BUTTON_CONTAINER_SELECTOR = 'ps-checkout-express-button';
+
 export class PayLaterButtonProductComponent extends BaseComponent {
   static Inject = {
     querySelectorService: 'QuerySelectorService',
@@ -31,9 +33,9 @@ export class PayLaterButtonProductComponent extends BaseComponent {
   }
 
   render() {
-    if (!document.getElementById('ps-checkout-express-button')) {
+    if (!document.getElementById(BUTTON_CONTAINER_SELECTOR)) {
       this.checkoutExpressButton = document.createElement('div');
-      this.checkoutExpressButton.id = 'ps-checkout-express-button';
+      this.checkoutExpressButton.id = BUTTON_CONTAINER_SELECTOR;
 
       const productQuantityHTMLElement = this.buttonReferenceContainer.nextElementSibling;
 
@@ -54,7 +56,7 @@ export class PayLaterButtonProductComponent extends BaseComponent {
       {
         fundingSource: 'paylater',
         // TODO: Move this to constant when ExpressCheckoutButton component is created
-        querySelector: '#ps-checkout-express-button',
+        querySelector: `#${BUTTON_CONTAINER_SELECTOR}`,
         createOrder: () => {
           const {
             id_product,
@@ -81,9 +83,9 @@ export class PayLaterButtonProductComponent extends BaseComponent {
   updateButtonContainerVisibility()
   {
     if (this.prestashopService.isAddToCartButtonDisabled()) {
-      document.getElementById('ps-checkout-express-button').classList.add('disabled');
+      document.getElementById(BUTTON_CONTAINER_SELECTOR).classList.add('disabled');
     } else {
-      document.getElementById('ps-checkout-express-button').classList.remove('disabled');
+      document.getElementById(BUTTON_CONTAINER_SELECTOR).classList.remove('disabled');
     }
   }
 }
