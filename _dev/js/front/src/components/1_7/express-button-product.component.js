@@ -19,6 +19,8 @@
 import { BaseComponent } from '../../core/dependency-injection/base.component';
 import { ExpressCheckoutButtonComponent } from '../common/express-checkout-button.component';
 
+const BUTTON_CONTAINER_SELECTOR = 'ps-checkout-express-button';
+
 export class ExpressButtonProductComponent extends BaseComponent {
   static Inject = {
     querySelectorService: 'QuerySelectorService',
@@ -27,12 +29,12 @@ export class ExpressButtonProductComponent extends BaseComponent {
   };
 
   created() {
-    this.buttonReferenceContainer = this.querySelectorService.getCheckoutExpressCheckoutButtonContainerProduct();
+    this.buttonReferenceContainer = this.querySelectorService.getExpressCheckoutButtonContainerProduct();
   }
 
   render() {
     this.checkoutExpressButton = document.createElement('div');
-    this.checkoutExpressButton.id = 'ps-checkout-express-button';
+    this.checkoutExpressButton.id = BUTTON_CONTAINER_SELECTOR;
 
     const productQuantityHTMLElement = this.buttonReferenceContainer.nextElementSibling;
 
@@ -41,12 +43,18 @@ export class ExpressButtonProductComponent extends BaseComponent {
       productQuantityHTMLElement
     );
 
+    this.updateButtonContainerVisibility();
+
+    this.prestashopService.onUpdatedProduct(() => {
+      this.updateButtonContainerVisibility();
+    });
+
     this.children.expressCheckoutButton = new ExpressCheckoutButtonComponent(
       this.app,
       {
         fundingSource: 'paypal',
         // TODO: Move this to constant when ExpressCheckoutButton component is created
-        querySelector: '#ps-checkout-express-button',
+        querySelector: `#${BUTTON_CONTAINER_SELECTOR}`,
         createOrder: () => {
           const {
             id_product,
@@ -68,5 +76,14 @@ export class ExpressButtonProductComponent extends BaseComponent {
     ).render();
 
     return this;
+  }
+
+  updateButtonContainerVisibility()
+  {
+    if (this.prestashopService.isAddToCartButtonDisabled()) {
+      document.getElementById(BUTTON_CONTAINER_SELECTOR).classList.add('disabled');
+    } else {
+      document.getElementById(BUTTON_CONTAINER_SELECTOR).classList.remove('disabled');
+    }
   }
 }

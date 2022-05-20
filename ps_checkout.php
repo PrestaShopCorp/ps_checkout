@@ -448,8 +448,8 @@ class Ps_checkout extends PaymentModule
             return '';
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
-        $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payIn4XService */
+        $payIn4XService = $this->getService('ps_checkout.pay_later.configuration');
 
         /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
         $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
@@ -547,78 +547,6 @@ class Ps_checkout extends PaymentModule
     public function hookDisplayFooterProduct()
     {
         return $this->display(__FILE__, 'views/templates/hook/displayFooterProduct.tpl');
-    }
-
-    /**
-     * Pay in 4x banner in the product page
-     *
-     * @param array{cookie: Cookie, cart: Cart, altern: int, type: string, product: mixed} $params
-     *
-     * @return string
-     */
-    public function hookDisplayProductPriceBlock(array $params)
-    {
-        if ('product' !== Tools::getValue('controller')
-            || !isset($params['type'])
-            || $params['type'] !== 'weight'
-            || empty($params['product'])
-        ) {
-            return '';
-        }
-
-        $price = 0;
-
-        if (isset($params['product']->price_amount)) {
-            // $params['product'] is a ProductLazyArray since PrestaShop 1.7.5.0
-            $price = $params['product']->price_amount;
-        } elseif ($params['product'] instanceof Product) {
-            // $params['product'] is an instance of Product before 1.7.5.0
-            $id_product_attribute = Tools::getValue('id_product_attribute', null);
-            $price = $params['product']->getPrice(
-                Product::$_taxCalculationMethod == PS_TAX_INC,
-                null !== $id_product_attribute ? (int) $id_product_attribute : null
-            );
-        }
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
-        $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
-
-        $this->context->smarty->assign([
-            'totalCartPrice' => sprintf('%01.2f', $price),
-            'payIn4XisProductPageEnabled' => $payIn4XService->isProductPageMessageActive(),
-        ]);
-
-        return $this->display(__FILE__, 'views/templates/hook/displayProductPriceBlock.tpl');
-    }
-
-    /**
-     * Pay in 4x banner in the cart page for 1.6
-     *
-     * @param array{cookie: Cookie, cart: Cart, altern: int} $params
-     *
-     * @return string|void
-     */
-    public function hookDisplayCartTotalPriceLabel(array $params)
-    {
-        $cart = $params['cart'];
-
-        if (false === Validate::isLoadedObject($cart)) {
-            return;
-        }
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService('ps_checkout.context.shop');
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4XService */
-        $payIn4XService = $this->getService('ps_checkout.pay_in_4x.configuration');
-
-        $totalCartPrice = $cart->getSummaryDetails();
-        $this->context->smarty->assign([
-            'totalCartPrice' => $totalCartPrice['total_price'],
-            'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageMessageActive(),
-        ]);
-
-        return $this->display(__FILE__, 'views/templates/hook/displayCartTotalPriceLabel.tpl');
     }
 
     public function getContent()
@@ -889,6 +817,13 @@ class Ps_checkout extends PaymentModule
         $isFullyOnboarded = $psAccount->onBoardingIsCompleted() && $paypalAccount->onBoardingIsCompleted();
 
         if ('AdminPayment' === Tools::getValue('controller') && $isShop17) { // Display on PrestaShop 1.7.x.x only
+            if (in_array($this->getShopDefaultCountryCode(), ['FR', 'IT'])
+                && Module::isEnabled('ps_checkout')
+                && Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT')
+            ) {
+                return false;
+            }
+
             $params = [
                 'imgPath' => $this->_path . 'views/img/',
                 'configureLink' => (new PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter($this->context->link))->getAdminLink(
@@ -1036,8 +971,8 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
         $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration $payIn4xConfiguration */
-        $payIn4xConfiguration = $this->getService('ps_checkout.pay_in_4x.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
+        $payLaterConfiguration = $this->getService('ps_checkout.pay_later.configuration');
 
         $fundingSourcesSorted = [];
         $payWithTranslations = [];
@@ -1107,9 +1042,15 @@ class Ps_checkout extends PaymentModule
             $this->name . 'ExpressCheckoutProductEnabled' => $expressCheckoutConfiguration->isProductPageEnabled(),
             $this->name . 'ExpressCheckoutCartEnabled' => $expressCheckoutConfiguration->isOrderPageEnabled(),
             $this->name . 'ExpressCheckoutOrderEnabled' => $expressCheckoutConfiguration->isCheckoutPageEnabled(),
-            $this->name . 'PayLaterProductPageButtonEnabled' => $payIn4xConfiguration->isProductPageButtonActive(),
-            $this->name . 'PayLaterCartPageButtonEnabled' => $payIn4xConfiguration->isCartPageButtonActive(),
-            $this->name . 'PayLaterOrderPageButtonEnabled' => $payIn4xConfiguration->isOrderPageButtonActive(),
+            $this->name . 'PayLaterProductPageMessageEnabled' => $payLaterConfiguration->isProductPageMessageActive(),
+            $this->name . 'PayLaterOrderPageMessageEnabled' => $payLaterConfiguration->isOrderPageMessageActive(),
+            $this->name . 'PayLaterHomePageBannerEnabled' => $payLaterConfiguration->isHomePageBannerActive(),
+            $this->name . 'PayLaterCategoryPageBannerEnabled' => $payLaterConfiguration->isCategoryPageBannerActive(),
+            $this->name . 'PayLaterProductPageBannerEnabled' => $payLaterConfiguration->isProductPageBannerActive(),
+            $this->name . 'PayLaterOrderPageBannerEnabled' => $payLaterConfiguration->isOrderPageBannerActive(),
+            $this->name . 'PayLaterProductPageButtonEnabled' => $payLaterConfiguration->isProductPageButtonActive(),
+            $this->name . 'PayLaterCartPageButtonEnabled' => $payLaterConfiguration->isCartPageButtonActive(),
+            $this->name . 'PayLaterOrderPageButtonEnabled' => $payLaterConfiguration->isOrderPageButtonActive(),
             $this->name . '3dsEnabled' => $payPalConfiguration->is3dSecureEnabled(),
             $this->name . 'CspNonce' => $payPalConfiguration->getCSPNonce(),
             $this->name . 'CartProductCount' => $cartProductCount,
@@ -1765,5 +1706,19 @@ class Ps_checkout extends PaymentModule
             ],
             'id_order_payment = ' . (int) $orderPayment->id
         );
+    }
+
+    /**
+     * @return string
+     */
+    private function getShopDefaultCountryCode()
+    {
+        $defaultCountry = '';
+
+        if (empty($defaultCountry) && Configuration::hasKey('PS_COUNTRY_DEFAULT')) {
+            $defaultCountry = (new Country((int) Configuration::get('PS_COUNTRY_DEFAULT')))->iso_code;
+        }
+
+        return $defaultCountry ? strtoupper($defaultCountry) : '';
     }
 }

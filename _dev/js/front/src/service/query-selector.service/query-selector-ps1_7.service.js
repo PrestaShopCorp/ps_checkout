@@ -68,21 +68,46 @@ export class QuerySelectorPs1_7Service {
     );
   }
 
-  static getCheckoutExpressCheckoutButtonContainerCart() {
+  static getExpressCheckoutButtonContainerCart() {
     return document.querySelector(
       SELECTORS.EXPRESS_CHECKOUT_CONTAINER_CART_PAGE
     );
   }
 
-  static getCheckoutExpressCheckoutButtonContainerCheckout() {
+  static getExpressCheckoutButtonContainerCheckout() {
     return document.querySelector(
       SELECTORS.EXPRESS_CHECKOUT_CONTAINER_CHECKOUT_PAGE
     );
   }
 
-  static getCheckoutExpressCheckoutButtonContainerProduct() {
+  static getExpressCheckoutButtonContainerProduct() {
     return document.querySelector(
       SELECTORS.EXPRESS_CHECKOUT_CONTAINER_PRODUCT_PAGE
     );
+  }
+
+  static getPayLaterOfferMessageContainerSelector(placement) {
+    switch (placement) {
+      case 'product':
+        return document.querySelector(SELECTORS.PAY_LATER_OFFER_MESSAGE_CONTAINER_PRODUCT);
+      case 'cart':
+      case 'order':
+        return document.querySelector(SELECTORS.PAY_LATER_OFFER_MESSAGE_CONTAINER_CART_SUMMARY);
+      default:
+        return;
+    }
+  }
+
+  static getPayLaterOfferBannerContainerSelector(placement) {
+    switch (placement) {
+      case 'product':
+      case 'cart':
+      case 'home':
+      case 'order':
+      case 'category':
+        return document.querySelector(SELECTORS.PAY_LATER_BANNER_CONTAINER);
+      default:
+        return;
+    }
   }
 }

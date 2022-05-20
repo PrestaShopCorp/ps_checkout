@@ -37,5 +37,10 @@ export const DefaultSelectors1_6 = {
     'body.product .box-cart-bottom .buttons_bottom_block',
   EXPRESS_CHECKOUT_CONTAINER_CART_PAGE: 'body.order .cart_navigation_extra',
   EXPRESS_CHECKOUT_CONTAINER_CHECKOUT_PAGE:
-    'body.authentication #create-account_form, body.order-opc #opc_account_choice:not([style*="display: none"]) .opc-button, body.order-opc #opc_account_form:not([style*="display: none"])'
+    'body.authentication #create-account_form, body.order-opc #opc_account_choice:not([style*="display: none"]) .opc-button, body.order-opc #opc_account_form:not([style*="display: none"])',
+
+  PAY_LATER_OFFER_MESSAGE_CONTAINER_PRODUCT: '.content_prices',
+  PAY_LATER_OFFER_MESSAGE_CONTAINER_CART_SUMMARY: '#total_price_container',
+
+  PAY_LATER_BANNER_CONTAINER: '#notifications .container'
 };

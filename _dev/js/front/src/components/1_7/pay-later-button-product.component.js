@@ -19,7 +19,9 @@
 import { BaseComponent } from '../../core/dependency-injection/base.component';
 import { ExpressCheckoutButtonComponent } from '../common/express-checkout-button.component';
 
-export class PayLaterExpressButtonProductComponent extends BaseComponent {
+const BUTTON_CONTAINER_SELECTOR = 'ps-checkout-express-button';
+
+export class PayLaterButtonProductComponent extends BaseComponent {
   static Inject = {
     querySelectorService: 'QuerySelectorService',
     psCheckoutApi: 'PsCheckoutApi',
@@ -27,13 +29,13 @@ export class PayLaterExpressButtonProductComponent extends BaseComponent {
   };
 
   created() {
-    this.buttonReferenceContainer = this.querySelectorService.getCheckoutExpressCheckoutButtonContainerProduct();
+    this.buttonReferenceContainer = this.querySelectorService.getExpressCheckoutButtonContainerProduct();
   }
 
   render() {
-    if (!document.getElementById('ps-checkout-express-button')) {
+    if (!document.getElementById(BUTTON_CONTAINER_SELECTOR)) {
       this.checkoutExpressButton = document.createElement('div');
-      this.checkoutExpressButton.id = 'ps-checkout-express-button';
+      this.checkoutExpressButton.id = BUTTON_CONTAINER_SELECTOR;
 
       const productQuantityHTMLElement = this.buttonReferenceContainer.nextElementSibling;
 
@@ -43,12 +45,18 @@ export class PayLaterExpressButtonProductComponent extends BaseComponent {
       );
     }
 
+    this.updateButtonContainerVisibility();
+
+    this.prestashopService.onUpdatedProduct(() => {
+      this.updateButtonContainerVisibility();
+    });
+
     this.children.expressCheckoutButton = new ExpressCheckoutButtonComponent(
       this.app,
       {
         fundingSource: 'paylater',
         // TODO: Move this to constant when ExpressCheckoutButton component is created
-        querySelector: '#ps-checkout-express-button',
+        querySelector: `#${BUTTON_CONTAINER_SELECTOR}`,
         createOrder: () => {
           const {
             id_product,
@@ -70,5 +78,14 @@ export class PayLaterExpressButtonProductComponent extends BaseComponent {
     ).render();
 
     return this;
+  }
+
+  updateButtonContainerVisibility()
+  {
+    if (this.prestashopService.isAddToCartButtonDisabled()) {
+      document.getElementById(BUTTON_CONTAINER_SELECTOR).classList.add('disabled');
+    } else {
+      document.getElementById(BUTTON_CONTAINER_SELECTOR).classList.remove('disabled');
+    }
   }
 }

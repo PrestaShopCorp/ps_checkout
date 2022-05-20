@@ -105,6 +105,7 @@ $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_1d565b9e5303
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_34ace703adbf14df140d3c02234f67bd'] = 'Bezahlen Sie mit einem PayPal-Konto';
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_983fe12e91079dcb00c74772b50747a3'] = 'Bezahlen mit Karte - 100% sichere zahlungen';
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_f990493af3321939ca512f8f2cace108'] = 'Bezahlen mit %s';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_fc9b4762660906602b63bcd99e5e9747'] = 'Bezahlen ratenzahlung mit PayPal Pay Later';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_100e10b5e05d4b3abd2cd52fd12e8789'] = 'Bei der Bezahlung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder wenden Sie sich an das Support-Team.';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_5ea7f231296949070013bc43715aae01'] = 'Sicherheitscode';
 $_MODULE['<{ps_checkout}prestashop>hosted-fields_95b16127e70e8a90220404fb48343182'] = 'Ablaufdatum';
@@ -317,6 +318,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_243e4f2f3bd512ca8a6cc83e7a19e103
 $_MODULE['<{ps_checkout}prestashop>translations_25a81701fbfa4a1efdf660a950c1d006'] = 'Weiß';
 $_MODULE['<{ps_checkout}prestashop>translations_25d76826f85d2bb976027066e6fcc522'] = 'Zu ändernde gerundete Parameter';
 $_MODULE['<{ps_checkout}prestashop>translations_2607298669ace2fc910321afeb9f8a84'] = 'PDF herunterladen';
+$_MODULE['<{ps_checkout}prestashop>translations_26609a4edfbef95f4695a1474d316a2c'] = 'Positionierung auf Nachrichtenseiten wählen';
 $_MODULE['<{ps_checkout}prestashop>translations_26a180e6da68731b08a94399789ff518'] = 'Herzlichen Glückwunsch! Sie können jetzt mit dem Online-Verkauf beginnen.';
 $_MODULE['<{ps_checkout}prestashop>translations_26d56092353c630f9ad92df134d3708d'] = 'Beschreibung einrichten';
 $_MODULE['<{ps_checkout}prestashop>translations_26ec71edbfce31656c47a66bf830ed1c'] = 'Achtung, Ihre gerundeten Parameter sind nicht völlig kompatibel mit der Transaktionsverarbeitung von PrestaShop Checkout. Einige Transaktionen können möglicherweise fehlschlagen. Aber es ist ganz einfach, Ihre Einstellungen für &quot;Rundungsregel&quot; und &quot;Rundungstyp&quot; müssen auf &quot;Bei halbem Wert auf unendlich runden&quot; und &quot;Für jedes Element runden&quot; eingestellt werden, oder klicken Sie auf die Schaltfläche unten, um dies automatisch zu tun!';
@@ -332,6 +334,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_30aa465f0263c86b865c01a7f590e805
 $_MODULE['<{ps_checkout}prestashop>translations_30dbd3dffa9dbd08b062436ba8dcbad7'] = 'Produktionsmodus';
 $_MODULE['<{ps_checkout}prestashop>translations_3131503f02d3c484982dd6752109ad1c'] = 'Den Bezahlvorgang individuell gestalten';
 $_MODULE['<{ps_checkout}prestashop>translations_31fde7b05ac8952dacf4af8a704074ec'] = 'Vorschau';
+$_MODULE['<{ps_checkout}prestashop>translations_339f7a2e087a159e6a31501649027a77'] = 'Startseite';
 $_MODULE['<{ps_checkout}prestashop>translations_34577fc0116aa3a2db0d3bbe55b4638e'] = 'Mit diesem Modul können Sie:';
 $_MODULE['<{ps_checkout}prestashop>translations_36d83ae2c209f6fb8e8865584d108d8b'] = 'PayPal-Algorithmen begrenzen automatisch Ihre Betrugsrate. Es gibt ein komplettes Tool auf PayPal, mit dem Sie spezifische Regeln festlegen und Ihre Leistung in Bezug auf Betrug und Rückbuchungskosten verbessern können.';
 $_MODULE['<{ps_checkout}prestashop>translations_37c3e853135c8286d58849ec93874750'] = 'Aktivität verwalten';
@@ -353,6 +356,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_3fa24bedca614725dc240832a0c0ac94
 $_MODULE['<{ps_checkout}prestashop>translations_42369faa6a6b243aac58683f3874bf99'] = 'Registrieren';
 $_MODULE['<{ps_checkout}prestashop>translations_4245499695408b974322be6f01b0d17a'] = 'Testmodus';
 $_MODULE['<{ps_checkout}prestashop>translations_42885463cee2cd63b1cabc1be6785db0'] = 'Es wurde ein Fehler bei der Konfiguration festgestellt. Bitte setzen Sie das PrestaShop Checkout-Modul zurück und konfigurieren Sie es erneut.';
+$_MODULE['<{ps_checkout}prestashop>translations_43340e6cc4e88197d57f8d6d5ea50a46'] = 'Mehr erfahren';
 $_MODULE['<{ps_checkout}prestashop>translations_4394c8d8e63c470de62ced3ae85de5ae'] = 'Abmelden';
 $_MODULE['<{ps_checkout}prestashop>translations_44106d67db6b915eab67e4293f70a926'] = 'Hängige(r) Streitfall(fälle)';
 $_MODULE['<{ps_checkout}prestashop>translations_447473b7d8c733b008a87b7abb3ac354'] = 'die Nutzungsbedingungen';
@@ -422,6 +426,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_85f1c40411c583bd7f540802570e7567
 $_MODULE['<{ps_checkout}prestashop>translations_8634bddac0c61abde83ce1debdc1892c'] = 'Mit dem Absenden dieses Formulars erkläre ich mich damit einverstanden, dass die Daten, die für die Erstellung des PrestaShop-Checkout-Kontos bereitgestellt werden, von PrestaShop S.A gespeichert werden. Durch die Erstellung Ihres Kontos werden Sie kommerzielle Werbung von PrestaShop erhalten';
 $_MODULE['<{ps_checkout}prestashop>translations_88bccdecc2c4b9dcc8afbbc94483293c'] = 'von dem Know-how und den Vorteilen von PayPal profitieren';
 $_MODULE['<{ps_checkout}prestashop>translations_8a9f98e889a0de9caf2feb4b9b382284'] = 'Mit Ihrer Abmeldung deaktivieren Sie alle Zahlungsmethoden. Sie können jetzt keine Bezahlungen mehr über Ihr PrestaShop-Checkout-Konto erhalten.';
+$_MODULE['<{ps_checkout}prestashop>translations_8ac88d38d8b578d5b10bf4cf0cf50076'] = 'Positionierung auf Schaltflächenseiten wählen';
 $_MODULE['<{ps_checkout}prestashop>translations_8acc0bc61a5f75b13cea7e27bbcd51af'] = 'Sie können die Art der Kreditkartenfelder nur dann auswählen, wenn die Option Kreditkarte auf der Registerkarte &quot;Checkout-Erfahrung anpassen&quot; aktiviert ist.';
 $_MODULE['<{ps_checkout}prestashop>translations_8bcdc441379cbf584638b0589a3f9adb'] = 'Postleitzahl';
 $_MODULE['<{ps_checkout}prestashop>translations_8bf906833cc7aea8084f552217ed9c1d'] = 'Suspendiert';
@@ -446,6 +451,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_9c9f75fecc9e80c7bf8f139d84f47cd3
 $_MODULE['<{ps_checkout}prestashop>translations_9cb7f08469a52068a24e2827b8bff107'] = 'Sie sind bereit!';
 $_MODULE['<{ps_checkout}prestashop>translations_9d5a474aaa552210ff0298949aeb6c0a'] = 'Benötigte Informationen';
 $_MODULE['<{ps_checkout}prestashop>translations_9e67f7c55ebde9258ce8526e702f2337'] = 'Ihre Rundungskonfigurationen sind jetzt kompatibel';
+$_MODULE['<{ps_checkout}prestashop>translations_9f46701a1510e8b2cfa09cc5c3fa7bcb'] = 'Die Verfügbarkeit dieser Funktion unterliegt den Eignungskriterien.';
 $_MODULE['<{ps_checkout}prestashop>translations_a08ce63bd16ad2f81f57385b53686960'] = 'Sobald Sie mit dem ersten Shop fertig sind, können Sie die anderen konfigurieren: Wählen Sie die Shops Stück für Stück mithilfe der Shop-Auswahl in der waagerechten Menüleiste aus.';
 $_MODULE['<{ps_checkout}prestashop>translations_a0bfb8e59e6c13fc8d990781f77694fe'] = 'Weiter';
 $_MODULE['<{ps_checkout}prestashop>translations_a0d4cc0f54602c3f247c72f15a7d2dbf'] = 'Tipp';
@@ -485,6 +491,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_bb382e0ee3028e14015c573a5f248583
 $_MODULE['<{ps_checkout}prestashop>translations_bba6519ffd7fb775c8bb15dc78c34296'] = 'Genehmigung ausstehend';
 $_MODULE['<{ps_checkout}prestashop>translations_bc294136fea992290d8b3b12a36fddfa'] = 'Direktverkauf';
 $_MODULE['<{ps_checkout}prestashop>translations_bc34c158b938eec639230b7133b92ea3'] = 'In der Zwischenzeit werden Sie nur noch Kreditkartenzahlungen akzeptieren, wenn die Kreditkartenfelder der PayPal-Marke';
+$_MODULE['<{ps_checkout}prestashop>translations_bc4327368b4abb06c1ea90fe0ddd36d6'] = 'Kategorieseite';
 $_MODULE['<{ps_checkout}prestashop>translations_bccbffbcbc3942d59b232727c1ae32cb'] = 'Alle Transaktionen Ihres PayPal-Kontos sehen.';
 $_MODULE['<{ps_checkout}prestashop>translations_bd9be8329aa7e6f55266c06298e18e39'] = 'Wählen Sie die Form';
 $_MODULE['<{ps_checkout}prestashop>translations_bffe9a3c9a7e00ba00a11749e022d911'] = 'Anmelden';
@@ -523,6 +530,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_dc43994c00f8f208f0c649524a9bcd46
 $_MODULE['<{ps_checkout}prestashop>translations_dc647eb65e6711e155375218212b3964'] = 'Passwort';
 $_MODULE['<{ps_checkout}prestashop>translations_dd7bf230fde8d4836917806aff6a6b27'] = 'Adresse';
 $_MODULE['<{ps_checkout}prestashop>translations_dfcfc43722eef1eab1e4a12e50a068b1'] = 'Währungen';
+$_MODULE['<{ps_checkout}prestashop>translations_e138ea82bff561b002c7916e696f7bd2'] = 'Positionierung auf Bannerseiten wählen';
 $_MODULE['<{ps_checkout}prestashop>translations_e1e1ce67de4906765f104f24a4280a1d'] = 'Brauchen Sie Hilfe? Hier finden Sie das Benutzerhandbuch des Moduls';
 $_MODULE['<{ps_checkout}prestashop>translations_e268443e43d93dab7ebef303bbe9642f'] = 'Konto';
 $_MODULE['<{ps_checkout}prestashop>translations_e2e372415a8b8d36f4d86d9fc86bc608'] = 'Für weitere Informationen zu den Gebühren besuchen Sie bitte diese Seite:';
@@ -553,6 +561,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_f7b94d969ddb6d79bdf2d70668ae43fa
 $_MODULE['<{ps_checkout}prestashop>translations_f8373fe451b71e04d3b3b4551785f6a7'] = 'Verlinken Sie Ihr PayPal-Konto';
 $_MODULE['<{ps_checkout}prestashop>translations_f96e345fdc19cbd4cf15256c251a39a0'] = 'Silber';
 $_MODULE['<{ps_checkout}prestashop>translations_faeaec9eda6bc4c8cb6e1a9156a858be'] = 'Verfügbarkeit';
+$_MODULE['<{ps_checkout}prestashop>translations_fc9b4762660906602b63bcd99e5e9747'] = 'Bezahlen ratenzahlung mit PayPal Pay Later';
 $_MODULE['<{ps_checkout}prestashop>translations_fe4c6a5e7bd6793b37370e4e46daf998'] = 'Fortgeschrittene Einstellungen';
 $_MODULE['<{ps_checkout}prestashop>translations_ff8313e7d0a38ececa23e28fd77421de'] = 'Wann sind Felder für Kreditkarten mit PayPal-Markenzeichen zu verwenden?';
 $_MODULE['<{ps_checkout}prestashop>validate_10fe6db261f79ac6848dd8109d5e73b3'] = 'Die Transaktion wurde abgelehnt.';

@@ -18,12 +18,12 @@
  */
 import { BaseComponent } from '../../core/dependency-injection/base.component';
 
-import { PayLaterExpressButtonCartComponent } from '../1_6/paylater-express-button-cart.component';
-import { PayLaterExpressButtonCheckoutComponent } from '../1_6/paylater-express-button-checkout.component';
-import { PayLaterExpressButtonProductComponent } from '../1_6/paylater-express-button-product.component';
+import { PayLaterButtonCartComponent } from '../1_6/pay-later-button-cart.component';
+import { PayLaterButtonCheckoutComponent } from '../1_6/pay-later-button-checkout.component';
+import { PayLaterButtonProductComponent } from '../1_6/pay-later-button-product.component';
 import { ExpressCheckoutButtonComponent } from '../common/express-checkout-button.component';
 
-export class PsCheckoutExpressPayLaterPs1_6Component extends BaseComponent {
+export class PsCheckoutPayLaterButtonPs1_6Component extends BaseComponent {
   static ID = 0;
 
   static Inject = {
@@ -36,12 +36,12 @@ export class PsCheckoutExpressPayLaterPs1_6Component extends BaseComponent {
     this.props.HTMLElement.classList.add('ps_checkout-express-button');
     this.props.HTMLElement.setAttribute(
       'express-button-id',
-      PsCheckoutExpressPayLaterPs1_6Component.ID
+      PsCheckoutPayLaterButtonPs1_6Component.ID
     );
 
     this.children.expressButton = new ExpressCheckoutButtonComponent(this.app, {
       fundingSource: 'paylater',
-      querySelector: `.ps_checkout-express-button[express-button-id="${PsCheckoutExpressPayLaterPs1_6Component.ID++}"]`,
+      querySelector: `.ps_checkout-express-button[express-button-id="${PsCheckoutPayLaterButtonPs1_6Component.ID++}"]`,
       createOrder: (data) =>
         this.psCheckoutApi.postCreateOrder({
           ...(this.props.productData || data),
@@ -58,10 +58,10 @@ export class PsCheckoutExpressPayLaterPs1_6Component extends BaseComponent {
     }
 
     if (this.prestashopService.isCartPage()) {
-      if (!this.config.expressCheckout.enabled.cart || !this.config.paylater.enabled.cart) return this;
+      if (!this.config.payLater.button.cart) return this;
       if (!window.ps_checkoutCartProductCount) return this;
 
-      this.children.expressButton = new PayLaterExpressButtonCartComponent(
+      this.children.expressButton = new PayLaterButtonCartComponent(
         this.app
       ).render();
 
@@ -69,9 +69,9 @@ export class PsCheckoutExpressPayLaterPs1_6Component extends BaseComponent {
     }
 
     if (this.prestashopService.isOrderPersonalInformationStepPage()) {
-      if (!this.config.expressCheckout.enabled.order || !this.config.paylater.enabled.order) return this;
+      if (!this.config.payLater.button.order) return this;
       if (!window.ps_checkoutCartProductCount) return this;
-      this.children.expressButton = new PayLaterExpressButtonCheckoutComponent(
+      this.children.expressButton = new PayLaterButtonCheckoutComponent(
         this.app
       ).render();
 
@@ -82,7 +82,7 @@ export class PsCheckoutExpressPayLaterPs1_6Component extends BaseComponent {
       this.prestashopService.isProductPage() &&
       !this.prestashopService.isIframeProductPage()
     ) {
-      if (!this.config.expressCheckout.enabled.product|| !this.config.paylater.enabled.product) return;
+      if (!this.config.payLater.button.product) return;
       if (
         this.children.expressButton &&
         this.children.expressButton.checkoutExpressButton &&
@@ -90,7 +90,7 @@ export class PsCheckoutExpressPayLaterPs1_6Component extends BaseComponent {
       )
         return;
 
-      this.children.expressButton = new PayLaterExpressButtonProductComponent(
+      this.children.expressButton = new PayLaterButtonProductComponent(
         this.app
       ).render();
 

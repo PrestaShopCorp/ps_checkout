@@ -29,5 +29,7 @@ export const PayPalSdkConfig = {
   expressCheckoutButtonCustomization:
     window.ps_checkoutExpressCheckoutButtonCustomization,
   hostedFieldsCustomization:
-    window.ps_checkoutHostedFieldsCustomizationConfiguration
+    window.ps_checkoutHostedFieldsCustomizationConfiguration,
+  payLaterOfferMessageCustomization: window.ps_checkoutPayLaterOfferMessageCustomization,
+  payLaterOfferBannerCustomization: window.ps_checkoutPayLaterOfferBannerCustomization
 };

@@ -38,5 +38,10 @@ export const DefaultSelectors1_7 = {
   EXPRESS_CHECKOUT_CONTAINER_CART_PAGE:
     '#cart .cart-summary .cart-detailed-actions',
   EXPRESS_CHECKOUT_CONTAINER_CHECKOUT_PAGE:
-    '#checkout-personal-information-step .content'
+    '#checkout-personal-information-step .content',
+
+  PAY_LATER_OFFER_MESSAGE_CONTAINER_PRODUCT: '.product-prices',
+  PAY_LATER_OFFER_MESSAGE_CONTAINER_CART_SUMMARY: '.cart-summary-totals',
+
+  PAY_LATER_BANNER_CONTAINER: '#notifications .container'
 };

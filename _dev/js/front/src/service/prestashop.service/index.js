@@ -36,6 +36,14 @@ export class PrestashopService {
     return this.instance.getProductDetails();
   }
 
+  isHomePage() {
+    return !!this.instance.isHomePage();
+  }
+
+  isCategoryPage() {
+    return !!this.instance.isCategoryPage();
+  }
+
   isCartPage() {
     return !!this.instance.isCartPage();
   }
@@ -76,6 +84,18 @@ export class PrestashopService {
     return this.instance.hasProductInCart();
   }
 
+  getCartAmount() {
+    return this.instance.getCartAmount();
+  }
+
+  getProductPrice() {
+    return this.instance.getProductPrice();
+  }
+
+  isAddToCartButtonDisabled() {
+    return this.instance.isAddToCartButtonDisabled();
+  }
+
   getVersion() {
     if (!window.prestashop) {
       return PS_VERSION_1_6;
@@ -86,6 +106,10 @@ export class PrestashopService {
 
   onUpdatedCart(listener) {
     this.instance.onUpdatedCart(listener);
+  }
+
+  onUpdatedProduct(listener) {
+    this.instance.onUpdatedProduct(listener);
   }
 
   onUpdatePaymentMethods(listener) {

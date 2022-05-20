@@ -37,20 +37,32 @@ export default {
   [types.UPDATE_CARD_INLINE_PAYPAL_AVAILABILITY](state, payload) {
     state.cardInlinePaypalIsEnabled = payload;
   },
-  [types.UPDATE_PAY_IN_4X_ORDER_PAGE](state, payload) {
-    state.payIn4X.orderPage = payload;
+  [types.UPDATE_PAY_LATER_ORDER_PAGE_MESSAGE](state, payload) {
+    state.payLater.orderPage.message = payload;
   },
-  [types.UPDATE_PAY_IN_4X_PRODUCT_PAGE](state, payload) {
-    state.payIn4X.productPage = payload;
+  [types.UPDATE_PAY_LATER_PRODUCT_PAGE_MESSAGE](state, payload) {
+    state.payLater.productPage.message = payload;
   },
-  [types.UPDATE_PAY_IN_4X_CART_PAGE_BUTTON](state, payload) {
-    state.payIn4X.cartPageButton = payload;
+  [types.UPDATE_PAY_LATER_ORDER_PAGE_BANNER](state, payload) {
+    state.payLater.orderPage.banner = payload;
   },
-  [types.UPDATE_PAY_IN_4X_ORDER_PAGE_BUTTON](state, payload) {
-    state.payIn4X.orderPageButton = payload;
+  [types.UPDATE_PAY_LATER_PRODUCT_PAGE_BANNER](state, payload) {
+    state.payLater.productPage.banner = payload;
   },
-  [types.UPDATE_PAY_IN_4X_PRODUCT_PAGE_BUTTON](state, payload) {
-    state.payIn4X.productPageButton = payload;
+  [types.UPDATE_PAY_LATER_HOME_PAGE_BANNER](state, payload) {
+    state.payLater.homePage.banner = payload;
+  },
+  [types.UPDATE_PAY_LATER_CATEGORY_PAGE_BANNER](state, payload) {
+    state.payLater.categoryPage.banner = payload;
+  },
+  [types.UPDATE_PAY_LATER_CART_PAGE_BUTTON](state, payload) {
+    state.payLater.cartPage.button = payload;
+  },
+  [types.UPDATE_PAY_LATER_ORDER_PAGE_BUTTON](state, payload) {
+    state.payLater.orderPage.button = payload;
+  },
+  [types.UPDATE_PAY_LATER_PRODUCT_PAGE_BUTTON](state, payload) {
+    state.payLater.productPage.button = payload;
   },
   [types.UPDATE_EC_ORDER_PAGE](state, payload) {
     state.expressCheckout.orderPage = payload;
