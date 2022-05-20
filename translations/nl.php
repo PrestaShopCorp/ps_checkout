@@ -318,6 +318,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_243e4f2f3bd512ca8a6cc83e7a19e103
 $_MODULE['<{ps_checkout}prestashop>translations_25a81701fbfa4a1efdf660a950c1d006'] = 'Wit';
 $_MODULE['<{ps_checkout}prestashop>translations_25d76826f85d2bb976027066e6fcc522'] = 'Instellingen voor afrondingen wijzigen';
 $_MODULE['<{ps_checkout}prestashop>translations_2607298669ace2fc910321afeb9f8a84'] = 'Pdf downloaden';
+$_MODULE['<{ps_checkout}prestashop>translations_26609a4edfbef95f4695a1474d316a2c'] = 'Kies de positionering op de berichtenpagina\'s';
 $_MODULE['<{ps_checkout}prestashop>translations_26a180e6da68731b08a94399789ff518'] = 'Gefeliciteerd! U kunt nu online gaan verkopen.';
 $_MODULE['<{ps_checkout}prestashop>translations_26d56092353c630f9ad92df134d3708d'] = 'Opzetten van de beschrijving';
 $_MODULE['<{ps_checkout}prestashop>translations_26ec71edbfce31656c47a66bf830ed1c'] = 'Opgelet: uw instellingen voor afrondingen zijn niet volledig compatibel met de transactiebehandeling van PrestaShop Checkout. Sommige transacties kunnen mogelijk niet worden verwerkt. U kunt dit echter eenvoudig aanpassen. Maar het is gemakkelijk, uw &quot;Afrondingsregel&quot; en &quot;Afrondingstype&quot; instellingen moeten worden ingesteld op &quot;Afronden tot oneindig wanneer halverwege de waarde&quot; en &quot;Afronden voor elk artikel&quot; of klik op de knop hieronder om het automatisch te doen!';
@@ -427,6 +428,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_8634bddac0c61abde83ce1debdc1892c
 $_MODULE['<{ps_checkout}prestashop>translations_88bccdecc2c4b9dcc8afbbc94483293c'] = 'Geniet van alle PayPal-expertise en -voordelen';
 $_MODULE['<{ps_checkout}prestashop>translations_8ac88d38d8b578d5b10bf4cf0cf50076'] = 'Kies de pagina\'s waarop de knoppen worden weergegeven';
 $_MODULE['<{ps_checkout}prestashop>translations_8a9f98e889a0de9caf2feb4b9b382284'] = 'Logt u uit, dan worden alle betaalmethoden gedeactiveerd. U kunt dan geen betalingen via PrestaShop Checkout meer ontvangen.';
+$_MODULE['<{ps_checkout}prestashop>translations_8ac88d38d8b578d5b10bf4cf0cf50076'] = 'Kies positionering op banner pagina\'s';
 $_MODULE['<{ps_checkout}prestashop>translations_8acc0bc61a5f75b13cea7e27bbcd51af'] = 'U kunt het type creditcardvelden alleen kiezen als de creditcard is geactiveerd in het tabblad &quot;Kassa-ervaring aanpassen&quot;.';
 $_MODULE['<{ps_checkout}prestashop>translations_8bcdc441379cbf584638b0589a3f9adb'] = 'Postcode';
 $_MODULE['<{ps_checkout}prestashop>translations_8bf906833cc7aea8084f552217ed9c1d'] = 'Geschorst';
@@ -531,6 +533,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_dc43994c00f8f208f0c649524a9bcd46
 $_MODULE['<{ps_checkout}prestashop>translations_dc647eb65e6711e155375218212b3964'] = 'Wachtwoord';
 $_MODULE['<{ps_checkout}prestashop>translations_dd7bf230fde8d4836917806aff6a6b27'] = 'Adres';
 $_MODULE['<{ps_checkout}prestashop>translations_dfcfc43722eef1eab1e4a12e50a068b1'] = 'Valuta\'s';
+$_MODULE['<{ps_checkout}prestashop>translations_e138ea82bff561b002c7916e696f7bd2'] = 'Kies positionering op banner pagina\'s';
 $_MODULE['<{ps_checkout}prestashop>translations_e1e1ce67de4906765f104f24a4280a1d'] = 'Hulp nodig? Hier vindt u de documentatie bij deze module';
 $_MODULE['<{ps_checkout}prestashop>translations_e268443e43d93dab7ebef303bbe9642f'] = 'account';
 $_MODULE['<{ps_checkout}prestashop>translations_e2e372415a8b8d36f4d86d9fc86bc608'] = 'Voor meer informatie over uw tarieven kunt u terecht op deze pagina:';
