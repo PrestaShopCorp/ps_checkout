@@ -17,25 +17,34 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  *}
 <section id="ps_checkout-displayOrderConfirmation">
-  {if $status === 'pending' }
-    <div class="alert alert-warning">
-      {l s='Your order is waiting for payment confirmation. You will receive an email when your payment has been validated. You can also check the order status in your order history in your account.' mod='ps_checkout'}
-    </div>
-  {elseif $isShop17 && $isAuthorized }
-    {* PrestaShop 1.7 show a confirmation message itself, so we display only a message in case of isAuthorized *}
-    <div class="alert alert-info">
-      <i class="material-icons">info</i>
-      {l s="Important : you won't be charged until the order's shipping is effective." mod="ps_checkout"}
-    </div>
-  {elseif !$isShop17 }
-    {* PrestaShop 1.6 doesn't show a confirmation message itself, so have to display it *}
-    <div class="alert alert-success">
-      {l s='Your order is confirmed.' mod='ps_checkout'}
-    </div>
-    {if $isAuthorized }
-      <div class="box">
-        <p>{l s="Important : you won't be charged until the order's shipping is effective." mod="ps_checkout"}</p>
+    {if $orderPayPalTransactionStatus === 'COMPLETED' && !$isShop17 }
+        {* PrestaShop 1.6 doesn't show a confirmation message itself, so have to display it *}
+      <div class="alert alert-success">
+          {l s='Your order is confirmed.' mod='ps_checkout'}
       </div>
     {/if}
-  {/if}
+
+    {if $orderPayPalTransactionStatus === 'PENDING' }
+      <div class="alert alert-warning">
+          {l s='Your order is waiting for payment confirmation. You will receive an email when your payment has been validated. You can also check the order status in your order history in your account.' mod='ps_checkout'}
+      </div>
+    {/if}
+
+    {if $orderPayPalTransactionStatus === 'DECLINED' || $orderPayPalTransactionStatus === 'FAILED' }
+      <div class="alert alert-danger">
+          {l s='Your payment has been declined by our payment gateway, please contact us via the link below, on Payment Gateway Information section.' mod='ps_checkout'}
+      </div>
+    {/if}
+
+    {if $approvalLink || $orderPayPalStatus === 'PENDING_APPROVAL' }
+      <div class="alert alert-warning">
+          {l s='Your payment needs approving, please click the button below, on Payment Gateway Information section.' mod='ps_checkout'}
+      </div>
+    {/if}
+
+    {if $payerActionLink || $orderPayPalStatus === 'PAYER_ACTION_REQUIRED' }
+      <div class="alert alert-warning">
+          {l s='Your payment needs to be authenticated, please click the button below, on Payment Gateway Information section.' mod='ps_checkout'}
+      </div>
+    {/if}
 </section>

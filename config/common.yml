@@ -382,3 +382,17 @@ services:
   ps_checkout.paypal.provider.client_token:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalClientTokenProvider'
     public: true
+
+  ps_checkout.prestashop.router:
+    class: 'PrestaShop\Module\PrestashopCheckout\Routing\Router'
+    public: true
+
+  ps_checkout.paypal.builder.view_order_summary:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder'
+    public: true
+    arguments:
+      - '@ps_checkout.repository.pscheckoutcart'
+      - '@ps_checkout.paypal.provider.order'
+      - '@ps_checkout.prestashop.router'
+      - '@ps_checkout.funding_source.translation'
+      - '@ps_checkout.context.shop'

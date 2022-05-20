@@ -47,6 +47,8 @@ class Ps_checkout extends PaymentModule
         'header',
         'actionObjectOrderPaymentAddAfter',
         'actionObjectOrderPaymentUpdateAfter',
+        'displayPaymentReturn',
+        'displayOrderDetail',
     ];
 
     /**
@@ -788,17 +790,16 @@ class Ps_checkout extends PaymentModule
         /** @var Order $order */
         $order = (isset($params['objOrder'])) ? $params['objOrder'] : $params['order'];
 
-        if ($order->module !== $this->name) {
+        if (!Validate::isLoadedObject($order) || $order->module !== $this->name) {
             return '';
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService('ps_checkout.context.shop');
-        $this->context->smarty->assign([
-            'status' => $order->valid ? 'completed' : 'pending',
-            'isShop17' => $shopContext->isShop17(),
-            'isAuthorized' => 'AUTHORIZE' === Configuration::get('PS_CHECKOUT_INTENT'),
-        ]);
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder $orderSummaryViewBuilder */
+        $orderSummaryViewBuilder = $this->getService('ps_checkout.paypal.builder.view_order_summary');
+
+        $orderSummaryView = $orderSummaryViewBuilder->build($order);
+
+        $this->context->smarty->assign($orderSummaryView->getTemplateVars());
 
         return $this->display(__FILE__, 'views/templates/hook/displayOrderConfirmation.tpl');
     }
@@ -1767,5 +1768,57 @@ class Ps_checkout extends PaymentModule
         }
 
         return $defaultCountry ? strtoupper($defaultCountry) : '';
+    }
+
+    /**
+     * Display payment status on order confirmation page
+     *
+     * @param array{cookie: Cookie, cart: Cart, altern: int, order: Order, objOrder: Order} $params
+     *
+     * @return string
+     */
+    public function hookDisplayPaymentReturn(array $params)
+    {
+        /** @var Order $order */
+        $order = (isset($params['objOrder'])) ? $params['objOrder'] : $params['order'];
+
+        if (!Validate::isLoadedObject($order) || $order->module !== $this->name) {
+            return '';
+        }
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder $orderSummaryViewBuilder */
+        $orderSummaryViewBuilder = $this->getService('ps_checkout.paypal.builder.view_order_summary');
+
+        $orderSummaryView = $orderSummaryViewBuilder->build($order);
+
+        $this->context->smarty->assign($orderSummaryView->getTemplateVars());
+
+        return $this->display(__FILE__, 'views/templates/hook/displayPaymentReturn.tpl');
+    }
+
+    /**
+     * Display payment status on order detail page
+     *
+     * @param array{cookie: Cookie, cart: Cart, altern: int, order: Order} $params
+     *
+     * @return string
+     */
+    public function hookDisplayOrderDetail(array $params)
+    {
+        /** @var Order $order */
+        $order = $params['order'];
+
+        if (!Validate::isLoadedObject($order) || $order->module !== $this->name) {
+            return '';
+        }
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder $orderSummaryViewBuilder */
+        $orderSummaryViewBuilder = $this->getService('ps_checkout.paypal.builder.view_order_summary');
+
+        $orderSummaryView = $orderSummaryViewBuilder->build($order);
+
+        $this->context->smarty->assign($orderSummaryView->getTemplateVars());
+
+        return $this->display(__FILE__, 'views/templates/hook/displayOrderDetail.tpl');
     }
 }
