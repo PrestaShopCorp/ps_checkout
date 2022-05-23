@@ -161,8 +161,14 @@ export class HostedFieldsComponent extends BaseComponent {
                   });
               })
               .catch(error => {
+                let message = error.message || '';
+
+                if (!message) {
+                  message = `Unknown error, code: ${error.code || 'none'}, description: ${error.description || 'none'}`;
+                }
+
                 this.data.loader.hide();
-                this.data.notification.showError(error.message);
+                this.data.notification.showError(message);
                 this.data.HTMLElementButton.removeAttribute('disabled');
               });
           });
