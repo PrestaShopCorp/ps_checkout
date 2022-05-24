@@ -267,13 +267,31 @@
   bottom: 0;
   right: 0;
 
-  width: 400px;
+  width: 800px;
   height: 250px;
 
   margin: auto;
 
   background-color: #fff;
   border-radius: 15px;
+}
+
+@media (max-width: 992px) {
+  .ps-checkout.popup {
+    width: 600px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ps-checkout.popup {
+    width: 500px;
+  }
+}
+
+@media (max-width: 576px) {
+  .ps-checkout.popup {
+    width: 400px;
+  }
 }
 
 .ps-checkout.text, .ps-checkout.loader {
