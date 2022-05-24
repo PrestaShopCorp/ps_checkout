@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
+use libphonenumber\PhoneNumberType;
+use libphonenumber\PhoneNumberUtil;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
@@ -183,17 +185,6 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             $node['roundingConfig'] = $roundType . '-' . $roundMode;
         }
 
-        // TODO: Disabled temporary: Need to handle country indicator
-        // Add optional phone number if provided
-        // if (!empty($params['addresses']['invoice']->phone)) {
-        //     $payload['payer']['phone'] = [
-        //         'phone_number' => [
-        //             'national_number' => $params['addresses']['invoice']->phone,
-        //         ],
-        //         'phone_type' => 'MOBILE', // TODO - Function to determine if phone is mobile or not
-        //     ];
-        // }
-
         $this->getPayload()->addAndMergeItems($node);
     }
 
@@ -232,6 +223,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     {
         $countryCodeMatrice = new PaypalCountryCodeMatrice();
         $payerCountryIsoCode = $this->getCountryIsoCodeById($this->cart['addresses']['invoice']->id_country);
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
 
         $node['payer'] = [
             'name' => [
@@ -252,6 +245,41 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         // Add optional birthdate if provided
         if (!empty($this->cart['customer']->birthday) && $this->cart['customer']->birthday !== '0000-00-00') {
             $node['payer']['birth_date'] = (string) $this->cart['customer']->birthday;
+        }
+
+        $phone = !empty($this->cart['addresses']['invoice']->phone) ? $this->cart['addresses']['invoice']->phone : '';
+        $phone = empty($phone) && !empty($this->cart['addresses']['invoice']->phone_mobile) ? $this->cart['addresses']['invoice']->phone_mobile : $phone;
+
+        if (!empty($phone)) {
+            try {
+                $phoneUtil = PhoneNumberUtil::getInstance();
+                $parsedPhone = $phoneUtil->parse($phone, $payerCountryIsoCode);
+                if ($phoneUtil->isValidNumber($parsedPhone)) {
+                    $node['payer']['phone']['phone_number']['national_number'] = $parsedPhone->getNationalNumber();
+                    switch ($phoneUtil->getNumberType($parsedPhone)) {
+                        case PhoneNumberType::MOBILE:
+                            $node['payer']['phone']['phone_type'] = 'MOBILE';
+                            break;
+                        case PhoneNumberType::PAGER:
+                            $node['payer']['phone']['phone_type'] = 'PAGER';
+                            break;
+                        default:
+                            $node['payer']['phone']['phone_type'] = 'OTHER';
+                    }
+                }
+            } catch (\Exception $exception) {
+                $module->getLogger()->warning(
+                    'Unable to format phone number on PayPal Order payload',
+                    [
+                        'type' => $this->isUpdate ? 'UPDATE' : 'CREATE',
+                        'paypal_order' => $this->paypalOrderId,
+                        'id_cart' => (int) $this->cart['cart']['id'],
+                        'address_id' => (int) $this->cart['addresses']['invoice']->id,
+                        'phone' => $phone,
+                        'exception' => $exception,
+                    ]
+                );
+            }
         }
 
         $this->getPayload()->addAndMergeItems($node);
