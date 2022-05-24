@@ -318,7 +318,6 @@ $_MODULE['<{ps_checkout}prestashop>translations_243e4f2f3bd512ca8a6cc83e7a19e103
 $_MODULE['<{ps_checkout}prestashop>translations_25a81701fbfa4a1efdf660a950c1d006'] = 'Bianco';
 $_MODULE['<{ps_checkout}prestashop>translations_25d76826f85d2bb976027066e6fcc522'] = 'Parametri di arrotondamento da modificare';
 $_MODULE['<{ps_checkout}prestashop>translations_2607298669ace2fc910321afeb9f8a84'] = 'Scarica il PDF';
-$_MODULE['<{ps_checkout}prestashop>translations_26609a4edfbef95f4695a1474d316a2c'] = 'Scegli posizione della pagina per i messaggi';
 $_MODULE['<{ps_checkout}prestashop>translations_26a180e6da68731b08a94399789ff518'] = 'Congratulazioni! Puoi iniziare a vendere i tuoi articoli online ora.';
 $_MODULE['<{ps_checkout}prestashop>translations_26d56092353c630f9ad92df134d3708d'] = 'Configura descrizione';
 $_MODULE['<{ps_checkout}prestashop>translations_26ec71edbfce31656c47a66bf830ed1c'] = 'Attenzione, i tuoi parametri di arrotondamento non sono pienamente compatibili con l’elaborazione delle transazioni PrestaShop Checkout. Alcune transazioni potrebbero non andare a buon fine. Ma è facile, le impostazioni &quot;Regola di arrotondamento&quot; e &quot;Tipo di arrotondamento&quot; devono essere predisposte su &quot;Arrotonda all\'infinito quando il valore è a metà&quot; e &quot;Arrotonda per ogni elemento&quot; oppure cliccare sul pulsante qui sotto per farlo automaticamente!';
@@ -428,7 +427,6 @@ $_MODULE['<{ps_checkout}prestashop>translations_8634bddac0c61abde83ce1debdc1892c
 $_MODULE['<{ps_checkout}prestashop>translations_88bccdecc2c4b9dcc8afbbc94483293c'] = 'Beneficiare dell’esperienza e dei vantaggi di PayPal';
 $_MODULE['<{ps_checkout}prestashop>translations_8ac88d38d8b578d5b10bf4cf0cf50076'] = 'Scegli le pagine dove mostrare i pulsanti';
 $_MODULE['<{ps_checkout}prestashop>translations_8a9f98e889a0de9caf2feb4b9b382284'] = 'Se esci, tutti i metodi di pagamento verranno disattivati. Non potrai più ricevere pagamenti con PrestaShop Checkout.';
-$_MODULE['<{ps_checkout}prestashop>translations_8ac88d38d8b578d5b10bf4cf0cf50076'] = 'Scegli posizione della pagina per i pulsanti';
 $_MODULE['<{ps_checkout}prestashop>translations_8acc0bc61a5f75b13cea7e27bbcd51af'] = 'È possibile scegliere il tipo di campi della carta di credito solo se la carta di credito è attivata nella scheda &quot; Personalizza esperienza di pagamento&quot;.';
 $_MODULE['<{ps_checkout}prestashop>translations_8bcdc441379cbf584638b0589a3f9adb'] = 'CAP';
 $_MODULE['<{ps_checkout}prestashop>translations_8bf906833cc7aea8084f552217ed9c1d'] = 'Sospeso';
@@ -533,7 +531,6 @@ $_MODULE['<{ps_checkout}prestashop>translations_dc43994c00f8f208f0c649524a9bcd46
 $_MODULE['<{ps_checkout}prestashop>translations_dc647eb65e6711e155375218212b3964'] = 'Password';
 $_MODULE['<{ps_checkout}prestashop>translations_dd7bf230fde8d4836917806aff6a6b27'] = 'Indirizzo';
 $_MODULE['<{ps_checkout}prestashop>translations_dfcfc43722eef1eab1e4a12e50a068b1'] = 'Valute';
-$_MODULE['<{ps_checkout}prestashop>translations_e138ea82bff561b002c7916e696f7bd2'] = 'Scegli posizione della pagina per i bandiera';
 $_MODULE['<{ps_checkout}prestashop>translations_e1e1ce67de4906765f104f24a4280a1d'] = 'Bisogno di aiuto? Qui troverai la guida utente per il modulo';
 $_MODULE['<{ps_checkout}prestashop>translations_e268443e43d93dab7ebef303bbe9642f'] = 'account';
 $_MODULE['<{ps_checkout}prestashop>translations_e2e372415a8b8d36f4d86d9fc86bc608'] = 'Per maggiori informazioni sulle tue tariffe, visita questa pagina:';

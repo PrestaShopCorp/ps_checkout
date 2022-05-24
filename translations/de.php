@@ -318,7 +318,6 @@ $_MODULE['<{ps_checkout}prestashop>translations_243e4f2f3bd512ca8a6cc83e7a19e103
 $_MODULE['<{ps_checkout}prestashop>translations_25a81701fbfa4a1efdf660a950c1d006'] = 'Weiß';
 $_MODULE['<{ps_checkout}prestashop>translations_25d76826f85d2bb976027066e6fcc522'] = 'Zu ändernde gerundete Parameter';
 $_MODULE['<{ps_checkout}prestashop>translations_2607298669ace2fc910321afeb9f8a84'] = 'PDF herunterladen';
-$_MODULE['<{ps_checkout}prestashop>translations_26609a4edfbef95f4695a1474d316a2c'] = 'Positionierung auf Nachrichtenseiten wählen';
 $_MODULE['<{ps_checkout}prestashop>translations_26a180e6da68731b08a94399789ff518'] = 'Herzlichen Glückwunsch! Sie können jetzt mit dem Online-Verkauf beginnen.';
 $_MODULE['<{ps_checkout}prestashop>translations_26d56092353c630f9ad92df134d3708d'] = 'Beschreibung einrichten';
 $_MODULE['<{ps_checkout}prestashop>translations_26ec71edbfce31656c47a66bf830ed1c'] = 'Achtung, Ihre gerundeten Parameter sind nicht völlig kompatibel mit der Transaktionsverarbeitung von PrestaShop Checkout. Einige Transaktionen können möglicherweise fehlschlagen. Aber es ist ganz einfach, Ihre Einstellungen für &quot;Rundungsregel&quot; und &quot;Rundungstyp&quot; müssen auf &quot;Bei halbem Wert auf unendlich runden&quot; und &quot;Für jedes Element runden&quot; eingestellt werden, oder klicken Sie auf die Schaltfläche unten, um dies automatisch zu tun!';
@@ -428,7 +427,6 @@ $_MODULE['<{ps_checkout}prestashop>translations_8634bddac0c61abde83ce1debdc1892c
 $_MODULE['<{ps_checkout}prestashop>translations_88bccdecc2c4b9dcc8afbbc94483293c'] = 'von dem Know-how und den Vorteilen von PayPal profitieren';
 $_MODULE['<{ps_checkout}prestashop>translations_8ac88d38d8b578d5b10bf4cf0cf50076'] = 'Positionierung auf Schaltflächenseiten wählen';
 $_MODULE['<{ps_checkout}prestashop>translations_8a9f98e889a0de9caf2feb4b9b382284'] = 'Mit Ihrer Abmeldung deaktivieren Sie alle Zahlungsmethoden. Sie können jetzt keine Bezahlungen mehr über Ihr PrestaShop-Checkout-Konto erhalten.';
-$_MODULE['<{ps_checkout}prestashop>translations_8ac88d38d8b578d5b10bf4cf0cf50076'] = 'Positionierung auf Schaltflächenseiten wählen';
 $_MODULE['<{ps_checkout}prestashop>translations_8acc0bc61a5f75b13cea7e27bbcd51af'] = 'Sie können die Art der Kreditkartenfelder nur dann auswählen, wenn die Option Kreditkarte auf der Registerkarte &quot;Checkout-Erfahrung anpassen&quot; aktiviert ist.';
 $_MODULE['<{ps_checkout}prestashop>translations_8bcdc441379cbf584638b0589a3f9adb'] = 'Postleitzahl';
 $_MODULE['<{ps_checkout}prestashop>translations_8bf906833cc7aea8084f552217ed9c1d'] = 'Suspendiert';
@@ -533,7 +531,6 @@ $_MODULE['<{ps_checkout}prestashop>translations_dc43994c00f8f208f0c649524a9bcd46
 $_MODULE['<{ps_checkout}prestashop>translations_dc647eb65e6711e155375218212b3964'] = 'Passwort';
 $_MODULE['<{ps_checkout}prestashop>translations_dd7bf230fde8d4836917806aff6a6b27'] = 'Adresse';
 $_MODULE['<{ps_checkout}prestashop>translations_dfcfc43722eef1eab1e4a12e50a068b1'] = 'Währungen';
-$_MODULE['<{ps_checkout}prestashop>translations_e138ea82bff561b002c7916e696f7bd2'] = 'Positionierung auf Bannerseiten wählen';
 $_MODULE['<{ps_checkout}prestashop>translations_e1e1ce67de4906765f104f24a4280a1d'] = 'Brauchen Sie Hilfe? Hier finden Sie das Benutzerhandbuch des Moduls';
 $_MODULE['<{ps_checkout}prestashop>translations_e268443e43d93dab7ebef303bbe9642f'] = 'Konto';
 $_MODULE['<{ps_checkout}prestashop>translations_e2e372415a8b8d36f4d86d9fc86bc608'] = 'Für weitere Informationen zu den Gebühren besuchen Sie bitte diese Seite:';
