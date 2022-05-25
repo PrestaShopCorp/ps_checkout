@@ -35,6 +35,7 @@ class PayPalConfiguration
     const PAYMENT_METHODS_ORDER = 'PS_CHECKOUT_PAYMENT_METHODS_ORDER';
     const INTEGRATION_DATE = 'PS_CHECKOUT_INTEGRATION_DATE';
     const HOSTED_FIELDS_3DS_DISABLED = 'PS_CHECKOUT_3DS_DISABLED';
+    const HOSTED_FIELDS_CONTINGENCIES = 'PS_CHECKOUT_HOSTEDFIELDS_CONTINGENCIES';
     const CSP_NONCE = 'PS_CHECKOUT_CSP_NONCE';
     const PS_CHECKOUT_PAYPAL_CB_INLINE = 'PS_CHECKOUT_PAYPAL_CB_INLINE';
     const PS_CHECKOUT_PAYPAL_BUTTON = 'PS_CHECKOUT_PAYPAL_BUTTON';
@@ -324,5 +325,20 @@ class PayPalConfiguration
     public function setButtonConfiguration($configuration)
     {
         $this->configuration->set(self::PS_CHECKOUT_PAYPAL_BUTTON, json_encode($configuration));
+    }
+
+    /**
+     * @return string
+     */
+    public function getHostedFieldsContingencies()
+    {
+        switch ($this->configuration->get(self::HOSTED_FIELDS_CONTINGENCIES)) {
+            case 'SCA_ALWAYS':
+                return 'SCA_ALWAYS';
+            case 'NONE':
+                return 'NONE';
+            default:
+                return 'SCA_WHEN_REQUIRED';
+        }
     }
 }
