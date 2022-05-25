@@ -189,7 +189,16 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $customer->email = $email;
         $customer->firstname = $firstName;
         $customer->lastname = $lastName;
-        $customer->passwd = md5(time() . _COOKIE_KEY_);
+
+        if (class_exists('PrestaShop\PrestaShop\Core\Crypto\Hashing')) {
+            $crypto = new PrestaShop\PrestaShop\Core\Crypto\Hashing();
+            $customer->passwd = $crypto->hash(
+                time() . _COOKIE_KEY_,
+                _COOKIE_KEY_
+            );
+        } else {
+            $customer->passwd = md5(time() . _COOKIE_KEY_);
+        }
 
         try {
             $customer->save();
