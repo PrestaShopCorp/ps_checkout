@@ -439,7 +439,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      */
     private function getCountryIsoCodeById($countryId)
     {
-        return \Country::getIsoById($countryId);
+        return strtoupper(\Country::getIsoById($countryId));
     }
 
     /**
