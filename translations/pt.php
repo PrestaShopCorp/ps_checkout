@@ -121,7 +121,7 @@ $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_4aeac3b5e47dfe0a59d0c7992e
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_588db83bc5f0db77d73f37b06760c9c4'] = 'A conta do comerciante não está configurada para aceitar pagamentos com cartão. Por favor, entre em contacto com o serviço de atendimento ao cliente PayPal.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_5ff62d9ee2fadb425910904929dfad79'] = 'O valor de um dos campos é inválido.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_60f36bd938597c9e38b669bc6ee7ddb2'] = 'Número do cartão, data de validade ou VCC inválido. Verifique-os e tente novamente.';
-$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_66ee09a7e80eb7b54cf0a676b0a15ead'] = 'O valor não pode ser atualizado, pois o &amp;amp;amp;quot;pagador&amp;amp;amp;quot; escolheu e aprovou uma oferta de financiamento específica para um determinado valor. Por favor, crie um novo Pedido com o valor do Pedido atualizado e peça ao &amp;amp;amp;quot;pagador&amp;amp;amp;quot; para aprovar as novas condições de pagamento. ';
+$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_66ee09a7e80eb7b54cf0a676b0a15ead'] = 'O valor não pode ser atualizado, pois o &quot;pagador&quot; escolheu e aprovou uma oferta de financiamento específica para um determinado valor. Por favor, crie um novo Pedido com o valor do Pedido atualizado e peça ao &quot;pagador&quot; para aprovar as novas condições de pagamento. ';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_6a5ff55a65a1abc268f70656bec2c3fd'] = 'Esta transação foi bloqueada pelas normas de proteção antifraude. Utilize outro cartão ou contacte o serviço de apoio ao cliente para processar o seu pedido ou para alterar as regras antifraude da conta bancária.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_6b7891d243754e565fc91d307afba03c'] = 'Essa transação atualmente é incompatível. Entre em contacto com o atendimento ao cliente ou com o seu gestor de conta para obter mais informações.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_6ed540ca1704c2b0cd24f90276de9de9'] = 'O número de caracteres de um dos parâmetros é muito pequeno.';
@@ -145,11 +145,11 @@ $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_bd972c54e30277bb235fa34b5d
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_c180c7c7be6f58fde50feae89c97c0a0'] = 'A API Caller account não está configurado para aceitar pagamentos com cartão. Por favor, entre em contacto com o serviço de atendimento ao cliente PayPal.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_c4cdc3c3b50c0a7aa017266797228972'] = 'O processamento deste tipo de cartão não é suportado. Por favor, utilize outro tipo de cartão.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_cba316dfd19bdaf1c654cd84d82688fe'] = 'Esta transação foi recusada devido a um incumprimento de conformidade.';
-$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_d00df53f04b51b8bba7060021a13250a'] = 'Este cliente não está autorizado a utilizar o objeto &amp;amp;amp;quot;payment_instruction&amp;amp;amp;quot;.';
-$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_dddf233eaa8da4b85ebc33661ca4fe94'] = 'A moeda da autorização de pagamento deve ser a mesma utilizada para criar o pedido de compra e autorizada pelo cliente. Verifique o &amp;amp;amp;quot;currency_code&amp;amp;amp;quot; e tente novamente.';
+$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_d00df53f04b51b8bba7060021a13250a'] = 'Este cliente não está autorizado a utilizar o objeto &quot;payment_instruction&quot;.';
+$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_dddf233eaa8da4b85ebc33661ca4fe94'] = 'A moeda da autorização de pagamento deve ser a mesma utilizada para criar o pedido de compra e autorizada pelo cliente. Verifique o &quot;currency_code&quot; e tente novamente.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_df5bf45d0c1e09ae5e724072d361410f'] = 'O cliente não aprovou o pagamento.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e229686c76660524e7c83d4fda4a2b48'] = 'O pagador ainda não aprovou a Ordem de Pagamento. Por favor redirecione o pagador para a url `rel`:`approve` url devolvida como parte dos links da HATEOAS dentro da chamada Create Order ou forneça uma fonte de pagamento válida no pedido.';
-$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e39b765a3de4545e91f889374c84535c'] = 'A opção de registar a encomenda só se encontra disponível se a &amp;amp;amp;quot;intenção&amp;amp;amp;quot; for AUTORIZAR e a &amp;amp;amp;quot;instrução_de_processamento&amp;amp;amp;quot; for ORDER_SAVED_EXPLICITY. Por favor mude a &amp;amp;amp;quot;intenção&amp;amp;amp;quot; para AUTORIZAR, &amp;amp;amp;quot;processing_instruction&amp;amp;amp;quot; para &amp;amp;amp;quot;ORDER_SAVED_EXPLICITY&amp;amp;amp;quot; e tente novamente.';
+$_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e39b765a3de4545e91f889374c84535c'] = 'A opção de registar a encomenda só se encontra disponível se a &quot;intenção&quot; for AUTORIZAR e a &quot;instrução_de_processamento&quot; for ORDER_SAVED_EXPLICITY. Por favor mude a &quot;intenção&quot; para AUTORIZAR, &quot;processing_instruction&quot; para &quot;ORDER_SAVED_EXPLICITY&quot; e tente novamente.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e447d4a6087d64d98201ba94eacc6696'] = 'Número de cartão inválido. Verifique o número do cartão e tente novamente.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_e765f8d5cab9d172c3522849bdd37334'] = 'O endereço de entrega é obrigatório. Por favor, verifique os campos do endereço de entrega e tente novamente.';
 $_MODULE['<{ps_checkout}prestashop>hostedfieldserrors_ecb1bec859ca59e1f4cf6935743ddad4'] = 'Um montante de autorização só pode ser especificado se um Pedido tiver sido gravada ligando /v2/checkout/orders/{order_id}/save. Por favor, guarde o pedido e tente novamente.';
@@ -188,7 +188,7 @@ $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_95b16127e70e8a9022040
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_a44217022190f5734b2f72ba1e4f8a79'] = 'Número do cartão';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_bc9189406be84ec297464a514221406d'] = 'XXX';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_c884ed19483d45970c5bf23a681e2dd2'] = 'Veja um breve resumo do seu pedido:';
-$_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_edd87c9059d88fea45c0bd6384ce92b9'] = 'Por favor, finalize a sua encomenda clicando em &amp;amp;amp;quot;Confirmo a minha encomenda&amp;amp;amp;quot;.';
+$_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_edd87c9059d88fea45c0bd6384ce92b9'] = 'Por favor, finalize a sua encomenda clicando em &quot;Confirmo a minha encomenda&quot;.';
 $_MODULE['<{ps_checkout}prestashop>paymentcardconfirmation_f1d3b424cd68795ecaa552883759aceb'] = 'Resumo do pedido';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_1e9307ff80da8e2e7053566f1613cf90'] = '3 dígitos';
 $_MODULE['<{ps_checkout}prestashop>paymentoptions_36883c97eb73307ac86b5ad32abbb49b'] = 'no verso do seu cartão de crédito. Em alguns casos, pode ser um código de 4 dígitos ou na frente do seu cartão.';
@@ -254,7 +254,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_bc9189406be84ec297464a514221406d'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_c884ed19483d45970c5bf23a681e2dd2'] = 'Veja um breve resumo do seu pedido:';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_dbb50a3167fd387cac23808bd55a9ee4'] = 'Identificação da transação PayPal: ';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_e81c4e4f2b7b93b481e13a8553c2ae1b'] = 'ou';
-$_MODULE['<{ps_checkout}prestashop>ps_checkout_edd87c9059d88fea45c0bd6384ce92b9'] = 'Por favor, finalize a sua encomenda clicando em &amp;amp;amp;quot;Confirmo a minha encomenda&amp;amp;amp;quot;.';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_edd87c9059d88fea45c0bd6384ce92b9'] = 'Por favor, finalize a sua encomenda clicando em &quot;Confirmo a minha encomenda&quot;.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f1d3b424cd68795ecaa552883759aceb'] = 'Resumo do pedido';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f212c48fb02b2494070e22184cc8906b'] = 'Referência do pedido PayPal:';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f2e984154b51f09b97cd60a1b8396059'] = 'No PayPal Javascript SDK Instance';
@@ -319,7 +319,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_25d76826f85d2bb976027066e6fcc522
 $_MODULE['<{ps_checkout}prestashop>translations_2607298669ace2fc910321afeb9f8a84'] = 'Baixar PDF';
 $_MODULE['<{ps_checkout}prestashop>translations_26a180e6da68731b08a94399789ff518'] = 'Parabéns! Já pode começar a vender online!';
 $_MODULE['<{ps_checkout}prestashop>translations_26d56092353c630f9ad92df134d3708d'] = 'Descrição da instalação';
-$_MODULE['<{ps_checkout}prestashop>translations_26ec71edbfce31656c47a66bf830ed1c'] = 'Cuidado, as configurações de arredondamento não são totalmente compatíveis com o processamento de transações do PrestaShop Checkout. Pode dar erro em algumas transações. Mas é fácil. As suas configurações de &amp;amp;amp;quot;Regra de Arredondamento&amp;amp;amp;quot; e &amp;amp;amp;quot;Tipo de Arredondamento&amp;amp;amp;quot; necessitam de ser definidas para &amp;amp;amp;quot;Arredondar para o infinito quando o valor estiver a meio&amp;amp;amp;quot; e &amp;amp;amp;quot;Arredondar para cada artigo&amp;amp;amp;quot; ou clique no botão abaixo para fazer isso automaticamente!';
+$_MODULE['<{ps_checkout}prestashop>translations_26ec71edbfce31656c47a66bf830ed1c'] = 'Cuidado, as configurações de arredondamento não são totalmente compatíveis com o processamento de transações do PrestaShop Checkout. Pode dar erro em algumas transações. Mas é fácil. As suas configurações de &quot;Regra de Arredondamento&quot; e &quot;Tipo de Arredondamento&quot; necessitam de ser definidas para &quot;Arredondar para o infinito quando o valor estiver a meio&quot; e &quot;Arredondar para cada artigo&quot; ou clique no botão abaixo para fazer isso automaticamente!';
 $_MODULE['<{ps_checkout}prestashop>translations_29ac026d29c538244f7b8a7505213750'] = 'DICAS';
 $_MODULE['<{ps_checkout}prestashop>translations_2bd63f8a40a2830f6e7c4043bb534137'] = 'Multiloja detectada';
 $_MODULE['<{ps_checkout}prestashop>translations_2c3d0d52cd44ea478c6e2a6586632239'] = 'Personalizar o botão PayPal';
@@ -426,7 +426,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_8634bddac0c61abde83ce1debdc1892c
 $_MODULE['<{ps_checkout}prestashop>translations_88bccdecc2c4b9dcc8afbbc94483293c'] = 'Beneficie-se da experiência e das vantagens do PayPal';
 $_MODULE['<{ps_checkout}prestashop>translations_8ac88d38d8b578d5b10bf4cf0cf50076'] = 'Escolha as páginas onde serão exibidos os botões';
 $_MODULE['<{ps_checkout}prestashop>translations_8a9f98e889a0de9caf2feb4b9b382284'] = 'Desconectar desativará todas as formas de pagamento. Você não mais poderá receber pagamentos por meio do PrestaShop Checkout.';
-$_MODULE['<{ps_checkout}prestashop>translations_8acc0bc61a5f75b13cea7e27bbcd51af'] = 'Apenas pode escolher o tipo de campos do cartão de crédito se este estiver ativado no separador &amp;amp;amp;quot;Personalizar experiência de Checkout&amp;amp;amp;quot;.';
+$_MODULE['<{ps_checkout}prestashop>translations_8acc0bc61a5f75b13cea7e27bbcd51af'] = 'Apenas pode escolher o tipo de campos do cartão de crédito se este estiver ativado no separador &quot;Personalizar experiência de Checkout&quot;.';
 $_MODULE['<{ps_checkout}prestashop>translations_8bcdc441379cbf584638b0589a3f9adb'] = 'CEP';
 $_MODULE['<{ps_checkout}prestashop>translations_8bf906833cc7aea8084f552217ed9c1d'] = 'Suspenso';
 $_MODULE['<{ps_checkout}prestashop>translations_8d3d326e52dae2640dc2e2143062e078'] = 'A verificação de antecedentes está em andamento';
