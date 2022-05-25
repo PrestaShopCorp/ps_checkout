@@ -274,7 +274,11 @@
 
 @media (max-width: 576px) {
   .ps-checkout.popup {
-    width: 400px;
+    width: 350px;
+  }
+
+  .ps-checkout.text {
+    font-size: 20;
   }
 }
 
