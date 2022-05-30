@@ -42,5 +42,5 @@ export const DefaultSelectors1_6 = {
   PAY_LATER_OFFER_MESSAGE_CONTAINER_PRODUCT: '.content_prices',
   PAY_LATER_OFFER_MESSAGE_CONTAINER_CART_SUMMARY: '#total_price_container',
 
-  PAY_LATER_BANNER_CONTAINER: '#notifications .container'
+  PAY_LATER_BANNER_CONTAINER: '.header-container'
 };
