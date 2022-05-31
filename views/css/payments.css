@@ -342,7 +342,8 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
 }
 
 .ps_checkout-payment-option label {
-  display: inline-block !important;
+  display: inline !important;
+  line-height: 2.5;
 }
 
 .js-payment-ps_checkout.disabled .ps_checkout-button[data-funding-source="card"] button:disabled {
@@ -452,7 +453,7 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
   z-index: 1;
   bottom: 125%;
   left: 50%;
-  margin-left: -150px;
+  margin-left: -280px;
   font-weight: normal;
   font-size: 0.775rem;
   line-height: 1.25rem;
