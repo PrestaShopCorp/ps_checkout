@@ -28,7 +28,7 @@ export class ExpressButtonCartComponent extends BaseComponent {
   };
 
   created() {
-    this.buttonReferenceContainer = this.querySelectorService.getCheckoutExpressCheckoutButtonContainerCart();
+    this.buttonReferenceContainer = this.querySelectorService.getExpressCheckoutButtonContainerCart();
   }
 
   renderComponent() {

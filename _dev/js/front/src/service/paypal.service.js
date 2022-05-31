@@ -29,6 +29,31 @@
  * @property {function} createOrder
  */
 
+/**
+ * @typedef PaypalPayLaterOfferStyle
+ * @type {*}
+ *
+ * @property {string} layout
+ * @property {string} color
+ * @property {string} ratio
+ * @property {object} logo
+ * @property {string} logo.type
+ * @property {string} logo.position
+ * @property {object} text
+ * @property {string} text.color
+ * @property {string} text.size
+ * @property {string} text.align
+ */
+
+/**
+ * @typedef PaypalPayLaterOfferEvents
+ * @type {*}
+ *
+ * @property {function} onRender
+ * @property {function} onClick
+ * @property {function} onApply
+ */
+
 import { BaseClass } from '../core/dependency-injection/base.class';
 
 /**
@@ -40,17 +65,18 @@ import { BaseClass } from '../core/dependency-injection/base.class';
 
 export class PayPalService extends BaseClass {
   static Inject = {
-    config: 'PayPalSdkConfig',
+    configPayPal: 'PayPalSdkConfig',
+    configPrestaShop: 'PsCheckoutConfig',
     sdk: 'PayPalSDK',
     $: '$'
   };
 
   getOrderId() {
-    return this.config.orderId;
+    return this.configPayPal.orderId;
   }
 
   getFundingSource() {
-    return this.config.fundingSource;
+    return this.configPayPal.fundingSource;
   }
 
   /**
@@ -84,7 +110,7 @@ export class PayPalService extends BaseClass {
   getButtonCustomizationStyle(fundingSource) {
     const style = {
       ...{ label: 'pay', color: 'gold', shape: 'pill' },
-      ...(this.config.buttonCustomization || {}),
+      ...(this.configPayPal.buttonCustomization || {}),
       ...(window.ps_checkout.PayPalButtonCustomization || {})
     };
 
@@ -117,7 +143,7 @@ export class PayPalService extends BaseClass {
           color: 'black'
         }
       },
-      ...(this.config.hostedFieldsCustomization || {}),
+      ...(this.configPayPal.hostedFieldsCustomization || {}),
       ...(window.ps_checkout.hostedFieldsCustomization || {})
     };
 
@@ -257,7 +283,7 @@ export class PayPalService extends BaseClass {
     if (!this.eligibleFundingSources || cache) {
       const paypalFundingSources = this.sdk.getFundingSources();
       this.eligibleFundingSources = (
-        this.config.fundingSourcesSorted || paypalFundingSources
+        this.configPrestaShop.fundingSourcesSorted || paypalFundingSources
       )
         .filter(
           fundingSource => paypalFundingSources.indexOf(fundingSource) >= 0
@@ -268,7 +294,7 @@ export class PayPalService extends BaseClass {
         }))
         .filter(({ name, mark }) => {
           if (name === 'card') {
-            if (this.config.hostedFieldsEnabled) {
+            if (this.configPrestaShop.hostedFieldsEnabled) {
               return this.isHostedFieldsEligible()
                 ? true
                 : (console.error('Hosted Fields eligibility is declined'),
@@ -285,7 +311,63 @@ export class PayPalService extends BaseClass {
     return this.eligibleFundingSources;
   }
 
+  isFundingEligible(fundingSource) {
+    return this.getEligibleFundingSources(true).contains(fundingSource);
+  }
+
   isHostedFieldsEligible() {
     return this.sdk.HostedFields && this.sdk.HostedFields.isEligible();
+  }
+
+  /**
+   * @param {string} placement
+   * @param {string} amount
+   * @param {PaypalPayLaterOfferEvents} events
+   */
+  getPayLaterOfferMessage(placement, amount, events) {
+    const style = {
+      ...{
+        layout: 'text',
+        logo: {
+          type: 'inline'
+        }
+      },
+      ...(this.configPayPal.payLaterOfferMessageCustomization || {}),
+      ...(window.ps_checkout.payLaterOfferMessageCustomization || {})
+    };
+    return (
+      this.sdk.Messages &&
+      this.sdk.Messages({
+        placement: placement,
+        amount: amount,
+        style: style,
+        ...events
+      })
+    );
+  }
+
+  /**
+   * @param {string} placement
+   * @param {string} amount
+   * @param {PaypalPayLaterOfferEvents} events
+   */
+  getPayLaterOfferBanner(placement, amount, events) {
+    const style = {
+      ...{
+        layout: 'flex',
+        ratio: '20x1'
+      },
+      ...(this.configPayPal.payLaterOfferBannerCustomization || {}),
+      ...(window.ps_checkout.payLaterOfferBannerCustomization || {})
+    };
+    return (
+      this.sdk.Messages &&
+      this.sdk.Messages({
+        placement: placement,
+        amount: amount,
+        style: style,
+        ...events
+      })
+    );
   }
 }

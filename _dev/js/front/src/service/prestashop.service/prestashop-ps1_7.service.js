@@ -23,6 +23,14 @@ export class PrestashopPs1_7Service {
     );
   }
 
+  static isHomePage() {
+    return document.body.id === 'index';
+  }
+
+  static isCategoryPage() {
+    return document.body.id === 'category';
+  }
+
   static isCartPage() {
     return document.body.id === 'cart';
   }
@@ -67,9 +75,38 @@ export class PrestashopPs1_7Service {
     return !!window.ps_checkoutCartProductCount;
   }
 
+  static getCartAmount() {
+    return window.prestashop.cart.totals.total.amount || '';
+  }
+
+  static getProductPrice() {
+    let productPrice = document.querySelector('.current-price .current-price-value');
+
+    if (!productPrice) {
+      productPrice = document.querySelector('.current-price [itemprop="price"]');
+    }
+
+    return productPrice.getAttribute('content') || '';
+  }
+
+  static isAddToCartButtonDisabled() {
+    let addToCartElement = document.querySelector('.page-product:not(.modal-open) .row .product-add-to-cart, .page-product:not(.modal-open) .product-container .product-add-to-cart, .page-product:not(.modal-open) .row .js-product-add-to-cart, .page-product:not(.modal-open) .product-container .js-product-add-to-cart');
+    let addToCartButtonElement = addToCartElement.querySelector('button.add-to-cart');
+
+    return addToCartButtonElement.disabled;
+  }
+
   static onUpdatedCart(listener) {
     if (window['prestashop'] && window['prestashop'].on) {
       window['prestashop'].on('updatedCart', listener);
+    } else {
+      console.error('');
+    }
+  }
+
+  static onUpdatedProduct(listener) {
+    if (window['prestashop'] && window['prestashop'].on) {
+      window['prestashop'].on('updatedProduct', listener);
     } else {
       console.error('');
     }

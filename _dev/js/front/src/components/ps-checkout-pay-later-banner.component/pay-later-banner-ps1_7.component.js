@@ -16,30 +16,15 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
+import { BaseComponent } from '../../core/dependency-injection/base.component';
 
-/**
- * This file exists only for documentative purposes
- */
-
-/**
- * @typedef PayPalSdk
- * @type {object}
- *
- * @property {string} version
- * @property {string[]} FUNDING
- * @property {function} getCorrelationID
- * @property {function} getFundingSources
- * @property {function} isFundingEligible
- * @property {function} rememberFunding
- * @property {object} Buttons
- * @property {function} Buttons.isEligible
- * @property {function} Buttons.render
- * @property {object} Marks
- * @property {function} Marks.isEligible
- * @property {function} Marks.render
- * @property {object} HostedFields
- * @property {function} HostedFields.isEligible
- * @property {function} HostedFields.render
- * @property {object} Messages
- * @property {function} Messages.render
- */
+export class PayLaterBannerPs1_7Component extends BaseComponent {
+  createContainer(containerIdentifier, querySelector) {
+    if (null === document.querySelector(containerIdentifier)) {
+      let containerElement = document.createElement('div');
+      containerElement.id = containerIdentifier.slice(1);
+      containerElement.classList.add('mb-2');
+      querySelector.append(containerElement);
+    }
+  }
+}

@@ -79,15 +79,23 @@ export class QuerySelectorService extends BaseClass {
     return this.instance.getPaymentOptionRadios();
   }
 
-  getCheckoutExpressCheckoutButtonContainerCart() {
-    return this.instance.getCheckoutExpressCheckoutButtonContainerCart();
+  getExpressCheckoutButtonContainerCart() {
+    return this.instance.getExpressCheckoutButtonContainerCart();
   }
 
-  getCheckoutExpressCheckoutButtonContainerCheckout() {
-    return this.instance.getCheckoutExpressCheckoutButtonContainerCheckout();
+  getExpressCheckoutButtonContainerCheckout() {
+    return this.instance.getExpressCheckoutButtonContainerCheckout();
   }
 
-  getCheckoutExpressCheckoutButtonContainerProduct() {
-    return this.instance.getCheckoutExpressCheckoutButtonContainerProduct();
+  getExpressCheckoutButtonContainerProduct() {
+    return this.instance.getExpressCheckoutButtonContainerProduct();
+  }
+
+  getPayLaterOfferMessageContainerSelector(placement) {
+    return this.instance.getPayLaterOfferMessageContainerSelector(placement);
+  }
+
+  getPayLaterOfferBannerContainerSelector(placement) {
+    return this.instance.getPayLaterOfferBannerContainerSelector(placement);
   }
 }

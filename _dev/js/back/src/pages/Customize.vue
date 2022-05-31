@@ -28,7 +28,8 @@
             class="link-underline"
           >
             {{ $t('pages.customize.customThemeWarningMessage2') }}
-          </a>.
+          </a>
+          .
         </p>
       </b-alert>
     </b-container>
@@ -38,7 +39,7 @@
     </b-container>
 
     <b-container class="mb-4">
-      <PayIn4X />
+      <PayLater />
     </b-container>
 
     <b-container class="mb-4">
@@ -58,7 +59,7 @@
 <script>
   import ActivePayment from '@/components/panel/active-payment';
   import ExpressCheckout from '@/components/panel/express-checkout';
-  import PayIn4X from '@/components/panel/pay-in-4x';
+  import PayLater from '@/components/panel/pay-later';
   import ButtonCustomization from '@/components/panel/button-customization';
   import FeatureIncoming from '@/components/block/feature-incoming';
 
@@ -66,7 +67,7 @@
     name: 'Customize',
     components: {
       ActivePayment,
-      PayIn4X,
+      PayLater,
       ExpressCheckout,
       ButtonCustomization,
       FeatureIncoming

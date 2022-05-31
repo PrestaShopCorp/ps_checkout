@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Validator;
 
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
-use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayIn4XConfiguration;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
 
 class FrontControllerValidator
 {
@@ -34,18 +34,18 @@ class FrontControllerValidator
      */
     private $expressCheckoutConfiguration;
     /**
-     * @var PayPalPayIn4XConfiguration
+     * @var PayPalPayLaterConfiguration
      */
-    private $payIn4XConfiguration;
+    private $payLaterConfiguration;
 
     public function __construct(
         MerchantValidator $merchantValidator,
         ExpressCheckoutConfiguration $expressCheckoutConfiguration,
-        PayPalPayIn4XConfiguration $payIn4XConfiguration
+        PayPalPayLaterConfiguration $payLaterConfiguration
     ) {
         $this->merchantValidator = $merchantValidator;
         $this->expressCheckoutConfiguration = $expressCheckoutConfiguration;
-        $this->payIn4XConfiguration = $payIn4XConfiguration;
+        $this->payLaterConfiguration = $payLaterConfiguration;
     }
 
     /**
@@ -60,15 +60,28 @@ class FrontControllerValidator
         }
 
         switch ($controller) {
+            // Homepage
+            case 'index':
+                return $this->payLaterConfiguration->isHomePageBannerActive();
+            // Category
+            case 'category':
+                return $this->payLaterConfiguration->isCategoryPageBannerActive();
             case 'orderopc':
             case 'order':
                 return true;
             case 'product':
-                return $this->expressCheckoutConfiguration->isProductPageEnabled() || $this->payIn4XConfiguration->isProductPageEnabled();
+                return $this->payLaterConfiguration->isProductPageMessageActive()
+                    || $this->payLaterConfiguration->isProductPageBannerActive()
+                    || $this->payLaterConfiguration->isProductPageButtonActive()
+                    || $this->expressCheckoutConfiguration->isProductPageEnabled();
             case 'cart':
-                return $this->expressCheckoutConfiguration->isOrderPageEnabled() || $this->payIn4XConfiguration->isOrderPageEnabled();
+                return $this->payLaterConfiguration->isOrderPageMessageActive()
+                    || $this->payLaterConfiguration->isOrderPageBannerActive()
+                    || $this->payLaterConfiguration->isCartPageButtonActive()
+                    || $this->expressCheckoutConfiguration->isOrderPageEnabled();
             case 'authentication':
-                return $this->expressCheckoutConfiguration->isCheckoutPageEnabled();
+                return $this->expressCheckoutConfiguration->isCheckoutPageEnabled()
+                    || $this->payLaterConfiguration->isOrderPageButtonActive();
         }
 
         return false;
@@ -86,6 +99,12 @@ class FrontControllerValidator
         }
 
         switch ($controller) {
+            // Homepage
+            case 'index':
+                return $this->payLaterConfiguration->isHomePageBannerActive();
+            // Category
+            case 'category':
+                return $this->payLaterConfiguration->isCategoryPageBannerActive();
             // Payment step
             case 'orderopc':
             case 'order':
@@ -95,7 +114,8 @@ class FrontControllerValidator
                 return true;
             // ExpressCheckout button
             case 'authentication':
-                return $this->expressCheckoutConfiguration->isCheckoutPageEnabled();
+                return $this->expressCheckoutConfiguration->isCheckoutPageEnabled()
+                    || $this->payLaterConfiguration->isOrderPageButtonActive();
         }
 
         return false;

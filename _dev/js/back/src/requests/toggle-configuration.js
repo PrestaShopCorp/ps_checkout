@@ -17,29 +17,18 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 
-/**
- * This file exists only for documentative purposes
- */
+import ajax from './ajax.js';
 
-/**
- * @typedef PayPalSdk
- * @type {object}
- *
- * @property {string} version
- * @property {string[]} FUNDING
- * @property {function} getCorrelationID
- * @property {function} getFundingSources
- * @property {function} isFundingEligible
- * @property {function} rememberFunding
- * @property {object} Buttons
- * @property {function} Buttons.isEligible
- * @property {function} Buttons.render
- * @property {object} Marks
- * @property {function} Marks.isEligible
- * @property {function} Marks.render
- * @property {object} HostedFields
- * @property {function} HostedFields.isEligible
- * @property {function} HostedFields.render
- * @property {object} Messages
- * @property {function} Messages.render
- */
+export function toggleConfiguration({ commit, getters }, payload, action, mutationType) {
+  return ajax({
+    url: getters.adminController,
+    action,
+    data: {
+      status: payload ? 1 : 0
+    }
+  }).then(() => {
+    commit(mutationType, payload);
+
+    return payload;
+  });
+}
