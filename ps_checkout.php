@@ -1525,53 +1525,55 @@ class Ps_checkout extends PaymentModule
 
     /**
      * @return void
-     *
-     * @throws Raven_Exception
      */
     private function installSentryExceptionLogger()
     {
-        $envFiles = [
-            'prod' => '.env',
-            'test' => '.env.test',
-        ];
+        try {
+            $envFiles = [
+                'prod' => '.env',
+                'test' => '.env.test',
+            ];
 
-        $envLoader = new \PrestaShop\Module\PrestashopCheckout\Environment\EnvLoader();
+            $envLoader = new \PrestaShop\Module\PrestashopCheckout\Environment\EnvLoader();
 
-        foreach ($envFiles as $environment => $fileName) {
-            if (!file_exists(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName)) {
-                continue;
+            foreach ($envFiles as $environment => $fileName) {
+                if (!file_exists(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName)) {
+                    continue;
+                }
+
+                $env = $envLoader->read(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName);
+
+                break;
             }
 
-            $env = $envLoader->read(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName);
+            if (!empty($env) && isset($env['PS_CHECKOUT_SENTRY_DSN_MODULE'])) {
+                $this->sentryClient = new PrestaShop\Module\PrestashopCheckout\Handler\ModuleFilteredRavenClient(
+                    $env['PS_CHECKOUT_SENTRY_DSN_MODULE'],
+                    [
+                        'level' => 'error',
+                        'error_types' => E_ERROR,
+                        'tags' => [
+                            'php_version' => phpversion(),
+                            'module_version' => $this->version,
+                            'prestashop_version' => _PS_VERSION_,
+                        ],
+                    ]
+                );
 
-            break;
-        }
+                $this->sentryClient->setAppPath(realpath(_PS_MODULE_DIR_ . 'ps_checkout/'));
+                $this->sentryClient->setExcludedAppPaths([
+                    realpath(_PS_MODULE_DIR_ . 'ps_checkout/vendor/'),
+                ]);
+                $this->sentryClient->setExcludedDomains(['127.0.0.1', 'localhost', '.local']);
 
-        if (!empty($env) && isset($env['PS_CHECKOUT_SENTRY_DSN_MODULE'])) {
-            $this->sentryClient = new PrestaShop\Module\PrestashopCheckout\Handler\ModuleFilteredRavenClient(
-                $env['PS_CHECKOUT_SENTRY_DSN_MODULE'],
-                [
-                    'level' => 'error',
-                    'error_types' => E_ERROR,
-                    'tags' => [
-                        'php_version' => phpversion(),
-                        'module_version' => $this->version,
-                        'prestashop_version' => _PS_VERSION_,
-                    ],
-                ]
-            );
+                if (version_compare(phpversion(), '7.4.0', '>=') && version_compare(_PS_VERSION_, '1.7.8.0', '<')) {
+                    return;
+                }
 
-            $this->sentryClient->setAppPath(realpath(_PS_MODULE_DIR_ . 'ps_checkout/'));
-            $this->sentryClient->setExcludedAppPaths([
-                realpath(_PS_MODULE_DIR_ . 'ps_checkout/vendor/'),
-            ]);
-            $this->sentryClient->setExcludedDomains(['127.0.0.1', 'localhost', '.local']);
-
-            if (version_compare(phpversion(), '7.4.0', '>=') && version_compare(_PS_VERSION_, '1.7.8.0', '<')) {
-                return;
+                $this->sentryClient->install();
             }
-
-            $this->sentryClient->install();
+        } catch (Exception $exception) {
+            $this->getLogger()->debug('Sentry exception', ['exception' => $exception]);
         }
     }
 
