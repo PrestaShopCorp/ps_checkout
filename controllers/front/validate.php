@@ -331,7 +331,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                     $exceptionMessageForCustomer = $this->module->l('Order cannot be saved');
                     break;
                 case PayPalException::PAYMENT_DENIED:
-                    $exceptionMessageForCustomer = $this->module->l('This payment method is not allowed to proceed the transaction on payment gateway, please try another.');
+                    $exceptionMessageForCustomer = $this->module->l('This payment method has been refused by the payment platform, please use another payment method.');
                     $notifyCustomerService = false;
                     break;
             }
