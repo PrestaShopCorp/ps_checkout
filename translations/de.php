@@ -83,7 +83,6 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_ec53a8c4f07baed5d882507
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_ef93d2efbc5c9bdb02f807dd2c9337fb'] = 'Nettobetrag zur Erstattung';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_f5d74ea75357b5e139854c14f8e24fe3'] = 'Bestelldetails';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_fc9aab144255fe59fc53dea649cff88b'] = 'Rückerstattung bestätigen';
-$_MODULE['<{ps_checkout}prestashop>configurationmodule_6017aa60accb3ba69278852888ab02be'] = 'Vorsicht : die Währungen, dass Sie haben aktivieren : %s mit PrestaShop Checkout zur Zeit nicht funktionieren. Bitte deaktivieren Sie %s für PrestaShop Checkout in Ihren';
 $_MODULE['<{ps_checkout}prestashop>cursedpage_960567c486a23f5e75891b735928c8ba'] = 'Gehen Sie zurück zur Modulkonfiguration';
 $_MODULE['<{ps_checkout}prestashop>cursedpage_df2183ab7d5bfd58187077969f08c7f8'] = 'Bei PayPal-Onboarding ist ein Fehler aufgetreten, bitte versuchen Sie es erneut.';
 $_MODULE['<{ps_checkout}prestashop>displayexpresscheckout_2f2401d57093e7d31bf2689fb87f72f6'] = '100 % sichere Zahlungen';
@@ -238,6 +237,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_569fd05bdafa1712c4f6be5b153b8418'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_5ea7f231296949070013bc43715aae01'] = 'Sicherheitscode';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_644818852b4dd8cf9da73543e30f045a'] = 'Zurück zur Bezahlung';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_6ff063fbc860a79759a7369ac32cee22'] = 'Bezahlung';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_71c5a2eb62ee779761c12147312be25a'] = 'Diese Zahlungsmethode ist nicht autorisiert, mit der Transaktion auf dem Zahlungsgateway fortzufahren, bitte versuchen Sie es mit einer anderen Methode.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_7253e56eef5057e5763f535498a4abe2'] = 'Sie haben sich dafür entschieden, mit PayPal zu zahlen.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_72e506c5e5a9308bb3836d539dc4e39e'] = 'Vielen Dank für Ihren Kauf!';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_78432b718ec482b7211e1a45785087f1'] = 'Karteninhaberauthentifizierung wurde abgebrochen, bitte wählen Sie eine andere Zahlungsmethode oder versuchen Sie es erneut.';
@@ -531,6 +531,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_dc43994c00f8f208f0c649524a9bcd46
 $_MODULE['<{ps_checkout}prestashop>translations_dc647eb65e6711e155375218212b3964'] = 'Passwort';
 $_MODULE['<{ps_checkout}prestashop>translations_dd7bf230fde8d4836917806aff6a6b27'] = 'Adresse';
 $_MODULE['<{ps_checkout}prestashop>translations_dfcfc43722eef1eab1e4a12e50a068b1'] = 'Währungen';
+$_MODULE['<{ps_checkout}prestashop>translations_e1b74123fdda2fd3b4a98308ef5dd782'] = 'Vorsicht : die Währungen, dass Sie haben aktivieren : %s mit PrestaShop Checkout zur Zeit nicht funktionieren. Bitte deaktivieren Sie %s für PrestaShop Checkout in Ihren';
 $_MODULE['<{ps_checkout}prestashop>translations_e1e1ce67de4906765f104f24a4280a1d'] = 'Brauchen Sie Hilfe? Hier finden Sie das Benutzerhandbuch des Moduls';
 $_MODULE['<{ps_checkout}prestashop>translations_e268443e43d93dab7ebef303bbe9642f'] = 'Konto';
 $_MODULE['<{ps_checkout}prestashop>translations_e2e372415a8b8d36f4d86d9fc86bc608'] = 'Für weitere Informationen zu den Gebühren besuchen Sie bitte diese Seite:';
