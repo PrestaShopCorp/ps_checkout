@@ -30,7 +30,16 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_3_0($module)
 {
-    return (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates()
-        && $module->registerHook('actionObjectShopAddAfter')
-        && (new PrestaShop\Module\PrestashopCheckout\MultiStoreFixer())->run();
+    // Force PrestaShop to upgrade for all shop to avoid issues
+    $savedShopContext = Shop::getContext();
+    Shop::setContext(Shop::CONTEXT_ALL);
+
+    (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates();
+    $module->registerHook('actionObjectShopAddAfter');
+    (new PrestaShop\Module\PrestashopCheckout\MultiStoreFixer())->run();
+
+    // Restore initial PrestaShop shop context
+    Shop::setContext($savedShopContext);
+
+    return true;
 }

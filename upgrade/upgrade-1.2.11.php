@@ -30,5 +30,16 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_2_11($module)
 {
-    return \Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_order_matrice` CHANGE `id_order_prestashop` `id_order_prestashop` INT(10) UNSIGNED NOT NULL;');
+    $db = Db::getInstance();
+
+    // Force PrestaShop to upgrade for all shop to avoid issues
+    $savedShopContext = Shop::getContext();
+    Shop::setContext(Shop::CONTEXT_ALL);
+
+    $db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_order_matrice` CHANGE `id_order_prestashop` `id_order_prestashop` INT(10) UNSIGNED NOT NULL;');
+
+    // Restore initial PrestaShop shop context
+    Shop::setContext($savedShopContext);
+
+    return true;
 }

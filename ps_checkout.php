@@ -187,6 +187,10 @@ class Ps_checkout extends PaymentModule
         // Should be done before parent::install() because enable() will be called first
         $this->disableSegment = true;
 
+        // Force PrestaShop to install for all shop to avoid issues, install action is always for all shops
+        $savedShopContext = Shop::getContext();
+        Shop::setContext(Shop::CONTEXT_ALL);
+
         // Install for both 1.7 and 1.6
         $result = (bool) parent::install() &&
             $this->installConfiguration() &&
@@ -197,6 +201,9 @@ class Ps_checkout extends PaymentModule
             $this->disableIncompatibleCountries() &&
             $this->disableIncompatibleCurrencies() &&
             (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops();
+
+        // Restore initial PrestaShop shop context
+        Shop::setContext($savedShopContext);
 
         if (!$result) {
             return false;
@@ -351,6 +358,10 @@ class Ps_checkout extends PaymentModule
      */
     public function uninstall()
     {
+        // Force PrestaShop to uninstall for all shop to avoid issues, uninstall action is always for all shops
+        $savedShopContext = Shop::getContext();
+        Shop::setContext(Shop::CONTEXT_ALL);
+
         // When PrestaShop uninstall a module, disable() and uninstall() are called but we want to track only uninstall()
         // Should be done before parent::uninstall() because disable() will be called first
         $this->disableSegment = true;
@@ -360,9 +371,14 @@ class Ps_checkout extends PaymentModule
             Configuration::deleteByName($name);
         }
 
-        return parent::uninstall() &&
-            (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->dropTable() &&
-            $this->uninstallTabs();
+        $result = parent::uninstall()
+            && (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->dropTable()
+            && $this->uninstallTabs();
+
+        // Restore initial PrestaShop shop context
+        Shop::setContext($savedShopContext);
+
+        return $result;
     }
 
     /**

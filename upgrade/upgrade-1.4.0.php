@@ -30,7 +30,10 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_4_0($module)
 {
-    $result = true;
+    // Force PrestaShop to upgrade for all shop to avoid issues
+    $savedShopContext = Shop::getContext();
+    Shop::setContext(Shop::CONTEXT_ALL);
+
     $db = Db::getInstance();
 
     // Remove our ModuleAdminControllers from SEO & URLs page
@@ -42,12 +45,12 @@ function upgrade_module_1_4_0($module)
 
     if (false === empty($queryMetaResults)) {
         foreach ($queryMetaResults as $queryMetaResult) {
-            $result = $result && (bool) $db->delete(
+            $db->delete(
                 'meta',
                 'id_meta = ' . (int) $queryMetaResult['id_meta']
             );
 
-            $result = $result && (bool) $db->delete(
+            $db->delete(
                 'meta_lang',
                 'id_meta = ' . (int) $queryMetaResult['id_meta']
             );
@@ -91,7 +94,7 @@ function upgrade_module_1_4_0($module)
             if (false === empty($data['id_order_state'])) {
                 if (false === $isGlobalValueSaved) {
                     // Set value global for all shops
-                    $result = $result && $db->update(
+                    $result = $db->update(
                         'configuration',
                         [
                             'id_shop' => null,
@@ -109,7 +112,7 @@ function upgrade_module_1_4_0($module)
                     }
                 } else {
                     // Mark this duplicated OrderState as deleted
-                    $result = $result && $db->update(
+                    $db->update(
                         'order_state',
                         [
                             'deleted' => 1,
@@ -120,7 +123,7 @@ function upgrade_module_1_4_0($module)
             }
 
             // Remove this OrderState identifier from Configuration
-            $result = $result && $db->delete(
+            $db->delete(
                 'configuration',
                 'id_configuration = ' . (int) $data['id_configuration']
             );
@@ -142,7 +145,7 @@ function upgrade_module_1_4_0($module)
 
     if (false === empty($queryOrderStateResults)) {
         foreach ($queryOrderStateResults as $queryOrderStateResult) {
-            $result = $result && $db->update(
+            $db->update(
                 'order_state',
                 [
                     'deleted' => 1,
@@ -152,10 +155,14 @@ function upgrade_module_1_4_0($module)
         }
     }
 
-    return $result
-        && (bool) $module->registerHook('displayAdminOrderLeft')
-        && (bool) $module->registerHook('displayAdminOrderMainBottom')
-        && (bool) $module->registerHook('actionAdminControllerSetMedia')
-        && (bool) $module->unregisterHook('actionOrderSlipAdd')
-        && (bool) $module->unregisterHook('actionOrderStatusUpdate');
+    $module->registerHook('displayAdminOrderLeft');
+    $module->registerHook('displayAdminOrderMainBottom');
+    $module->registerHook('actionAdminControllerSetMedia');
+    $module->unregisterHook('actionOrderSlipAdd');
+    $module->unregisterHook('actionOrderStatusUpdate');
+
+    // Restore initial PrestaShop shop context
+    Shop::setContext($savedShopContext);
+
+    return true;
 }

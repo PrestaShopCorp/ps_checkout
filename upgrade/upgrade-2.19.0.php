@@ -30,6 +30,9 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_19_0($module)
 {
+    // Force PrestaShop to upgrade for all shop to avoid issues
+    $savedShopContext = Shop::getContext();
+    Shop::setContext(Shop::CONTEXT_ALL);
     $shopsList = \Shop::getShops(false, null, true);
 
     foreach ($shopsList as $shopId) {
@@ -39,6 +42,9 @@ function upgrade_module_2_19_0($module)
         Configuration::updateValue('PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER', '0', false, null, (int) $shopId);
         Configuration::updateValue('PS_CHECKOUT_INTEGRATION_DATE', '2022-05-11', false, null, (int) $shopId);
     }
+
+    // Restore initial PrestaShop shop context
+    Shop::setContext($savedShopContext);
 
     return true;
 }
