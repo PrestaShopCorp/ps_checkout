@@ -83,6 +83,7 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_ec53a8c4f07baed5d882507
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_ef93d2efbc5c9bdb02f807dd2c9337fb'] = 'Net amount to refund';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_f5d74ea75357b5e139854c14f8e24fe3'] = 'Order details';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_fc9aab144255fe59fc53dea649cff88b'] = 'Confirm refund';
+$_MODULE['<{ps_checkout}prestashop>configurationmodule_6017aa60accb3ba69278852888ab02be'] = 'Warning : the currencies you have activated : %s are not currently supported by PrestaShop Checkout. Please deactivate %s for PrestaShop Checkout in your ';
 $_MODULE['<{ps_checkout}prestashop>cursedpage_960567c486a23f5e75891b735928c8ba'] = 'Go back to module configuration';
 $_MODULE['<{ps_checkout}prestashop>cursedpage_df2183ab7d5bfd58187077969f08c7f8'] = 'An error occurred on PayPal Onboarding, please try again.';
 $_MODULE['<{ps_checkout}prestashop>displayexpresscheckout_2f2401d57093e7d31bf2689fb87f72f6'] = '100% secure payments';
@@ -296,7 +297,6 @@ $_MODULE['<{ps_checkout}prestashop>translations_14e5629d13fb3983cc6b6880a6b5058a
 $_MODULE['<{ps_checkout}prestashop>translations_15bbb9d0bbf25e8d2978de1168c749dc'] = 'Website';
 $_MODULE['<{ps_checkout}prestashop>translations_15c52cd080705793a4aef0f321a0f592'] = 'If approval is pending or issues are encountered with the Integrated fields, you can activate these fields as a backup, only if Integrated fields are not available or deactivated. The fees are the same as PayPal payment method.';
 $_MODULE['<{ps_checkout}prestashop>translations_16bfbf9c462762cf1cba4134ec53c504'] = 'Loading';
-$_MODULE['<{ps_checkout}prestashop>translations_18d100b9add17d03191b8f7f3c63aad8'] = 'There are no payment methods available. You can\'t receive payments from PayPal right now and your customers can\'t proceed to payments (anymore) via the payment methods provided by PrestaShop Checkout.';
 $_MODULE['<{ps_checkout}prestashop>translations_190fcd96a9ebae0593cd777c8797b43b'] = 'Connect your PrestaShop Checkout account and link your PayPal Account or create one if needed';
 $_MODULE['<{ps_checkout}prestashop>translations_19146f30e246bba7235f1f052711fe74'] = 'What is the difference between Integrated Credit Card fields and PayPal branded Credit Card Fields ?';
 $_MODULE['<{ps_checkout}prestashop>translations_1b4c17532f2e6390cadc07e662079870'] = 'Conversion rules';
@@ -350,7 +350,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_3c6411b86383a104dbab0759d80ad85b
 $_MODULE['<{ps_checkout}prestashop>translations_3c8611cba7dc4293d5c360b6b052574f'] = 'Pay in 4x messaging banner';
 $_MODULE['<{ps_checkout}prestashop>translations_3cff569d2e78602b63755abd743a0f76'] = 'PrestaShop Checkout transactions won\'t work in some of your configured countries, but there is a solution !';
 $_MODULE['<{ps_checkout}prestashop>translations_3d808624c7b26cfee0b74ee3b4afc38b'] = 'up to $500';
-$_MODULE['<{ps_checkout}prestashop>translations_e138ea82bff561b002c7916e696f7bd2'] = 'Choose the pages on which the banners are displayed';
+$_MODULE['<{ps_checkout}prestashop>translations_3e06ed2f777a9dcef86160d0211365c8'] = 'Choose the pages on which the banners are displayed';
 $_MODULE['<{ps_checkout}prestashop>translations_3e335cc9a3b59223da56df9434994954'] = 'Integrated Credit Card Fields';
 $_MODULE['<{ps_checkout}prestashop>translations_3f371818d262886c99af519da0cc9548'] = 'Change countries ISO Codes';
 $_MODULE['<{ps_checkout}prestashop>translations_3fa24bedca614725dc240832a0c0ac94'] = 'Payment methods acceptance';
@@ -427,7 +427,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_85ede935fa20f1d16c0f022074f7a358
 $_MODULE['<{ps_checkout}prestashop>translations_85f1c40411c583bd7f540802570e7567'] = 'Credit Card information, bank account information and ID card';
 $_MODULE['<{ps_checkout}prestashop>translations_8634bddac0c61abde83ce1debdc1892c'] = 'By submitting this form, I agree that the data provided may be collected by PrestaShop S.A to create your PrestaShop Checkout account. By creating your account, you will receive commercial prospecting from PrestaShop';
 $_MODULE['<{ps_checkout}prestashop>translations_88bccdecc2c4b9dcc8afbbc94483293c'] = 'Benefit from all PayPal expertise and advantages';
-$_MODULE['<{ps_checkout}prestashop>translations_8ac88d38d8b578d5b10bf4cf0cf50076'] = 'Choose the pages on which the buttons are displayed';
+$_MODULE['<{ps_checkout}prestashop>translations_89fe1d2f7f4886b6f54eaf5e0fe11849'] = 'Choose the pages on which the buttons are displayed';
 $_MODULE['<{ps_checkout}prestashop>translations_8a9f98e889a0de9caf2feb4b9b382284'] = 'Logging out will deactivate all payment methods. You will no longer be able to receive payments with PrestaShop Checkout.';
 $_MODULE['<{ps_checkout}prestashop>translations_8acc0bc61a5f75b13cea7e27bbcd51af'] = 'You can choose the type of credit card fields only if Credit card is activated in « Customize checkout experience » tab.';
 $_MODULE['<{ps_checkout}prestashop>translations_8bcdc441379cbf584638b0589a3f9adb'] = 'Postcode';
@@ -496,6 +496,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_bc294136fea992290d8b3b12a36fddfa
 $_MODULE['<{ps_checkout}prestashop>translations_bc34c158b938eec639230b7133b92ea3'] = 'in the meantime, you will only accept credit cards payments thought the PayPal branded credit card fields';
 $_MODULE['<{ps_checkout}prestashop>translations_bc4327368b4abb06c1ea90fe0ddd36d6'] = 'Category page';
 $_MODULE['<{ps_checkout}prestashop>translations_bccbffbcbc3942d59b232727c1ae32cb'] = 'See the full list of transactions on your PayPal account';
+$_MODULE['<{ps_checkout}prestashop>translations_bd3b4dbe1e543ba62b7cf56abf8c26b1'] = 'You can not receive Payments in PayPal at this moment, please contact PayPal to solve this problem';
 $_MODULE['<{ps_checkout}prestashop>translations_bd9be8329aa7e6f55266c06298e18e39'] = 'Select the shape';
 $_MODULE['<{ps_checkout}prestashop>translations_bffe9a3c9a7e00ba00a11749e022d911'] = 'Log in';
 $_MODULE['<{ps_checkout}prestashop>translations_c1053fd298c615d9bb6e45a1d9d763d6'] = 'PayPal branded Credit Card Fields';
@@ -521,7 +522,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_d14a8aa0420b7f7de59091398a53fcd9
 $_MODULE['<{ps_checkout}prestashop>translations_d1d64497037adbbc778d6b23f4552952'] = 'PrestaShop Checkout transactions won\'t work in some of your configured currencies, but there is a solution !';
 $_MODULE['<{ps_checkout}prestashop>translations_d2947ae0e864eb5c9c00080602c9b45e'] = 'Select background color';
 $_MODULE['<{ps_checkout}prestashop>translations_d4222f5cc5b8395e93fa678bc7215381'] = 'pending transaction(s)';
-$_MODULE['<{ps_checkout}prestashop>translations_26609a4edfbef95f4695a1474d316a2c'] = 'Choose the pages on which the messages are displayed';
+$_MODULE['<{ps_checkout}prestashop>translations_d42e70322691ce1ef9e9e6c8562d92ef'] = 'Choose the pages on which the messages are displayed';
 $_MODULE['<{ps_checkout}prestashop>translations_d434eccb7674d461f562616696955b7d'] = 'Local payment buttons';
 $_MODULE['<{ps_checkout}prestashop>translations_d59048f21fd887ad520398ce677be586'] = 'Learn more';
 $_MODULE['<{ps_checkout}prestashop>translations_d6ca53a668b116991b7aa68ed33a29a7'] = 'Business category';
@@ -534,7 +535,6 @@ $_MODULE['<{ps_checkout}prestashop>translations_dc43994c00f8f208f0c649524a9bcd46
 $_MODULE['<{ps_checkout}prestashop>translations_dc647eb65e6711e155375218212b3964'] = 'Password';
 $_MODULE['<{ps_checkout}prestashop>translations_dd7bf230fde8d4836917806aff6a6b27'] = 'Address';
 $_MODULE['<{ps_checkout}prestashop>translations_dfcfc43722eef1eab1e4a12e50a068b1'] = 'Currencies';
-$_MODULE['<{ps_checkout}prestashop>translations_e1b74123fdda2fd3b4a98308ef5dd782'] = 'Warning : the currencies you have activated : {0} are not currently supported by PrestaShop Checkout. Please deactivate {0} for PrestaShop Checkout in your';
 $_MODULE['<{ps_checkout}prestashop>translations_e1e1ce67de4906765f104f24a4280a1d'] = 'Need help? Find here the documentation of this module';
 $_MODULE['<{ps_checkout}prestashop>translations_e268443e43d93dab7ebef303bbe9642f'] = 'account';
 $_MODULE['<{ps_checkout}prestashop>translations_e2e372415a8b8d36f4d86d9fc86bc608'] = 'For more informations about your fees please visit this page:';
