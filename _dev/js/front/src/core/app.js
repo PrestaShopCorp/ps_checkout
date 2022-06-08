@@ -79,9 +79,9 @@ export class App {
     };
   }
 
-  async initPayPalService(useToken = false) {
+  async initPayPalService() {
     if (!this.container.PayPalSDK) {
-      const token = useToken
+      const token = this.psCheckoutConfig.hostedFieldsEnabled && this.prestashopService.isOrderPage()
         ? await this.psCheckoutService.getPayPalToken()
         : '';
 
@@ -99,7 +99,7 @@ export class App {
   }
 
   async renderCheckout() {
-    await this.initPayPalService(this.psCheckoutConfig.hostedFieldsEnabled);
+    await this.initPayPalService();
     new PsCheckoutComponent(this).render();
   }
 
