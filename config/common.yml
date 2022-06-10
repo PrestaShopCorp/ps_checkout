@@ -378,3 +378,7 @@ services:
     public: true
     arguments:
       - '@ps_checkout.cache.paypal.merchant_integration'
+
+  ps_checkout.paypal.provider.client_token:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalClientTokenProvider'
+    public: true

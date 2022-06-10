@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
 /**
  * Handle order requests
@@ -134,13 +135,15 @@ class Order extends PaymentClient
     /**
      * @param string $merchantId
      *
-     * @return array
+     * @return string
+     *
+     * @throws PsCheckoutException
      */
     public function generateClientToken($merchantId)
     {
         $this->setRoute('/payments/order/generate_client_token');
 
-        return $this->post([
+        $response = $this->post([
             'json' => [
                 'return_payload' => true,
                 'payee' => [
@@ -148,5 +151,17 @@ class Order extends PaymentClient
                 ],
             ],
         ]);
+
+        if (empty($response['body']) || empty($response['body']['client_token'])) {
+            $exception = null;
+
+            if (!empty($response['exceptionMessage'])) {
+                $exception = new \Exception($response['exceptionMessage'], $response['exceptionCode']);
+            }
+
+            throw new PsCheckoutException('Unable to retrieve PayPal Client Token', PsCheckoutException::MISSING_PAYPAL_CLIENT_TOKEN, $exception);
+        }
+
+        return $response['body']['client_token'];
     }
 }

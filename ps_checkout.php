@@ -1013,10 +1013,22 @@ class Ps_checkout extends PaymentModule
             && strtotime($psCheckoutCart->paypal_token_expire) > time()
         ) {
             $payPalOrderId = $psCheckoutCart->paypal_order;
-            $payPalClientToken = $psCheckoutCart->paypal_token;
             $cartFundingSource = $psCheckoutCart->paypal_funding;
         }
         // END To be refactored in services
+
+        if ($frontControllerValidator->shouldGeneratePayPalClientToken($controller)
+            && $paypalAccountRepository->cardHostedFieldsIsAvailable()
+        ) {
+            try {
+                /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalClientTokenProvider $clientTokenProvider */
+                $clientTokenProvider = $this->getService('ps_checkout.paypal.provider.client_token');
+
+                $payPalClientToken = $clientTokenProvider->getPayPalClientToken();
+            } catch (Exception $exception) {
+                $this->getLogger()->warning('Unable to retrieve PayPal Client Token', ['exception' => $exception]);
+            }
+        }
 
         Media::addJsDef([
             $this->name . 'Version' => self::VERSION,
