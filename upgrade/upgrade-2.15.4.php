@@ -30,6 +30,15 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_15_4($module)
 {
-    return (bool) $module->registerHook('actionObjectOrderPaymentAddAfter')
-        && (bool) $module->registerHook('actionObjectOrderPaymentUpdateAfter');
+    // Force PrestaShop to upgrade for all shop to avoid issues
+    $savedShopContext = Shop::getContext();
+    Shop::setContext(Shop::CONTEXT_ALL);
+
+    $module->registerHook('actionObjectOrderPaymentAddAfter');
+    $module->registerHook('actionObjectOrderPaymentUpdateAfter');
+
+    // Restore initial PrestaShop shop context
+    Shop::setContext($savedShopContext);
+
+    return true;
 }

@@ -32,6 +32,10 @@ function upgrade_module_2_3_0($module)
 {
     $result = true;
 
+    // Force PrestaShop to upgrade for all shop to avoid issues
+    $savedShopContext = Shop::getContext();
+    Shop::setContext(Shop::CONTEXT_ALL);
+
     foreach (\Shop::getShops(false, null, true) as $shopId) {
         $result = $result && (bool) Configuration::updateValue(
             'PS_CHECKOUT_PAYPAL_BUTTON',
@@ -45,6 +49,9 @@ function upgrade_module_2_3_0($module)
             (int) $shopId
         );
     }
+
+    // Restore initial PrestaShop shop context
+    Shop::setContext($savedShopContext);
 
     return $result;
 }

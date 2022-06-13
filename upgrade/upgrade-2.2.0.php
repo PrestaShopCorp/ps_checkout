@@ -32,6 +32,10 @@ function upgrade_module_2_2_0($module)
 {
     $db = Db::getInstance();
 
+    // Force PrestaShop to upgrade for all shop to avoid issues
+    $savedShopContext = Shop::getContext();
+    Shop::setContext(Shop::CONTEXT_ALL);
+
     $createFundingSourceTable = (bool) $db->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_funding_source` (
               `name` varchar(20) NOT NULL,
@@ -73,6 +77,9 @@ function upgrade_module_2_2_0($module)
             }
         }
     }
+
+    // Restore initial PrestaShop shop context
+    Shop::setContext($savedShopContext);
 
     return true;
 }

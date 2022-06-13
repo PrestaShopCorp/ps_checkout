@@ -47,6 +47,9 @@ function upgrade_module_1_2_10($module)
         }
     }
 
+    // Force PrestaShop to upgrade for all shop to avoid issues
+    $savedShopContext = Shop::getContext();
+    Shop::setContext(Shop::CONTEXT_ALL);
     $shopsList = \Shop::getShops(false, null, true);
 
     foreach ($shopsList as $shopId) {
@@ -92,6 +95,9 @@ function upgrade_module_1_2_10($module)
     ];
 
     $module->registerHook($hooks);
+
+    // Restore initial PrestaShop shop context
+    Shop::setContext($savedShopContext);
 
     return true;
 }

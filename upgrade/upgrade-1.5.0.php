@@ -30,9 +30,16 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_5_0($module)
 {
+    // Force PrestaShop to upgrade for all shop to avoid issues
+    $savedShopContext = Shop::getContext();
+    Shop::setContext(Shop::CONTEXT_ALL);
+
     if (empty(Currency::checkPaymentCurrencies($module->id))) {
         return 'checkbox' === $module->currencies_mode ? $module->addCheckboxCurrencyRestrictionsForModule() : $module->addRadioCurrencyRestrictionsForModule();
     }
+
+    // Restore initial PrestaShop shop context
+    Shop::setContext($savedShopContext);
 
     return true;
 }

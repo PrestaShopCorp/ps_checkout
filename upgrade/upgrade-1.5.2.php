@@ -30,8 +30,15 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_5_2($module)
 {
-    // Check if all shops have a ShopUuid, if not generate it
-    $shopUuidManager = new PrestaShop\Module\PrestashopCheckout\ShopUuidManager();
+    // Force PrestaShop to upgrade for all shop to avoid issues
+    $savedShopContext = Shop::getContext();
+    Shop::setContext(Shop::CONTEXT_ALL);
 
-    return $shopUuidManager->generateForAllShops();
+    // Check if all shops have a ShopUuid, if not generate it
+    (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops();
+
+    // Restore initial PrestaShop shop context
+    Shop::setContext($savedShopContext);
+
+    return true;
 }

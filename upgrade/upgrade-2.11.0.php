@@ -30,11 +30,18 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_11_0($module)
 {
+    // Force PrestaShop to upgrade for all shop to avoid issues
+    $savedShopContext = Shop::getContext();
+    Shop::setContext(Shop::CONTEXT_ALL);
+
     if (true === (bool) version_compare(_PS_VERSION_, '1.7.1.0', '>=')) {
         // Register hooks only for PrestaShop 1.7.1, used for payment methods logo block
         $module->registerHook('displayProductAdditionalInfo');
         $module->updatePosition(Hook::getIdByName('displayProductAdditionalInfo'), false, 1);
     }
+
+    // Restore initial PrestaShop shop context
+    Shop::setContext($savedShopContext);
 
     return true;
 }
