@@ -66,7 +66,7 @@ class Translations
                     'tips' => $this->module->l('Once you are done with the first shop, you can configure the others: select them one by one with the shop selector, in the horizontal menu.', 'translations'),
                 ],
                 'errors' => [
-                    'cantReceivePayments' => $this->module->l('There are no payment methods available. You can\'t receive payments from PayPal right now and your customers can\'t proceed to payments anymore via the payment methods provided by PrestaShop Checkout.', 'translations'),
+                    'cantReceivePayments' => $this->module->l('There are no payment methods available. You can\'t receive payments from PayPal right now and your customers can\'t proceed to payments (anymore) via the payment methods provided by PrestaShop Checkout.', 'translations'),
                     'contactPaypalCustomerService' => $this->module->l('Please contact PayPal Customer Service', 'translations'),
                     'decimalCurrenciesError' => $this->module->l('Warning : the currencies you have activated : {0} are not currently supported by PrestaShop Checkout. Please deactivate {0} for PrestaShop Checkout in your', 'translations'),
                     'paymentPreferences' => $this->module->l('Payment preferences', 'translations'),
@@ -95,7 +95,6 @@ class Translations
                     'accountDeclined' => $this->module->l('Account declined', 'translations'),
                     'cannotProcessCreditCard' => $this->module->l('Unfortunately, credit card payments cannot be processed for you at the moment. You will be able to reapply after 90 days. In the meantime, you can still receive payments via PayPal', 'translations'),
                     'accountDeclinedLink' => $this->module->l('Account declined FAQs', 'translations'),
-
                     'suspendedAlertTitle' => $this->module->l('Credit Card availability suspended', 'translations'),
                     'suspendedAlertLabel' => $this->module->l('Unfortunately, credit card payments cannot be processed for you at the moment. In the meantime, you can still receive payments via PayPal. Please proceed to some actions from your PayPal account, where you should have received a notification. If not, please contact PayPal help center.', 'translations'),
                     'suspendedButton' => $this->module->l('Manage your account', 'translations'),

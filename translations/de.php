@@ -237,6 +237,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_569fd05bdafa1712c4f6be5b153b8418'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_5ea7f231296949070013bc43715aae01'] = 'Sicherheitscode';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_644818852b4dd8cf9da73543e30f045a'] = 'Zurück zur Bezahlung';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_6ff063fbc860a79759a7369ac32cee22'] = 'Bezahlung';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_71c5a2eb62ee779761c12147312be25a'] = 'Diese Zahlungsmethode ist nicht autorisiert, mit der Transaktion auf dem Zahlungsgateway fortzufahren, bitte versuchen Sie es mit einer anderen Methode.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_7253e56eef5057e5763f535498a4abe2'] = 'Sie haben sich dafür entschieden, mit PayPal zu zahlen.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_72e506c5e5a9308bb3836d539dc4e39e'] = 'Vielen Dank für Ihren Kauf!';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_78432b718ec482b7211e1a45785087f1'] = 'Karteninhaberauthentifizierung wurde abgebrochen, bitte wählen Sie eine andere Zahlungsmethode oder versuchen Sie es erneut.';
@@ -295,6 +296,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_14e5629d13fb3983cc6b6880a6b5058a
 $_MODULE['<{ps_checkout}prestashop>translations_15bbb9d0bbf25e8d2978de1168c749dc'] = 'Website';
 $_MODULE['<{ps_checkout}prestashop>translations_15c52cd080705793a4aef0f321a0f592'] = 'Wenn eine Genehmigung aussteht oder Probleme mit den integrierten Feldern auftreten, können Sie diese Felder nur dann als Sicherung aktivieren, wenn die integrierten Felder nicht verfügbar oder deaktiviert sind. Die Gebühren sind die gleichen wie bei der PayPal-Zahlungsmethode.';
 $_MODULE['<{ps_checkout}prestashop>translations_16bfbf9c462762cf1cba4134ec53c504'] = 'Ladevorgang';
+$_MODULE['<{ps_checkout}prestashop>translations_18d100b9add17d03191b8f7f3c63aad8'] = 'Es sind derzeit keine Zahlungsmethoden verfügbar. Sie können derzeit keine Zahlungen von PayPal erhalten und Ihre Kunden können keine Zahlungen (mehr) über die von PrestaShop Checkout bereitgestellten Zahlungsmethoden tätigen.';
 $_MODULE['<{ps_checkout}prestashop>translations_190fcd96a9ebae0593cd777c8797b43b'] = 'eine Verbindung zu Ihrem PrestaShop Checkout-Konto herstellen und Ihr PayPal-Konto verknüpfen oder bei Bedarf eines erstellen';
 $_MODULE['<{ps_checkout}prestashop>translations_19146f30e246bba7235f1f052711fe74'] = 'Was ist der Unterschied zwischen integrierten Kreditkartenfeldern und Kreditkartenfeldern mit PayPal-Markenzeichen?';
 $_MODULE['<{ps_checkout}prestashop>translations_1b4c17532f2e6390cadc07e662079870'] = 'Konvertierungsregeln';
@@ -399,6 +401,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_6f266e3508d20d99c079e0130c679208
 $_MODULE['<{ps_checkout}prestashop>translations_6f8063417ab31f38d864c28302f3de2f'] = 'Genehmigt';
 $_MODULE['<{ps_checkout}prestashop>translations_6ff063fbc860a79759a7369ac32cee22'] = 'Check-out';
 $_MODULE['<{ps_checkout}prestashop>translations_70bdce46b416665976a87b1a13fb20c5'] = 'Melden Sie sich mit Ihrem PrestaShop-Checkout-Konto an';
+$_MODULE['<{ps_checkout}prestashop>translations_731f2472e5c3d9f8e81b70b17a7c354c'] = 'Bitte wenden Sie sich an den PayPal-Kundendienst';
 $_MODULE['<{ps_checkout}prestashop>translations_735a9fd0d8c04893638d407721ec4601'] = 'Mehr zur Freischaltung meines Kontos erfahren';
 $_MODULE['<{ps_checkout}prestashop>translations_74cd3a6cbf54c04a5634352d476f2b2f'] = 'Fehler! Bitte versuchen Sie es später erneut.';
 $_MODULE['<{ps_checkout}prestashop>translations_76f0ed934de85cc7131910b32ede7714'] = 'Rückerstattung';

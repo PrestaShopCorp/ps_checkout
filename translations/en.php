@@ -237,6 +237,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_569fd05bdafa1712c4f6be5b153b8418'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_5ea7f231296949070013bc43715aae01'] = 'CVC';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_644818852b4dd8cf9da73543e30f045a'] = 'Go back to the Checkout';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_6ff063fbc860a79759a7369ac32cee22'] = 'Checkout';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_71c5a2eb62ee779761c12147312be25a'] = 'This payment method has been refused by the payment platform, please use another payment method.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_7253e56eef5057e5763f535498a4abe2'] = 'You have chosen to pay by PayPal.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_72e506c5e5a9308bb3836d539dc4e39e'] = 'Thanks for your purchase!';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_78432b718ec482b7211e1a45785087f1'] = 'Card holder authentication canceled, please choose another payment method or try again.';
@@ -249,7 +250,6 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_ad69e733ebae8d264bccaa38d68830e8'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_aec47b33255dfc9e90e269930c428c40'] = 'Please wait, loading additional payment methods.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_b4a89c5a9a46cf77f29e1c2d42af9083'] = 'Please wait, we are processing your payment';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_b6aa9dd84faacf7932dfa15fefad521a'] = 'Provide the most commonly used payment methods to your customers in this all-in-one module, and manage all your sales in a centralized interface.';
-$_MODULE['<{ps_checkout}prestashop>ps_checkout_bb2777836efe456025277ed20111f5ef'] = 'Currently some payment methods are unavailable. For more information please contact customer service.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_bb8956c67b82c7444a80c6b2433dd8b4'] = 'Are you sure you want to uninstall this module?';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_bc9189406be84ec297464a514221406d'] = 'XXX';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_c884ed19483d45970c5bf23a681e2dd2'] = 'Here is a short summary of your order:';
@@ -296,6 +296,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_14e5629d13fb3983cc6b6880a6b5058a
 $_MODULE['<{ps_checkout}prestashop>translations_15bbb9d0bbf25e8d2978de1168c749dc'] = 'Website';
 $_MODULE['<{ps_checkout}prestashop>translations_15c52cd080705793a4aef0f321a0f592'] = 'If approval is pending or issues are encountered with the Integrated fields, you can activate these fields as a backup, only if Integrated fields are not available or deactivated. The fees are the same as PayPal payment method.';
 $_MODULE['<{ps_checkout}prestashop>translations_16bfbf9c462762cf1cba4134ec53c504'] = 'Loading';
+$_MODULE['<{ps_checkout}prestashop>translations_18d100b9add17d03191b8f7f3c63aad8'] = 'There are no payment methods available. You can\'t receive payments from PayPal right now and your customers can\'t proceed to payments (anymore) via the payment methods provided by PrestaShop Checkout.';
 $_MODULE['<{ps_checkout}prestashop>translations_190fcd96a9ebae0593cd777c8797b43b'] = 'Connect your PrestaShop Checkout account and link your PayPal Account or create one if needed';
 $_MODULE['<{ps_checkout}prestashop>translations_19146f30e246bba7235f1f052711fe74'] = 'What is the difference between Integrated Credit Card fields and PayPal branded Credit Card Fields ?';
 $_MODULE['<{ps_checkout}prestashop>translations_1b4c17532f2e6390cadc07e662079870'] = 'Conversion rules';
@@ -328,7 +329,6 @@ $_MODULE['<{ps_checkout}prestashop>translations_2c9b5b15a6d3cc951ca57c65e4966fd3
 $_MODULE['<{ps_checkout}prestashop>translations_2cf3cc18e1609157b38384dbea6a77d0'] = 'per transaction depending on your country. ';
 $_MODULE['<{ps_checkout}prestashop>translations_2d25c72c1b18e562f6654fff8e11711e'] = 'Not available';
 $_MODULE['<{ps_checkout}prestashop>translations_2d5b22ec484b27c39d09b643bc86756b'] = 'Adjust your bank account';
-$_MODULE['<{ps_checkout}prestashop>translations_2dcc739d55af9156e66c71243d0d0194'] = 'There are no payment methods available. You can\'t receive payments from PayPal right now and your customers can\'t proceed to payments anymore via the payment methods provided by PrestaShop Checkout.';
 $_MODULE['<{ps_checkout}prestashop>translations_2dddad3a82e8e68edd68fe1776c1c13b'] = 'Connect your PrestaShop account';
 $_MODULE['<{ps_checkout}prestashop>translations_30aa465f0263c86b865c01a7f590e805'] = 'available in :';
 $_MODULE['<{ps_checkout}prestashop>translations_30dbd3dffa9dbd08b062436ba8dcbad7'] = 'Production mode';
@@ -497,6 +497,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_bc294136fea992290d8b3b12a36fddfa
 $_MODULE['<{ps_checkout}prestashop>translations_bc34c158b938eec639230b7133b92ea3'] = 'in the meantime, you will only accept credit cards payments thought the PayPal branded credit card fields';
 $_MODULE['<{ps_checkout}prestashop>translations_bc4327368b4abb06c1ea90fe0ddd36d6'] = 'Category page';
 $_MODULE['<{ps_checkout}prestashop>translations_bccbffbcbc3942d59b232727c1ae32cb'] = 'See the full list of transactions on your PayPal account';
+$_MODULE['<{ps_checkout}prestashop>translations_bd3b4dbe1e543ba62b7cf56abf8c26b1'] = 'You can not receive Payments in PayPal at this moment, please contact PayPal to solve this problem';
 $_MODULE['<{ps_checkout}prestashop>translations_bd9be8329aa7e6f55266c06298e18e39'] = 'Select the shape';
 $_MODULE['<{ps_checkout}prestashop>translations_bffe9a3c9a7e00ba00a11749e022d911'] = 'Log in';
 $_MODULE['<{ps_checkout}prestashop>translations_c1053fd298c615d9bb6e45a1d9d763d6'] = 'PayPal branded Credit Card Fields';
