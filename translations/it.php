@@ -237,6 +237,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_569fd05bdafa1712c4f6be5b153b8418'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_5ea7f231296949070013bc43715aae01'] = 'Cod. di sicurezza';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_644818852b4dd8cf9da73543e30f045a'] = 'Torna al pagamento';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_6ff063fbc860a79759a7369ac32cee22'] = 'Checkout';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_71c5a2eb62ee779761c12147312be25a'] = 'Questo metodo di pagamento non è autorizzato a procedere con la transazione sul gateway di pagamento, scegline un altro.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_7253e56eef5057e5763f535498a4abe2'] = 'Hai scelto di pagare con PayPal.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_72e506c5e5a9308bb3836d539dc4e39e'] = 'Grazie per l’acquisto!';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_78432b718ec482b7211e1a45785087f1'] = 'Autenticazione del titolare della carta annullata. Si prega di scegliere un altro metodo di pagamento o riprovare.';
@@ -295,6 +296,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_14e5629d13fb3983cc6b6880a6b5058a
 $_MODULE['<{ps_checkout}prestashop>translations_15bbb9d0bbf25e8d2978de1168c749dc'] = 'Sito web';
 $_MODULE['<{ps_checkout}prestashop>translations_15c52cd080705793a4aef0f321a0f592'] = 'Se l\'approvazione è in attesa di approvazione o si riscontrano problemi con i campi integrati, è possibile attivare questi campi come soluzione di riserva, solo se i campi integrati non sono disponibili o sono disattivati. Le tariffe sono le stesse del metodo di pagamento PayPal.';
 $_MODULE['<{ps_checkout}prestashop>translations_16bfbf9c462762cf1cba4134ec53c504'] = 'Caricamento in corso';
+$_MODULE['<{ps_checkout}prestashop>translations_18d100b9add17d03191b8f7f3c63aad8'] = 'Non sono disponibili metodi di pagamento. Non puoi ricevere pagamenti da PayPal in questo momento e i tuoi clienti non possono (più) procedere ai pagamenti tramite i metodi di pagamento forniti da PrestaShop Checkout.';
 $_MODULE['<{ps_checkout}prestashop>translations_190fcd96a9ebae0593cd777c8797b43b'] = 'Connettere il tuo account PrestaShop Checkout e collegare il tuo account PayPal oppure crearne uno se necessario';
 $_MODULE['<{ps_checkout}prestashop>translations_19146f30e246bba7235f1f052711fe74'] = 'Qual è la differenza tra i campi carta di credito integrati e i campi della carta di credito PayPal?';
 $_MODULE['<{ps_checkout}prestashop>translations_1b4c17532f2e6390cadc07e662079870'] = 'Regole di conversione';
@@ -348,7 +350,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_3c6411b86383a104dbab0759d80ad85b
 $_MODULE['<{ps_checkout}prestashop>translations_3c8611cba7dc4293d5c360b6b052574f'] = 'Banner relativo al pagamento in 4 rate';
 $_MODULE['<{ps_checkout}prestashop>translations_3cff569d2e78602b63755abd743a0f76'] = 'Le transazioni di PrestaShop Checkout non funzioneranno in alcuni dei Paesi configurati, ma esiste una soluzione!';
 $_MODULE['<{ps_checkout}prestashop>translations_3d808624c7b26cfee0b74ee3b4afc38b'] = 'per un importo massimo di $ 500';
-$_MODULE['<{ps_checkout}prestashop>translations_e138ea82bff561b002c7916e696f7bd2'] = 'Scegli le pagine dove mostrare i banner';
+$_MODULE['<{ps_checkout}prestashop>translations_3e06ed2f777a9dcef86160d0211365c8'] = 'Scegli le pagine dove mostrare i banner';
 $_MODULE['<{ps_checkout}prestashop>translations_3e335cc9a3b59223da56df9434994954'] = 'Campi carta di credito integrati';
 $_MODULE['<{ps_checkout}prestashop>translations_3f371818d262886c99af519da0cc9548'] = 'Cambia i codici ISO dei Paesi';
 $_MODULE['<{ps_checkout}prestashop>translations_3fa24bedca614725dc240832a0c0ac94'] = 'Mezzi di pagamento accettati';
@@ -399,6 +401,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_6f266e3508d20d99c079e0130c679208
 $_MODULE['<{ps_checkout}prestashop>translations_6f8063417ab31f38d864c28302f3de2f'] = 'Approvato';
 $_MODULE['<{ps_checkout}prestashop>translations_6ff063fbc860a79759a7369ac32cee22'] = 'Checkout';
 $_MODULE['<{ps_checkout}prestashop>translations_70bdce46b416665976a87b1a13fb20c5'] = 'Accedere con il proprio account PrestaShop Checkout';
+$_MODULE['<{ps_checkout}prestashop>translations_731f2472e5c3d9f8e81b70b17a7c354c'] = 'Per favore, contatta il Customer Service di PayPal';
 $_MODULE['<{ps_checkout}prestashop>translations_735a9fd0d8c04893638d407721ec4601'] = 'Maggiori informazioni sull’approvazione del mio account';
 $_MODULE['<{ps_checkout}prestashop>translations_74cd3a6cbf54c04a5634352d476f2b2f'] = 'Errore, ritentare più tardi.';
 $_MODULE['<{ps_checkout}prestashop>translations_76f0ed934de85cc7131910b32ede7714'] = 'Rimborso';
@@ -424,7 +427,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_85ede935fa20f1d16c0f022074f7a358
 $_MODULE['<{ps_checkout}prestashop>translations_85f1c40411c583bd7f540802570e7567'] = 'Dati della carta di credito, del conto bancario e della carta d’identità';
 $_MODULE['<{ps_checkout}prestashop>translations_8634bddac0c61abde83ce1debdc1892c'] = 'Inviando il presente modulo acconsenti alla possibile raccolta da parte di PrestaShop S.A. dei dati da te forniti per la creazione del tuo account PrestaShop Checkout. Creando un account riceverai annunci commerciali da PrestaShop';
 $_MODULE['<{ps_checkout}prestashop>translations_88bccdecc2c4b9dcc8afbbc94483293c'] = 'Beneficiare dell’esperienza e dei vantaggi di PayPal';
-$_MODULE['<{ps_checkout}prestashop>translations_8ac88d38d8b578d5b10bf4cf0cf50076'] = 'Scegli le pagine dove mostrare i pulsanti';
+$_MODULE['<{ps_checkout}prestashop>translations_89fe1d2f7f4886b6f54eaf5e0fe11849'] = 'Scegli le pagine dove mostrare i pulsanti';
 $_MODULE['<{ps_checkout}prestashop>translations_8a9f98e889a0de9caf2feb4b9b382284'] = 'Se esci, tutti i metodi di pagamento verranno disattivati. Non potrai più ricevere pagamenti con PrestaShop Checkout.';
 $_MODULE['<{ps_checkout}prestashop>translations_8acc0bc61a5f75b13cea7e27bbcd51af'] = 'È possibile scegliere il tipo di campi della carta di credito solo se la carta di credito è attivata nella scheda &quot; Personalizza esperienza di pagamento&quot;.';
 $_MODULE['<{ps_checkout}prestashop>translations_8bcdc441379cbf584638b0589a3f9adb'] = 'CAP';
@@ -517,7 +520,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_d14a8aa0420b7f7de59091398a53fcd9
 $_MODULE['<{ps_checkout}prestashop>translations_d1d64497037adbbc778d6b23f4552952'] = 'Le transazioni di PrestaShop Checkout non funzioneranno in alcune delle valute configurate, ma esiste una soluzione!';
 $_MODULE['<{ps_checkout}prestashop>translations_d2947ae0e864eb5c9c00080602c9b45e'] = 'Seleziona il colore di sfondo';
 $_MODULE['<{ps_checkout}prestashop>translations_d4222f5cc5b8395e93fa678bc7215381'] = 'transazione/i in corso';
-$_MODULE['<{ps_checkout}prestashop>translations_26609a4edfbef95f4695a1474d316a2c'] = 'Scegli le pagine dove mostrare i messaggi';
+$_MODULE['<{ps_checkout}prestashop>translations_d42e70322691ce1ef9e9e6c8562d92ef'] = 'Scegli le pagine dove mostrare i messaggi';
 $_MODULE['<{ps_checkout}prestashop>translations_d434eccb7674d461f562616696955b7d'] = 'Pulsanti per metodi di pagamento locali';
 $_MODULE['<{ps_checkout}prestashop>translations_d59048f21fd887ad520398ce677be586'] = 'Per saperne di più';
 $_MODULE['<{ps_checkout}prestashop>translations_d6ca53a668b116991b7aa68ed33a29a7'] = 'Categoria dell\'azienda';
