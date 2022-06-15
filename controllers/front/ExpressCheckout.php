@@ -113,7 +113,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
                     $exception->getMessage()
                 ),
                 [
-                    'paypal_order' => $this->payload['orderID'],
+                    'paypal_order' => isset($this->payload['orderID']) ? $this->payload['orderID'] : null,
                 ]
             );
 
