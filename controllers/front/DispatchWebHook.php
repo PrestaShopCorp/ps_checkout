@@ -332,6 +332,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
         );
 
         http_response_code($this->getHttpCodeFromExceptionCode($exception->getCode()));
+        header('X-Robots-Tag: noindex, nofollow');
         header('Content-Type: application/json');
 
         $bodyReturn = json_encode($exception->getMessage());

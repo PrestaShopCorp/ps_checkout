@@ -297,6 +297,8 @@ class PayPalError
                 throw new PayPalException('You are over the time limit to perform a refund on this capture. The refund cannot be issued at this time.', PayPalException::REFUND_TIME_LIMIT_EXCEEDED);
             case 'NO_EXTERNAL_FUNDING_DETAILS_FOUND':
                 throw new PayPalException('External funding details not found.', PayPalException::NO_EXTERNAL_FUNDING_DETAILS_FOUND);
+            case 'PAYMENT_DENIED':
+                throw new PayPalException('Payment denied.', PayPalException::PAYMENT_DENIED);
             default:
                 throw new PayPalException($this->message, PayPalException::UNKNOWN);
         }

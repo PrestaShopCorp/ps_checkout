@@ -74,6 +74,8 @@ class PaymentClient extends GenericClient
      * @param array $options
      *
      * @return array
+     *
+     * @throws HttpTimeoutException
      */
     protected function post(array $options = [])
     {
@@ -90,6 +92,8 @@ class PaymentClient extends GenericClient
      * @param int $retries
      *
      * @return array
+     *
+     * @throws HttpTimeoutException
      */
     private function postWithRetry(array $options, $delay = 2, $retries = 2)
     {
@@ -113,7 +117,7 @@ class PaymentClient extends GenericClient
                 throw new HttpTimeoutException($response['body']['message'], PsCheckoutException::PSL_TIMEOUT);
             }
         } catch (HttpTimeoutException $exception) {
-            if ($retries > 0) {
+            if ($this->isRouteRetryable() && $retries > 0) {
                 sleep($delay);
 
                 return $this->postWithRetry($options, $delay, $retries - 1);
@@ -123,5 +127,19 @@ class PaymentClient extends GenericClient
         }
 
         return $response;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isRouteRetryable()
+    {
+        switch ($this->getRoute()) {
+            case '/payments/order/capture':
+            case '/payments/order/refund':
+                return false;
+        }
+
+        return true;
     }
 }

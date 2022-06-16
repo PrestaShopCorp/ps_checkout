@@ -251,13 +251,35 @@
   bottom: 0;
   right: 0;
 
-  width: 450px;
+  width: 800px;
   height: 250px;
 
   margin: auto;
 
   background-color: #fff;
   border-radius: 15px;
+}
+
+@media (max-width: 992px) {
+  .ps-checkout.popup {
+    width: 600px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ps-checkout.popup {
+    width: 500px;
+  }
+}
+
+@media (max-width: 576px) {
+  .ps-checkout.popup {
+    width: 350px;
+  }
+
+  .ps-checkout.text {
+    font-size: 20px;
+  }
 }
 
 .ps-checkout.text, .ps-checkout.loader {
@@ -407,7 +429,7 @@
   z-index: 1;
   bottom: 125%;
   left: 50%;
-  margin-left: -150px;
+  margin-left: -280px;
   font-weight: normal;
   font-size: 0.8em;
   line-height: 1.5em;

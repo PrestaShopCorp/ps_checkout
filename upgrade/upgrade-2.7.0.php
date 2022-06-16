@@ -30,7 +30,18 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_7_0($module)
 {
-    \Db::getInstance()->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` CHANGE `paypal_token` `paypal_token` text DEFAULT NULL;');
+    $db = Db::getInstance();
 
-    return $module->disableIncompatibleCountries() && $module->disableIncompatibleCurrencies();
+    // Force PrestaShop to upgrade for all shop to avoid issues
+    $savedShopContext = Shop::getContext();
+    Shop::setContext(Shop::CONTEXT_ALL);
+
+    $db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` CHANGE `paypal_token` `paypal_token` text DEFAULT NULL;');
+    $module->disableIncompatibleCountries();
+    $module->disableIncompatibleCurrencies();
+
+    // Restore initial PrestaShop shop context
+    Shop::setContext($savedShopContext);
+
+    return true;
 }

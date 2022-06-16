@@ -30,6 +30,10 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_9_0($module)
 {
+    // Force PrestaShop to upgrade for all shop to avoid issues
+    $savedShopContext = Shop::getContext();
+    Shop::setContext(Shop::CONTEXT_ALL);
+
     if (false === (bool) version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
         // Register hooks only for PrestaShop 1.6, used for ExpressCheckout
         $module->registerHook('actionBeforeCartUpdateQty');
@@ -38,6 +42,9 @@ function upgrade_module_2_9_0($module)
         // Register hook only for PrestaShop 1.7, used for ExpressCheckout
         $module->registerHook('actionObjectProductInCartDeleteAfter');
     }
+
+    // Restore initial PrestaShop shop context
+    Shop::setContext($savedShopContext);
 
     return true;
 }

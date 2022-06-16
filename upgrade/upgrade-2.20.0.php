@@ -22,13 +22,13 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Update main function for module version 2.19.0
+ * Update main function for module version 2.20.0
  *
  * @param Ps_checkout $module
  *
  * @return bool
  */
-function upgrade_module_2_19_0($module)
+function upgrade_module_2_20_0($module)
 {
     // Force PrestaShop to upgrade for all shop to avoid issues
     $savedShopContext = Shop::getContext();
@@ -36,11 +36,7 @@ function upgrade_module_2_19_0($module)
     $shopsList = \Shop::getShops(false, null, true);
 
     foreach ($shopsList as $shopId) {
-        Configuration::updateValue('PS_CHECKOUT_PAY_LATER_HOME_PAGE_BANNER', '0', false, null, (int) $shopId);
-        Configuration::updateValue('PS_CHECKOUT_PAY_LATER_CATEGORY_PAGE_BANNER', '0', false, null, (int) $shopId);
-        Configuration::updateValue('PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE_BANNER', '0', false, null, (int) $shopId);
-        Configuration::updateValue('PS_CHECKOUT_PAY_LATER_ORDER_PAGE_BANNER', '0', false, null, (int) $shopId);
-        Configuration::updateValue('PS_CHECKOUT_INTEGRATION_DATE', '2022-05-11', false, null, (int) $shopId);
+        Configuration::updateValue('PS_CHECKOUT_INTEGRATION_DATE', '2022-14-06', false, null, (int) $shopId);
     }
 
     // Restore initial PrestaShop shop context

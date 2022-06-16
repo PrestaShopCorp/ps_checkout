@@ -41,7 +41,7 @@
     "@sentry/browser": "^6.2.1",
     "@sentry/tracing": "^6.2.1",
     "@sentry/vue": "^6.2.1",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "bootstrap-vue": "^2.16.0",
     "core-js": "^3.6.5",
     "firebase": "^7.15.5",

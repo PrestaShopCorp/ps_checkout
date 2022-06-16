@@ -30,7 +30,14 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_2_15_3($module)
 {
+    // Force PrestaShop to upgrade for all shop to avoid issues
+    $savedShopContext = Shop::getContext();
+    Shop::setContext(Shop::CONTEXT_ALL);
+
     $module->registerHook('header');
+
+    // Restore initial PrestaShop shop context
+    Shop::setContext($savedShopContext);
 
     return true;
 }

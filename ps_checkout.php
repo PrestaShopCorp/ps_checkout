@@ -129,9 +129,9 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.19.0';
+    const VERSION = '2.20.0';
 
-    const INTEGRATION_DATE = '2020-07-30';
+    const INTEGRATION_DATE = '2022-14-06';
 
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
@@ -155,7 +155,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.19.0';
+        $this->version = '2.20.0';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -187,6 +187,10 @@ class Ps_checkout extends PaymentModule
         // Should be done before parent::install() because enable() will be called first
         $this->disableSegment = true;
 
+        // Force PrestaShop to install for all shop to avoid issues, install action is always for all shops
+        $savedShopContext = Shop::getContext();
+        Shop::setContext(Shop::CONTEXT_ALL);
+
         // Install for both 1.7 and 1.6
         $result = (bool) parent::install() &&
             $this->installConfiguration() &&
@@ -197,6 +201,9 @@ class Ps_checkout extends PaymentModule
             $this->disableIncompatibleCountries() &&
             $this->disableIncompatibleCurrencies() &&
             (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops();
+
+        // Restore initial PrestaShop shop context
+        Shop::setContext($savedShopContext);
 
         if (!$result) {
             return false;
@@ -351,6 +358,10 @@ class Ps_checkout extends PaymentModule
      */
     public function uninstall()
     {
+        // Force PrestaShop to uninstall for all shop to avoid issues, uninstall action is always for all shops
+        $savedShopContext = Shop::getContext();
+        Shop::setContext(Shop::CONTEXT_ALL);
+
         // When PrestaShop uninstall a module, disable() and uninstall() are called but we want to track only uninstall()
         // Should be done before parent::uninstall() because disable() will be called first
         $this->disableSegment = true;
@@ -360,9 +371,14 @@ class Ps_checkout extends PaymentModule
             Configuration::deleteByName($name);
         }
 
-        return parent::uninstall() &&
-            (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->dropTable() &&
-            $this->uninstallTabs();
+        $result = parent::uninstall()
+            && (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->dropTable()
+            && $this->uninstallTabs();
+
+        // Restore initial PrestaShop shop context
+        Shop::setContext($savedShopContext);
+
+        return $result;
     }
 
     /**
@@ -1013,10 +1029,22 @@ class Ps_checkout extends PaymentModule
             && strtotime($psCheckoutCart->paypal_token_expire) > time()
         ) {
             $payPalOrderId = $psCheckoutCart->paypal_order;
-            $payPalClientToken = $psCheckoutCart->paypal_token;
             $cartFundingSource = $psCheckoutCart->paypal_funding;
         }
         // END To be refactored in services
+
+        if ($frontControllerValidator->shouldGeneratePayPalClientToken($controller)
+            && $paypalAccountRepository->cardHostedFieldsIsAvailable()
+        ) {
+            try {
+                /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalClientTokenProvider $clientTokenProvider */
+                $clientTokenProvider = $this->getService('ps_checkout.paypal.provider.client_token');
+
+                $payPalClientToken = $clientTokenProvider->getPayPalClientToken();
+            } catch (Exception $exception) {
+                $this->getLogger()->warning('Unable to retrieve PayPal Client Token', ['exception' => $exception]);
+            }
+        }
 
         Media::addJsDef([
             $this->name . 'Version' => self::VERSION,
@@ -1038,19 +1066,20 @@ class Ps_checkout extends PaymentModule
             $this->name . 'FundingSource' => $cartFundingSource,
             $this->name . 'HostedFieldsEnabled' => $isCardAvailable && $payPalConfiguration->isCardPaymentEnabled() && $paypalAccountRepository->cardHostedFieldsIsAllowed(),
             $this->name . 'HostedFieldsSelected' => false !== $psCheckoutCart ? (bool) $psCheckoutCart->isHostedFields : false,
+            $this->name . 'HostedFieldsContingencies' => $payPalConfiguration->getHostedFieldsContingencies(),
             $this->name . 'ExpressCheckoutSelected' => false !== $psCheckoutCart ? (bool) $psCheckoutCart->isExpressCheckout : false,
-            $this->name . 'ExpressCheckoutProductEnabled' => $expressCheckoutConfiguration->isProductPageEnabled(),
-            $this->name . 'ExpressCheckoutCartEnabled' => $expressCheckoutConfiguration->isOrderPageEnabled(),
-            $this->name . 'ExpressCheckoutOrderEnabled' => $expressCheckoutConfiguration->isCheckoutPageEnabled(),
-            $this->name . 'PayLaterProductPageMessageEnabled' => $payLaterConfiguration->isProductPageMessageActive(),
-            $this->name . 'PayLaterOrderPageMessageEnabled' => $payLaterConfiguration->isOrderPageMessageActive(),
-            $this->name . 'PayLaterHomePageBannerEnabled' => $payLaterConfiguration->isHomePageBannerActive(),
-            $this->name . 'PayLaterCategoryPageBannerEnabled' => $payLaterConfiguration->isCategoryPageBannerActive(),
-            $this->name . 'PayLaterProductPageBannerEnabled' => $payLaterConfiguration->isProductPageBannerActive(),
-            $this->name . 'PayLaterOrderPageBannerEnabled' => $payLaterConfiguration->isOrderPageBannerActive(),
-            $this->name . 'PayLaterProductPageButtonEnabled' => $payLaterConfiguration->isProductPageButtonActive(),
-            $this->name . 'PayLaterCartPageButtonEnabled' => $payLaterConfiguration->isCartPageButtonActive(),
-            $this->name . 'PayLaterOrderPageButtonEnabled' => $payLaterConfiguration->isOrderPageButtonActive(),
+            $this->name . 'ExpressCheckoutProductEnabled' => $expressCheckoutConfiguration->isProductPageEnabled() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
+            $this->name . 'ExpressCheckoutCartEnabled' => $expressCheckoutConfiguration->isOrderPageEnabled() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
+            $this->name . 'ExpressCheckoutOrderEnabled' => $expressCheckoutConfiguration->isCheckoutPageEnabled() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
+            $this->name . 'PayLaterProductPageMessageEnabled' => $payLaterConfiguration->isProductPageMessageActive() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
+            $this->name . 'PayLaterOrderPageMessageEnabled' => $payLaterConfiguration->isOrderPageMessageActive() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
+            $this->name . 'PayLaterHomePageBannerEnabled' => $payLaterConfiguration->isHomePageBannerActive() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
+            $this->name . 'PayLaterCategoryPageBannerEnabled' => $payLaterConfiguration->isCategoryPageBannerActive() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
+            $this->name . 'PayLaterProductPageBannerEnabled' => $payLaterConfiguration->isProductPageBannerActive() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
+            $this->name . 'PayLaterOrderPageBannerEnabled' => $payLaterConfiguration->isOrderPageBannerActive() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
+            $this->name . 'PayLaterProductPageButtonEnabled' => $payLaterConfiguration->isProductPageButtonActive() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
+            $this->name . 'PayLaterCartPageButtonEnabled' => $payLaterConfiguration->isCartPageButtonActive() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
+            $this->name . 'PayLaterOrderPageButtonEnabled' => $payLaterConfiguration->isOrderPageButtonActive() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
             $this->name . '3dsEnabled' => $payPalConfiguration->is3dSecureEnabled(),
             $this->name . 'CspNonce' => $payPalConfiguration->getCSPNonce(),
             $this->name . 'CartProductCount' => $cartProductCount,
@@ -1525,53 +1554,55 @@ class Ps_checkout extends PaymentModule
 
     /**
      * @return void
-     *
-     * @throws Raven_Exception
      */
     private function installSentryExceptionLogger()
     {
-        $envFiles = [
-            'prod' => '.env',
-            'test' => '.env.test',
-        ];
+        try {
+            $envFiles = [
+                'prod' => '.env',
+                'test' => '.env.test',
+            ];
 
-        $envLoader = new \PrestaShop\Module\PrestashopCheckout\Environment\EnvLoader();
+            $envLoader = new \PrestaShop\Module\PrestashopCheckout\Environment\EnvLoader();
 
-        foreach ($envFiles as $environment => $fileName) {
-            if (!file_exists(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName)) {
-                continue;
+            foreach ($envFiles as $environment => $fileName) {
+                if (!file_exists(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName)) {
+                    continue;
+                }
+
+                $env = $envLoader->read(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName);
+
+                break;
             }
 
-            $env = $envLoader->read(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName);
+            if (!empty($env) && isset($env['PS_CHECKOUT_SENTRY_DSN_MODULE'])) {
+                $this->sentryClient = new PrestaShop\Module\PrestashopCheckout\Handler\ModuleFilteredRavenClient(
+                    $env['PS_CHECKOUT_SENTRY_DSN_MODULE'],
+                    [
+                        'level' => 'error',
+                        'error_types' => E_ERROR,
+                        'tags' => [
+                            'php_version' => phpversion(),
+                            'module_version' => $this->version,
+                            'prestashop_version' => _PS_VERSION_,
+                        ],
+                    ]
+                );
 
-            break;
-        }
+                $this->sentryClient->setAppPath(realpath(_PS_MODULE_DIR_ . 'ps_checkout/'));
+                $this->sentryClient->setExcludedAppPaths([
+                    realpath(_PS_MODULE_DIR_ . 'ps_checkout/vendor/'),
+                ]);
+                $this->sentryClient->setExcludedDomains(['127.0.0.1', 'localhost', '.local']);
 
-        if (!empty($env) && isset($env['PS_CHECKOUT_SENTRY_DSN_MODULE'])) {
-            $this->sentryClient = new PrestaShop\Module\PrestashopCheckout\Handler\ModuleFilteredRavenClient(
-                $env['PS_CHECKOUT_SENTRY_DSN_MODULE'],
-                [
-                    'level' => 'error',
-                    'error_types' => E_ERROR,
-                    'tags' => [
-                        'php_version' => phpversion(),
-                        'module_version' => $this->version,
-                        'prestashop_version' => _PS_VERSION_,
-                    ],
-                ]
-            );
+                if (version_compare(phpversion(), '7.4.0', '>=') && version_compare(_PS_VERSION_, '1.7.8.0', '<')) {
+                    return;
+                }
 
-            $this->sentryClient->setAppPath(realpath(_PS_MODULE_DIR_ . 'ps_checkout/'));
-            $this->sentryClient->setExcludedAppPaths([
-                realpath(_PS_MODULE_DIR_ . 'ps_checkout/vendor/'),
-            ]);
-            $this->sentryClient->setExcludedDomains(['127.0.0.1', 'localhost', '.local']);
-
-            if (version_compare(phpversion(), '7.4.0', '>=') && version_compare(_PS_VERSION_, '1.7.8.0', '<')) {
-                return;
+                $this->sentryClient->install();
             }
-
-            $this->sentryClient->install();
+        } catch (Exception $exception) {
+            $this->getLogger()->debug('Sentry exception', ['exception' => $exception]);
         }
     }
 

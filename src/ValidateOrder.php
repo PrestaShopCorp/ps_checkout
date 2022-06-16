@@ -22,6 +22,8 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -133,6 +135,15 @@ class ValidateOrder
 
             if (false === $response['status']) {
                 if (false === empty($response['body']['message'])) {
+                    if ($response['body']['message'] === 'PAYEE_ACCOUNT_RESTRICTED') {
+                        /** @var PaypalAccountRepository $payPalAccountRepository */
+                        $payPalAccountRepository = $module->getService('ps_checkout.repository.paypal.account');
+                        /** @var PaypalAccountUpdater $payPalAccountUpdater */
+                        $payPalAccountUpdater = $module->getService('ps_checkout.updater.paypal.account');
+                        $payPalAccount = $payPalAccountRepository->getOnboardedAccount();
+                        $payPalAccount->setPaypalPaymentStatus(0);
+                        $payPalAccountUpdater->update($payPalAccount);
+                    }
                     (new PayPalError($response['body']['message']))->throwException();
                 }
 

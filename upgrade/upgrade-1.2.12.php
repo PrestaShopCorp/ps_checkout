@@ -30,5 +30,14 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_2_12($module)
 {
-    return $module->registerHook('displayInvoiceLegalFreeText');
+    // Force PrestaShop to upgrade for all shop to avoid issues
+    $savedShopContext = Shop::getContext();
+    Shop::setContext(Shop::CONTEXT_ALL);
+
+    $module->registerHook('displayInvoiceLegalFreeText');
+
+    // Restore initial PrestaShop shop context
+    Shop::setContext($savedShopContext);
+
+    return true;
 }

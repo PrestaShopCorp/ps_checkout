@@ -17,40 +17,27 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
 
-/**
- * Update main function for module version 2.18.0
- *
- * @param Ps_checkout $module
- *
- * @return bool
- */
-function upgrade_module_2_18_0($module)
+namespace PrestaShop\Module\PrestashopCheckout\PayPal;
+
+use Configuration;
+use Context;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+
+class PayPalClientTokenProvider
 {
-    $db = Db::getInstance();
+    /**
+     * @return string
+     *
+     * @throws PsCheckoutException
+     */
+    public function getPayPalClientToken()
+    {
+        $context = Context::getContext();
+        $apiOrder = new Order($context->link);
+        $merchantId = Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT', null, null, $context->shop->id);
 
-    // Force PrestaShop to upgrade for all shop to avoid issues
-    $savedShopContext = Shop::getContext();
-    Shop::setContext(Shop::CONTEXT_ALL);
-    $shopsList = \Shop::getShops(false, null, true);
-
-    foreach ($shopsList as $shopId) {
-        $db->insert(
-            'pscheckout_funding_source',
-            [
-                'name' => 'paylater',
-                'position' => 10,
-                'active' => 1,
-                'id_shop' => (int) $shopId,
-            ]
-        );
+        return $apiOrder->generateClientToken($merchantId);
     }
-
-    // Restore initial PrestaShop shop context
-    Shop::setContext($savedShopContext);
-
-    return true;
 }

@@ -152,7 +152,10 @@ export class PsCheckoutApi extends BaseClass {
 
           throw new Error('Invalid response');
         })
-        .then(({ body: { token } }) => token)
+        .then(({ body: { token } }) => {
+          window.ps_checkoutPayPalClientToken = token;
+          return token;
+        })
         // TODO: Handle error
         .catch(() => {})
     );

@@ -20,7 +20,7 @@ import { BaseComponent } from '../../core/dependency-injection/base.component';
 
 export class HostedFieldsComponent extends BaseComponent {
   static Inject = {
-    config: 'PsCheckoutconfig',
+    config: 'PsCheckoutConfig',
     payPalService: 'PayPalService',
     psCheckoutApi: 'PsCheckoutApi',
     psCheckoutService: 'PsCheckoutService'
@@ -71,6 +71,18 @@ export class HostedFieldsComponent extends BaseComponent {
     return document.querySelector(sectionSelector);
   }
 
+  getContingencies() {
+    switch (this.config.hostedFieldsContingencies) {
+      case '3D_SECURE':
+      case 'SCA_ALWAYS':
+        return ['SCA_ALWAYS'];
+      case 'NONE':
+        return undefined;
+      default:
+        return ['SCA_WHEN_REQUIRED'];
+    }
+  }
+
   isSubmittable() {
     return this.data.conditions
       ? this.data.conditions.isChecked() && this.data.validity
@@ -92,23 +104,23 @@ export class HostedFieldsComponent extends BaseComponent {
                 fundingSource: this.data.name,
                 isHostedFields: true
               })
-              .catch((error) => {
+              .catch(error => {
                 this.data.notification.showError(
                   `${error.message} ${error.name}`
                 );
               })
         }
       )
-      .then((hostedFields) => {
+      .then(hostedFields => {
         if (this.data.HTMLElement !== null) {
-          hostedFields.on('validityChange', (event) => {
+          hostedFields.on('validityChange', event => {
             this.data.validity =
               Object.keys(event.fields)
-                .map((name) => event.fields[name])
+                .map(name => event.fields[name])
                 .map(({ isValid }) => {
                   return isValid;
                 })
-                .filter((validity) => validity === false).length === 0;
+                .filter(validity => validity === false).length === 0;
 
             this.data.HTMLElementSection.classList.toggle(
               'disabled',
@@ -120,7 +132,7 @@ export class HostedFieldsComponent extends BaseComponent {
               : this.data.HTMLElementButton.setAttribute('disabled', '');
           });
 
-          this.data.HTMLElementButton.addEventListener('click', (event) => {
+          this.data.HTMLElementButton.addEventListener('click', event => {
             event.preventDefault();
             this.data.loader.show();
             // this.data.HTMLElementButton.classList.toggle('disabled', true);
@@ -128,12 +140,12 @@ export class HostedFieldsComponent extends BaseComponent {
 
             hostedFields
               .submit({
-                contingencies: ['3D_SECURE']
+                contingencies: this.getContingencies()
               })
-              .then((payload) => {
-                const { liabilityShifted, authenticationReason } = payload;
+              .then(payload => {
+                const { liabilityShift } = payload;
                 return this.psCheckoutService
-                  .validateContingency(liabilityShifted, authenticationReason)
+                  .validateLiablityShift(liabilityShift)
                   .then(() => {
                     const data = payload;
 
@@ -148,9 +160,15 @@ export class HostedFieldsComponent extends BaseComponent {
                     });
                   });
               })
-              .catch((error) => {
+              .catch(error => {
+                let message = error.message || '';
+
+                if (!message) {
+                  message = `Unknown error, code: ${error.code || 'none'}, description: ${error.description || 'none'}`;
+                }
+
                 this.data.loader.hide();
-                this.data.notification.showError(error.message);
+                this.data.notification.showError(message);
                 this.data.HTMLElementButton.removeAttribute('disabled');
               });
           });

@@ -70,6 +70,7 @@ class AbstractFrontController extends ModuleFrontController
         ob_end_clean();
         header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
         header('Content-Type: application/json;charset=utf-8');
+        header('X-Robots-Tag: noindex, nofollow');
 
         if (isset($response['httpCode'])) {
             http_response_code($response['httpCode']);

@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
+use libphonenumber\PhoneNumberType;
+use libphonenumber\PhoneNumberUtil;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
@@ -87,7 +89,6 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
         $this->buildBaseNode();
         $this->buildAmountBreakdownNode();
-        $this->buildItemsNode();
 
         if (false === $this->expressCheckout) {
             $this->buildShippingNode();
@@ -151,12 +152,12 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             'custom_id' => (string) $this->cart['cart']['id'], // id_cart or id_order // link between paypal order and prestashop order
             'invoice_id' => '',
             'description' => $this->truncate(
-                'Checking out with your cart from ' . $shopName,
+                'Checking out with your cart #' . $this->cart['cart']['id'] . ' from ' . $shopName,
                 127
             ),
             'amount' => [
                 'currency_code' => $this->cart['currency']['iso_code'],
-                'value' => $this->cart['cart']['totals']['total_including_tax']['amount'],
+                'value' => $this->formatAmount($this->cart['cart']['totals']['total_including_tax']['amount']),
             ],
             'payee' => [
                 'merchant_id' => $merchantId,
@@ -182,17 +183,6 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
             $node['roundingConfig'] = $roundType . '-' . $roundMode;
         }
-
-        // TODO: Disabled temporary: Need to handle country indicator
-        // Add optional phone number if provided
-        // if (!empty($params['addresses']['invoice']->phone)) {
-        //     $payload['payer']['phone'] = [
-        //         'phone_number' => [
-        //             'national_number' => $params['addresses']['invoice']->phone,
-        //         ],
-        //         'phone_type' => 'MOBILE', // TODO - Function to determine if phone is mobile or not
-        //     ];
-        // }
 
         $this->getPayload()->addAndMergeItems($node);
     }
@@ -232,6 +222,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     {
         $countryCodeMatrice = new PaypalCountryCodeMatrice();
         $payerCountryIsoCode = $this->getCountryIsoCodeById($this->cart['addresses']['invoice']->id_country);
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
 
         $node['payer'] = [
             'name' => [
@@ -252,6 +244,41 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         // Add optional birthdate if provided
         if (!empty($this->cart['customer']->birthday) && $this->cart['customer']->birthday !== '0000-00-00') {
             $node['payer']['birth_date'] = (string) $this->cart['customer']->birthday;
+        }
+
+        $phone = !empty($this->cart['addresses']['invoice']->phone) ? $this->cart['addresses']['invoice']->phone : '';
+        $phone = empty($phone) && !empty($this->cart['addresses']['invoice']->phone_mobile) ? $this->cart['addresses']['invoice']->phone_mobile : $phone;
+
+        if (!empty($phone)) {
+            try {
+                $phoneUtil = PhoneNumberUtil::getInstance();
+                $parsedPhone = $phoneUtil->parse($phone, $payerCountryIsoCode);
+                if ($phoneUtil->isValidNumber($parsedPhone)) {
+                    $node['payer']['phone']['phone_number']['national_number'] = $parsedPhone->getNationalNumber();
+                    switch ($phoneUtil->getNumberType($parsedPhone)) {
+                        case PhoneNumberType::MOBILE:
+                            $node['payer']['phone']['phone_type'] = 'MOBILE';
+                            break;
+                        case PhoneNumberType::PAGER:
+                            $node['payer']['phone']['phone_type'] = 'PAGER';
+                            break;
+                        default:
+                            $node['payer']['phone']['phone_type'] = 'OTHER';
+                    }
+                }
+            } catch (\Exception $exception) {
+                $module->getLogger()->warning(
+                    'Unable to format phone number on PayPal Order payload',
+                    [
+                        'type' => $this->isUpdate ? 'UPDATE' : 'CREATE',
+                        'paypal_order' => $this->paypalOrderId,
+                        'id_cart' => (int) $this->cart['cart']['id'],
+                        'address_id' => (int) $this->cart['addresses']['invoice']->id,
+                        'phone' => $phone,
+                        'exception' => $exception,
+                    ]
+                );
+            }
         }
 
         $this->getPayload()->addAndMergeItems($node);
@@ -280,16 +307,28 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     }
 
     /**
-     * Build the paypal items node
+     * Build the amount breakdown node
      */
-    public function buildItemsNode()
+    public function buildAmountBreakdownNode()
     {
         $node = [];
+        $amountTotal = $this->cart['cart']['totals']['total_including_tax']['amount'];
+        $breakdownItemTotal = 0;
+        $breakdownTaxTotal = 0;
+        $breakdownShipping = $this->cart['cart']['shipping_cost'];
+        $breakdownHandling = 0;
+        $breakdownDiscount = 0;
 
         foreach ($this->cart['products'] as $product => $value) {
-            $paypalItem = [];
-
             $sku = '';
+            $totalWithoutTax = $value['total'];
+            $totalWithTax = $value['total_wt'];
+            $totalTax = $totalWithTax - $totalWithoutTax;
+            $quantity = $value['quantity'];
+            $unitPriceWithoutTax = $this->formatAmount($totalWithoutTax / $quantity);
+            $unitTax = $this->formatAmount($totalTax / $quantity);
+            $breakdownItemTotal += $unitPriceWithoutTax * $quantity;
+            $breakdownTaxTotal += $unitTax * $quantity;
 
             if (false === empty($value['reference'])) {
                 $sku = $value['reference'];
@@ -307,111 +346,60 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 $sku = $value['upc'];
             }
 
+            $paypalItem = [];
             $paypalItem['name'] = $this->truncate($value['name'], 127);
             $paypalItem['description'] = false === empty($value['attributes']) ? $this->truncate($value['attributes'], 127) : '';
             $paypalItem['sku'] = $this->truncate($sku, 127);
             $paypalItem['unit_amount']['currency_code'] = $this->cart['currency']['iso_code'];
-            $paypalItem['unit_amount']['value'] = $value['total'] / $value['quantity'];
+            $paypalItem['unit_amount']['value'] = $unitPriceWithoutTax;
             $paypalItem['tax']['currency_code'] = $this->cart['currency']['iso_code'];
-            $paypalItem['tax']['value'] = ($value['total_wt'] - $value['total']) / $value['quantity'];
-            $paypalItem['quantity'] = $value['quantity'];
+            $paypalItem['tax']['value'] = $unitTax;
+            $paypalItem['quantity'] = $quantity;
             $paypalItem['category'] = $value['is_virtual'] === '1' ? 'DIGITAL_GOODS' : 'PHYSICAL_GOODS';
 
             $node['items'][] = $paypalItem;
         }
 
-        $this->getPayload()->addAndMergeItems($node);
-    }
-
-    /**
-     * Build the amount breakdown node
-     */
-    public function buildAmountBreakdownNode()
-    {
-        $totalProductWithoutTax = $this->calcTotalProductWithoutTax();
-        $totalTax = $this->calcTotalTax();
-
         $node['amount']['breakdown'] = [
             'item_total' => [
                 'currency_code' => $this->cart['currency']['iso_code'],
-                'value' => $totalProductWithoutTax,
+                'value' => $this->formatAmount($breakdownItemTotal),
             ],
             'shipping' => [
                 'currency_code' => $this->cart['currency']['iso_code'],
-                'value' => $this->cart['cart']['shipping_cost'],
+                'value' => $this->formatAmount($breakdownShipping),
             ],
             'tax_total' => [
                 'currency_code' => $this->cart['currency']['iso_code'],
-                'value' => $totalTax,
+                'value' => $this->formatAmount($breakdownTaxTotal),
             ],
         ];
 
-        // define by default the handling at 0
-        $handlingValue = 0;
-
         // set handling cost id needed -> principally used in case of gift_wrapping
-        if (isset($this->cart['cart']['subtotals']['gift_wrapping'])) {
-            $handlingValue += $this->cart['cart']['subtotals']['gift_wrapping']['amount'];
-
-            $node['amount']['breakdown']['handling'] = [
-                'currency_code' => $this->cart['currency']['iso_code'],
-                'value' => $handlingValue,
-            ];
+        if (!empty($this->cart['cart']['subtotals']['gift_wrapping'])) {
+            $breakdownHandling += $this->cart['cart']['subtotals']['gift_wrapping'];
         }
 
-        // Calc the discount value. Dicount value can also be used in case of a rounding issue.
-        // PrestaShop and PayPal doesn't handle rounding in the same way. In some cases (eg: amount ended with .35, .55 etc ... with a 10% discount),
-        // the amount value of PrestaShop is different of the value calc by PayPal (paypal always has .1 or .2 more than prestashop).
-        // In order to avoid this difference, we put it into the discount field in order to get the correct value.
-        // (the surplus value (calc by paypal) is deducts from the total amount in order to get the same amount of prestashop)
+        $remainderValue = $amountTotal - $breakdownItemTotal - $breakdownTaxTotal - $breakdownShipping - $breakdownHandling;
+
+        // In case of rounding issue, if remainder value is negative we use discount value to deduct remainder and if remainder value is positive we use handling value to add remainder
+        if ($remainderValue < 0) {
+            $breakdownDiscount += abs($remainderValue);
+        } else {
+            $breakdownHandling += $remainderValue;
+        }
+
         $node['amount']['breakdown']['discount'] = [
             'currency_code' => $this->cart['currency']['iso_code'],
-            'value' => abs($this->cart['cart']['totals']['total_including_tax']['amount'] - $totalProductWithoutTax - $totalTax - $this->cart['cart']['shipping_cost'] - $handlingValue),
+            'value' => $this->formatAmount($breakdownDiscount),
+        ];
+
+        $node['amount']['breakdown']['handling'] = [
+            'currency_code' => $this->cart['currency']['iso_code'],
+            'value' => $this->formatAmount($breakdownHandling),
         ];
 
         $this->getPayload()->addAndMergeItems($node);
-    }
-
-    /**
-     * Calc products total amount without tax
-     *
-     * @return float
-     */
-    private function calcTotalProductWithoutTax()
-    {
-        $totalProductsWithoutTax = 0;
-
-        foreach ($this->cart['products'] as $product) {
-            // calc total for the current product in the loop
-            $unitProductPriceWithoutTax = $product['total'] / $product['quantity'];
-            $productsPriceWithoutTax = $unitProductPriceWithoutTax * $product['quantity'];
-
-            // adding the amount for the current product to the total amount
-            $totalProductsWithoutTax += $productsPriceWithoutTax;
-        }
-
-        return $totalProductsWithoutTax;
-    }
-
-    /**
-     * Calc the total tax
-     *
-     * @return float
-     */
-    private function calcTotalTax()
-    {
-        $totalTax = 0;
-
-        foreach ($this->cart['products'] as $product) {
-            // calc total tax for the current product in the loop
-            $unitTaxAmount = ($product['total_wt'] - $product['total']) / $product['quantity'];
-            $totalTaxAmount = $unitTaxAmount * $product['quantity'];
-
-            // adding the amount tax for the current product to the total tax amount
-            $totalTax += $totalTaxAmount;
-        }
-
-        return $totalTax;
     }
 
     /**
@@ -437,19 +425,25 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      * Advise from PayPal: Always round to 2 decimals except for HUF, JPY and TWD
      * currencies which require a round with 0 decimal
      *
-     * @param string $currencyIsoCode iso code of the currency used to pass the payment
-     *
      * @return int
      */
-    private function getNbDecimalToRound($currencyIsoCode)
+    private function getNbDecimalToRound()
     {
-        $currency_wt_decimal = ['HUF', 'JPY', 'TWD'];
-
-        if (in_array($currencyIsoCode, $currency_wt_decimal)) {
+        if (in_array($this->cart['currency']['iso_code'], ['HUF', 'JPY', 'TWD'], true)) {
             return 0;
         }
 
         return 2;
+    }
+
+    /**
+     * @param float|int|string $amount
+     *
+     * @return string
+     */
+    private function formatAmount($amount)
+    {
+        return sprintf("%01.{$this->getNbDecimalToRound()}f", $amount);
     }
 
     /**
@@ -473,7 +467,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      */
     private function getCountryIsoCodeById($countryId)
     {
-        return \Country::getIsoById($countryId);
+        return strtoupper(\Country::getIsoById($countryId));
     }
 
     /**

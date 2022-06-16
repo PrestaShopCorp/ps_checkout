@@ -20,6 +20,7 @@
 
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalClientTokenProvider;
 
 /**
  * This controller receive ajax call to retrieve a PayPal Client Token
@@ -43,6 +44,9 @@ class Ps_CheckoutTokenModuleFrontController extends AbstractFrontController
                 throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
             }
 
+            /** @var PayPalClientTokenProvider $clientTokenProvider */
+            $clientTokenProvider = $this->module->getService('ps_checkout.paypal.provider.client_token');
+
             /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
@@ -59,7 +63,7 @@ class Ps_CheckoutTokenModuleFrontController extends AbstractFrontController
                 || strtotime($psCheckoutCart->paypal_token_expire) <= time()
             ) {
                 $psCheckoutCart->paypal_order = '';
-                $psCheckoutCart->paypal_token = $this->getToken();
+                $psCheckoutCart->paypal_token = $clientTokenProvider->getPayPalClientToken();
                 $psCheckoutCart->paypal_token_expire = (new DateTime())->modify('+3550 seconds')->format('Y-m-d H:i:s');
                 $psCheckoutCartRepository->save($psCheckoutCart);
             }
@@ -88,23 +92,5 @@ class Ps_CheckoutTokenModuleFrontController extends AbstractFrontController
 
             $this->exitWithExceptionMessage($exception);
         }
-    }
-
-    /**
-     * @return string
-     */
-    private function getToken()
-    {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccountRepository */
-        $paypalAccountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
-
-        $apiOrder = new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order(\Context::getContext()->link);
-        $response = $apiOrder->generateClientToken($paypalAccountRepository->getMerchantId());
-
-        if (empty($response['body']) || empty($response['body']['client_token'])) {
-            throw new Exception('Unable to retrieve PayPal Client Token');
-        }
-
-        return $response['body']['client_token'];
     }
 }
