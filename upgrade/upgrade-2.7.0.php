@@ -34,6 +34,8 @@ function upgrade_module_2_7_0($module)
 
     // Force PrestaShop to upgrade for all shop to avoid issues
     $savedShopContext = Shop::getContext();
+    $savedShopId = Shop::getContextShopID();
+    $savedGroupShopId = Shop::getContextShopGroupID();
     Shop::setContext(Shop::CONTEXT_ALL);
 
     $db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` CHANGE `paypal_token` `paypal_token` text DEFAULT NULL;');
@@ -41,7 +43,13 @@ function upgrade_module_2_7_0($module)
     $module->disableIncompatibleCurrencies();
 
     // Restore initial PrestaShop shop context
-    Shop::setContext($savedShopContext);
+    if (Shop::CONTEXT_SHOP === $savedShopContext) {
+        Shop::setContext($savedShopContext, $savedShopId);
+    } elseif (Shop::CONTEXT_GROUP === $savedShopContext) {
+        Shop::setContext($savedShopContext, $savedGroupShopId);
+    } else {
+        Shop::setContext($savedShopContext);
+    }
 
     return true;
 }

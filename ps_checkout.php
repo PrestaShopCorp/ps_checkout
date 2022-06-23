@@ -189,6 +189,8 @@ class Ps_checkout extends PaymentModule
 
         // Force PrestaShop to install for all shop to avoid issues, install action is always for all shops
         $savedShopContext = Shop::getContext();
+        $savedShopId = Shop::getContextShopID();
+        $savedGroupShopId = Shop::getContextShopGroupID();
         Shop::setContext(Shop::CONTEXT_ALL);
 
         // Install for both 1.7 and 1.6
@@ -203,7 +205,13 @@ class Ps_checkout extends PaymentModule
             (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops();
 
         // Restore initial PrestaShop shop context
-        Shop::setContext($savedShopContext);
+        if (Shop::CONTEXT_SHOP === $savedShopContext) {
+            Shop::setContext($savedShopContext, $savedShopId);
+        } elseif (Shop::CONTEXT_GROUP === $savedShopContext) {
+            Shop::setContext($savedShopContext, $savedGroupShopId);
+        } else {
+            Shop::setContext($savedShopContext);
+        }
 
         if (!$result) {
             return false;
@@ -360,6 +368,8 @@ class Ps_checkout extends PaymentModule
     {
         // Force PrestaShop to uninstall for all shop to avoid issues, uninstall action is always for all shops
         $savedShopContext = Shop::getContext();
+        $savedShopId = Shop::getContextShopID();
+        $savedGroupShopId = Shop::getContextShopGroupID();
         Shop::setContext(Shop::CONTEXT_ALL);
 
         // When PrestaShop uninstall a module, disable() and uninstall() are called but we want to track only uninstall()
@@ -376,7 +386,13 @@ class Ps_checkout extends PaymentModule
             && $this->uninstallTabs();
 
         // Restore initial PrestaShop shop context
-        Shop::setContext($savedShopContext);
+        if (Shop::CONTEXT_SHOP === $savedShopContext) {
+            Shop::setContext($savedShopContext, $savedShopId);
+        } elseif (Shop::CONTEXT_GROUP === $savedShopContext) {
+            Shop::setContext($savedShopContext, $savedGroupShopId);
+        } else {
+            Shop::setContext($savedShopContext);
+        }
 
         return $result;
     }
