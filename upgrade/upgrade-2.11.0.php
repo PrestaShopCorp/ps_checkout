@@ -32,6 +32,8 @@ function upgrade_module_2_11_0($module)
 {
     // Force PrestaShop to upgrade for all shop to avoid issues
     $savedShopContext = Shop::getContext();
+    $savedShopId = Shop::getContextShopID();
+    $savedGroupShopId = Shop::getContextShopGroupID();
     Shop::setContext(Shop::CONTEXT_ALL);
 
     if (true === (bool) version_compare(_PS_VERSION_, '1.7.1.0', '>=')) {
@@ -41,7 +43,13 @@ function upgrade_module_2_11_0($module)
     }
 
     // Restore initial PrestaShop shop context
-    Shop::setContext($savedShopContext);
+    if (Shop::CONTEXT_SHOP === $savedShopContext) {
+        Shop::setContext($savedShopContext, $savedShopId);
+    } elseif (Shop::CONTEXT_GROUP === $savedShopContext) {
+        Shop::setContext($savedShopContext, $savedGroupShopId);
+    } else {
+        Shop::setContext($savedShopContext);
+    }
 
     return true;
 }
