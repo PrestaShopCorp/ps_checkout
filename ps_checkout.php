@@ -129,7 +129,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.20.0';
+    const VERSION = '2.20.1';
 
     const INTEGRATION_DATE = '2022-14-06';
 
@@ -155,7 +155,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.20.0';
+        $this->version = '2.20.1';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -189,6 +189,8 @@ class Ps_checkout extends PaymentModule
 
         // Force PrestaShop to install for all shop to avoid issues, install action is always for all shops
         $savedShopContext = Shop::getContext();
+        $savedShopId = Shop::getContextShopID();
+        $savedGroupShopId = Shop::getContextShopGroupID();
         Shop::setContext(Shop::CONTEXT_ALL);
 
         // Install for both 1.7 and 1.6
@@ -203,7 +205,13 @@ class Ps_checkout extends PaymentModule
             (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForAllShops();
 
         // Restore initial PrestaShop shop context
-        Shop::setContext($savedShopContext);
+        if (Shop::CONTEXT_SHOP === $savedShopContext) {
+            Shop::setContext($savedShopContext, $savedShopId);
+        } elseif (Shop::CONTEXT_GROUP === $savedShopContext) {
+            Shop::setContext($savedShopContext, $savedGroupShopId);
+        } else {
+            Shop::setContext($savedShopContext);
+        }
 
         if (!$result) {
             return false;
@@ -360,6 +368,8 @@ class Ps_checkout extends PaymentModule
     {
         // Force PrestaShop to uninstall for all shop to avoid issues, uninstall action is always for all shops
         $savedShopContext = Shop::getContext();
+        $savedShopId = Shop::getContextShopID();
+        $savedGroupShopId = Shop::getContextShopGroupID();
         Shop::setContext(Shop::CONTEXT_ALL);
 
         // When PrestaShop uninstall a module, disable() and uninstall() are called but we want to track only uninstall()
@@ -376,7 +386,13 @@ class Ps_checkout extends PaymentModule
             && $this->uninstallTabs();
 
         // Restore initial PrestaShop shop context
-        Shop::setContext($savedShopContext);
+        if (Shop::CONTEXT_SHOP === $savedShopContext) {
+            Shop::setContext($savedShopContext, $savedShopId);
+        } elseif (Shop::CONTEXT_GROUP === $savedShopContext) {
+            Shop::setContext($savedShopContext, $savedGroupShopId);
+        } else {
+            Shop::setContext($savedShopContext);
+        }
 
         return $result;
     }
