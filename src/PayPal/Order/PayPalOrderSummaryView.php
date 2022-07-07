@@ -98,7 +98,7 @@ class PayPalOrderSummaryView
             'orderPayPalTransactionStatus' => $this->orderPayPalDataProvider->getTransactionStatus(),
             'approvalLink' => $this->orderPayPalDataProvider->getApprovalLink(),
             'payerActionLink' => $this->orderPayPalDataProvider->getPayActionLink(),
-            'contactUsLink' => $this->router->getContactLink(),
+            'contactUsLink' => $this->router->getContactLink($this->orderDataProvider->getOrderId()),
             'isShop17' => $this->shopContext->isShop17(),
         ];
     }

@@ -37,8 +37,8 @@ class Router
     /**
      * @return string
      */
-    public function getContactLink()
+    public function getContactLink($orderId = null)
     {
-        return $this->context->link->getPageLink('contact', true);
+        return $this->context->link->getPageLink('contact', true, $this->context->language->id, ['id_order' => (int) $orderId]);
     }
 }
