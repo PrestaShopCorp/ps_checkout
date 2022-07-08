@@ -21,12 +21,25 @@
     <h3 class="h1 card-title">
         {l s='Payment gateway information' mod='ps_checkout'}
     </h3>
-      {if !$orderIsPaid}
-        <div class="alert alert-warning">
-            {l s='The order has not yet been paid' mod='ps_checkout'}
+
+      {if $orderPayPalTransactionStatus === 'DECLINED' || $orderPayPalTransactionStatus === 'FAILED'}
+        <div class="alert alert-danger">
+            {l s='Your payment has been declined by our payment gateway, please contact us via the link below.' mod='ps_checkout'}
         </div>
-        <p>{l s='We have not received information about the successful payment of the order.' mod='ps_checkout'}</p>
       {/if}
+
+      {if $approvalLink && $orderPayPalStatus === 'PENDING_APPROVAL'}
+        <div class="alert alert-warning">
+            {l s='Your payment needs to be approved, please click the button below.' mod='ps_checkout'}
+        </div>
+      {/if}
+
+      {if $payerActionLink && $orderPayPalStatus === 'PAYER_ACTION_REQUIRED'}
+        <div class="alert alert-warning">
+            {l s='Your payment needs to be authenticated, please click the button below.' mod='ps_checkout'}
+        </div>
+      {/if}
+
     <div class="definition-list">
       <dl>
         <dt>{l s='Funding source' mod='ps_checkout'}</dt>
@@ -39,34 +52,23 @@
           {/if}
       </dl>
     </div>
-      {if $orderPayPalTransactionStatus === 'DECLINED' || $orderPayPalTransactionStatus === 'FAILED' }
-        <div class="alert alert-danger">
-            {l s='Your payment has been declined by our payment gateway, please contact us via the link below.' mod='ps_checkout'}
-        </div>
-      {/if}
 
-      {if $approvalLink && $orderPayPalStatus === 'PENDING_APPROVAL' }
-        <div class="alert alert-warning">
-            {l s='Your payment needs approving, please click the button below.' mod='ps_checkout'}
-        </div>
-        <div>
+      {if $approvalLink && $orderPayPalStatus === 'PENDING_APPROVAL'}
+        <p>
           <a class="btn btn-primary" href="{$approvalLink|escape:'html':'UTF-8'}">
               {l s='Approve payment' mod='ps_checkout'}
           </a>
             {l s='You will be redirected to an external secured page of our payment gateway.' mod='ps_checkout'}
-        </div>
+        </p>
       {/if}
 
-      {if $payerActionLink && $orderPayPalStatus === 'PAYER_ACTION_REQUIRED' }
-        <div class="alert alert-info">
-            {l s='Your payment needs to be authenticated, please click the button below.' mod='ps_checkout'}
-        </div>
-        <div>
+      {if $payerActionLink && $orderPayPalStatus === 'PAYER_ACTION_REQUIRED'}
+        <p>
           <a class="btn btn-primary" href="{$payerActionLink|escape:'html':'UTF-8'}">
-              {l s='Verify payment' mod='ps_checkout'}
+              {l s='Authenticate payment' mod='ps_checkout'}
           </a>
             {l s='You will be redirected to an external secured page of our payment gateway.' mod='ps_checkout'}
-        </div>
+        </p>
       {/if}
     <p>
       <a href="{$contactUsLink|escape:'html':'UTF-8'}" class="contact-us">
@@ -80,9 +82,21 @@
         {l s='Payment gateway information' mod='ps_checkout'}
     </h3>
 
-      {if !$orderIsPaid}
+      {if $orderPayPalTransactionStatus === 'DECLINED' || $orderPayPalTransactionStatus === 'FAILED'}
+        <div class="alert alert-danger">
+            {l s='Your payment has been declined by our payment gateway, please contact us via the link below.' mod='ps_checkout'}
+        </div>
+      {/if}
+
+      {if $approvalLink && $orderPayPalStatus === 'PENDING_APPROVAL'}
         <div class="alert alert-warning">
-            {l s='We have not received information about the successful payment of the order.' mod='ps_checkout'}
+            {l s='Your payment needs to be approved, please click the button below.' mod='ps_checkout'}
+        </div>
+      {/if}
+
+      {if $payerActionLink && $orderPayPalStatus === 'PAYER_ACTION_REQUIRED'}
+        <div class="alert alert-warning">
+            {l s='Your payment needs to be authenticated, please click the button below.' mod='ps_checkout'}
         </div>
       {/if}
 
@@ -105,16 +119,7 @@
       </table>
     </div>
 
-      {if $orderPayPalTransactionStatus === 'DECLINED' || $orderPayPalTransactionStatus === 'FAILED'}
-        <div class="alert alert-danger">
-            {l s='Your payment has been declined by our payment gateway, please contact us via the link below.' mod='ps_checkout'}
-        </div>
-      {/if}
-
       {if $approvalLink && $orderPayPalStatus === 'PENDING_APPROVAL'}
-        <div class="alert alert-info">
-            {l s='Your payment needs approving, please click the button below.' mod='ps_checkout'}
-        </div>
         <div class="submit">
           <a class="button btn btn-default button-medium" href="{$approvalLink|escape:'html':'UTF-8'}">
             <span>
@@ -126,14 +131,11 @@
         </div>
       {/if}
 
-      {if $payerActionLink && $orderPayPalStatus === 'PAYER_ACTION_REQUIRED' }
-        <div class="alert alert-info">
-            {l s='Your payment needs to be authenticated, please click the button below.' mod='ps_checkout'}
-        </div>
+      {if $payerActionLink && $orderPayPalStatus === 'PAYER_ACTION_REQUIRED'}
         <div class="submit">
           <a class="button btn btn-default button-medium" href="{$payerActionLink|escape:'html':'UTF-8'}">
             <span>
-                {l s='Verify payment' mod='ps_checkout'}
+                {l s='Authenticate payment' mod='ps_checkout'}
                 <i class="icon-chevron-right right"></i>
             </span>
           </a>

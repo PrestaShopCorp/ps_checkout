@@ -17,34 +17,40 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  *}
 <section id="ps_checkout-displayOrderConfirmation">
-    {if $orderPayPalTransactionStatus === 'COMPLETED' && !$isShop17 }
+    {if $orderPayPalTransactionStatus === 'COMPLETED' && !$isShop17}
         {* PrestaShop 1.6 doesn't show a confirmation message itself, so have to display it *}
       <div class="alert alert-success">
           {l s='Your order is confirmed.' mod='ps_checkout'}
       </div>
     {/if}
 
-    {if $orderPayPalTransactionStatus === 'PENDING' }
+    {if $orderPayPalTransactionStatus === 'PENDING'}
       <div class="alert alert-warning">
           {l s='Your order is waiting for payment confirmation. You will receive an email when your payment has been validated. You can also check the order status in your order history in your account.' mod='ps_checkout'}
       </div>
     {/if}
 
-    {if $orderPayPalTransactionStatus === 'DECLINED' || $orderPayPalTransactionStatus === 'FAILED' }
+    {if $orderPayPalTransactionStatus === 'DECLINED' || $orderPayPalTransactionStatus === 'FAILED'}
       <div class="alert alert-danger">
-          {l s='Your payment has been declined by our payment gateway, please contact us via the link below, on Payment Gateway Information section.' mod='ps_checkout'}
+        <a href="#ps_checkout-displayPaymentReturn" class="alert-link">
+            {l s='Your payment has been declined by our payment gateway, please contact us via the link below.' mod='ps_checkout'}
+        </a>
       </div>
     {/if}
 
-    {if $approvalLink || $orderPayPalStatus === 'PENDING_APPROVAL' }
+    {if $approvalLink || $orderPayPalStatus === 'PENDING_APPROVAL'}
       <div class="alert alert-warning">
-          {l s='Your payment needs approving, please click the button below, on Payment Gateway Information section.' mod='ps_checkout'}
+        <a href="#ps_checkout-displayPaymentReturn" class="alert-link"{if $isShop17} style="margin: initial;padding: initial;"{/if}>
+            {l s='Your payment needs to be approved, please click the button below.' mod='ps_checkout'}
+        </a>
       </div>
     {/if}
 
-    {if $payerActionLink || $orderPayPalStatus === 'PAYER_ACTION_REQUIRED' }
+    {if $payerActionLink || $orderPayPalStatus === 'PAYER_ACTION_REQUIRED'}
       <div class="alert alert-warning">
-          {l s='Your payment needs to be authenticated, please click the button below, on Payment Gateway Information section.' mod='ps_checkout'}
+        <a href="#ps_checkout-displayPaymentReturn" class="alert-link"{if $isShop17} style="margin: initial;padding: initial;"{/if}>
+            {l s='Your payment needs to be authenticated, please click the button below.' mod='ps_checkout'}
+        </a>
       </div>
     {/if}
 </section>
