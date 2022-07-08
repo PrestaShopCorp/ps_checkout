@@ -54,6 +54,11 @@ class PayPalOrderSummaryView
     private $fundingSourceTranslationProvider;
 
     /**
+     * @var PayPalOrderTranslationProvider
+     */
+    private $orderPayPalTranslationProvider;
+
+    /**
      * @var ShopContext
      */
     private $shopContext;
@@ -63,7 +68,7 @@ class PayPalOrderSummaryView
      * @param OrderDataProvider $orderDataProvider
      * @param PsCheckoutDataProvider $checkoutDataProvider
      * @param Router $router
-     * @param FundingSourceTranslationProvider $fundingSourceTranslationProvider
+     * @param PayPalOrderTranslationProvider $orderPayPalTranslationProvider
      * @param ShopContext $shopContext
      */
     public function __construct(
@@ -72,6 +77,7 @@ class PayPalOrderSummaryView
         PsCheckoutDataProvider $checkoutDataProvider,
         Router $router,
         FundingSourceTranslationProvider $fundingSourceTranslationProvider,
+        PayPalOrderTranslationProvider $orderPayPalTranslationProvider,
         ShopContext $shopContext
     ) {
         $this->orderPayPalDataProvider = $orderPayPalDataProvider;
@@ -79,6 +85,7 @@ class PayPalOrderSummaryView
         $this->checkoutDataProvider = $checkoutDataProvider;
         $this->router = $router;
         $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
+        $this->orderPayPalTranslationProvider = $orderPayPalTranslationProvider;
         $this->shopContext = $shopContext;
     }
 
@@ -89,13 +96,18 @@ class PayPalOrderSummaryView
      */
     public function getTemplateVars()
     {
+        $orderStatus = $this->orderPayPalDataProvider->getOrderStatus();
+        $orderTransactionStatus = $this->orderPayPalDataProvider->getTransactionStatus();
+
         return [
             'orderIsPaid' => $this->orderDataProvider->hasBeenPaid(),
             'orderPayPalId' => $this->checkoutDataProvider->getPaypalOrderId(),
-            'orderPayPalStatus' => $this->orderPayPalDataProvider->getOrderStatus(),
+            'orderPayPalStatus' => $orderStatus,
+            'orderPayPalStatusTranslated' => $this->orderPayPalTranslationProvider->getTranslatedOrderStatus($orderStatus),
             'orderPayPalFundingSource' => $this->fundingSourceTranslationProvider->getPaymentMethodName($this->checkoutDataProvider->getFundingSourceName()),
             'orderPayPalTransactionId' => $this->orderPayPalDataProvider->getTransactionId(),
-            'orderPayPalTransactionStatus' => $this->orderPayPalDataProvider->getTransactionStatus(),
+            'orderPayPalTransactionStatus' => $orderTransactionStatus,
+            'orderPayPalTransactionStatusTranslated' => $this->orderPayPalTranslationProvider->getTranslatedTransactionStatus($orderTransactionStatus),
             'approvalLink' => $this->orderPayPalDataProvider->getApprovalLink(),
             'payerActionLink' => $this->orderPayPalDataProvider->getPayActionLink(),
             'contactUsLink' => $this->router->getContactLink($this->orderDataProvider->getOrderId()),

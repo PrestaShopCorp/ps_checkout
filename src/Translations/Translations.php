@@ -491,6 +491,30 @@ class Translations
                     ],
                 ],
             ],
+            'paypal' => [
+                'order' => [
+                    'status' => [
+                        'CREATED' => $this->module->l('Created', 'translations'),
+                        'SAVED' => $this->module->l('Saved', 'translations'),
+                        'APPROVED' => $this->module->l('Approved', 'translations'),
+                        'PENDING_APPROVAL' => $this->module->l('Pending approval', 'translations'),
+                        'VOIDED' => $this->module->l('Voided', 'translations'),
+                        'COMPLETED' => $this->module->l('Completed', 'translations'),
+                        'PAYER_ACTION_REQUIRED' => $this->module->l('Payer action required', 'translations'),
+                        'PARTIALLY_COMPLETED' => $this->module->l('Partially completed', 'translations'),
+                    ],
+                ],
+                'capture' => [
+                    'status' => [
+                        'COMPLETED' => $this->module->l('Completed', 'translations'),
+                        'DECLINED' => $this->module->l('Declined', 'translations'),
+                        'PARTIALLY_REFUNDED' => $this->module->l('Partially refunded', 'translations'),
+                        'PENDING' => $this->module->l('Pending', 'translations'),
+                        'REFUNDED' => $this->module->l('Refunded', 'translations'),
+                        'FAILED' => $this->module->l('Failed', 'translations'),
+                    ],
+                ],
+            ],
         ];
 
         return $translations;
