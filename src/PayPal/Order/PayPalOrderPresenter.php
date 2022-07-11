@@ -20,8 +20,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order;
 
-use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
+use Currency;
 use PrestaShop\Module\PrestashopCheckout\PsCheckoutDataProvider;
+use Tools;
 
 class PayPalOrderPresenter
 {
@@ -36,11 +37,6 @@ class PayPalOrderPresenter
     public $psCheckoutDataProvider;
 
     /**
-     * @var FundingSourceTranslationProvider
-     */
-    public $fundingSourceTranslationProvider;
-
-    /**
      * @var PayPalOrderTranslationProvider
      */
     public $paypalOrderTranslationProvider;
@@ -48,44 +44,68 @@ class PayPalOrderPresenter
     /**
      * @param PaypalOrderDataProvider $paypalOrderDataProvider
      * @param PsCheckoutDataProvider $psCheckoutDataProvider
-     * @param FundingSourceTranslationProvider $fundingSourceTranslationProvider
      * @param PayPalOrderTranslationProvider $paypalOrderTranslationProvider
      */
-    public function __construct(PaypalOrderDataProvider $paypalOrderDataProvider, PsCheckoutDataProvider $psCheckoutDataProvider, FundingSourceTranslationProvider $fundingSourceTranslationProvider, PayPalOrderTranslationProvider $paypalOrderTranslationProvider)
-    {
+    public function __construct(
+        PaypalOrderDataProvider $paypalOrderDataProvider,
+        PsCheckoutDataProvider $psCheckoutDataProvider,
+        PayPalOrderTranslationProvider $paypalOrderTranslationProvider
+    ) {
         $this->paypalOrderDataProvider = $paypalOrderDataProvider;
         $this->psCheckoutDataProvider = $psCheckoutDataProvider;
-        $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
         $this->paypalOrderTranslationProvider = $paypalOrderTranslationProvider;
     }
 
     /**
      * @param string $orderStatus
-     * 
+     *
      * @return string
      */
-    public function getOrderStatus($orderStatus)
+    public function getOrderStatusTranslated($orderStatus)
     {
-        return $this->paypalOrderTranslationProvider->getTranslatedOrderStatus($orderStatus);
+        return $this->paypalOrderTranslationProvider->getOrderStatusTranslated($orderStatus);
     }
 
     /**
      * @param string $transactionStatus
-     * 
+     *
      * @return string
      */
-    public function getTransactionStatus($transactionStatus)
+    public function getTransactionStatusTranslated($transactionStatus)
     {
-        return $this->paypalOrderTranslationProvider->getTranslatedTransactionStatus($transactionStatus);
+        return $this->paypalOrderTranslationProvider->getTransactionStatusTranslated($transactionStatus);
     }
 
     /**
      * @param string $fundingSource
-     * 
+     *
      * @return string
      */
-    public function getFundingSourceName($fundingSource)
+    public function getFundingSourceTranslated($fundingSource)
     {
-        return $this->fundingSourceTranslationProvider->getPaymentMethodName($fundingSource);
+        return $this->paypalOrderTranslationProvider->getFundingSourceTranslated($fundingSource);
+    }
+
+    /**
+     * @return string
+     */
+    public function getTotalAmountFormatted()
+    {
+        if (!$this->paypalOrderDataProvider->getTotalAmount() || !$this->paypalOrderDataProvider->getCurrencyCode()) {
+            return '';
+        }
+
+        return Tools::displayPrice(
+            (float) $this->paypalOrderDataProvider->getTotalAmount(),
+            Currency::getCurrencyInstance(Currency::getIdByIsoCode($this->paypalOrderDataProvider->getCurrencyCode()))
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getSummaryTranslations()
+    {
+        return $this->paypalOrderTranslationProvider->getSummaryTranslations();
     }
 }

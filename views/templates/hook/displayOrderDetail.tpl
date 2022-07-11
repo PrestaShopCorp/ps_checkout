@@ -19,36 +19,38 @@
 {if $isShop17}
   <section id="ps_checkout-displayOrderDetail" class="box">
     <h3 class="h1 card-title">
-        {l s='Payment gateway information' mod='ps_checkout'}
+        {$translations.blockTitle|escape:'html':'UTF-8'}
     </h3>
 
       {if $orderPayPalTransactionStatus === 'DECLINED' || $orderPayPalTransactionStatus === 'FAILED'}
         <div class="alert alert-danger">
-            {l s='Your payment has been declined by our payment gateway, please contact us via the link below.' mod='ps_checkout'}
+            {$translations.notificationFailed|escape:'html':'UTF-8'}
         </div>
       {/if}
 
       {if $approvalLink && $orderPayPalStatus === 'PENDING_APPROVAL'}
         <div class="alert alert-warning">
-            {l s='Your payment needs to be approved, please click the button below.' mod='ps_checkout'}
+            {$translations.notificationPendingApproval|escape:'html':'UTF-8'}
         </div>
       {/if}
 
       {if $payerActionLink && $orderPayPalStatus === 'PAYER_ACTION_REQUIRED'}
         <div class="alert alert-warning">
-            {l s='Your payment needs to be authenticated, please click the button below.' mod='ps_checkout'}
+            {$translations.notificationPayerActionRequired|escape:'html':'UTF-8'}
         </div>
       {/if}
 
     <div class="definition-list">
       <dl>
-        <dt>{l s='Funding source' mod='ps_checkout'}</dt>
-        <dd>{$orderPayPalFundingSource|escape:'html':'UTF-8'}</dd>
+        <dt>{$translations.fundingSource|escape:'html':'UTF-8'}</dt>
+        <dd>{$orderPayPalFundingSourceTranslated|escape:'html':'UTF-8'}</dd>
           {if $orderPayPalTransactionId}
-            <dt>{l s='Transaction identifier' mod='ps_checkout'}</dt>
+            <dt>{$translations.transactionIdentifier|escape:'html':'UTF-8'}</dt>
             <dd>{$orderPayPalTransactionId|escape:'html':'UTF-8'}</dd>
-            <dt>{l s='Transaction status' mod='ps_checkout'}</dt>
-            <dd>{$orderPayPalTransactionStatus|escape:'html':'UTF-8'}</dd>
+            <dt>{$translations.transactionStatus|escape:'html':'UTF-8'}</dt>
+            <dd>{$orderPayPalTransactionStatusTranslated|escape:'html':'UTF-8'}</dd>
+            <dt>{$translations.amountPaid|escape:'html':'UTF-8'}</dt>
+            <dd>{$orderPayPalTransactionAmount|escape:'html':'UTF-8'}</dd>
           {/if}
       </dl>
     </div>
@@ -56,64 +58,68 @@
       {if $approvalLink && $orderPayPalStatus === 'PENDING_APPROVAL'}
         <p>
           <a class="btn btn-primary" href="{$approvalLink|escape:'html':'UTF-8'}">
-              {l s='Approve payment' mod='ps_checkout'}
+              {$translations.buttonApprove|escape:'html':'UTF-8'}
           </a>
-            {l s='You will be redirected to an external secured page of our payment gateway.' mod='ps_checkout'}
+            {$translations.externalRedirection|escape:'html':'UTF-8'}
         </p>
       {/if}
 
       {if $payerActionLink && $orderPayPalStatus === 'PAYER_ACTION_REQUIRED'}
         <p>
           <a class="btn btn-primary" href="{$payerActionLink|escape:'html':'UTF-8'}">
-              {l s='Authenticate payment' mod='ps_checkout'}
+              {$translations.buttonPayerAction|escape:'html':'UTF-8'}
           </a>
-            {l s='You will be redirected to an external secured page of our payment gateway.' mod='ps_checkout'}
+            {$translations.externalRedirection|escape:'html':'UTF-8'}
         </p>
       {/if}
     <p>
       <a href="{$contactUsLink|escape:'html':'UTF-8'}" class="contact-us">
-          {l s='If you have any question, please contact us.' mod='ps_checkout'}
+          {$translations.contactLink|escape:'html':'UTF-8'}
       </a>
     </p>
   </section>
 {else}
   <section id="ps_checkout-displayOrderDetail" class="box">
     <h3 class="page-subheading">
-        {l s='Payment gateway information' mod='ps_checkout'}
+        {$translations.blockTitle|escape:'html':'UTF-8'}
     </h3>
 
       {if $orderPayPalTransactionStatus === 'DECLINED' || $orderPayPalTransactionStatus === 'FAILED'}
         <div class="alert alert-danger">
-            {l s='Your payment has been declined by our payment gateway, please contact us via the link below.' mod='ps_checkout'}
+            {$translations.notificationFailed|escape:'html':'UTF-8'}
         </div>
       {/if}
 
       {if $approvalLink && $orderPayPalStatus === 'PENDING_APPROVAL'}
         <div class="alert alert-warning">
-            {l s='Your payment needs to be approved, please click the button below.' mod='ps_checkout'}
+            {$translations.notificationPendingApproval|escape:'html':'UTF-8'}
         </div>
       {/if}
 
       {if $payerActionLink && $orderPayPalStatus === 'PAYER_ACTION_REQUIRED'}
         <div class="alert alert-warning">
-            {l s='Your payment needs to be authenticated, please click the button below.' mod='ps_checkout'}
+            {$translations.notificationPayerActionRequired|escape:'html':'UTF-8'}
         </div>
       {/if}
 
     <div class="table-responsive">
       <table class="table table-striped table-condensed">
         <tr>
-          <th style="width:30%; white-space: nowrap;">{l s='Funding source' mod='ps_checkout'}</th>
-          <td>{$orderPayPalFundingSource|escape:'html':'UTF-8'}</td>
+          <th style="width:30%; white-space: nowrap;">{$translations.fundingSource|escape:'html':'UTF-8'}</th>
+          <td>{$orderPayPalFundingSourceTranslated|escape:'html':'UTF-8'}</td>
         </tr>
           {if $orderPayPalTransactionId}
             <tr>
-              <th>{l s='Transaction identifier' mod='ps_checkout'}</th>
+              <th>{$translations.transactionIdentifier|escape:'html':'UTF-8'}</th>
               <td>{$orderPayPalTransactionId|escape:'html':'UTF-8'}</td>
             </tr>
             <tr>
-              <th>{l s='Transaction status' mod='ps_checkout'}</th>
-              <td>{$orderPayPalTransactionStatus|escape:'html':'UTF-8'}</td>
+              <th>{$translations.transactionStatus|escape:'html':'UTF-8'}</th>
+              <td>{$orderPayPalTransactionStatusTranslated|escape:'html':'UTF-8'}</td>
+            </tr>
+            <tr>
+              <th>{$translations.amountPaid|escape:'html':'UTF-8'}</th>
+              <td>{$orderPayPalTransactionAmount|escape:'html':'UTF-8'}</td>
             </tr>
           {/if}
       </table>
@@ -123,11 +129,11 @@
         <div class="submit">
           <a class="button btn btn-default button-medium" href="{$approvalLink|escape:'html':'UTF-8'}">
             <span>
-                {l s='Approve payment' mod='ps_checkout'}
+                {$translations.buttonApprove|escape:'html':'UTF-8'}
                 <i class="icon-chevron-right right"></i>
             </span>
           </a>
-          <span>{l s='You will be redirected to an external secured page of our payment gateway.' mod='ps_checkout'}</span>
+          <span>{$translations.externalRedirection|escape:'html':'UTF-8'}</span>
         </div>
       {/if}
 
@@ -135,17 +141,17 @@
         <div class="submit">
           <a class="button btn btn-default button-medium" href="{$payerActionLink|escape:'html':'UTF-8'}">
             <span>
-                {l s='Authenticate payment' mod='ps_checkout'}
+                {$translations.buttonPayerAction|escape:'html':'UTF-8'}
                 <i class="icon-chevron-right right"></i>
             </span>
           </a>
-          <span>{l s='You will be redirected to an external secured page of our payment gateway.' mod='ps_checkout'}</span>
+          <span>{$translations.externalRedirection|escape:'html':'UTF-8'}</span>
         </div>
       {/if}
 
     <p class="pack_content">
       <a href="{$contactUsLink|escape:'html':'UTF-8'}" class="contact-us">
-          {l s='If you have any question, please contact us.' mod='ps_checkout'}
+          {$translations.contactLink|escape:'html':'UTF-8'}
       </a>
     </p>
   </section>

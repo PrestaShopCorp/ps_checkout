@@ -23,7 +23,6 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order;
 use Exception;
 use Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
 use PrestaShop\Module\PrestashopCheckout\Order\OrderDataProvider;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\PsCheckoutDataProvider;
@@ -49,9 +48,9 @@ class PayPalOrderSummaryViewBuilder
     private $router;
 
     /**
-     * @var FundingSourceTranslationProvider
+     * @var PayPalOrderTranslationProvider
      */
-    private $fundingSourceTranslationProvider;
+    private $orderPayPalTranslationProvider;
 
     /**
      * @var ShopContext
@@ -62,20 +61,20 @@ class PayPalOrderSummaryViewBuilder
      * @param PsCheckoutCartRepository $psCheckoutCartRepository
      * @param PayPalOrderProvider $orderPayPalProvider
      * @param Router $router
-     * @param FundingSourceTranslationProvider $fundingSourceTranslationProvider
+     * @param PayPalOrderTranslationProvider $orderPayPalTranslationProvider
      * @param ShopContext $shopContext
      */
     public function __construct(
         PsCheckoutCartRepository $psCheckoutCartRepository,
         PayPalOrderProvider $orderPayPalProvider,
         Router $router,
-        FundingSourceTranslationProvider $fundingSourceTranslationProvider,
+        PayPalOrderTranslationProvider $orderPayPalTranslationProvider,
         ShopContext $shopContext
     ) {
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
         $this->orderPayPalProvider = $orderPayPalProvider;
         $this->router = $router;
-        $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
+        $this->orderPayPalTranslationProvider = $orderPayPalTranslationProvider;
         $this->shopContext = $shopContext;
     }
 
@@ -104,12 +103,15 @@ class PayPalOrderSummaryViewBuilder
             throw new PsCheckoutException('Unable to retrieve PayPal order data');
         }
 
+        $orderPayPalDataProvider = new PaypalOrderDataProvider($orderPayPal);
+        $checkoutDataProvider = new PsCheckoutDataProvider($psCheckoutCart);
+
         return new PayPalOrderSummaryView(
-            new PaypalOrderDataProvider($orderPayPal),
+            $orderPayPalDataProvider,
             new OrderDataProvider($order),
-            new PsCheckoutDataProvider($psCheckoutCart),
+            $checkoutDataProvider,
             $this->router,
-            $this->fundingSourceTranslationProvider,
+            new PayPalOrderPresenter($orderPayPalDataProvider, $checkoutDataProvider, $this->orderPayPalTranslationProvider),
             $this->shopContext
         );
     }

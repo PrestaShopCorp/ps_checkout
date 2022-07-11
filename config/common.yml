@@ -387,6 +387,20 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Routing\Router'
     public: true
 
+  ps_checkout.paypal.order.translations:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderTranslationProvider'
+    public: true
+    arguments:
+      - '@ps_checkout.translations.translations'
+      - '@ps_checkout.funding_source.translation'
+
+  ps_checkout.paypal.order.presenter:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder'
+    public: true
+    arguments:
+      - '@ps_checkout.translations.translations'
+      - '@ps_checkout.funding_source.translation'
+
   ps_checkout.paypal.builder.view_order_summary:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder'
     public: true
@@ -394,5 +408,5 @@ services:
       - '@ps_checkout.repository.pscheckoutcart'
       - '@ps_checkout.paypal.provider.order'
       - '@ps_checkout.prestashop.router'
-      - '@ps_checkout.funding_source.translation'
+      - '@ps_checkout.paypal.order.translations'
       - '@ps_checkout.context.shop'

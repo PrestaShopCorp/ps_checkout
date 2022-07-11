@@ -110,4 +110,24 @@ class PaypalOrderDataProvider
             ? $this->orderData['id']
             : '';
     }
+
+    /**
+     * @return string
+     */
+    public function getTotalAmount()
+    {
+        return isset($this->orderData['purchase_units'][0]['payments']['captures'][0]['amount']['value'])
+            ? $this->orderData['purchase_units'][0]['payments']['captures'][0]['amount']['value']
+            : '';
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrencyCode()
+    {
+        return isset($this->orderData['purchase_units'][0]['payments']['captures'][0]['amount']['currency_code'])
+            ? $this->orderData['purchase_units'][0]['payments']['captures'][0]['amount']['currency_code']
+            : '';
+    }
 }

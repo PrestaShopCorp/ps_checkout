@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order;
 
-use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
 use PrestaShop\Module\PrestashopCheckout\Order\OrderDataProvider;
 use PrestaShop\Module\PrestashopCheckout\PsCheckoutDataProvider;
 use PrestaShop\Module\PrestashopCheckout\Routing\Router;
@@ -49,14 +48,9 @@ class PayPalOrderSummaryView
     private $router;
 
     /**
-     * @var FundingSourceTranslationProvider
+     * @var PayPalOrderPresenter
      */
-    private $fundingSourceTranslationProvider;
-
-    /**
-     * @var PayPalOrderTranslationProvider
-     */
-    private $orderPayPalTranslationProvider;
+    private $orderPayPalPresenter;
 
     /**
      * @var ShopContext
@@ -68,7 +62,7 @@ class PayPalOrderSummaryView
      * @param OrderDataProvider $orderDataProvider
      * @param PsCheckoutDataProvider $checkoutDataProvider
      * @param Router $router
-     * @param PayPalOrderTranslationProvider $orderPayPalTranslationProvider
+     * @param PayPalOrderPresenter $orderPayPalPresenter
      * @param ShopContext $shopContext
      */
     public function __construct(
@@ -76,16 +70,14 @@ class PayPalOrderSummaryView
         OrderDataProvider $orderDataProvider,
         PsCheckoutDataProvider $checkoutDataProvider,
         Router $router,
-        FundingSourceTranslationProvider $fundingSourceTranslationProvider,
-        PayPalOrderTranslationProvider $orderPayPalTranslationProvider,
+        PayPalOrderPresenter $orderPayPalPresenter,
         ShopContext $shopContext
     ) {
         $this->orderPayPalDataProvider = $orderPayPalDataProvider;
         $this->orderDataProvider = $orderDataProvider;
         $this->checkoutDataProvider = $checkoutDataProvider;
         $this->router = $router;
-        $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
-        $this->orderPayPalTranslationProvider = $orderPayPalTranslationProvider;
+        $this->orderPayPalPresenter = $orderPayPalPresenter;
         $this->shopContext = $shopContext;
     }
 
@@ -98,20 +90,24 @@ class PayPalOrderSummaryView
     {
         $orderStatus = $this->orderPayPalDataProvider->getOrderStatus();
         $orderTransactionStatus = $this->orderPayPalDataProvider->getTransactionStatus();
+        $fundingSource = $this->checkoutDataProvider->getFundingSourceName();
 
         return [
             'orderIsPaid' => $this->orderDataProvider->hasBeenPaid(),
             'orderPayPalId' => $this->checkoutDataProvider->getPaypalOrderId(),
             'orderPayPalStatus' => $orderStatus,
-            'orderPayPalStatusTranslated' => $this->orderPayPalTranslationProvider->getTranslatedOrderStatus($orderStatus),
-            'orderPayPalFundingSource' => $this->fundingSourceTranslationProvider->getPaymentMethodName($this->checkoutDataProvider->getFundingSourceName()),
+            'orderPayPalStatusTranslated' => $this->orderPayPalPresenter->getOrderStatusTranslated($orderStatus),
+            'orderPayPalFundingSource' => $fundingSource,
+            'orderPayPalFundingSourceTranslated' => $this->orderPayPalPresenter->getFundingSourceTranslated($fundingSource),
             'orderPayPalTransactionId' => $this->orderPayPalDataProvider->getTransactionId(),
             'orderPayPalTransactionStatus' => $orderTransactionStatus,
-            'orderPayPalTransactionStatusTranslated' => $this->orderPayPalTranslationProvider->getTranslatedTransactionStatus($orderTransactionStatus),
+            'orderPayPalTransactionStatusTranslated' => $this->orderPayPalPresenter->getTransactionStatusTranslated($orderTransactionStatus),
+            'orderPayPalTransactionAmount' => $this->orderPayPalPresenter->getTotalAmountFormatted(),
             'approvalLink' => $this->orderPayPalDataProvider->getApprovalLink(),
             'payerActionLink' => $this->orderPayPalDataProvider->getPayActionLink(),
             'contactUsLink' => $this->router->getContactLink($this->orderDataProvider->getOrderId()),
             'isShop17' => $this->shopContext->isShop17(),
+            'translations' => $this->orderPayPalPresenter->getSummaryTranslations(),
         ];
     }
 }

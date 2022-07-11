@@ -515,6 +515,22 @@ class Translations
                     ],
                 ],
             ],
+            'order' => [
+                'summary' => [
+                    'blockTitle' => $this->module->l('Payment gateway information', 'translations'),
+                    'notificationFailed' => $this->module->l('Your payment has been declined by our payment gateway, please contact us via the link below.', 'translations'),
+                    'notificationPendingApproval' => $this->module->l('Your payment needs to be approved, please click the button below.', 'translations'),
+                    'notificationPayerActionRequired' => $this->module->l('Your payment needs to be authenticated, please click the button below.', 'translations'),
+                    'fundingSource' => $this->module->l('Funding source', 'translations'),
+                    'transactionIdentifier' => $this->module->l('Transaction identifier', 'translations'),
+                    'transactionStatus' => $this->module->l('Transaction status', 'translations'),
+                    'amountPaid' => $this->module->l('Amount paid', 'translations'),
+                    'buttonApprove' => $this->module->l('Approve payment', 'translations'),
+                    'buttonPayerAction' => $this->module->l('Authenticate payment', 'translations'),
+                    'externalRedirection' => $this->module->l('You will be redirected to an external secured page of our payment gateway.', 'translations'),
+                    'contactLink' => $this->module->l('If you have any question, please contact us.', 'translations'),
+                ],
+            ],
         ];
 
         return $translations;

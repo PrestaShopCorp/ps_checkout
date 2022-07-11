@@ -33,7 +33,7 @@
     {if $orderPayPalTransactionStatus === 'DECLINED' || $orderPayPalTransactionStatus === 'FAILED'}
       <div class="alert alert-danger">
         <a href="#ps_checkout-displayPaymentReturn" class="alert-link">
-            {l s='Your payment has been declined by our payment gateway, please contact us via the link below.' mod='ps_checkout'}
+            {$translations.notificationFailed|escape:'html':'UTF-8'}
         </a>
       </div>
     {/if}
@@ -41,7 +41,7 @@
     {if $approvalLink || $orderPayPalStatus === 'PENDING_APPROVAL'}
       <div class="alert alert-warning">
         <a href="#ps_checkout-displayPaymentReturn" class="alert-link"{if $isShop17} style="margin: initial;padding: initial;"{/if}>
-            {l s='Your payment needs to be approved, please click the button below.' mod='ps_checkout'}
+            {$translations.notificationPendingApproval|escape:'html':'UTF-8'}
         </a>
       </div>
     {/if}
@@ -49,7 +49,7 @@
     {if $payerActionLink || $orderPayPalStatus === 'PAYER_ACTION_REQUIRED'}
       <div class="alert alert-warning">
         <a href="#ps_checkout-displayPaymentReturn" class="alert-link"{if $isShop17} style="margin: initial;padding: initial;"{/if}>
-            {l s='Your payment needs to be authenticated, please click the button below.' mod='ps_checkout'}
+            {$translations.notificationPayerActionRequired|escape:'html':'UTF-8'}
         </a>
       </div>
     {/if}
