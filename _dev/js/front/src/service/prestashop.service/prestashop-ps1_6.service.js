@@ -91,11 +91,20 @@ export class PrestashopPs1_6Service {
   }
 
   static getCartAmount() {
-    let totalPrice = document.querySelector('.cart_block_total').textContent || '';
-    return totalPrice.replace(',', '.').replace(/[^.\d]/g, '');
+    let cartAmountContainer = document.querySelector('.cart_block_total');
+
+    if (!cartAmountContainer) {
+      return '';
+    }
+
+    return cartAmountContainer.textContent.replace(',', '.').replace(/[^.\d]/g, '');
   }
 
   static getProductPrice() {
+    if (!window.productPrice) {
+      return '';
+    }
+
     return Number.parseFloat(window.productPrice).toFixed(2) || '';
   }
 
@@ -104,7 +113,12 @@ export class PrestashopPs1_6Service {
     let productAllowBuyWhenOutOfStock = window.allowBuyWhenOutOfStock || false;
     let productQuantityAvailable = window.quantityAvailable || 0;
     let productMinimalQuantity = window.minimalQuantity || 0;
-    let productQuantityWanted = parseInt(document.querySelector('#quantity_wanted').value) || 0;
+    let productQuantityWantedElement = document.querySelector('#quantity_wanted');
+    let productQuantityWanted = 0;
+
+    if (productQuantityWantedElement) {
+      productQuantityWanted = parseInt(productQuantityWantedElement.value) || 0;
+    }
 
     return !productIsAvailableForOrder
       || (!productAllowBuyWhenOutOfStock && (productQuantityAvailable <= 0 || productQuantityWanted > productQuantityAvailable))
