@@ -38,9 +38,8 @@ class GetClientTokenPayPalQueryHandler
         $response = $apiOrder->generateClientToken($merchantId); // API doesn't support customerId yet, but required for vaulting only for logged customer (not for guest)
 
         return new GetClientTokenPayPalQueryResult(
-            $response['body']['client_token'],
-            $response['body']['id_token'],
-            $response['body']['expires_in'],
+            $response['client_token'],
+            (int) $response['expires_in'],
             $createdAt
         );
     }

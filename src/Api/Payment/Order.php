@@ -135,7 +135,7 @@ class Order extends PaymentClient
     /**
      * @param string $merchantId
      *
-     * @return string
+     * @return array{client_token: string, expires_in: string}
      *
      * @throws PsCheckoutException
      */
@@ -162,6 +162,6 @@ class Order extends PaymentClient
             throw new PsCheckoutException('Unable to retrieve PayPal Client Token', PsCheckoutException::MISSING_PAYPAL_CLIENT_TOKEN, $exception);
         }
 
-        return $response['body']['client_token'];
+        return $response['body'];
     }
 }

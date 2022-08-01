@@ -28,11 +28,6 @@ class GetClientTokenPayPalQueryResult
     private $clientToken;
 
     /**
-     * @var string
-     */
-    private $idToken;
-
-    /**
      * @var int
      */
     private $expiresIn;
@@ -44,14 +39,12 @@ class GetClientTokenPayPalQueryResult
 
     /**
      * @param string $clientToken
-     * @param string $idToken
      * @param int $expiresIn
      * @param int $createdAt
      */
-    public function __construct($clientToken, $idToken, $expiresIn, $createdAt)
+    public function __construct($clientToken, $expiresIn, $createdAt)
     {
         $this->clientToken = $clientToken;
-        $this->idToken = $idToken;
         $this->expiresIn = $expiresIn;
         $this->createdAt = $createdAt;
     }
@@ -62,14 +55,6 @@ class GetClientTokenPayPalQueryResult
     public function getClientToken()
     {
         return $this->clientToken;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIdToken()
-    {
-        return $this->idToken;
     }
 
     /**

@@ -37,7 +37,8 @@ class PayPalClientTokenProvider
         $context = Context::getContext();
         $apiOrder = new Order($context->link);
         $merchantId = Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT', null, null, $context->shop->id);
+        $response = $apiOrder->generateClientToken($merchantId);
 
-        return $apiOrder->generateClientToken($merchantId);
+        return $response['client_token'];
     }
 }
