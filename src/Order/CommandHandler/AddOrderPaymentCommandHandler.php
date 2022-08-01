@@ -33,7 +33,7 @@ class AddOrderPaymentCommandHandler extends AbstractOrderCommandHandler
         $currency = Currency::getCurrencyInstance($command->getPaymentCurrencyId());
 
         $paymentAdded = $order->addOrderPayment(
-            $command->getPaymentAmount(),
+            (float) $command->getPaymentAmount(),
             $command->getPaymentMethod(),
             $command->getPaymentTransactionId(),
             $currency,
