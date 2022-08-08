@@ -26,18 +26,21 @@ class CheckoutAmount
 {
     /**
      * Indicates if the number is negative
+     *
      * @var bool
      */
     private $isNegative = false;
 
     /**
      * Integer representation of this number
+     *
      * @var string
      */
     private $integerPart = '';
 
     /**
      * Integer representation of this number
+     *
      * @var string
      */
     private $fractionalPart = '';
@@ -50,9 +53,7 @@ class CheckoutAmount
     public function __construct($number)
     {
         if (!is_string($number)) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid type - expected string, but got (%s) "%s"', gettype($number), print_r($number, true))
-            );
+            throw new InvalidArgumentException(sprintf('Invalid type - expected string, but got (%s) "%s"', gettype($number), print_r($number, true)));
         }
         if (!is_numeric($number)) {
             throw new InvalidArgumentException('Invalid type - expected numeric, but got (%s) "%s');
@@ -61,18 +62,15 @@ class CheckoutAmount
         $this->parseAmount($number);
     }
 
-
     public function getSign()
     {
         return $this->isNegative ? '-' : '';
     }
 
-
     public function getIntegerPart()
     {
         return $this->integerPart;
     }
-
 
     public function getFractionalPart()
     {
@@ -115,4 +113,3 @@ class CheckoutAmount
         return $this->isNegative;
     }
 }
-
