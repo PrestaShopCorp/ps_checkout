@@ -18,8 +18,14 @@
  */
 export class PrestashopPs1_7Service {
   static getProductDetails() {
+    const productDetails = document.getElementById('product-details');
+
+    if (!productDetails || !productDetails.dataset || !productDetails.dataset.product) {
+      throw new Error('Unable to retrieve product details from DOM: document.getElementById("product-details").dataset.product');
+    }
+
     return JSON.parse(
-      document.getElementById('product-details').dataset.product
+      productDetails.dataset.product
     );
   }
 
