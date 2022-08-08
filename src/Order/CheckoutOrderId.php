@@ -36,9 +36,6 @@ class CheckoutOrderId
      */
     public function __construct($orderId)
     {
-        if (!is_string($orderId)) {
-            throw new InvalidArgumentException(sprintf('Invalid type - expected string, but got (%s) "%s"', gettype($orderId), print_r($orderId, true)));
-        }
         if (!is_numeric($orderId)) {
             throw new InvalidArgumentException('Invalid type - expected numeric, but got (%s) "%s');
         }
@@ -66,5 +63,10 @@ class CheckoutOrderId
         if (!is_int($orderId) || 0 > $orderId) {
             throw new OrderException('Order id must be greater than zero.');
         }
+    }
+
+    public function __toString()
+    {
+        return (string) $this->orderId;
     }
 }

@@ -30,13 +30,14 @@ use Customer;
 use Exception;
 use Language;
 use Order;
+use PrestaShop\Module\PrestashopCheckout\Order\CheckoutOrderId;
 use PrestaShop\Module\PrestashopCheckout\Order\OrderException;
 use Shop;
 
 class AbstractOrderCommandHandler
 {
     /**
-     * @param int $orderId
+     * @param CheckoutOrderId $orderId
      *
      * @return Order
      *
