@@ -42,7 +42,6 @@ class Ps_checkout extends PaymentModule
         'actionAdminControllerSetMedia',
         'displayPaymentTop',
         'displayPaymentByBinaries',
-        'displayProductPriceBlock',
         'actionFrontControllerSetMedia',
         'header',
         'actionObjectOrderPaymentAddAfter',

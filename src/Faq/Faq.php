@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Faq;
 
 use GuzzleHttp\Client;
+use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
 
 /**
  * Retrieve the faq of the module
@@ -52,11 +53,9 @@ class Faq
 
     public function __construct()
     {
-        $client = new Client([
+        $client = (new ClientFactory())->getClient([
             'base_url' => 'https://api.addons.prestashop.com/request/faq/',
-            'defaults' => [
-                'timeout' => 10,
-            ],
+            'timeout' => 10,
         ]);
 
         $this->client = $client;

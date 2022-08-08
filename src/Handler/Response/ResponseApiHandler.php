@@ -20,7 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Handler\Response;
 
-use GuzzleHttp\Message\ResponseInterface;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Handle api response
