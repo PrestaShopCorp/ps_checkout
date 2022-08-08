@@ -278,7 +278,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             $address->id_state = $idState;
         }
 
-        if ($address->validateFields(false)) {
+        if (true !== $address->validateFields(false)) {
             return false;
         }
 
