@@ -39,15 +39,13 @@ class Token extends FirebaseClient
         $this->setRoute('https://securetoken.googleapis.com/v1/token');
 
         $response = $this->post([
-            'json' => [
-                'grant_type' => 'refresh_token',
-                'refresh_token' => \Configuration::get(
-                    'PS_PSX_FIREBASE_REFRESH_TOKEN',
-                    null,
-                    null,
-                    (int) \Context::getContext()->shop->id
-                ),
-            ],
+            'grant_type' => 'refresh_token',
+            'refresh_token' => \Configuration::get(
+                'PS_PSX_FIREBASE_REFRESH_TOKEN',
+                null,
+                null,
+                (int) \Context::getContext()->shop->id
+            ),
         ]);
 
         if (true === $response['status']) {

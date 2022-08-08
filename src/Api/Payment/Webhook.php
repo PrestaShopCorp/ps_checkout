@@ -38,8 +38,6 @@ class Webhook extends PaymentClient
     {
         $this->setRoute('/payments/shop/verify_webhook_signature');
 
-        return $this->post([
-            'json' => $payload,
-        ]);
+        return $this->post($payload);
     }
 }

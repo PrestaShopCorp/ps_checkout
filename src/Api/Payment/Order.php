@@ -31,7 +31,7 @@ class Order extends PaymentClient
     /**
      * Create order to paypal api
      *
-     * @param string $payload Cart details (json)
+     * @param array $payload Cart details (json)
      *
      * @return array data with paypal order id or false if error
      */
@@ -39,9 +39,7 @@ class Order extends PaymentClient
     {
         $this->setRoute('/payments/order/create');
 
-        return $this->post([
-            'json' => $payload,
-        ]);
+        return $this->post($payload);
     }
 
     /**
@@ -58,13 +56,11 @@ class Order extends PaymentClient
         $this->setRoute('/payments/order/capture');
 
         return $this->post([
-            'json' => json_encode([
-                'mode' => $fundingSource,
-                'orderId' => (string) $orderId,
-                'payee' => [
-                    'merchant_id' => $merchantId,
-                ],
-            ]),
+            'mode' => $fundingSource,
+            'orderId' => (string)$orderId,
+            'payee' => [
+                'merchant_id' => $merchantId,
+            ],
         ]);
     }
 
@@ -80,9 +76,7 @@ class Order extends PaymentClient
         $this->setRoute('/payments/order/fetch');
 
         return $this->post([
-            'json' => json_encode([
-                'orderId' => $orderId,
-            ]),
+            'orderId' => $orderId,
         ]);
     }
 
@@ -111,15 +105,13 @@ class Order extends PaymentClient
     {
         $this->setRoute('/payments/order/refund');
 
-        return $this->post([
-            'json' => json_encode($payload),
-        ]);
+        return $this->post($payload);
     }
 
     /**
      * Patch paypal order
      *
-     * @param string $payload
+     * @param array $payload
      *
      * @return array response from paypal if the payment is accepted or false if error occured
      */
@@ -127,9 +119,7 @@ class Order extends PaymentClient
     {
         $this->setRoute('/payments/order/update');
 
-        return $this->post([
-            'json' => $payload,
-        ]);
+        return $this->post($payload);
     }
 
     /**
@@ -144,11 +134,9 @@ class Order extends PaymentClient
         $this->setRoute('/payments/order/generate_client_token');
 
         $response = $this->post([
-            'json' => [
-                'return_payload' => true,
-                'payee' => [
-                    'merchant_id' => $merchantId,
-                ],
+            'return_payload' => true,
+            'payee' => [
+                'merchant_id' => $merchantId,
             ],
         ]);
 

@@ -42,11 +42,9 @@ class Auth extends FirebaseClient
         $this->setRoute('https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword');
 
         return $this->post([
-            'json' => [
-                'email' => $email,
-                'password' => $password,
-                'returnSecureToken' => true,
-            ],
+            'email' => $email,
+            'password' => $password,
+            'returnSecureToken' => true,
         ]);
     }
 
@@ -65,11 +63,9 @@ class Auth extends FirebaseClient
         $this->setRoute('https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser');
 
         return $this->post([
-            'json' => [
-                'email' => $email,
-                'password' => $password,
-                'returnSecureToken' => true,
-            ],
+            'email' => $email,
+            'password' => $password,
+            'returnSecureToken' => true,
         ]);
     }
 
@@ -87,10 +83,8 @@ class Auth extends FirebaseClient
         $this->setRoute('https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=' . $this->apiKey);
 
         return $this->post([
-            'json' => [
-                'email' => $email,
-                'requestType' => 'PASSWORD_RESET',
-            ],
+            'email' => $email,
+            'requestType' => 'PASSWORD_RESET',
         ]);
     }
 }
