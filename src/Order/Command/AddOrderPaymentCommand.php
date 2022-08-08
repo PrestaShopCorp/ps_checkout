@@ -21,11 +21,14 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\Command;
 
 use DateTimeImmutable;
+use PrestaShop\Module\PrestashopCheckout\Exception\NegativePaymentAmountException;
+use PrestaShop\Module\PrestashopCheckout\Order\CheckoutAmount;
+use PrestaShop\Module\PrestashopCheckout\Order\CheckoutOrderId;
 
 class AddOrderPaymentCommand
 {
     /**
-     * @var int
+     * @var CheckoutOrderId
      */
     private $orderId;
 
@@ -40,7 +43,7 @@ class AddOrderPaymentCommand
     private $paymentMethod;
 
     /**
-     * @var string
+     * @var CheckoutAmount
      */
     private $paymentAmount;
 
@@ -70,16 +73,19 @@ class AddOrderPaymentCommand
         $paymentCurrencyId,
         $transactionId = null
     ) {
-        $this->orderId = $orderId;
+        $amount = new CheckoutAmount($paymentAmount);
+        $this->assertAmountIsPositive($amount);
+        $this->orderId = new CheckoutOrderId($orderId);
+
         $this->paymentDate = new DateTimeImmutable($paymentDate);
         $this->paymentMethod = $paymentMethod;
-        $this->paymentAmount = $paymentAmount;
+        $this->paymentAmount = $amount;
         $this->paymentCurrencyId = $paymentCurrencyId;
         $this->transactionId = $transactionId;
     }
 
     /**
-     * @return int
+     * @return CheckoutOrderId
      */
     public function getOrderId()
     {
@@ -124,5 +130,19 @@ class AddOrderPaymentCommand
     public function getPaymentTransactionId()
     {
         return $this->transactionId;
+    }
+
+    /**
+     * @param CheckoutAmount $amount
+     *
+     * @return void
+     *
+     * @throws NegativePaymentAmountException
+     */
+    private function assertAmountIsPositive(CheckoutAmount $amount)
+    {
+        if ($amount->isNegative()) {
+            throw new NegativePaymentAmountException('The amount should be greater than 0.');
+        }
     }
 }
