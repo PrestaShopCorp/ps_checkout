@@ -17,12 +17,13 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+
 namespace Tests\Unit\Order;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Exception\NegativePaymentAmountException;
-use PrestaShop\Module\PrestashopCheckout\Order\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\AddOrderPaymentCommand;
+use PrestaShop\Module\PrestashopCheckout\Order\OrderException;
 
 class AddOrderPaymentCommandTest extends TestCase
 {
@@ -37,7 +38,6 @@ class AddOrderPaymentCommandTest extends TestCase
     {
         $this->expectException(OrderException::class);
         $this->expectExceptionMessage('Order id must be greater than zero.');
-        new AddOrderPaymentCommand("-1", date('Y-m-d'), 'Check', "10", 2);
+        new AddOrderPaymentCommand('-1', date('Y-m-d'), 'Check', '10', 2);
     }
-
 }
