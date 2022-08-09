@@ -962,6 +962,10 @@ class Ps_checkout extends PaymentModule
     {
         $controller = (string) Tools::getValue('controller');
 
+        if (empty($controller) && isset($this->context->controller->php_self)) {
+            $controller = $this->context->controller->php_self;
+        }
+
         /** @var \PrestaShop\Module\PrestashopCheckout\Validator\FrontControllerValidator $frontControllerValidator */
         $frontControllerValidator = $this->getService('ps_checkout.validator.front_controller');
 
