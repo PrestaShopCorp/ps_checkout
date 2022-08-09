@@ -35,7 +35,7 @@ class UpdateOrderStatusCommand
     private $newOrderStatusId;
 
     /**
-     * @param int $orderId
+     * @param CheckoutOrderId $orderId
      * @param int $newOrderStatusId
      */
     public function __construct($orderId, $newOrderStatusId)
@@ -45,11 +45,11 @@ class UpdateOrderStatusCommand
     }
 
     /**
-     * @return int
+     * @return CheckoutOrderId
      */
     public function getOrderId()
     {
-        return $this->orderId->getValue();
+        return $this->orderId;
     }
 
     /**
