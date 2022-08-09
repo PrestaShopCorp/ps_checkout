@@ -46,12 +46,12 @@ class AbstractOrderCommandHandler
     protected function getOrder($orderId)
     {
         try {
-            $order = new Order($orderId);
+            $order = new Order($orderId->getValue());
         } catch (Exception $exception) {
             throw new OrderException(sprintf('Error occurred when trying to get order object #%s', $orderId), OrderException::CANNOT_RETRIEVE_ORDER, $exception);
         }
 
-        if ($order->id !== $orderId) {
+        if ($order->id !== $orderId->getValue()) {
             throw new OrderException(sprintf('Order with id "%d" was not found.', $orderId), OrderException::ORDER_NOT_FOUND);
         }
 

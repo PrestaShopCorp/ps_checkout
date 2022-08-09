@@ -20,10 +20,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Command;
 
+use PrestaShop\Module\PrestashopCheckout\Order\CheckoutOrderId;
+
 class UpdateOrderStatusCommand
 {
     /**
-     * @var int
+     * @var CheckoutOrderId
      */
     private $orderId;
 
@@ -47,7 +49,7 @@ class UpdateOrderStatusCommand
      */
     public function getOrderId()
     {
-        return $this->orderId;
+        return $this->orderId->getValue();
     }
 
     /**
