@@ -147,6 +147,7 @@ services:
     public: true
     arguments:
       - '@ps_checkout.configuration'
+      - '@ps_accounts.facade'
 
   ps_checkout.store.module.psx:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule'
@@ -165,7 +166,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\FirebaseModule'
     public: true
     arguments:
-      - '@ps_checkout.configuration'
+      - '@ps_checkout.repository.prestashop.account'
 
   ps_checkout.store.module.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule'
@@ -382,3 +383,15 @@ services:
   ps_checkout.paypal.provider.client_token:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalClientTokenProvider'
     public: true
+
+  ps_accounts.installer:
+    class: 'PrestaShop\PsAccountsInstaller\Installer\Installer'
+    public: true
+    arguments:
+      - '4.0.0'
+
+  ps_accounts.facade:
+    class: 'PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts'
+    public: true
+    arguments:
+      - '@ps_accounts.installer'
