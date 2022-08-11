@@ -28,6 +28,7 @@ use GuzzleHttp\Subscriber\Log\LogSubscriber;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -71,6 +72,27 @@ class GenericClient
      * @var string
      */
     protected $route;
+
+    /**
+     * @var string
+     */
+    protected $shopUid;
+
+    /**
+     * @var string
+     */
+    protected $token;
+
+    public function __construct()
+    {
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        /** @var PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $module->getService('ps_checkout.repository.prestashop.account');
+
+        $this->shopUid = $psAccountRepository->getShopUuid();
+        $this->token = $psAccountRepository->getIdToken();
+    }
 
     /**
      * Wrapper of method post from guzzle client

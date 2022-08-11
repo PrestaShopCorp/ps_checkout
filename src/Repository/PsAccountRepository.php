@@ -23,6 +23,8 @@ namespace PrestaShop\Module\PrestashopCheckout\Repository;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
+use PrestaShop\Module\PsAccounts\Service\PsAccountsService;
+use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 
 /**
  * Repository for PsAccount class
@@ -33,11 +35,21 @@ class PsAccountRepository
     private $configuration;
 
     /**
+     * @var PsAccountsService|false
+     */
+    private $psAccountsService;
+
+    /**
      * @param PrestaShopConfiguration $configuration
      */
-    public function __construct(PrestaShopConfiguration $configuration)
+    public function __construct(PrestaShopConfiguration $configuration, PsAccounts $psAccountsFacade)
     {
         $this->configuration = $configuration;
+        try {
+            $this->psAccountsService = $psAccountsFacade->getPsAccountsService();
+        } catch (\Exception) {
+            $this->psAccountsService = false;
+        }
     }
 
     /**
@@ -90,7 +102,10 @@ class PsAccountRepository
      */
     public function getEmail()
     {
-        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_EMAIL);
+        if (!$this->psAccountsService) {
+            return false;
+        }
+        return $this->psAccountsService->getEmail();
     }
 
     /**
@@ -100,7 +115,10 @@ class PsAccountRepository
      */
     public function getIdToken()
     {
-        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_ID_TOKEN);
+        if (!$this->psAccountsService) {
+            return false;
+        }
+        return (string)$this->psAccountsService->getOrRefreshToken();
     }
 
     /**
@@ -110,7 +128,10 @@ class PsAccountRepository
      */
     public function getLocalId()
     {
-        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_LOCAL_ID);
+        if (!$this->psAccountsService) {
+            return false;
+        }
+        return $this->psAccountsService->getUserUuidV4();
     }
 
     /**
@@ -120,7 +141,10 @@ class PsAccountRepository
      */
     public function getRefreshToken()
     {
-        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN);
+        if (!$this->psAccountsService) {
+            return false;
+        }
+        return $this->psAccountsService->getRefreshToken();
     }
 
     /**
@@ -144,9 +168,35 @@ class PsAccountRepository
      */
     public function getShopUuid()
     {
-        $psContext = new PrestaShopContext();
-        $shopUuidManager = new \PrestaShop\Module\PrestashopCheckout\ShopUuidManager();
+        if (!$this->psAccountsService) {
+            return false;
+        }
+        return $this->psAccountsService->getShopUuid();
+    }
 
-        return $shopUuidManager->getForShop((int) $psContext->getShopId());
+    /**
+     * @return bool
+     *
+     * @throws \Exception
+     */
+    public function isEmailValidated()
+    {
+        if (!$this->psAccountsService) {
+            return false;
+        }
+        return $this->psAccountsService->isEmailValidated();
+    }
+
+    /**
+     * @return bool
+     *
+     * @throws \Exception
+     */
+    public function isAccountLinked()
+    {
+        if (!$this->psAccountsService) {
+            return false;
+        }
+        return $this->psAccountsService->isAccountLinked();
     }
 }
