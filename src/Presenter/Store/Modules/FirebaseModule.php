@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
@@ -57,6 +56,9 @@ class FirebaseModule implements PresenterInterface
                 'localId' => $this->psAccountRepository->getLocalId(),
                 'refreshToken' => $this->psAccountRepository->getRefreshToken(),
                 'onboardingCompleted' => !empty($this->psAccountRepository->getIdToken()),
+                'shopUuid' => $this->psAccountRepository->getShopUuid(),
+                'isEmailVerified' => $this->psAccountRepository->isEmailValidated(),
+                'isAccountLinked' => $this->psAccountRepository->isAccountLinked(),
             ],
         ];
 

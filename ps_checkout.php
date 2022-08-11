@@ -1146,11 +1146,6 @@ class Ps_checkout extends PaymentModule
                 'error.paypal-sdk.contingency.failure' => $this->l('Card holder authentication failed, please choose another payment method or try again.'),
                 'error.paypal-sdk.contingency.unknown' => $this->l('Card holder authentication cannot be checked, please choose another payment method or try again.'),
             ],
-            $this->name . 'Onboarding' => [
-                'shopUuid' => $psAccountsRepository->getShopUuid(),
-                'isEmailVerified' => $psAccountsRepository->isEmailValidated(),
-                'isAccountLinked' => $psAccountsRepository->isAccountLinked(),
-            ]
         ]);
 
         if (method_exists($this->context->controller, 'registerJavascript')) {

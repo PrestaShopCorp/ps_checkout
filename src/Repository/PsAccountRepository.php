@@ -21,9 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
-use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
-use PrestaShop\Module\PsAccounts\Service\PsAccountsService;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 
 /**
@@ -34,9 +32,6 @@ class PsAccountRepository
     /** @var PrestaShopConfiguration */
     private $configuration;
 
-    /**
-     * @var PsAccountsService|false
-     */
     private $psAccountsService;
 
     /**
