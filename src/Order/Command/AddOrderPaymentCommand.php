@@ -31,12 +31,12 @@ class AddOrderPaymentCommand
     /**
      * @var string
      */
-    public const INVALID_CHARACTERS_NAME = '<>={}';
+    const INVALID_CHARACTERS_NAME = '<>={}';
 
     /**
      * @var string
      */
-    private const PATTERN_PAYMENT_METHOD_NAME = '/^[^' . self::INVALID_CHARACTERS_NAME . ']*$/u';
+    const PATTERN_PAYMENT_METHOD_NAME = '/^[^' . self::INVALID_CHARACTERS_NAME . ']*$/u';
 
     /**
      * @var CheckoutOrderId

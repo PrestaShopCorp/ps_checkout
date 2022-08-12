@@ -22,9 +22,9 @@ namespace Tests\Unit\Order;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Exception\NegativePaymentAmountException;
+use PrestaShop\Module\PrestashopCheckout\Exception\OrderConstraintException;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\AddOrderPaymentCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\OrderException;
-use PrestaShop\Module\PrestashopCheckout\Exception\OrderConstraintException;
 
 class AddOrderPaymentCommandTest extends TestCase
 {
@@ -48,5 +48,4 @@ class AddOrderPaymentCommandTest extends TestCase
         $this->expectExceptionMessage('The selected payment method is invalid.');
         new AddOrderPaymentCommand(1, date('Y-m-d'), '', '0', 2);
     }
-
 }
