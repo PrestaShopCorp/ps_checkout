@@ -83,7 +83,8 @@ class AddOrderPaymentCommand
         $paymentAmount,
         $paymentCurrencyId,
         $transactionId = null
-    ) {
+    )
+    {
         $amount = new CheckoutAmount($paymentAmount);
         $this->assertAmountIsPositive($amount);
         $this->assertPaymentMethodIsGenericName($paymentMethod);
@@ -159,6 +160,7 @@ class AddOrderPaymentCommand
             throw new NegativePaymentAmountException('The amount should be greater than 0.');
         }
     }
+
     /**
      * @param string $paymentMethod
      */
