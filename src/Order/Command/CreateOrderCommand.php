@@ -20,14 +20,14 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Command;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\InvalidModuleException;
 use PrestaShop\Module\PrestashopCheckout\Exception\InvalidOrderStateException;
 use PrestaShop\Module\PrestashopCheckout\Order\CheckoutCartId;
-use PrestaShop\Module\PrestashopCheckout\Exception\InvalidModuleException;
 
 class CreateOrderCommand
 {
     /**
-     * @var int
+     * @var CheckoutCartId
      */
     private $cartId;
 
@@ -57,7 +57,7 @@ class CreateOrderCommand
     }
 
     /**
-     * @return int
+     * @return CheckoutCartId
      */
     public function getCartId()
     {

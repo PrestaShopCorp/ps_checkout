@@ -28,7 +28,7 @@ class CartConstraintException extends \Exception
     /**
      * When cart product quantity is invalid
      */
-    public const INVALID_QUANTITY = 1;
+    const INVALID_QUANTITY = 1;
 
     /**
      * When cart product quantity is already correct
@@ -38,5 +38,5 @@ class CartConstraintException extends \Exception
     /**
      * When carrier is not found or inactive
      */
-    public const INVALID_CARRIER = 3;
+    const INVALID_CARRIER = 3;
 }
