@@ -24,9 +24,20 @@ use DateTimeImmutable;
 use PrestaShop\Module\PrestashopCheckout\Exception\NegativePaymentAmountException;
 use PrestaShop\Module\PrestashopCheckout\Order\CheckoutAmount;
 use PrestaShop\Module\PrestashopCheckout\Order\CheckoutOrderId;
+use PrestaShop\Module\PrestashopCheckout\Exception\OrderConstraintException;
 
 class AddOrderPaymentCommand
 {
+    /**
+     * @var string
+     */
+    public const INVALID_CHARACTERS_NAME = '<>={}';
+
+    /**
+     * @var string
+     */
+    private const PATTERN_PAYMENT_METHOD_NAME = '/^[^' . self::INVALID_CHARACTERS_NAME . ']*$/u';
+
     /**
      * @var CheckoutOrderId
      */
@@ -75,6 +86,9 @@ class AddOrderPaymentCommand
     ) {
         $amount = new CheckoutAmount($paymentAmount);
         $this->assertAmountIsPositive($amount);
+        $this->assertPaymentMethodIsGenericName($paymentMethod);
+
+
         $this->orderId = new CheckoutOrderId($orderId);
 
         $this->paymentDate = new DateTimeImmutable($paymentDate);
@@ -143,6 +157,18 @@ class AddOrderPaymentCommand
     {
         if ($amount->isNegative()) {
             throw new NegativePaymentAmountException('The amount should be greater than 0.');
+        }
+    }
+    /**
+     * @param string $paymentMethod
+     */
+    private function assertPaymentMethodIsGenericName($paymentMethod)
+    {
+        if (empty($paymentMethod) || !preg_match(self::PATTERN_PAYMENT_METHOD_NAME, $paymentMethod)) {
+            throw new OrderConstraintException(
+                'The selected payment method is invalid.',
+                OrderConstraintException::INVALID_PAYMENT_METHOD
+            );
         }
     }
 }
