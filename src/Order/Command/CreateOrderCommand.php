@@ -22,7 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Order\Command;
 
 use PrestaShop\Module\PrestashopCheckout\Exception\InvalidOrderStateException;
 use PrestaShop\Module\PrestashopCheckout\Order\CheckoutCartId;
-use PrestaShopBundle\Exception\InvalidModuleException;
+use PrestaShop\Module\PrestashopCheckout\Exception\InvalidModuleException;
 
 class CreateOrderCommand
 {
