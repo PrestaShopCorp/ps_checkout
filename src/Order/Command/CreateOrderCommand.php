@@ -20,6 +20,10 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Command;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\InvalidOrderStateException;
+use PrestaShop\Module\PrestashopCheckout\Order\CheckoutCartId;
+use PrestaShopBundle\Exception\InvalidModuleException;
+
 class CreateOrderCommand
 {
     /**
@@ -44,7 +48,10 @@ class CreateOrderCommand
      */
     public function __construct($cartId, $paymentModuleName, $orderStateId)
     {
-        $this->cartId = $cartId;
+        $this->cartId = new CheckoutCartId($cartId);
+        $this->assertIsModuleName($paymentModuleName);
+        $this->assertOrderStateIsPositiveInt($orderStateId);
+
         $this->paymentModuleName = $paymentModuleName;
         $this->orderStateId = $orderStateId;
     }
@@ -71,5 +78,29 @@ class CreateOrderCommand
     public function getOrderStateId()
     {
         return $this->orderStateId;
+    }
+
+    /**
+     * @param string $moduleName
+     *
+     * @throws InvalidModuleException
+     */
+    private function assertIsModuleName($moduleName)
+    {
+        if (!is_string($moduleName) || !preg_match('/^[a-zA-Z0-9_-]+$/', $moduleName)) {
+            throw new InvalidModuleException();
+        }
+    }
+
+    /**
+     * @param int $orderStateId
+     *
+     * @throws InvalidOrderStateException
+     */
+    private function assertOrderStateIsPositiveInt($orderStateId)
+    {
+        if (!is_int($orderStateId) || 0 >= $orderStateId) {
+            throw new InvalidOrderStateException(InvalidOrderStateException::INVALID_ID, 'Invalid order state id');
+        }
     }
 }
