@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
-use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
@@ -30,12 +29,12 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 class FirebaseModule implements PresenterInterface
 {
     /**
-     * @var PrestaShopConfiguration
+     * @var PsAccountRepository
      */
     private $psAccountRepository;
 
     /**
-     * @param PrestaShopConfiguration $configuration
+     * @param PsAccountRepository $psAccountRepository
      */
     public function __construct(PsAccountRepository $psAccountRepository)
     {
