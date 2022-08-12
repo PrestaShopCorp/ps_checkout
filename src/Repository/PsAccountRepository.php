@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
+use Exception;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
@@ -42,7 +43,7 @@ class PsAccountRepository
         $this->configuration = $configuration;
         try {
             $this->psAccountsService = $psAccountsFacade->getPsAccountsService();
-        } catch (\Exception) {
+        } catch (Exception $exception) {
             $this->psAccountsService = false;
         }
     }
@@ -100,6 +101,7 @@ class PsAccountRepository
         if (!$this->psAccountsService) {
             return false;
         }
+
         return $this->psAccountsService->getEmail();
     }
 
@@ -113,7 +115,8 @@ class PsAccountRepository
         if (!$this->psAccountsService) {
             return false;
         }
-        return (string)$this->psAccountsService->getOrRefreshToken();
+
+        return (string) $this->psAccountsService->getOrRefreshToken();
     }
 
     /**
@@ -126,6 +129,7 @@ class PsAccountRepository
         if (!$this->psAccountsService) {
             return false;
         }
+
         return $this->psAccountsService->getUserUuidV4();
     }
 
@@ -139,6 +143,7 @@ class PsAccountRepository
         if (!$this->psAccountsService) {
             return false;
         }
+
         return $this->psAccountsService->getRefreshToken();
     }
 
@@ -166,32 +171,35 @@ class PsAccountRepository
         if (!$this->psAccountsService) {
             return false;
         }
+
         return $this->psAccountsService->getShopUuid();
     }
 
     /**
      * @return bool
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function isEmailValidated()
     {
         if (!$this->psAccountsService) {
             return false;
         }
+
         return $this->psAccountsService->isEmailValidated();
     }
 
     /**
      * @return bool
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function isAccountLinked()
     {
         if (!$this->psAccountsService) {
             return false;
         }
+
         return $this->psAccountsService->isAccountLinked();
     }
 }
