@@ -88,7 +88,7 @@ class CreateOrderCommand
     private function assertIsModuleName($moduleName)
     {
         if (!is_string($moduleName) || !preg_match('/^[a-zA-Z0-9_-]+$/', $moduleName)) {
-            throw new InvalidModuleException();
+            throw new InvalidModuleException(sprintf('Invalid PaymentModule name, got %s', var_export($moduleName, true)));
         }
     }
 

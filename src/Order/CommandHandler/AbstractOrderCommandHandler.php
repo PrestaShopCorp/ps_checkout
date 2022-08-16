@@ -43,7 +43,7 @@ class AbstractOrderCommandHandler
      *
      * @throws OrderException
      */
-    protected function getOrder($orderId)
+    protected function getOrder(CheckoutOrderId $orderId)
     {
         try {
             $order = new Order($orderId->getValue());

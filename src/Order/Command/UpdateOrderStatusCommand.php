@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\Command;
 
 use PrestaShop\Module\PrestashopCheckout\Order\CheckoutOrderId;
-use PrestaShop\Module\PrestashopCheckout\Order\OrderException;
 
 class UpdateOrderStatusCommand
 {
@@ -41,7 +40,7 @@ class UpdateOrderStatusCommand
      */
     public function __construct($orderId, $newOrderStatusId)
     {
-        $this->orderId = $this->assertOrderIdIsPositiveInt($orderId);
+        $this->orderId = new CheckoutOrderId($orderId->getValue());
         $this->newOrderStatusId = $newOrderStatusId;
     }
 
@@ -59,19 +58,5 @@ class UpdateOrderStatusCommand
     public function getNewOrderStatusId()
     {
         return $this->newOrderStatusId;
-    }
-
-    /**
-     * @param CheckoutOrderId $orderId
-     *
-     * @throws OrderException
-     */
-    private function assertOrderIdIsPositiveInt($orderId)
-    {
-        if (!is_int($orderId->getValue()) || 0 >= $orderId->getValue()) {
-            throw new OrderException('Order id must be greater than zero.');
-        }
-
-        return $orderId;
     }
 }

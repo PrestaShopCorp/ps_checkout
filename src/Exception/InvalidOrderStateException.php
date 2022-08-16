@@ -20,8 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Exception;
 
-use Throwable;
-
 /**
  * Thrown when the order state is incompatible with an action (ex: standard
  * refund on an order not paid yet).
@@ -55,9 +53,9 @@ class InvalidOrderStateException extends \Exception
     /**
      * @param int $code
      * @param string $message
-     * @param Throwable|null $previous
+     * @param \Exception|null $previous
      */
-    public function __construct($code = 0, $message = '', Throwable $previous = null)
+    public function __construct($code = 0, $message = '', $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

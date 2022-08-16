@@ -20,8 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order;
 
-use InvalidArgumentException;
-
 class CheckoutOrderId
 {
     /**
@@ -36,12 +34,7 @@ class CheckoutOrderId
      */
     public function __construct($orderId)
     {
-        if (!is_numeric($orderId)) {
-            throw new InvalidArgumentException('Invalid type - expected numeric, but got (%s) "%s');
-        }
-
         $this->assertIntegerIsGreaterThanZero((int) $orderId);
-
         $this->orderId = (int) $orderId;
     }
 
@@ -61,7 +54,7 @@ class CheckoutOrderId
     private function assertIntegerIsGreaterThanZero($orderId)
     {
         if (!is_int($orderId) || 0 > $orderId) {
-            throw new OrderException('Order id must be greater than zero.');
+            throw new OrderException(sprintf('Order id %s is invalid. Order id must be number that is greater than zero.', var_export($orderId, true)));
         }
     }
 
