@@ -62,7 +62,7 @@ class UpdateOrderStatusCommand
     }
 
     /**
-     * @param int $orderId
+     * @param CheckoutOrderId $orderId
      *
      * @throws OrderException
      */

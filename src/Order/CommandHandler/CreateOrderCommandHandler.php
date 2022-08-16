@@ -38,7 +38,7 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
             throw new OrderException(sprintf('Unable to get "%s" module instance.', $command->getPaymentModuleName()), OrderException::MODULE_INSTANCE_NOT_FOUND);
         }
 
-        $cart = new Cart($command->getCartId());
+        $cart = new Cart($command->getCartId()->getValue());
         $this->setCartContext($cart);
 
         try {
