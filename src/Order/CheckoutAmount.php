@@ -53,7 +53,7 @@ class CheckoutAmount
     public function __construct($number)
     {
         if (!is_string($number)) {
-            throw new InvalidArgumentException(sprintf('Invalid type - expected string, but got (%s) "%s"', var_export($number, true)));
+            throw new InvalidArgumentException(sprintf('Invalid type - expected string, but got "%s"', var_export($number, true)));
         }
         if (!is_numeric($number)) {
             throw new InvalidArgumentException(sprintf('Invalid type - expected numeric, but got %s', var_export($number, true)));
