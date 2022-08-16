@@ -21,6 +21,7 @@
 namespace Tests\Unit\Order;
 
 use PHPUnit\Framework\TestCase;
+use PrestaShop\Module\PrestashopCheckout\Order\CheckoutOrderId;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\OrderException;
 
@@ -30,6 +31,6 @@ class UpdateOrderStatusCommandTest extends TestCase
     {
         $this->expectException(OrderException::class);
         $this->expectExceptionMessage('Order id must be greater than zero.');
-        new UpdateOrderStatusCommand(-1, -2);
+        new UpdateOrderStatusCommand(new CheckoutOrderId(-1), -2);
     }
 }

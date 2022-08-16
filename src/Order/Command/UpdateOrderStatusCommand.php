@@ -36,7 +36,7 @@ class UpdateOrderStatusCommand
     private $newOrderStatusId;
 
     /**
-     * @param CheckoutOrderId $orderId
+     * @param CheckoutOrderId $checkoutOrderId
      * @param int $newOrderStatusId
      */
     public function __construct($orderId, $newOrderStatusId)
@@ -68,10 +68,11 @@ class UpdateOrderStatusCommand
      */
     private function assertOrderIdIsPositiveInt($orderId)
     {
-        if (!is_int($orderId) || 0 >= $orderId) {
+        if (!is_int($orderId->getValue()) || 0 >= $orderId) {
             throw new OrderException('Order id must be greater than zero.');
         }
 
         return $orderId;
     }
 }
+
