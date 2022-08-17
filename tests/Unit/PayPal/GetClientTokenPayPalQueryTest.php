@@ -17,31 +17,18 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+namespace Tests\Unit\Order;
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query;
+use PHPUnit\Framework\TestCase;
+use PrestaShop\Module\PrestashopCheckout\Exception\InvalidCustomerIdException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query\GetClientTokenPayPalQuery;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\CheckoutCustomerId;
-
-class GetClientTokenPayPalQuery
+class GetClientTokenPayPalQueryTest extends TestCase
 {
-    /**
-     * @var CheckoutCustomerId|null
-     */
-    private $customerId;
-
-    /**
-     * @param int|null $customerId
-     */
-    public function __construct($customerId = null)
+    public function testCustomerIdIsGreaterthanZero()
     {
-        $this->customerId = new CheckoutCustomerId($customerId);
-    }
-
-    /**
-     * @return CheckoutCustomerId|null
-     */
-    public function getCustomerId()
-    {
-        return $this->customerId;
+        $this->expectException(InvalidCustomerIdException::class);
+        $this->expectExceptionMessage('Customer id must be integer greater than zero');
+        new GetClientTokenPayPalQuery('-1');
     }
 }

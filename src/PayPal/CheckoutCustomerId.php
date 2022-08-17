@@ -18,29 +18,35 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\CheckoutCustomerId;
+use PrestaShop\Module\PrestashopCheckout\Exception\InvalidCustomerIdException;
 
-class GetClientTokenPayPalQuery
+class CheckoutCustomerId
 {
     /**
-     * @var CheckoutCustomerId|null
+     * @var int
      */
     private $customerId;
 
     /**
-     * @param int|null $customerId
+     * @param int $customerId
+     *
+     * @throws InvalidCustomerIdException if customer id is not valid
      */
-    public function __construct($customerId = null)
+    public function __construct($customerId)
     {
-        $this->customerId = new CheckoutCustomerId($customerId);
+        if (!is_int($customerId) || 0 >= $customerId) {
+            throw new InvalidCustomerIdException('Customer id must be integer greater than zero');
+        }
+
+        $this->customerId = $customerId;
     }
 
     /**
-     * @return CheckoutCustomerId|null
+     * @return int
      */
-    public function getCustomerId()
+    public function getValue()
     {
         return $this->customerId;
     }

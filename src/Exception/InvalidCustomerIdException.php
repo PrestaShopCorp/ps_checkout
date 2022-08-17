@@ -18,30 +18,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query;
+namespace PrestaShop\Module\PrestashopCheckout\Exception;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\CheckoutCustomerId;
-
-class GetClientTokenPayPalQuery
+class InvalidCustomerIdException extends \Exception
 {
-    /**
-     * @var CheckoutCustomerId|null
-     */
-    private $customerId;
-
-    /**
-     * @param int|null $customerId
-     */
-    public function __construct($customerId = null)
-    {
-        $this->customerId = new CheckoutCustomerId($customerId);
-    }
-
-    /**
-     * @return CheckoutCustomerId|null
-     */
-    public function getCustomerId()
-    {
-        return $this->customerId;
-    }
 }
