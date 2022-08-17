@@ -242,17 +242,19 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         // check if country is available for delivery
         $psIsoCode = (new PaypalCountryCodeMatrice())->getPrestashopIsoCode($countryIsoCode);
         $idCountry = Country::getByIso($psIsoCode);
-
+        $idState = 0;
         $country = new Country((int) $idCountry);
 
         if (!$country->active || Country::isNeedDniByCountryId($idCountry)) {
             return false;
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository $countryRepository */
-        $countryRepository = $this->module->getService('ps_checkout.repository.country');
+        if ($country->contains_states) {
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository $countryRepository */
+            $countryRepository = $this->module->getService('ps_checkout.repository.country');
 
-        $idState = $countryRepository->getStateId($state);
+            $idState = $countryRepository->getStateId($state);
+        }
 
         // check if a paypal address already exist for the customer
         $paypalAddress = $this->addressAlreadyExist('PayPal', $this->context->customer->id);
@@ -273,10 +275,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $address->city = $city;
         $address->id_country = $idCountry;
         $address->phone = $phone;
-
-        if ($idState) {
-            $address->id_state = $idState;
-        }
+        $address->id_state = $idState;
 
         if ($address->validateFields(false)) {
             return false;
