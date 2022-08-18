@@ -220,6 +220,8 @@ class Ps_checkout extends PaymentModule
         // We must doing that here because before module is not installed so Service Container cannot be used
         $this->trackModuleAction('Install');
 
+        $this->getService('ps_accounts.installer')->install();
+
         return $result;
     }
 
@@ -587,6 +589,8 @@ class Ps_checkout extends PaymentModule
         $paypalAccount = $this->getService('ps_checkout.repository.paypal.account');
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
         $psAccount = $this->getService('ps_checkout.repository.prestashop.account');
+        /** @var \PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts $psAccountsFacade */
+        $psAccountsFacade = $this->getService('ps_accounts.facade');
 
         // update merchant status only if the merchant onboarding is completed
         if ($paypalAccount->onBoardingIsCompleted()
@@ -602,6 +606,7 @@ class Ps_checkout extends PaymentModule
 
         Media::addJsDef([
             'store' => $storePresenter->present(),
+            'contextPsAccounts' => $psAccountsFacade->getPsAccountsPresenter()->present(),
         ]);
 
         $this->context->controller->addJS(
@@ -1009,6 +1014,9 @@ class Ps_checkout extends PaymentModule
 
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
         $payLaterConfiguration = $this->getService('ps_checkout.pay_later.configuration');
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountsRepository */
+        $psAccountsRepository = $this->getService('  ps_checkout.repository.prestashop.account');
 
         $fundingSourcesSorted = [];
         $payWithTranslations = [];

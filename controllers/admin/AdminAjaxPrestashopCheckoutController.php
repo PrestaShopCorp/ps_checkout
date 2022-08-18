@@ -925,6 +925,31 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
+     * AJAX: SignUp firebase account
+     */
+    public function ajaxProcessGetOrRefreshToken()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->module->getService('  ps_checkout.repository.prestashop.account');
+
+        try {
+            $token = $psAccountRepository->getIdToken();
+
+            $this->ajaxDie(json_encode([
+                'status' => true,
+                'token' => $token,
+            ], JSON_PRETTY_PRINT));
+        } catch (\Exception $exception) {
+            http_response_code($exception->getCode());
+
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'error' => $exception->getMessage(),
+            ], JSON_PRETTY_PRINT));
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function initCursedPage()

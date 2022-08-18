@@ -20,10 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
-use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
-use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
 /**
  * Construct the firebase module
@@ -31,16 +29,16 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 class FirebaseModule implements PresenterInterface
 {
     /**
-     * @var PrestaShopConfiguration
+     * @var PsAccountRepository
      */
-    private $configuration;
+    private $psAccountRepository;
 
     /**
-     * @param PrestaShopConfiguration $configuration
+     * @param PsAccountRepository $psAccountRepository
      */
-    public function __construct(PrestaShopConfiguration $configuration)
+    public function __construct(PsAccountRepository $psAccountRepository)
     {
-        $this->configuration = $configuration;
+        $this->psAccountRepository = $psAccountRepository;
     }
 
     /**
@@ -50,15 +48,16 @@ class FirebaseModule implements PresenterInterface
      */
     public function present()
     {
-        $idToken = (new Token())->getToken();
-
         $firebaseModule = [
             'firebase' => [
-                'email' => $this->configuration->get(PsAccount::PS_PSX_FIREBASE_EMAIL),
-                'idToken' => $idToken,
-                'localId' => $this->configuration->get(PsAccount::PS_PSX_FIREBASE_LOCAL_ID),
-                'refreshToken' => $this->configuration->get(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN),
-                'onboardingCompleted' => !empty($idToken),
+                'email' => $this->psAccountRepository->getEmail(),
+                'idToken' => $this->psAccountRepository->getIdToken(),
+                'localId' => $this->psAccountRepository->getLocalId(),
+                'refreshToken' => $this->psAccountRepository->getRefreshToken(),
+                'onboardingCompleted' => !empty($this->psAccountRepository->getIdToken()),
+                'shopUuid' => $this->psAccountRepository->getShopUuid(),
+                'isEmailVerified' => $this->psAccountRepository->isEmailValidated(),
+                'isAccountLinked' => $this->psAccountRepository->isAccountLinked(),
             ],
         ];
 

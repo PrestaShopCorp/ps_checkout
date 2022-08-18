@@ -27,7 +27,6 @@ use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
-use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 
 /**
  * Construct the client used to make call to maasland
@@ -36,6 +35,8 @@ class PaymentClient extends GenericClient
 {
     public function __construct(\Link $link, Client $client = null)
     {
+        parent::__construct();
+
         $this->setLink($link);
 
         // Client can be provided for tests
@@ -49,8 +50,8 @@ class PaymentClient extends GenericClient
                     'headers' => [
                         'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
                         'Accept' => 'application/json',
-                        'Authorization' => 'Bearer ' . (new Token())->getToken(),
-                        'Shop-Id' => (new ShopUuidManager())->getForShop((int) \Context::getContext()->shop->id),
+                        'Authorization' => 'Bearer ' . $this->token,  // Token we get from PsAccounts
+                        'Shop-Id' => $this->shopUid,                  // Shop UUID we get from PsAccounts
                         'Hook-Url' => $this->link->getModuleLink(
                             'ps_checkout',
                             'DispatchWebHook',

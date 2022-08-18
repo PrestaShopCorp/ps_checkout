@@ -38,6 +38,8 @@ class FirebaseClient extends GenericClient
 
     public function __construct(array $params = [])
     {
+        parent::__construct();
+
         if (isset($params['api_key'])) {
             $this->apiKey = $params['api_key'];
         } else {
