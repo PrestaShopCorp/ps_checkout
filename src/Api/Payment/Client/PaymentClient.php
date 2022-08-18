@@ -57,7 +57,7 @@ class PaymentClient extends GenericClient
                             'DispatchWebHook',
                             [],
                             true,
-                            null,
+                            (int) \Configuration::get('PS_LANG_DEFAULT'),
                             (int) \Context::getContext()->shop->id
                         ),
                         'Bn-Code' => (new ShopContext())->getBnCode(),
