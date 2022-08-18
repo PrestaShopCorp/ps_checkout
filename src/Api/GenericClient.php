@@ -28,8 +28,8 @@ use GuzzleHttp\Subscriber\Log\LogSubscriber;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
-use Psr\Http\Client\ClientInterface;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
+use Psr\Http\Client\ClientInterface;
 use Psr\Log\LoggerInterface;
 
 /**
