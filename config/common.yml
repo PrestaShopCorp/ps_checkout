@@ -384,6 +384,11 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalClientTokenProvider'
     public: true
 
+  ps_checkout.webhook.service.secret_token:
+    class: 'PrestaShop\Module\PrestashopCheckout\Webhook\WebhookSecretTokenService'
+    arguments:
+      - '@ps_checkout.configuration'
+
   ps_accounts.installer:
     class: 'PrestaShop\PsAccountsInstaller\Installer\Installer'
     public: true
