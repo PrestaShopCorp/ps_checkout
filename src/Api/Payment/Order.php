@@ -57,7 +57,7 @@ class Order extends PaymentClient
 
         return $this->post([
             'mode' => $fundingSource,
-            'orderId' => (string)$orderId,
+            'orderId' => (string) $orderId,
             'payee' => [
                 'merchant_id' => $merchantId,
             ],

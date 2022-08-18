@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Firebase\Client;
 
-use GuzzleHttp\Client;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\FirebaseEnv;
 use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
