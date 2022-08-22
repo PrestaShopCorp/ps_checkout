@@ -1007,7 +1007,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     private function ajaxProcessUpsertSecretToken()
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\Webhook\WebhookSecretTokenService $webhookSecretTokenService */
-        $webhookSecretTokenService = $this->module->getService('  ps_checkout.webhook.service.secret_token');
+        $webhookSecretTokenService = $this->module->getService('ps_checkout.webhook.service.secret_token');
 
         $secret = (string) Tools::getValue('body');
 
