@@ -21,14 +21,13 @@
 namespace Tests\Unit\Order;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\PrestashopCheckout\Exception\InvalidCustomerIdException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query\GetClientTokenPayPalQuery;
 
 class GetClientTokenPayPalQueryTest extends TestCase
 {
-    public function testCustomerIdIsGreaterthanZero()
+    public function testCustomerIdIsValid()
     {
-        $this->expectException(InvalidCustomerIdException::class);
-        new GetClientTokenPayPalQuery('-1');
+        $customerId = new GetClientTokenPayPalQuery(1000);
+        $this->assertEquals(1000, $customerId->getCustomerId()->getValue());
     }
 }
