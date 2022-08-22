@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Faq;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
 use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
 
 /**
@@ -69,7 +70,9 @@ class Faq
     public function getFaq()
     {
         try {
-            $response = $this->client->post($this->generateRoute());
+            $response = $this->client->sendRequest(
+                new Request('POST', $this->generateRoute())
+            );
         } catch (\Exception $exception) {
             /** @var \Ps_checkout $module */
             $module = \Module::getInstanceByName('ps_checkout');
