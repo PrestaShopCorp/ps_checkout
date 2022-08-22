@@ -20,6 +20,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query;
 
+use PrestaShop\Module\PrestashopCheckout\Exception\InvalidClientTokenException;
+use PrestaShop\Module\PrestashopCheckout\Exception\InvalidDateException;
+
 class GetClientTokenPayPalQueryResult
 {
     /**
@@ -44,9 +47,9 @@ class GetClientTokenPayPalQueryResult
      */
     public function __construct($clientToken, $expiresIn, $createdAt)
     {
-        $this->clientToken = $clientToken;
-        $this->expiresIn = $expiresIn;
-        $this->createdAt = $createdAt;
+        $this->clientToken = $this->assertClientTokenIsNotEmpty($clientToken);
+        $this->expiresIn = $this->assertDatePropertyIsNotEmpty($expiresIn, 'ExpiresIn');
+        $this->createdAt = $this->assertDatePropertyIsNotEmpty($createdAt, 'CreatedAt');
     }
 
     /**
@@ -71,5 +74,23 @@ class GetClientTokenPayPalQueryResult
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    public function assertClientTokenIsNotEmpty($clientToken)
+    {
+        if (empty($clientToken)) {
+            throw new InvalidClientTokenException('Client token  is empty');
+        }
+
+        return $clientToken;
+    }
+
+    public function assertDatePropertyIsNotEmpty($date, $dateType)
+    {
+        if (empty($date)) {
+            throw new InvalidDateException(sprintf('Client token %s date is empty', $dateType));
+        }
+
+        return $date;
     }
 }
