@@ -29,7 +29,6 @@ class GetClientTokenPayPalQueryTest extends TestCase
     public function testCustomerIdIsGreaterthanZero()
     {
         $this->expectException(InvalidCustomerIdException::class);
-        $this->expectExceptionMessage('Customer id must be integer greater than zero');
         new GetClientTokenPayPalQuery('-1');
     }
 }
