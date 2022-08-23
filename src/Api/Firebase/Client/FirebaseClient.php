@@ -20,9 +20,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Firebase\Client;
 
-use GuzzleHttp\Client;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\FirebaseEnv;
+use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
 
 /**
  * Handle firebase signIn/signUp
@@ -46,18 +46,16 @@ class FirebaseClient extends GenericClient
             $this->apiKey = (new FirebaseEnv())->getFirebaseApiKey();
         }
 
-        $client = new Client([
-            'defaults' => [
-                'verify' => $this->getVerify(),
-                'timeout' => $this->timeout,
-                'exceptions' => $this->catchExceptions,
-                'allow_redirects' => false,
-                'query' => [
-                    'key' => $this->apiKey,
-                ],
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                ],
+        $client = (new ClientFactory())->getClient([
+            'verify' => $this->getVerify(),
+            'timeout' => $this->timeout,
+            'exceptions' => $this->catchExceptions,
+            'allow_redirects' => false,
+            'query' => [
+                'key' => $this->apiKey,
+            ],
+            'headers' => [
+                'Content-Type' => 'application/json',
             ],
         ]);
 

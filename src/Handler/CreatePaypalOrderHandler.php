@@ -96,7 +96,7 @@ class CreatePaypalOrderHandler
             $builder->buildMinimalPayload();
         }
 
-        $payload = $builder->presentPayload()->getJson();
+        $payload = $builder->presentPayload()->getArray();
 
         // Create the paypal order or update it
         if (true === $updateOrder) {
@@ -108,7 +108,7 @@ class CreatePaypalOrderHandler
         // Retry with minimal payload when full payload failed (only on 1.7)
         if (substr((string) $paypalOrder['httpCode'], 0, 1) === '4' && $shopContext->isShop17()) {
             $builder->buildMinimalPayload();
-            $payload = $builder->presentPayload()->getJson();
+            $payload = $builder->presentPayload()->getArray();
 
             if (true === $updateOrder) {
                 $paypalOrder = (new Order($this->context->link))->patch($payload);

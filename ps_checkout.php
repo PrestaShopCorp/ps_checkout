@@ -42,7 +42,6 @@ class Ps_checkout extends PaymentModule
         'actionAdminControllerSetMedia',
         'displayPaymentTop',
         'displayPaymentByBinaries',
-        'displayProductPriceBlock',
         'actionFrontControllerSetMedia',
         'header',
         'actionObjectOrderPaymentAddAfter',
@@ -1014,9 +1013,6 @@ class Ps_checkout extends PaymentModule
 
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
         $payLaterConfiguration = $this->getService('ps_checkout.pay_later.configuration');
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountsRepository */
-        $psAccountsRepository = $this->getService('  ps_checkout.repository.prestashop.account');
 
         $fundingSourcesSorted = [];
         $payWithTranslations = [];

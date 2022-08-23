@@ -21,12 +21,12 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
 use GuzzleHttp\Client;
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
+use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
 
 /**
  * Construct the client used to make call to maasland
@@ -41,29 +41,27 @@ class PaymentClient extends GenericClient
 
         // Client can be provided for tests
         if (null === $client) {
-            $client = new Client([
+            $client = (new ClientFactory())->getClient([
                 'base_url' => (new PaymentEnv())->getPaymentApiUrl(),
-                'defaults' => [
-                    'verify' => $this->getVerify(),
-                    'timeout' => $this->timeout,
-                    'exceptions' => $this->catchExceptions,
-                    'headers' => [
-                        'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
-                        'Accept' => 'application/json',
-                        'Authorization' => 'Bearer ' . $this->token,  // Token we get from PsAccounts
-                        'Shop-Id' => $this->shopUid,                  // Shop UUID we get from PsAccounts
-                        'Hook-Url' => $this->link->getModuleLink(
-                            'ps_checkout',
-                            'DispatchWebHook',
-                            [],
-                            true,
-                            (int) \Configuration::get('PS_LANG_DEFAULT'),
-                            (int) \Context::getContext()->shop->id
-                        ),
-                        'Bn-Code' => (new ShopContext())->getBnCode(),
-                        'Module-Version' => \Ps_checkout::VERSION, // version of the module
-                        'Prestashop-Version' => _PS_VERSION_, // prestashop version
-                    ],
+                'verify' => $this->getVerify(),
+                'timeout' => $this->timeout,
+                'exceptions' => $this->catchExceptions,
+                'headers' => [
+                    'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer ' . $this->token,  // Token we get from PsAccounts
+                    'Shop-Id' => $this->shopUid,                  // Shop UUID we get from PsAccounts
+                    'Hook-Url' => $this->link->getModuleLink(
+                        'ps_checkout',
+                        'DispatchWebHook',
+                        [],
+                        true,
+                        (int) \Configuration::get('PS_LANG_DEFAULT'),
+                        (int) \Context::getContext()->shop->id
+                    ),
+                    'Bn-Code' => (new ShopContext())->getBnCode(),
+                    'Module-Version' => \Ps_checkout::VERSION, // version of the module
+                    'Prestashop-Version' => _PS_VERSION_, // prestashop version
                 ],
             ]);
         }
