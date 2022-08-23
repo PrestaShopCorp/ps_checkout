@@ -1015,9 +1015,6 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
         $payLaterConfiguration = $this->getService('ps_checkout.pay_later.configuration');
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountsRepository */
-        $psAccountsRepository = $this->getService('  ps_checkout.repository.prestashop.account');
-
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService('ps_checkout.context.shop');
 
