@@ -27,6 +27,7 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\Validator\PayloadBuilderValidator;
 
 /**
  * Build the payload for creating paypal order
@@ -183,7 +184,18 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
             $node['roundingConfig'] = $roundType . '-' . $roundMode;
         }
-
+        /** @var PayloadBuilderValidator $payloadValidator */
+        $payloadValidator = $module->getService('ps_checkout.validator.builder.payload');
+        try {
+            $payloadValidator->checkNodeValues($node);
+        } catch (\Exception $exception) {
+            $module->getLogger()->error(
+                'Unable to build PayPal Order payload',
+                [
+                    'exception' => $exception,
+                ]
+            );
+        }
         $this->getPayload()->addAndMergeItems($node);
     }
 
