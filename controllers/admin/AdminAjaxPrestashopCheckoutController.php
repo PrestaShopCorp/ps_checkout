@@ -930,7 +930,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessGetOrRefreshToken()
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $this->module->getService('  ps_checkout.repository.prestashop.account');
+        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
 
         try {
             $token = $psAccountRepository->getIdToken();
