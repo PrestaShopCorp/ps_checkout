@@ -609,7 +609,12 @@ class Ps_checkout extends PaymentModule
         ]);
 
         $this->context->controller->addJS(
-            $this->getPathUri() . 'views/js/app.js?version=' . $this->version,
+//            This value is composed by three parts
+//              - ENV_URL: https://storage.googleapis.com/checkout-sdk-cdn
+//              - ENV_VERSION: (if undefined -> (MAJOR_MODULE_VERSION).X.X (.X.X is a static string to have last version)
+//              - Fixed value: /sdk/ps_checkout-bo-sdk.umd.js
+//
+            'https://storage.googleapis.com/checkout-sdk-cdn/3.1.2/sdk/ps_checkout-bo-sdk.umd.js',
             false
         );
 
