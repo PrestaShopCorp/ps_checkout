@@ -150,4 +150,9 @@ class PayPalException extends PsCheckoutException
     const CURRENCY_NOT_SUPPORTED_FOR_CARD_TYPE = 126;
     const NO_EXTERNAL_FUNDING_DETAILS_FOUND = 127;
     const PAYMENT_DENIED = 128;
+    const INVALID_PAYER_NAME = 129;
+    const INVALID_PAYER_EMAIL_ADDRESS = 130;
+    const INVALID_PAYER_ADDRESS = 131;
+    const APPLICATION_CONTEXT_IS_MISSED = 132;
+    const INVALID_ITEM = 133;
 }

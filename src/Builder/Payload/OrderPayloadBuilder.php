@@ -23,17 +23,24 @@ namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 use libphonenumber\PhoneNumberType;
 use libphonenumber\PhoneNumberUtil;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
-use PrestaShop\Module\PrestashopCheckout\Validator\PayloadBuilderValidator;
 
 /**
  * Build the payload for creating paypal order
  */
 class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 {
+    /**
+     * @var array
+     */
+    private $validCurrencies = ['AUD', 'BRL', 'CAD', 'CNY', 'CZK', 'DKK', 'EUR',
+        'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'TWD', 'NZD', 'NOK', 'PHP', 'PLN',
+        'GPB', 'RUB', 'SGD', 'SEK', 'USD', 'CHF', 'THB', ];
+
     /**
      * @var array
      */
@@ -184,17 +191,18 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
             $node['roundingConfig'] = $roundType . '-' . $roundMode;
         }
-        /** @var PayloadBuilderValidator $payloadValidator */
-        $payloadValidator = $module->getService('ps_checkout.validator.builder.payload');
-        try {
-            $payloadValidator->checkNodeValues($node);
-        } catch (\Exception $exception) {
-            $module->getLogger()->error(
-                'Unable to build PayPal Order payload',
-                [
-                    'exception' => $exception,
-                ]
-            );
+
+        if ($node['intent'] != 'CAPTURE') {
+            throw new PayPalException(sprintf('Passed intent %s is unsupported', $node['intent']), PayPalException::UNSUPPORTED_INTENT);
+        }
+        if (!in_array($node['amount']['currency_code'], $this->validCurrencies)) {
+            throw new PayPalException(sprintf('Passed currency %s is invalid', $node['amount']['currency_code']), PayPalException::INVALID_CURRENCY_CODE);
+        }
+        if ($node['amount']['value'] <= 0) {
+            throw new PayPalException(sprintf('Passed amount %s is less or equal to zero', $node['amount']['value']), PayPalException::AMOUNT_MISMATCH);
+        }
+        if (empty($node['payee']['merchant_id'])) {
+            throw new PayPalException(sprintf('Passed merchant id %s is invalid', $node['payee']['merchant_id']), PayPalException::PAYEE_ACCOUNT_NOT_SUPPORTED);
         }
         $this->getPayload()->addAndMergeItems($node);
     }
@@ -223,7 +231,9 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 'postal_code' => (string) $this->cart['addresses']['shipping']->postcode,
             ],
         ];
-
+        if (empty($node['shipping']['name'])) {
+            throw new PayPalException('shiping address is empty', PayPalException::SHIPPING_ADDRESS_INVALID);
+        }
         $this->getPayload()->addAndMergeItems($node);
     }
 
@@ -292,7 +302,15 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 );
             }
         }
-
+        if (empty($node['payer']['name'])) {
+            throw new PayPalException('payer name is empty', PayPalException::INVALID_PAYER_NAME);
+        }
+        if (empty($node['payer']['email_address'])) {
+            throw new PayPalException('payer email_address is empty', PayPalException::INVALID_PAYER_EMAIL_ADDRESS);
+        }
+        if (empty($node['payer']['address'])) {
+            throw new PayPalException('payer address is empty', PayPalException::INVALID_PAYER_ADDRESS);
+        }
         $this->getPayload()->addAndMergeItems($node);
     }
 
@@ -314,7 +332,9 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             ),
             'shipping_preference' => $this->expressCheckout ? 'GET_FROM_FILE' : 'SET_PROVIDED_ADDRESS',
         ];
-
+        if (empty($node['application_context'])) {
+            throw new PayPalException('application contex is missed', PayPalException::APPLICATION_CONTEXT_IS_MISSED);
+        }
         $this->getPayload()->addAndMergeItems($node);
     }
 
@@ -410,7 +430,24 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             'currency_code' => $this->cart['currency']['iso_code'],
             'value' => $this->formatAmount($breakdownHandling),
         ];
-
+        if (empty($node['items'][0]['name'])) {
+            throw new PayPalException('item name is empty', PayPalException::INVALID_ITEM);
+        }
+        if (empty($node['items'][0]['sku'])) {
+            throw new PayPalException('item sku is empty', PayPalException::INVALID_ITEM);
+        }
+        if (empty($node['items'][0]['unit_amount'])) {
+            throw new PayPalException('item unit_amount is empty', PayPalException::INVALID_ITEM);
+        }
+        if (empty($node['items'][0]['tax'])) {
+            throw new PayPalException('item tax is empty', PayPalException::INVALID_ITEM);
+        }
+        if (empty($node['items'][0]['quantity'])) {
+            throw new PayPalException('item quantity is empty', PayPalException::INVALID_ITEM);
+        }
+        if (empty($node['items'][0]['category'])) {
+            throw new PayPalException('item category is empty', PayPalException::INVALID_ITEM);
+        }
         $this->getPayload()->addAndMergeItems($node);
     }
 
