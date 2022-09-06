@@ -40,7 +40,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'TWD', 'NZD', 'NOK', 'PHP', 'PLN',
         'GPB', 'RUB', 'SGD', 'SEK', 'USD', 'CHF', 'THB', ];
 
-    private   $country_names;
+    private $country_names;
     /**
      * @var array
      */
@@ -81,8 +81,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         $this->cart = $cart;
         $this->isPatch = $isPatch;
         $this->country_names = json_decode(
-            file_get_contents("http://country.io/names.json")
-            , true);
+            file_get_contents('http://country.io/names.json'), true);
 
         parent::__construct();
     }
@@ -235,7 +234,6 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 'postal_code' => (string) $this->cart['addresses']['shipping']->postcode,
             ],
         ];
-
 
         if (empty($node['shipping']['name']['full_name'])) {
             throw new PsCheckoutException('shiping name is empty', PsCheckoutException::PSCHECKOUT_SHIPPING_NAME_INVALID);
