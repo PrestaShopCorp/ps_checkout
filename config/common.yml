@@ -383,7 +383,4 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalClientTokenProvider'
     public: true
 
-  ps_checkout.validator.builder.payload:
-    class: 'PrestaShop\Module\PrestashopCheckout\Validator\PayloadBuilderValidator'
-    public: true
 

@@ -40,6 +40,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'TWD', 'NZD', 'NOK', 'PHP', 'PLN',
         'GPB', 'RUB', 'SGD', 'SEK', 'USD', 'CHF', 'THB', ];
 
+    private   $country_names;
     /**
      * @var array
      */
@@ -79,6 +80,9 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     {
         $this->cart = $cart;
         $this->isPatch = $isPatch;
+        $this->country_names = json_decode(
+            file_get_contents("http://country.io/names.json")
+            , true);
 
         parent::__construct();
     }
@@ -203,6 +207,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         if (empty($node['payee']['merchant_id'])) {
             throw new PsCheckoutException(sprintf('Passed merchant id %s is invalid', $node['payee']['merchant_id']), PsCheckoutException::PSCHECKOUT_MERCHANT_ID_INVALID);
         }
+
         $this->getPayload()->addAndMergeItems($node);
     }
 
@@ -231,6 +236,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             ],
         ];
 
+
         if (empty($node['shipping']['name']['full_name'])) {
             throw new PsCheckoutException('shiping name is empty', PsCheckoutException::PSCHECKOUT_SHIPPING_NAME_INVALID);
         }
@@ -240,8 +246,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         if (empty($node['shipping']['address']['admin_area_2'])) {
             throw new PsCheckoutException('shipping city is empty', PsCheckoutException::PSCHECKOUT_SHIPPING_CITY_INVALID);
         }
-        if (empty($node['shipping']['address']['country_code'])) {
-            throw new PsCheckoutException('shipping country code is empty', PsCheckoutException::PSCHECKOUT_SHIPPING_COUNTRY_CODE_INVALID);
+        if (!isset($this->country_names[$node['shipping']['address']['country_code']])) {
+            throw new PsCheckoutException(sprintf('shipping address country code -> %s is invalid', $node['shipping']['address']['country_code']), PsCheckoutException::PSCHECKOUT_SHIPPING_COUNTRY_CODE_INVALID);
         }
         if (empty($node['shipping']['address']['postal_code'])) {
             throw new PsCheckoutException('shipping postal code is empty', PsCheckoutException::PSCHECKOUT_SHIPPING_POSTAL_CODE_INVALID);
@@ -320,7 +326,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         if (empty($node['payer']['name']['surname'])) {
             throw new PsCheckoutException('payer surname is empty', PsCheckoutException::PSCHECKOUT_PAYER_SURNAME_INVALID);
         }
-        if (empty($node['payer']['email_address'])) {
+        if (!filter_var($node['payer']['email_address'], FILTER_VALIDATE_EMAIL)) {
             throw new PsCheckoutException('payer email_address is empty', PsCheckoutException::PSCHECKOUT_PAYER_EMAIL_ADDRESS_INVALID);
         }
         if (empty($node['payer']['address']['address_line_1'])) {
@@ -329,8 +335,9 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         if (empty($node['payer']['address']['admin_area_2'])) {
             throw new PsCheckoutException('payer address city is empty', PsCheckoutException::PSCHECKOUT_PAYER_ADDRESS_CITY_INVALID);
         }
-        if (empty($node['payer']['address']['country_code'])) {
-            throw new PsCheckoutException('payer address country code is empty', PsCheckoutException::PSCHECKOUT_PAYER_ADDRESS_COUNTRY_CODE_INVALID);
+
+        if (!isset($this->country_names[$node['payer']['address']['country_code']])) {
+            throw new PsCheckoutException(sprintf('payer address country code -> %s is invalid', $node['payer']['address']['country_code']), PsCheckoutException::PSCHECKOUT_PAYER_ADDRESS_COUNTRY_CODE_INVALID);
         }
         if (empty($node['payer']['address']['postal_code'])) {
             throw new PsCheckoutException('payer address country code is empty', PsCheckoutException::PSCHECKOUT_PAYER_ADDRESS_POSTAL_CODE_INVALID);
@@ -461,26 +468,26 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             if (empty($item['name'])) {
                 throw new PsCheckoutException('item name is empty', PsCheckoutException::PSCHECKOUT_ITEM_INVALID);
             }
-            if (empty($node['sku'])) {
-                throw new PsCheckoutException('item sku is empty', PsCheckoutException::PSCHECKOUT_ITEM_INVALID);
+            if (empty($item['sku'])) {
+                throw new PsCheckoutException('item sku is empty', PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
             }
-            if (empty($node['unit_amount']['currency_code'])) {
+            if (!in_array($item['unit_amount']['currency_code'], $this->validCurrencies)) {
                 throw new PsCheckoutException('item unit_amount currency code is empty', PsCheckoutException::PSCHECKOUT_ITEM_INVALID);
             }
-            if (empty($node['unit_amount']['value'])) {
+            if (empty($item['unit_amount']['value'])) {
                 throw new PsCheckoutException('item unit_amount value is empty', PsCheckoutException::PSCHECKOUT_ITEM_INVALID);
             }
-            if (empty($node['tax']['valuee'])) {
+            if (empty($item['tax']['value'])) {
                 throw new PsCheckoutException('item tax currency code is empty', PsCheckoutException::PSCHECKOUT_ITEM_INVALID);
             }
-            if (empty($node['tax']['currency_code'])) {
+            if (empty($item['tax']['currency_code'])) {
                 throw new PsCheckoutException('item tax value is empty', PsCheckoutException::PSCHECKOUT_ITEM_INVALID);
             }
-            if (empty($node['quantity'])) {
+            if (empty($item['quantity'])) {
                 throw new PsCheckoutException('item quantity is empty', PsCheckoutException::PSCHECKOUT_ITEM_INVALID);
             }
 
-            if (empty($node['category'])) {
+            if (empty($item['category'])) {
                 throw new PsCheckoutException('item category is empty', PsCheckoutException::PSCHECKOUT_ITEM_INVALID);
             }
         }
