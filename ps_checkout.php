@@ -620,7 +620,6 @@ class Ps_checkout extends PaymentModule
             $boSdkUrl = $boSdkUrl . $boSdkVersion . '/sdk/ps_checkout-bo-sdk.umd.js';
         }
 
-
         $this->context->controller->addJS($boSdkUrl, false);
 
         return $this->display(__FILE__, 'views/templates/admin/configuration.tpl');
