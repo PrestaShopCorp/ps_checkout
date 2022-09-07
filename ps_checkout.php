@@ -590,6 +590,7 @@ class Ps_checkout extends PaymentModule
         $psAccount = $this->getService('ps_checkout.repository.prestashop.account');
         /** @var \PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts $psAccountsFacade */
         $psAccountsFacade = $this->getService('ps_accounts.facade');
+        $env = new \PrestaShop\Module\PrestashopCheckout\Environment\Env();
 
         // update merchant status only if the merchant onboarding is completed
         if ($paypalAccount->onBoardingIsCompleted()
@@ -608,10 +609,18 @@ class Ps_checkout extends PaymentModule
             'contextPsAccounts' => $psAccountsFacade->getPsAccountsPresenter()->present(),
         ]);
 
-        $this->context->controller->addJS(
-            $this->getPathUri() . 'views/js/app.js?version=' . $this->version,
-            false
-        );
+        $boSdkUrl = $env->getEnv('CHECKOUT_BO_SDK_URL');
+        if (substr($boSdkUrl, -3) !== '.js') {
+            $boSdkVersion = $env->getEnv('CHECKOUT_BO_SDK_VERSION');
+            if (empty($boSdkVersion)) {
+                $majorModuleVersion = explode('.', $this->version)[0];
+                $boSdkVersion = "$majorModuleVersion.X.X";
+            }
+
+            $boSdkUrl = $boSdkUrl . $boSdkVersion . '/sdk/ps_checkout-bo-sdk.umd.js';
+        }
+
+        $this->context->controller->addJS($boSdkUrl, false);
 
         return $this->display(__FILE__, 'views/templates/admin/configuration.tpl');
     }
