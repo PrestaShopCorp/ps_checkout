@@ -29,11 +29,12 @@
 </div>
 
 {if $is17 && $isExpressCheckout}
-<div class="express-checkout-block mb-2">
+<div id="ps_checkout-block" class="express-checkout-block mb-2">
   <img src="{$paypalLogoPath|escape:'htmlall':'UTF-8'}" class="express-checkout-img" alt="PayPal">
   <p class="express-checkout-label">
     {$translatedText|escape:'htmlall':'UTF-8'}
   </p>
+  <button id="ps_checkout-cancel" class="btn btn-secondary">{$cancelTranslatedText|escape:'htmlall':'UTF-8'}</button>
 </div>
 {elseif $is17}
   <div id="ps_checkout-loader" class="express-checkout-block mb-2">
