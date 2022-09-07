@@ -609,20 +609,19 @@ class Ps_checkout extends PaymentModule
             'contextPsAccounts' => $psAccountsFacade->getPsAccountsPresenter()->present(),
         ]);
 
-        $boScriptVersion = $env->getEnv('CHECKOUT_BO_SDK_VERSION');
-        if (empty($boScriptVersion)) {
-            $majorModuleVersion = explode('.', $this->version)[0];
-            $boScriptVersion = "$majorModuleVersion.X.X";
+        $boSdkUrl = $env->getEnv('CHECKOUT_BO_SDK_URL');
+        if (substr($boSdkUrl, -3) !== '.js') {
+            $boSdkVersion = $env->getEnv('CHECKOUT_BO_SDK_VERSION');
+            if (empty($boSdkVersion)) {
+                $majorModuleVersion = explode('.', $this->version)[0];
+                $boSdkVersion = "$majorModuleVersion.X.X";
+            }
+
+            $boSdkUrl = $boSdkUrl . $boSdkVersion . '/sdk/ps_checkout-bo-sdk.umd.js';
         }
 
-        $this->context->controller->addJS(
-//            This value is composed by three parts
-//              - ENV_URL: https://storage.googleapis.com/checkout-sdk-cdn
-//              - ENV_VERSION: (if undefined -> (MAJOR_MODULE_VERSION).X.X (.X.X is a static string to have last version)
-//              - Fixed value: /sdk/ps_checkout-bo-sdk.umd.js
-            $env->getEnv('CHECKOUT_BO_SDK_URL') . $boScriptVersion . "/sdk/ps_checkout-bo-sdk.umd.js",
-            false
-        );
+
+        $this->context->controller->addJS($boSdkUrl, false);
 
         return $this->display(__FILE__, 'views/templates/admin/configuration.tpl');
     }
