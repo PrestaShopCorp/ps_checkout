@@ -99,7 +99,8 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
                 false === empty($this->payload['order']['shipping']['address']['admin_area_1']) ? $this->payload['order']['shipping']['address']['admin_area_1'] : '',
                 $this->payload['order']['shipping']['address']['admin_area_2'],
                 $this->payload['order']['shipping']['address']['country_code'],
-                false === empty($this->payload['order']['payer']['phone']) ? $this->payload['order']['payer']['phone']['phone_number']['national_number'] : ''
+                false === empty($this->payload['order']['payer']['phone']) ? $this->payload['order']['payer']['phone']['phone_number']['national_number'] : '',
+                $this->payload['orderID']
             );
         } catch (Exception $exception) {
             $this->handleExceptionSendingToSentry($exception);
@@ -237,7 +238,8 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $state,
         $city,
         $countryIsoCode,
-        $phone
+        $phone,
+        $idPaypalOrder
     ) {
         // check if country is available for delivery
         $psIsoCode = (new PaypalCountryCodeMatrice())->getPrestashopIsoCode($countryIsoCode);
@@ -255,7 +257,8 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $idState = $countryRepository->getStateId($state);
 
         // check if a paypal address already exist for the customer and not used
-        $paypalAddressId = $this->addressAlreadyExist('PayPal', $this->context->customer->id);
+        $paypalAddressAlias = 'Paypal '.$idPaypalOrder
+        $paypalAddressId = $this->addressAlreadyExist($paypalAddressAlias, $this->context->customer->id);
         $paypalAddress = new Address($paypalAddressId);
         $isPaypalValidAddressAndNotUsed = Validate::isLoadedObject($paypalAddress) && !$paypalAddress->isUsed();
 
@@ -265,7 +268,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             $address = new Address(); // otherwise create a new address
         }
 
-        $address->alias = 'PayPal';
+        $address->alias = $paypalAddressAlias;
         $address->id_customer = $this->context->customer->id;
         $address->firstname = $firstName;
         $address->lastname = $lastName;
