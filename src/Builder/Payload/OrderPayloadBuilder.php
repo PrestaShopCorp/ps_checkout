@@ -225,22 +225,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             ],
         ];
 
-        if (empty($node['shipping']['name']['full_name'])) {
-            throw new PsCheckoutException('shiping name is empty', PsCheckoutException::PSCHECKOUT_SHIPPING_NAME_INVALID);
-        }
-        if (empty($node['shipping']['address']['address_line_1'])) {
-            throw new PsCheckoutException('shipping address is empty', PsCheckoutException::PSCHECKOUT_SHIPPING_ADDRESS_INVALID);
-        }
-        if (empty($node['shipping']['address']['admin_area_2'])) {
-            throw new PsCheckoutException('shipping city is empty', PsCheckoutException::PSCHECKOUT_SHIPPING_CITY_INVALID);
-        }
-        if (!isset($this->country_names[$node['shipping']['address']['country_code']])) {
-            throw new PsCheckoutException(sprintf('shipping address country code -> %s is invalid', $node['shipping']['address']['country_code']), PsCheckoutException::PSCHECKOUT_SHIPPING_COUNTRY_CODE_INVALID);
-        }
+        $this->checkShippingNode($node);
 
-        if (empty($node['shipping']['address']['postal_code'])) {
-            throw new PsCheckoutException('shipping postal code is empty', PsCheckoutException::PSCHECKOUT_SHIPPING_POSTAL_CODE_INVALID);
-        }
         $this->getPayload()->addAndMergeItems($node);
     }
 
@@ -622,6 +608,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             throw new PsCheckoutException(sprintf('Passed merchant id %s is invalid', $node['payee']['merchant_id']), PsCheckoutException::PSCHECKOUT_MERCHANT_ID_INVALID);
         }
     }
+
     public function checkShippingNode($node)
     {
         if (empty($node['shipping']['name']['full_name'])) {
