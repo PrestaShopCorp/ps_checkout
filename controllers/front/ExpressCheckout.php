@@ -258,11 +258,13 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             $idState = $countryRepository->getStateId($state);
         }
 
-        // check if a paypal address already exist for the customer
-        $paypalAddress = $this->addressAlreadyExist('PayPal', $this->context->customer->id);
+        // check if a paypal address already exist for the customer and not used
+        $paypalAddressId = $this->addressAlreadyExist('PayPal', $this->context->customer->id);
+        $paypalAddress = new Address($paypalAddressId);
+        $isPaypalValidAddressAndNotUsed = Validate::isLoadedObject($paypalAddress) && !$paypalAddress->isUsed();
 
-        if ($paypalAddress) {
-            $address = new Address($paypalAddress); // if yes, update it with the new address
+        if ($isPaypalValidAddressAndNotUsed) {
+            $address = $paypalAddress; // if yes, update it with the new address
         } else {
             $address = new Address(); // otherwise create a new address
         }
