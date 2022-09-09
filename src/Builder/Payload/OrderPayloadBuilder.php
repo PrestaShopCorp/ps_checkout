@@ -72,6 +72,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      */
     private $isPatch;
 
+    const COUNTRY_NAMES_IO = 'http://country.io/names.json';
+
     /**
      * @param array $cart
      * @param bool $isPatch
@@ -80,8 +82,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     {
         $this->cart = $cart;
         $this->isPatch = $isPatch;
-        $this->country_names = json_decode(
-            file_get_contents('http://country.io/names.json'), true);
+        $this->country_names = (array) json_decode(
+            file_get_contents(self::COUNTRY_NAMES_IO, true));
 
         parent::__construct();
     }
@@ -193,19 +195,19 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
             $node['roundingConfig'] = $roundType . '-' . $roundMode;
         }
-
-        if ($node['intent'] != 'CAPTURE') {
-            throw new PsCheckoutException(sprintf('Passed intent %s is unsupported', $node['intent']), PsCheckoutException::PSCHECKOUT_INVALID_INTENT);
-        }
-        if (!in_array($node['amount']['currency_code'], $this->validCurrencies)) {
-            throw new PsCheckoutException(sprintf('Passed currency %s is invalid', $node['amount']['currency_code']), PsCheckoutException::PSCHECKOUT_CURRENCY_CODE_INVALID);
-        }
-        if ($node['amount']['value'] <= 0) {
-            throw new PsCheckoutException(sprintf('Passed amount %s is less or equal to zero', $node['amount']['value']), PsCheckoutException::PSCHECKOUT_AMOUNT_EMPTY);
-        }
-        if (empty($node['payee']['merchant_id'])) {
-            throw new PsCheckoutException(sprintf('Passed merchant id %s is invalid', $node['payee']['merchant_id']), PsCheckoutException::PSCHECKOUT_MERCHANT_ID_INVALID);
-        }
+        $this->checkBaseNode($node);
+//        if ($node['intent'] != 'CAPTURE') {
+//            throw new PsCheckoutException(sprintf('Passed intent %s is unsupported', $node['intent']), PsCheckoutException::PSCHECKOUT_INVALID_INTENT);
+//        }
+//        if (!in_array($node['amount']['currency_code'], $this->validCurrencies)) {
+//            throw new PsCheckoutException(sprintf('Passed currency %s is invalid', $node['amount']['currency_code']), PsCheckoutException::PSCHECKOUT_CURRENCY_CODE_INVALID);
+//        }
+//        if ($node['amount']['value'] <= 0) {
+//            throw new PsCheckoutException(sprintf('Passed amount %s is less or equal to zero', $node['amount']['value']), PsCheckoutException::PSCHECKOUT_AMOUNT_EMPTY);
+//        }
+//        if (empty($node['payee']['merchant_id'])) {
+//            throw new PsCheckoutException(sprintf('Passed merchant id %s is invalid', $node['payee']['merchant_id']), PsCheckoutException::PSCHECKOUT_MERCHANT_ID_INVALID);
+//        }
 
         $this->getPayload()->addAndMergeItems($node);
     }
@@ -247,6 +249,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         if (!isset($this->country_names[$node['shipping']['address']['country_code']])) {
             throw new PsCheckoutException(sprintf('shipping address country code -> %s is invalid', $node['shipping']['address']['country_code']), PsCheckoutException::PSCHECKOUT_SHIPPING_COUNTRY_CODE_INVALID);
         }
+
         if (empty($node['shipping']['address']['postal_code'])) {
             throw new PsCheckoutException('shipping postal code is empty', PsCheckoutException::PSCHECKOUT_SHIPPING_POSTAL_CODE_INVALID);
         }
@@ -614,5 +617,21 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     public function getExpressCheckout()
     {
         return $this->expressCheckout;
+    }
+
+    public function checkBaseNode($node)
+    {
+        if ($node['intent'] != 'CAPTURE') {
+            throw new PsCheckoutException(sprintf('Passed intent %s is unsupported', $node['intent']), PsCheckoutException::PSCHECKOUT_INVALID_INTENT);
+        }
+        if (!in_array($node['amount']['currency_code'], $this->validCurrencies)) {
+            throw new PsCheckoutException(sprintf('Passed currency %s is invalid', $node['amount']['currency_code']), PsCheckoutException::PSCHECKOUT_CURRENCY_CODE_INVALID);
+        }
+        if ($node['amount']['value'] <= 0) {
+            throw new PsCheckoutException(sprintf('Passed amount %s is less or equal to zero', $node['amount']['value']), PsCheckoutException::PSCHECKOUT_AMOUNT_EMPTY);
+        }
+        if (empty($node['payee']['merchant_id'])) {
+            throw new PsCheckoutException(sprintf('Passed merchant id %s is invalid', $node['payee']['merchant_id']), PsCheckoutException::PSCHECKOUT_MERCHANT_ID_INVALID);
+        }
     }
 }
