@@ -562,13 +562,16 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         if (empty($node['shipping']['address']['address_line_1'])) {
             throw new PsCheckoutException('shipping address is empty', PsCheckoutException::PSCHECKOUT_SHIPPING_ADDRESS_INVALID);
         }
-        if (empty($node['shipping']['address']['admin_area_2'])) {
+        $countries = new PayPalCountryProvider();
+        $country = $countries->getByCode($node['shipping']['address']['country_code']);
+        if (empty($node['shipping']['address']['admin_area_1']) && $country->isStateRequired()) {
+            throw new PsCheckoutException('shipping state is empty', PsCheckoutException::PSCHECKOUT_SHIPPING_CITY_INVALID);
+        }
+        if (empty($node['shipping']['address']['admin_area_2']) && $country->isCityRequired()) {
             throw new PsCheckoutException('shipping city is empty', PsCheckoutException::PSCHECKOUT_SHIPPING_CITY_INVALID);
         }
-        $countries = new PayPalCountryProvider();
-        $countries->getByCode($node['shipping']['address']['country_code']);
 
-        if (empty($node['shipping']['address']['postal_code'])) {
+        if (empty($node['shipping']['address']['postal_code']) && $country->isZipCodeRequired()) {
             throw new PsCheckoutException('shipping postal code is empty', PsCheckoutException::PSCHECKOUT_SHIPPING_POSTAL_CODE_INVALID);
         }
     }
@@ -591,9 +594,9 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             throw new PsCheckoutException('payer address city is empty', PsCheckoutException::PSCHECKOUT_PAYER_ADDRESS_CITY_INVALID);
         }
         $countries = new PayPalCountryProvider();
-        $countries->getByCode($node['payer']['address']['country_code']);
+        $country = $countries->getByCode($node['payer']['address']['country_code']);
 
-        if (empty($node['payer']['address']['postal_code'])) {
+        if (empty($node['payer']['address']['postal_code']) && $country->isCityRequired()) {
             throw new PsCheckoutException('payer address country code is empty', PsCheckoutException::PSCHECKOUT_PAYER_ADDRESS_POSTAL_CODE_INVALID);
         }
     }
