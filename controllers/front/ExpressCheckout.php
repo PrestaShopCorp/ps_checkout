@@ -273,8 +273,9 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $address->city = $city;
         $address->id_country = $idCountry;
         $address->phone = $phone;
+        $containsStates = Country::containsStates($idCountry);
 
-        if ($idState) {
+        if ($idState && $containsStates) {
             $address->id_state = $idState;
         }
 
