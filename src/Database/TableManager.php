@@ -80,16 +80,9 @@ class TableManager
             INDEX (`id_shop`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ') && $this->db->execute('
-            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_address_management` (
-            `firstname` varchar(20) NOT NULL,
-            `lastname` varchar(20) NOT NULL,
-            `address1` varchar(40) NOT NULL,
-            `address2` varchar(40) NOT NULL,
-            `city` varchar(40) NOT NULL,
-            `post_code` int(10) unsigned DEFAULT 0 NOT NULL,
-            `id_country` int(10) unsigned DEFAULT 0 NOT NULL,
-            `phone` varchar(20) NOT NULL,
-            `id_state` int(10) unsigned NOT NULL,
+            CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_address` (
+            `checksum` varchar(100) NOT NULL,
+            `alias` varchar(20) NOT NULL,
             `id_customer` int unsigned NOT NULL,
             PRIMARY KEY (`id_customer`),
             INDEX (`id_customer`)
