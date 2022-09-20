@@ -173,8 +173,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
     /**
      * Create a customer
      *
-     * @todo Extract factory in a Service.
-     *
      * @param string $email
      * @param string $firstName
      * @param string $lastName
@@ -182,6 +180,8 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
      * @return Customer
      *
      * @throws PsCheckoutException
+     *
+     * @todo Extract factory in a Service.
      */
     private function createCustomer($email, $firstName, $lastName)
     {
@@ -212,8 +212,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
     /**
      * Create address
      *
-     * @todo Extract factory in a Service.
-     *
      * @param string $firstName
      * @param string $lastName
      * @param string $address1
@@ -227,6 +225,8 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
      * @return bool
      *
      * @throws PsCheckoutException
+     *
+     * @todo Extract factory in a Service.
      */
     private function createAddress(
         $firstName,
@@ -263,7 +263,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             $address = new Address(); // otherwise create a new address
         }
 
-        $address->alias = 'PayPal';
+        $address->alias = $this->createAddressAlias();
         $address->id_customer = $this->context->customer->id;
         $address->firstname = $firstName;
         $address->lastname = $lastName;
@@ -276,6 +276,11 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
 
         if ($idState) {
             $address->id_state = $idState;
+        }
+        $checksum = $this->generateChecksum($address);
+
+        if ($this->retrieveChecksum($this->context->customer->id) != $checksum) {
+            $this->storeCheckSum($checksum);
         }
 
         if ($address->validateFields(false)) {
@@ -317,5 +322,40 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $query->where('deleted = 0');
 
         return (int) Db::getInstance()->getValue($query);
+    }
+
+    public function createAddressAlias()
+    {
+        return 'PayPal';
+    }
+
+    public function generateChecksum($addressObj)
+    {
+        $separator = '_';
+        if (!$addressObj->id) {
+            return sha1('No address set');
+        }
+
+        $address = (array) $addressObj;
+
+        $uniqId = '';
+
+        foreach ($address as $value) {
+            $uniqId .= $value . $separator;
+        }
+        $uniqId = rtrim($uniqId, $separator);
+
+        return sha1($uniqId);
+    }
+
+    public function retrieveCheckSum($checkSum)
+    {
+        // TODO: retrieve checksum from ps_checkout_address_management
+        return $checkSum;
+    }
+
+    public function storeCheckSum($checkSum)
+    {
+        // TODO: store checksum into ps_checkout_address_management
     }
 }
