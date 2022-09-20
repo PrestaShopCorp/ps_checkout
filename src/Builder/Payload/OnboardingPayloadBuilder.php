@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
 use PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter;
-use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
+use PrestaShop\Module\PrestashopCheckout\Builder\ModuleLink\ModuleLinkBuilder;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataMatrice;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 
@@ -41,14 +41,20 @@ class OnboardingPayloadBuilder extends Builder
     private $languageAdapter;
 
     /**
+     * @var ModuleLinkBuilder
+     */
+    private $moduleLinkBuilder;
+
+    /**
      * @param PsAccountRepository $psAccount
      * @param LanguageAdapter $languageAdapter
      */
-    public function __construct(PsAccountRepository $psAccount, LanguageAdapter $languageAdapter)
+    public function __construct(PsAccountRepository $psAccount, LanguageAdapter $languageAdapter, ModuleLinkBuilder $moduleLinkBuilder)
     {
         parent::__construct();
         $this->psAccount = $psAccount;
         $this->languageAdapter = $languageAdapter;
+        $this->moduleLinkBuilder = $moduleLinkBuilder;
     }
 
     /**
@@ -84,7 +90,7 @@ class OnboardingPayloadBuilder extends Builder
         $locale = $language['locale'];
 
         $node = [
-            'url' => $this->getCallBackUrl(),
+            'url' => $this->moduleLinkBuilder->getPaypalOnboardingCallBackUrl(),
             'preferred_language_code' => $locale,
             'primary_currency_code' => $this->getCurrencyIsoCode(),
         ];
@@ -163,16 +169,6 @@ class OnboardingPayloadBuilder extends Builder
         ]);
 
         $this->getPayload()->addAndMergeItems($node);
-    }
-
-    /**
-     * Generate the callback url used by the paypal button
-     *
-     * @return string callback link
-     */
-    private function getCallBackUrl()
-    {
-        return (new LinkAdapter())->getAdminLink('AdminPaypalOnboardingPrestashopCheckout');
     }
 
     /**
