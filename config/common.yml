@@ -178,12 +178,17 @@ services:
       - '@ps_checkout.funding_source.provider'
       - '@ps_checkout.module'
 
+  ps_checkout.builder.module_link:
+    class: 'PrestaShop\Module\PrestashopCheckout\Builder\ModuleLink\ModuleLinkBuilder'
+    public: true
+
   ps_checkout.builder.payload.onboarding:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder'
     public: true
     arguments:
       - '@ps_checkout.repository.prestashop.account'
       - '@ps_checkout.adapter.language'
+      - '@ps_checkout.builder.module_link'
 
   ps_checkout.updater.paypal.account:
     class: 'PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater'
@@ -223,6 +228,7 @@ services:
       - '@ps_checkout.translations.translations'
       - '@ps_checkout.context.shop'
       - '@ps_checkout.shop.provider'
+      - '@ps_checkout.builder.module_link'
 
   ps_checkout.adapter.language:
     class: 'PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter'

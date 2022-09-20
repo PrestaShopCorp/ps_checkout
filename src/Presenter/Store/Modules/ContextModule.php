@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
+use PrestaShop\Module\PrestashopCheckout\Builder\ModuleLink\ModuleLinkBuilder;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Faq\Faq;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep;
@@ -84,6 +85,11 @@ class ContextModule implements PresenterInterface
     private $shopProvider;
 
     /**
+     * @var ModuleLinkBuilder
+     */
+    private $moduleLinkBuilder;
+
+    /**
      * @param string $moduleName
      * @param string $moduleKey
      * @param PrestaShopContext $psContext
@@ -103,7 +109,8 @@ class ContextModule implements PresenterInterface
         ValueBanner $valueBanner,
         Translations $translations,
         ShopContext $shopContext,
-        ShopProvider $shopProvider
+        ShopProvider $shopProvider,
+        ModuleLinkBuilder $moduleLinkBuilder
     ) {
         $this->moduleName = $moduleName;
         $this->moduleKey = $moduleKey;
@@ -114,6 +121,7 @@ class ContextModule implements PresenterInterface
         $this->translations = $translations;
         $this->shopContext = $shopContext;
         $this->shopProvider = $shopProvider;
+        $this->moduleLinkBuilder = $moduleLinkBuilder;
     }
 
     /**
@@ -160,6 +168,7 @@ class ContextModule implements PresenterInterface
                 'submitIdeaLink' => $this->getSubmitIdeaLink(),
                 'orderTotal' => (new OrderRepository())->count($this->psContext->getShopId()),
                 'isCustomTheme' => $this->shopUsesCustomTheme(),
+                'callbackUrl' => $this->moduleLinkBuilder->getPaypalOnboardingCallBackUrl(),
             ],
         ];
     }
