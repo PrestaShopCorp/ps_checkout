@@ -79,7 +79,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         $this->cart = $cart;
         $this->isPatch = $isPatch;
 
-        /** @todo Refactor with dependency injection when possible */
+        /* @todo Refactor with dependency injection when possible */
         $this->validator = new OrderPayloadValidator();
 
         parent::__construct();

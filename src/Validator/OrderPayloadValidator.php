@@ -43,27 +43,6 @@ class OrderPayloadValidator
         $this->currencyPayPalProvider = new PayPalCurrencyProvider();
     }
 
-    public function checkNodeValues($node)
-    {
-        if ($node['intent'] != 'CAPTURE' && $node['intent'] != 'AUTHORIZE') {
-            throw new OrderValidationException(sprintf('Passed intent %s is unsupported', $node['intent']), OrderValidationException::PSCHECKOUT_INVALID_INTENT);
-        }
-
-        try {
-            $this->currencyPayPalProvider->getByCode($node['amount']['currency_code']);
-        } catch (PsCheckoutException $exception) {
-            throw new OrderValidationException($exception->getMessage(), $exception->getCode());
-        }
-
-        if ($node['amount']['value'] <= 0) {
-            throw new OrderValidationException(sprintf('Passed amount %s is less or equal to zero', $node['amount']['value']), OrderValidationException::PSCHECKOUT_AMOUNT_EMPTY);
-        }
-
-        if (empty($node['payee']['merchant_id'])) {
-            throw new OrderValidationException(sprintf('Passed merchant id %s is invalid', $node['payee']['merchant_id']), OrderValidationException::PSCHECKOUT_MERCHANT_ID_INVALID);
-        }
-    }
-
     public function checkBaseNode($node)
     {
         if ($node['intent'] != 'CAPTURE') {
@@ -71,8 +50,7 @@ class OrderPayloadValidator
         }
 
         try {
-            //$this->currencyPayPalProvider->getByCode($node['amount']['currency_code']);
-            $this->currencyPayPalProvider->getByCode('XX');
+            $this->currencyPayPalProvider->getByCode($node['amount']['currency_code']);
         } catch (PsCheckoutException $exception) {
             throw new OrderValidationException($exception->getMessage(), OrderValidationException::PSCHECKOUT_CURRENCY_CODE_INVALID, $exception);
         }
