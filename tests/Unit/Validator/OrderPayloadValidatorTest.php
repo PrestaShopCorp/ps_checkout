@@ -1,228 +1,205 @@
 <?php
 
-namespace Tests\Unit\Builder;
+namespace Tests\Unit\Validator;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Exception\OrderValidationException;
+use PrestaShop\Module\PrestashopCheckout\Validator\OrderPayloadValidator;
 
-class OrderPayloadBuilderTest extends TestCase
+class OrderPayloadValidatorTest extends TestCase
 {
-    public function testOrderPayloadBuilderIntentException()
+    /**
+     * @var OrderPayloadValidator
+     */
+    private $orderPayloadValidator;
+
+    protected function setUp()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage(sprintf('Passed intent %s is unsupported', 'FAILURE'));
-        $orderPayloadBuilder->checkBaseNode($this->nodeProvider('FAILURE'));
+        $this->orderPayloadValidator = new OrderPayloadValidator();
     }
 
-    public function testOrderPayloadBuilderCurrencyCodeException()
+    public function testOrderPayloadValidatorIntentException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage(sprintf('Passed currency %s is invalid', 'XXX'));
-        $orderPayloadBuilder->checkBaseNode($this->nodeProvider('XXX'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_INVALID_INTENT);
+        $this->orderPayloadValidator->checkBaseNode($this->nodeProvider('FAILURE'));
     }
 
-    public function testOrderPayloadBuilderAmountException()
+    public function testOrderPayloadValidatorCurrencyCodeException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage(sprintf('Passed amount %s is less or equal to zero', -1));
-        $orderPayloadBuilder->checkBaseNode($this->nodeProvider('-1'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_CURRENCY_CODE_INVALID);
+        $this->orderPayloadValidator->checkBaseNode($this->nodeProvider('XXX'));
     }
 
-    public function testOrderPayloadBuilderMerchantIdException()
+    public function testOrderPayloadValidatorAmountException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage(sprintf('Passed merchant id %s is invalid', ''));
-        $orderPayloadBuilder->checkBaseNode($this->nodeProvider(''));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_AMOUNT_EMPTY);
+        $this->orderPayloadValidator->checkBaseNode($this->nodeProvider('-1'));
     }
 
-    public function testOrderPayloadBuilderShippingNameException()
+    public function testOrderPayloadValidatorMerchantIdException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('shipping name is empty');
-        $orderPayloadBuilder->checkShippingNode($this->shippingNodeProvider('0'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_MERCHANT_ID_INVALID);
+        $this->orderPayloadValidator->checkBaseNode($this->nodeProvider(''));
     }
 
-    public function testOrderPayloadBuilderShippingAddressException()
+    public function testOrderPayloadValidatorShippingNameException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('shipping address is empty');
-        $orderPayloadBuilder->checkShippingNode($this->shippingNodeProvider('1'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_SHIPPING_NAME_INVALID);
+        $this->orderPayloadValidator->checkShippingNode($this->shippingNodeProvider('0'));
     }
 
-    public function testOrderPayloadBuilderShippingCityException()
+    public function testOrderPayloadValidatorShippingAddressException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('shipping city is empty');
-        $orderPayloadBuilder->checkShippingNode($this->shippingNodeProvider('2'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_SHIPPING_ADDRESS_INVALID);
+        $this->orderPayloadValidator->checkShippingNode($this->shippingNodeProvider('1'));
     }
 
-    public function testOrderPayloadBuilderShippingCountryCodeException()
+    public function testOrderPayloadValidatorShippingCityException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_SHIPPING_CITY_INVALID);
+        $this->orderPayloadValidator->checkShippingNode($this->shippingNodeProvider('2'));
+    }
+
+    public function testOrderPayloadValidatorShippingCountryCodeException()
+    {
+        $this->expectException(OrderValidationException::class);
         $node = $this->shippingNodeProvider('3');
         $code = $node['shipping']['address']['country_code'];
-        $this->expectExceptionMessage(sprintf('Unsupported country code, given %s', var_export($code, true)));
-        $orderPayloadBuilder->checkShippingNode($this->shippingNodeProvider('3'));
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_SHIPPING_COUNTRY_CODE_INVALID);
+        $this->orderPayloadValidator->checkShippingNode($this->shippingNodeProvider('3'));
     }
 
-    public function testOrderPayloadBuilderShippingPostalCodeException()
+    public function testOrderPayloadValidatorShippingPostalCodeException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('shipping postal code is empty');
-        $orderPayloadBuilder->checkShippingNode($this->shippingNodeProvider('4'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_SHIPPING_POSTAL_CODE_INVALID);
+        $this->orderPayloadValidator->checkShippingNode($this->shippingNodeProvider('4'));
     }
 
-    public function testOrderPayloadBuilderPayerGivenNameException()
+    public function testOrderPayloadValidatorPayerGivenNameException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('payer given name is empty');
-        $orderPayloadBuilder->checkPayerNode($this->payerNodeProvider('0'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_PAYER_GIVEN_NAME_INVALID);
+        $this->orderPayloadValidator->checkPayerNode($this->payerNodeProvider('0'));
     }
 
-    public function testOrderPayloadBuilderPayerSurnameException()
+    public function testOrderPayloadValidatorPayerSurnameException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('payer surname is empty');
-        $orderPayloadBuilder->checkPayerNode($this->payerNodeProvider('1'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_PAYER_SURNAME_INVALID);
+        $this->orderPayloadValidator->checkPayerNode($this->payerNodeProvider('1'));
     }
 
-    public function testOrderPayloadBuilderPayerEmailAddressException()
+    public function testOrderPayloadValidatorPayerEmailAddressException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('payer email_address is empty');
-        $orderPayloadBuilder->checkPayerNode($this->payerNodeProvider('2'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_PAYER_EMAIL_ADDRESS_INVALID);
+        $this->orderPayloadValidator->checkPayerNode($this->payerNodeProvider('2'));
     }
 
-    public function testOrderPayloadBuilderPayerStreetAddressException()
+    public function testOrderPayloadValidatorPayerStreetAddressException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('payer address street is empty');
-        $orderPayloadBuilder->checkPayerNode($this->payerNodeProvider('3'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_PAYER_ADDRESS_STREET_INVALID);
+        $this->orderPayloadValidator->checkPayerNode($this->payerNodeProvider('3'));
     }
 
-    public function testOrderPayloadBuilderPayerCityAddressException()
+    public function testOrderPayloadValidatorPayerCityAddressException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('payer address city is empty');
-        $orderPayloadBuilder->checkPayerNode($this->payerNodeProvider('4'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_PAYER_ADDRESS_CITY_INVALID);
+        $this->orderPayloadValidator->checkPayerNode($this->payerNodeProvider('4'));
     }
 
-    public function testOrderPayloadBuilderPayerCountryCodeException()
+    public function testOrderPayloadValidatorPayerCountryCodeException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $node = $this->payerNodeProvider('5');
-        $code = $node['payer']['address']['country_code'];
-        $this->expectExceptionMessage(sprintf('Unsupported country code, given %s', var_export($code, true)));
-        $orderPayloadBuilder->checkPayerNode($this->payerNodeProvider('5'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_PAYER_ADDRESS_COUNTRY_CODE_INVALID);
+        $this->orderPayloadValidator->checkPayerNode($this->payerNodeProvider('5'));
     }
 
-    public function testOrderPayloadBuilderPayerPostalCodeException()
+    public function testOrderPayloadValidatorPayerPostalCodeException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('payer address country code is empty');
-        $orderPayloadBuilder->checkPayerNode($this->payerNodeProvider('6'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_PAYER_ADDRESS_POSTAL_CODE_INVALID);
+        $this->orderPayloadValidator->checkPayerNode($this->payerNodeProvider('6'));
     }
 
-    public function testOrderPayloadBuilderApplicationContextBrandNameException()
+    public function testOrderPayloadValidatorApplicationContextBrandNameException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('application contex brand name is missed');
-        $orderPayloadBuilder->checkApplicationContextNode($this->applicationContextNodeProvider('0'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_APPLICATION_CONTEXT_BRAND_NAME_INVALID);
+        $this->orderPayloadValidator->checkApplicationContextNode($this->applicationContextNodeProvider('0'));
     }
 
-    public function testOrderPayloadBuilderApplicationContextShippingPreferenceException()
+    public function testOrderPayloadValidatorApplicationContextShippingPreferenceException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('application contex shipping preference is missed');
-        $orderPayloadBuilder->checkApplicationContextNode($this->applicationContextNodeProvider('1'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_APPLICATION_CONTEXT_SHIPPING_PREFERENCE_INVALID);
+        $this->orderPayloadValidator->checkApplicationContextNode($this->applicationContextNodeProvider('1'));
     }
 
-    public function testOrderPayloadBuilderAmountBreakDownItemNameException()
+    public function testOrderPayloadValidatorAmountBreakDownItemNameException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('item name is empty');
-        $orderPayloadBuilder->checkAmountBreakDownNode($this->amountBreakDownNodeProvider('0'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_ITEM_INVALID);
+        $this->orderPayloadValidator->checkAmountBreakDownNode($this->amountBreakDownNodeProvider('0'));
     }
 
-    public function testOrderPayloadBuilderAmountBreakDownItemNameSkuException()
+    public function testOrderPayloadValidatorAmountBreakDownItemNameSkuException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('item sku is empty');
-        $orderPayloadBuilder->checkAmountBreakDownNode($this->amountBreakDownNodeProvider('1'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_ITEM_ORDER_NOT_FOUND);
+        $this->orderPayloadValidator->checkAmountBreakDownNode($this->amountBreakDownNodeProvider('1'));
     }
 
-    public function testOrderPayloadBuilderAmountBreakDownItemUnitAmountCurrencyCodeException()
+    public function testOrderPayloadValidatorAmountBreakDownItemUnitAmountCurrencyCodeException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('item unit_amount currency code is not valid');
-        $orderPayloadBuilder->checkAmountBreakDownNode($this->amountBreakDownNodeProvider('2'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_ITEM_INVALID_AMOUNT_CURRENCY);
+        $this->orderPayloadValidator->checkAmountBreakDownNode($this->amountBreakDownNodeProvider('2'));
     }
 
-    public function testOrderPayloadBuilderAmountBreakDownItemUnitAmountValueException()
+    public function testOrderPayloadValidatorAmountBreakDownItemUnitAmountValueException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('item unit_amount value is empty');
-        $orderPayloadBuilder->checkAmountBreakDownNode($this->amountBreakDownNodeProvider('3'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_ITEM_INVALID_AMOUNT_VALUE);
+        $this->orderPayloadValidator->checkAmountBreakDownNode($this->amountBreakDownNodeProvider('3'));
     }
 
-    public function testOrderPayloadBuilderAmountBreakDownItemTaxCurrencyCodeException()
+    public function testOrderPayloadValidatorAmountBreakDownItemTaxCurrencyCodeException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('item tax currency code is empty');
-        $orderPayloadBuilder->checkAmountBreakDownNode($this->amountBreakDownNodeProvider('4'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_ITEM_INVALID_TAX_CURRENCY);
+        $this->orderPayloadValidator->checkAmountBreakDownNode($this->amountBreakDownNodeProvider('4'));
     }
 
-    public function testOrderPayloadBuilderAmountBreakDownItemTaxValueException()
+    public function testOrderPayloadValidatorAmountBreakDownItemTaxValueException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('item tax value is empty');
-        $orderPayloadBuilder->checkAmountBreakDownNode($this->amountBreakDownNodeProvider('5'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_ITEM_INVALID_TAX_VALUE);
+        $this->orderPayloadValidator->checkAmountBreakDownNode($this->amountBreakDownNodeProvider('5'));
     }
 
-    public function testOrderPayloadBuilderAmountBreakDownItemQuantityException()
+    public function testOrderPayloadValidatorAmountBreakDownItemQuantityException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('item quantity is empty');
-        $orderPayloadBuilder->checkAmountBreakDownNode($this->amountBreakDownNodeProvider('6'));
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_ITEM_INVALID_QUANTITY);
+        $this->orderPayloadValidator->checkAmountBreakDownNode($this->amountBreakDownNodeProvider('6'));
     }
 
-    public function testOrderPayloadBuilderAmountBreakDownItemCategoryException()
+    public function testOrderPayloadValidatorAmountBreakDownItemCategoryException()
     {
-        $orderPayloadBuilder = new OrderPayloadBuilder($this->cartProvider());
-        $this->expectException(PsCheckoutException::class);
-        $this->expectExceptionMessage('item category is empty');
-        $orderPayloadBuilder->checkAmountBreakDownNode($this->amountBreakDownNodeProvider('7'));
-    }
-
-    public function cartProvider()
-    {
-        return ['key' => 'value'];
+        $this->expectException(OrderValidationException::class);
+        $this->expectExceptionCode(OrderValidationException::PSCHECKOUT_ITEM_INVALID_CATEGORY);
+        $this->orderPayloadValidator->checkAmountBreakDownNode($this->amountBreakDownNodeProvider('7'));
     }
 
     public function nodeProvider($value)
@@ -305,7 +282,7 @@ class OrderPayloadBuilderTest extends TestCase
                     'address_line_2' => 'Taraku 3',
                     'admin_area_1' => 'Lithuania',
                     'admin_area_2' => 'Kaunas',
-                    'country_code' => 'LT',
+                    'country_code' => 'LU',
                     'postal_code' => '',
                 ],
             ]],

@@ -19,8 +19,10 @@
  */
 
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
+use PrestaShop\Module\PrestashopCheckout\Exception\OrderValidationException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
+use PrestaShop\Module\PrestashopCheckout\Order\Validation\OrderValidationError;
 
 /**
  * This controller receive ajax call on customer click on a payment button
@@ -91,6 +93,32 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
                 'body' => $bodyValues,
                 'exceptionCode' => null,
                 'exceptionMessage' => null,
+            ]);
+        } catch (OrderValidationException $exception) {
+            /* @var \Psr\Log\LoggerInterface logger */
+            $logger = $this->module->getService('ps_checkout.logger');
+            $logger->error(
+                sprintf(
+                    'CheckController - OrderValidationException %s : %s',
+                    $exception->getCode(),
+                    $exception->getMessage()
+                )
+            );
+
+            /** @var OrderValidationError $orderValidationError */
+            $orderValidationError = $this->module->getService('ps_checkout.order.validation.error');
+
+            $this->exitWithResponse([
+                'status' => false,
+                'httpCode' => 400,
+                'body' => [
+                    'error' => [
+                        'message' => $orderValidationError->getErrorMessage($exception->getCode()),
+                        'name' => '',
+                    ],
+                ],
+                'exceptionCode' => $exception->getCode(),
+                'exceptionMessage' => $exception->getMessage(),
             ]);
         } catch (Exception $exception) {
             $this->handleExceptionSendingToSentry($exception);

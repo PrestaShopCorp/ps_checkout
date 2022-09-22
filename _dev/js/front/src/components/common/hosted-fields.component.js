@@ -105,9 +105,7 @@ export class HostedFieldsComponent extends BaseComponent {
                 isHostedFields: true
               })
               .catch(error => {
-                this.data.notification.showError(
-                  `${error.message} ${error.name}`
-                );
+                throw new Error(error.message);
               })
         }
       )
@@ -163,6 +161,7 @@ export class HostedFieldsComponent extends BaseComponent {
               .catch(error => {
                 let message = error.message || '';
 
+                console.log(error);
                 if (!message) {
                   message = `Unknown error, code: ${error.code || 'none'}, description: ${error.description || 'none'}`;
                 }

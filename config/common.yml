@@ -383,4 +383,22 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalClientTokenProvider'
     public: true
 
+  ps_checkout.paypal.provider.country:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalCountryProvider'
+    public: true
 
+  ps_checkout.paypal.provider.currency:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalCurrencyProvider'
+    public: true
+
+  ps_checkout.translations.ordervalidation:
+    class: 'PrestaShop\Module\PrestashopCheckout\Translations\OrderValidationTranslation'
+    public: true
+    arguments:
+      - '@ps_checkout.module'
+
+  ps_checkout.order.validation.error:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\Validation\OrderValidationError'
+    public: true
+    arguments:
+      - '@ps_checkout.translations.ordervalidation'

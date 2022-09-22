@@ -231,8 +231,6 @@ class PayPalCountryProvider
         ['iso_code' => 'ZW', 'isCityRequired' => true, 'isStateRequired' => false, 'isZipCodeRequired' => false],
     ];
 
-//    const COUNTRIES = [['iso_code' => 'ZW'], ['iso_code' => 'ZM'], ['iso_code' => 'YE']];
-
     public function getSupportedCountryCode()
     {
         return array_column(self::COUNTRIES, 'iso_code');
