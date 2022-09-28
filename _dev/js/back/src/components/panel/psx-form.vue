@@ -496,10 +496,13 @@
           })
           .catch(error => {
             if (error.response) {
-              this.handleResponseError(error.response.data);
-            } else {
-              throw error;
+              let responseError = ['Unsupported error'];
+              if (Array.isArray(error.response.data.body)) {
+                responseError = error.response.data.body;
+              }
+              this.handleResponseError(responseError);
             }
+            throw error;
           });
       },
       handleResponseError(response) {

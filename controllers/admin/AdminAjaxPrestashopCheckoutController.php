@@ -227,34 +227,74 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessPsxSendData()
     {
-        $payload = json_decode(Tools::getValue('payload'), true);
-        $psxForm = (new PsxDataPrepare($payload))->prepareData();
+        $payload = Tools::getValue('payload');
+
+        if (empty($payload)) {
+            $this->exitWithResponse([
+                'status' => false,
+                'httpCode' => 400,
+                'body' => [
+                    'Payload is invalid',
+                ],
+            ]);
+        }
+
+        $data = json_decode($payload, true);
+        $jsonError = json_last_error();
+
+        if (null === $data && JSON_ERROR_NONE !== $jsonError) {
+            $this->exitWithResponse([
+                'status' => false,
+                'httpCode' => 400,
+                'body' => [
+                    $jsonError,
+                ],
+            ]);
+        }
+
+        $psxForm = (new PsxDataPrepare($data))->prepareData();
         $errors = (new PsxDataValidation())->validateData($psxForm);
 
         if (!empty($errors)) {
-            http_response_code(400);
-            $this->ajaxDie(json_encode($errors));
+            $this->exitWithResponse([
+                'status' => false,
+                'httpCode' => 400,
+                'body' => $errors,
+            ]);
         }
-
-        /** @var PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration $configuration */
-        $configuration = $this->module->getService('ps_checkout.configuration');
 
         // Save form in database
         if (false === $this->savePsxForm($psxForm)) {
-            http_response_code(500);
-            $this->ajaxDie(json_encode(['Cannot save in database.']));
+            $this->exitWithResponse([
+                'status' => false,
+                'httpCode' => 500,
+                'body' => [
+                    'Cannot save in database.',
+                ],
+            ]);
         }
 
         /** @var PrestaShop\Module\PrestashopCheckout\Api\Psx\Onboarding $psxOnboarding */
         $psxOnboarding = $this->module->getService('ps_checkout.api.psx.onboarding');
 
-        $response = $psxOnboarding->setOnboardingMerchant(array_filter($psxForm));
+        $result = $psxOnboarding->setOnboardingMerchant(array_filter($psxForm));
 
-        if (!$response['status'] && isset($response['httpCode'])) {
-            http_response_code((int) $response['httpCode']);
+        $response = [
+            'status' => $result['status'],
+            'httpCode' => $result['httpCode'],
+        ];
+
+        if (!empty($result['body'])) {
+            $response['body'] = $result['body'];
         }
 
-        $this->ajaxDie(json_encode($response));
+        if (!empty($result['exceptionMessage'])) {
+            $response['body'] = [
+                $result['exceptionMessage'],
+            ];
+        }
+
+        $this->exitWithResponse($response);
     }
 
     /**
@@ -977,5 +1017,28 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $payLaterConfiguration->$method(Tools::getValue('status') ? true : false);
 
         $this->ajaxDie(json_encode(true));
+    }
+
+    /**
+     * @param array{httpCode: int} $response
+     *
+     * @return void
+     */
+    private function exitWithResponse(array $response)
+    {
+        header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+        header('Content-Type: application/json;charset=utf-8');
+        header('X-Robots-Tag: noindex, nofollow');
+
+        if (isset($response['httpCode'])) {
+            http_response_code($response['httpCode']);
+            unset($response['httpCode']);
+        }
+
+        if (!empty($response)) {
+            echo json_encode($response, JSON_UNESCAPED_SLASHES);
+        }
+
+        exit;
     }
 }
