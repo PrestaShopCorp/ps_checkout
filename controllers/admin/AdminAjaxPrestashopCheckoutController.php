@@ -1004,7 +1004,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $this->ajaxDie(json_encode(true));
     }
 
-    private function ajaxProcessUpsertSecretToken()
+    public function ajaxProcessUpsertSecretToken()
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\Webhook\WebhookSecretTokenService $webhookSecretTokenService */
         $webhookSecretTokenService = $this->module->getService('ps_checkout.webhook.service.secret_token');
@@ -1015,9 +1015,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         try {
             $status = $webhookSecretTokenService->upsertSecretToken($secret);
-        } catch (\PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException $e) {
+        } catch (Exception $exception) {
             $status = false;
-            $response['errors'] = $e->getMessage();
+            $response['errors'] = $exception->getMessage();
         }
 
         http_response_code($status ? 204 : 500);
