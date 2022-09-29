@@ -392,16 +392,19 @@ services:
 
   ps_checkout.webhook.service.secret_token:
     class: 'PrestaShop\Module\PrestashopCheckout\Webhook\WebhookSecretTokenService'
+    public: true
     arguments:
       - '@ps_checkout.configuration'
 
   ps_checkout.webhook.handler.event.configuration_updated:
     class: 'PrestaShop\Module\PrestashopCheckout\Webhook\WebhookEventConfigurationUpdatedHandler'
+    public: true
     arguments:
       - '@ps_checkout.configuration'
 
   ps_checkout.webhook.handler:
     class: 'PrestaShop\Module\PrestashopCheckout\Webhook\WebhookHandler'
+    public: true
     arguments:
       - '@ps_checkout.webhook.service.secret_token'
       - ['@ps_checkout.webhook.handler.event.configuration_updated']
