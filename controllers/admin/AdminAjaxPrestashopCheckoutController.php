@@ -281,7 +281,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         $response = [
             'status' => $result['status'],
-            'httpCode' => $result['httpCode'],
+            'httpCode' => ($result['status'] == 'true') ? 200 : $result['httpCode'],
         ];
 
         if (!empty($result['body'])) {
