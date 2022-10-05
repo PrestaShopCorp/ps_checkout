@@ -593,13 +593,14 @@ class Ps_checkout extends PaymentModule
         $env = new \PrestaShop\Module\PrestashopCheckout\Environment\Env();
 
         // update merchant status only if the merchant onboarding is completed
-        if ($paypalAccount->onBoardingIsCompleted()
-            && $psAccount->onBoardingIsCompleted()) {
-            $paypalAccount = $paypalAccount->getOnboardedAccount();
-            /** @var \PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater $accountUpdater */
-            $accountUpdater = $this->getService('ps_checkout.updater.paypal.account');
-            $accountUpdater->update($paypalAccount);
-        }
+        // Commented out because merchant integrations got reset after every page refresh
+//        if ($paypalAccount->onBoardingIsCompleted()
+//            && $psAccount->onBoardingIsCompleted()) {
+//            $paypalAccount = $paypalAccount->getOnboardedAccount();
+//            /** @var \PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater $accountUpdater */
+//            $accountUpdater = $this->getService('ps_checkout.updater.paypal.account');
+//            $accountUpdater->update($paypalAccount);
+//        }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter $storePresenter */
         $storePresenter = $this->getService('ps_checkout.store.store');
