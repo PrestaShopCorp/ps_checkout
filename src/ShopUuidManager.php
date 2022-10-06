@@ -44,6 +44,7 @@ class ShopUuidManager
     }
 
     // TODO : Remove shop uuid generation
+
     /**
      * Used in hook ActionObjectShopAddAfter
      *
