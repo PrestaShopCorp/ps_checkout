@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -151,7 +152,8 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             $headers = getallheaders();
 
             // Ensure we will not return empty values if Request is FORWARDED
-            if (false === empty($headers['Shop-Id'])
+            if (
+                false === empty($headers['Shop-Id'])
                 && false === empty($headers['Merchant-Id'])
                 && false === empty($headers['Psx-Id'])
             ) {

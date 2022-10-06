@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -35,13 +36,14 @@ class ShopUuidManager
     public function getForShop($idShop)
     {
         return \Configuration::get(
-            'PS_CHECKOUT_SHOP_UUID_V4',
+            'PSX_UUID_V4',
             null,
             null,
             (int) $idShop
         );
     }
 
+    // TODO : Remove shop uuid generation
     /**
      * Used in hook ActionObjectShopAddAfter
      *
@@ -92,14 +94,16 @@ class ShopUuidManager
      */
     public function isSetForShop($idShop)
     {
-        if (true === \Shop::isFeatureActive()
-            && false === \Configuration::hasKey('PS_CHECKOUT_SHOP_UUID_V4', null, null, (int) $idShop)
+        if (
+            true === \Shop::isFeatureActive()
+            && false === \Configuration::hasKey('PSX_UUID_V4', null, null, (int) $idShop)
         ) {
             return false;
         }
 
-        if (false === \Shop::isFeatureActive()
-            && false === \Configuration::hasKey('PS_CHECKOUT_SHOP_UUID_V4')
+        if (
+            false === \Shop::isFeatureActive()
+            && false === \Configuration::hasKey('PSX_UUID_V4')
         ) {
             return false;
         }
