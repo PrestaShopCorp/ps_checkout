@@ -27,6 +27,10 @@ use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPresenter;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataPrepare;
 use PrestaShop\Module\PrestashopCheckout\PsxData\PsxDataValidation;
 use PrestaShop\Module\PrestashopCheckout\Settings\RoundingSettings;
+use PrestaShop\Module\PrestashopCheckout\Webhook\WebhookException;
+use PrestaShop\Module\PrestashopCheckout\Webhook\WebhookHandler;
+use PrestaShop\Module\PrestashopCheckout\Webhook\WebhookHelper;
+use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
@@ -1024,4 +1028,69 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $response['status'] = $status;
         $this->ajaxDie(json_encode($response));
     }
+
+    public function ajaxProcessWebhook()
+    {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService('ps_checkout.logger');
+        /** @var WebhookHelper $webhookHelper */
+        $webhookHelper = $this->module->getService('ps_checkout.webhook.helper');
+        /** @var WebhookHandler $webhookHandler */
+        $webhookHandler = $this->module->getService('ps_checkout.webhook.handler');
+
+        try {
+            if (empty($_SERVER['HTTP_WEBHOOK_SECRET']) || !$webhookHandler->authenticate($_SERVER['HTTP_WEBHOOK_SECRET'])) {
+                throw new WebhookException('Webhook secret mismatch', WebhookException::WEBHOOK_SECRET_MISMATCH);
+            }
+
+            $payload = $webhookHelper->getPayload(file_get_contents('php://input'));
+            $webhookHandler->handle($payload);
+
+            $logger->debug(
+                'Webhook handled successfully',
+                [
+                    'id' => $payload['id'],
+                    'createTime' => $payload['createTime'],
+                    'eventType' => $payload['eventType'],
+                    'eventVersion' => $payload['eventVersion'],
+                    'summary' => $payload['summary'],
+                    'resourceType' => $payload['resourceType'],
+                ]
+            );
+            $this->exitWithHttpCode(200);
+            exit;
+        } catch (WebhookException $exception) {
+            switch ($exception->getCode()) {
+                case WebhookException::WEBHOOK_SECRET_MISMATCH:
+                    $this->exitWithHttpCode(403);
+                    break;
+                default:
+                    $this->exitWithHttpCode(400);
+            }
+            exit;
+        } catch (Exception $exception) {
+            $logger->error(
+                'Webhook cannot be handled',
+                [
+                    'exception' => $exception,
+                ]
+            );
+            $this->exitWithHttpCode(500);
+            exit;
+        }
+    }
+
+    /**
+     * @param int $httpCode
+     * @return void
+     * @throws PrestaShopException
+     */
+    private function exitWithHttpCode($httpCode)
+    {
+        http_response_code($httpCode);
+        $this->ajaxDie(json_encode([
+            'httpCode' => $httpCode,
+        ]));
+    }
 }
+

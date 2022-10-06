@@ -409,6 +409,10 @@ services:
       - '@ps_checkout.webhook.service.secret_token'
       - ['@ps_checkout.webhook.handler.event.configuration_updated']
 
+  ps_checkout.webhook.helper:
+    class: 'PrestaShop\Module\PrestashopCheckout\Webhook\WebhookHelper'
+    public: true
+
   ps_accounts.installer:
     class: 'PrestaShop\PsAccountsInstaller\Installer\Installer'
     public: true

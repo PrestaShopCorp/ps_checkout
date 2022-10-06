@@ -19,7 +19,6 @@
  */
 
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Webhook\WebhookException;
 use PrestaShop\Module\PrestashopCheckout\Webhook\WebhookHandler;
 use Psr\Log\LoggerInterface;
@@ -46,6 +45,8 @@ class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
     {
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService('ps_checkout.logger');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Webhook\WebhookHelper $webhookHelper */
+        $webhookHelper = $this->module->getService('ps_checkout.webhook.helper');
 
         try {
             /** @var WebhookHandler $webhookHandler */
@@ -55,7 +56,7 @@ class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
                 throw new WebhookException('Webhook secret mismatch', WebhookException::WEBHOOK_SECRET_MISMATCH);
             }
 
-            $payload = $this->getPayload();
+            $payload = $webhookHelper->getPayload(file_get_contents('php://input'));
             $webhookHandler->handle($payload);
 
             $logger->debug(
@@ -98,57 +99,6 @@ class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
             ]);
             exit;
         }
-    }
-
-    /**
-     * @return array{id: string, createTime: string, eventType: string, eventVersion: string, summary: string, resourceType: string, resource: array}
-     *
-     * @throws PsCheckoutException
-     */
-    private function getPayload()
-    {
-        $content = file_get_contents('php://input');
-
-        if (empty($content)) {
-            throw new WebhookException('Body can\'t be empty', WebhookException::WEBHOOK_PAYLOAD_INVALID);
-        }
-
-        $payload = json_decode($content, true);
-        $jsonError = json_last_error();
-
-        if (null === $payload && JSON_ERROR_NONE !== $jsonError) {
-            throw new PsCheckoutException('Json decode last error: ' . $jsonError, WebhookException::WEBHOOK_PAYLOAD_INVALID);
-        }
-
-        if (empty($payload['id'])) {
-            throw new WebhookException('Webhook id is missing', WebhookException::WEBHOOK_PAYLOAD_EVENT_TYPE_MISSING);
-        }
-
-        if (empty($payload['createTime'])) {
-            throw new WebhookException('Webhook createTime is missing', WebhookException::WEBHOOK_PAYLOAD_EVENT_TYPE_MISSING);
-        }
-
-        if (empty($payload['eventType'])) {
-            throw new WebhookException('Webhook eventType is missing', WebhookException::WEBHOOK_PAYLOAD_EVENT_TYPE_MISSING);
-        }
-
-        if (empty($payload['eventVersion'])) {
-            throw new WebhookException('Webhook eventVersion is missing', WebhookException::WEBHOOK_PAYLOAD_EVENT_TYPE_MISSING);
-        }
-
-        if (empty($payload['summary'])) {
-            throw new WebhookException('Webhook summary is missing', WebhookException::WEBHOOK_PAYLOAD_EVENT_TYPE_MISSING);
-        }
-
-        if (empty($payload['resourceType'])) {
-            throw new WebhookException('Webhook resourceType is missing', WebhookException::WEBHOOK_PAYLOAD_EVENT_TYPE_MISSING);
-        }
-
-        if (empty($payload['resource'])) {
-            throw new WebhookException('Webhook resource is missing', WebhookException::WEBHOOK_PAYLOAD_RESOURCE_MISSING);
-        }
-
-        return $payload;
     }
 
     /**
