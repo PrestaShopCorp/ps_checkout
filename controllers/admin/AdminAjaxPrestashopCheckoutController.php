@@ -1082,7 +1082,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
     /**
      * @param int $httpCode
+     *
      * @return void
+     *
      * @throws PrestaShopException
      */
     private function exitWithHttpCode($httpCode)
@@ -1093,4 +1095,3 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         ]));
     }
 }
-
