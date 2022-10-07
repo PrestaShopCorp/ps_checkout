@@ -59,8 +59,8 @@ class PsAccountRepository
             $this->getIdToken(),
             $this->getRefreshToken(),
             $this->getEmail(),
-            $this->getLocalId(),
-            $this->getPsxForm()
+            $this->getLocalId()
+//            $this->getPsxForm()
         );
     }
 
@@ -73,11 +73,14 @@ class PsAccountRepository
      */
     public function psxFormIsCompleted()
     {
-        if (getenv('PLATEFORM') === 'PSREADY') { // if on ready, the user is already onboarded
-            return true;
-        }
-
-        return !empty($this->getPsxForm());
+        // TODO: Remove all code related to PSX form. Since it's not used any more we return true to be sure to not make any breaking changes
+        return true;
+//
+//        if (getenv('PLATEFORM') === 'PSREADY') { // if on ready, the user is already onboarded
+//            return true;
+//        }
+//
+//        return !empty($this->getPsxForm());
     }
 
     /**
@@ -88,7 +91,9 @@ class PsAccountRepository
      */
     public function onBoardingIsCompleted()
     {
-        return !empty($this->getIdToken()) && $this->psxFormIsCompleted();
+        return !empty($this->getIdToken());
+        // Commented out because psx form is no longer used
+        // && $this->psxFormIsCompleted();
     }
 
     /**
