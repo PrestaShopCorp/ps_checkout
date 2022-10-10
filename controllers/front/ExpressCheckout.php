@@ -86,7 +86,8 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             }
 
             $this->context->cookie->__set('paypalEmail', $this->payload['order']['payer']['email_address']);
-
+            
+            $this->resetContextCartAddresses();
             // Always 0 index because we are not using the paypal marketplace system
             // This index is only used in a marketplace context
             // @todo Extract factory in a Service.
@@ -317,5 +318,16 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $query->where('deleted = 0');
 
         return (int) Db::getInstance()->getValue($query);
+    }
+    
+    /**
+     * Reset current cart addresse
+     *
+     */
+    private function resetContextCartAddresses()
+    {
+        $this->context->cart->id_address_delivery = 0;
+        $this->context->cart->id_address_invoice = 0;
+        $this->context->cart->save();
     }
 }
