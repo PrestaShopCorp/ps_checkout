@@ -245,7 +245,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $idState = 0;
         $country = new Country((int) $idCountry);
 
-        if (!$country->active || Country::isNeedDniByCountryId($idCountry)) {
+        if (!Validate::isLoadedObject($country) || !$country->active || Country::isNeedDniByCountryId($idCountry)) {
             return false;
         }
 
