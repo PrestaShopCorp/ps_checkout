@@ -243,9 +243,9 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $psIsoCode = (new PaypalCountryCodeMatrice())->getPrestashopIsoCode($countryIsoCode);
         $idCountry = Country::getByIso($psIsoCode);
 
-        $country = new Country((int) $idCountry);
+        $country = new Country((int) $idCountry, null, (int) $this->context->shop->id);
 
-        if (!$country->active || Country::isNeedDniByCountryId($idCountry)) {
+        if (!Validate::isLoadedObject($country) || !$country->active || Country::isNeedDniByCountryId($idCountry)) {
             return false;
         }
 
