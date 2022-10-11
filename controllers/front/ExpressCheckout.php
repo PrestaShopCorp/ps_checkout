@@ -244,8 +244,9 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $idCountry = Country::getByIso($psIsoCode);
         $idState = 0;
         $country = new Country((int) $idCountry);
+        $isCountryAssociatedToShop = (bool) $country->isAssociatedToShop((int) $this->context->shop->id);
 
-        if (!Validate::isLoadedObject($country) || !$country->active || Country::isNeedDniByCountryId($idCountry)) {
+        if (!$isCountryAssociatedToShop || !$country->active || Country::isNeedDniByCountryId($idCountry)) {
             return false;
         }
 
