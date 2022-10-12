@@ -262,18 +262,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessRefreshPaypalAccountStatus()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
-        $paypalAccount = $this->module->getService('ps_checkout.repository.paypal.account');
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
-        $psAccount = $this->module->getService('ps_checkout.repository.prestashop.account');
-
-        // update merchant status only if the merchant onBoarding is completed
-        if ($paypalAccount->onBoardingIsCompleted() && $psAccount->onBoardingIsCompleted()) {
-            /** @var \PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater $updater */
-            $updater = $this->module->getService('ps_checkout.updater.paypal.account');
-            $updater->update($paypalAccount->getOnboardedAccount());
-        }
-
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule $paypalModule */
         $paypalModule = $this->module->getService('ps_checkout.store.module.paypal');
         $this->ajaxDie(
