@@ -1012,4 +1012,58 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $response['status'] = $status;
         $this->ajaxDie(json_encode($response));
     }
+
+    public function ajaxProcessCheckConfiguration()
+    {
+        $response = [];
+
+        $query = new DbQuery();
+        $query->select('name, value, date_add, date_upd');
+        $query->from('configuration');
+        $query->where('name LIKE "PS_CHECKOUT_%"');
+
+        /** @var int|null $shopId When multishop is disabled, it returns null, so we don't have to restrict results by shop */
+        $shopId = Shop::getContextShopID(true);
+
+        // When ShopId is not NULL, we have to retrieve global values with id_shop = NULL and shop values with id_shop = ShopId
+        if ($shopId) {
+            $query->where('id_shop IS NULL OR id_shop = ' . (int) $shopId);
+        }
+
+        $configurations = Db::getInstance()->executeS($query);
+
+        $response['status'] = !empty($configurations);
+
+        foreach ($configurations as $configuration) {
+            $response['configuration'][] = [
+                'name' => $configuration['name'],
+                'value' => !empty($configuration['value']),
+            ];
+        }
+
+        $this->exitWithResponse($response);
+    }
+
+    /**
+     * @param array $response
+     *
+     * @return void
+     */
+    private function exitWithResponse(array $response)
+    {
+        header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+        header('Content-Type: application/json;charset=utf-8');
+        header('X-Robots-Tag: noindex, nofollow');
+
+        if (isset($response['httpCode'])) {
+            http_response_code($response['httpCode']);
+            unset($response['httpCode']);
+        }
+
+        if (!empty($response)) {
+            echo json_encode($response);
+        }
+
+        exit;
+    }
 }
