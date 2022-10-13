@@ -137,6 +137,7 @@ class ContextModule implements PresenterInterface
         return [
             'context' => [
                 'moduleVersion' => \Ps_checkout::VERSION,
+                'moduleIsEnabled' => (bool) \Module::isEnabled('ps_checkout'),
                 'psVersion' => _PS_VERSION_,
                 'phpVersion' => phpversion(),
                 'shopIs17' => $this->shopContext->isShop17(),
