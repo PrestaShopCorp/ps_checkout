@@ -82,10 +82,6 @@ class WebhookEventConfigurationUpdatedHandler implements WebhookEventHandlerInte
             if (empty($configuration['name']) || 0 !== strpos($configuration['name'], 'PS_CHECKOUT_')) {
                 throw new WebhookException('Configuration name is invalid', WebhookException::WEBHOOK_PAYLOAD_CONFIGURATION_NAME_INVALID);
             }
-
-            if (empty($configuration['value'])) {
-                throw new WebhookException('Configuration value is invalid', WebhookException::WEBHOOK_PAYLOAD_CONFIGURATION_VALUE_INVALID);
-            }
         }
     }
 }
