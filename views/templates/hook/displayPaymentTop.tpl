@@ -58,7 +58,7 @@
         const paymentOptionContainer = document.getElementById(paymentOption.id + '-container');
         const paymentOptionName = paymentOption.getAttribute('data-module-name');
 
-        if (-1 !== paymentOptionName.search('ps_checkout')) {
+        if (!paymentOptionContainer.classList.contains('ps_checkout-payment-option') && -1 !== paymentOptionName.search('ps_checkout')) {
           paymentOptionContainer.style.display = 'none';
         }
       });
