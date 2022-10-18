@@ -711,6 +711,7 @@ class Ps_checkout extends PaymentModule
         $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout;
 
         $this->context->smarty->assign([
+            'cancelTranslatedText' => $this->l('Choose another payment method'),
             'is17' => $shopContext->isShop17(),
             'isExpressCheckout' => $isExpressCheckout,
             'modulePath' => $this->getPathUri(),
@@ -1432,6 +1433,7 @@ class Ps_checkout extends PaymentModule
         $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout;
 
         $this->context->smarty->assign([
+            'cancelTranslatedText' => $this->l('Choose another payment method'),
             'is17' => $shopContext->isShop17(),
             'isExpressCheckout' => $isExpressCheckout,
             'isOnePageCheckout16' => !$shopContext->isShop17() && (bool) Configuration::get('PS_ORDER_PROCESS_TYPE'),

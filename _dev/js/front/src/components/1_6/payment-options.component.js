@@ -136,6 +136,25 @@ export class PaymentOptionsComponent extends BaseComponent {
     });
   }
 
+  renderExpressCheckoutCancelButton() {
+    const cancelButton = document.querySelector('#ps_checkout-cancel');
+    cancelButton.addEventListener('click', (event) => {
+      this.psCheckoutApi.postCancelOrder(
+        {
+          orderID: this.payPalService.getOrderId(),
+          fundingSource: this.payPalService.getFundingSource(),
+          isExpressCheckout: true
+        })
+        .then(() => {
+          location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+          this.data.notification.showError(error.message);
+        });
+    });
+  }
+
   render() {
     this.data.conditions = this.app.root.children.conditionsCheckbox;
     this.data.notification = this.app.root.children.notification;
@@ -147,6 +166,7 @@ export class PaymentOptionsComponent extends BaseComponent {
     } else {
       this.data.HTMLElement.style.display = 'none';
       this.renderExpressCheckoutPaymentButton();
+      this.renderExpressCheckoutCancelButton();
     }
 
     return this;

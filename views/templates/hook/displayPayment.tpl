@@ -32,12 +32,13 @@
 
 <section id="ps_checkout-displayPayment">
   {if !$is17 && $isExpressCheckout}
-  <div class="express-checkout-block">
+  <div id="ps_checkout-block" class="express-checkout-block">
     <img src="{$paypalLogoPath|escape:'htmlall':'UTF-8'}" class="express-checkout-img" alt="PayPal">
     <p class="express-checkout-label">
       {$translatedText|escape:'htmlall':'UTF-8'}
     </p>
     <div id="button-paypal" class="ps_checkout-express-checkout-button">
+      <button id="ps_checkout-cancel" class="button btn" type="button">{$cancelTranslatedText|escape:'htmlall':'UTF-8'}</button>
       <button id="ps_checkout-express-checkout-submit-button" class="button btn btn-default button-medium" type="button" disabled>
         <span>{l s='I confirm my order' mod='ps_checkout'}<i class="icon-chevron-right right"></i></span>
       </button>
