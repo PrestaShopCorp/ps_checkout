@@ -127,7 +127,13 @@ export class PaymentOptionsComponent extends BaseComponent {
 
   renderExpressCheckoutCancelButton() {
     const cancelButton = document.querySelector('#ps_checkout-cancel');
-    cancelButton.addEventListener('click', (event) => {
+
+    if (!cancelButton) {
+      console.error('HTMLElement selector #ps_checkout-cancel not found.');
+      return;
+    }
+
+    cancelButton.addEventListener('click', () => {
       this.psCheckoutApi.postCancelOrder(
         {
           orderID: this.payPalService.getOrderId(),
@@ -137,11 +143,16 @@ export class PaymentOptionsComponent extends BaseComponent {
         .then(() => {
           this.renderPaymentOptionItems();
           this.renderPaymentOptionRadios();
-          document.querySelector('#ps_checkout-block').style.display = 'none';
-          document.querySelector('.payment-options').style.display = 'block';
+          const expressCheckoutContainer = document.querySelector('.express-checkout-block');
+
+          if (expressCheckoutContainer) {
+            expressCheckoutContainer.style.display = 'none';
+          }
+
+          this.data.HTMLElementPaymentOptionsContainer.style.display = 'block';
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           this.data.notification.showError(error.message);
         });
     });

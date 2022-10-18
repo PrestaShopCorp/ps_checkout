@@ -138,7 +138,13 @@ export class PaymentOptionsComponent extends BaseComponent {
 
   renderExpressCheckoutCancelButton() {
     const cancelButton = document.querySelector('#ps_checkout-cancel');
-    cancelButton.addEventListener('click', (event) => {
+
+    if (!cancelButton) {
+      console.error('HTMLElement selector #ps_checkout-cancel not found.');
+      return;
+    }
+
+    cancelButton.addEventListener('click', () => {
       this.psCheckoutApi.postCancelOrder(
         {
           orderID: this.payPalService.getOrderId(),
@@ -149,7 +155,7 @@ export class PaymentOptionsComponent extends BaseComponent {
           location.reload();
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           this.data.notification.showError(error.message);
         });
     });
