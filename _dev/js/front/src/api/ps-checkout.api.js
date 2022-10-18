@@ -190,33 +190,30 @@ export class PsCheckoutApi extends BaseClass {
         throw new Error('Invalid response');
       })
       .then((response) => {
-        if (response.body && 'COMPLETED' === response.body.paypal_status) {
-          const {
-            id_cart,
-            id_module,
-            id_order,
-            secure_key,
-            paypal_order,
-            paypal_transaction
-          } = response.body;
+        const {
+          id_cart,
+          id_module,
+          id_order,
+          secure_key,
+          paypal_order,
+          paypal_status,
+          paypal_transaction
+        } = response.body || {};
 
-          const confirmationUrl = new URL(this.config.confirmationUrl);
-          confirmationUrl.searchParams.append('id_cart', id_cart);
-          confirmationUrl.searchParams.append('id_module', id_module);
-          confirmationUrl.searchParams.append('id_order', id_order);
-          confirmationUrl.searchParams.append('key', secure_key);
-          confirmationUrl.searchParams.append('paypal_order', paypal_order);
-          confirmationUrl.searchParams.append(
-            'paypal_transaction',
-            paypal_transaction
-          );
+        const confirmationUrl = new URL(this.config.confirmationUrl);
+        confirmationUrl.searchParams.append('id_cart', id_cart);
+        confirmationUrl.searchParams.append('id_module', id_module);
+        confirmationUrl.searchParams.append('id_order', id_order);
+        confirmationUrl.searchParams.append('key', secure_key);
+        confirmationUrl.searchParams.append('paypal_order', paypal_order);
+        confirmationUrl.searchParams.append('paypal_status', paypal_status);
+        confirmationUrl.searchParams.append('fundingSource', data.fundingSource);
+        confirmationUrl.searchParams.append(
+          'paypal_transaction',
+          paypal_transaction
+        );
 
-          window.location.href = confirmationUrl.toString();
-        }
-
-        if (response.error && 'INSTRUMENT_DECLINED' === response.error) {
-          return actions.restart();
-        }
+        window.location.href = confirmationUrl.toString();
       });
   }
 
