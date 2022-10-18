@@ -69,10 +69,15 @@ export class PaymentOptionComponent extends BaseComponent {
       this.$(translationKey) !== undefined
         ? this.$(translationKey)
         : this.$('funding-source.name.default');
-
-    return Array.prototype.slice
+    let element = Array.prototype.slice
       .call(this.data.HTMLElementContainer.querySelectorAll('*'))
       .find(item => item.innerHTML.trim() === label.trim());
+
+    if (!element) {
+      console.error('HTMLElement label "' + label.trim() + '" not found.');
+    }
+
+    return element;
   }
 
   getSmartButton() {
@@ -93,6 +98,10 @@ export class PaymentOptionComponent extends BaseComponent {
   }
 
   renderMark() {
+    if (!this.data.HTMLElementLabel) {
+      return;
+    }
+
     if (!this.data.HTMLElementMarker) {
       this.data.HTMLElementMarker = document.createElement('div');
       this.data.HTMLElementMarker.style.display = 'inline-block';
@@ -112,6 +121,11 @@ export class PaymentOptionComponent extends BaseComponent {
   }
 
   render() {
+    if (this.data.HTMLElementContainer.classList.contains('ps_checkout-payment-option')) {
+      // Render already done
+      return;
+    }
+
     this.renderWrapper();
     this.renderMark();
 
