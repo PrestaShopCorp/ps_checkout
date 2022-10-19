@@ -157,8 +157,8 @@ class OrderStates
             'SELECT id_order_state
             FROM  `' . _DB_PREFIX_ . self::ORDER_STATE_LANG_TABLE . '`
             WHERE
-                id_order_state = ' . $orderStateId . '
-                AND id_lang = ' . $langId
+                id_order_state = ' . (int) $orderStateId . '
+                AND id_lang = ' . (int) $langId
         );
     }
 
