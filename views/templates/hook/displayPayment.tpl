@@ -32,7 +32,7 @@
 
 <section id="ps_checkout-displayPayment">
   {if !$is17 && $isExpressCheckout}
-  <div id="ps_checkout-block" class="express-checkout-block">
+  <div class="express-checkout-block">
     <img src="{$paypalLogoPath|escape:'htmlall':'UTF-8'}" class="express-checkout-img" alt="PayPal">
     <p class="express-checkout-label">
       {$translatedText|escape:'htmlall':'UTF-8'}
