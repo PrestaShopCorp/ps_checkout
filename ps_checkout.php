@@ -1358,6 +1358,14 @@ class Ps_checkout extends PaymentModule
         /** @var Shop $shop */
         $shop = $params['object'];
 
+        $toggleShopConfigurationCommandHandler = new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommandHandler();
+        $toggleShopConfigurationCommandHandler->handle(
+            new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommand(
+                (int) Configuration::get('PS_SHOP_DEFAULT'),
+                (bool) Shop::isFeatureActive()
+            )
+        );
+
         (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForShop((int) $shop->id);
         $this->installConfiguration();
         $this->addCheckboxCarrierRestrictionsForModule([(int) $shop->id]);
@@ -1795,5 +1803,20 @@ class Ps_checkout extends PaymentModule
         }
 
         return $defaultCountry ? strtoupper($defaultCountry) : '';
+    }
+
+    /**
+     * @param array{cookie: Cookie, cart: Cart, altern: int, object: Shop} $params
+     * @return void
+     */
+    public function hookActionObjectShopDeleteAfter(array $params)
+    {
+        $toggleShopConfigurationCommandHandler = new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommandHandler();
+        $toggleShopConfigurationCommandHandler->handle(
+            new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommand(
+                (int) Configuration::get('PS_SHOP_DEFAULT'),
+                (bool) Shop::isFeatureActive()
+            )
+        );
     }
 }
