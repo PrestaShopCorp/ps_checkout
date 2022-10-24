@@ -1026,6 +1026,9 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
         $payLaterConfiguration = $this->getService('ps_checkout.pay_later.configuration');
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+
         $fundingSourcesSorted = [];
         $payWithTranslations = [];
         $isCardAvailable = false;
@@ -1118,6 +1121,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'PayLaterOrderPageButtonEnabled' => $payLaterConfiguration->isOrderPageButtonActive() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
             $this->name . '3dsEnabled' => $payPalConfiguration->is3dSecureEnabled(),
             $this->name . 'CspNonce' => $payPalConfiguration->getCSPNonce(),
+            $this->name . 'PartnerAttributionId' => $shopContext->getBnCode(),
             $this->name . 'CartProductCount' => $cartProductCount,
             $this->name . 'FundingSourcesSorted' => $fundingSourcesSorted,
             $this->name . 'PayWithTranslations' => $payWithTranslations,

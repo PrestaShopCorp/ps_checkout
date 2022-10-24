@@ -48,6 +48,10 @@ export class PayPalSdkComponent extends BaseComponent {
       script.setAttribute('data-order-id', this.config.orderId);
     }
 
+    if (this.config.partnerAttributionId) {
+      script.setAttribute('data-partner-attribution-id', this.config.partnerAttributionId);
+    }
+
     script.setAttribute('data-client-token', this.props.token);
 
     document.head.appendChild(script);
