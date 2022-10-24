@@ -1807,6 +1807,7 @@ class Ps_checkout extends PaymentModule
 
     /**
      * @param array{cookie: Cookie, cart: Cart, altern: int, object: Shop} $params
+     *
      * @return void
      */
     public function hookActionObjectShopDeleteAfter(array $params)
