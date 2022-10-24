@@ -39,6 +39,7 @@ class Ps_checkout extends PaymentModule
         'displayAdminOrderLeft',
         'displayAdminOrderMainBottom',
         'actionObjectShopAddAfter',
+        'actionObjectShopDeleteAfter',
         'actionAdminControllerSetMedia',
         'displayPaymentTop',
         'displayPaymentByBinaries',
