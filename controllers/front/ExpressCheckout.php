@@ -189,6 +189,8 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $customer->email = $email;
         $customer->firstname = $firstName;
         $customer->lastname = $lastName;
+        $customer->is_guest = 1;
+        $customer->id_default_group = (int) Configuration::get('PS_GUEST_GROUP');
 
         if (class_exists('PrestaShop\PrestaShop\Core\Crypto\Hashing')) {
             $crypto = new PrestaShop\PrestaShop\Core\Crypto\Hashing();
