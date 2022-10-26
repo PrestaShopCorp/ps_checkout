@@ -50,6 +50,7 @@ class DatePresenter
     public function present()
     {
         $this->date->setTimezone($this->getTimeZone());
+
         return $this->date->format($this->format);
     }
 
