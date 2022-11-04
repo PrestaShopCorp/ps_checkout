@@ -60,15 +60,15 @@ class CheckoutAddress
     public $id_state;
 
     /**
-     * @param $firstname
-     * @param $lastname
-     * @param $address1
-     * @param $address2
-     * @param $postcode
-     * @param $city
-     * @param $id_country
-     * @param $phone
-     * @param $id_state
+     * @param string $firstname
+     * @param string $lastname
+     * @param string $address1
+     * @param string $address2
+     * @param string $postcode
+     * @param string $city
+     * @param string $id_country
+     * @param string $phone
+     * @param string $id_state
      */
     public function __construct($firstname,
                                 $lastname,

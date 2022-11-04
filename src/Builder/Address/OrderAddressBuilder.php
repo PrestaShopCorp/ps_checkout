@@ -22,6 +22,11 @@ namespace PrestaShop\Module\PrestashopCheckout\Builder\Address;
 
 class OrderAddressBuilder extends AddressBuilder
 {
+    /**
+     * @var CheckoutAddress
+     */
+    public $address;
+
     public function __construct(CheckoutAddress $address)
     {
         $this->address = $address;
