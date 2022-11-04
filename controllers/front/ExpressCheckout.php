@@ -18,6 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
+use PrestaShop\Module\PrestashopCheckout\Builder\Address\OrderAddressBuilder;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
@@ -263,7 +264,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             $address = new Address(); // otherwise create a new address
         }
 
-        $address->alias = $this->createAddressAlias();
+        $address->alias = 'Paypal';
         $address->id_customer = $this->context->customer->id;
         $address->firstname = $firstName;
         $address->lastname = $lastName;
@@ -277,15 +278,17 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         if ($idState) {
             $address->id_state = $idState;
         }
-        $checksum = $this->generateChecksum($address);
 
-        if ($this->retrieveChecksum($this->context->customer->id) != $checksum) {
-            $this->storeCheckSum($checksum);
-        }
+//        $addressBuilder = new OrderAddressBuilder();
+//
+//
+//        if ($this->retrieveChecksum($this->context->customer->id) != $checksum) {
+//            $this->storeCheckSum($address->id_customer, $address->alias, $checksum);
+//        }
 
-        if ($address->validateFields(false)) {
-            return false;
-        }
+//        if ($address->validateFields(false)) {
+//            return false;
+//        }
 
         try {
             $address->save();
@@ -322,40 +325,5 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $query->where('deleted = 0');
 
         return (int) Db::getInstance()->getValue($query);
-    }
-
-    public function createAddressAlias()
-    {
-        return 'PayPal';
-    }
-
-    public function generateChecksum($addressObj)
-    {
-        $separator = '_';
-        if (!$addressObj->id) {
-            return sha1('No address set');
-        }
-
-        $address = (array) $addressObj;
-
-        $uniqId = '';
-
-        foreach ($address as $value) {
-            $uniqId .= $value . $separator;
-        }
-        $uniqId = rtrim($uniqId, $separator);
-
-        return sha1($uniqId);
-    }
-
-    public function retrieveCheckSum($checkSum)
-    {
-        // TODO: retrieve checksum from ps_checkout_address_management
-        return $checkSum;
-    }
-
-    public function storeCheckSum($checkSum)
-    {
-        // TODO: store checksum into ps_checkout_address_management
     }
 }
