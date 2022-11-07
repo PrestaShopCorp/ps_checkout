@@ -170,6 +170,10 @@ class ContextModule implements PresenterInterface
                 'orderTotal' => (new OrderRepository())->count($this->psContext->getShopId()),
                 'isCustomTheme' => $this->shopUsesCustomTheme(),
                 'callbackUrl' => $this->moduleLinkBuilder->getPaypalOnboardingCallBackUrl(),
+                'dependencies' => [
+                    'ps_eventbus' => \Module::isEnabled('ps_eventbus'),
+                    'ps_accounts' => \Module::isEnabled('ps_accounts'),
+                ],
             ],
         ];
     }
