@@ -47,6 +47,25 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     protected $json = true;
 
     /**
+     * {@inheritDoc}
+     */
+    public function postProcess()
+    {
+        $shopIdRequested = (int) Tools::getValue('id_shop');
+        $currentShopId = (int) Shop::getContextShopID();
+
+        if ($shopIdRequested && $shopIdRequested !== $currentShopId) {
+            $shopRequested = new Shop($shopIdRequested);
+            if (Validate::isLoadedObject($shopRequested)) {
+                Shop::setContext(Shop::CONTEXT_SHOP, $shopIdRequested);
+                $this->context->shop = $shopRequested;
+            }
+        }
+
+        return parent::postProcess();
+    }
+
+    /**
      * AJAX: Update payment method order
      */
     public function ajaxProcessUpdatePaymentMethodsOrder()
