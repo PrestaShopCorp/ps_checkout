@@ -17,5 +17,5 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  *}
 {foreach $contentToPrefetch as $content}
-  <link rel="prefetch" href="{$content.link}" as="{$content.type}">
+  <link rel="prefetch" href="{$content.link|escape:'javascript':'UTF-8'}" as="{$content.type}">
 {/foreach}
