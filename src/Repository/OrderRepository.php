@@ -43,7 +43,7 @@ class OrderRepository
             INNER JOIN `' . _DB_PREFIX_ . 'customer` c ON (o.id_customer = c.id_customer)
             WHERE o.module = "ps_checkout"
             AND o.id_shop = ' . (int) $shopId . '
-            AND o.current_state IN (' . implode(',', array_keys($idStates)) . ')
+            AND o.current_state IN (' . implode(', ', array_map('intval', $idStates)) . ')
             ORDER BY o.date_add DESC
             LIMIT 1000
         ');

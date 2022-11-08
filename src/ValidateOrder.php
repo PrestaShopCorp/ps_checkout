@@ -199,7 +199,7 @@ class ValidateOrder
                 $module->validateOrder(
                     $payload['cartId'],
                     (int) $this->getOrderState($psCheckoutCart->paypal_funding),
-                    $payload['amount'],
+                    0,
                     $fundingSourceTranslationProvider->getPaymentMethodName($psCheckoutCart->paypal_funding),
                     null,
                     [
