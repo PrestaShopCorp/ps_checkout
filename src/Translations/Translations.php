@@ -222,6 +222,7 @@ class Translations
                         'title' => $this->module->l('PayPal account', 'translations'),
                         'activate' => $this->module->l('Log in or sign up to PayPal', 'translations'),
                         'isLinked' => $this->module->l('Your PrestaShop account is linked to your PayPal account', 'translations'),
+                        'merchantId' => $this->module->l('(merchant ID {0})', 'translations'),
                         'useAnotherAccount' => $this->module->l('Use another account', 'translations'),
                         'linkToPaypal' => $this->module->l('Link to PayPal account', 'translations'),
                         'linkToPsCheckoutFirst' => $this->module->l('Link to PrestaShop Checkout first', 'translations'),
