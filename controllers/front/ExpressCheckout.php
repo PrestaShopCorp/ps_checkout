@@ -86,7 +86,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             }
 
             $this->context->cookie->__set('paypalEmail', $this->payload['order']['payer']['email_address']);
-            
+
             $this->resetContextCartAddresses();
             // Always 0 index because we are not using the paypal marketplace system
             // This index is only used in a marketplace context
@@ -249,9 +249,11 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $idCountry = Country::getByIso($psIsoCode);
         $idState = 0;
         $country = new Country((int) $idCountry);
-        $isCountryAssociatedToShop = (bool) $country->isAssociatedToShop((int) $this->context->shop->id);
 
-        if (!$isCountryAssociatedToShop || !$country->active || Country::isNeedDniByCountryId($idCountry)) {
+        if (!$country->active
+            || !$country->isAssociatedToShop((int) $this->context->shop->id)
+            || Country::isNeedDniByCountryId($idCountry)
+        ) {
             return false;
         }
 
@@ -262,8 +264,8 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             $idState = $countryRepository->getStateId($state);
         }
 
-        // check if a paypal address already exist for the customer and not used
-        $paypalAddressAlias = 'Paypal '.$idPaypalOrder
+        // check if a PayPal address already exist for the customer and not used
+        $paypalAddressAlias = 'Paypal ' . $idPaypalOrder;
         $paypalAddressId = $this->addressAlreadyExist($paypalAddressAlias, $this->context->customer->id);
         $paypalAddress = new Address($paypalAddressId);
         $isPaypalValidAddressAndNotUsed = Validate::isLoadedObject($paypalAddress) && !$paypalAddress->isUsed();
@@ -326,7 +328,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
 
         return (int) Db::getInstance()->getValue($query);
     }
-    
+
     /**
      * Reset current cart addresse
      *
