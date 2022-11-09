@@ -191,8 +191,11 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $customer->email = $email;
         $customer->firstname = $firstName;
         $customer->lastname = $lastName;
-        $customer->is_guest = 1;
-        $customer->id_default_group = (int) Configuration::get('PS_GUEST_GROUP');
+
+        if (Configuration::get('PS_CHECKOUT_EXPRESS_USE_GUEST')) {
+            $customer->is_guest = 1;
+            $customer->id_default_group = (int) Configuration::get('PS_GUEST_GROUP');
+        }
 
         if (class_exists('PrestaShop\PrestaShop\Core\Crypto\Hashing')) {
             $crypto = new PrestaShop\PrestaShop\Core\Crypto\Hashing();
@@ -248,9 +251,10 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $psIsoCode = (new PaypalCountryCodeMatrice())->getPrestashopIsoCode($countryIsoCode);
         $idCountry = Country::getByIso($psIsoCode);
         $idState = 0;
-        $country = new Country((int) $idCountry);
+        $country = new Country((int) $idCountry, null, (int) $this->context->shop->id);
 
-        if (!$country->active
+        if (!Validate::isLoadedObject($country)
+            || !$country->active
             || !$country->isAssociatedToShop((int) $this->context->shop->id)
             || Country::isNeedDniByCountryId($idCountry)
         ) {
@@ -331,7 +335,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
 
     /**
      * Reset current cart addresse
-     *
      */
     private function resetContextCartAddresses()
     {
