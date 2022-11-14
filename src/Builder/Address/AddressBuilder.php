@@ -25,11 +25,6 @@ use PrestaShop\Module\PrestashopCheckout\Repository\CheckoutAddresRepository;
 
 abstract class AddressBuilder
 {
-    public function createAddressAlias()
-    {
-        return 'PayPal';
-    }
-
     public function generateChecksum($addressObj)
     {
         $separator = '_';

@@ -30,8 +30,8 @@ class CheckoutAddressTest extends TestCase
     {
         $stringFormat = ' ';
         $address = new CheckoutAddress($this->addresProvider());
-        $street = $address->formatAddressLine($address->getField('address_line_1'));
-        $city = $address->formatAddressLine($address->getField('admin_area_1'));
+        $street = $address->formatAddressLine($address->getField('address1'));
+        $city = $address->formatAddressLine($address->getField('city'));
 
         $this->assertStringEndsNotWith($stringFormat, $street, 'String ends with space');
         $this->assertStringStartsNotWith($stringFormat, $street, 'String starts with space');
@@ -44,7 +44,7 @@ class CheckoutAddressTest extends TestCase
         $address = new CheckoutAddress($this->addresProvider());
         $builder = new OrderAddressBuilder($address);
         $alias = $builder->createAddressAlias();
-        // TODO: assertion
+        $this->assertEquals($alias, 'JoPi20582Do', 'Alias formed not correctlly');
     }
 
     public function testGenerateCheckoutAddressCecksum()
@@ -64,15 +64,29 @@ class CheckoutAddressTest extends TestCase
 
     public function addresProvider()
     {
-        return [' K.Donelaicio  ',
-            '',
-            'Kaunas',
-            '',
-            'LT',
-            '50285',
-            'Jonas',
-            'Pinigas',
-            '+37062071053',
+        return ['order' => [
+            'payer' => [
+                'name' => [
+                    'given_name' => 'Jonas',
+                    'surname' => 'Pinigas',
+                ],
+                'email_address' => 'jonas.pinigas@gmail.com',
+                'address' => [
+                    'country_code' => 'LV',
+                ],
+            ],
+            'shipping' => [
+                'name' => [
+                    'full_name' => 'Mr.Jonas Pinigas',
+                ],
+                'address' => [
+                    'address_line_1' => 'Donelaicio 62',
+                    'admin_area_2' => 'Kaunas',
+                    'postal_code' => '20582',
+                    'country_code' => 'LT',
+                ],
+            ],
+        ],
         ];
     }
 }

@@ -109,4 +109,12 @@ class OrderAddressBuilder extends AddressBuilder
 
         return $context->cart->save();
     }
+
+    public function createAddressAlias()
+    {
+        return substr($this->checkoutAddress->firstname, 0, 2) .
+            substr($this->checkoutAddress->lastname, 0, 2) .
+            $this->checkoutAddress->postcode .
+            substr($this->checkoutAddress->address1, 0, 2);
+    }
 }

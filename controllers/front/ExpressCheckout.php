@@ -95,6 +95,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             $payPalAddress = new CheckoutAddress($this->payload);
 
             $payPalAddressBuilder = new PaypalAddressBuilder($payPalAddress);
+
             $checkSum = $payPalAddressBuilder->generateChecksum($payPalAddress);
             $orderAddressBuilder = new OrderAddressBuilder($payPalAddress);
             if (!$payPalAddressBuilder->retrieveCheckSum($checkSum)) {
