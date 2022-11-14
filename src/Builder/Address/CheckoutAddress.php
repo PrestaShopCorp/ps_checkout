@@ -67,8 +67,8 @@ class CheckoutAddress
         $this->firstname = $this->formatAddressLine($payload['order']['payer']['name']['given_name']);
         $this->lastname = $this->formatAddressLine($payload['order']['payer']['name']['surname']);
         $this->address1 = $this->formatAddressLine($payload['order']['shipping']['address']['address_line_1']);
-        $this->address2 = $this->formatAddressLine(false === empty($this->payload['order']['shipping']['address']['address_line_2'])
-            ? $this->payload['order']['shipping']['address']['address_line_2'] : '');
+        $this->address2 = $this->formatAddressLine(false === empty($payload['order']['shipping']['address']['address_line_2'])
+            ? $payload['order']['shipping']['address']['address_line_2'] : '');
         $this->postcode = $payload['order']['shipping']['address']['postal_code'];
         $this->city = $this->formatAddressLine($payload['order']['shipping']['address']['admin_area_2']);
         $this->id_country = $payload['order']['shipping']['address']['country_code'];
