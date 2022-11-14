@@ -22,8 +22,13 @@ namespace PrestaShop\Module\PrestashopCheckout\Builder\Address;
 
 class PaypalAddressBuilder extends AddressBuilder
 {
-    public function __construct(CheckoutAddress $address)
+    /**
+     * @var CheckoutAddress
+     */
+    public $checkoutAddress;
+
+    public function __construct(CheckoutAddress $checkoutAddress)
     {
-        $this->address = $address;
+        $this->checkoutAddress = $checkoutAddress;
     }
 }

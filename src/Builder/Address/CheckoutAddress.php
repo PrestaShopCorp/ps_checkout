@@ -73,7 +73,7 @@ class CheckoutAddress
         $this->city = $this->formatAddressLine($payload['order']['shipping']['address']['admin_area_2']);
         $this->id_country = $payload['order']['shipping']['address']['country_code'];
         $this->phone = (false === empty($payload['order']['payer']['phone'])
-            ? $this->payload['order']['payer']['phone']['phone_number']['national_number'] : '');
+            ? $payload['order']['payer']['phone']['phone_number']['national_number'] : '');
         $this->id_state = $this->formatAddressLine(false === empty($payload['order']['shipping']['address']['admin_area_1'])
             ? $payload['order']['shipping']['address']['admin_area_1'] : '');
     }
