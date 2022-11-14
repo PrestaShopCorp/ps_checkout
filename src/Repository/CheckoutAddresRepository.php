@@ -21,10 +21,11 @@
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
 use Db;
+use DbQuery;
 
-class AddressCheckSumRepository
+class CheckoutAddresRepository
 {
-    public function addAddressChecksum($id_customer, $alias, $checksum)
+    public function addChecksum($id_customer, $alias, $checksum)
     {
         $sql = ' INSERT INTO ' . _DB_PREFIX_ . 'checkout_address
 				(`checksum`, `alias`, `id_customer`)
@@ -33,11 +34,33 @@ class AddressCheckSumRepository
         if (!Db::getInstance()->execute($sql)) {
             return false;
         }
+
+        return true;
     }
 
-    public function retrieveAddressChecksum($id_customer)
+    public function retrieveChecksum($checksum)
     {
         return Db::getInstance()->getRow(' SELECT `checksum` FROM ' . _DB_PREFIX_ . 'checkout_address
-				WHERE `id_customer` = ' . (int) $id_customer);
+				WHERE `checksum` = ' . (int) $checksum);
+    }
+
+    /**
+     * Check if address already exist, if yes return the id_address
+     *
+     * @param string $alias
+     * @param int $id_customer
+     *
+     * @return int
+     */
+    public function addressAlreadyExist($alias, $id_customer)
+    {
+        $query = new DbQuery();
+        $query->select('id_address');
+        $query->from('address');
+        $query->where('alias = \'' . pSQL($alias) . '\'');
+        $query->where('id_customer = ' . (int) $id_customer);
+        $query->where('deleted = 0');
+
+        return (int) Db::getInstance()->getValue($query);
     }
 }

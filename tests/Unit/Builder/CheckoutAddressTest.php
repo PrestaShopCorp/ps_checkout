@@ -22,6 +22,7 @@ namespace Tests\Unit\Builder;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Builder\Address\CheckoutAddress;
+use PrestaShop\Module\PrestashopCheckout\Builder\Address\OrderAddressBuilder;
 
 class CheckoutAddressTest extends TestCase
 {
@@ -29,13 +30,36 @@ class CheckoutAddressTest extends TestCase
     {
         $stringFormat = ' ';
         $address = new CheckoutAddress($this->addresProvider());
-        $street = $address->formatAddress($address->getField('address_line_1'));
-        $city = $address->formatAddress($address->getField('admin_area_1'));
+        $street = $address->formatAddressLine($address->getField('address_line_1'));
+        $city = $address->formatAddressLine($address->getField('admin_area_1'));
 
         $this->assertStringEndsNotWith($stringFormat, $street, 'String ends with space');
         $this->assertStringStartsNotWith($stringFormat, $street, 'String starts with space');
         $this->assertStringEndsNotWith($stringFormat, $city, 'String ends with space');
         $this->assertStringStartsNotWith($stringFormat, $city, 'String starts with space');
+    }
+
+    public function testCheckoutAddressAlias()
+    {
+        $address = new CheckoutAddress($this->addresProvider());
+        $builder = new OrderAddressBuilder($address);
+        $alias = $builder->createAddressAlias();
+        // TODO: assertion
+    }
+
+    public function testGenerateCheckoutAddressCecksum()
+    {
+        // TODO: write test
+    }
+
+    public function testRetreaveChecksum()
+    {
+        // TODO: write test
+    }
+
+    public function testStoreChecksum()
+    {
+        // TODO: write test
     }
 
     public function addresProvider()

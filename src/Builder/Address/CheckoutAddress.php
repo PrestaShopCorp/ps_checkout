@@ -60,44 +60,38 @@ class CheckoutAddress
     public $id_state;
 
     /**
-     * @param string $firstname
-     * @param string $lastname
-     * @param string $address1
-     * @param string $address2
-     * @param string $postcode
-     * @param string $city
-     * @param string $id_country
-     * @param string $phone
-     * @param string $id_state
+     * @param array $payload
      */
-    public function __construct($firstname,
-                                $lastname,
-                                $address1,
-                                $address2,
-                                $postcode,
-                                $city,
-                                $id_country,
-                                $phone,
-                                $id_state)
+    public function __construct($payload)
     {
-        $this->firstname = $this->formatAddressLine($firstname);
-        $this->lastname = $this->formatAddressLine($lastname);
-        $this->address1 = $this->formatAddressLine($address1);
-        $this->address2 = $this->formatAddressLine($address2);
-        $this->postcode = $this->formatAddressLine($postcode);
-        $this->city = $this->formatAddressLine($city);
-        $this->id_country = $this->formatAddressLine($id_country);
-        $this->phone = $this->formatAddressLine($phone);
-        $this->id_state = $this->formatAddressLine($id_state);
+        $this->firstname = $this->formatAddressLine($payload['order']['payer']['name']['given_name']);
+        $this->lastname = $this->formatAddressLine($payload['order']['payer']['name']['surname']);
+        $this->address1 = $this->formatAddressLine($payload['order']['shipping']['address']['address_line_1']);
+        $this->address2 = $this->formatAddressLine(false === empty($this->payload['order']['shipping']['address']['address_line_2'])
+            ? $this->payload['order']['shipping']['address']['address_line_2'] : '');
+        $this->postcode = $payload['order']['shipping']['address']['postal_code'];
+        $this->city = $this->formatAddressLine($payload['order']['shipping']['address']['admin_area_2']);
+        $this->id_country = $payload['order']['shipping']['address']['country_code'];
+        $this->phone = (false === empty($payload['order']['payer']['phone'])
+            ? $this->payload['order']['payer']['phone']['phone_number']['national_number'] : '');
+        $this->id_state = $this->formatAddressLine(false === empty($payload['order']['shipping']['address']['admin_area_1'])
+            ? $payload['order']['shipping']['address']['admin_area_1'] : '');
     }
 
     /**
-     * @param $adressLine
+     * @param string $adressLine
      *
      * @return string
      */
     public function formatAddressLine($adressLine)
     {
-        return trim($adressLine);
+        $adressLine = trim($adressLine);
+
+        return ucfirst($adressLine);
+    }
+
+    public function getField($name)
+    {
+        return $this->$name;
     }
 }

@@ -20,7 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Address;
 
-use PrestaShop\Module\PrestashopCheckout\Repository\AddressCheckSumRepository;
+use Address;
+use PrestaShop\Module\PrestashopCheckout\Repository\CheckoutAddresRepository;
 
 abstract class AddressBuilder
 {
@@ -32,9 +33,9 @@ abstract class AddressBuilder
     public function generateChecksum($addressObj)
     {
         $separator = '_';
-        if (!$addressObj->id) {
-            return sha1('No address set');
-        }
+//        if (!$addressObj->id) {
+//            return sha1('No address set');
+//        }
 
         $address = (array) $addressObj;
 
@@ -48,17 +49,17 @@ abstract class AddressBuilder
         return sha1($uniqId);
     }
 
-    public function retrieveCheckSum($id_customer)
+    public function retrieveCheckSum($checksum)
     {
-        $repository = new AddressCheckSumRepository();
+        $repository = new CheckoutAddresRepository();
 
-        return $repository->retrieveAddressChecksum($id_customer);
+        return $repository->retrieveChecksum($checksum);
     }
 
-    public function storeCheckSum($id_customer, $alias, $checksum)
+    public function addCheckSum($id_customer, $alias, $checksum)
     {
-        $repository = new AddressCheckSumRepository();
-        if (!$repository->addAddressChecksum($id_customer, $alias, $checksum)) {
+        $repository = new CheckoutAddresRepository();
+        if (!$repository->addChecksum($id_customer, $alias, $checksum)) {
             return false;
         }
 

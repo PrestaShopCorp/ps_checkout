@@ -17,11 +17,13 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
-use PrestaShop\Module\PrestashopCheckout\Builder\Address\AddressBuilder;
+
+namespace PrestaShop\Module\PrestashopCheckout\Builder\Address;
 
 class PaypalAddressBuilder extends AddressBuilder
 {
-    public function __construct()
+    public function __construct(CheckoutAddress $address)
     {
+        $this->address = $address;
     }
 }

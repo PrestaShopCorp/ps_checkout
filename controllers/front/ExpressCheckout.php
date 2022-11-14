@@ -18,7 +18,9 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
+use PrestaShop\Module\PrestashopCheckout\Builder\Address\CheckoutAddress;
 use PrestaShop\Module\PrestashopCheckout\Builder\Address\OrderAddressBuilder;
+use PrestaShop\Module\PrestashopCheckout\Builder\Address\PaypalAddressBuilder;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
@@ -90,18 +92,17 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
 
             // Always 0 index because we are not using the paypal marketplace system
             // This index is only used in a marketplace context
-            // @todo Extract factory in a Service.
-            $this->createAddress(
-                $this->payload['order']['payer']['name']['given_name'],
-                $this->payload['order']['payer']['name']['surname'],
-                $this->payload['order']['shipping']['address']['address_line_1'],
-                false === empty($this->payload['order']['shipping']['address']['address_line_2']) ? $this->payload['order']['shipping']['address']['address_line_2'] : '',
-                $this->payload['order']['shipping']['address']['postal_code'],
-                false === empty($this->payload['order']['shipping']['address']['admin_area_1']) ? $this->payload['order']['shipping']['address']['admin_area_1'] : '',
-                $this->payload['order']['shipping']['address']['admin_area_2'],
-                $this->payload['order']['shipping']['address']['country_code'],
-                false === empty($this->payload['order']['payer']['phone']) ? $this->payload['order']['payer']['phone']['phone_number']['national_number'] : ''
-            );
+            $payPalAddress = new CheckoutAddress($this->payload);
+
+            $payPalAddressBuilder = new PaypalAddressBuilder($payPalAddress);
+            $checkSum = $payPalAddressBuilder->generateChecksum($payPalAddress);
+            $orderAddressBuilder = new OrderAddressBuilder($payPalAddress);
+            if (!$payPalAddressBuilder->retrieveCheckSum($checkSum)) {
+                $orderAddressBuilder->createAddress($this->context->customer->id);
+                $orderAddressBuilder->addCheckSum($this->context->customer->id, $orderAddressBuilder->createAddressAlias(), $checkSum);
+            } else {
+                $orderAddressBuilder->createAddress($this->context->customer->id);
+            }
         } catch (Exception $exception) {
             $this->handleExceptionSendingToSentry($exception);
 
@@ -210,120 +211,120 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         return $customer;
     }
 
-    /**
-     * Create address
-     *
-     * @param string $firstName
-     * @param string $lastName
-     * @param string $address1
-     * @param string $address2
-     * @param string $postcode
-     * @param string $state
-     * @param string $city
-     * @param string $countryIsoCode
-     * @param string $phone
-     *
-     * @return bool
-     *
-     * @throws PsCheckoutException
-     *
-     * @todo Extract factory in a Service.
-     */
-    private function createAddress(
-        $firstName,
-        $lastName,
-        $address1,
-        $address2,
-        $postcode,
-        $state,
-        $city,
-        $countryIsoCode,
-        $phone
-    ) {
-        // check if country is available for delivery
-        $psIsoCode = (new PaypalCountryCodeMatrice())->getPrestashopIsoCode($countryIsoCode);
-        $idCountry = Country::getByIso($psIsoCode);
-
-        $country = new Country((int) $idCountry);
-
-        if (!$country->active || Country::isNeedDniByCountryId($idCountry)) {
-            return false;
-        }
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository $countryRepository */
-        $countryRepository = $this->module->getService('ps_checkout.repository.country');
-
-        $idState = $countryRepository->getStateId($state);
-
-        // check if a paypal address already exist for the customer
-        $paypalAddress = $this->addressAlreadyExist('PayPal', $this->context->customer->id);
-
-        if ($paypalAddress) {
-            $address = new Address($paypalAddress); // if yes, update it with the new address
-        } else {
-            $address = new Address(); // otherwise create a new address
-        }
-
-        $address->alias = 'Paypal';
-        $address->id_customer = $this->context->customer->id;
-        $address->firstname = $firstName;
-        $address->lastname = $lastName;
-        $address->address1 = $address1;
-        $address->address2 = $address2;
-        $address->postcode = $postcode;
-        $address->city = $city;
-        $address->id_country = $idCountry;
-        $address->phone = $phone;
-
-        if ($idState) {
-            $address->id_state = $idState;
-        }
-
+//    /**
+//     * Create address
+//     *
+//     * @param string $firstName
+//     * @param string $lastName
+//     * @param string $address1
+//     * @param string $address2
+//     * @param string $postcode
+//     * @param string $state
+//     * @param string $city
+//     * @param string $countryIsoCode
+//     * @param string $phone
+//     *
+//     * @return bool
+//     *
+//     * @throws PsCheckoutException
+//     *
+//     * @todo Extract factory in a Service.
+//     */
+//    private function createAddress(
+//        $firstName,
+//        $lastName,
+//        $address1,
+//        $address2,
+//        $postcode,
+//        $state,
+//        $city,
+//        $countryIsoCode,
+//        $phone
+//    ) {
+//        // check if country is available for delivery
+//        $psIsoCode = (new PaypalCountryCodeMatrice())->getPrestashopIsoCode($countryIsoCode);
+//        $idCountry = Country::getByIso($psIsoCode);
+//
+//        $country = new Country((int) $idCountry);
+//
+//        if (!$country->active || Country::isNeedDniByCountryId($idCountry)) {
+//            return false;
+//        }
+//
+//        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository $countryRepository */
+//        $countryRepository = $this->module->getService('ps_checkout.repository.country');
+//
+//        $idState = $countryRepository->getStateId($state);
+//
+//        // check if a paypal address already exist for the customer
+//        $paypalAddress = $this->addressAlreadyExist('PayPal', $this->context->customer->id);
+//
+//        if ($paypalAddress) {
+//            $address = new Address($paypalAddress); // if yes, update it with the new address
+//        } else {
+//            $address = new Address(); // otherwise create a new address
+//        }
+//
+//        $address->alias = 'Paypal';
+//        $address->id_customer = $this->context->customer->id;
+//        $address->firstname = $firstName;
+//        $address->lastname = $lastName;
+//        $address->address1 = $address1;
+//        $address->address2 = $address2;
+//        $address->postcode = $postcode;
+//        $address->city = $city;
+//        $address->id_country = $idCountry;
+//        $address->phone = $phone;
+//
+//        if ($idState) {
+//            $address->id_state = $idState;
+//        }
+//
 //        $addressBuilder = new OrderAddressBuilder();
 //
 //
 //        if ($this->retrieveChecksum($this->context->customer->id) != $checksum) {
 //            $this->storeCheckSum($address->id_customer, $address->alias, $checksum);
 //        }
-
+//
 //        if ($address->validateFields(false)) {
 //            return false;
 //        }
+//
+//        try {
+//            $address->save();
+//        } catch (Exception $exception) {
+//            throw new PsCheckoutException($exception->getMessage(), PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_CANNOT_SAVE_ADDRESS, $exception);
+//        }
+//
+//        $this->context->cart->id_address_delivery = $address->id;
+//        $this->context->cart->id_address_invoice = $address->id;
+//
+//        $products = $this->context->cart->getProducts();
+//        foreach ($products as $product) {
+//            $this->context->cart->setProductAddressDelivery($product['id_product'], $product['id_product_attribute'], $product['id_address_delivery'], $address->id);
+//        }
+//
+//        return $this->context->cart->save();
+//    }
 
-        try {
-            $address->save();
-        } catch (Exception $exception) {
-            throw new PsCheckoutException($exception->getMessage(), PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_CANNOT_SAVE_ADDRESS, $exception);
-        }
-
-        $this->context->cart->id_address_delivery = $address->id;
-        $this->context->cart->id_address_invoice = $address->id;
-
-        $products = $this->context->cart->getProducts();
-        foreach ($products as $product) {
-            $this->context->cart->setProductAddressDelivery($product['id_product'], $product['id_product_attribute'], $product['id_address_delivery'], $address->id);
-        }
-
-        return $this->context->cart->save();
-    }
-
-    /**
-     * Check if address already exist, if yes return the id_address
-     *
-     * @param string $alias
-     * @param int $id_customer
-     *
-     * @return int
-     */
-    private function addressAlreadyExist($alias, $id_customer)
-    {
-        $query = new DbQuery();
-        $query->select('id_address');
-        $query->from('address');
-        $query->where('alias = \'' . pSQL($alias) . '\'');
-        $query->where('id_customer = ' . (int) $id_customer);
-        $query->where('deleted = 0');
-
-        return (int) Db::getInstance()->getValue($query);
-    }
+//    /**
+//     * Check if address already exist, if yes return the id_address
+//     *
+//     * @param string $alias
+//     * @param int $id_customer
+//     *
+//     * @return int
+//     */
+//    private function addressAlreadyExist($alias, $id_customer)
+//    {
+//        $query = new DbQuery();
+//        $query->select('id_address');
+//        $query->from('address');
+//        $query->where('alias = \'' . pSQL($alias) . '\'');
+//        $query->where('id_customer = ' . (int)$id_customer);
+//        $query->where('deleted = 0');
+//
+//        return (int)Db::getInstance()->getValue($query);
+//    }
 }
