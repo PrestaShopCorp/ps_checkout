@@ -193,7 +193,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $customer->lastname = $lastName;
 
         if (Configuration::get('PS_CHECKOUT_EXPRESS_USE_GUEST')) {
-            $customer->is_guest = 1;
+            $customer->is_guest = true;
             $customer->id_default_group = (int) Configuration::get('PS_GUEST_GROUP');
         }
 
@@ -334,7 +334,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
     }
 
     /**
-     * Reset current cart addresse
+     * Reset current cart address
      */
     private function resetContextCartAddresses()
     {
