@@ -1051,6 +1051,8 @@ class Ps_checkout extends PaymentModule
             && in_array($psCheckoutCart->paypal_status, [PsCheckoutCart::STATUS_CREATED, PsCheckoutCart::STATUS_APPROVED], true)
             && false === empty($psCheckoutCart->paypal_token_expire)
             && strtotime($psCheckoutCart->paypal_token_expire) > time()
+            && false === empty($psCheckoutCart->date_upd)
+            && strtotime($psCheckoutCart->date_upd) + 3600 > time()
         ) {
             $payPalOrderId = $psCheckoutCart->paypal_order;
             $cartFundingSource = $psCheckoutCart->paypal_funding;
