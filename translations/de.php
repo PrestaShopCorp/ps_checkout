@@ -255,6 +255,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_bc9189406be84ec297464a514221406d'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_c884ed19483d45970c5bf23a681e2dd2'] = 'Hier ist eine kurze Zusammenfassung Ihrer Bestellung:';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_dbb50a3167fd387cac23808bd55a9ee4'] = 'PayPal-Transaktions-Id : ';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_e81c4e4f2b7b93b481e13a8553c2ae1b'] = 'oder';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_eb18dd00e86aff4b5b5d15e938382b49'] = 'Andere Zahlungsmethode';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_edd87c9059d88fea45c0bd6384ce92b9'] = 'Bitte bestätigen Sie Ihre Bestellung, indem Sie auf „Ich bestätige meine Bestellung“ klicken.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f1d3b424cd68795ecaa552883759aceb'] = 'Bestellübersicht';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f212c48fb02b2494070e22184cc8906b'] = 'PayPal-Bestellnummer : ';
@@ -319,6 +320,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_243e4f2f3bd512ca8a6cc83e7a19e103
 $_MODULE['<{ps_checkout}prestashop>translations_25a81701fbfa4a1efdf660a950c1d006'] = 'Weiß';
 $_MODULE['<{ps_checkout}prestashop>translations_25d76826f85d2bb976027066e6fcc522'] = 'Zu ändernde gerundete Parameter';
 $_MODULE['<{ps_checkout}prestashop>translations_2607298669ace2fc910321afeb9f8a84'] = 'PDF herunterladen';
+$_MODULE['<{ps_checkout}prestashop>translations_26609a4edfbef95f4695a1474d316a2c'] = 'Wählen Sie die Platzierung der Nachrichten auf der Seite';
 $_MODULE['<{ps_checkout}prestashop>translations_26a180e6da68731b08a94399789ff518'] = 'Herzlichen Glückwunsch! Sie können jetzt mit dem Online-Verkauf beginnen.';
 $_MODULE['<{ps_checkout}prestashop>translations_26d56092353c630f9ad92df134d3708d'] = 'Beschreibung einrichten';
 $_MODULE['<{ps_checkout}prestashop>translations_26ec71edbfce31656c47a66bf830ed1c'] = 'Achtung, Ihre gerundeten Parameter sind nicht völlig kompatibel mit der Transaktionsverarbeitung von PrestaShop Checkout. Einige Transaktionen können möglicherweise fehlschlagen. Aber es ist ganz einfach, Ihre Einstellungen für &quot;Rundungsregel&quot; und &quot;Rundungstyp&quot; müssen auf &quot;Bei halbem Wert auf unendlich runden&quot; und &quot;Für jedes Element runden&quot; eingestellt werden, oder klicken Sie auf die Schaltfläche unten, um dies automatisch zu tun!';
@@ -376,6 +378,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_526d688f37a86d3c3f27d0c5016eb71d
 $_MODULE['<{ps_checkout}prestashop>translations_54c1127bed31e947d0951af3263522cf'] = 'Konfigurieren Sie Ihre Kontoauszugsbeschreibung';
 $_MODULE['<{ps_checkout}prestashop>translations_5579726f3f99842c8bd6aa672b0ba1df'] = 'Pille';
 $_MODULE['<{ps_checkout}prestashop>translations_55926e741046f094a5597085b9a329bb'] = 'Beachten Sie, dass im Testmodus keine Zahlungen eingezogen werden können';
+$_MODULE['<{ps_checkout}prestashop>translations_55c93629a14e52832a2a4b1c989140f4'] = 'überprüfen Sie bitte unsere Liste der anpassbaren Einstellungen';
 $_MODULE['<{ps_checkout}prestashop>translations_56396cec5c858be914156d159a387592'] = 'Art des Unternehmens';
 $_MODULE['<{ps_checkout}prestashop>translations_565c23511bb8643ac5552fbd5e4ba358'] = 'Ein Modul, alle Zahlungsmethoden.';
 $_MODULE['<{ps_checkout}prestashop>translations_57e46658fd7e21e0377d342fd9743dd4'] = 'Keine Bestätigungs-E-Mail erhalten?';
@@ -408,12 +411,14 @@ $_MODULE['<{ps_checkout}prestashop>translations_76f0ed934de85cc7131910b32ede7714
 $_MODULE['<{ps_checkout}prestashop>translations_78945de8de090e90045d299651a68a9b'] = 'Verfügbar';
 $_MODULE['<{ps_checkout}prestashop>translations_79d0c6669f615687e6a265f73e989d5d'] = 'Ich akzeptiere ';
 $_MODULE['<{ps_checkout}prestashop>translations_79f10e23fabf1720054a5fe16a62f760'] = 'Details für Kontoauszüge';
+$_MODULE['<{ps_checkout}prestashop>translations_7a4711bc25b9893e1092c166e726b084'] = '(merchant ID {0})';
 $_MODULE['<{ps_checkout}prestashop>translations_7c6c2e5d48ab37a007cbf70d3ea25fa4'] = 'Ausstehend';
 $_MODULE['<{ps_checkout}prestashop>translations_7d6395b374d009ee9cae645ecf8556d0'] = 'Zusätzliche Informationen';
 $_MODULE['<{ps_checkout}prestashop>translations_7e87484272c2e328136e9d2bba0d8b27'] = 'Begrenzen Sie Ihre Betrugsrate';
 $_MODULE['<{ps_checkout}prestashop>translations_7ec35321dd6ed2f0c30fccee83d15a2a'] = 'Bankverbindung';
 $_MODULE['<{ps_checkout}prestashop>translations_7f2a1b59ac1ab6d2d892dbbf4f132c40'] = 'Frau';
 $_MODULE['<{ps_checkout}prestashop>translations_7f79b3c1755a6eaf27e27a183a675477'] = 'Verfügbarkeit von Kreditkarten auf Eis gelegt';
+$_MODULE['<{ps_checkout}prestashop>translations_8ac88d38d8b578d5b10bf4cf0cf50076'] = 'Wählen Sie die Platzierung von Schaltflächen auf der Seite';
 $_MODULE['<{ps_checkout}prestashop>translations_807235d3474190247606812059b87a5f'] = 'Sobald PayPal alle Dokumente erhalten hat, müssen Sie 48 Stunden auf die endgültige Genehmigung warten.';
 $_MODULE['<{ps_checkout}prestashop>translations_8102d556eface36002bd4e3aef4f4acd'] = 'Alle Transaktionen';
 $_MODULE['<{ps_checkout}prestashop>translations_8215900bbe4e4ddcac7968eefb28256d'] = 'Sie können Kartentransaktionen im Wert von';
@@ -477,6 +482,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_ad69e733ebae8d264bccaa38d68830e8
 $_MODULE['<{ps_checkout}prestashop>translations_adf6671e843f2afa12ff0da097e2cdbf'] = 'E-Mail-Validierung erforderlich';
 $_MODULE['<{ps_checkout}prestashop>translations_ae7bd6527c89645a15c3b5e5f1f22dbd'] = 'Keine Umleitung bei Zahlung mit Kreditkarte';
 $_MODULE['<{ps_checkout}prestashop>translations_af37d2248a1fa9c60e8df22938255f05'] = 'Wir können für Sie derzeit keine Kartenzahlungen abwickeln.';
+$_MODULE['<{ps_checkout}prestashop>translations_b03623c3f090d1119f44d3191397acb1'] = 'Möglicherweise sind nicht alle benutzerdefinierten Themen vollständig kompatibel. Um mögliche Integrationsprobleme auf der Zahlungsseite zu vermeiden,';
 $_MODULE['<{ps_checkout}prestashop>translations_b235ad7b91fbeda6f87ac3d7e6f0ff6d'] = 'Wir haben die Bestätigung von PayPal erhalten. Sie können nun alle Kartentransaktionen ohne Limits verarbeiten.';
 $_MODULE['<{ps_checkout}prestashop>translations_b3a3bef1143977b9be6f9058641b1035'] = 'Diese E-Mail-Adresse konnte nicht gefunden werden.';
 $_MODULE['<{ps_checkout}prestashop>translations_b52a626dee6ab468117342c9292a45b6'] = 'Zahlungseinstellungen';
@@ -533,6 +539,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_dc43994c00f8f208f0c649524a9bcd46
 $_MODULE['<{ps_checkout}prestashop>translations_dc647eb65e6711e155375218212b3964'] = 'Passwort';
 $_MODULE['<{ps_checkout}prestashop>translations_dd7bf230fde8d4836917806aff6a6b27'] = 'Adresse';
 $_MODULE['<{ps_checkout}prestashop>translations_dfcfc43722eef1eab1e4a12e50a068b1'] = 'Währungen';
+$_MODULE['<{ps_checkout}prestashop>translations_e138ea82bff561b002c7916e696f7bd2'] = 'Wählen Sie die Platzierung von Bannern auf der Seite.';
 $_MODULE['<{ps_checkout}prestashop>translations_e1b74123fdda2fd3b4a98308ef5dd782'] = 'Vorsicht : die Währungen, dass Sie haben aktivieren : {0} mit PrestaShop Checkout zur Zeit nicht funktionieren. Bitte deaktivieren Sie {0} für PrestaShop Checkout in Ihren';
 $_MODULE['<{ps_checkout}prestashop>translations_e1e1ce67de4906765f104f24a4280a1d'] = 'Brauchen Sie Hilfe? Hier finden Sie das Benutzerhandbuch des Moduls';
 $_MODULE['<{ps_checkout}prestashop>translations_e268443e43d93dab7ebef303bbe9642f'] = 'Konto';

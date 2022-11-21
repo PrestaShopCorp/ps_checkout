@@ -255,6 +255,7 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_bc9189406be84ec297464a514221406d'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_c884ed19483d45970c5bf23a681e2dd2'] = 'Here is a short summary of your order:';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_dbb50a3167fd387cac23808bd55a9ee4'] = 'PayPal Transaction Id : ';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_e81c4e4f2b7b93b481e13a8553c2ae1b'] = 'or';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_eb18dd00e86aff4b5b5d15e938382b49'] = 'Choose another payment method';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_edd87c9059d88fea45c0bd6384ce92b9'] = 'Please confirm your order by clicking "I confirm my order".';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f1d3b424cd68795ecaa552883759aceb'] = 'Order summary';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_f212c48fb02b2494070e22184cc8906b'] = 'PayPal Order Id : ';
@@ -319,6 +320,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_243e4f2f3bd512ca8a6cc83e7a19e103
 $_MODULE['<{ps_checkout}prestashop>translations_25a81701fbfa4a1efdf660a950c1d006'] = 'White';
 $_MODULE['<{ps_checkout}prestashop>translations_25d76826f85d2bb976027066e6fcc522'] = 'Roundings settings to change';
 $_MODULE['<{ps_checkout}prestashop>translations_2607298669ace2fc910321afeb9f8a84'] = 'Download PDF';
+$_MODULE['<{ps_checkout}prestashop>translations_26609a4edfbef95f4695a1474d316a2c'] = 'Choose the location of the messages on the page';
 $_MODULE['<{ps_checkout}prestashop>translations_26a180e6da68731b08a94399789ff518'] = 'Congrats ! You can start selling online now.';
 $_MODULE['<{ps_checkout}prestashop>translations_26d56092353c630f9ad92df134d3708d'] = 'Set up description';
 $_MODULE['<{ps_checkout}prestashop>translations_26ec71edbfce31656c47a66bf830ed1c'] = 'Be careful, your roundings settings are not fully compatible with PrestaShop Checkout transaction processing. Some of the transactions could fail. But it is easy, your setting Round mode and Round type should be set on « Round up away from zero, when it is half way there » and « Round on each item » or click on the button bellow to make it automatically !';
@@ -409,12 +411,14 @@ $_MODULE['<{ps_checkout}prestashop>translations_76f0ed934de85cc7131910b32ede7714
 $_MODULE['<{ps_checkout}prestashop>translations_78945de8de090e90045d299651a68a9b'] = 'Available';
 $_MODULE['<{ps_checkout}prestashop>translations_79d0c6669f615687e6a265f73e989d5d'] = 'I agree to the ';
 $_MODULE['<{ps_checkout}prestashop>translations_79f10e23fabf1720054a5fe16a62f760'] = 'Details for Bank statements';
+$_MODULE['<{ps_checkout}prestashop>translations_7a4711bc25b9893e1092c166e726b084'] = '(merchant ID {0})';
 $_MODULE['<{ps_checkout}prestashop>translations_7c6c2e5d48ab37a007cbf70d3ea25fa4'] = 'pending';
 $_MODULE['<{ps_checkout}prestashop>translations_7d6395b374d009ee9cae645ecf8556d0'] = 'Additional Details';
 $_MODULE['<{ps_checkout}prestashop>translations_7e87484272c2e328136e9d2bba0d8b27'] = 'Limit your fraud rate';
 $_MODULE['<{ps_checkout}prestashop>translations_7ec35321dd6ed2f0c30fccee83d15a2a'] = 'Bank account';
 $_MODULE['<{ps_checkout}prestashop>translations_7f2a1b59ac1ab6d2d892dbbf4f132c40'] = 'Mrs';
 $_MODULE['<{ps_checkout}prestashop>translations_7f79b3c1755a6eaf27e27a183a675477'] = 'Credit Card availability suspended';
+$_MODULE['<{ps_checkout}prestashop>translations_8ac88d38d8b578d5b10bf4cf0cf50076'] = 'Choose the location of the buttons on the page';
 $_MODULE['<{ps_checkout}prestashop>translations_807235d3474190247606812059b87a5f'] = 'As soon as PayPal gets all your documents, you\'ll have to wait 48h for final approval.';
 $_MODULE['<{ps_checkout}prestashop>translations_8102d556eface36002bd4e3aef4f4acd'] = 'All transactions';
 $_MODULE['<{ps_checkout}prestashop>translations_8215900bbe4e4ddcac7968eefb28256d'] = 'You can process';
@@ -536,6 +540,7 @@ $_MODULE['<{ps_checkout}prestashop>translations_dc43994c00f8f208f0c649524a9bcd46
 $_MODULE['<{ps_checkout}prestashop>translations_dc647eb65e6711e155375218212b3964'] = 'Password';
 $_MODULE['<{ps_checkout}prestashop>translations_dd7bf230fde8d4836917806aff6a6b27'] = 'Address';
 $_MODULE['<{ps_checkout}prestashop>translations_dfcfc43722eef1eab1e4a12e50a068b1'] = 'Currencies';
+$_MODULE['<{ps_checkout}prestashop>translations_e138ea82bff561b002c7916e696f7bd2'] = 'Choose the location of the banners on the page';
 $_MODULE['<{ps_checkout}prestashop>translations_e1b74123fdda2fd3b4a98308ef5dd782'] = 'Warning : the currencies you have activated : {0} are not currently supported by PrestaShop Checkout. Please deactivate {0} for PrestaShop Checkout in your';
 $_MODULE['<{ps_checkout}prestashop>translations_e1e1ce67de4906765f104f24a4280a1d'] = 'Need help? Find here the documentation of this module';
 $_MODULE['<{ps_checkout}prestashop>translations_e268443e43d93dab7ebef303bbe9642f'] = 'account';
