@@ -144,12 +144,18 @@ export class PaymentOptionsComponent extends BaseComponent {
           this.renderPaymentOptionItems();
           this.renderPaymentOptionRadios();
           const expressCheckoutContainer = document.querySelector('.express-checkout-block');
+          const expressCheckoutPaymentButton = document.querySelector('#ps_checkout-express-checkout-button');
 
           if (expressCheckoutContainer) {
             expressCheckoutContainer.style.display = 'none';
           }
 
+          if (expressCheckoutPaymentButton) {
+            expressCheckoutPaymentButton.style.display = 'none';
+          }
+
           this.data.HTMLElementPaymentOptionsContainer.style.display = 'block';
+          this.data.HTMLBasePaymentConfirmation.style.display = 'block';
         })
         .catch((error) => {
           console.error(error);
