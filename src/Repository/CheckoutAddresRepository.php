@@ -44,6 +44,14 @@ class CheckoutAddresRepository
 				WHERE `checksum` = ' . (int) $checksum);
     }
 
+    public function retrieveCheckoutAdressAlias($checksum)
+    {
+        $row = Db::getInstance()->getRow(' SELECT `alias` FROM ' . _DB_PREFIX_ . 'checkout_address
+				WHERE `checksum` = ' . (int) $checksum);
+
+        return $row['alias'];
+    }
+
     /**
      * Check if address already exist, if yes return the id_address
      *

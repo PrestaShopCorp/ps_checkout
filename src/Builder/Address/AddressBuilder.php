@@ -20,44 +20,52 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Address;
 
-use Address;
 use PrestaShop\Module\PrestashopCheckout\Repository\CheckoutAddresRepository;
 
 abstract class AddressBuilder
 {
-    public function generateChecksum($addressObj)
+    /**
+     * @var CheckoutAddress
+     */
+    public $module;
+    public $checkoutAddress;
+    public $idState;
+    public $idCountry;
+    public $country;
+    public $checkoutAddressRepository;
+
+    public function __construct(CheckoutAddress $checkoutAddress)
+    {
+        $this->checkoutAddress = $checkoutAddress;
+        $this->checkoutAddressRepository = new CheckoutAddresRepository();
+    }
+
+    /**
+     * @return string
+     */
+    public function generateChecksum()
     {
         $separator = '_';
-//        if (!$addressObj->id) {
-//            return sha1('No address set');
-//        }
-
-        $address = (array) $addressObj;
-
         $uniqId = '';
 
-        foreach ($address as $value) {
-            $uniqId .= $value . $separator;
+        foreach ($this->checkoutAddress as $value) {
+            if (gettype($value) !== 'object') {
+                $uniqId .= $value . $separator;
+            }
         }
         $uniqId = rtrim($uniqId, $separator);
 
         return sha1($uniqId);
     }
 
-    public function retrieveCheckSum($checksum)
+    /**
+     * @return string
+     */
+    public function createAddressAlias()
     {
-        $repository = new CheckoutAddresRepository();
-
-        return $repository->retrieveChecksum($checksum);
-    }
-
-    public function addCheckSum($id_customer, $alias, $checksum)
-    {
-        $repository = new CheckoutAddresRepository();
-        if (!$repository->addChecksum($id_customer, $alias, $checksum)) {
-            return false;
-        }
-
-        return true;
+        return substr($this->checkoutAddress->firstname, 0, 2) .
+            substr($this->checkoutAddress->lastname, 0, 2) .
+            $this->checkoutAddress->postcode .
+            substr($this->checkoutAddress->address1, 0, 2);
     }
 }

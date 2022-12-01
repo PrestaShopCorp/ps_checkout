@@ -22,14 +22,21 @@ namespace Tests\Unit\Builder;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Builder\Address\CheckoutAddress;
-use PrestaShop\Module\PrestashopCheckout\Builder\Address\OrderAddressBuilder;
+use PrestaShop\Module\PrestashopCheckout\Builder\Address\CountryInterface;
+use PrestaShop\Module\PrestashopCheckout\Builder\Address\PaypalAddressBuilder;
 
 class CheckoutAddressTest extends TestCase
 {
+    private $mockCountry;
+
     public function testCheckoutAddressFormat()
     {
         $stringFormat = ' ';
-        $address = new CheckoutAddress($this->addresProvider());
+        /* @var CountryInterface $mockCountry */
+        $this->mockCountry = $this->createMock(CountryInterface::class);
+
+        $address = new CheckoutAddress($this->addresProvider(), $this->mockCountry);
+
         $street = $address->formatAddressLine($address->getField('address1'));
         $city = $address->formatAddressLine($address->getField('city'));
 
@@ -41,15 +48,24 @@ class CheckoutAddressTest extends TestCase
 
     public function testCheckoutAddressAlias()
     {
-        $address = new CheckoutAddress($this->addresProvider());
-        $builder = new OrderAddressBuilder($address);
+        /* @var CountryInterface $mockCountry */
+        $this->mockCountry = $this->createMock(CountryInterface::class);
+        $address = new CheckoutAddress($this->addresProvider(), $this->mockCountry);
+
+        $builder = new PaypalAddressBuilder($address);
         $alias = $builder->createAddressAlias();
-        $this->assertEquals($alias, 'JoPi20582Do', 'Alias formed not correctlly');
+        $this->assertEquals('JoPi20582Do', $alias, 'Alias formed not correctlly');
     }
 
-    public function testGenerateCheckoutAddressCecksum()
+    public function testGenerateCheckoutAddressCecksumIsNotCorrect()
     {
-        // TODO: write test
+        /* @var CountryInterface $mockCountry */
+        $this->mockCountry = $this->createMock(CountryInterface::class);
+        $address = new CheckoutAddress($this->addresProvider(), $this->mockCountry);
+
+        $builder = new PaypalAddressBuilder($address);
+        $checksum = $builder->generateChecksum();
+        $this->assertNotEquals('JoPi20582Do', $checksum, 'Alias formed not correctlly');
     }
 
     public function testRetreaveChecksum()
@@ -64,29 +80,8 @@ class CheckoutAddressTest extends TestCase
 
     public function addresProvider()
     {
-        return ['order' => [
-            'payer' => [
-                'name' => [
-                    'given_name' => 'Jonas',
-                    'surname' => 'Pinigas',
-                ],
-                'email_address' => 'jonas.pinigas@gmail.com',
-                'address' => [
-                    'country_code' => 'LV',
-                ],
-            ],
-            'shipping' => [
-                'name' => [
-                    'full_name' => 'Mr.Jonas Pinigas',
-                ],
-                'address' => [
-                    'address_line_1' => 'Donelaicio 62',
-                    'admin_area_2' => 'Kaunas',
-                    'postal_code' => '20582',
-                    'country_code' => 'LT',
-                ],
-            ],
-        ],
-        ];
+        $address = new AddressDataProvider();
+
+        return $address->getProvidedAddress();
     }
 }

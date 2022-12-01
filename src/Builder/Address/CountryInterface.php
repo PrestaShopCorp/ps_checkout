@@ -20,6 +20,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Address;
 
-class OrderAddressBuilder extends AddressBuilder
+interface CountryInterface
 {
+    /**
+     * @param $psIsoCode
+     *
+     * @return mixed
+     */
+    public function getByIso($psIsoCode);
 }

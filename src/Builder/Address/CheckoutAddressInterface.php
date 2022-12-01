@@ -20,6 +20,22 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Address;
 
-class OrderAddressBuilder extends AddressBuilder
+/**
+ * Define common methods for CheckoutAddress
+ */
+interface CheckoutAddressInterface
 {
+    /**
+     * @param $countryIsoCode
+     *
+     * @return mixed
+     */
+    public function getCountryId($countryIsoCode);
+
+    /**
+     * @param $name
+     *
+     * @return mixed
+     */
+    public function getField($name);
 }
