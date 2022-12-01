@@ -66,8 +66,8 @@ class AddressAdapter
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param $key string
+     * @param $value string
      *
      * @return void
      */
@@ -77,8 +77,8 @@ class AddressAdapter
     }
 
     /**+
-     * @param $key
-     * @return mixe
+     * @param $key string
+     * @return mixed
      *
      */
     public function getField($key)

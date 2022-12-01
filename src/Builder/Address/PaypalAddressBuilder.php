@@ -51,11 +51,10 @@ class PaypalAddressBuilder extends AddressBuilder
             $this->checkoutAddressRepository->addChecksum($id_customer, $addressAdapter->getField('alias'), $checkSum);
             $addressAdapter->fillWith((array) $this->checkoutAddress);
             $addressAdapter->setField('alias', $this->createAddressAlias());
-            $addressAdapter->id_customer = $id_customer;
         }
 
         if ($this->idState) {
-            $addressAdapter->id_state = $this->idState;
+            $addressAdapter->setField('id_state', $this->idState);
         }
 
         if (!$addressAdapter->isValid()) {

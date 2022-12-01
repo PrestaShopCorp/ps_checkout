@@ -26,14 +26,14 @@ namespace PrestaShop\Module\PrestashopCheckout\Builder\Address;
 interface CheckoutAddressInterface
 {
     /**
-     * @param $countryIsoCode
+     * @param $countryIsoCode int
      *
      * @return mixed
      */
     public function getCountryId($countryIsoCode);
 
     /**
-     * @param $name
+     * @param $name string
      *
      * @return mixed
      */

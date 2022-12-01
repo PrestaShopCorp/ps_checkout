@@ -23,7 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Builder\Address;
 interface CountryInterface
 {
     /**
-     * @param $psIsoCode
+     * @param $psIsoCode string
      *
      * @return mixed
      */

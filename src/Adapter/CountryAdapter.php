@@ -37,11 +37,11 @@ class CountryAdapter implements CountryInterface
      */
     public function getByIso($psIsoCode)
     {
-        return $this->country::getByIso($psIsoCode);
+        return $this->country->getByIso($psIsoCode);
     }
 
     /**
-     * @param $key
+     * @param $key string
      *
      * @return mixed
      */
