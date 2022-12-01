@@ -54,7 +54,7 @@ class AddressAdapter
      */
     public function save()
     {
-        return (bool)$this->address->save();
+        return (bool) $this->address->save();
     }
 
     /**

@@ -40,11 +40,6 @@ class CountryAdapter implements CountryInterface
         return $this->country->getByIso($psIsoCode);
     }
 
-    /**
-     * @param $key string
-     *
-     * @return mixed
-     */
     public function getField($key)
     {
         return $this->country->$key;
