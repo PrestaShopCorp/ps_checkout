@@ -22,10 +22,5 @@ namespace PrestaShop\Module\PrestashopCheckout\Builder\Address;
 
 interface CountryInterface
 {
-    /**
-     * @param $psIsoCode string
-     *
-     * @return mixed
-     */
     public function getByIso($psIsoCode);
 }

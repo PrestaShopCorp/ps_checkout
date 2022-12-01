@@ -54,7 +54,7 @@ class AddressAdapter
      */
     public function save()
     {
-        return (bool) $this->address->save();
+        return (bool)$this->address->save();
     }
 
     /**
@@ -65,22 +65,11 @@ class AddressAdapter
         return $this->address->validateFields(false);
     }
 
-    /**
-     * @param $key string
-     * @param $value string
-     *
-     * @return void
-     */
     public function setField($key, $value)
     {
         $this->address->$key = $value;
     }
 
-    /**+
-     * @param $key string
-     * @return mixed
-     *
-     */
     public function getField($key)
     {
         return $this->address->$key;
