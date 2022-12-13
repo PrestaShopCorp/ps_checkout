@@ -24,44 +24,45 @@ class PsCheckoutCart extends ObjectModel
     const STATUS_APPROVED = 'APPROVED';
     const STATUS_COMPLETED = 'COMPLETED';
     const STATUS_VOIDED = 'VOIDED';
+    const PAYER_ACTION_REQUIRED = 'PAYER_ACTION_REQUIRED';
 
     /**
-     * @var int Cart Identifier
+     * @var int|null Cart Identifier
      */
     public $id_cart;
 
     /**
-     * @var string PayPal Order Intent
+     * @var string|null PayPal Order Intent
      */
     public $paypal_intent;
 
     /**
-     * @var string PayPal Order Identifier
+     * @var string|null PayPal Order Identifier
      */
     public $paypal_order;
 
     /**
-     * @var string PayPal Order Status
+     * @var string|null PayPal Order Status
      */
     public $paypal_status;
 
     /**
-     * @var string PayPal Funding Source
+     * @var string|null PayPal Funding Source
      */
     public $paypal_funding;
 
     /**
-     * @var string PayPal Access Token for Hosted-Fields
+     * @var string|null PayPal Access Token for Hosted-Fields
      */
     public $paypal_token;
 
     /**
-     * @var string PayPal expiration date for Access Token
+     * @var string|null PayPal expiration date for Access Token
      */
     public $paypal_token_expire;
 
     /**
-     * @var string PayPal expiration date for Authorization
+     * @var string|null PayPal expiration date for Authorization
      */
     public $paypal_authorization_expire;
 
@@ -76,12 +77,12 @@ class PsCheckoutCart extends ObjectModel
     public $isHostedFields = false;
 
     /**
-     * @var string Creation date in mysql date format
+     * @var string|null Creation date in mysql date format
      */
     public $date_add;
 
     /**
-     * @var string Last modification date in mysql date format
+     * @var string|null Last modification date in mysql date format
      */
     public $date_upd;
 
@@ -164,4 +165,130 @@ class PsCheckoutCart extends ObjectModel
             ],
         ],
     ];
+
+    /**
+     * @return int
+     */
+    public function getIdCart()
+    {
+        return (int) $this->id_cart;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPaypalIntent()
+    {
+        return $this->paypal_intent;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPaypalOrderId()
+    {
+        return $this->paypal_order;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPaypalStatus()
+    {
+        return $this->paypal_status;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPaypalFundingSource()
+    {
+        return $this->paypal_funding;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPaypalClientToken()
+    {
+        if (empty($this->paypal_token) || $this->isPaypalClientTokenExpired()) {
+            return null;
+        }
+
+        return $this->paypal_token;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPaypalClientTokenExpired()
+    {
+        return empty($this->paypal_token_expire) || strtotime($this->paypal_token_expire) > time();
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaypalAuthorizationExpireDate()
+    {
+        return $this->paypal_authorization_expire;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPaypalAuthorizationExpired()
+    {
+        return empty($this->paypal_authorization_expire) || strtotime($this->paypal_authorization_expire) > time();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExpressCheckout()
+    {
+        return (bool) $this->isExpressCheckout;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHostedFields()
+    {
+        return (bool) $this->isHostedFields;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateAdd()
+    {
+        return $this->date_add;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDateUpd()
+    {
+        return $this->date_upd;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPayPalOrderExpired()
+    {
+        return empty($this->date_add) || strtotime($this->date_add) + 3600 * 3 < time();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOrderAvailable()
+    {
+        return $this->getPaypalOrderId()
+            && in_array($this->paypal_status, [PsCheckoutCart::STATUS_CREATED, PsCheckoutCart::STATUS_APPROVED, PsCheckoutCart::PAYER_ACTION_REQUIRED], true)
+            && !$this->isPayPalOrderExpired();
+    }
 }
