@@ -23,4 +23,6 @@ namespace PrestaShop\Module\PrestashopCheckout\Builder\Address;
 interface CountryInterface
 {
     public function getByIso($psIsoCode);
+
+    public function isNeedDniByCountryId($country_code);
 }

@@ -20,7 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Address;
 
-use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
+use PrestaShop\Module\PrestashopCheckout\Adapter\CountryAdapter;
 
 class CheckoutAddress implements CheckoutAddressInterface
 {
@@ -72,7 +72,7 @@ class CheckoutAddress implements CheckoutAddressInterface
     /**
      * @param array $payload
      */
-    public function __construct($payload, CountryInterface $country)
+    public function __construct($payload, CountryAdapter $country)
     {
         $this->country = $country;
         $this->firstname = $this->formatAddressLine($payload['order']['payer']['name']['given_name']);
@@ -112,8 +112,35 @@ class CheckoutAddress implements CheckoutAddressInterface
      */
     public function getCountryId($countryIsoCode)
     {
-        $psIsoCode = (new PaypalCountryCodeMatrice())->getPrestashopIsoCode($countryIsoCode);
+        return  $this->country->getByIso($countryIsoCode);
+    }
 
-        return $this->country->getByIso($psIsoCode);
+    /**
+     * @return string
+     */
+    public function generateChecksum()
+    {
+        $separator = '_';
+        $uniqId = '';
+
+        foreach ($this as $value) {
+            if (gettype($value) !== 'object') {
+                $uniqId .= $value . $separator;
+            }
+        }
+        $uniqId = rtrim($uniqId, $separator);
+
+        return sha1($uniqId);
+    }
+
+    /**
+     * @return string
+     */
+    public function createAddressAlias()
+    {
+        return substr($this->firstname, 0, 2) .
+            substr($this->lastname, 0, 2) .
+            $this->postcode .
+            substr($this->address1, 0, 2);
     }
 }

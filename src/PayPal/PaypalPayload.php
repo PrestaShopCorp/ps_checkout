@@ -18,29 +18,28 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Builder\Address;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
-use PrestaShop\Module\PrestashopCheckout\Adapter\CountryAdapter;
-use PrestaShop\Module\PrestashopCheckout\Repository\AddressRepository;
-use PrestaShop\Module\PrestashopCheckout\Adapter\AddressAdapter;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
-abstract class AddressBuilder
+class PaypalPayload
 {
-    public $checkoutAddress;
-    public $addressRepository;
-    public $countryAdapter;
-    public $addressAdapter;
+    public $payload;
 
-    public function __construct(
-        CheckoutAddress $checkoutAddress,
-        AddressRepository $addressRepository,
-        CountryAdapter        $countryAdapter,
-        AddressAdapter $addressAdapter
-    )
+    public function __construct()
     {
-        $this->checkoutAddress = $checkoutAddress;
-        $this->addressRepository = $addressRepository;
-        $this->countryAdapter = $countryAdapter;
-        $this->addressAdapter = $addressAdapter;
+        $bodyContent = file_get_contents('php://input');
+        if (empty($bodyContent)) {
+            throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
+        }
+        $this->payload = json_decode($bodyContent, true);
+        if (empty($this->payload)) {
+            throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
+        }
+    }
+
+    public function getPayload()
+    {
+        return $this->payload;
     }
 }

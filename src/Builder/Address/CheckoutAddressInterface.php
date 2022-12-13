@@ -28,4 +28,10 @@ interface CheckoutAddressInterface
     public function getCountryId($countryIsoCode);
 
     public function getField($name);
+
+    public function formatAddressLine($adressLine);
+
+    public function generateChecksum();
+
+    public function createAddressAlias();
 }

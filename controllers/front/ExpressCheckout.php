@@ -23,7 +23,9 @@ use PrestaShop\Module\PrestashopCheckout\Builder\Address\CheckoutAddress;
 use PrestaShop\Module\PrestashopCheckout\Builder\Address\PaypalAddressBuilder;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaypalPayload;
 use PrestaShop\Module\PrestashopCheckout\Updater\CustomerUpdater;
+use PrestaShop\Module\PrestashopCheckout\Repository\AddressRepository;
 
 /**
  * This controller receive ajax call when customer click on an express checkout button
@@ -49,17 +51,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
     {
         try {
             // We receive data in a payload not in GET/POST
-            $bodyContent = file_get_contents('php://input');
-
-            if (empty($bodyContent)) {
-                throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
-            }
-
-            $this->payload = json_decode($bodyContent, true);
-
-            if (empty($this->payload)) {
-                throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
-            }
+            $this->payload = $this->module->getService('ps_checkout.paypal.payload')->getPayload();
 
             if (empty($this->payload['orderID']) || false === Validate::isGenericName($this->payload['orderID'])) {
                 throw new PsCheckoutException('PayPal Order identifier missing or invalid', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
@@ -69,7 +61,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int)$this->context->cart->id);
 
             if (false !== $psCheckoutCart) {
                 $psCheckoutCart->paypal_funding = $this->payload['fundingSource'];
@@ -91,9 +83,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
 
             // Always 0 index because we are not using the paypal marketplace system
             // This index is only used in a marketplace context
-            $payPalAddress = new CheckoutAddress($this->payload, new CountryAdapter($this->payload['order']['shipping']['address']['country_code']));
-            $payPalAddressBuilder = new PaypalAddressBuilder($payPalAddress);
-
+            $payPalAddressBuilder = $this->module->getService('ps_checkout.builder.paypal_address_builder');
             $payPalAddressBuilder->createAddress($this->context->customer->id);
         } catch (Exception $exception) {
             $this->handleExceptionSendingToSentry($exception);

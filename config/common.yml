@@ -382,3 +382,36 @@ services:
   ps_checkout.paypal.provider.client_token:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalClientTokenProvider'
     public: true
+
+  ps_checkout.repository.address:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\AddressRepository'
+    public: true
+
+  ps_checkout.builder.checkout_address:
+    class: 'PrestaShop\Module\PrestashopCheckout\Builder\Address\CheckoutAddress'
+    public: true
+    arguments:
+      - '@=service("ps_checkout.paypal.payload").getPayload()'
+      - '@ps_checkout.country_provider'
+
+  ps_checkout.builder.paypal_address_builder:
+    class: 'PrestaShop\Module\PrestashopCheckout\Builder\Address\PaypalAddressBuilder'
+    public: true
+    arguments:
+      - '@ps_checkout.builder.checkout_address'
+      - '@ps_checkout.repository.address'
+      - '@ps_checkout.country_provider'
+      - '@ps_checkout.address_adapter'
+
+  ps_checkout.paypal.payload:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaypalPayload'
+    public: true
+
+  ps_checkout.country_provider:
+    class: 'PrestaShop\Module\PrestashopCheckout\Adapter\CountryAdapter'
+    public: true
+
+  ps_checkout.address_adapter:
+    class: 'PrestaShop\Module\PrestashopCheckout\Adapter\AddressAdapter'
+    public: true
+

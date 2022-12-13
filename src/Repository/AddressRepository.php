@@ -23,13 +23,13 @@ namespace PrestaShop\Module\PrestashopCheckout\Repository;
 use Db;
 use DbQuery;
 
-class CheckoutAddresRepository
+class AddressRepository
 {
     public function addChecksum($id_customer, $alias, $checksum)
     {
         $sql = ' INSERT INTO ' . _DB_PREFIX_ . 'checkout_address
 				(`checksum`, `alias`, `id_customer`)
-				VALUES ("' . pSQL($checksum) . '","' . pSQL($alias) . '",' . (int) $id_customer . ')';
+				VALUES ("' . pSQL($checksum) . '","' . pSQL($alias) . '",' . (int)$id_customer . ')';
 
         if (!Db::getInstance()->execute($sql)) {
             return false;
@@ -41,13 +41,13 @@ class CheckoutAddresRepository
     public function retrieveChecksum($checksum)
     {
         return Db::getInstance()->getRow(' SELECT `checksum` FROM ' . _DB_PREFIX_ . 'checkout_address
-				WHERE `checksum` = ' . (int) $checksum);
+				WHERE `checksum` = ' . (int)$checksum);
     }
 
     public function retrieveCheckoutAdressAlias($checksum)
     {
         $row = Db::getInstance()->getRow(' SELECT `alias` FROM ' . _DB_PREFIX_ . 'checkout_address
-				WHERE `checksum` = ' . (int) $checksum);
+				WHERE `checksum` = ' . (int)$checksum);
 
         return $row['alias'];
     }
@@ -66,9 +66,14 @@ class CheckoutAddresRepository
         $query->select('id_address');
         $query->from('address');
         $query->where('alias = \'' . pSQL($alias) . '\'');
-        $query->where('id_customer = ' . (int) $id_customer);
+        $query->where('id_customer = ' . (int)$id_customer);
         $query->where('deleted = 0');
 
-        return (int) Db::getInstance()->getValue($query);
+        return (int)Db::getInstance()->getValue($query);
+    }
+
+    public function getNewIncstance()
+    {
+        return "Tokas";
     }
 }

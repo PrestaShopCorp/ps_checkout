@@ -23,7 +23,6 @@ namespace Tests\Unit\Builder;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Builder\Address\CheckoutAddress;
 use PrestaShop\Module\PrestashopCheckout\Builder\Address\CountryInterface;
-use PrestaShop\Module\PrestashopCheckout\Builder\Address\PaypalAddressBuilder;
 
 class CheckoutAddressTest extends TestCase
 {
@@ -52,8 +51,7 @@ class CheckoutAddressTest extends TestCase
         $this->mockCountry = $this->createMock(CountryInterface::class);
         $address = new CheckoutAddress($this->addresProvider(), $this->mockCountry);
 
-        $builder = new PaypalAddressBuilder($address);
-        $alias = $builder->createAddressAlias();
+        $alias = $address->createAddressAlias();
         $this->assertEquals('JoPi20582Do', $alias, 'Alias formed not correctlly');
     }
 
@@ -63,19 +61,8 @@ class CheckoutAddressTest extends TestCase
         $this->mockCountry = $this->createMock(CountryInterface::class);
         $address = new CheckoutAddress($this->addresProvider(), $this->mockCountry);
 
-        $builder = new PaypalAddressBuilder($address);
-        $checksum = $builder->generateChecksum();
-        $this->assertNotEquals('JoPi20582Do', $checksum, 'Alias formed not correctlly');
-    }
-
-    public function testRetreaveChecksum()
-    {
-        // TODO: write test
-    }
-
-    public function testStoreChecksum()
-    {
-        // TODO: write test
+        $checksum = $address->generateChecksum();
+        $this->assertNotEquals('JoPi20582Do', $checksum, 'Checksum calculated not correctlly');
     }
 
     public function addresProvider()

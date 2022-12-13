@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Address;
 
-use Country;
 use PrestaShop\Module\PrestashopCheckout\Adapter\AddressAdapter;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
@@ -35,48 +34,53 @@ class PaypalAddressBuilder extends AddressBuilder
      */
     public function createAddress($id_customer)
     {
-        if (!$this->checkoutAddress->country->getField('active') || Country::isNeedDniByCountryId($this->idCountry)) {
+        if (!$this->countryAdapter->getField('active') ||
+            $this->countryAdapter->isNeedDniByCountryId($this->checkoutAddress->id_country)) {
             return false;
         }
 
         // check if a paypal address already exist for the customer
-        $checkSum = $this->generateChecksum();
-        $alias = $this->checkoutAddressRepository->retrieveCheckoutAdressAlias($checkSum);
-        $paypalAddress = $this->checkoutAddressRepository->addressAlreadyExist($alias, $id_customer);
+        $checkSum = $this->checkoutAddress->generateChecksum();
+        $alias = $this->addressRepository->retrieveCheckoutAdressAlias($checkSum);
+        $id_address = $this->addressRepository->addressAlreadyExist($alias, $id_customer);
 
-        if ($paypalAddress) {
-            $addressAdapter = new AddressAdapter($paypalAddress); // if yes, update it with the new address
+        if ($id_address) {
+            $this->addressAdapter = new AddressAdapter($id_address); // if yes, update it with the new address
         } else {
-            $addressAdapter = new AddressAdapter(); // otherwise create a new address
-            $this->checkoutAddressRepository->addChecksum($id_customer, $addressAdapter->getField('alias'), $checkSum);
-            $addressAdapter->fillWith((array) $this->checkoutAddress);
-            $addressAdapter->setField('alias', $this->createAddressAlias());
+            $this->addressAdapter = new AddressAdapter(); // otherwise create a new address
+            $this->addressRepository->addChecksum($id_customer, $this->addressAdapter->getField('alias'), $checkSum);
+            $this->addressAdapter->fillWith((array) $this->checkoutAddress);
+            $this->addressAdapter->setField('alias', $this->checkoutAddress->createAddressAlias());
         }
 
-        if ($this->idState) {
-            $addressAdapter->setField('id_state', $this->idState);
+        if ($this->checkoutAddress->id_state) {
+            $this->addressAdapter->setField('id_state', $this->checkoutAddress->id_state);
         }
 
-        if (!$addressAdapter->isValid()) {
+        if (!$this->addressAdapter->isValid()) {
             return false;
         }
 
         try {
-            $addressAdapter->save();
+            $this->addressAdapter->save();
         } catch (\Exception $exception) {
             throw new PsCheckoutException($exception->getMessage(), PsCheckoutException::PSCHECKOUT_EXPRESS_CHECKOUT_CANNOT_SAVE_ADDRESS, $exception);
         }
         $context = \Context::getContext();
 
-        $context->cart->id_address_delivery = $addressAdapter->getField('id');
-        $context->cart->id_address_invoice = $addressAdapter->getField('id');
+        $context->cart->id_address_delivery = $this->addressAdapter->getField('id');
+        $context->cart->id_address_invoice = $this->addressAdapter->getField('id');
 
         $products = $context->cart->getProducts();
         foreach ($products as $product) {
             $context->cart->setProductAddressDelivery(
-                $product['id_product'], $product['id_product_attribute'],
-                $product['id_address_delivery'], $addressAdapter->getField('id'
-                ));
+                $product['id_product'],
+                $product['id_product_attribute'],
+                $product['id_address_delivery'],
+                $this->addressAdapter->getField(
+                    'id'
+                )
+            );
         }
 
         return $context->cart->save();

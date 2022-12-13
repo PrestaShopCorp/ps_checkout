@@ -25,7 +25,7 @@ class AddressAdapter
     /**
      * @var \Address
      */
-    private $address;
+    public $address;
 
     /**
      * @param int|null $id
