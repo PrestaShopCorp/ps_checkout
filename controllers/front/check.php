@@ -60,7 +60,7 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($bodyValues['orderID']);
 
             if (false === $psCheckoutCart) {
                 $psCheckoutCart = new PsCheckoutCart();
@@ -71,8 +71,8 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
                 $psCheckoutCart->paypal_funding = $bodyValues['fundingSource'];
             }
 
-            $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) ? (bool) $bodyValues['isExpressCheckout'] : false;
-            $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) ? (bool) $bodyValues['isHostedFields'] : false;
+            $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) && (bool) $bodyValues['isExpressCheckout'];
+            $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) && (bool) $bodyValues['isHostedFields'];
             $psCheckoutCartRepository->save($psCheckoutCart);
 
             if (false === empty($psCheckoutCart->paypal_order)) {
@@ -81,6 +81,7 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
                 $response = $paypalOrder->handle($isExpressCheckout, true, $psCheckoutCart->paypal_order);
 
                 if (false === $response['status']) {
+                    $psCheckoutCartRepository->remove($psCheckoutCart);
                     throw new PsCheckoutException(sprintf('Unable to patch PayPal Order - Exception %s : %s', $response['exceptionCode'], $response['exceptionMessage']), PsCheckoutException::PSCHECKOUT_UPDATE_ORDER_HANDLE_ERROR);
                 }
             }

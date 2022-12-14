@@ -91,8 +91,12 @@ export class SmartButtonComponent extends BaseComponent {
           }
 
           return this.psCheckoutApi
-            .postCheckCartOrder(
-              { ...data, fundingSource: this.data.name },
+            .postCheckCartOrder({
+                ...data,
+                fundingSource: this.data.name,
+                isExpressCheckout: this.config.expressCheckout.active,
+                orderID: this.payPalService.getOrderId(),
+              },
               actions
             )
             .catch(error => {
@@ -111,8 +115,11 @@ export class SmartButtonComponent extends BaseComponent {
         onApprove: (data, actions) => {
           this.data.loader.show();
           return this.psCheckoutApi
-            .postValidateOrder(
-              { ...data, fundingSource: this.data.name },
+            .postValidateOrder({
+                ...data,
+                fundingSource: this.data.name,
+                isExpressCheckout: this.config.expressCheckout.active
+              },
               actions
             )
             .catch(error => {
@@ -127,7 +134,8 @@ export class SmartButtonComponent extends BaseComponent {
           return this.psCheckoutApi
             .postCancelOrder({
               ...data,
-              fundingSource: this.data.name
+              fundingSource: this.data.name,
+              isExpressCheckout: this.config.expressCheckout.active
             })
             .catch(error => {
               this.data.loader.hide();
@@ -138,7 +146,8 @@ export class SmartButtonComponent extends BaseComponent {
           return this.psCheckoutApi
             .postCreateOrder({
               ...data,
-              fundingSource: this.data.name
+              fundingSource: this.data.name,
+              isExpressCheckout: this.config.expressCheckout.active
             })
             .catch(error => {
               this.data.loader.hide();

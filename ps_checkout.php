@@ -1044,18 +1044,9 @@ class Ps_checkout extends PaymentModule
             $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
         }
 
-        // If we have a PayPal Order Id with a status CREATED or APPROVED and a not expired PayPal Client Token, we can use it
-        // If paypal_token_expire is in future, token is not expired
-        if (false !== $psCheckoutCart
-            && false === empty($psCheckoutCart->paypal_order)
-            && in_array($psCheckoutCart->paypal_status, [PsCheckoutCart::STATUS_CREATED, PsCheckoutCart::STATUS_APPROVED], true)
-            && false === empty($psCheckoutCart->paypal_token_expire)
-            && strtotime($psCheckoutCart->paypal_token_expire) > time()
-            && false === empty($psCheckoutCart->date_upd)
-            && strtotime($psCheckoutCart->date_upd) + 3600 > time()
-        ) {
-            $payPalOrderId = $psCheckoutCart->paypal_order;
-            $cartFundingSource = $psCheckoutCart->paypal_funding;
+        if (false !== $psCheckoutCart && $psCheckoutCart->isOrderAvailable()) {
+            $payPalOrderId = $psCheckoutCart->getPaypalOrderId();
+            $cartFundingSource = $psCheckoutCart->getPaypalFundingSource();
         }
         // END To be refactored in services
 
@@ -1091,9 +1082,9 @@ class Ps_checkout extends PaymentModule
             $this->name . 'PayPalOrderId' => $payPalOrderId,
             $this->name . 'FundingSource' => $cartFundingSource,
             $this->name . 'HostedFieldsEnabled' => $isCardAvailable && $payPalConfiguration->isCardPaymentEnabled() && $paypalAccountRepository->cardHostedFieldsIsAllowed(),
-            $this->name . 'HostedFieldsSelected' => false !== $psCheckoutCart ? (bool) $psCheckoutCart->isHostedFields : false,
+            $this->name . 'HostedFieldsSelected' => false !== $psCheckoutCart && $psCheckoutCart->isHostedFields(),
             $this->name . 'HostedFieldsContingencies' => $payPalConfiguration->getHostedFieldsContingencies(),
-            $this->name . 'ExpressCheckoutSelected' => false !== $psCheckoutCart ? (bool) $psCheckoutCart->isExpressCheckout : false,
+            $this->name . 'ExpressCheckoutSelected' => false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout(),
             $this->name . 'ExpressCheckoutProductEnabled' => $expressCheckoutConfiguration->isProductPageEnabled() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
             $this->name . 'ExpressCheckoutCartEnabled' => $expressCheckoutConfiguration->isOrderPageEnabled() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
             $this->name . 'ExpressCheckoutOrderEnabled' => $expressCheckoutConfiguration->isCheckoutPageEnabled() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
