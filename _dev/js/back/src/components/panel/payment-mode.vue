@@ -23,27 +23,13 @@
       {{ $t('panel.payment-mode.title') }}
     </template>
     <b-card-body>
+      <b-alert class="d-inline-block w-100" variant="warning" show>
+        <p>
+          After switch environment, please logout from PayPal Account and login
+          again on the new environment.
+        </p>
+      </b-alert>
       <b-form>
-        <b-form-group
-          label-cols="4"
-          label-align="right"
-          :label="$t('panel.payment-mode.paymentAction')"
-          label-for="intent-mode"
-        >
-          <b-form-radio-group
-            id="intent-mode"
-            v-model="captureMode"
-            :options="intentOptions"
-            buttons
-            button-variant="outline-primary"
-            name="radio-btn-outline"
-          />
-        </b-form-group>
-
-        <b-alert class="d-inline-block w-100" variant="info" show>
-          <p>{{ $t('panel.payment-mode.infoAlertText') }}.</p>
-        </b-alert>
-
         <b-form-group
           v-if="paymentMode === 'LIVE'"
           label-cols="4"
@@ -96,14 +82,6 @@
 
 <script>
   export default {
-    data() {
-      return {
-        intentOptions: [
-          { text: this.$t('panel.payment-mode.capture'), value: 'CAPTURE' },
-          { text: this.$t('panel.payment-mode.authorize'), value: 'AUTHORIZE' }
-        ]
-      };
-    },
     methods: {
       updatePaymentMode() {
         let mode = 'LIVE';
@@ -117,17 +95,6 @@
       }
     },
     computed: {
-      captureMode: {
-        get() {
-          return this.$store.state.configuration.captureMode;
-        },
-        set(value) {
-          if (this.captureMode === value) {
-            return;
-          }
-          this.$store.dispatch('updateCaptureMode', value);
-        }
-      },
       paymentMode() {
         return this.$store.state.configuration.paymentMode;
       }
