@@ -123,7 +123,7 @@ class CheckoutAddress implements CheckoutAddressInterface
         $separator = '_';
         $uniqId = '';
 
-        foreach ($this as $value) {
+        foreach ((array) $this as $value) {
             if (gettype($value) !== 'object') {
                 $uniqId .= $value . $separator;
             }

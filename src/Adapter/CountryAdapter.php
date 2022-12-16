@@ -43,6 +43,6 @@ class CountryAdapter implements CountryInterface
 
     public function isNeedDniByCountryId($country_code)
     {
-        return $this->country::isNeedDniByCountryId($country_code);
+        return $this->country->isNeedDniByCountryId($country_code);
     }
 }
