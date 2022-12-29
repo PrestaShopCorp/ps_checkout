@@ -51,6 +51,10 @@ class OrderPresenter
      */
     public function present()
     {
+        if (empty($this->orderPayPal)) {
+            return [];
+        }
+
         return array_merge(
             [
                 'id' => $this->orderPayPal['id'],

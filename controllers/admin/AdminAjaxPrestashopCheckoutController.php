@@ -367,20 +367,8 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $paypalOrderProvider = $this->module->getService('ps_checkout.paypal.provider.order');
 
         $paypalOrder = $paypalOrderProvider->getById($psCheckoutCart->paypal_order);
-
-        if (empty($paypalOrder)) {
-            http_response_code(500);
-            $this->ajaxDie(json_encode([
-                'status' => false,
-                'errors' => [
-                    strtr(
-                        $this->l('Unable to fetch PayPal Order [PAYPAL_ORDER_ID]'),
-                        [
-                            '[PAYPAL_ORDER_ID]' => $psCheckoutCart->paypal_order,
-                        ]
-                    ),
-                ],
-            ]));
+        if ($paypalOrder === false) {
+            $paypalOrder = [];
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider $fundingSourceTranslationProvider */
@@ -389,6 +377,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         $this->context->smarty->assign([
             'moduleName' => $this->module->displayName,
+            'moduleUrl' => $this->context->link->getAdminLink('AdminModules', true, [], ['configure' => 'ps_checkout']),
             'orderPayPal' => $presenter->present(),
             'orderPayPalBaseUrl' => $this->context->link->getAdminLink('AdminAjaxPrestashopCheckout'),
             'moduleLogoUri' => $this->module->getPathUri() . 'logo.png',
