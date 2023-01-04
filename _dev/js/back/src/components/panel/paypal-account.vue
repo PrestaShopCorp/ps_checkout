@@ -46,7 +46,7 @@
             </template>
 
             <template v-else>
-              {{ $t('panel.accounts.paypal.isLinked') }}
+              {{ $t('panel.accounts.paypal.isLinked') }} <i v-if="paypalMerchantId">{{ $t('panel.accounts.paypal.merchantId', [paypalMerchantId]) }}</i>
 
               <br />
 
@@ -188,6 +188,9 @@
         }
 
         return emailMerchant;
+      },
+      paypalMerchantId() {
+        return this.$store.state.paypal.idMerchant;
       },
       checkoutAccountStatus() {
         return this.$store.state.firebase.onboardingCompleted;

@@ -183,6 +183,7 @@ export class HostedFieldsComponent extends BaseComponent {
 
     this.data.HTMLElementButtonWrapper.append(this.data.HTMLElementButton);
     this.data.HTMLElementButton.classList.remove('disabled');
+    this.data.HTMLElementButton.style.display = '';
     this.data.HTMLElementButton.disabled = !this.isSubmittable();
 
     this.data.conditions &&

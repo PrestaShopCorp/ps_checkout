@@ -59,7 +59,7 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($bodyValues['orderID']);
 
             if (false !== $psCheckoutCart) {
                 $psCheckoutCart->paypal_funding = $bodyValues['fundingSource'];
@@ -73,8 +73,8 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
                 [
                     'PayPalOrderId' => isset($bodyValues['orderID']) ? $bodyValues['orderID'] : null,
                     'FundingSource' => isset($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : null,
-                    'isExpressCheckout' => isset($bodyValues['isExpressCheckout']) ? (bool) $bodyValues['isExpressCheckout'] : false,
-                    'isHostedFields' => isset($bodyValues['isHostedFields']) ? (bool) $bodyValues['isHostedFields'] : false,
+                    'isExpressCheckout' => isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'],
+                    'isHostedFields' => isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'],
                 ]
             );
 

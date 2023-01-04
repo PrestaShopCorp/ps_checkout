@@ -29,23 +29,25 @@
 </div>
 
 {if $is17 && $isExpressCheckout}
-<div class="express-checkout-block mb-2">
+<div class="express-checkout-block mb-2" id="ps_checkout-express-checkout-banner">
   <img src="{$paypalLogoPath|escape:'htmlall':'UTF-8'}" class="express-checkout-img" alt="PayPal">
   <p class="express-checkout-label">
     {$translatedText|escape:'htmlall':'UTF-8'}
   </p>
 </div>
-{elseif $is17}
-  <div id="ps_checkout-loader" class="express-checkout-block mb-2">
-    <div class="express-checkout-block-wrapper">
-      <p class="express-checkout-spinner-text">
+{/if}
+
+{if $is17}
+<div id="ps_checkout-loader" class="express-checkout-block mb-2">
+  <div class="express-checkout-block-wrapper">
+    <p class="express-checkout-spinner-text">
         {$loaderTranslatedText|escape:'htmlall':'UTF-8'}
-      </p>
-      <div class="express-checkout-spinner">
-        <img src="{$spinnerPath|escape:'htmlall':'UTF-8'}" alt="{$loaderTranslatedText|escape:'htmlall':'UTF-8'}">
-      </div>
+    </p>
+    <div class="express-checkout-spinner">
+      <img src="{$spinnerPath|escape:'htmlall':'UTF-8'}" alt="{$loaderTranslatedText|escape:'htmlall':'UTF-8'}">
     </div>
   </div>
+</div>
 {/if}
 
 {if $is17}
@@ -58,7 +60,7 @@
         const paymentOptionContainer = document.getElementById(paymentOption.id + '-container');
         const paymentOptionName = paymentOption.getAttribute('data-module-name');
 
-        if (-1 !== paymentOptionName.search('ps_checkout')) {
+        if (!paymentOptionContainer.classList.contains('ps_checkout-payment-option') && -1 !== paymentOptionName.search('ps_checkout')) {
           paymentOptionContainer.style.display = 'none';
         }
       });

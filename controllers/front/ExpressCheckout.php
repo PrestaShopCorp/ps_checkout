@@ -67,7 +67,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($this->payload['orderID']);
 
             if (false !== $psCheckoutCart) {
                 $psCheckoutCart->paypal_funding = $this->payload['fundingSource'];
@@ -87,6 +87,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
 
             $this->context->cookie->__set('paypalEmail', $this->payload['order']['payer']['email_address']);
 
+            $this->resetContextCartAddresses();
             // Always 0 index because we are not using the paypal marketplace system
             // This index is only used in a marketplace context
             // @todo Extract factory in a Service.
@@ -99,7 +100,8 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
                 false === empty($this->payload['order']['shipping']['address']['admin_area_1']) ? $this->payload['order']['shipping']['address']['admin_area_1'] : '',
                 $this->payload['order']['shipping']['address']['admin_area_2'],
                 $this->payload['order']['shipping']['address']['country_code'],
-                false === empty($this->payload['order']['payer']['phone']) ? $this->payload['order']['payer']['phone']['phone_number']['national_number'] : ''
+                false === empty($this->payload['order']['payer']['phone']) ? $this->payload['order']['payer']['phone']['phone_number']['national_number'] : '',
+                $this->payload['orderID']
             );
         } catch (Exception $exception) {
             $this->handleExceptionSendingToSentry($exception);
@@ -190,6 +192,11 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $customer->firstname = $firstName;
         $customer->lastname = $lastName;
 
+        if (Configuration::get('PS_CHECKOUT_EXPRESS_USE_GUEST')) {
+            $customer->is_guest = true;
+            $customer->id_default_group = (int) Configuration::get('PS_GUEST_GROUP');
+        }
+
         if (class_exists('PrestaShop\PrestaShop\Core\Crypto\Hashing')) {
             $crypto = new PrestaShop\PrestaShop\Core\Crypto\Hashing();
             $customer->passwd = $crypto->hash(
@@ -237,33 +244,43 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $state,
         $city,
         $countryIsoCode,
-        $phone
+        $phone,
+        $idPaypalOrder
     ) {
         // check if country is available for delivery
         $psIsoCode = (new PaypalCountryCodeMatrice())->getPrestashopIsoCode($countryIsoCode);
         $idCountry = Country::getByIso($psIsoCode);
+        $idState = 0;
+        $country = new Country((int) $idCountry, null, (int) $this->context->shop->id);
 
-        $country = new Country((int) $idCountry);
-
-        if (!$country->active || Country::isNeedDniByCountryId($idCountry)) {
+        if (!Validate::isLoadedObject($country)
+            || !$country->active
+            || !$country->isAssociatedToShop((int) $this->context->shop->id)
+            || Country::isNeedDniByCountryId($idCountry)
+        ) {
             return false;
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository $countryRepository */
-        $countryRepository = $this->module->getService('ps_checkout.repository.country');
+        if ($country->contains_states) {
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository $countryRepository */
+            $countryRepository = $this->module->getService('ps_checkout.repository.country');
 
-        $idState = $countryRepository->getStateId($state);
+            $idState = $countryRepository->getStateId($state);
+        }
 
-        // check if a paypal address already exist for the customer
-        $paypalAddress = $this->addressAlreadyExist('PayPal', $this->context->customer->id);
+        // check if a PayPal address already exist for the customer and not used
+        $paypalAddressAlias = 'Paypal ' . $idPaypalOrder;
+        $paypalAddressId = $this->addressAlreadyExist($paypalAddressAlias, $this->context->customer->id);
+        $paypalAddress = new Address($paypalAddressId);
+        $isPaypalValidAddressAndNotUsed = Validate::isLoadedObject($paypalAddress) && !$paypalAddress->isUsed();
 
-        if ($paypalAddress) {
-            $address = new Address($paypalAddress); // if yes, update it with the new address
+        if ($isPaypalValidAddressAndNotUsed) {
+            $address = $paypalAddress; // if yes, update it with the new address
         } else {
             $address = new Address(); // otherwise create a new address
         }
 
-        $address->alias = 'PayPal';
+        $address->alias = $paypalAddressAlias;
         $address->id_customer = $this->context->customer->id;
         $address->firstname = $firstName;
         $address->lastname = $lastName;
@@ -273,10 +290,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $address->city = $city;
         $address->id_country = $idCountry;
         $address->phone = $phone;
-
-        if ($idState) {
-            $address->id_state = $idState;
-        }
+        $address->id_state = $idState;
 
         if (true !== $address->validateFields(false)) {
             return false;
@@ -317,5 +331,15 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         $query->where('deleted = 0');
 
         return (int) Db::getInstance()->getValue($query);
+    }
+
+    /**
+     * Reset current cart address
+     */
+    private function resetContextCartAddresses()
+    {
+        $this->context->cart->id_address_delivery = 0;
+        $this->context->cart->id_address_invoice = 0;
+        $this->context->cart->save();
     }
 }

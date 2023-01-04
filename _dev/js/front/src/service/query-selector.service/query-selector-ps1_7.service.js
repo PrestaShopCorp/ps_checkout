@@ -25,63 +25,59 @@ const SELECTORS = {
 
 export class QuerySelectorPs1_7Service {
   static getBasePaymentConfirmation() {
-    return document.querySelector(SELECTORS.BASE_PAYMENT_CONFIRMATION);
+    return this.querySelector(SELECTORS.BASE_PAYMENT_CONFIRMATION);
   }
 
   static getConditionsCheckboxes() {
-    return Array.prototype.slice.call(
-      document.querySelectorAll(SELECTORS.CONDITIONS_CHECKBOXES)
-    );
+    return this.querySelectorAll(SELECTORS.CONDITIONS_CHECKBOXES);
   }
 
   static getLoaderParent() {
-    return document.querySelector(SELECTORS.LOADER_PARENT);
+    return this.querySelector(SELECTORS.LOADER_PARENT);
   }
 
   static getNotificationConditions() {
-    return document.querySelector(SELECTORS.NOTIFICATION_CONDITIONS);
+    return this.querySelector(SELECTORS.NOTIFICATION_CONDITIONS);
   }
 
   static getNotificationPaymentCanceled() {
-    return document.querySelector(SELECTORS.NOTIFICATION_PAYMENT_CANCELLED);
+    return this.querySelector(SELECTORS.NOTIFICATION_PAYMENT_CANCELLED);
   }
 
   static getNotificationPaymentError() {
-    return document.querySelector(SELECTORS.NOTIFICATION_PAYMENT_ERROR);
+    return this.querySelector(SELECTORS.NOTIFICATION_PAYMENT_ERROR);
   }
 
   static getNotificationPaymentErrorText() {
-    return document.querySelector(SELECTORS.NOTIFICATION_PAYMENT_ERROR_TEXT);
+    return this.querySelector(SELECTORS.NOTIFICATION_PAYMENT_ERROR_TEXT);
   }
 
   static getPaymentOptions() {
-    return document.querySelector(SELECTORS.PAYMENT_OPTIONS);
+    return this.querySelector(SELECTORS.PAYMENT_OPTIONS);
   }
 
   static getPaymentOptionsLoader() {
-    return document.querySelector(SELECTORS.PAYMENT_OPTIONS_LOADER);
+    return this.querySelector(SELECTORS.PAYMENT_OPTIONS_LOADER);
   }
 
   static getPaymentOptionRadios() {
-    return Array.prototype.slice.call(
-      document.querySelectorAll(SELECTORS.PAYMENT_OPTION_RADIOS)
-    );
+    return this.querySelectorAll(SELECTORS.PAYMENT_OPTION_RADIOS);
   }
 
   static getExpressCheckoutButtonContainerCart() {
-    return document.querySelector(
+    return this.querySelector(
       SELECTORS.EXPRESS_CHECKOUT_CONTAINER_CART_PAGE
     );
   }
 
   static getExpressCheckoutButtonContainerCheckout() {
-    return document.querySelector(
+    return this.querySelector(
       SELECTORS.EXPRESS_CHECKOUT_CONTAINER_CHECKOUT_PAGE
     );
   }
 
   static getExpressCheckoutButtonContainerProduct() {
-    return document.querySelector(
+    return this.querySelector(
       SELECTORS.EXPRESS_CHECKOUT_CONTAINER_PRODUCT_PAGE
     );
   }
@@ -89,10 +85,10 @@ export class QuerySelectorPs1_7Service {
   static getPayLaterOfferMessageContainerSelector(placement) {
     switch (placement) {
       case 'product':
-        return document.querySelector(SELECTORS.PAY_LATER_OFFER_MESSAGE_CONTAINER_PRODUCT);
+        return this.querySelector(SELECTORS.PAY_LATER_OFFER_MESSAGE_CONTAINER_PRODUCT);
       case 'cart':
       case 'order':
-        return document.querySelector(SELECTORS.PAY_LATER_OFFER_MESSAGE_CONTAINER_CART_SUMMARY);
+        return this.querySelector(SELECTORS.PAY_LATER_OFFER_MESSAGE_CONTAINER_CART_SUMMARY);
       default:
         return;
     }
@@ -105,9 +101,31 @@ export class QuerySelectorPs1_7Service {
       case 'home':
       case 'order':
       case 'category':
-        return document.querySelector(SELECTORS.PAY_LATER_BANNER_CONTAINER);
+        return this.querySelector(SELECTORS.PAY_LATER_BANNER_CONTAINER);
       default:
         return;
     }
+  }
+
+  static querySelector(selector) {
+    let element = document.querySelector(selector);
+
+    if (!element) {
+      console.error('HTMLElement selector ' + selector + ' not found.');
+    }
+
+    return element;
+  }
+
+  static querySelectorAll(selector) {
+    let elements = Array.prototype.slice.call(
+      document.querySelectorAll(selector)
+    );
+
+    if (!elements) {
+      console.error('HTMLElement selector ' + selector + ' not found.');
+    }
+
+    return elements;
   }
 }

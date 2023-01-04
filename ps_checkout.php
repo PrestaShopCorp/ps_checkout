@@ -129,7 +129,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.20.2';
+    const VERSION = '2.21.0';
 
     const INTEGRATION_DATE = '2022-14-06';
 
@@ -155,7 +155,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.20.2';
+        $this->version = '2.21.0';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -711,6 +711,7 @@ class Ps_checkout extends PaymentModule
         $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout;
 
         $this->context->smarty->assign([
+            'cancelTranslatedText' => $this->l('Choose another payment method'),
             'is17' => $shopContext->isShop17(),
             'isExpressCheckout' => $isExpressCheckout,
             'modulePath' => $this->getPathUri(),
@@ -1010,6 +1011,9 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
         $payLaterConfiguration = $this->getService('ps_checkout.pay_later.configuration');
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
+        $shopContext = $this->getService('ps_checkout.context.shop');
+
         $fundingSourcesSorted = [];
         $payWithTranslations = [];
         $isCardAvailable = false;
@@ -1040,16 +1044,9 @@ class Ps_checkout extends PaymentModule
             $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
         }
 
-        // If we have a PayPal Order Id with a status CREATED or APPROVED and a not expired PayPal Client Token, we can use it
-        // If paypal_token_expire is in future, token is not expired
-        if (false !== $psCheckoutCart
-            && false === empty($psCheckoutCart->paypal_order)
-            && in_array($psCheckoutCart->paypal_status, [PsCheckoutCart::STATUS_CREATED, PsCheckoutCart::STATUS_APPROVED], true)
-            && false === empty($psCheckoutCart->paypal_token_expire)
-            && strtotime($psCheckoutCart->paypal_token_expire) > time()
-        ) {
-            $payPalOrderId = $psCheckoutCart->paypal_order;
-            $cartFundingSource = $psCheckoutCart->paypal_funding;
+        if (false !== $psCheckoutCart && $psCheckoutCart->isOrderAvailable()) {
+            $payPalOrderId = $psCheckoutCart->getPaypalOrderId();
+            $cartFundingSource = $psCheckoutCart->getPaypalFundingSource();
         }
         // END To be refactored in services
 
@@ -1085,9 +1082,9 @@ class Ps_checkout extends PaymentModule
             $this->name . 'PayPalOrderId' => $payPalOrderId,
             $this->name . 'FundingSource' => $cartFundingSource,
             $this->name . 'HostedFieldsEnabled' => $isCardAvailable && $payPalConfiguration->isCardPaymentEnabled() && $paypalAccountRepository->cardHostedFieldsIsAllowed(),
-            $this->name . 'HostedFieldsSelected' => false !== $psCheckoutCart ? (bool) $psCheckoutCart->isHostedFields : false,
+            $this->name . 'HostedFieldsSelected' => false !== $psCheckoutCart && $psCheckoutCart->isHostedFields(),
             $this->name . 'HostedFieldsContingencies' => $payPalConfiguration->getHostedFieldsContingencies(),
-            $this->name . 'ExpressCheckoutSelected' => false !== $psCheckoutCart ? (bool) $psCheckoutCart->isExpressCheckout : false,
+            $this->name . 'ExpressCheckoutSelected' => false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout(),
             $this->name . 'ExpressCheckoutProductEnabled' => $expressCheckoutConfiguration->isProductPageEnabled() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
             $this->name . 'ExpressCheckoutCartEnabled' => $expressCheckoutConfiguration->isOrderPageEnabled() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
             $this->name . 'ExpressCheckoutOrderEnabled' => $expressCheckoutConfiguration->isCheckoutPageEnabled() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
@@ -1102,6 +1099,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'PayLaterOrderPageButtonEnabled' => $payLaterConfiguration->isOrderPageButtonActive() && $paypalAccountRepository->paypalPaymentMethodIsValid(),
             $this->name . '3dsEnabled' => $payPalConfiguration->is3dSecureEnabled(),
             $this->name . 'CspNonce' => $payPalConfiguration->getCSPNonce(),
+            $this->name . 'PartnerAttributionId' => $shopContext->getBnCode(),
             $this->name . 'CartProductCount' => $cartProductCount,
             $this->name . 'FundingSourcesSorted' => $fundingSourcesSorted,
             $this->name . 'PayWithTranslations' => $payWithTranslations,
@@ -1432,6 +1430,7 @@ class Ps_checkout extends PaymentModule
         $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout;
 
         $this->context->smarty->assign([
+            'cancelTranslatedText' => $this->l('Choose another payment method'),
             'is17' => $shopContext->isShop17(),
             'isExpressCheckout' => $isExpressCheckout,
             'isOnePageCheckout16' => !$shopContext->isShop17() && (bool) Configuration::get('PS_ORDER_PROCESS_TYPE'),
@@ -1636,7 +1635,17 @@ class Ps_checkout extends PaymentModule
 
     public function hookHeader()
     {
-        if (false === $this->merchantIsValid()) {
+        $controller = Tools::getValue('controller');
+
+        if (empty($controller) && isset($this->context->controller->php_self)) {
+            $controller = $this->context->controller->php_self;
+        }
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Validator\FrontControllerValidator $frontControllerValidator */
+        $frontControllerValidator = $this->getService('ps_checkout.validator.front_controller');
+
+        if ($frontControllerValidator->shouldLoadFrontJS($controller)) {
+            // No need to prefetch if script will be loaded
             return '';
         }
 

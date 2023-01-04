@@ -58,10 +58,7 @@ class Ps_CheckoutTokenModuleFrontController extends AbstractFrontController
                 $psCheckoutCart->id_cart = (int) $this->context->cart->id;
             }
 
-            // If paypal_token_expire is in future, token is not expired
-            if (empty($psCheckoutCart->paypal_token_expire)
-                || strtotime($psCheckoutCart->paypal_token_expire) <= time()
-            ) {
+            if ($psCheckoutCart->isPaypalClientTokenExpired()) {
                 $psCheckoutCart->paypal_order = '';
                 $psCheckoutCart->paypal_token = $clientTokenProvider->getPayPalClientToken();
                 $psCheckoutCart->paypal_token_expire = (new DateTime())->modify('+3550 seconds')->format('Y-m-d H:i:s');

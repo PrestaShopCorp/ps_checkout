@@ -141,20 +141,27 @@ class PaypalAccountUpdater
      */
     private function cardIsLimited($response)
     {
-        $findCapability = array_search('CUSTOM_CARD_PROCESSING', array_column($response['capabilities'], 'name'));
-        $capability = $response['capabilities'][$findCapability];
+        $capabilityCustomCardProcessingIndex = array_search('CUSTOM_CARD_PROCESSING', array_column($response['capabilities'], 'name'));
+        $capabilityCustomCardProcessing = $response['capabilities'][$capabilityCustomCardProcessingIndex];
+
+        $capabilityWithdrawMoneyIndex = array_search('WITHDRAW_MONEY', array_column($response['capabilities'], 'name'));
+        $isCapabilityWithdrawMoneyLimited = false !== $capabilityWithdrawMoneyIndex && isset($response['capabilities'][$capabilityWithdrawMoneyIndex]['limits']);
+
+        $capabilitySendMoneyIndex = array_search('SEND_MONEY', array_column($response['capabilities'], 'name'));
+        $isCapabilitySendMoneyLimited = false !== $capabilitySendMoneyIndex && isset($response['capabilities'][$capabilitySendMoneyIndex]['limits']);
 
         // The capability can no longer be used, but there are remediation steps to regain access to the corresponding functionality.
-        if ($capability['status'] === 'SUSPENDED') {
+        if ($capabilityCustomCardProcessing['status'] === 'SUSPENDED') {
             return self::SUSPENDED;
         }
 
         // The capability can no longer be used and there are no remediation steps available to regain the functionality.
-        if ($capability['status'] === 'REVOKED') {
+        if ($capabilityCustomCardProcessing['status'] === 'REVOKED') {
             return self::REVOKED;
         }
 
-        if (isset($capability['limits'])) {
+        // Returns only limited when limits has been reached ($isCapabilityWithdrawMoneyLimited && $isCapabilitySendMoneyLimited)
+        if (isset($capabilityCustomCardProcessing['limits']) && $isCapabilityWithdrawMoneyLimited && $isCapabilitySendMoneyLimited) {
             return self::LIMITED;
         }
 

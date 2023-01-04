@@ -66,9 +66,11 @@ export class ExpressButtonCartComponent extends BaseComponent {
     if (!this.buttonReferenceContainer) return;
 
     this.renderComponent();
-    this.prestashopService.onUpdatedShoppingCartExtra(() =>
-      this.renderComponent()
-    );
+    this.prestashopService.onUpdatedShoppingCartExtra(() => {
+        if (null === document.querySelector('#ps_checkout-express-button-cart')) {
+          this.renderComponent();
+        }
+    });
 
     return this;
   }

@@ -29,10 +29,6 @@ export class PaymentOptionsComponent extends BaseComponent {
 
   created() {
     this.data.HTMLElement = this.querySelectorService.getPaymentOptions();
-
-    this.data.HTMLExpressCheckoutPaymentConfirmation = this.querySelectorService.getBasePaymentConfirmation();
-
-    this.data.HTMLElementHookPayment = document.querySelector('#HOOK_PAYMENT');
   }
 
   renderPaymentOptionItems() {
@@ -48,7 +44,6 @@ export class PaymentOptionsComponent extends BaseComponent {
           new PaymentOptionComponent(this.app, {
             fundingSource: fundingSource,
             markPosition: this.props.markPosition,
-
             HTMLElement
           }).render()
         );
@@ -57,8 +52,7 @@ export class PaymentOptionsComponent extends BaseComponent {
   }
 
   renderPaymentOptionListener() {
-    const HTMLListenerElements = this.children.paymentOptions.map(
-      (paymentOption) => {
+    const HTMLListenerElements = this.children.paymentOptions.map((paymentOption) => {
         const HTMLElement = paymentOption.data.HTMLElementContainer;
         const [button, form] = Array.prototype.slice.call(
           HTMLElement.querySelectorAll('.payment_module')
@@ -80,60 +74,41 @@ export class PaymentOptionsComponent extends BaseComponent {
           this.data.notification.hideError();
         });
 
+        if (this.config.expressCheckout.active && (('ps_checkout-' + this.payPalService.getFundingSource()) !== HTMLListenerElements[index].button.dataset.moduleName)) {
+          this.psCheckoutApi.postCancelOrder(
+            {
+              orderID: this.payPalService.getOrderId(),
+              fundingSource: this.payPalService.getFundingSource(),
+              isExpressCheckout: true
+            }
+          ).then(() => {
+            this.config.expressCheckout.active = false;
+
+            const expressCheckoutContainer = document.querySelector('#ps_checkout-express-checkout-banner');
+            if (expressCheckoutContainer) {
+              expressCheckoutContainer.style.display = 'none';
+            }
+          });
+        }
+
         HTMLListenerElements[index].button.classList.add('open');
         HTMLListenerElements[index].button.classList.remove('closed');
         HTMLListenerElements[index].form.classList.add('open');
         HTMLListenerElements[index].form.classList.remove('closed');
       });
     });
-  }
 
-  getHookPaymentElements() {
-    return Array.prototype.slice.call(
-      document.querySelector('#HOOK_PAYMENT').children
-    );
-  }
-
-  renderExpressCheckoutPaymentButton() {
-    const paymentButton = this.data.HTMLExpressCheckoutPaymentConfirmation;
-
-    paymentButton.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.data.loader.show();
-
-      this.psCheckoutApi
-        .postCheckCartOrder(
-          {
-            orderID: this.payPalService.getOrderId(),
-            fundingSource: this.payPalService.getFundingSource(),
-            isExpressCheckout: true
-          },
-          { resolve: () => {}, reject: () => {} }
-        )
-        .then(() =>
-          this.psCheckoutApi.postValidateOrder({
-            orderID: this.payPalService.getOrderId(),
-            fundingSource: this.payPalService.getFundingSource(),
-            isExpressCheckout: true
-          })
-        )
-        .catch((error) => {
-          console.log(error);
-          this.data.loader.hide();
-          this.data.notification.showError(error.message);
-        });
-    });
-
-    paymentButton.disabled = !this.data.conditions.isChecked();
-    this.data.conditions.onChange(() => {
-      paymentButton.disabled = !this.data.conditions.isChecked();
-    });
-
-    this.getHookPaymentElements().forEach((element) => {
-      if (element.id !== 'ps_checkout-displayPayment' && element.id !== 'ps_checkout-notification-container') {
-        element.style.display = 'none';
-      }
-    });
+    console.log(this.payPalService.getFundingSource());
+    if (this.config.expressCheckout.active) {
+      HTMLListenerElements.forEach(({ button, form }) => {
+        if (button.dataset.moduleName === ('ps_checkout-' + this.payPalService.getFundingSource())) {
+          button.classList.add('open');
+          button.classList.remove('closed');
+          form.classList.add('open');
+          form.classList.remove('closed');
+        }
+      });
+    }
   }
 
   render() {
@@ -141,13 +116,8 @@ export class PaymentOptionsComponent extends BaseComponent {
     this.data.notification = this.app.root.children.notification;
     this.data.loader = this.app.root.children.loader;
 
-    if (!this.config.expressCheckout.active) {
-      this.renderPaymentOptionItems();
-      this.renderPaymentOptionListener();
-    } else {
-      this.data.HTMLElement.style.display = 'none';
-      this.renderExpressCheckoutPaymentButton();
-    }
+    this.renderPaymentOptionItems();
+    this.renderPaymentOptionListener();
 
     return this;
   }

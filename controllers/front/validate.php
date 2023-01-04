@@ -84,7 +84,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($bodyValues['orderID']);
 
             if (false !== $psCheckoutCart) {
                 $psCheckoutCart->paypal_funding = $bodyValues['fundingSource'];

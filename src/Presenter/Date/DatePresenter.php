@@ -40,10 +40,7 @@ class DatePresenter
      */
     public function __construct($timestamp, $format)
     {
-        $this->date = new \DateTime(
-            $timestamp,
-            $this->getTimeZone()
-        );
+        $this->date = new \DateTime($timestamp);
         $this->format = $format;
     }
 
@@ -52,6 +49,8 @@ class DatePresenter
      */
     public function present()
     {
+        $this->date->setTimezone($this->getTimeZone());
+
         return $this->date->format($this->format);
     }
 

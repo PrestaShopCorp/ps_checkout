@@ -120,7 +120,7 @@
             <div class="mt-2">
               <b-button
                 variant="link"
-                href="mailto:support-checkout-download@prestashop.com"
+                href="https://help-center.prestashop.com/contact"
                 target="_blank"
                 @click="onClickContactUs()"
               >
