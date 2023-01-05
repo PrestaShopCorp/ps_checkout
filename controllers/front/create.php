@@ -159,8 +159,6 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            $this->handleExceptionSendingToSentry($exception);
-
             /* @var \Psr\Log\LoggerInterface logger */
             $logger = $this->module->getService('ps_checkout.logger');
             $logger->error(

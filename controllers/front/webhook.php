@@ -67,6 +67,7 @@ class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
                     'eventVersion' => $payload['eventVersion'],
                     'summary' => $payload['summary'],
                     'resourceType' => $payload['resourceType'],
+                    'resource' => $payload['resource'],
                 ]
             );
             $this->exitWithResponse([

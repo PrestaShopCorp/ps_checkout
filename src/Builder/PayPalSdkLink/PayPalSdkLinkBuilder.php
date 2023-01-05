@@ -25,7 +25,6 @@ use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfigur
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
  * Build sdk link
@@ -33,11 +32,6 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 class PayPalSdkLinkBuilder
 {
     const BASE_LINK = 'https://www.paypal.com/sdk/js';
-
-    /**
-     * @var PaypalAccountRepository
-     */
-    private $payPalAccountRepository;
 
     /**
      * @var PayPalConfiguration
@@ -58,41 +52,17 @@ class PayPalSdkLinkBuilder
     private $expressCheckoutConfiguration;
 
     /**
-     * @todo To be removed
-     *
-     * @var bool
-     */
-    private $isExpressCheckout = false;
-
-    /**
-     * @todo To be removed
-     *
-     * @var bool
-     */
-    private $isDisplayOnlyHostedFields = false;
-
-    /**
-     * @todo To be removed
-     *
-     * @var bool
-     */
-    private $isDisplayOnlySmartButtons = false;
-
-    /**
-     * @param PaypalAccountRepository $payPalAccountRepository
      * @param PayPalConfiguration $configuration
      * @param PayPalPayLaterConfiguration $payLaterConfiguration
      * @param FundingSourceConfigurationRepository $fundingSourceConfigurationRepository
      * @param ExpressCheckoutConfiguration $expressCheckoutConfiguration
      */
     public function __construct(
-        PaypalAccountRepository $payPalAccountRepository,
         PayPalConfiguration $configuration,
         PayPalPayLaterConfiguration $payLaterConfiguration,
         FundingSourceConfigurationRepository $fundingSourceConfigurationRepository,
         ExpressCheckoutConfiguration $expressCheckoutConfiguration
     ) {
-        $this->payPalAccountRepository = $payPalAccountRepository;
         $this->configuration = $configuration;
         $this->payLaterConfiguration = $payLaterConfiguration;
         $this->fundingSourceConfigurationRepository = $fundingSourceConfigurationRepository;
@@ -126,7 +96,7 @@ class PayPalSdkLinkBuilder
         $params = [
             'components' => implode(',', $components),
             'client-id' => (new PaypalEnv())->getPaypalClientId(),
-            'merchant-id' => $this->payPalAccountRepository->getMerchantId(),
+            'merchant-id' => $this->configuration->getMerchantId(),
             'currency' => \Context::getContext()->currency->iso_code,
             'intent' => strtolower($this->configuration->getIntent()),
             'commit' => 'order' === $this->getPageName() ? 'true' : 'false',
@@ -175,30 +145,6 @@ class PayPalSdkLinkBuilder
         }
 
         return $fundingSourcesDisabled;
-    }
-
-    /**
-     * @todo To be removed
-     */
-    public function enableDisplayExpressCheckout()
-    {
-        $this->isExpressCheckout = true;
-    }
-
-    /**
-     * @todo To be removed
-     */
-    public function enableDisplayOnlyHostedFields()
-    {
-        $this->isDisplayOnlyHostedFields = true;
-    }
-
-    /**
-     * @todo To be removed
-     */
-    public function enableDisplayOnlySmartButtons()
-    {
-        $this->isDisplayOnlySmartButtons = true;
     }
 
     private function getPageName()
@@ -259,7 +205,7 @@ class PayPalSdkLinkBuilder
             return false;
         }
 
-        return $this->payPalAccountRepository->cardHostedFieldsIsAvailable();
+        return $this->configuration->isHostedFieldsEnabled() && in_array($this->configuration->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true);
     }
 
     /**

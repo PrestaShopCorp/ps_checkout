@@ -104,8 +104,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
                 $this->payload['orderID']
             );
         } catch (Exception $exception) {
-            $this->handleExceptionSendingToSentry($exception);
-
             /* @var \Psr\Log\LoggerInterface logger */
             $logger = $this->module->getService('ps_checkout.logger');
             $logger->error(

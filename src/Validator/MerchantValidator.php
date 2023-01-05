@@ -21,16 +21,15 @@
 namespace PrestaShop\Module\PrestashopCheckout\Validator;
 
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
-use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 
 class MerchantValidator
 {
     /**
-     * @var PaypalAccountRepository
+     * @var PayPalConfiguration
      */
-    private $paypalAccountRepository;
+    private $configuration;
     /**
      * @var PsAccountRepository
      */
@@ -39,31 +38,22 @@ class MerchantValidator
      * @var PrestaShopContext
      */
     private $prestaShopContext;
-    /**
-     * @var ShopUuidManager
-     */
-    private $shopUuidManager;
 
     public function __construct(
-        PaypalAccountRepository $paypalAccountRepository,
+        PayPalConfiguration $configuration,
         PsAccountRepository $psAccountRepository,
-        PrestaShopContext $prestaShopContext,
-        ShopUuidManager $shopUuidManager
+        PrestaShopContext $prestaShopContext
     ) {
-        $this->paypalAccountRepository = $paypalAccountRepository;
+        $this->configuration = $configuration;
         $this->psAccountRepository = $psAccountRepository;
         $this->prestaShopContext = $prestaShopContext;
-        $this->shopUuidManager = $shopUuidManager;
     }
 
     public function merchantIsValid()
     {
-        $shopUuid = $this->shopUuidManager->getForShop((int) $this->prestaShopContext->getShopId());
-
-        return $this->paypalAccountRepository->onBoardingIsCompleted()
-            && $this->paypalAccountRepository->paypalEmailIsValid()
-            && $this->paypalAccountRepository->paypalPaymentMethodIsValid()
-            && $this->psAccountRepository->onBoardingIsCompleted()
-            && $shopUuid;
+        return $this->configuration->getMerchantId()
+            && $this->configuration->isMerchantEmailConfirmed()
+            && $this->configuration->isPayPalPaymentsReceivable()
+            && $this->psAccountRepository->onBoardingIsCompleted();
     }
 }

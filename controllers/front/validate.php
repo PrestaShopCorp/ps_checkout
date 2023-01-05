@@ -104,10 +104,9 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             $currency = $this->context->currency;
             $total = (float) $cart->getOrderTotal(true, Cart::BOTH);
 
-            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $accountRepository */
-            $accountRepository = $this->module->getService('ps_checkout.repository.paypal.account');
-            $merchandId = $accountRepository->getMerchantId();
-            $payment = new ValidateOrder($bodyValues['orderID'], $merchandId);
+            /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $configurationPayPal */
+            $configurationPayPal = $this->module->getService('ps_checkout.paypal.configuration');
+            $payment = new ValidateOrder($bodyValues['orderID'], $configurationPayPal->getMerchantId());
 
             $dataOrder = [
                 'cartId' => (int) $cart->id,
@@ -347,8 +346,6 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                     'paypal_order' => $paypalOrder,
                 ]
             );
-
-            $this->sentryExceptionHandler->handle($exception, false);
         } else {
             $this->module->getLogger()->notice(
                 'ValidateOrder - Exception ' . $exception->getCode(),
