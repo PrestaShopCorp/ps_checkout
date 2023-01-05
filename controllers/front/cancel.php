@@ -86,12 +86,10 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            $this->handleExceptionSendingToSentry($exception);
-
             /* @var \Psr\Log\LoggerInterface logger */
             $logger = $this->module->getService('ps_checkout.logger');
             $logger->error(
-                'ExpressCheckoutController - Exception ' . $exception->getCode(),
+                'CancelController - Exception ' . $exception->getCode(),
                 [
                     'exception' => $exception,
                 ]

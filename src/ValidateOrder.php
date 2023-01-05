@@ -22,8 +22,6 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
-use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -82,9 +80,6 @@ class ValidateOrder
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler $exceptionHandler */
-        $exceptionHandler = $module->getService('ps_checkout.handler.exception');
-
         // API call here
         $paypalOrder = new PaypalOrder($this->paypalOrderId);
         $order = $paypalOrder->getOrder();
@@ -135,15 +130,6 @@ class ValidateOrder
 
             if (false === $response['status']) {
                 if (false === empty($response['body']['message'])) {
-                    if ($response['body']['message'] === 'PAYEE_ACCOUNT_RESTRICTED') {
-                        /** @var PaypalAccountRepository $payPalAccountRepository */
-                        $payPalAccountRepository = $module->getService('ps_checkout.repository.paypal.account');
-                        /** @var PaypalAccountUpdater $payPalAccountUpdater */
-                        $payPalAccountUpdater = $module->getService('ps_checkout.updater.paypal.account');
-                        $payPalAccount = $payPalAccountRepository->getOnboardedAccount();
-                        $payPalAccount->setPaypalPaymentStatus(0);
-                        $payPalAccountUpdater->update($payPalAccount);
-                    }
                     (new PayPalError($response['body']['message']))->throwException();
                 }
 
@@ -211,9 +197,8 @@ class ValidateOrder
                 );
             } catch (\ErrorException $exception) {
                 // Notice or warning from PHP
-                $exceptionHandler->handle($exception, false);
             } catch (\Exception $exception) {
-                $exceptionHandler->handle(new PsCheckoutException('PrestaShop cannot validate order', PsCheckoutException::PRESTASHOP_VALIDATE_ORDER, $exception));
+                throw new PsCheckoutException('PrestaShop cannot validate order', PsCheckoutException::PRESTASHOP_VALIDATE_ORDER, $exception);
             }
 
             if (empty($module->currentOrder)) {
@@ -240,9 +225,8 @@ class ValidateOrder
                     } catch (\ErrorException $exception) {
                         // Notice or warning from PHP
                         // For example : https://github.com/PrestaShop/PrestaShop/issues/18837
-                        $exceptionHandler->handle($exception, false);
                     } catch (\Exception $exception) {
-                        $exceptionHandler->handle(new PsCheckoutException('Unable to change PrestaShop OrderState', PsCheckoutException::PRESTASHOP_ORDER_STATE_ERROR, $exception));
+                        throw new PsCheckoutException('Unable to change PrestaShop OrderState', PsCheckoutException::PRESTASHOP_ORDER_STATE_ERROR, $exception);
                     }
                 }
             }

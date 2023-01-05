@@ -97,14 +97,6 @@ class OrderDispatcher implements Dispatcher
         (new WebHookValidation())->validateRefundResourceValues($resource);
 
         return true;
-
-//        $initiateBy = 'Merchant';
-//
-//        if ($eventType === self::PS_CHECKOUT_PAYMENT_REVERSED) {
-//            $initiateBy = 'Paypal';
-//        }
-//
-//        return (new WebHookOrder($initiateBy, $resource, $orderId))->updateOrder();
     }
 
     /**

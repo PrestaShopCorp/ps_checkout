@@ -22,7 +22,6 @@
 use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
-use PrestaShop\Module\PrestashopCheckout\Dispatcher\MerchantDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
@@ -235,12 +234,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             ]
         );
 
-        if ('ShopNotificationMerchantAccount' === $this->payload['category']) {
-            return (new MerchantDispatcher())->dispatchEventType(
-                ['merchantId' => $this->merchantId]
-            );
-        }
-
         if ('ShopNotificationOrderChange' === $this->payload['category']) {
             return (new OrderDispatcher())->dispatchEventType($this->payload);
         }
@@ -319,8 +312,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
      */
     private function handleException(Exception $exception)
     {
-        $this->handleExceptionSendingToSentry($exception);
-
         $this->module->getLogger()->log(
             PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND === $exception->getCode() ? Logger::NOTICE : Logger::ERROR,
             'Webhook exception ' . $exception->getCode(),
