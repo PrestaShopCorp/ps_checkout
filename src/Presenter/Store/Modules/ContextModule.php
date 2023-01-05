@@ -23,7 +23,6 @@ namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 use PrestaShop\Module\PrestashopCheckout\Builder\ModuleLink\ModuleLinkBuilder;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
-use PrestaShop\Module\PrestashopCheckout\Faq\Faq;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
@@ -147,7 +146,6 @@ class ContextModule implements PresenterInterface
                 'isReady' => $this->shopContext->isReady(),
                 'isShopContext' => $this->isShopContext(),
                 'shopsTree' => $this->getShopsTree(),
-                'faq' => $this->getFaq(),
                 'language' => $this->psContext->getLanguage(),
                 'prestashopCheckoutAjax' => (new LinkAdapter($this->psContext->getLink()))->getAdminLink('AdminAjaxPrestashopCheckout'),
                 'translations' => $this->translations->getTranslations(),
@@ -230,29 +228,6 @@ class ContextModule implements PresenterInterface
         }
 
         return $shopList;
-    }
-
-    /**
-     * Retrieve the faq
-     *
-     * @return array|bool faq or false if no faq associated to the module
-     */
-    private function getFaq()
-    {
-        $faq = new Faq();
-        $faq->setModuleKey($this->moduleKey);
-        $faq->setPsVersion(_PS_VERSION_);
-        $faq->setIsoCode($this->psContext->getLanguageIsoCode());
-
-        $response = $faq->getFaq();
-
-        // If no response in the selected language, retrieve the faq in the default language (english)
-        if (false === $response && $faq->getIsoCode() !== 'en') {
-            $faq->setIsoCode('en');
-            $response = $faq->getFaq();
-        }
-
-        return $response;
     }
 
     /**
