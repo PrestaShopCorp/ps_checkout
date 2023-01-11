@@ -292,19 +292,13 @@ export class PayPalService extends BaseClass {
           name: fundingSource,
           mark: this.sdk.Marks({ fundingSource })
         }))
-        .filter(({ name, mark }) => {
-          if (name === 'card') {
-            if (this.configPrestaShop.hostedFieldsEnabled) {
-              return this.isHostedFieldsEligible()
-                ? true
-                : (console.error('Hosted Fields eligibility is declined'),
-                  false);
-            }
+        .filter((fundingSource) => {
+          if (fundingSource.name === 'card' && this.configPrestaShop.hostedFieldsEnabled && !this.isHostedFieldsEligible()) {
+            console.error('Hosted Fields (CCF) eligibility is declined. Switching to PayPal branded card fields (SCF)');
           }
-          //TODO: REMOVE AFTER TESTING
-          console.log(name, mark.isEligible());
+          console.log(name, fundingSource.mark.isEligible());
 
-          return mark.isEligible();
+          return fundingSource.mark.isEligible();
         });
     }
 
