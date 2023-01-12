@@ -945,7 +945,7 @@ class Ps_checkout extends PaymentModule
             );
         }
 
-        if ('AdminOrders' === Tools::getValue('controller')) {
+        if ('AdminOrders' === Tools::getValue('controller') || 'AdminOrders' === Tools::getValue('tab')) {
             $this->context->controller->addJS(
                 $this->getPathUri() . 'views/js/adminOrderView.js?version=' . $this->version,
                 false
