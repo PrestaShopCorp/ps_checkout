@@ -18,26 +18,43 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
+namespace PrestaShop\Module\PrestashopCheckout\Configuration;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
-
-/**
- * Handle Webhook requests
- */
-class Webhook extends PaymentClient
+class ToggleShopConfigurationCommand
 {
     /**
-     * Tells if the webhook came from the PSL
-     *
-     * @param array $payload
-     *
-     * @return array
+     * @var int
      */
-    public function getShopSignature(array $payload)
-    {
-        $this->setRoute('/payments/shop/verify_webhook_signature');
+    private $defaultShopId;
 
-        return $this->post($payload);
+    /**
+     * @var bool
+     */
+    private $multiShopFeatureIsCurrentlyEnabled;
+
+    /**
+     * @param int $defaultShopId
+     * @param bool $multiShopFeatureIsCurrentlyEnabled
+     */
+    public function __construct($defaultShopId, $multiShopFeatureIsCurrentlyEnabled)
+    {
+        $this->defaultShopId = $defaultShopId;
+        $this->multiShopFeatureIsCurrentlyEnabled = $multiShopFeatureIsCurrentlyEnabled;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDefaultShopId()
+    {
+        return $this->defaultShopId;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getMultiShopFeatureIsCurrentlyEnabled()
+    {
+        return $this->multiShopFeatureIsCurrentlyEnabled;
     }
 }

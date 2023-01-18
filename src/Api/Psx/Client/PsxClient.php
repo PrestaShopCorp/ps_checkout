@@ -20,30 +20,28 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Psx\Client;
 
-use GuzzleHttp\Client;
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PsxEnv;
-use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
+use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
 
 class PsxClient extends GenericClient
 {
     public function __construct()
     {
-        $client = new Client([
+        parent::__construct();
+
+        $client = (new ClientFactory())->getClient([
             'base_url' => (new PsxEnv())->getPsxApiUrl(),
-            'defaults' => [
-                'verify' => $this->getVerify(),
-                'timeout' => $this->getTimeout(),
-                'exceptions' => $this->getExceptionsMode(),
-                'headers' => [
-                    'Content-Type' => 'application/vnd.psx.v1+json', // api version to use (psl side)
-                    'Accept' => 'application/json',
-                    'Authorization' => 'Bearer ' . (new Token())->getToken(),
-                    'Shop-Id' => (new ShopUuidManager())->getForShop((int) \Context::getContext()->shop->id),
-                    'Module-Version' => \Ps_checkout::VERSION, // version of the module
-                    'Prestashop-Version' => _PS_VERSION_, // prestashop version
-                ],
+            'verify' => $this->getVerify(),
+            'timeout' => $this->getTimeout(),
+            'exceptions' => $this->getExceptionsMode(),
+            'headers' => [
+                'Content-Type' => 'application/vnd.psx.v1+json', // api version to use (psl side)
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $this->token,  // Token we get from PsAccounts
+                'Shop-Id' => $this->shopUid,                  // Shop UUID we get from PsAccounts
+                'Module-Version' => \Ps_checkout::VERSION, // version of the module
+                'Prestashop-Version' => _PS_VERSION_, // prestashop version
             ],
         ]);
 

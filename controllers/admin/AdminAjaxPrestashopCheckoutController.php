@@ -47,6 +47,25 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     protected $json = true;
 
     /**
+     * {@inheritDoc}
+     */
+    public function postProcess()
+    {
+        $shopIdRequested = (int) Tools::getValue('id_shop');
+        $currentShopId = (int) Shop::getContextShopID();
+
+        if ($shopIdRequested && $shopIdRequested !== $currentShopId) {
+            $shopRequested = new Shop($shopIdRequested);
+            if (Validate::isLoadedObject($shopRequested)) {
+                Shop::setContext(Shop::CONTEXT_SHOP, $shopIdRequested);
+                $this->context->shop = $shopRequested;
+            }
+        }
+
+        return parent::postProcess();
+    }
+
+    /**
      * AJAX: Update payment method order
      */
     public function ajaxProcessUpdatePaymentMethodsOrder()
@@ -262,18 +281,6 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessRefreshPaypalAccountStatus()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository $paypalAccount */
-        $paypalAccount = $this->module->getService('ps_checkout.repository.paypal.account');
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
-        $psAccount = $this->module->getService('ps_checkout.repository.prestashop.account');
-
-        // update merchant status only if the merchant onBoarding is completed
-        if ($paypalAccount->onBoardingIsCompleted() && $psAccount->onBoardingIsCompleted()) {
-            /** @var \PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater $updater */
-            $updater = $this->module->getService('ps_checkout.updater.paypal.account');
-            $updater->update($paypalAccount->getOnboardedAccount());
-        }
-
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule $paypalModule */
         $paypalModule = $this->module->getService('ps_checkout.store.module.paypal');
         $this->ajaxDie(
@@ -925,6 +932,31 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
+     * AJAX: SignUp firebase account
+     */
+    public function ajaxProcessGetOrRefreshToken()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+
+        try {
+            $token = $psAccountRepository->getIdToken();
+
+            $this->ajaxDie(json_encode([
+                'status' => true,
+                'token' => $token,
+            ], JSON_PRETTY_PRINT));
+        } catch (\Exception $exception) {
+            http_response_code($exception->getCode());
+
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'error' => $exception->getMessage(),
+            ], JSON_PRETTY_PRINT));
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function initCursedPage()
@@ -977,5 +1009,80 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $payLaterConfiguration->$method(Tools::getValue('status') ? true : false);
 
         $this->ajaxDie(json_encode(true));
+    }
+
+    public function ajaxProcessUpsertSecretToken()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\Webhook\WebhookSecretTokenService $webhookSecretTokenService */
+        $webhookSecretTokenService = $this->module->getService('ps_checkout.webhook.service.secret_token');
+
+        $secret = (string) Tools::getValue('body');
+
+        $response = [];
+
+        try {
+            $status = $webhookSecretTokenService->upsertSecretToken($secret);
+        } catch (Exception $exception) {
+            $status = false;
+            $response['errors'] = $exception->getMessage();
+        }
+
+        http_response_code($status ? 204 : 500);
+        $response['status'] = $status;
+        $this->ajaxDie(json_encode($response));
+    }
+
+    public function ajaxProcessCheckConfiguration()
+    {
+        $response = [];
+
+        $query = new DbQuery();
+        $query->select('name, value, date_add, date_upd');
+        $query->from('configuration');
+        $query->where('name LIKE "PS_CHECKOUT_%"');
+
+        /** @var int|null $shopId When multishop is disabled, it returns null, so we don't have to restrict results by shop */
+        $shopId = Shop::getContextShopID(true);
+
+        // When ShopId is not NULL, we have to retrieve global values with id_shop = NULL and shop values with id_shop = ShopId
+        if ($shopId) {
+            $query->where('id_shop IS NULL OR id_shop = ' . (int) $shopId);
+        }
+
+        $configurations = Db::getInstance()->executeS($query);
+
+        $response['status'] = !empty($configurations);
+
+        foreach ($configurations as $configuration) {
+            $response['configuration'][] = [
+                'name' => $configuration['name'],
+                'value' => !empty($configuration['value']),
+            ];
+        }
+
+        $this->exitWithResponse($response);
+    }
+
+    /**
+     * @param array $response
+     *
+     * @return void
+     */
+    private function exitWithResponse(array $response)
+    {
+        header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+        header('Content-Type: application/json;charset=utf-8');
+        header('X-Robots-Tag: noindex, nofollow');
+
+        if (isset($response['httpCode'])) {
+            http_response_code($response['httpCode']);
+            unset($response['httpCode']);
+        }
+
+        if (!empty($response)) {
+            echo json_encode($response);
+        }
+
+        exit;
     }
 }

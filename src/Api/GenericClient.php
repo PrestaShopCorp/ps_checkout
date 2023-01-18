@@ -20,14 +20,16 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api;
 
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Ring\Exception\RingException;
 use GuzzleHttp\Subscriber\Log\Formatter;
 use GuzzleHttp\Subscriber\Log\LogSubscriber;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
+use Psr\Http\Client\ClientInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -38,7 +40,7 @@ class GenericClient
     /**
      * Guzzle Client
      *
-     * @var Client
+     * @var ClientInterface
      */
     protected $client;
 
@@ -73,6 +75,27 @@ class GenericClient
     protected $route;
 
     /**
+     * @var string
+     */
+    protected $shopUid;
+
+    /**
+     * @var string
+     */
+    protected $token;
+
+    public function __construct()
+    {
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        /** @var PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $module->getService('ps_checkout.repository.prestashop.account');
+
+        $this->shopUid = $psAccountRepository->getShopUuid();
+        $this->token = $psAccountRepository->getIdToken();
+    }
+
+    /**
      * Wrapper of method post from guzzle client
      *
      * @param array $options payload
@@ -100,7 +123,9 @@ class GenericClient
         }
 
         try {
-            $response = $this->getClient()->post($this->getRoute(), $options);
+            $response = $this->client->sendRequest(
+                new Request('POST', $this->getRoute(), [], json_encode($options))
+            );
         } catch (RequestException $exception) {
             return $this->handleException(
                 new PsCheckoutException(
@@ -143,9 +168,9 @@ class GenericClient
     /**
      * Setter for client
      *
-     * @param Client $client
+     * @param ClientInterface $client
      */
-    protected function setClient(Client $client)
+    protected function setClient(ClientInterface $client)
     {
         $this->client = $client;
     }
@@ -193,7 +218,7 @@ class GenericClient
     /**
      * Getter for client
      *
-     * @return Client
+     * @return ClientInterface
      */
     protected function getClient()
     {

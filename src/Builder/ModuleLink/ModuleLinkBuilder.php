@@ -18,26 +18,19 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
+namespace PrestaShop\Module\PrestashopCheckout\Builder\ModuleLink;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
+use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
 
-/**
- * Handle Webhook requests
- */
-class Webhook extends PaymentClient
+class ModuleLinkBuilder
 {
     /**
-     * Tells if the webhook came from the PSL
+     * Generate the callback url used by the paypal button
      *
-     * @param array $payload
-     *
-     * @return array
+     * @return string callback link
      */
-    public function getShopSignature(array $payload)
+    public function getPaypalOnboardingCallBackUrl()
     {
-        $this->setRoute('/payments/shop/verify_webhook_signature');
-
-        return $this->post($payload);
+        return (new LinkAdapter())->getAdminLink('AdminPaypalOnboardingPrestashopCheckout');
     }
 }

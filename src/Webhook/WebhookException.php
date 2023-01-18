@@ -18,26 +18,18 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
+namespace PrestaShop\Module\PrestashopCheckout\Webhook;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
-/**
- * Handle Webhook requests
- */
-class Webhook extends PaymentClient
+class WebhookException extends PsCheckoutException
 {
-    /**
-     * Tells if the webhook came from the PSL
-     *
-     * @param array $payload
-     *
-     * @return array
-     */
-    public function getShopSignature(array $payload)
-    {
-        $this->setRoute('/payments/shop/verify_webhook_signature');
-
-        return $this->post($payload);
-    }
+    const WEBHOOK_SECRET_MISMATCH = 1;
+    const WEBHOOK_PAYLOAD_INVALID = 2;
+    const WEBHOOK_PAYLOAD_UNSUPPORTED = 3;
+    const WEBHOOK_PAYLOAD_EVENT_TYPE_MISSING = 4;
+    const WEBHOOK_PAYLOAD_RESOURCE_MISSING = 5;
+    const WEBHOOK_PAYLOAD_CONFIGURATION_LIST_MISSING = 6;
+    const WEBHOOK_PAYLOAD_CONFIGURATION_NAME_INVALID = 7;
+    const WEBHOOK_PAYLOAD_CONFIGURATION_VALUE_INVALID = 8;
 }

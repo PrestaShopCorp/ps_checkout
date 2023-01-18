@@ -39,10 +39,10 @@ class Ps_checkout extends PaymentModule
         'displayAdminOrderLeft',
         'displayAdminOrderMainBottom',
         'actionObjectShopAddAfter',
+        'actionObjectShopDeleteAfter',
         'actionAdminControllerSetMedia',
         'displayPaymentTop',
         'displayPaymentByBinaries',
-        'displayProductPriceBlock',
         'actionFrontControllerSetMedia',
         'header',
         'actionObjectOrderPaymentAddAfter',
@@ -122,6 +122,7 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_LIVE_STEP_VIEWED' => false,
         'PS_CHECKOUT_INTEGRATION_DATE' => self::INTEGRATION_DATE,
         'PS_CHECKOUT_SHOP_UUID_V4' => '',
+        'PS_CHECKOUT_WEBHOOK_SECRET' => '',
     ];
 
     public $confirmUninstall;
@@ -129,7 +130,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '2.21.0';
+    const VERSION = '3.0.0';
 
     const INTEGRATION_DATE = '2022-14-06';
 
@@ -155,7 +156,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '2.21.0';
+        $this->version = '3.0.0';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -219,6 +220,8 @@ class Ps_checkout extends PaymentModule
 
         // We must doing that here because before module is not installed so Service Container cannot be used
         $this->trackModuleAction('Install');
+
+        $this->getService('ps_accounts.installer')->install();
 
         return $result;
     }
@@ -587,27 +590,40 @@ class Ps_checkout extends PaymentModule
         $paypalAccount = $this->getService('ps_checkout.repository.paypal.account');
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
         $psAccount = $this->getService('ps_checkout.repository.prestashop.account');
+        /** @var \PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts $psAccountsFacade */
+        $psAccountsFacade = $this->getService('ps_accounts.facade');
+        $env = new \PrestaShop\Module\PrestashopCheckout\Environment\Env();
 
         // update merchant status only if the merchant onboarding is completed
-        if ($paypalAccount->onBoardingIsCompleted()
-            && $psAccount->onBoardingIsCompleted()) {
-            $paypalAccount = $paypalAccount->getOnboardedAccount();
-            /** @var \PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater $accountUpdater */
-            $accountUpdater = $this->getService('ps_checkout.updater.paypal.account');
-            $accountUpdater->update($paypalAccount);
-        }
+        // Commented out because merchant integrations got reset after every page refresh
+//        if ($paypalAccount->onBoardingIsCompleted()
+//            && $psAccount->onBoardingIsCompleted()) {
+//            $paypalAccount = $paypalAccount->getOnboardedAccount();
+//            /** @var \PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater $accountUpdater */
+//            $accountUpdater = $this->getService('ps_checkout.updater.paypal.account');
+//            $accountUpdater->update($paypalAccount);
+//        }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter $storePresenter */
         $storePresenter = $this->getService('ps_checkout.store.store');
 
         Media::addJsDef([
             'store' => $storePresenter->present(),
+            'contextPsAccounts' => $psAccountsFacade->getPsAccountsPresenter()->present(),
         ]);
 
-        $this->context->controller->addJS(
-            $this->getPathUri() . 'views/js/app.js?version=' . $this->version,
-            false
-        );
+        $boSdkUrl = $env->getEnv('CHECKOUT_BO_SDK_URL');
+        if (substr($boSdkUrl, -3) !== '.js') {
+            $boSdkVersion = $env->getEnv('CHECKOUT_BO_SDK_VERSION');
+            if (empty($boSdkVersion)) {
+                $majorModuleVersion = explode('.', $this->version)[0];
+                $boSdkVersion = "$majorModuleVersion.X.X";
+            }
+
+            $boSdkUrl = $boSdkUrl . $boSdkVersion . '/sdk/ps_checkout-bo-sdk.umd.js';
+        }
+
+        $this->context->controller->addJS($boSdkUrl, false);
 
         return $this->display(__FILE__, 'views/templates/admin/configuration.tpl');
     }
@@ -1343,6 +1359,14 @@ class Ps_checkout extends PaymentModule
         /** @var Shop $shop */
         $shop = $params['object'];
 
+        $toggleShopConfigurationCommandHandler = new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommandHandler();
+        $toggleShopConfigurationCommandHandler->handle(
+            new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommand(
+                (int) Configuration::get('PS_SHOP_DEFAULT'),
+                (bool) Shop::isFeatureActive()
+            )
+        );
+
         (new PrestaShop\Module\PrestashopCheckout\ShopUuidManager())->generateForShop((int) $shop->id);
         $this->installConfiguration();
         $this->addCheckboxCarrierRestrictionsForModule([(int) $shop->id]);
@@ -1780,5 +1804,21 @@ class Ps_checkout extends PaymentModule
         }
 
         return $defaultCountry ? strtoupper($defaultCountry) : '';
+    }
+
+    /**
+     * @param array{cookie: Cookie, cart: Cart, altern: int, object: Shop} $params
+     *
+     * @return void
+     */
+    public function hookActionObjectShopDeleteAfter(array $params)
+    {
+        $toggleShopConfigurationCommandHandler = new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommandHandler();
+        $toggleShopConfigurationCommandHandler->handle(
+            new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommand(
+                (int) Configuration::get('PS_SHOP_DEFAULT'),
+                (bool) Shop::isFeatureActive()
+            )
+        );
     }
 }

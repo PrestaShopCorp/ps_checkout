@@ -50,16 +50,12 @@ class Onboarding extends PaymentClient
             $builder->buildMinimalPayload();
         }
 
-        $response = $this->post([
-            'json' => $builder->presentPayload()->getJson(),
-        ]);
+        $response = $this->post($builder->presentPayload()->getArray());
 
         // Retry with minimal payload when full payload failed
         if (substr((string) $response['httpCode'], 0, 1) === '4') {
             $builder->buildMinimalPayload();
-            $response = $this->post([
-                'json' => $builder->presentPayload()->getJson(),
-            ]);
+            $response = $this->post($builder->presentPayload()->getArray());
         }
 
         if (false === $response['status']) {
