@@ -17,7 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  *}
 <div>
-  {if !$orderPayPal.id}
+  {if !$orderPayPal}
     <div class="checkout-modal-container">
       <div class="checkout-modal">
         <div role="alert" aria-live="polite" aria-atomic="true" class="alert alert-warning">
@@ -34,7 +34,7 @@
     </div>
   {/if}
 
-  {if $orderPayPal.id}
+  {if $orderPayPal}
     <div class="panel-wrapper">
       <div class="panel">
         <h3 class="panel__title">{l s='PayPal Order' mod='ps_checkout'}</h3>
