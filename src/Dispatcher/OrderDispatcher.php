@@ -55,6 +55,12 @@ class OrderDispatcher implements Dispatcher
 
         $this->assignPsCheckoutCart($payload['orderId']);
 
+        if ($payload['eventType'] === 'CheckoutOrderApproved' && $this->psCheckoutCart->paypal_status !== 'COMPLETED') {
+            $this->psCheckoutCart->paypal_status = 'APPROVED';
+
+            return \Validate::isLoadedObject($this->psCheckoutCart) ? $this->psCheckoutCart->save() : true;
+        }
+
         /** @var int|false $psOrderId */
         $psOrderId = \Order::getOrderByCartId((int) $this->psCheckoutCart->id_cart);
 
