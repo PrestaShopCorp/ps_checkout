@@ -79,6 +79,13 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             }
 
             $this->paypalOrderId = $bodyValues['orderID'];
+            $isExpressCheckout = isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'];
+            $isHostedFields = isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'];
+            $fundingSource = isset($bodyValues['fundingSource']) && Validate::isGenericName($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : null;
+            $liabilityShift = $isHostedFields && isset($bodyValues['liabilityShift']) && Validate::isGenericName($bodyValues['liabilityShift']) ? $bodyValues['liabilityShift'] : null;
+            $liabilityShifted = $isHostedFields ? (isset($bodyValues['liabilityShifted']) && $bodyValues['liabilityShifted']) : null;
+            $authenticationStatus = $isHostedFields && isset($bodyValues['authenticationStatus']) && Validate::isGenericName($bodyValues['authenticationStatus']) ? $bodyValues['authenticationStatus'] : null;
+            $authenticationReason = $isHostedFields && isset($bodyValues['authenticationReason']) && Validate::isGenericName($bodyValues['authenticationReason']) ? $bodyValues['authenticationReason'] : null;
 
             /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
@@ -87,9 +94,9 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($bodyValues['orderID']);
 
             if (false !== $psCheckoutCart) {
-                $psCheckoutCart->paypal_funding = $bodyValues['fundingSource'];
-                $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) ? (bool) $bodyValues['isExpressCheckout'] : false;
-                $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) ? (bool) $bodyValues['isHostedFields'] : false;
+                $psCheckoutCart->paypal_funding = $fundingSource;
+                $psCheckoutCart->isExpressCheckout = $isExpressCheckout;
+                $psCheckoutCart->isHostedFields = $isHostedFields;
                 $psCheckoutCartRepository->save($psCheckoutCart);
             }
 
@@ -98,6 +105,13 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                 [
                     'paypal_order' => $this->paypalOrderId,
                     'id_cart' => (int) $this->context->cart->id,
+                    'isExpressCheckout' => $isExpressCheckout,
+                    'isHostedFields' => $isHostedFields,
+                    'fundingSource' => $fundingSource,
+                    'liabilityShift' => $liabilityShift,
+                    'liabilityShifted' => $liabilityShifted,
+                    'authenticationStatus' => $authenticationStatus,
+                    'authenticationReason' => $authenticationReason,
                 ]
             );
 
@@ -114,6 +128,13 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                 'amount' => $total,
                 'currencyId' => (int) $currency->id,
                 'secureKey' => $customer->secure_key,
+                'isExpressCheckout' => $isExpressCheckout,
+                'isHostedFields' => $isHostedFields,
+                'fundingSource' => $fundingSource,
+                'liabilityShift' => $liabilityShift,
+                'liabilityShifted' => $liabilityShifted,
+                'authenticationStatus' => $authenticationStatus,
+                'authenticationReason' => $authenticationReason,
             ];
 
             // If the payment is rejected redirect the client to the last checkout step (422 error)
@@ -266,6 +287,18 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                     break;
                 case PsCheckoutException::DIFFERENCE_BETWEEN_TRANSACTION_AND_CART:
                     $exceptionMessageForCustomer = $this->module->l('The transaction amount doesn\'t match with the cart amount.');
+                    $notifyCustomerService = false;
+                    break;
+                case PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_FAILURE:
+                    $exceptionMessageForCustomer = $this->module->l('Card holder authentication failed, please choose another payment method or try again.');
+                    $notifyCustomerService = false;
+                    break;
+                case PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN:
+                    $exceptionMessageForCustomer = $this->module->l('Card holder authentication cannot be checked, please choose another payment method or try again.');
+                    $notifyCustomerService = false;
+                    break;
+                case PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_CANCELED:
+                    $exceptionMessageForCustomer = $this->module->l('Card holder authentication canceled, please choose another payment method or try again.');
                     $notifyCustomerService = false;
                     break;
             }

@@ -143,22 +143,17 @@ export class HostedFieldsComponent extends BaseComponent {
                 contingencies: this.getContingencies()
               })
               .then(payload => {
-                const { liabilityShift } = payload;
-                return this.psCheckoutService
-                  .validateLiablityShift(liabilityShift)
-                  .then(() => {
-                    const data = payload;
+                const data = payload;
 
-                    // Backend requirement
-                    data.orderID = data.orderId;
-                    delete data.orderId;
+                // Backend requirement
+                data.orderID = data.orderId;
+                delete data.orderId;
 
-                    return this.psCheckoutApi.postValidateOrder({
-                      ...data,
-                      fundingSource: this.data.name,
-                      isHostedFields: true
-                    });
-                  });
+                return this.psCheckoutApi.postValidateOrder({
+                  ...data,
+                  fundingSource: this.data.name,
+                  isHostedFields: true
+                });
               })
               .catch(error => {
                 let message = error.message || '';

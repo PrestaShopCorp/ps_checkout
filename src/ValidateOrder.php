@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
 use Psr\SimpleCache\CacheInterface;
@@ -70,9 +71,7 @@ class ValidateOrder
     }
 
     /**
-     * Process the validation for an order
-     *
-     * @param array $payload array with all information required by PaymentModule->validateOrder()
+     * @param array{cartId: int, amount: float, currencyId: int, secureKey: string, isExpressCheckout: bool, isHostedFields: bool, fundingSource: string, liabilityShift: string, liabilityShifted: bool, authenticationStatus: string, authenticationReason: string} $payload
      *
      * @throws PsCheckoutException
      * @throws \PrestaShopException
@@ -91,6 +90,44 @@ class ValidateOrder
 
         if (empty($order)) {
             throw new PsCheckoutException(sprintf('Unable to retrieve Paypal Order for %s', $this->paypalOrderId), PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
+        }
+
+        if ($payload['isHostedFields']) {
+            $card3DSecure = (new Card3DSecure())->continueWithAuthorization($order);
+
+            $module->getLogger()->info(
+                '3D Secure authentication result',
+                [
+                    'authentication_result' => isset($order['payment_source']['card']['authentication_result']) ? $order['payment_source']['card']['authentication_result'] : null,
+                    'decision' => str_replace(
+                        [
+                            (string) Card3DSecure::NO_DECISION,
+                            (string) Card3DSecure::PROCEED,
+                            (string) Card3DSecure::REJECT,
+                            (string) Card3DSecure::RETRY,
+                        ],
+                        [
+                            \Configuration::get('PS_CHECKOUT_LIABILITY_SHIFT_REQ') ? 'Rejected, no liability shift' : 'Proceed, without liability shift',
+                            'Proceed, liability shift is possible',
+                            'Rejected',
+                            'Retry, ask customer to retry',
+                        ],
+                        (string) $card3DSecure
+                    ),
+                ]
+            );
+
+            if (Card3DSecure::REJECT === $card3DSecure) {
+                throw new PsCheckoutException('Card Strong Customer Authentication failure', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_FAILURE);
+            }
+
+            if (Card3DSecure::RETRY === $card3DSecure) {
+                throw new PsCheckoutException('Card Strong Customer Authentication must be retried.', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN);
+            }
+
+            if (Card3DSecure::NO_DECISION === $card3DSecure && \Configuration::get('PS_CHECKOUT_LIABILITY_SHIFT_REQ')) {
+                throw new PsCheckoutException('No liability shift to card issuer', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN);
+            }
         }
 
         $transactionIdentifier = false === empty($order['purchase_units'][0]['payments']['captures'][0]['id']) ? $order['purchase_units'][0]['payments']['captures'][0]['id'] : '';
