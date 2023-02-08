@@ -21,6 +21,7 @@ import { BaseComponent } from '../../core/dependency-injection/base.component';
 import { HostedFieldsComponent } from './hosted-fields.component';
 import { MarkComponent } from './marker.component';
 import { SmartButtonComponent } from './smart-button.component';
+import { PaymentFieldsComponent } from "./payment-fields.component";
 
 /**
  * @typedef PaymentOptionComponentProps
@@ -48,6 +49,7 @@ export class PaymentOptionComponent extends BaseComponent {
 
     this.data.HTMLElementHostedFields = this.getHostedFields();
     this.data.HTMLElementSmartButton = this.getSmartButton();
+    this.data.HTMLElementPaymentFields = this.getPaymentFields();
   }
 
   getContainer() {
@@ -62,6 +64,17 @@ export class PaymentOptionComponent extends BaseComponent {
       this.data.name === 'card'
       && this.config.hostedFieldsEnabled
       && document.getElementById(hostedFieldsFormId)
+    );
+  }
+
+  getPaymentFields() {
+    const container = `pay-with-${this.data.HTMLElement.id}-form`;
+    // Replace by paypal.PaymentFields.isEligible() ???
+    const APM = ['bancontact', 'blik', 'eps', 'giropay', 'ideal', 'mybank', 'p24', 'sofort'];
+
+    return (
+      APM.includes(this.data.name) &&
+      document.getElementById(container)
     );
   }
 
@@ -122,6 +135,18 @@ export class PaymentOptionComponent extends BaseComponent {
     }).render();
   }
 
+  renderPaymentFields() {
+    if (!this.data.HTMLElementPaymentFields) {
+      return;
+    }
+
+    this.children.PaymentFields = this.PaymentFields = new PaymentFieldsComponent(this.app, {
+      fundingSource: this.props.fundingSource,
+
+      HTMLElement: this.data.HTMLElementPaymentFields
+    }).render();
+  }
+
   render() {
     if (this.data.HTMLElementContainer.classList.contains('ps_checkout-payment-option')) {
       // Render already done
@@ -130,6 +155,7 @@ export class PaymentOptionComponent extends BaseComponent {
 
     this.renderWrapper();
     this.renderMark();
+    this.renderPaymentFields();
 
     let isHostedFieldsEligible = this.payPalService.isHostedFieldsEligible();
     if (this.data.HTMLElementHostedFields && !isHostedFieldsEligible) {

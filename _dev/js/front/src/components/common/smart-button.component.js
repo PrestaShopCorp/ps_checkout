@@ -109,7 +109,7 @@ export class SmartButtonComponent extends BaseComponent {
           console.error(error);
           this.data.loader.hide();
           this.data.notification.showError(
-            error instanceof TypeError ? error.message : ''
+            error instanceof Error ? error.message : error
           );
         },
         onApprove: (data, actions) => {

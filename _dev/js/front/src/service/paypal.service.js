@@ -364,4 +364,29 @@ export class PayPalService extends BaseClass {
       })
     );
   }
+
+  /**
+   * @param {string} fundingSource
+   * @param {object} fields
+   */
+  getPaymentFields(fundingSource, fields = {}) {
+    console.log(this.sdk.PaymentFields);
+    return this.sdk.PaymentFields && this.sdk.PaymentFields({
+      fundingSource: fundingSource,
+      style: this.getPaymentFieldsCustomizationStyle(fundingSource),
+      fields: fields
+    });
+  }
+
+  /**
+   * @param {string} placement
+   * @param {string} amount
+   * @param {PaypalPayLaterOfferEvents} events
+   */
+  getPaymentFieldsCustomizationStyle() {
+    return {
+      ...(this.configPayPal.paymentFieldsCustomization || {}),
+      ...(window.ps_checkout.paymentFieldsCustomization || {})
+    };
+  }
 }
