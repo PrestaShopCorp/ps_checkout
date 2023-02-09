@@ -305,6 +305,12 @@
   padding: 100px 180px;
 }
 
+@media (max-width: 1400px) {
+  .checkout-modal-container {
+    padding: 10px 18px;
+  }
+}
+
 .checkout-modal {
   border: 1px solid #D9E3EC;
   border-radius: 8px;
