@@ -42,12 +42,12 @@
       <div id="payment-option-{$fundingSource}-container" class="payment-option row" style="display: none;">
         <div class="col-xs-12">
           <div id="payment-option-{$fundingSource}" class="payment_module closed" data-module-name="ps_checkout-{$fundingSource}">
-            <a class="ps_checkout-{$fundingSource}" href="#">
+            <a class="ps_checkout-{$fundingSource}" href="javascript:void(0);">
               {$paymentOptionName}
             </a>
           </div>
           <div class="payment_module closed">
-            <a>
+            <a href="javascript:void(0);">
               {if $fundingSource == 'card' && $isHostedFieldsAvailable}
                 <form id="ps_checkout-hosted-fields-form" class="form-horizontal">
                   <div class="form-group">
