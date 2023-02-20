@@ -130,7 +130,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '3.0.0';
+    const VERSION = '3.0.1';
 
     const INTEGRATION_DATE = '2022-14-06';
 
@@ -156,7 +156,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '3.0.0';
+        $this->version = '3.0.1';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
