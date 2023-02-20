@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "72c747a4a1a18fc30f909f4e67745571",
+    "content-hash": "057da90f654b8f699de7d06e30b94a20",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -957,21 +957,21 @@
         },
         {
             "name": "prestashop/module-lib-guzzle-adapter",
-            "version": "v0.4",
+            "version": "v1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PrestaShopCorp/module-lib-guzzle-adapter.git",
-                "reference": "914e993c37010e2dbd9c4b5032f729656dcec7d3"
+                "reference": "f008a7a8d5ab32504281acdc1855e3492b5d8b20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PrestaShopCorp/module-lib-guzzle-adapter/zipball/914e993c37010e2dbd9c4b5032f729656dcec7d3",
-                "reference": "914e993c37010e2dbd9c4b5032f729656dcec7d3",
+                "url": "https://api.github.com/repos/PrestaShopCorp/module-lib-guzzle-adapter/zipball/f008a7a8d5ab32504281acdc1855e3492b5d8b20",
+                "reference": "f008a7a8d5ab32504281acdc1855e3492b5d8b20",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/psr7": "^2.3.0",
-                "php": "^7.2 || ^8.0",
+                "php": "^7.2.5 || ^8.0",
                 "php-http/httplug": "^2.3",
                 "php-http/message": "^1.13",
                 "psr/http-client": "^1.0",
@@ -983,7 +983,7 @@
             },
             "require-dev": {
                 "phpstan/phpstan": "^1.7",
-                "phpunit/phpunit": "^9.5",
+                "phpunit/phpunit": "^9.5|^8.5",
                 "prestashop/php-dev-tools": "^4.2"
             },
             "type": "library",
@@ -1003,7 +1003,11 @@
                 }
             ],
             "description": "Plug modules to the Guzzle client available on a running shop",
-            "time": "2022-06-20T15:14:10+00:00"
+            "support": {
+                "issues": "https://github.com/PrestaShopCorp/module-lib-guzzle-adapter/issues",
+                "source": "https://github.com/PrestaShopCorp/module-lib-guzzle-adapter/tree/v1.0"
+            },
+            "time": "2022-09-30T10:25:35+00:00"
         },
         {
             "name": "prestashop/module-lib-service-container",
@@ -5357,5 +5361,5 @@
     "platform-overrides": {
         "php": "7.2.34"
     },
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.2.0"
 }
