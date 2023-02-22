@@ -616,7 +616,9 @@ class Ps_checkout extends PaymentModule
         if (substr($boSdkUrl, -3) !== '.js') {
             $boSdkVersion = $env->getEnv('CHECKOUT_BO_SDK_VERSION');
             if (empty($boSdkVersion)) {
-                $majorModuleVersion = explode('.', $this->version)[0];
+                /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
+                $version = $this->getService('ps_checkout.module.version');
+                $majorModuleVersion = explode('.', $version->getSemVersion())[0];
                 $boSdkVersion = "$majorModuleVersion.X.X";
             }
 
@@ -918,9 +920,12 @@ class Ps_checkout extends PaymentModule
      */
     public function hookActionAdminControllerSetMedia()
     {
+        /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
+        $version = $this->getService('ps_checkout.module.version');
+
         if ('AdminPayment' === Tools::getValue('controller')) {
             $this->context->controller->addCss(
-                $this->_path . 'views/css/adminAfterHeader.css?version=' . $this->version,
+                $this->_path . 'views/css/adminAfterHeader.css?version=' . $version->getSemVersion(),
                 'all',
                 null,
                 false
@@ -929,7 +934,7 @@ class Ps_checkout extends PaymentModule
 
         if ('AdminCountries' === Tools::getValue('controller')) {
             $this->context->controller->addCss(
-                $this->_path . 'views/css/incompatible-banner.css?version=' . $this->version,
+                $this->_path . 'views/css/incompatible-banner.css?version=' . $version->getSemVersion(),
                 'all',
                 null,
                 false
@@ -938,7 +943,7 @@ class Ps_checkout extends PaymentModule
 
         if ('AdminCurrencies' === Tools::getValue('controller')) {
             $this->context->controller->addCss(
-                $this->_path . 'views/css/incompatible-banner.css?version=' . $this->version,
+                $this->_path . 'views/css/incompatible-banner.css?version=' . $version->getSemVersion(),
                 'all',
                 null,
                 false
@@ -947,11 +952,11 @@ class Ps_checkout extends PaymentModule
 
         if ('AdminOrders' === Tools::getValue('controller')) {
             $this->context->controller->addJS(
-                $this->getPathUri() . 'views/js/adminOrderView.js?version=' . $this->version,
+                $this->getPathUri() . 'views/js/adminOrderView.js?version=' . $version->getSemVersion(),
                 false
             );
             $this->context->controller->addCss(
-                $this->_path . 'views/css/adminOrderView.css?version=' . $this->version,
+                $this->_path . 'views/css/adminOrderView.css?version=' . $version->getSemVersion(),
                 'all',
                 null,
                 false
@@ -986,18 +991,21 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\Validator\FrontControllerValidator $frontControllerValidator */
         $frontControllerValidator = $this->getService('ps_checkout.validator.front_controller');
 
+        /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
+        $version = $this->getService('ps_checkout.module.version');
+
         if ($frontControllerValidator->shouldLoadFrontCss($controller)) {
             if (method_exists($this->context->controller, 'registerStylesheet')) {
                 $this->context->controller->registerStylesheet(
                     'ps-checkout-css-paymentOptions',
-                    $this->getPathUri() . 'views/css/payments.css?version=' . $this->version,
+                    $this->getPathUri() . 'views/css/payments.css?version=' . $version->getSemVersion(),
                     [
                         'server' => 'remote',
                     ]
                 );
             } else {
                 $this->context->controller->addCss(
-                    $this->getPathUri() . 'views/css/payments16.css?version=' . $this->version,
+                    $this->getPathUri() . 'views/css/payments16.css?version=' . $version->getSemVersion(),
                     'all',
                     null,
                     false
@@ -1029,6 +1037,9 @@ class Ps_checkout extends PaymentModule
 
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService('ps_checkout.context.shop');
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
+        $version = $this->getService('ps_checkout.module.version');
 
         $fundingSourcesSorted = [];
         $payWithTranslations = [];
@@ -1080,7 +1091,7 @@ class Ps_checkout extends PaymentModule
         }
 
         Media::addJsDef([
-            $this->name . 'Version' => self::VERSION,
+            $this->name . 'Version' => $version->getSemVersion(),
             $this->name . 'AutoRenderDisabled' => (bool) Configuration::get('PS_CHECKOUT_AUTO_RENDER_DISABLED'),
             $this->name . 'LoaderImage' => $this->getPathUri() . 'views/img/loader.svg',
             $this->name . 'PayPalButtonConfiguration' => $payPalConfiguration->getButtonConfiguration(),
@@ -1157,7 +1168,7 @@ class Ps_checkout extends PaymentModule
         if (method_exists($this->context->controller, 'registerJavascript')) {
             $this->context->controller->registerJavascript(
                 $this->name . 'Front',
-                $this->getPathUri() . 'views/js/front.js?version=' . $this->version,
+                $this->getPathUri() . 'views/js/front.js?version=' . $version->getSemVersion(),
                 [
                     'position' => 'bottom',
                     'priority' => 201,
@@ -1166,7 +1177,7 @@ class Ps_checkout extends PaymentModule
             );
         } else {
             $this->context->controller->addJS(
-                $this->getPathUri() . 'views/js/front.js?version=' . $this->version,
+                $this->getPathUri() . 'views/js/front.js?version=' . $version->getSemVersion(),
                 false
             );
         }
@@ -1483,7 +1494,7 @@ class Ps_checkout extends PaymentModule
     {
         if ($this->serviceContainer === null) {
             $this->serviceContainer = new \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer(
-                $this->name . str_replace('.', '', $this->version),
+                $this->name . str_replace(['.', '-', '+'], '', $this->version),
                 $this->getLocalPath()
             );
         }
@@ -1619,6 +1630,9 @@ class Ps_checkout extends PaymentModule
             }
 
             if (!empty($env) && isset($env['PS_CHECKOUT_SENTRY_DSN_MODULE'])) {
+                /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
+                $version = $this->getService('ps_checkout.module.version');
+
                 $this->sentryClient = new PrestaShop\Module\PrestashopCheckout\Handler\ModuleFilteredRavenClient(
                     $env['PS_CHECKOUT_SENTRY_DSN_MODULE'],
                     [
@@ -1626,7 +1640,7 @@ class Ps_checkout extends PaymentModule
                         'error_types' => E_ERROR,
                         'tags' => [
                             'php_version' => phpversion(),
-                            'module_version' => $this->version,
+                            'module_version' => $version->getVersion(true),
                             'prestashop_version' => _PS_VERSION_,
                         ],
                     ]
