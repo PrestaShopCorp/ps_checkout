@@ -20,20 +20,20 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
-use GuzzleHttp\Client;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
+use Prestashop\ModuleLibGuzzleAdapter\Interfaces\HttpClientInterface;
 
 /**
  * Construct the client used to make call to maasland
  */
 class PaymentClient extends GenericClient
 {
-    public function __construct(\Link $link, Client $client = null)
+    public function __construct(\Link $link, HttpClientInterface $client = null)
     {
         parent::__construct();
 

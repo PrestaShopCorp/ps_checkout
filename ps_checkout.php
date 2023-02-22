@@ -130,7 +130,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '3.0.1';
+    const VERSION = '6.3.1.0';
 
     const INTEGRATION_DATE = '2022-14-06';
 
@@ -156,7 +156,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '3.0.1';
+        $this->version = '6.3.1.0';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -171,7 +171,7 @@ class Ps_checkout extends PaymentModule
         $this->description = $this->l('Provide the most commonly used payment methods to your customers in this all-in-one module, and manage all your sales in a centralized interface.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
-        $this->ps_versions_compliancy = ['min' => '8.0.0', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = ['min' => '1.6.1.0', 'max' => '1.6.999.999'];
         $this->disableSegment = false;
 
         $this->installSentryExceptionLogger();
