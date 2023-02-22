@@ -12,6 +12,13 @@ services:
     arguments:
       - 'ps_checkout'
 
+  ps_checkout.module.version:
+    class: 'PrestaShop\Module\PrestashopCheckout\Version\Version'
+    factory: ['PrestaShop\Module\PrestashopCheckout\Version\Version', 'buildFromString']
+    public: true
+    arguments:
+      - '@=service("ps_checkout.module").version'
+
   ps_checkout.context.prestashop:
     class: 'PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
     public: true
