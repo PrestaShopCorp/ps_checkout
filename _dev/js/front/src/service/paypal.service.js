@@ -296,7 +296,7 @@ export class PayPalService extends BaseClass {
           if (fundingSource.name === 'card' && this.configPrestaShop.hostedFieldsEnabled && !this.isHostedFieldsEligible()) {
             console.error('Hosted Fields (CCF) eligibility is declined. Switching to PayPal branded card fields (SCF)');
           }
-          console.log(name, fundingSource.mark.isEligible());
+          console.log(fundingSource.name, fundingSource.mark.isEligible());
 
           return fundingSource.mark.isEligible();
         });
