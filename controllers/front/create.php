@@ -86,6 +86,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
 
                 $this->context->cart = $cart;
                 $this->context->cookie->__set('id_cart', (int) $cart->id);
+                $this->context->cookie->write();
             }
             // END Express Checkout
 
