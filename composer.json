@@ -1,6 +1,6 @@
 {
-    "name": "prestashop/ps_checkout",
-    "description": "Provide the most commonly used payment methods to your customers in this all-in-one module, and manage all your sales in a centralized interface.",
+    "name": "prestashopcorp/ps_checkout",
+    "description": "PrestaShop Essentials - Provide the most commonly used payment methods to your customers in this all-in-one module, and manage all your sales in a centralized interface.",
     "homepage": "https://github.com/PrestaShopCorp/ps_checkout",
     "license": "AFL-3.0",
     "type": "prestashop-module",
