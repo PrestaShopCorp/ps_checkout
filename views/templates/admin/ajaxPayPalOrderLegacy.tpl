@@ -102,17 +102,25 @@
                       <dd>{$orderPayPalTransaction.amount} {$orderPayPalTransaction.currency}</dd>
                     </dl>
                   </div>
+                    {if $orderPayPalTransaction.gross_amount || $orderPayPalTransaction.paypal_fee || $orderPayPalTransaction.net_amount}
                   <div>
                     <h3 class="tabpanel__title">{l s='Transaction amounts' mod='ps_checkout'}</h3>
                     <dl class="tabpanel__infos">
+                        {if $orderPayPalTransaction.gross_amount}
                       <dt>{l s='Gross amount' mod='ps_checkout'}</dt>
                       <dd>{$orderPayPalTransaction.gross_amount} {$orderPayPalTransaction.currency}</dd>
+                        {/if}
+                        {if $orderPayPalTransaction.paypal_fee}
                       <dt>{l s='Fees (Tax Incl.)' mod='ps_checkout'}</dt>
                       <dd>- {$orderPayPalTransaction.paypal_fee} {$orderPayPalTransaction.currency}</dd>
+                        {/if}
+                        {if $orderPayPalTransaction.net_amount}
                       <dt>{l s='Net amount' mod='ps_checkout'}</dt>
                       <dd>{$orderPayPalTransaction.net_amount} {$orderPayPalTransaction.currency}</dd>
+                        {/if}
                     </dl>
                   </div>
+                    {/if}
                   <a href="https://www.paypal.com/activity/payment/{$orderPayPalTransaction.id|escape:'html':'UTF-8'}" target="_blank" class="tabpanel__cta">
                       {l s='See on PayPal' mod='ps_checkout'}
                   </a>
@@ -122,6 +130,7 @@
                       </a>
                     {/if}
                 </div>
+                  {/if}
               </div>
 
                 {if $orderPayPalTransaction.isRefundable}
