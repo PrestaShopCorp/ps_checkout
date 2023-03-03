@@ -69,11 +69,14 @@ export class PaymentOptionComponent extends BaseComponent {
 
   getPaymentFields() {
     const container = `pay-with-${this.data.HTMLElement.id}-form`;
-    // Replace by paypal.PaymentFields.isEligible() ???
     const APM = ['bancontact', 'blik', 'eps', 'giropay', 'ideal', 'mybank', 'p24', 'sofort'];
 
+    const APMEligible = typeof this.payPalService.sdk.PaymentFields?.isEligible === "function" ?
+      this.payPalService.sdk.PaymentFields.isEligible(this.data.name)
+      : APM.includes(this.data.name)
+
     return (
-      APM.includes(this.data.name) &&
+      APMEligible &&
       document.getElementById(container)
     );
   }
