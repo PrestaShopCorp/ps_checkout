@@ -27,7 +27,12 @@ function buildDIContainerMock() {
         }
       },
       PayPalService: {
-        getPaymentFields: jest.fn()
+        getPaymentFields: jest.fn(),
+        sdk: {
+          paymentFields: {
+            isEligible: jest.fn()
+          }
+        },
       }
     }
   };
