@@ -19,6 +19,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand;
@@ -47,7 +48,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             $bodyValues = [];
             $bodyContent = file_get_contents('php://input');
 
-            if (false === empty($bodyContent)) {
+            if (!empty($bodyContent)) {
                 $bodyValues = json_decode($bodyContent, true);
             }
 
@@ -95,13 +96,39 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
 
             $cartId = (int) $this->context->cart->id;
 
+            $vaultId = isset($bodyValues['vaultId']) ? $bodyValues['vaultId'] : null;
+            $vault = isset($bodyValues['vault']) && $bodyValues['vault'];
+            $favorite = isset($bodyValues['favorite']) && $bodyValues['favorite'];
+
             $fundingSource = isset($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : 'paypal';
-            $isHostedFields = isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'];
+            $isCardFields = isset($bodyValues['isCardFields']) && $bodyValues['isCardFields'];
             $isExpressCheckout = (isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout']) || empty($this->context->cart->id_address_delivery);
+
+            if ($isExpressCheckout) {
+                $psCheckoutCartCollection = new PrestaShopCollection(PsCheckoutCart::class);
+                $psCheckoutCartCollection->where('id_cart', '=', (int) $cartId);
+                $psCheckoutCartCollection->where('isExpressCheckout', '=', '1');
+                $psCheckoutCartCollection->where('paypal_status', 'IN', [PsCheckoutCart::STATUS_CREATED, PsCheckoutCart::STATUS_APPROVED, PsCheckoutCart::STATUS_PAYER_ACTION_REQUIRED]);
+                $psCheckoutCartCollection->where('date_upd', '>', date('Y-m-d H:i:s', strtotime('-1 hour')));
+                $psCheckoutCartCollection->orderBy('date_upd', 'desc');
+                /** @var PsCheckoutCart|false $psCheckoutCart */
+                $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+                if ($psCheckoutCart) {
+                    $this->exitWithResponse([
+                        'status' => true,
+                        'httpCode' => 200,
+                        'body' => [
+                            'orderID' => $psCheckoutCart->paypal_order,
+                        ],
+                        'exceptionCode' => null,
+                        'exceptionMessage' => null,
+                    ]);
+                }
+            }
 
             /** @var CommandBusInterface $commandBus */
             $commandBus = $this->module->getService('ps_checkout.bus.command');
-            $commandBus->handle(new CreatePayPalOrderCommand($cartId, $fundingSource, $isHostedFields, $isExpressCheckout));
+            $commandBus->handle(new CreatePayPalOrderCommand($cartId, $fundingSource, $isCardFields, $isExpressCheckout, $vaultId, $favorite, $vault));
 
             /** @var GetPayPalOrderForCartIdQueryResult $getPayPalOrderForCartIdQueryResult */
             $getPayPalOrderForCartIdQueryResult = $commandBus->handle(new GetPayPalOrderForCartIdQuery($cartId));
@@ -115,6 +142,11 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 ],
                 'exceptionCode' => null,
                 'exceptionMessage' => null,
+            ]);
+        } catch (CartNotFoundException $exception) {
+            $this->exitWithResponse([
+                'httpCode' => 400,
+                'body' => 'No cart found.',
             ]);
         } catch (Exception $exception) {
             $this->module->getLogger()->error(

@@ -38,29 +38,25 @@ class CartPresenter implements PresenterInterface
     {
         $context = \Context::getContext();
         $productList = $context->cart->getProducts();
-
-        $cart = (array) $context->cart;
-
-        if (class_exists('\PrestaShop\PrestaShop\Adapter\Cart\CartPresenter')) {
-            $cart = new \PrestaShop\PrestaShop\Adapter\Cart\CartPresenter();
-            $cart = $cart->present($context->cart);
-        }
-
-        if (false === isset($cart['totals']['total_including_tax']['amount'])) {
-            // Handle native CartPresenter before 1.7.2
-            $cart['totals']['total_including_tax']['amount'] = $context->cart->getOrderTotal(true);
-        }
-
-        $shippingAddress = \Address::initialize((int) $cart['id_address_delivery']);
-        $invoiceAddress = \Address::initialize((int) $cart['id_address_invoice']);
+        $shippingAddress = \Address::initialize((int) $context->cart->id_address_delivery);
+        $invoiceAddress = \Address::initialize((int) $context->cart->id_address_invoice);
         $currency = \Currency::getCurrencyInstance((int) $context->cart->id_currency);
 
         return [
-            'cart' => array_merge(
-                $cart,
-                ['id' => $context->cart->id],
-                ['shipping_cost' => $context->cart->getTotalShippingCost(null, true)]
-            ),
+            'cart' => [
+                'id' => $context->cart->id,
+                'shipping_cost' => $context->cart->getTotalShippingCost(null, true),
+                'totals' => [
+                    'total_including_tax' => [
+                        'amount' => $context->cart->getOrderTotal(true),
+                    ],
+                ],
+                'subtotals' => [
+                    'gift_wrapping' => [
+                        'amount' => $context->cart->getGiftWrappingPrice(true),
+                    ],
+                ],
+            ],
             'customer' => \Validate::isLoadedObject($context->customer) ? $context->customer : new \Customer((int) $context->cart->id_customer),
             'language' => $context->language,
             'products' => $productList,

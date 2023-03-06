@@ -20,6 +20,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Environment;
 
+use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
+
 /**
  * Get the current environment used: prod or test // sandbox or live
  */
@@ -52,7 +55,7 @@ class Env
      */
     protected $mode;
 
-    public function __construct()
+    public function __construct(PayPalConfiguration $payPalConfiguration)
     {
         foreach (self::FILE_ENV_LIST as $env => $fileName) {
             if (!file_exists(_PS_MODULE_DIR_ . 'ps_checkout/' . $fileName)) {
@@ -67,10 +70,7 @@ class Env
             break;
         }
 
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-
-        $this->setMode($module->getService('ps_checkout.paypal.configuration')->getPaymentMode());
+        $this->setMode($payPalConfiguration->getPaymentMode());
     }
 
     /**
@@ -125,5 +125,46 @@ class Env
         }
 
         return getenv($name);
+    }
+
+    /**
+     * getter for paymentApiUrl
+     */
+    public function getPaymentApiUrl()
+    {
+        if (Mode::SANDBOX === $this->mode) {
+            return $this->getEnv('PAYMENT_API_URL_SANDBOX');
+        }
+
+        return $this->getEnv('PAYMENT_API_URL_LIVE');
+    }
+
+    /**
+     * @return string
+     */
+    public function getCheckoutApiUrl()
+    {
+        if (Mode::SANDBOX === $this->mode) {
+            return $this->getEnv('CHECKOUT_API_URL_SANDBOX');
+        }
+
+        return $this->getEnv('CHECKOUT_API_URL_LIVE');
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaypalClientId()
+    {
+        if (Mode::SANDBOX === $this->mode) {
+            return $this->getEnv('PAYPAL_CLIENT_ID_SANDBOX');
+        }
+
+        return $this->getEnv('PAYPAL_CLIENT_ID_LIVE');
+    }
+
+    public function getBnCode()
+    {
+        return $this->getEnv('PAYPAL_BN_CODE');
     }
 }

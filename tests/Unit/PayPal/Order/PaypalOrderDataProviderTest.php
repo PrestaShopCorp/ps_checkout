@@ -21,6 +21,7 @@
 namespace Tests\Unit\PayPal\Order;
 
 use PHPUnit\Framework\TestCase;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PaypalOrderDataProvider;
 
 class PaypalOrderDataProviderTest extends TestCase
@@ -81,5 +82,85 @@ class PaypalOrderDataProviderTest extends TestCase
         $this->assertEquals('5O190127TN364715T', $orderPayPalDataProvider->getOrderId());
         $this->assertEquals('PENDING_APPROVAL', $orderPayPalDataProvider->getOrderStatus());
         $this->assertEquals('https://www.paypal.com/checkoutnow?token=5O190127TN364715T', $orderPayPalDataProvider->getApprovalLink());
+    }
+
+    /**
+     * @dataProvider getPayPalOrder
+     */
+    public function testVaultingData($order, $intentToVault, $isTokenSaved, $tokenIdentifier)
+    {
+        $orderPayPalDataProvider = new PaypalOrderDataProvider(
+            [],
+            $order
+        );
+        $this->assertEquals($intentToVault, $orderPayPalDataProvider->isIntentToVault());
+        $this->assertEquals($isTokenSaved, $orderPayPalDataProvider->isTokenSaved());
+        $this->assertEquals($tokenIdentifier, $orderPayPalDataProvider->getPaymentTokenIdentifier());
+    }
+
+    public function getPayPalOrder()
+    {
+        return [
+            [
+                new PayPalOrder('5O190127TN364715T', '1', 'CAPTURE', 'card', 'COMPLETE', ['card' => ['last_digits' => '4242', 'brand' => 'VISA', 'attributes' => ['vault' => ['id' => '123', 'status' => 'VAULTED']]]], 'LIVE', false, false, [PayPalOrder::CUSTOMER_INTENT_VAULT]),
+                true,
+                true,
+                'VISA *4242',
+            ],
+            [
+                new PayPalOrder('5O190127TN364715T', '1', 'CAPTURE', 'card', 'COMPLETE', ['card' => ['last_digits' => '4242', 'brand' => 'VISA', 'attributes' => ['vault' => ['id' => '123', 'status' => 'APPROVED']]]], 'LIVE', false, false, [PayPalOrder::CUSTOMER_INTENT_VAULT]),
+                true,
+                false,
+                'VISA *4242',
+            ],
+            [
+                new PayPalOrder('5O190127TN364715T', '1', 'CAPTURE', 'card', 'COMPLETE', ['card' => ['last_digits' => '4242', 'brand' => 'VISA']], 'LIVE', false, false, [PayPalOrder::CUSTOMER_INTENT_VAULT]),
+                true,
+                false,
+                'VISA *4242',
+            ],
+            [
+                new PayPalOrder('5O190127TN364715T', '1', 'CAPTURE', 'card', 'COMPLETE', ['card' => ['last_digits' => '4242', 'brand' => 'VISA']], 'LIVE', false, false, []),
+                false,
+                false,
+                'VISA *4242',
+            ],
+            [
+                null,
+                false,
+                false,
+                '',
+            ],
+            [
+                new PayPalOrder('5O190127TN364715T', '1', 'CAPTURE', 'paypal', 'COMPLETE', ['paypal' => ['email_address' => 'test@prestashop.com', 'attributes' => ['vault' => ['id' => '123', 'status' => 'VAULTED']]]], 'LIVE', false, false, [PayPalOrder::CUSTOMER_INTENT_VAULT]),
+                true,
+                true,
+                'test@prestashop.com',
+            ],
+            [
+                new PayPalOrder('5O190127TN364715T', '1', 'CAPTURE', 'paypal', 'COMPLETE', ['paypal' => ['email_address' => 'test@prestashop.com', 'attributes' => ['vault' => ['id' => '123', 'status' => 'VAULTED']]]], 'LIVE', false, false, []),
+                false,
+                true,
+                'test@prestashop.com',
+            ],
+            [
+                new PayPalOrder('5O190127TN364715T', '1', 'CAPTURE', 'paypal', 'COMPLETE', ['paypal' => ['email_address' => 'test@prestashop.com', 'attributes' => ['vault' => ['id' => '123', 'status' => 'APPROVED']]]], 'LIVE', false, false, []),
+                false,
+                false,
+                'test@prestashop.com',
+            ],
+            [
+                new PayPalOrder('5O190127TN364715T', '1', 'CAPTURE', 'paypal', 'COMPLETE', ['paypal' => ['email_address' => 'test@prestashop.com']], 'LIVE', false, false, []),
+                false,
+                false,
+                'test@prestashop.com',
+            ],
+            [
+                null,
+                false,
+                false,
+                '',
+            ],
+        ];
     }
 }

@@ -24,10 +24,14 @@ use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\TransferException;
 use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 
 class PsrHttpClientAdapter implements HttpClientInterface
 {
+    /**
+     * @var ClientInterface
+     */
     private $client;
 
     /**
@@ -45,12 +49,12 @@ class PsrHttpClientAdapter implements HttpClientInterface
     {
         try {
             $response = $this->client->sendRequest($request);
-        } catch (\GuzzleHttp\Ring\Exception\ConnectException $exception) {
+        } catch (\GuzzleHttp\Ring\Exception\ConnectException $exception) { // @phpstan-ignore-line
             // Guzzle 5.3 use RingPHP for the low level connection
-            throw new NetworkException($exception->getMessage(), $request, $exception);
-        } catch (\GuzzleHttp\Ring\Exception\RingException $exception) {
+            throw new NetworkException($exception->getMessage(), $request, $exception); // @phpstan-ignore-line
+        } catch (\GuzzleHttp\Ring\Exception\RingException $exception) { // @phpstan-ignore-line
             // Guzzle 5.3 use RingPHP for the low level connection
-            throw new TransferException($exception->getMessage(), 0, $exception);
+            throw new TransferException($exception->getMessage(), 0, $exception); // @phpstan-ignore-line
         }
 
         // Guzzle 5.3 does not throw exceptions on 4xx and 5xx status codes

@@ -59,6 +59,12 @@ $_MODULE['<{ps_checkout}prestashop>ps_checkout_78432b718ec482b7211e1a45785087f1'
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_39dc86ebdd6c930447215d738bc4d15f'] = 'Une erreur est survenue lors de l\'authentification du titulaire de la carte, veuillez choisir un autre moyen de paiement ou essayez de nouveau.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_816565ccf105493c7b15166627f6fc16'] = 'Echec de l\'authentification du titulaire de la carte, veuillez choisir un autre moyen de paiement ou essayez de nouveau.';
 $_MODULE['<{ps_checkout}prestashop>ps_checkout_52afb370f87a4acfe4f1aaee204835eb'] = 'L\'identité du titulaire de la carte n\'a pas pu être vérifiée, veuillez choisir un autre moyen de paiement ou essayez de nouveau.';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_a60852f204ed8028c1c58808b746d115'] = 'Ok';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_ea4788705e6873b424c65e91c2846b19'] = 'Annuler';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_5e1c8c70c8b2948157cbcafaef3dd7b9'] = 'Voulez-vous supprimer cette méthode de paiement ?';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_b54040e4e1fd364112517e8ce7b531fd'] = 'Cette méthode de paiement sera supprimée de votre compte :';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_1203190e2c25d0377afab032ddd9b608'] = 'Supprimer cette méthode de paiement';
+$_MODULE['<{ps_checkout}prestashop>ps_checkout_875e6e29b50c20a90d8c09435ab2c8b3'] = 'Veuillez patienter, nous traitons votre demande...';
 $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_32187a5bef114c112c1ef96ca2e3da1a'] = 'Votre commande est confirmée.';
 $_MODULE['<{ps_checkout}prestashop>displayorderconfirmation_034347c8ea2ce26879ee1fee0b5e58ca'] = 'Votre commande est en attente de confirmation de paiement. Vous recevrez un email lorsque votre paiement aura été validé. Vous pouvez également vérifier le statut de votre commande dans votre historique de commandes dans votre compte.';
 $_MODULE['<{ps_checkout}prestashop>displaypaymenttop_733ea3e302b9c48da7777481ed50e59a'] = 'Traitement du paiement annulé, veuillez choisir une autre méthode de paiement ou essayez de nouveau.';
@@ -66,7 +72,7 @@ $_MODULE['<{ps_checkout}prestashop>displaypayment_f92103c13c44bded222d124f5b9743
 $_MODULE['<{ps_checkout}prestashop>displaypayment_a44217022190f5734b2f72ba1e4f8a79'] = 'Numéro de carte';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_95b16127e70e8a90220404fb48343182'] = 'Date d\'expiration';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_5ea7f231296949070013bc43715aae01'] = 'Code de sécurité';
-$_MODULE['<{ps_checkout}prestashop>displaypayment_fa29fdc19f1d3ac45b09645c15c5312b'] = 'Le code de sécurité et un code à';
+$_MODULE['<{ps_checkout}prestashop>displaypayment_fa29fdc19f1d3ac45b09645c15c5312b'] = 'Le code de sécurité est un code à';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_1e9307ff80da8e2e7053566f1613cf90'] = '3 chiffres';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_36883c97eb73307ac86b5ad32abbb49b'] = 'présent sur le dos de votre carte. Dans certains cas, il est composé de 4 chiffres ou se trouve à l\'avant de la carte.';
 $_MODULE['<{ps_checkout}prestashop>displaypayment_46b9e3665f187c739c55983f757ccda0'] = 'Je valide ma commande';
@@ -82,6 +88,15 @@ $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_a4e8c4aedf01bae8876d415df39
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_5041c9dced8f0d0a4d319be95b229ea5'] = 'Changer les pays activés pour ce module de paiement';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_487a4ced3865f176965c1571a9f3c0fe'] = 'Changer les devises activées pour ce module de paiement';
 $_MODULE['<{ps_checkout}prestashop>incompatiblecodes_cb2afa98a49d1ac44da748a5ee556a8a'] = 'En savoir plus sur les ISO Codes conformes';
+$_MODULE['<{ps_checkout}prestashop>payment_94a3acb3f16f07d0a2e3bfae65cfdb58'] = 'L\'authentification 3D secure a échoué, veuillez réessayer.';
+$_MODULE['<{ps_checkout}prestashop>payment_fd6237b65b7bb37075277bba7d1aca08'] = 'Retour à la page de commande';
+$_MODULE['<{ps_checkout}prestashop>vaultpaymentfields_8878480cb609084dbf1573e8cc53ff02'] = 'Sauvegardez en toute sécurité vos informations de paiement';
+$_MODULE['<{ps_checkout}prestashop>vaultpaymentfields_2c391a491914670af81c0522a9091d7c'] = 'Définir comme méthode de paiement préférée';
+$_MODULE['<{ps_checkout}prestashop>vaultpaymentfields_e6e2a83a209d8c2ca1793dfcda1eca49'] = 'Définir ce compte comme méthode de paiement préférée';
+$_MODULE['<{ps_checkout}prestashop>vaulttokenform_ca3e15a8a9c7a796a1893277bf48b8ef'] = 'Cette méthode de paiement est enregistrée sur votre compte et définie comme méthode de paiement préférée pour vos futurs achats.';
+$_MODULE['<{ps_checkout}prestashop>vaulttokenform_6c493105989f12b2da5d1f770ac779f9'] = 'Cette méthode de paiement a été enregistrée sur votre compte.';
+$_MODULE['<{ps_checkout}prestashop>vaulttokenform_f2a6c498fb90ee345d997f888fce3b18'] = 'Supprimer';
+$_MODULE['<{ps_checkout}prestashop>vaulttokenform_0db443e338b016aae2b24ce0be40beda'] = 'Définir comme méthode de paiement préférée';
 $_MODULE['<{ps_checkout}prestashop>cardfields_f92103c13c44bded222d124f5b9743f3'] = 'Nom du titulaire de la carte';
 $_MODULE['<{ps_checkout}prestashop>cardfields_01cd32f89f9f5807e07d58a002b09dee'] = 'Nom du titulaire de la carte invalide.';
 $_MODULE['<{ps_checkout}prestashop>cardfields_a44217022190f5734b2f72ba1e4f8a79'] = 'Numéro de carte';
@@ -90,7 +105,7 @@ $_MODULE['<{ps_checkout}prestashop>cardfields_2c2aaf0b855bf6d000b350c69acd2e78']
 $_MODULE['<{ps_checkout}prestashop>cardfields_462256f533f152fa6b05baabb7919473'] = 'Date d\'expiration';
 $_MODULE['<{ps_checkout}prestashop>cardfields_5284be11230ea808cbcb2bfa117eef0e'] = 'Date d\'expiration de la carte invalide.';
 $_MODULE['<{ps_checkout}prestashop>cardfields_5ea7f231296949070013bc43715aae01'] = 'Code de sécurité';
-$_MODULE['<{ps_checkout}prestashop>cardfields_fa29fdc19f1d3ac45b09645c15c5312b'] = 'Le code de sécurité et un code à';
+$_MODULE['<{ps_checkout}prestashop>cardfields_fa29fdc19f1d3ac45b09645c15c5312b'] = 'Le code de sécurité est un code à';
 $_MODULE['<{ps_checkout}prestashop>cardfields_1e9307ff80da8e2e7053566f1613cf90'] = '3 chiffres';
 $_MODULE['<{ps_checkout}prestashop>cardfields_36883c97eb73307ac86b5ad32abbb49b'] = 'présent sur le dos de votre carte. Dans certains cas, il est composé de 4 chiffres ou se trouve à l\'avant de la carte.';
 $_MODULE['<{ps_checkout}prestashop>cardfields_43da12b692a051ce433c2877b61d4c67'] = 'Code de sécurité invalide.';
@@ -239,6 +254,7 @@ $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_ccf338e
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_bc06e3a40808fc7351ff8f57b3bad7cf'] = 'Transaction PayPal invalide.';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_5825dada06af7bef8ae4db80c2c5aeba'] = 'Montant de remboursement PayPal invalide.';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_da74acca9d5669367fa982b7694f5303'] = 'Devise de remboursement PayPal invalide.';
+$_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_785e1b8c2c57d4ad6ed603778b4f6ba9'] = 'Le remboursement a été traité par PayPal, mais le changement de statut de la commande ou l\'envoi de l\'e-mail a échoué.';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_d1a7ac6d45dcb4a782b441e29380056a'] = 'Le remboursement a été effectué par PayPal.';
 $_MODULE['<{ps_checkout}prestashop>adminajaxprestashopcheckoutcontroller_ee6403a0a4d60590a6b6634df2fdce3f'] = 'Le remboursement n\'a pas pu être effectué par PayPal.';
 $_MODULE['<{ps_checkout}prestashop>adminpaypalonboardingprestashopcheckoutcontroller_f54c8c9ec6eb9489f860c4b04206c0db'] = 'Nous n\'avons pas reçu votre identifiant marchand PayPal.';
@@ -645,7 +661,11 @@ $_MODULE['<{ps_checkout}prestashop>translations_7d316b2dd91387c8a8bfd045643b3182
 $_MODULE['<{ps_checkout}prestashop>translations_b147f642538c69e4fbd7ae6609fd62fe'] = 'Authentifier le paiemennt';
 $_MODULE['<{ps_checkout}prestashop>translations_45a110be54ff9533824fc03578b06371'] = 'Vous serez redirigé vers une page externe sécurisé.';
 $_MODULE['<{ps_checkout}prestashop>translations_8fe57282806d2b6da782d1da9ab5d46c'] = 'Si vous avez une question, veuillez nous contacter.';
+$_MODULE['<{ps_checkout}prestashop>translations_20cb69d4c9adf02e582769f6b5e43353'] = 'Statut méthode de paiement';
+$_MODULE['<{ps_checkout}prestashop>translations_df7acad4a0ddd7ea87e21d06f4564041'] = 'a été enregistré pour vos achats futurs';
+$_MODULE['<{ps_checkout}prestashop>translations_1917b07d3afbf9408a6e91ede37479d3'] = 'n\'a pas été enregistré pour vos achats futurs';
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_1d565b9e5303987bb1b1938d5d458bca'] = 'Carte';
+$_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_35895cff7df70dab18783453e2bd241f'] = 'Payer avec %s';
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_f990493af3321939ca512f8f2cace108'] = 'Payer par %s';
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_34ace703adbf14df140d3c02234f67bd'] = 'Payer avec un compte PayPal';
 $_MODULE['<{ps_checkout}prestashop>fundingsourcetranslationprovider_983fe12e91079dcb00c74772b50747a3'] = 'Payer par carte - paiements 100% sécurisés';

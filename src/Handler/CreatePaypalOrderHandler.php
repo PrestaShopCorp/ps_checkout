@@ -27,7 +27,7 @@ use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
-use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
+use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use Ps_checkout;
@@ -41,12 +41,8 @@ class CreatePaypalOrderHandler
      */
     private $context;
 
-    public function __construct(Context $context = null)
+    public function __construct(Context $context)
     {
-        if (null === $context) {
-            $context = Context::getContext();
-        }
-
         $this->context = $context;
     }
 
@@ -70,7 +66,7 @@ class CreatePaypalOrderHandler
         $module = Module::getInstanceByName('ps_checkout');
 
         /** @var ShopContext $shopContext */
-        $shopContext = $module->getService('ps_checkout.context.shop');
+        $shopContext = $module->getService(ShopContext::class);
 
         $builder->setIsCard($isCardPayment);
 
@@ -93,8 +89,8 @@ class CreatePaypalOrderHandler
 
         $payload = $builder->presentPayload()->getArray();
 
-        /** @var CheckoutHttpClient $checkoutHttpClient */
-        $checkoutHttpClient = $module->getService('ps_checkout.http.client.checkout');
+        /** @var MaaslandHttpClient $checkoutHttpClient */
+        $checkoutHttpClient = $module->getService(MaaslandHttpClient::class);
 
         // Create the paypal order or update it
         try {
