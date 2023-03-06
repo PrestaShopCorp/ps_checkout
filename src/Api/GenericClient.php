@@ -170,7 +170,7 @@ class GenericClient
      *
      * @param ClientInterface $client
      */
-    protected function setClient(ClientInterface $client)
+    protected function setClient($client)
     {
         $this->client = $client;
     }

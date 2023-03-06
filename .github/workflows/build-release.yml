@@ -1,10 +1,12 @@
 name: Build & Release draft
 
 on:
-  pull_request:
   push:
     branches:
-      - master
+      - 'master'
+      - 'prestashop/8.x'
+  pull_request:
+    types: [ opened, reopened, synchronize, edited ]
 
 env:
   GCLOUD_TOKEN_PATH: ./token.json
@@ -68,7 +70,7 @@ jobs:
       - name: Prepare for Release
         run: |
           cd ${{ github.event.repository.name }}
-          zip -r ${{ github.event.repository.name }}.zip ${{ github.event.repository.name }}
+          zip -r ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip ${{ github.event.repository.name }} -x '*.git*'
       - name: Clean existing assets
         shell: bash
         run: |
@@ -86,6 +88,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.release_info.outputs.upload_url }}
-          asset_path: ./${{ github.event.repository.name }}/${{ github.event.repository.name }}.zip
-          asset_name: ${{ github.event.repository.name }}.zip
+          asset_path: ./${{ github.event.repository.name }}/${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip
+          asset_name: ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip
           asset_content_type: application/zip

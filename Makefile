@@ -12,16 +12,16 @@ build-back-prod:
 	docker-compose run --rm php sh -c "composer install --no-dev -o"
 
 build-front:
-	docker-compose run --rm node sh -c "yarn --cwd _dev/ install"
-	docker-compose run --rm node sh -c "yarn --cwd _dev/ build"
+	docker-compose run --rm node sh -c "npm i --prefix ./_dev/js/front"
+	docker-compose run --rm node sh -c "npm run build --prefix ./_dev/js/front"
 
 # target: watch-front                   - Watcher for the vueJS files
 watch-front:
-	docker-compose run --rm node sh -c "yarn --cwd _dev/ dev"
+	docker-compose run --rm node sh -c "npm run watch --prefix ./_dev/js/front"
 
 # target: test-front                   - Launch the front test suite
 test-front:
-	docker-compose run --rm node sh -c "yarn --cwd _dev/ lint"
+	docker-compose run --rm node sh -c "npm test --prefix ./_dev/js/front"
 
 build-zip:
 	cp -Ra $(PWD) /tmp/ps_checkout
@@ -30,6 +30,9 @@ build-zip:
 	rm -rf /tmp/ps_checkout/.travis.yml
 	rm -rf /tmp/ps_checkout/cloudbuild.yaml
 	rm -rf /tmp/ps_checkout/composer.*
+	rm -rf /tmp/ps_checkout/package.json
+	rm -rf /tmp/ps_checkout/.npmrc
+	rm -rf /tmp/ps_checkout/package-lock.json
 	rm -rf /tmp/ps_checkout/.gitignore
 	rm -rf /tmp/ps_checkout/deploy.sh
 	rm -rf /tmp/ps_checkout/.editorconfig
