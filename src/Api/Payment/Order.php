@@ -152,4 +152,38 @@ class Order extends PaymentClient
 
         return $response['body']['client_token'];
     }
+
+    /**
+     * @param string $merchantId
+     * @param int $customerId
+     *
+     * @return array{client_token:string, id_token: string, expires_in: int}
+     *
+     * @throws PsCheckoutException
+     */
+    public function getClientToken($merchantId, $customerId)
+    {
+        $this->setRoute('/payments/order/generate_client_token');
+
+        $response = $this->post([
+            'return_payload' => true,
+            'payee' => [
+                'merchant_id' => $merchantId,
+            ],
+            // API doesn't support customerId yet, but required for vaulting only for logged customer (not for guest)
+            // 'customer_id' => $customerId
+        ]);
+
+        if (empty($response['body']) || empty($response['body']['client_token'])) {
+            $exception = null;
+
+            if (!empty($response['exceptionMessage'])) {
+                $exception = new \Exception($response['exceptionMessage'], $response['exceptionCode']);
+            }
+
+            throw new PsCheckoutException('Unable to retrieve PayPal Client Token', PsCheckoutException::MISSING_PAYPAL_CLIENT_TOKEN, $exception);
+        }
+
+        return $response['body'];
+    }
 }
