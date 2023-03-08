@@ -122,7 +122,7 @@ export class QuerySelectorPs1_6Service {
       document.querySelectorAll(selector)
     );
 
-    if (!elements) {
+    if (!elements || elements.length === 0) {
       console.error('HTMLElement selector ' + selector + ' not found.');
     }
 
