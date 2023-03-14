@@ -33,7 +33,7 @@ class GetClientTokenPayPalQueryHandler
         $createdAt = time();
         $context = Context::getContext();
         $merchantId = Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT', null, null, $context->shop->id);
-        $customerId = $clientTokenPayPalQuery->getCustomerId();
+        $customerId = $clientTokenPayPalQuery->getCustomerId()->getValue();
         $apiOrder = new Order($context->link);
         $response = $apiOrder->getClientToken($merchantId, $customerId);
 

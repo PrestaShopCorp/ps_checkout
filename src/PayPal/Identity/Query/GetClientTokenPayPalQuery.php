@@ -20,10 +20,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query;
 
+use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
+
 class GetClientTokenPayPalQuery
 {
     /**
-     * @var int|null
+     * @var CustomerId
      */
     private $customerId;
 
@@ -32,11 +34,11 @@ class GetClientTokenPayPalQuery
      */
     public function __construct($customerId = null)
     {
-        $this->customerId = $customerId;
+        $this->customerId = new CustomerId($customerId);
     }
 
     /**
-     * @return int|null
+     * @return CustomerId
      */
     public function getCustomerId()
     {
