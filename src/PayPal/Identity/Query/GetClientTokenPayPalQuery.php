@@ -25,12 +25,12 @@ use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 class GetClientTokenPayPalQuery
 {
     /**
-     * @var CustomerId
+     * @var int
      */
     private $customerId;
 
     /**
-     * @param CustomerId $customerId
+     * @param int $customerId
      */
     public function __construct($customerId = null)
     {
