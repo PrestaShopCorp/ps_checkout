@@ -30,7 +30,7 @@ class GetClientTokenPayPalQuery
     private $customerId;
 
     /**
-     * @param int|null $customerId
+     * @param CustomerId $customerId
      */
     public function __construct($customerId = null)
     {
