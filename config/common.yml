@@ -333,3 +333,32 @@ services:
     public: true
     arguments:
       - '@ps_accounts.installer'
+
+  ps_checkout.event.dispatcher.factory:
+    class: 'PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherFactory'
+    public: true
+    arguments:
+      - '@ps_checkout.logger'
+
+  ps_checkout.event.subscriber.checkout:
+    class: 'PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber\CheckoutEventSubscriber'
+    public: true
+
+  ps_checkout.event.subscriber.order:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber'
+    public: true
+
+  ps_checkout.event.subscriber.paypal.order:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber'
+    public: true
+
+  ps_checkout.event.subscriber.paypal.capture:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber'
+    public: true
+
+  ps_checkout.event.dispatcher:
+    class: 'Symfony\Component\EventDispatcher\EventDispatcherInterface'
+    public: true
+    factory: ['@ps_checkout.event.dispatcher.factory', 'create']
+    arguments:
+      - ['@ps_checkout.event.subscriber.checkout', '@ps_checkout.event.subscriber.order', '@ps_checkout.event.subscriber.paypal.order', '@ps_checkout.event.subscriber.paypal.capture']
