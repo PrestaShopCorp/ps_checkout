@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
 
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 
 class CapturePayPalOrderCommand
@@ -37,6 +38,8 @@ class CapturePayPalOrderCommand
     /**
      * @param string $orderId
      * @param string $fundingSource
+     *
+     * @throws PayPalOrderException
      */
     public function __construct($orderId, $fundingSource)
     {

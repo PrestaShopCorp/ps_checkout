@@ -26,12 +26,27 @@ use Exception;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPalError;
 use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CapturePayPalOrderCommandHandler
 {
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
     public function handle(CapturePayPalOrderCommand $capturePayPalOrderCommand)
     {
         try {
@@ -80,5 +95,10 @@ class CapturePayPalOrderCommandHandler
         } catch (Exception $exception) {
             throw new PayPalOrderException(sprintf('Unable to capture PayPal Order #%d', $capturePayPalOrderCommand->getOrderId()->getValue()), PayPalOrderException::CANNOT_CAPTURE_ORDER, $exception);
         }
+
+        $this->eventDispatcher->dispatch(
+            PayPalOrderCompletedEvent::NAME,
+            new PayPalOrderCompletedEvent($capturePayPalOrderCommand->getOrderId()->getValue())
+        );
     }
 }
