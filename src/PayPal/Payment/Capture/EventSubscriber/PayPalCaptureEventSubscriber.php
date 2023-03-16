@@ -33,9 +33,9 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            PayPalCaptureCompletedEvent::NAME => 'onPayPalCaptureCompleted',
-            PayPalCaptureDeniedEvent::NAME => 'onPayPalCaptureDenied',
-            PayPalCaptureRefundedEvent::NAME => 'onPayPalCaptureRefunded',
+            PayPalCaptureCompletedEvent::class => 'onPayPalCaptureCompleted',
+            PayPalCaptureDeniedEvent::class => 'onPayPalCaptureDenied',
+            PayPalCaptureRefundedEvent::class => 'onPayPalCaptureRefunded',
         ];
     }
 

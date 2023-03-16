@@ -20,14 +20,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
 
+use PrestaShop\Module\PrestashopCheckout\Event\Event;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
-use Symfony\Component\EventDispatcher\Event;
 
 class PayPalOrderCreatedEvent extends Event
 {
-    const NAME = 'paypal.order.created';
-
     /**
      * @var PayPalOrderId
      */

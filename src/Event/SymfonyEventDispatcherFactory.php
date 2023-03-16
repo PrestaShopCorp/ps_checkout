@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Event;
 
+use PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -27,7 +28,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
-class EventDispatcherFactory
+class SymfonyEventDispatcherFactory
 {
     /**
      * @var LoggerInterface
@@ -35,11 +36,18 @@ class EventDispatcherFactory
     private $logger;
 
     /**
-     * @param LoggerInterface $logger
+     * @var LoggerConfiguration
      */
-    public function __construct(LoggerInterface $logger)
+    private $configuration;
+
+    /**
+     * @param LoggerInterface $logger
+     * @param LoggerConfiguration $configuration
+     */
+    public function __construct(LoggerInterface $logger, LoggerConfiguration $configuration)
     {
         $this->logger = $logger;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -49,7 +57,7 @@ class EventDispatcherFactory
      */
     public function create(array $eventSubscribers)
     {
-        $eventDispatcher = _PS_MODE_DEV_
+        $eventDispatcher = LoggerConfiguration::LEVEL_DEBUG === $this->configuration->getLevel()
             ? new TraceableEventDispatcher(
                 new EventDispatcher(),
                 new Stopwatch(),

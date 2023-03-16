@@ -20,14 +20,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Event;
 
+use PrestaShop\Module\PrestashopCheckout\Event\Event;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
-use Symfony\Component\EventDispatcher\Event;
 
 class OrderStatusUpdatedEvent extends Event
 {
-    const NAME = 'order.status.updated';
-
     /**
      * @var OrderStateId
      */

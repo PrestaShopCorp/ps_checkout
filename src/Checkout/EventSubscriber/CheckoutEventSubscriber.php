@@ -31,7 +31,7 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            CheckoutCompletedEvent::NAME => 'onCheckoutCompleted',
+            CheckoutCompletedEvent::class => 'onCheckoutCompleted',
         ];
     }
 

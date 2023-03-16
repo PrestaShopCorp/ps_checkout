@@ -20,14 +20,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event;
 
+use PrestaShop\Module\PrestashopCheckout\Event\Event;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\ValueObject\PayPalCaptureId;
-use Symfony\Component\EventDispatcher\Event;
 
 class PayPalCaptureDeniedEvent extends Event
 {
-    const NAME = 'paypal.payment.capture.denied';
-
     /**
      * @var PayPalCaptureId
      */

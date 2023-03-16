@@ -33,9 +33,9 @@ class OrderEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            OrderCreatedEvent::NAME => 'onOrderCreated',
-            OrderPaymentCreated::NAME => 'onOrderPaymentCreated',
-            OrderStatusUpdatedEvent::NAME => 'onOrderStatusUpdated',
+            OrderCreatedEvent::class => 'onOrderCreated',
+            OrderPaymentCreated::class => 'onOrderPaymentCreated',
+            OrderStatusUpdatedEvent::class => 'onOrderStatusUpdated',
         ];
     }
 

@@ -20,14 +20,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Event;
 
+use PrestaShop\Module\PrestashopCheckout\Event\Event;
 use PrestaShop\Module\PrestashopCheckout\Order\Payment\Exception\OrderPaymentException;
 use PrestaShop\Module\PrestashopCheckout\Order\Payment\ValueObject\OrderPaymentId;
-use Symfony\Component\EventDispatcher\Event;
 
 class OrderPaymentCreated extends Event
 {
-    const NAME = 'order.payment.created';
-
     /**
      * @var OrderPaymentId
      */
