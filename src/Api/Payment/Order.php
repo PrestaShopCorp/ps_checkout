@@ -155,24 +155,28 @@ class Order extends PaymentClient
 
     /**
      * @param string $merchantId
-     * @param int $customerId
+     * @param int|null $customerId
      *
      * @return array{client_token:string, id_token: string, expires_in: int}
      *
      * @throws PsCheckoutException
      */
-    public function getClientToken($merchantId, $customerId)
+    public function getClientToken($merchantId, $customerId = null)
     {
         $this->setRoute('/payments/order/generate_client_token');
 
-        $response = $this->post([
+        $payload = [
             'return_payload' => true,
             'payee' => [
                 'merchant_id' => $merchantId,
             ],
-            // API doesn't support customerId yet, but required for vaulting only for logged customer (not for guest)
-            // 'customer_id' => $customerId
-        ]);
+        ];
+
+        if ($customerId) {
+            $payload['customer_id'] = $customerId;
+        }
+
+        $response = $this->post($payload);
 
         if (empty($response['body']) || empty($response['body']['client_token'])) {
             $exception = null;

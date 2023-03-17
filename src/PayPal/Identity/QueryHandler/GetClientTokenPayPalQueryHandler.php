@@ -23,11 +23,36 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Identity\QueryHandler;
 use Configuration;
 use Context;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
+use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Event\PayPalClientTokenUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query\GetClientTokenPayPalQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query\GetClientTokenPayPalQueryResult;
 
 class GetClientTokenPayPalQueryHandler
 {
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * @param GetClientTokenPayPalQuery $clientTokenPayPalQuery
+     *
+     * @return GetClientTokenPayPalQueryResult
+     *
+     * @throws CartException
+     * @throws PsCheckoutException
+     */
     public function handle(GetClientTokenPayPalQuery $clientTokenPayPalQuery)
     {
         $createdAt = time();
@@ -36,6 +61,16 @@ class GetClientTokenPayPalQueryHandler
         $customerId = $clientTokenPayPalQuery->getCustomerId()->getValue();
         $apiOrder = new Order($context->link);
         $response = $apiOrder->getClientToken($merchantId, $customerId);
+
+        $this->eventDispatcher->dispatch(
+            new PayPalClientTokenUpdatedEvent(
+                $clientTokenPayPalQuery->getCartId()->getValue(),
+                $response['client_token'],
+                $response['id_token'],
+                (int) $response['expires_in'],
+                $createdAt
+            )
+        );
 
         return new GetClientTokenPayPalQueryResult(
             $response['client_token'],

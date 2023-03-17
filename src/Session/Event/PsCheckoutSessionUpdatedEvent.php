@@ -18,14 +18,13 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query;
+namespace PrestaShop\Module\PrestashopCheckout\Session\Event;
 
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
-use PrestaShop\Module\PrestashopCheckout\Customer\Exception\CustomerException;
-use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
+use PrestaShop\Module\PrestashopCheckout\Event\Event;
 
-class GetClientTokenPayPalQuery
+class PsCheckoutSessionUpdatedEvent extends Event
 {
     /**
      * @var CartId
@@ -33,21 +32,13 @@ class GetClientTokenPayPalQuery
     private $cartId;
 
     /**
-     * @var CustomerId|null
-     */
-    private $customerId;
-
-    /**
      * @param int $cartId
-     * @param int|null $customerId
      *
      * @throws CartException
-     * @throws CustomerException
      */
-    public function __construct($cartId, $customerId = null)
+    public function __construct($cartId)
     {
         $this->cartId = new CartId($cartId);
-        $this->customerId = $customerId ? new CustomerId($customerId) : null;
     }
 
     /**
@@ -56,13 +47,5 @@ class GetClientTokenPayPalQuery
     public function getCartId()
     {
         return $this->cartId;
-    }
-
-    /**
-     * @return CustomerId|null
-     */
-    public function getCustomerId()
-    {
-        return $this->customerId;
     }
 }
