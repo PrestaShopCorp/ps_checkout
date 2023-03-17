@@ -18,34 +18,17 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Order\Event;
+namespace PrestaShop\Module\PrestashopCheckout\Event;
 
-use PrestaShop\Module\PrestashopCheckout\Event\Event;
-use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
-use PrestaShop\Module\PrestashopCheckout\Order\ValueObject\OrderId;
+use Symfony\Component\EventDispatcher\Event as ComponentEvent;
+use Symfony\Contracts\EventDispatcher\Event as ContractEvent;
 
-class OrderCreatedEvent extends Event
-{
-    /**
-     * @var OrderId
-     */
-    private $orderId;
-
-    /**
-     * @param int $orderId
-     *
-     * @throws OrderException
-     */
-    public function __construct($orderId)
+if (class_exists(ComponentEvent::class)) {
+    class Event extends ComponentEvent
     {
-        $this->orderId = new OrderId($orderId);
     }
-
-    /**
-     * @return OrderId
-     */
-    public function getOrderId()
+} else {
+    class Event extends ContractEvent
     {
-        return $this->orderId;
     }
 }

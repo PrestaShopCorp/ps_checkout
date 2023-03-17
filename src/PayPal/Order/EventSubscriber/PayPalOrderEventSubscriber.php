@@ -33,9 +33,9 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            PayPalOrderCreatedEvent::NAME => 'onPayPalOrderCreated',
-            PayPalOrderApprovedEvent::NAME => 'onPayPalOrderApproved',
-            PayPalOrderCompletedEvent::NAME => 'onPayPalOrderCompleted',
+            PayPalOrderCreatedEvent::class => 'onPayPalOrderCreated',
+            PayPalOrderApprovedEvent::class => 'onPayPalOrderApproved',
+            PayPalOrderCompletedEvent::class => 'onPayPalOrderCompleted',
         ];
     }
 

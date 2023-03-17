@@ -24,13 +24,13 @@ use Configuration;
 use Context;
 use Exception;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
+use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPalError;
 use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CapturePayPalOrderCommandHandler
 {
@@ -97,7 +97,6 @@ class CapturePayPalOrderCommandHandler
         }
 
         $this->eventDispatcher->dispatch(
-            PayPalOrderCompletedEvent::NAME,
             new PayPalOrderCompletedEvent($capturePayPalOrderCommand->getOrderId()->getValue())
         );
     }

@@ -18,34 +18,27 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Order\Event;
+namespace PrestaShop\Module\PrestashopCheckout\Event;
 
-use PrestaShop\Module\PrestashopCheckout\Event\Event;
-use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
-use PrestaShop\Module\PrestashopCheckout\Order\ValueObject\OrderId;
+use Psr\EventDispatcher\EventDispatcherInterface as PsrEventDispatcherInterface;
 
-class OrderCreatedEvent extends Event
-{
-    /**
-     * @var OrderId
-     */
-    private $orderId;
-
-    /**
-     * @param int $orderId
-     *
-     * @throws OrderException
-     */
-    public function __construct($orderId)
+if (interface_exists(PsrEventDispatcherInterface::class)) {
+    interface EventDispatcherInterface extends PsrEventDispatcherInterface
     {
-        $this->orderId = new OrderId($orderId);
     }
-
+} else {
     /**
-     * @return OrderId
+     * Defines a dispatcher for events.
      */
-    public function getOrderId()
+    interface EventDispatcherInterface
     {
-        return $this->orderId;
+        /**
+         * Provide all relevant listeners with an event to process.
+         *
+         * @param object $event the object to process
+         *
+         * @return object the Event that was passed, now modified by listeners
+         */
+        public function dispatch($event);
     }
 }
