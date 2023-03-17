@@ -121,6 +121,10 @@ class PayPalSdkLinkBuilder
             $components[] = 'payment-fields';
         }
 
+        if (isset($params['locale']) && empty($params['locale'])) {
+            unset($params['locale']);
+        }
+
         if ($this->isPayLaterEnabled()) {
             $eligibleAlternativePaymentMethods[] = 'paylater';
         }
@@ -334,6 +338,10 @@ class PayPalSdkLinkBuilder
 
         if ('AU' === $country) {
             return 'en_AU';
+        }
+
+        if ('AT' === $country) {
+            return 'DE' === $language ? 'de_AT' : 'en_AT';
         }
 
         return '';
