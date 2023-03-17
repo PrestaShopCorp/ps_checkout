@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber;
 
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderCreatedEvent;
-use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderPaymentCreated;
+use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderPaymentCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderStatusUpdatedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -34,7 +34,7 @@ class OrderEventSubscriber implements EventSubscriberInterface
     {
         return [
             OrderCreatedEvent::class => 'onOrderCreated',
-            OrderPaymentCreated::class => 'onOrderPaymentCreated',
+            OrderPaymentCreatedEvent::class => 'onOrderPaymentCreated',
             OrderStatusUpdatedEvent::class => 'onOrderStatusUpdated',
         ];
     }
@@ -50,11 +50,11 @@ class OrderEventSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param OrderPaymentCreated $event
+     * @param OrderPaymentCreatedEvent $event
      *
      * @return void
      */
-    public function onOrderPaymentCreated(OrderPaymentCreated $event)
+    public function onOrderPaymentCreated(OrderPaymentCreatedEvent $event)
     {
         // TODO
     }

@@ -32,5 +32,8 @@ parameters:
 		- '#Parameter \#7 \$currency_special of method PaymentModuleCore::validateOrder\(\) expects null, int given.#'
 		- '#Parameter \#9 \$secure_key of method PaymentModuleCore::validateOrder\(\) expects bool, string given.#'
 		- '#Property CustomerMessageCore::\$private \(int\) does not accept true.#'
+		- '#Parameter \#1 \$id of class Currency constructor expects null, int given.#'
+		- '#Parameter \#1 \$amount_paid of method OrderCore::addOrderPayment\(\) expects float, string given.#'
+		- '#Parameter \#3 \$amount_paid of method PaymentModuleCore::validateOrder\(\) expects float, string given.#'
 
 	level: 5
