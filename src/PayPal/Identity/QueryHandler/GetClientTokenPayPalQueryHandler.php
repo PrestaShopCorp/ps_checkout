@@ -23,11 +23,25 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Identity\QueryHandler;
 use Configuration;
 use Context;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Event\GetClientTokenPayPal;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query\GetClientTokenPayPalQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query\GetClientTokenPayPalQueryResult;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class GetClientTokenPayPalQueryHandler
 {
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
     public function handle(GetClientTokenPayPalQuery $clientTokenPayPalQuery)
     {
         $createdAt = time();
@@ -36,6 +50,10 @@ class GetClientTokenPayPalQueryHandler
         $customerId = $clientTokenPayPalQuery->getCustomerId()->getValue();
         $apiOrder = new Order($context->link);
         $response = $apiOrder->getClientToken($merchantId, $customerId);
+
+        $this->eventDispatcher->dispatch(
+            new PayPalClientTokenUpdatedEvent($capturePayPalOrderCommand->getOrderId()->getValue(),$response['client_token'],$response['id_token'])
+        );
 
         return new GetClientTokenPayPalQueryResult(
             $response['client_token'],
