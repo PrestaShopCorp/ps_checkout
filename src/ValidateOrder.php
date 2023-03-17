@@ -79,13 +79,20 @@ class ValidateOrder
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
 
-        // API call here
+        /**
+         * @TODO When CheckoutCompletedEvent is dispatched
+         * => Subscribe and call GetPayPalOrderQueryHandler on CheckoutEventSubscriber
+         * BEGIN GetPayPalOrderQueryHandler
+         */
         $paypalOrder = new PaypalOrder($this->paypalOrderId);
         $order = $paypalOrder->getOrder();
 
         if (empty($order)) {
             throw new PsCheckoutException(sprintf('Unable to retrieve Paypal Order for %s', $this->paypalOrderId), PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
         }
+        /*
+         * END GetPayPalOrderQueryHandler
+         */
 
         if ($payload['isHostedFields']) {
             $card3DSecure = (new Card3DSecure())->continueWithAuthorization($order);
@@ -159,6 +166,11 @@ class ValidateOrder
                 $fundingSource .= $psCheckoutCart->isHostedFields ? '_hosted' : '_inline';
             }
 
+            /**
+             * @TODO When PayPalOrderApprovedEvent is dispatched
+             * => Subscribe and call CapturePayPalOrderCommandHandler on PayPalOrderEventSubscriber
+             * BEGIN CapturePayPalOrderCommandHandler
+             */
             $response = $apiOrder->capture(
                 $order['id'],
                 $this->merchantId,
@@ -196,11 +208,34 @@ class ValidateOrder
                     $payPalProcessorResponse->throwException();
                 }
             }
+            /**
+             * END CapturePayPalOrderCommandHandler
+             */
+
+            /**
+             * @TODO When PayPalOrderFetchedEvent is dispatched
+             * => Subscribe and call UpdatePayPalOrderCacheCommandHandler on PayPalOrderEventSubscriber
+             * @TODO BEGIN Extract to UpdatePayPalOrderCacheCommandHandler
+             */
 
             /** @var CacheInterface $paypalOrderCache */
             $paypalOrderCache = $module->getService('ps_checkout.cache.paypal.order');
             $paypalOrderCache->set($response['body']['id'], $response['body']);
 
+            /*
+             * @TODO END Extract to UpdatePayPalOrderCacheCommandHandler
+             */
+
+            /*
+             * @TODO When
+             * - CheckoutCompletedEvent is dispatched
+             * => Subscribe and call UpdatePsCheckoutSessionCommandHandler on CheckoutEventSubscriber
+             * - PayPalOrderCreatedEvent is dispatched
+             * - PayPalOrderApprovedEvent is dispatched
+             * - PayPalOrderCompletedEvent is dispatched
+             * => Subscribe and call UpdatePsCheckoutSessionCommandHandler on PayPalOrderEventSubscriber
+             * BEGIN UpdatePsCheckoutSessionCommandHandler
+             */
             if (false === $psCheckoutCart) {
                 $psCheckoutCart = new \PsCheckoutCart();
                 $psCheckoutCart->id_cart = (int) $payload['cartId'];
@@ -213,11 +248,19 @@ class ValidateOrder
                 $psCheckoutCart->paypal_status = $response['body']['status'];
                 $psCheckoutCartRepository->save($psCheckoutCart);
             }
+            /*
+             * END UpdatePsCheckoutSessionCommandHandler
+             */
 
             if (self::CAPTURE_STATUS_DECLINED === $transactionStatus) {
                 throw new PsCheckoutException(sprintf('Transaction declined by PayPal : %s', false === empty($response['body']['details']['description']) ? $response['body']['details']['description'] : 'No detail'), PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
             }
 
+            /*
+             * @TODO When PayPalCaptureCompletedEvent is dispatched
+             * => subscribe and call CreateOrderCommandHandler on PayPalCaptureEventSubscriber
+             * BEGIN CreateOrderCommandHandler
+             */
             try {
                 $module->validateOrder(
                     $payload['cartId'],
@@ -241,10 +284,23 @@ class ValidateOrder
             if (empty($module->currentOrder)) {
                 throw new PsCheckoutException(sprintf('PrestaShop was unable to returns Prestashop Order ID for Prestashop Cart ID : %s  - Paypal Order ID : %s. This happens when PrestaShop take too long time to create an Order due to heavy processes in hooks actionValidateOrder and/or actionOrderStatusUpdate and/or actionOrderStatusPostUpdate', $payload['cartId'], $this->paypalOrderId), PsCheckoutException::PRESTASHOP_ORDER_ID_MISSING);
             }
+            /*
+             * END CreateOrderCommandHandler
+             */
+
+            /*
+             * @TODO When PayPalOrderCompletedEvent is dispatched
+             * => subscribe and call UpdatePayPalOrderMatriceCommandHandler on PayPalOrderEventSubscriber
+             * TODO BEGIN Extract to UpdatePayPalOrderMatriceCommandHandler
+             */
 
             if (false === $this->setOrdersMatrice($module->currentOrder, $this->paypalOrderId)) {
                 throw new PsCheckoutException(sprintf('Set Order Matrice error for Prestashop Order ID : %s and Paypal Order ID : %s', $module->currentOrder, $this->paypalOrderId), PsCheckoutException::PSCHECKOUT_ORDER_MATRICE_ERROR);
             }
+
+            /*
+             * @TODO END Extract to UpdatePayPalOrderMatriceCommandHandler
+             */
 
             if (in_array($transactionStatus, [static::CAPTURE_STATUS_COMPLETED, static::CAPTURE_STATUS_DECLINED])) {
                 $newOrderState = static::CAPTURE_STATUS_COMPLETED === $transactionStatus ? $this->getPaidStatusId($module->currentOrder) : (int) \Configuration::getGlobalValue('PS_OS_ERROR');
@@ -254,6 +310,16 @@ class ValidateOrder
 
                 // If have to change current OrderState from Waiting to Paid or Canceled
                 if ($currentOrderStateId !== $newOrderState) {
+                    /**
+                     * @TODO When
+                     * - PayPalOrderCompletedEvent is dispatched (Check if PrestaShop order status need to be updated)
+                     * => subscribe and call UpdateOrderStatusCommandHandler on PayPalOrderEventSubscriber
+                     * - PayPalCaptureCompletedEvent is dispatched (PrestaShop Order status change to Payment accepted if paid completely)
+                     * - PayPalCaptureDeniedEvent is dispatched (PrestaShop Order status change to Payment error)
+                     * - PayPalCaptureRefundedEvent is dispatched (PrestaShop Order status change to Refunded or Partial refund)
+                     * => subscribe and call UpdateOrderStatusCommandHandler on PayPalCaptureEventSubscriber
+                     * BEGIN UpdateOrderStatusCommandHandler
+                     */
                     $orderHistory = new \OrderHistory();
                     $orderHistory->id_order = $module->currentOrder;
                     try {
@@ -265,6 +331,9 @@ class ValidateOrder
                     } catch (\Exception $exception) {
                         throw new PsCheckoutException('Unable to change PrestaShop OrderState', PsCheckoutException::PRESTASHOP_ORDER_STATE_ERROR, $exception);
                     }
+                    /*
+                     * END UpdateOrderStatusCommandHandler
+                     */
                 }
             }
         }

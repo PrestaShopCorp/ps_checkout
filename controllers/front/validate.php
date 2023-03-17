@@ -82,6 +82,14 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             $isExpressCheckout = isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'];
             $isHostedFields = isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'];
             $fundingSource = isset($bodyValues['fundingSource']) && Validate::isGenericName($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : null;
+
+            /**
+             * @TODO dispatch CheckoutCompletedEvent
+             * It will call all needed Handler to performs all required operation
+             * Then you have to fetch data from database and returns response
+             *
+             * BEGIN code to remove
+             */
             $liabilityShift = $isHostedFields && isset($bodyValues['liabilityShift']) && Validate::isGenericName($bodyValues['liabilityShift']) ? $bodyValues['liabilityShift'] : null;
             $liabilityShifted = $isHostedFields ? (isset($bodyValues['liabilityShifted']) && $bodyValues['liabilityShifted']) : null;
             $authenticationStatus = $isHostedFields && isset($bodyValues['authenticationStatus']) && Validate::isGenericName($bodyValues['authenticationStatus']) ? $bodyValues['authenticationStatus'] : null;
@@ -141,6 +149,10 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             $response = $payment->validateOrder($dataOrder);
 
             $this->context->cookie->__unset('paypalEmail');
+
+            /*
+             * @TODO END code to remove
+             */
 
             $this->sendOkResponse($response);
         } catch (Exception $exception) {
