@@ -22,13 +22,29 @@ namespace PrestaShop\Module\PrestashopCheckout\Order\CommandHandler;
 
 use Currency;
 use OrderInvoice;
+use OrderPayment;
+use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\AbstractOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\AddOrderPaymentCommand;
+use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderPaymentCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use Validate;
 
 class AddOrderPaymentHandler extends AbstractOrderHandler
 {
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
     /**
      * @param AddOrderPaymentCommand $command
      *
@@ -63,5 +79,11 @@ class AddOrderPaymentHandler extends AbstractOrderHandler
         if (!$paymentAdded) {
             throw new OrderException(sprintf('Failed to add a payment to Order #%s.', $command->getOrderId()->getValue()), OrderException::FAILED_ADD_PAYMENT);
         }
+
+        /** @var OrderPayment[] $orderPayments */
+        $orderPayments = $order->getOrderPayments();
+        $latestOrderPayment = end($orderPayments);
+
+        $this->eventDispatcher->dispatch(new OrderPaymentCreatedEvent((int) $latestOrderPayment->id));
     }
 }

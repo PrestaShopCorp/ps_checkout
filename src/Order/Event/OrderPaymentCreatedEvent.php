@@ -24,7 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\Event\Event;
 use PrestaShop\Module\PrestashopCheckout\Order\Payment\Exception\OrderPaymentException;
 use PrestaShop\Module\PrestashopCheckout\Order\Payment\ValueObject\OrderPaymentId;
 
-class OrderPaymentCreated extends Event
+class OrderPaymentCreatedEvent extends Event
 {
     /**
      * @var OrderPaymentId
