@@ -20,9 +20,19 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Dispatcher;
 
+use Module;
+use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
-use Psr\SimpleCache\CacheInterface;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovalReversedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeniedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureRefundedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
+use Ps_checkout;
+use Psr\Log\LoggerInterface;
 
 class OrderDispatcher implements Dispatcher
 {
@@ -32,6 +42,9 @@ class OrderDispatcher implements Dispatcher
     const PS_CHECKOUT_PAYMENT_PENDING = 'PaymentCapturePending';
     const PS_CHECKOUT_PAYMENT_COMPLETED = 'PaymentCaptureCompleted';
     const PS_CHECKOUT_PAYMENT_DENIED = 'PaymentCaptureDenied';
+    const PS_CHECKOUT_ORDER_APPROVED = 'CheckoutOrderApproved';
+    const PS_CHECKOUT_ORDER_COMPLETED = 'CheckoutOrderCompleted';
+    const PS_CHECKOUT_ORDER_APPROVAL_REVERSED = 'CHECKOUT.PAYMENT-APPROVAL.REVERSED';
 
     /**
      * @var \PsCheckoutCart
@@ -53,190 +66,63 @@ class OrderDispatcher implements Dispatcher
             throw new PsCheckoutException('orderId must not be empty', PsCheckoutException::PSCHECKOUT_WEBHOOK_ORDER_ID_EMPTY);
         }
 
-        $this->assignPsCheckoutCart($payload['orderId']);
+        /** @var Ps_checkout $module */
+        $module = Module::getInstanceByName('ps_checkout');
 
-        if ($payload['eventType'] === 'CheckoutOrderApproved' && $this->psCheckoutCart->paypal_status !== 'COMPLETED') {
-            $this->psCheckoutCart->paypal_status = 'APPROVED';
+        /** @var EventDispatcherInterface $eventDispatcher */
+        $eventDispatcher = $module->getService('ps_checkout.event.dispatcher');
 
-            return \Validate::isLoadedObject($this->psCheckoutCart) ? $this->psCheckoutCart->save() : true;
-        }
+        /** @var LoggerInterface $logger */
+        $logger = $module->getService('ps_checkout.logger');
 
-        /** @var int|false $psOrderId */
-        $psOrderId = \Order::getOrderByCartId((int) $this->psCheckoutCart->id_cart);
+        /**
+         * @todo check if the webhook received contains more recent data than data we have already on database
+         * Due to asynchronous and webhook queue, it can happen webhook received is outdated
+         * Compare data using `status` and `update_time`values from $payload['resource']
+         * With PsCheckoutCart::$paypal_status and PsCheckoutCart::$date_upd
+         */
+        switch ($payload['eventType']) {
+            case static::PS_CHECKOUT_PAYMENT_COMPLETED:
+                $eventDispatcher->dispatch(new PayPalCaptureCompletedEvent($payload['resource']['id'], $payload['orderId']));
 
-        if (false === $psOrderId) {
-            throw new PsCheckoutException('No PrestaShop Order associated to this PayPal Order at this time.', PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
-        }
+                return true;
+            case static::PS_CHECKOUT_PAYMENT_PENDING:
+                $eventDispatcher->dispatch(new PayPalCapturePendingEvent($payload['resource']['id'], $payload['orderId']));
 
-        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REFUNED
-            || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_REVERSED) {
-            return $this->dispatchPaymentAction($payload['eventType'], $payload['resource'], $psOrderId);
-        }
+                return true;
+            case static::PS_CHECKOUT_PAYMENT_DENIED:
+                $eventDispatcher->dispatch(new PayPalCaptureDeniedEvent($payload['resource']['id'], $payload['orderId']));
 
-        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_COMPLETED
-            || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_DENIED
-            || $payload['eventType'] === self::PS_CHECKOUT_PAYMENT_AUTH_VOIDED) {
-            return $this->dispatchPaymentStatus($payload['eventType'], $payload['resource'], $psOrderId);
-        }
+                return true;
+            case static::PS_CHECKOUT_PAYMENT_REFUNED:
+                $eventDispatcher->dispatch(new PayPalCaptureRefundedEvent($payload['resource']['id'], $payload['orderId']));
 
-        // For now, if pending, do not change anything
-        if ($payload['eventType'] === self::PS_CHECKOUT_PAYMENT_PENDING) {
-            return true;
-        }
+                return true;
+            case static::PS_CHECKOUT_PAYMENT_REVERSED:
+                $eventDispatcher->dispatch(new PayPalCaptureReversedEvent($payload['resource']['id'], $payload['orderId']));
 
-        return true;
-    }
+                return true;
+            case static::PS_CHECKOUT_ORDER_APPROVED:
+                $eventDispatcher->dispatch(new PayPalOrderApprovedEvent($payload['orderId']));
 
-    /**
-     * Dispatch the Event Type to the payments action Refunded or Revesed
-     *
-     * @param string $eventType
-     * @param array $resource
-     * @param int $orderId
-     *
-     * @return bool
-     *
-     * @throws PsCheckoutException
-     */
-    private function dispatchPaymentAction($eventType, $resource, $orderId)
-    {
-        (new WebHookValidation())->validateRefundResourceValues($resource);
+                return true;
+            case static::PS_CHECKOUT_ORDER_COMPLETED:
+                $eventDispatcher->dispatch(new PayPalOrderCompletedEvent($payload['orderId']));
 
-        return true;
-    }
+                return true;
+            case static::PS_CHECKOUT_ORDER_APPROVAL_REVERSED:
+                $eventDispatcher->dispatch(new PayPalOrderApprovalReversedEvent($payload['orderId']));
 
-    /**
-     * Dispatch the event Type the the payment status PENDING / COMPLETED / DENIED / AUTH_VOIDED
-     *
-     * @param string $eventType
-     * @param array $resource
-     * @param int $orderId
-     *
-     * @return bool
-     *
-     * @throws PsCheckoutException
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     * @throws \Exception
-     */
-    private function dispatchPaymentStatus($eventType, $resource, $orderId)
-    {
-        (new WebHookValidation())->validateRefundOrderIdValue($orderId);
-
-        $order = new \Order($orderId);
-        $currentOrderStateId = (int) $order->getCurrentState();
-        $newOrderStateId = (int) $this->getNewState($eventType, $currentOrderStateId);
-
-        // Prevent duplicate state entry
-        if ($currentOrderStateId !== $newOrderStateId
-            && false === (bool) $order->hasBeenPaid()
-            && false === (bool) $order->hasBeenShipped()
-            && false === (bool) $order->hasBeenDelivered()
-            && false === (bool) $order->isInPreparation()
-        ) {
-            $orderHistory = new \OrderHistory();
-            $orderHistory->id_order = $orderId;
-
-            try {
-                $orderHistory->changeIdOrderState(
-                    $newOrderStateId,
-                    $orderId
-                );
-                $orderHistory->addWithemail();
-            } catch (\Exception $exception) {
-                // If PrestaShop cannot send email or generate invoice do not break next operation
-                // For example : https://github.com/PrestaShop/PrestaShop/issues/18837
-            }
-        }
-
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-
-        /** @var CacheInterface $paypalOrderCache */
-        $paypalOrderCache = $module->getService('ps_checkout.cache.paypal.order');
-
-        // Cache used provide pruning (deletion) of all expired cache items to reduce cache size
-        if (method_exists($paypalOrderCache, 'prune')) {
-            $paypalOrderCache->prune();
-        }
-
-        return true;
-    }
-
-    /**
-     * @param string $eventType
-     * @param int $currentOrderStateId
-     *
-     * @return int
-     */
-    private function getNewState($eventType, $currentOrderStateId)
-    {
-        if (static::PS_CHECKOUT_PAYMENT_AUTH_VOIDED === $eventType) {
-            return (int) \Configuration::getGlobalValue('PS_OS_CANCELED');
-        }
-
-        if (static::PS_CHECKOUT_PAYMENT_COMPLETED === $eventType) {
-            return $this->getPaidStatusId($currentOrderStateId);
-        }
-
-        if (static::PS_CHECKOUT_PAYMENT_DENIED === $eventType) {
-            return (int) \Configuration::getGlobalValue('PS_OS_ERROR');
-        }
-
-        return $this->getPendingStatusId();
-    }
-
-    /**
-     * @param int $currentOrderStateId Current OrderState identifier
-     *
-     * @return int OrderState paid identifier
-     */
-    private function getPaidStatusId($currentOrderStateId)
-    {
-        if ($currentOrderStateId === (int) \Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_UNPAID')) {
-            return (int) \Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_PAID');
-        }
-
-        return (int) \Configuration::getGlobalValue('PS_OS_PAYMENT');
-    }
-
-    /**
-     * @return int OrderState identifier
-     */
-    private function getPendingStatusId()
-    {
-        switch ($this->psCheckoutCart->paypal_funding) {
-            case 'card':
-                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
-                break;
-            case 'paypal':
-                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
-                break;
+                return true;
             default:
-                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT');
+                $logger->warning(
+                    'Unknown webhook, cannot be processed.',
+                    [
+                        'payload' => $payload,
+                    ]
+                );
+
+                return true;
         }
-
-        return $orderStateId;
-    }
-
-    /**
-     * @param string $payPalOrderId PayPal Order Id
-     *
-     * @throws PsCheckoutException
-     * @throws \PrestaShopException
-     */
-    private function assignPsCheckoutCart($payPalOrderId)
-    {
-        $psCheckoutCartCollection = new \PrestaShopCollection('PsCheckoutCart');
-        $psCheckoutCartCollection->where('paypal_order', '=', $payPalOrderId);
-
-        /** @var \PsCheckoutCart|false $psCheckoutCart */
-        $psCheckoutCart = $psCheckoutCartCollection->getFirst();
-
-        if (false === $psCheckoutCart) {
-            throw new PsCheckoutException(sprintf('order #%s is not linked to a cart', $payPalOrderId), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
-        }
-
-        $this->psCheckoutCart = $psCheckoutCart;
     }
 }

@@ -20,6 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event;
 
-class PayPalCaptureDeniedEvent extends PayPalCaptureEvent
+class PayPalCaptureReversedEvent extends PayPalCaptureEvent
 {
 }
