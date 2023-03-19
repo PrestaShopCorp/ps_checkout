@@ -18,8 +18,34 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
 
-class PayPalCaptureDeniedEvent extends PayPalCaptureEvent
+use PrestaShop\Module\PrestashopCheckout\Event\Event;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
+
+class PayPalOrderEvent extends Event
 {
+    /**
+     * @var PayPalOrderId
+     */
+    private $orderPayPalId;
+
+    /**
+     * @param string $orderPayPalId
+     *
+     * @throws PayPalOrderException
+     */
+    public function __construct($orderPayPalId)
+    {
+        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
+    }
+
+    /**
+     * @return PayPalOrderId
+     */
+    public function getOrderPayPalId()
+    {
+        return $this->orderPayPalId;
+    }
 }

@@ -111,6 +111,13 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
                 return false;
             }
 
+            $this->module->getLogger()->info(
+                'Webhook received',
+                [
+                    'payload' => $bodyValues,
+                ]
+            );
+
             return $this->dispatchWebHook();
         } catch (Exception $exception) {
             $this->handleException($exception);

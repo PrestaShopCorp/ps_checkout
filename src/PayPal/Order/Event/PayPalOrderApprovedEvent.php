@@ -20,32 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
 
-use PrestaShop\Module\PrestashopCheckout\Event\Event;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
-
-class PayPalOrderApprovedEvent extends Event
+class PayPalOrderApprovedEvent extends PayPalOrderEvent
 {
-    /**
-     * @var PayPalOrderId
-     */
-    private $orderPayPalId;
-
-    /**
-     * @param string $orderPayPalId
-     *
-     * @throws PayPalOrderException
-     */
-    public function __construct($orderPayPalId)
-    {
-        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
-    }
-
-    /**
-     * @return PayPalOrderId
-     */
-    public function getOrderPayPalId()
-    {
-        return $this->orderPayPalId;
-    }
 }

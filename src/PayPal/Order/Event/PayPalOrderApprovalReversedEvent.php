@@ -18,8 +18,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
 
-class PayPalCaptureDeniedEvent extends PayPalCaptureEvent
+class PayPalOrderApprovalReversedEvent extends PayPalOrderEvent
 {
 }
