@@ -23,10 +23,12 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Identity\QueryHandler;
 use Configuration;
 use Context;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Event\GetClientTokenPayPal;
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
+use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Event\PayPalClientTokenUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query\GetClientTokenPayPalQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query\GetClientTokenPayPalQueryResult;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class GetClientTokenPayPalQueryHandler
 {
@@ -42,6 +44,15 @@ class GetClientTokenPayPalQueryHandler
     {
         $this->eventDispatcher = $eventDispatcher;
     }
+
+    /**
+     * @param GetClientTokenPayPalQuery $clientTokenPayPalQuery
+     *
+     * @return GetClientTokenPayPalQueryResult
+     *
+     * @throws CartException
+     * @throws PsCheckoutException
+     */
     public function handle(GetClientTokenPayPalQuery $clientTokenPayPalQuery)
     {
         $createdAt = time();
@@ -52,7 +63,13 @@ class GetClientTokenPayPalQueryHandler
         $response = $apiOrder->getClientToken($merchantId, $customerId);
 
         $this->eventDispatcher->dispatch(
-            new PayPalClientTokenUpdatedEvent($capturePayPalOrderCommand->getOrderId()->getValue(),$response['client_token'],$response['id_token'])
+            new PayPalClientTokenUpdatedEvent(
+                $clientTokenPayPalQuery->getCartId()->getValue(),
+                $response['client_token'],
+                $response['id_token'],
+                (int) $response['expires_in'],
+                $createdAt
+            )
         );
 
         return new GetClientTokenPayPalQueryResult(

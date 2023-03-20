@@ -18,15 +18,17 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
+namespace PrestaShop\Module\PrestashopCheckout\Session\CommandHandler;
 
 use Exception;
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePsCheckoutSessionCommand;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
+use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand;
+use PrestaShop\Module\PrestashopCheckout\Session\Event\PsCheckoutSessionUpdatedEvent;
+use PrestaShop\Module\PrestashopCheckout\Session\Exception\PsCheckoutSessionException;
+use PsCheckoutCart;
 
 class UpdatePsCheckoutSessionCommandHandler
 {
@@ -44,36 +46,47 @@ class UpdatePsCheckoutSessionCommandHandler
      * @param EventDispatcherInterface $eventDispatcher
      * @param PsCheckoutCartRepository $psCheckoutCartRepository
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, PsCheckoutCartRepository $psCheckoutCartRepository)
-    {
+    public function __construct(
+        EventDispatcherInterface $eventDispatcher,
+        PsCheckoutCartRepository $psCheckoutCartRepository
+    ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
     }
 
+    /**
+     * @param UpdatePsCheckoutSessionCommand $updatePsCheckoutSessionCommand
+     *
+     * @return void
+     *
+     * @throws PayPalOrderException
+     * @throws CartException
+     * @throws PsCheckoutSessionException
+     */
     public function handle(UpdatePsCheckoutSessionCommand $updatePsCheckoutSessionCommand)
     {
         try {
-            /** @var \PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($updatePsCheckoutSessionCommand->getOrderId()->getValue());
+            /** @var PsCheckoutCart|false $psCheckoutCart */
+            $psCheckoutCart = $this->psCheckoutCartRepository->findOneByCartId($updatePsCheckoutSessionCommand->getCartId()->getValue());
+
             if (false === $psCheckoutCart) {
-                $psCheckoutCart = new \PsCheckoutCart();
-                $psCheckoutCart->id_cart = $updatePsCheckoutSessionCommand->getIdCart()->getValue();
+                $psCheckoutCart = new PsCheckoutCart();
+                $psCheckoutCart->id_cart = $updatePsCheckoutSessionCommand->getCartId()->getValue();
                 $psCheckoutCart->paypal_intent = $updatePsCheckoutSessionCommand->getPaypalIntent();
-                $psCheckoutCart->paypal_order = $updatePsCheckoutSessionCommand->getOrderId()->getValue();
+                $psCheckoutCart->paypal_order = $updatePsCheckoutSessionCommand->getPayPalOrderId()->getValue();
                 $psCheckoutCart->paypal_status = $updatePsCheckoutSessionCommand->getPaypalStatus();
                 $this->psCheckoutCartRepository->save($psCheckoutCart);
             } else {
-                $psCheckoutCart->paypal_order = $updatePsCheckoutSessionCommand->getOrderId()->getValue();
+                $psCheckoutCart->paypal_order = $updatePsCheckoutSessionCommand->getPayPalOrderId()->getValue();
                 $psCheckoutCart->paypal_status = $updatePsCheckoutSessionCommand->getPaypalStatus();
                 $this->psCheckoutCartRepository->save($psCheckoutCart);
             }
-            // Update an Aggregate or dispatch an Event with $transactionIdentifier
         } catch (Exception $exception) {
-            throw new PayPalOrderException(sprintf('Unable to capture PayPal Order #%d', $updatePsCheckoutSessionCommand->getOrderId()->getValue()), PayPalOrderException::SESSION_EXCEPTION, $exception);
+            throw new PsCheckoutSessionException(sprintf('Unable to update PrestaShop Checkout session #%s', $updatePsCheckoutSessionCommand->getPayPalOrderId()->getValue()), PsCheckoutSessionException::UPDATE_FAILED, $exception);
         }
 
         $this->eventDispatcher->dispatch(
-            new PayPalOrderCompletedEvent($updatePsCheckoutSessionCommand->getOrderId()->getValue())
+            new PsCheckoutSessionUpdatedEvent($updatePsCheckoutSessionCommand->getCartId()->getValue())
         );
     }
 }

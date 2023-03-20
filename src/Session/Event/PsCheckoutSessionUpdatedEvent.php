@@ -18,13 +18,13 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Event;
+namespace PrestaShop\Module\PrestashopCheckout\Session\Event;
 
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
 use PrestaShop\Module\PrestashopCheckout\Event\Event;
 
-class PayPalClientTokenUpdatedEvent extends Event
+class PsCheckoutSessionUpdatedEvent extends Event
 {
     /**
      * @var CartId
@@ -32,41 +32,13 @@ class PayPalClientTokenUpdatedEvent extends Event
     private $cartId;
 
     /**
-     * @var string
-     */
-    private $token;
-
-    /**
-     * @var string
-     */
-    private $tokenId;
-
-    /**
-     * @var int
-     */
-    private $expireIn;
-
-    /**
-     * @var int
-     */
-    private $createdAt;
-
-    /**
      * @param int $cartId
-     * @param string $token
-     * @param string $tokenId
-     * @param int $expireIn
-     * @param int $createdAt
      *
      * @throws CartException
      */
-    public function __construct($cartId, $token, $tokenId, $expireIn, $createdAt)
+    public function __construct($cartId)
     {
         $this->cartId = new CartId($cartId);
-        $this->token = $token;
-        $this->tokenId = $tokenId;
-        $this->expireIn = $expireIn;
-        $this->createdAt = $createdAt;
     }
 
     /**
@@ -75,37 +47,5 @@ class PayPalClientTokenUpdatedEvent extends Event
     public function getCartId()
     {
         return $this->cartId;
-    }
-
-    /**
-     * @return string
-     */
-    public function getToken()
-    {
-        return $this->token;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIdToken()
-    {
-        return $this->tokenId;
-    }
-
-    /**
-     * @return int
-     */
-    public function getExpireIn()
-    {
-        return $this->expireIn;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
     }
 }

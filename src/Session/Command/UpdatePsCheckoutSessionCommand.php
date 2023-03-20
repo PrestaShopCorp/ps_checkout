@@ -18,8 +18,9 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
+namespace PrestaShop\Module\PrestashopCheckout\Session\Command;
 
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
@@ -77,19 +78,8 @@ class UpdatePsCheckoutSessionCommand
     private $isHostedFields;
 
     /**
-     * @var string;
-     */
-    private $dateAdd;
-
-    /**
-     * @var string;
-     */
-    private $dateUpd
-    ;
-
-    /**
      * @param string $orderId
-     * @param int $cartId
+     * @param int $id_cart
      * @param string $fundingSource
      * @param string $paypalIntent
      * @param string $paypalStatus
@@ -100,12 +90,22 @@ class UpdatePsCheckoutSessionCommand
      * @param bool $isExpressCheckout
      *
      * @throws PayPalOrderException
-     * @throws \PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException
+     * @throws CartException
      */
-    public function __construct($orderId, $cartId, $fundingSource, $paypalIntent, $paypalStatus, $paypalToken, $paypalTokenExpire, $paypalAuthorizationExpire, $isHostedFields, $isExpressCheckout)
-    {
+    public function __construct(
+        $orderId,
+        $id_cart,
+        $fundingSource,
+        $paypalIntent,
+        $paypalStatus,
+        $paypalToken,
+        $paypalTokenExpire,
+        $paypalAuthorizationExpire,
+        $isHostedFields,
+        $isExpressCheckout
+    ) {
         $this->orderId = new PayPalOrderId($orderId);
-        $this->cartId = new CartId($cartId);
+        $this->cartId = new CartId($id_cart);
         $this->fundingSource = $fundingSource;
         $this->paypalIntent = $paypalIntent;
         $this->paypalStatus = $paypalStatus;
@@ -119,7 +119,7 @@ class UpdatePsCheckoutSessionCommand
     /**
      * @return CartId
      */
-    public function getIdCart()
+    public function getCartId()
     {
         return $this->cartId;
     }
@@ -183,7 +183,7 @@ class UpdatePsCheckoutSessionCommand
     /**
      * @return PayPalOrderId
      */
-    public function getOrderId()
+    public function getPayPalOrderId()
     {
         return $this->orderId;
     }

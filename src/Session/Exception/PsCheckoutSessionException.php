@@ -18,14 +18,11 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order;
+namespace PrestaShop\Module\PrestashopCheckout\Session\Exception;
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
-class PayPalOrderException extends PsCheckoutException
+class PsCheckoutSessionException extends PsCheckoutException
 {
-    const CANNOT_RETRIEVE_ORDER = 0;
-    const EMPTY_ORDER_DATA = 0;
-    const CANNOT_CAPTURE_ORDER = 0;
-    const SESSION_EXCEPTION = 0;
+    const UPDATE_FAILED = 1;
 }
