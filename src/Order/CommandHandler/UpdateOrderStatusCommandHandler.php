@@ -29,7 +29,7 @@ use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderStatusUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
 
-class UpdateOrderStatusHandler extends AbstractOrderCommandHandler
+class UpdateOrderStatusCommandHandler extends AbstractOrderCommandHandler
 {
     /**
      * @var EventDispatcherInterface

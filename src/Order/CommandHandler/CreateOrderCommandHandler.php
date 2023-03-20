@@ -33,7 +33,7 @@ use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
-class CreateOrderHandler extends AbstractOrderCommandHandler
+class CreateOrderCommandHandler extends AbstractOrderCommandHandler
 {
     /**
      * @var EventDispatcherInterface
