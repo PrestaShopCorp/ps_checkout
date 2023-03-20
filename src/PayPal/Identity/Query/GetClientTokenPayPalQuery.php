@@ -20,25 +20,46 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query;
 
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
+use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
+use PrestaShop\Module\PrestashopCheckout\Customer\Exception\CustomerException;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 
 class GetClientTokenPayPalQuery
 {
     /**
-     * @var CustomerId
+     * @var CartId
+     */
+    private $cartId;
+
+    /**
+     * @var CustomerId|null
      */
     private $customerId;
 
     /**
-     * @param int $customerId
+     * @param int $cartId
+     * @param int|null $customerId
+     *
+     * @throws CartException
+     * @throws CustomerException
      */
-    public function __construct($customerId = null)
+    public function __construct($cartId, $customerId = null)
     {
-        $this->customerId = new CustomerId($customerId);
+        $this->cartId = new CartId($cartId);
+        $this->customerId = $customerId ? new CustomerId($customerId) : null;
     }
 
     /**
-     * @return CustomerId
+     * @return CartId
+     */
+    public function getCartId()
+    {
+        return $this->cartId;
+    }
+
+    /**
+     * @return CustomerId|null
      */
     public function getCustomerId()
     {

@@ -18,20 +18,27 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Identity\EventSubscriber;
 
+use DateTime;
+use Exception;
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Event\PayPalClientTokenUpdatedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePsCheckoutSessionCommand;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\UpdatePsCheckoutSessionCommandHandler;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand;
+use PrestaShop\Module\PrestashopCheckout\Session\CommandHandler\UpdatePsCheckoutSessionCommandHandler;
+use PrestaShop\Module\PrestashopCheckout\Session\Exception\PsCheckoutSessionException;
+use PrestaShopException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalIdentityEventSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var UpdatePsCheckoutSessionCommandHandler
+     */
+    private $updatePsCheckoutSessionCommandHandler;
+
     public function __construct(UpdatePsCheckoutSessionCommandHandler $updatePsCheckoutSessionCommandHandler)
     {
         $this->updatePsCheckoutSessionCommandHandler = $updatePsCheckoutSessionCommandHandler;
@@ -43,20 +50,38 @@ class PayPalIdentityEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            PayPalClientTokenUpdatedEvent::NAME => 'updatePsCheckoutSession',
+            PayPalClientTokenUpdatedEvent::class => 'updatePsCheckoutSession',
         ];
     }
 
     /**
-     * @param PayPalOrderCreatedEvent $event
+     * @param PayPalClientTokenUpdatedEvent $event
      *
      * @return void
+     *
+     * @throws PrestaShopException
+     * @throws CartException
+     * @throws PayPalOrderException
+     * @throws PsCheckoutSessionException
+     * @throws Exception
      */
     public function updatePsCheckoutSession(PayPalClientTokenUpdatedEvent $event)
     {
         $psCheckoutCartRepository = new PsCheckoutCartRepository();
-        $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($event->getOrderPayPalId()->getValue());
-        $updatePsCheckoutSessionCommand = new UpdatePsCheckoutSessionCommand($event->getOrderPayPalId()->getValue(),$psCheckoutCart->getIdCart(),$psCheckoutCart->getPaypalFundingSource(),$psCheckoutCart->getPaypalIntent(),$psCheckoutCart->getPaypalStatus(),$event->getToken(),$psCheckoutCart->paypal_token_expire,$psCheckoutCart->paypal_authorization_expire,$psCheckoutCart->isHostedFields(),$psCheckoutCart->isExpressCheckout());
-        $this->updatePsCheckoutSessionCommandHandler->handle($updatePsCheckoutSessionCommand);
+        $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId($event->getCartId()->getValue());
+        $this->updatePsCheckoutSessionCommandHandler->handle(
+            new UpdatePsCheckoutSessionCommand(
+                $psCheckoutCart->getPaypalOrderId(),
+                $event->getCartId()->getValue(),
+                $psCheckoutCart->getPaypalFundingSource(),
+                $psCheckoutCart->getPaypalIntent(),
+                $psCheckoutCart->getPaypalStatus(),
+                $event->getToken(),
+                (new DateTime())->setTimestamp($event->getCreatedAt())->modify("+{$event->getExpireIn()} seconds")->format('Y-m-d H:i:s'),
+                $psCheckoutCart->paypal_authorization_expire,
+                $psCheckoutCart->isHostedFields(),
+                $psCheckoutCart->isExpressCheckout()
+            )
+        );
     }
 }
