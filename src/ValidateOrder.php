@@ -198,7 +198,7 @@ class ValidateOrder
             try {
                 $module->validateOrder(
                     $payload['cartId'],
-                    (int) $this->getOrderState($psCheckoutCart->paypal_funding),
+                    (int)Configuration::get('PS_OS_PAYMENT'),
                     0,
                     $fundingSourceTranslationProvider->getPaymentMethodName($psCheckoutCart->paypal_funding),
                     null,
