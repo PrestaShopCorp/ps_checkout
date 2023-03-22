@@ -68,6 +68,12 @@ class PsCheckoutException extends \Exception
     const PSL_TIMEOUT = 44;
     const MISSING_PAYPAL_CLIENT_TOKEN = 46;
 
+    const PAYPAL_PAYMENT_CARD_SCA_UNKNOWN = 50;
+
+    const PAYPAL_PAYMENT_CARD_SCA_FAILURE = 51;
+
+    const PAYPAL_PAYMENT_CARD_SCA_CANCELED = 52;
+
     const EXCEPTIONS_IGNORED_BY_SENTRY = [
         self::PRESTASHOP_CART_NOT_FOUND,
         self::PRESTASHOP_CONTEXT_INVALID,

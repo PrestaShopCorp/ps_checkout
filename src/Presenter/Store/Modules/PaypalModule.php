@@ -20,25 +20,25 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
- * Construct the paypal module
+ * Construct the PayPal module
  */
 class PaypalModule implements PresenterInterface
 {
     /**
-     * @var PaypalAccountRepository
+     * @var PayPalConfiguration
      */
-    private $paypalAccount;
+    private $configuration;
 
     /**
-     * @param PaypalAccountRepository $paypalAccountRepository
+     * @param PayPalConfiguration $configuration
      */
-    public function __construct(PaypalAccountRepository $paypalAccountRepository)
+    public function __construct(PayPalConfiguration $configuration)
     {
-        $this->paypalAccount = $paypalAccountRepository;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -48,19 +48,17 @@ class PaypalModule implements PresenterInterface
      */
     public function present()
     {
-        $paypalAccount = $this->paypalAccount->getOnboardedAccount();
-
         return [
             'paypal' => [
-                'idMerchant' => $paypalAccount->getMerchantId(),
+                'idMerchant' => $this->configuration->getMerchantId(),
                 'paypalOnboardingLink' => '',
-                'onboardingCompleted' => !empty($paypalAccount->getMerchantId()),
-                'accountIslinked' => !empty($paypalAccount->getEmail()) && !empty($paypalAccount->getMerchantId()),
-                'emailMerchant' => $paypalAccount->getEmail(),
-                'emailIsValid' => $paypalAccount->getEmailIsVerified(),
-                'cardIsActive' => $paypalAccount->getCardPaymentStatus(),
-                'paypalIsActive' => $paypalAccount->getPaypalPaymentStatus(),
-                'countryMerchant' => $paypalAccount->getMerchantCountry(),
+                'onboardingCompleted' => !empty($this->configuration->getMerchantId()),
+                'accountIslinked' => !empty($this->configuration->getMerchantEmail()) && !empty($this->configuration->getMerchantId()),
+                'emailMerchant' => $this->configuration->getMerchantEmail(),
+                'emailIsValid' => $this->configuration->isMerchantEmailConfirmed(),
+                'cardIsActive' => $this->configuration->getCardHostedFieldsStatus(),
+                'paypalIsActive' => $this->configuration->isPayPalPaymentsReceivable(),
+                'countryMerchant' => $this->configuration->getMerchantCountry(),
             ],
         ];
     }

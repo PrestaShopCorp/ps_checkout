@@ -29,9 +29,9 @@ use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Repository\OrderRepository;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
-use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 
 /**
@@ -88,6 +88,10 @@ class ContextModule implements PresenterInterface
      * @var ModuleLinkBuilder
      */
     private $moduleLinkBuilder;
+    /**
+     * @var PsAccountRepository
+     */
+    private $psAccountRepository;
 
     /**
      * @param string $moduleName
@@ -110,7 +114,8 @@ class ContextModule implements PresenterInterface
         Translations $translations,
         ShopContext $shopContext,
         ShopProvider $shopProvider,
-        ModuleLinkBuilder $moduleLinkBuilder
+        ModuleLinkBuilder $moduleLinkBuilder,
+        PsAccountRepository $psAccountRepository
     ) {
         $this->moduleName = $moduleName;
         $this->moduleKey = $moduleKey;
@@ -122,6 +127,7 @@ class ContextModule implements PresenterInterface
         $this->shopContext = $shopContext;
         $this->shopProvider = $shopProvider;
         $this->moduleLinkBuilder = $moduleLinkBuilder;
+        $this->psAccountRepository = $psAccountRepository;
     }
 
     /**
@@ -131,7 +137,6 @@ class ContextModule implements PresenterInterface
      */
     public function present()
     {
-        $shopUuid = new ShopUuidManager();
         $shopId = (int) \Context::getContext()->shop->id;
 
         return [
@@ -142,7 +147,7 @@ class ContextModule implements PresenterInterface
                 'phpVersion' => phpversion(),
                 'shopIs17' => $this->shopContext->isShop17(),
                 'moduleKey' => $this->moduleKey,
-                'shopId' => $shopUuid->getForShop($shopId),
+                'shopId' => $this->psAccountRepository->getShopUuid(),
                 'shopUri' => $this->shopProvider->getShopUrl($shopId),
                 'isReady' => $this->shopContext->isReady(),
                 'isShopContext' => $this->isShopContext(),

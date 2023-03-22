@@ -67,6 +67,7 @@ class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
                     'eventVersion' => $payload['eventVersion'],
                     'summary' => $payload['summary'],
                     'resourceType' => $payload['resourceType'],
+                    'resource' => $payload['resource'],
                 ]
             );
             $this->exitWithResponse([
@@ -78,11 +79,13 @@ class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
                 case WebhookException::WEBHOOK_SECRET_MISMATCH:
                     $this->exitWithResponse([
                         'httpCode' => 403,
+                        'error' => $exception->getMessage(),
                     ]);
                     break;
                 default:
                     $this->exitWithResponse([
                         'httpCode' => 400,
+                        'error' => $exception->getMessage(),
                     ]);
             }
             exit;
@@ -110,14 +113,13 @@ class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
         $content = file_get_contents('php://input');
 
         if (empty($content)) {
-            throw new WebhookException('Body can\'t be empty', WebhookException::WEBHOOK_PAYLOAD_INVALID);
+            throw new WebhookException('Webhook payload is missing.', WebhookException::WEBHOOK_PAYLOAD_INVALID);
         }
 
         $payload = json_decode($content, true);
-        $jsonError = json_last_error();
 
-        if (null === $payload && JSON_ERROR_NONE !== $jsonError) {
-            throw new PsCheckoutException('Json decode last error: ' . $jsonError, WebhookException::WEBHOOK_PAYLOAD_INVALID);
+        if (null === $payload && JSON_ERROR_NONE !== json_last_error()) {
+            throw new PsCheckoutException('Webhook payload cannot be decoded: ' . json_last_error_msg(), WebhookException::WEBHOOK_PAYLOAD_INVALID);
         }
 
         if (empty($payload['id'])) {

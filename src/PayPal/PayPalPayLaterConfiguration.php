@@ -21,18 +21,10 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
-use PrestaShop\Module\PrestashopCheckout\Customer;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Merchant;
 
 class PayPalPayLaterConfiguration
 {
-    const AVAILABLE_FOR_MERCHANT = ['FR'];
-    const AVAILABLE_FOR_CUSTOMER = [[
-        'country' => 'FR',
-        'currency' => 'EUR',
-    ]];
-
     const PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE = 'PS_CHECKOUT_PAY_IN_4X_PRODUCT_PAGE';
     const PS_CHECKOUT_PAY_LATER_ORDER_PAGE = 'PS_CHECKOUT_PAY_IN_4X_ORDER_PAGE';
 
@@ -51,49 +43,11 @@ class PayPalPayLaterConfiguration
     private $configuration;
 
     /**
-     * @var Customer
-     */
-    private $customer;
-
-    /**
-     * @var Merchant
-     */
-    private $merchant;
-
-    /**
      * @param PrestaShopConfiguration $configuration
-     * @param Customer $customer
-     * @param Merchant $merchant
      */
-    public function __construct(PrestaShopConfiguration $configuration, Customer $customer, Merchant $merchant)
+    public function __construct(PrestaShopConfiguration $configuration)
     {
         $this->configuration = $configuration;
-        $this->customer = $customer;
-        $this->merchant = $merchant;
-    }
-
-    public function isActiveForMerchant()
-    {
-        $active = false;
-        foreach (self::AVAILABLE_FOR_MERCHANT as &$country) {
-            if ($this->merchant->isLang($country)) {
-                $active = true;
-            }
-        }
-
-        return $active;
-    }
-
-    public function isActiveForCustomer()
-    {
-        $active = false;
-        foreach (self::AVAILABLE_FOR_CUSTOMER as &$item) {
-            if ($this->customer->isLang($item['country'], $item['currency'])) {
-                $active = true;
-            }
-        }
-
-        return $active;
     }
 
     public function isOrderPageMessageActive()
@@ -101,19 +55,9 @@ class PayPalPayLaterConfiguration
         return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_LATER_ORDER_PAGE);
     }
 
-    public function isOrderPageMessageEnabled()
-    {
-        return $this->isActiveForCustomer() && $this->isActiveForMerchant() && $this->configuration->get(self::PS_CHECKOUT_PAY_LATER_ORDER_PAGE);
-    }
-
     public function isProductPageMessageActive()
     {
         return (bool) $this->configuration->get(self::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE);
-    }
-
-    public function isProductPageMessageEnabled()
-    {
-        return $this->isActiveForCustomer() && $this->isActiveForMerchant() && $this->configuration->get(self::PS_CHECKOUT_PAY_LATER_PRODUCT_PAGE);
     }
 
     /**

@@ -98,7 +98,6 @@ export class PaymentOptionsComponent extends BaseComponent {
       });
     });
 
-    console.log(this.payPalService.getFundingSource());
     if (this.config.expressCheckout.active) {
       HTMLListenerElements.forEach(({ button, form }) => {
         if (button.dataset.moduleName === ('ps_checkout-' + this.payPalService.getFundingSource())) {
