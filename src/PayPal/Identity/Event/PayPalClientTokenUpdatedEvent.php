@@ -18,14 +18,13 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Event;
 
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
-use PrestaShop\Module\PrestashopCheckout\Customer\Exception\CustomerException;
-use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
+use PrestaShop\Module\PrestashopCheckout\Event\Event;
 
-class GetClientTokenPayPalQuery
+class PayPalClientTokenUpdatedEvent extends Event
 {
     /**
      * @var CartId
@@ -33,21 +32,41 @@ class GetClientTokenPayPalQuery
     private $cartId;
 
     /**
-     * @var CustomerId|null
+     * @var string
      */
-    private $customerId;
+    private $token;
+
+    /**
+     * @var string
+     */
+    private $tokenId;
+
+    /**
+     * @var int
+     */
+    private $expireIn;
+
+    /**
+     * @var int
+     */
+    private $createdAt;
 
     /**
      * @param int $cartId
-     * @param int|null $customerId
+     * @param string $token
+     * @param string $tokenId
+     * @param int $expireIn
+     * @param int $createdAt
      *
      * @throws CartException
-     * @throws CustomerException
      */
-    public function __construct($cartId, $customerId = null)
+    public function __construct($cartId, $token, $tokenId, $expireIn, $createdAt)
     {
         $this->cartId = new CartId($cartId);
-        $this->customerId = $customerId ? new CustomerId($customerId) : null;
+        $this->token = $token;
+        $this->tokenId = $tokenId;
+        $this->expireIn = $expireIn;
+        $this->createdAt = $createdAt;
     }
 
     /**
@@ -59,10 +78,34 @@ class GetClientTokenPayPalQuery
     }
 
     /**
-     * @return CustomerId|null
+     * @return string
      */
-    public function getCustomerId()
+    public function getToken()
     {
-        return $this->customerId;
+        return $this->token;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdToken()
+    {
+        return $this->tokenId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getExpireIn()
+    {
+        return $this->expireIn;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
     }
 }

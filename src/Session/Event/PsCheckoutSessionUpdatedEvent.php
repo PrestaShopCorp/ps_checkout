@@ -18,14 +18,34 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order;
+namespace PrestaShop\Module\PrestashopCheckout\Session\Event;
 
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
+use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
+use PrestaShop\Module\PrestashopCheckout\Event\Event;
 
-class PayPalOrderException extends PsCheckoutException
+class PsCheckoutSessionUpdatedEvent extends Event
 {
-    const CANNOT_RETRIEVE_ORDER = 0;
-    const EMPTY_ORDER_DATA = 0;
-    const CANNOT_CAPTURE_ORDER = 0;
-    const SESSION_EXCEPTION = 0;
+    /**
+     * @var CartId
+     */
+    private $cartId;
+
+    /**
+     * @param int $cartId
+     *
+     * @throws CartException
+     */
+    public function __construct($cartId)
+    {
+        $this->cartId = new CartId($cartId);
+    }
+
+    /**
+     * @return CartId
+     */
+    public function getCartId()
+    {
+        return $this->cartId;
+    }
 }
