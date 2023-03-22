@@ -11,12 +11,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.0.0
 
+      - name: Get module version
+        id: get_version
+        run: |
+          echo ::set-output name=VERSION::$(grep "const VERSION = " ./ps_checkout.php | sed "s/.*'\(.*\)'.*/\1/")
+
       - name: Download release asset
         uses: dsaltares/fetch-gh-release-asset@0.0.4
         with:
           repo: ${{ github.event.repository.full_name }}
           version: ${{ github.event.release.id }}
-          file: ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip
+          file: ${{ github.event.repository.name }}-${{ steps.get_version.outputs.VERSION }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -26,6 +31,6 @@ jobs:
 
       - name: Release zip
         run: |
-          ~/.composer/vendor/bin/publish-on-marketplace --archive=$PWD/${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip --metadata-json=$PWD/.github/mktp-metadata.json --changelog="${{ github.event.release.body }}" --debug
+          ~/.composer/vendor/bin/publish-on-marketplace --archive=$PWD/${{ github.event.repository.name }}-${{ steps.get_version.outputs.VERSION }}.zip --metadata-json=$PWD/.github/mktp-metadata.json --changelog="${{ github.event.release.body }}" --debug
         env:
           MARKETPLACE_API_KEY: ${{ secrets.MARKETPLACE_API_KEY }}

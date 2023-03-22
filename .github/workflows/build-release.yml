@@ -3,7 +3,6 @@ name: Build & Release draft
 on:
   push:
     branches:
-      - 'master'
       - 'prestashop/1.6.1.x'
   pull_request:
     types: [ opened, reopened, synchronize, edited ]
@@ -67,10 +66,14 @@ jobs:
         uses: toolmantim/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get module version
+        id: get_version
+        run: |
+          echo ::set-output name=VERSION::$(grep "const VERSION = " ./ps_checkout.php | sed "s/.*'\(.*\)'.*/\1/")
       - name: Prepare for Release
         run: |
           cd ${{ github.event.repository.name }}
-          zip -r ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip ${{ github.event.repository.name }} -x '*.git*'
+          zip -r ${{ github.event.repository.name }}-${{ steps.get_version.outputs.VERSION }}.zip ${{ github.event.repository.name }} -x '*.git*'
       - name: Clean existing assets
         shell: bash
         run: |
@@ -88,6 +91,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.release_info.outputs.upload_url }}
-          asset_path: ./${{ github.event.repository.name }}/${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip
-          asset_name: ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip
+          asset_path: ./${{ github.event.repository.name }}/${{ github.event.repository.name }}-${{ steps.get_version.outputs.VERSION }}.zip
+          asset_name: ${{ github.event.repository.name }}-${{ steps.get_version.outputs.VERSION }}.zip
           asset_content_type: application/zip
