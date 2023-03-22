@@ -30,7 +30,7 @@ use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderPaymentCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use Validate;
 
-class AddOrderPaymentHandler extends AbstractOrderHandler
+class AddOrderPaymentCommandHandler extends AbstractOrderHandler
 {
     /**
      * @var EventDispatcherInterface
