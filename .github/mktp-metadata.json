@@ -5,5 +5,6 @@
     "channel" : "stable",
     "type_upgrade" : "updatemin",
     "product_type" : "module",
-    "compatible_from" : "1.6.1.0"
+    "compatible_from" : "1.6.1.0",
+    "compatible_to" : "1.6.1.24"
 }
