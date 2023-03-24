@@ -26,6 +26,8 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use Psr\SimpleCache\CacheInterface;
 
 /**
+ * @deprecated This file will be removed
+ *
  * Class that allow to validate an order
  */
 class ValidateOrder

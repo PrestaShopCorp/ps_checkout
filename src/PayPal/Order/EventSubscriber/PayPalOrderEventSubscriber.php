@@ -21,13 +21,19 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber;
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdatePayPalOrderMatriceCommand;
+use PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdateOrderStatusCommandHandler;
+use PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdatePayPalOrderMatriceCommandHandler;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCacheCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CapturePayPalOrderCommandHandler;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\UpdatePayPalOrderCacheCommandHandler;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovalReversedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderFetchedEvent;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand;
 use PrestaShop\Module\PrestashopCheckout\Session\CommandHandler\UpdatePsCheckoutSessionCommandHandler;
@@ -42,9 +48,24 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     private $updatePsCheckoutSessionCommandHandler;
 
     /**
+     * @var UpdatePayPalOrderCacheCommandHandler
+     */
+    private $updatePayPalOrderCacheCommandHandler;
+
+    /**
+     * @var UpdatePayPalOrderMatriceCommandHandler
+     */
+    private $updatePayPalOrderMatriceCommandHandler;
+
+    /**
      * @var CapturePayPalOrderCommandHandler
      */
     private $capturePayPalOrderCommandHandler;
+
+    /**
+     * @var UpdateOrderStatusCommandHandler
+     */
+    private $updateOrderStatusCommandHandler;
 
     /**
      * @var PsCheckoutCartRepository
@@ -58,18 +79,27 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
 
     /**
      * @param UpdatePsCheckoutSessionCommandHandler $updatePsCheckoutSessionCommandHandler
+     * @param UpdatePayPalOrderCacheCommandHandler $updatePayPalOrderCacheCommandHandler
+     * @param UpdatePayPalOrderMatriceCommandHandler $updatePayPalOrderMatriceCommandHandler
      * @param CapturePayPalOrderCommandHandler $capturePayPalOrderCommandHandler
+     * @param UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler
      * @param PsCheckoutCartRepository $psCheckoutCartRepository
      * @param CacheInterface $orderPayPalCache
      */
     public function __construct(
         UpdatePsCheckoutSessionCommandHandler $updatePsCheckoutSessionCommandHandler,
+        UpdatePayPalOrderCacheCommandHandler $updatePayPalOrderCacheCommandHandler,
+        UpdatePayPalOrderMatriceCommandHandler $updatePayPalOrderMatriceCommandHandler,
         CapturePayPalOrderCommandHandler $capturePayPalOrderCommandHandler,
+        UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler,
         PsCheckoutCartRepository $psCheckoutCartRepository,
         CacheInterface $orderPayPalCache
     ) {
         $this->updatePsCheckoutSessionCommandHandler = $updatePsCheckoutSessionCommandHandler;
+        $this->updatePayPalOrderCacheCommandHandler = $updatePayPalOrderCacheCommandHandler;
+        $this->updatePayPalOrderMatriceCommandHandler = $updatePayPalOrderMatriceCommandHandler;
         $this->capturePayPalOrderCommandHandler = $capturePayPalOrderCommandHandler;
+        $this->updateOrderStatusCommandHandler = $updateOrderStatusCommandHandler;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
         $this->orderPayPalCache = $orderPayPalCache;
     }
@@ -91,11 +121,15 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             ],
             PayPalOrderCompletedEvent::class => [
                 ['updatePayPalOrder'],
+                ['updatePayPalOrderMatrice'],
                 ['prunePayPalOrderCache'],
             ],
             PayPalOrderApprovalReversedEvent::class => [
                 ['updatePayPalOrder'],
                 ['prunePayPalOrderCache'],
+            ],
+            PayPalOrderFetchedEvent::class => [
+                ['updatePayPalOrderCache'],
             ],
         ];
     }
@@ -181,6 +215,16 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         );
     }
 
+    public function updatePayPalOrderCache()
+    {
+        // TODO : Recuperer la response
+        $reponseBody = [];
+
+        $this->updatePayPalOrderCacheCommandHandler->handle(
+            new UpdatePayPalOrderCacheCommand($reponseBody)
+        );
+    }
+
     /**
      * @return void
      */
@@ -190,5 +234,17 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         if (method_exists($this->orderPayPalCache, 'prune')) {
             $this->orderPayPalCache->prune();
         }
+    }
+
+    public function updatePayPalOrderMatrice(PayPalOrderCompletedEvent $event)
+    {
+        $this->updatePayPalOrderMatriceCommandHandler->handle(
+            new UpdatePayPalOrderMatriceCommand($event->getOrderPayPalId()->getValue())
+        );
+    }
+
+    public function updateOrderStatus(PayPalOrderCompletedEvent $event)
+    {
+        // TODO : Check if PrestaShop order status need to be updated
     }
 }
