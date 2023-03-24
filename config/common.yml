@@ -334,6 +334,25 @@ services:
     arguments:
       - '@ps_accounts.installer'
 
+  ps_checkout.tactician.bus:
+    class: 'League\Tactician\CommandBus'
+    factory: ['@ps_checkout.tactician.bus.factory', 'create']
+
+  ps_checkout.bus.command:
+    class: 'PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusAdapter'
+    public: true
+    arguments:
+      - '@ps_checkout.tactician.bus'
+
+  ps_checkout.tactician.bus.factory:
+    class: 'PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory'
+    public: true
+    arguments:
+      - '@ps_checkout.module'
+      - '@ps_checkout.logger'
+      - handlers:
+        - ''
+
   ps_checkout.event.dispatcher.factory:
     class: 'PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherFactory'
     public: true
