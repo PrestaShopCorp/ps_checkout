@@ -18,10 +18,11 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
+use PrestaShop\Module\PrestashopCheckout\Checkout\Event\CheckoutCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
+use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
 
 /**
  * This controller receive ajax call to capture/authorize payment and create a PrestaShop Order
@@ -79,68 +80,23 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             }
 
             $this->paypalOrderId = $bodyValues['orderID'];
-            $isExpressCheckout = isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'];
-            $isHostedFields = isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'];
-            $fundingSource = isset($bodyValues['fundingSource']) && Validate::isGenericName($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : null;
-            $liabilityShift = $isHostedFields && isset($bodyValues['liabilityShift']) && Validate::isGenericName($bodyValues['liabilityShift']) ? $bodyValues['liabilityShift'] : null;
-            $liabilityShifted = $isHostedFields ? (isset($bodyValues['liabilityShifted']) && $bodyValues['liabilityShifted']) : null;
-            $authenticationStatus = $isHostedFields && isset($bodyValues['authenticationStatus']) && Validate::isGenericName($bodyValues['authenticationStatus']) ? $bodyValues['authenticationStatus'] : null;
-            $authenticationReason = $isHostedFields && isset($bodyValues['authenticationReason']) && Validate::isGenericName($bodyValues['authenticationReason']) ? $bodyValues['authenticationReason'] : null;
 
-            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
-            $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
+            /** @var EventDispatcherInterface $eventDispatcher */
+            $eventDispatcher = $this->module->getService('ps_checkout.event.dispatcher');
 
-            /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($bodyValues['orderID']);
+            $eventDispatcher->dispatch(new CheckoutCompletedEvent(
+                $this->paypalOrderId,
+                isset($bodyValues['fundingSource']) && Validate::isGenericName($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : null,
+                isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'],
+                isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields']
+            ));
 
-            if (false !== $psCheckoutCart) {
-                $psCheckoutCart->paypal_funding = $fundingSource;
-                $psCheckoutCart->isExpressCheckout = $isExpressCheckout;
-                $psCheckoutCart->isHostedFields = $isHostedFields;
-                $psCheckoutCartRepository->save($psCheckoutCart);
-            }
-
-            $this->module->getLogger()->info(
-                'ValidateOrder',
-                [
-                    'paypal_order' => $this->paypalOrderId,
-                    'id_cart' => (int) $this->context->cart->id,
-                    'isExpressCheckout' => $isExpressCheckout,
-                    'isHostedFields' => $isHostedFields,
-                    'fundingSource' => $fundingSource,
-                    'liabilityShift' => $liabilityShift,
-                    'liabilityShifted' => $liabilityShifted,
-                    'authenticationStatus' => $authenticationStatus,
-                    'authenticationReason' => $authenticationReason,
-                ]
-            );
-
-            $currency = $this->context->currency;
-            $total = (float) $cart->getOrderTotal(true, Cart::BOTH);
-
-            /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $configurationPayPal */
-            $configurationPayPal = $this->module->getService('ps_checkout.paypal.configuration');
-            $payment = new ValidateOrder($bodyValues['orderID'], $configurationPayPal->getMerchantId());
-
-            $dataOrder = [
-                'cartId' => (int) $cart->id,
-                'amount' => $total,
-                'currencyId' => (int) $currency->id,
-                'secureKey' => $customer->secure_key,
-                'isExpressCheckout' => $isExpressCheckout,
-                'isHostedFields' => $isHostedFields,
-                'fundingSource' => $fundingSource,
-                'liabilityShift' => $liabilityShift,
-                'liabilityShifted' => $liabilityShifted,
-                'authenticationStatus' => $authenticationStatus,
-                'authenticationReason' => $authenticationReason,
+            // @todo Fetch data from database using a Query then returns response created from QueryResult
+            $response = [
+                'status' => '',
+                'paypalOrderId' => '',
+                'transactionIdentifier' => '',
             ];
-
-            // If the payment is rejected redirect the client to the last checkout step (422 error)
-            // API call here
-            $response = $payment->validateOrder($dataOrder);
-
-            $this->context->cookie->__unset('paypalEmail');
 
             $this->sendOkResponse($response);
         } catch (Exception $exception) {
