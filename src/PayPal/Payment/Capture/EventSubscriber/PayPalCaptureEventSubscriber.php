@@ -20,9 +20,13 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber;
 
+use Configuration;
+use Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
-use PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdateOrderStatusHandler;
+use PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\CreateOrderCommandHandler;
+use PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdateOrderStatusCommandHandler;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeniedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureEvent;
@@ -35,7 +39,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var UpdateOrderStatusHandler
+     * @var CreateOrderCommandHandler
+     */
+    private $createOrderCommandHandler;
+
+    /**
+     * @var UpdateOrderStatusCommandHandler
      */
     private $updateOrderStatusCommandHandler;
 
@@ -45,11 +54,16 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     private $psCheckoutCartRepository;
 
     /**
-     * @param UpdateOrderStatusHandler $updateOrderStatusCommandHandler
+     * @param CreateOrderCommandHandler $createOrderCommandHandler
+     * @param UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler
      * @param PsCheckoutCartRepository $psCheckoutCartRepository
      */
-    public function __construct(UpdateOrderStatusHandler $updateOrderStatusCommandHandler, PsCheckoutCartRepository $psCheckoutCartRepository)
-    {
+    public function __construct(
+        CreateOrderCommandHandler $createOrderCommandHandler,
+        UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler,
+        PsCheckoutCartRepository $psCheckoutCartRepository
+    ) {
+        $this->createOrderCommandHandler = $createOrderCommandHandler;
         $this->updateOrderStatusCommandHandler = $updateOrderStatusCommandHandler;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
     }
@@ -60,12 +74,30 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            PayPalCaptureCompletedEvent::class => 'updateOrderStatus',
+            PayPalCaptureCompletedEvent::class => [
+                ['createOrder'],
+                ['updateOrderStatus'],
+            ],
             PayPalCaptureDeniedEvent::class => 'updateOrderStatus',
             PayPalCapturePendingEvent::class => 'updateOrderStatus',
             PayPalCaptureRefundedEvent::class => 'updateOrderStatus',
             PayPalCaptureReversedEvent::class => 'updateOrderStatus',
         ];
+    }
+
+    public function createOrder(PayPalCaptureCompletedEvent $event)
+    {
+        // TODO : complete handle
+//        $this->createOrderCommandHandler->handle(
+//            new CreateOrderCommand(
+//                '',
+//                '',
+//                '',
+//                '',
+//                '',
+//                ''
+//            )
+//        );
     }
 
     /**
@@ -85,6 +117,8 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
      */
     public function updateOrderStatus(PayPalCaptureEvent $event)
     {
+        // TODO : PrestaShop Order status change to Payment accepted if paid completely
+
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
 
         if (false === $psCheckoutCart) {
@@ -94,22 +128,22 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $orderId = null;
 
         // Order::getIdByCartId() is available since PrestaShop 1.7.1.0
-        if (method_exists(\Order::class, 'getIdByCartId')) {
+        if (method_exists(Order::class, 'getIdByCartId')) {
             // @phpstan-ignore-next-line
-            $orderId = (int) \Order::getIdByCartId($psCheckoutCart->getIdCart());
+            $orderId = (int) Order::getIdByCartId($psCheckoutCart->getIdCart());
         }
 
         // Order::getIdByCartId() is available before PrestaShop 1.7.1.0, removed since PrestaShop 8.0.0
-        if (method_exists(\Order::class, 'getOrderByCartId')) {
+        if (method_exists(Order::class, 'getOrderByCartId')) {
             // @phpstan-ignore-next-line
-            $orderId = (int) \Order::getOrderByCartId($psCheckoutCart->getIdCart());
+            $orderId = (int) Order::getOrderByCartId($psCheckoutCart->getIdCart());
         }
 
         if (!$orderId) {
             throw new PsCheckoutException('No PrestaShop Order associated to this PayPal Order at this time.', PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
         }
 
-        $order = new \Order($orderId);
+        $order = new Order($orderId);
         $currentOrderStateId = (int) $order->getCurrentState();
         $newOrderStateId = (int) $this->getNewState($event, $currentOrderStateId, $psCheckoutCart->getPaypalFundingSource());
 
@@ -136,7 +170,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $eventClass = get_class($event);
 
         if (PayPalCaptureReversedEvent::class === $eventClass) {
-            return (int) \Configuration::getGlobalValue('PS_OS_CANCELED');
+            return (int) Configuration::getGlobalValue('PS_OS_CANCELED');
         }
 
         if (PayPalCaptureCompletedEvent::class === $eventClass) {
@@ -144,11 +178,11 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         }
 
         if (PayPalCaptureDeniedEvent::class === $eventClass) {
-            return (int) \Configuration::getGlobalValue('PS_OS_ERROR');
+            return (int) Configuration::getGlobalValue('PS_OS_ERROR');
         }
 
         if (PayPalCaptureRefundedEvent::class === $eventClass) {
-            return (int) \Configuration::getGlobalValue('PS_OS_REFUND');
+            return (int) Configuration::getGlobalValue('PS_OS_REFUND');
         }
 
         return $this->getPendingStatusId($fundingSource);
@@ -161,11 +195,11 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
      */
     private function getPaidStatusId($currentOrderStateId)
     {
-        if ($currentOrderStateId === (int) \Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_UNPAID')) {
-            return (int) \Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_PAID');
+        if ($currentOrderStateId === (int) Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_UNPAID')) {
+            return (int) Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_PAID');
         }
 
-        return (int) \Configuration::getGlobalValue('PS_OS_PAYMENT');
+        return (int) Configuration::getGlobalValue('PS_OS_PAYMENT');
     }
 
     /**
@@ -177,13 +211,13 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     {
         switch ($fundingSource) {
             case 'card':
-                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
+                $orderStateId = (int) Configuration::get('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
                 break;
             case 'paypal':
-                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
+                $orderStateId = (int) Configuration::get('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
                 break;
             default:
-                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT');
+                $orderStateId = (int) Configuration::get('PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT');
         }
 
         return $orderStateId;

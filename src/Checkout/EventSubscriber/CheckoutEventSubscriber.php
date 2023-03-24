@@ -21,10 +21,36 @@
 namespace PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber;
 
 use PrestaShop\Module\PrestashopCheckout\Checkout\Event\CheckoutCompletedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\GetPayPalOrderCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\GetPayPalOrderCommandHandler;
+use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand;
+use PrestaShop\Module\PrestashopCheckout\Session\CommandHandler\UpdatePsCheckoutSessionCommandHandler;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class CheckoutEventSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var GetPayPalOrderCommandHandler
+     */
+    private $getPayPalOrderCommandHandler;
+
+    /**
+     * @var UpdatePsCheckoutSessionCommandHandler
+     */
+    private $updatePsCheckoutSessionCommandHandler;
+
+    /**
+     * @param GetPayPalOrderCommandHandler $getPayPalOrderCommandHandler
+     * @param UpdatePsCheckoutSessionCommandHandler $updatePsCheckoutSessionCommandHandler
+     */
+    public function __construct(
+        GetPayPalOrderCommandHandler $getPayPalOrderCommandHandler,
+        UpdatePsCheckoutSessionCommandHandler $updatePsCheckoutSessionCommandHandler
+    ) {
+        $this->getPayPalOrderCommandHandler = $getPayPalOrderCommandHandler;
+        $this->updatePsCheckoutSessionCommandHandler = $updatePsCheckoutSessionCommandHandler;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -42,6 +68,26 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
      */
     public function onCheckoutCompleted(CheckoutCompletedEvent $event)
     {
+        $this->getPayPalOrderCommandHandler->handle(
+            new GetPayPalOrderCommand($event->getPayPalOrderId()->getValue())
+        );
+
+        // TODO : remplir les paramètres en s'inspirant de updatePayPalOrder dans PayPalOrderEventSubscriber
+//        $this->updatePsCheckoutSessionCommandHandler->handle(
+//            new UpdatePsCheckoutSessionCommand(
+//                $event->getPayPalOrderId()->getValue(),
+//                '',
+//                $event->getFundingSource(),
+//                '',
+//                '',
+//                '',
+//                '',
+//                '',
+//                $event->isHostedFields(),
+//                $event->isExpressCheckout()
+//            )
+//        );
+
         // Update data on pscheckout_cart table
         // Check if Cart is still valid
         // Check if PayPal Order is ready to capture
