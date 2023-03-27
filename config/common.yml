@@ -341,6 +341,22 @@ services:
       - '@ps_checkout.logger'
       - '@ps_checkout.logger.configuration'
 
+  ps_checkout.command.handler.update.session:
+    class: 'PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommandHandler'
+    public: true
+
+  ps_checkout.query.handler.get.paypal.order:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler'
+    public: true
+
+  ps_checkout.command.handler.create.order:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\CreateOrderCommandHandler'
+    public: true
+
+  ps_checkout.command.handler.update.order.state:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\State\CommandHandler\UpdateOrderStateCommandHandler'
+    public: true
+
   ps_checkout.event.subscriber.checkout:
     class: 'PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber\CheckoutEventSubscriber'
     public: true
@@ -352,10 +368,21 @@ services:
   ps_checkout.event.subscriber.paypal.order:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber'
     public: true
+    arguments:
+      - '@ps_checkout.command.handler.update.session'
+      - '@ps_checkout.query.handler.get.paypal.order'
+      - '@ps_checkout.command.handler.create.order'
+      - '@ps_checkout.command.handler.update.order.state'
 
   ps_checkout.event.subscriber.paypal.capture:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber'
     public: true
+    arguments:
+      - '@ps_checkout.command.handler.update.session'
+      - '@ps_checkout.query.handler.get.paypal.order'
+      - '@ps_checkout.command.handler.create.order'
+      - '@ps_checkout.command.handler.update.order.state'
+
 
   ps_checkout.event.dispatcher.symfony:
     class: 'Symfony\Component\EventDispatcher\EventDispatcherInterface'

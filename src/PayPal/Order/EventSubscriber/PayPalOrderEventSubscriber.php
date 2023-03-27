@@ -20,13 +20,47 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber;
 
+use PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\CreateOrderCommandHandler;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand;
+use PrestaShop\Module\PrestashopCheckout\Session\CommandHandler\UpdatePsCheckoutSessionCommandHandler;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalOrderEventSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var UpdatePsCheckoutSessionCommandHandler
+     */
+    private $updatePsCheckoutSessionCommandHandler;
+
+    /**
+     * @var GetPayPalOrderQueryHandler
+     */
+    private $getPayPalOrderQueryHandler;
+
+    /**
+     * @var CreateOrderCommandHandler;
+     */
+    private $createOrderCommandHandler;
+
+    const ORDER_STATUS_PENDING = 'PENDING';
+    const ORDER_STATUS_DENIED = 'DENIED';
+    const ORDER_STATUS_VOIDED = 'VOIDED';
+    const ORDER_STATUS_COMPLETED = 'COMPLETED';
+    const ORDER_STATUS_DECLINED = 'DECLINED';
+    const ORDER_STATUS_REFUNDED = 'REFUNDED';
+
+    public function __construct(UpdatePsCheckoutSessionCommandHandler $updatePsCheckoutSessionCommandHandler,GetPayPalOrderQueryHandler $getPayPalOrderQueryHandler,CreateOrderCommandHandler $createOrderCommandHandler)
+    {
+        $this->updatePsCheckoutSessionCommandHandler = $updatePsCheckoutSessionCommandHandler;
+        $this->getPayPalOrderQueryHandler = $getPayPalOrderQueryHandler;
+        $this->createOrderCommandHandler = $createOrderCommandHandler;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -47,6 +81,22 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     public function onPayPalOrderCreated(PayPalOrderCreatedEvent $event)
     {
         // Update data on pscheckout_cart table
+        $psCheckoutCartRepository = new PsCheckoutCartRepository();
+        $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalCaptureId()->getValue());
+        $this->updatePsCheckoutSessionCommandHandler->handle(
+            new UpdatePsCheckoutSessionCommand(
+                $psCheckoutCart->getPaypalOrderId(),
+                $event->getCartId()->getValue(),
+                $psCheckoutCart->getPaypalFundingSource(),
+                $psCheckoutCart->getPaypalIntent(),
+                $psCheckoutCart->getPaypalStatus(),
+                $event->getToken(),
+                (new DateTime())->setTimestamp($event->getCreatedAt())->modify("+{$event->getExpireIn()} seconds")->format('Y-m-d H:i:s'),
+                $psCheckoutCart->paypal_authorization_expire,
+                $psCheckoutCart->isHostedFields(),
+                $psCheckoutCart->isExpressCheckout()
+            )
+        );
     }
 
     /**
@@ -71,6 +121,23 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     public function onPayPalOrderCompleted(PayPalOrderCompletedEvent $event)
     {
         // Update data on pscheckout_cart table
+        // Update data on pscheckout_cart table
+        $psCheckoutCartRepository = new PsCheckoutCartRepository();
+        $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalCaptureId()->getValue());
+        $this->updatePsCheckoutSessionCommandHandler->handle(
+            new UpdatePsCheckoutSessionCommand(
+                $psCheckoutCart->getPaypalOrderId(),
+                $event->getCartId()->getValue(),
+                $psCheckoutCart->getPaypalFundingSource(),
+                $psCheckoutCart->getPaypalIntent(),
+                $psCheckoutCart->getPaypalStatus(),
+                $event->getToken(),
+                (new DateTime())->setTimestamp($event->getCreatedAt())->modify("+{$event->getExpireIn()} seconds")->format('Y-m-d H:i:s'),
+                $psCheckoutCart->paypal_authorization_expire,
+                $psCheckoutCart->isHostedFields(),
+                $psCheckoutCart->isExpressCheckout()
+            )
+        );
         // Check if an Order on PrestaShop already exist
         // Check if the OrderState of Order on PrestaShop need to be updated
     }
