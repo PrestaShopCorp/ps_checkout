@@ -39,6 +39,53 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 {
     /**
+     * @var UpdatePsCheckoutSessionCommandHandler
+     */
+    private $updatePsCheckoutSessionCommandHandler;
+
+    /**
+     * @var GetOrderQueryHandler
+     */
+    private $getPayPalOrderQueryHandler;
+
+    /**
+     * @var CreateOrderCommandHandler;
+     */
+    private $createOrderCommandHandler;
+    /**
+     * @var UpdateOrderStatusCommandHandler
+     */
+    private $updateOrderStatusCommandHandler;
+
+    const CAPTURE_STATUS_PENDING = 'PENDING';
+    const CAPTURE_STATUS_ID_PENDING = 2;
+
+    const CAPTURE_STATUS_DENIED = 'DENIED';
+    const CAPTURE_STATUS_ID_DENIED = 2;
+
+    const CAPTURE_STATUS_VOIDED = 'VOIDED';
+    const CAPTURE_STATUS_ID_VOIDED = 2;
+
+    const CAPTURE_STATUS_COMPLETED = 'COMPLETED';
+    const CAPTURE_STATUS_ID_COMPLETED = 2;
+
+    const CAPTURE_STATUS_DECLINED = 'DECLINED';
+    const CAPTURE_STATUS_ID_DECLINED = 2;
+
+    const CAPTURE_STATUS_REFUNDED = 'REFUNDED';
+    const CAPTURE_STATUS_ID_REFUNDED = 2;
+
+
+
+    public function __construct(UpdatePsCheckoutSessionCommandHandler $updatePsCheckoutSessionCommandHandler, GetOrderQueryHandler $getPayPalOrderQueryHandler, CreateOrderCommandHandler $createOrderCommandHandler, UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler)
+    {
+        $this->updatePsCheckoutSessionCommandHandler = $updatePsCheckoutSessionCommandHandler;
+        $this->getPayPalOrderQueryHandler = $getPayPalOrderQueryHandler;
+        $this->createOrderCommandHandler = $createOrderCommandHandler;
+        $this->updateOrderStatusCommandHandler = $updateOrderStatusCommandHandler;
+    }
+
+    /**
      * @var CreateOrderCommandHandler
      */
     private $createOrderCommandHandler;
@@ -108,6 +155,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     public function updatePayPalCapture($event)
     {
         // @todo We don't have a dedicated table for capture data storage in database yet
+
     }
 
     /**
