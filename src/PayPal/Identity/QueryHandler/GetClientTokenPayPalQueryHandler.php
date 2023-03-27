@@ -27,8 +27,8 @@ use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Event\PayPalClientTokenUpdatedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query\GetClientTokenPayPalQuery;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query\GetClientTokenPayPalQueryResult;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetClientTokenPayPalQuery;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetClientTokenPayPalQueryResult;
 
 class GetClientTokenPayPalQueryHandler
 {
