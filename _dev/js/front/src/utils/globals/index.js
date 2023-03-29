@@ -21,7 +21,7 @@ window.ps_checkout = window.ps_checkout || {};
 window.ps_checkout.app = window.ps_checkout.app || null;
 
 window.ps_checkout.config = window.ps_checkout.config || {};
-window.ps_checkout.selectors = window.ps_checkout.app || {};
+window.ps_checkout.selectors = window.ps_checkout.selectors || {};
 
 window.ps_checkout.events = window.ps_checkout.events || new EventTarget();
 

@@ -22,22 +22,24 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Update main function for module Version 1.3.0
+ * Update main function for module version 3.1.0
  *
- * @param Module $module
+ * @param Ps_checkout $module
  *
  * @return bool
  */
-function upgrade_module_1_3_0($module)
+function upgrade_module_3_1_0($module)
 {
     // Force PrestaShop to upgrade for all shop to avoid issues
     $savedShopContext = Shop::getContext();
     $savedShopId = Shop::getContextShopID();
     $savedGroupShopId = Shop::getContextShopGroupID();
     Shop::setContext(Shop::CONTEXT_ALL);
+    $shopsList = \Shop::getShops(false, null, true);
 
-    (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates();
-    $module->registerHook('actionObjectShopAddAfter');
+    foreach ($shopsList as $shopId) {
+        Configuration::updateValue('PS_CHECKOUT_LIABILITY_SHIFT_REQ', '1', false, null, (int) $shopId);
+    }
 
     // Restore initial PrestaShop shop context
     if (Shop::CONTEXT_SHOP === $savedShopContext) {

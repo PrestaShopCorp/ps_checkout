@@ -22,8 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
-use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -70,9 +69,7 @@ class ValidateOrder
     }
 
     /**
-     * Process the validation for an order
-     *
-     * @param array $payload array with all information required by PaymentModule->validateOrder()
+     * @param array{cartId: int, amount: float, currencyId: int, secureKey: string, isExpressCheckout: bool, isHostedFields: bool, fundingSource: string, liabilityShift: string, liabilityShifted: bool, authenticationStatus: string, authenticationReason: string} $payload
      *
      * @throws PsCheckoutException
      * @throws \PrestaShopException
@@ -82,15 +79,50 @@ class ValidateOrder
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler $exceptionHandler */
-        $exceptionHandler = $module->getService('ps_checkout.handler.exception');
-
         // API call here
         $paypalOrder = new PaypalOrder($this->paypalOrderId);
         $order = $paypalOrder->getOrder();
 
         if (empty($order)) {
             throw new PsCheckoutException(sprintf('Unable to retrieve Paypal Order for %s', $this->paypalOrderId), PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
+        }
+
+        if ($payload['isHostedFields']) {
+            $card3DSecure = (new Card3DSecure())->continueWithAuthorization($order);
+
+            $module->getLogger()->info(
+                '3D Secure authentication result',
+                [
+                    'authentication_result' => isset($order['payment_source']['card']['authentication_result']) ? $order['payment_source']['card']['authentication_result'] : null,
+                    'decision' => str_replace(
+                        [
+                            (string) Card3DSecure::NO_DECISION,
+                            (string) Card3DSecure::PROCEED,
+                            (string) Card3DSecure::REJECT,
+                            (string) Card3DSecure::RETRY,
+                        ],
+                        [
+                            \Configuration::get('PS_CHECKOUT_LIABILITY_SHIFT_REQ') ? 'Rejected, no liability shift' : 'Proceed, without liability shift',
+                            'Proceed, liability shift is possible',
+                            'Rejected',
+                            'Retry, ask customer to retry',
+                        ],
+                        (string) $card3DSecure
+                    ),
+                ]
+            );
+
+            if (Card3DSecure::REJECT === $card3DSecure) {
+                throw new PsCheckoutException('Card Strong Customer Authentication failure', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_FAILURE);
+            }
+
+            if (Card3DSecure::RETRY === $card3DSecure) {
+                throw new PsCheckoutException('Card Strong Customer Authentication must be retried.', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN);
+            }
+
+            if (Card3DSecure::NO_DECISION === $card3DSecure && \Configuration::get('PS_CHECKOUT_LIABILITY_SHIFT_REQ')) {
+                throw new PsCheckoutException('No liability shift to card issuer', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN);
+            }
         }
 
         $transactionIdentifier = false === empty($order['purchase_units'][0]['payments']['captures'][0]['id']) ? $order['purchase_units'][0]['payments']['captures'][0]['id'] : '';
@@ -135,15 +167,6 @@ class ValidateOrder
 
             if (false === $response['status']) {
                 if (false === empty($response['body']['message'])) {
-                    if ($response['body']['message'] === 'PAYEE_ACCOUNT_RESTRICTED') {
-                        /** @var PaypalAccountRepository $payPalAccountRepository */
-                        $payPalAccountRepository = $module->getService('ps_checkout.repository.paypal.account');
-                        /** @var PaypalAccountUpdater $payPalAccountUpdater */
-                        $payPalAccountUpdater = $module->getService('ps_checkout.updater.paypal.account');
-                        $payPalAccount = $payPalAccountRepository->getOnboardedAccount();
-                        $payPalAccount->setPaypalPaymentStatus(0);
-                        $payPalAccountUpdater->update($payPalAccount);
-                    }
                     (new PayPalError($response['body']['message']))->throwException();
                 }
 
@@ -211,9 +234,8 @@ class ValidateOrder
                 );
             } catch (\ErrorException $exception) {
                 // Notice or warning from PHP
-                $exceptionHandler->handle($exception, false);
             } catch (\Exception $exception) {
-                $exceptionHandler->handle(new PsCheckoutException('PrestaShop cannot validate order', PsCheckoutException::PRESTASHOP_VALIDATE_ORDER, $exception));
+                throw new PsCheckoutException('PrestaShop cannot validate order', PsCheckoutException::PRESTASHOP_VALIDATE_ORDER, $exception);
             }
 
             if (empty($module->currentOrder)) {
@@ -240,9 +262,8 @@ class ValidateOrder
                     } catch (\ErrorException $exception) {
                         // Notice or warning from PHP
                         // For example : https://github.com/PrestaShop/PrestaShop/issues/18837
-                        $exceptionHandler->handle($exception, false);
                     } catch (\Exception $exception) {
-                        $exceptionHandler->handle(new PsCheckoutException('Unable to change PrestaShop OrderState', PsCheckoutException::PRESTASHOP_ORDER_STATE_ERROR, $exception));
+                        throw new PsCheckoutException('Unable to change PrestaShop OrderState', PsCheckoutException::PRESTASHOP_ORDER_STATE_ERROR, $exception);
                     }
                 }
             }

@@ -47,7 +47,7 @@ class WebhookSecretTokenService
     public function upsertSecretToken($secret)
     {
         if (empty($secret)) {
-            throw new PsCheckoutException("The secret can't be empty");
+            throw new WebhookException('Webhook secret is empty', WebhookException::WEBHOOK_PAYLOAD_UNSUPPORTED);
         }
 
         $this->prestaShopConfiguration->set(self::PS_CHECKOUT_WEBHOOK_SECRET, $secret);

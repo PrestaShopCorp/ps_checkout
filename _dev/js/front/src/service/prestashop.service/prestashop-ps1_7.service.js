@@ -70,7 +70,7 @@ export class PrestashopPs1_7Service {
   }
 
   static isLogged() {
-    return window.prestashop.customer.is_logged;
+    return window.prestashop?.customer?.is_logged || false;
   }
 
   static isGuestCheckoutEnabled() {
@@ -82,7 +82,7 @@ export class PrestashopPs1_7Service {
   }
 
   static getCartAmount() {
-    return window.prestashop.cart.totals.total.amount || '';
+    return window.prestashop?.cart?.totals?.total?.amount || '';
   }
 
   static getProductPrice() {

@@ -34,6 +34,7 @@ import { SmartButtonComponent } from './smart-button.component';
 export class PaymentOptionComponent extends BaseComponent {
   static Inject = {
     config: 'PsCheckoutConfig',
+    payPalService: 'PayPalService',
     $: '$'
   };
 
@@ -56,10 +57,11 @@ export class PaymentOptionComponent extends BaseComponent {
 
   getHostedFields() {
     const hostedFieldsFormId = 'ps_checkout-hosted-fields-form';
+
     return (
-      this.data.name === 'card' &&
-      this.config.hostedFieldsEnabled &&
-      document.getElementById(hostedFieldsFormId)
+      this.data.name === 'card'
+      && this.config.hostedFieldsEnabled
+      && document.getElementById(hostedFieldsFormId)
     );
   }
 
@@ -129,7 +131,12 @@ export class PaymentOptionComponent extends BaseComponent {
     this.renderWrapper();
     this.renderMark();
 
-    if (this.data.HTMLElementHostedFields) {
+    let isHostedFieldsEligible = this.payPalService.isHostedFieldsEligible();
+    if (this.data.HTMLElementHostedFields && !isHostedFieldsEligible) {
+      this.data.HTMLElementHostedFields.style.display = 'none';
+    }
+
+    if (this.data.HTMLElementHostedFields && isHostedFieldsEligible) {
       this.children.hostedFields = new HostedFieldsComponent(this.app, {
         fundingSource: this.props.fundingSource,
 
@@ -149,7 +156,7 @@ export class PaymentOptionComponent extends BaseComponent {
           fundingSource: this.data.name,
           HTMLElement: this.data.HTMLElement,
           HTMLElementContainer: this.data.HTMLElementContainer,
-          HTMLElementBinary: this.data.HTMLElementHostedFields
+          HTMLElementBinary: this.data.HTMLElementHostedFields && isHostedFieldsEligible
             ? this.children.hostedFields.data.HTMLElementButton.parentElement
             : this.data.HTMLElementSmartButton
         }

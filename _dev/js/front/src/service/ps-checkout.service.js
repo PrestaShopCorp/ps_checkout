@@ -31,20 +31,4 @@ export class PsCheckoutService extends BaseClass {
       ? Promise.resolve(this.payPalSdkConfig.clientToken)
       : await this.psCheckoutApi.getGetToken();
   }
-
-  validateLiablityShift(liabilityShift) {
-    if ('NO' === liabilityShift) {
-      return Promise.reject(
-        new Error(this.$('error.paypal-sdk.contingency.failure'))
-      );
-    }
-
-    if ('UNKNOWN' === liabilityShift) {
-      return Promise.reject(
-        new Error(this.$('error.paypal-sdk.contingency.unknown'))
-      );
-    }
-
-    return Promise.resolve();
-  }
 }

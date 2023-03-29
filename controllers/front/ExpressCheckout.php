@@ -86,6 +86,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             }
 
             $this->context->cookie->__set('paypalEmail', $this->payload['order']['payer']['email_address']);
+            $this->context->cookie->write();
 
             $this->resetContextCartAddresses();
             // Always 0 index because we are not using the paypal marketplace system
@@ -104,8 +105,6 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
                 $this->payload['orderID']
             );
         } catch (Exception $exception) {
-            $this->handleExceptionSendingToSentry($exception);
-
             /* @var \Psr\Log\LoggerInterface logger */
             $logger = $this->module->getService('ps_checkout.logger');
             $logger->error(

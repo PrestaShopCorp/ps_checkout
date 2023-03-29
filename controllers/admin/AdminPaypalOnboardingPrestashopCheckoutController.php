@@ -18,8 +18,6 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
-use PrestaShop\Module\PrestashopCheckout\Entity\PaypalAccount;
-use PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater;
 
 class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminController
 {
@@ -42,25 +40,10 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
                 return false;
             }
 
-            if (!Validate::isGenericName($idMerchant) || PaypalAccountUpdater::MIN_ID_LENGTH > strlen($idMerchant)) {
+            if (!Validate::isGenericName($idMerchant)) {
                 $this->errors[] = $this->module->l('Your PayPal Merchant identifier seems invalid.');
 
                 return false;
-            }
-
-            $paypalAccount = new PaypalAccount($idMerchant);
-
-            /** @var \PrestaShop\Module\PrestashopCheckout\PersistentConfiguration $persistentConfiguration */
-            $persistentConfiguration = $this->module->getService('ps_checkout.persistent.configuration');
-            $persistentConfiguration->savePaypalAccount($paypalAccount);
-
-            /** @var PaypalAccountUpdater $accountUpdater */
-            $accountUpdater = $this->module->getService('ps_checkout.updater.paypal.account');
-            $accountUpdater->update($paypalAccount);
-
-            if ($paypalAccount->getCardPaymentStatus() === PaypalAccountUpdater::SUBSCRIBED) {
-                // track account paypal fully approved
-                $this->module->getService('ps_checkout.segment.tracker')->track('Account Paypal Fully Approved', Shop::getContextListShopID());
             }
 
             Tools::redirect(
