@@ -20,6 +20,46 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event;
 
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\ValueObject\PayPalCaptureId;
+
 class PayPalCaptureCompletedEvent extends PayPalCaptureEvent
 {
+    /**
+     * @var PayPalCaptureId
+     */
+    private $captureId;
+
+    /**
+     * @var array
+     */
+    private $payload;
+
+    /**
+     * @param string$captureId
+     * @param array $payload
+     *
+     * @throws PayPalCaptureException
+     */
+    public function __construct($captureId, $payload)
+    {
+        $this->captureId = new PayPalCaptureId($captureId);
+        $this->payload = $payload;
+    }
+
+    /**
+     * @return PayPalCaptureId
+     */
+    public function getPayPalCaptureId()
+    {
+        return $this->captureId;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPayload()
+    {
+        return $this->payload;
+    }
 }
