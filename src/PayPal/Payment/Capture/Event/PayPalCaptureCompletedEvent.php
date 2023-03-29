@@ -32,13 +32,20 @@ class PayPalCaptureCompletedEvent extends Event
     private $captureId;
 
     /**
-     * @param string $captureId
+     * @var array
+     */
+    private $payload;
+
+    /**
+     * @param string$captureId
+     * @param array $payload
      *
      * @throws PayPalCaptureException
      */
-    public function __construct($captureId)
+    public function __construct($captureId, $payload)
     {
         $this->captureId = new PayPalCaptureId($captureId);
+        $this->payload = $payload;
     }
 
     /**
@@ -47,5 +54,13 @@ class PayPalCaptureCompletedEvent extends Event
     public function getPayPalCaptureId()
     {
         return $this->captureId;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPayload()
+    {
+        return $this->payload;
     }
 }
