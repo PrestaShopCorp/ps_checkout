@@ -39,16 +39,23 @@ abstract class PayPalCaptureEvent extends Event
     private $orderId;
 
     /**
+     * @var array{id: string, status: string, amount: array, final_capture: bool, disbursement_mode: string, create_time: string, update_time: string, seller_protection: array, seller_receivable_breakdown: array, links: array}
+     */
+    private $capture;
+
+    /**
      * @param string $captureId
      * @param string $orderId
+     * @param array{id: string, status: string, amount: array, final_capture: bool, disbursement_mode: string, create_time: string, update_time: string, seller_protection: array, seller_receivable_breakdown: array, links: array} $capture
      *
      * @throws PayPalCaptureException
      * @throws PayPalOrderException
      */
-    public function __construct($captureId, $orderId)
+    public function __construct($captureId, $orderId, array $capture)
     {
         $this->captureId = new PayPalCaptureId($captureId);
         $this->orderId = new PayPalOrderId($orderId);
+        $this->capture = $capture;
     }
 
     /**
@@ -65,5 +72,13 @@ abstract class PayPalCaptureEvent extends Event
     public function getPayPalOrderId()
     {
         return $this->orderId;
+    }
+
+    /**
+     * @return array{id: string, status: string, amount: array, final_capture: bool, disbursement_mode: string, create_time: string, update_time: string, seller_protection: array, seller_receivable_breakdown: array, links: array}
+     */
+    public function getCapture()
+    {
+        return $this->capture;
     }
 }
