@@ -20,35 +20,49 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber;
 
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Event\CheckoutCompletedEvent;
+use PrestaShop\Module\PrestashopCheckout\Checkout\Exception\CheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler;
-use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand;
-use PrestaShop\Module\PrestashopCheckout\Session\CommandHandler\UpdatePsCheckoutSessionCommandHandler;
+use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePaymentMethodSelectedCommand;
+use PrestaShop\Module\PrestashopCheckout\Session\CommandHandler\UpdatePaymentMethodSelectedCommandHandler;
+use PrestaShop\Module\PrestashopCheckout\Session\Exception\PsCheckoutSessionException;
+use Psr\SimpleCache\CacheInterface;
+use Psr\SimpleCache\InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class CheckoutEventSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var UpdatePaymentMethodSelectedCommandHandler
+     */
+    private $updatePaymentMethodSelectedCommandHandler;
+
+    /**
+     * @var CacheInterface
+     */
+    private $orderPayPalCache;
+
     /**
      * @var GetPayPalOrderQueryHandler
      */
     private $getPayPalOrderQueryHandler;
 
     /**
-     * @var UpdatePsCheckoutSessionCommandHandler
-     */
-    private $updatePsCheckoutSessionCommandHandler;
-
-    /**
+     * @param UpdatePaymentMethodSelectedCommandHandler $updatePaymentMethodSelectedCommandHandler
+     * @param CacheInterface $orderPayPalCache
      * @param GetPayPalOrderQueryHandler $getPayPalOrderQueryHandler
-     * @param UpdatePsCheckoutSessionCommandHandler $updatePsCheckoutSessionCommandHandler
      */
     public function __construct(
-        GetPayPalOrderQueryHandler $getPayPalOrderQueryHandler,
-        UpdatePsCheckoutSessionCommandHandler $updatePsCheckoutSessionCommandHandler
+        UpdatePaymentMethodSelectedCommandHandler $updatePaymentMethodSelectedCommandHandler,
+        CacheInterface $orderPayPalCache,
+        GetPayPalOrderQueryHandler $getPayPalOrderQueryHandler
     ) {
+        $this->updatePaymentMethodSelectedCommandHandler = $updatePaymentMethodSelectedCommandHandler;
+        $this->orderPayPalCache = $orderPayPalCache;
         $this->getPayPalOrderQueryHandler = $getPayPalOrderQueryHandler;
-        $this->updatePsCheckoutSessionCommandHandler = $updatePsCheckoutSessionCommandHandler;
     }
 
     /**
@@ -57,41 +71,70 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            CheckoutCompletedEvent::class => 'onCheckoutCompleted',
+            CheckoutCompletedEvent::class => [
+                ['deletePayPalOrderCache'],
+                ['updatePaymentMethodSelected'],
+                ['fetchPayPalOrder'],
+            ],
         ];
     }
 
     /**
+     * Remove the order already in cache to ensure fetching the order with updated status
+     *
      * @param CheckoutCompletedEvent $event
      *
      * @return void
+     *
+     * @throws CheckoutException
      */
-    public function onCheckoutCompleted(CheckoutCompletedEvent $event)
+    public function deletePayPalOrderCache(CheckoutCompletedEvent $event)
     {
-        $order = $this->getPayPalOrderQueryHandler->handle(
-            new GetPayPalOrderQuery($event->getPayPalOrderId()->getValue())
-        );
-        /*
-                $this->updatePsCheckoutSessionCommandHandler->handle(
-                    new UpdatePsCheckoutSessionCommand(
-                        $event->getPayPalOrderId()->getValue(),
-                        '',
-                        $event->getFundingSource(),
-                        '',
-                        '',
-                        '',
-                        '',
-                        '',
-                        $event->isHostedFields(),
-                        $event->isExpressCheckout()
-                    )
-                );
-        */
+        try {
+            $this->orderPayPalCache->delete($event->getPayPalOrderId()->getValue());
+        } catch (InvalidArgumentException $exception) {
+            throw new CheckoutException('Unable to clear PayPal Order cache', CheckoutException::UNABLE_DELETE_CACHE, $exception);
+        }
+    }
 
-        // Update data on pscheckout_cart table
-        // Check if Cart is still valid
-        // Check if PayPal Order is ready to capture
-        // Try to capture
-        // Create an Order on PrestaShop
+    /**
+     * Update the payment method selected
+     * - funding source name
+     * - isHostedFields
+     * - isExpressCheckout
+     *
+     * @param CheckoutCompletedEvent $event
+     *
+     * @return void
+     *
+     * @throws CartException
+     * @throws PayPalOrderException
+     * @throws PsCheckoutSessionException
+     */
+    public function updatePaymentMethodSelected(CheckoutCompletedEvent $event)
+    {
+        $this->updatePaymentMethodSelectedCommandHandler->handle(new UpdatePaymentMethodSelectedCommand(
+            $event->getCartId()->getValue(),
+            $event->getPayPalOrderId()->getValue(),
+            $event->getFundingSource(),
+            $event->isHostedFields(),
+            $event->isExpressCheckout()
+        ));
+    }
+
+    /**
+     * Fetch PayPal Order from API
+     *
+     * @param CheckoutCompletedEvent $event
+     *
+     * @return void
+     *
+     * @throws PayPalOrderException
+     */
+    public function fetchPayPalOrder(CheckoutCompletedEvent $event)
+    {
+        $this->getPayPalOrderQueryHandler->handle(new GetPayPalOrderQuery(
+            $event->getPayPalOrderId()->getValue()
+        ));
     }
 }

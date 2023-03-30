@@ -18,15 +18,14 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Checkout\Event;
+namespace PrestaShop\Module\PrestashopCheckout\Session\Command;
 
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
-use PrestaShop\Module\PrestashopCheckout\Event\Event;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 
-class CheckoutCompletedEvent extends Event
+class UpdatePaymentMethodSelectedCommand
 {
     /**
      * @var CartId
@@ -60,8 +59,8 @@ class CheckoutCompletedEvent extends Event
      * @param bool $isExpressCheckout
      * @param bool $isHostedFields
      *
-     * @throws PayPalOrderException
      * @throws CartException
+     * @throws PayPalOrderException
      */
     public function __construct($cartId, $orderPayPalId, $fundingSource, $isExpressCheckout, $isHostedFields)
     {
@@ -83,7 +82,7 @@ class CheckoutCompletedEvent extends Event
     /**
      * @return PayPalOrderId
      */
-    public function getPayPalOrderId()
+    public function getOrderPayPalId()
     {
         return $this->orderPayPalId;
     }
