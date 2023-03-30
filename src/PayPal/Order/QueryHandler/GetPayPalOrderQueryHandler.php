@@ -21,6 +21,8 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler;
 
 use Exception;
+use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderFetchedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQueryResult;
@@ -28,6 +30,19 @@ use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
 
 class GetPayPalOrderQueryHandler
 {
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
     /**
      * @param GetPayPalOrderQuery $getPayPalOrderQuery
      *
@@ -46,6 +61,10 @@ class GetPayPalOrderQueryHandler
         if (!$orderPayPal->isLoaded()) {
             throw new PayPalOrderException(sprintf('No data for PayPal Order #%d', $getPayPalOrderQuery->getOrderId()->getValue()), PayPalOrderException::EMPTY_ORDER_DATA);
         }
+
+        $this->eventDispatcher->dispatch(
+            new PayPalOrderFetchedEvent($orderPayPal->getOrder())
+        );
 
         return new GetPayPalOrderQueryResult($orderPayPal->getOrder());
     }
