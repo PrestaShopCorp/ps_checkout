@@ -26,11 +26,13 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovalReversedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeniedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureRefundedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
 use Ps_checkout;
 use Psr\Log\LoggerInterface;
 
@@ -57,8 +59,8 @@ class OrderDispatcher implements Dispatcher
      * {@inheritdoc}
      *
      * @throws PsCheckoutException
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @throws PayPalOrderException
+     * @throws PayPalCaptureException
      */
     public function dispatchEventType($payload)
     {
@@ -83,23 +85,43 @@ class OrderDispatcher implements Dispatcher
          */
         switch ($payload['eventType']) {
             case static::PS_CHECKOUT_PAYMENT_COMPLETED:
-                $eventDispatcher->dispatch(new PayPalCaptureCompletedEvent($payload['resource']['id'], $payload['orderId']));
+                $eventDispatcher->dispatch(new PayPalCaptureCompletedEvent(
+                    $payload['resource']['id'],
+                    $payload['orderId'],
+                    $payload['resource']
+                ));
 
                 return true;
             case static::PS_CHECKOUT_PAYMENT_PENDING:
-                $eventDispatcher->dispatch(new PayPalCapturePendingEvent($payload['resource']['id'], $payload['orderId']));
+                $eventDispatcher->dispatch(new PayPalCapturePendingEvent(
+                    $payload['resource']['id'],
+                    $payload['orderId'],
+                    $payload['resource']
+                ));
 
                 return true;
             case static::PS_CHECKOUT_PAYMENT_DENIED:
-                $eventDispatcher->dispatch(new PayPalCaptureDeniedEvent($payload['resource']['id'], $payload['orderId']));
+                $eventDispatcher->dispatch(new PayPalCaptureDeniedEvent(
+                    $payload['resource']['id'],
+                    $payload['orderId'],
+                    $payload['resource']
+                ));
 
                 return true;
             case static::PS_CHECKOUT_PAYMENT_REFUNED:
-                $eventDispatcher->dispatch(new PayPalCaptureRefundedEvent($payload['resource']['id'], $payload['orderId']));
+                $eventDispatcher->dispatch(new PayPalCaptureRefundedEvent(
+                    $payload['resource']['id'],
+                    $payload['orderId'],
+                    $payload['resource']
+                ));
 
                 return true;
             case static::PS_CHECKOUT_PAYMENT_REVERSED:
-                $eventDispatcher->dispatch(new PayPalCaptureReversedEvent($payload['resource']['id'], $payload['orderId']));
+                $eventDispatcher->dispatch(new PayPalCaptureReversedEvent(
+                    $payload['resource']['id'],
+                    $payload['orderId'],
+                    $payload['resource']
+                ));
 
                 return true;
             case static::PS_CHECKOUT_ORDER_APPROVED:
