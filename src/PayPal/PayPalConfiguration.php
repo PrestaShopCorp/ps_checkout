@@ -32,13 +32,20 @@ class PayPalConfiguration
     const CARD_PAYMENT_ENABLED = 'PS_CHECKOUT_CARD_PAYMENT_ENABLED';
     const PS_ROUND_TYPE = 'PS_ROUND_TYPE';
     const PS_PRICE_ROUND_MODE = 'PS_PRICE_ROUND_MODE';
-    const PAYMENT_METHODS_ORDER = 'PS_CHECKOUT_PAYMENT_METHODS_ORDER';
     const INTEGRATION_DATE = 'PS_CHECKOUT_INTEGRATION_DATE';
     const HOSTED_FIELDS_3DS_DISABLED = 'PS_CHECKOUT_3DS_DISABLED';
     const HOSTED_FIELDS_CONTINGENCIES = 'PS_CHECKOUT_HOSTEDFIELDS_CONTINGENCIES';
     const CSP_NONCE = 'PS_CHECKOUT_CSP_NONCE';
     const PS_CHECKOUT_PAYPAL_CB_INLINE = 'PS_CHECKOUT_PAYPAL_CB_INLINE';
     const PS_CHECKOUT_PAYPAL_BUTTON = 'PS_CHECKOUT_PAYPAL_BUTTON';
+
+    const PS_CHECKOUT_PAYPAL_ID_MERCHANT = 'PS_CHECKOUT_PAYPAL_ID_MERCHANT';
+    const PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT = 'PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT';
+    const PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT = 'PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT';
+    const PS_CHECKOUT_PAYPAL_EMAIL_STATUS = 'PS_CHECKOUT_PAYPAL_EMAIL_STATUS';
+    const PS_CHECKOUT_PAYPAL_PAYMENT_STATUS = 'PS_CHECKOUT_PAYPAL_PAYMENT_STATUS';
+    const PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS = 'PS_CHECKOUT_CARD_PAYMENT_STATUS';
+    const PS_CHECKOUT_CARD_HOSTED_FIELDS_ENABLED = 'PS_CHECKOUT_CARD_PAYMENT_ENABLED';
 
     /**
      * @var PrestaShopConfiguration
@@ -231,7 +238,7 @@ class PayPalConfiguration
     }
 
     /**
-     * Get the incompatible ISO country codes with Paypal.
+     * Get the incompatible ISO country codes with PayPal.
      *
      * @param bool $onlyEnabledShopCountries
      *
@@ -260,7 +267,7 @@ class PayPalConfiguration
     }
 
     /**
-     * Get the incompatible ISO currency codes with Paypal.
+     * Get the incompatible ISO currency codes with PayPal.
      *
      * @param bool $onlyEnabledShopCurrencies
      *
@@ -289,7 +296,7 @@ class PayPalConfiguration
     }
 
     /**
-     * Check shop codes compatibility with Paypal
+     * Check shop codes compatibility with PayPal
      *
      * @param array $shopCodes
      * @param array $paypalCodes
@@ -340,5 +347,75 @@ class PayPalConfiguration
             default:
                 return 'SCA_WHEN_REQUIRED';
         }
+    }
+
+    /**
+     * Get the merchant id for the current onboarded merchant
+     *
+     * @return string|false
+     */
+    public function getMerchantId()
+    {
+        return $this->configuration->get(static::PS_CHECKOUT_PAYPAL_ID_MERCHANT);
+    }
+
+    /**
+     * Get the merchant email
+     *
+     * @return string|false
+     */
+    public function getMerchantEmail()
+    {
+        return $this->configuration->get(static::PS_CHECKOUT_PAYPAL_EMAIL_MERCHANT);
+    }
+
+    /**
+     * Get the merchant country ISO code
+     *
+     * @return string|false
+     */
+    public function getMerchantCountry()
+    {
+        return $this->configuration->get(static::PS_CHECKOUT_PAYPAL_COUNTRY_MERCHANT);
+    }
+
+    /**
+     * Get the merchant email status
+     *
+     * @return bool
+     */
+    public function isMerchantEmailConfirmed()
+    {
+        return (bool) $this->configuration->get(static::PS_CHECKOUT_PAYPAL_EMAIL_STATUS);
+    }
+
+    /**
+     * Get the PayPal payment method status for the current merchant
+     *
+     * @return bool
+     */
+    public function isPayPalPaymentsReceivable()
+    {
+        return (bool) $this->configuration->get(static::PS_CHECKOUT_PAYPAL_PAYMENT_STATUS);
+    }
+
+    /**
+     * Get the card payment status for the current merchant
+     *
+     * @return string|false SUBSCRIBED|LIMITED|NEED_MORE_DATA|IN_REVIEW|SUSPENDED|REVOKED|DENIED
+     */
+    public function getCardHostedFieldsStatus()
+    {
+        return $this->configuration->get(static::PS_CHECKOUT_CARD_HOSTED_FIELDS_STATUS);
+    }
+
+    /**
+     * Merchant can disable hosted fields in module configuration
+     *
+     * @return bool
+     */
+    public function isHostedFieldsEnabled()
+    {
+        return (bool) $this->configuration->get(static::PS_CHECKOUT_CARD_HOSTED_FIELDS_ENABLED);
     }
 }

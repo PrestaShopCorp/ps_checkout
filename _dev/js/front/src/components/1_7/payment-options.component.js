@@ -40,7 +40,7 @@ export class PaymentOptionsComponent extends BaseComponent {
           `[data-module-name^="ps_checkout-${fundingSource.name}"]`
         );
 
-        if (this.payPalService.getFundingSource() === fundingSource.name) {
+        if (this.config.expressCheckout.active && this.payPalService.getFundingSource() === fundingSource.name) {
           HTMLElement.click();
         }
 

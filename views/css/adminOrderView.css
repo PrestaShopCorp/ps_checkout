@@ -300,3 +300,40 @@
 .modal.ps-checkout-refund.legacy .modal-content-container{
   padding: 10px
 }
+
+.checkout-modal-container {
+  padding: 100px 180px;
+}
+
+@media (max-width: 1400px) {
+  .checkout-modal-container {
+    padding: 10px 18px;
+  }
+}
+
+.checkout-modal {
+  border: 1px solid #D9E3EC;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.checkout-modal-button {
+  align-items: center;
+  background: #442CC7;
+  border: 0px;
+  border-radius: 4px;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: row;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  justify-content: center;
+  line-height: 24px;
+  padding: 12px 12px;
+  width: 100%;
+}
+
+.checkout-modal-button .btn {
+  color: #FFFFFF;
+}

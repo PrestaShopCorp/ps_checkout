@@ -30,22 +30,6 @@ use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfigur
 class Shop extends PaymentClient
 {
     /**
-     * Generate the paypal link to onboard merchant
-     *
-     * @param string $merchantId
-     *
-     * @return array onboarding link
-     */
-    public function getMerchantIntegration($merchantId)
-    {
-        $this->setRoute('/payments/shop/get_merchant_integrations');
-
-        return $this->post([
-            'merchant_id' => $merchantId,
-        ]);
-    }
-
-    /**
      * Used to notify PSL on settings update
      *
      * @return array

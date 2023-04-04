@@ -43,6 +43,8 @@ class OrderStates
         'PS_CHECKOUT_STATE_WAITING_CAPTURE' => self::BLUE_HEXA_COLOR,
     ];
 
+    const REFUND_STATE = 'PS_CHECKOUT_STATE_PARTIAL_REFUND';
+
     /**
      * Insert the new paypal states if it does not exists
      * Create a new order state for each ps_checkout new order states
@@ -214,7 +216,7 @@ class OrderStates
             }
         }
 
-        if ($state === Refund::REFUND_STATE) {
+        if ($state === static::REFUND_STATE) {
             $iconName = 'refund';
         } else {
             $iconName = 'waiting';
