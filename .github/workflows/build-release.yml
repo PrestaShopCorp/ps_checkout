@@ -99,11 +99,6 @@ jobs:
           prestabulle=$(echo "${{ github.event.pull_request.labels.*.name }}" | grep "^prestabulle")
           echo "::set-output name=prestabulle::$prestabulle"
 
-      - name: Get module version
-        id: get_version
-        run: |
-          echo ::set-output name=VERSION::$(grep "const VERSION = " ./ps_checkout.php | sed "s/.*'\(.*\)'.*/\1/")
-
       - name: Get branch name
         id: branch
         uses: tj-actions/branch-names@v5.1
@@ -111,7 +106,7 @@ jobs:
       - name: Prepare for Release
         run: |
           cd ${{ github.event.repository.name }}
-          zip -r ${{ github.event.repository.name }}-${{ steps.branch.outputs.current_branch }}-${{ steps.get_version.outputs.VERSION }}.zip ${{ github.event.repository.name }} -x '*.git*'
+          zip -r ${{ github.event.repository.name }}-${{ steps.branch.outputs.current_branch }}.zip ${{ github.event.repository.name }} -x '*.git*'
 
       - name: Authenticating to GCP ⚙️
         uses: google-github-actions/auth@v1
@@ -121,7 +116,7 @@ jobs:
 
       - name: Push Zip in bucket
         run: |
-          gsutil cp -r ${{ github.event.repository.name }}-${{ steps.branch.outputs.current_branch }}-${{ steps.get_version.outputs.VERSION }}.zip gs://$GCP_BUCKET/$BUCKET_SUBFOLDER
+          gsutil cp -r ${{ github.event.repository.name }}-${{ steps.branch.outputs.current_branch }}.zip gs://$GCP_BUCKET/$BUCKET_SUBFOLDER
         env:
           GCP_BUCKET: ${{ secrets.gcp-bucket }}
           BUCKET_SUBFOLDER: ${{ steps.get-prestabulle-name.outputs.env_name }}
