@@ -87,8 +87,6 @@ jobs:
       contains(github.event.pull_request.labels.*.name, 'prestabulle4') ||
       contains(github.event.pull_request.labels.*.name, 'prestabulle5') ||
       contains(github.event.pull_request.labels.*.name, 'prestabulle6'))
-    env:
-      APP: "ps_checkout"
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v1
