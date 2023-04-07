@@ -91,3 +91,46 @@ jobs:
           asset_path: ./${{ github.event.repository.name }}/${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip
           asset_name: ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip
           asset_content_type: application/zip
+
+  prestabulle:
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if:  github.event_name == 'pull_request' && (contains(github.event.pull_request.labels.*.name, 'prestabulle1') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle2') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle3') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle4') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle5') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle6'))
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: ${{ github.event.repository.name }}
+
+      - name: Get prestabulle name
+        id: get-prestabulle-name
+        run: |
+          prestabulle=$(echo "${{ github.event.pull_request.labels.*.name }}" | grep "^prestabulle")
+          echo "::set-output name=prestabulle::$prestabulle"
+
+      - name: Get branch name
+        id: branch
+        uses: tj-actions/branch-names@v5.1
+
+      - name: Prepare for Release
+        run: |
+          cd ${{ github.event.repository.name }}
+          zip -r ${{ github.event.repository.name }}-${{ steps.branch.outputs.current_branch }}.zip ${{ github.event.repository.name }} -x '*.git*'
+
+      - name: Authenticating to GCP ⚙️
+        uses: google-github-actions/auth@v1
+        with:
+          project_id: ${{ secrets.GCLOUD_NAMESPACE_INTEGRATION }}
+          credentials_json: ${{ secrets.GCLOUD_CREDENTIAL_INTEGRATION }}
+
+      - name: Push Zip in bucket
+        run: |
+          gsutil cp -r ${{ github.event.repository.name }}-${{ steps.branch.outputs.current_branch }}.zip gs://$GCP_BUCKET/$BUCKET_SUBFOLDER
+        env:
+          GCP_BUCKET: ${{ secrets.gcp-bucket }}
+          BUCKET_SUBFOLDER: ${{ steps.get-prestabulle-name.outputs.env_name }}
