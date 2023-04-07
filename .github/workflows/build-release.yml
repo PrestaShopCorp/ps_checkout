@@ -7,9 +7,6 @@ on:
   pull_request:
     types: [ opened, reopened, synchronize, edited ]
 
-env:
-  GCLOUD_TOKEN_PATH: ./token.json
-
 jobs:
   deploy:
     name: build dependencies & create artifact
@@ -17,20 +14,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
-
-      - name: Gcloud auth and write env file
-        run: |
-          echo $GOOGLE_APPLICATION_CREDENTIALS > $GCLOUD_TOKEN_PATH
-          gcloud auth activate-service-account --key-file=$GCLOUD_TOKEN_PATH
-          gcloud container clusters get-credentials $GCLOUD_CLUSTER \
-          --zone europe-west1-c --project $GCLOUD_PROJECT
-          gcloud beta secrets versions access latest --project=$GCLOUD_PROJECT --secret="checkout-module" > .env
-          rm $GCLOUD_TOKEN_PATH
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_CREDENTIAL_PRODUCTION }}
-          GCLOUD_TOKEN_PATH: ${{ env.GCLOUD_TOKEN_PATH }}
-          GCLOUD_CLUSTER: ${{ secrets.GCLOUD_CLUSTER }}
-          GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT_PRODUCTION }}
 
       - name: Build JS dependencies
         uses: PrestaShopCorp/github-action-build-js/12@v1.0
@@ -94,3 +77,53 @@ jobs:
           asset_path: ./${{ github.event.repository.name }}/${{ github.event.repository.name }}-${{ steps.get_version.outputs.VERSION }}.zip
           asset_name: ${{ github.event.repository.name }}-${{ steps.get_version.outputs.VERSION }}.zip
           asset_content_type: application/zip
+
+  prestabulle:
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if:  github.event_name == 'pull_request' && (contains(github.event.pull_request.labels.*.name, 'prestabulle1') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle2') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle3') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle4') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle5') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle6'))
+    env:
+      APP: "ps_checkout"
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: ${{ github.event.repository.name }}
+
+      - name: Get prestabulle name
+        id: get-prestabulle-name
+        run: |
+          prestabulle=$(echo "${{ github.event.pull_request.labels.*.name }}" | grep "^prestabulle")
+          echo "::set-output name=prestabulle::$prestabulle"
+
+      - name: Get module version
+        id: get_version
+        run: |
+          echo ::set-output name=VERSION::$(grep "const VERSION = " ./ps_checkout.php | sed "s/.*'\(.*\)'.*/\1/")
+
+      - name: Get branch name
+        id: branch
+        uses: tj-actions/branch-names@v5.1
+
+      - name: Prepare for Release
+        run: |
+          cd ${{ github.event.repository.name }}
+          zip -r ${{ github.event.repository.name }}-${{ steps.branch.outputs.current_branch }}-${{ steps.get_version.outputs.VERSION }}.zip ${{ github.event.repository.name }} -x '*.git*'
+
+      - name: Authenticating to GCP ⚙️
+        uses: google-github-actions/auth@v1
+        with:
+          project_id: ${{ secrets.GCLOUD_NAMESPACE_INTEGRATION }}
+          credentials_json: ${{ secrets.GCLOUD_CREDENTIAL_INTEGRATION }}
+
+      - name: Push Zip in bucket
+        run: |
+          gsutil cp -r ${{ github.event.repository.name }}-${{ steps.branch.outputs.current_branch }}-${{ steps.get_version.outputs.VERSION }}.zip gs://$GCP_BUCKET/$BUCKET_SUBFOLDER
+        env:
+          GCP_BUCKET: ${{ secrets.gcp-bucket }}
+          BUCKET_SUBFOLDER: ${{ steps.get-prestabulle-name.outputs.env_name }}
