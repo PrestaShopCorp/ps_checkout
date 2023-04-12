@@ -11,6 +11,7 @@ on:
 jobs:
   deploy:
     name: build dependencies & create artifact
+    if: "!contains(github.event.pull_request.labels.*.name, 'prestabulle')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -74,6 +75,58 @@ jobs:
           asset_path: ./${{ github.event.repository.name }}/${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip
           asset_name: ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip
           asset_content_type: application/zip
+
+  build_for_prestabulle:
+    name: build dependencies & create artifact for prestabulle
+    if:  github.event_name == 'pull_request' && (contains(github.event.pull_request.labels.*.name, 'prestabulle1') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle2') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle3') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle4') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle5') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle6'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+
+      - name: Setting up Bubble variable
+        run: echo "BULLE=$BULLE$(echo $LABELS > labels.json && cat labels.json | jq -r '.[]|.name'|grep prestabulle)" >> $GITHUB_OUTPUT
+        id: get_bulle
+
+      - name: Authenticating to GCP ⚙️
+        uses: google-github-actions/auth@v1
+        with:
+          project_id: ${{ secrets.GCLOUD_NAMESPACE_INTEGRATION }}
+          credentials_json: ${{ secrets.GCLOUD_CREDENTIAL_INTEGRATION }}
+
+      - name: Copy env files
+        run: |
+          gcloud components install beta
+          gcloud beta secrets versions access latest --secret="checkout-module-${{ steps.get_bulle.outputs.BULLE }}" > .env
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_CREDENTIAL_INTEGRATION }}
+
+      - name: Build JS dependencies
+        uses: PrestaShopCorp/github-action-build-js/12@v1.0
+        with:
+          cmd: npm
+          path: ./
+
+      - name: Install composer dependencies
+        run: composer install --no-dev -o
+
+      - name: Clean-up project
+        uses: PrestaShopCorp/github-action-clean-before-deploy@v1.0
+
+      - name: Clean-up node_modules directory
+        run: sudo rm -rf node_modules
+
+      - name: Create & upload artifact
+        uses: actions/upload-artifact@v1
+
+        with:
+          name: ${{ github.event.repository.name }}
+          path: ../
 
   prestabulle:
     runs-on: ubuntu-latest
