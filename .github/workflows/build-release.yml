@@ -11,8 +11,13 @@ on:
 jobs:
   deploy:
     name: build dependencies & create artifact
+    if: "!(contains(github.event.pull_request.labels.*.name, 'prestabulle1') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle2') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle3') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle4') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle5') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle6'))"
     runs-on: ubuntu-latest
-    if: "!contains(github.event.pull_request.labels.*.name, 'prestabulle')"
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
@@ -85,6 +90,9 @@ jobs:
       contains(github.event.pull_request.labels.*.name, 'prestabulle5') ||
       contains(github.event.pull_request.labels.*.name, 'prestabulle6'))
     runs-on: ubuntu-latest
+    concurrency: build_for_prestabulle
+    env:
+      LABELS: ${{toJSON(github.event.pull_request.labels)}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
@@ -92,6 +100,9 @@ jobs:
       - name: Setting up Bubble variable
         run: echo "BULLE=$BULLE$(echo $LABELS > labels.json && cat labels.json | jq -r '.[]|.name'|grep prestabulle)" >> $GITHUB_OUTPUT
         id: get_bulle
+
+      - name: Setting up Cloud SDK ⚙️
+        uses: google-github-actions/setup-gcloud@v1
 
       - name: Authenticating to GCP ⚙️
         uses: google-github-actions/auth@v1
@@ -125,7 +136,7 @@ jobs:
         uses: actions/upload-artifact@v1
 
         with:
-          name: ${{ github.event.repository.name }}
+          name: "${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}"
           path: ../
 
   prestabulle:
@@ -137,24 +148,24 @@ jobs:
       contains(github.event.pull_request.labels.*.name, 'prestabulle4') ||
       contains(github.event.pull_request.labels.*.name, 'prestabulle5') ||
       contains(github.event.pull_request.labels.*.name, 'prestabulle6'))
+    env:
+      LABELS: ${{toJSON(github.event.pull_request.labels)}}
+    concurrency: prestabulle
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v1
-        with:
-          name: ${{ github.event.repository.name }}
 
       - name: Setting up Bubble variable
         run: echo "BULLE=$BULLE$(echo $LABELS > labels.json && cat labels.json | jq -r '.[]|.name'|grep prestabulle)" >> $GITHUB_OUTPUT
         id: get_bulle
 
-      - name: Get branch name
-        id: branch
-        uses: tj-actions/branch-names@v5.1
+      - name: Download artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: "${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}"
 
       - name: Prepare for Release
         run: |
-          cd ${{ github.event.repository.name }}
-          zip -r ${{ github.event.repository.name }}-${{ steps.branch.outputs.current_branch }}.zip ${{ github.event.repository.name }} -x '*.git*'
+          cd "${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}"
+          zip -r ${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}.zip ${{ github.event.repository.name }} -x '*.git*'
 
       - name: Authenticating to GCP ⚙️
         uses: google-github-actions/auth@v1
@@ -164,7 +175,7 @@ jobs:
 
       - name: Push Zip in bucket
         run: |
-          gsutil cp -r ${{ github.event.repository.name }}-${{ steps.branch.outputs.current_branch }}.zip gs://$GCP_BUCKET/$BUCKET_SUBFOLDER
+          gsutil cp -r ${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}.zip gs://$GCP_BUCKET/$BUCKET_SUBFOLDER
         env:
-          GCP_BUCKET: ${{ secrets.gcp-bucket }}
+          GCP_BUCKET: ${{ secrets.GCP_BUCKET }}
           BUCKET_SUBFOLDER: ${{ steps.get_bulle.outputs.BULLE }}
