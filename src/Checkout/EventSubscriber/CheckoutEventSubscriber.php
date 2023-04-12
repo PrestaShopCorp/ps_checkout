@@ -71,21 +71,22 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
         $order = $this->getPayPalOrderQueryHandler->handle(
             new GetPayPalOrderQuery($event->getPayPalOrderId()->getValue())
         );
-
-        $this->updatePsCheckoutSessionCommandHandler->handle(
-            new UpdatePsCheckoutSessionCommand(
-                $event->getPayPalOrderId()->getValue(),
-                '',
-                $event->getFundingSource(),
-                '',
-                '',
-                '',
-                '',
-                '',
-                $event->isHostedFields(),
-                $event->isExpressCheckout()
-            )
-        );
+        /*
+                $this->updatePsCheckoutSessionCommandHandler->handle(
+                    new UpdatePsCheckoutSessionCommand(
+                        $event->getPayPalOrderId()->getValue(),
+                        '',
+                        $event->getFundingSource(),
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        $event->isHostedFields(),
+                        $event->isExpressCheckout()
+                    )
+                );
+        */
 
         // Update data on pscheckout_cart table
         // Check if Cart is still valid
