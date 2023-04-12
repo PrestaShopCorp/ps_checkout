@@ -23,6 +23,8 @@ namespace PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Event\CheckoutCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Exception\CheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CapturePayPalOrderCommandHandler;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler;
@@ -75,6 +77,7 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
                 ['deletePayPalOrderCache'],
                 ['updatePaymentMethodSelected'],
                 ['fetchPayPalOrder'],
+                ['capturePayPalOrder'],
             ],
         ];
     }
@@ -136,5 +139,19 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
         $this->getPayPalOrderQueryHandler->handle(new GetPayPalOrderQuery(
             $event->getPayPalOrderId()->getValue()
         ));
+    }
+
+    /**
+     * @param CheckoutCompletedEvent $event
+     *
+     * @return void
+     *
+     * @throws PayPalOrderException
+     * @throws \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderException
+     */
+    public function capturePayPalOrder(CheckoutCompletedEvent $event)
+    {
+        $temp = new CapturePayPalOrderCommandHandler();
+        $temp->handle(new CapturePayPalOrderCommand($event->getPayPalOrderId()->getValue(), $event->getFundingSource()));
     }
 }

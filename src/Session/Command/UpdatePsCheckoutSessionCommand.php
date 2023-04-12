@@ -52,68 +52,29 @@ class UpdatePsCheckoutSessionCommand
      */
     private $paypalStatus;
 
-    /**
-     * @var string
-     */
-    private $paypalToken;
-
-    /**
-     * @var string;
-     */
-    private $paypalTokenExpire;
-
-    /**
-     * @var string;
-     */
-    private $paypalAuthorizationExpire;
-
-    /**
-     * @var bool;
-     */
-    private $isExpressCheckout;
-
-    /**
-     * @var bool;
-     */
-    private $isHostedFields;
 
     /**
      * @param string $orderId
-     * @param int $id_cart
+     * @param int $cartId
      * @param string $fundingSource
      * @param string $paypalIntent
      * @param string $paypalStatus
-     * @param string $paypalToken
-     * @param string $paypalTokenExpire
-     * @param string $paypalAuthorizationExpire
-     * @param bool $isHostedFields
-     * @param bool $isExpressCheckout
      *
      * @throws PayPalOrderException
      * @throws CartException
      */
     public function __construct(
         $orderId,
-        $id_cart,
+        $cartId,
         $fundingSource,
         $paypalIntent,
         $paypalStatus,
-        $paypalToken,
-        $paypalTokenExpire,
-        $paypalAuthorizationExpire,
-        $isHostedFields,
-        $isExpressCheckout
     ) {
         $this->orderId = new PayPalOrderId($orderId);
-        $this->cartId = new CartId($id_cart);
+        $this->cartId = new CartId($cartId);
         $this->fundingSource = $fundingSource;
         $this->paypalIntent = $paypalIntent;
         $this->paypalStatus = $paypalStatus;
-        $this->paypalToken = $paypalToken;
-        $this->paypalTokenExpire = $paypalTokenExpire;
-        $this->paypalAuthorizationExpire = $paypalAuthorizationExpire;
-        $this->isHostedFields = $isHostedFields;
-        $this->isExpressCheckout = $isExpressCheckout;
     }
 
     /**
@@ -138,46 +99,6 @@ class UpdatePsCheckoutSessionCommand
     public function getPaypalStatus()
     {
         return $this->paypalStatus;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPaypalToken()
-    {
-        return $this->paypalToken;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPaypalAuthorizationExpire()
-    {
-        return $this->paypalAuthorizationExpire;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPaypalTokenExpire()
-    {
-        return $this->paypalTokenExpire;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isExpressCheckout()
-    {
-        return $this->isExpressCheckout;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isHostedFields()
-    {
-        return $this->isHostedFields;
     }
 
     /**
