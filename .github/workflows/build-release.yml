@@ -138,7 +138,7 @@ jobs:
         uses: actions/upload-artifact@v1
 
         with:
-          name: ${{ github.event.repository.name }}
+          name: "${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}"
           path: ../
 
   prestabulle:
@@ -157,7 +157,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v1
         with:
-          name: ${{ github.event.repository.name }}
+          name: "${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}"
 
       - name: Setting up Bubble variable
         run: echo "BULLE=$BULLE$(echo $LABELS > labels.json && cat labels.json | jq -r '.[]|.name'|grep prestabulle)" >> $GITHUB_OUTPUT
@@ -166,9 +166,12 @@ jobs:
       - name: Get branch name
         id: branch
         uses: tj-actions/branch-names@v5.1
-      
+
+      - name: Check ls 1
+        run: ls -la
+
       - name: Check cd
-        run: cd ${{ github.event.repository.name }}
+        run: cd "${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}"
 
       - name: Check pwd
         run: pwd
@@ -178,7 +181,7 @@ jobs:
 
       - name: Prepare for Release
         run: |
-          cd ${{ github.event.repository.name }}
+          cd "${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}"
           zip -r ${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}.zip ${{ github.event.repository.name }} -x '*.git*'
 
       - name: Authenticating to GCP ⚙️
