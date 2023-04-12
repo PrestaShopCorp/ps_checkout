@@ -165,9 +165,6 @@ jobs:
         with:
           name: "${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}"
 
-      - name: check cat
-        run: cat "${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}/ps_checkout/.env"
-
       - name: Prepare for Release
         run: |
           cd "${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}"
@@ -181,6 +178,7 @@ jobs:
 
       - name: Push Zip in bucket
         run: |
+          cd "${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}"
           gsutil cp -r ${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}.zip gs://$GCP_BUCKET/$BUCKET_SUBFOLDER
         env:
           GCP_BUCKET: ${{ secrets.GCP_BUCKET }}
