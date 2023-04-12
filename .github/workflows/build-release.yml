@@ -93,6 +93,7 @@ jobs:
       contains(github.event.pull_request.labels.*.name, 'prestabulle5') ||
       contains(github.event.pull_request.labels.*.name, 'prestabulle6'))
     runs-on: ubuntu-latest
+    concurrency: build_for_prestabulle
     env:
       LABELS: ${{toJSON(github.event.pull_request.labels)}}
     steps:
@@ -152,6 +153,7 @@ jobs:
       contains(github.event.pull_request.labels.*.name, 'prestabulle6'))
     env:
       LABELS: ${{toJSON(github.event.pull_request.labels)}}
+    concurrency: prestabulle
     steps:
 
       - name: Download artifact
