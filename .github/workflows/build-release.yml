@@ -93,6 +93,8 @@ jobs:
       contains(github.event.pull_request.labels.*.name, 'prestabulle5') ||
       contains(github.event.pull_request.labels.*.name, 'prestabulle6'))
     runs-on: ubuntu-latest
+    env:
+      LABELS: ${{toJSON(github.event.pull_request.labels)}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
@@ -148,6 +150,8 @@ jobs:
       contains(github.event.pull_request.labels.*.name, 'prestabulle4') ||
       contains(github.event.pull_request.labels.*.name, 'prestabulle5') ||
       contains(github.event.pull_request.labels.*.name, 'prestabulle6'))
+    env:
+      LABELS: ${{toJSON(github.event.pull_request.labels)}}
     steps:
 
       - name: Download artifact
