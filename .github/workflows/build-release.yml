@@ -10,7 +10,7 @@ on:
 jobs:
   deploy:
     name: build dependencies & create artifact
-    if: !contains(github.event.pull_request.labels.*.name, 'prestabulle')
+    if: "!contains(github.event.pull_request.labels.*.name, 'prestabulle')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
