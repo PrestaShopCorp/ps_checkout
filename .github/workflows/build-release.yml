@@ -10,7 +10,12 @@ on:
 jobs:
   deploy:
     name: build dependencies & create artifact
-    if: "!contains(github.event.pull_request.labels.*.name, 'prestabulle')"
+    if: "!(contains(github.event.pull_request.labels.*.name, 'prestabulle1') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle2') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle3') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle4') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle5') ||
+      contains(github.event.pull_request.labels.*.name, 'prestabulle6'))"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
