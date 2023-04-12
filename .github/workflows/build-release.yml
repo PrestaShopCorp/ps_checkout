@@ -143,11 +143,9 @@ jobs:
         with:
           name: ${{ github.event.repository.name }}
 
-      - name: Get prestabulle name
-        id: get-prestabulle-name
-        run: |
-          prestabulle=$(echo "${{ github.event.pull_request.labels.*.name }}" | grep "^prestabulle")
-          echo "::set-output name=prestabulle::$prestabulle"
+      - name: Setting up Bubble variable
+        run: echo "BULLE=$BULLE$(echo $LABELS > labels.json && cat labels.json | jq -r '.[]|.name'|grep prestabulle)" >> $GITHUB_OUTPUT
+        id: get_bulle
 
       - name: Get branch name
         id: branch
@@ -169,4 +167,4 @@ jobs:
           gsutil cp -r ${{ github.event.repository.name }}-${{ steps.branch.outputs.current_branch }}.zip gs://$GCP_BUCKET/$BUCKET_SUBFOLDER
         env:
           GCP_BUCKET: ${{ secrets.gcp-bucket }}
-          BUCKET_SUBFOLDER: ${{ steps.get-prestabulle-name.outputs.env_name }}
+          BUCKET_SUBFOLDER: ${{ steps.get_bulle.outputs.BULLE }}
