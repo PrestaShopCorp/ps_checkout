@@ -101,6 +101,9 @@ jobs:
         run: echo "BULLE=$BULLE$(echo $LABELS > labels.json && cat labels.json | jq -r '.[]|.name'|grep prestabulle)" >> $GITHUB_OUTPUT
         id: get_bulle
 
+      - name: Setting up Cloud SDK ⚙️
+        uses: google-github-actions/setup-gcloud@v1
+
       - name: Authenticating to GCP ⚙️
         uses: google-github-actions/auth@v1
         with:
