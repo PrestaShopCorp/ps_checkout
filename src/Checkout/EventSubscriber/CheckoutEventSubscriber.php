@@ -21,8 +21,8 @@
 namespace PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber;
 
 use PrestaShop\Module\PrestashopCheckout\Checkout\Event\CheckoutCompletedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\GetPayPalOrderCommand;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\GetPayPalOrderCommandHandler;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler;
 use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand;
 use PrestaShop\Module\PrestashopCheckout\Session\CommandHandler\UpdatePsCheckoutSessionCommandHandler;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -30,9 +30,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class CheckoutEventSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var GetPayPalOrderCommandHandler
+     * @var GetPayPalOrderQueryHandler
      */
-    private $getPayPalOrderCommandHandler;
+    private $getPayPalOrderQueryHandler;
 
     /**
      * @var UpdatePsCheckoutSessionCommandHandler
@@ -40,14 +40,14 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
     private $updatePsCheckoutSessionCommandHandler;
 
     /**
-     * @param GetPayPalOrderCommandHandler $getPayPalOrderCommandHandler
+     * @param GetPayPalOrderQueryHandler $getPayPalOrderQueryHandler
      * @param UpdatePsCheckoutSessionCommandHandler $updatePsCheckoutSessionCommandHandler
      */
     public function __construct(
-        GetPayPalOrderCommandHandler $getPayPalOrderCommandHandler,
+        GetPayPalOrderQueryHandler $getPayPalOrderQueryHandler,
         UpdatePsCheckoutSessionCommandHandler $updatePsCheckoutSessionCommandHandler
     ) {
-        $this->getPayPalOrderCommandHandler = $getPayPalOrderCommandHandler;
+        $this->getPayPalOrderQueryHandler = $getPayPalOrderQueryHandler;
         $this->updatePsCheckoutSessionCommandHandler = $updatePsCheckoutSessionCommandHandler;
     }
 
@@ -68,25 +68,24 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
      */
     public function onCheckoutCompleted(CheckoutCompletedEvent $event)
     {
-        $this->getPayPalOrderCommandHandler->handle(
-            new GetPayPalOrderCommand($event->getPayPalOrderId()->getValue())
+        $order = $this->getPayPalOrderQueryHandler->handle(
+            new GetPayPalOrderQuery($event->getPayPalOrderId()->getValue())
         );
 
-        // TODO : remplir les paramètres en s'inspirant de updatePayPalOrder dans PayPalOrderEventSubscriber
-//        $this->updatePsCheckoutSessionCommandHandler->handle(
-//            new UpdatePsCheckoutSessionCommand(
-//                $event->getPayPalOrderId()->getValue(),
-//                '',
-//                $event->getFundingSource(),
-//                '',
-//                '',
-//                '',
-//                '',
-//                '',
-//                $event->isHostedFields(),
-//                $event->isExpressCheckout()
-//            )
-//        );
+        $this->updatePsCheckoutSessionCommandHandler->handle(
+            new UpdatePsCheckoutSessionCommand(
+                $event->getPayPalOrderId()->getValue(),
+                '',
+                $event->getFundingSource(),
+                '',
+                '',
+                '',
+                '',
+                '',
+                $event->isHostedFields(),
+                $event->isExpressCheckout()
+            )
+        );
 
         // Update data on pscheckout_cart table
         // Check if Cart is still valid
