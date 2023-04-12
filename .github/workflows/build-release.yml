@@ -165,21 +165,8 @@ jobs:
         with:
           name: "${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}"
 
-      - name: Get branch name
-        id: branch
-        uses: tj-actions/branch-names@v5.1
-
-      - name: Check ls 1
-        run: ls -la
-
-      - name: Check cd
-        run: cd "${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}"
-
-      - name: Check pwd
-        run: pwd
-
       - name: check ls
-        run: ls -la
+        run: cat "${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}/.env"
 
       - name: Prepare for Release
         run: |
@@ -196,5 +183,5 @@ jobs:
         run: |
           gsutil cp -r ${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}.zip gs://$GCP_BUCKET/$BUCKET_SUBFOLDER
         env:
-          GCP_BUCKET: ${{ secrets.gcp-bucket }}
+          GCP_BUCKET: ${{ secrets.GCP_BUCKET }}
           BUCKET_SUBFOLDER: ${{ steps.get_bulle.outputs.BULLE }}
