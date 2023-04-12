@@ -170,7 +170,7 @@ jobs:
       - name: Prepare for Release
         run: |
           cd ${{ github.event.repository.name }}
-          zip -r ${{ github.event.repository.name }}-${{ steps.branch.outputs.current_branch }}.zip ${{ github.event.repository.name }} -x '*.git*'
+          zip -r ${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}.zip ${{ github.event.repository.name }} -x '*.git*'
 
       - name: Authenticating to GCP ⚙️
         uses: google-github-actions/auth@v1
@@ -180,7 +180,7 @@ jobs:
 
       - name: Push Zip in bucket
         run: |
-          gsutil cp -r ${{ github.event.repository.name }}-${{ steps.branch.outputs.current_branch }}.zip gs://$GCP_BUCKET/$BUCKET_SUBFOLDER
+          gsutil cp -r ${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}.zip gs://$GCP_BUCKET/$BUCKET_SUBFOLDER
         env:
           GCP_BUCKET: ${{ secrets.gcp-bucket }}
           BUCKET_SUBFOLDER: ${{ steps.get_bulle.outputs.BULLE }}
