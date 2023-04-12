@@ -156,14 +156,14 @@ jobs:
     concurrency: prestabulle
     steps:
 
+      - name: Setting up Bubble variable
+        run: echo "BULLE=$BULLE$(echo $LABELS > labels.json && cat labels.json | jq -r '.[]|.name'|grep prestabulle)" >> $GITHUB_OUTPUT
+        id: get_bulle
+
       - name: Download artifact
         uses: actions/download-artifact@v1
         with:
           name: "${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}"
-
-      - name: Setting up Bubble variable
-        run: echo "BULLE=$BULLE$(echo $LABELS > labels.json && cat labels.json | jq -r '.[]|.name'|grep prestabulle)" >> $GITHUB_OUTPUT
-        id: get_bulle
 
       - name: Get branch name
         id: branch
