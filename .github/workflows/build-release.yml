@@ -130,7 +130,7 @@ jobs:
 
   prestabulle:
     runs-on: ubuntu-latest
-    needs: [deploy]
+    needs: [build_for_prestabulle]
     if:  github.event_name == 'pull_request' && (contains(github.event.pull_request.labels.*.name, 'prestabulle1') ||
       contains(github.event.pull_request.labels.*.name, 'prestabulle2') ||
       contains(github.event.pull_request.labels.*.name, 'prestabulle3') ||
