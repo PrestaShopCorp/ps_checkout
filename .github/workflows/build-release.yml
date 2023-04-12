@@ -81,7 +81,7 @@ jobs:
           asset_name: ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}.zip
           asset_content_type: application/zip
 
-  build_for_prestabulle:
+  build_for_prestabulle_ps7:
     name: build dependencies & create artifact for prestabulle
     if:  github.event_name == 'pull_request' && (contains(github.event.pull_request.labels.*.name, 'prestabulle1') ||
       contains(github.event.pull_request.labels.*.name, 'prestabulle2') ||
@@ -90,7 +90,7 @@ jobs:
       contains(github.event.pull_request.labels.*.name, 'prestabulle5') ||
       contains(github.event.pull_request.labels.*.name, 'prestabulle6'))
     runs-on: ubuntu-latest
-    concurrency: build_for_prestabulle
+    concurrency: build_for_prestabulle_ps7
     env:
       LABELS: ${{toJSON(github.event.pull_request.labels)}}
     steps:
@@ -139,9 +139,9 @@ jobs:
           name: "${{ github.event.repository.name }}-${{ steps.get_bulle.outputs.BULLE }}"
           path: ../
 
-  prestabulle:
+  prestabulle_ps7:
     runs-on: ubuntu-latest
-    needs: [build_for_prestabulle]
+    needs: [build_for_prestabulle_ps7]
     if:  github.event_name == 'pull_request' && (contains(github.event.pull_request.labels.*.name, 'prestabulle1') ||
       contains(github.event.pull_request.labels.*.name, 'prestabulle2') ||
       contains(github.event.pull_request.labels.*.name, 'prestabulle3') ||
@@ -150,7 +150,7 @@ jobs:
       contains(github.event.pull_request.labels.*.name, 'prestabulle6'))
     env:
       LABELS: ${{toJSON(github.event.pull_request.labels)}}
-    concurrency: prestabulle
+    concurrency: prestabulle_ps7
     steps:
 
       - name: Setting up Bubble variable
