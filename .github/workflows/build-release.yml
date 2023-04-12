@@ -166,6 +166,15 @@ jobs:
       - name: Get branch name
         id: branch
         uses: tj-actions/branch-names@v5.1
+      
+      - name: Check cd
+        run: cd ${{ github.event.repository.name }}
+
+      - name: Check pwd
+        run: pwd
+
+      - name: check ls
+        run: ls -la
 
       - name: Prepare for Release
         run: |
