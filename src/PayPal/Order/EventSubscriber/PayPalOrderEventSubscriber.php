@@ -34,6 +34,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompleted
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderFetchedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderNotApprovedEvent;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand;
 use PrestaShop\Module\PrestashopCheckout\Session\CommandHandler\UpdatePsCheckoutSessionCommandHandler;
@@ -119,6 +120,9 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
                 ['capturePayPalOrder'],
                 ['prunePayPalOrderCache'],
             ],
+            PayPalOrderNotApprovedEvent::class => [
+                ['updatePayPalOrder'],
+            ],
             PayPalOrderCompletedEvent::class => [
                 ['updatePayPalOrder'],
                 ['updatePayPalOrderMatrice'],
@@ -162,6 +166,9 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
                 break;
             case PayPalOrderApprovalReversedEvent::class:
                 $orderStatus = 'PENDING_APPROVAL';
+                break;
+            case PayPalOrderNotApprovedEvent::class:
+                $orderStatus = 'PENDING';
                 break;
             default:
                 $orderStatus = '';
