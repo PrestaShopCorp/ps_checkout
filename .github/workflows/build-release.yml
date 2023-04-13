@@ -107,15 +107,15 @@ jobs:
       - name: Authenticating to GCP ⚙️
         uses: google-github-actions/auth@v1
         with:
-          project_id: ${{ secrets.GCLOUD_NAMESPACE_INTEGRATION }}
-          credentials_json: ${{ secrets.GCLOUD_CREDENTIAL_INTEGRATION }}
+          project_id: ${{ secrets.GCP_PROJECTID_PRESTABULLE }}
+          credentials_json: ${{ secrets.GCP_CREDENTIALS_PRESTABULLE }}
 
       - name: Copy env files
         run: |
           gcloud components install beta
           gcloud beta secrets versions access latest --secret="checkout-module-${{ steps.get_bulle.outputs.BULLE }}" > .env
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_CREDENTIAL_INTEGRATION }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS_PRESTABULLE }}
 
       - name: Build JS dependencies
         uses: PrestaShopCorp/github-action-build-js/12@v1.0
@@ -170,8 +170,8 @@ jobs:
       - name: Authenticating to GCP ⚙️
         uses: google-github-actions/auth@v1
         with:
-          project_id: ${{ secrets.GCLOUD_NAMESPACE_INTEGRATION }}
-          credentials_json: ${{ secrets.GCLOUD_CREDENTIAL_INTEGRATION }}
+          project_id: ${{ secrets.GCP_PROJECTID_PRESTABULLE }}
+          credentials_json: ${{ secrets.GCP_CREDENTIALS_PRESTABULLE }}
 
       - name: Push Zip in bucket
         run: |
