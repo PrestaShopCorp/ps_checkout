@@ -85,8 +85,9 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             $eventDispatcher = $this->module->getService('ps_checkout.event.dispatcher');
 
             $eventDispatcher->dispatch(new CheckoutCompletedEvent(
+                $cart->id,
                 $this->paypalOrderId,
-                isset($bodyValues['fundingSource']) && Validate::isGenericName($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : null,
+                (isset($bodyValues['fundingSource']) && Validate::isGenericName($bodyValues['fundingSource'])) ? $bodyValues['fundingSource'] : null,
                 isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'],
                 isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields']
             ));
