@@ -35,4 +35,5 @@ class OrderException extends PsCheckoutException
     const ORDER_STATUS_NOT_FOUND = 9;
     const MODULE_INSTANCE_NOT_FOUND = 10;
     const ORDER_MATRICE_ERROR = 11;
+    const ORDER_CHECK_AMOUNT_BAD_PARAMETER = 12;
 }
