@@ -25,4 +25,9 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 class PayPalOrderException extends PsCheckoutException
 {
     const INVALID_ID = 1;
+    const CANNOT_RETRIEVE_ORDER = 2;
+    const EMPTY_ORDER_DATA = 3;
+    const CANNOT_CAPTURE_ORDER = 4;
+    const SESSION_EXCEPTION = 5;
+    const CACHE_EXCEPTION = 6;
 }

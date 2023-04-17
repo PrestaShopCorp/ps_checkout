@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler;
 
 use Exception;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
