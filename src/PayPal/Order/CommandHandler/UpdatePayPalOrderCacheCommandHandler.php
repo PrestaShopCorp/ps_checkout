@@ -20,55 +20,27 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
-use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCacheCommand;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCacheUpdatedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use Psr\SimpleCache\CacheException;
 use Psr\SimpleCache\CacheInterface;
 
 class UpdatePayPalOrderCacheCommandHandler
 {
     /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
      * @var CacheInterface
      */
-    private $cache;
+    private $paypalOrderCache;
 
     /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param CacheInterface $cache
+     * @param CacheInterface $paypalOrderCache
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, CacheInterface $cache)
+    public function __construct($paypalOrderCache)
     {
-        $this->eventDispatcher = $eventDispatcher;
-        $this->cache = $cache;
+        $this->paypalOrderCache = $paypalOrderCache;
     }
 
-    /**
-     * @param UpdatePayPalOrderCacheCommand $updatePayPalOrderCacheCommand
-     *
-     * @return void
-     *
-     * @throws PayPalOrderException
-     */
     public function handle(UpdatePayPalOrderCacheCommand $updatePayPalOrderCacheCommand)
     {
-        try {
-            $this->cache->set(
-                $updatePayPalOrderCacheCommand->getOrderId()->getValue(),
-                $updatePayPalOrderCacheCommand->getOrder()
-            );
-        } catch (CacheException $exception) {
-            throw new PayPalOrderException('Unable to update PayPal Order Cache', PayPalOrderException::CACHE_EXCEPTION, $exception);
-        }
-
-        $this->eventDispatcher->dispatch(
-            new PayPalOrderCacheUpdatedEvent($updatePayPalOrderCacheCommand->getOrderId()->getValue())
-        );
+        $responseBody = $updatePayPalOrderCacheCommand->getResponseBody();
+        $this->paypalOrderCache->set($responseBody['id'], $responseBody);
     }
 }
