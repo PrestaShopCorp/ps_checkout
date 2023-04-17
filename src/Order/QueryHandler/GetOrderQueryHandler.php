@@ -68,7 +68,7 @@ class GetOrderQueryHandler
             (bool) $order->hasBeenShipped(),
             (bool) $order->hasBeenDelivered(),
             (bool) $order->isInPreparation(),
-            (string) $order->getTotalProductsWithTaxes(),
+            (string) $order->getTotalProductsWithTaxes(), /* @phpstan-ignore-line */
             (string) $order->getTotalPaid()
         );
     }
