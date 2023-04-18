@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber;
 
+use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderPaymentCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderStatusUpdatedEvent;
@@ -27,6 +28,19 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class OrderEventSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var CommandBusInterface
+     */
+    private $commandBus;
+
+    /**
+     * @param CommandBusInterface $commandBus
+     */
+    public function __construct(CommandBusInterface $commandBus)
+    {
+        $this->commandBus = $commandBus;
+    }
+
     /**
      * {@inheritdoc}
      */

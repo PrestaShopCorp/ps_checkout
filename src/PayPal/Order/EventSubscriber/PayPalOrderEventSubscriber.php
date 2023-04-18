@@ -20,14 +20,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber;
 
+use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdatePayPalOrderMatriceCommand;
-use PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdateOrderStatusCommandHandler;
-use PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdatePayPalOrderMatriceCommandHandler;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\PrunePayPalOrderCacheCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCacheCommand;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CapturePayPalOrderCommandHandler;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\UpdatePayPalOrderCacheCommandHandler;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovalReversedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
@@ -37,72 +35,28 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderFetchedEv
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderNotApprovedEvent;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand;
-use PrestaShop\Module\PrestashopCheckout\Session\CommandHandler\UpdatePsCheckoutSessionCommandHandler;
-use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalOrderEventSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var UpdatePsCheckoutSessionCommandHandler
+     * @var CommandBusInterface
      */
-    private $updatePsCheckoutSessionCommandHandler;
-
-    /**
-     * @var UpdatePayPalOrderCacheCommandHandler
-     */
-    private $updatePayPalOrderCacheCommandHandler;
-
-    /**
-     * @var UpdatePayPalOrderMatriceCommandHandler
-     */
-    private $updatePayPalOrderMatriceCommandHandler;
-
-    /**
-     * @var CapturePayPalOrderCommandHandler
-     */
-    private $capturePayPalOrderCommandHandler;
-
-    /**
-     * @var UpdateOrderStatusCommandHandler
-     */
-    private $updateOrderStatusCommandHandler;
-
+    private $commandBus;
     /**
      * @var PsCheckoutCartRepository
      */
     private $psCheckoutCartRepository;
 
     /**
-     * @var CacheInterface
-     */
-    private $orderPayPalCache;
-
-    /**
-     * @param UpdatePsCheckoutSessionCommandHandler $updatePsCheckoutSessionCommandHandler
-     * @param UpdatePayPalOrderCacheCommandHandler $updatePayPalOrderCacheCommandHandler
-     * @param UpdatePayPalOrderMatriceCommandHandler $updatePayPalOrderMatriceCommandHandler
-     * @param CapturePayPalOrderCommandHandler $capturePayPalOrderCommandHandler
-     * @param UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler
-     * @param PsCheckoutCartRepository $psCheckoutCartRepository
-     * @param CacheInterface $orderPayPalCache
+     * @param CommandBusInterface $commandBus
      */
     public function __construct(
-        UpdatePsCheckoutSessionCommandHandler $updatePsCheckoutSessionCommandHandler,
-        UpdatePayPalOrderCacheCommandHandler $updatePayPalOrderCacheCommandHandler,
-        UpdatePayPalOrderMatriceCommandHandler $updatePayPalOrderMatriceCommandHandler,
-        CapturePayPalOrderCommandHandler $capturePayPalOrderCommandHandler,
-        UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler,
-        PsCheckoutCartRepository $psCheckoutCartRepository,
-        CacheInterface $orderPayPalCache
+        CommandBusInterface $commandBus,
+        PsCheckoutCartRepository $psCheckoutCartRepository
     ) {
-        $this->updatePsCheckoutSessionCommandHandler = $updatePsCheckoutSessionCommandHandler;
-        $this->updatePayPalOrderCacheCommandHandler = $updatePayPalOrderCacheCommandHandler;
-        $this->updatePayPalOrderMatriceCommandHandler = $updatePayPalOrderMatriceCommandHandler;
-        $this->capturePayPalOrderCommandHandler = $capturePayPalOrderCommandHandler;
-        $this->updateOrderStatusCommandHandler = $updateOrderStatusCommandHandler;
+        $this->commandBus = $commandBus;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-        $this->orderPayPalCache = $orderPayPalCache;
     }
 
     /**
@@ -179,7 +133,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->updatePsCheckoutSessionCommandHandler->handle(new UpdatePsCheckoutSessionCommand(
+        $this->commandBus->handle(new UpdatePsCheckoutSessionCommand(
             $event->getOrderPayPalId()->getValue(),
             $psCheckoutCart->getIdCart(),
             $psCheckoutCart->getPaypalFundingSource(),
@@ -214,7 +168,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         // @todo Always check if Cart is ready to payment before (quantities, stocks, invoice address, delivery address, delivery option...)
 
         // This should mainly occur for APMs
-        $this->capturePayPalOrderCommandHandler->handle(
+        $this->commandBus->handle(
             new CapturePayPalOrderCommand(
                 $event->getOrderPayPalId()->getValue(),
                 $psCheckoutCart->getPaypalFundingSource()
@@ -222,30 +176,29 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         );
     }
 
-    public function updatePayPalOrderCache()
+    public function updatePayPalOrderCache(PayPalOrderEvent $event)
     {
-        // TODO : Recuperer la response
-        $reponseBody = [];
-
-        $this->updatePayPalOrderCacheCommandHandler->handle(
-            new UpdatePayPalOrderCacheCommand($reponseBody)
-        );
+        $this->commandBus->handle(new UpdatePayPalOrderCacheCommand(
+            $event->getOrderPayPalId()->getValue(),
+            $event->getOrderPayPalId()->getValue() // TODO : Recuperer la response
+        ));
     }
 
     /**
+     * @param PayPalOrderEvent $event
+     *
      * @return void
      */
-    public function prunePayPalOrderCache()
+    public function prunePayPalOrderCache(PayPalOrderEvent $event)
     {
-        // Cache used provide pruning (deletion) of all expired cache items to reduce cache size
-        if (method_exists($this->orderPayPalCache, 'prune')) {
-            $this->orderPayPalCache->prune();
-        }
+        $this->commandBus->handle(
+            new PrunePayPalOrderCacheCommand($event->getOrderPayPalId())
+        );
     }
 
     public function updatePayPalOrderMatrice(PayPalOrderCompletedEvent $event)
     {
-        $this->updatePayPalOrderMatriceCommandHandler->handle(
+        $this->commandBus->handle(
             new UpdatePayPalOrderMatriceCommand($event->getOrderPayPalId()->getValue())
         );
     }
