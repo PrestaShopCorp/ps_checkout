@@ -18,48 +18,30 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
+namespace PrestaShop\Module\PrestashopCheckout\CommandBus;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
+use League\Tactician\CommandBus;
 
-class UpdatePayPalOrderCacheCommand
+class TacticianCommandBusAdapter implements CommandBusInterface
 {
     /**
-     * @var PayPalOrderId
+     * @var CommandBus
      */
-    private $orderId;
+    private $bus;
 
     /**
-     * @var array
+     * @param CommandBus $bus
      */
-    private $order;
-
-    /**
-     * @param string $orderId
-     * @param array $order
-     *
-     * @throws PayPalOrderException
-     */
-    public function __construct($orderId, array $order)
+    public function __construct(CommandBus $bus)
     {
-        $this->orderId = new PayPalOrderId($orderId);
-        $this->order = $order;
+        $this->bus = $bus;
     }
 
     /**
-     * @return PayPalOrderId
+     * {@inheritdoc}
      */
-    public function getOrderId()
+    public function handle($command)
     {
-        return $this->orderId;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOrder()
-    {
-        return $this->order;
+        return $this->bus->handle($command);
     }
 }

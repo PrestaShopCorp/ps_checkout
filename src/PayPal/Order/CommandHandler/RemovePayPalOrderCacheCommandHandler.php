@@ -27,7 +27,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 use Psr\SimpleCache\CacheException;
 use Psr\SimpleCache\CacheInterface;
 
-class UpdatePayPalOrderCacheCommandHandler
+class RemovePayPalOrderCacheCommandHandler
 {
     /**
      * @var EventDispatcherInterface
@@ -59,12 +59,11 @@ class UpdatePayPalOrderCacheCommandHandler
     public function handle(UpdatePayPalOrderCacheCommand $updatePayPalOrderCacheCommand)
     {
         try {
-            $this->cache->set(
-                $updatePayPalOrderCacheCommand->getOrderId()->getValue(),
-                $updatePayPalOrderCacheCommand->getOrder()
-            );
+            if ($this->cache->has($updatePayPalOrderCacheCommand->getOrderId()->getValue())) {
+                $this->cache->delete($updatePayPalOrderCacheCommand->getOrderId()->getValue());
+            }
         } catch (CacheException $exception) {
-            throw new PayPalOrderException('Unable to update PayPal Order Cache', PayPalOrderException::CACHE_EXCEPTION, $exception);
+            throw new PayPalOrderException('Unable to remove item from PayPal Order Cache', PayPalOrderException::CACHE_EXCEPTION, $exception);
         }
 
         $this->eventDispatcher->dispatch(

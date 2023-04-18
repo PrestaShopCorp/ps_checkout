@@ -39,6 +39,7 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
      * @var UpdatePaymentMethodSelectedCommandHandler
      */
     private $updatePaymentMethodSelectedCommandHandler;
+
     /**
      * @var CacheInterface
      */

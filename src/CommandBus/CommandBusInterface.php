@@ -18,16 +18,17 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception;
+namespace PrestaShop\Module\PrestashopCheckout\CommandBus;
 
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-
-class PayPalOrderException extends PsCheckoutException
+/**
+ * Interface CommandBusInterface defines contract for Commands bus.
+ */
+interface CommandBusInterface
 {
-    const INVALID_ID = 1;
-    const CANNOT_RETRIEVE_ORDER = 2;
-    const EMPTY_ORDER_DATA = 3;
-    const CANNOT_CAPTURE_ORDER = 4;
-    const SESSION_EXCEPTION = 5;
-    const CACHE_EXCEPTION = 6;
+    /**
+     * Handle command.
+     *
+     * @param object $command
+     */
+    public function handle($command);
 }

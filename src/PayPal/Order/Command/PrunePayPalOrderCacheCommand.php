@@ -23,7 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 
-class UpdatePayPalOrderCacheCommand
+class PrunePayPalOrderCacheCommand
 {
     /**
      * @var PayPalOrderId
@@ -31,20 +31,13 @@ class UpdatePayPalOrderCacheCommand
     private $orderId;
 
     /**
-     * @var array
-     */
-    private $order;
-
-    /**
      * @param string $orderId
-     * @param array $order
      *
      * @throws PayPalOrderException
      */
-    public function __construct($orderId, array $order)
+    public function __construct($orderId)
     {
         $this->orderId = new PayPalOrderId($orderId);
-        $this->order = $order;
     }
 
     /**
@@ -53,13 +46,5 @@ class UpdatePayPalOrderCacheCommand
     public function getOrderId()
     {
         return $this->orderId;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOrder()
-    {
-        return $this->order;
     }
 }

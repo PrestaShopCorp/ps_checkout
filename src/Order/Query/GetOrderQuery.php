@@ -18,48 +18,33 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
+namespace PrestaShop\Module\PrestashopCheckout\Order\Query;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
+use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
 
-class UpdatePayPalOrderCacheCommand
+class GetOrderQuery
 {
     /**
-     * @var PayPalOrderId
+     * @var CartId
      */
-    private $orderId;
+    private $cartId;
 
     /**
-     * @var array
-     */
-    private $order;
-
-    /**
-     * @param string $orderId
-     * @param array $order
+     * @param int $cartId
      *
-     * @throws PayPalOrderException
+     * @throws CartException
      */
-    public function __construct($orderId, array $order)
+    public function __construct($cartId)
     {
-        $this->orderId = new PayPalOrderId($orderId);
-        $this->order = $order;
+        $this->cartId = new CartId($cartId);
     }
 
     /**
-     * @return PayPalOrderId
+     * @return CartId
      */
-    public function getOrderId()
+    public function getCartId()
     {
-        return $this->orderId;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOrder()
-    {
-        return $this->order;
+        return $this->cartId;
     }
 }
