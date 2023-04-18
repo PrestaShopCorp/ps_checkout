@@ -22,11 +22,10 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubsc
 
 use Configuration;
 use Order;
+use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
-use PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\CreateOrderCommandHandler;
-use PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdateOrderStatusCommandHandler;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeniedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureEvent;
@@ -39,32 +38,23 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var CreateOrderCommandHandler
+     * @var CommandBusInterface
      */
-    private $createOrderCommandHandler;
-
-    /**
-     * @var UpdateOrderStatusCommandHandler
-     */
-    private $updateOrderStatusCommandHandler;
-
+    private $commandBus;
     /**
      * @var PsCheckoutCartRepository
      */
     private $psCheckoutCartRepository;
 
     /**
-     * @param CreateOrderCommandHandler $createOrderCommandHandler
-     * @param UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler
+     * @param CommandBusInterface $commandBus
      * @param PsCheckoutCartRepository $psCheckoutCartRepository
      */
     public function __construct(
-        CreateOrderCommandHandler $createOrderCommandHandler,
-        UpdateOrderStatusCommandHandler $updateOrderStatusCommandHandler,
+        CommandBusInterface $commandBus,
         PsCheckoutCartRepository $psCheckoutCartRepository
     ) {
-        $this->createOrderCommandHandler = $createOrderCommandHandler;
-        $this->updateOrderStatusCommandHandler = $updateOrderStatusCommandHandler;
+        $this->commandBus = $commandBus;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
     }
 
@@ -87,17 +77,14 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
     public function createOrder(PayPalCaptureCompletedEvent $event)
     {
-        // TODO : complete handle
-//        $this->createOrderCommandHandler->handle(
-//            new CreateOrderCommand(
-//                '',
-//                '',
-//                '',
-//                '',
-//                '',
-//                ''
-//            )
-//        );
+        $this->commandBus->handle(new CreateOrderCommand(
+            \Context::getContext()->cart->id,
+            'ps_checkout',
+            1,
+            '',
+            '',
+            ''
+        ));
     }
 
     /**
@@ -154,7 +141,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             && false === (bool) $order->hasBeenDelivered()
             && false === (bool) $order->isInPreparation()
         ) {
-            $this->updateOrderStatusCommandHandler->handle(new UpdateOrderStatusCommand($orderId, $newOrderStateId));
+            $this->commandBus->handle(new UpdateOrderStatusCommand($orderId, $newOrderStateId));
         }
     }
 
