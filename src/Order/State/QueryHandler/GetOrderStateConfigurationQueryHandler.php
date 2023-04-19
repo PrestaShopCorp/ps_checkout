@@ -29,19 +29,19 @@ class GetOrderStateConfigurationQueryHandler
     public function handle(GetOrderStateConfigurationQuery $query)
     {
         return new GetOrderStateConfigurationQueryResult(
-            \Configuration::getGlobalValue(OrderStateConfiguration::CANCELED),
-            \Configuration::getGlobalValue(OrderStateConfiguration::PAYMENT_ERROR),
-            \Configuration::getGlobalValue(OrderStateConfiguration::OUT_OF_STOCK_UNPAID),
-            \Configuration::getGlobalValue(OrderStateConfiguration::OUT_OF_STOCK_PAID),
-            \Configuration::getGlobalValue(OrderStateConfiguration::PAYMENT_ACCEPTED),
-            \Configuration::getGlobalValue(OrderStateConfiguration::REFUNDED),
-            \Configuration::getGlobalValue(OrderStateConfiguration::AUTHORIZED),
-            \Configuration::getGlobalValue(OrderStateConfiguration::PARTIALLY_PAID),
-            \Configuration::getGlobalValue(OrderStateConfiguration::PARTIALLY_REFUNDED),
-            \Configuration::getGlobalValue(OrderStateConfiguration::WAITING_CAPTURE),
-            \Configuration::getGlobalValue(OrderStateConfiguration::WAITING_CREDIT_CARD_PAYMENT),
-            \Configuration::getGlobalValue(OrderStateConfiguration::WAITING_PAYPAL_PAYMENT),
-            \Configuration::getGlobalValue(OrderStateConfiguration::WAITING_LOCAL_PAYMENT)
+            (int) \Configuration::getGlobalValue(OrderStateConfiguration::CANCELED),
+            (int) \Configuration::getGlobalValue(OrderStateConfiguration::PAYMENT_ERROR),
+            (int) \Configuration::getGlobalValue(OrderStateConfiguration::OUT_OF_STOCK_UNPAID),
+            (int) \Configuration::getGlobalValue(OrderStateConfiguration::OUT_OF_STOCK_PAID),
+            (int) \Configuration::getGlobalValue(OrderStateConfiguration::PAYMENT_ACCEPTED),
+            (int) \Configuration::getGlobalValue(OrderStateConfiguration::REFUNDED),
+            (int) \Configuration::getGlobalValue(OrderStateConfiguration::AUTHORIZED),
+            (int) \Configuration::getGlobalValue(OrderStateConfiguration::PARTIALLY_PAID),
+            (int) \Configuration::getGlobalValue(OrderStateConfiguration::PARTIALLY_REFUNDED),
+            (int) \Configuration::getGlobalValue(OrderStateConfiguration::WAITING_CAPTURE),
+            (int) \Configuration::getGlobalValue(OrderStateConfiguration::WAITING_CREDIT_CARD_PAYMENT),
+            (int) \Configuration::getGlobalValue(OrderStateConfiguration::WAITING_PAYPAL_PAYMENT),
+            (int) \Configuration::getGlobalValue(OrderStateConfiguration::WAITING_LOCAL_PAYMENT)
         );
     }
 }
