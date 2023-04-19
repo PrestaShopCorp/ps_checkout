@@ -40,10 +40,10 @@ class CheckTransitionPayPalRefundStatusService
         if (!is_string($newStatus)) {
             throw new OrderException(sprintf('Type of newStatus (%s) is not string', gettype($newStatus)), OrderException::STATUS_CHECK_AVAILABLE_BAD_PARAMETER);
         }
-        if (!isset(PayPalRefundStatus::STATUS_AVAILABLE[$oldStatus])) {
+        if (!isset(PayPalRefundStatus::TRANSITION_AVAILABLE[$oldStatus])) {
             throw new OrderException(sprintf('The oldStatus doesn\'t exist (%s)', $oldStatus), OrderException::STATUS_CHECK_AVAILABLE_BAD_PARAMETER);
         }
 
-        return in_array($newStatus, PayPalRefundStatus::STATUS_AVAILABLE[$oldStatus]);
+        return in_array($newStatus, PayPalRefundStatus::TRANSITION_AVAILABLE[$oldStatus]);
     }
 }
