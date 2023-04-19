@@ -25,8 +25,8 @@ use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 class CheckTransitionPayPalRefundStatusService
 {
     /**
-     * @param $oldStatus
-     * @param $newStatus
+     * @param string $oldStatus
+     * @param string $newStatus
      *
      * @return bool
      *
