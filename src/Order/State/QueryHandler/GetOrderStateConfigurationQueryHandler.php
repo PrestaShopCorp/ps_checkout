@@ -28,24 +28,20 @@ class GetOrderStateConfigurationQueryHandler
 {
     public function handle(GetOrderStateConfigurationQuery $query)
     {
-        $reflection = new \ReflectionClass(OrderStateConfiguration::class);
-
-        $configName = '';
-        $constants = $reflection->getConstants();
-        foreach ($constants as $name => $value) {
-            if ($value === $query->getOrderStateConfigurationId()) {
-                $configName = $name;
-                break;
-            }
-        }
-
-        // @TODO : Gérer le cas pour récupérer correctement en cas de multishop
-        $orderStateId = \Db::getInstance()->getValue(
-            'SELECT value
-            FROM `' . _DB_PREFIX_ . 'configuration`
-            WHERE `name` = "' . $configName . '";'
+        return new GetOrderStateConfigurationQueryResult(
+            \Configuration::getGlobalValue(OrderStateConfiguration::CANCELED),
+            \Configuration::getGlobalValue(OrderStateConfiguration::PAYMENT_ERROR),
+            \Configuration::getGlobalValue(OrderStateConfiguration::OUT_OF_STOCK_UNPAID),
+            \Configuration::getGlobalValue(OrderStateConfiguration::OUT_OF_STOCK_PAID),
+            \Configuration::getGlobalValue(OrderStateConfiguration::PAYMENT_ACCEPTED),
+            \Configuration::getGlobalValue(OrderStateConfiguration::REFUNDED),
+            \Configuration::getGlobalValue(OrderStateConfiguration::AUTHORIZED),
+            \Configuration::getGlobalValue(OrderStateConfiguration::PARTIALLY_PAID),
+            \Configuration::getGlobalValue(OrderStateConfiguration::PARTIALLY_REFUNDED),
+            \Configuration::getGlobalValue(OrderStateConfiguration::WAITING_CAPTURE),
+            \Configuration::getGlobalValue(OrderStateConfiguration::WAITING_CREDIT_CARD_PAYMENT),
+            \Configuration::getGlobalValue(OrderStateConfiguration::WAITING_PAYPAL_PAYMENT),
+            \Configuration::getGlobalValue(OrderStateConfiguration::WAITING_LOCAL_PAYMENT)
         );
-
-        return new GetOrderStateConfigurationQueryResult($orderStateId);
     }
 }
