@@ -30,7 +30,7 @@ class PayPalOrderStatus
     const VOIDED = 'VOIDED';
     const COMPLETED = 'COMPLETED';
 
-    const STATUS_AVAILABLE = [
+    const TRANSITION_AVAILABLE = [
         self::CREATED => [
             self::APPROVED,
             self::PENDING_APPROVAL,

@@ -30,7 +30,7 @@ class PayPalAuthorizationStatus
     const VOIDED = 'VOIDED';
     const PENDING = 'PENDING';
 
-    const STATUS_AVAILABLE = [
+    const TRANSITION_AVAILABLE = [
         self::CREATED => [
             self::CAPTURED,
             self::DENIED,

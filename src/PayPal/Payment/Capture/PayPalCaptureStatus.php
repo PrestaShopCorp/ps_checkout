@@ -29,7 +29,7 @@ class PayPalCaptureStatus
     const DECLINED = 'DECLINED';
     const COMPLETED = 'COMPLETED';
 
-    const STATUS_AVAILABLE = [
+    const TRANSITION_AVAILABLE = [
         self::PENDING => [
             self::DECLINED,
             self::FAILED,
