@@ -27,7 +27,7 @@ class PayPalRefundStatus
     const CANCELLED = 'CANCELLED';
     const COMPLETED = 'COMPLETED';
 
-    const STATUS_AVAILABLE = [
+    const TRANSITION_AVAILABLE = [
         self::PENDING => [
             self::CANCELLED,
             self::FAILED,

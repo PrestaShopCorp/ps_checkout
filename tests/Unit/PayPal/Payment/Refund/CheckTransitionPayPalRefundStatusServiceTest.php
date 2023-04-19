@@ -40,26 +40,22 @@ class CheckTransitionPayPalRefundStatusServiceTest extends TestCase
     public function statusProvider()
     {
         return [
-            [
-                PayPalRefundStatus::PENDING,
-                PayPalRefundStatus::CANCELLED,
-                true,
-            ],
-            [
-                PayPalRefundStatus::CANCELLED,
-                PayPalRefundStatus::PENDING,
-                false,
-            ],
-            [
-                PayPalRefundStatus::PENDING,
-                PayPalRefundStatus::COMPLETED,
-                true,
-            ],
-            [
-                PayPalRefundStatus::PENDING,
-                PayPalRefundStatus::FAILED,
-                true,
-            ],
+            [PayPalRefundStatus::PENDING, PayPalRefundStatus::PENDING, false],
+            [PayPalRefundStatus::PENDING, PayPalRefundStatus::FAILED, true],
+            [PayPalRefundStatus::PENDING, PayPalRefundStatus::CANCELLED, true],
+            [PayPalRefundStatus::PENDING, PayPalRefundStatus::COMPLETED, true],
+            [PayPalRefundStatus::FAILED, PayPalRefundStatus::PENDING, false],
+            [PayPalRefundStatus::FAILED, PayPalRefundStatus::FAILED, false],
+            [PayPalRefundStatus::FAILED, PayPalRefundStatus::CANCELLED, false],
+            [PayPalRefundStatus::FAILED, PayPalRefundStatus::COMPLETED, false],
+            [PayPalRefundStatus::CANCELLED, PayPalRefundStatus::PENDING, false],
+            [PayPalRefundStatus::CANCELLED, PayPalRefundStatus::FAILED, false],
+            [PayPalRefundStatus::CANCELLED, PayPalRefundStatus::CANCELLED, false],
+            [PayPalRefundStatus::CANCELLED, PayPalRefundStatus::COMPLETED, false],
+            [PayPalRefundStatus::COMPLETED, PayPalRefundStatus::PENDING, false],
+            [PayPalRefundStatus::COMPLETED, PayPalRefundStatus::FAILED, false],
+            [PayPalRefundStatus::COMPLETED, PayPalRefundStatus::CANCELLED, false],
+            [PayPalRefundStatus::COMPLETED, PayPalRefundStatus::COMPLETED, false],
         ];
     }
 
