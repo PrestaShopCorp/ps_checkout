@@ -36,28 +36,24 @@ class GetOrderPaymentQueryHandler
      */
     public function handle(GetOrderPaymentQuery $query)
     {
-        $orderPaymentCollection = \ObjectModel::hydrateCollection(
-            'OrderPayment',
-            \Db::getInstance()->executeS(
-                'SELECT *
+        $orderPaymentResult = \Db::getInstance()->executeS(
+            'SELECT *
 			    FROM `' . _DB_PREFIX_ . 'order_payment`
 			    WHERE `transaction_id` = \'' . pSQL($query->getTransactionId()->getValue()) . '\''
-            )
         );
 
-        if (empty($orderPaymentCollection)) {
+        if (empty($orderPaymentResult)) {
             throw new OrderPaymentException('No PrestaShop OrderPayment associated to this PayPal capture id at this time.', OrderPaymentException::INVALID_ID);
         }
 
-        /** @var \OrderPayment $orderPayment */
-        $orderPayment = end($orderPaymentCollection);
+        $orderPayment = end($orderPaymentResult);
 
         return new GetOrderPaymentQueryResult(
-            $orderPayment->transaction_id,
-            $orderPayment->order_reference,
-            $orderPayment->amount,
-            $orderPayment->payment_method,
-            $orderPayment->date_add
+            $orderPayment['transaction_id'],
+            $orderPayment['order_reference'],
+            $orderPayment['amount'],
+            $orderPayment['payment_method'],
+            $orderPayment['date_add']
         );
     }
 }
