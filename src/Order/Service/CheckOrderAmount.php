@@ -39,6 +39,8 @@ class CheckOrderAmount
      * @param string $totalAmountPaid
      *
      * @return int
+     *
+     * @throws OrderException
      */
     public function checkAmount($totalAmount, $totalAmountPaid)
     {
