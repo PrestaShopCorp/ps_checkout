@@ -412,7 +412,7 @@ class PayPalSdkLinkBuilder
             }
             if ($fundingSource['active']
                 && $fundingSource['name'] === 'sofort'
-                && (($context->currency->iso_code === 'EUR' && in_array($country, ['AU', 'BE', 'DE', 'ES', 'IT', 'NL'], true))
+                && (($context->currency->iso_code === 'EUR' && in_array($country, ['AT', 'BE', 'DE', 'ES', 'NL'], true))
                 || ($context->currency->iso_code === 'GBP' && in_array($country, ['GB', 'UK'], true)))
             ) {
                 $fundingSourcesEnabled[] = $fundingSource['name'];
