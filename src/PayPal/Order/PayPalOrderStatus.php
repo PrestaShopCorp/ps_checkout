@@ -52,6 +52,6 @@ class PayPalOrderStatus
             self::COMPLETED,
         ],
         self::VOIDED => [],
-        self::COMPLETED => [],
+        self::COMPLETED => [self::COMPLETED],
     ];
 }

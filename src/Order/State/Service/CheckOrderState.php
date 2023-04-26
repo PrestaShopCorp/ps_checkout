@@ -41,6 +41,7 @@ class CheckOrderState
         OrderStateConfiguration::REFUNDED => [],
         OrderStateConfiguration::WAITING_PAYPAL_PAYMENT => [
             OrderStateConfiguration::PAYMENT_ACCEPTED,
+            OrderStateConfiguration::PARTIALLY_PAID,
             OrderStateConfiguration::CANCELED,
             OrderStateConfiguration::PAYMENT_ERROR,
         ],
@@ -56,24 +57,11 @@ class CheckOrderState
             OrderStateConfiguration::PAYMENT_ERROR,
             OrderStateConfiguration::PAYMENT_ACCEPTED,
         ],
-        OrderStateConfiguration::OUT_OF_STOCK_PAID=>[],
-        OrderStateConfiguration::OUT_OF_STOCK_UNPAID=>[],
-        OrderStateConfiguration::PAYMENT_ERROR =>[],
-        OrderStateConfiguration::CANCELED =>[],
+        OrderStateConfiguration::OUT_OF_STOCK_PAID => [],
+        OrderStateConfiguration::OUT_OF_STOCK_UNPAID => [],
+        OrderStateConfiguration::PAYMENT_ERROR => [],
+        OrderStateConfiguration::CANCELED => [],
     ];
-
-    /**
-     * @var array
-     */
-    private $orderStateMapping;
-
-    /**
-     * @param array $orderStateMapping
-     */
-    public function __construct(array $orderStateMapping)
-    {
-        $this->orderStateMapping = $orderStateMapping;
-    }
 
     /**
      * @param string $currentOrderState
@@ -91,6 +79,7 @@ class CheckOrderState
      * @param string $newOrderStateId
      *
      * @return bool
+     *
      * @throws OrderException
      */
     public function isOrderStateTransitionAvailable($currentOrderStateId, $newOrderStateId)
@@ -101,9 +90,10 @@ class CheckOrderState
         if (!is_string($newOrderStateId)) {
             throw new OrderException(sprintf('Type of newOrderStateId (%s) is not string', gettype($newOrderStateId)), OrderException::STATUS_CHECK_AVAILABLE_BAD_PARAMETER);
         }
-        if (!isset(self::TRANSITION_ALLOWED[$currentOrderStateId])) {
+        if (!key_exists($currentOrderStateId,self::TRANSITION_ALLOWED)) {
             throw new OrderException(sprintf('The currentOrderStateId doesn\'t exist (%s)', $currentOrderStateId), OrderException::STATUS_CHECK_AVAILABLE_BAD_PARAMETER);
         }
+
         return in_array($newOrderStateId, self::TRANSITION_ALLOWED[$currentOrderStateId]);
     }
 }

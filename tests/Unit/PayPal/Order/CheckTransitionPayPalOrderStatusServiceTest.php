@@ -88,7 +88,7 @@ class CheckTransitionPayPalOrderStatusServiceTest extends TestCase
             [PayPalOrderStatus::COMPLETED, PayPalOrderStatus::PENDING_APPROVAL, false],
             [PayPalOrderStatus::COMPLETED, PayPalOrderStatus::PAYER_ACTION_REQUIRED, false],
             [PayPalOrderStatus::COMPLETED, PayPalOrderStatus::VOIDED, false],
-            [PayPalOrderStatus::COMPLETED, PayPalOrderStatus::COMPLETED, false],
+            [PayPalOrderStatus::COMPLETED, PayPalOrderStatus::COMPLETED, true],
         ];
     }
 

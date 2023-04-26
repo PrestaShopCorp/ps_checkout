@@ -32,7 +32,7 @@ class CheckTransitionPayPalRefundStatusService
      *
      * @throws OrderException
      */
-    public function checkAvailableStatus($oldStatus, $newStatus): bool
+    public function checkAvailableStatus($oldStatus, $newStatus)
     {
         if (!is_string($oldStatus)) {
             throw new OrderException(sprintf('Type of oldStatus (%s) is not string', gettype($oldStatus)), OrderException::STATUS_CHECK_AVAILABLE_BAD_PARAMETER);

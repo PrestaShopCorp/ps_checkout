@@ -32,7 +32,7 @@ class CheckTransitionPayPalOrderStatusService
      *
      * @throws OrderException
      */
-    public function checkAvailableStatus($oldStatus, $newStatus): bool
+    public function checkAvailableStatus($oldStatus, $newStatus)
     {
         if (!is_string($oldStatus)) {
             throw new OrderException(sprintf('Type of oldStatus (%s) is not string', gettype($oldStatus)), OrderException::STATUS_CHECK_AVAILABLE_BAD_PARAMETER);
@@ -40,7 +40,7 @@ class CheckTransitionPayPalOrderStatusService
         if (!is_string($newStatus)) {
             throw new OrderException(sprintf('Type of newStatus (%s) is not string', gettype($newStatus)), OrderException::STATUS_CHECK_AVAILABLE_BAD_PARAMETER);
         }
-        if (!isset(PayPalOrderStatus::TRANSITION_AVAILABLE[$oldStatus])) {
+        if (!key_exists($oldStatus,PayPalOrderStatus::TRANSITION_AVAILABLE)) {
             throw new OrderException(sprintf('The oldStatus doesn\'t exist (%s)', $oldStatus), OrderException::STATUS_CHECK_AVAILABLE_BAD_PARAMETER);
         }
 
