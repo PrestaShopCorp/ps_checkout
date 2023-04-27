@@ -159,8 +159,10 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $orderPayment = null;
         try {
             $this->commandBus->handle(new GetOrderPaymentQuery($event->getPayPalCaptureId()));
+
             return; // We already have an OrderPayment, there's no need to add another one
-        } catch (OrderPaymentException $e) {}
+        } catch (OrderPaymentException $e) {
+        }
 
         $paymentMethod = $psCheckoutCart->paypal_funding;
         if ($paymentMethod === 'card') {
