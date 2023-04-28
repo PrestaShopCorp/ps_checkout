@@ -33,6 +33,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEv
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderFetchedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderNotApprovedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -50,6 +51,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
 
     /**
      * @param CommandBusInterface $commandBus
+     * @param PsCheckoutCartRepository $psCheckoutCartRepository
      */
     public function __construct(
         CommandBusInterface $commandBus,
@@ -96,36 +98,35 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      * @param PayPalOrderEvent $event
      *
      * @return void
+     *
+     * @throws PsCheckoutException
+     * @throws \PrestaShopException
      */
     public function updatePayPalOrder($event)
     {
-        // @todo We don't have a dedicated table for order data storage in database yet
-        // But we can save some data in current pscheckout_cart table
-
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getOrderPayPalId()->getValue());
-
         if (false === $psCheckoutCart) {
             throw new PsCheckoutException(sprintf('order #%s is not linked to a cart', $event->getOrderPayPalId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
         switch (get_class($event)) {
             case PayPalOrderCreatedEvent::class:
-                $orderStatus = 'CREATED';
+                $orderPayPalStatus = 'CREATED';
                 break;
             case PayPalOrderApprovedEvent::class:
-                $orderStatus = 'APPROVED';
+                $orderPayPalStatus = 'APPROVED';
                 break;
             case PayPalOrderCompletedEvent::class:
-                $orderStatus = 'COMPLETED';
+                $orderPayPalStatus = 'COMPLETED';
                 break;
             case PayPalOrderApprovalReversedEvent::class:
-                $orderStatus = 'PENDING_APPROVAL';
+                $orderPayPalStatus = 'PENDING_APPROVAL';
                 break;
             case PayPalOrderNotApprovedEvent::class:
-                $orderStatus = 'PENDING';
+                $orderPayPalStatus = 'PENDING';
                 break;
             default:
-                $orderStatus = '';
+                $orderPayPalStatus = '';
         }
 
         // COMPLETED is a final status, always ensure we don't update to previous status due to outdated webhook for example
@@ -138,7 +139,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             $psCheckoutCart->getIdCart(),
             $psCheckoutCart->getPaypalFundingSource(),
             $psCheckoutCart->getPaypalIntent(),
-            $orderStatus,
+            $orderPayPalStatus,
             $psCheckoutCart->getPaypalClientToken(),
             $psCheckoutCart->paypal_token_expire,
             $psCheckoutCart->paypal_authorization_expire,
@@ -151,6 +152,10 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      * @param PayPalOrderApprovedEvent $event
      *
      * @return void
+     *
+     * @throws \PrestaShopException
+     * @throws PayPalOrderException
+     * @throws PsCheckoutException
      */
     public function capturePayPalOrder(PayPalOrderApprovedEvent $event)
     {
@@ -165,7 +170,8 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // @todo Always check if Cart is ready to payment before (quantities, stocks, invoice address, delivery address, delivery option...)
+        // Check if cart is ready to payment :
+        // Invoice & delivery address, delivery option, stocks & quantities...
 
         // This should mainly occur for APMs
         $this->commandBus->handle(
@@ -176,11 +182,19 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         );
     }
 
-    public function updatePayPalOrderCache(PayPalOrderEvent $event)
+    /**
+     * @param PayPalOrderFetchedEvent $event
+     *
+     * @return void
+     *
+     * @throws PayPalOrderException
+     */
+    public function updatePayPalOrderCache(PayPalOrderFetchedEvent $event)
     {
+        $orderPayPal = $event->getOrderPayPal();
         $this->commandBus->handle(new UpdatePayPalOrderCacheCommand(
-            $event->getOrderPayPalId()->getValue(),
-            $event->getOrderPayPalId()->getValue() // TODO : Recuperer la response
+            $orderPayPal['id'],
+            $orderPayPal
         ));
     }
 
@@ -188,23 +202,27 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      * @param PayPalOrderEvent $event
      *
      * @return void
+     *
+     * @throws PayPalOrderException
      */
     public function prunePayPalOrderCache(PayPalOrderEvent $event)
     {
         $this->commandBus->handle(
-            new PrunePayPalOrderCacheCommand($event->getOrderPayPalId())
+            new PrunePayPalOrderCacheCommand($event->getOrderPayPalId()->getValue())
         );
     }
 
+    /**
+     * @param PayPalOrderCompletedEvent $event
+     *
+     * @return void
+     *
+     * @throws PayPalOrderException
+     */
     public function updatePayPalOrderMatrice(PayPalOrderCompletedEvent $event)
     {
         $this->commandBus->handle(
             new UpdatePayPalOrderMatriceCommand($event->getOrderPayPalId()->getValue())
         );
-    }
-
-    public function updateOrderStatus(PayPalOrderCompletedEvent $event)
-    {
-        // TODO : Check if PrestaShop order status need to be updated
     }
 }
