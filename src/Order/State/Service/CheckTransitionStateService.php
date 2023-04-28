@@ -32,7 +32,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\PayPalRefundStatu
 class CheckTransitionStateService
 {
     const STATES = [
-        'PaypalOrder' => [
+        'PayPalOrder' => [
             PayPalOrderStatus::CREATED => OrderStateConfiguration::WAITING_PAYPAL_PAYMENT,
             PayPalOrderStatus::SAVED => OrderStateConfiguration::WAITING_PAYPAL_PAYMENT,
             PayPalOrderStatus::APPROVED => OrderStateConfiguration::WAITING_PAYPAL_PAYMENT,
@@ -41,7 +41,7 @@ class CheckTransitionStateService
             PayPalOrderStatus::VOIDED => OrderStateConfiguration::CANCELED,
             PayPalOrderStatus::COMPLETED => OrderStateConfiguration::PAYMENT_ACCEPTED,
         ],
-        'PaypalCapture' => [
+        'PayPalCapture' => [
             PayPalCaptureStatus::COMPLETED => OrderStateConfiguration::PAYMENT_ACCEPTED,
             PayPalCaptureStatus::PENDING => OrderStateConfiguration::WAITING_PAYPAL_PAYMENT,
             PayPalCaptureStatus::FAILED => OrderStateConfiguration::PAYMENT_ERROR,
@@ -58,7 +58,7 @@ class CheckTransitionStateService
             PayPalAuthorizationStatus::VOIDED => OrderStateConfiguration::CANCELED,
             PayPalAuthorizationStatus::PENDING => OrderStateConfiguration::WAITING_CAPTURE,
         ],
-        'PaypalRefund' => [
+        'PayPalRefund' => [
             PayPalRefundStatus::CANCELLED => OrderStateConfiguration::CANCELED,
             PayPalRefundStatus::PENDING => OrderStateConfiguration::REFUNDED,
             PayPalRefundStatus::FAILED => OrderStateConfiguration::PAYMENT_ERROR,
@@ -117,6 +117,8 @@ class CheckTransitionStateService
      * - Cart -> Order via validateOrder
      *
      * @return bool
+     *
+     * @throws OrderException
      */
     public function getNewOrderState($data)
     {
@@ -141,6 +143,8 @@ class CheckTransitionStateService
      * @param array $data
      *
      * @return false|string
+     *
+     * @throws OrderException
      */
     public function getPsState($data)
     {
@@ -156,7 +160,7 @@ class CheckTransitionStateService
                 }
                 break;
             default:
-                $state = isset(self::STATES['PayPalOrder'][$data['PayPalOrder']['newStatus']]) ? self::STATES['PayPalOrder'][$data['PayPalOrder']['newStatus']] : false;
+                $state = key_exists($data['PayPalOrder']['newStatus'], self::STATES['PayPalOrder']) ? self::STATES['PayPalOrder'][$data['PayPalOrder']['newStatus']] : false;
         }
 
         return $state;
@@ -172,8 +176,8 @@ class CheckTransitionStateService
      */
     private function getPsCaptureState($paypalCapture, $psOrder)
     {
-        if (isset(self::STATES['PaypalCapture'][$paypalCapture['status']])) {
-            $state = self::STATES['PaypalCapture'][$paypalCapture['status']];
+        if (key_exists($paypalCapture['status'], self::STATES['PayPalCapture'])) {
+            $state = self::STATES['PayPalCapture'][$paypalCapture['status']];
             if ($state == OrderStateConfiguration::PAYMENT_ACCEPTED) {
                 $totalPaid = (string) ($paypalCapture['amount'] + $psOrder['totalAmountPaid']);
                 switch ($this->checkOrderAmount->checkAmount($psOrder['totalAmount'], $totalPaid)) {
@@ -206,8 +210,8 @@ class CheckTransitionStateService
     }
 
     /**
-     * @param $paypalRefund
-     * @param $psOrder
+     * @param array $paypalRefund
+     * @param array $psOrder
      *
      * @return false|mixed|string
      *
@@ -215,8 +219,8 @@ class CheckTransitionStateService
      */
     private function getPsRefundState($paypalRefund, $psOrder)
     {
-        if (isset(self::STATES['PaypalRefund'][$paypalRefund['status']])) {
-            $state = self::STATES['PaypalRefund'][$paypalRefund['status']];
+        if (key_exists($paypalRefund['status'], self::STATES['PayPalRefund'])) {
+            $state = self::STATES['PayPalRefund'][$paypalRefund['status']];
             if ($state == OrderStateConfiguration::REFUNDED || $state == OrderStateConfiguration::PARTIALLY_REFUNDED) {
                 $totalRefund = (string) ($paypalRefund['amount'] + $psOrder['totalRefunded']);
                 switch ($this->checkOrderAmount->checkAmount($psOrder['totalAmount'], $totalRefund)) {
@@ -238,9 +242,17 @@ class CheckTransitionStateService
         return $state;
     }
 
+    /**
+     * @param array $paypalAuthorization
+     * @param array $psOrder
+     *
+     * @return false|mixed|string
+     *
+     * @throws OrderException
+     */
     private function getPsAuthorizationState($paypalAuthorization, $psOrder)
     {
-        if (isset(self::STATES['PayPalAuthorization'][$paypalAuthorization['status']])) {
+        if (key_exists($paypalAuthorization['status'], self::STATES['PayPalAuthorization'])) {
             $state = self::STATES['PayPalAuthorization'][$paypalAuthorization['status']];
             if ($state == OrderStateConfiguration::PAYMENT_ACCEPTED || $state == OrderStateConfiguration::PARTIALLY_PAID) {
                 $totalAuthorization = (string) ($paypalAuthorization['amount'] + $psOrder['totalPaid']);

@@ -90,7 +90,7 @@ class CheckOrderState
         if (!is_string($newOrderStateId)) {
             throw new OrderException(sprintf('Type of newOrderStateId (%s) is not string', gettype($newOrderStateId)), OrderException::STATUS_CHECK_AVAILABLE_BAD_PARAMETER);
         }
-        if (!key_exists($currentOrderStateId,self::TRANSITION_ALLOWED)) {
+        if (!key_exists($currentOrderStateId, self::TRANSITION_ALLOWED)) {
             throw new OrderException(sprintf('The currentOrderStateId doesn\'t exist (%s)', $currentOrderStateId), OrderException::STATUS_CHECK_AVAILABLE_BAD_PARAMETER);
         }
 
