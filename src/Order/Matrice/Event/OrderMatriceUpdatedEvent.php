@@ -18,12 +18,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Order\State\Exception;
+namespace PrestaShop\Module\PrestashopCheckout\Order\Matrice\Event;
 
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-
-class OrderStateException extends PsCheckoutException
+class OrderMatriceUpdatedEvent
 {
-    const INVALID_ID = 1;
-    const TRANSITION_UNAVAILABLE = 2;
 }

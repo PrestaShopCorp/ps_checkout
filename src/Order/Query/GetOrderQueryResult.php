@@ -46,6 +46,9 @@ class GetOrderQueryResult
     /** @var string */
     private $totalAmountPaid;
 
+    /** @var int */
+    private $currencyId;
+
     /**
      * @param int $id
      * @param int $currentState
@@ -64,7 +67,8 @@ class GetOrderQueryResult
         $hasBeenDelivered,
         $isInPreparation,
         $totalAmount,
-        $totalAmountPaid
+        $totalAmountPaid,
+        $currencyId
     ) {
         $this->id = $id;
         $this->currentState = $currentState;
@@ -74,6 +78,7 @@ class GetOrderQueryResult
         $this->isInPreparation = $isInPreparation;
         $this->totalAmount = $totalAmount;
         $this->totalAmountPaid = $totalAmountPaid;
+        $this->currencyId = $currencyId;
     }
 
     /**
@@ -138,5 +143,13 @@ class GetOrderQueryResult
     public function getTotalAmountPaid()
     {
         return $this->totalAmountPaid;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCurrencyId()
+    {
+        return $this->currencyId;
     }
 }
