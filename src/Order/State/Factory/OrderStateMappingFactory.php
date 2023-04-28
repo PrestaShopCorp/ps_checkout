@@ -61,7 +61,7 @@ class OrderStateMappingFactory
             OrderStateConfiguration::WAITING_CAPTURE => $queryResult->getWaitingCaptureStateId(),
             OrderStateConfiguration::WAITING_CREDIT_CARD_PAYMENT => $queryResult->getWaitingPaymentCardStateId(),
             OrderStateConfiguration::WAITING_LOCAL_PAYMENT => $queryResult->getWaitingPaymentLocalStateId(),
-            OrderStateConfiguration::WAITING_PAYPAL_PAYMENT => $queryResult->getWaitingPaymentPayPalStateId()
+            OrderStateConfiguration::WAITING_PAYPAL_PAYMENT => $queryResult->getWaitingPaymentPayPalStateId(),
         ];
     }
 }

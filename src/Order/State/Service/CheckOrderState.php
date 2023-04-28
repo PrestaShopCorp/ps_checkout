@@ -20,42 +20,52 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\State\Service;
 
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
+use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfiguration;
+
 class CheckOrderState
 {
     const TRANSITION_ALLOWED = [
-        'PS_CHECKOUT_STATE_WAITING_CAPTURE' => [
-            'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT',
-            'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT',
-            'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT'
+        OrderStateConfiguration::PAYMENT_ACCEPTED => [
+            OrderStateConfiguration::PARTIALLY_REFUNDED,
+            OrderStateConfiguration::REFUNDED,
         ],
-        'PS_CHECKOUT_STATE_PARTIAL_REFUND' => [],
-        'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT' => [],
-        'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT' => [],
-        'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT' => [],
-        'PS_CHECKOUT_STATE_AUTHORIZED' => [
-            'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT',
-            'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT',
-            'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT',
-            'PS_CHECKOUT_STATE_PARTIAL_REFUND'
-        ]
+        OrderStateConfiguration::WAITING_CAPTURE => [
+            OrderStateConfiguration::WAITING_PAYPAL_PAYMENT,
+            OrderStateConfiguration::WAITING_CREDIT_CARD_PAYMENT,
+            OrderStateConfiguration::WAITING_LOCAL_PAYMENT,
+        ],
+        OrderStateConfiguration::PARTIALLY_REFUNDED => [
+            OrderStateConfiguration::REFUNDED,
+        ],
+        OrderStateConfiguration::REFUNDED => [],
+        OrderStateConfiguration::WAITING_PAYPAL_PAYMENT => [
+            OrderStateConfiguration::PAYMENT_ACCEPTED,
+            OrderStateConfiguration::PARTIALLY_PAID,
+            OrderStateConfiguration::CANCELED,
+            OrderStateConfiguration::PAYMENT_ERROR,
+        ],
+        OrderStateConfiguration::WAITING_CREDIT_CARD_PAYMENT => [],
+        OrderStateConfiguration::WAITING_LOCAL_PAYMENT => [],
+        OrderStateConfiguration::AUTHORIZED => [
+            OrderStateConfiguration::WAITING_PAYPAL_PAYMENT,
+            OrderStateConfiguration::WAITING_CREDIT_CARD_PAYMENT,
+            OrderStateConfiguration::WAITING_LOCAL_PAYMENT,
+            OrderStateConfiguration::PARTIALLY_REFUNDED,
+        ],
+        OrderStateConfiguration::PARTIALLY_PAID => [
+            OrderStateConfiguration::PAYMENT_ERROR,
+            OrderStateConfiguration::PAYMENT_ACCEPTED,
+        ],
+        OrderStateConfiguration::OUT_OF_STOCK_PAID => [],
+        OrderStateConfiguration::OUT_OF_STOCK_UNPAID => [],
+        OrderStateConfiguration::PAYMENT_ERROR => [],
+        OrderStateConfiguration::CANCELED => [],
     ];
 
     /**
-     * @var array
-     */
-    private $orderStateMapping;
-
-    /**
-     * @param array $orderStateMapping
-     */
-    public function __construct(array $orderStateMapping)
-    {
-        $this->orderStateMapping = $orderStateMapping;
-    }
-
-    /**
-     * @param int $currentOrderState
-     * @param int $newOrderState
+     * @param string $currentOrderState
+     * @param string $newOrderState
      *
      * @return bool
      */
@@ -65,37 +75,25 @@ class CheckOrderState
     }
 
     /**
-     * @param int $currentOrderStateId
-     * @param int $newOrderStateId
+     * @param string $currentOrderStateId
+     * @param string $newOrderStateId
      *
      * @return bool
+     *
+     * @throws OrderException
      */
     public function isOrderStateTransitionAvailable($currentOrderStateId, $newOrderStateId)
     {
-        $currentKey = $this->getOrderStateKey($currentOrderStateId);
-        $newKey = $this->getOrderStateKey($newOrderStateId);
-        foreach (self::TRANSITION_ALLOWED as $key => $availableStateKeys) {
-            if ($currentKey === $key && in_array($newKey, $availableStateKeys)) {
-                return true;
-            }
+        if (!is_string($currentOrderStateId)) {
+            throw new OrderException(sprintf('Type of currentOrderStateId (%s) is not string', gettype($currentOrderStateId)), OrderException::STATUS_CHECK_AVAILABLE_BAD_PARAMETER);
+        }
+        if (!is_string($newOrderStateId)) {
+            throw new OrderException(sprintf('Type of newOrderStateId (%s) is not string', gettype($newOrderStateId)), OrderException::STATUS_CHECK_AVAILABLE_BAD_PARAMETER);
+        }
+        if (!key_exists($currentOrderStateId, self::TRANSITION_ALLOWED)) {
+            throw new OrderException(sprintf('The currentOrderStateId doesn\'t exist (%s)', $currentOrderStateId), OrderException::STATUS_CHECK_AVAILABLE_BAD_PARAMETER);
         }
 
-        return false;
-    }
-
-    /**
-     * @param int $orderStateId
-     *
-     * @return string
-     */
-    private function getOrderStateKey($orderStateId)
-    {
-        foreach ($this->orderStateMapping as $const => $id) {
-            if ($orderStateId === $id) {
-                return $const;
-            }
-        }
-
-        return '';
+        return in_array($newOrderStateId, self::TRANSITION_ALLOWED[$currentOrderStateId]);
     }
 }
