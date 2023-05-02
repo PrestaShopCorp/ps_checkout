@@ -20,7 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\State;
 
-class OrderStateConfiguration
+class OrderStateConfigurationKeys
 {
     const CANCELED = 'PS_OS_CANCELED';
     const PAYMENT_ERROR = 'PS_OS_ERROR';

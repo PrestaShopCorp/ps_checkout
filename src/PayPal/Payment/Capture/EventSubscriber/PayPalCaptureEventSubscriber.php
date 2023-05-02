@@ -32,8 +32,9 @@ use PrestaShop\Module\PrestashopCheckout\Order\Payment\Query\GetOrderPaymentQuer
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
-use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckOrderState;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckTransitionStateService;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeniedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureEvent;
@@ -57,23 +58,23 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     private $psCheckoutCartRepository;
 
     /**
-     * @var CheckOrderState
+     * @var CheckTransitionStateService
      */
-    private $checkOrderState;
+    private $checkTransitionStateService;
 
     /**
      * @param CommandBusInterface $commandBus
      * @param PsCheckoutCartRepository $psCheckoutCartRepository
-     * @param CheckOrderState $checkOrderState
+     * @param CheckTransitionStateService $checkTransitionStateService
      */
     public function __construct(
         CommandBusInterface $commandBus,
         PsCheckoutCartRepository $psCheckoutCartRepository,
-        CheckOrderState $checkOrderState
+        CheckTransitionStateService $checkTransitionStateService
     ) {
         $this->commandBus = $commandBus;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-        $this->checkOrderState = $checkOrderState;
+        $this->checkTransitionStateService = $checkTransitionStateService;
     }
 
     /**
@@ -116,10 +117,10 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
                 $orderStateId = $this->getPendingStatusId($fundingSource);
                 break;
             case (float) $capture['amount']['value'] < $cart->getCartTotalPrice():
-                $orderStateId = \Configuration::getGlobalValue(OrderStateConfiguration::PARTIALLY_PAID);
+                $orderStateId = \Configuration::getGlobalValue(OrderStateConfigurationKeys::PARTIALLY_PAID);
                 break;
             case (float) $capture['amount']['value'] === $cart->getCartTotalPrice():
-                $orderStateId = \Configuration::getGlobalValue(OrderStateConfiguration::PAYMENT_ACCEPTED);
+                $orderStateId = \Configuration::getGlobalValue(OrderStateConfigurationKeys::PAYMENT_ACCEPTED);
                 $transactionId = $event->getPayPalCaptureId();
                 $paidAmount = $capture['amount']['value'];
                 break;
@@ -216,7 +217,37 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $orderId = $this->commandBus->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
         $order = new \Order($orderId);
         $currentOrderStateId = $order->getCurrentState();
-        $newOrderStateId = $this->getNewState($event, $currentOrderStateId, $psCheckoutCart->getPaypalFundingSource());
+
+
+        //ATTENTION LES YEUX !!! (A l'aide)
+        $total_refund = 0;
+        foreach ($order->getOrderSlipsCollection() as $orderSlip)
+        {
+            $total_refund += $orderSlip->amount;
+        }
+        $newOrderStateId = $this->checkTransitionStateService->getNewOrderState([
+            'cart' => ['amount' => $order->total_paid],
+            'Order' => [
+                'currentOrderStatus' => $currentOrderStateId,
+                'totalAmountPaid' => $order->getTotalPaid(),
+                'totalAmount' => $order->total_paid,
+                'totalRefunded' => $total_refund,
+            ],
+            'PayPalRefund' => [ // NULL si pas de refund dans l'order PayPal
+                null,
+            ],
+            'PayPalCapture' => [ // NULL si pas de refund dans l'order PayPal
+                'status' => $event->getCapture()['status'],
+                'amount' => $event->getCapture()['amount']['value'],
+            ],
+            'PayPalAuthorization' => [ // NULL si pas de refund dans l'order PayPal
+                null,
+            ],
+            'PayPalOrder' => [
+                'oldStatus' => PayPalOrderStatus::CREATED,
+                'newStatus' => PayPalOrderStatus::COMPLETED,
+            ],
+        ]);
 
         // Prevent duplicate state entry
         if ($currentOrderStateId !== $newOrderStateId

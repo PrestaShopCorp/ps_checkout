@@ -103,7 +103,7 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
 
         // It happens this returns null in case of override or weird modules
         if ($paymentModule->currentOrder) {
-            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) $paymentModule->currentOrder));
+            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) $paymentModule->currentOrder, (int) $cart->id));
 
             return;
         }
@@ -111,7 +111,7 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
         // Order::getIdByCartId() is available since PrestaShop 1.7.1.0
         if (method_exists(Order::class, 'getIdByCartId')) {
             // @phpstan-ignore-next-line
-            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) Order::getIdByCartId($cart->id)));
+            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) Order::getIdByCartId($cart->id), (int) $cart->id));
 
             return;
         }
@@ -119,7 +119,7 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
         // Order::getIdByCartId() is available before PrestaShop 1.7.1.0, removed since PrestaShop 8.0.0
         if (method_exists(Order::class, 'getOrderByCartId')) {
             // @phpstan-ignore-next-line
-            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) Order::getOrderByCartId($cart->id)));
+            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) Order::getOrderByCartId($cart->id),  (int) $cart->id));
 
             return;
         }

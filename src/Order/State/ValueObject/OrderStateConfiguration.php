@@ -18,52 +18,47 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Order\Event;
+namespace PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject;
 
-use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
-use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
-use PrestaShop\Module\PrestashopCheckout\Event\Event;
-use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
-use PrestaShop\Module\PrestashopCheckout\Order\ValueObject\OrderId;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
 
-class OrderCreatedEvent extends Event
+class OrderStateConfiguration
 {
     /**
-     * @var OrderId
+     * @var OrderStateId
      */
-    private $orderId;
+    private $orderStateId;
 
     /**
-     * @var CartId
+     * @var string
      */
-    private $cartId;
+    private $orderStateConfigurationName;
 
     /**
-     * @param int $orderId
-     * @param int $cartId
+     * @param int $orderStateId
+     * @param string $orderStateConfigurationName
      *
-     * @throws OrderException
-     * @throws CartException
+     * @throws OrderStateException
      */
-    public function __construct($orderId, $cartId)
+    public function __construct($orderStateId, $orderStateConfigurationName)
     {
-        $this->orderId = new OrderId($orderId);
-        $this->cartId = new CartId($cartId);
+        $this->orderStateId = new OrderStateId($orderStateId);
+        $this->orderStateConfigurationName = $orderStateConfigurationName;
     }
 
     /**
-     * @return OrderId
+     * @return int
      */
-    public function getOrderId()
+    public function getOrderStateId()
     {
-        return $this->orderId;
+        return $this->orderStateId->getValue();
     }
 
     /**
-     * @return CartId
+     * @return string
      */
-    public function getCartId()
+    public function getOrderStateConfigurationName()
     {
-        return $this->cartId;
+        return $this->orderStateConfigurationName;
     }
 }

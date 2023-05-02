@@ -22,7 +22,7 @@ namespace Tests\Unit\PayPal;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount;
-use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckOrderState;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckTransitionStateService;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CheckTransitionPayPalOrderStatusService;
@@ -48,7 +48,7 @@ class CheckTransitionStateServiceTest extends TestCase
                 [
                     'cart' => ['amount' => 10],
                     'Order' => [
-                        'currentOrderStatus' => OrderStateConfiguration::WAITING_PAYPAL_PAYMENT,
+                        'currentOrderStatus' => OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT,
                         'totalAmountPaid' => '0',
                         'totalAmount' => '10',
                         'totalRefunded' => '0',
@@ -68,13 +68,13 @@ class CheckTransitionStateServiceTest extends TestCase
                         'newStatus' => PayPalOrderStatus::COMPLETED,
                     ],
                 ],
-                OrderStateConfiguration::PAYMENT_ACCEPTED,
+                OrderStateConfigurationKeys::PAYMENT_ACCEPTED,
             ],
             [
                 [
                     'cart' => ['amount' => 10],
                     'Order' => [
-                        'currentOrderStatus' => OrderStateConfiguration::WAITING_PAYPAL_PAYMENT,
+                        'currentOrderStatus' => OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT,
                         'totalAmountPaid' => '0',
                         'totalAmount' => '10',
                         'totalRefunded' => '0',
@@ -94,13 +94,13 @@ class CheckTransitionStateServiceTest extends TestCase
                         'newStatus' => PayPalOrderStatus::COMPLETED,
                     ],
                 ],
-                OrderStateConfiguration::PARTIALLY_PAID,
+                OrderStateConfigurationKeys::PARTIALLY_PAID,
             ],
             [
                 [
                     'cart' => ['amount' => 10],
                     'Order' => [
-                        'currentOrderStatus' => OrderStateConfiguration::PAYMENT_ACCEPTED,
+                        'currentOrderStatus' => OrderStateConfigurationKeys::PAYMENT_ACCEPTED,
                         'totalAmountPaid' => '0',
                         'totalAmount' => '10',
                         'totalRefunded' => '0',
@@ -120,13 +120,13 @@ class CheckTransitionStateServiceTest extends TestCase
                         'newStatus' => PayPalOrderStatus::COMPLETED,
                     ],
                 ],
-                OrderStateConfiguration::PARTIALLY_REFUNDED,
+                OrderStateConfigurationKeys::PARTIALLY_REFUNDED,
             ],
             [
                 [
                     'cart' => ['amount' => 10],
                     'Order' => [
-                        'currentOrderStatus' => OrderStateConfiguration::PAYMENT_ACCEPTED,
+                        'currentOrderStatus' => OrderStateConfigurationKeys::PAYMENT_ACCEPTED,
                         'totalAmountPaid' => '0',
                         'totalAmount' => '10',
                         'totalRefunded' => '0',
@@ -146,13 +146,13 @@ class CheckTransitionStateServiceTest extends TestCase
                         'newStatus' => PayPalOrderStatus::COMPLETED,
                     ],
                 ],
-                OrderStateConfiguration::REFUNDED,
+                OrderStateConfigurationKeys::REFUNDED,
             ],
             [
                 [
                     'cart' => ['amount' => 10],
                     'Order' => [
-                        'currentOrderStatus' => OrderStateConfiguration::PAYMENT_ACCEPTED,
+                        'currentOrderStatus' => OrderStateConfigurationKeys::PAYMENT_ACCEPTED,
                         'totalAmountPaid' => '0',
                         'totalAmount' => '10',
                         'totalRefunded' => '0',
@@ -172,13 +172,13 @@ class CheckTransitionStateServiceTest extends TestCase
                         'newStatus' => PayPalOrderStatus::COMPLETED,
                     ],
                 ],
-                OrderStateConfiguration::PARTIALLY_REFUNDED,
+                OrderStateConfigurationKeys::PARTIALLY_REFUNDED,
             ],
             [
                 [
                     'cart' => ['amount' => 10],
                     'Order' => [
-                        'currentOrderStatus' => OrderStateConfiguration::PAYMENT_ACCEPTED,
+                        'currentOrderStatus' => OrderStateConfigurationKeys::PAYMENT_ACCEPTED,
                         'totalAmountPaid' => '0',
                         'totalAmount' => '10',
                         'totalRefunded' => '0',
@@ -198,13 +198,13 @@ class CheckTransitionStateServiceTest extends TestCase
                         'newStatus' => PayPalOrderStatus::COMPLETED,
                     ],
                 ],
-                OrderStateConfiguration::REFUNDED,
+                OrderStateConfigurationKeys::REFUNDED,
             ],
             [
                 [
                     'cart' => ['amount' => 10],
                     'Order' => [
-                        'currentOrderStatus' => OrderStateConfiguration::WAITING_CAPTURE,
+                        'currentOrderStatus' => OrderStateConfigurationKeys::WAITING_CAPTURE,
                         'totalAmountPaid' => '0',
                         'totalAmount' => '10',
                         'totalRefunded' => '0',
@@ -224,7 +224,7 @@ class CheckTransitionStateServiceTest extends TestCase
                         'newStatus' => PayPalOrderStatus::COMPLETED,
                     ],
                 ],
-                OrderStateConfiguration::WAITING_PAYPAL_PAYMENT,
+                OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT,
             ],
         ];
     }
