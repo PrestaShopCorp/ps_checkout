@@ -241,15 +241,28 @@ class GetOrderStateConfigurationQueryResult
 
     /**
      * @param OrderStateId $orderStateId
+     *
      * @return void
      */
-    public function getKeyById($orderStateId){
-        foreach ($this as $orderState){
-            if($orderState->getOrderStateId() == $orderStateId->getValue())
-            {
+    public function getKeyById($orderStateId)
+    {
+        foreach ($this as $orderState) {
+            if ($orderState->getOrderStateId() == $orderStateId->getValue()) {
                 return $orderState->getOrderStateConfigurationName();
             }
         }
+
+        return false;
+    }
+
+    public function getIdByKey($orderStateName)
+    {
+        foreach ($this as $orderState) {
+            if ($orderState->getOrderStateConfigurationName() == $orderStateName) {
+                return $orderState->getOrderStateId();
+            }
+        }
+
         return false;
     }
 }

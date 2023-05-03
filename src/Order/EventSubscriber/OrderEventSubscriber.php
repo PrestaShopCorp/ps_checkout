@@ -30,7 +30,6 @@ use PrestaShop\Module\PrestashopCheckout\Order\Matrice\Command\UpdateOrderMatric
 use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateQuery;
-use PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckOrderState;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckTransitionStateService;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
@@ -94,7 +93,7 @@ class OrderEventSubscriber implements EventSubscriberInterface
      */
     public function onOrderCreated(OrderCreatedEvent $event)
     {
-        $data =  [
+        $data = [
             'cart' => ['amount' => 10],
             'Order' => [
                 'currentOrderStatus' => OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT,

@@ -119,7 +119,7 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
         // Order::getIdByCartId() is available before PrestaShop 1.7.1.0, removed since PrestaShop 8.0.0
         if (method_exists(Order::class, 'getOrderByCartId')) {
             // @phpstan-ignore-next-line
-            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) Order::getOrderByCartId($cart->id),  (int) $cart->id));
+            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) Order::getOrderByCartId($cart->id), (int) $cart->id));
 
             return;
         }
