@@ -125,7 +125,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $cart = new \Cart($psCheckoutCart->getIdCart());
 
         if (empty($capture['amount']['value'])) {
-            $orderStateId = $this->getPendingStatusId($fundingSource);
+            $orderStateId = $getOrderStateConfiguration->getIdByKey(OrderStateConfigurationKeys::PARTIALLY_PAID);
         } else {
             switch ($this->checkOrderAmount->checkAmount((string) $capture['amount']['value'], (string) $cart->getCartTotalPrice())) {
                 case CheckOrderAmount::ORDER_NOT_FULL_PAID:
@@ -277,65 +277,5 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
                 throw new OrderStateException(sprintf('Order state from order #%s cannot be changed from %s to %s', $orderId, $currentOrderStateId, $newOrderStateId), OrderStateException::TRANSITION_UNAVAILABLE);
             }
         }
-    }
-
-    /**
-     * @param PayPalCaptureEvent $event
-     * @param int $currentOrderStateId
-     * @param string $fundingSource
-     *
-     * @return int
-     */
-    private function getNewState($event, $currentOrderStateId, $fundingSource)
-    {
-        $eventClass = get_class($event);
-        switch ($eventClass) {
-            case PayPalCaptureReversedEvent::class:
-                return (int) \Configuration::getGlobalValue('PS_OS_CANCELED');
-            case PayPalCaptureCompletedEvent::class:
-                return $this->getPaidStatusId($currentOrderStateId);
-            case PayPalCaptureDeniedEvent::class:
-                return (int) \Configuration::getGlobalValue('PS_OS_ERROR');
-            case PayPalCaptureRefundedEvent::class:
-                return (int) \Configuration::getGlobalValue('PS_OS_REFUND');
-            default:
-                return $this->getPendingStatusId($fundingSource);
-        }
-    }
-
-    /**
-     * @param int $currentOrderStateId Current OrderState identifier
-     *
-     * @return int OrderState paid identifier
-     */
-    private function getPaidStatusId($currentOrderStateId)
-    {
-        if ($currentOrderStateId === (int) \Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_UNPAID')) {
-            return (int) \Configuration::getGlobalValue('PS_OS_OUTOFSTOCK_PAID');
-        }
-
-        return (int) \Configuration::getGlobalValue('PS_OS_PAYMENT');
-    }
-
-    /**
-     * @param string $fundingSource
-     * @TODO to be removed as we will be keeping only one PS_CHECKOUT_STATE_WAITING_PAYMENT
-     *
-     * @return int OrderState identifier
-     */
-    private function getPendingStatusId($fundingSource)
-    {
-        switch ($fundingSource) {
-            case 'card':
-                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT');
-                break;
-            case 'paypal':
-                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT');
-                break;
-            default:
-                $orderStateId = (int) \Configuration::get('PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT');
-        }
-
-        return $orderStateId;
     }
 }
