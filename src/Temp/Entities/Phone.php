@@ -47,7 +47,7 @@ class Phone
     public function toArray()
     {
         return array_filter([
-            'national_number' => $this->getNationalNumber()
+            'national_number' => $this->getNationalNumber(),
         ]);
     }
 }

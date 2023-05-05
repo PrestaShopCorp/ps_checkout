@@ -61,7 +61,7 @@ class Payee
     {
         return array_filter([
             'email_address' => $this->getEmailAddress(),
-            'merchant_id' => $this->getMerchantId()
+            'merchant_id' => $this->getMerchantId(),
         ]);
     }
 }

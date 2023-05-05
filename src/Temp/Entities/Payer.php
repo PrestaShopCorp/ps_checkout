@@ -44,7 +44,7 @@ class Payer
     private $taxInfo;
 
     /**
-     * @link https://developer.paypal.com/docs/api/orders/v2/#definition-payer
+     * @see https://developer.paypal.com/docs/api/orders/v2/#definition-payer
      *
      * @param string $emailAddress
      * @param string $payerId
@@ -176,7 +176,7 @@ class Payer
     public function toArray()
     {
         $data = [
-            'email_address' => $this->getEmailAddress()
+            'email_address' => $this->getEmailAddress(),
         ];
 
         if (!empty($this->getPayerId())) {

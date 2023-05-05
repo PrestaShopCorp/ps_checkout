@@ -25,12 +25,12 @@ class ResumePayPalOrder
     /**
      * @var string
      */
-    public $oldStatus;
+    private $oldStatus;
 
     /**
      * @var string
      */
-    public $newStatus;
+    private $newStatus;
 
     /**
      * @param string $oldStatus

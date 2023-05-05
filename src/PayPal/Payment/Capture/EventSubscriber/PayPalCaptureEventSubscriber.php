@@ -238,6 +238,8 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         foreach ($order->getOrderSlipsCollection() as $orderSlip) {
             $total_refund += $orderSlip->amount;
         }
+
+        // TODO prendre exemple sur orderEventSubscriber pour convertire en objet
         $newOrderState = $this->checkTransitionStateService->getNewOrderState([
             'cart' => ['amount' => $order->total_paid],
             'Order' => [

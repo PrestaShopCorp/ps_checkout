@@ -25,12 +25,12 @@ class ResumePayPalCapture
     /**
      * @var string
      */
-    public $status;
+    private $status;
 
     /**
      * @var string
      */
-    public $amount;
+    private $amount;
 
     /**
      * @param string $status

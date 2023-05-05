@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Factory;
 
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
@@ -30,6 +31,7 @@ use PrestaShop\Module\PrestashopCheckout\Order\Resume\ResumePayPalAuthorization;
 use PrestaShop\Module\PrestashopCheckout\Order\Resume\ResumePayPalCapture;
 use PrestaShop\Module\PrestashopCheckout\Order\Resume\ResumePayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\Order\Resume\ResumePayPalRefund;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigurationQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
 
@@ -37,7 +39,6 @@ class OrderResumeFactory
 {
     const PAYPAL_CAPTURE = 'PAYPAL_CAPTURE';
     const PAYPAL_REFUND = 'PAYPAL_REFUND';
-
     const PAYPAL_AUTHORIZATION = 'PAYPAL_AUTHORIZATION';
 
     /**
@@ -66,8 +67,8 @@ class OrderResumeFactory
      * @throws OrderException
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
-     * @throws \PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException
-     * @throws \PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException
+     * @throws CartException
+     * @throws OrderStateException
      */
     public function create($cartId, $type, $status, $amount, $paypalOrderOldStatus, $paypalOrderNewStatus)
     {
@@ -81,37 +82,20 @@ class OrderResumeFactory
         foreach ($order->getOrderSlipsCollection() as $orderSlip) {
             $total_refund += $orderSlip->amount;
         }
-
+        $resumeOrder = new Resume(
+            new ResumeCart(new CartId($cart->id), $cart->getOrderTotal()),
+            new ResumeOrder($getOrderStateConfiguration->getKeyById($orderStateId), $orderStateId, $order->total_paid_real, $order->total_paid, $total_refund),
+            new ResumePayPalOrder($paypalOrderOldStatus, $paypalOrderNewStatus)
+        );
         switch ($type) {
             case self::PAYPAL_CAPTURE:
-                $resumeOrder = new Resume(
-                    new ResumeCart(new CartId($cart->id), $cart->getOrderTotal()),
-                    new ResumeOrder($getOrderStateConfiguration->getKeyById($orderStateId), $orderStateId, $order->total_paid_real, $order->total_paid, $total_refund),
-                    new ResumePayPalOrder($paypalOrderOldStatus, $paypalOrderNewStatus),
-                    new ResumePayPalCapture($status, $amount),
-                    null,
-                    null
-                );
+                $resumeOrder->setPaypalCapture(new ResumePayPalCapture($status, $amount));
                 break;
             case self::PAYPAL_REFUND:
-                $resumeOrder = new Resume(
-                    new ResumeCart(new CartId($cart->id), $cart->getOrderTotal()),
-                    new ResumeOrder($getOrderStateConfiguration->getKeyById($orderStateId), $orderStateId, $order->total_paid_real, $order->total_paid, $total_refund),
-                    new ResumePayPalOrder($paypalOrderOldStatus, $paypalOrderNewStatus),
-                    null,
-                    new ResumePayPalRefund($status, $amount),
-                    null
-                );
+                $resumeOrder->setPaypalRefund(new ResumePayPalRefund($status, $amount));
                 break;
             case self::PAYPAL_AUTHORIZATION:
-                $resumeOrder = new Resume(
-                    new ResumeCart(new CartId($cart->id), $cart->getOrderTotal()),
-                    new ResumeOrder($getOrderStateConfiguration->getKeyById($orderStateId), $orderStateId, $order->total_paid_real, $order->total_paid, $total_refund),
-                    new ResumePayPalOrder($paypalOrderOldStatus, $paypalOrderNewStatus),
-                    null,
-                    null,
-                    new ResumePayPalAuthorization($status, $amount)
-                );
+                $resumeOrder->setPaypalAuthorization(new ResumePayPalAuthorization($status, $amount));
                 break;
             default:
                 throw new OrderException(sprintf('PayPal Order State invalid ("%s")', $type), OrderException::INVALID_PAYPAL_ORDER_STATE);

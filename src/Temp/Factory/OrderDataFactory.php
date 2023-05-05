@@ -21,8 +21,8 @@
 namespace PrestaShop\Module\PrestashopCheckout\Temp\Factory;
 
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
-use PrestaShop\Module\PrestashopCheckout\Temp\Builder\CreateOrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Temp\Adapter\OrderDataAdapter;
+use PrestaShop\Module\PrestashopCheckout\Temp\Builder\CreateOrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Temp\Provider\OrderDataProvider;
 
 class OrderDataFactory
@@ -63,7 +63,8 @@ class OrderDataFactory
         $total_with_taxes = 0;
         try {
             $total_with_taxes = $cart->getOrderTotal();
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         $data = [
             'cart' => [
@@ -73,22 +74,22 @@ class OrderDataFactory
                 'shipping_cost' => '',
                 'subtotals' => [
                     'gift_wrapping' => [
-                        'amount' => !empty(true) ? 'y' : ''
-                    ]
+                        'amount' => !empty(true) ? 'y' : '',
+                    ],
                 ],
-                'total_with_taxes' => $total_with_taxes
+                'total_with_taxes' => $total_with_taxes,
             ],
             'currency' => [
-                'iso_code' => $currency->iso_code
+                'iso_code' => $currency->iso_code,
             ],
             'customer' => [
                 'birthday' => !empty($customer->birthday) ? $customer->birthday : '',
                 'email_address' => $customer->email,
-                'id_gender' => $customer->id_gender
+                'id_gender' => $customer->id_gender,
             ],
             'payee' => [
                 'email_address' => $this->accountRepository->getMerchantEmail(),
-                'merchant_id' => $this->accountRepository->getMerchantId()
+                'merchant_id' => $this->accountRepository->getMerchantId(),
             ],
             'payer' => [
                 'address_line_1' => $invoiceAddress->address1,
@@ -101,10 +102,10 @@ class OrderDataFactory
                 'payer_id' => '',
                 'phone' => $invoiceAddress->phone,
                 'phone_mobile' => $invoiceAddress->phone_mobile,
-                'postcode' => $invoiceAddress->postcode
+                'postcode' => $invoiceAddress->postcode,
             ],
             'psCheckout' => [
-                'isExpressCheckout' => $psCheckout->isExpressCheckout()
+                'isExpressCheckout' => $psCheckout->isExpressCheckout(),
             ],
             'shipping' => [
                 'address_line_1' => $deliveryAddress->address1,
@@ -114,11 +115,11 @@ class OrderDataFactory
                 'id_country' => $deliveryAddress->id_country,
                 'id_state' => $deliveryAddress->id_state,
                 'surname' => $deliveryAddress->lastname,
-                'postcode' => $deliveryAddress->postcode
+                'postcode' => $deliveryAddress->postcode,
             ],
             'shop' => [
-                'name' => $shop->name
-            ]
+                'name' => $shop->name,
+            ],
         ];
 
         return $this->createFromArray($data, $toArray);

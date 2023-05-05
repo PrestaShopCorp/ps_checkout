@@ -53,7 +53,7 @@ class Amount
     public function toArray()
     {
         $data = [
-            'money' => $this->getMoney()->toArray()
+            'money' => $this->getMoney()->toArray(),
         ];
 
         if (!empty($this->getBreakdown())) {

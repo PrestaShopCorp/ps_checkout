@@ -50,11 +50,12 @@ class PurchaseUnit
     private $softDescriptor;
 
     /**
-     * @link https://developer.paypal.com/docs/api/orders/v2/#definition-purchase_unit_request
+     * @see https://developer.paypal.com/docs/api/orders/v2/#definition-purchase_unit_request
      *
      * @param Amount $amount
      */
-    public function __construct($amount) {
+    public function __construct($amount)
+    {
         $this->setAmount($amount);
     }
 
@@ -205,7 +206,7 @@ class PurchaseUnit
     public function toArray()
     {
         $data = [
-            'amount' => $this->getAmount()->toArray()
+            'amount' => $this->getAmount()->toArray(),
         ];
 
         if (!empty($this->getCustomId())) {

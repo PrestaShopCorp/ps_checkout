@@ -24,36 +24,42 @@ class Address
 {
     /**
      * The first line of the address, such as number and street.
+     *
      * @var string
      */
     private $addressLine1;
 
     /**
      * The second line of the address, for example, a suite or apartment number.
+     *
      * @var string
      */
     private $addressLine2;
 
     /**
      * The highest-level sub-division in a country, which is usually a province, state, or ISO-3166-2 subdivision.
+     *
      * @var string
      */
     private $adminArea1;
 
     /**
      * A city, town, or village.
+     *
      * @var string
      */
     private $adminArea2;
 
     /**
      * The ISO 3166-1 code that identifies the country or region
+     *
      * @var string
      */
     private $countryCode;
 
     /**
      * The postal code, which is the ZIP code or equivalent.
+     *
      * @var string
      */
     private $postalCode;
@@ -167,7 +173,7 @@ class Address
     public function toArray()
     {
         $data = [
-            'country_code' => $this->countryCode
+            'country_code' => $this->countryCode,
         ];
 
         if (!empty($this->getAddressLine1())) {

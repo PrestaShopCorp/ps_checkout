@@ -49,7 +49,7 @@ class CreateOrderPayloadBuilder
     }
 
     /**
-     * @param boolean
+     * @param bool
      *
      * @return array
      */
@@ -59,12 +59,12 @@ class CreateOrderPayloadBuilder
             'application_context' => $this->buildApplicationContextNode($toArray),
             'intent' => 'CAPTURE',
             'payer' => $this->buildPayerNode($toArray),
-            'purchase_units' => $this->buildPurchaseUnitsNode($toArray)
+            'purchase_units' => $this->buildPurchaseUnitsNode($toArray),
         ];
     }
 
     /**
-     * @param boolean
+     * @param bool
      *
      * @return array|ApplicationContext
      */
@@ -78,7 +78,7 @@ class CreateOrderPayloadBuilder
     }
 
     /**
-     * @param boolean
+     * @param bool
      *
      * @return array|Payer
      */
@@ -110,7 +110,7 @@ class CreateOrderPayloadBuilder
     }
 
     /**
-     * @param boolean
+     * @param bool
      *
      * @return array
      */

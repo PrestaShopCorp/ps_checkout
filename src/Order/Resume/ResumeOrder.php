@@ -27,27 +27,27 @@ class ResumeOrder
     /**
      * @var string
      */
-    public $currentOrderStatus;
+    private $currentOrderStatus;
 
     /**
      * @var OrderStateId
      */
-    public $currentOrderStatusId;
+    private $currentOrderStatusId;
 
     /**
      * @var string
      */
-    public $totalAmountPaid;
+    private $totalAmountPaid;
 
     /**
      * @var string
      */
-    public $totalAmount;
+    private $totalAmount;
 
     /**
      * @var string
      */
-    public $totalRefunded;
+    private $totalRefunded;
 
     /**
      * @param string $currentOrderStatus

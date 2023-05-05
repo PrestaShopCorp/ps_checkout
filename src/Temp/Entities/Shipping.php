@@ -70,9 +70,9 @@ class Shipping
         return array_filter([
             'address' => $this->getAddress()->toArray(),
             'name' => [
-                'full_name' => $this->getName()
+                'full_name' => $this->getName(),
             ],
-            'type' => $this->getType()
+            'type' => $this->getType(),
         ]);
     }
 }

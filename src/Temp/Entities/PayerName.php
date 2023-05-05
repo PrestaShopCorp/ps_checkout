@@ -77,7 +77,7 @@ class PayerName
     {
         return array_filter([
             'given_name' => $this->getGivenName(),
-            'surname' => $this->getSurname()
+            'surname' => $this->getSurname(),
         ]);
     }
 }

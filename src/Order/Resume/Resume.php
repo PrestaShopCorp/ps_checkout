@@ -25,32 +25,32 @@ class Resume
     /**
      * @var ResumeCart
      */
-    public $cart;
+    private $cart;
 
     /**
      * @var ResumeOrder
      */
-    public $order;
+    private $order;
 
     /**
      * @var ResumePayPalOrder
      */
-    public $paypalOrder;
+    private $paypalOrder;
 
     /**
      * @var ResumePayPalCapture
      */
-    public $paypalCapture;
+    private $paypalCapture;
 
     /**
      * @var ResumePayPalRefund
      */
-    public $paypalRefund;
+    private $paypalRefund;
 
     /**
      * @var ResumePayPalAuthorization
      */
-    public $paypalAuthorization;
+    private $paypalAuthorization;
 
     /**
      * @param ResumeCart $cart
@@ -60,14 +60,11 @@ class Resume
      * @param ResumePayPalRefund $paypalRefund
      * @param ResumePayPalAuthorization $paypalAuthorization
      */
-    public function __construct(ResumeCart $cart, ResumeOrder $order, ResumePayPalOrder $paypalOrder, ResumePayPalCapture $paypalCapture, ResumePayPalRefund $paypalRefund, ResumePayPalAuthorization $paypalAuthorization)
+    public function __construct(ResumeCart $cart, ResumeOrder $order, ResumePayPalOrder $paypalOrder)
     {
         $this->cart = $cart;
         $this->order = $order;
         $this->paypalOrder = $paypalOrder;
-        $this->paypalCapture = $paypalCapture;
-        $this->paypalRefund = $paypalRefund;
-        $this->paypalAuthorization = $paypalAuthorization;
     }
 
     /**
@@ -116,5 +113,29 @@ class Resume
     public function getPaypalAuthorization()
     {
         return $this->paypalAuthorization;
+    }
+
+    /**
+     * @param ResumePayPalCapture $paypalCapture
+     */
+    public function setPaypalCapture($paypalCapture)
+    {
+        $this->paypalCapture = $paypalCapture;
+    }
+
+    /**
+     * @param ResumePayPalRefund $paypalRefund
+     */
+    public function setPaypalRefund($paypalRefund)
+    {
+        $this->paypalRefund = $paypalRefund;
+    }
+
+    /**
+     * @param ResumePayPalAuthorization $paypalAuthorization
+     */
+    public function setPaypalAuthorization($paypalAuthorization)
+    {
+        $this->paypalAuthorization = $paypalAuthorization;
     }
 }

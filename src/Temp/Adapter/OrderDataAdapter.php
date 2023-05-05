@@ -33,7 +33,8 @@ class OrderDataAdapter
      *
      * @return bool|string
      */
-    public function getIsoCountry($idCountry) {
+    public function getIsoCountry($idCountry)
+    {
         return \CountryCore::getIsoById($idCountry);
     }
 }

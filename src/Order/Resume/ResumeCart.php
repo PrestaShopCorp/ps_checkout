@@ -27,12 +27,12 @@ class ResumeCart
     /**
      * @var CartId
      */
-    public $id;
+    private $id;
 
     /**
      * @var string
      */
-    public $amount;
+    private $amount;
 
     /**
      * @param CartId $id

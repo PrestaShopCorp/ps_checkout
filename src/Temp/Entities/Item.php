@@ -175,7 +175,7 @@ class Item
         $data = [
             'name' => $this->getName(),
             'quantity' => $this->getQuantity(),
-            'unit_amount' => $this->getUnitAmount()->toArray()
+            'unit_amount' => $this->getUnitAmount()->toArray(),
         ];
 
         if (!empty($this->getCategory())) {

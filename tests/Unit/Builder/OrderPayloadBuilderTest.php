@@ -24,8 +24,8 @@ use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfigurationOptionsResolver;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
-use PrestaShop\Module\PrestashopCheckout\Temp\Factory\OrderDataFactory;
 use PrestaShop\Module\PrestashopCheckout\Temp\Adapter\OrderDataAdapter;
+use PrestaShop\Module\PrestashopCheckout\Temp\Factory\OrderDataFactory;
 
 class OrderPayloadBuilderTest extends TestCase
 {
@@ -73,22 +73,22 @@ class OrderPayloadBuilderTest extends TestCase
                 'shipping_cost' => 5.70,
                 'subtotals' => [
                     'gift_wrapping' => [
-                        'amount' => 0
-                    ]
+                        'amount' => 0,
+                    ],
                 ],
-                'total_with_taxes' => 83
+                'total_with_taxes' => 83,
             ],
             'currency' => [
-                'iso_code' => 1
+                'iso_code' => 1,
             ],
             'customer' => [
                 'birthday' => '1990-01-01',
                 'email_address' => 'john.doe@mail.fr',
-                'id_gender' => 1
+                'id_gender' => 1,
             ],
             'payee' => [
                 'email_address' => 'nhoj.eod@prestatest.fr',
-                'merchant_id' => '716537O08'
+                'merchant_id' => '716537O08',
             ],
             'payer' => [
                 'address_line_1' => '16 rue des champs',
@@ -101,10 +101,10 @@ class OrderPayloadBuilderTest extends TestCase
                 'payer_id' => '',
                 'phone' => '',
                 'phone_mobile' => '0612345678',
-                'postcode' => '75000'
+                'postcode' => '75000',
             ],
             'psCheckout' => [
-                'isExpressCheckout' => false
+                'isExpressCheckout' => false,
             ],
             'shipping' => [
                 'address_line_1' => '5 rue du port',
@@ -114,11 +114,11 @@ class OrderPayloadBuilderTest extends TestCase
                 'id_country' => 1,
                 'id_state' => 1,
                 'surname' => 'Doe',
-                'postcode' => '72000'
+                'postcode' => '72000',
             ],
             'shop' => [
-                'name' => 'PrestaTest'
-            ]
+                'name' => 'PrestaTest',
+            ],
         ];
     }
 
@@ -134,7 +134,7 @@ class OrderPayloadBuilderTest extends TestCase
                 'name' => 'Pull imprime',
                 'quantity' => 2,
                 'total' => 37.80,
-                'total_wt' => 40
+                'total_wt' => 40,
             ],
             [
                 'attributes' => 'Mug rouge en ceramique, avec une anse',
@@ -142,8 +142,8 @@ class OrderPayloadBuilderTest extends TestCase
                 'name' => 'Mug',
                 'quantity' => 1,
                 'total' => 2.60,
-                'total_wt' => 3
-            ]
+                'total_wt' => 3,
+            ],
         ];
     }
 
@@ -152,7 +152,7 @@ class OrderPayloadBuilderTest extends TestCase
      */
     private function checkPayloadPayer($payload)
     {
-        print 'Payer : ' . json_encode($payload['payer']) . PHP_EOL;
+        echo 'Payer : ' . json_encode($payload['payer']) . PHP_EOL;
     }
 
     /**
@@ -160,7 +160,7 @@ class OrderPayloadBuilderTest extends TestCase
      */
     private function checkPayloadApplicationContext($payload)
     {
-        print 'ApplicationContext : ' . json_encode($payload['application_context']) . PHP_EOL;
+        echo 'ApplicationContext : ' . json_encode($payload['application_context']) . PHP_EOL;
     }
 
     /**
@@ -168,7 +168,7 @@ class OrderPayloadBuilderTest extends TestCase
      */
     private function checkPayloadPurchaseUnits($payload)
     {
-        print 'PurchaseUnits : ' . json_encode($payload['purchase_units']) . PHP_EOL;
+        echo 'PurchaseUnits : ' . json_encode($payload['purchase_units']) . PHP_EOL;
     }
 
     /**
@@ -178,6 +178,6 @@ class OrderPayloadBuilderTest extends TestCase
     {
         $checksum = $payload['payer']->generateChecksum();
         $checksum2 = $payload2['payer']->generateChecksum();
-        $this->assertTrue($checksum !== $checksum2,'Two different checksum for the Payer object');
+        $this->assertTrue($checksum !== $checksum2, 'Two different checksum for the Payer object');
     }
 }

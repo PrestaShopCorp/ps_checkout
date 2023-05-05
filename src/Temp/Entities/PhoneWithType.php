@@ -74,7 +74,7 @@ class PhoneWithType
     public function toArray()
     {
         $data = [
-            'phone_number' => $this->getPhoneNumber()->toArray()
+            'phone_number' => $this->getPhoneNumber()->toArray(),
         ];
 
         if (!empty($this->getPhoneType())) {

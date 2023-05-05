@@ -57,7 +57,7 @@ class Money
     {
         return [
             'currency_code' => $this->getCurrencyCode(),
-            'value' => $this->getValue()
+            'value' => $this->getValue(),
         ];
     }
 }
