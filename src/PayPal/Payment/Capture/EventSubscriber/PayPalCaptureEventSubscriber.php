@@ -38,6 +38,7 @@ use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigur
 use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigurationQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckTransitionStateService;
 use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeniedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureEvent;
@@ -46,6 +47,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapt
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalCaptureEventSubscriber implements EventSubscriberInterface
@@ -71,17 +73,26 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     private $checkOrderAmount;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @param CommandBusInterface $commandBus
+     * @param LoggerInterface $logger
      * @param PsCheckoutCartRepository $psCheckoutCartRepository
      * @param CheckTransitionStateService $checkTransitionStateService
+     * @param CheckOrderAmount $checkOrderAmount
      */
     public function __construct(
         CommandBusInterface $commandBus,
+        LoggerInterface $logger,
         PsCheckoutCartRepository $psCheckoutCartRepository,
         CheckTransitionStateService $checkTransitionStateService,
-        CheckOrderAmout $checkOrderAmount
+        CheckOrderAmount $checkOrderAmount
     ) {
         $this->commandBus = $commandBus;
+        $this->logger = $logger;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
         $this->checkTransitionStateService = $checkTransitionStateService;
         $this->checkOrderAmount = $checkOrderAmount;
@@ -176,6 +187,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         try {
             $this->commandBus->handle(new GetOrderPaymentQuery($event->getPayPalCaptureId()));
 
+            $this->logger->info('Order Payment is already created.');
             return; // We already have an OrderPayment, there's no need to add another one
         } catch (OrderPaymentException $e) {
         }
@@ -204,6 +216,8 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
                 $order->getCurrencyId(),
                 $transactionId
             ));
+        } else {
+            $this->logger->info('Order Payment failed to be created.');
         }
     }
 
@@ -278,6 +292,8 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             } else {
                 throw new OrderStateException(sprintf('Order state from order #%s cannot be changed from %s to %s', $orderId, $currentOrderStateId, $newOrderStateId), OrderStateException::TRANSITION_UNAVAILABLE);
             }
+        } else {
+            $this->logger->info('Order state failed to be updated.');
         }
     }
 }

@@ -20,26 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
 
-class PayPalOrderFetchedEvent
+class PayPalOrderFetchedEvent extends PayPalOrderEvent
 {
-    /**
-     * @var array
-     */
-    private $orderPayPal;
-
-    /**
-     * @param array $orderPayPal
-     */
-    public function __construct($orderPayPal)
-    {
-        $this->orderPayPal = $orderPayPal;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOrderPayPal()
-    {
-        return $this->orderPayPal;
-    }
 }

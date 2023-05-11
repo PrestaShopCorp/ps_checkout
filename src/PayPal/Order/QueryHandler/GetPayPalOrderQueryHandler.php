@@ -63,7 +63,7 @@ class GetPayPalOrderQueryHandler
         }
 
         $this->eventDispatcher->dispatch(
-            new PayPalOrderFetchedEvent($orderPayPal->getOrder())
+            new PayPalOrderFetchedEvent($getPayPalOrderQuery->getOrderId()->getValue(), $orderPayPal->getOrder())
         );
 
         return new GetPayPalOrderQueryResult($orderPayPal->getOrder());

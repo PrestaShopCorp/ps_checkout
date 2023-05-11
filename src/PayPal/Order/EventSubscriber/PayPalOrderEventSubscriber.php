@@ -42,6 +42,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderNotApprov
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalOrderEventSubscriber implements EventSubscriberInterface
@@ -50,6 +51,12 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      * @var CommandBusInterface
      */
     private $commandBus;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     /**
      * @var PsCheckoutCartRepository
      */
@@ -60,9 +67,11 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      */
     public function __construct(
         CommandBusInterface $commandBus,
+        LoggerInterface $logger,
         PsCheckoutCartRepository $psCheckoutCartRepository
     ) {
         $this->commandBus = $commandBus;
+        $this->logger = $logger;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
     }
 
@@ -178,6 +187,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
 
         // ExpressCheckout require buyer select a delivery option, we have to check if cart is ready to payment
         if ($psCheckoutCart->isExpressCheckout() && $psCheckoutCart->getPaypalFundingSource() === 'paypal') {
+            $this->logger->info('PayPal Order cannot be captured.');
             return;
         }
 
@@ -217,7 +227,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     public function prunePayPalOrderCache(PayPalOrderEvent $event)
     {
         $this->commandBus->handle(
-            new PrunePayPalOrderCacheCommand($event->getOrderPayPalId())
+            new PrunePayPalOrderCacheCommand($event->getOrderPayPalId()->getValue())
         );
     }
 
@@ -246,10 +256,11 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     public function updateOrderStatus(PayPalOrderCompletedEvent $event)
     {
         $getOrderStateConfiguration = $this->commandBus->handle(new GetOrderStateConfigurationQuery());
-        $orderId = new OrderId($event->getOrder()->id);
+        $order = $event->getOrder();
+        $orderId = new OrderId($order['id']);
         $currentOrderState = $getOrderStateConfiguration->getKeyById(new OrderStateId($event->getOrder()->getCurrentState()));
         $this->commandBus->handle(
-            new UpdateOrderStatusCommand($orderId, $currentOrderState)
+            new UpdateOrderStatusCommand($order['id'], $currentOrderState)
         );
     }
 }

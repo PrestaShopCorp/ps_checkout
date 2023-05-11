@@ -32,19 +32,19 @@ class PayPalOrderEvent extends Event
     private $orderPayPalId;
 
     /**
-     * @var array
+     * @var array{id: string, status: string, intent: string, payment_source: array, purchase_units: array, payer: array, create_time: string, links: array}
      */
-    private $orderPayload;
+    private $order;
 
     /**
-     * @param int $orderPayPalId
+     * @param string $orderPayPalId
      *
      * @throws PayPalOrderException
      */
-    public function __construct($orderPayPalId, $orderPayload)
+    public function __construct($orderPayPalId, $order)
     {
         $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
-        $this->orderPayload = $orderPayload;
+        $this->order = $order;
     }
 
     /**
@@ -58,8 +58,8 @@ class PayPalOrderEvent extends Event
     /**
      * @return array
      */
-    public function getOrderPayload()
+    public function getOrder()
     {
-
+        return $this->order;
     }
 }
