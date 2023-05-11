@@ -23,6 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdatePayPalOrderMatriceCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\PrunePayPalOrderCacheCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCacheCommand;
@@ -33,8 +34,10 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEv
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderFetchedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderNotApprovedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalOrderEventSubscriber implements EventSubscriberInterface
@@ -43,6 +46,12 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      * @var CommandBusInterface
      */
     private $commandBus;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     /**
      * @var PsCheckoutCartRepository
      */
@@ -53,9 +62,11 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      */
     public function __construct(
         CommandBusInterface $commandBus,
+        LoggerInterface $logger,
         PsCheckoutCartRepository $psCheckoutCartRepository
     ) {
         $this->commandBus = $commandBus;
+        $this->logger = $logger;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
     }
 
@@ -151,6 +162,10 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      * @param PayPalOrderApprovedEvent $event
      *
      * @return void
+     *
+     * @throws PsCheckoutException
+     * @throws \PrestaShopException
+     * @throws PayPalOrderException
      */
     public function capturePayPalOrder(PayPalOrderApprovedEvent $event)
     {
@@ -162,10 +177,49 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
 
         // ExpressCheckout require buyer select a delivery option, we have to check if cart is ready to payment
         if ($psCheckoutCart->isExpressCheckout() && $psCheckoutCart->getPaypalFundingSource() === 'paypal') {
+            $this->logger->info('PayPal Order cannot be captured.');
             return;
         }
 
         // @todo Always check if Cart is ready to payment before (quantities, stocks, invoice address, delivery address, delivery option...)
+
+        if ($psCheckoutCart->isHostedFields()) {
+            $card3DSecure = (new Card3DSecure())->continueWithAuthorization($event->getOrder());
+
+            $this->logger->info(
+                '3D Secure authentication result',
+                [
+                    'authentication_result' => isset($order['payment_source']['card']['authentication_result']) ? $order['payment_source']['card']['authentication_result'] : null,
+                    'decision' => str_replace(
+                        [
+                            (string) Card3DSecure::NO_DECISION,
+                            (string) Card3DSecure::PROCEED,
+                            (string) Card3DSecure::REJECT,
+                            (string) Card3DSecure::RETRY,
+                        ],
+                        [
+                            \Configuration::get('PS_CHECKOUT_LIABILITY_SHIFT_REQ') ? 'Rejected, no liability shift' : 'Proceed, without liability shift',
+                            'Proceed, liability shift is possible',
+                            'Rejected',
+                            'Retry, ask customer to retry',
+                        ],
+                        (string) $card3DSecure
+                    ),
+                ]
+            );
+
+            switch ($card3DSecure) {
+                case Card3DSecure::REJECT:
+                    throw new PsCheckoutException('Card Strong Customer Authentication failure', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_FAILURE);
+                case Card3DSecure::RETRY:
+                    throw new PsCheckoutException('Card Strong Customer Authentication must be retried.', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN);
+                case Card3DSecure::NO_DECISION:
+                    if (\Configuration::get('PS_CHECKOUT_LIABILITY_SHIFT_REQ')) {
+                        throw new PsCheckoutException('No liability shift to card issuer', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN);
+                    }
+                    break;
+            }
+        }
 
         // This should mainly occur for APMs
         $this->commandBus->handle(
@@ -180,7 +234,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     {
         $this->commandBus->handle(new UpdatePayPalOrderCacheCommand(
             $event->getOrderPayPalId()->getValue(),
-            $event->getOrderPayPalId()->getValue() // TODO : Recuperer la response
+            $event->getOrder()
         ));
     }
 
@@ -192,7 +246,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     public function prunePayPalOrderCache(PayPalOrderEvent $event)
     {
         $this->commandBus->handle(
-            new PrunePayPalOrderCacheCommand($event->getOrderPayPalId())
+            new PrunePayPalOrderCacheCommand($event->getOrderPayPalId()->getValue())
         );
     }
 
