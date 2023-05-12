@@ -184,7 +184,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         // @todo Always check if Cart is ready to payment before (quantities, stocks, invoice address, delivery address, delivery option...)
 
         if ($psCheckoutCart->isHostedFields()) {
-            $card3DSecure = (new Card3DSecure())->continueWithAuthorization($event->getOrder());
+            $card3DSecure = (new Card3DSecure())->continueWithAuthorization($event->getOrderPayPal());
 
             $this->logger->info(
                 '3D Secure authentication result',
@@ -234,7 +234,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     {
         $this->commandBus->handle(new UpdatePayPalOrderCacheCommand(
             $event->getOrderPayPalId()->getValue(),
-            $event->getOrder()
+            $event->getOrderPayPal()
         ));
     }
 
