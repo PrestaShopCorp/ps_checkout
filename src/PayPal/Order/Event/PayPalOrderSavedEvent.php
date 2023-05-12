@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -18,29 +19,34 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCacheCommand;
-use Psr\SimpleCache\CacheInterface;
-
-class UpdatePayPalOrderCacheCommandHandler
+class PayPalOrderSavedEvent extends PayPalOrderEvent
 {
     /**
-     * @var CacheInterface
+     * @var string
      */
-    private $paypalOrderCache;
+    private $dateUpd;
 
     /**
-     * @param CacheInterface $paypalOrderCache
+     * @param string $orderPayPalId
+     * @param string $orderPayPal
+     * @param string $dateUpd
+     *
+     * @throws PayPalCaptureException
+     * @throws PayPalOrderException
      */
-    public function __construct($paypalOrderCache)
+    public function __construct($orderPayPalId, $orderPayPal, $dateUpd)
     {
-        $this->paypalOrderCache = $paypalOrderCache;
+        parent::__construct($orderPayPalId, $orderPayPal);
+        $this->dateUpd = $dateUpd;
     }
 
-    public function handle(UpdatePayPalOrderCacheCommand $updatePayPalOrderCacheCommand)
+    /**
+     * @return string
+     */
+    public function getDateUpd()
     {
-        $responseBody = $updatePayPalOrderCacheCommand->getOrder();
-        $this->paypalOrderCache->set($responseBody['id'], $responseBody);
+        return $this->dateUpd;
     }
 }

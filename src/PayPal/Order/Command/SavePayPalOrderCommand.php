@@ -19,13 +19,12 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
 
-use PrestaShop\Module\PrestashopCheckout\Event\Event;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 
-class PayPalOrderEvent extends Event
+class SavePayPalOrderCommand
 {
     /**
      * @var PayPalOrderId
@@ -33,18 +32,27 @@ class PayPalOrderEvent extends Event
     private $orderPayPalId;
 
     /**
-     * @var array{id: string, status: string, intent: string, payment_source: array, purchase_units: array, payer: array, create_time: string, links: array}
+     * @var string
+     */
+    private $orderPayPalStatus;
+
+    /**
+     * @var array;
      */
     private $orderPayPal;
 
     /**
      * @param string $orderPayPalId
+     * @param string $orderPayPalStatus
+     * @param string $orderPayPal
      *
      * @throws PayPalOrderException
+     * @throws \PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException
      */
-    public function __construct($orderPayPalId, $orderPayPal)
+    public function __construct($orderPayPalId, $orderPayPalStatus, $orderPayPal)
     {
         $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
+        $this->orderPayPalStatus = $orderPayPalStatus;
         $this->orderPayPal = $orderPayPal;
     }
 
@@ -54,6 +62,14 @@ class PayPalOrderEvent extends Event
     public function getOrderPayPalId()
     {
         return $this->orderPayPalId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrderPaypalStatus()
+    {
+        return $this->orderPayPalStatus;
     }
 
     /**

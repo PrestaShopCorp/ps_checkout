@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -31,6 +32,7 @@ use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
 use PrestaShop\Module\PrestashopCheckout\Order\ValueObject\OrderId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\PrunePayPalOrderCacheCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCacheCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovalReversedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
@@ -41,7 +43,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderFetchedEv
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderNotApprovedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -82,27 +83,28 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     {
         return [
             PayPalOrderCreatedEvent::class => [
-                ['updatePayPalOrder'],
+                ['savePayPalOrder'],
                 ['prunePayPalOrderCache'],
             ],
             PayPalOrderApprovedEvent::class => [
-                ['updatePayPalOrder'],
+                ['savePayPalOrder'],
                 ['capturePayPalOrder'],
                 ['prunePayPalOrderCache'],
             ],
             PayPalOrderNotApprovedEvent::class => [
-                ['updatePayPalOrder'],
+                ['savePayPalOrder'],
             ],
             PayPalOrderCompletedEvent::class => [
-                ['updatePayPalOrder'],
+                ['savePayPalOrder'],
                 ['updatePayPalOrderMatrice'],
                 ['prunePayPalOrderCache'],
             ],
             PayPalOrderApprovalReversedEvent::class => [
-                ['updatePayPalOrder'],
+                ['savePayPalOrder'],
                 ['prunePayPalOrderCache'],
             ],
             PayPalOrderFetchedEvent::class => [
+                ['savePayPalOrder'],
                 ['updatePayPalOrderCache'],
             ],
         ];
@@ -118,7 +120,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      * @throws \PrestaShopException
      * @throws \PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException
      */
-    public function updatePayPalOrder($event)
+    public function savePayPalOrder($event)
     {
         // @todo We don't have a dedicated table for order data storage in database yet
         // But we can save some data in current pscheckout_cart table
@@ -154,18 +156,13 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->commandBus->handle(new UpdatePsCheckoutSessionCommand(
-            $event->getOrderPayPalId()->getValue(),
-            $psCheckoutCart->getIdCart(),
-            $psCheckoutCart->getPaypalFundingSource(),
-            $psCheckoutCart->getPaypalIntent(),
-            $orderStatus,
-            $psCheckoutCart->getPaypalClientToken(),
-            $psCheckoutCart->paypal_token_expire,
-            $psCheckoutCart->paypal_authorization_expire,
-            $psCheckoutCart->isHostedFields(),
-            $psCheckoutCart->isExpressCheckout()
-        ));
+        if ($psCheckoutCart->getPaypalStatus() !== $orderStatus || $psCheckoutCart->getDateUpd() < date('Y-m-d H:i:s')) {
+            $this->commandBus->handle(new SavePayPalOrderCommand(
+                $event->getOrderPayPalId()->getValue(),
+                $orderStatus,
+                $event->getOrderPayPal()
+            ));
+        }
     }
 
     /**
@@ -213,7 +210,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     {
         $this->commandBus->handle(new UpdatePayPalOrderCacheCommand(
             $event->getOrderPayPalId()->getValue(),
-            $event->getOrder()
+            $event->getOrderPayPal()
         ));
     }
 
@@ -256,9 +253,9 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     public function updateOrderStatus(PayPalOrderCompletedEvent $event)
     {
         $getOrderStateConfiguration = $this->commandBus->handle(new GetOrderStateConfigurationQuery());
-        $order = $event->getOrder();
-        $orderId = new OrderId($order['id']);
-        $currentOrderState = $getOrderStateConfiguration->getKeyById(new OrderStateId($event->getOrder()->getCurrentState()));
+        $orderId = new OrderId($event->getOrderPayPalId()->getValue());
+        // TODO: Retrieve current state
+        $currentOrderState = $getOrderStateConfiguration->getKeyById(new OrderStateId($event->getOrderPayPal()->getCurrentState()));
         $this->commandBus->handle(
             new UpdateOrderStatusCommand($order['id'], $currentOrderState)
         );

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -138,11 +139,13 @@ class ValidateOrder
             /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider $fundingSourceTranslationProvider */
             $fundingSourceTranslationProvider = $module->getService('ps_checkout.funding_source.translation');
 
-            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
-            $psCheckoutCartRepository = $module->getService('ps_checkout.repository.pscheckoutcart');
+            // UpdatePsCheckoutSessionCommandHandler
+            // /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            // $psCheckoutCartRepository = $module->getService('ps_checkout.repository.pscheckoutcart');
 
-            /** @var \PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $payload['cartId']);
+            // /** @var \PsCheckoutCart|false $psCheckoutCart */
+            // $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $payload['cartId']);
+            // UpdatePsCheckoutSessionCommandHandler
 
             // Check if the PayPal order amount is the same than the cart amount
             // We tolerate a difference of more or less 0.05
@@ -183,7 +186,8 @@ class ValidateOrder
                 $transactionIdentifier = $response['body']['purchase_units'][0]['payments']['captures'][0]['id'];
                 $transactionStatus = $response['body']['purchase_units'][0]['payments']['captures'][0]['status'];
 
-                if (self::CAPTURE_STATUS_DECLINED === $transactionStatus
+                if (
+                    self::CAPTURE_STATUS_DECLINED === $transactionStatus
                     && false === empty($response['body']['payment_source'])
                     && false === empty($response['body']['payment_source'][0]['card'])
                     && false === empty($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response'])
@@ -198,23 +202,26 @@ class ValidateOrder
                     $payPalProcessorResponse->throwException();
                 }
             }
+            // UpdatePayPalOrderCacheCommandHandler
+            // /** @var CacheInterface $paypalOrderCache */
+            // $paypalOrderCache = $module->getService('ps_checkout.cache.paypal.order');
+            // $paypalOrderCache->set($response['body']['id'], $response['body']);
+            // UpdatePayPalOrderCacheCommandHandler
 
-            /** @var CacheInterface $paypalOrderCache */
-            $paypalOrderCache = $module->getService('ps_checkout.cache.paypal.order');
-            $paypalOrderCache->set($response['body']['id'], $response['body']);
-
-            if (false === $psCheckoutCart) {
-                $psCheckoutCart = new \PsCheckoutCart();
-                $psCheckoutCart->id_cart = (int) $payload['cartId'];
-                $psCheckoutCart->paypal_intent = $paypalOrder->getOrderIntent();
-                $psCheckoutCart->paypal_order = $response['body']['id'];
-                $psCheckoutCart->paypal_status = $response['body']['status'];
-                $psCheckoutCartRepository->save($psCheckoutCart);
-            } else {
-                $psCheckoutCart->paypal_order = $response['body']['id'];
-                $psCheckoutCart->paypal_status = $response['body']['status'];
-                $psCheckoutCartRepository->save($psCheckoutCart);
-            }
+            // UpdatePsCheckoutSessionCommandHandler
+            // if (false === $psCheckoutCart) {
+            //     $psCheckoutCart = new \PsCheckoutCart();
+            //     $psCheckoutCart->id_cart = (int) $payload['cartId'];
+            //     $psCheckoutCart->paypal_intent = $paypalOrder->getOrderIntent();
+            //     $psCheckoutCart->paypal_order = $response['body']['id'];
+            //     $psCheckoutCart->paypal_status = $response['body']['status'];
+            //     $psCheckoutCartRepository->save($psCheckoutCart);
+            // } else {
+            //     $psCheckoutCart->paypal_order = $response['body']['id'];
+            //     $psCheckoutCart->paypal_status = $response['body']['status'];
+            //     $psCheckoutCartRepository->save($psCheckoutCart);
+            // }
+            // UpdatePsCheckoutSessionCommandHandler
 
             if (self::CAPTURE_STATUS_DECLINED === $transactionStatus) {
                 throw new PsCheckoutException(sprintf('Transaction declined by PayPal : %s', false === empty($response['body']['details']['description']) ? $response['body']['details']['description'] : 'No detail'), PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);

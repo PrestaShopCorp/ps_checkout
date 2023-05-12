@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -22,12 +23,11 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
 use Exception;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePsCheckoutSessionCommand;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderSavedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 
-class UpdatePsCheckoutSessionCommandHandler
+class SavePayPalOrderCommandHandler
 {
     /**
      * @var EventDispatcherInterface
@@ -49,30 +49,24 @@ class UpdatePsCheckoutSessionCommandHandler
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
     }
 
-    public function handle(UpdatePsCheckoutSessionCommand $updatePsCheckoutSessionCommand)
+    public function handle(SavePayPalOrderCommand $savePayPalOrderCommand)
     {
         try {
             /** @var \PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($updatePsCheckoutSessionCommand->getOrderId()->getValue());
-            if (false === $psCheckoutCart) {
-                $psCheckoutCart = new \PsCheckoutCart();
-                $psCheckoutCart->id_cart = $updatePsCheckoutSessionCommand->getIdCart()->getValue();
-                $psCheckoutCart->paypal_intent = $updatePsCheckoutSessionCommand->getPaypalIntent();
-                $psCheckoutCart->paypal_order = $updatePsCheckoutSessionCommand->getOrderId()->getValue();
-                $psCheckoutCart->paypal_status = $updatePsCheckoutSessionCommand->getPaypalStatus();
-                $this->psCheckoutCartRepository->save($psCheckoutCart);
-            } else {
-                $psCheckoutCart->paypal_order = $updatePsCheckoutSessionCommand->getOrderId()->getValue();
-                $psCheckoutCart->paypal_status = $updatePsCheckoutSessionCommand->getPaypalStatus();
-                $this->psCheckoutCartRepository->save($psCheckoutCart);
-            }
+            $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($savePayPalOrderCommand->getOrderPayPalId()->getValue());
+
+            $psCheckoutCart->paypal_order = $savePayPalOrderCommand->getOrderPayPalId()->getValue();
+            $psCheckoutCart->paypal_status = $savePayPalOrderCommand->getOrderPaypalStatus();
+            $this->psCheckoutCartRepository->save($psCheckoutCart);
             // Update an Aggregate or dispatch an Event with $transactionIdentifier
         } catch (Exception $exception) {
-            throw new PayPalOrderException(sprintf('Unable to capture PayPal Order #%d', $updatePsCheckoutSessionCommand->getOrderId()->getValue()), PayPalOrderException::SESSION_EXCEPTION, $exception);
+            throw new PayPalOrderException(sprintf('Unable to retrieve PrestaShop cart #%d', $savePayPalOrderCommand->getOrderPayPalId()->getValue()), PayPalOrderException::SESSION_EXCEPTION, $exception);
         }
 
         $this->eventDispatcher->dispatch(
-            new PayPalOrderCompletedEvent($updatePsCheckoutSessionCommand->getOrderId()->getValue())
+            new PayPalOrderSavedEvent(
+                $savePayPalOrderCommand->getOrderPayPalId()->getValue(),
+            )
         );
     }
 }
