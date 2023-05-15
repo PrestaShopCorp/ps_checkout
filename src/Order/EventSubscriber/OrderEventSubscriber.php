@@ -103,9 +103,15 @@ class OrderEventSubscriber implements EventSubscriberInterface
     public function onOrderCreated(OrderCreatedEvent $event)
     {
         /** @var GetPayPalOrderQueryResult $paypalOrder */
-        $paypalOrder = $this->commandBus->handle(new GetPayPalOrderQuery($event->getOrderId()->getValue()));
+        $paypalOrder = $this->commandBus->handle(new GetPayPalOrderQuery($event->getOrderPayPal()->getValue()));
 
-        $resume = $this->orderResumeFactory->create($event->getCartId(), OrderResumeFactory::PAYPAL_CAPTURE, PayPalCaptureStatus::COMPLETED, $event->getOrderPayPal()['purchase_units']['amount'], $paypalOrder->getOrder()['status'], $event->getOrderPayPal()['status']);
+//TODO refaire le tableau ou utiliser celui passer dans l'event
+        $resume = [
+            'Cart'=>[],
+            ''
+        ]
+
+        //$resume = $this->orderResumeFactory->create($event->getCartId(), OrderResumeFactory::PAYPAL_CAPTURE, PayPalCaptureStatus::COMPLETED, $event->getOrderPayPal()['purchase_units']['amount'], $paypalOrder->getOrder()['status'], $event->getOrderPayPal()['status']);
 
         $newOrderState = $this->checkTransitionStateService->getNewOrderState($resume);
         if ($newOrderState !== false) {

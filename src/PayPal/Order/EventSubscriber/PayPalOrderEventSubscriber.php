@@ -292,6 +292,8 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         );
     }
 
+
+    // @TODO : I think this method should be removed
     /**
      * @param PayPalOrderCompletedEvent $event
      *

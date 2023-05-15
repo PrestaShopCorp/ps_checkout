@@ -99,7 +99,7 @@ class CheckTransitionStateService
     }
 
     /**
-     * @param Resume $data
+     * @param array $data
      *
      * @return false|string
      *
@@ -108,12 +108,12 @@ class CheckTransitionStateService
     public function getNewOrderState($data)
     {
         // PayPal Order Status
-        if (!$this->checkTransitionPayPalOrderStatusService->checkAvailableStatus($data->getPaypalOrder()->getOldStatus(), $data->getPaypalOrder()->getNewStatus())) {
+        if (!$this->checkTransitionPayPalOrderStatusService->checkAvailableStatus($data['PaypalOrder']['OldStatus'], $data['PaypalOrder']['NewStatus'])) {
             return false;
         }
 
         $newOrderState = $this->getPsState($data);
-        if ($this->checkOrderState->isOrderStateTransitionAvailable($data->getOrder()->getCurrentOrderStatus(), $newOrderState)) {
+        if ($this->checkOrderState->isOrderStateTransitionAvailable($data['Order']['CurrentOrderStatus'], $newOrderState)) {
             return $newOrderState;
         } else {
             return false;
@@ -121,7 +121,7 @@ class CheckTransitionStateService
     }
 
     /**
-     * @param Resume $data
+     * @param array $data
      *
      * @return false|string
      *
@@ -130,26 +130,26 @@ class CheckTransitionStateService
     public function getPsState($data)
     {
         $state = false;
-        switch ($data->getPaypalOrder()->getNewStatus()) {
+        switch ($data['PaypalOrder']['NewStatus']) {
             case PayPalOrderStatus::COMPLETED:
-                if ($data->getPaypalCapture() != null) {
-                    $state = $this->getPsCaptureState($data->getPaypalCapture(), $data->getOrder());
-                } elseif ($data->getPaypalAuthorization() != null) {
-                    $state = $this->getPsAuthorizationState($data->getPaypalAuthorization(), $data->getOrder());
-                } elseif ($data->getPaypalRefund() != null) {
-                    $state = $this->getPsRefundState($data->getPaypalRefund(), $data->getOrder());
+                if ($data['PaypalCapture'] != null) {
+                    $state = $this->getPsCaptureState($data['PaypalCapture'], $data['Order']);
+                } elseif ($data['PaypalAuthorization'] != null) {
+                    $state = $this->getPsAuthorizationState($data['PaypalAuthorization'], $data['Order']);
+                } elseif ($data['PaypalRefund'] != null) {
+                    $state = $this->getPsRefundState($data['PaypalRefund'], $data['Order']);
                 }
                 break;
             default:
-                $state = key_exists($data->getPaypalOrder()->getNewStatus(), self::STATES['PayPalOrder']) ? self::STATES['PayPalOrder'][$data->getPaypalOrder()->getNewStatus()] : false;
+                $state = key_exists($data['PaypalOrder']['NewStatus'], self::STATES['PayPalOrder']) ? self::STATES['PayPalOrder'][$data['PaypalOrder']['NewStatus']] : false;
         }
 
         return $state;
     }
 
     /**
-     * @param ResumePayPalCapture $paypalCapture
-     * @param ResumeOrder $psOrder
+     * @param array $paypalCapture
+     * @param array $psOrder
      *
      * @return false|mixed|string
      *
@@ -157,11 +157,11 @@ class CheckTransitionStateService
      */
     private function getPsCaptureState($paypalCapture, $psOrder)
     {
-        if (key_exists($paypalCapture->getStatus(), self::STATES['PayPalCapture'])) {
-            $state = self::STATES['PayPalCapture'][$paypalCapture->getStatus()];
+        if (key_exists($paypalCapture['Status'], self::STATES['PayPalCapture'])) {
+            $state = self::STATES['PayPalCapture'][$paypalCapture['Status']];
             if ($state == OrderStateConfigurationKeys::PAYMENT_ACCEPTED) {
-                $totalPaid = $this->sum($paypalCapture->getAmount(), $psOrder->getTotalAmountPaid());
-                switch ($this->checkOrderAmount->checkAmount($psOrder->getTotalAmount(), $totalPaid)) {
+                $totalPaid = $this->sum($paypalCapture['Amount'], $psOrder['TotalAmountPaid']);
+                switch ($this->checkOrderAmount->checkAmount($psOrder['TotalAmount'], $totalPaid)) {
                     case CheckOrderAmount::ORDER_NOT_FULL_PAID:
                         $state = OrderStateConfigurationKeys::PARTIALLY_PAID;
                         break;
@@ -170,8 +170,8 @@ class CheckTransitionStateService
                         break;
                 }
             } elseif ($state == OrderStateConfigurationKeys::REFUNDED || $state == OrderStateConfigurationKeys::PARTIALLY_REFUNDED) {
-                $totalRefund = $this->sum($paypalCapture->getAmount(), $psOrder->getTotalRefunded());
-                switch ($this->checkOrderAmount->checkAmount($psOrder->getTotalAmount(), $totalRefund)) {
+                $totalRefund = $this->sum($paypalCapture['Amount'], $psOrder['TotalRefunded']);
+                switch ($this->checkOrderAmount->checkAmount($psOrder['TotalAmount'], $totalRefund)) {
                     case CheckOrderAmount::ORDER_NOT_FULL_PAID:
                         $state = OrderStateConfigurationKeys::PARTIALLY_REFUNDED;
                         break;
@@ -191,8 +191,8 @@ class CheckTransitionStateService
     }
 
     /**
-     * @param ResumePayPalAuthorization $paypalAuthorization
-     * @param ResumeOrder $psOrder
+     * @param array $paypalAuthorization
+     * @param array $psOrder
      *
      * @return false|mixed|string
      *
@@ -200,11 +200,11 @@ class CheckTransitionStateService
      */
     private function getPsAuthorizationState($paypalAuthorization, $psOrder)
     {
-        if (key_exists($paypalAuthorization->getStatus(), self::STATES['PayPalAuthorization'])) {
-            $state = self::STATES['PayPalAuthorization'][$paypalAuthorization->getStatus()];
+        if (key_exists($paypalAuthorization['Status'], self::STATES['PayPalAuthorization'])) {
+            $state = self::STATES['PayPalAuthorization'][$paypalAuthorization['Status']];
             if ($state == OrderStateConfigurationKeys::PAYMENT_ACCEPTED || $state == OrderStateConfigurationKeys::PARTIALLY_PAID) {
-                $totalAuthorization = $this->sum($paypalAuthorization->getAmount(), $psOrder->getTotalAmountPaid());
-                switch ($this->checkOrderAmount->checkAmount($psOrder->getTotalAmount(), $totalAuthorization)) {
+                $totalAuthorization = $this->sum($paypalAuthorization['Amount'], $psOrder['TotalAmountPaid']);
+                switch ($this->checkOrderAmount->checkAmount($psOrder['TotalAmount'], $totalAuthorization)) {
                     case CheckOrderAmount::ORDER_NOT_FULL_PAID:
                         $state = OrderStateConfigurationKeys::PARTIALLY_PAID;
                         break;
@@ -224,8 +224,8 @@ class CheckTransitionStateService
     }
 
     /**
-     * @param ResumePayPalRefund $paypalRefund
-     * @param ResumeOrder $psOrder
+     * @param array $paypalRefund
+     * @param array $psOrder
      *
      * @return false|mixed|string
      *
@@ -233,11 +233,11 @@ class CheckTransitionStateService
      */
     private function getPsRefundState($paypalRefund, $psOrder)
     {
-        if (key_exists($paypalRefund->getStatus(), self::STATES['PayPalRefund'])) {
-            $state = self::STATES['PayPalRefund'][$paypalRefund->getStatus()];
+        if (key_exists($paypalRefund['Status'], self::STATES['PayPalRefund'])) {
+            $state = self::STATES['PayPalRefund'][$paypalRefund['Status']];
             if ($state == OrderStateConfigurationKeys::REFUNDED || $state == OrderStateConfigurationKeys::PARTIALLY_REFUNDED) {
-                $totalRefund = $this->sum($paypalRefund->getAmount(), $psOrder->getTotalRefunded());
-                switch ($this->checkOrderAmount->checkAmount($psOrder->getTotalAmount(), $totalRefund)) {
+                $totalRefund = $this->sum($paypalRefund['Amount'], $psOrder['TotalRefunded']);
+                switch ($this->checkOrderAmount->checkAmount($psOrder['TotalAmount'], $totalRefund)) {
                     case CheckOrderAmount::ORDER_NOT_FULL_PAID:
                         $state = OrderStateConfigurationKeys::PARTIALLY_REFUNDED;
                         break;

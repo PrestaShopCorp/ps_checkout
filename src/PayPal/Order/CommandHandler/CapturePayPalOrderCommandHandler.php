@@ -98,7 +98,7 @@ class CapturePayPalOrderCommandHandler
                 }
             }
 
-            // Event to emit (depending to order status)
+            // Event to emit (depending to order capture status)
             switch ($captureStatus) {
                 case 'COMPLETED':
                     $this->eventDispatcher->dispatch(
@@ -121,15 +121,6 @@ class CapturePayPalOrderCommandHandler
                 case 'DECLINED':
                     $this->eventDispatcher->dispatch(
                         new PayPalCaptureDeniedEvent(
-                            $captureId,
-                            $capturePayPalOrderCommand->getOrderId()->getValue(),
-                            $capturePayload
-                        )
-                    );
-                    break;
-                case 'REFUNDED':
-                    $this->eventDispatcher->dispatch(
-                        new PayPalCaptureRefundedEvent(
                             $captureId,
                             $capturePayPalOrderCommand->getOrderId()->getValue(),
                             $capturePayload

@@ -110,7 +110,10 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
                 ['updateOrderStatus'],
             ],
             PayPalCaptureDeniedEvent::class => 'updateOrderStatus',
-            PayPalCapturePendingEvent::class => 'updateOrderStatus',
+            PayPalCapturePendingEvent::class => [
+                ['createOrder'],
+                ['updateOrderStatus'],
+            ],
             PayPalCaptureRefundedEvent::class => 'updateOrderStatus',
             PayPalCaptureReversedEvent::class => 'updateOrderStatus',
         ];
@@ -127,13 +130,21 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     {
         /** @var \PsCheckoutCart $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
-        $getOrderStateConfiguration = $this->commandBus->handle(new GetOrderStateConfigurationQuery());
+
+        try {
+            $this->commandBus->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
+
+            $this->logger->info(sprintf('PrestaShop Order for PayPal Order #%s is already created.', $event->getPayPalOrderId()->getValue()));
+            return; // If we already have an Order (when going from Pending to Completed), we stop
+        } catch (PsCheckoutException $exception) {}
 
         $capture = $event->getCapture();
 
         $transactionId = $orderStateId = $paidAmount = '';
         $fundingSource = $psCheckoutCart->getPaypalFundingSource();
         $cart = new \Cart($psCheckoutCart->getIdCart());
+
+        $getOrderStateConfiguration = $this->commandBus->handle(new GetOrderStateConfigurationQuery());
 
         if (empty($capture['amount']['value'])) {
             $orderStateId = $getOrderStateConfiguration->getIdByKey(OrderStateConfigurationKeys::PARTIALLY_PAID);
@@ -183,7 +194,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         /** @var GetOrderQueryResult $order */
         $order = $this->commandBus->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
 
-        $orderPayment = null;
         try {
             $this->commandBus->handle(new GetOrderPaymentQuery($event->getPayPalCaptureId()));
 
@@ -207,18 +217,15 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         }
 
         $createTime = new \DateTime($capture['create_time']);
-        if (empty($orderPayment) && $capture['status'] === 'COMPLETED') {
-            $this->commandBus->handle(new AddOrderPaymentCommand(
-                $order->getId(),
-                $createTime->format('Y-m-d H:i:s'),
-                $paymentMethod,
-                $paymentAmount,
-                $order->getCurrencyId(),
-                $transactionId
-            ));
-        } else {
-            $this->logger->info('Order Payment failed to be created.');
-        }
+    
+        $this->commandBus->handle(new AddOrderPaymentCommand(
+            $order->getId(),
+            $createTime->format('Y-m-d H:i:s'),
+            $paymentMethod,
+            $paymentAmount,
+            $order->getCurrencyId(),
+            $transactionId
+        ));
     }
 
     /**
@@ -247,13 +254,15 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $order = new \Order($orderId);
         $currentOrderStateId = $order->getCurrentState();
 
+        // @TODO : Clean un peu cette fonction (retirer Refund et Authorization)
+
         //ATTENTION LES YEUX !!! (A l'aide)
         $total_refund = 0;
         foreach ($order->getOrderSlipsCollection() as $orderSlip) {
             $total_refund += $orderSlip->amount;
         }
 
-        // TODO prendre exemple sur orderEventSubscriber pour convertire en objet
+        // @TODO : Prendre exemple sur orderEventSubscriber pour convertire en objet
         $newOrderState = $this->checkTransitionStateService->getNewOrderState([
             'cart' => ['amount' => $order->total_paid],
             'Order' => [
@@ -279,6 +288,8 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         ]);
 
         $newOrderStateId = $getOrderStateConfiguration->getIdByKey($newOrderState);
+
+        // @TODO : Corriger l'orderstatetransition en dessous -v
 
         // Prevent duplicate state entry
         if ($currentOrderStateId !== $newOrderStateId

@@ -69,18 +69,6 @@ class GetPayPalOrderQueryHandler
             new PayPalOrderFetchedEvent($getPayPalOrderQuery->getOrderId()->getValue(), $orderPayPal->getOrder())
         );
 
-        $result = new GetPayPalOrderQueryResult($orderPayPal->getOrder());
-
-        if ($result->getOrder()['status'] === 'APPROVED') {
-            $event = PayPalOrderApprovedEvent::class;
-        } else if ($result->getOrder()['status'] === 'COMPLETED') {
-            $event = PayPalOrderCompletedEvent::class;
-        }
-
-        $this->eventDispatcher->dispatch(
-            new $event($getPayPalOrderQuery->getOrderId()->getValue(), $orderPayPal->getOrder())
-        );
-
-        return $result;
+        return new GetPayPalOrderQueryResult($orderPayPal->getOrder());
     }
 }

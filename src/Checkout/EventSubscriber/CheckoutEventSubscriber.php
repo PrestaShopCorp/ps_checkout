@@ -24,7 +24,10 @@ use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Event\CheckoutCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Exception\CheckoutException;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
+use PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\RemovePayPalOrderCacheCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePaymentMethodSelectedCommand;
@@ -39,11 +42,17 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
     private $commandBus;
 
     /**
+     * @var SymfonyEventDispatcherAdapter
+     */
+    private $eventDispatcher;
+
+    /**
      * @param CommandBusInterface $commandBus
      */
-    public function __construct(CommandBusInterface $commandBus)
+    public function __construct(CommandBusInterface $commandBus, SymfonyEventDispatcherAdapter $eventDispatcher)
     {
         $this->commandBus = $commandBus;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -53,7 +62,7 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
     {
         return [
             CheckoutCompletedEvent::class => [
-                ['deletePayPalOrderCache'],
+                ['removePayPalOrderCache'],
                 ['updatePaymentMethodSelected'],
                 ['fetchPayPalOrder'],
             ],
@@ -69,7 +78,7 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
      *
      * @throws CheckoutException
      */
-    public function deletePayPalOrderCache(CheckoutCompletedEvent $event)
+    public function removePayPalOrderCache(CheckoutCompletedEvent $event)
     {
         $this->commandBus->handle(new RemovePayPalOrderCacheCommand(
             $event->getPayPalOrderId()->getValue()
@@ -112,8 +121,18 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
      */
     public function fetchPayPalOrder(CheckoutCompletedEvent $event)
     {
-        $this->commandBus->handle(new GetPayPalOrderQuery(
+        $result = $this->commandBus->handle(new GetPayPalOrderQuery(
             $event->getPayPalOrderId()->getValue()
         ));
+
+        if ($result->getOrder()['status'] === 'APPROVED') {
+            $this->eventDispatcher->dispatch(
+                new PayPalOrderApprovedEvent($event->getPayPalOrderId()->getValue(), $result->getOrder())
+            );
+        } else if ($result->getOrder()['status'] === 'COMPLETED') {
+            $this->eventDispatcher->dispatch(
+                new PayPalOrderCompletedEvent($event->getPayPalOrderId()->getValue(), $result->getOrder())
+            );
+        }
     }
 }

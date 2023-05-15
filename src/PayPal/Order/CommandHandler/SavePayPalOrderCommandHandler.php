@@ -23,6 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
 use Exception;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderSavedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
@@ -66,6 +67,8 @@ class SavePayPalOrderCommandHandler
         $this->eventDispatcher->dispatch(
             new PayPalOrderSavedEvent(
                 $savePayPalOrderCommand->getOrderPayPalId()->getValue(),
+                $savePayPalOrderCommand->getOrderPayPal(),
+                $psCheckoutCart->date_upd
             )
         );
     }

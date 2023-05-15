@@ -344,6 +344,8 @@ services:
   ps_checkout.event.subscriber.checkout:
     class: 'PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber\CheckoutEventSubscriber'
     public: true
+    arguments:
+      - '@ps_checkout.event.dispatcher'
 
   ps_checkout.event.subscriber.order:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber'
