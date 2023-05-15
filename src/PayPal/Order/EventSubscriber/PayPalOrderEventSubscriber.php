@@ -166,6 +166,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      * @throws PsCheckoutException
      * @throws \PrestaShopException
      * @throws PayPalOrderException
+     * @throws \Exception
      */
     public function capturePayPalOrder(PayPalOrderApprovedEvent $event)
     {
@@ -178,13 +179,15 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         // ExpressCheckout require buyer select a delivery option, we have to check if cart is ready to payment
         if ($psCheckoutCart->isExpressCheckout() && $psCheckoutCart->getPaypalFundingSource() === 'paypal') {
             $this->logger->info('PayPal Order cannot be captured.');
+
             return;
         }
 
         // @todo Always check if Cart is ready to payment before (quantities, stocks, invoice address, delivery address, delivery option...)
 
+        $orderPayPal = $event->getOrderPayPal();
         if ($psCheckoutCart->isHostedFields()) {
-            $card3DSecure = (new Card3DSecure())->continueWithAuthorization($event->getOrderPayPal());
+            $card3DSecure = (new Card3DSecure())->continueWithAuthorization($orderPayPal);
 
             $this->logger->info(
                 '3D Secure authentication result',
@@ -219,6 +222,14 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
                     }
                     break;
             }
+        }
+
+        // Check if PayPal order amount is the same than the cart amount : we tolerate a difference of more or less 0.05
+        $paypalOrderAmount = (float) sprintf('%01.2f', $orderPayPal['purchase_units'][0]['amount']['value']);
+        $cartAmount = (float) sprintf('%01.2f', (new \Cart($psCheckoutCart->getIdCart()))->getOrderTotal(true, \Cart::BOTH));
+
+        if ($paypalOrderAmount + 0.05 < $cartAmount || $paypalOrderAmount - 0.05 > $cartAmount) {
+            throw new PsCheckoutException('The transaction amount does not match with the cart amount.', PsCheckoutException::DIFFERENCE_BETWEEN_TRANSACTION_AND_CART);
         }
 
         // This should mainly occur for APMs
