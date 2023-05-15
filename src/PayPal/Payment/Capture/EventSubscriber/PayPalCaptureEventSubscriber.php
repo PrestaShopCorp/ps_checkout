@@ -146,6 +146,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
         $getOrderStateConfiguration = $this->commandBus->handle(new GetOrderStateConfigurationQuery());
 
+
         if (empty($capture['amount']['value'])) {
             $orderStateId = $getOrderStateConfiguration->getIdByKey(OrderStateConfigurationKeys::PARTIALLY_PAID);
         } else {
@@ -217,7 +218,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         }
 
         $createTime = new \DateTime($capture['create_time']);
-    
+
         $this->commandBus->handle(new AddOrderPaymentCommand(
             $order->getId(),
             $createTime->format('Y-m-d H:i:s'),
@@ -256,34 +257,28 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
         // @TODO : Clean un peu cette fonction (retirer Refund et Authorization)
 
-        //ATTENTION LES YEUX !!! (A l'aide)
-        $total_refund = 0;
-        foreach ($order->getOrderSlipsCollection() as $orderSlip) {
-            $total_refund += $orderSlip->amount;
-        }
 
-        // @TODO : Prendre exemple sur orderEventSubscriber pour convertire en objet
         $newOrderState = $this->checkTransitionStateService->getNewOrderState([
-            'cart' => ['amount' => $order->total_paid],
+            'Cart' => ['CartId'=>$psCheckoutCart->getIdCart(),'Amount' => $order->total_paid],
             'Order' => [
-                'currentOrderStatus' => $getOrderStateConfiguration->getKeyById(new OrderStateId($currentOrderStateId)),
-                'totalAmountPaid' => $order->getTotalPaid(),
-                'totalAmount' => $order->total_paid,
-                'totalRefunded' => $total_refund,
+                'CurrentOrderStatus' => $getOrderStateConfiguration->getKeyById(new OrderStateId($currentOrderStateId)),
+                'TotalAmountPaid' => $order->getTotalPaid(),
+                'TotalAmount' => $order->total_paid,
+                'TotalRefunded' => '0',
             ],
             'PayPalRefund' => [ // NULL si pas de refund dans l'order PayPal
                 null,
             ],
             'PayPalCapture' => [ // NULL si pas de refund dans l'order PayPal
-                'status' => $event->getCapture()['status'],
-                'amount' => $event->getCapture()['amount']['value'],
+                'Status' => $event->getCapture()['status'],
+                'Amount' => $event->getCapture()['amount']['value'],
             ],
             'PayPalAuthorization' => [ // NULL si pas de refund dans l'order PayPal
                 null,
             ],
             'PayPalOrder' => [
-                'oldStatus' => PayPalOrderStatus::CREATED,
-                'newStatus' => PayPalOrderStatus::COMPLETED,
+                'OldStatus' => PayPalOrderStatus::COMPLETED,
+                'NewStatus' => PayPalOrderStatus::COMPLETED,
             ],
         ]);
 

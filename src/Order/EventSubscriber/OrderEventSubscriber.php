@@ -105,15 +105,32 @@ class OrderEventSubscriber implements EventSubscriberInterface
         /** @var GetPayPalOrderQueryResult $paypalOrder */
         $paypalOrder = $this->commandBus->handle(new GetPayPalOrderQuery($event->getOrderPayPal()->getValue()));
 
-//TODO refaire le tableau ou utiliser celui passer dans l'event
-        $resume = [
-            'Cart'=>[],
-            ''
-        ]
 
         //$resume = $this->orderResumeFactory->create($event->getCartId(), OrderResumeFactory::PAYPAL_CAPTURE, PayPalCaptureStatus::COMPLETED, $event->getOrderPayPal()['purchase_units']['amount'], $paypalOrder->getOrder()['status'], $event->getOrderPayPal()['status']);
 
-        $newOrderState = $this->checkTransitionStateService->getNewOrderState($resume);
+        $newOrderState = $this->checkTransitionStateService->getNewOrderState([
+            'Cart' => ['CartId'=>$psCheckoutCart->getIdCart(),'Amount' => $order->total_paid],
+            'Order' => [
+                'CurrentOrderStatus' => $getOrderStateConfiguration->getKeyById(new OrderStateId($currentOrderStateId)),
+                'TotalAmountPaid' => $order->getTotalPaid(),
+                'TotalAmount' => $order->total_paid,
+                'TotalRefunded' => '0',
+            ],
+            'PayPalRefund' => [ // NULL si pas de refund dans l'order PayPal
+                null,
+            ],
+            'PayPalCapture' => [ // NULL si pas de refund dans l'order PayPal
+                'Status' => $event->getCapture()['status'],
+                'Amount' => $event->getCapture()['amount']['value'],
+            ],
+            'PayPalAuthorization' => [ // NULL si pas de refund dans l'order PayPal
+                null,
+            ],
+            'PayPalOrder' => [
+                'OldStatus' => $paypalOrder->getOrder()['status'],
+                'NewStatus' => PayPalOrderStatus::COMPLETED,
+            ],
+        ]);
         if ($newOrderState !== false) {
             $newOrderStateId = $this->commandBus->handle(new GetOrderStateQuery($newOrderState));
             $this->commandBus->handle(new UpdateOrderStatusCommand($event->getOrderId()->getValue(), $newOrderStateId->getOrderStateId()->getValue()));
