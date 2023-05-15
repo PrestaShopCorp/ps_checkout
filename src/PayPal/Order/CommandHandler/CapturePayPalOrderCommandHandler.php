@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -75,7 +76,8 @@ class CapturePayPalOrderCommandHandler
                 $transactionIdentifier = $response['body']['purchase_units'][0]['payments']['captures'][0]['id'];
                 $transactionStatus = $response['body']['purchase_units'][0]['payments']['captures'][0]['status'];
 
-                if ('DECLINED' === $transactionStatus
+                if (
+                    'DECLINED' === $transactionStatus
                     && false === empty($response['body']['payment_source'])
                     && false === empty($response['body']['payment_source'][0]['card'])
                     && false === empty($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response'])
@@ -89,6 +91,27 @@ class CapturePayPalOrderCommandHandler
                     );
                     $payPalProcessorResponse->throwException();
                 }
+            }
+
+            // Event to emit (depending to order status)
+            switch ($transactionStatus) {
+                case 'COMPLETED':
+                    $event = PayPalOrderCreatedEvent::class;
+                    break;
+                case 'APPROVED':
+                    $event = PayPalOrderApprovedEvent::class;
+                    break;
+                case 'COMPLETED':
+                    $event = PayPalOrderCompletedEvent::class;
+                    break;
+                case PayPalOrderApprovalReversedEvent::class:
+                    $event = 'PENDING_APPROVAL';
+                    break;
+                case PayPalOrderNotApprovedEvent::class:
+                    $event = 'PENDING';
+                    break;
+                default:
+                    $event = '';
             }
 
             // Update an Aggregate or dispatch an Event with $transactionIdentifier

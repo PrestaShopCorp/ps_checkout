@@ -106,6 +106,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             PayPalOrderFetchedEvent::class => [
                 ['savePayPalOrder'],
                 ['updatePayPalOrderCache'],
+                ['capturePayPalOrder'],
             ],
         ];
     }
