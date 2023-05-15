@@ -55,14 +55,25 @@ class CountryRepository
      *
      * @return int
      */
-    public function getStateId($state)
+    public function getStateId($idCountry, $state)
     {
+        $db = \Db::getInstance();
         $query = new \DbQuery();
         $query->select('id_state');
         $query->from('state');
-        $query->where('name LIKE \'%' . pSQL($state) . '%\' OR iso_code LIKE \'%' . pSQL($state) . '%\'');
+        $query->where('iso_code LIKE \'%' . pSQL($state) . '%\'');
         $query->where('active = 1');
+        $query->where('id_country = '.(int)$idCountry);
+        $idState = (int)$db->getValue($query);
+        if($idState > 0)
+            return $idState;
 
-        return (int) \Db::getInstance()->getValue($query);
+        $query = new \DbQuery();
+        $query->select('id_state');
+        $query->from('state');
+        $query->where('name LIKE \'%' . pSQL($state) . '%\'');
+        $query->where('active = 1');
+        $query->where('id_country = '.(int)$idCountry);
+        return (int)$db->getValue($query);
     }
 }

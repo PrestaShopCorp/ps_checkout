@@ -265,7 +265,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             /** @var \PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository $countryRepository */
             $countryRepository = $this->module->getService('ps_checkout.repository.country');
 
-            $idState = $countryRepository->getStateId($state);
+            $idState = $countryRepository->getStateId($idCountry, $state);
         }
 
         // check if a PayPal address already exist for the customer and not used
