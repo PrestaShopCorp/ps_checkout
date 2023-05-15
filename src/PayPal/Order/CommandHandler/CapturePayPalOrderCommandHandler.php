@@ -28,8 +28,11 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureRefundedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPalError;
 use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
 
@@ -96,31 +99,29 @@ class CapturePayPalOrderCommandHandler
             // Event to emit (depending to order status)
             switch ($transactionStatus) {
                 case 'COMPLETED':
-                    $event = PayPalOrderCreatedEvent::class;
+                    $event = PayPalCaptureCompletedEvent::class;
                     break;
-                case 'APPROVED':
-                    $event = PayPalOrderApprovedEvent::class;
+                case 'PENDING':
+                    $event = PayPalCapturePendingEvent::class;
                     break;
-                case 'COMPLETED':
-                    $event = PayPalOrderCompletedEvent::class;
+                case 'DECLINED':
+                    $event = PayPalCaptureDeniedEvent::class;
                     break;
-                case PayPalOrderApprovalReversedEvent::class:
-                    $event = 'PENDING_APPROVAL';
+                case 'REFUNDED':
+                    $event = PayPalCaptureRefundedEvent::class;
                     break;
-                case PayPalOrderNotApprovedEvent::class:
-                    $event = 'PENDING';
+                case 'REVERSED':
+                    $event = PayPalCaptureReversedEvent::class;
                     break;
-                default:
-                    $event = '';
             }
+
+            $this->eventDispatcher->dispatch(
+                new $event($capturePayPalOrderCommand->getOrderId()->getValue())
+            );
 
             // Update an Aggregate or dispatch an Event with $transactionIdentifier
         } catch (Exception $exception) {
             throw new PayPalOrderException(sprintf('Unable to capture PayPal Order #%d', $capturePayPalOrderCommand->getOrderId()->getValue()), PayPalOrderException::CANNOT_CAPTURE_ORDER, $exception);
         }
-
-        $this->eventDispatcher->dispatch(
-            new PayPalOrderCompletedEvent($capturePayPalOrderCommand->getOrderId()->getValue())
-        );
     }
 }
