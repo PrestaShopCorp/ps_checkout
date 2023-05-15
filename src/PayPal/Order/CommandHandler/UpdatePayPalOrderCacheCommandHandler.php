@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -40,7 +41,7 @@ class UpdatePayPalOrderCacheCommandHandler
 
     public function handle(UpdatePayPalOrderCacheCommand $updatePayPalOrderCacheCommand)
     {
-        $responseBody = $updatePayPalOrderCacheCommand->getOrder();
+        $responseBody = $updatePayPalOrderCacheCommand->getOrderPayPal();
         $this->paypalOrderCache->set($responseBody['id'], $responseBody);
     }
 }

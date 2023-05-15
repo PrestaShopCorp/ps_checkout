@@ -155,7 +155,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($psCheckoutCart->getPaypalStatus() !== $orderStatus || $psCheckoutCart->getDateUpd() < date('Y-m-d H:i:s')) {
+        if ($psCheckoutCart->getPaypalStatus() !== $orderStatus || $psCheckoutCart->getDateUpd() < date_create_from_format('Y-m-d\TH:i:s\Z', $event->getOrderPayPal()['update_time'])) {
             $this->commandBus->handle(new SavePayPalOrderCommand(
                 $event->getOrderPayPalId()->getValue(),
                 $orderStatus,

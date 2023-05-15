@@ -30,9 +30,9 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeniedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureRefundedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPalError;
 use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
 
@@ -75,49 +75,68 @@ class CapturePayPalOrderCommandHandler
                 throw new PsCheckoutException(isset($response['body']['error']) ? $response['body']['error'] : 'Unknown error', PsCheckoutException::UNKNOWN);
             }
 
-            if (false === empty($response['body']['purchase_units'][0]['payments']['captures'])) {
-                $transactionIdentifier = $response['body']['purchase_units'][0]['payments']['captures'][0]['id'];
-                $transactionStatus = $response['body']['purchase_units'][0]['payments']['captures'][0]['status'];
+            $capturePayload = $response['body']['purchase_units'][0]['payments']['captures'];
+
+            if (false === empty($capturePayload)) {
+                $captureId = $capturePayload[0]['id'];
+                $captureStatus = $capturePayload[0]['status'];
 
                 if (
-                    'DECLINED' === $transactionStatus
+                    'DECLINED' === $captureStatus
                     && false === empty($response['body']['payment_source'])
                     && false === empty($response['body']['payment_source'][0]['card'])
-                    && false === empty($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response'])
+                    && false === empty($capturePayload[0]['processor_response'])
                 ) {
                     $payPalProcessorResponse = new PayPalProcessorResponse(
                         isset($response['body']['payment_source'][0]['card']['brand']) ? $response['body']['payment_source'][0]['card']['brand'] : null,
                         isset($response['body']['payment_source'][0]['card']['type']) ? $response['body']['payment_source'][0]['card']['type'] : null,
-                        isset($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['avs_code']) ? $response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['avs_code'] : null,
-                        isset($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['cvv_code']) ? $response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['cvv_code'] : null,
-                        isset($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['response_code']) ? $response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['response_code'] : null
+                        isset($capturePayload[0]['processor_response']['avs_code']) ? $$capturePayload[0]['processor_response']['avs_code'] : null,
+                        isset($capturePayload[0]['processor_response']['cvv_code']) ? $$capturePayload[0]['processor_response']['cvv_code'] : null,
+                        isset($capturePayload[0]['processor_response']['response_code']) ? $$capturePayload[0]['processor_response']['response_code'] : null
                     );
                     $payPalProcessorResponse->throwException();
                 }
             }
 
             // Event to emit (depending to order status)
-            switch ($transactionStatus) {
+            switch ($captureStatus) {
                 case 'COMPLETED':
-                    $event = PayPalCaptureCompletedEvent::class;
+                    $this->eventDispatcher->dispatch(
+                        new PayPalCaptureCompletedEvent(
+                            $captureId,
+                            $capturePayPalOrderCommand->getOrderId()->getValue(),
+                            $capturePayload
+                        )
+                    );
                     break;
                 case 'PENDING':
-                    $event = PayPalCapturePendingEvent::class;
+                    $this->eventDispatcher->dispatch(
+                        new PayPalCapturePendingEvent(
+                            $captureId,
+                            $capturePayPalOrderCommand->getOrderId()->getValue(),
+                            $capturePayload
+                        )
+                    );
                     break;
                 case 'DECLINED':
-                    $event = PayPalCaptureDeniedEvent::class;
+                    $this->eventDispatcher->dispatch(
+                        new PayPalCaptureDeniedEvent(
+                            $captureId,
+                            $capturePayPalOrderCommand->getOrderId()->getValue(),
+                            $capturePayload
+                        )
+                    );
                     break;
                 case 'REFUNDED':
-                    $event = PayPalCaptureRefundedEvent::class;
-                    break;
-                case 'REVERSED':
-                    $event = PayPalCaptureReversedEvent::class;
+                    $this->eventDispatcher->dispatch(
+                        new PayPalCaptureRefundedEvent(
+                            $captureId,
+                            $capturePayPalOrderCommand->getOrderId()->getValue(),
+                            $capturePayload
+                        )
+                    );
                     break;
             }
-
-            $this->eventDispatcher->dispatch(
-                new $event($capturePayPalOrderCommand->getOrderId()->getValue())
-            );
         } catch (Exception $exception) {
             throw new PayPalOrderException(sprintf('Unable to capture PayPal Order #%d', $capturePayPalOrderCommand->getOrderId()->getValue()), PayPalOrderException::CANNOT_CAPTURE_ORDER, $exception);
         }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -102,9 +103,9 @@ class OrderEventSubscriber implements EventSubscriberInterface
     public function onOrderCreated(OrderCreatedEvent $event)
     {
         /** @var GetPayPalOrderQueryResult $paypalOrder */
-        $paypalOrder = $this->commandBus->handle(new GetPayPalOrderQuery(new PaypalOrderId($event->getPayPalOrder()->getId())));
+        $paypalOrder = $this->commandBus->handle(new GetPayPalOrderQuery($event->getOrderId()->getValue()));
 
-        $resume = $this->orderResumeFactory->create($event->getCartId(), OrderResumeFactory::PAYPAL_CAPTURE, PayPalCaptureStatus::COMPLETED, $event->getPayPalOrder()->getPurhcaseUnits['amount'], $paypalOrder->getOrder()['status'], $event->getPayPalOrder()->getStatus());
+        $resume = $this->orderResumeFactory->create($event->getCartId(), OrderResumeFactory::PAYPAL_CAPTURE, PayPalCaptureStatus::COMPLETED, $event->getOrderPayPal()['purchase_units']['amount'], $paypalOrder->getOrder()['status'], $event->getOrderPayPal()['status']);
 
         $newOrderState = $this->checkTransitionStateService->getNewOrderState($resume);
         if ($newOrderState !== false) {
