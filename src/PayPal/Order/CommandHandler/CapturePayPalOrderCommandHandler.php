@@ -118,8 +118,6 @@ class CapturePayPalOrderCommandHandler
             $this->eventDispatcher->dispatch(
                 new $event($capturePayPalOrderCommand->getOrderId()->getValue())
             );
-
-            // Update an Aggregate or dispatch an Event with $transactionIdentifier
         } catch (Exception $exception) {
             throw new PayPalOrderException(sprintf('Unable to capture PayPal Order #%d', $capturePayPalOrderCommand->getOrderId()->getValue()), PayPalOrderException::CANNOT_CAPTURE_ORDER, $exception);
         }
