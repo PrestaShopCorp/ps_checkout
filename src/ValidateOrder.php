@@ -139,13 +139,11 @@ class ValidateOrder
             /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider $fundingSourceTranslationProvider */
             $fundingSourceTranslationProvider = $module->getService('ps_checkout.funding_source.translation');
 
-            // UpdatePsCheckoutSessionCommandHandler
-            // /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
-            // $psCheckoutCartRepository = $module->getService('ps_checkout.repository.pscheckoutcart');
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            $psCheckoutCartRepository = $module->getService('ps_checkout.repository.pscheckoutcart');
 
-            // /** @var \PsCheckoutCart|false $psCheckoutCart */
-            // $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $payload['cartId']);
-            // UpdatePsCheckoutSessionCommandHandler
+            /** @var \PsCheckoutCart|false $psCheckoutCart */
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $payload['cartId']);
 
             // Check if the PayPal order amount is the same than the cart amount
             // We tolerate a difference of more or less 0.05
@@ -202,26 +200,24 @@ class ValidateOrder
                     $payPalProcessorResponse->throwException();
                 }
             }
-            // UpdatePayPalOrderCacheCommandHandler
-            // /** @var CacheInterface $paypalOrderCache */
-            // $paypalOrderCache = $module->getService('ps_checkout.cache.paypal.order');
-            // $paypalOrderCache->set($response['body']['id'], $response['body']);
-            // UpdatePayPalOrderCacheCommandHandler
+            /** @var CacheInterface $paypalOrderCache */
+            $paypalOrderCache = $module->getService('ps_checkout.cache.paypal.order');
+            $paypalOrderCache->set($response['body']['id'], $response['body']);
+            UpdatePayPalOrderCacheCommandHandler
 
-            // UpdatePsCheckoutSessionCommandHandler
-            // if (false === $psCheckoutCart) {
-            //     $psCheckoutCart = new \PsCheckoutCart();
-            //     $psCheckoutCart->id_cart = (int) $payload['cartId'];
-            //     $psCheckoutCart->paypal_intent = $paypalOrder->getOrderIntent();
-            //     $psCheckoutCart->paypal_order = $response['body']['id'];
-            //     $psCheckoutCart->paypal_status = $response['body']['status'];
-            //     $psCheckoutCartRepository->save($psCheckoutCart);
-            // } else {
-            //     $psCheckoutCart->paypal_order = $response['body']['id'];
-            //     $psCheckoutCart->paypal_status = $response['body']['status'];
-            //     $psCheckoutCartRepository->save($psCheckoutCart);
-            // }
-            // UpdatePsCheckoutSessionCommandHandler
+            UpdatePsCheckoutSessionCommandHandler
+            if (false === $psCheckoutCart) {
+                $psCheckoutCart = new \PsCheckoutCart();
+                $psCheckoutCart->id_cart = (int) $payload['cartId'];
+                $psCheckoutCart->paypal_intent = $paypalOrder->getOrderIntent();
+                $psCheckoutCart->paypal_order = $response['body']['id'];
+                $psCheckoutCart->paypal_status = $response['body']['status'];
+                $psCheckoutCartRepository->save($psCheckoutCart);
+            } else {
+                $psCheckoutCart->paypal_order = $response['body']['id'];
+                $psCheckoutCart->paypal_status = $response['body']['status'];
+                $psCheckoutCartRepository->save($psCheckoutCart);
+            }
 
             if (self::CAPTURE_STATUS_DECLINED === $transactionStatus) {
                 throw new PsCheckoutException(sprintf('Transaction declined by PayPal : %s', false === empty($response['body']['details']['description']) ? $response['body']['details']['description'] : 'No detail'), PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
