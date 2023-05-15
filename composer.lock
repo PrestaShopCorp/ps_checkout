@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8b40c7b92955114b76b65f82cbd99b57",
+    "content-hash": "077193d253dadd075d8b8a70324d2ab6",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -1127,16 +1127,16 @@
         },
         {
             "name": "prestashop/prestashop-accounts-installer",
-            "version": "v1.0.1",
+            "version": "v1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PrestaShopCorp/prestashop-accounts-installer.git",
-                "reference": "f038af2408968d1045330b32aa1fed65fcaf4c9b"
+                "reference": "b69a6a0d1f2ecbb1e53e61b22a4140462e77bdf7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PrestaShopCorp/prestashop-accounts-installer/zipball/f038af2408968d1045330b32aa1fed65fcaf4c9b",
-                "reference": "f038af2408968d1045330b32aa1fed65fcaf4c9b",
+                "url": "https://api.github.com/repos/PrestaShopCorp/prestashop-accounts-installer/zipball/b69a6a0d1f2ecbb1e53e61b22a4140462e77bdf7",
+                "reference": "b69a6a0d1f2ecbb1e53e61b22a4140462e77bdf7",
                 "shasum": ""
             },
             "require": {
@@ -1161,9 +1161,9 @@
             "description": "Utility package to install `ps_accounts` module or present data to trigger manual install from psx configuration page.",
             "support": {
                 "issues": "https://github.com/PrestaShopCorp/prestashop-accounts-installer/issues",
-                "source": "https://github.com/PrestaShopCorp/prestashop-accounts-installer/tree/v1.0.1"
+                "source": "https://github.com/PrestaShopCorp/prestashop-accounts-installer/tree/v1.0.3"
             },
-            "time": "2021-07-23T15:40:36+00:00"
+            "time": "2023-04-18T11:54:57+00:00"
         },
         {
             "name": "psr/cache",
