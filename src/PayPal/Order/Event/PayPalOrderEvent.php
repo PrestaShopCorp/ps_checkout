@@ -39,6 +39,7 @@ class PayPalOrderEvent extends Event
 
     /**
      * @param string $orderPayPalId
+     * @param array $orderPayPal
      *
      * @throws PayPalOrderException
      */

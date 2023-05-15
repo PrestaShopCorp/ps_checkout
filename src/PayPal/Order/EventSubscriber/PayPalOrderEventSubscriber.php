@@ -30,6 +30,7 @@ use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateExcepti
 use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigurationQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
 use PrestaShop\Module\PrestashopCheckout\Order\ValueObject\OrderId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\PrunePayPalOrderCacheCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand;
@@ -43,6 +44,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderFetchedEv
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderNotApprovedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -169,9 +171,10 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      *
      * @return void
      *
-     * @throws PayPalOrderException
      * @throws PsCheckoutException
      * @throws \PrestaShopException
+     * @throws PayPalOrderException
+     * @throws \Exception
      */
     public function capturePayPalOrder(PayPalOrderApprovedEvent $event)
     {
@@ -184,10 +187,58 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         // ExpressCheckout require buyer select a delivery option, we have to check if cart is ready to payment
         if ($psCheckoutCart->isExpressCheckout() && $psCheckoutCart->getPaypalFundingSource() === 'paypal') {
             $this->logger->info('PayPal Order cannot be captured.');
+
             return;
         }
 
         // @todo Always check if Cart is ready to payment before (quantities, stocks, invoice address, delivery address, delivery option...)
+
+        $orderPayPal = $event->getOrderPayPal();
+        if ($psCheckoutCart->isHostedFields()) {
+            $card3DSecure = (new Card3DSecure())->continueWithAuthorization($orderPayPal);
+
+            $this->logger->info(
+                '3D Secure authentication result',
+                [
+                    'authentication_result' => isset($order['payment_source']['card']['authentication_result']) ? $order['payment_source']['card']['authentication_result'] : null,
+                    'decision' => str_replace(
+                        [
+                            (string) Card3DSecure::NO_DECISION,
+                            (string) Card3DSecure::PROCEED,
+                            (string) Card3DSecure::REJECT,
+                            (string) Card3DSecure::RETRY,
+                        ],
+                        [
+                            \Configuration::get('PS_CHECKOUT_LIABILITY_SHIFT_REQ') ? 'Rejected, no liability shift' : 'Proceed, without liability shift',
+                            'Proceed, liability shift is possible',
+                            'Rejected',
+                            'Retry, ask customer to retry',
+                        ],
+                        (string) $card3DSecure
+                    ),
+                ]
+            );
+
+            switch ($card3DSecure) {
+                case Card3DSecure::REJECT:
+                    throw new PsCheckoutException('Card Strong Customer Authentication failure', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_FAILURE);
+                case Card3DSecure::RETRY:
+                    throw new PsCheckoutException('Card Strong Customer Authentication must be retried.', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN);
+                case Card3DSecure::NO_DECISION:
+                    if (\Configuration::get('PS_CHECKOUT_LIABILITY_SHIFT_REQ')) {
+                        throw new PsCheckoutException('No liability shift to card issuer', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN);
+                    }
+                    break;
+            }
+        }
+
+        // Check if PayPal order amount is the same than the cart amount : we tolerate a difference of more or less 0.05
+        $paypalOrderAmount = (float) sprintf('%01.2f', $orderPayPal['purchase_units'][0]['amount']['value']);
+        $cartAmount = (float) sprintf('%01.2f', (new \Cart($psCheckoutCart->getIdCart()))->getOrderTotal(true, \Cart::BOTH));
+
+        if ($paypalOrderAmount + 0.05 < $cartAmount || $paypalOrderAmount - 0.05 > $cartAmount) {
+            throw new PsCheckoutException('The transaction amount does not match with the cart amount.', PsCheckoutException::DIFFERENCE_BETWEEN_TRANSACTION_AND_CART);
+        }
 
         // This should mainly occur for APMs
         $this->commandBus->handle(
