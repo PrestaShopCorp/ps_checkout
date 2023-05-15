@@ -20,219 +20,249 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\State\Query;
 
+use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
+
 class GetOrderStateConfigurationQueryResult
 {
     /**
-     * @var int
+     * @var OrderStateConfiguration
      */
-    private $canceledStateId;
+    private $canceledState;
 
     /**
-     * @var int
+     * @var OrderStateConfiguration
      */
-    private $paymentErrorStateId;
+    private $paymentErrorState;
 
     /**
-     * @var int
+     * @var OrderStateConfiguration
      */
-    private $outOfStockUnpaidStateId;
+    private $outOfStockUnpaidState;
 
     /**
-     * @var int
+     * @var OrderStateConfiguration
      */
-    private $outOfStockPaidStateId;
+    private $outOfStockPaidState;
 
     /**
-     * @var int
+     * @var OrderStateConfiguration
      */
-    private $paymentAcceptedStateId;
+    private $paymentAcceptedState;
 
     /**
-     * @var int
+     * @var OrderStateConfiguration
      */
-    private $refundedStateId;
+    private $refundedState;
 
     /**
-     * @var int
+     * @var OrderStateConfiguration
      */
-    private $authorizedStateId;
+    private $authorizedState;
 
     /**
-     * @var int
+     * @var OrderStateConfiguration
      */
-    private $partiallyPaidStateId;
+    private $partiallyPaidState;
 
     /**
-     * @var int
+     * @var OrderStateConfiguration
      */
-    private $partiallyRefundedStateId;
+    private $partiallyRefundedState;
 
     /**
-     * @var int
+     * @var OrderStateConfiguration
      */
-    private $waitingCaptureStateId;
+    private $waitingCaptureState;
 
     /**
-     * @var int
+     * @var OrderStateConfiguration
      */
-    private $waitingPaymentCardStateId;
+    private $waitingPaymentCardState;
 
     /**
-     * @var int
+     * @var OrderStateConfiguration
      */
-    private $waitingPaymentPayPalStateId;
+    private $waitingPaymentPayPalState;
 
     /**
-     * @var int
+     * @var OrderStateConfiguration
      */
-    private $waitingPaymentLocalStateId;
+    private $waitingPaymentLocalState;
 
     /**
-     * @param int $canceledStateId
-     * @param int $paymentErrorStateId
-     * @param int $outOfStockUnpaidStateId
-     * @param int $outOfStockPaidStateId
-     * @param int $paymentAcceptedStateId
-     * @param int $refundedStateId
-     * @param int $authorizedStateId
-     * @param int $partiallyPaidStateId
-     * @param int $partiallyRefundedStateId
-     * @param int $waitingCaptureStateId
-     * @param int $waitingPaymentCardStateId
-     * @param int $waitingPaymentPayPalStateId
-     * @param int $waitingPaymentLocalStateId
+     * @param OrderStateConfiguration $canceledState
+     * @param OrderStateConfiguration $paymentErrorState
+     * @param OrderStateConfiguration $outOfStockUnpaidState
+     * @param OrderStateConfiguration $outOfStockPaidState
+     * @param OrderStateConfiguration $paymentAcceptedState
+     * @param OrderStateConfiguration $refundedState
+     * @param OrderStateConfiguration $authorizedState
+     * @param OrderStateConfiguration $partiallyPaidState
+     * @param OrderStateConfiguration $partiallyRefundedState
+     * @param OrderStateConfiguration $waitingCaptureState
+     * @param OrderStateConfiguration $waitingPaymentCardState
+     * @param OrderStateConfiguration $waitingPaymentPayPalState
+     * @param OrderStateConfiguration $waitingPaymentLocalState
      */
     public function __construct(
-        $canceledStateId,
-        $paymentErrorStateId,
-        $outOfStockUnpaidStateId,
-        $outOfStockPaidStateId,
-        $paymentAcceptedStateId,
-        $refundedStateId,
-        $authorizedStateId,
-        $partiallyPaidStateId,
-        $partiallyRefundedStateId,
-        $waitingCaptureStateId,
-        $waitingPaymentCardStateId,
-        $waitingPaymentPayPalStateId,
-        $waitingPaymentLocalStateId
+        $canceledState,
+        $paymentErrorState,
+        $outOfStockUnpaidState,
+        $outOfStockPaidState,
+        $paymentAcceptedState,
+        $refundedState,
+        $authorizedState,
+        $partiallyPaidState,
+        $partiallyRefundedState,
+        $waitingCaptureState,
+        $waitingPaymentCardState,
+        $waitingPaymentPayPalState,
+        $waitingPaymentLocalState
     ) {
-        $this->canceledStateId = $canceledStateId;
-        $this->paymentErrorStateId = $paymentErrorStateId;
-        $this->outOfStockUnpaidStateId = $outOfStockUnpaidStateId;
-        $this->outOfStockPaidStateId = $outOfStockPaidStateId;
-        $this->paymentAcceptedStateId = $paymentAcceptedStateId;
-        $this->refundedStateId = $refundedStateId;
-        $this->authorizedStateId = $authorizedStateId;
-        $this->partiallyPaidStateId = $partiallyPaidStateId;
-        $this->partiallyRefundedStateId = $partiallyRefundedStateId;
-        $this->waitingCaptureStateId = $waitingCaptureStateId;
-        $this->waitingPaymentCardStateId = $waitingPaymentCardStateId;
-        $this->waitingPaymentPayPalStateId = $waitingPaymentPayPalStateId;
-        $this->waitingPaymentLocalStateId = $waitingPaymentLocalStateId;
+        $this->canceledState = $canceledState;
+        $this->paymentErrorState = $paymentErrorState;
+        $this->outOfStockUnpaidState = $outOfStockUnpaidState;
+        $this->outOfStockPaidState = $outOfStockPaidState;
+        $this->paymentAcceptedState = $paymentAcceptedState;
+        $this->refundedState = $refundedState;
+        $this->authorizedState = $authorizedState;
+        $this->partiallyPaidState = $partiallyPaidState;
+        $this->partiallyRefundedState = $partiallyRefundedState;
+        $this->waitingCaptureState = $waitingCaptureState;
+        $this->waitingPaymentCardState = $waitingPaymentCardState;
+        $this->waitingPaymentPayPalState = $waitingPaymentPayPalState;
+        $this->waitingPaymentLocalState = $waitingPaymentLocalState;
     }
 
     /**
-     * @return int
+     * @return OrderStateConfiguration
      */
-    public function getCanceledStateId()
+    public function getCanceledState()
     {
-        return $this->canceledStateId;
+        return $this->canceledState;
     }
 
     /**
-     * @return int
+     * @return OrderStateConfiguration
      */
-    public function getPaymentErrorStateId()
+    public function getPaymentErrorState()
     {
-        return $this->paymentErrorStateId;
+        return $this->paymentErrorState;
     }
 
     /**
-     * @return int
+     * @return OrderStateConfiguration
      */
-    public function getOutOfStockUnpaidStateId()
+    public function getOutOfStockUnpaidState()
     {
-        return $this->outOfStockUnpaidStateId;
+        return $this->outOfStockUnpaidState;
     }
 
     /**
-     * @return int
+     * @return OrderStateConfiguration
      */
-    public function getOutOfStockPaidStateId()
+    public function getOutOfStockPaidState()
     {
-        return $this->outOfStockPaidStateId;
+        return $this->outOfStockPaidState;
     }
 
     /**
-     * @return int
+     * @return OrderStateConfiguration
      */
-    public function getPaymentAcceptedStateId()
+    public function getPaymentAcceptedState()
     {
-        return $this->paymentAcceptedStateId;
+        return $this->paymentAcceptedState;
     }
 
     /**
-     * @return int
+     * @return OrderStateConfiguration
      */
-    public function getRefundedStateId()
+    public function getRefundedState()
     {
-        return $this->refundedStateId;
+        return $this->refundedState;
     }
 
     /**
-     * @return int
+     * @return OrderStateConfiguration
      */
-    public function getAuthorizedStateId()
+    public function getAuthorizedState()
     {
-        return $this->authorizedStateId;
+        return $this->authorizedState;
     }
 
     /**
-     * @return int
+     * @return OrderStateConfiguration
      */
-    public function getPartiallyPaidStateId()
+    public function getPartiallyPaidState()
     {
-        return $this->partiallyPaidStateId;
+        return $this->partiallyPaidState;
     }
 
     /**
-     * @return int
+     * @return OrderStateConfiguration
      */
-    public function getPartiallyRefundedStateId()
+    public function getPartiallyRefundedState()
     {
-        return $this->partiallyRefundedStateId;
+        return $this->partiallyRefundedState;
     }
 
     /**
-     * @return int
+     * @return OrderStateConfiguration
      */
-    public function getWaitingCaptureStateId()
+    public function getWaitingCaptureState()
     {
-        return $this->waitingCaptureStateId;
+        return $this->waitingCaptureState;
     }
 
     /**
-     * @return int
+     * @return OrderStateConfiguration
      */
-    public function getWaitingPaymentCardStateId()
+    public function getWaitingPaymentCardState()
     {
-        return $this->waitingPaymentCardStateId;
+        return $this->waitingPaymentCardState;
     }
 
     /**
-     * @return int
+     * @return OrderStateConfiguration
      */
-    public function getWaitingPaymentPayPalStateId()
+    public function getWaitingPaymentPayPalState()
     {
-        return $this->waitingPaymentPayPalStateId;
+        return $this->waitingPaymentPayPalState;
     }
 
     /**
-     * @return int
+     * @return OrderStateConfiguration
      */
-    public function getWaitingPaymentLocalStateId()
+    public function getWaitingPaymentLocalState()
     {
-        return $this->waitingPaymentLocalStateId;
+        return $this->waitingPaymentLocalState;
+    }
+
+    /**
+     * @param OrderStateId $orderStateId
+     *
+     * @return void
+     */
+    public function getKeyById($orderStateId)
+    {
+        foreach ($this as $orderState) {
+            if ($orderState->getOrderStateId() == $orderStateId->getValue()) {
+                return $orderState->getOrderStateConfigurationName();
+            }
+        }
+
+        return false;
+    }
+
+    public function getIdByKey($orderStateName)
+    {
+        foreach ($this as $orderState) {
+            if ($orderState->getOrderStateConfigurationName() == $orderStateName) {
+                return $orderState->getOrderStateId();
+            }
+        }
+
+        return false;
     }
 }

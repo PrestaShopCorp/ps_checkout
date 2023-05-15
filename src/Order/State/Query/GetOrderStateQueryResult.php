@@ -18,8 +18,33 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
+namespace PrestaShop\Module\PrestashopCheckout\Order\State\Query;
 
-class PayPalOrderFetchedEvent extends PayPalOrderEvent
+use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
+use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
+
+class GetOrderStateQueryResult
 {
+    /**
+     * @var OrderStateId
+     */
+    private $orderStateId;
+
+    /**
+     * @param int $orderStateId
+     *
+     * @throws OrderStateException
+     */
+    public function __construct($orderStateId)
+    {
+        $this->orderStateId = new OrderStateId($orderStateId);
+    }
+
+    /**
+     * @return OrderStateId
+     */
+    public function getOrderStateId()
+    {
+        return $this->orderStateId;
+    }
 }

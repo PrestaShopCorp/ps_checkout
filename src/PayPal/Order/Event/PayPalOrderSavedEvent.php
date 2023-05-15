@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -20,6 +21,32 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
 
-class PayPalOrderFetchedEvent extends PayPalOrderEvent
+class PayPalOrderSavedEvent extends PayPalOrderEvent
 {
+    /**
+     * @var string
+     */
+    private $dateUpd;
+
+    /**
+     * @param string $orderPayPalId
+     * @param string $orderPayPal
+     * @param string $dateUpd
+     *
+     * @throws PayPalCaptureException
+     * @throws PayPalOrderException
+     */
+    public function __construct($orderPayPalId, $orderPayPal, $dateUpd)
+    {
+        parent::__construct($orderPayPalId, $orderPayPal);
+        $this->dateUpd = $dateUpd;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateUpd()
+    {
+        return $this->dateUpd;
+    }
 }

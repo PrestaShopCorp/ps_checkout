@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\State\Factory;
 
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
-use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigurationQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigurationQueryResult;
 
@@ -49,19 +49,19 @@ class OrderStateMappingFactory
         $queryResult = $this->commandBus->handle(new GetOrderStateConfigurationQuery());
 
         return [
-            OrderStateConfiguration::CANCELED => $queryResult->getCanceledStateId(),
-            OrderStateConfiguration::PAYMENT_ERROR => $queryResult->getPaymentErrorStateId(),
-            OrderStateConfiguration::OUT_OF_STOCK_UNPAID => $queryResult->getOutOfStockUnpaidStateId(),
-            OrderStateConfiguration::OUT_OF_STOCK_PAID => $queryResult->getOutOfStockPaidStateId(),
-            OrderStateConfiguration::PAYMENT_ACCEPTED => $queryResult->getPaymentAcceptedStateId(),
-            OrderStateConfiguration::REFUNDED => $queryResult->getRefundedStateId(),
-            OrderStateConfiguration::AUTHORIZED => $queryResult->getAuthorizedStateId(),
-            OrderStateConfiguration::PARTIALLY_PAID => $queryResult->getPartiallyPaidStateId(),
-            OrderStateConfiguration::PARTIALLY_REFUNDED => $queryResult->getPartiallyRefundedStateId(),
-            OrderStateConfiguration::WAITING_CAPTURE => $queryResult->getWaitingCaptureStateId(),
-            OrderStateConfiguration::WAITING_CREDIT_CARD_PAYMENT => $queryResult->getWaitingPaymentCardStateId(),
-            OrderStateConfiguration::WAITING_LOCAL_PAYMENT => $queryResult->getWaitingPaymentLocalStateId(),
-            OrderStateConfiguration::WAITING_PAYPAL_PAYMENT => $queryResult->getWaitingPaymentPayPalStateId(),
+            OrderStateConfigurationKeys::CANCELED => $queryResult->getCanceledStateId(),
+            OrderStateConfigurationKeys::PAYMENT_ERROR => $queryResult->getPaymentErrorStateId(),
+            OrderStateConfigurationKeys::OUT_OF_STOCK_UNPAID => $queryResult->getOutOfStockUnpaidStateId(),
+            OrderStateConfigurationKeys::OUT_OF_STOCK_PAID => $queryResult->getOutOfStockPaidStateId(),
+            OrderStateConfigurationKeys::PAYMENT_ACCEPTED => $queryResult->getPaymentAcceptedStateId(),
+            OrderStateConfigurationKeys::REFUNDED => $queryResult->getRefundedStateId(),
+            OrderStateConfigurationKeys::AUTHORIZED => $queryResult->getAuthorizedStateId(),
+            OrderStateConfigurationKeys::PARTIALLY_PAID => $queryResult->getPartiallyPaidStateId(),
+            OrderStateConfigurationKeys::PARTIALLY_REFUNDED => $queryResult->getPartiallyRefundedStateId(),
+            OrderStateConfigurationKeys::WAITING_CAPTURE => $queryResult->getWaitingCaptureStateId(),
+            OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT => $queryResult->getWaitingPaymentCardStateId(),
+            OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT => $queryResult->getWaitingPaymentLocalStateId(),
+            OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT => $queryResult->getWaitingPaymentPayPalStateId(),
         ];
     }
 }

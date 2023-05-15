@@ -18,8 +18,36 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
+namespace PrestaShop\Module\PrestashopCheckout\Temp\Entities;
 
-class PayPalOrderFetchedEvent extends PayPalOrderEvent
+class Phone
 {
+    /** @var string */
+    private $nationalNumber;
+
+    /**
+     * @param string $nationalNumber
+     */
+    public function __construct($nationalNumber)
+    {
+        $this->nationalNumber = $nationalNumber;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNationalNumber()
+    {
+        return $this->nationalNumber;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return array_filter([
+            'national_number' => $this->getNationalNumber(),
+        ]);
+    }
 }

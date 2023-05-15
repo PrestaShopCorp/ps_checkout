@@ -21,46 +21,46 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\State\Service;
 
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
-use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 
 class CheckOrderState
 {
     const TRANSITION_ALLOWED = [
-        OrderStateConfiguration::PAYMENT_ACCEPTED => [
-            OrderStateConfiguration::PARTIALLY_REFUNDED,
-            OrderStateConfiguration::REFUNDED,
+        OrderStateConfigurationKeys::PAYMENT_ACCEPTED => [
+            OrderStateConfigurationKeys::PARTIALLY_REFUNDED,
+            OrderStateConfigurationKeys::REFUNDED,
         ],
-        OrderStateConfiguration::WAITING_CAPTURE => [
-            OrderStateConfiguration::WAITING_PAYPAL_PAYMENT,
-            OrderStateConfiguration::WAITING_CREDIT_CARD_PAYMENT,
-            OrderStateConfiguration::WAITING_LOCAL_PAYMENT,
+        OrderStateConfigurationKeys::WAITING_CAPTURE => [
+            OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT,
+            OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT,
+            OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT,
         ],
-        OrderStateConfiguration::PARTIALLY_REFUNDED => [
-            OrderStateConfiguration::REFUNDED,
+        OrderStateConfigurationKeys::PARTIALLY_REFUNDED => [
+            OrderStateConfigurationKeys::REFUNDED,
         ],
-        OrderStateConfiguration::REFUNDED => [],
-        OrderStateConfiguration::WAITING_PAYPAL_PAYMENT => [
-            OrderStateConfiguration::PAYMENT_ACCEPTED,
-            OrderStateConfiguration::PARTIALLY_PAID,
-            OrderStateConfiguration::CANCELED,
-            OrderStateConfiguration::PAYMENT_ERROR,
+        OrderStateConfigurationKeys::REFUNDED => [],
+        OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT => [
+            OrderStateConfigurationKeys::PAYMENT_ACCEPTED,
+            OrderStateConfigurationKeys::PARTIALLY_PAID,
+            OrderStateConfigurationKeys::CANCELED,
+            OrderStateConfigurationKeys::PAYMENT_ERROR,
         ],
-        OrderStateConfiguration::WAITING_CREDIT_CARD_PAYMENT => [],
-        OrderStateConfiguration::WAITING_LOCAL_PAYMENT => [],
-        OrderStateConfiguration::AUTHORIZED => [
-            OrderStateConfiguration::WAITING_PAYPAL_PAYMENT,
-            OrderStateConfiguration::WAITING_CREDIT_CARD_PAYMENT,
-            OrderStateConfiguration::WAITING_LOCAL_PAYMENT,
-            OrderStateConfiguration::PARTIALLY_REFUNDED,
+        OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT => [],
+        OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT => [],
+        OrderStateConfigurationKeys::AUTHORIZED => [
+            OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT,
+            OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT,
+            OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT,
+            OrderStateConfigurationKeys::PARTIALLY_REFUNDED,
         ],
-        OrderStateConfiguration::PARTIALLY_PAID => [
-            OrderStateConfiguration::PAYMENT_ERROR,
-            OrderStateConfiguration::PAYMENT_ACCEPTED,
+        OrderStateConfigurationKeys::PARTIALLY_PAID => [
+            OrderStateConfigurationKeys::PAYMENT_ERROR,
+            OrderStateConfigurationKeys::PAYMENT_ACCEPTED,
         ],
-        OrderStateConfiguration::OUT_OF_STOCK_PAID => [],
-        OrderStateConfiguration::OUT_OF_STOCK_UNPAID => [],
-        OrderStateConfiguration::PAYMENT_ERROR => [],
-        OrderStateConfiguration::CANCELED => [],
+        OrderStateConfigurationKeys::OUT_OF_STOCK_PAID => [],
+        OrderStateConfigurationKeys::OUT_OF_STOCK_UNPAID => [],
+        OrderStateConfigurationKeys::PAYMENT_ERROR => [],
+        OrderStateConfigurationKeys::CANCELED => [],
     ];
 
     /**

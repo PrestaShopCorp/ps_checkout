@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -19,48 +18,50 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
+namespace PrestaShop\Module\PrestashopCheckout\Temp\Entities;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
-
-class UpdatePayPalOrderCacheCommand
+class Payee
 {
-    /**
-     * @var PayPalOrderId
-     */
-    private $orderPayPalId;
+    /** @var string */
+    private $emailAddress;
+
+    /** @var string */
+    private $merchantId;
 
     /**
-     * @var array
+     * @param string $emailAddress
+     * @param string $merchantId
      */
-    private $orderPayPal;
-
-    /**
-     * @param string $orderPayPalId
-     * @param array $orderPayPal
-     *
-     * @throws PayPalOrderException
-     */
-    public function __construct($orderPayPalId, array $orderPayPal)
+    public function __construct($emailAddress, $merchantId)
     {
-        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
-        $this->orderPayPal = $orderPayPal;
+        $this->emailAddress = $emailAddress;
+        $this->merchantId = $merchantId;
     }
 
     /**
-     * @return PayPalOrderId
+     * @return string
      */
-    public function getOrderId()
+    public function getEmailAddress()
     {
-        return $this->orderPayPalId;
+        return $this->emailAddress;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMerchantId()
+    {
+        return $this->merchantId;
     }
 
     /**
      * @return array
      */
-    public function getOrderPayPal()
+    public function toArray()
     {
-        return $this->orderPayPal;
+        return array_filter([
+            'email_address' => $this->getEmailAddress(),
+            'merchant_id' => $this->getMerchantId(),
+        ]);
     }
 }

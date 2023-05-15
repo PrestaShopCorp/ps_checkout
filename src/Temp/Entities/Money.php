@@ -18,8 +18,46 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
+namespace PrestaShop\Module\PrestashopCheckout\Temp\Entities;
 
-class PayPalOrderFetchedEvent extends PayPalOrderEvent
+class Money
 {
+    /** @var string */
+    private $currencyCode;
+
+    /** @var float */
+    private $value;
+
+    public function __construct($currencyCode, $value)
+    {
+        $this->currencyCode = $currencyCode;
+        $this->value = $value;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrencyCode()
+    {
+        return $this->currencyCode;
+    }
+
+    /**
+     * @return float
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'currency_code' => $this->getCurrencyCode(),
+            'value' => $this->getValue(),
+        ];
+    }
 }

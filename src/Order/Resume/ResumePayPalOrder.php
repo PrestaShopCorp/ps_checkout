@@ -18,8 +18,43 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
+namespace PrestaShop\Module\PrestashopCheckout\Order\Resume;
 
-class PayPalOrderFetchedEvent extends PayPalOrderEvent
+class ResumePayPalOrder
 {
+    /**
+     * @var string
+     */
+    private $oldStatus;
+
+    /**
+     * @var string
+     */
+    private $newStatus;
+
+    /**
+     * @param string $oldStatus
+     * @param string $newStatus
+     */
+    public function __construct($oldStatus, $newStatus)
+    {
+        $this->oldStatus = $oldStatus;
+        $this->newStatus = $newStatus;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOldStatus()
+    {
+        return $this->oldStatus;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNewStatus()
+    {
+        return $this->newStatus;
+    }
 }

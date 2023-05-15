@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -32,13 +33,19 @@ class PayPalOrderEvent extends Event
     private $orderPayPalId;
 
     /**
+     * @var array{id: string, status: string, intent: string, payment_source: array, purchase_units: array, payer: array, create_time: string, links: array}
+     */
+    private $orderPayPal;
+
+    /**
      * @param string $orderPayPalId
      *
      * @throws PayPalOrderException
      */
-    public function __construct($orderPayPalId)
+    public function __construct($orderPayPalId, $orderPayPal)
     {
         $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
+        $this->orderPayPal = $orderPayPal;
     }
 
     /**
@@ -47,5 +54,13 @@ class PayPalOrderEvent extends Event
     public function getOrderPayPalId()
     {
         return $this->orderPayPalId;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOrderPayPal()
+    {
+        return $this->orderPayPal;
     }
 }

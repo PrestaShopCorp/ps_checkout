@@ -18,8 +18,45 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
+namespace PrestaShop\Module\PrestashopCheckout\Order\Resume;
 
-class PayPalOrderFetchedEvent extends PayPalOrderEvent
+use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
+
+class ResumeCart
 {
+    /**
+     * @var CartId
+     */
+    private $id;
+
+    /**
+     * @var string
+     */
+    private $amount;
+
+    /**
+     * @param CartId $id
+     * @param string $amount
+     */
+    public function __construct(CartId $id, $amount)
+    {
+        $this->id = $id;
+        $this->amount = $amount;
+    }
+
+    /**
+     * @return CartId
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAmount()
+    {
+        return $this->amount;
+    }
 }

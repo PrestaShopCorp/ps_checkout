@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -19,48 +18,61 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
+namespace PrestaShop\Module\PrestashopCheckout\Temp\Entities;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
-
-class UpdatePayPalOrderCacheCommand
+class Shipping
 {
-    /**
-     * @var PayPalOrderId
-     */
-    private $orderPayPalId;
+    /** @var Address */
+    private $address;
 
-    /**
-     * @var array
-     */
-    private $orderPayPal;
+    /** @var string */
+    private $name;
 
-    /**
-     * @param string $orderPayPalId
-     * @param array $orderPayPal
-     *
-     * @throws PayPalOrderException
-     */
-    public function __construct($orderPayPalId, array $orderPayPal)
+    /** @var string */
+    private $type;
+
+    public function __construct($address, $name, $type)
     {
-        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
-        $this->orderPayPal = $orderPayPal;
+        $this->address = $address;
+        $this->name = $name;
+        $this->type = $type;
     }
 
     /**
-     * @return PayPalOrderId
+     * @return Address
      */
-    public function getOrderId()
+    public function getAddress()
     {
-        return $this->orderPayPalId;
+        return $this->address;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 
     /**
      * @return array
      */
-    public function getOrderPayPal()
+    public function toArray()
     {
-        return $this->orderPayPal;
+        return array_filter([
+            'address' => $this->getAddress()->toArray(),
+            'name' => [
+                'full_name' => $this->getName(),
+            ],
+            'type' => $this->getType(),
+        ]);
     }
 }
