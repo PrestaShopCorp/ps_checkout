@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -19,48 +18,48 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
+namespace PrestaShop\Module\PrestashopCheckout\Temp\Entities;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
-
-class UpdatePayPalOrderCacheCommand
+class Amount
 {
-    /**
-     * @var PayPalOrderId
-     */
-    private $orderPayPalId;
+    /** @var Money */
+    private $money;
 
-    /**
-     * @var array
-     */
-    private $orderPayPal;
+    /** @var AmountBreakdown */
+    private $breakdown;
 
-    /**
-     * @param string $orderPayPalId
-     * @param array $orderPayPal
-     *
-     * @throws PayPalOrderException
-     */
-    public function __construct($orderPayPalId, array $orderPayPal)
+    public function __construct($money, $breakdown = null)
     {
-        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
-        $this->orderPayPal = $orderPayPal;
+        $this->money = $money;
+        $this->breakdown = $breakdown;
     }
 
     /**
-     * @return PayPalOrderId
+     * @return Money
      */
-    public function getOrderId()
+    public function getMoney()
     {
-        return $this->orderPayPalId;
+        return $this->money;
     }
 
     /**
-     * @return array
+     * @return AmountBreakdown
      */
-    public function getOrderPayPal()
+    public function getBreakdown()
     {
-        return $this->orderPayPal;
+        return $this->breakdown;
+    }
+
+    public function toArray()
+    {
+        $data = [
+            'money' => $this->getMoney()->toArray(),
+        ];
+
+        if (!empty($this->getBreakdown())) {
+            $data['breakdown'] = $this->getBreakdown()->toArray();
+        }
+
+        return $data;
     }
 }

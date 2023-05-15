@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -19,48 +18,43 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
+namespace PrestaShop\Module\PrestashopCheckout\Order\Resume;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
-
-class UpdatePayPalOrderCacheCommand
+class ResumePayPalAuthorization
 {
     /**
-     * @var PayPalOrderId
+     * @var string
      */
-    private $orderPayPalId;
+    private $status;
 
     /**
-     * @var array
+     * @var string
      */
-    private $orderPayPal;
+    private $amount;
 
     /**
-     * @param string $orderPayPalId
-     * @param array $orderPayPal
-     *
-     * @throws PayPalOrderException
+     * @param string $status
+     * @param string $amount
      */
-    public function __construct($orderPayPalId, array $orderPayPal)
+    public function __construct($status, $amount)
     {
-        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
-        $this->orderPayPal = $orderPayPal;
+        $this->status = $status;
+        $this->amount = $amount;
     }
 
     /**
-     * @return PayPalOrderId
+     * @return string
      */
-    public function getOrderId()
+    public function getStatus()
     {
-        return $this->orderPayPalId;
+        return $this->status;
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getOrderPayPal()
+    public function getAmount()
     {
-        return $this->orderPayPal;
+        return $this->amount;
     }
 }

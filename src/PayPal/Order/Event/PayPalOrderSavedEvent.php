@@ -21,47 +21,32 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
 
-use PrestaShop\Module\PrestashopCheckout\Event\Event;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
-
-class PayPalOrderEvent extends Event
+class PayPalOrderSavedEvent extends PayPalOrderEvent
 {
     /**
-     * @var PayPalOrderId
+     * @var string
      */
-    private $orderPayPalId;
-
-    /**
-     * @var array{id: string, status: string, intent: string, payment_source: array, purchase_units: array, payer: array, create_time: string, links: array}
-     */
-    private $orderPayPal;
+    private $dateUpd;
 
     /**
      * @param string $orderPayPalId
-     * @param array $orderPayPal
+     * @param string $orderPayPal
+     * @param string $dateUpd
      *
+     * @throws PayPalCaptureException
      * @throws PayPalOrderException
      */
-    public function __construct($orderPayPalId, $orderPayPal)
+    public function __construct($orderPayPalId, $orderPayPal, $dateUpd)
     {
-        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
-        $this->orderPayPal = $orderPayPal;
+        parent::__construct($orderPayPalId, $orderPayPal);
+        $this->dateUpd = $dateUpd;
     }
 
     /**
-     * @return PayPalOrderId
+     * @return string
      */
-    public function getOrderPayPalId()
+    public function getDateUpd()
     {
-        return $this->orderPayPalId;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOrderPayPal()
-    {
-        return $this->orderPayPal;
+        return $this->dateUpd;
     }
 }

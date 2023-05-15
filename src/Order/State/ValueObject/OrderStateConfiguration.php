@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -19,48 +18,47 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
+namespace PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
 
-class UpdatePayPalOrderCacheCommand
+class OrderStateConfiguration
 {
     /**
-     * @var PayPalOrderId
+     * @var OrderStateId
      */
-    private $orderPayPalId;
+    private $orderStateId;
 
     /**
-     * @var array
+     * @var string
      */
-    private $orderPayPal;
+    private $orderStateConfigurationName;
 
     /**
-     * @param string $orderPayPalId
-     * @param array $orderPayPal
+     * @param int $orderStateId
+     * @param string $orderStateConfigurationName
      *
-     * @throws PayPalOrderException
+     * @throws OrderStateException
      */
-    public function __construct($orderPayPalId, array $orderPayPal)
+    public function __construct($orderStateId, $orderStateConfigurationName)
     {
-        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
-        $this->orderPayPal = $orderPayPal;
+        $this->orderStateId = new OrderStateId($orderStateId);
+        $this->orderStateConfigurationName = $orderStateConfigurationName;
     }
 
     /**
-     * @return PayPalOrderId
+     * @return int
      */
-    public function getOrderId()
+    public function getOrderStateId()
     {
-        return $this->orderPayPalId;
+        return $this->orderStateId->getValue();
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getOrderPayPal()
+    public function getOrderStateConfigurationName()
     {
-        return $this->orderPayPal;
+        return $this->orderStateConfigurationName;
     }
 }

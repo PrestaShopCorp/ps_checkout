@@ -125,15 +125,15 @@ class OrderDispatcher implements Dispatcher
 
                 return true;
             case static::PS_CHECKOUT_ORDER_APPROVED:
-                $eventDispatcher->dispatch(new PayPalOrderApprovedEvent($payload['orderId']));
+                $eventDispatcher->dispatch(new PayPalOrderApprovedEvent($payload['orderId'], $payload['resource']));
 
                 return true;
             case static::PS_CHECKOUT_ORDER_COMPLETED:
-                $eventDispatcher->dispatch(new PayPalOrderCompletedEvent($payload['orderId']));
+                $eventDispatcher->dispatch(new PayPalOrderCompletedEvent($payload['orderId'], $payload['resource']));
 
                 return true;
             case static::PS_CHECKOUT_ORDER_APPROVAL_REVERSED:
-                $eventDispatcher->dispatch(new PayPalOrderApprovalReversedEvent($payload['orderId']));
+                $eventDispatcher->dispatch(new PayPalOrderApprovalReversedEvent($payload['orderId'], $payload['resource']));
 
                 return true;
             default:

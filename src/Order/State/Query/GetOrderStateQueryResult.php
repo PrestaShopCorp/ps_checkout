@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -19,48 +18,33 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
+namespace PrestaShop\Module\PrestashopCheckout\Order\State\Query;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
+use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
 
-class UpdatePayPalOrderCacheCommand
+class GetOrderStateQueryResult
 {
     /**
-     * @var PayPalOrderId
+     * @var OrderStateId
      */
-    private $orderPayPalId;
+    private $orderStateId;
 
     /**
-     * @var array
-     */
-    private $orderPayPal;
-
-    /**
-     * @param string $orderPayPalId
-     * @param array $orderPayPal
+     * @param int $orderStateId
      *
-     * @throws PayPalOrderException
+     * @throws OrderStateException
      */
-    public function __construct($orderPayPalId, array $orderPayPal)
+    public function __construct($orderStateId)
     {
-        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
-        $this->orderPayPal = $orderPayPal;
+        $this->orderStateId = new OrderStateId($orderStateId);
     }
 
     /**
-     * @return PayPalOrderId
+     * @return OrderStateId
      */
-    public function getOrderId()
+    public function getOrderStateId()
     {
-        return $this->orderPayPalId;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOrderPayPal()
-    {
-        return $this->orderPayPal;
+        return $this->orderStateId;
     }
 }

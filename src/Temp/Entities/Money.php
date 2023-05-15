@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -19,48 +18,46 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
+namespace PrestaShop\Module\PrestashopCheckout\Temp\Entities;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
-
-class UpdatePayPalOrderCacheCommand
+class Money
 {
-    /**
-     * @var PayPalOrderId
-     */
-    private $orderPayPalId;
+    /** @var string */
+    private $currencyCode;
 
-    /**
-     * @var array
-     */
-    private $orderPayPal;
+    /** @var float */
+    private $value;
 
-    /**
-     * @param string $orderPayPalId
-     * @param array $orderPayPal
-     *
-     * @throws PayPalOrderException
-     */
-    public function __construct($orderPayPalId, array $orderPayPal)
+    public function __construct($currencyCode, $value)
     {
-        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
-        $this->orderPayPal = $orderPayPal;
+        $this->currencyCode = $currencyCode;
+        $this->value = $value;
     }
 
     /**
-     * @return PayPalOrderId
+     * @return string
      */
-    public function getOrderId()
+    public function getCurrencyCode()
     {
-        return $this->orderPayPalId;
+        return $this->currencyCode;
+    }
+
+    /**
+     * @return float
+     */
+    public function getValue()
+    {
+        return $this->value;
     }
 
     /**
      * @return array
      */
-    public function getOrderPayPal()
+    public function toArray()
     {
-        return $this->orderPayPal;
+        return [
+            'currency_code' => $this->getCurrencyCode(),
+            'value' => $this->getValue(),
+        ];
     }
 }
