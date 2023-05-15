@@ -203,9 +203,7 @@ class ValidateOrder
             /** @var CacheInterface $paypalOrderCache */
             $paypalOrderCache = $module->getService('ps_checkout.cache.paypal.order');
             $paypalOrderCache->set($response['body']['id'], $response['body']);
-            UpdatePayPalOrderCacheCommandHandler
 
-            UpdatePsCheckoutSessionCommandHandler
             if (false === $psCheckoutCart) {
                 $psCheckoutCart = new \PsCheckoutCart();
                 $psCheckoutCart->id_cart = (int) $payload['cartId'];
