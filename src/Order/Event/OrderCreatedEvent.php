@@ -42,7 +42,6 @@ class OrderCreatedEvent extends Event
     /**
      * @param int $orderId
      * @param int $cartId
-     * @param array $orderPayPal
      *
      * @throws OrderException
      * @throws CartException

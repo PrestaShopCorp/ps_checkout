@@ -36,7 +36,6 @@ use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckTransitionStateService;
 use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -106,11 +105,9 @@ class OrderEventSubscriber implements EventSubscriberInterface
     {
         $cartId = $event->getCartId()->getValue();
 
-        /** @var GetOrderQueryResult $order */
+        /** @var PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQueryResult $order */
         $order = $this->commandBus->handle(new GetOrderQuery($cartId));
 
-
-        //$resume = $this->orderResumeFactory->create($event->getCartId(), OrderResumeFactory::PAYPAL_CAPTURE, PayPalCaptureStatus::COMPLETED, $event->getOrderPayPal()['purchase_units']['amount'], $paypalOrder->getOrder()['status'], $event->getOrderPayPal()['status']);
         $getOrderStateConfiguration = $this->commandBus->handle(new GetOrderStateConfigurationQuery());
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByCartId($cartId);
         $paypalOrder = $this->commandBus->handle(new GetPayPalOrderQuery($psCheckoutCart->paypal_order));

@@ -129,7 +129,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
      */
     public function createOrder(PayPalCaptureEvent $event)
     {
-        if (get_class($event) != 'PayPalCaptureCompletedEvent' || get_class($event) != 'PayPalCapturePendingEvent') {
+        if (get_class($event) !== 'PayPalCaptureCompletedEvent' || get_class($event) !== 'PayPalCapturePendingEvent') {
             throw new PsCheckoutException(sprintf('Invalid Capture Event class (%s). Expected : PayPalCaptureCompletedEvent or PayPalCapturePendingEvent', get_class($event)), PsCheckoutException::INVALID_CAPTURE_EVENT);
         }
 
