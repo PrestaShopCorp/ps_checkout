@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -21,7 +22,8 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCacheCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\RemovePayPalOrderCacheCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\removePayPalOrderCacheCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCacheUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use Psr\SimpleCache\CacheException;
@@ -50,24 +52,24 @@ class RemovePayPalOrderCacheCommandHandler
     }
 
     /**
-     * @param UpdatePayPalOrderCacheCommand $updatePayPalOrderCacheCommand
+     * @param RemovePayPalOrderCacheCommand $removePayPalOrderCacheCommand
      *
      * @return void
      *
      * @throws PayPalOrderException
      */
-    public function handle(UpdatePayPalOrderCacheCommand $updatePayPalOrderCacheCommand)
+    public function handle(RemovePayPalOrderCacheCommand $removePayPalOrderCacheCommand)
     {
         try {
-            if ($this->cache->has($updatePayPalOrderCacheCommand->getOrderId()->getValue())) {
-                $this->cache->delete($updatePayPalOrderCacheCommand->getOrderId()->getValue());
+            if ($this->cache->has($removePayPalOrderCacheCommand->getOrderId()->getValue())) {
+                $this->cache->delete($removePayPalOrderCacheCommand->getOrderId()->getValue());
             }
         } catch (CacheException $exception) {
             throw new PayPalOrderException('Unable to remove item from PayPal Order Cache', PayPalOrderException::CACHE_EXCEPTION, $exception);
         }
 
         $this->eventDispatcher->dispatch(
-            new PayPalOrderCacheUpdatedEvent($updatePayPalOrderCacheCommand->getOrderId()->getValue())
+            new PayPalOrderCacheUpdatedEvent($removePayPalOrderCacheCommand->getOrderId()->getValue())
         );
     }
 }
