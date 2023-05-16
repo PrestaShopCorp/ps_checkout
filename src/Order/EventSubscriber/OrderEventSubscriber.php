@@ -105,7 +105,7 @@ class OrderEventSubscriber implements EventSubscriberInterface
     {
         $cartId = $event->getCartId()->getValue();
 
-        /** @var PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQueryResult $order */
+        /** @var \PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQueryResult $order */
         $order = $this->commandBus->handle(new GetOrderQuery($cartId));
 
         $getOrderStateConfiguration = $this->commandBus->handle(new GetOrderStateConfigurationQuery());
