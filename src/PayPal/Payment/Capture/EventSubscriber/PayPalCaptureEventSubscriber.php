@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -38,7 +39,7 @@ use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigur
 use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigurationQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckTransitionStateService;
 use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeniedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureEvent;
@@ -126,8 +127,12 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
      *
      * @throws \PrestaShopException
      */
-    public function createOrder(PayPalCaptureCompletedEvent $event)
+    public function createOrder(PayPalCaptureEvent $event)
     {
+        if (get_class($event) !== 'PayPalCaptureCompletedEvent' || get_class($event) !== 'PayPalCapturePendingEvent') {
+            throw new PsCheckoutException(sprintf('Invalid Capture Event class (%s). Expected : PayPalCaptureCompletedEvent or PayPalCapturePendingEvent', get_class($event)), PsCheckoutException::INVALID_CAPTURE_EVENT);
+        }
+
         /** @var \PsCheckoutCart $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
 
@@ -136,7 +141,8 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
             $this->logger->info(sprintf('PrestaShop Order for PayPal Order #%s is already created.', $event->getPayPalOrderId()->getValue()));
             return; // If we already have an Order (when going from Pending to Completed), we stop
-        } catch (PsCheckoutException $exception) {}
+        } catch (PsCheckoutException $exception) {
+        }
 
         $capture = $event->getCapture();
 
@@ -145,7 +151,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $cart = new \Cart($psCheckoutCart->getIdCart());
 
         $getOrderStateConfiguration = $this->commandBus->handle(new GetOrderStateConfigurationQuery());
-
 
         if (empty($capture['amount']['value'])) {
             $orderStateId = $getOrderStateConfiguration->getIdByKey(OrderStateConfigurationKeys::PARTIALLY_PAID);
@@ -175,7 +180,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param PayPalCaptureEvent $event
+     * @param PayPalCaptureCompletedEvent $event
      *
      * @return void
      *
@@ -184,7 +189,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
      * @throws \PrestaShopException
      * @throws PayPalCaptureException
      */
-    public function createOrderPayment(PayPalCaptureEvent $event)
+    public function createOrderPayment(PayPalCaptureCompletedEvent $event)
     {
         /** @var \PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
@@ -211,8 +216,12 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $capture = $event->getCapture();
         $paymentAmount = '';
         $transactionId = null;
-        // @TODO: Test if it correctly works everytime (because of float approx.)
-        if ((float) $capture['amount']['value'] === ((float) $order->getTotalAmount() - (float) $order->getTotalAmountPaid())) {
+
+        $captureAmount = sprintf('%01.2f', $capture['amount']['value']);
+        $orderAmount = sprintf('%01.2f', $order->getTotalAmount());
+        $paidAmount = sprintf('%01.2f', $order->getTotalAmountPaid());
+
+        if ($captureAmount + 0.05 < ($orderAmount - $paidAmount) || $captureAmount - 0.05 > ($orderAmount - $paidAmount)) {
             $paymentAmount = $capture['amount']['value'];
             $transactionId = $event->getPayPalCaptureId();
         }
@@ -257,49 +266,37 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
         // @TODO : Clean un peu cette fonction (retirer Refund et Authorization)
 
+        $paypalOrder = $this->commandBus->handle(new GetPayPalOrderQuery($event->getPayPalOrderId()->getValue()));
+        $capturePayload = $paypalOrder->getOrder()['body']['purchase_units'][0]['payments']['captures'];
 
         $newOrderState = $this->checkTransitionStateService->getNewOrderState([
-            'Cart' => ['CartId'=>$psCheckoutCart->getIdCart(),'Amount' => $order->total_paid],
             'Order' => [
-                'CurrentOrderStatus' => $getOrderStateConfiguration->getKeyById(new OrderStateId($currentOrderStateId)),
-                'TotalAmountPaid' => $order->getTotalPaid(),
-                'TotalAmount' => $order->total_paid,
+                'CurrentOrderStatus' => $getOrderStateConfiguration->getKeyById(new OrderStateId($order->getCurrentState())),
+                'TotalAmountPaid' => $order->getTotalAmountPaid(),
+                'TotalAmount' => $order->getTotalAmount(),
                 'TotalRefunded' => '0',
             ],
             'PayPalRefund' => [ // NULL si pas de refund dans l'order PayPal
                 null,
             ],
             'PayPalCapture' => [ // NULL si pas de refund dans l'order PayPal
-                'Status' => $event->getCapture()['status'],
-                'Amount' => $event->getCapture()['amount']['value'],
+                'Status' => $capturePayload['status'],
+                'Amount' => $capturePayload['amount']['value'],
             ],
             'PayPalAuthorization' => [ // NULL si pas de refund dans l'order PayPal
                 null,
             ],
             'PayPalOrder' => [
-                'OldStatus' => PayPalOrderStatus::COMPLETED,
-                'NewStatus' => PayPalOrderStatus::COMPLETED,
+                'OldStatus' => $psCheckoutCart->getPaypalStatus(),
+                'NewStatus' => $paypalOrder->getOrder()['status'],
             ],
         ]);
 
-        $newOrderStateId = $getOrderStateConfiguration->getIdByKey($newOrderState);
-
-        // @TODO : Corriger l'orderstatetransition en dessous -v
-
-        // Prevent duplicate state entry
-        if ($currentOrderStateId !== $newOrderStateId
-            && false === (bool) $order->hasBeenPaid()
-            && false === (bool) $order->hasBeenShipped()
-            && false === (bool) $order->hasBeenDelivered()
-            && false === (bool) $order->isInPreparation()
-        ) {
-            if ($this->checkOrderState->isOrderStateTransitionAvailable($currentOrderStateId, $newOrderStateId)) {
-                $this->commandBus->handle(new UpdateOrderStatusCommand($currentOrderStateId, $newOrderStateId));
-            } else {
-                throw new OrderStateException(sprintf('Order state from order #%s cannot be changed from %s to %s', $orderId, $currentOrderStateId, $newOrderStateId), OrderStateException::TRANSITION_UNAVAILABLE);
-            }
+        if ($newOrderState !== false) {
+            $newOrderStateId = $getOrderStateConfiguration->getIdByKey($newOrderState);
+            $this->commandBus->handle(new UpdateOrderStatusCommand($currentOrderStateId, $newOrderStateId));
         } else {
-            $this->logger->info('Order state failed to be updated.');
+            throw new OrderStateException(sprintf('Order state from order #%s cannot be changed from %s to %s', $orderId, $currentOrderStateId, $newOrderStateId), OrderStateException::TRANSITION_UNAVAILABLE);
         }
     }
 }

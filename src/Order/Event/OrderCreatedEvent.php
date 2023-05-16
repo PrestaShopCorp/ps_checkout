@@ -40,23 +40,16 @@ class OrderCreatedEvent extends Event
     private $cartId;
 
     /**
-     * @var array
-     */
-    private $orderPayPal;
-
-    /**
      * @param int $orderId
      * @param int $cartId
-     * @param array $orderPayPal
      *
      * @throws OrderException
      * @throws CartException
      */
-    public function __construct($orderId, $cartId, $orderPayPal)
+    public function __construct($orderId, $cartId)
     {
         $this->orderId = new OrderId($orderId);
         $this->cartId = new CartId($cartId);
-        $this->orderPayPal = $orderPayPal;
     }
 
     /**
@@ -73,13 +66,5 @@ class OrderCreatedEvent extends Event
     public function getCartId()
     {
         return $this->cartId;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOrderPayPal()
-    {
-        return $this->orderPayPal;
     }
 }

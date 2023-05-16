@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -36,7 +37,7 @@ abstract class PayPalCaptureEvent extends Event
     /**
      * @var PayPalOrderId
      */
-    private $orderId;
+    private $paypalOrderId;
 
     /**
      * @var array{id: string, status: string, amount: array, final_capture: bool, disbursement_mode: string, create_time: string, update_time: string, seller_protection: array, seller_receivable_breakdown: array, links: array}
@@ -45,16 +46,16 @@ abstract class PayPalCaptureEvent extends Event
 
     /**
      * @param string $captureId
-     * @param string $orderId
+     * @param string $paypalOrderId
      * @param array{id: string, status: string, amount: array, final_capture: bool, disbursement_mode: string, create_time: string, update_time: string, seller_protection: array, seller_receivable_breakdown: array, links: array} $capture
      *
      * @throws PayPalCaptureException
      * @throws PayPalOrderException
      */
-    public function __construct($captureId, $orderId, array $capture)
+    public function __construct($captureId, $paypalOrderId, array $capture)
     {
         $this->captureId = new PayPalCaptureId($captureId);
-        $this->orderId = new PayPalOrderId($orderId);
+        $this->paypalOrderId = new PayPalOrderId($paypalOrderId);
         $this->capture = $capture;
     }
 
@@ -71,7 +72,7 @@ abstract class PayPalCaptureEvent extends Event
      */
     public function getPayPalOrderId()
     {
-        return $this->orderId;
+        return $this->paypalOrderId;
     }
 
     /**
