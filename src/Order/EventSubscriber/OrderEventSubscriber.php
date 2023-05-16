@@ -21,13 +21,11 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber;
 
-use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderPaymentCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderStatusUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
-use PrestaShop\Module\PrestashopCheckout\Order\Factory\OrderResumeFactory;
 use PrestaShop\Module\PrestashopCheckout\Order\Matrice\Command\UpdateOrderMatriceCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
@@ -38,14 +36,15 @@ use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use Ps_checkout;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class OrderEventSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var CommandBusInterface
+     * @var Ps_checkout
      */
-    private $commandBus;
+    private $module;
 
     /**
      * @var CheckTransitionStateService
@@ -58,16 +57,16 @@ class OrderEventSubscriber implements EventSubscriberInterface
     private $psCheckoutCartRepository;
 
     /**
-     * @param CommandBusInterface $commandBus
+     * @param Ps_checkout $module
      * @param CheckTransitionStateService $checkTransitionStateService
      * @param PsCheckoutCartRepository $psCheckoutCartRepository
      */
     public function __construct(
-        CommandBusInterface $commandBus,
+        Ps_checkout $module,
         CheckTransitionStateService $checkTransitionStateService,
         PsCheckoutCartRepository $psCheckoutCartRepository,
     ) {
-        $this->commandBus = $commandBus;
+        $this->module = $module;
         $this->checkTransitionStateService = $checkTransitionStateService;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
     }
@@ -99,11 +98,11 @@ class OrderEventSubscriber implements EventSubscriberInterface
         $cartId = $event->getCartId()->getValue();
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQueryResult $order */
-        $order = $this->commandBus->handle(new GetOrderQuery($cartId));
+        $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderQuery($cartId));
 
-        $getOrderStateConfiguration = $this->commandBus->handle(new GetOrderStateConfigurationQuery());
+        $getOrderStateConfiguration = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderStateConfigurationQuery());
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByCartId($cartId);
-        $paypalOrder = $this->commandBus->handle(new GetPayPalOrderQuery($psCheckoutCart->paypal_order));
+        $paypalOrder = $this->module->getService('ps_checkout.bus.command')->handle(new GetPayPalOrderQuery($psCheckoutCart->paypal_order));
         $capturePayload = $paypalOrder->getOrder()['body']['purchase_units'][0]['payments']['captures'];
 
         $newOrderState = $this->checkTransitionStateService->getNewOrderState([
@@ -129,11 +128,11 @@ class OrderEventSubscriber implements EventSubscriberInterface
             ],
         ]);
         if ($newOrderState !== false) {
-            $newOrderStateId = $this->commandBus->handle(new GetOrderStateQuery($newOrderState));
-            $this->commandBus->handle(new UpdateOrderStatusCommand($event->getOrderId()->getValue(), $newOrderStateId->getOrderStateId()->getValue()));
+            $newOrderStateId = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderStateQuery($newOrderState));
+            $this->module->getService('ps_checkout.bus.command')->handle(new UpdateOrderStatusCommand($event->getOrderId()->getValue(), $newOrderStateId->getOrderStateId()->getValue()));
         }
 
-        $this->commandBus->handle(new UpdateOrderMatriceCommand(
+        $this->module->getService('ps_checkout.bus.command')->handle(new UpdateOrderMatriceCommand(
             $event->getOrderId()->getValue(),
             $psCheckoutCart->getPaypalOrderId()
         ));

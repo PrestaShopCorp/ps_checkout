@@ -410,13 +410,13 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber\CheckoutEventSubscriber'
     public: true
     arguments:
-      - "@ps_checkout.bus.command"
+      - "@ps_checkout.module"
 
   ps_checkout.event.subscriber.order:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber'
     public: true
     arguments:
-      - "@ps_checkout.bus.command"
+      - "@ps_checkout.module"
       - "@ps_checkout.order.state.service.check_transition_state"
       - "@ps_checkout.repository.pscheckoutcart"
 
@@ -424,7 +424,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber'
     public: true
     arguments:
-      - "@ps_checkout.bus.command"
+      - "@ps_checkout.module"
       - "@ps_checkout.logger"
       - "@ps_checkout.repository.pscheckoutcart"
 
@@ -432,7 +432,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber'
     public: true
     arguments:
-      - "@ps_checkout.bus.command"
+      - "@ps_checkout.module"
       - "@ps_checkout.logger"
       - "@ps_checkout.repository.pscheckoutcart"
       - "@ps_checkout.order.state.service.check_transition_state"
