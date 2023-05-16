@@ -321,11 +321,35 @@ services:
     arguments:
       - "@ps_checkout.configuration"
 
-  ps_checkout.webhook.handler.event.configuration_updated:
-    class: 'PrestaShop\Module\PrestashopCheckout\Webhook\WebhookEventConfigurationUpdatedHandler'
+  ps_checkout.webhook.service.secret_token:
+    class: 'PrestaShop\Module\PrestashopCheckout\Webhook\WebhookSecretTokenService'
     public: true
     arguments:
       - "@ps_checkout.configuration"
+
+  ps_checkout.order.service.check_order_amount:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount'
+    public: true
+
+  ps_checkout.order.state.service.check_order_state:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckOrderState'
+    public: true
+
+  ps_checkout.paypal.order.service.paypal_order_status:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus'
+    public: true
+
+  ps_checkout.paypal.order.service.check_transition_paypal_order_status:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CheckTransitionPayPalOrderStatusService'
+    public: true
+
+  ps_checkout.order.state.service.check_transition_state:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckTransitionStateService'
+    public: true
+    arguments:
+      - "@ps_checkout.paypal.order.service.check_transition_paypal_order_status"
+      - "@ps_checkout.order.state.service.check_order_state"
+      - "@ps_checkout.order.service.check_order_amount"
 
   ps_checkout.webhook.handler:
     class: 'PrestaShop\Module\PrestashopCheckout\Webhook\WebhookHandler'
@@ -391,18 +415,34 @@ services:
   ps_checkout.event.subscriber.checkout:
     class: 'PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber\CheckoutEventSubscriber'
     public: true
+    arguments:
+      - "@ps_checkout.bus.command"
 
   ps_checkout.event.subscriber.order:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber'
     public: true
+    arguments:
+      - "@ps_checkout.bus.command"
+      - "@ps_checkout.order.state.service.check_transition_state"
+      - "@ps_checkout.repository.pscheckoutcart"
 
   ps_checkout.event.subscriber.paypal.order:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber'
     public: true
+    arguments:
+      - "@ps_checkout.bus.command"
+      - "@ps_checkout.logger"
+      - "@ps_checkout.repository.pscheckoutcart"
 
   ps_checkout.event.subscriber.paypal.capture:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber'
     public: true
+    arguments:
+      - "@ps_checkout.bus.command"
+      - "@ps_checkout.logger"
+      - "@ps_checkout.repository.pscheckoutcart"
+      - "@ps_checkout.order.state.service.check_transition_state"
+      - "@ps_checkout.order.service.check_order_amount"
 
   ps_checkout.event.dispatcher.symfony:
     class: 'Symfony\Component\EventDispatcher\EventDispatcherInterface'

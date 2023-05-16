@@ -58,11 +58,6 @@ class OrderEventSubscriber implements EventSubscriberInterface
     private $psCheckoutCartRepository;
 
     /**
-     * @var OrderResumeFactory
-     */
-    private $orderResumeFactory;
-
-    /**
      * @param CommandBusInterface $commandBus
      * @param CheckTransitionStateService $checkTransitionStateService
      * @param PsCheckoutCartRepository $psCheckoutCartRepository
@@ -71,12 +66,10 @@ class OrderEventSubscriber implements EventSubscriberInterface
         CommandBusInterface $commandBus,
         CheckTransitionStateService $checkTransitionStateService,
         PsCheckoutCartRepository $psCheckoutCartRepository,
-        OrderResumeFactory $orderResumeFactory
     ) {
         $this->commandBus = $commandBus;
         $this->checkTransitionStateService = $checkTransitionStateService;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-        $this->orderResumeFactory = $orderResumeFactory;
     }
 
     /**
