@@ -387,22 +387,22 @@ services:
       - "@ps_checkout.module"
       - "@ps_checkout.logger"
       - [
-          PrestaShop\Module\PrestashopCheckout\Order\Command\AddOrderPaymentCommand: "@ps_checkout.command.handler.order.add_order_payment",
-          PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand: "@ps_checkout.command.handler.order.create_order",
-          PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand: "@ps_checkout.command.handler.order.update_order_status",
-          PrestaShop\Module\PrestashopCheckout\Order\Command\UpdatePayPalOrderMatriceCommand: "@ps_checkout.command.handler.order.update_paypal_matrice",
-          PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand: "@ps_checkout.command.handler.paypal.order.capture_paypal_order",
-          PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\PrunePayPalOrderCacheCommand: "@ps_checkout.command.handler.paypal.order.prune_paypal_order_cache",
-          PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\RemovePayPalOrderCacheCommand: "@ps_checkout.command.handler.paypal.order.remove_paypal_order_cache",
-          PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand: "@ps_checkout.command.handler.paypal.order.save_paypal_order",
-          PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCacheCommand: "@ps_checkout.command.handler.paypal.order.update_paypal_order_cache",
-          PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetOrderQuery: "@ps_checkout.query.handler.order.get_order",
-          PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query\GetClientTokenPayPalQuery: "@ps_checkout.query.handler.paypal.identity.get_client_token",
-          PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery: "@ps_checkout.query.handler.paypal.order.get_paypal_order",
-          PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePaymentMethodSelectedCommand: "@ps_checkout.query.handler.session.update_payment_method_selected",
-          PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand: "@ps_checkout.query.handler.session.update_ps_checkout_session",
-          PrestaShop\Module\PrestashopCheckout\Order\Payment\Query\GetPaymentOrderQuery: "@ps_checkout.query.handler.order.payment.get_payment_order",
-          PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigurationQuery: "@ps_checkout.query.handler.order.state.get_order_state_configuration",
+          PrestaShop\Module\PrestashopCheckout\Order\Command\AddOrderPaymentCommand: "ps_checkout.command.handler.order.add_order_payment",
+          PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand: "ps_checkout.command.handler.order.create_order",
+          PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand: "ps_checkout.command.handler.order.update_order_status",
+          PrestaShop\Module\PrestashopCheckout\Order\Command\UpdatePayPalOrderMatriceCommand: "ps_checkout.command.handler.order.update_paypal_matrice",
+          PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand: "ps_checkout.command.handler.paypal.order.capture_paypal_order",
+          PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\PrunePayPalOrderCacheCommand: "ps_checkout.command.handler.paypal.order.prune_paypal_order_cache",
+          PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\RemovePayPalOrderCacheCommand: "ps_checkout.command.handler.paypal.order.remove_paypal_order_cache",
+          PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand: "ps_checkout.command.handler.paypal.order.save_paypal_order",
+          PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCacheCommand: "ps_checkout.command.handler.paypal.order.update_paypal_order_cache",
+          PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetOrderQuery: "ps_checkout.query.handler.order.get_order",
+          PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query\GetClientTokenPayPalQuery: "ps_checkout.query.handler.paypal.identity.get_client_token",
+          PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery: "ps_checkout.query.handler.paypal.order.get_paypal_order",
+          PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePaymentMethodSelectedCommand: "ps_checkout.query.handler.session.update_payment_method_selected",
+          PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand: "ps_checkout.query.handler.session.update_ps_checkout_session",
+          PrestaShop\Module\PrestashopCheckout\Order\Payment\Query\GetPaymentOrderQuery: "ps_checkout.query.handler.order.payment.get_payment_order",
+          PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigurationQuery: "ps_checkout.query.handler.order.state.get_order_state_configuration",
         ]
 
   ps_checkout.event.dispatcher.factory:
@@ -548,7 +548,7 @@ services:
       - "@ps_checkout.repository.pscheckoutcart"
 
   ps_checkout.query.handler.order.payment.get_payment_order:
-    class: 'PrestaShop\Module\PrestashopCheckout\Order\Payment\QueryHandler\GetOrderPaymentQueryHandler'
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\Payment\QueryHandler\GetOrderPaymentOrderQueryHandler'
     public: true
 
   ps_checkout.query.handler.order.state.get_order_state_configuration:
