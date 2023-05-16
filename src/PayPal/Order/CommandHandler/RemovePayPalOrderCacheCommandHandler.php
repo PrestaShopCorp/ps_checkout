@@ -23,7 +23,6 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\RemovePayPalOrderCacheCommand;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\removePayPalOrderCacheCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCacheUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use Psr\SimpleCache\CacheException;
