@@ -321,6 +321,12 @@ services:
     arguments:
       - "@ps_checkout.configuration"
 
+  ps_checkout.webhook.handler.event.configuration_updated:
+    class: 'PrestaShop\Module\PrestashopCheckout\Webhook\WebhookEventConfigurationUpdatedHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.configuration"
+
   ps_checkout.order.service.check_order_amount:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount'
     public: true
