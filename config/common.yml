@@ -389,3 +389,75 @@ services:
     public: true
     arguments:
       - '@ps_checkout.event.dispatcher.symfony'
+
+  ps_checkout.command.handler.order.add_order_payment:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\AddOrderPaymentCommandHandler'
+    public: true
+    arguments:
+      - '@ps_checkout.event.dispatcher'
+
+  ps_checkout.command.handler.order.create_order:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\CreateOrderCommandHandler'
+    public: true
+    arguments:
+      - '' #TODO add ContextStateManager
+      - '@ps_checkout.event.dispatcher'
+
+  ps_checkout.command.handler.order.update_order_status:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdateOrderStatusCommandHandler'
+    public: true
+    arguments:
+      - '@ps_checkout.event.dispatcher'
+
+  ps_checkout.command.handler.order.update_paypal_matrice:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdatePayPalOrderMatriceCommandHandler'
+    public: true
+
+  ps_checkout.command.handler.paypal.order.capture_paypal_order:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CapturePayPalOrderCommandHandler'
+    public: true
+    arguments:
+      - '@ps_checkout.event.dispatcher'
+
+  ps_checkout.command.handler.paypal.order.prune_paypal_order_cache:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\PrunePayPalOrderCacheCommandHandler'
+    public: true
+    arguments:
+      - '@ps_checkout.event.dispatcher'
+      - '@ps_checkout.cache.paypal.order'
+
+  ps_checkout.command.handler.paypal.order.remove_paypal_order_cache:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\RemovePayPalOrderCacheCommandHandler'
+    public: true
+    arguments:
+      - '@ps_checkout.event.dispatcher'
+      - '@ps_checkout.cache.paypal.order'
+
+  ps_checkout.command.handler.paypal.order.save_paypal_order:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\SavePayPalOrderCommandHandler'
+    public: true
+    arguments:
+      - '@ps_checkout.event.dispatcher'
+      - '@ps_checkout.repository.pscheckoutcart'
+
+  ps_checkout.command.handler.paypal.order.update_paypal_order_cache:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\UpdatePayPalOrderCacheCommandHandler'
+    public: true
+    arguments:
+      - '@ps_checkout.cache.paypal.order'
+
+  ps_checkout.query.handler.order.get_order:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderQueryHandler'
+    public: true
+
+  ps_checkout.query.handler.paypal.identity.get_client_token:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Identity\QueryHandler\GetClientTokenPayPalQueryHandler'
+    public : true
+    arguments:
+      - '@ps_checkout.event.dispatcher'
+
+  ps_checkout.query.handler.paypal.order.get_paypal_order:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler'
+    public: true
+    arguments:
+      - '@ps_checkout.event.dispatcher'
