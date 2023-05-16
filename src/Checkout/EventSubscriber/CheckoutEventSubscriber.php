@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -42,17 +43,11 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
     private $commandBus;
 
     /**
-     * @var SymfonyEventDispatcherAdapter
-     */
-    private $eventDispatcher;
-
-    /**
      * @param CommandBusInterface $commandBus
      */
-    public function __construct(CommandBusInterface $commandBus, SymfonyEventDispatcherAdapter $eventDispatcher)
+    public function __construct(CommandBusInterface $commandBus)
     {
         $this->commandBus = $commandBus;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -121,18 +116,8 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
      */
     public function fetchPayPalOrder(CheckoutCompletedEvent $event)
     {
-        $result = $this->commandBus->handle(new GetPayPalOrderQuery(
+        $this->commandBus->handle(new GetPayPalOrderQuery(
             $event->getPayPalOrderId()->getValue()
         ));
-
-        if ($result->getOrder()['status'] === 'APPROVED') {
-            $this->eventDispatcher->dispatch(
-                new PayPalOrderApprovedEvent($event->getPayPalOrderId()->getValue(), $result->getOrder())
-            );
-        } else if ($result->getOrder()['status'] === 'COMPLETED') {
-            $this->eventDispatcher->dispatch(
-                new PayPalOrderCompletedEvent($event->getPayPalOrderId()->getValue(), $result->getOrder())
-            );
-        }
     }
 }
