@@ -29,13 +29,15 @@ use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderStatusUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\Factory\OrderResumeFactory;
 use PrestaShop\Module\PrestashopCheckout\Order\Matrice\Command\UpdateOrderMatriceCommand;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigurationQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckTransitionStateService;
+use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQueryResult;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\PayPalCaptureStatus;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -102,40 +104,44 @@ class OrderEventSubscriber implements EventSubscriberInterface
      */
     public function onOrderCreated(OrderCreatedEvent $event)
     {
-        /** @var GetPayPalOrderQueryResult $paypalOrder */
-        $paypalOrder = $this->commandBus->handle(new GetPayPalOrderQuery($event->getOrderPayPal()->getValue()));
+        $cartId = $event->getCartId()->getValue();
+
+        /** @var GetOrderQueryResult $order */
+        $order = $this->commandBus->handle(new GetOrderQuery($cartId));
 
 
         //$resume = $this->orderResumeFactory->create($event->getCartId(), OrderResumeFactory::PAYPAL_CAPTURE, PayPalCaptureStatus::COMPLETED, $event->getOrderPayPal()['purchase_units']['amount'], $paypalOrder->getOrder()['status'], $event->getOrderPayPal()['status']);
+        $getOrderStateConfiguration = $this->commandBus->handle(new GetOrderStateConfigurationQuery());
+        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByCartId($cartId);
+        $paypalOrder = $this->commandBus->handle(new GetPayPalOrderQuery($psCheckoutCart->paypal_order));
+        $capturePayload = $paypalOrder->getOrder()['body']['purchase_units'][0]['payments']['captures'];
 
         $newOrderState = $this->checkTransitionStateService->getNewOrderState([
-            'Cart' => ['CartId'=>$psCheckoutCart->getIdCart(),'Amount' => $order->total_paid],
             'Order' => [
-                'CurrentOrderStatus' => $getOrderStateConfiguration->getKeyById(new OrderStateId($currentOrderStateId)),
-                'TotalAmountPaid' => $order->getTotalPaid(),
-                'TotalAmount' => $order->total_paid,
+                'CurrentOrderStatus' => $getOrderStateConfiguration->getKeyById(new OrderStateId($order->getCurrentState())),
+                'TotalAmountPaid' => $order->getTotalAmountPaid(),
+                'TotalAmount' => $order->getTotalAmount(),
                 'TotalRefunded' => '0',
             ],
             'PayPalRefund' => [ // NULL si pas de refund dans l'order PayPal
                 null,
             ],
             'PayPalCapture' => [ // NULL si pas de refund dans l'order PayPal
-                'Status' => $event->getCapture()['status'],
-                'Amount' => $event->getCapture()['amount']['value'],
+                'Status' => $capturePayload['status'],
+                'Amount' => $capturePayload['amount']['value'],
             ],
             'PayPalAuthorization' => [ // NULL si pas de refund dans l'order PayPal
                 null,
             ],
             'PayPalOrder' => [
-                'OldStatus' => $paypalOrder->getOrder()['status'],
-                'NewStatus' => PayPalOrderStatus::COMPLETED,
+                'OldStatus' => $psCheckoutCart->getPaypalStatus(),
+                'NewStatus' => $paypalOrder->getOrder()['status'],
             ],
         ]);
         if ($newOrderState !== false) {
             $newOrderStateId = $this->commandBus->handle(new GetOrderStateQuery($newOrderState));
             $this->commandBus->handle(new UpdateOrderStatusCommand($event->getOrderId()->getValue(), $newOrderStateId->getOrderStateId()->getValue()));
         }
-        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByCartId($event->getCartId()->getValue());
 
         $this->commandBus->handle(new UpdateOrderMatriceCommand(
             $event->getOrderId()->getValue(),
