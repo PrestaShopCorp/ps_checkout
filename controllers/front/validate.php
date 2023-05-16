@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -23,6 +24,8 @@ use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
 
 /**
  * This controller receive ajax call to capture/authorize payment and create a PrestaShop Order
@@ -93,10 +96,24 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             ));
 
             // @todo Fetch data from database using a Query then returns response created from QueryResult
+            /** @var \PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface $commandBus */
+            $commandBus = $this->module->getService('ps_checkout.bus.command');
+            $order = $commandBus->handle(new GetOrderQuery(
+                $cart->id
+            ));
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId($cart->id);
+
+            $paypalOrder = $commandBus->handle(new GetPayPalOrderQuery(
+                $psCheckoutCart->paypal_order
+            ));
+
             $response = [
-                'status' => '',
-                'paypalOrderId' => '',
-                'transactionIdentifier' => '',
+                'status' => $order->getCurrentState(),
+                'paypalOrderId' => $psCheckoutCart->paypal_order,
+                'transactionIdentifier' => isset($paypalOrder->getOrder()['body']['purchase_units'][0]['payments']['captures']) ? $paypalOrder->getOrder()['body']['purchase_units'][0]['payments']['captures']['id'] : null,
             ];
 
             $this->sendOkResponse($response);
