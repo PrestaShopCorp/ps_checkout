@@ -321,12 +321,6 @@ services:
     arguments:
       - "@ps_checkout.configuration"
 
-  ps_checkout.webhook.service.secret_token:
-    class: 'PrestaShop\Module\PrestashopCheckout\Webhook\WebhookSecretTokenService'
-    public: true
-    arguments:
-      - "@ps_checkout.configuration"
-
   ps_checkout.order.service.check_order_amount:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount'
     public: true
