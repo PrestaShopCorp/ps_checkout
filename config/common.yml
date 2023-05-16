@@ -548,7 +548,7 @@ services:
       - "@ps_checkout.repository.pscheckoutcart"
 
   ps_checkout.query.handler.order.payment.get_payment_order:
-    class: 'PrestaShop\Module\PrestashopCheckout\Order\Payment\QueryHandler\GetPaymentOrderQueryHandler'
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\Payment\QueryHandler\GetOrderPaymentQueryHandler'
     public: true
 
   ps_checkout.query.handler.order.state.get_order_state_configuration:
