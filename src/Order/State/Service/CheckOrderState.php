@@ -45,8 +45,18 @@ class CheckOrderState
             OrderStateConfigurationKeys::CANCELED,
             OrderStateConfigurationKeys::PAYMENT_ERROR,
         ],
-        OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT => [],
-        OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT => [],
+        OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT => [
+            OrderStateConfigurationKeys::PAYMENT_ACCEPTED,
+            OrderStateConfigurationKeys::PARTIALLY_PAID,
+            OrderStateConfigurationKeys::CANCELED,
+            OrderStateConfigurationKeys::PAYMENT_ERROR,
+        ],
+        OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT => [
+            OrderStateConfigurationKeys::PAYMENT_ACCEPTED,
+            OrderStateConfigurationKeys::PARTIALLY_PAID,
+            OrderStateConfigurationKeys::CANCELED,
+            OrderStateConfigurationKeys::PAYMENT_ERROR,
+        ],
         OrderStateConfigurationKeys::AUTHORIZED => [
             OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT,
             OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT,

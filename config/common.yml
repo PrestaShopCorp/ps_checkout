@@ -423,7 +423,6 @@ services:
     public: true
     arguments:
       - "@ps_checkout.module"
-      - "@ps_checkout.order.state.service.check_transition_state"
       - "@ps_checkout.repository.pscheckoutcart"
 
   ps_checkout.event.subscriber.paypal.order:

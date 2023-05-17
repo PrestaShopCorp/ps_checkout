@@ -39,19 +39,27 @@ class PayPalOrderStatus
             self::VOIDED,
             self::COMPLETED,
         ],
-        self::SAVED => [],
-        self::APPROVED => [],
-        self::PENDING_APPROVAL => [
-            self::APPROVED,
+        self::SAVED => [
             self::SAVED,
             self::VOIDED,
         ],
-        self::PAYER_ACTION_REQUIRED => [
-            self::SAVED,
-            self::VOIDED,
+        self::APPROVED => [
+            self::APPROVED,
+            self::PAYER_ACTION_REQUIRED,
             self::COMPLETED,
         ],
-        self::VOIDED => [],
+        self::PENDING_APPROVAL => [
+            self::PENDING_APPROVAL,
+            self::PAYER_ACTION_REQUIRED,
+            self::APPROVED,
+        ],
+        self::PAYER_ACTION_REQUIRED => [
+            self::PAYER_ACTION_REQUIRED,
+            self::PENDING_APPROVAL,
+            self::APPROVED,
+            self::COMPLETED,
+        ],
+        self::VOIDED => [self::VOIDED],
         self::COMPLETED => [self::COMPLETED],
     ];
 }

@@ -22,12 +22,14 @@ namespace PrestaShop\Module\PrestashopCheckout\Order\State\Service;
 
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CheckTransitionPayPalOrderStatusService;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Authorization\PayPalAuthorizationStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\PayPalCaptureStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\PayPalRefundStatus;
+use PrestaShop\PrestaShop\Adapter\Entity\Module;
 
 class CheckTransitionStateService
 {
@@ -104,14 +106,16 @@ class CheckTransitionStateService
     {
         // PayPal Order Status
         if (!$this->checkTransitionPayPalOrderStatusService->checkAvailableStatus($data['PayPalOrder']['OldStatus'], $data['PayPalOrder']['NewStatus'])) {
-            return false;
+            throw new OrderStateException(sprintf('PayPal Order state cannot be changed (%s => %s)', $data['PayPalOrder']['OldStatus'], $data['PayPalOrder']['NewStatus']), OrderStateException::TRANSITION_UNAVAILABLE);
         }
 
         $newOrderState = $this->getPsState($data);
+        $module = Module::getInstanceByName('ps_checkout');
+        $module->getLogger()->debug(__CLASS__, [$newOrderState]);
         if ($this->checkOrderState->isOrderStateTransitionAvailable($data['Order']['CurrentOrderStatus'], $newOrderState)) {
             return $newOrderState;
         } else {
-            return false;
+            throw new OrderStateException(sprintf('PS Order state cannot be changed (%s => %s)', $data['Order']['CurrentOrderStatus'], $newOrderState), OrderStateException::TRANSITION_UNAVAILABLE);
         }
     }
 

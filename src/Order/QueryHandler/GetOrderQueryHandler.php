@@ -23,6 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQueryResult;
+use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 
 class GetOrderQueryHandler
 {
@@ -68,6 +69,7 @@ class GetOrderQueryHandler
             (bool) $order->hasBeenShipped(),
             (bool) $order->hasBeenDelivered(),
             (bool) $order->isInPreparation(),
+            $order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT)) || $order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT)) || $order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT)),
             (string) $order->getTotalProductsWithTaxes(), /* @phpstan-ignore-line */
             (string) $order->getTotalPaid(),
             (int) $order->id_currency

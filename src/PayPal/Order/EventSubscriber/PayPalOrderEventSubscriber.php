@@ -241,7 +241,6 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             throw new PsCheckoutException('The transaction amount does not match with the cart amount.', PsCheckoutException::DIFFERENCE_BETWEEN_TRANSACTION_AND_CART);
         }
 
-        // This should mainly occur for APMs
         $this->module->getService('ps_checkout.bus.command')->handle(
             new CapturePayPalOrderCommand(
                 $event->getOrderPayPalId()->getValue(),

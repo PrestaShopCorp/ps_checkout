@@ -24,7 +24,6 @@ use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
 
 /**
@@ -95,12 +94,11 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                 isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields']
             ));
 
-            // @todo Fetch data from database using a Query then returns response created from QueryResult
+            // Nom de la classe où on récupère des données
+            // dictionnaire des données demandées + objet lié (bdd? paypal? api?)
+
             /** @var \PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface $commandBus */
             $commandBus = $this->module->getService('ps_checkout.bus.command');
-            $order = $commandBus->handle(new GetOrderQuery(
-                $cart->id
-            ));
 
             /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
