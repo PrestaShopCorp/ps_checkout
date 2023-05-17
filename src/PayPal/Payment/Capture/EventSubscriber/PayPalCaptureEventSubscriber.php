@@ -129,9 +129,9 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
      */
     public function createOrder(PayPalCaptureEvent $event)
     {
-//        if (get_class($event) !== PayPalCaptureCompletedEvent::class || get_class($event) !== PayPalCapturePendingEvent::class) {
-//            throw new PsCheckoutException(sprintf('Invalid Capture Event class (%s). Expected : PayPalCaptureCompletedEvent or PayPalCapturePendingEvent', get_class($event)), PsCheckoutException::INVALID_CAPTURE_EVENT);
-//        }
+        //        if (get_class($event) !== PayPalCaptureCompletedEvent::class || get_class($event) !== PayPalCapturePendingEvent::class) {
+        //            throw new PsCheckoutException(sprintf('Invalid Capture Event class (%s). Expected : PayPalCaptureCompletedEvent or PayPalCapturePendingEvent', get_class($event)), PsCheckoutException::INVALID_CAPTURE_EVENT);
+        //        }
 
         /** @var \PsCheckoutCart $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
@@ -216,6 +216,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         }
 
         $capture = $event->getCapture();
+        var_dump($capture);
         $paymentAmount = '';
         $transactionId = null;
 

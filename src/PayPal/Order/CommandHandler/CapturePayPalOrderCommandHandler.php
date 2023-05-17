@@ -74,24 +74,24 @@ class CapturePayPalOrderCommandHandler
                 throw new PsCheckoutException(isset($response['body']['error']) ? $response['body']['error'] : 'Unknown error', PsCheckoutException::UNKNOWN);
             }
 
-            $capturePayload = $response['body']['purchase_units'][0]['payments']['captures'];
+            $capturePayload = $response['body']['purchase_units'][0]['payments']['captures'][0];
 
             if (false === empty($capturePayload)) {
-                $captureId = $capturePayload[0]['id'];
-                $captureStatus = $capturePayload[0]['status'];
+                $captureId = $capturePayload['id'];
+                $captureStatus = $capturePayload['status'];
 
                 if (
                     'DECLINED' === $captureStatus
                     && false === empty($response['body']['payment_source'])
                     && false === empty($response['body']['payment_source'][0]['card'])
-                    && false === empty($capturePayload[0]['processor_response'])
+                    && false === empty($capturePayload['processor_response'])
                 ) {
                     $payPalProcessorResponse = new PayPalProcessorResponse(
                         isset($response['body']['payment_source'][0]['card']['brand']) ? $response['body']['payment_source'][0]['card']['brand'] : null,
                         isset($response['body']['payment_source'][0]['card']['type']) ? $response['body']['payment_source'][0]['card']['type'] : null,
-                        isset($capturePayload[0]['processor_response']['avs_code']) ? $$capturePayload[0]['processor_response']['avs_code'] : null,
-                        isset($capturePayload[0]['processor_response']['cvv_code']) ? $$capturePayload[0]['processor_response']['cvv_code'] : null,
-                        isset($capturePayload[0]['processor_response']['response_code']) ? $$capturePayload[0]['processor_response']['response_code'] : null
+                        isset($capturePayload['processor_response']['avs_code']) ? $$capturePayload['processor_response']['avs_code'] : null,
+                        isset($capturePayload['processor_response']['cvv_code']) ? $$capturePayload['processor_response']['cvv_code'] : null,
+                        isset($capturePayload['processor_response']['response_code']) ? $$capturePayload['processor_response']['response_code'] : null
                     );
                     $payPalProcessorResponse->throwException();
                 }
