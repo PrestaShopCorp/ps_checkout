@@ -263,8 +263,8 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             throw new PsCheckoutException(sprintf('Order #%s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
-        $orderQueryResult = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
-        $order = new \Order($orderQueryResult->getId());
+        /** @var GetOrderQueryResult $order */
+        $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
         $currentOrderStateId = $order->getCurrentState();
 
         $paypalOrder = $this->module->getService('ps_checkout.bus.command')->handle(new GetPayPalOrderQuery($event->getPayPalOrderId()->getValue()));
@@ -273,13 +273,19 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $newOrderState = $this->checkTransitionStateService->getNewOrderState([
             'Order' => [
                 'CurrentOrderStatus' => $getOrderStateConfiguration->getKeyById(new OrderStateId($order->getCurrentState())),
-                'TotalAmountPaid' => $order->getTotalPaid(),
-                'TotalAmount' => $order->total_paid_tax_incl, // Peut etre récupérer le total du panier via l'instance Cart
+                'TotalAmountPaid' => $order->getTotalAmountPaid(),
+                'TotalAmount' => $order->getTotalAmount(), // Peut etre récupérer le total du panier via l'instance Cart
                 'TotalRefunded' => '0',
+            ],
+            'PayPalRefund' => [ // NULL si pas de refund dans l'order PayPal
+                null,
             ],
             'PayPalCapture' => [
                 'Status' => $capturePayload['status'],
                 'Amount' => $capturePayload['amount']['value'],
+            ],
+            'PayPalAuthorization' => [ // NULL si pas de refund dans l'order PayPal
+                null,
             ],
             'PayPalOrder' => [
                 'OldStatus' => $psCheckoutCart->getPaypalStatus(),
@@ -291,7 +297,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             $newOrderStateId = $getOrderStateConfiguration->getIdByKey($newOrderState);
             $this->module->getService('ps_checkout.bus.command')->handle(new UpdateOrderStatusCommand($currentOrderStateId, $newOrderStateId));
         } else {
-            throw new OrderStateException(sprintf('Order state from order #%s cannot be changed from %s ', $orderQueryResult->getId(), $currentOrderStateId), OrderStateException::TRANSITION_UNAVAILABLE);
+            throw new OrderStateException(sprintf('Order state from order #%s cannot be changed from %s ', $order->getId(), $currentOrderStateId), OrderStateException::TRANSITION_UNAVAILABLE);
         }
     }
 }
