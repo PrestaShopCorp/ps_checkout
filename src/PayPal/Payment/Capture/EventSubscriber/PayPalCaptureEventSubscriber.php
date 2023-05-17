@@ -219,6 +219,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $paymentAmount = '';
         $transactionId = null;
 
+        $this->logger->debug('Capture array : ' . print_r($capture, true));
         $captureAmount = sprintf('%01.2f', $capture['amount']['value']);
         $orderAmount = sprintf('%01.2f', $order->getTotalAmount());
         $paidAmount = sprintf('%01.2f', $order->getTotalAmountPaid());
@@ -262,33 +263,25 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             throw new PsCheckoutException(sprintf('Order #%s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
-        $orderId = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
-        $order = new \Order($orderId);
+        $orderQueryResult = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
+        $order = new \Order($orderQueryResult->getId());
         $currentOrderStateId = $order->getCurrentState();
 
-        // @TODO : Clean un peu cette fonction (retirer Refund et Authorization)
-
         $paypalOrder = $this->module->getService('ps_checkout.bus.command')->handle(new GetPayPalOrderQuery($event->getPayPalOrderId()->getValue()));
-        $capturePayload = $paypalOrder->getOrder()['body']['purchase_units'][0]['payments']['captures'];
+        $capturePayload = $paypalOrder->getOrder()['purchase_units'][0]['payments']['captures'][0];
 
         $newOrderState = $this->checkTransitionStateService->getNewOrderState([
             'Order' => [
                 'CurrentOrderStatus' => $getOrderStateConfiguration->getKeyById(new OrderStateId($order->getCurrentState())),
-                'TotalAmountPaid' => $order->getTotalAmountPaid(),
-                'TotalAmount' => $order->getTotalAmount(),
+                'TotalAmountPaid' => $order->getTotalPaid(),
+                'TotalAmount' => $order->total_paid_tax_incl, // Peut etre récupérer le total du panier via l'instance Cart
                 'TotalRefunded' => '0',
             ],
-            'PayPalRefund' => [ // NULL si pas de refund dans l'order PayPal
-                null,
-            ],
-            'PayPalCapture' => [ // NULL si pas de refund dans l'order PayPal
+            'PayPalCapture' => [
                 'Status' => $capturePayload['status'],
                 'Amount' => $capturePayload['amount']['value'],
             ],
-            'PayPalAuthorization' => [ // NULL si pas de refund dans l'order PayPal
-                null,
-            ],
-            'p' => [
+            'PayPalOrder' => [
                 'OldStatus' => $psCheckoutCart->getPaypalStatus(),
                 'NewStatus' => $paypalOrder->getOrder()['status'],
             ],
@@ -298,7 +291,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             $newOrderStateId = $getOrderStateConfiguration->getIdByKey($newOrderState);
             $this->module->getService('ps_checkout.bus.command')->handle(new UpdateOrderStatusCommand($currentOrderStateId, $newOrderStateId));
         } else {
-            throw new OrderStateException(sprintf('Order state from order #%s cannot be changed from %s to %s', $orderId, $currentOrderStateId, $newOrderStateId), OrderStateException::TRANSITION_UNAVAILABLE);
+            throw new OrderStateException(sprintf('Order state from order #%s cannot be changed from %s ', $orderQueryResult->getId(), $currentOrderStateId), OrderStateException::TRANSITION_UNAVAILABLE);
         }
     }
 }

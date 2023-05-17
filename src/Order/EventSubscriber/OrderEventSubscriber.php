@@ -103,7 +103,7 @@ class OrderEventSubscriber implements EventSubscriberInterface
         $getOrderStateConfiguration = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderStateConfigurationQuery());
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByCartId($cartId);
         $paypalOrder = $this->module->getService('ps_checkout.bus.command')->handle(new GetPayPalOrderQuery($psCheckoutCart->paypal_order));
-        $capturePayload = $paypalOrder->getOrder()['purchase_units'][0]['payments']['captures'];
+        $capturePayload = $paypalOrder->getOrder()['purchase_units'][0]['payments']['captures'][0];
 
         $newOrderState = $this->checkTransitionStateService->getNewOrderState([
             'Order' => [
