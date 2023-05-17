@@ -76,6 +76,10 @@ class CapturePayPalOrderCommandHandler
 
             $capturePayload = $response['body']['purchase_units'][0]['payments']['captures'][0];
 
+            /** @var \Ps_checkout $module */
+            $module = \Module::getInstanceByName('ps_checkout');
+            $module->getLogger()->debug(__CLASS__, [$capturePayload]);
+
             if (false === empty($capturePayload)) {
                 $captureId = $capturePayload['id'];
                 $captureStatus = $capturePayload['status'];

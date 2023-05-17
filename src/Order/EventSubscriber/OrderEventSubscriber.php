@@ -64,7 +64,7 @@ class OrderEventSubscriber implements EventSubscriberInterface
     public function __construct(
         Ps_checkout $module,
         CheckTransitionStateService $checkTransitionStateService,
-        PsCheckoutCartRepository $psCheckoutCartRepository,
+        PsCheckoutCartRepository $psCheckoutCartRepository
     ) {
         $this->module = $module;
         $this->checkTransitionStateService = $checkTransitionStateService;
@@ -99,6 +99,7 @@ class OrderEventSubscriber implements EventSubscriberInterface
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQueryResult $order */
         $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderQuery($cartId));
+
         $getOrderStateConfiguration = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderStateConfigurationQuery());
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByCartId($cartId);
         $paypalOrder = $this->module->getService('ps_checkout.bus.command')->handle(new GetPayPalOrderQuery($psCheckoutCart->paypal_order));

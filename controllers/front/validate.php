@@ -111,9 +111,9 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             ));
 
             $response = [
-                'status' => $order->getCurrentState(),
+                'status' => $psCheckoutCart->paypal_status,
                 'paypalOrderId' => $psCheckoutCart->paypal_order,
-                'transactionIdentifier' => isset($paypalOrder->getOrder()['body']['purchase_units'][0]['payments']['captures']) ? $paypalOrder->getOrder()['body']['purchase_units'][0]['payments']['captures']['id'] : null,
+                'transactionIdentifier' => isset($paypalOrder->getOrder()['purchase_units'][0]['payments']['captures'][0]) ? $paypalOrder->getOrder()['purchase_units'][0]['payments']['captures'][0]['id'] : null,
             ];
 
             $this->sendOkResponse($response);
