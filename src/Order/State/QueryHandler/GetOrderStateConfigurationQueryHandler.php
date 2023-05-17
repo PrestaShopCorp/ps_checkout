@@ -39,7 +39,7 @@ class GetOrderStateConfigurationQueryHandler
     {
         return new GetOrderStateConfigurationQueryResult(
             new OrderStateConfiguration(OrderStateConfigurationKeys::CANCELED, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::CANCELED)),
-            new OrderStateConfiguration(OrderStateConfigurationKeys::PAYMENT_ERROR, \Configuration::getGlobalValue(OrderStateConfigurationKeys::PAYMENT_ERROR)),
+            new OrderStateConfiguration(OrderStateConfigurationKeys::PAYMENT_ERROR, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::PAYMENT_ERROR)),
             new OrderStateConfiguration(OrderStateConfigurationKeys::OUT_OF_STOCK_UNPAID, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::OUT_OF_STOCK_UNPAID)),
             new OrderStateConfiguration(OrderStateConfigurationKeys::OUT_OF_STOCK_PAID, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::OUT_OF_STOCK_PAID)),
             new OrderStateConfiguration(OrderStateConfigurationKeys::PAYMENT_ACCEPTED, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::PAYMENT_ACCEPTED)),

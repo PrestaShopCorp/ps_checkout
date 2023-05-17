@@ -23,8 +23,8 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber;
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
-use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdatePayPalOrderMatriceCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
+use PrestaShop\Module\PrestashopCheckout\Order\Matrice\Command\UpdateOrderMatriceCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigurationQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
@@ -43,7 +43,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderFetchedEv
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderNotApprovedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand;
 use Ps_checkout;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -100,7 +99,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             ],
             PayPalOrderCompletedEvent::class => [
                 ['savePayPalOrder'],
-                ['updatePayPalOrderMatrice'],
+                ['updateOrderMatrice'],
                 ['prunePayPalOrderCache'],
             ],
             PayPalOrderApprovalReversedEvent::class => [
@@ -286,16 +285,30 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      * @return void
      *
      * @throws PayPalOrderException
+     * @throws OrderException
+     * @throws \PrestaShopException
      */
-    public function updatePayPalOrderMatrice(PayPalOrderCompletedEvent $event)
+    public function updateOrderMatrice(PayPalOrderCompletedEvent $event)
     {
+        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getOrderPayPalId()->getValue());
+
+        $orderId = 0;
+        if (method_exists(\Order::class, 'getIdByCartId')) {
+            $orderId = (int) \Order::getIdByCartId($psCheckoutCart->getIdCart());
+        } elseif (method_exists(\Order::class, 'getOrderByCartId')) {
+            $orderId = (int) \Order::getOrderByCartId($psCheckoutCart->getIdCart());
+        }
+
         $this->module->getService('ps_checkout.bus.command')->handle(
-            new UpdatePayPalOrderMatriceCommand($event->getOrderPayPalId()->getValue())
+            new UpdateOrderMatriceCommand(
+                $orderId,
+                $event->getOrderPayPalId()->getValue()
+            )
         );
     }
 
-
     // @TODO : I think this method should be removed
+
     /**
      * @param PayPalOrderCompletedEvent $event
      *

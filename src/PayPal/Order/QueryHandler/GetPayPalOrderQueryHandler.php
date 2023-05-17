@@ -71,12 +71,11 @@ class GetPayPalOrderQueryHandler
 
         $result = new GetPayPalOrderQueryResult($orderPayPal->getOrder());
 
-
         if ($result->getOrder()['status'] === 'APPROVED') {
             $this->eventDispatcher->dispatch(
                 new PayPalOrderApprovedEvent($orderPayPal->getOrder()['id'], $result->getOrder())
             );
-        } else if ($result->getOrder()['status'] === 'COMPLETED') {
+        } elseif ($result->getOrder()['status'] === 'COMPLETED') {
             $this->eventDispatcher->dispatch(
                 new PayPalOrderCompletedEvent($orderPayPal->getOrder()['id'], $result->getOrder())
             );

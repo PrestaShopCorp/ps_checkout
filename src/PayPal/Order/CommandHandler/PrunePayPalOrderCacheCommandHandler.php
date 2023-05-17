@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCacheCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\PrunePayPalOrderCacheCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCacheUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use Psr\SimpleCache\CacheException;
@@ -50,13 +50,13 @@ class PrunePayPalOrderCacheCommandHandler
     }
 
     /**
-     * @param UpdatePayPalOrderCacheCommand $updatePayPalOrderCacheCommand
+     * @param PrunePayPalOrderCacheCommand $prunePayPalOrderCacheCommand
      *
      * @return void
      *
      * @throws PayPalOrderException
      */
-    public function handle(UpdatePayPalOrderCacheCommand $updatePayPalOrderCacheCommand)
+    public function handle(PrunePayPalOrderCacheCommand $prunePayPalOrderCacheCommand)
     {
         try {
             // Cache used provide pruning (deletion) of all expired cache items to reduce cache size
@@ -68,7 +68,7 @@ class PrunePayPalOrderCacheCommandHandler
         }
 
         $this->eventDispatcher->dispatch(
-            new PayPalOrderCacheUpdatedEvent($updatePayPalOrderCacheCommand->getOrderId()->getValue())
+            new PayPalOrderCacheUpdatedEvent($prunePayPalOrderCacheCommand->getOrderId()->getValue())
         );
     }
 }

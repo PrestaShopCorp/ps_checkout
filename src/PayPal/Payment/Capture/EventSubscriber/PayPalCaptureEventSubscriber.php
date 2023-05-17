@@ -129,9 +129,9 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
      */
     public function createOrder(PayPalCaptureEvent $event)
     {
-        if (get_class($event) !== 'PayPalCaptureCompletedEvent' || get_class($event) !== 'PayPalCapturePendingEvent') {
-            throw new PsCheckoutException(sprintf('Invalid Capture Event class (%s). Expected : PayPalCaptureCompletedEvent or PayPalCapturePendingEvent', get_class($event)), PsCheckoutException::INVALID_CAPTURE_EVENT);
-        }
+//        if (get_class($event) !== PayPalCaptureCompletedEvent::class || get_class($event) !== PayPalCapturePendingEvent::class) {
+//            throw new PsCheckoutException(sprintf('Invalid Capture Event class (%s). Expected : PayPalCaptureCompletedEvent or PayPalCapturePendingEvent', get_class($event)), PsCheckoutException::INVALID_CAPTURE_EVENT);
+//        }
 
         /** @var \PsCheckoutCart $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
@@ -140,6 +140,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
 
             $this->logger->info(sprintf('PrestaShop Order for PayPal Order #%s is already created.', $event->getPayPalOrderId()->getValue()));
+
             return; // If we already have an Order (when going from Pending to Completed), we stop
         } catch (PsCheckoutException $exception) {
         }
@@ -161,7 +162,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
                     break;
                 case CheckOrderAmount::ORDER_FULL_PAID:
                     $orderStateId = $getOrderStateConfiguration->getIdByKey(OrderStateConfigurationKeys::PAYMENT_ACCEPTED);
-                    $transactionId = $event->getPayPalCaptureId();
+                    $transactionId = $event->getPayPalCaptureId()->getValue();
                     $paidAmount = $capture['amount']['value'];
                     break;
                 case CheckOrderAmount::ORDER_TO_MUCH_PAID:
@@ -201,9 +202,10 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
 
         try {
-            $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderPaymentQuery($event->getPayPalCaptureId()));
+            $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderPaymentQuery($event->getPayPalCaptureId()->getValue()));
 
             $this->logger->info('Order Payment is already created.');
+
             return; // We already have an OrderPayment, there's no need to add another one
         } catch (OrderPaymentException $e) {
         }
@@ -223,7 +225,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
         if ($captureAmount + 0.05 < ($orderAmount - $paidAmount) || $captureAmount - 0.05 > ($orderAmount - $paidAmount)) {
             $paymentAmount = $capture['amount']['value'];
-            $transactionId = $event->getPayPalCaptureId();
+            $transactionId = $event->getPayPalCaptureId()->getValue();
         }
 
         $createTime = new \DateTime($capture['create_time']);
@@ -286,7 +288,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             'PayPalAuthorization' => [ // NULL si pas de refund dans l'order PayPal
                 null,
             ],
-            'PayPalOrder' => [
+            'p' => [
                 'OldStatus' => $psCheckoutCart->getPaypalStatus(),
                 'NewStatus' => $paypalOrder->getOrder()['status'],
             ],

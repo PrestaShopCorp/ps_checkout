@@ -21,11 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\State\Service;
 
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
-use PrestaShop\Module\PrestashopCheckout\Order\Resume\Resume;
-use PrestaShop\Module\PrestashopCheckout\Order\Resume\ResumeOrder;
-use PrestaShop\Module\PrestashopCheckout\Order\Resume\ResumePayPalAuthorization;
-use PrestaShop\Module\PrestashopCheckout\Order\Resume\ResumePayPalCapture;
-use PrestaShop\Module\PrestashopCheckout\Order\Resume\ResumePayPalRefund;
 use PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CheckTransitionPayPalOrderStatusService;
@@ -108,7 +103,7 @@ class CheckTransitionStateService
     public function getNewOrderState($data)
     {
         // PayPal Order Status
-        if (!$this->checkTransitionPayPalOrderStatusService->checkAvailableStatus($data['PaypalOrder']['OldStatus'], $data['PaypalOrder']['NewStatus'])) {
+        if (!$this->checkTransitionPayPalOrderStatusService->checkAvailableStatus($data['PayPalOrder']['OldStatus'], $data['PayPalOrder']['NewStatus'])) {
             return false;
         }
 
@@ -130,18 +125,18 @@ class CheckTransitionStateService
     public function getPsState($data)
     {
         $state = false;
-        switch ($data['PaypalOrder']['NewStatus']) {
+        switch ($data['PayPalOrder']['NewStatus']) {
             case PayPalOrderStatus::COMPLETED:
-                if ($data['PaypalCapture'] != null) {
-                    $state = $this->getPsCaptureState($data['PaypalCapture'], $data['Order']);
-                } elseif ($data['PaypalAuthorization'] != null) {
-                    $state = $this->getPsAuthorizationState($data['PaypalAuthorization'], $data['Order']);
-                } elseif ($data['PaypalRefund'] != null) {
-                    $state = $this->getPsRefundState($data['PaypalRefund'], $data['Order']);
+                if ($data['PayPalCapture'] != null) {
+                    $state = $this->getPsCaptureState($data['PayPalCapture'], $data['Order']);
+                } elseif ($data['PayPalAuthorization'] != null) {
+                    $state = $this->getPsAuthorizationState($data['PayPalAuthorization'], $data['Order']);
+                } elseif ($data['PayPalRefund'] != null) {
+                    $state = $this->getPsRefundState($data['PayPalRefund'], $data['Order']);
                 }
                 break;
             default:
-                $state = key_exists($data['PaypalOrder']['NewStatus'], self::STATES['PayPalOrder']) ? self::STATES['PayPalOrder'][$data['PaypalOrder']['NewStatus']] : false;
+                $state = key_exists($data['PayPalOrder']['NewStatus'], self::STATES['PayPalOrder']) ? self::STATES['PayPalOrder'][$data['PayPalOrder']['NewStatus']] : false;
         }
 
         return $state;
