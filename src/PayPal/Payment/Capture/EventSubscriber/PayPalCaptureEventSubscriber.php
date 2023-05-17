@@ -216,7 +216,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         }
 
         $capture = $event->getCapture();
-        var_dump($capture);
         $paymentAmount = '';
         $transactionId = null;
 
