@@ -29,6 +29,15 @@ use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\Payment\Exception\OrderPaymentException;
 use PrestaShop\Module\PrestashopCheckout\Order\Payment\Query\GetOrderPaymentQuery;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQuery;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQueryResult;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQuery;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQueryResult;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentPendingQuery;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQuery;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQueryResult;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQuery;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount;
@@ -108,15 +117,15 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             PayPalCaptureCompletedEvent::class => [
                 ['createPaidOrder'],
                 ['createOrderPayment'],
-                ['updateOrderStatus'],
+                ['setPaymentCompletedOrderStatus'],
             ],
-            PayPalCaptureDeniedEvent::class => 'updateOrderStatus',
+            PayPalCaptureDeniedEvent::class => 'setPaymentDeniedOrderStatus',
             PayPalCapturePendingEvent::class => [
                 ['createPendingOrder'],
-                ['updateOrderStatus'],
+                ['setPaymentPendingOrderStatus'],
             ],
-            PayPalCaptureRefundedEvent::class => 'updateOrderStatus',
-            PayPalCaptureReversedEvent::class => 'updateOrderStatus',
+            PayPalCaptureRefundedEvent::class => 'setPaymentRefundedOrderStatus',
+            PayPalCaptureReversedEvent::class => 'setPaymentReversedOrderStatus',
         ];
     }
 
@@ -152,7 +161,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         if (empty($capture['amount']['value'])) {
             $orderStateId = $getOrderStateConfiguration->getIdByKey(OrderStateConfigurationKeys::PARTIALLY_PAID);
         } else {
-            switch ($this->checkOrderAmount->checkAmount((string) $capture['amount']['value'], (string) $cart->getCartTotalPrice())) {
+            switch ($this->checkOrderAmount->checkAmount((string) $capture['amount']['value'], (string) $cart->getOrderTotal(true, \Cart::BOTH))) {
                 case CheckOrderAmount::ORDER_NOT_FULL_PAID:
                     $orderStateId = $getOrderStateConfiguration->getIdByKey(OrderStateConfigurationKeys::PARTIALLY_PAID);
                     break;
@@ -162,7 +171,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
                     $paidAmount = $capture['amount']['value'];
                     break;
                 case CheckOrderAmount::ORDER_TO_MUCH_PAID:
-                    $orderStateId = $getOrderStateConfiguration->getIdByKey(OrderStateConfigurationKeys::PARTIALLY_PAID);
+                    $orderStateId = $getOrderStateConfiguration->getIdByKey(OrderStateConfigurationKeys::PAYMENT_ACCEPTED);
             }
         }
 
@@ -288,105 +297,112 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         ));
     }
 
+//    /**
+//     * @param PayPalCaptureEvent $event
+//     *
+//     * @return void
+//     *
+//     * @throws PsCheckoutException
+//     * @throws \PrestaShopDatabaseException
+//     * @throws \PrestaShopException
+//     * @throws CartException
+//     * @throws OrderException
+//     * @throws OrderStateException
+//     */
+//    public function updateOrderStatus(PayPalCaptureEvent $event)
+//    {
+//        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
+//        /** @var GetOrderStateConfigurationQueryResult $getOrderStateConfiguration */
+//        $getOrderStateConfiguration = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderStateConfigurationQuery());
+//
+//        if (false === $psCheckoutCart) {
+//            throw new PsCheckoutException(sprintf('Order #%s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
+//        }
+//
+//        /** @var GetOrderQueryResult $order */
+//        $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
+//
+//        $currentOrderStateId = $order->getCurrentStateId();
+//
+//        $paypalOrder = $this->module->getService('ps_checkout.bus.command')->handle(new GetPayPalOrderQuery($event->getPayPalOrderId()->getValue()));
+//        $capturePayload = $paypalOrder->getOrder()['purchase_units'][0]['payments']['captures'][0];
+//
+//        // Normal case
+//        if ($this->checkOrderAmount->checkAmount((string) $order->getTotalAmountPaid(), (string) $order->getTotalAmount()) === CheckOrderAmount::ORDER_FULL_PAID
+//            && $order->getCurrentStateId() === $getOrderStateConfiguration->getPaymentAcceptedState()->getOrderStateId()
+//            ) {
+//            return;
+//        }
+//
+//        $this->module->getLogger()->debug(__CLASS__, [
+//            'Order' => [
+//                'CurrentOrderStatus' => $getOrderStateConfiguration->getKeyById(new OrderStateId($order->getCurrentStateId())),
+//                'TotalAmountPaid' => $order->getTotalAmountPaid(),
+//                'TotalAmount' => $order->getTotalAmount(), // Peut etre récupérer le total du panier via l'instance Cart
+//                'TotalRefunded' => '0',
+//            ],
+//            'PayPalRefund' => [ // NULL si pas de refund dans l'order PayPal
+//                null,
+//            ],
+//            'PayPalCapture' => [
+//                'Status' => $capturePayload['status'],
+//                'Amount' => $capturePayload['amount']['value'],
+//            ],
+//            'PayPalAuthorization' => [ // NULL si pas de refund dans l'order PayPal
+//                null,
+//            ],
+//            'PayPalOrder' => [
+//                'OldStatus' => $psCheckoutCart->getPaypalStatus(),
+//                'NewStatus' => $paypalOrder->getOrder()['status'],
+//            ],
+//        ]);
+//
+//        $newOrderState = $this->checkTransitionStateService->getNewOrderState([
+//            'Order' => [
+//                'CurrentOrderStatus' => $getOrderStateConfiguration->getKeyById(new OrderStateId($order->getCurrentStateId())),
+//                'TotalAmountPaid' => $order->getTotalAmountPaid(),
+//                'TotalAmount' => $order->getTotalAmount(), // Peut etre récupérer le total du panier via l'instance Cart
+//                'TotalRefunded' => '0',
+//            ],
+//            'PayPalRefund' => [ // NULL si pas de refund dans l'order PayPal
+//                null,
+//            ],
+//            'PayPalCapture' => [
+//                'Status' => $capturePayload['status'],
+//                'Amount' => $capturePayload['amount']['value'],
+//            ],
+//            'PayPalAuthorization' => [ // NULL si pas de refund dans l'order PayPal
+//                null,
+//            ],
+//            'PayPalOrder' => [
+//                'OldStatus' => $psCheckoutCart->getPaypalStatus(),
+//                'NewStatus' => $paypalOrder->getOrder()['status'],
+//            ],
+//        ]);
+//
+//        /*
+//         *
+//        $currentOrderStateId = $order->getCurrentStateId();
+//        $order->hasBeenPaid();
+//        $order->hasBeenShipped();
+//        $order->hasBeenDelivered();
+//        $order->isInPreparation();
+//         */
+//        if ($newOrderState !== false) {
+//            $newOrderStateId = $getOrderStateConfiguration->getIdByKey($newOrderState);
+//            $this->module->getService('ps_checkout.bus.command')->handle(new UpdateOrderStatusCommand($currentOrderStateId, $newOrderStateId));
+//        } else {
+//            throw new OrderStateException(sprintf('Order state from order #%s cannot be changed (%s => %s)  ', $order->getId(), $psCheckoutCart->getPaypalStatus(), $paypalOrder->getOrder()['status']), OrderStateException::TRANSITION_UNAVAILABLE);
+//        }
+//    }
+
     /**
-     * @param PayPalCaptureEvent $event
-     *
-     * @return void
-     *
-     * @throws PsCheckoutException
-     * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
-     * @throws CartException
      * @throws OrderException
      * @throws OrderStateException
+     * @throws PsCheckoutException
+     * @throws CartException
      */
-    public function updateOrderStatus(PayPalCaptureEvent $event)
-    {
-        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
-        /** @var GetOrderStateConfigurationQueryResult $getOrderStateConfiguration */
-        $getOrderStateConfiguration = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderStateConfigurationQuery());
-
-        if (false === $psCheckoutCart) {
-            throw new PsCheckoutException(sprintf('Order #%s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
-        }
-
-        /** @var GetOrderQueryResult $order */
-        $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
-
-        $currentOrderStateId = $order->getCurrentStateId();
-
-        $paypalOrder = $this->module->getService('ps_checkout.bus.command')->handle(new GetPayPalOrderQuery($event->getPayPalOrderId()->getValue()));
-        $capturePayload = $paypalOrder->getOrder()['purchase_units'][0]['payments']['captures'][0];
-
-        // Normal case
-        if ($this->checkOrderAmount->checkAmount((string) $order->getTotalAmountPaid(), (string) $order->getTotalAmount()) === CheckOrderAmount::ORDER_FULL_PAID
-            && $order->getCurrentStateId() === $getOrderStateConfiguration->getPaymentAcceptedState()->getOrderStateId()
-            ) {
-            return;
-        }
-
-        $this->module->getLogger()->debug(__CLASS__, [
-            'Order' => [
-                'CurrentOrderStatus' => $getOrderStateConfiguration->getKeyById(new OrderStateId($order->getCurrentStateId())),
-                'TotalAmountPaid' => $order->getTotalAmountPaid(),
-                'TotalAmount' => $order->getTotalAmount(), // Peut etre récupérer le total du panier via l'instance Cart
-                'TotalRefunded' => '0',
-            ],
-            'PayPalRefund' => [ // NULL si pas de refund dans l'order PayPal
-                null,
-            ],
-            'PayPalCapture' => [
-                'Status' => $capturePayload['status'],
-                'Amount' => $capturePayload['amount']['value'],
-            ],
-            'PayPalAuthorization' => [ // NULL si pas de refund dans l'order PayPal
-                null,
-            ],
-            'PayPalOrder' => [
-                'OldStatus' => $psCheckoutCart->getPaypalStatus(),
-                'NewStatus' => $paypalOrder->getOrder()['status'],
-            ],
-        ]);
-
-        $newOrderState = $this->checkTransitionStateService->getNewOrderState([
-            'Order' => [
-                'CurrentOrderStatus' => $getOrderStateConfiguration->getKeyById(new OrderStateId($order->getCurrentStateId())),
-                'TotalAmountPaid' => $order->getTotalAmountPaid(),
-                'TotalAmount' => $order->getTotalAmount(), // Peut etre récupérer le total du panier via l'instance Cart
-                'TotalRefunded' => '0',
-            ],
-            'PayPalRefund' => [ // NULL si pas de refund dans l'order PayPal
-                null,
-            ],
-            'PayPalCapture' => [
-                'Status' => $capturePayload['status'],
-                'Amount' => $capturePayload['amount']['value'],
-            ],
-            'PayPalAuthorization' => [ // NULL si pas de refund dans l'order PayPal
-                null,
-            ],
-            'PayPalOrder' => [
-                'OldStatus' => $psCheckoutCart->getPaypalStatus(),
-                'NewStatus' => $paypalOrder->getOrder()['status'],
-            ],
-        ]);
-
-        /*
-         *
-        $currentOrderStateId = $order->getCurrentStateId();
-        $order->hasBeenPaid();
-        $order->hasBeenShipped();
-        $order->hasBeenDelivered();
-        $order->isInPreparation();
-         */
-        if ($newOrderState !== false) {
-            $newOrderStateId = $getOrderStateConfiguration->getIdByKey($newOrderState);
-            $this->module->getService('ps_checkout.bus.command')->handle(new UpdateOrderStatusCommand($currentOrderStateId, $newOrderStateId));
-        } else {
-            throw new OrderStateException(sprintf('Order state from order #%s cannot be changed (%s => %s)  ', $order->getId(), $psCheckoutCart->getPaypalStatus(), $paypalOrder->getOrder()['status']), OrderStateException::TRANSITION_UNAVAILABLE);
-        }
-    }
-
     public function setPaymentCompletedOrderStatus(PayPalCaptureCompletedEvent $event)
     {
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
@@ -397,16 +413,24 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             throw new PsCheckoutException(sprintf('Order #%s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
-        /** @var GetOrderQueryResult $order */
-        $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
+        /** @var GetOrderForPaymentCompletedQueryResult $order */
+        $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderForPaymentCompletedQuery($psCheckoutCart->getIdCart()));
 
         if ($order->hasBeenPaid()) {
             return;
         }
 
+        // todo check order amount
+
         $this->module->getService('ps_checkout.bus.command')->handle(new UpdateOrderStatusCommand($order->getId(), $getOrderStateConfiguration->getPaymentAcceptedState()->getOrderStateId()));
     }
 
+    /**
+     * @throws \PrestaShopException
+     * @throws OrderException
+     * @throws OrderStateException
+     * @throws CartException
+     */
     public function setPaymentPendingOrderStatus(PayPalCapturePendingEvent $event)
     {
         // PayPalCapturePendingEvent
@@ -416,8 +440,8 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
 
-        /** @var GetOrderQueryResult $order */
-        $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
+        /** @var GetOrderForPaymentPendingQuery $order */
+        $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderForPaymentPendingQuery($psCheckoutCart->getIdCart()));
 
         /** @var GetOrderStateConfigurationQueryResult $getOrderStateConfiguration */
         $getOrderStateConfiguration = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderStateConfigurationQuery());
@@ -445,13 +469,17 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
 
         try {
-            /** @var GetOrderQueryResult $order */
-            $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
+            /** @var GetOrderForPaymentDeniedQueryResult $order */
+            $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderForPaymentDeniedQuery($psCheckoutCart->getIdCart()));
         } catch (PsCheckoutException $exception) {
             return;
         }
 
-        if ($order->isInPending()) { // @todo is PAYMENT_ERROR ou CANCELED
+        // Si timeout lors de la capture, on a créé une commande PS avec un status pending
+        // Donc on doit mettre à jour le status de la commande PS en PAYMENT_ERROR
+
+        // Si OrderStateHistory y a déjà PAYMENT_ERROR
+        if ($order->hasBeenError()) {
             return;
         }
 
@@ -461,6 +489,13 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $this->module->getService('ps_checkout.bus.command')->handle(new UpdateOrderStatusCommand($order->getId(), $getOrderStateConfiguration->getPaymentErrorState()->getOrderStateId()));
     }
 
+    /**
+     * @throws \PrestaShopException
+     * @throws OrderException
+     * @throws OrderStateException
+     * @throws PsCheckoutException
+     * @throws CartException
+     */
     public function setPaymentRefundedOrderStatus(PayPalCaptureRefundedEvent $event)
     {
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
@@ -469,21 +504,30 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         if (false === $psCheckoutCart) {
             throw new PsCheckoutException(sprintf('Order #%s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
-        /** @var GetOrderQueryResult $order */
-        $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
+        /** @var GetOrderForPaymentRefundedQueryResult $order */
+        $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderForPaymentRefundedQuery($psCheckoutCart->getIdCart()));
 
         if (!$order->hasBeenPaid()) {
             return;
         }
-
-        if ($order->hasBeenRefund()) {
+        if ($order->hasBeenTotallyRefund()) {
             return;
         }
-        //TODO decide if we need to manage partial refund state
-        $this->module->getService('ps_checkout.bus.command')->handle(new UpdateOrderStatusCommand($order->getId(), $getOrderStateConfiguration->getRefundedState()->getOrderStateId()));
+        if ($this->checkOrderAmount->checkAmount($order->getTotalAmount(), $order->getTotalRefund()) == CheckOrderAmount::ORDER_NOT_FULL_PAID) {
+            $this->module->getService('ps_checkout.bus.command')->handle(new UpdateOrderStatusCommand($order->getId(), $getOrderStateConfiguration->getPartiallyRefundedState()->getOrderStateId()));
+        } else {
+            $this->module->getService('ps_checkout.bus.command')->handle(new UpdateOrderStatusCommand($order->getId(), $getOrderStateConfiguration->getRefundedState()->getOrderStateId()));
+        }
     }
 
-    public function setPaymentCanceledOrderStatus(PayPalCaptureReversedEvent $event)
+    /**
+     * @throws \PrestaShopException
+     * @throws OrderException
+     * @throws OrderStateException
+     * @throws PsCheckoutException
+     * @throws CartException
+     */
+    public function setPaymentReversedOrderStatus(PayPalCaptureReversedEvent $event)
     {
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
         /** @var GetOrderStateConfigurationQueryResult $getOrderStateConfiguration */
@@ -493,14 +537,14 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             throw new PsCheckoutException(sprintf('Order #%s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
-        /** @var GetOrderQueryResult $order */
-        $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
+        /** @var GetOrderForPaymentReversedQueryResult $order */
+        $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderForPaymentReversedQuery($psCheckoutCart->getIdCart()));
 
         if (!$order->hasBeenPaid()) {
             return;
         }
 
-        if ($order->hasBeenRefund()) {
+        if ($order->hasBeenTotallyRefund()) {
             return;
         }
 

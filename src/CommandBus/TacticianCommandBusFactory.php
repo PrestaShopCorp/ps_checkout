@@ -63,20 +63,18 @@ class TacticianCommandBusFactory
      */
     public function create()
     {
-        $commandHandlerMiddleware = new CommandHandlerMiddleware(
-            new ClassNameExtractor(),
-            new TacticianContainerLocator(
-                $this->module,
-                $this->commandToHandlerMap
-            ),
-            new HandleInflector()
-        );
-
         return new CommandBus([
-            $commandHandlerMiddleware,
             new LoggerMiddleware(
                 new ClassPropertiesFormatter(),
                 $this->logger
+            ),
+            new CommandHandlerMiddleware(
+                new ClassNameExtractor(),
+                new TacticianContainerLocator(
+                    $this->module,
+                    $this->commandToHandlerMap
+                ),
+                new HandleInflector()
             ),
         ]);
     }

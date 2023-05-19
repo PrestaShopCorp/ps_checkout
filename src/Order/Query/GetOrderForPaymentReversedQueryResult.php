@@ -20,7 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Query;
 
-class GetOrderQueryResult
+class GetOrderForPaymentReversedQueryResult
 {
     /**
      * @var int
@@ -40,42 +40,7 @@ class GetOrderQueryResult
     /**
      * @var bool
      */
-    private $hasBeenShipped;
-
-    /**
-     * @var bool
-     */
-    private $hasBeenDelivered;
-
-    /**
-     * @var bool
-     */
     private $hasBeenTotallyRefund;
-
-    /**
-     * @var bool
-     */
-    private $isInPreparation;
-
-    /**
-     * @var bool
-     */
-    private $isInPending;
-
-    /**
-     * @var string
-     */
-    private $totalAmount;
-
-    /**
-     * @var string
-     */
-    private $totalAmountPaid;
-
-    /**
-     * @var int
-     */
-    private $currencyId;
 
     /**
      * @param int $id
@@ -93,26 +58,12 @@ class GetOrderQueryResult
         $id,
         $currentState,
         $hasBeenPaid,
-        $hasBeenShipped,
-        $hasBeenDelivered,
-        $hasBeenTotallyRefund,
-        $isInPreparation,
-        $isInPending,
-        $totalAmount,
-        $totalAmountPaid,
-        $currencyId
+        $hasBeenTotallyRefund
     ) {
         $this->id = $id;
         $this->currentState = $currentState;
         $this->hasBeenPaid = $hasBeenPaid;
-        $this->hasBeenShipped = $hasBeenShipped;
-        $this->hasBeenDelivered = $hasBeenDelivered;
         $this->hasBeenTotallyRefund = $hasBeenTotallyRefund;
-        $this->isInPreparation = $isInPreparation;
-        $this->isInPending = $isInPending;
-        $this->totalAmount = $totalAmount;
-        $this->totalAmountPaid = $totalAmountPaid;
-        $this->currencyId = $currencyId;
     }
 
     /**
@@ -142,64 +93,8 @@ class GetOrderQueryResult
     /**
      * @return bool
      */
-    public function hasBeenShipped()
-    {
-        return $this->hasBeenShipped;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasBeenDelivered()
-    {
-        return $this->hasBeenDelivered;
-    }
-
-    /**
-     * @return bool
-     */
     public function hasBeenTotallyRefund()
     {
         return $this->hasBeenTotallyRefund;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isInPreparation()
-    {
-        return $this->isInPreparation;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTotalAmount()
-    {
-        return $this->totalAmount;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTotalAmountPaid()
-    {
-        return $this->totalAmountPaid;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCurrencyId()
-    {
-        return $this->currencyId;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isInPending()
-    {
-        return $this->isInPending;
     }
 }

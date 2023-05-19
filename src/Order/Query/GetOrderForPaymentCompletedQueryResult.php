@@ -20,7 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Query;
 
-class GetOrderQueryResult
+class GetOrderForPaymentCompletedQueryResult
 {
     /**
      * @var int
@@ -36,31 +36,6 @@ class GetOrderQueryResult
      * @var bool
      */
     private $hasBeenPaid;
-
-    /**
-     * @var bool
-     */
-    private $hasBeenShipped;
-
-    /**
-     * @var bool
-     */
-    private $hasBeenDelivered;
-
-    /**
-     * @var bool
-     */
-    private $hasBeenTotallyRefund;
-
-    /**
-     * @var bool
-     */
-    private $isInPreparation;
-
-    /**
-     * @var bool
-     */
-    private $isInPending;
 
     /**
      * @var string
@@ -81,11 +56,6 @@ class GetOrderQueryResult
      * @param int $id
      * @param int $currentState
      * @param bool $hasBeenPaid
-     * @param bool $hasBeenShipped
-     * @param bool $hasBeenDelivered
-     * @param bool $hasBeenTotallyRefund
-     * @param bool $isInPreparation
-     * @param bool $isInPending
      * @param string $totalAmount
      * @param string $totalAmountPaid
      */
@@ -93,11 +63,6 @@ class GetOrderQueryResult
         $id,
         $currentState,
         $hasBeenPaid,
-        $hasBeenShipped,
-        $hasBeenDelivered,
-        $hasBeenTotallyRefund,
-        $isInPreparation,
-        $isInPending,
         $totalAmount,
         $totalAmountPaid,
         $currencyId
@@ -105,11 +70,6 @@ class GetOrderQueryResult
         $this->id = $id;
         $this->currentState = $currentState;
         $this->hasBeenPaid = $hasBeenPaid;
-        $this->hasBeenShipped = $hasBeenShipped;
-        $this->hasBeenDelivered = $hasBeenDelivered;
-        $this->hasBeenTotallyRefund = $hasBeenTotallyRefund;
-        $this->isInPreparation = $isInPreparation;
-        $this->isInPending = $isInPending;
         $this->totalAmount = $totalAmount;
         $this->totalAmountPaid = $totalAmountPaid;
         $this->currencyId = $currencyId;
@@ -137,38 +97,6 @@ class GetOrderQueryResult
     public function hasBeenPaid()
     {
         return $this->hasBeenPaid;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasBeenShipped()
-    {
-        return $this->hasBeenShipped;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasBeenDelivered()
-    {
-        return $this->hasBeenDelivered;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasBeenTotallyRefund()
-    {
-        return $this->hasBeenTotallyRefund;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isInPreparation()
-    {
-        return $this->isInPreparation;
     }
 
     /**

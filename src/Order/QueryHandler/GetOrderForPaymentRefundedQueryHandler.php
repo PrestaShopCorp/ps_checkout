@@ -21,16 +21,15 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQuery;
-use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQueryResult;
-use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 
 class GetOrderQueryHandler
 {
     /**
      * @param GetOrderQuery $query
      *
-     * @return GetOrderQueryResult
+     * @return GetOrderForPaymentRefundedQueryResult
      *
      * @throws PsCheckoutException
      * @throws \PrestaShopDatabaseException
@@ -62,34 +61,25 @@ class GetOrderQueryHandler
             throw new PsCheckoutException('No PrestaShop Order associated to this PayPal Order at this time.', PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
         }
 
-        return new GetOrderQueryResult(
+        $totalRefund = $this->getTotalRefund($order);
+
+        return new GetOrderForPaymentRefundedQueryResult(
             (int) $order->id,
             (int) $order->getCurrentState(),
             (bool) $order->hasBeenPaid(),
-            (bool) $order->hasBeenShipped(),
-            (bool) $order->hasBeenDelivered(),
-            $this->hasBeenTotallyRefunded($order),
-            (bool) $order->isInPreparation(),
-            $this->isInPending($order),
+            $this->hasBeenTotallyRefunded($totalRefund, $order),
             (string) $order->getTotalProductsWithTaxes(), /* @phpstan-ignore-line */
-            (string) $order->getTotalPaid(),
+            (string) $totalRefund,
             (int) $order->id_currency
         );
     }
 
-    /**
-     * @param \Order $order
-     *
-     * @return bool
-     */
-    private function isInPending(\Order $order)
+    private function hasBeenTotallyRefunded($refundAmount, $order)
     {
-        return $order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT))
-        || $order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT))
-        || $order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT));
+        return $refundAmount >= $order->total_paid;
     }
 
-    private function hasBeenTotallyRefunded(\Order $order)
+    private function getTotalRefund(\Order $order)
     {
         $orderSlips = $order->getOrderSlipsCollection();
         $refundAmount = 0;
@@ -98,6 +88,6 @@ class GetOrderQueryHandler
             $refundAmount += $orderSlip->amount + $orderSlip->shipping_cost_amount;
         }
 
-        return $refundAmount >= $order->total_paid;
+        return $refundAmount;
     }
 }
