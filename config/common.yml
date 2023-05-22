@@ -396,9 +396,14 @@ services:
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\RemovePayPalOrderCacheCommand: "ps_checkout.command.handler.paypal.order.remove_paypal_order_cache"
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand: "ps_checkout.command.handler.paypal.order.save_paypal_order"
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCacheCommand: "ps_checkout.command.handler.paypal.order.update_paypal_order_cache"
-        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetOrderQuery: "ps_checkout.query.handler.paypal.order.get_paypal_order"
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQuery: "ps_checkout.query.handler.order.get_order_for_payment_completed"
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQuery: "ps_checkout.query.handler.order.get_order_for_payment_denied"
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentPendingQuery: "ps_checkout.query.handler.order.get_order_for_payment_pending"
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQuery: "ps_checkout.query.handler.order.get_order_for_payment_refunded"
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQuery: "ps_checkout.query.handler.order.get_order_for_payment_reversed"
         PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query\GetClientTokenPayPalQuery: "ps_checkout.query.handler.paypal.identity.get_client_token"
-        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery: "ps_checkout.query.handler.paypal.order.get_paypal_order"
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery: "ps_checkout.query.handler.paypal.order.get_paypal_order_for_checkout_completed"
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery: "ps_checkout.query.handler.paypal.order.get_paypal_order_for_order_confirmation"
         PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePaymentMethodSelectedCommand: "ps_checkout.query.handler.session.update_payment_method_selected"
         PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand: "ps_checkout.query.handler.session.update_ps_checkout_session"
         PrestaShop\Module\PrestashopCheckout\Order\Payment\Query\GetOrderPaymentQuery: "ps_checkout.query.handler.order.payment.get_payment_order"
@@ -522,17 +527,45 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderQueryHandler'
     public: true
 
+  ps_checkout.query.handler.order.get_order_for_payment_completed:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentCompletedQueryHandler'
+    public: true
+
+  ps_checkout.query.handler.order.get_order_for_payment_denied:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentDeniedQueryHandler'
+    public: true
+
+  ps_checkout.query.handler.order.get_order_for_payment_pending:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentPendingQueryHandler'
+    public: true
+
+  ps_checkout.query.handler.order.get_order_for_payment_refunded:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentRefundedQueryHandler'
+    public: true
+
+  ps_checkout.query.handler.order.get_order_for_payment_reversed:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentReversedQueryHandler'
+    public: true
+
   ps_checkout.query.handler.paypal.identity.get_client_token:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Identity\QueryHandler\GetClientTokenPayPalQueryHandler'
     public: true
     arguments:
       - "@ps_checkout.event.dispatcher"
 
-  ps_checkout.query.handler.paypal.order.get_paypal_order:
-    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler'
+  ps_checkout.query.handler.paypal.order.get_paypal_order_for_checkout_completed:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForCheckoutCompletedQueryHandler'
     public: true
     arguments:
       - "@ps_checkout.event.dispatcher"
+      - "@ps_checkout.cache.paypal.order"
+
+  ps_checkout.query.handler.paypal.order.get_paypal_order_for_order_confirmation:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForOrderConfirmationQueryHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.event.dispatcher"
+      - "@ps_checkout.cache.paypal.order"
 
   ps_checkout.query.handler.session.update_payment_method_selected:
     class: 'PrestaShop\Module\PrestashopCheckout\Session\CommandHandler\UpdatePaymentMethodSelectedCommandHandler'

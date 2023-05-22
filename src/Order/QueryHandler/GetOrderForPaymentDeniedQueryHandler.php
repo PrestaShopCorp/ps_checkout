@@ -21,22 +21,24 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQueryResult;
-use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
+use PrestaShopDatabaseException;
+use PrestaShopException;
 
 class GetOrderForPaymentDeniedQueryHandler
 {
     /**
-     * @param GetOrderQuery $query
+     * @param GetOrderForPaymentDeniedQuery $query
      *
      * @return GetOrderForPaymentDeniedQueryResult
      *
      * @throws PsCheckoutException
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
-    public function handle(GetOrderQuery $query)
+    public function handle(GetOrderForPaymentDeniedQuery $query)
     {
         $orderId = null;
 

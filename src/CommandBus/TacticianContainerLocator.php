@@ -92,6 +92,17 @@ class TacticianContainerLocator implements HandlerLocator
 
         $serviceId = $this->commandNameToHandlerMap[$commandName];
 
+        if ($commandName === 'PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQuery') {
+            $this->module->getLogger()->debug(
+                __CLASS__,
+                [
+                    'commandName' => $commandName,
+                    'serviceId' => $serviceId,
+                    'service' => get_class($this->module->getService($serviceId)),
+                ]
+            );
+        }
+
         return $this->module->getService($serviceId);
     }
 }

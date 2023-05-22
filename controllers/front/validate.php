@@ -24,7 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery;
 
 /**
  * This controller receive ajax call to capture/authorize payment and create a PrestaShop Order
@@ -94,9 +94,6 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                 isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields']
             ));
 
-            // Nom de la classe où on récupère des données
-            // dictionnaire des données demandées + objet lié (bdd? paypal? api?)
-
             /** @var \PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface $commandBus */
             $commandBus = $this->module->getService('ps_checkout.bus.command');
 
@@ -104,7 +101,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
             $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId($cart->id);
 
-            $paypalOrder = $commandBus->handle(new GetPayPalOrderQuery(
+            $paypalOrder = $commandBus->handle(new GetPayPalOrderForOrderConfirmationQuery(
                 $psCheckoutCart->paypal_order
             ));
 

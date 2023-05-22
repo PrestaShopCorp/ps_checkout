@@ -21,22 +21,24 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentPendingQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentPendingQueryResult;
-use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
+use PrestaShopDatabaseException;
+use PrestaShopException;
 
 class GetOrderForPaymentPendingQueryHandler
 {
     /**
-     * @param GetOrderQuery $query
+     * @param GetOrderForPaymentPendingQuery $query
      *
      * @return GetOrderForPaymentPendingQueryResult
      *
      * @throws PsCheckoutException
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
-    public function handle(GetOrderQuery $query)
+    public function handle(GetOrderForPaymentPendingQuery $query)
     {
         $orderId = null;
 

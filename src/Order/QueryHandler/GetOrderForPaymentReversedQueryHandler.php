@@ -21,21 +21,23 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQueryResult;
-use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQuery;
+use PrestaShopDatabaseException;
+use PrestaShopException;
 
 class GetOrderForPaymentReversedQueryHandler
 {
     /**
-     * @param GetOrderQuery $query
+     * @param GetOrderForPaymentReversedQuery $query
      *
      * @return GetOrderForPaymentReversedQueryResult
      *
      * @throws PsCheckoutException
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
-    public function handle(GetOrderQuery $query)
+    public function handle(GetOrderForPaymentReversedQuery $query)
     {
         $orderId = null;
 

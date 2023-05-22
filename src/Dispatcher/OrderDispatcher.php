@@ -33,6 +33,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapt
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureRefundedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use Ps_checkout;
 use Psr\Log\LoggerInterface;
 
@@ -74,6 +75,11 @@ class OrderDispatcher implements Dispatcher
         /** @var EventDispatcherInterface $eventDispatcher */
         $eventDispatcher = $module->getService('ps_checkout.event.dispatcher');
 
+        /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
+        $psCheckoutCartRepository = $module->getService('ps_checkout.repository.pscheckoutcart');
+
+        $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($payload['orderId']);
+
         /** @var LoggerInterface $logger */
         $logger = $module->getService('ps_checkout.logger');
 
@@ -85,6 +91,9 @@ class OrderDispatcher implements Dispatcher
          */
         switch ($payload['eventType']) {
             case static::PS_CHECKOUT_PAYMENT_COMPLETED:
+                if ($psCheckoutCart->getPaypalStatus() === 'COMPLETED') {
+                    return true;
+                }
                 $eventDispatcher->dispatch(new PayPalCaptureCompletedEvent(
                     $payload['resource']['id'],
                     $payload['orderId'],
@@ -125,6 +134,9 @@ class OrderDispatcher implements Dispatcher
 
                 return true;
             case static::PS_CHECKOUT_ORDER_APPROVED:
+                if ($psCheckoutCart->getPaypalStatus() === 'COMPLETED') {
+                    return true;
+                }
                 $eventDispatcher->dispatch(new PayPalOrderApprovedEvent($payload['orderId'], $payload['resource']));
 
                 return true;

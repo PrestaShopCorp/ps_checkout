@@ -22,7 +22,9 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber;
 
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
+use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\AddOrderPaymentCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
@@ -34,6 +36,7 @@ use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompleted
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentPendingQuery;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentPendingQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQuery;
@@ -46,17 +49,16 @@ use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys
 use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigurationQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigurationQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckTransitionStateService;
-use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeniedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureRefundedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use PrestaShopException;
 use Ps_checkout;
+use PsCheckoutCart;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -134,11 +136,11 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
      *
      * @return void
      *
-     * @throws \PrestaShopException
+     * @throws PrestaShopException
      */
     public function createPaidOrder(PayPalCaptureCompletedEvent $event)
     {
-        /** @var \PsCheckoutCart $psCheckoutCart */
+        /** @var PsCheckoutCart $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
 
         try {
@@ -175,7 +177,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             }
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider $fundingSourceTranslationProvider */
+        /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
         $fundingSourceTranslationProvider = $this->module->getService('ps_checkout.funding_source.translation');
 
         $this->module->getService('ps_checkout.bus.command')->handle(new CreateOrderCommand(
@@ -193,11 +195,11 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
      *
      * @return void
      *
-     * @throws \PrestaShopException
+     * @throws PrestaShopException
      */
     public function createPendingOrder(PayPalCapturePendingEvent $event)
     {
-        /** @var \PsCheckoutCart $psCheckoutCart */
+        /** @var PsCheckoutCart $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
 
         try {
@@ -225,7 +227,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
                 $orderStateId = $getOrderStateConfiguration->getIdByKey(OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT);
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider $fundingSourceTranslationProvider */
+        /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
         $fundingSourceTranslationProvider = $this->module->getService('ps_checkout.funding_source.translation');
 
         $this->module->getService('ps_checkout.bus.command')->handle(new CreateOrderCommand(
@@ -245,12 +247,12 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
      *
      * @throws CartException
      * @throws PsCheckoutException
-     * @throws \PrestaShopException
+     * @throws PrestaShopException
      * @throws PayPalCaptureException
      */
     public function createOrderPayment(PayPalCaptureCompletedEvent $event)
     {
-        /** @var \PsCheckoutCart|false $psCheckoutCart */
+        /** @var PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
         if (false === $psCheckoutCart) {
             throw new PsCheckoutException(sprintf('Order #%s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
@@ -268,7 +270,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         } catch (OrderPaymentException $e) {
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider $fundingSourceTranslationProvider */
+        /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
         $fundingSourceTranslationProvider = $this->module->getService('ps_checkout.funding_source.translation');
 
         $capture = $event->getCapture();
@@ -397,7 +399,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 //    }
 
     /**
-     * @throws \PrestaShopException
+     * @throws PrestaShopException
      * @throws OrderException
      * @throws OrderStateException
      * @throws PsCheckoutException
@@ -413,8 +415,27 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             throw new PsCheckoutException(sprintf('Order #%s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
+        /** @var CommandBusInterface $commandBus */
+        $commandBus = $this->module->getService('ps_checkout.bus.command');
+
+        $this->logger->debug(
+            __CLASS__,
+            [
+                'function' => __FUNCTION__,
+                'id_cart' => $psCheckoutCart->getIdCart(),
+                'query' => new GetOrderForPaymentCompletedQuery($psCheckoutCart->getIdCart()),
+                'commandBus' => $commandBus instanceof CommandBusInterface,
+            ]
+        );
+
         /** @var GetOrderForPaymentCompletedQueryResult $order */
-        $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderForPaymentCompletedQuery($psCheckoutCart->getIdCart()));
+        $order = $commandBus->handle(new GetOrderForPaymentCompletedQuery($psCheckoutCart->getIdCart()));
+
+        if ($order) {
+            $this->logger->debug(__CLASS__, [__FUNCTION__, get_class($order)]);
+        } else {
+            $this->logger->error(__CLASS__, [__FUNCTION__, $order]);
+        }
 
         if ($order->hasBeenPaid()) {
             return;
@@ -426,7 +447,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @throws \PrestaShopException
+     * @throws PrestaShopException
      * @throws OrderException
      * @throws OrderStateException
      * @throws CartException
@@ -440,7 +461,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
 
-        /** @var GetOrderForPaymentPendingQuery $order */
+        /** @var GetOrderForPaymentPendingQueryResult $order */
         $order = $this->module->getService('ps_checkout.bus.command')->handle(new GetOrderForPaymentPendingQuery($psCheckoutCart->getIdCart()));
 
         /** @var GetOrderStateConfigurationQueryResult $getOrderStateConfiguration */
@@ -490,7 +511,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @throws \PrestaShopException
+     * @throws PrestaShopException
      * @throws OrderException
      * @throws OrderStateException
      * @throws PsCheckoutException
@@ -521,7 +542,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @throws \PrestaShopException
+     * @throws PrestaShopException
      * @throws OrderException
      * @throws OrderStateException
      * @throws PsCheckoutException

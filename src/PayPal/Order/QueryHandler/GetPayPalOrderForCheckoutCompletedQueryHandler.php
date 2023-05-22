@@ -69,7 +69,7 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
         /** @var array{id: string, status: string} $order */
         $order = $this->cache->get($getPayPalOrderQuery->getOrderId()->getValue());
 
-        if ($order['status'] === 'APPROVED') {
+        if (!empty($order) && $order['status'] === 'APPROVED') {
             return new GetPayPalOrderQueryResult($order);
         }
 

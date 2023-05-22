@@ -99,12 +99,11 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             }
 
             $validationValues->validateBodyDatas($bodyValues);
+            $this->setAtributesBodyValues($bodyValues);
 
             if (false === $this->checkPSLSignature($bodyValues)) {
                 throw new PsCheckoutException('Invalid PSL signature', PsCheckoutException::PSCHECKOUT_WEBHOOK_PSL_SIGNATURE_INVALID);
             }
-
-            $this->setAtributesBodyValues($bodyValues);
 
             // Check if have execution permissions
             if (false === $this->checkExecutionPermissions()) {
@@ -137,6 +136,8 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
     {
         $context = Context::getContext();
         $response = (new Webhook($context->link))->getShopSignature($bodyValues);
+
+        $this->module->getLogger()->debug('checkPSLSignature', ['payload' => $bodyValues, 'response' => $response]);
 
         // data return false if no error
         if (200 === $response['httpCode'] && 'VERIFIED' === $response['body']['message']) {
@@ -243,6 +244,8 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
         );
 
         if ('ShopNotificationOrderChange' === $this->payload['category']) {
+            return true;
+
             return (new OrderDispatcher())->dispatchEventType($this->payload);
         }
 

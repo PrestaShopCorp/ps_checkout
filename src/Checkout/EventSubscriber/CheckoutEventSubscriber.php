@@ -26,7 +26,7 @@ use PrestaShop\Module\PrestashopCheckout\Checkout\Event\CheckoutCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Exception\CheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\RemovePayPalOrderCacheCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePaymentMethodSelectedCommand;
 use PrestaShop\Module\PrestashopCheckout\Session\Exception\PsCheckoutSessionException;
 use Ps_checkout;
@@ -113,7 +113,7 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
      */
     public function fetchPayPalOrder(CheckoutCompletedEvent $event)
     {
-        $this->module->getService('ps_checkout.bus.command')->handle(new GetPayPalOrderQuery(
+        $this->module->getService('ps_checkout.bus.command')->handle(new GetPayPalOrderForCheckoutCompletedQuery(
             $event->getPayPalOrderId()->getValue()
         ));
     }

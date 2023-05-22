@@ -21,21 +21,23 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQueryResult;
-use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQuery;
+use PrestaShopDatabaseException;
+use PrestaShopException;
 
-class GetOrderQueryHandler
+class GetOrderForPaymentRefundedQueryHandler
 {
     /**
-     * @param GetOrderQuery $query
+     * @param GetOrderForPaymentRefundedQuery $query
      *
      * @return GetOrderForPaymentRefundedQueryResult
      *
      * @throws PsCheckoutException
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
-    public function handle(GetOrderQuery $query)
+    public function handle(GetOrderForPaymentRefundedQuery $query)
     {
         $orderId = null;
 
@@ -68,7 +70,7 @@ class GetOrderQueryHandler
             (int) $order->getCurrentState(),
             (bool) $order->hasBeenPaid(),
             $this->hasBeenTotallyRefunded($totalRefund, $order),
-            (string) $order->getTotalProductsWithTaxes(), /* @phpstan-ignore-line */
+            (string) $order->getTotalProductsWithTaxes(),
             (string) $totalRefund,
             (int) $order->id_currency
         );
