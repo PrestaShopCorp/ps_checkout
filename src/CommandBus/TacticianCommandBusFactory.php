@@ -26,7 +26,6 @@ use League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor;
 use League\Tactician\Handler\MethodNameInflector\HandleInflector;
 use League\Tactician\Logger\Formatter\ClassPropertiesFormatter;
 use League\Tactician\Logger\LoggerMiddleware;
-use League\Tactician\Plugins\LockingMiddleware;
 use Ps_checkout;
 use Psr\Log\LoggerInterface;
 
@@ -67,7 +66,6 @@ class TacticianCommandBusFactory
         $this->logger->debug(__CLASS__, [$this->commandToHandlerMap]);
 
         return new CommandBus([
-            new LockingMiddleware(),
             new LoggerMiddleware(
                 new ClassPropertiesFormatter(),
                 $this->logger

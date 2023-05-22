@@ -28,6 +28,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeniedEvent;
@@ -100,6 +101,19 @@ class CapturePayPalOrderCommandHandler
                     $payPalProcessorResponse->throwException();
                 }
             }
+
+//            $orderPayload = $response['body'];
+//            $orderStatus = $orderPayload['status'];
+//            switch ($orderStatus) {
+//                case 'COMPLETED':
+//                    $this->eventDispatcher->dispatch(
+//                        new PayPalOrderCompletedEvent(
+//                            $capturePayPalOrderCommand->getOrderId()->getValue(),
+//                            $orderPayload
+//                        )
+//                    );
+//                    break;
+//            }
 
             // Event to emit (depending to order capture status)
             switch ($captureStatus) {

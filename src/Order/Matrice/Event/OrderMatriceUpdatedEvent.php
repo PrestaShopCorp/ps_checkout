@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Matrice\Event;
 
-class OrderMatriceUpdatedEvent
+use PrestaShop\Module\PrestashopCheckout\Event\Event;
+
+class OrderMatriceUpdatedEvent extends Event
 {
 }
