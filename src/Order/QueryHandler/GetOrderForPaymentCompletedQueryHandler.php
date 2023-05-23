@@ -25,9 +25,24 @@ use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompleted
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQueryResult;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use Psr\SimpleCache\CacheInterface;
 
 class GetOrderForPaymentCompletedQueryHandler
 {
+
+    /**
+     * @var CacheInterface
+     */
+    private $cache;
+
+    /**
+     * @param CacheInterface $cache
+     */
+    public function __construct(CacheInterface $cache)
+    {
+        $this->cache = $cache;
+    }
+
     /**
      * @param GetOrderForPaymentCompletedQuery $query
      *
@@ -39,17 +54,14 @@ class GetOrderForPaymentCompletedQueryHandler
      */
     public function handle(GetOrderForPaymentCompletedQuery $query)
     {
-        $module = \Module::getInstanceByName('ps_checkout');
-        $module->getLogger()->debug(
-            __CLASS__,
-            [
-                'query' => $query,
-                'id_cart' => $query->getCartId()->getValue(),
-            ]
-        );
+
+        /** @var GetOrderForPaymentCompletedQueryResult $result */
+        $result = $this->cache->get('cart_id_' . $query->getCartId()->getValue());
+        if (!empty($result) && $result instanceof GetOrderForPaymentCompletedQueryResult) {
+            return new $result;
+        }
 
         $orderId = null;
-
         // Order::getIdByCartId() is available since PrestaShop 1.7.1.0
         if (method_exists(\Order::class, 'getIdByCartId')) {
             // @phpstan-ignore-next-line
@@ -58,19 +70,17 @@ class GetOrderForPaymentCompletedQueryHandler
             // @phpstan-ignore-next-line
             $orderId = (int) \Order::getOrderByCartId($query->getCartId()->getValue());
         }
-        $module->getLogger()->debug('!!!!', [$orderId]);
+
         if (!$orderId) {
             throw new PsCheckoutException('No PrestaShop Order associated to this PayPal Order at this time.', PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
         }
 
-        // $order = $this->cache->get($query->getCartId()->getValue());
         $order = new \Order($orderId);
 
         if (!\Validate::isLoadedObject($order)) {
             throw new PsCheckoutException('No PrestaShop Order associated to this PayPal Order at this time.', PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
         }
-
-        return new GetOrderForPaymentCompletedQueryResult(
+        $result = new GetOrderForPaymentCompletedQueryResult(
             (int) $order->id,
             (int) $order->getCurrentState(),
             (bool) $order->hasBeenPaid(),
@@ -78,5 +88,9 @@ class GetOrderForPaymentCompletedQueryHandler
             (string) $order->getTotalPaid(),
             (int) $order->id_currency
         );
+
+        $this->cache->set('cart_id_' . $query->getCartId()->getValue(), $result);
+
+        return $result;
     }
 }

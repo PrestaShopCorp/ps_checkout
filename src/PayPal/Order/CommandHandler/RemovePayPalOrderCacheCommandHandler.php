@@ -60,8 +60,8 @@ class RemovePayPalOrderCacheCommandHandler
     public function handle(RemovePayPalOrderCacheCommand $removePayPalOrderCacheCommand)
     {
         try {
-            if ($this->cache->has($removePayPalOrderCacheCommand->getOrderId()->getValue())) {
-                $this->cache->delete($removePayPalOrderCacheCommand->getOrderId()->getValue());
+            if ($this->cache->has('paypal_order_id_' . $removePayPalOrderCacheCommand->getOrderId()->getValue())) {
+                $this->cache->delete('paypal_order_id_' . $removePayPalOrderCacheCommand->getOrderId()->getValue());
             }
         } catch (CacheException $exception) {
             throw new PayPalOrderException('Unable to remove item from PayPal Order Cache', PayPalOrderException::CACHE_EXCEPTION, $exception);

@@ -26,9 +26,24 @@ use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQue
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use Psr\SimpleCache\CacheInterface;
 
 class GetOrderForPaymentDeniedQueryHandler
 {
+
+    /**
+     * @var CacheInterface
+     */
+    private $cache;
+
+    /**
+     * @param CacheInterface $cache
+     */
+    public function __construct(CacheInterface $cache)
+    {
+        $this->cache = $cache;
+    }
+
     /**
      * @param GetOrderForPaymentDeniedQuery $query
      *
@@ -40,6 +55,13 @@ class GetOrderForPaymentDeniedQueryHandler
      */
     public function handle(GetOrderForPaymentDeniedQuery $query)
     {
+
+        /** @var GetOrderForPaymentDeniedQueryResult $result */
+        $result = $this->cache->get('cart_id_'.$query->getCartId()->getValue());
+        if (!empty($result) && $result instanceof GetOrderForPaymentDeniedQueryResult) {
+            return new $result;
+        }
+
         $orderId = null;
 
         // Order::getIdByCartId() is available since PrestaShop 1.7.1.0
@@ -64,11 +86,15 @@ class GetOrderForPaymentDeniedQueryHandler
             throw new PsCheckoutException('No PrestaShop Order associated to this PayPal Order at this time.', PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
         }
 
-        return new GetOrderForPaymentDeniedQueryResult(
+
+        $result = new GetOrderForPaymentDeniedQueryResult(
             (int) $order->id,
             (int) $order->getCurrentState(),
             $this->hasBeenError($order)
         );
+
+        $this->cache->set('cart_id_'.$query->getCartId()->getValue(),$result);
+        return $result;
     }
 
     /**

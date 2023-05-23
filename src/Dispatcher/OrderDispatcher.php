@@ -91,11 +91,17 @@ class OrderDispatcher implements Dispatcher
          */
         switch ($payload['eventType']) {
             case static::PS_CHECKOUT_PAYMENT_COMPLETED:
-                if ($psCheckoutCart->getPaypalStatus() === 'COMPLETED') {
+                /** @var \Symfony\Component\Cache\Simple\FilesystemCache $captureCache */
+                $captureCache = $module->getService('ps_checkout.cache.paypal.capture');
+
+                $captureId = $payload['resource']['id'];
+
+                if ($psCheckoutCart->getPaypalStatus() === 'COMPLETED' || $captureCache->get($captureId)) {
                     return true;
                 }
+
                 $eventDispatcher->dispatch(new PayPalCaptureCompletedEvent(
-                    $payload['resource']['id'],
+                    $captureId,
                     $payload['orderId'],
                     $payload['resource']
                 ));

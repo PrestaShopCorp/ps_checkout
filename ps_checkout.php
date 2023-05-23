@@ -158,6 +158,16 @@ class Ps_checkout extends PaymentModule
         $this->ps_versions_compliancy = ['min' => '8.0.0', 'max' => _PS_VERSION_];
 
         // $this->disableSegment = false;
+        if (defined('_PS_ADMIN_DIR_') && Validate::isLoadedObject($this->context->cart)) {
+            // A l'initialisation du module, via un hook qui serait appelé à la fois coté Webhook et côté Controller, si une instance de Cart existe dans le Context, on récupère dans pscheckout_cart si une PayPal Order est associé à ce Cart puis si oui alors on initialise le Cache avec la PayPal Order
+            // Ce qui permettra au Comparator d'avoir la PayPal Order initiale qui servira de référence pour comparaison
+            $this->getLogger()->debug(
+                'A Cart is loaded in Context',
+                [
+                    'id_cart' => $this->context->cart->id,
+                ]
+            );
+        }
     }
 
     /**

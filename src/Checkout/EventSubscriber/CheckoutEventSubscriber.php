@@ -54,27 +54,10 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
     {
         return [
             CheckoutCompletedEvent::class => [
-                ['removePayPalOrderCache'],
                 ['updatePaymentMethodSelected'],
                 ['fetchPayPalOrder'],
             ],
         ];
-    }
-
-    /**
-     * Remove the order already in cache to ensure fetching the order with updated status
-     *
-     * @param CheckoutCompletedEvent $event
-     *
-     * @return void
-     *
-     * @throws CheckoutException
-     */
-    public function removePayPalOrderCache(CheckoutCompletedEvent $event)
-    {
-        $this->module->getService('ps_checkout.bus.command')->handle(new RemovePayPalOrderCacheCommand(
-            $event->getPayPalOrderId()->getValue()
-        ));
     }
 
     /**

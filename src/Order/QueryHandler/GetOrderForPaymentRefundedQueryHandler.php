@@ -25,9 +25,23 @@ use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQ
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQueryResult;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use Psr\SimpleCache\CacheInterface;
 
 class GetOrderForPaymentRefundedQueryHandler
 {
+    /**
+     * @var CacheInterface
+     */
+    private $cache;
+
+    /**
+     * @param CacheInterface $cache
+     */
+    public function __construct(CacheInterface $cache)
+    {
+        $this->cache = $cache;
+    }
+
     /**
      * @param GetOrderForPaymentRefundedQuery $query
      *
@@ -39,6 +53,12 @@ class GetOrderForPaymentRefundedQueryHandler
      */
     public function handle(GetOrderForPaymentRefundedQuery $query)
     {
+        /** @var GetOrderForPaymentRefundedQueryResult $result */
+        $result = $this->cache->get('cart_id_'.$query->getCartId()->getValue());
+        if (!empty($result) && $result instanceof GetOrderForPaymentRefundedQueryResult) {
+            return new $result;
+        }
+
         $orderId = null;
 
         // Order::getIdByCartId() is available since PrestaShop 1.7.1.0
@@ -65,7 +85,7 @@ class GetOrderForPaymentRefundedQueryHandler
 
         $totalRefund = $this->getTotalRefund($order);
 
-        return new GetOrderForPaymentRefundedQueryResult(
+        $result = new GetOrderForPaymentRefundedQueryResult(
             (int) $order->id,
             (int) $order->getCurrentState(),
             (bool) $order->hasBeenPaid(),
@@ -74,6 +94,9 @@ class GetOrderForPaymentRefundedQueryHandler
             (string) $totalRefund,
             (int) $order->id_currency
         );
+
+        $this->cache->set('cart_id_'.$query->getCartId()->getValue(),$result);
+        return $result;
     }
 
     private function hasBeenTotallyRefunded($refundAmount, $order)

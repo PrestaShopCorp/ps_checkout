@@ -49,8 +49,8 @@ class PayPalOrderProvider
             return false;
         }
 
-        if ($this->cache->has($id)) {
-            return $this->cache->get($id);
+        if ($this->cache->has('paypal_order_id_' . $id)) {
+            return $this->cache->get('paypal_order_id_' . $id);
         }
 
         $orderPayPal = new PaypalOrder($id);
@@ -61,7 +61,7 @@ class PayPalOrderProvider
 
         $data = $orderPayPal->getOrder();
 
-        $this->cache->set($id, $data);
+        $this->cache->set('paypal_order_id_' . $id, $data);
 
         return $data;
     }

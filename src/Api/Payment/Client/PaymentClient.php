@@ -20,7 +20,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
+use GuzzleLogMiddleware\LogMiddleware;
 use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
@@ -41,11 +43,24 @@ class PaymentClient extends GenericClient
 
         // Client can be provided for tests
         if (null === $client) {
-            $client = (new ClientFactory())->getClient([
+            /** @var \Ps_Checkout $module */
+            $module = \Module::getInstanceByName('ps_checkout');
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
+            $version = $module->getService('ps_checkout.module.version');
+
+            $handlerStack = null;
+            if (class_exists(HandlerStack::class) && class_exists(LogMiddleware::class)) {
+                $handlerStack = HandlerStack::create();
+                $handlerStack->push(new LogMiddleware($module->getLogger()));
+            }
+            
+            $clientConfiguration = [
                 'base_url' => (new PaymentEnv())->getPaymentApiUrl(),
                 'verify' => $this->getVerify(),
                 'timeout' => $this->timeout,
                 'exceptions' => $this->catchExceptions,
+                'handler' => $handlerStack,
                 'headers' => [
                     'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
                     'Accept' => 'application/json',
@@ -60,10 +75,12 @@ class PaymentClient extends GenericClient
                         (int) \Context::getContext()->shop->id
                     ),
                     'Bn-Code' => (new ShopContext())->getBnCode(),
-                    'Module-Version' => \Ps_checkout::VERSION, // version of the module
+                    'Module-Version' => $version->getSemVersion(), // version of the module
                     'Prestashop-Version' => _PS_VERSION_, // prestashop version
                 ],
-            ]);
+            ];
+
+            $client = (new ClientFactory())->getClient($clientConfiguration);
         }
 
         $this->setClient($client);

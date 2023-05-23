@@ -207,6 +207,8 @@ services:
   ps_checkout.repository.pscheckoutcart:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
     public: true
+    arguments:
+      - "@ps_checkout.cache.pscheckoutcart"
 
   ps_checkout.funding_source.configuration.repository:
     class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository'
@@ -305,6 +307,30 @@ services:
       - 3600
       - '@=service("ps_checkout.cache.directory").getPath()'
 
+  ps_checkout.cache.paypal.capture:
+    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
+    public: true
+    arguments:
+      - "paypal-captures"
+      - 3600
+      - '@=service("ps_checkout.cache.directory").getPath()'
+
+  ps_checkout.cache.pscheckoutcart:
+    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
+    public: true
+    arguments:
+      - "ps-checkout-carts"
+      - 3600
+      - '@=service("ps_checkout.cache.directory").getPath()'
+  
+  ps_checkout.cache.order:
+    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
+    public: true
+    arguments:
+      - "ps-orders"
+      - 3600
+      - '@=service("ps_checkout.cache.directory").getPath()'
+  
   ps_checkout.paypal.provider.order:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider'
     public: true
@@ -530,22 +556,32 @@ services:
   ps_checkout.query.handler.order.get_order_for_payment_completed:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentCompletedQueryHandler'
     public: true
+    arguments:
+      - "@ps_checkout.cache.order"
 
   ps_checkout.query.handler.order.get_order_for_payment_denied:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentDeniedQueryHandler'
     public: true
+    arguments:
+      - "@ps_checkout.cache.order"
 
   ps_checkout.query.handler.order.get_order_for_payment_pending:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentPendingQueryHandler'
     public: true
+    arguments:
+      - "@ps_checkout.cache.order"
 
   ps_checkout.query.handler.order.get_order_for_payment_refunded:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentRefundedQueryHandler'
     public: true
+    arguments:
+      - "@ps_checkout.cache.order"
 
   ps_checkout.query.handler.order.get_order_for_payment_reversed:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentReversedQueryHandler'
     public: true
+    arguments:
+      - "@ps_checkout.cache.order"
 
   ps_checkout.query.handler.paypal.identity.get_client_token:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Identity\QueryHandler\GetClientTokenPayPalQueryHandler'
