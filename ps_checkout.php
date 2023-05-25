@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -155,7 +156,7 @@ class Ps_checkout extends PaymentModule
         $this->description = $this->l('Provide the most commonly used payment methods to your customers in this all-in-one module, and manage all your sales in a centralized interface.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall this module?');
-        $this->ps_versions_compliancy = ['min' => '8.0.0', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = ['min' => '1.7.0.0', 'max' => _PS_VERSION_];
 
         // $this->disableSegment = false;
         if (defined('_PS_ADMIN_DIR_') && Validate::isLoadedObject($this->context->cart)) {
@@ -247,12 +248,12 @@ class Ps_checkout extends PaymentModule
             foreach ($this->configurationList as $name => $value) {
                 if (false === Configuration::hasKey($name, null, null, (int) $shopId)) {
                     $result = $result && (bool) Configuration::updateValue(
-                            $name,
-                            $value,
-                            false,
-                            null,
-                            (int) $shopId
-                        );
+                        $name,
+                        $value,
+                        false,
+                        null,
+                        (int) $shopId
+                    );
                 }
             }
         }
@@ -304,12 +305,13 @@ class Ps_checkout extends PaymentModule
         foreach ($incompatibleCodes as $incompatibleCode) {
             $db = \Db::getInstance();
 
-            $result = $result && $db->execute('
+            $result = $result && $db->execute(
+                '
                 DELETE FROM ' . _DB_PREFIX_ . 'module_country
                 WHERE id_country = (SELECT id_country FROM ' . _DB_PREFIX_ . 'country WHERE iso_code = "' . $incompatibleCode . '")
                 AND id_module = ' . $this->id . '
                 AND id_shop = ' . \Context::getContext()->shop->id
-                );
+            );
         }
 
         return $result;
@@ -330,12 +332,13 @@ class Ps_checkout extends PaymentModule
         foreach ($incompatibleCodes as $incompatibleCode) {
             $db = \Db::getInstance();
 
-            $result = $result && $db->execute('
+            $result = $result && $db->execute(
+                '
                 DELETE FROM ' . _DB_PREFIX_ . 'module_currency
                 WHERE id_currency = (SELECT id_currency FROM ' . _DB_PREFIX_ . 'currency WHERE iso_code = "' . $incompatibleCode . '")
                 AND id_module = ' . $this->id . '
                 AND id_shop = ' . \Context::getContext()->shop->id
-                );
+            );
         }
 
         return $result;
@@ -613,7 +616,8 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayPayment()
     {
-        if (false === Validate::isLoadedObject($this->context->cart)
+        if (
+            false === Validate::isLoadedObject($this->context->cart)
             || false === $this->checkCurrency($this->context->cart)
             || false === $this->merchantIsValid()
         ) {
@@ -678,7 +682,8 @@ class Ps_checkout extends PaymentModule
         /** @var Cart $cart */
         $cart = $params['cart'];
 
-        if (false === Validate::isLoadedObject($cart)
+        if (
+            false === Validate::isLoadedObject($cart)
             || false === $this->checkCurrency($cart)
             || false === $this->merchantIsValid()
         ) {
@@ -781,7 +786,8 @@ class Ps_checkout extends PaymentModule
         $isFullyOnboarded = $psAccount->onBoardingIsCompleted() && $paypalConfiguration->getMerchantId();
 
         if ('AdminPayment' === Tools::getValue('controller') && $isShop17) { // Display on PrestaShop 1.7.x.x only
-            if (in_array($this->getShopDefaultCountryCode(), ['FR', 'IT'])
+            if (
+                in_array($this->getShopDefaultCountryCode(), ['FR', 'IT'])
                 && Module::isEnabled('ps_checkout')
                 && Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT')
             ) {
@@ -986,7 +992,8 @@ class Ps_checkout extends PaymentModule
         }
         // END To be refactored in services
 
-        if ($frontControllerValidator->shouldGeneratePayPalClientToken($controller)
+        if (
+            $frontControllerValidator->shouldGeneratePayPalClientToken($controller)
             && $payPalConfiguration->isHostedFieldsEnabled() && in_array($payPalConfiguration->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true)
         ) {
             try {
@@ -1216,7 +1223,8 @@ class Ps_checkout extends PaymentModule
         $order = $params['order'];
 
         // This order has not been paid with this module
-        if (false === Validate::isLoadedObject($order)
+        if (
+            false === Validate::isLoadedObject($order)
             || $this->name !== $order->module
         ) {
             return '';
@@ -1349,7 +1357,8 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayPaymentTop()
     {
-        if (false === Validate::isLoadedObject($this->context->cart)
+        if (
+            false === Validate::isLoadedObject($this->context->cart)
             || false === $this->checkCurrency($this->context->cart)
             || false === $this->merchantIsValid()
         ) {
@@ -1417,7 +1426,8 @@ class Ps_checkout extends PaymentModule
         /** @var Cart $cart */
         $cart = $params['cart'];
 
-        if (false === Validate::isLoadedObject($cart)
+        if (
+            false === Validate::isLoadedObject($cart)
             || false === $this->checkCurrency($cart)
             || false === $this->merchantIsValid()
         ) {
@@ -1544,7 +1554,8 @@ class Ps_checkout extends PaymentModule
         /** @var \OrderPayment $orderPayment */
         $orderPayment = $params['object'];
 
-        if (!Validate::isLoadedObject($orderPayment)
+        if (
+            !Validate::isLoadedObject($orderPayment)
             || empty($orderPayment->order_reference)
             || !empty($orderPayment->transaction_id)
             || 1 !== count(OrderPayment::getByOrderReference($orderPayment->order_reference))
