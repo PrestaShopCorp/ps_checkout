@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -56,7 +57,7 @@ class GetOrderForPaymentCompletedQueryHandler
         /** @var GetOrderForPaymentCompletedQueryResult $result */
         $result = $this->cache->get('cart_id_' . $query->getCartId()->getValue());
         if (!empty($result) && $result instanceof GetOrderForPaymentCompletedQueryResult) {
-            return new $result();
+            return $result;
         }
 
         $orderId = null;

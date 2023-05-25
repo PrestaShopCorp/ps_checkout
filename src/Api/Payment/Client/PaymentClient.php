@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -43,7 +44,7 @@ class PaymentClient extends GenericClient
 
         // Client can be provided for tests
         if (null === $client) {
-            /** @var \Ps_Checkout $module */
+            /** @var \Ps_checkout $module */
             $module = \Module::getInstanceByName('ps_checkout');
 
             /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
@@ -124,14 +125,16 @@ class PaymentClient extends GenericClient
                 return $response;
             }
 
-            if (isset($response['exceptionCode'])
+            if (
+                isset($response['exceptionCode'])
                 && $response['exceptionCode'] === PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION
                 && false !== strpos($response['exceptionMessage'], 'cURL error 28')
             ) {
                 throw new HttpTimeoutException($response['exceptionMessage'], PsCheckoutException::PSL_TIMEOUT);
             }
 
-            if (isset($response['body']['message'])
+            if (
+                isset($response['body']['message'])
                 && ($response['body']['message'] === 'Error: ETIMEDOUT' || $response['body']['message'] === 'Error: ESOCKETTIMEDOUT')
             ) {
                 throw new HttpTimeoutException($response['body']['message'], PsCheckoutException::PSL_TIMEOUT);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -57,7 +58,7 @@ class GetOrderForPaymentPendingQueryHandler
         /** @var GetOrderForPaymentPendingQueryResult $result */
         $result = $this->cache->get('cart_id_' . $query->getCartId()->getValue());
         if (!empty($result) && $result instanceof GetOrderForPaymentPendingQueryResult) {
-            return new $result();
+            return $result;
         }
 
         $orderId = null;
@@ -103,7 +104,7 @@ class GetOrderForPaymentPendingQueryHandler
     private function isInPending(\Order $order)
     {
         return $order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT))
-        || $order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT))
-        || $order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT));
+            || $order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT))
+            || $order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT));
     }
 }

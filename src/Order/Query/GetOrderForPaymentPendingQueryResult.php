@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -45,7 +46,7 @@ class GetOrderForPaymentPendingQueryResult
     public function __construct(
         $id,
         $currentState,
-        $isInPending,
+        $isInPending
     ) {
         $this->id = $id;
         $this->currentState = $currentState;
@@ -75,5 +76,4 @@ class GetOrderForPaymentPendingQueryResult
     {
         return $this->isInPending;
     }
-
 }
