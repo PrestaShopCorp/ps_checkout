@@ -71,7 +71,7 @@ class PayPalCaptureComparator
      */
     private function checkAmount()
     {
-        return $this->capturePayPal['amount']['total'] === $this->capturePayPalCache['amount']['total'];
+        return $this->capturePayPal['amount']['value'] === $this->capturePayPalCache['amount']['value'];
     }
 
     /**
