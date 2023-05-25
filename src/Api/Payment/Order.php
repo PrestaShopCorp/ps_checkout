@@ -68,7 +68,7 @@ class Order extends PaymentClient
 
         /** @var \Symfony\Component\Cache\Simple\FilesystemCache $captureCache */
         $captureCache = $module->getService('ps_checkout.cache.paypal.capture');
-        
+
         $responseBody = isset($response['body']) ? $response['body'] : null;
 
         if ($responseBody) {

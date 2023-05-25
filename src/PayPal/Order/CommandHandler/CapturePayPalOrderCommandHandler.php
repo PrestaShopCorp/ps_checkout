@@ -115,6 +115,16 @@ class CapturePayPalOrderCommandHandler
 //                    break;
 //            }
 
+            // utiliser comparateur pour send l'event PayPalOrderCompleted
+            if (true) {
+                $this->eventDispatcher->dispatch(
+                    new PayPalOrderCompletedEvent(
+                        $capturePayPalOrderCommand->getOrderId()->getValue(),
+                        $capturePayload
+                    )
+                );
+            }
+
             // Event to emit (depending to order capture status)
             switch ($captureStatus) {
                 case 'COMPLETED':

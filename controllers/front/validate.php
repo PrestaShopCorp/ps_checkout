@@ -25,6 +25,7 @@ use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQueryResult;
 
 /**
  * This controller receive ajax call to capture/authorize payment and create a PrestaShop Order
@@ -94,13 +95,33 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                 isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields']
             ));
 
+            $this->sendOkResponse($this->generateResponse());
+        } catch (Exception $exception) {
+            $response = $this->generateResponse();
+
+            if (!empty($response)) {
+                $this->sendOkResponse($response);
+            }
+
+            $this->handleException($exception);
+        }
+    }
+
+    private function generateResponse()
+    {
+        try {
             /** @var \PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface $commandBus */
             $commandBus = $this->module->getService('ps_checkout.bus.command');
 
             /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId($cart->id);
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId($this->context->cart->id);
 
+            if (!Validate::isLoadedObject($psCheckoutCart)) {
+                return null;
+            }
+
+            /** @var GetPayPalOrderForOrderConfirmationQueryResult $paypalOrde */
             $paypalOrder = $commandBus->handle(new GetPayPalOrderForOrderConfirmationQuery(
                 $psCheckoutCart->paypal_order
             ));
@@ -111,7 +132,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                 'transactionIdentifier' => isset($paypalOrder->getOrder()['purchase_units'][0]['payments']['captures'][0]) ? $paypalOrder->getOrder()['purchase_units'][0]['payments']['captures'][0]['id'] : null,
             ];
 
-            $this->sendOkResponse($response);
+            return $response;
         } catch (Exception $exception) {
             $this->handleException($exception);
         }

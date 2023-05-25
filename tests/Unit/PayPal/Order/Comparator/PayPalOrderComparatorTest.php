@@ -22,83 +22,100 @@ namespace Tests\Unit\PayPal\Order\Comparator;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Comparator\PayPalOrderComparator;
+use Symfony\Component\Cache\Simple\ArrayCache;
 
 class PayPalOrderComparatorTest extends TestCase
 {
     public function testCheckPayPalCreatedIsDifferent()
     {
         $firstPayPalOrder = json_decode($this->getFirstOrderPayPalCreated(), true);
+        $cache = new ArrayCache();
+        $cache->set($firstPayPalOrder['id'], $firstPayPalOrder);
         $secondPayPalOrder = json_decode($this->getSecondOrderPayPalCreated(), true);
 
-        $comparator = new PayPalOrderComparator($firstPayPalOrder, $secondPayPalOrder);
+        $comparator = new PayPalOrderComparator($cache);
 
-        $this->assertEquals(false, $comparator->isOrderPayPalSimilar());
+        $this->assertEquals(false, $comparator->compare($secondPayPalOrder));
     }
 
     public function testCheckPayPalCreatedIsSimilar()
     {
         $firstPayPalOrder = json_decode($this->getFirstOrderPayPalCreated(), true);
+        $cache = new ArrayCache();
+        $cache->set($firstPayPalOrder['id'], $firstPayPalOrder);
 
-        $comparator = new PayPalOrderComparator($firstPayPalOrder, $firstPayPalOrder);
+        $comparator = new PayPalOrderComparator($cache);
 
-        $this->assertEquals(true, $comparator->isOrderPayPalSimilar());
+        $this->assertEquals(true, $comparator->compare($firstPayPalOrder));
     }
 
     public function testCheckPayPalPayerActionRequiredIsDifferent()
     {
         $firstPayPalOrder = json_decode($this->getFirstOrderPayPalPayerActionRequired(), true);
+        $cache = new ArrayCache();
+        $cache->set($firstPayPalOrder['id'], $firstPayPalOrder);
         $secondPayPalOrder = json_decode($this->getSecondOrderPayPalPayerActionRequired(), true);
 
-        $comparator = new PayPalOrderComparator($firstPayPalOrder, $secondPayPalOrder);
+        $comparator = new PayPalOrderComparator($cache);
 
-        $this->assertEquals(false, $comparator->isOrderPayPalSimilar());
+        $this->assertEquals(false, $comparator->compare($secondPayPalOrder));
     }
 
     public function testCheckPayPalPayerActionRequiredIsSimilar()
     {
         $firstPayPalOrder = json_decode($this->getFirstOrderPayPalPayerActionRequired(), true);
+        $cache = new ArrayCache();
+        $cache->set($firstPayPalOrder['id'], $firstPayPalOrder);
 
-        $comparator = new PayPalOrderComparator($firstPayPalOrder, $firstPayPalOrder);
+        $comparator = new PayPalOrderComparator($cache);
 
-        $this->assertEquals(true, $comparator->isOrderPayPalSimilar());
+        $this->assertEquals(true, $comparator->compare($firstPayPalOrder));
     }
 
     public function testCheckPayPalApprovedIsDifferent()
     {
         $firstPayPalOrder = json_decode($this->getFirstOrderPayPalApproved(), true);
+        $cache = new ArrayCache();
+        $cache->set($firstPayPalOrder['id'], $firstPayPalOrder);
         $secondPayPalOrder = json_decode($this->getSecondOrderPayPalApproved(), true);
 
-        $comparator = new PayPalOrderComparator($firstPayPalOrder, $secondPayPalOrder);
+        $comparator = new PayPalOrderComparator($cache);
 
-        $this->assertEquals(false, $comparator->isOrderPayPalSimilar());
+        $this->assertEquals(false, $comparator->compare($secondPayPalOrder));
     }
 
     public function testCheckPayPalApprovedIsSimilar()
     {
         $firstPayPalOrder = json_decode($this->getFirstOrderPayPalApproved(), true);
+        $cache = new ArrayCache();
+        $cache->set($firstPayPalOrder['id'], $firstPayPalOrder);
 
-        $comparator = new PayPalOrderComparator($firstPayPalOrder, $firstPayPalOrder);
+        $comparator = new PayPalOrderComparator($cache);
 
-        $this->assertEquals(true, $comparator->isOrderPayPalSimilar());
+        $this->assertEquals(true, $comparator->compare($firstPayPalOrder));
     }
 
     public function testCheckPayPalCompletedIsDifferent()
     {
         $firstPayPalOrder = json_decode($this->getFirstOrderPayPalCompleted(), true);
+        $cache = new ArrayCache();
+        $cache->set($firstPayPalOrder['id'], $firstPayPalOrder);
         $secondPayPalOrder = json_decode($this->getSecondOrderPayPalCompleted(), true);
 
-        $comparator = new PayPalOrderComparator($firstPayPalOrder, $secondPayPalOrder);
+        $comparator = new PayPalOrderComparator($cache);
 
-        $this->assertEquals(false, $comparator->isOrderPayPalSimilar());
+        $this->assertEquals(false, $comparator->compare($secondPayPalOrder));
     }
 
     public function testCheckPayPalCompletedIsSimilar()
     {
         $firstPayPalOrder = json_decode($this->getFirstOrderPayPalCompleted(), true);
+        $cache = new ArrayCache();
+        $cache->set($firstPayPalOrder['id'], $firstPayPalOrder);
 
-        $comparator = new PayPalOrderComparator($firstPayPalOrder, $firstPayPalOrder);
+        $comparator = new PayPalOrderComparator($cache);
 
-        $this->assertEquals(true, $comparator->isOrderPayPalSimilar());
+        $this->assertEquals(true, $comparator->compare($firstPayPalOrder));
     }
 
     public function getFirstOrderPayPalCreated()

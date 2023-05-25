@@ -20,9 +20,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
-use GuzzleLogMiddleware\LogMiddleware;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
+use GuzzleLogMiddleware\LogMiddleware;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
@@ -50,11 +50,15 @@ class PaymentClient extends GenericClient
             $version = $module->getService('ps_checkout.module.version');
 
             $handlerStack = null;
-            if (class_exists(HandlerStack::class) && class_exists(LogMiddleware::class)) {
+            
+            if (defined('\GuzzleHttp\ClientInterface::MAJOR_VERSION')
+                && class_exists(HandlerStack::class)
+                && class_exists(LogMiddleware::class)
+            ) {
                 $handlerStack = HandlerStack::create();
                 $handlerStack->push(new LogMiddleware($module->getLogger()));
             }
-            
+
             $clientConfiguration = [
                 'base_url' => (new PaymentEnv())->getPaymentApiUrl(),
                 'verify' => $this->getVerify(),

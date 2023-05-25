@@ -18,7 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace Tests\Unit\PayPal;
+ namespace Tests\Unit\Order\State\Service;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount;

@@ -29,7 +29,6 @@ use Psr\SimpleCache\CacheInterface;
 
 class GetOrderForPaymentReversedQueryHandler
 {
-
     /**
      * @var CacheInterface
      */
@@ -55,9 +54,9 @@ class GetOrderForPaymentReversedQueryHandler
     public function handle(GetOrderForPaymentReversedQuery $query)
     {
         /** @var GetOrderForPaymentPendingQueryResult $result */
-        $result = $this->cache->get('cart_id_'.$query->getCartId()->getValue());
+        $result = $this->cache->get('cart_id_' . $query->getCartId()->getValue());
         if (!empty($result) && $result instanceof GetOrderForPaymentPendingQueryResult) {
-            return new $result;
+            return new $result();
         }
 
         $orderId = null;
@@ -84,14 +83,15 @@ class GetOrderForPaymentReversedQueryHandler
             throw new PsCheckoutException('No PrestaShop Order associated to this PayPal Order at this time.', PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
         }
 
-        $result =  new GetOrderForPaymentReversedQueryResult(
+        $result = new GetOrderForPaymentReversedQueryResult(
             (int) $order->id,
             (int) $order->getCurrentState(),
             (bool) $order->hasBeenPaid(),
             $this->hasBeenTotallyRefunded($order)
         );
 
-        $this->cache->set('cart_id_'.$query->getCartId()->getValue(),$result);
+        $this->cache->set('cart_id_' . $query->getCartId()->getValue(), $result);
+
         return $result;
     }
 

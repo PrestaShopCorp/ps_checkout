@@ -30,7 +30,6 @@ use Psr\SimpleCache\CacheInterface;
 
 class GetOrderForPaymentDeniedQueryHandler
 {
-
     /**
      * @var CacheInterface
      */
@@ -55,11 +54,10 @@ class GetOrderForPaymentDeniedQueryHandler
      */
     public function handle(GetOrderForPaymentDeniedQuery $query)
     {
-
         /** @var GetOrderForPaymentDeniedQueryResult $result */
-        $result = $this->cache->get('cart_id_'.$query->getCartId()->getValue());
+        $result = $this->cache->get('cart_id_' . $query->getCartId()->getValue());
         if (!empty($result) && $result instanceof GetOrderForPaymentDeniedQueryResult) {
-            return new $result;
+            return new $result();
         }
 
         $orderId = null;
@@ -86,14 +84,14 @@ class GetOrderForPaymentDeniedQueryHandler
             throw new PsCheckoutException('No PrestaShop Order associated to this PayPal Order at this time.', PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
         }
 
-
         $result = new GetOrderForPaymentDeniedQueryResult(
             (int) $order->id,
             (int) $order->getCurrentState(),
             $this->hasBeenError($order)
         );
 
-        $this->cache->set('cart_id_'.$query->getCartId()->getValue(),$result);
+        $this->cache->set('cart_id_' . $query->getCartId()->getValue(), $result);
+
         return $result;
     }
 

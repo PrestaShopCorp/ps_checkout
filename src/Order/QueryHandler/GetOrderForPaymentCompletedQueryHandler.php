@@ -29,7 +29,6 @@ use Psr\SimpleCache\CacheInterface;
 
 class GetOrderForPaymentCompletedQueryHandler
 {
-
     /**
      * @var CacheInterface
      */
@@ -54,11 +53,10 @@ class GetOrderForPaymentCompletedQueryHandler
      */
     public function handle(GetOrderForPaymentCompletedQuery $query)
     {
-
         /** @var GetOrderForPaymentCompletedQueryResult $result */
         $result = $this->cache->get('cart_id_' . $query->getCartId()->getValue());
         if (!empty($result) && $result instanceof GetOrderForPaymentCompletedQueryResult) {
-            return new $result;
+            return new $result();
         }
 
         $orderId = null;

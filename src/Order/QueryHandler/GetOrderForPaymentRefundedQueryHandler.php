@@ -54,9 +54,9 @@ class GetOrderForPaymentRefundedQueryHandler
     public function handle(GetOrderForPaymentRefundedQuery $query)
     {
         /** @var GetOrderForPaymentRefundedQueryResult $result */
-        $result = $this->cache->get('cart_id_'.$query->getCartId()->getValue());
+        $result = $this->cache->get('cart_id_' . $query->getCartId()->getValue());
         if (!empty($result) && $result instanceof GetOrderForPaymentRefundedQueryResult) {
-            return new $result;
+            return new $result();
         }
 
         $orderId = null;
@@ -95,7 +95,8 @@ class GetOrderForPaymentRefundedQueryHandler
             (int) $order->id_currency
         );
 
-        $this->cache->set('cart_id_'.$query->getCartId()->getValue(),$result);
+        $this->cache->set('cart_id_' . $query->getCartId()->getValue(), $result);
+
         return $result;
     }
 

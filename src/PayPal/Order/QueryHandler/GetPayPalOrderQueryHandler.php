@@ -23,8 +23,6 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler;
 
 use Exception;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderFetchedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
@@ -55,6 +53,7 @@ class GetPayPalOrderQueryHandler
      */
     public function handle(GetPayPalOrderQuery $getPayPalOrderQuery)
     {
+        //
         try {
             $orderPayPal = new PaypalOrder($getPayPalOrderQuery->getOrderId()->getValue());
         } catch (Exception $exception) {
@@ -69,18 +68,6 @@ class GetPayPalOrderQueryHandler
             new PayPalOrderFetchedEvent($getPayPalOrderQuery->getOrderId()->getValue(), $orderPayPal->getOrder())
         );
 
-        $result = new GetPayPalOrderQueryResult($orderPayPal->getOrder());
-
-        if ($result->getOrder()['status'] === 'APPROVED') {
-            $this->eventDispatcher->dispatch(
-                new PayPalOrderApprovedEvent($orderPayPal->getOrder()['id'], $result->getOrder())
-            );
-        } elseif ($result->getOrder()['status'] === 'COMPLETED') {
-            $this->eventDispatcher->dispatch(
-                new PayPalOrderCompletedEvent($orderPayPal->getOrder()['id'], $result->getOrder())
-            );
-        }
-
-        return $result;
+        return new GetPayPalOrderQueryResult($orderPayPal->getOrder());
     }
 }

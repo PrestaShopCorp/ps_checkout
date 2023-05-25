@@ -32,6 +32,7 @@ class PayPalOrderStatus
 
     const TRANSITION_AVAILABLE = [
         self::CREATED => [
+            self::CREATED,
             self::APPROVED,
             self::PENDING_APPROVAL,
             self::SAVED,
