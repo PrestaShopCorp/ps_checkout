@@ -49,8 +49,10 @@ use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys
 use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigurationQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigurationQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckTransitionStateService;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeniedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeclinedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureRefundedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
@@ -60,6 +62,7 @@ use PrestaShopException;
 use Ps_checkout;
 use PsCheckoutCart;
 use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalCaptureEventSubscriber implements EventSubscriberInterface
@@ -95,6 +98,11 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     private $commandBus;
 
     /**
+     * @var CacheInterface
+     */
+    private $cache;
+
+    /**
      * @param Ps_checkout $module
      * @param LoggerInterface $logger
      * @param PsCheckoutCartRepository $psCheckoutCartRepository
@@ -106,7 +114,8 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         LoggerInterface $logger,
         PsCheckoutCartRepository $psCheckoutCartRepository,
         CheckTransitionStateService $checkTransitionStateService,
-        CheckOrderAmount $checkOrderAmount
+        CheckOrderAmount $checkOrderAmount,
+        CacheInterface $cache
     ) {
         $this->module = $module;
         $this->logger = $logger;
@@ -116,6 +125,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         /** @var CommandBusInterface $commandBus */
         $commandBus = $this->module->getService('ps_checkout.bus.command');
         $this->commandBus = $commandBus;
+        $this->cache = $cache;
     }
 
     /**
@@ -128,14 +138,24 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
                 ['createPaidOrder'],
                 ['createOrderPayment'],
                 ['setPaymentCompletedOrderStatus'],
+                ['updateCache']
             ],
-            PayPalCaptureDeniedEvent::class => 'setPaymentDeniedOrderStatus',
+            PayPalCaptureDeclinedEvent::class => [
+                ['setPaymentDeclinedOrderStatus'],
+                ['updateCache']
+            ],
             PayPalCapturePendingEvent::class => [
                 ['createPendingOrder'],
                 ['setPaymentPendingOrderStatus'],
             ],
-            PayPalCaptureRefundedEvent::class => 'setPaymentRefundedOrderStatus',
-            PayPalCaptureReversedEvent::class => 'setPaymentReversedOrderStatus',
+            PayPalCaptureRefundedEvent::class => [
+                ['setPaymentRefundedOrderStatus'],
+                ['updateCache']
+            ],
+            PayPalCaptureReversedEvent::class => [
+                ['setPaymentReversedOrderStatus'],
+                ['updateCache']
+            ]
         ];
     }
 
@@ -493,7 +513,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $this->commandBus->handle(new UpdateOrderStatusCommand($order->getId(), $newOrderStateId));
     }
 
-    public function setPaymentDeniedOrderStatus(PayPalCaptureDeniedEvent $event)
+    public function setPaymentDeclinedOrderStatus(PayPalCaptureDeclinedEvent $event)
     {
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
 
@@ -578,5 +598,14 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         }
 
         $this->commandBus->handle(new UpdateOrderStatusCommand($order->getId(), $getOrderStateConfiguration->getRefundedState()->getOrderStateId()));
+    }
+
+    /**
+     * @param PayPalCaptureEvent $event
+     * @return void
+     * @throws InvalidArgumentException
+     */
+    public function updateCache(PayPalCaptureEvent $event){
+        $this->cache->set($event->getPayPalOrderId()->getValue(),$event->getCapture());
     }
 }

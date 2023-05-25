@@ -28,12 +28,14 @@ class PayPalCaptureStatus
     const FAILED = 'FAILED';
     const DECLINED = 'DECLINED';
     const COMPLETED = 'COMPLETED';
+    const REVERSED = 'REVERSED';
 
     const TRANSITION_AVAILABLE = [
         self::PENDING => [
             self::DECLINED,
             self::FAILED,
             self::COMPLETED,
+            self::REVERSED
         ],
         self::PARTIALLY_REFUNDED => [
             self::REFUND,
@@ -42,8 +44,10 @@ class PayPalCaptureStatus
         self::FAILED => [],
         self::DECLINED => [],
         self::COMPLETED => [
+            self::COMPLETED,
             self::REFUND,
             self::PARTIALLY_REFUNDED,
+            self::REVERSED
         ],
     ];
 }
