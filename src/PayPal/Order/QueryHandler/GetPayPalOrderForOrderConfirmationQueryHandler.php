@@ -22,12 +22,12 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler;
 
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderFetchedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
-use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 
 class GetPayPalOrderForOrderConfirmationQueryHandler
@@ -63,7 +63,7 @@ class GetPayPalOrderForOrderConfirmationQueryHandler
     public function handle(GetPayPalOrderForOrderConfirmationQuery $query)
     {
         /** @var array{id: string, status: string} $order */
-        $order = $this->cache->get('paypal_order_id_' . $query->getOrderId()->getValue());
+        $order = $this->cache->get(CacheInterface::PAYPAL_ORDER_ID . $query->getOrderId()->getValue());
 
         if (!empty($order) && ($order['status'] === 'PENDING' || $order['status'] === 'COMPLETED')) {
             return new GetPayPalOrderForOrderConfirmationQueryResult($order);
@@ -79,7 +79,7 @@ class GetPayPalOrderForOrderConfirmationQueryHandler
             throw new PayPalOrderException(sprintf('No data for PayPal Order #%d', $query->getOrderId()->getValue()), PayPalOrderException::EMPTY_ORDER_DATA);
         }
 
-        $this->cache->set('paypal_order_id_' . $query->getOrderId()->getValue(), $orderPayPal->getOrder());
+        $this->cache->set(CacheInterface::PAYPAL_ORDER_ID . $query->getOrderId()->getValue(), $orderPayPal->getOrder());
 
         $this->eventDispatcher->dispatch(
             new PayPalOrderFetchedEvent($query->getOrderId()->getValue(), $orderPayPal->getOrder())

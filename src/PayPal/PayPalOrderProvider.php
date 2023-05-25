@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
-use Psr\SimpleCache\CacheInterface;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheInterface;
 
 class PayPalOrderProvider
 {
@@ -49,8 +49,8 @@ class PayPalOrderProvider
             return false;
         }
 
-        if ($this->cache->has('paypal_order_id_' . $id)) {
-            return $this->cache->get('paypal_order_id_' . $id);
+        if ($this->cache->has(CacheInterface::PAYPAL_ORDER_ID . $id)) {
+            return $this->cache->get(CacheInterface::PAYPAL_ORDER_ID . $id);
         }
 
         $orderPayPal = new PaypalOrder($id);
@@ -61,7 +61,7 @@ class PayPalOrderProvider
 
         $data = $orderPayPal->getOrder();
 
-        $this->cache->set('paypal_order_id_' . $id, $data);
+        $this->cache->set(CacheInterface::PAYPAL_ORDER_ID . $id, $data);
 
         return $data;
     }

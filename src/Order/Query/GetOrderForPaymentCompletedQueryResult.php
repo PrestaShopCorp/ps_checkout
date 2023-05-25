@@ -58,6 +58,7 @@ class GetOrderForPaymentCompletedQueryResult
      * @param bool $hasBeenPaid
      * @param string $totalAmount
      * @param string $totalAmountPaid
+     * @param int $currencyId
      */
     public function __construct(
         $id,
@@ -121,13 +122,5 @@ class GetOrderForPaymentCompletedQueryResult
     public function getCurrencyId()
     {
         return $this->currencyId;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isInPending()
-    {
-        return $this->isInPending;
     }
 }

@@ -28,6 +28,6 @@ class GetOrderStateQueryHandler
 {
     public function handle(GetOrderStateQuery $query)
     {
-        return new GetOrderStateQueryResult(\Configuration::getGlobalValue($query->getOrderState()));
+        return new GetOrderStateQueryResult((int) \Configuration::getGlobalValue($query->getOrderState()));
     }
 }

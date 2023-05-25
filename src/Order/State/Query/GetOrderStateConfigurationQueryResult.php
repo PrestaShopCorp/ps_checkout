@@ -240,9 +240,11 @@ class GetOrderStateConfigurationQueryResult
     }
 
     /**
+     * @todo Remove this
+     *
      * @param OrderStateId $orderStateId
      *
-     * @return void
+     * @return string|false
      */
     public function getKeyById($orderStateId)
     {
@@ -255,6 +257,13 @@ class GetOrderStateConfigurationQueryResult
         return false;
     }
 
+    /**
+     * @todo Remove this
+     *
+     * @param $orderStateName
+     *
+     * @return int|false
+     */
     public function getIdByKey($orderStateName)
     {
         foreach ($this as $orderState) {

@@ -244,7 +244,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
         );
 
         if ('ShopNotificationOrderChange' === $this->payload['category']) {
-            return true;
 
             return (new OrderDispatcher())->dispatchEventType($this->payload);
         }

@@ -23,6 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler;
 
 use Exception;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderFetchedEvent;
@@ -30,7 +31,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
-use Psr\SimpleCache\CacheInterface;
 
 /**
  * We need to know if the Order Status is APPROVED and in case of Card payment if 3D Secure allow to capture
@@ -67,7 +67,7 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
     public function handle(GetPayPalOrderForCheckoutCompletedQuery $getPayPalOrderQuery)
     {
         /** @var array{id: string, status: string} $order */
-        $order = $this->cache->get('paypal_order_id_' . $getPayPalOrderQuery->getOrderId()->getValue());
+        $order = $this->cache->get(CacheInterface::PAYPAL_ORDER_ID . $getPayPalOrderQuery->getOrderId()->getValue());
 
         if (!empty($order) && $order['status'] === 'APPROVED') {
             return new GetPayPalOrderQueryResult($order);
@@ -83,7 +83,7 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
             throw new PayPalOrderException(sprintf('No data for PayPal Order #%d', $getPayPalOrderQuery->getOrderId()->getValue()), PayPalOrderException::EMPTY_ORDER_DATA);
         }
 
-        $this->cache->set('paypal_order_id_' . $getPayPalOrderQuery->getOrderId()->getValue(), $orderPayPal->getOrder());
+        $this->cache->set(CacheInterface::PAYPAL_ORDER_ID . $getPayPalOrderQuery->getOrderId()->getValue(), $orderPayPal->getOrder());
 
         $this->eventDispatcher->dispatch(
             new PayPalOrderFetchedEvent($getPayPalOrderQuery->getOrderId()->getValue(), $orderPayPal->getOrder())

@@ -18,43 +18,12 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Order\Resume;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache;
 
-class ResumePayPalOrder
+use Psr\SimpleCache\CacheInterface as PsrCacheInterface;
+
+interface CacheInterface extends PsrCacheInterface
 {
-    /**
-     * @var string
-     */
-    private $oldStatus;
-
-    /**
-     * @var string
-     */
-    private $newStatus;
-
-    /**
-     * @param string $oldStatus
-     * @param string $newStatus
-     */
-    public function __construct($oldStatus, $newStatus)
-    {
-        $this->oldStatus = $oldStatus;
-        $this->newStatus = $newStatus;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOldStatus()
-    {
-        return $this->oldStatus;
-    }
-
-    /**
-     * @return string
-     */
-    public function getNewStatus()
-    {
-        return $this->newStatus;
-    }
+    const CART_ID = 'cart_id_';
+    const PAYPAL_ORDER_ID = 'paypal_order_id_';
 }

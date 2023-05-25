@@ -110,7 +110,7 @@ class CheckTransitionStateService
         }
 
         $newOrderState = $this->getPsState($data);
-        $module = Module::getInstanceByName('ps_checkout');
+        $module = \Module::getInstanceByName('ps_checkout');
         $module->getLogger()->debug(__CLASS__, [$newOrderState]);
         if ($this->checkOrderState->isOrderStateTransitionAvailable($data['Order']['CurrentOrderStatus'], $newOrderState)) {
             return $newOrderState;

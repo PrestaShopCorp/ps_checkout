@@ -64,7 +64,7 @@ class Order extends PaymentClient
             ],
         ]);
 
-        /** @var \Ps_Checkout $module */
+        /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
 
         /** @var \Symfony\Component\Cache\Simple\FilesystemCache $captureCache */

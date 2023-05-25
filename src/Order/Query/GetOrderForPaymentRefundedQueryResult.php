@@ -64,6 +64,7 @@ class GetOrderForPaymentRefundedQueryResult
      * @param bool $hasBeenTotallyRefund
      * @param string $totalAmount
      * @param string $totalRefund
+     * @param int $currencyId
      */
     public function __construct(
         $id,

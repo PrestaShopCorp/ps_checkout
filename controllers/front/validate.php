@@ -121,7 +121,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                 return null;
             }
 
-            /** @var GetPayPalOrderForOrderConfirmationQueryResult $paypalOrde */
+            /** @var GetPayPalOrderForOrderConfirmationQueryResult $paypalOrder */
             $paypalOrder = $commandBus->handle(new GetPayPalOrderForOrderConfirmationQuery(
                 $psCheckoutCart->paypal_order
             ));

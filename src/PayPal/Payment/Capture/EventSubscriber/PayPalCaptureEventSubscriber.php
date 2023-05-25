@@ -166,6 +166,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $fundingSource = $psCheckoutCart->getPaypalFundingSource();
         $cart = new \Cart($psCheckoutCart->getIdCart());
 
+        /** @var GetOrderStateConfigurationQueryResult $getOrderStateConfiguration */
         $getOrderStateConfiguration = $this->commandBus->handle(new GetOrderStateConfigurationQuery());
 
         if (empty($capture['amount']['value'])) {

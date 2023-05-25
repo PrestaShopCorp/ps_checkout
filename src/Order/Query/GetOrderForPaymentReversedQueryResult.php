@@ -46,13 +46,7 @@ class GetOrderForPaymentReversedQueryResult
      * @param int $id
      * @param int $currentState
      * @param bool $hasBeenPaid
-     * @param bool $hasBeenShipped
-     * @param bool $hasBeenDelivered
      * @param bool $hasBeenTotallyRefund
-     * @param bool $isInPreparation
-     * @param bool $isInPending
-     * @param string $totalAmount
-     * @param string $totalAmountPaid
      */
     public function __construct(
         $id,

@@ -299,38 +299,56 @@ services:
       - !php/const _PS_ROOT_DIR_
       - !php/const _PS_MODE_DEV_
 
-  ps_checkout.cache.paypal.order:
-    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
-    public: true
+  ps_checkout.cache.array.paypal.order:
+    class: 'Symfony\Component\Cache\Simple\ArrayCache'
     arguments:
       - "paypal-orders"
       - 3600
       - '@=service("ps_checkout.cache.directory").getPath()'
 
-  ps_checkout.cache.paypal.capture:
+  ps_checkout.cache.filesystem.paypal.order:
     class: 'Symfony\Component\Cache\Simple\FilesystemCache'
-    public: true
     arguments:
-      - "paypal-captures"
+      - "paypal-orders"
       - 3600
       - '@=service("ps_checkout.cache.directory").getPath()'
 
+  ps_checkout.cache.paypal.order:
+    class: 'Symfony\Component\Cache\Simple\ChainCache'
+    public: true
+    arguments:
+      - [
+        "@ps_checkout.cache.array.paypal.order",
+        "@ps_checkout.cache.filesystem.paypal.order",
+      ]
+
+  ps_checkout.cache.array.paypal.capture:
+    class: 'Symfony\Component\Cache\Simple\ArrayCache'
+
+  ps_checkout.cache.filesystem.paypal.capture:
+    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
+    arguments:
+      - "paypal-capture"
+      - 3600
+      - '@=service("ps_checkout.cache.directory").getPath()'
+
+  ps_checkout.cache.paypal.capture:
+    class: 'Symfony\Component\Cache\Simple\ChainCache'
+    public: true
+    arguments:
+      - [
+        "@ps_checkout.cache.array.paypal.capture",
+        "@ps_checkout.cache.filesystem.paypal.capture",
+      ]
+
   ps_checkout.cache.pscheckoutcart:
-    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
+    class: 'Symfony\Component\Cache\Simple\ArrayCache'
     public: true
-    arguments:
-      - "ps-checkout-carts"
-      - 3600
-      - '@=service("ps_checkout.cache.directory").getPath()'
-  
+
   ps_checkout.cache.order:
-    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
+    class: 'Symfony\Component\Cache\Simple\ArrayCache'
     public: true
-    arguments:
-      - "ps-orders"
-      - 3600
-      - '@=service("ps_checkout.cache.directory").getPath()'
-  
+
   ps_checkout.paypal.provider.order:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider'
     public: true
