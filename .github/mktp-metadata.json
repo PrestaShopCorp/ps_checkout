@@ -1,9 +1,10 @@
 {
-    "id_product" : "46347",
-    "technical_name" : "ps_checkout",
-    "display_name" : "PrestaShop Checkout",
-    "channel" : "stable",
-    "type_upgrade" : "updatemin",
-    "product_type" : "module",
-    "compatible_from" : "1.6.1.0"
+  "id_product" : "46347",
+  "technical_name" : "ps_checkout",
+  "display_name" : "PrestaShop Checkout",
+  "channel" : "stable",
+  "type_upgrade" : "updatemin",
+  "product_type" : "module",
+  "compatible_from" : "1.7.0.0",
+  "compatible_to" : "1.7.8.8"
 }
