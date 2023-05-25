@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -18,7 +19,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
- namespace Tests\Unit\Order\State\Service;
+namespace Tests\Unit\Order\State\Service;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount;

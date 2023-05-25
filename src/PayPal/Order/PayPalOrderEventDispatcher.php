@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -25,8 +26,6 @@ use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Comparator\PayPalOrderComparator;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetCurrentPayPalOrderQuery;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetCurrentPayPalOrderQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetCurrentPayPalOrderStatusQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetCurrentPayPalOrderStatusQueryResult;
 
@@ -59,10 +58,10 @@ class PayPalOrderEventDispatcher
      * @param PayPalOrderComparator $paypalOrderComparator
      */
     public function __construct(
-        EventDispatcherInterface                $eventDispatcher,
-        CommandBusInterface                     $commandBus,
+        EventDispatcherInterface $eventDispatcher,
+        CommandBusInterface $commandBus,
         CheckTransitionPayPalOrderStatusService $checkTransitionPayPalOrderStatusService,
-        PayPalOrderComparator                   $paypalOrderComparator
+        PayPalOrderComparator $paypalOrderComparator
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->commandBus = $commandBus;
@@ -80,7 +79,8 @@ class PayPalOrderEventDispatcher
         /** @var GetCurrentPayPalOrderStatusQueryResult $getCurrentPayPalOrderStatusQueryResult */
         $getCurrentPayPalOrderStatusQueryResult = $this->commandBus->handle(new GetCurrentPayPalOrderStatusQuery($orderPayPal['id']));
 
-        if ($this->paypalOrderComparator->compare($orderPayPal)
+        if (
+            $this->paypalOrderComparator->compare($orderPayPal)
             && $this->checkTransitionPayPalOrderStatusService->checkAvailableStatus(
                 $getCurrentPayPalOrderStatusQueryResult->getStatus(),
                 $orderPayPal['status']
@@ -89,8 +89,10 @@ class PayPalOrderEventDispatcher
             switch ($orderPayPal['status']) {
                 case 'APPROVED':
                     $this->eventDispatcher->dispatch(new PayPalOrderApprovedEvent($orderPayPal['id'], $orderPayPal));
+                    break;
                 case 'COMPLETED':
                     $this->eventDispatcher->dispatch(new PayPalOrderCompletedEvent($orderPayPal['id'], $orderPayPal));
+                    break;
             }
         }
     }

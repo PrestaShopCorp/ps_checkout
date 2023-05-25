@@ -53,7 +53,6 @@ class GetPayPalOrderQueryHandler
      */
     public function handle(GetPayPalOrderQuery $getPayPalOrderQuery)
     {
-        //
         try {
             $orderPayPal = new PaypalOrder($getPayPalOrderQuery->getOrderId()->getValue());
         } catch (Exception $exception) {

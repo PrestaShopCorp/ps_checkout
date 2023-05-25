@@ -51,8 +51,9 @@ class PaymentClient extends GenericClient
             $version = $module->getService('ps_checkout.module.version');
 
             $handlerStack = null;
-            
-            if (defined('\GuzzleHttp\ClientInterface::MAJOR_VERSION')
+
+            if (
+                defined('\GuzzleHttp\ClientInterface::MAJOR_VERSION')
                 && class_exists(HandlerStack::class)
                 && class_exists(LogMiddleware::class)
             ) {
