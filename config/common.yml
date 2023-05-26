@@ -320,7 +320,7 @@ services:
       - [
         "@ps_checkout.cache.array.paypal.order",
         "@ps_checkout.cache.filesystem.paypal.order",
-      ]
+        ]
 
   ps_checkout.cache.array.paypal.capture:
     class: 'Symfony\Component\Cache\Simple\ArrayCache'
@@ -339,7 +339,7 @@ services:
       - [
         "@ps_checkout.cache.array.paypal.capture",
         "@ps_checkout.cache.filesystem.paypal.capture",
-      ]
+        ]
 
   ps_checkout.cache.pscheckoutcart:
     class: 'Symfony\Component\Cache\Simple\ArrayCache'
@@ -646,3 +646,5 @@ services:
   ps_checkout.query.handler.order.state.get_order_state:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\State\QueryHandler\GetOrderStateQueryHandler'
     public: true
+
+  ps_checkout.
