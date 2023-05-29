@@ -29,11 +29,13 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovalR
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderNotApprovedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use Ps_checkout;
 use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalOrderEventSubscriber implements EventSubscriberInterface
@@ -54,18 +56,26 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     private $psCheckoutCartRepository;
 
     /**
+     * @var CacheInterface
+     */
+    private $cache;
+
+    /**
      * @param Ps_checkout $module
      * @param LoggerInterface $logger
      * @param PsCheckoutCartRepository $psCheckoutCartRepository
+     * @param CacheInterface $cache
      */
     public function __construct(
         Ps_checkout $module,
         LoggerInterface $logger,
-        PsCheckoutCartRepository $psCheckoutCartRepository
+        PsCheckoutCartRepository $psCheckoutCartRepository,
+        CacheInterface $cache
     ) {
         $this->module = $module;
         $this->logger = $logger;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
+        $this->cache = $cache;
     }
 
     /**
@@ -76,19 +86,24 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         return [
             PayPalOrderCreatedEvent::class => [
                 ['savePayPalOrder'],
+                ['updateCache'],
             ],
             PayPalOrderApprovedEvent::class => [
                 ['savePayPalOrder'],
                 ['capturePayPalOrder'],
+                ['updateCache'],
             ],
             PayPalOrderNotApprovedEvent::class => [
                 ['savePayPalOrder'],
+                ['updateCache'],
             ],
             PayPalOrderCompletedEvent::class => [
                 ['savePayPalOrder'],
+                ['updateCache'],
             ],
             PayPalOrderApprovalReversedEvent::class => [
                 ['savePayPalOrder'],
+                ['updateCache'],
             ],
         ];
     }
@@ -162,7 +177,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         if (false === $psCheckoutCart) {
             throw new PsCheckoutException(sprintf('order #%s is not linked to a cart', $event->getOrderPayPalId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
-
+        // @todo delete si ça marche
         if ($psCheckoutCart->getPaypalStatus() === 'COMPLETED') {
             return;
         }
@@ -229,5 +244,15 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
                 $psCheckoutCart->getPaypalFundingSource()
             )
         );
+    }
+
+    /**
+     * @param PayPalOrderEvent $event
+     *
+     * @return void
+     */
+    public function updateCache(PayPalOrderEvent $event)
+    {
+        $this->cache->set($event->getOrderPayPalId()->getValue(), $event->getOrderPayPal());
     }
 }

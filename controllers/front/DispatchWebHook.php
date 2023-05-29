@@ -110,12 +110,12 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
                 return false;
             }
 
-            $this->module->getLogger()->info(
-                'Webhook received',
-                [
-                    'payload' => $bodyValues,
-                ]
-            );
+//            $this->module->getLogger()->info(
+//                'Webhook received',
+//                [
+//                    'payload' => $bodyValues,
+//                ]
+//            );
 
             return $this->dispatchWebHook();
         } catch (Exception $exception) {
@@ -136,8 +136,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
     {
         $context = Context::getContext();
         $response = (new Webhook($context->link))->getShopSignature($bodyValues);
-
-        $this->module->getLogger()->debug('checkPSLSignature', ['payload' => $bodyValues, 'response' => $response]);
 
         // data return false if no error
         if (200 === $response['httpCode'] && 'VERIFIED' === $response['body']['message']) {
@@ -244,7 +242,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
         );
 
         if ('ShopNotificationOrderChange' === $this->payload['category']) {
-
             return (new OrderDispatcher())->dispatchEventType($this->payload);
         }
 

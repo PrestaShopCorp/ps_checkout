@@ -22,11 +22,12 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheInterface;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheSettings;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\RemovePayPalOrderCacheCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCacheUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use Psr\SimpleCache\CacheException;
+use Psr\SimpleCache\CacheInterface;
 
 class RemovePayPalOrderCacheCommandHandler
 {
@@ -60,8 +61,8 @@ class RemovePayPalOrderCacheCommandHandler
     public function handle(RemovePayPalOrderCacheCommand $removePayPalOrderCacheCommand)
     {
         try {
-            if ($this->cache->has(CacheInterface::PAYPAL_ORDER_ID . $removePayPalOrderCacheCommand->getOrderId()->getValue())) {
-                $this->cache->delete(CacheInterface::PAYPAL_ORDER_ID . $removePayPalOrderCacheCommand->getOrderId()->getValue());
+            if ($this->cache->has(CacheSettings::PAYPAL_ORDER_ID . $removePayPalOrderCacheCommand->getOrderId()->getValue())) {
+                $this->cache->delete(CacheSettings::PAYPAL_ORDER_ID . $removePayPalOrderCacheCommand->getOrderId()->getValue());
             }
         } catch (CacheException $exception) {
             throw new PayPalOrderException('Unable to remove item from PayPal Order Cache', PayPalOrderException::CACHE_EXCEPTION, $exception);

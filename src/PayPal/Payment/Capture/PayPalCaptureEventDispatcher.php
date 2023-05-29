@@ -21,17 +21,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture;
 
-use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheInterface;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CheckTransitionPayPalOrderStatusService;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Comparator\PayPalOrderComparator;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetCurrentPayPalOrderStatusQuery;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetCurrentPayPalOrderStatusQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Comparator\PayPalCaptureComparator;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeclinedEvent;
@@ -39,6 +31,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapt
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureRefundedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
+use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 
 class PayPalCaptureEventDispatcher
@@ -47,11 +40,6 @@ class PayPalCaptureEventDispatcher
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
-
-    /**
-     * @var CommandBusInterface
-     */
-    private $commandBus;
 
     /**
      * @var CheckTransitionPayPalCaptureStatusService
@@ -70,69 +58,75 @@ class PayPalCaptureEventDispatcher
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
-     * @param CommandBusInterface $commandBus
      * @param CheckTransitionPayPalCaptureStatusService $checkTransitionPayPalCaptureStatusService
-     * @param PayPalCaptureComparator $payPalCaptureComparator
+     * @param PayPalCaptureComparator $paypalCaptureComparator
+     * @param CacheInterface $cache
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
-        CommandBusInterface $commandBus,
         CheckTransitionPayPalCaptureStatusService $checkTransitionPayPalCaptureStatusService,
-        PayPalOrderComparator $paypalCaptureComparator,
+        PayPalCaptureComparator $paypalCaptureComparator,
         CacheInterface $cache
     ) {
         $this->eventDispatcher = $eventDispatcher;
-        $this->commandBus = $commandBus;
         $this->checkTransitionPayPalCaptureStatusService = $checkTransitionPayPalCaptureStatusService;
         $this->paypalCaptureComparator = $paypalCaptureComparator;
         $this->cache = $cache;
     }
 
     /**
-     * @param array{id: string, status: string} $orderPayPal
+     * @param string $orderId
+     * @param array $capture
      *
      * @return void
-     * @throws OrderException
+     *
      * @throws InvalidArgumentException
+     * @throws OrderException
+     * @throws PayPalCaptureException
+     * @throws PayPalOrderException
      */
-    public function dispatch(array $payload)
+    public function dispatch($orderId, array $capture)
     {
-        $orderPayPal = $payload['resource'];
-        $capture = $this->cache->get($orderPayPal['id']);
-        if($capture === null)
-        {
-            $this->dispatchAfterCheck($payload);
-        } else if (
-            $this->paypalCaptureComparator->compare($orderPayPal)
+        $cacheCapturePayPal = $this->cache->get($capture['id']);
+        if (empty($cacheCapturePayPal)) {
+            $this->dispatchAfterCheck($orderId, $capture);
+        } elseif (
+            $this->paypalCaptureComparator->compare($capture)
             && $this->checkTransitionPayPalCaptureStatusService->checkAvailableStatus(
-                $capture['status'],
-                $orderPayPal['status']
+                $cacheCapturePayPal['status'],
+                $capture['status']
             )
         ) {
-            $this->dispatchAfterCheck($payload);
+            $this->dispatchAfterCheck($orderId, $capture);
         }
     }
 
     /**
+     * @param string $orderId
+     * @param array $capture
+     *
+     * @return void
+     *
      * @throws PayPalCaptureException
      * @throws PayPalOrderException
      */
-    private function dispatchAfterCheck(array $payload){
-        switch ($payload['resource']['status']) {
+    private function dispatchAfterCheck($orderId, array $capture)
+    {
+        switch ($capture['status']) {
             case PayPalCaptureStatus::COMPLETED:
-                $this->eventDispatcher->dispatch(new PayPalCaptureCompletedEvent($payload['resource']['id'],$payload['orderId'], $payload['resource']));
+                $this->eventDispatcher->dispatch(new PayPalCaptureCompletedEvent($capture['id'], $orderId, $capture));
                 break;
             case PayPalCaptureStatus::DECLINED:
-                $this->eventDispatcher->dispatch(new PayPalCaptureDeclinedEvent($payload['resource']['id'],$payload['orderId'], $payload['resource']));
+                $this->eventDispatcher->dispatch(new PayPalCaptureDeclinedEvent($capture['id'], $orderId, $capture));
                 break;
             case PayPalCaptureStatus::PENDING:
-                $this->eventDispatcher->dispatch(new PayPalCapturePendingEvent($payload['resource']['id'],$payload['orderId'], $payload['resource']));
+                $this->eventDispatcher->dispatch(new PayPalCapturePendingEvent($capture['id'], $orderId, $capture));
                 break;
             case PayPalCaptureStatus::REFUND:
-                $this->eventDispatcher->dispatch(new PayPalCaptureRefundedEvent($payload['resource']['id'],$payload['orderId'], $payload['resource']));
+                $this->eventDispatcher->dispatch(new PayPalCaptureRefundedEvent($capture['id'], $orderId, $capture));
                 break;
             case PayPalCaptureStatus::REVERSED:
-                $this->eventDispatcher->dispatch(new PayPalCaptureReversedEvent($payload['resource']['id'],$payload['orderId'], $payload['resource']));
+                $this->eventDispatcher->dispatch(new PayPalCaptureReversedEvent($capture['id'], $orderId, $capture));
                 break;
         }
     }

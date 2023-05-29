@@ -25,9 +25,10 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentPendingQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQueryResult;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheInterface;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheSettings;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use Psr\SimpleCache\CacheInterface;
 
 class GetOrderForPaymentReversedQueryHandler
 {
@@ -56,7 +57,7 @@ class GetOrderForPaymentReversedQueryHandler
     public function handle(GetOrderForPaymentReversedQuery $query)
     {
         /** @var GetOrderForPaymentPendingQueryResult $result */
-        $result = $this->cache->get(CacheInterface::CART_ID . $query->getCartId()->getValue());
+        $result = $this->cache->get(CacheSettings::CART_ID . $query->getCartId()->getValue());
         if (!empty($result) && $result instanceof GetOrderForPaymentPendingQueryResult) {
             return $result;
         }
@@ -92,7 +93,7 @@ class GetOrderForPaymentReversedQueryHandler
             $this->hasBeenTotallyRefunded($order)
         );
 
-        $this->cache->set(CacheInterface::CART_ID . $query->getCartId()->getValue(), $result);
+        $this->cache->set(CacheSettings::CART_ID . $query->getCartId()->getValue(), $result);
 
         return $result;
     }

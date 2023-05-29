@@ -63,8 +63,6 @@ class TacticianCommandBusFactory
      */
     public function create()
     {
-        $this->logger->debug(__CLASS__, [$this->commandToHandlerMap]);
-
         return new CommandBus([
             new LoggerMiddleware(
                 new ClassPropertiesFormatter(),

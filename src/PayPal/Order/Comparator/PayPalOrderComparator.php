@@ -21,7 +21,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Comparator;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheInterface;
+use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 
 class PayPalOrderComparator
@@ -55,7 +55,7 @@ class PayPalOrderComparator
     public function compare($orderPayPal)
     {
         $this->orderPayPal = $orderPayPal;
-        $this->orderPayPalCache = $this->cache->get(CacheInterface::PAYPAL_ORDER_ID . $this->orderPayPal['id']);
+        $this->orderPayPalCache = $this->cache->get($this->orderPayPal['id']);
 
         if (empty($this->orderPayPalCache)) {
             // In case we don't have it in cache

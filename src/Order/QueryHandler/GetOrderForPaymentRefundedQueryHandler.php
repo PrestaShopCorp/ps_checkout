@@ -24,9 +24,10 @@ namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQueryResult;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheInterface;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheSettings;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use Psr\SimpleCache\CacheInterface;
 
 class GetOrderForPaymentRefundedQueryHandler
 {
@@ -55,7 +56,7 @@ class GetOrderForPaymentRefundedQueryHandler
     public function handle(GetOrderForPaymentRefundedQuery $query)
     {
         /** @var GetOrderForPaymentRefundedQueryResult $result */
-        $result = $this->cache->get(CacheInterface::CART_ID . $query->getCartId()->getValue());
+        $result = $this->cache->get(CacheSettings::CART_ID . $query->getCartId()->getValue());
         if (!empty($result) && $result instanceof GetOrderForPaymentRefundedQueryResult) {
             return $result;
         }
@@ -96,7 +97,7 @@ class GetOrderForPaymentRefundedQueryHandler
             (int) $order->id_currency
         );
 
-        $this->cache->set(CacheInterface::CART_ID . $query->getCartId()->getValue(), $result);
+        $this->cache->set(CacheSettings::CART_ID . $query->getCartId()->getValue(), $result);
 
         return $result;
     }

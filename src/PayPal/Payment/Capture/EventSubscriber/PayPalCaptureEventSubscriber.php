@@ -48,8 +48,6 @@ use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateExcepti
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigurationQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigurationQueryResult;
-use PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckTransitionStateService;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeclinedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureEvent;
@@ -62,6 +60,7 @@ use PrestaShopException;
 use Ps_checkout;
 use PsCheckoutCart;
 use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -76,11 +75,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
      * @var PsCheckoutCartRepository
      */
     private $psCheckoutCartRepository;
-
-    /**
-     * @var CheckTransitionStateService
-     */
-    private $checkTransitionStateService;
 
     /**
      * @var CheckOrderAmount
@@ -106,21 +100,19 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
      * @param Ps_checkout $module
      * @param LoggerInterface $logger
      * @param PsCheckoutCartRepository $psCheckoutCartRepository
-     * @param CheckTransitionStateService $checkTransitionStateService
      * @param CheckOrderAmount $checkOrderAmount
+     * @param CacheInterface $cache
      */
     public function __construct(
         Ps_checkout $module,
         LoggerInterface $logger,
         PsCheckoutCartRepository $psCheckoutCartRepository,
-        CheckTransitionStateService $checkTransitionStateService,
         CheckOrderAmount $checkOrderAmount,
         CacheInterface $cache
     ) {
         $this->module = $module;
         $this->logger = $logger;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-        $this->checkTransitionStateService = $checkTransitionStateService;
         $this->checkOrderAmount = $checkOrderAmount;
         /** @var CommandBusInterface $commandBus */
         $commandBus = $this->module->getService('ps_checkout.bus.command');
@@ -138,11 +130,11 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
                 ['createPaidOrder'],
                 ['createOrderPayment'],
                 ['setPaymentCompletedOrderStatus'],
-                ['updateCache']
+                ['updateCache'],
             ],
             PayPalCaptureDeclinedEvent::class => [
                 ['setPaymentDeclinedOrderStatus'],
-                ['updateCache']
+                ['updateCache'],
             ],
             PayPalCapturePendingEvent::class => [
                 ['createPendingOrder'],
@@ -150,12 +142,12 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             ],
             PayPalCaptureRefundedEvent::class => [
                 ['setPaymentRefundedOrderStatus'],
-                ['updateCache']
+                ['updateCache'],
             ],
             PayPalCaptureReversedEvent::class => [
                 ['setPaymentReversedOrderStatus'],
-                ['updateCache']
-            ]
+                ['updateCache'],
+            ],
         ];
     }
 
@@ -168,16 +160,32 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
      */
     public function createPaidOrder(PayPalCaptureCompletedEvent $event)
     {
+        $this->logger->debug('PayPalCaptureEventSubscriber !!! ', [$event->getPayPalOrderId()->getValue(), $event->getPayPalOrderId()->getValue()]);
         /** @var PsCheckoutCart $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
 
         try {
-            $this->commandBus->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
+            /** @var GetOrderQueryResult $order */
+            $order = $this->commandBus->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
 
-            $this->logger->info(sprintf('PrestaShop Order for PayPal Order #%s is already created.', $event->getPayPalOrderId()->getValue()));
+            $this->logger->info(
+                'PrestaShop Order for PayPal Order is already created.',
+                [
+                    'id_cart' => $psCheckoutCart->getIdCart(),
+                    'id_order' => $order->getId(),
+                    'PayPalOrderId' => $event->getPayPalOrderId()->getValue(),
+                ]
+            );
 
             return; // If we already have an Order (when going from Pending to Completed), we stop
         } catch (PsCheckoutException $exception) {
+            $this->logger->info(
+                'No PrestaShop Order for PayPal Order #%s, create it',
+                [
+                    'id_cart' => $psCheckoutCart->getIdCart(),
+                    'PayPalOrderId' => $event->getPayPalOrderId()->getValue(),
+                ]
+            );
         }
 
         $capture = $event->getCapture();
@@ -232,9 +240,17 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
 
         try {
-            $this->commandBus->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
+            /** @var GetOrderQueryResult $order */
+            $order = $this->commandBus->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
 
-            $this->logger->info(sprintf('PrestaShop Order for PayPal Order #%s is already created.', $event->getPayPalOrderId()->getValue()));
+            $this->logger->info(
+                'PrestaShop Order for PayPal Order is already created.',
+                [
+                    'id_cart' => $psCheckoutCart->getIdCart(),
+                    'id_order' => $order->getId(),
+                    'PayPalOrderId' => $event->getPayPalOrderId()->getValue(),
+                ]
+            );
 
             return;
         } catch (PsCheckoutException $exception) {
@@ -291,9 +307,14 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $order = $this->commandBus->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
 
         try {
-            $this->commandBus->handle(new GetOrderPaymentQuery($event->getPayPalCaptureId()->getValue()));
+            $this->commandBus->handle(new GetOrderPaymentQuery($order->getId(), $event->getPayPalCaptureId()->getValue()));
 
-            $this->logger->info('Order Payment is already created.');
+            $this->logger->info(
+                'Order Payment is already created.',
+                [
+                    'id_order' => $order->getId(),
+                    'PayPalCaptureId' => $event->getPayPalCaptureId()->getValue(),
+                ]);
 
             return; // We already have an OrderPayment, there's no need to add another one
         } catch (OrderPaymentException $e) {
@@ -305,8 +326,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $capture = $event->getCapture();
         $paymentAmount = '';
         $transactionId = null;
-
-        $this->logger->debug('Capture array : ' . print_r($capture, true));
         $captureAmount = sprintf('%01.2f', $capture['amount']['value']);
         $orderAmount = sprintf('%01.2f', $order->getTotalAmount());
         $paidAmount = sprintf('%01.2f', $order->getTotalAmountPaid());
@@ -328,105 +347,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         ));
     }
 
-//    /**
-//     * @param PayPalCaptureEvent $event
-//     *
-//     * @return void
-//     *
-//     * @throws PsCheckoutException
-//     * @throws \PrestaShopDatabaseException
-//     * @throws \PrestaShopException
-//     * @throws CartException
-//     * @throws OrderException
-//     * @throws OrderStateException
-//     */
-//    public function updateOrderStatus(PayPalCaptureEvent $event)
-//    {
-//        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
-//        /** @var GetOrderStateConfigurationQueryResult $getOrderStateConfiguration */
-//        $getOrderStateConfiguration = $this->commandBus->handle(new GetOrderStateConfigurationQuery());
-//
-//        if (false === $psCheckoutCart) {
-//            throw new PsCheckoutException(sprintf('Order #%s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
-//        }
-//
-//        /** @var GetOrderQueryResult $order */
-//        $order = $this->commandBus->handle(new GetOrderQuery($psCheckoutCart->getIdCart()));
-//
-//        $currentOrderStateId = $order->getCurrentStateId();
-//
-//        $paypalOrder = $this->commandBus->handle(new GetPayPalOrderQuery($event->getPayPalOrderId()->getValue()));
-//        $capturePayload = $paypalOrder->getOrder()['purchase_units'][0]['payments']['captures'][0];
-//
-//        // Normal case
-//        if ($this->checkOrderAmount->checkAmount((string) $order->getTotalAmountPaid(), (string) $order->getTotalAmount()) === CheckOrderAmount::ORDER_FULL_PAID
-//            && $order->getCurrentStateId() === $getOrderStateConfiguration->getPaymentAcceptedState()->getOrderStateId()
-//            ) {
-//            return;
-//        }
-//
-//        $this->module->getLogger()->debug(__CLASS__, [
-//            'Order' => [
-//                'CurrentOrderStatus' => $getOrderStateConfiguration->getKeyById(new OrderStateId($order->getCurrentStateId())),
-//                'TotalAmountPaid' => $order->getTotalAmountPaid(),
-//                'TotalAmount' => $order->getTotalAmount(), // Peut etre récupérer le total du panier via l'instance Cart
-//                'TotalRefunded' => '0',
-//            ],
-//            'PayPalRefund' => [ // NULL si pas de refund dans l'order PayPal
-//                null,
-//            ],
-//            'PayPalCapture' => [
-//                'Status' => $capturePayload['status'],
-//                'Amount' => $capturePayload['amount']['value'],
-//            ],
-//            'PayPalAuthorization' => [ // NULL si pas de refund dans l'order PayPal
-//                null,
-//            ],
-//            'PayPalOrder' => [
-//                'OldStatus' => $psCheckoutCart->getPaypalStatus(),
-//                'NewStatus' => $paypalOrder->getOrder()['status'],
-//            ],
-//        ]);
-//
-//        $newOrderState = $this->checkTransitionStateService->getNewOrderState([
-//            'Order' => [
-//                'CurrentOrderStatus' => $getOrderStateConfiguration->getKeyById(new OrderStateId($order->getCurrentStateId())),
-//                'TotalAmountPaid' => $order->getTotalAmountPaid(),
-//                'TotalAmount' => $order->getTotalAmount(), // Peut etre récupérer le total du panier via l'instance Cart
-//                'TotalRefunded' => '0',
-//            ],
-//            'PayPalRefund' => [ // NULL si pas de refund dans l'order PayPal
-//                null,
-//            ],
-//            'PayPalCapture' => [
-//                'Status' => $capturePayload['status'],
-//                'Amount' => $capturePayload['amount']['value'],
-//            ],
-//            'PayPalAuthorization' => [ // NULL si pas de refund dans l'order PayPal
-//                null,
-//            ],
-//            'PayPalOrder' => [
-//                'OldStatus' => $psCheckoutCart->getPaypalStatus(),
-//                'NewStatus' => $paypalOrder->getOrder()['status'],
-//            ],
-//        ]);
-//
-//        /*
-//         *
-//        $currentOrderStateId = $order->getCurrentStateId();
-//        $order->hasBeenPaid();
-//        $order->hasBeenShipped();
-//        $order->hasBeenDelivered();
-//        $order->isInPreparation();
-//         */
-//        if ($newOrderState !== false) {
-//            $newOrderStateId = $getOrderStateConfiguration->getIdByKey($newOrderState);
-//            $this->commandBus->handle(new UpdateOrderStatusCommand($currentOrderStateId, $newOrderStateId));
-//        } else {
-//            throw new OrderStateException(sprintf('Order state from order #%s cannot be changed (%s => %s)  ', $order->getId(), $psCheckoutCart->getPaypalStatus(), $paypalOrder->getOrder()['status']), OrderStateException::TRANSITION_UNAVAILABLE);
-//        }
-//    }
-
     /**
      * @throws PrestaShopException
      * @throws OrderException
@@ -445,25 +365,8 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             throw new PsCheckoutException(sprintf('Order #%s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
-        $this->logger->debug(
-            __CLASS__,
-            [
-                'function' => __FUNCTION__,
-                'id_cart' => $psCheckoutCart->getIdCart(),
-                'query' => new GetOrderForPaymentCompletedQuery($psCheckoutCart->getIdCart()),
-                'commandBus' => $this->commandBus instanceof CommandBusInterface,
-                'getOrderStateConfiguration' => $getOrderStateConfiguration,
-            ]
-        );
-
         /** @var GetOrderForPaymentCompletedQueryResult $order */
         $order = $this->commandBus->handle(new GetOrderForPaymentCompletedQuery($psCheckoutCart->getIdCart()));
-
-        if ($order) {
-            $this->logger->debug(__CLASS__, [__FUNCTION__, get_class($order)]);
-        } else {
-            $this->logger->error(__CLASS__, [__FUNCTION__, $order]);
-        }
 
         if ($order->hasBeenPaid()) {
             return;
@@ -602,10 +505,13 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
     /**
      * @param PayPalCaptureEvent $event
+     *
      * @return void
+     *
      * @throws InvalidArgumentException
      */
-    public function updateCache(PayPalCaptureEvent $event){
-        $this->cache->set($event->getPayPalOrderId()->getValue(),$event->getCapture());
+    public function updateCache(PayPalCaptureEvent $event)
+    {
+        $this->cache->set($event->getPayPalOrderId()->getValue(), $event->getCapture());
     }
 }

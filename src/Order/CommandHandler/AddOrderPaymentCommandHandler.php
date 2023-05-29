@@ -65,7 +65,14 @@ class AddOrderPaymentCommandHandler extends AbstractOrderHandler
         $orderInvoice = $orderHasInvoice ? $order->getNotPaidInvoicesCollection()->getFirst() : null;
 
         if ($orderHasInvoice && !Validate::isLoadedObject($orderInvoice)) {
-            throw new OrderException('The invoice is invalid.', OrderException::INVALID_INVOICE);
+            $module = \Module::getInstanceByName('ps_checkout');
+            $module->getLogger()->alert(
+                'Order is already paid',
+                [
+                    'id_order' => $command->getOrderId()->getValue(),
+                ]
+            );
+            $orderInvoice = null;
         }
 
         $paymentAdded = $order->addOrderPayment(

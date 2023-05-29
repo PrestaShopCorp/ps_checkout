@@ -24,23 +24,17 @@ use Module;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovalReversedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeniedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureRefundedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderEventDispatcher;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
-use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\PayPalCaptureEventDispatcher;
 use Ps_checkout;
 use Psr\Log\LoggerInterface;
 
 class OrderDispatcher implements Dispatcher
 {
     const PS_CHECKOUT_PAYMENT_REVERSED = 'PaymentCaptureReversed';
-    const PS_CHECKOUT_PAYMENT_REFUNED = 'PaymentCaptureRefunded';
+    const PS_CHECKOUT_PAYMENT_REFUNDED = 'PaymentCaptureRefunded';
     const PS_CHECKOUT_PAYMENT_AUTH_VOIDED = 'PaymentAuthorizationVoided';
     const PS_CHECKOUT_PAYMENT_PENDING = 'PaymentCapturePending';
     const PS_CHECKOUT_PAYMENT_COMPLETED = 'PaymentCaptureCompleted';
@@ -48,11 +42,6 @@ class OrderDispatcher implements Dispatcher
     const PS_CHECKOUT_ORDER_APPROVED = 'CheckoutOrderApproved';
     const PS_CHECKOUT_ORDER_COMPLETED = 'CheckoutOrderCompleted';
     const PS_CHECKOUT_ORDER_APPROVAL_REVERSED = 'CHECKOUT.PAYMENT-APPROVAL.REVERSED';
-
-    /**
-     * @var \PsCheckoutCart
-     */
-    private $psCheckoutCart;
 
     /**
      * Dispatch the Event Type to manage the merchant status
@@ -75,79 +64,27 @@ class OrderDispatcher implements Dispatcher
         /** @var EventDispatcherInterface $eventDispatcher */
         $eventDispatcher = $module->getService('ps_checkout.event.dispatcher');
 
-        /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
-        $psCheckoutCartRepository = $module->getService('ps_checkout.repository.pscheckoutcart');
-
-        $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($payload['orderId']);
-
         /** @var LoggerInterface $logger */
         $logger = $module->getService('ps_checkout.logger');
 
-        /**
-         * @todo check if the webhook received contains more recent data than data we have already on database
-         * Due to asynchronous and webhook queue, it can happen webhook received is outdated
-         * Compare data using `status` and `update_time`values from $payload['resource']
-         * With PsCheckoutCart::$paypal_status and PsCheckoutCart::$date_upd
-         */
+        /** @var PayPalCaptureEventDispatcher $paypalCaptureEventDispatcher */
+        $paypalCaptureEventDispatcher = $module->getService('ps_checkout.paypal.capture.dispatcher');
+
+        /** @var PayPalOrderEventDispatcher $paypalOrderEventDispatcher */
+        $paypalOrderEventDispatcher = $module->getService('ps_checkout.paypal.order.dispatcher');
+
         switch ($payload['eventType']) {
             case static::PS_CHECKOUT_PAYMENT_COMPLETED:
-                /** @var \Symfony\Component\Cache\Simple\FilesystemCache $captureCache */
-                $captureCache = $module->getService('ps_checkout.cache.paypal.capture');
-
-                $captureId = $payload['resource']['id'];
-
-                if ($psCheckoutCart->getPaypalStatus() === 'COMPLETED' || $captureCache->get($captureId)) {
-                    return true;
-                }
-
-                $eventDispatcher->dispatch(new PayPalCaptureCompletedEvent(
-                    $captureId,
-                    $payload['orderId'],
-                    $payload['resource']
-                ));
-
-                return true;
             case static::PS_CHECKOUT_PAYMENT_PENDING:
-                $eventDispatcher->dispatch(new PayPalCapturePendingEvent(
-                    $payload['resource']['id'],
-                    $payload['orderId'],
-                    $payload['resource']
-                ));
-
-                return true;
             case static::PS_CHECKOUT_PAYMENT_DENIED:
-                $eventDispatcher->dispatch(new PayPalCaptureDeniedEvent(
-                    $payload['resource']['id'],
-                    $payload['orderId'],
-                    $payload['resource']
-                ));
-
-                return true;
-            case static::PS_CHECKOUT_PAYMENT_REFUNED:
-                $eventDispatcher->dispatch(new PayPalCaptureRefundedEvent(
-                    $payload['resource']['id'],
-                    $payload['orderId'],
-                    $payload['resource']
-                ));
-
-                return true;
+            case static::PS_CHECKOUT_PAYMENT_REFUNDED:
             case static::PS_CHECKOUT_PAYMENT_REVERSED:
-                $eventDispatcher->dispatch(new PayPalCaptureReversedEvent(
-                    $payload['resource']['id'],
-                    $payload['orderId'],
-                    $payload['resource']
-                ));
+                $paypalCaptureEventDispatcher->dispatch($payload['resource']['supplementary_data']['related_ids']['order_id'], $payload['resource']);
 
                 return true;
             case static::PS_CHECKOUT_ORDER_APPROVED:
-                if ($psCheckoutCart->getPaypalStatus() === 'COMPLETED') {
-                    return true;
-                }
-                $eventDispatcher->dispatch(new PayPalOrderApprovedEvent($payload['orderId'], $payload['resource']));
-
-                return true;
             case static::PS_CHECKOUT_ORDER_COMPLETED:
-                $eventDispatcher->dispatch(new PayPalOrderCompletedEvent($payload['orderId'], $payload['resource']));
+                $paypalOrderEventDispatcher->dispatch($payload['resource']);
 
                 return true;
             case static::PS_CHECKOUT_ORDER_APPROVAL_REVERSED:

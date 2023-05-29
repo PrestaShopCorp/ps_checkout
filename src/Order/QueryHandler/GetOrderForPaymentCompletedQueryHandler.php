@@ -24,9 +24,10 @@ namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQueryResult;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheInterface;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheSettings;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use Psr\SimpleCache\CacheInterface;
 
 class GetOrderForPaymentCompletedQueryHandler
 {
@@ -55,7 +56,7 @@ class GetOrderForPaymentCompletedQueryHandler
     public function handle(GetOrderForPaymentCompletedQuery $query)
     {
         /** @var GetOrderForPaymentCompletedQueryResult $result */
-        $result = $this->cache->get(CacheInterface::CART_ID . $query->getCartId()->getValue());
+        $result = $this->cache->get(CacheSettings::CART_ID . $query->getCartId()->getValue());
         if (!empty($result) && $result instanceof GetOrderForPaymentCompletedQueryResult) {
             return $result;
         }
@@ -88,7 +89,7 @@ class GetOrderForPaymentCompletedQueryHandler
             (int) $order->id_currency
         );
 
-        $this->cache->set(CacheInterface::CART_ID . $query->getCartId()->getValue(), $result);
+        $this->cache->set(CacheSettings::CART_ID . $query->getCartId()->getValue(), $result);
 
         return $result;
     }

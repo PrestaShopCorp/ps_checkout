@@ -25,6 +25,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 
 class RemovePayPalOrderCacheCommand
 {
+    // todo change variable name to paypalOrderId
     /**
      * @var PayPalOrderId
      */

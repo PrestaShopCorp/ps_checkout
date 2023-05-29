@@ -18,46 +18,10 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Temp\Entities;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache;
 
-class Money
+class CacheSettings
 {
-    /** @var string */
-    private $currencyCode;
-
-    /** @var float */
-    private $value;
-
-    public function __construct($currencyCode, $value)
-    {
-        $this->currencyCode = $currencyCode;
-        $this->value = $value;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCurrencyCode()
-    {
-        return $this->currencyCode;
-    }
-
-    /**
-     * @return float
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    /**
-     * @return array
-     */
-    public function toArray()
-    {
-        return [
-            'currency_code' => $this->getCurrencyCode(),
-            'value' => $this->getValue(),
-        ];
-    }
+    const CART_ID = 'cart_id_';
+    const PAYPAL_ORDER_ID = 'paypal_order_id_';
 }

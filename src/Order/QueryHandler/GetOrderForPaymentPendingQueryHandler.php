@@ -25,9 +25,10 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentPendingQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentPendingQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheInterface;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheSettings;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use Psr\SimpleCache\CacheInterface;
 
 class GetOrderForPaymentPendingQueryHandler
 {
@@ -56,7 +57,7 @@ class GetOrderForPaymentPendingQueryHandler
     public function handle(GetOrderForPaymentPendingQuery $query)
     {
         /** @var GetOrderForPaymentPendingQueryResult $result */
-        $result = $this->cache->get(CacheInterface::CART_ID . $query->getCartId()->getValue());
+        $result = $this->cache->get(CacheSettings::CART_ID . $query->getCartId()->getValue());
         if (!empty($result) && $result instanceof GetOrderForPaymentPendingQueryResult) {
             return $result;
         }
@@ -91,7 +92,7 @@ class GetOrderForPaymentPendingQueryHandler
             $this->isInPending($order)
         );
 
-        $this->cache->set(CacheInterface::CART_ID . $query->getCartId()->getValue(), $result);
+        $this->cache->set(CacheSettings::CART_ID . $query->getCartId()->getValue(), $result);
 
         return $result;
     }

@@ -30,7 +30,7 @@ class PayPalOrderSavedEvent extends PayPalOrderEvent
 
     /**
      * @param string $orderPayPalId
-     * @param string $orderPayPal
+     * @param array $orderPayPal
      * @param string $dateUpd
      *
      * @throws PayPalCaptureException
