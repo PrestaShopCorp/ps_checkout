@@ -94,11 +94,11 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
                 $cart->secure_key
             );
         } catch (Exception $exception) {
-            throw new OrderException(sprintf('Failed to create order from Cart #%s.', $cart->id), OrderException::FAILED_ADD_ORDER, $exception);
+            throw new OrderException(sprintf('Failed to create order from Cart #%s.', var_export($cart->id, true)), OrderException::FAILED_ADD_ORDER, $exception);
         }
 
         if (!$cart->orderExists()) {
-            throw new OrderException(sprintf('Failed to create order from Cart #%s.', $cart->id), OrderException::ORDER_NOT_FOUND);
+            throw new OrderException(sprintf('Failed to create order from Cart #%s.', var_export($cart->id, true)), OrderException::ORDER_NOT_FOUND);
         }
 
         // It happens this returns null in case of override or weird modules
@@ -124,6 +124,6 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
             return;
         }
 
-        throw new OrderException(sprintf('Unable to retrieve order identifier from Cart #%s.', $cart->id), OrderException::ORDER_NOT_FOUND);
+        throw new OrderException(sprintf('Unable to retrieve order identifier from Cart #%s.', var_export($cart->id, true)), OrderException::ORDER_NOT_FOUND);
     }
 }

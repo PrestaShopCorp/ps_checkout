@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\State\Query;
 
 use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateConfiguration;
-use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
 
 class GetOrderStateConfigurationQueryResult
 {
@@ -237,24 +236,6 @@ class GetOrderStateConfigurationQueryResult
     public function getWaitingPaymentLocalState()
     {
         return $this->waitingPaymentLocalState;
-    }
-
-    /**
-     * @todo Remove this
-     *
-     * @param OrderStateId $orderStateId
-     *
-     * @return string|false
-     */
-    public function getKeyById($orderStateId)
-    {
-        foreach ($this as $orderState) {
-            if ($orderState->getOrderStateId() == $orderStateId->getValue()) {
-                return $orderState->getOrderStateConfigurationName();
-            }
-        }
-
-        return false;
     }
 
     /**

@@ -58,7 +58,7 @@ class PayPalOrderComparator
         $this->currentOrderPayPal = $this->orderPayPalCache->get($this->newOrderPayPal['id']);
 
         if (empty($this->currentOrderPayPal)) {
-            return true;
+            return false;
         }
 
         return $this->checkOrderId() && $this->checkOrderStatus() && $this->checkUpdateTime();

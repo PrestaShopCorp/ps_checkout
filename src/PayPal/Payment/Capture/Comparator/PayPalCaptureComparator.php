@@ -58,7 +58,7 @@ class PayPalCaptureComparator
         $this->currentCapturePayPal = $this->capturePayPalCache->get($this->newCapturePayPal['id']);
 
         if (empty($this->currentCapturePayPal)) {
-            return true;
+            return false;
         }
 
         return $this->checkCaptureId() && $this->checkCaptureStatus() && $this->checkUpdateTime() && $this->checkAmount();

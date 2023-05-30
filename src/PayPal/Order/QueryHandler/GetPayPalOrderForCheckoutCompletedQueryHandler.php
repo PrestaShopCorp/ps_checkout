@@ -23,14 +23,16 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler;
 
 use Exception;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheSettings;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderFetchedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderEventDispatcher;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQueryResult;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
 use Psr\SimpleCache\CacheInterface;
+use Psr\SimpleCache\InvalidArgumentException;
 
 /**
  * We need to know if the Order Status is APPROVED and in case of Card payment if 3D Secure allow to capture
@@ -67,9 +69,11 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
     /**
      * @param GetPayPalOrderForCheckoutCompletedQuery $getPayPalOrderQuery
      *
-     * @return GetPayPalOrderQueryResult
+     * @return GetPayPalOrderForCheckoutCompletedQueryResult
      *
      * @throws PayPalOrderException
+     * @throws OrderException
+     * @throws InvalidArgumentException
      */
     public function handle(GetPayPalOrderForCheckoutCompletedQuery $getPayPalOrderQuery)
     {
@@ -77,7 +81,7 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
         $order = $this->orderPayPalCache->get(CacheSettings::PAYPAL_ORDER_ID . $getPayPalOrderQuery->getOrderId()->getValue());
 
         if (!empty($order) && $order['status'] === 'APPROVED') {
-            return new GetPayPalOrderQueryResult($order);
+            return new GetPayPalOrderForCheckoutCompletedQueryResult($order);
         }
 
         try {
@@ -90,13 +94,13 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
             throw new PayPalOrderException(sprintf('No data for PayPal Order #%d', $getPayPalOrderQuery->getOrderId()->getValue()), PayPalOrderException::EMPTY_ORDER_DATA);
         }
 
-        $this->orderPayPalCache->set(CacheSettings::PAYPAL_ORDER_ID . $getPayPalOrderQuery->getOrderId()->getValue(), $orderPayPal->getOrder());
+        // $this->orderPayPalCache->set(CacheSettings::PAYPAL_ORDER_ID . $getPayPalOrderQuery->getOrderId()->getValue(), $orderPayPal->getOrder());
 
         $this->eventDispatcher->dispatch(
             new PayPalOrderFetchedEvent($getPayPalOrderQuery->getOrderId()->getValue(), $orderPayPal->getOrder())
         );
 
-        $result = new GetPayPalOrderQueryResult($orderPayPal->getOrder());
+        $result = new GetPayPalOrderForCheckoutCompletedQueryResult($orderPayPal->getOrder());
 
         $this->paypalOrderEventDispatcher->dispatch($result->getOrder());
 

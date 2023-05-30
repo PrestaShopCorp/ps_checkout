@@ -90,8 +90,8 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             ],
             PayPalOrderApprovedEvent::class => [
                 ['savePayPalOrder'],
-                ['capturePayPalOrder'],
                 ['updateCache'],
+                ['capturePayPalOrder'],
             ],
             PayPalOrderNotApprovedEvent::class => [
                 ['savePayPalOrder'],
@@ -177,21 +177,43 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         if (false === $psCheckoutCart) {
             throw new PsCheckoutException(sprintf('order #%s is not linked to a cart', $event->getOrderPayPalId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
-        // @todo delete si ça marche
+
         if ($psCheckoutCart->getPaypalStatus() === 'COMPLETED') {
             return;
         }
 
-        // ExpressCheckout require buyer select a delivery option, we have to check if cart is ready to payment
-        if ($psCheckoutCart->isExpressCheckout() && $psCheckoutCart->getPaypalFundingSource() === 'paypal') {
-            $this->logger->info('PayPal Order cannot be captured.');
-
+        if ($psCheckoutCart->isExpressCheckout()) {
             return;
         }
 
-        // @todo Always check if Cart is ready to payment before (quantities, stocks, invoice address, delivery address, delivery option...)
+        // Verification du panier : service ?
+        $cart = new \Cart($psCheckoutCart->id_cart);
+
+        if (!$cart->hasProducts()) {
+            throw new PsCheckoutException(sprintf('Cart with id #%s has no product. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_MISSING);
+        }
+
+        if ($cart->isAllProductsInStock() !== true ||
+            (method_exists($cart, 'checkAllProductsAreStillAvailableInThisState') && $cart->checkAllProductsAreStillAvailableInThisState() !== true) ||
+            (method_exists($cart, 'checkAllProductsHaveMinimalQuantities') && $cart->checkAllProductsHaveMinimalQuantities() !== true)
+        ) {
+            throw new PsCheckoutException(sprintf('Cart with id #%s contains products unavailable. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_UNAVAILABLE);
+        }
+
+        if (!\Customer::customerHasAddress($cart->id_customer, $cart->id_address_invoice)) {
+            throw new PsCheckoutException(sprintf('Invoice address with id %s is incorrect. Cannot capture the order.', var_export($cart->id_address_invoice, true)), PsCheckoutException::CART_ADDRESS_INVOICE_INVALID);
+        }
+
+        if (!$cart->isVirtualCart() && !\Customer::customerHasAddress($cart->id_customer, $cart->id_address_delivery)) {
+            throw new PsCheckoutException(sprintf('Delivery address with id %s is incorrect. Cannot capture the order.', var_export($cart->id_address_delivery, true)), PsCheckoutException::CART_ADDRESS_DELIVERY_INVALID);
+        }
+
+        if (!$cart->isVirtualCart() && !array_key_exists((int) $cart->id_address_delivery, $cart->getDeliveryOptionList())) {
+            throw new PsCheckoutException(sprintf('No delivery option selected for address with id %s is incorrect. Cannot capture the order.', var_export($cart->id_address_delivery, true)), PsCheckoutException::CART_DELIVERY_OPTION_INVALID);
+        }
 
         $orderPayPal = $event->getOrderPayPal();
+
         if ($psCheckoutCart->isHostedFields()) {
             $card3DSecure = (new Card3DSecure())->continueWithAuthorization($orderPayPal);
 

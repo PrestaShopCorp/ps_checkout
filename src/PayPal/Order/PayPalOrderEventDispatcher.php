@@ -105,7 +105,7 @@ class PayPalOrderEventDispatcher
         }
 
         if (
-            $this->paypalOrderComparator->compare($orderPayPal)
+            !$this->paypalOrderComparator->compare($orderPayPal)
             && $this->checkTransitionPayPalOrderStatusService->checkAvailableStatus(
                 $oldStatus,
                 $orderPayPal['status']
@@ -127,6 +127,10 @@ class PayPalOrderEventDispatcher
                     'PayPalOrderId' => $orderPayPal['id'],
                     'CurrentPayPalOrderStatus' => $oldStatus,
                     'NewPayPalOrderStatus' => $orderPayPal['status'],
+                    'CompareOrder' => $this->paypalOrderComparator->compare($orderPayPal),
+                    'CheckTransitionAvailable' => $this->checkTransitionPayPalOrderStatusService->checkAvailableStatus($oldStatus, $orderPayPal['status']),
+                    'isCacheFilled' => !empty($cacheOrderPayPal),
+                    'CacheOrderPayPal' => $cacheOrderPayPal,
                 ]
             );
         }

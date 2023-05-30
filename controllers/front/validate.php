@@ -290,6 +290,26 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                     $exceptionMessageForCustomer = $this->module->l('Card holder authentication canceled, please choose another payment method or try again.');
                     $notifyCustomerService = false;
                     break;
+                case PsCheckoutException::CART_PRODUCT_MISSING:
+                    $exceptionMessageForCustomer = $this->module->l('Cart doesn\'t contains product.');
+                    $notifyCustomerService = false;
+                    break;
+                case PsCheckoutException::CART_PRODUCT_UNAVAILABLE:
+                    $exceptionMessageForCustomer = $this->module->l('Cart contains product unavailable.');
+                    $notifyCustomerService = false;
+                    break;
+                case PsCheckoutException::CART_ADDRESS_INVOICE_INVALID:
+                    $exceptionMessageForCustomer = $this->module->l('Cart invoice address is invalid.');
+                    $notifyCustomerService = false;
+                    break;
+                case PsCheckoutException::CART_ADDRESS_DELIVERY_INVALID:
+                    $exceptionMessageForCustomer = $this->module->l('Cart delivery address is invalid.');
+                    $notifyCustomerService = false;
+                    break;
+                case PsCheckoutException::CART_DELIVERY_OPTION_INVALID:
+                    $exceptionMessageForCustomer = $this->module->l('Cart delivery option is unavailable.');
+                    $notifyCustomerService = false;
+                    break;
             }
         } elseif ('PrestaShop\Module\PrestashopCheckout\Exception\PayPalException' === $exceptionClass) {
             switch ($exception->getCode()) {

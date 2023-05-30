@@ -383,14 +383,6 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CheckTransitionPayPalOrderStatusService'
     public: true
 
-  ps_checkout.order.state.service.check_transition_state:
-    class: 'PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckTransitionStateService'
-    public: true
-    arguments:
-      - "@ps_checkout.paypal.order.service.check_transition_paypal_order_status"
-      - "@ps_checkout.order.state.service.check_order_state"
-      - "@ps_checkout.order.service.check_order_amount"
-
   ps_checkout.webhook.handler:
     class: 'PrestaShop\Module\PrestashopCheckout\Webhook\WebhookHandler'
     public: true
@@ -525,6 +517,7 @@ services:
     public: true
     arguments:
       - "@ps_checkout.event.dispatcher"
+      - "@ps_checkout.order.state.service.check_order_state"
 
   ps_checkout.command.handler.order.matrice.update_order_matrice:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\Matrice\CommandHandler\UpdateOrderMatriceCommandHandler'

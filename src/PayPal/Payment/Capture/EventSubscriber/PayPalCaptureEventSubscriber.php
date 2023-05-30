@@ -161,9 +161,14 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
      */
     public function createPaidOrder(PayPalCaptureCompletedEvent $event)
     {
-        $this->logger->debug('PayPalCaptureEventSubscriber !!! ', [$event->getPayPalOrderId()->getValue(), $event->getPayPalOrderId()->getValue()]);
         /** @var PsCheckoutCart $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
+
+        $cart = new \Cart($psCheckoutCart->getIdCart());
+
+        if (!\Validate::isLoadedObject($cart)) {
+            throw new PsCheckoutException('Cart not found', PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
+        }
 
         try {
             /** @var GetOrderQueryResult $order */
@@ -181,7 +186,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             return; // If we already have an Order (when going from Pending to Completed), we stop
         } catch (PsCheckoutException $exception) {
             $this->logger->info(
-                'No PrestaShop Order for PayPal Order #%s, create it',
+                'No PrestaShop Order for PayPal Order, create it',
                 [
                     'id_cart' => $psCheckoutCart->getIdCart(),
                     'PayPalOrderId' => $event->getPayPalOrderId()->getValue(),
@@ -193,7 +198,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
         $transactionId = $orderStateId = $paidAmount = '';
         $fundingSource = $psCheckoutCart->getPaypalFundingSource();
-        $cart = new \Cart($psCheckoutCart->getIdCart());
 
         /** @var GetOrderStateConfigurationQueryResult $getOrderStateConfiguration */
         $getOrderStateConfiguration = $this->commandBus->handle(new GetOrderStateConfigurationQuery());
@@ -239,6 +243,12 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     {
         /** @var PsCheckoutCart $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
+
+        $cart = new \Cart($psCheckoutCart->getIdCart());
+
+        if (!\Validate::isLoadedObject($cart)) {
+            throw new PsCheckoutException('Cart not found', PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
+        }
 
         try {
             /** @var GetOrderQueryResult $order */
@@ -373,9 +383,15 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // todo check order amount
-
-        $this->commandBus->handle(new UpdateOrderStatusCommand($order->getId(), $getOrderStateConfiguration->getPaymentAcceptedState()->getOrderStateId()));
+        switch ($this->checkOrderAmount->checkAmount((string) $order->getTotalAmount(), (string) $event->getCapture()['amount']['value'] + $order->getTotalAmountPaid())) {
+            case CheckOrderAmount::ORDER_FULL_PAID:
+            case CheckOrderAmount::ORDER_TO_MUCH_PAID:
+                $this->commandBus->handle(new UpdateOrderStatusCommand($order->getId(), $getOrderStateConfiguration->getPaymentAcceptedState()->getOrderStateId()));
+                break;
+            case CheckOrderAmount::ORDER_NOT_FULL_PAID:
+                $this->commandBus->handle(new UpdateOrderStatusCommand($order->getId(), $getOrderStateConfiguration->getPartiallyPaidState()->getOrderStateId()));
+                break;
+        }
     }
 
     /**
@@ -386,11 +402,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
      */
     public function setPaymentPendingOrderStatus(PayPalCapturePendingEvent $event)
     {
-        // PayPalCapturePendingEvent
-        // - Vérifier si le ps Order existe
-        // - Vérifier le current PS Order State === WAITING_PAYPAL_PAYMENT ou WAITING_LOCAL_PAYMENT ou WAITING_CREDIT_CARD_PAYMENT
-        // ===> Changer le PS Order state si besoin
-
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
 
         /** @var GetOrderForPaymentPendingQueryResult $order */

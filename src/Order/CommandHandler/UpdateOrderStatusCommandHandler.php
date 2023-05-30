@@ -27,6 +27,7 @@ use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderStatusUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckOrderState;
 use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
 
 class UpdateOrderStatusCommandHandler extends AbstractOrderCommandHandler
@@ -37,11 +38,17 @@ class UpdateOrderStatusCommandHandler extends AbstractOrderCommandHandler
     private $eventDispatcher;
 
     /**
+     * @var CheckOrderState
+     */
+    private $checkOrderState;
+
+    /**
      * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct(EventDispatcherInterface $eventDispatcher, CheckOrderState $checkOrderState)
     {
         $this->eventDispatcher = $eventDispatcher;
+        $this->checkOrderState = $checkOrderState;
     }
 
     /**
@@ -57,7 +64,11 @@ class UpdateOrderStatusCommandHandler extends AbstractOrderCommandHandler
         $orderState = $this->getOrderStateObject($command->getNewOrderStatusId());
 
         if ($order->getCurrentState() == $orderState->id) {
-            throw new OrderException(sprintf('The order #%d has already been assigned to OrderState #%d', $command->getOrderId()->getValue(), $command->getNewOrderStatusId()->getValue()), OrderException::ORDER_HAS_ALREADY_THIS_STATUS);
+            throw new OrderException(sprintf('The order #%d has already been assigned to OrderState #%d', $command->getOrderId()->getValue(), $orderState->id), OrderException::ORDER_HAS_ALREADY_THIS_STATUS);
+        }
+
+        if (!$this->checkOrderState->isOrderStateTransitionAvailable($order->getCurrentState(), $orderState->id)) {
+            throw new OrderException(sprintf('Transition is not valid for order #%d Current order state %d, new order state %d', $command->getOrderId()->getValue(), $order->getCurrentState(), $orderState->id), OrderException::TRANSITION_NOT_ALLOWED);
         }
 
         // Create new OrderHistory
