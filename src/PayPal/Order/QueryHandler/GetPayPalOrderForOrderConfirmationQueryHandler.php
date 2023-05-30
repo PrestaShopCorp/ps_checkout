@@ -41,16 +41,16 @@ class GetPayPalOrderForOrderConfirmationQueryHandler
     /**
      * @var CacheInterface
      */
-    private $cache;
+    private $orderPayPalCache;
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
-     * @param CacheInterface $cache
+     * @param CacheInterface $orderPayPalCache
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, CacheInterface $cache)
+    public function __construct(EventDispatcherInterface $eventDispatcher, CacheInterface $orderPayPalCache)
     {
         $this->eventDispatcher = $eventDispatcher;
-        $this->cache = $cache;
+        $this->orderPayPalCache = $orderPayPalCache;
     }
 
     /**
@@ -64,7 +64,7 @@ class GetPayPalOrderForOrderConfirmationQueryHandler
     public function handle(GetPayPalOrderForOrderConfirmationQuery $query)
     {
         /** @var array{id: string, status: string} $order */
-        $order = $this->cache->get(CacheSettings::PAYPAL_ORDER_ID . $query->getOrderId()->getValue());
+        $order = $this->orderPayPalCache->get(CacheSettings::PAYPAL_ORDER_ID . $query->getOrderId()->getValue());
 
         if (!empty($order) && ($order['status'] === 'PENDING' || $order['status'] === 'COMPLETED')) {
             return new GetPayPalOrderForOrderConfirmationQueryResult($order);
@@ -80,7 +80,7 @@ class GetPayPalOrderForOrderConfirmationQueryHandler
             throw new PayPalOrderException(sprintf('No data for PayPal Order #%d', $query->getOrderId()->getValue()), PayPalOrderException::EMPTY_ORDER_DATA);
         }
 
-        $this->cache->set(CacheSettings::PAYPAL_ORDER_ID . $query->getOrderId()->getValue(), $orderPayPal->getOrder());
+        $this->orderPayPalCache->set(CacheSettings::PAYPAL_ORDER_ID . $query->getOrderId()->getValue(), $orderPayPal->getOrder());
 
         $this->eventDispatcher->dispatch(
             new PayPalOrderFetchedEvent($query->getOrderId()->getValue(), $orderPayPal->getOrder())

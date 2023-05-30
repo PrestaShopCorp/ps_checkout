@@ -29,14 +29,14 @@ class PsCheckoutCartRepository
     /**
      * @var CacheInterface
      */
-    private $cache;
+    private $cartPrestaShopCache;
 
     /**
-     * @param CacheInterface $cache
+     * @param CacheInterface $cartPrestaShopCache
      */
-    public function __construct(CacheInterface $cache)
+    public function __construct(CacheInterface $cartPrestaShopCache)
     {
-        $this->cache = $cache;
+        $this->cartPrestaShopCache = $cartPrestaShopCache;
     }
 
     /**
@@ -48,8 +48,8 @@ class PsCheckoutCartRepository
      */
     public function findOneByCartId($cartId)
     {
-        if ($this->cache->has(CacheSettings::CART_ID . $cartId)) {
-            return $this->cache->get(CacheSettings::CART_ID . $cartId);
+        if ($this->cartPrestaShopCache->has(CacheSettings::CART_ID . $cartId)) {
+            return $this->cartPrestaShopCache->get(CacheSettings::CART_ID . $cartId);
         }
 
         $psCheckoutCartCollection = new \PrestaShopCollection('PsCheckoutCart');
@@ -60,7 +60,7 @@ class PsCheckoutCartRepository
         $psCheckoutCart = $psCheckoutCartCollection->getFirst();
 
         if (false !== $psCheckoutCart) {
-            $this->cache->setMultiple([
+            $this->cartPrestaShopCache->setMultiple([
                 CacheSettings::CART_ID . $cartId => $psCheckoutCart,
                 CacheSettings::PAYPAL_ORDER_ID . $psCheckoutCart->paypal_order => $psCheckoutCart,
             ]);
@@ -78,8 +78,8 @@ class PsCheckoutCartRepository
      */
     public function findOneByPayPalOrderId($payPalOrderId)
     {
-        if ($this->cache->has(CacheSettings::PAYPAL_ORDER_ID . $payPalOrderId)) {
-            return $this->cache->get(CacheSettings::PAYPAL_ORDER_ID . $payPalOrderId);
+        if ($this->cartPrestaShopCache->has(CacheSettings::PAYPAL_ORDER_ID . $payPalOrderId)) {
+            return $this->cartPrestaShopCache->get(CacheSettings::PAYPAL_ORDER_ID . $payPalOrderId);
         }
 
         $psCheckoutCartCollection = new \PrestaShopCollection('PsCheckoutCart');
@@ -89,7 +89,7 @@ class PsCheckoutCartRepository
         $psCheckoutCart = $psCheckoutCartCollection->getFirst();
 
         if (false !== $psCheckoutCart) {
-            $this->cache->setMultiple([
+            $this->cartPrestaShopCache->setMultiple([
                 CacheSettings::CART_ID . $psCheckoutCart->id_cart => $psCheckoutCart,
                 CacheSettings::PAYPAL_ORDER_ID . $payPalOrderId => $psCheckoutCart,
             ]);
@@ -114,7 +114,7 @@ class PsCheckoutCartRepository
         $success = $psCheckoutCart->save();
 
         if ($success) {
-            $this->cache->setMultiple([
+            $this->cartPrestaShopCache->setMultiple([
                 CacheSettings::CART_ID . $psCheckoutCart->id_cart => $psCheckoutCart,
                 CacheSettings::PAYPAL_ORDER_ID . $psCheckoutCart->paypal_order => $psCheckoutCart,
             ]);
@@ -139,7 +139,7 @@ class PsCheckoutCartRepository
         $success = $psCheckoutCart->delete();
 
         if ($success) {
-            $this->cache->deleteMultiple([
+            $this->cartPrestaShopCache->deleteMultiple([
                 CacheSettings::CART_ID . $psCheckoutCart->id_cart,
                 CacheSettings::PAYPAL_ORDER_ID . $psCheckoutCart->paypal_order,
             ]);

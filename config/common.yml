@@ -301,10 +301,6 @@ services:
 
   ps_checkout.cache.array.paypal.order:
     class: 'Symfony\Component\Cache\Simple\ArrayCache'
-    arguments:
-      - "paypal-orders"
-      - 3600
-      - '@=service("ps_checkout.cache.directory").getPath()'
 
   ps_checkout.cache.filesystem.paypal.order:
     class: 'Symfony\Component\Cache\Simple\FilesystemCache'

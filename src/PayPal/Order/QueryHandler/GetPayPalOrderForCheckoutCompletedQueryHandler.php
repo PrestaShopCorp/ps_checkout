@@ -45,7 +45,7 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
     /**
      * @var CacheInterface
      */
-    private $cache;
+    private $orderPayPalCache;
 
     /**
      * @var PayPalOrderEventDispatcher
@@ -54,13 +54,13 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
-     * @param CacheInterface $cache
+     * @param CacheInterface $orderPayPalCache
      * @param PayPalOrderEventDispatcher $paypalOrderEventDispatcher
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, CacheInterface $cache, PayPalOrderEventDispatcher $paypalOrderEventDispatcher)
+    public function __construct(EventDispatcherInterface $eventDispatcher, CacheInterface $orderPayPalCache, PayPalOrderEventDispatcher $paypalOrderEventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
-        $this->cache = $cache;
+        $this->orderPayPalCache = $orderPayPalCache;
         $this->paypalOrderEventDispatcher = $paypalOrderEventDispatcher;
     }
 
@@ -74,7 +74,7 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
     public function handle(GetPayPalOrderForCheckoutCompletedQuery $getPayPalOrderQuery)
     {
         /** @var array{id: string, status: string} $order */
-        $order = $this->cache->get(CacheSettings::PAYPAL_ORDER_ID . $getPayPalOrderQuery->getOrderId()->getValue());
+        $order = $this->orderPayPalCache->get(CacheSettings::PAYPAL_ORDER_ID . $getPayPalOrderQuery->getOrderId()->getValue());
 
         if (!empty($order) && $order['status'] === 'APPROVED') {
             return new GetPayPalOrderQueryResult($order);
@@ -90,7 +90,7 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
             throw new PayPalOrderException(sprintf('No data for PayPal Order #%d', $getPayPalOrderQuery->getOrderId()->getValue()), PayPalOrderException::EMPTY_ORDER_DATA);
         }
 
-        $this->cache->set(CacheSettings::PAYPAL_ORDER_ID . $getPayPalOrderQuery->getOrderId()->getValue(), $orderPayPal->getOrder());
+        $this->orderPayPalCache->set(CacheSettings::PAYPAL_ORDER_ID . $getPayPalOrderQuery->getOrderId()->getValue(), $orderPayPal->getOrder());
 
         $this->eventDispatcher->dispatch(
             new PayPalOrderFetchedEvent($getPayPalOrderQuery->getOrderId()->getValue(), $orderPayPal->getOrder())

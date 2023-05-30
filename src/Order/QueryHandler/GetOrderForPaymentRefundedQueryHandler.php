@@ -34,14 +34,14 @@ class GetOrderForPaymentRefundedQueryHandler
     /**
      * @var CacheInterface
      */
-    private $cache;
+    private $orderPrestaShopCache;
 
     /**
-     * @param CacheInterface $cache
+     * @param CacheInterface $orderPrestaShopCache
      */
-    public function __construct(CacheInterface $cache)
+    public function __construct(CacheInterface $orderPrestaShopCache)
     {
-        $this->cache = $cache;
+        $this->orderPrestaShopCache = $orderPrestaShopCache;
     }
 
     /**
@@ -56,7 +56,7 @@ class GetOrderForPaymentRefundedQueryHandler
     public function handle(GetOrderForPaymentRefundedQuery $query)
     {
         /** @var GetOrderForPaymentRefundedQueryResult $result */
-        $result = $this->cache->get(CacheSettings::CART_ID . $query->getCartId()->getValue());
+        $result = $this->orderPrestaShopCache->get(CacheSettings::CART_ID . $query->getCartId()->getValue());
         if (!empty($result) && $result instanceof GetOrderForPaymentRefundedQueryResult) {
             return $result;
         }
@@ -97,7 +97,7 @@ class GetOrderForPaymentRefundedQueryHandler
             (int) $order->id_currency
         );
 
-        $this->cache->set(CacheSettings::CART_ID . $query->getCartId()->getValue(), $result);
+        $this->orderPrestaShopCache->set(CacheSettings::CART_ID . $query->getCartId()->getValue(), $result);
 
         return $result;
     }

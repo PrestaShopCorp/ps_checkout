@@ -34,14 +34,14 @@ class GetOrderForPaymentCompletedQueryHandler
     /**
      * @var CacheInterface
      */
-    private $cache;
+    private $orderPrestaShopcache;
 
     /**
-     * @param CacheInterface $cache
+     * @param CacheInterface $orderPrestaShopcache
      */
-    public function __construct(CacheInterface $cache)
+    public function __construct(CacheInterface $orderPrestaShopcache)
     {
-        $this->cache = $cache;
+        $this->orderPrestaShopcache = $orderPrestaShopcache;
     }
 
     /**
@@ -56,7 +56,7 @@ class GetOrderForPaymentCompletedQueryHandler
     public function handle(GetOrderForPaymentCompletedQuery $query)
     {
         /** @var GetOrderForPaymentCompletedQueryResult $result */
-        $result = $this->cache->get(CacheSettings::CART_ID . $query->getCartId()->getValue());
+        $result = $this->orderPrestaShopcache->get(CacheSettings::CART_ID . $query->getCartId()->getValue());
         if (!empty($result) && $result instanceof GetOrderForPaymentCompletedQueryResult) {
             return $result;
         }
@@ -89,7 +89,7 @@ class GetOrderForPaymentCompletedQueryHandler
             (int) $order->id_currency
         );
 
-        $this->cache->set(CacheSettings::CART_ID . $query->getCartId()->getValue(), $result);
+        $this->orderPrestaShopcache->set(CacheSettings::CART_ID . $query->getCartId()->getValue(), $result);
 
         return $result;
     }

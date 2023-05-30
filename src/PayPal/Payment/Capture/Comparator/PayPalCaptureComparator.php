@@ -29,38 +29,36 @@ class PayPalCaptureComparator
     /**
      * @var CacheInterface
      */
-    private $cache;
-
-    /**
-     * @var array
-     */
-    private $capturePayPal;
-
-    /**
-     * @var array
-     */
     private $capturePayPalCache;
 
     /**
-     * @param CacheInterface $cache
+     * @var array
      */
-    public function __construct($cache)
+    private $newCapturePayPal;
+
+    /**
+     * @var array
+     */
+    private $currentCapturePayPal;
+
+    /**
+     * @param CacheInterface $capturePayPalCache
+     */
+    public function __construct($capturePayPalCache)
     {
-        $this->cache = $cache;
+        $this->capturePayPalCache = $capturePayPalCache;
     }
 
     /**
      * @throws InvalidArgumentException
      */
-    public function compare($capturePayPal)
+    public function compare($newCapturePayPal)
     {
-        $this->capturePayPal = $capturePayPal;
-        $this->capturePayPalCache = $this->cache->get($this->capturePayPal['id']);
+        $this->newCapturePayPal = $newCapturePayPal;
+        $this->currentCapturePayPal = $this->capturePayPalCache->get($this->newCapturePayPal['id']);
 
-        if (empty($this->capturePayPalCache)) {
-            // In case we don't have it in cache
-
-            return false;
+        if (empty($this->currentCapturePayPal)) {
+            return true;
         }
 
         return $this->checkCaptureId() && $this->checkCaptureStatus() && $this->checkUpdateTime() && $this->checkAmount();
@@ -71,7 +69,7 @@ class PayPalCaptureComparator
      */
     private function checkAmount()
     {
-        return $this->capturePayPal['amount']['value'] === $this->capturePayPalCache['amount']['value'];
+        return $this->newCapturePayPal['amount']['value'] === $this->currentCapturePayPal['amount']['value'];
     }
 
     /**
@@ -79,7 +77,7 @@ class PayPalCaptureComparator
      */
     private function checkCaptureId()
     {
-        return $this->capturePayPal['id'] === $this->capturePayPalCache['id'];
+        return $this->newCapturePayPal['id'] === $this->currentCapturePayPal['id'];
     }
 
     /**
@@ -87,7 +85,7 @@ class PayPalCaptureComparator
      */
     private function checkCaptureStatus()
     {
-        return $this->capturePayPal['status'] === $this->capturePayPalCache['status'];
+        return $this->newCapturePayPal['status'] === $this->currentCapturePayPal['status'];
     }
 
     /**
@@ -97,25 +95,25 @@ class PayPalCaptureComparator
      */
     private function checkUpdateTime()
     {
-        if ($this->capturePayPal['status'] !== 'COMPLETED') {
+        if ($this->newCapturePayPal['status'] !== 'COMPLETED') {
             // We only have update_time in some COMPLETED requests, which mean we can't compare the update_time
 
             return true;
         }
 
-        if (!isset($this->capturePayPal['update_time']) && isset($this->capturePayPalCache['update_time'])) {
+        if (!isset($this->newCapturePayPal['update_time']) && isset($this->currentCapturePayPal['update_time'])) {
             // We can have an outdated webhook coming through, we keep the recent one
 
             return true;
         }
 
-        if (isset($this->capturePayPal['update_time']) && !isset($this->capturePayPalCache['update_time'])) {
+        if (isset($this->newCapturePayPal['update_time']) && !isset($this->currentCapturePayPal['update_time'])) {
             // We don't have an update_time in cache but we have an update_time in the new orderPayPal, which means it's recent
 
             return false;
         }
 
-        if (date_create_from_format('Y-m-d\TH:i:s\Z', $this->capturePayPal['update_time']) > date_create_from_format('Y-m-d\TH:i:s\Z', $this->capturePayPalCache['update_time'])) {
+        if (date_create_from_format('Y-m-d\TH:i:s\Z', $this->newCapturePayPal['update_time']) > date_create_from_format('Y-m-d\TH:i:s\Z', $this->currentCapturePayPal['update_time'])) {
             // The update_time in the new orderPayPal is more recent than the cache one
 
             return false;

@@ -59,27 +59,27 @@ class PayPalOrderEventDispatcher
     /**
      * @var CacheInterface
      */
-    private $cache;
+    private $orderPayPalCache;
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param CommandBusInterface $commandBus
      * @param CheckTransitionPayPalOrderStatusService $checkTransitionPayPalOrderStatusService
      * @param PayPalOrderComparator $paypalOrderComparator
-     * @param CacheInterface $cache
+     * @param CacheInterface $orderPayPalCache
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         CommandBusInterface $commandBus,
         CheckTransitionPayPalOrderStatusService $checkTransitionPayPalOrderStatusService,
         PayPalOrderComparator $paypalOrderComparator,
-        CacheInterface $cache
+        CacheInterface $orderPayPalCache
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->commandBus = $commandBus;
         $this->checkTransitionPayPalOrderStatusService = $checkTransitionPayPalOrderStatusService;
         $this->paypalOrderComparator = $paypalOrderComparator;
-        $this->cache = $cache;
+        $this->orderPayPalCache = $orderPayPalCache;
     }
 
     /**
@@ -94,14 +94,8 @@ class PayPalOrderEventDispatcher
     public function dispatch(array $orderPayPal)
     {
         $module = \Module::getInstanceByName('ps_checkout');
-        $module->getLogger()->debug(
-            __CLASS__ . ' - ' . __FUNCTION__,
-            [
-                'PayPalOrderId' => $orderPayPal['id'],
-            ]
-        );
 
-        $cacheOrderPayPal = $this->cache->get($orderPayPal['id']);
+        $cacheOrderPayPal = $this->orderPayPalCache->get($orderPayPal['id']);
         if (empty($cacheOrderPayPal)) {
             /** @var GetCurrentPayPalOrderStatusQueryResult $getCurrentPayPalOrderStatusQueryResult */
             $getCurrentPayPalOrderStatusQueryResult = $this->commandBus->handle(new GetCurrentPayPalOrderStatusQuery($orderPayPal['id']));

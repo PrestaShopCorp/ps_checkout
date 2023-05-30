@@ -64,19 +64,19 @@ class Order extends PaymentClient
             ],
         ]);
 
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-
-        /** @var \Symfony\Component\Cache\Simple\FilesystemCache $captureCache */
-        $captureCache = $module->getService('ps_checkout.cache.paypal.capture');
-
-        $responseBody = isset($response['body']) ? $response['body'] : null;
-
-        if ($responseBody) {
-            $capture = $responseBody['purchase_units'][0]['payments']['captures'][0];
-
-            $captureCache->set($capture['id'], $capture);
-        }
+//        /** @var \Ps_checkout $module */
+//        $module = \Module::getInstanceByName('ps_checkout');
+//
+//        /** @var \Symfony\Component\Cache\Simple\FilesystemCache $captureCache */
+//        $captureCache = $module->getService('ps_checkout.cache.paypal.capture');
+//
+//        $responseBody = isset($response['body']) ? $response['body'] : null;
+//
+//        if ($responseBody) {
+//            $capture = $responseBody['purchase_units'][0]['payments']['captures'][0];
+//
+//            $captureCache->set($capture['id'], $capture);
+//        }
 
         return $response;
     }

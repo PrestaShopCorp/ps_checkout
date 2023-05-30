@@ -58,24 +58,24 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     /**
      * @var CacheInterface
      */
-    private $cache;
+    private $orderPayPalCache;
 
     /**
      * @param Ps_checkout $module
      * @param LoggerInterface $logger
      * @param PsCheckoutCartRepository $psCheckoutCartRepository
-     * @param CacheInterface $cache
+     * @param CacheInterface $orderPayPalCache
      */
     public function __construct(
         Ps_checkout $module,
         LoggerInterface $logger,
         PsCheckoutCartRepository $psCheckoutCartRepository,
-        CacheInterface $cache
+        CacheInterface $orderPayPalCache
     ) {
         $this->module = $module;
         $this->logger = $logger;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
-        $this->cache = $cache;
+        $this->orderPayPalCache = $orderPayPalCache;
     }
 
     /**
@@ -253,6 +253,6 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      */
     public function updateCache(PayPalOrderEvent $event)
     {
-        $this->cache->set($event->getOrderPayPalId()->getValue(), $event->getOrderPayPal());
+        $this->orderPayPalCache->set($event->getOrderPayPalId()->getValue(), $event->getOrderPayPal());
     }
 }

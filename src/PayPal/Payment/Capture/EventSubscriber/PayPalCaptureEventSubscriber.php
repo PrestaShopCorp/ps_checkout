@@ -94,21 +94,21 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     /**
      * @var CacheInterface
      */
-    private $cache;
+    private $capturePayPalCache;
 
     /**
      * @param Ps_checkout $module
      * @param LoggerInterface $logger
      * @param PsCheckoutCartRepository $psCheckoutCartRepository
      * @param CheckOrderAmount $checkOrderAmount
-     * @param CacheInterface $cache
+     * @param CacheInterface $capturePayPalCache
      */
     public function __construct(
         Ps_checkout $module,
         LoggerInterface $logger,
         PsCheckoutCartRepository $psCheckoutCartRepository,
         CheckOrderAmount $checkOrderAmount,
-        CacheInterface $cache
+        CacheInterface $capturePayPalCache
     ) {
         $this->module = $module;
         $this->logger = $logger;
@@ -117,7 +117,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         /** @var CommandBusInterface $commandBus */
         $commandBus = $this->module->getService('ps_checkout.bus.command');
         $this->commandBus = $commandBus;
-        $this->cache = $cache;
+        $this->capturePayPalCache = $capturePayPalCache;
     }
 
     /**
@@ -139,6 +139,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             PayPalCapturePendingEvent::class => [
                 ['createPendingOrder'],
                 ['setPaymentPendingOrderStatus'],
+                ['updateCache'],
             ],
             PayPalCaptureRefundedEvent::class => [
                 ['setPaymentRefundedOrderStatus'],
@@ -512,6 +513,14 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
      */
     public function updateCache(PayPalCaptureEvent $event)
     {
-        $this->cache->set($event->getPayPalOrderId()->getValue(), $event->getCapture());
+        $this->logger->info(
+            __CLASS__ . ':' . __FUNCTION__,
+            [
+                'PayPalOrderId' => $event->getPayPalOrderId()->getValue(),
+                'PayPalCaptureId' => $event->getPayPalCaptureId()->getValue(),
+                'PayPalCapture' => $event->getCapture(),
+            ]
+        );
+        $this->capturePayPalCache->set($event->getPayPalCaptureId()->getValue(), $event->getCapture());
     }
 }

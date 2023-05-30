@@ -39,16 +39,16 @@ class RemovePayPalOrderCacheCommandHandler
     /**
      * @var CacheInterface
      */
-    private $cache;
+    private $orderPayPalCache;
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
-     * @param CacheInterface $cache
+     * @param CacheInterface $orderPayPalCache
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, CacheInterface $cache)
+    public function __construct(EventDispatcherInterface $eventDispatcher, CacheInterface $orderPayPalCache)
     {
         $this->eventDispatcher = $eventDispatcher;
-        $this->cache = $cache;
+        $this->orderPayPalCache = $orderPayPalCache;
     }
 
     /**
@@ -61,8 +61,8 @@ class RemovePayPalOrderCacheCommandHandler
     public function handle(RemovePayPalOrderCacheCommand $removePayPalOrderCacheCommand)
     {
         try {
-            if ($this->cache->has(CacheSettings::PAYPAL_ORDER_ID . $removePayPalOrderCacheCommand->getOrderId()->getValue())) {
-                $this->cache->delete(CacheSettings::PAYPAL_ORDER_ID . $removePayPalOrderCacheCommand->getOrderId()->getValue());
+            if ($this->orderPayPalCache->has(CacheSettings::PAYPAL_ORDER_ID . $removePayPalOrderCacheCommand->getOrderId()->getValue())) {
+                $this->orderPayPalCache->delete(CacheSettings::PAYPAL_ORDER_ID . $removePayPalOrderCacheCommand->getOrderId()->getValue());
             }
         } catch (CacheException $exception) {
             throw new PayPalOrderException('Unable to remove item from PayPal Order Cache', PayPalOrderException::CACHE_EXCEPTION, $exception);

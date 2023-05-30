@@ -54,24 +54,24 @@ class PayPalCaptureEventDispatcher
     /**
      * @var CacheInterface
      */
-    private $cache;
+    private $capturePayPalCache;
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param CheckTransitionPayPalCaptureStatusService $checkTransitionPayPalCaptureStatusService
      * @param PayPalCaptureComparator $paypalCaptureComparator
-     * @param CacheInterface $cache
+     * @param CacheInterface $capturePayPalCache
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         CheckTransitionPayPalCaptureStatusService $checkTransitionPayPalCaptureStatusService,
         PayPalCaptureComparator $paypalCaptureComparator,
-        CacheInterface $cache
+        CacheInterface $capturePayPalCache
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->checkTransitionPayPalCaptureStatusService = $checkTransitionPayPalCaptureStatusService;
         $this->paypalCaptureComparator = $paypalCaptureComparator;
-        $this->cache = $cache;
+        $this->capturePayPalCache = $capturePayPalCache;
     }
 
     /**
@@ -87,17 +87,39 @@ class PayPalCaptureEventDispatcher
      */
     public function dispatch($orderId, array $capture)
     {
-        $cacheCapturePayPal = $this->cache->get($capture['id']);
+        $module = \Module::getInstanceByName('ps_checkout');
+
+        $cacheCapturePayPal = $this->capturePayPalCache->get($capture['id']);
+
         if (empty($cacheCapturePayPal)) {
             $this->dispatchAfterCheck($orderId, $capture);
         } elseif (
-            $this->paypalCaptureComparator->compare($capture)
+            !$this->paypalCaptureComparator->compare($capture)
             && $this->checkTransitionPayPalCaptureStatusService->checkAvailableStatus(
                 $cacheCapturePayPal['status'],
                 $capture['status']
             )
         ) {
+            $module->getLogger()->debug(
+                'Need to dispatch PayPalCaptureEvent',
+                [
+                    'PayPalOrderId' => $orderId,
+                    'PayPalCaptureId' => $capture['id'],
+                    'CurrentPayPalCaptureStatus' => $cacheCapturePayPal['status'],
+                    'NewPayPalCaptureStatus' => $capture['status'],
+                ]
+            );
             $this->dispatchAfterCheck($orderId, $capture);
+        } else {
+            $module->getLogger()->debug(
+                'No need to dispatch PayPalCaptureEvent',
+                [
+                    'PayPalOrderId' => $orderId,
+                    'PayPalCaptureId' => $capture['id'],
+                    'CurrentPayPalCaptureStatus' => $cacheCapturePayPal['status'],
+                    'NewPayPalCaptureStatus' => $capture['status'],
+                ]
+            );
         }
     }
 

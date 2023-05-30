@@ -101,7 +101,6 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
             throw new OrderException(sprintf('Failed to create order from Cart #%s.', $cart->id), OrderException::ORDER_NOT_FOUND);
         }
 
-        // TODO Manque le orderPaypal | Quid d'avoir un tableau avec les infos de ps dont on a besoin (ex: cart amount, totalAmountPaid ...)
         // It happens this returns null in case of override or weird modules
         if ($paymentModule->currentOrder) {
             $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) $paymentModule->currentOrder, (int) $cart->id));
