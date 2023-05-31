@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -85,6 +86,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
 
                 $this->context->cart = $cart;
                 $this->context->cookie->__set('id_cart', (int) $cart->id);
+                $this->context->cookie->write();
             }
             // END Express Checkout
 
@@ -98,6 +100,20 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             /** @var PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
 
+            $isExpressCheckout = (isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout']) || empty($this->context->cart->id_address_delivery);
+
+            if (false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout() && $psCheckoutCart->isOrderAvailable()) {
+                $this->exitWithResponse([
+                    'status' => true,
+                    'httpCode' => 200,
+                    'body' => [
+                        'orderID' => $psCheckoutCart->paypal_order,
+                    ],
+                    'exceptionCode' => null,
+                    'exceptionMessage' => null,
+                ]);
+            }
+
             // If we have a PayPal Order Id with a status CREATED or APPROVED we delete it and create new one
             // This is needed because cart gets updated so we need to update paypal order too
             if (
@@ -107,7 +123,6 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 $psCheckoutCart = false;
             }
 
-            $isExpressCheckout = (isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout']) || empty($this->context->cart->id_address_delivery);
             $paypalOrder = new PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler($this->context);
             $response = $paypalOrder->handle($isExpressCheckout);
 
@@ -130,8 +145,8 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             $psCheckoutCart->paypal_intent = 'CAPTURE' === Configuration::get('PS_CHECKOUT_INTENT') ? 'CAPTURE' : 'AUTHORIZE';
             $psCheckoutCart->paypal_token = $response['body']['client_token'];
             $psCheckoutCart->paypal_token_expire = (new DateTime())->modify('+3550 seconds')->format('Y-m-d H:i:s');
-            $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) ? (bool) $bodyValues['isExpressCheckout'] : false;
-            $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) ? (bool) $bodyValues['isHostedFields'] : false;
+            $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) && (bool) $bodyValues['isExpressCheckout'];
+            $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) && (bool) $bodyValues['isHostedFields'];
             $psCheckoutCartRepository->save($psCheckoutCart);
 
             $this->exitWithResponse([
@@ -144,8 +159,6 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            $this->handleExceptionSendingToSentry($exception);
-
             /* @var \Psr\Log\LoggerInterface logger */
             $logger = $this->module->getService('ps_checkout.logger');
             $logger->error(

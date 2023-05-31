@@ -21,12 +21,21 @@ import { PsCheckoutConfig } from '../../config/ps-checkout.config';
 import { HostedFieldsComponentMock } from '../../../test/mocks/components/common/hosted-fields.component.mock';
 import { MarkComponentMock } from '../../../test/mocks/components/common/mark.component.mock';
 import { SmartButtonComponentMock } from '../../../test/mocks/components/common/smart-button.component.mock';
+import { PaymentFieldsComponentMock } from '../../../test/mocks/components/common/payment-fields.component.mock';
 
 function buildDIContainerMock() {
   return {
     container: {
       PsCheckoutConfig: {
         ...PsCheckoutConfig
+      },
+      PayPalService: {
+        getPaymentFields: jest.fn(),
+        sdk: {
+          paymentFields: {
+            isEligible: jest.fn()
+          }
+        },
       },
       $: jest.fn().mockImplementation(key => {
         return (
@@ -44,6 +53,7 @@ describe('src/components/common/payment-option.component.spec.js', () => {
   const markComponentMock = MarkComponentMock;
   const smartButtonComponentMock = SmartButtonComponentMock;
   const hostedFieldsComponentMock = HostedFieldsComponentMock;
+  const paymentFieldsComponentMock = PaymentFieldsComponentMock;
 
   let PaymentOptionComponent;
 
@@ -57,12 +67,18 @@ describe('src/components/common/payment-option.component.spec.js', () => {
     hostedFieldsComponentMock.mockClear();
     hostedFieldsComponentMock.render.mockClear();
 
+    paymentFieldsComponentMock.mockClear();
+    paymentFieldsComponentMock.render.mockClear();
+
     jest
       .doMock('./marker.component', () => ({
         MarkComponent: markComponentMock
       }))
       .doMock('./smart-button.component', () => ({
         SmartButtonComponent: smartButtonComponentMock
+      }))
+      .doMock('./payment-fields.component', () => ({
+        PaymentFieldsComponent: paymentFieldsComponentMock
       }))
       .doMock('./hosted-fields.component', () => ({
         HostedFieldsComponent: hostedFieldsComponentMock

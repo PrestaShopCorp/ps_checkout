@@ -38,7 +38,6 @@ function upgrade_module_1_3_0($module)
 
     (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates();
     $module->registerHook('actionObjectShopAddAfter');
-    (new PrestaShop\Module\PrestashopCheckout\MultiStoreFixer())->run();
 
     // Restore initial PrestaShop shop context
     if (Shop::CONTEXT_SHOP === $savedShopContext) {

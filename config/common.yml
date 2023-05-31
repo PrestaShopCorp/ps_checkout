@@ -6,14 +6,29 @@ services:
   #   public: true
 
   ps_checkout.module:
-    class: 'Ps_checkout'
-    factory: ['Module', 'getInstanceByName']
+    class: "Ps_checkout"
+    factory: ["Module", "getInstanceByName"]
     public: true
     arguments:
-      - 'ps_checkout'
+      - "ps_checkout"
+
+  ps_checkout.module.version:
+    class: 'PrestaShop\Module\PrestashopCheckout\Version\Version'
+    factory:
+      [
+        'PrestaShop\Module\PrestashopCheckout\Version\Version',
+        "buildFromString",
+      ]
+    public: true
+    arguments:
+      - '@=service("ps_checkout.module").version'
 
   ps_checkout.context.prestashop:
     class: 'PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
+    public: true
+
+  ps_checkout.context.state.manager:
+    class: 'PrestaShop\Module\PrestashopCheckout\Context\ContextStateManager'
     public: true
 
   ps_checkout.context.shop:
@@ -34,7 +49,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration'
     public: true
     arguments:
-      - '@ps_checkout.configuration.options.resolver'
+      - "@ps_checkout.configuration.options.resolver"
 
   ps_checkout.logger.directory:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory'
@@ -54,11 +69,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration'
     public: true
     arguments:
-      - '@ps_checkout.configuration'
-
-  ps_checkout.env.sentry:
-    class: 'PrestaShop\Module\PrestashopCheckout\Environment\SentryEnv'
-    public: true
+      - "@ps_checkout.configuration"
 
   ps_checkout.logger.handler.factory:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerHandlerFactory'
@@ -72,142 +83,94 @@ services:
   ps_checkout.logger.handler:
     class: 'Monolog\Handler\HandlerInterface'
     public: true
-    factory: ['@ps_checkout.logger.handler.factory', 'build']
+    factory: ["@ps_checkout.logger.handler.factory", "build"]
 
   ps_checkout.logger.factory:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory'
     public: true
     arguments:
       - '@=service("ps_checkout.module").name'
-      - '@ps_checkout.logger.handler'
+      - "@ps_checkout.logger.handler"
 
   ps_checkout.logger:
     class: 'Psr\Log\LoggerInterface'
     public: true
-    factory: ['@ps_checkout.logger.factory', 'build']
+    factory: ["@ps_checkout.logger.factory", "build"]
     arguments:
-      - '@ps_checkout.logger.directory'
+      - "@ps_checkout.logger.directory"
 
   ps_checkout.paypal.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
     public: true
     arguments:
-      - '@ps_checkout.configuration'
-      - '@ps_checkout.repository.paypal.code'
-
-  ps_checkout.persistent.configuration:
-    class: 'PrestaShop\Module\PrestashopCheckout\PersistentConfiguration'
-    public: true
-    arguments:
-      - '@ps_checkout.configuration'
+      - "@ps_checkout.configuration"
+      - "@ps_checkout.repository.paypal.code"
 
   ps_checkout.express_checkout.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration'
     public: true
     arguments:
-      - '@ps_checkout.configuration'
+      - "@ps_checkout.configuration"
 
   ps_checkout.pay_later.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration'
     public: true
     arguments:
-      - '@ps_checkout.configuration'
-      - '@ps_checkout.customer'
-      - '@ps_checkout.merchant'
-
-  ps_checkout.api.firebase.auth:
-    class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth'
-    public: true
-
-  ps_checkout.api.firebase.auth.factory:
-    class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\AuthFactory'
-    public: true
-    arguments:
-      - '@ps_checkout.api.firebase.auth'
-      - '@ps_checkout.persistent.configuration'
-
-  ps_checkout.repository.paypal.account:
-    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository'
-    public: true
-    arguments:
-      - '@ps_checkout.configuration'
+      - "@ps_checkout.configuration"
 
   ps_checkout.sdk.paypal.linkbuilder:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder'
     public: true
     arguments:
-      - '@ps_checkout.repository.paypal.account'
-      - '@ps_checkout.paypal.configuration'
-      - '@ps_checkout.pay_later.configuration'
-      - '@ps_checkout.funding_source.configuration.repository'
-      - '@ps_checkout.express_checkout.configuration'
+      - "@ps_checkout.paypal.configuration"
+      - "@ps_checkout.pay_later.configuration"
+      - "@ps_checkout.funding_source.configuration.repository"
+      - "@ps_checkout.express_checkout.configuration"
 
   ps_checkout.repository.prestashop.account:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'
     public: true
     arguments:
-      - '@ps_checkout.configuration'
-
-  ps_checkout.store.module.psx:
-    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule'
-    public: true
-    arguments:
-      - '@ps_checkout.context.prestashop'
-      - '@ps_checkout.repository.prestashop.account'
+      - "@ps_checkout.configuration"
+      - "@ps_accounts.facade"
 
   ps_checkout.store.module.paypal:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule'
     public: true
     arguments:
-      - '@ps_checkout.repository.paypal.account'
-
-  ps_checkout.store.module.firebase:
-    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\FirebaseModule'
-    public: true
-    arguments:
-      - '@ps_checkout.configuration'
+      - "@ps_checkout.paypal.configuration"
 
   ps_checkout.store.module.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule'
     public: true
     arguments:
-      - '@ps_checkout.pay_later.configuration'
-      - '@ps_checkout.express_checkout.configuration'
-      - '@ps_checkout.paypal.configuration'
-      - '@ps_checkout.funding_source.provider'
-      - '@ps_checkout.module'
+      - "@ps_checkout.pay_later.configuration"
+      - "@ps_checkout.express_checkout.configuration"
+      - "@ps_checkout.paypal.configuration"
+      - "@ps_checkout.funding_source.provider"
+      - "@ps_checkout.module"
 
-  ps_checkout.builder.payload.onboarding:
-    class: 'PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder'
+  ps_checkout.builder.module_link:
+    class: 'PrestaShop\Module\PrestashopCheckout\Builder\ModuleLink\ModuleLinkBuilder'
     public: true
-    arguments:
-      - '@ps_checkout.repository.prestashop.account'
-      - '@ps_checkout.adapter.language'
-
-  ps_checkout.updater.paypal.account:
-    class: 'PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater'
-    public: true
-    arguments:
-      - '@ps_checkout.persistent.configuration'
-      - '@ps_checkout.paypal.provider.merchant_integration'
 
   ps_checkout.step.live:
     class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep'
     public: true
     arguments:
-      - '@ps_checkout.configuration'
+      - "@ps_checkout.configuration"
 
   ps_checkout.step.value:
     class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner'
     public: true
     arguments:
-      - '@ps_checkout.configuration'
+      - "@ps_checkout.configuration"
 
   ps_checkout.translations.translations:
     class: 'PrestaShop\Module\PrestashopCheckout\Translations\Translations'
     public: true
     arguments:
-      - '@ps_checkout.module'
+      - "@ps_checkout.module"
 
   ps_checkout.store.module.context:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule'
@@ -215,41 +178,49 @@ services:
     arguments:
       - '@=service("ps_checkout.module").name'
       - '@=service("ps_checkout.module").module_key'
-      - '@ps_checkout.context.prestashop'
-      - '@ps_checkout.paypal.configuration'
-      - '@ps_checkout.step.live'
-      - '@ps_checkout.step.value'
-      - '@ps_checkout.translations.translations'
-      - '@ps_checkout.context.shop'
-      - '@ps_checkout.shop.provider'
+      - "@ps_checkout.context.prestashop"
+      - "@ps_checkout.paypal.configuration"
+      - "@ps_checkout.step.live"
+      - "@ps_checkout.step.value"
+      - "@ps_checkout.translations.translations"
+      - "@ps_checkout.context.shop"
+      - "@ps_checkout.shop.provider"
+      - "@ps_checkout.builder.module_link"
+      - "@ps_checkout.repository.prestashop.account"
 
   ps_checkout.adapter.language:
     class: 'PrestaShop\Module\PrestashopCheckout\Adapter\LanguageAdapter'
     public: true
     arguments:
-      - '@ps_checkout.context.shop'
+      - "@ps_checkout.context.shop"
 
   ps_checkout.store.store:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter'
     public: true
     arguments:
-      - ['@ps_checkout.store.module.context', '@ps_checkout.store.module.firebase', '@ps_checkout.store.module.paypal', '@ps_checkout.store.module.psx', '@ps_checkout.store.module.configuration']
+      - [
+          "@ps_checkout.store.module.context",
+          "@ps_checkout.store.module.paypal",
+          "@ps_checkout.store.module.configuration",
+        ]
 
   ps_checkout.repository.pscheckoutcart:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
     public: true
+    arguments:
+      - "@ps_checkout.cache.pscheckoutcart"
 
   ps_checkout.funding_source.configuration.repository:
     class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository'
     public: true
     arguments:
-      - '@ps_checkout.context.prestashop'
+      - "@ps_checkout.context.prestashop"
 
   ps_checkout.funding_source.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfiguration'
     public: true
     arguments:
-      - '@ps_checkout.funding_source.configuration.repository'
+      - "@ps_checkout.funding_source.configuration.repository"
 
   ps_checkout.funding_source.eligibility_constraint:
     class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceEligibilityConstraint'
@@ -259,14 +230,14 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceCollectionBuilder'
     public: true
     arguments:
-      - '@ps_checkout.funding_source.configuration'
-      - '@ps_checkout.funding_source.eligibility_constraint'
+      - "@ps_checkout.funding_source.configuration"
+      - "@ps_checkout.funding_source.eligibility_constraint"
 
   ps_checkout.funding_source.translation:
     class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider'
     public: true
     arguments:
-      - '@ps_checkout.module'
+      - "@ps_checkout.module"
 
   ps_checkout.funding_source.entity:
     class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceEntity'
@@ -280,8 +251,8 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourcePresenter'
     public: true
     arguments:
-      - '@ps_checkout.funding_source.translation'
-      - '@ps_checkout.repository.country'
+      - "@ps_checkout.funding_source.translation"
+      - "@ps_checkout.repository.country"
 
   ps_checkout.funding_source.collection:
     class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceCollection'
@@ -293,55 +264,32 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider'
     public: true
     arguments:
-      - '@ps_checkout.funding_source.collection.builder'
-      - '@ps_checkout.funding_source.presenter'
+      - "@ps_checkout.funding_source.collection.builder"
+      - "@ps_checkout.funding_source.presenter"
 
   ps_checkout.repository.paypal.code:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository'
-    public: true
-
-  ps_checkout.handler.exception:
-    class: 'PrestaShop\Module\PrestashopCheckout\Handler\ExceptionHandler'
-    public: true
-    arguments:
-      - '@ps_checkout.module'
-      - '@ps_checkout.env.sentry'
-      - '@ps_checkout.repository.prestashop.account'
-
-  ps_checkout.customer:
-    class: 'PrestaShop\Module\PrestashopCheckout\Customer'
-    public: true
-    arguments:
-      - '@ps_checkout.context.prestashop'
-
-  ps_checkout.merchant:
-    class: 'PrestaShop\Module\PrestashopCheckout\Merchant'
     public: true
 
   ps_checkout.env_loader:
     class: 'PrestaShop\Module\PrestashopCheckout\Environment\EnvLoader'
     public: true
 
-  ps_checkout.manager.shopuuid:
-    class: 'PrestaShop\Module\PrestashopCheckout\ShopUuidManager'
-    public: true
-
   ps_checkout.validator.merchant:
     class: 'PrestaShop\Module\PrestashopCheckout\Validator\MerchantValidator'
     public: true
     arguments:
-      - '@ps_checkout.repository.paypal.account'
-      - '@ps_checkout.repository.prestashop.account'
-      - '@ps_checkout.context.prestashop'
-      - '@ps_checkout.manager.shopuuid'
+      - "@ps_checkout.paypal.configuration"
+      - "@ps_checkout.repository.prestashop.account"
+      - "@ps_checkout.context.prestashop"
 
   ps_checkout.validator.front_controller:
     class: 'PrestaShop\Module\PrestashopCheckout\Validator\FrontControllerValidator'
     public: true
     arguments:
-      - '@ps_checkout.validator.merchant'
-      - '@ps_checkout.express_checkout.configuration'
-      - '@ps_checkout.pay_later.configuration'
+      - "@ps_checkout.validator.merchant"
+      - "@ps_checkout.express_checkout.configuration"
+      - "@ps_checkout.pay_later.configuration"
 
   ps_checkout.cache.directory:
     class: 'PrestaShop\ModuleLibCacheDirectoryProvider\Cache\CacheDirectoryProvider'
@@ -351,33 +299,57 @@ services:
       - !php/const _PS_ROOT_DIR_
       - !php/const _PS_MODE_DEV_
 
-  ps_checkout.cache.paypal.order:
+  ps_checkout.cache.array.paypal.order:
+    class: 'Symfony\Component\Cache\Simple\ArrayCache'
+
+  ps_checkout.cache.filesystem.paypal.order:
     class: 'Symfony\Component\Cache\Simple\FilesystemCache'
-    public: true
     arguments:
-      - 'paypal-orders'
+      - "paypal-orders"
       - 3600
       - '@=service("ps_checkout.cache.directory").getPath()'
+
+  ps_checkout.cache.paypal.order:
+    class: 'Symfony\Component\Cache\Simple\ChainCache'
+    public: true
+    arguments:
+      - [
+        "@ps_checkout.cache.array.paypal.order",
+        "@ps_checkout.cache.filesystem.paypal.order",
+        ]
+
+  ps_checkout.cache.array.paypal.capture:
+    class: 'Symfony\Component\Cache\Simple\ArrayCache'
+
+  ps_checkout.cache.filesystem.paypal.capture:
+    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
+    arguments:
+      - "paypal-capture"
+      - 3600
+      - '@=service("ps_checkout.cache.directory").getPath()'
+
+  ps_checkout.cache.paypal.capture:
+    class: 'Symfony\Component\Cache\Simple\ChainCache'
+    public: true
+    arguments:
+      - [
+        "@ps_checkout.cache.array.paypal.capture",
+        "@ps_checkout.cache.filesystem.paypal.capture",
+        ]
+
+  ps_checkout.cache.pscheckoutcart:
+    class: 'Symfony\Component\Cache\Simple\ArrayCache'
+    public: true
+
+  ps_checkout.cache.order:
+    class: 'Symfony\Component\Cache\Simple\ArrayCache'
+    public: true
 
   ps_checkout.paypal.provider.order:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider'
     public: true
     arguments:
-      - '@ps_checkout.cache.paypal.order'
-
-  ps_checkout.cache.paypal.merchant_integration:
-    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
-    public: true
-    arguments:
-      - 'merchant-integration'
-      - 86400
-      - '@=service("ps_checkout.cache.directory").getPath()'
-
-  ps_checkout.paypal.provider.merchant_integration:
-    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalMerchantIntegrationProvider'
-    public: true
-    arguments:
-      - '@ps_checkout.cache.paypal.merchant_integration'
+      - "@ps_checkout.cache.paypal.order"
 
   ps_checkout.paypal.provider.client_token:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalClientTokenProvider'
@@ -410,3 +382,329 @@ services:
       - '@ps_checkout.prestashop.router'
       - '@ps_checkout.paypal.order.translations'
       - '@ps_checkout.context.shop'
+
+  ps_checkout.webhook.service.secret_token:
+    class: 'PrestaShop\Module\PrestashopCheckout\Webhook\WebhookSecretTokenService'
+    public: true
+    arguments:
+      - "@ps_checkout.configuration"
+
+  ps_checkout.webhook.handler.event.configuration_updated:
+    class: 'PrestaShop\Module\PrestashopCheckout\Webhook\WebhookEventConfigurationUpdatedHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.configuration"
+
+  ps_checkout.order.service.check_order_amount:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount'
+    public: true
+
+  ps_checkout.order.state.service.check_order_state:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckOrderState'
+    public: true
+
+  ps_checkout.paypal.order.service.paypal_order_status:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus'
+    public: true
+
+  ps_checkout.paypal.order.service.check_transition_paypal_order_status:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CheckTransitionPayPalOrderStatusService'
+    public: true
+
+  ps_checkout.webhook.handler:
+    class: 'PrestaShop\Module\PrestashopCheckout\Webhook\WebhookHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.webhook.service.secret_token"
+      - ["@ps_checkout.webhook.handler.event.configuration_updated"]
+
+  ps_accounts.installer:
+    class: 'PrestaShop\PsAccountsInstaller\Installer\Installer'
+    public: true
+    arguments:
+      - "4.0.0"
+
+  ps_accounts.facade:
+    class: 'PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts'
+    public: true
+    arguments:
+      - "@ps_accounts.installer"
+
+  ps_checkout.tactician.bus:
+    class: 'League\Tactician\CommandBus'
+    factory: ["@ps_checkout.tactician.bus.factory", "create"]
+
+  ps_checkout.bus.command:
+    class: 'PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusAdapter'
+    public: true
+    arguments:
+      - "@ps_checkout.tactician.bus"
+
+  ps_checkout.tactician.bus.factory:
+    class: 'PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory'
+    public: true
+    arguments:
+      - "@ps_checkout.module"
+      - "@ps_checkout.logger"
+      -
+        PrestaShop\Module\PrestashopCheckout\Order\Command\AddOrderPaymentCommand: "ps_checkout.command.handler.order.add_order_payment"
+        PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand: "ps_checkout.command.handler.order.create_order"
+        PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand: "ps_checkout.command.handler.order.update_order_status"
+        PrestaShop\Module\PrestashopCheckout\Order\Matrice\Command\UpdateOrderMatriceCommand: "ps_checkout.command.handler.order.matrice.update_order_matrice"
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand: "ps_checkout.command.handler.paypal.order.capture_paypal_order"
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\PrunePayPalOrderCacheCommand: "ps_checkout.command.handler.paypal.order.prune_paypal_order_cache"
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\RemovePayPalOrderCacheCommand: "ps_checkout.command.handler.paypal.order.remove_paypal_order_cache"
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand: "ps_checkout.command.handler.paypal.order.save_paypal_order"
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCacheCommand: "ps_checkout.command.handler.paypal.order.update_paypal_order_cache"
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQuery: "ps_checkout.query.handler.order.get_order_for_payment_completed"
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQuery: "ps_checkout.query.handler.order.get_order_for_payment_denied"
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentPendingQuery: "ps_checkout.query.handler.order.get_order_for_payment_pending"
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQuery: "ps_checkout.query.handler.order.get_order_for_payment_refunded"
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQuery: "ps_checkout.query.handler.order.get_order_for_payment_reversed"
+        PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query\GetClientTokenPayPalQuery: "ps_checkout.query.handler.paypal.identity.get_client_token"
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetCurrentPayPalOrderStatusQuery: "ps_checkout.query.handler.paypal.order.get_current_paypal_order_status"
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery: "ps_checkout.query.handler.paypal.order.get_paypal_order_for_checkout_completed"
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery: "ps_checkout.query.handler.paypal.order.get_paypal_order_for_order_confirmation"
+        PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePaymentMethodSelectedCommand: "ps_checkout.query.handler.session.update_payment_method_selected"
+        PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand: "ps_checkout.query.handler.session.update_ps_checkout_session"
+        PrestaShop\Module\PrestashopCheckout\Order\Payment\Query\GetOrderPaymentQuery: "ps_checkout.query.handler.order.payment.get_payment_order"
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderQuery: "ps_checkout.query.handler.order.get_order"
+        PrestaShop\Module\PrestashopCheckout\Order\State\Query\GetOrderStateConfigurationQuery: "ps_checkout.query.handler.order.state.get_order_state_configuration"
+
+  ps_checkout.event.dispatcher.factory:
+    class: 'PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherFactory'
+    public: true
+    arguments:
+      - "@ps_checkout.logger"
+      - "@ps_checkout.logger.configuration"
+
+  ps_checkout.event.subscriber.checkout:
+    class: 'PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber\CheckoutEventSubscriber'
+    public: true
+    arguments:
+      - "@ps_checkout.module"
+
+  ps_checkout.event.subscriber.order:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber'
+    public: true
+    arguments:
+      - "@ps_checkout.module"
+      - "@ps_checkout.repository.pscheckoutcart"
+
+  ps_checkout.event.subscriber.paypal.order:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber'
+    public: true
+    arguments:
+      - "@ps_checkout.module"
+      - "@ps_checkout.logger"
+      - "@ps_checkout.repository.pscheckoutcart"
+      - "@ps_checkout.cache.paypal.order"
+
+  ps_checkout.event.subscriber.paypal.capture:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber'
+    public: true
+    arguments:
+      - "@ps_checkout.module"
+      - "@ps_checkout.logger"
+      - "@ps_checkout.repository.pscheckoutcart"
+      - "@ps_checkout.order.service.check_order_amount"
+      - "@ps_checkout.cache.paypal.capture"
+
+  ps_checkout.event.dispatcher.symfony:
+    class: 'Symfony\Component\EventDispatcher\EventDispatcherInterface'
+    factory: ["@ps_checkout.event.dispatcher.factory", "create"]
+    arguments:
+      - [
+          "@ps_checkout.event.subscriber.checkout",
+          "@ps_checkout.event.subscriber.order",
+          "@ps_checkout.event.subscriber.paypal.order",
+          "@ps_checkout.event.subscriber.paypal.capture",
+        ]
+
+  ps_checkout.event.dispatcher:
+    class: 'PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
+    public: true
+    arguments:
+      - "@ps_checkout.event.dispatcher.symfony"
+
+  ps_checkout.command.handler.order.add_order_payment:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\AddOrderPaymentCommandHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.event.dispatcher"
+
+  ps_checkout.command.handler.order.create_order:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\CreateOrderCommandHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.context.state.manager"
+      - "@ps_checkout.event.dispatcher"
+
+  ps_checkout.command.handler.order.update_order_status:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdateOrderStatusCommandHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.event.dispatcher"
+      - "@ps_checkout.order.state.service.check_order_state"
+
+  ps_checkout.command.handler.order.matrice.update_order_matrice:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\Matrice\CommandHandler\UpdateOrderMatriceCommandHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.event.dispatcher"
+
+  ps_checkout.command.handler.paypal.order.capture_paypal_order:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CapturePayPalOrderCommandHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.paypal.order.dispatcher"
+      - "@ps_checkout.paypal.capture.dispatcher"
+
+  ps_checkout.command.handler.paypal.order.prune_paypal_order_cache:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\PrunePayPalOrderCacheCommandHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.event.dispatcher"
+      - "@ps_checkout.cache.paypal.order"
+
+  ps_checkout.command.handler.paypal.order.remove_paypal_order_cache:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\RemovePayPalOrderCacheCommandHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.event.dispatcher"
+      - "@ps_checkout.cache.paypal.order"
+
+  ps_checkout.command.handler.paypal.order.save_paypal_order:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\SavePayPalOrderCommandHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.event.dispatcher"
+      - "@ps_checkout.repository.pscheckoutcart"
+
+  ps_checkout.command.handler.paypal.order.update_paypal_order_cache:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\UpdatePayPalOrderCacheCommandHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.cache.paypal.order"
+
+  ps_checkout.query.handler.paypal.order.get_current_paypal_order_status:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetCurrentPayPalOrderStatusQueryHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.repository.pscheckoutcart"
+
+  ps_checkout.query.handler.order.get_order:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderQueryHandler'
+    public: true
+
+  ps_checkout.query.handler.order.get_order_for_payment_completed:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentCompletedQueryHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.cache.order"
+
+  ps_checkout.query.handler.order.get_order_for_payment_denied:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentDeniedQueryHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.cache.order"
+
+  ps_checkout.query.handler.order.get_order_for_payment_pending:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentPendingQueryHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.cache.order"
+
+  ps_checkout.query.handler.order.get_order_for_payment_refunded:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentRefundedQueryHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.cache.order"
+
+  ps_checkout.query.handler.order.get_order_for_payment_reversed:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentReversedQueryHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.cache.order"
+
+  ps_checkout.query.handler.paypal.identity.get_client_token:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Identity\QueryHandler\GetClientTokenPayPalQueryHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.event.dispatcher"
+
+  ps_checkout.query.handler.paypal.order.get_paypal_order_for_checkout_completed:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForCheckoutCompletedQueryHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.event.dispatcher"
+      - "@ps_checkout.cache.paypal.order"
+      - "@ps_checkout.paypal.order.dispatcher"
+
+  ps_checkout.query.handler.paypal.order.get_paypal_order_for_order_confirmation:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForOrderConfirmationQueryHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.event.dispatcher"
+      - "@ps_checkout.cache.paypal.order"
+
+  ps_checkout.query.handler.session.update_payment_method_selected:
+    class: 'PrestaShop\Module\PrestashopCheckout\Session\CommandHandler\UpdatePaymentMethodSelectedCommandHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.event.dispatcher"
+      - "@ps_checkout.repository.pscheckoutcart"
+
+  ps_checkout.query.handler.session.update_ps_checkout_session:
+    class: 'PrestaShop\Module\PrestashopCheckout\Session\CommandHandler\UpdatePsCheckoutSessionCommandHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.event.dispatcher"
+      - "@ps_checkout.repository.pscheckoutcart"
+
+  ps_checkout.query.handler.order.payment.get_payment_order:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\Payment\QueryHandler\GetOrderPaymentQueryHandler'
+    public: true
+
+  ps_checkout.query.handler.order.state.get_order_state_configuration:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\State\QueryHandler\GetOrderStateConfigurationQueryHandler'
+    public: true
+
+  ps_checkout.query.handler.order.state.get_order_state:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\State\QueryHandler\GetOrderStateQueryHandler'
+    public: true
+
+  ps_checkout.paypal.order.comparator:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\Comparator\PayPalOrderComparator'
+    public: true
+    arguments:
+      - "@ps_checkout.cache.paypal.order"
+
+  ps_checkout.paypal.order.dispatcher:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderEventDispatcher'
+    public: true
+    arguments:
+      - "@ps_checkout.event.dispatcher"
+      - "@ps_checkout.bus.command"
+      - "@ps_checkout.paypal.order.service.check_transition_paypal_order_status"
+      - "@ps_checkout.paypal.order.comparator"
+      - "@ps_checkout.cache.paypal.order"
+
+  ps_checkout.paypal.capture.service.check_transition_paypal_capture_status:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\CheckTransitionPayPalCaptureStatusService'
+    public: true
+
+  ps_checkout.paypal.capture.comparator:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Comparator\PayPalCaptureComparator'
+    public: true
+    arguments:
+      - "@ps_checkout.cache.paypal.capture"
+
+  ps_checkout.paypal.capture.dispatcher:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\PayPalCaptureEventDispatcher'
+    public: true
+    arguments:
+      - "@ps_checkout.event.dispatcher"
+      - "@ps_checkout.paypal.capture.service.check_transition_paypal_capture_status"
+      - "@ps_checkout.paypal.capture.comparator"
+      - "@ps_checkout.cache.paypal.capture"

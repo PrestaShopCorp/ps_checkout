@@ -292,19 +292,13 @@ export class PayPalService extends BaseClass {
           name: fundingSource,
           mark: this.sdk.Marks({ fundingSource })
         }))
-        .filter(({ name, mark }) => {
-          if (name === 'card') {
-            if (this.configPrestaShop.hostedFieldsEnabled) {
-              return this.isHostedFieldsEligible()
-                ? true
-                : (console.error('Hosted Fields eligibility is declined'),
-                  false);
-            }
+        .filter((fundingSource) => {
+          if (fundingSource.name === 'card' && this.configPrestaShop.hostedFieldsEnabled && !this.isHostedFieldsEligible()) {
+            console.error('Hosted Fields (CCF) eligibility is declined. Switching to PayPal branded card fields (SCF)');
           }
-          //TODO: REMOVE AFTER TESTING
-          console.log(name, mark.isEligible());
+          console.log(fundingSource.name, fundingSource.mark.isEligible());
 
-          return mark.isEligible();
+          return fundingSource.mark.isEligible();
         });
     }
 
@@ -369,5 +363,30 @@ export class PayPalService extends BaseClass {
         ...events
       })
     );
+  }
+
+  /**
+   * @param {string} fundingSource
+   * @param {object} fields
+   */
+  getPaymentFields(fundingSource, fields = {}) {
+    console.log(this.sdk.PaymentFields);
+    return this.sdk.PaymentFields && this.sdk.PaymentFields({
+      fundingSource: fundingSource,
+      style: this.getPaymentFieldsCustomizationStyle(fundingSource),
+      fields: fields
+    });
+  }
+
+  /**
+   * @param {string} placement
+   * @param {string} amount
+   * @param {PaypalPayLaterOfferEvents} events
+   */
+  getPaymentFieldsCustomizationStyle() {
+    return {
+      ...(this.configPayPal.paymentFieldsCustomization || {}),
+      ...(window.ps_checkout.paymentFieldsCustomization || {})
+    };
   }
 }

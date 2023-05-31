@@ -28,16 +28,8 @@ export class PaymentOptionsComponent extends BaseComponent {
   };
 
   created() {
-    this.data.HTMLElement = this.querySelectorService.getPaymentOptions();
-
+    this.data.HTMLElementPaymentOptionsContainer = this.querySelectorService.getPaymentOptions();
     this.data.HTMLBasePaymentConfirmation = this.querySelectorService.getBasePaymentConfirmation();
-
-    this.data.HTMLElementPayPalButton = document.querySelector(
-      '.ps_checkout-button[data-funding-source="paypal"]'
-    );
-    this.data.HTMLElementPayPalRadio = document.querySelector(
-      'input[type="radio"][data-module-name="ps_checkout-paypal"]'
-    );
   }
 
   renderPaymentOptionItems() {
@@ -48,12 +40,15 @@ export class PaymentOptionsComponent extends BaseComponent {
           `[data-module-name^="ps_checkout-${fundingSource.name}"]`
         );
 
+        if (this.config.expressCheckout.active && this.payPalService.getFundingSource() === fundingSource.name) {
+          HTMLElement.click();
+        }
+
         return (
           HTMLElement &&
           new PaymentOptionComponent(this.app, {
             fundingSource: fundingSource,
             markPosition: this.props.markPosition,
-
             HTMLElement
           }).render()
         );
@@ -61,69 +56,31 @@ export class PaymentOptionsComponent extends BaseComponent {
       .filter((paymentOption) => paymentOption);
   }
 
-  renderPaymentOptionRadios() {
+  renderPaymentOptionListener() {
     const radios = this.querySelectorService.getPaymentOptionRadios();
     radios.forEach((radio) => {
       radio.addEventListener('change', () => {
         this.data.notification.hideCancelled();
         this.data.notification.hideError();
+
+        if (this.config.expressCheckout.active && (('ps_checkout-' + this.payPalService.getFundingSource()) !== radio.dataset.moduleName)) {
+          this.psCheckoutApi.postCancelOrder(
+            {
+              orderID: this.payPalService.getOrderId(),
+              fundingSource: this.payPalService.getFundingSource(),
+              isExpressCheckout: true
+            }
+          ).then(() => {
+            this.config.expressCheckout.active = false;
+
+            const expressCheckoutContainer = document.querySelector('#ps_checkout-express-checkout-banner');
+            if (expressCheckoutContainer) {
+              expressCheckoutContainer.style.display = 'none';
+            }
+          });
+        }
       });
     });
-  }
-
-  renderExpressCheckoutPaymentButton() {
-    const paymentButton = this.data.HTMLBasePaymentConfirmation.cloneNode(true);
-
-    paymentButton.id = 'ps_checkout-hosted-submit-button';
-    paymentButton.type = 'button';
-
-    paymentButton.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.data.loader.show();
-
-      this.psCheckoutApi
-        .postCheckCartOrder(
-          {
-            orderID: this.payPalService.getOrderId(),
-            fundingSource: this.payPalService.getFundingSource(),
-            isExpressCheckout: true
-          },
-          { resolve: () => {}, reject: () => {} }
-        )
-        .then(() =>
-          this.psCheckoutApi.postValidateOrder({
-            orderID: this.payPalService.getOrderId(),
-            fundingSource: this.payPalService.getFundingSource(),
-            isExpressCheckout: true
-          })
-        )
-        .catch((error) => {
-          console.log(error);
-          this.data.loader.hide();
-          this.data.notification.showError(error.message);
-        });
-    });
-
-    this.children.expressCheckoutButton = document.createElement('div');
-
-    this.children.expressCheckoutButton.id = 'button-paypal';
-    this.children.expressCheckoutButton.classList.add(
-      '.ps_checkout-express-checkout-button'
-    );
-
-    paymentButton.disabled = !this.data.conditions.isChecked();
-    paymentButton.classList.remove('disabled');
-
-    this.data.conditions.onChange(() => {
-      setTimeout(() => {
-        paymentButton.disabled = !this.data.conditions.isChecked();
-      }, 0);
-    });
-
-    this.children.expressCheckoutButton.append(paymentButton);
-    this.data.HTMLElementPayPalButton.append(
-      this.children.expressCheckoutButton
-    );
   }
 
   render() {
@@ -131,15 +88,8 @@ export class PaymentOptionsComponent extends BaseComponent {
     this.data.notification = this.app.root.children.notification;
     this.data.loader = this.app.root.children.loader;
 
-    if (!this.config.expressCheckout.active) {
-      this.renderPaymentOptionItems();
-      this.renderPaymentOptionRadios();
-    } else {
-      this.data.HTMLElement.style.display = 'none';
-      this.data.HTMLElementPayPalRadio.checked = true;
-
-      this.renderExpressCheckoutPaymentButton();
-    }
+    this.renderPaymentOptionItems();
+    this.renderPaymentOptionListener();
 
     return this;
   }

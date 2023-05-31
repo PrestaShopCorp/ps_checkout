@@ -26,13 +26,6 @@ use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceEntity;
 
 class FundingSourceCollectionTest extends TestCase
 {
-    protected function setUp()
-    {
-        $collection = new FundingSourceCollection($this->getFundingSourceEntityList());
-
-        $this->assertContainsOnlyInstancesOf(FundingSourceEntity::class, $collection->get());
-    }
-
     public function testSortFundingSourcesByPosition()
     {
         $collection = new FundingSourceCollection($this->getFundingSourceEntityList());

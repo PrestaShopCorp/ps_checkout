@@ -30,24 +30,6 @@ use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfigur
 class Shop extends PaymentClient
 {
     /**
-     * Generate the paypal link to onboard merchant
-     *
-     * @param string $merchantId
-     *
-     * @return array onboarding link
-     */
-    public function getMerchantIntegration($merchantId)
-    {
-        $this->setRoute('/payments/shop/get_merchant_integrations');
-
-        return $this->post([
-            'json' => json_encode([
-                'merchant_id' => $merchantId,
-            ]),
-        ]);
-    }
-
-    /**
      * Used to notify PSL on settings update
      *
      * @return array
@@ -64,14 +46,12 @@ class Shop extends PaymentClient
         $ecConfiguration = $module->getService('ps_checkout.express_checkout.configuration');
 
         return $this->post([
-            'json' => json_encode([
-                'settings' => [
-                    'cb' => (bool) $configuration->get('PS_CHECKOUT_CARD_PAYMENT_ENABLED'),
-                    'express_in_product' => (bool) $ecConfiguration->isProductPageEnabled(),
-                    'express_in_cart' => (bool) $ecConfiguration->isOrderPageEnabled(),
-                    'express_in_checkout' => (bool) $ecConfiguration->isCheckoutPageEnabled(),
-                ],
-            ]),
+            'settings' => [
+                'cb' => (bool) $configuration->get('PS_CHECKOUT_CARD_PAYMENT_ENABLED'),
+                'express_in_product' => (bool) $ecConfiguration->isProductPageEnabled(),
+                'express_in_cart' => (bool) $ecConfiguration->isOrderPageEnabled(),
+                'express_in_checkout' => (bool) $ecConfiguration->isCheckoutPageEnabled(),
+            ],
         ]);
     }
 }

@@ -26,10 +26,12 @@ export const PayPalSdkConfig = {
   fundingSource: window.ps_checkoutFundingSource,
   clientToken: window.ps_checkoutPayPalClientToken,
   buttonCustomization: window.ps_checkoutPayPalButtonConfiguration,
+  paymentFieldsCustomization: window.ps_checkout.paymentFieldsCustomization,
   expressCheckoutButtonCustomization:
     window.ps_checkoutExpressCheckoutButtonCustomization,
   hostedFieldsCustomization:
     window.ps_checkoutHostedFieldsCustomizationConfiguration,
   payLaterOfferMessageCustomization: window.ps_checkoutPayLaterOfferMessageCustomization,
-  payLaterOfferBannerCustomization: window.ps_checkoutPayLaterOfferBannerCustomization
+  payLaterOfferBannerCustomization: window.ps_checkoutPayLaterOfferBannerCustomization,
+  partnerAttributionId: window.ps_checkoutPartnerAttributionId
 };

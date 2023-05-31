@@ -32,7 +32,7 @@
                 <h2>
                   {if $codesType === 'countries'}
                     {l s='PrestaShop Checkout transactions won\'t work in some of your configured countries, but there is a solution !' mod='ps_checkout'}
-                  {else if $codesType === 'currencies'}
+                  {elseif $codesType === 'currencies'}
                     {l s='PrestaShop Checkout transactions won\'t work in some of your configured currencies, but there is a solution !' mod='ps_checkout'}
                   {/if}
                 </h2>
@@ -46,11 +46,15 @@
                         {foreach $incompatibleCodes as $key => $incompatibleCode}
                             {$incompatibleCode}{if $key != count($incompatibleCodes) - 1},{/if}
                         {/foreach}
-                    </b></i>
+                    </i></b>
                 </p>
 
                 <a href="{$paymentPreferencesLink}" class="button-link" target="_blank">
-                    {l s="Change {$codesType} activation for this payment module" mod='ps_checkout'}
+                    {if $codesType === 'countries'}
+                        {l s='Change countries activation for this payment module' mod='ps_checkout'}
+                    {elseif $codesType === 'currencies'}
+                        {l s='Change currencies activation for this payment module' mod='ps_checkout'}
+                    {/if}
                 </a>
 
                 <a class="btn btn-link banner-link" href="{$paypalLink}" target="_blank">

@@ -25,7 +25,6 @@ use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfigur
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
-use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 
 /**
  * Build sdk link
@@ -33,11 +32,6 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository;
 class PayPalSdkLinkBuilder
 {
     const BASE_LINK = 'https://www.paypal.com/sdk/js';
-
-    /**
-     * @var PaypalAccountRepository
-     */
-    private $payPalAccountRepository;
 
     /**
      * @var PayPalConfiguration
@@ -58,41 +52,17 @@ class PayPalSdkLinkBuilder
     private $expressCheckoutConfiguration;
 
     /**
-     * @todo To be removed
-     *
-     * @var bool
-     */
-    private $isExpressCheckout = false;
-
-    /**
-     * @todo To be removed
-     *
-     * @var bool
-     */
-    private $isDisplayOnlyHostedFields = false;
-
-    /**
-     * @todo To be removed
-     *
-     * @var bool
-     */
-    private $isDisplayOnlySmartButtons = false;
-
-    /**
-     * @param PaypalAccountRepository $payPalAccountRepository
      * @param PayPalConfiguration $configuration
      * @param PayPalPayLaterConfiguration $payLaterConfiguration
      * @param FundingSourceConfigurationRepository $fundingSourceConfigurationRepository
      * @param ExpressCheckoutConfiguration $expressCheckoutConfiguration
      */
     public function __construct(
-        PaypalAccountRepository $payPalAccountRepository,
         PayPalConfiguration $configuration,
         PayPalPayLaterConfiguration $payLaterConfiguration,
         FundingSourceConfigurationRepository $fundingSourceConfigurationRepository,
         ExpressCheckoutConfiguration $expressCheckoutConfiguration
     ) {
-        $this->payPalAccountRepository = $payPalAccountRepository;
         $this->configuration = $configuration;
         $this->payLaterConfiguration = $payLaterConfiguration;
         $this->fundingSourceConfigurationRepository = $fundingSourceConfigurationRepository;
@@ -124,9 +94,8 @@ class PayPalSdkLinkBuilder
         }
 
         $params = [
-            'components' => implode(',', $components),
             'client-id' => (new PaypalEnv())->getPaypalClientId(),
-            'merchant-id' => $this->payPalAccountRepository->getMerchantId(),
+            'merchant-id' => $this->configuration->getMerchantId(),
             'currency' => \Context::getContext()->currency->iso_code,
             'intent' => strtolower($this->configuration->getIntent()),
             'commit' => 'order' === $this->getPageName() ? 'true' : 'false',
@@ -137,7 +106,6 @@ class PayPalSdkLinkBuilder
         if ('SANDBOX' === $this->configuration->getPaymentMode()) {
             $params['debug'] = 'true';
 //            $params['buyer-country'] = $this->getCountry();
-//            $params['locale'] = $this->getLocale();
         }
 
         $fundingSourcesDisabled = $this->getFundingSourcesDisabled();
@@ -146,9 +114,26 @@ class PayPalSdkLinkBuilder
             $params['disable-funding'] = implode(',', $fundingSourcesDisabled);
         }
 
-        if ($this->isPayLaterEnabled()) {
-            $params['enable-funding'] = 'paylater';
+        $eligibleAlternativePaymentMethods = $this->getEligibleAlternativePaymentMethods();
+
+        if (false === empty($eligibleAlternativePaymentMethods)) {
+            $params['locale'] = $this->getLocale();
+            $components[] = 'payment-fields';
         }
+
+        if (isset($params['locale']) && empty($params['locale'])) {
+            unset($params['locale']);
+        }
+
+        if ($this->isPayLaterEnabled()) {
+            $eligibleAlternativePaymentMethods[] = 'paylater';
+        }
+
+        if (false === empty($eligibleAlternativePaymentMethods)) {
+            $params['enable-funding'] = implode(',', $eligibleAlternativePaymentMethods);
+        }
+
+        $params['components'] = implode(',', $components);
 
         return self::BASE_LINK . '?' . urldecode(http_build_query($params));
     }
@@ -175,30 +160,6 @@ class PayPalSdkLinkBuilder
         }
 
         return $fundingSourcesDisabled;
-    }
-
-    /**
-     * @todo To be removed
-     */
-    public function enableDisplayExpressCheckout()
-    {
-        $this->isExpressCheckout = true;
-    }
-
-    /**
-     * @todo To be removed
-     */
-    public function enableDisplayOnlyHostedFields()
-    {
-        $this->isDisplayOnlyHostedFields = true;
-    }
-
-    /**
-     * @todo To be removed
-     */
-    public function enableDisplayOnlySmartButtons()
-    {
-        $this->isDisplayOnlySmartButtons = true;
     }
 
     private function getPageName()
@@ -259,7 +220,7 @@ class PayPalSdkLinkBuilder
             return false;
         }
 
-        return $this->payPalAccountRepository->cardHostedFieldsIsAvailable();
+        return $this->configuration->isHostedFieldsEnabled() && in_array($this->configuration->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true);
     }
 
     /**
@@ -291,8 +252,6 @@ class PayPalSdkLinkBuilder
     }
 
     /**
-     * @todo Used only on sandbox, to be removed when CountryProvider will be available or provide a way to use a ENV value
-     *
      * @return string
      */
     private function getCountry()
@@ -319,8 +278,6 @@ class PayPalSdkLinkBuilder
     }
 
     /**
-     * @todo Used only on sandbox, to be removed when LanguageProvider will be available or provide a way to use a ENV value
-     *
      * @return string
      */
     private function getLanguage()
@@ -336,52 +293,132 @@ class PayPalSdkLinkBuilder
     }
 
     /**
-     * @todo Used only on sandbox, to be removed when LocaleProvider will be available or provide a way to use a ENV value
-     *
      * @return string
      */
     private function getLocale()
     {
-        if ('DE' === $this->getCountry()) {
-            return 'DE' === $this->getLanguage() ? 'de_DE' : 'en_DE';
+        $country = $this->getCountry();
+        $language = $this->getLanguage();
+
+        if ('DE' === $country) {
+            return 'DE' === $language ? 'de_DE' : 'en_DE';
         }
 
-        if ('US' === $this->getCountry()) {
+        if ('US' === $country) {
             return 'en_US';
         }
 
-        if ('GB' === $this->getCountry()) {
+        if ('GB' === $country) {
             return 'en_GB';
         }
 
-        if ('ES' === $this->getCountry()) {
-            return 'ES' === $this->getLanguage() ? 'es_ES' : 'en_ES';
+        if ('ES' === $country) {
+            return 'ES' === $language ? 'es_ES' : 'en_ES';
         }
 
-        if ('FR' === $this->getCountry()) {
-            return 'FR' === $this->getLanguage() ? 'fr_FR' : 'en_FR';
+        if ('FR' === $country) {
+            return 'FR' === $language ? 'fr_FR' : 'en_FR';
         }
 
-        if ('IT' === $this->getCountry()) {
-            return 'IT' === $this->getLanguage() ? 'it_IT' : 'en_IT';
+        if ('IT' === $country) {
+            return 'IT' === $language ? 'it_IT' : 'en_IT';
         }
 
-        if ('NL' === $this->getCountry()) {
-            return 'NL' === $this->getLanguage() ? 'nl_NL' : 'en_NL';
+        if ('NL' === $country) {
+            return 'NL' === $language ? 'nl_NL' : 'en_NL';
         }
 
-        if ('PL' === $this->getCountry()) {
-            return 'PL' === $this->getLanguage() ? 'pl_PL' : 'en_PL';
+        if ('PL' === $country) {
+            return 'PL' === $language ? 'pl_PL' : 'en_PL';
         }
 
-        if ('PT' === $this->getCountry()) {
-            return 'PT' === $this->getLanguage() ? 'pt_PT' : 'en_PT';
+        if ('PT' === $country) {
+            return 'PT' === $language ? 'pt_PT' : 'en_PT';
         }
 
-        if ('AU' === $this->getCountry()) {
+        if ('AU' === $country) {
             return 'en_AU';
         }
 
+        if ('AT' === $country) {
+            return 'DE' === $language ? 'de_AT' : 'en_AT';
+        }
+
         return '';
+    }
+
+    private function getEligibleAlternativePaymentMethods()
+    {
+        $fundingSourcesEnabled = [];
+
+        $fundingSources = $this->fundingSourceConfigurationRepository->getAll();
+
+        if (empty($fundingSources)) {
+            return $fundingSourcesEnabled;
+        }
+
+        $context = \Context::getContext();
+        $country = $this->getCountry();
+
+        foreach ($fundingSources as $fundingSource) {
+            if ($fundingSource['active']
+                && $fundingSource['name'] === 'bancontact'
+                && $country === 'BE'
+                && $context->currency->iso_code === 'EUR'
+            ) {
+                $fundingSourcesEnabled[] = $fundingSource['name'];
+            }
+            if ($fundingSource['active']
+                && $fundingSource['name'] === 'blik'
+                && $country === 'PL'
+                && $context->currency->iso_code === 'PLN'
+            ) {
+                $fundingSourcesEnabled[] = $fundingSource['name'];
+            }
+            if ($fundingSource['active']
+                && $fundingSource['name'] === 'eps'
+                && $country === 'AT'
+                && $context->currency->iso_code === 'EUR'
+            ) {
+                $fundingSourcesEnabled[] = $fundingSource['name'];
+            }
+            if ($fundingSource['active']
+                && $fundingSource['name'] === 'giropay'
+                && $country === 'DE'
+                && $context->currency->iso_code === 'EUR'
+            ) {
+                $fundingSourcesEnabled[] = $fundingSource['name'];
+            }
+            if ($fundingSource['active']
+                && $fundingSource['name'] === 'ideal'
+                && $country === 'NL'
+                && $context->currency->iso_code === 'EUR'
+            ) {
+                $fundingSourcesEnabled[] = $fundingSource['name'];
+            }
+            if ($fundingSource['active']
+                && $fundingSource['name'] === 'mybank'
+                && $country === 'IT'
+                && $context->currency->iso_code === 'EUR'
+            ) {
+                $fundingSourcesEnabled[] = $fundingSource['name'];
+            }
+            if ($fundingSource['active']
+                && $fundingSource['name'] === 'p24'
+                && $country === 'PL'
+                && in_array($context->currency->iso_code, ['EUR', 'PLN'], true)
+            ) {
+                $fundingSourcesEnabled[] = $fundingSource['name'];
+            }
+            if ($fundingSource['active']
+                && $fundingSource['name'] === 'sofort'
+                && (($context->currency->iso_code === 'EUR' && in_array($country, ['AU', 'BE', 'DE', 'ES', 'IT', 'NL'], true))
+                || ($context->currency->iso_code === 'GBP' && in_array($country, ['GB', 'UK'], true)))
+            ) {
+                $fundingSourcesEnabled[] = $fundingSource['name'];
+            }
+        }
+
+        return $fundingSourcesEnabled;
     }
 }

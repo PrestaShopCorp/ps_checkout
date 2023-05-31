@@ -20,9 +20,10 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
+use Exception;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
-use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Entity\PsAccount;
+use PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts;
 
 /**
  * Repository for PsAccount class
@@ -32,12 +33,19 @@ class PsAccountRepository
     /** @var PrestaShopConfiguration */
     private $configuration;
 
+    private $psAccountsService;
+
     /**
      * @param PrestaShopConfiguration $configuration
      */
-    public function __construct(PrestaShopConfiguration $configuration)
+    public function __construct(PrestaShopConfiguration $configuration, PsAccounts $psAccountsFacade)
     {
         $this->configuration = $configuration;
+        try {
+            $this->psAccountsService = $psAccountsFacade->getPsAccountsService();
+        } catch (Exception $exception) {
+            $this->psAccountsService = false;
+        }
     }
 
     /**
@@ -51,8 +59,8 @@ class PsAccountRepository
             $this->getIdToken(),
             $this->getRefreshToken(),
             $this->getEmail(),
-            $this->getLocalId(),
-            $this->getPsxForm()
+            $this->getLocalId()
+//            $this->getPsxForm()
         );
     }
 
@@ -65,11 +73,14 @@ class PsAccountRepository
      */
     public function psxFormIsCompleted()
     {
-        if (getenv('PLATEFORM') === 'PSREADY') { // if on ready, the user is already onboarded
-            return true;
-        }
-
-        return !empty($this->getPsxForm());
+        // TODO: Remove all code related to PSX form. Since it's not used any more we return true to be sure to not make any breaking changes
+        return true;
+//
+//        if (getenv('PLATEFORM') === 'PSREADY') { // if on ready, the user is already onboarded
+//            return true;
+//        }
+//
+//        return !empty($this->getPsxForm());
     }
 
     /**
@@ -80,7 +91,9 @@ class PsAccountRepository
      */
     public function onBoardingIsCompleted()
     {
-        return !empty($this->getIdToken()) && $this->psxFormIsCompleted();
+        return !empty($this->getIdToken());
+        // Commented out because psx form is no longer used
+        // && $this->psxFormIsCompleted();
     }
 
     /**
@@ -90,7 +103,11 @@ class PsAccountRepository
      */
     public function getEmail()
     {
-        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_EMAIL);
+        if (!$this->psAccountsService) {
+            return false;
+        }
+
+        return $this->psAccountsService->getEmail();
     }
 
     /**
@@ -100,7 +117,11 @@ class PsAccountRepository
      */
     public function getIdToken()
     {
-        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_ID_TOKEN);
+        if (!$this->psAccountsService) {
+            return false;
+        }
+
+        return (string) $this->psAccountsService->getOrRefreshToken();
     }
 
     /**
@@ -110,7 +131,11 @@ class PsAccountRepository
      */
     public function getLocalId()
     {
-        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_LOCAL_ID);
+        if (!$this->psAccountsService) {
+            return false;
+        }
+
+        return $this->psAccountsService->getUserUuidV4();
     }
 
     /**
@@ -120,7 +145,11 @@ class PsAccountRepository
      */
     public function getRefreshToken()
     {
-        return $this->configuration->get(PsAccount::PS_PSX_FIREBASE_REFRESH_TOKEN);
+        if (!$this->psAccountsService) {
+            return false;
+        }
+
+        return $this->psAccountsService->getRefreshToken();
     }
 
     /**
@@ -144,9 +173,38 @@ class PsAccountRepository
      */
     public function getShopUuid()
     {
-        $psContext = new PrestaShopContext();
-        $shopUuidManager = new \PrestaShop\Module\PrestashopCheckout\ShopUuidManager();
+        if (!$this->psAccountsService) {
+            return false;
+        }
 
-        return $shopUuidManager->getForShop((int) $psContext->getShopId());
+        return $this->psAccountsService->getShopUuid();
+    }
+
+    /**
+     * @return bool
+     *
+     * @throws Exception
+     */
+    public function isEmailValidated()
+    {
+        if (!$this->psAccountsService) {
+            return false;
+        }
+
+        return $this->psAccountsService->isEmailValidated();
+    }
+
+    /**
+     * @return bool
+     *
+     * @throws Exception
+     */
+    public function isAccountLinked()
+    {
+        if (!$this->psAccountsService) {
+            return false;
+        }
+
+        return $this->psAccountsService->isAccountLinked();
     }
 }

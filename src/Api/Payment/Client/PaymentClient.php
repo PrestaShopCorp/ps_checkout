@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -21,13 +22,14 @@
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
 use GuzzleHttp\Client;
-use PrestaShop\Module\PrestashopCheckout\Api\Firebase\Token;
+use GuzzleHttp\HandlerStack;
+use GuzzleLogMiddleware\LogMiddleware;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
-use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
+use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
 
 /**
  * Construct the client used to make call to maasland
@@ -36,35 +38,55 @@ class PaymentClient extends GenericClient
 {
     public function __construct(\Link $link, Client $client = null)
     {
+        parent::__construct();
+
         $this->setLink($link);
 
         // Client can be provided for tests
         if (null === $client) {
-            $client = new Client([
+            /** @var \Ps_checkout $module */
+            $module = \Module::getInstanceByName('ps_checkout');
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
+            $version = $module->getService('ps_checkout.module.version');
+
+            $handlerStack = null;
+
+            if (
+                defined('\GuzzleHttp\ClientInterface::MAJOR_VERSION')
+                && class_exists(HandlerStack::class)
+                && class_exists(LogMiddleware::class)
+            ) {
+                $handlerStack = HandlerStack::create();
+                $handlerStack->push(new LogMiddleware($module->getLogger()));
+            }
+
+            $clientConfiguration = [
                 'base_url' => (new PaymentEnv())->getPaymentApiUrl(),
-                'defaults' => [
-                    'verify' => $this->getVerify(),
-                    'timeout' => $this->timeout,
-                    'exceptions' => $this->catchExceptions,
-                    'headers' => [
-                        'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
-                        'Accept' => 'application/json',
-                        'Authorization' => 'Bearer ' . (new Token())->getToken(),
-                        'Shop-Id' => (new ShopUuidManager())->getForShop((int) \Context::getContext()->shop->id),
-                        'Hook-Url' => $this->link->getModuleLink(
-                            'ps_checkout',
-                            'DispatchWebHook',
-                            [],
-                            true,
-                            null,
-                            (int) \Context::getContext()->shop->id
-                        ),
-                        'Bn-Code' => (new ShopContext())->getBnCode(),
-                        'Module-Version' => \Ps_checkout::VERSION, // version of the module
-                        'Prestashop-Version' => _PS_VERSION_, // prestashop version
-                    ],
+                'verify' => $this->getVerify(),
+                'timeout' => $this->timeout,
+                'exceptions' => $this->catchExceptions,
+                'handler' => $handlerStack,
+                'headers' => [
+                    'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer ' . $this->token,  // Token we get from PsAccounts
+                    'Shop-Id' => $this->shopUid,                  // Shop UUID we get from PsAccounts
+                    'Hook-Url' => $this->link->getModuleLink(
+                        'ps_checkout',
+                        'DispatchWebHook',
+                        [],
+                        true,
+                        (int) \Configuration::get('PS_LANG_DEFAULT'),
+                        (int) \Context::getContext()->shop->id
+                    ),
+                    'Bn-Code' => (new ShopContext())->getBnCode(),
+                    'Module-Version' => $version->getSemVersion(), // version of the module
+                    'Prestashop-Version' => _PS_VERSION_, // prestashop version
                 ],
-            ]);
+            ];
+
+            $client = (new ClientFactory())->getClient($clientConfiguration);
         }
 
         $this->setClient($client);
@@ -104,14 +126,16 @@ class PaymentClient extends GenericClient
                 return $response;
             }
 
-            if (isset($response['exceptionCode'])
+            if (
+                isset($response['exceptionCode'])
                 && $response['exceptionCode'] === PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION
                 && false !== strpos($response['exceptionMessage'], 'cURL error 28')
             ) {
                 throw new HttpTimeoutException($response['exceptionMessage'], PsCheckoutException::PSL_TIMEOUT);
             }
 
-            if (isset($response['body']['message'])
+            if (
+                isset($response['body']['message'])
                 && ($response['body']['message'] === 'Error: ETIMEDOUT' || $response['body']['message'] === 'Error: ESOCKETTIMEDOUT')
             ) {
                 throw new HttpTimeoutException($response['body']['message'], PsCheckoutException::PSL_TIMEOUT);

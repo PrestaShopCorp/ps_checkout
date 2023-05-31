@@ -33,7 +33,12 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
     return (
       this.psCheckoutApi
         .postCheckCartOrder(
-          { ...data, fundingSource: this.props.fundingSource, isExpressCheckout: true },
+          {
+            ...data,
+            fundingSource: this.props.fundingSource,
+            isExpressCheckout: true,
+            orderID: this.payPalService.getOrderId(),
+          },
           actions
         )
         // TODO: Error notification

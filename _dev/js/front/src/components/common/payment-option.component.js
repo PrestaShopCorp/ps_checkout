@@ -21,6 +21,7 @@ import { BaseComponent } from '../../core/dependency-injection/base.component';
 import { HostedFieldsComponent } from './hosted-fields.component';
 import { MarkComponent } from './marker.component';
 import { SmartButtonComponent } from './smart-button.component';
+import { PaymentFieldsComponent } from "./payment-fields.component";
 
 /**
  * @typedef PaymentOptionComponentProps
@@ -34,6 +35,7 @@ import { SmartButtonComponent } from './smart-button.component';
 export class PaymentOptionComponent extends BaseComponent {
   static Inject = {
     config: 'PsCheckoutConfig',
+    payPalService: 'PayPalService',
     $: '$'
   };
 
@@ -47,6 +49,7 @@ export class PaymentOptionComponent extends BaseComponent {
 
     this.data.HTMLElementHostedFields = this.getHostedFields();
     this.data.HTMLElementSmartButton = this.getSmartButton();
+    this.data.HTMLElementPaymentFields = this.getPaymentFields();
   }
 
   getContainer() {
@@ -56,10 +59,25 @@ export class PaymentOptionComponent extends BaseComponent {
 
   getHostedFields() {
     const hostedFieldsFormId = 'ps_checkout-hosted-fields-form';
+
     return (
-      this.data.name === 'card' &&
-      this.config.hostedFieldsEnabled &&
-      document.getElementById(hostedFieldsFormId)
+      this.data.name === 'card'
+      && this.config.hostedFieldsEnabled
+      && document.getElementById(hostedFieldsFormId)
+    );
+  }
+
+  getPaymentFields() {
+    const container = `pay-with-${this.data.HTMLElement.id}-form`;
+    const APM = ['bancontact', 'blik', 'eps', 'giropay', 'ideal', 'mybank', 'p24', 'sofort'];
+
+    const APMEligible = typeof this.payPalService.sdk.PaymentFields?.isEligible === "function" ?
+      this.payPalService.sdk.PaymentFields.isEligible(this.data.name)
+      : APM.includes(this.data.name)
+
+    return (
+      APMEligible &&
+      document.getElementById(container)
     );
   }
 
@@ -69,10 +87,15 @@ export class PaymentOptionComponent extends BaseComponent {
       this.$(translationKey) !== undefined
         ? this.$(translationKey)
         : this.$('funding-source.name.default');
-
-    return Array.prototype.slice
+    let element = Array.prototype.slice
       .call(this.data.HTMLElementContainer.querySelectorAll('*'))
       .find(item => item.innerHTML.trim() === label.trim());
+
+    if (!element) {
+      console.error('HTMLElement label "' + label.trim() + '" not found.');
+    }
+
+    return element;
   }
 
   getSmartButton() {
@@ -93,6 +116,10 @@ export class PaymentOptionComponent extends BaseComponent {
   }
 
   renderMark() {
+    if (!this.data.HTMLElementLabel) {
+      return;
+    }
+
     if (!this.data.HTMLElementMarker) {
       this.data.HTMLElementMarker = document.createElement('div');
       this.data.HTMLElementMarker.style.display = 'inline-block';
@@ -111,11 +138,34 @@ export class PaymentOptionComponent extends BaseComponent {
     }).render();
   }
 
+  renderPaymentFields() {
+    if (!this.data.HTMLElementPaymentFields) {
+      return;
+    }
+
+    this.children.PaymentFields = this.PaymentFields = new PaymentFieldsComponent(this.app, {
+      fundingSource: this.props.fundingSource,
+
+      HTMLElement: this.data.HTMLElementPaymentFields
+    }).render();
+  }
+
   render() {
+    if (this.data.HTMLElementContainer.classList.contains('ps_checkout-payment-option')) {
+      // Render already done
+      return;
+    }
+
     this.renderWrapper();
     this.renderMark();
+    this.renderPaymentFields();
 
-    if (this.data.HTMLElementHostedFields) {
+    let isHostedFieldsEligible = this.payPalService.isHostedFieldsEligible();
+    if (this.data.HTMLElementHostedFields && !isHostedFieldsEligible) {
+      this.data.HTMLElementHostedFields.style.display = 'none';
+    }
+
+    if (this.data.HTMLElementHostedFields && isHostedFieldsEligible) {
       this.children.hostedFields = new HostedFieldsComponent(this.app, {
         fundingSource: this.props.fundingSource,
 
@@ -135,7 +185,7 @@ export class PaymentOptionComponent extends BaseComponent {
           fundingSource: this.data.name,
           HTMLElement: this.data.HTMLElement,
           HTMLElementContainer: this.data.HTMLElementContainer,
-          HTMLElementBinary: this.data.HTMLElementHostedFields
+          HTMLElementBinary: this.data.HTMLElementHostedFields && isHostedFieldsEligible
             ? this.children.hostedFields.data.HTMLElementButton.parentElement
             : this.data.HTMLElementSmartButton
         }

@@ -18,8 +18,14 @@
  */
 export class PrestashopPs1_7Service {
   static getProductDetails() {
+    const productDetails = document.getElementById('product-details');
+
+    if (!productDetails || !productDetails.dataset || !productDetails.dataset.product) {
+      throw new Error('Unable to retrieve product details from DOM: document.getElementById("product-details").dataset.product');
+    }
+
     return JSON.parse(
-      document.getElementById('product-details').dataset.product
+      productDetails.dataset.product
     );
   }
 
@@ -64,7 +70,7 @@ export class PrestashopPs1_7Service {
   }
 
   static isLogged() {
-    return window.prestashop.customer.is_logged;
+    return window.prestashop?.customer?.is_logged || false;
   }
 
   static isGuestCheckoutEnabled() {
@@ -76,7 +82,7 @@ export class PrestashopPs1_7Service {
   }
 
   static getCartAmount() {
-    return window.prestashop.cart.totals.total.amount || '';
+    return window.prestashop?.cart?.totals?.total?.amount || '';
   }
 
   static getProductPrice() {
@@ -86,14 +92,18 @@ export class PrestashopPs1_7Service {
       productPrice = document.querySelector('.current-price [itemprop="price"]');
     }
 
-    return productPrice.getAttribute('content') || '';
+    if (productPrice) {
+      return productPrice.getAttribute('content');
+    }
+
+    return '';
   }
 
   static isAddToCartButtonDisabled() {
     let addToCartElement = document.querySelector('.page-product:not(.modal-open) .row .product-add-to-cart, .page-product:not(.modal-open) .product-container .product-add-to-cart, .page-product:not(.modal-open) .row .js-product-add-to-cart, .page-product:not(.modal-open) .product-container .js-product-add-to-cart');
     let addToCartButtonElement = addToCartElement.querySelector('button.add-to-cart');
 
-    return addToCartButtonElement.disabled;
+    return addToCartButtonElement ? addToCartButtonElement.disabled : true;
   }
 
   static onUpdatedCart(listener) {

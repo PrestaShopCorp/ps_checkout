@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -21,10 +22,9 @@
 use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
-use PrestaShop\Module\PrestashopCheckout\Dispatcher\MerchantDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 
 /**
@@ -99,17 +99,23 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             }
 
             $validationValues->validateBodyDatas($bodyValues);
+            $this->setAtributesBodyValues($bodyValues);
 
             if (false === $this->checkPSLSignature($bodyValues)) {
                 throw new PsCheckoutException('Invalid PSL signature', PsCheckoutException::PSCHECKOUT_WEBHOOK_PSL_SIGNATURE_INVALID);
             }
 
-            $this->setAtributesBodyValues($bodyValues);
-
             // Check if have execution permissions
             if (false === $this->checkExecutionPermissions()) {
                 return false;
             }
+
+//            $this->module->getLogger()->info(
+//                'Webhook received',
+//                [
+//                    'payload' => $bodyValues,
+//                ]
+//            );
 
             return $this->dispatchWebHook();
         } catch (Exception $exception) {
@@ -151,7 +157,8 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             $headers = getallheaders();
 
             // Ensure we will not return empty values if Request is FORWARDED
-            if (false === empty($headers['Shop-Id'])
+            if (
+                false === empty($headers['Shop-Id'])
                 && false === empty($headers['Merchant-Id'])
                 && false === empty($headers['Psx-Id'])
             ) {
@@ -207,9 +214,10 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
      */
     private function checkExecutionPermissions()
     {
-        $localShopId = (new ShopUuidManager())->getForShop((int) Context::getContext()->shop->id);
+        /** @var PsAccountRepository $psAccountRepository */
+        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
 
-        if ($this->shopId !== $localShopId) {
+        if ($this->shopId !== $psAccountRepository->getShopUuid()) {
             throw new PsCheckoutException('shopId wrong', PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_INVALID);
         }
 
@@ -232,12 +240,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
                 'payload' => $this->payload,
             ]
         );
-
-        if ('ShopNotificationMerchantAccount' === $this->payload['category']) {
-            return (new MerchantDispatcher())->dispatchEventType(
-                ['merchantId' => $this->merchantId]
-            );
-        }
 
         if ('ShopNotificationOrderChange' === $this->payload['category']) {
             return (new OrderDispatcher())->dispatchEventType($this->payload);
@@ -317,8 +319,6 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
      */
     private function handleException(Exception $exception)
     {
-        $this->handleExceptionSendingToSentry($exception);
-
         $this->module->getLogger()->log(
             PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND === $exception->getCode() ? Logger::NOTICE : Logger::ERROR,
             'Webhook exception ' . $exception->getCode(),

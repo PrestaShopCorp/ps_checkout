@@ -17,44 +17,37 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  *}
 
-{if !$isExpressCheckout}
-  <div id="ps_checkout-loader" class="express-checkout-block mb-2">
-    <div class="express-checkout-block-wrapper">
-      <p class="express-checkout-spinner-text">
-        {$loaderTranslatedText|escape:'htmlall':'UTF-8'}
-      </p>
-      <div class="express-checkout-spinner">
-        <img src="{$spinnerPath|escape:'htmlall':'UTF-8'}" alt="{$loaderTranslatedText|escape:'htmlall':'UTF-8'}">
-      </div>
+<div id="ps_checkout-loader" class="express-checkout-block mb-2">
+  <div class="express-checkout-block-wrapper">
+    <p class="express-checkout-spinner-text">
+      {$loaderTranslatedText|escape:'htmlall':'UTF-8'}
+    </p>
+    <div class="express-checkout-spinner">
+      <img src="{$spinnerPath|escape:'htmlall':'UTF-8'}" alt="{$loaderTranslatedText|escape:'htmlall':'UTF-8'}">
     </div>
   </div>
-{/if}
+</div>
 
 <section id="ps_checkout-displayPayment">
   {if !$is17 && $isExpressCheckout}
-  <div class="express-checkout-block">
+  <div class="express-checkout-block" id="ps_checkout-express-checkout-banner">
     <img src="{$paypalLogoPath|escape:'htmlall':'UTF-8'}" class="express-checkout-img" alt="PayPal">
     <p class="express-checkout-label">
       {$translatedText|escape:'htmlall':'UTF-8'}
     </p>
-    <div id="button-paypal" class="ps_checkout-express-checkout-button">
-      <button id="ps_checkout-express-checkout-submit-button" class="button btn btn-default button-medium" type="button" disabled>
-        <span>{l s='I confirm my order' mod='ps_checkout'}<i class="icon-chevron-right right"></i></span>
-      </button>
-    </div>
   </div>
   {/if}
   <div class="payment-options">
     {foreach from=$paymentOptions item="paymentOptionName" key="fundingSource"}
-      <div id="payment-option-{$fundingSource}-container" class="payment-option ps_checkout-payment-option row" style="display: none;">
+      <div id="payment-option-{$fundingSource}-container" class="payment-option row" style="display: none;">
         <div class="col-xs-12">
           <div id="payment-option-{$fundingSource}" class="payment_module closed" data-module-name="ps_checkout-{$fundingSource}">
-            <a class="ps_checkout-{$fundingSource}" href="#">
+            <a class="ps_checkout-{$fundingSource}" href="javascript:void(0);">
               {$paymentOptionName}
             </a>
           </div>
           <div class="payment_module closed">
-            <a>
+            <a href="javascript:void(0);">
               {if $fundingSource == 'card' && $isHostedFieldsAvailable}
                 <form id="ps_checkout-hosted-fields-form" class="form-horizontal">
                   <div class="form-group">
@@ -92,6 +85,7 @@
                 </form>
               {/if}
               <div class="js-payment-ps_checkout-card">
+                <div id="pay-with-payment-option-{$fundingSource}-form"></div>
                 <div class="ps_checkout-button" data-funding-source="{$fundingSource}"></div>
               </div>
             </a>

@@ -19,7 +19,7 @@
  */
 
 let ps_checkout = {};
-const {$} = window;
+let {$} = window;
 
 (function() {
   /**

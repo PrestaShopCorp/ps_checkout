@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules;
 
 use PrestaShop\Module\PrestashopCheckout\Adapter\LinkAdapter;
+use PrestaShop\Module\PrestashopCheckout\Builder\ModuleLink\ModuleLinkBuilder;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Faq\Faq;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep;
@@ -28,9 +29,9 @@ use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\PresenterInterface;
 use PrestaShop\Module\PrestashopCheckout\Repository\OrderRepository;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
-use PrestaShop\Module\PrestashopCheckout\ShopUuidManager;
 use PrestaShop\Module\PrestashopCheckout\Translations\Translations;
 
 /**
@@ -84,6 +85,15 @@ class ContextModule implements PresenterInterface
     private $shopProvider;
 
     /**
+     * @var ModuleLinkBuilder
+     */
+    private $moduleLinkBuilder;
+    /**
+     * @var PsAccountRepository
+     */
+    private $psAccountRepository;
+
+    /**
      * @param string $moduleName
      * @param string $moduleKey
      * @param PrestaShopContext $psContext
@@ -103,7 +113,9 @@ class ContextModule implements PresenterInterface
         ValueBanner $valueBanner,
         Translations $translations,
         ShopContext $shopContext,
-        ShopProvider $shopProvider
+        ShopProvider $shopProvider,
+        ModuleLinkBuilder $moduleLinkBuilder,
+        PsAccountRepository $psAccountRepository
     ) {
         $this->moduleName = $moduleName;
         $this->moduleKey = $moduleKey;
@@ -114,6 +126,8 @@ class ContextModule implements PresenterInterface
         $this->translations = $translations;
         $this->shopContext = $shopContext;
         $this->shopProvider = $shopProvider;
+        $this->moduleLinkBuilder = $moduleLinkBuilder;
+        $this->psAccountRepository = $psAccountRepository;
     }
 
     /**
@@ -123,17 +137,17 @@ class ContextModule implements PresenterInterface
      */
     public function present()
     {
-        $shopUuid = new ShopUuidManager();
         $shopId = (int) \Context::getContext()->shop->id;
 
         return [
             'context' => [
                 'moduleVersion' => \Ps_checkout::VERSION,
+                'moduleIsEnabled' => (bool) \Module::isEnabled('ps_checkout'),
                 'psVersion' => _PS_VERSION_,
                 'phpVersion' => phpversion(),
                 'shopIs17' => $this->shopContext->isShop17(),
                 'moduleKey' => $this->moduleKey,
-                'shopId' => $shopUuid->getForShop($shopId),
+                'shopId' => $this->psAccountRepository->getShopUuid(),
                 'shopUri' => $this->shopProvider->getShopUrl($shopId),
                 'isReady' => $this->shopContext->isReady(),
                 'isShopContext' => $this->isShopContext(),
@@ -160,6 +174,11 @@ class ContextModule implements PresenterInterface
                 'submitIdeaLink' => $this->getSubmitIdeaLink(),
                 'orderTotal' => (new OrderRepository())->count($this->psContext->getShopId()),
                 'isCustomTheme' => $this->shopUsesCustomTheme(),
+                'callbackUrl' => $this->moduleLinkBuilder->getPaypalOnboardingCallBackUrl(),
+                'dependencies' => [
+                    'ps_eventbus' => \Module::isEnabled('ps_eventbus'),
+                    'ps_accounts' => \Module::isEnabled('ps_accounts'),
+                ],
             ],
         ];
     }

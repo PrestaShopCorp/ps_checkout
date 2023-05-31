@@ -51,6 +51,10 @@ class OrderPresenter
      */
     public function present()
     {
+        if (empty($this->orderPayPal)) {
+            return [];
+        }
+
         return array_merge(
             [
                 'id' => $this->orderPayPal['id'],
@@ -132,9 +136,9 @@ class OrderPresenter
                         'date' => (new DatePresenter($refund['create_time'], 'Y-m-d H:i:s'))->present(),
                         'isRefundable' => false,
                         'maxAmountRefundable' => 0,
-                        'gross_amount' => $refund['seller_payable_breakdown']['gross_amount']['value'],
-                        'paypal_fee' => $refund['seller_payable_breakdown']['paypal_fee']['value'],
-                        'net_amount' => $refund['seller_payable_breakdown']['net_amount']['value'],
+                        'gross_amount' => isset($refund['seller_payable_breakdown']['gross_amount']['value']) ? $refund['seller_payable_breakdown']['gross_amount']['value'] : '',
+                        'paypal_fee' => isset($refund['seller_payable_breakdown']['paypal_fee']['value']) ? $refund['seller_payable_breakdown']['paypal_fee']['value'] : '',
+                        'net_amount' => isset($refund['seller_payable_breakdown']['net_amount']['value']) ? $refund['seller_payable_breakdown']['net_amount']['value'] : '',
                     ];
                 }
             }
@@ -151,9 +155,9 @@ class OrderPresenter
                         'date' => (new DatePresenter($payment['create_time'], 'Y-m-d H:i:s'))->present(),
                         'isRefundable' => in_array($payment['status'], ['COMPLETED', 'PARTIALLY_REFUNDED']),
                         'maxAmountRefundable' => $maxAmountRefundable > 0 ? $maxAmountRefundable : 0,
-                        'gross_amount' => $payment['seller_receivable_breakdown']['gross_amount']['value'],
-                        'paypal_fee' => $payment['seller_receivable_breakdown']['paypal_fee']['value'],
-                        'net_amount' => $payment['seller_receivable_breakdown']['net_amount']['value'],
+                        'gross_amount' => isset($payment['seller_receivable_breakdown']['gross_amount']['value']) ? $payment['seller_receivable_breakdown']['gross_amount']['value'] : '',
+                        'paypal_fee' => isset($payment['seller_receivable_breakdown']['paypal_fee']['value']) ? $payment['seller_receivable_breakdown']['paypal_fee']['value'] : '',
+                        'net_amount' => isset($payment['seller_receivable_breakdown']['net_amount']['value']) ? $payment['seller_receivable_breakdown']['net_amount']['value'] : '',
                     ];
                 }
             }
@@ -284,7 +288,9 @@ class OrderPresenter
             if (!empty($purchase['payments']['captures'])) {
                 foreach ($purchase['payments']['captures'] as $payment) {
                     $balance += $payment['amount']['value'];
-                    $balance -= $payment['seller_receivable_breakdown']['paypal_fee']['value'];
+                    if (isset($payment['seller_receivable_breakdown']['paypal_fee']['value'])) {
+                        $balance -= $payment['seller_receivable_breakdown']['paypal_fee']['value'];
+                    }
                 }
             }
         }
@@ -323,7 +329,9 @@ class OrderPresenter
             if (!empty($purchase['payments']['captures'])) {
                 foreach ($purchase['payments']['captures'] as $payment) {
                     $total += $payment['amount']['value'];
-                    $fees -= $payment['seller_receivable_breakdown']['paypal_fee']['value'];
+                    if (isset($payment['seller_receivable_breakdown']['paypal_fee']['value'])) {
+                        $fees -= $payment['seller_receivable_breakdown']['paypal_fee']['value'];
+                    }
                 }
             }
         }
