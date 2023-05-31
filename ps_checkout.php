@@ -42,7 +42,7 @@ class Ps_checkout extends PaymentModule
         'displayPaymentTop',
         'displayPaymentByBinaries',
         'actionFrontControllerSetMedia',
-        'header',
+        'displayHeader',
         'actionObjectOrderPaymentAddAfter',
         'actionObjectOrderPaymentUpdateAfter',
         'displayPaymentReturn',
@@ -1642,7 +1642,7 @@ class Ps_checkout extends PaymentModule
             )
         );
     }
-  
+
     /**
      * Display payment status on order confirmation page
      *
