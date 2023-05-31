@@ -1478,7 +1478,7 @@ class Ps_checkout extends PaymentModule
         );
     }
 
-    public function hookHeader()
+    public function hookDisplayHeader()
     {
         $controller = Tools::getValue('controller');
 
