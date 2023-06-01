@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -26,6 +27,8 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use Psr\SimpleCache\CacheInterface;
 
 /**
+ * @deprecated This file will be removed
+ *
  * Class that allow to validate an order
  */
 class ValidateOrder
@@ -181,7 +184,8 @@ class ValidateOrder
                 $transactionIdentifier = $response['body']['purchase_units'][0]['payments']['captures'][0]['id'];
                 $transactionStatus = $response['body']['purchase_units'][0]['payments']['captures'][0]['status'];
 
-                if (self::CAPTURE_STATUS_DECLINED === $transactionStatus
+                if (
+                    self::CAPTURE_STATUS_DECLINED === $transactionStatus
                     && false === empty($response['body']['payment_source'])
                     && false === empty($response['body']['payment_source'][0]['card'])
                     && false === empty($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response'])
@@ -196,7 +200,6 @@ class ValidateOrder
                     $payPalProcessorResponse->throwException();
                 }
             }
-
             /** @var CacheInterface $paypalOrderCache */
             $paypalOrderCache = $module->getService('ps_checkout.cache.paypal.order');
             $paypalOrderCache->set($response['body']['id'], $response['body']);

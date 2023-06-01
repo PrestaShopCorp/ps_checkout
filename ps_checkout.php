@@ -42,9 +42,11 @@ class Ps_checkout extends PaymentModule
         'displayPaymentTop',
         'displayPaymentByBinaries',
         'actionFrontControllerSetMedia',
-        'header',
+        'displayHeader',
         'actionObjectOrderPaymentAddAfter',
         'actionObjectOrderPaymentUpdateAfter',
+        'displayPaymentReturn',
+        'displayOrderDetail',
     ];
 
     /**
@@ -158,6 +160,16 @@ class Ps_checkout extends PaymentModule
         $this->ps_versions_compliancy = ['min' => '8.0.0', 'max' => _PS_VERSION_];
 
         // $this->disableSegment = false;
+        if (defined('_PS_ADMIN_DIR_') && Validate::isLoadedObject($this->context->cart)) {
+            // A l'initialisation du module, via un hook qui serait appelé à la fois coté Webhook et côté Controller, si une instance de Cart existe dans le Context, on récupère dans pscheckout_cart si une PayPal Order est associé à ce Cart puis si oui alors on initialise le Cache avec la PayPal Order
+            // Ce qui permettra au Comparator d'avoir la PayPal Order initiale qui servira de référence pour comparaison
+            $this->getLogger()->debug(
+                'A Cart is loaded in Context',
+                [
+                    'id_cart' => $this->context->cart->id,
+                ]
+            );
+        }
     }
 
     /**
@@ -712,17 +724,16 @@ class Ps_checkout extends PaymentModule
         /** @var Order $order */
         $order = (isset($params['objOrder'])) ? $params['objOrder'] : $params['order'];
 
-        if ($order->module !== $this->name) {
+        if (!Validate::isLoadedObject($order) || $order->module !== $this->name) {
             return '';
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService('ps_checkout.context.shop');
-        $this->context->smarty->assign([
-            'status' => $order->valid ? 'completed' : 'pending',
-            'isShop17' => $shopContext->isShop17(),
-            'isAuthorized' => 'AUTHORIZE' === Configuration::get('PS_CHECKOUT_INTENT'),
-        ]);
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder $orderSummaryViewBuilder */
+        $orderSummaryViewBuilder = $this->getService('ps_checkout.paypal.builder.view_order_summary');
+
+        $orderSummaryView = $orderSummaryViewBuilder->build($order);
+
+        $this->context->smarty->assign($orderSummaryView->getTemplateVars());
 
         return $this->display(__FILE__, 'views/templates/hook/displayOrderConfirmation.tpl');
     }
@@ -1467,7 +1478,7 @@ class Ps_checkout extends PaymentModule
         );
     }
 
-    public function hookHeader()
+    public function hookDisplayHeader()
     {
         $controller = Tools::getValue('controller');
 
@@ -1630,5 +1641,57 @@ class Ps_checkout extends PaymentModule
                 (bool) Shop::isFeatureActive()
             )
         );
+    }
+
+    /**
+     * Display payment status on order confirmation page
+     *
+     * @param array{cookie: Cookie, cart: Cart, altern: int, order: Order, objOrder: Order} $params
+     *
+     * @return string
+     */
+    public function hookDisplayPaymentReturn(array $params)
+    {
+        /** @var Order $order */
+        $order = (isset($params['objOrder'])) ? $params['objOrder'] : $params['order'];
+
+        if (!Validate::isLoadedObject($order) || $order->module !== $this->name) {
+            return '';
+        }
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder $orderSummaryViewBuilder */
+        $orderSummaryViewBuilder = $this->getService('ps_checkout.paypal.builder.view_order_summary');
+
+        $orderSummaryView = $orderSummaryViewBuilder->build($order);
+
+        $this->context->smarty->assign($orderSummaryView->getTemplateVars());
+
+        return $this->display(__FILE__, 'views/templates/hook/displayPaymentReturn.tpl');
+    }
+
+    /**
+     * Display payment status on order detail page
+     *
+     * @param array{cookie: Cookie, cart: Cart, altern: int, order: Order} $params
+     *
+     * @return string
+     */
+    public function hookDisplayOrderDetail(array $params)
+    {
+        /** @var Order $order */
+        $order = $params['order'];
+
+        if (!Validate::isLoadedObject($order) || $order->module !== $this->name) {
+            return '';
+        }
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder $orderSummaryViewBuilder */
+        $orderSummaryViewBuilder = $this->getService('ps_checkout.paypal.builder.view_order_summary');
+
+        $orderSummaryView = $orderSummaryViewBuilder->build($order);
+
+        $this->context->smarty->assign($orderSummaryView->getTemplateVars());
+
+        return $this->display(__FILE__, 'views/templates/hook/displayOrderDetail.tpl');
     }
 }

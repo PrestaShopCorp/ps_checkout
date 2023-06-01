@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -55,13 +56,29 @@ class Order extends PaymentClient
     {
         $this->setRoute('/payments/order/capture');
 
-        return $this->post([
+        $response = $this->post([
             'mode' => $fundingSource,
             'orderId' => (string) $orderId,
             'payee' => [
                 'merchant_id' => $merchantId,
             ],
         ]);
+
+//        /** @var \Ps_checkout $module */
+//        $module = \Module::getInstanceByName('ps_checkout');
+//
+//        /** @var \Symfony\Component\Cache\Simple\FilesystemCache $captureCache */
+//        $captureCache = $module->getService('ps_checkout.cache.paypal.capture');
+//
+//        $responseBody = isset($response['body']) ? $response['body'] : null;
+//
+//        if ($responseBody) {
+//            $capture = $responseBody['purchase_units'][0]['payments']['captures'][0];
+//
+//            $captureCache->set($capture['id'], $capture);
+//        }
+
+        return $response;
     }
 
     /**
@@ -151,5 +168,43 @@ class Order extends PaymentClient
         }
 
         return $response['body']['client_token'];
+    }
+
+    /**
+     * @param string $merchantId
+     * @param int|null $customerId
+     *
+     * @return array{client_token:string, id_token: string, expires_in: int}
+     *
+     * @throws PsCheckoutException
+     */
+    public function getClientToken($merchantId, $customerId = null)
+    {
+        $this->setRoute('/payments/order/generate_client_token');
+
+        $payload = [
+            'return_payload' => true,
+            'payee' => [
+                'merchant_id' => $merchantId,
+            ],
+        ];
+
+        if ($customerId) {
+            $payload['customer_id'] = $customerId;
+        }
+
+        $response = $this->post($payload);
+
+        if (empty($response['body']) || empty($response['body']['client_token'])) {
+            $exception = null;
+
+            if (!empty($response['exceptionMessage'])) {
+                $exception = new \Exception($response['exceptionMessage'], $response['exceptionCode']);
+            }
+
+            throw new PsCheckoutException('Unable to retrieve PayPal Client Token', PsCheckoutException::MISSING_PAYPAL_CLIENT_TOKEN, $exception);
+        }
+
+        return $response['body'];
     }
 }

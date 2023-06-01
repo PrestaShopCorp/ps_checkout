@@ -26,6 +26,7 @@ export const PayPalSdkConfig = {
   fundingSource: window.ps_checkoutFundingSource,
   clientToken: window.ps_checkoutPayPalClientToken,
   buttonCustomization: window.ps_checkoutPayPalButtonConfiguration,
+  paymentFieldsCustomization: window.ps_checkout.paymentFieldsCustomization,
   expressCheckoutButtonCustomization:
     window.ps_checkoutExpressCheckoutButtonCustomization,
   hostedFieldsCustomization:
