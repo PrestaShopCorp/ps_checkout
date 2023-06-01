@@ -105,7 +105,7 @@ class CapturePayPalOrderCommandHandler
             $this->paypalOrderEventDispatcher->dispatch($response['body']);
             $this->paypalCaptureEventDispatcher->dispatch($response['body']['id'], $capturePayPal);
         } catch (Exception $exception) {
-            throw new PayPalOrderException(sprintf('Unable to capture PayPal Order #%d', $capturePayPalOrderCommand->getOrderId()->getValue()), PayPalOrderException::CANNOT_CAPTURE_ORDER, $exception);
+            throw new PayPalOrderException(sprintf('Unable to capture PayPal Order %s', $capturePayPalOrderCommand->getOrderId()->getValue()), PayPalOrderException::CANNOT_CAPTURE_ORDER, $exception);
         }
     }
 }

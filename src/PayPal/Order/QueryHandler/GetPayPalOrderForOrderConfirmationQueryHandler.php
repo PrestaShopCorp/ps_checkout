@@ -73,14 +73,12 @@ class GetPayPalOrderForOrderConfirmationQueryHandler
         try {
             $orderPayPal = new PaypalOrder($query->getOrderId()->getValue());
         } catch (\Exception $exception) {
-            throw new PayPalOrderException(sprintf('Unable to retrieve PayPal Order #%d', $query->getOrderId()->getValue()), PayPalOrderException::CANNOT_RETRIEVE_ORDER, $exception);
+            throw new PayPalOrderException(sprintf('Unable to retrieve PayPal Order %s', $query->getOrderId()->getValue()), PayPalOrderException::CANNOT_RETRIEVE_ORDER, $exception);
         }
 
         if (!$orderPayPal->isLoaded()) {
-            throw new PayPalOrderException(sprintf('No data for PayPal Order #%d', $query->getOrderId()->getValue()), PayPalOrderException::EMPTY_ORDER_DATA);
+            throw new PayPalOrderException(sprintf('No data for PayPal Order %s', $query->getOrderId()->getValue()), PayPalOrderException::EMPTY_ORDER_DATA);
         }
-
-        // $this->orderPayPalCache->set(CacheSettings::PAYPAL_ORDER_ID . $query->getOrderId()->getValue(), $orderPayPal->getOrder());
 
         $this->eventDispatcher->dispatch(
             new PayPalOrderFetchedEvent($query->getOrderId()->getValue(), $orderPayPal->getOrder())

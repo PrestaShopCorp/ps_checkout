@@ -54,7 +54,7 @@ class CheckoutChecker
     public function continueWithAuthorization($cartId, $orderPayPal)
     {
         if ($orderPayPal['status'] === 'COMPLETED') {
-            throw new PsCheckoutException('PayPal Order is already captured');
+            throw new PsCheckoutException(sprintf('PayPal Order %s is already captured', $orderPayPal['id']));
         }
 
         if (isset($orderPayPal['payment_source']['card'])) {
@@ -98,18 +98,18 @@ class CheckoutChecker
         $cart = new Cart($cartId);
 
         if (!Validate::isLoadedObject($cart)) {
-            throw new PsCheckoutException(sprintf('Cart with id #%s not found.', var_export($cartId, true)), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
+            throw new PsCheckoutException(sprintf('Cart with id %s not found.', var_export($cartId, true)), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
         if (!$cart->hasProducts()) {
-            throw new PsCheckoutException(sprintf('Cart with id #%s has no product. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_MISSING);
+            throw new PsCheckoutException(sprintf('Cart with id %s has no product. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_MISSING);
         }
 
         if ($cart->isAllProductsInStock() !== true ||
             (method_exists($cart, 'checkAllProductsAreStillAvailableInThisState') && $cart->checkAllProductsAreStillAvailableInThisState() !== true) ||
             (method_exists($cart, 'checkAllProductsHaveMinimalQuantities') && $cart->checkAllProductsHaveMinimalQuantities() !== true)
         ) {
-            throw new PsCheckoutException(sprintf('Cart with id #%s contains products unavailable. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_UNAVAILABLE);
+            throw new PsCheckoutException(sprintf('Cart with id %s contains products unavailable. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_UNAVAILABLE);
         }
 
         if (!Customer::customerHasAddress($cart->id_customer, $cart->id_address_invoice)) {
