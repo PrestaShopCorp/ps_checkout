@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Logger;
 
 use Monolog\Handler\HandlerInterface;
 use Monolog\Logger;
+use Monolog\Processor\ProcessIdProcessor;
 use Monolog\Processor\PsrLogMessageProcessor;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use Psr\Log\LoggerInterface;
@@ -70,6 +71,7 @@ class LoggerFactory
                 $this->loggerHandler,
             ],
             [
+                new ProcessIdProcessor(),
                 new PsrLogMessageProcessor(),
             ]
         );

@@ -94,15 +94,13 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
             throw new PayPalOrderException(sprintf('No data for PayPal Order #%d', $getPayPalOrderQuery->getOrderId()->getValue()), PayPalOrderException::EMPTY_ORDER_DATA);
         }
 
-        // $this->orderPayPalCache->set(CacheSettings::PAYPAL_ORDER_ID . $getPayPalOrderQuery->getOrderId()->getValue(), $orderPayPal->getOrder());
-
         $this->eventDispatcher->dispatch(
             new PayPalOrderFetchedEvent($getPayPalOrderQuery->getOrderId()->getValue(), $orderPayPal->getOrder())
         );
 
         $result = new GetPayPalOrderForCheckoutCompletedQueryResult($orderPayPal->getOrder());
 
-        $this->paypalOrderEventDispatcher->dispatch($result->getOrder());
+        $this->paypalOrderEventDispatcher->dispatch($result->getPayPalOrder());
 
         return $result;
     }

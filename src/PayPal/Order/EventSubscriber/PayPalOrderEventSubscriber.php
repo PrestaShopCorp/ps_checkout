@@ -21,8 +21,10 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber;
 
+use Exception;
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
+use PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovalReversedEvent;
@@ -33,9 +35,11 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderNotApprovedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use PrestaShopException;
 use Ps_checkout;
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
+use Psr\SimpleCache\InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalOrderEventSubscriber implements EventSubscriberInterface
@@ -61,6 +65,11 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     private $orderPayPalCache;
 
     /**
+     * @var CheckoutChecker
+     */
+    private $checkoutChecker;
+
+    /**
      * @param Ps_checkout $module
      * @param LoggerInterface $logger
      * @param PsCheckoutCartRepository $psCheckoutCartRepository
@@ -76,6 +85,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         $this->logger = $logger;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
         $this->orderPayPalCache = $orderPayPalCache;
+        $this->checkoutChecker = $this->module->getService('ps_checkout.checkout.checker');
     }
 
     /**
@@ -115,8 +125,8 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      *
      * @throws PayPalOrderException
      * @throws PsCheckoutException
-     * @throws \PrestaShopException
-     * @throws \PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException
+     * @throws PrestaShopException
+     * @throws CartException
      */
     public function savePayPalOrder($event)
     {
@@ -166,9 +176,9 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      * @return void
      *
      * @throws PsCheckoutException
-     * @throws \PrestaShopException
+     * @throws PrestaShopException
      * @throws PayPalOrderException
-     * @throws \Exception
+     * @throws Exception
      */
     public function capturePayPalOrder(PayPalOrderApprovedEvent $event)
     {
@@ -178,87 +188,11 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             throw new PsCheckoutException(sprintf('order #%s is not linked to a cart', $event->getOrderPayPalId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
-        if ($psCheckoutCart->getPaypalStatus() === 'COMPLETED') {
-            return;
-        }
-
         if ($psCheckoutCart->isExpressCheckout()) {
             return;
         }
 
-        // Verification du panier : service ?
-        $cart = new \Cart($psCheckoutCart->id_cart);
-
-        if (!$cart->hasProducts()) {
-            throw new PsCheckoutException(sprintf('Cart with id #%s has no product. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_MISSING);
-        }
-
-        if ($cart->isAllProductsInStock() !== true ||
-            (method_exists($cart, 'checkAllProductsAreStillAvailableInThisState') && $cart->checkAllProductsAreStillAvailableInThisState() !== true) ||
-            (method_exists($cart, 'checkAllProductsHaveMinimalQuantities') && $cart->checkAllProductsHaveMinimalQuantities() !== true)
-        ) {
-            throw new PsCheckoutException(sprintf('Cart with id #%s contains products unavailable. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_UNAVAILABLE);
-        }
-
-        if (!\Customer::customerHasAddress($cart->id_customer, $cart->id_address_invoice)) {
-            throw new PsCheckoutException(sprintf('Invoice address with id %s is incorrect. Cannot capture the order.', var_export($cart->id_address_invoice, true)), PsCheckoutException::CART_ADDRESS_INVOICE_INVALID);
-        }
-
-        if (!$cart->isVirtualCart() && !\Customer::customerHasAddress($cart->id_customer, $cart->id_address_delivery)) {
-            throw new PsCheckoutException(sprintf('Delivery address with id %s is incorrect. Cannot capture the order.', var_export($cart->id_address_delivery, true)), PsCheckoutException::CART_ADDRESS_DELIVERY_INVALID);
-        }
-
-        if (!$cart->isVirtualCart() && !array_key_exists((int) $cart->id_address_delivery, $cart->getDeliveryOptionList())) {
-            throw new PsCheckoutException(sprintf('No delivery option selected for address with id %s is incorrect. Cannot capture the order.', var_export($cart->id_address_delivery, true)), PsCheckoutException::CART_DELIVERY_OPTION_INVALID);
-        }
-
-        $orderPayPal = $event->getOrderPayPal();
-
-        if ($psCheckoutCart->isHostedFields()) {
-            $card3DSecure = (new Card3DSecure())->continueWithAuthorization($orderPayPal);
-
-            $this->logger->info(
-                '3D Secure authentication result',
-                [
-                    'authentication_result' => isset($order['payment_source']['card']['authentication_result']) ? $order['payment_source']['card']['authentication_result'] : null,
-                    'decision' => str_replace(
-                        [
-                            (string) Card3DSecure::NO_DECISION,
-                            (string) Card3DSecure::PROCEED,
-                            (string) Card3DSecure::REJECT,
-                            (string) Card3DSecure::RETRY,
-                        ],
-                        [
-                            \Configuration::get('PS_CHECKOUT_LIABILITY_SHIFT_REQ') ? 'Rejected, no liability shift' : 'Proceed, without liability shift',
-                            'Proceed, liability shift is possible',
-                            'Rejected',
-                            'Retry, ask customer to retry',
-                        ],
-                        (string) $card3DSecure
-                    ),
-                ]
-            );
-
-            switch ($card3DSecure) {
-                case Card3DSecure::REJECT:
-                    throw new PsCheckoutException('Card Strong Customer Authentication failure', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_FAILURE);
-                case Card3DSecure::RETRY:
-                    throw new PsCheckoutException('Card Strong Customer Authentication must be retried.', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN);
-                case Card3DSecure::NO_DECISION:
-                    if (\Configuration::get('PS_CHECKOUT_LIABILITY_SHIFT_REQ')) {
-                        throw new PsCheckoutException('No liability shift to card issuer', PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_UNKNOWN);
-                    }
-                    break;
-            }
-        }
-
-        // Check if PayPal order amount is the same than the cart amount : we tolerate a difference of more or less 0.05
-        $paypalOrderAmount = (float) sprintf('%01.2f', $orderPayPal['purchase_units'][0]['amount']['value']);
-        $cartAmount = (float) sprintf('%01.2f', (new \Cart($psCheckoutCart->getIdCart()))->getOrderTotal(true, \Cart::BOTH));
-
-        if ($paypalOrderAmount + 0.05 < $cartAmount || $paypalOrderAmount - 0.05 > $cartAmount) {
-            throw new PsCheckoutException('The transaction amount does not match with the cart amount.', PsCheckoutException::DIFFERENCE_BETWEEN_TRANSACTION_AND_CART);
-        }
+        $this->checkoutChecker->continueWithAuthorization($psCheckoutCart->getIdCart(), $event->getOrderPayPal());
 
         $this->module->getService('ps_checkout.bus.command')->handle(
             new CapturePayPalOrderCommand(
@@ -272,6 +206,8 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      * @param PayPalOrderEvent $event
      *
      * @return void
+     *
+     * @throws InvalidArgumentException
      */
     public function updateCache(PayPalOrderEvent $event)
     {

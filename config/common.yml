@@ -708,3 +708,9 @@ services:
       - "@ps_checkout.paypal.capture.service.check_transition_paypal_capture_status"
       - "@ps_checkout.paypal.capture.comparator"
       - "@ps_checkout.cache.paypal.capture"
+
+  ps_checkout.checkout.checker:
+    class: 'PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker'
+    public: true
+    arguments:
+      - "@ps_checkout.logger"

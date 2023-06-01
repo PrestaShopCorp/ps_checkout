@@ -109,6 +109,10 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
 
     private function generateResponse()
     {
+        if (!$this->module->currentOrder) {
+            return null;
+        }
+
         try {
             /** @var \PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface $commandBus */
             $commandBus = $this->module->getService('ps_checkout.bus.command');
