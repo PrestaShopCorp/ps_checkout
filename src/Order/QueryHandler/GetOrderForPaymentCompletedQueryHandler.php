@@ -22,6 +22,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheSettings;
@@ -72,13 +73,13 @@ class GetOrderForPaymentCompletedQueryHandler
         }
 
         if (!$orderId) {
-            throw new PsCheckoutException('No PrestaShop Order associated to this PayPal Order at this time.', PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
+            throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.', OrderNotFoundException::NOT_FOUND);
         }
 
         $order = new \Order($orderId);
 
         if (!\Validate::isLoadedObject($order)) {
-            throw new PsCheckoutException('No PrestaShop Order associated to this PayPal Order at this time.', PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
+            throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.', OrderNotFoundException::NOT_FOUND);
         }
         $result = new GetOrderForPaymentCompletedQueryResult(
             (int) $order->id,
