@@ -311,7 +311,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         /** @var PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
         if (false === $psCheckoutCart) {
-            throw new PsCheckoutException(sprintf('Order #%s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
+            throw new PsCheckoutException(sprintf('PayPal Order %s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
         /** @var GetOrderQueryResult $order */
@@ -373,7 +373,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
 
         if (false === $psCheckoutCart) {
-            throw new PsCheckoutException(sprintf('Order #%s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
+            throw new PsCheckoutException(sprintf('PayPal Order %s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
         /** @var GetOrderForPaymentCompletedQueryResult $order */
@@ -466,7 +466,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         /** @var GetOrderStateConfigurationQueryResult $getOrderStateConfiguration */
         $getOrderStateConfiguration = $this->commandBus->handle(new GetOrderStateConfigurationQuery());
         if (false === $psCheckoutCart) {
-            throw new PsCheckoutException(sprintf('Order #%s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
+            throw new PsCheckoutException(sprintf('PayPal Order %s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
         /** @var GetOrderForPaymentRefundedQueryResult $order */
         $order = $this->commandBus->handle(new GetOrderForPaymentRefundedQuery($psCheckoutCart->getIdCart()));
@@ -498,7 +498,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $getOrderStateConfiguration = $this->commandBus->handle(new GetOrderStateConfigurationQuery());
 
         if (false === $psCheckoutCart) {
-            throw new PsCheckoutException(sprintf('Order #%s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
+            throw new PsCheckoutException(sprintf('PayPal Order %s is not linked to a cart', $event->getPayPalOrderId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
         /** @var GetOrderForPaymentReversedQueryResult $order */
@@ -524,14 +524,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
      */
     public function updateCache(PayPalCaptureEvent $event)
     {
-        $this->logger->info(
-            __CLASS__ . ':' . __FUNCTION__,
-            [
-                'PayPalOrderId' => $event->getPayPalOrderId()->getValue(),
-                'PayPalCaptureId' => $event->getPayPalCaptureId()->getValue(),
-                'PayPalCapture' => $event->getCapture(),
-            ]
-        );
         $this->capturePayPalCache->set($event->getPayPalCaptureId()->getValue(), $event->getCapture());
     }
 }

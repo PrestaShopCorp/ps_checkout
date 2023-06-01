@@ -41,7 +41,7 @@ class UpdatePayPalOrderCacheCommandHandler
 
     public function handle(UpdatePayPalOrderCacheCommand $updatePayPalOrderCacheCommand)
     {
-        $responseBody = $updatePayPalOrderCacheCommand->getOrderPayPal();
-        $this->paypalOrderCache->set($responseBody['id'], $responseBody);
+        $orderPayPal = $updatePayPalOrderCacheCommand->getOrderPayPal();
+        $this->paypalOrderCache->set($orderPayPal['id'], $orderPayPal);
     }
 }
