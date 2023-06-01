@@ -30,6 +30,7 @@ use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
@@ -98,7 +99,7 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
         }
 
         if (!$cart->orderExists()) {
-            throw new OrderException(sprintf('Failed to create order from Cart #%s.', var_export($cart->id, true)), OrderException::ORDER_NOT_FOUND);
+            throw new OrderNotFoundException(sprintf('Failed to create order from Cart #%s.', var_export($cart->id, true)), OrderNotFoundException::NOT_FOUND);
         }
 
         // It happens this returns null in case of override or weird modules
@@ -124,6 +125,6 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
             return;
         }
 
-        throw new OrderException(sprintf('Unable to retrieve order identifier from Cart #%s.', var_export($cart->id, true)), OrderException::ORDER_NOT_FOUND);
+        throw new OrderNotFoundException(sprintf('Unable to retrieve order identifier from Cart #%s.', var_export($cart->id, true)), OrderNotFoundException::NOT_FOUND);
     }
 }
