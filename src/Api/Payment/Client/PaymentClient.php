@@ -26,6 +26,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
 use Psr\Http\Client\ClientInterface;
@@ -53,10 +54,18 @@ class PaymentClient extends GenericClient
             /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
             $version = $module->getService('ps_checkout.module.version');
 
+            /** @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration $configuration */
+            $configuration = $module->getService('ps_checkout.configuration');
+
             $handlerStack = null;
 
-            if (
-                defined('\GuzzleHttp\ClientInterface::MAJOR_VERSION')
+            $isLoggerEnabled = (bool) $configuration->get(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP, [
+                'default' => true,
+                'global' => true,
+            ]);
+
+            if ($isLoggerEnabled
+                && defined('\GuzzleHttp\ClientInterface::MAJOR_VERSION')
                 && class_exists(HandlerStack::class)
                 && class_exists(LogMiddleware::class)
             ) {
@@ -80,7 +89,7 @@ class PaymentClient extends GenericClient
                         'DispatchWebHook',
                         [],
                         true,
-                        (int) \Configuration::get('PS_LANG_DEFAULT'),
+                        (int) $configuration->get('PS_LANG_DEFAULT'),
                         (int) \Context::getContext()->shop->id
                     ),
                     'Bn-Code' => (new ShopContext())->getBnCode(),
