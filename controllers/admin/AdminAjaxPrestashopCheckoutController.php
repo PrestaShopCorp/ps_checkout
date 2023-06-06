@@ -17,13 +17,17 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+
 use Monolog\Logger;
+use PrestaShop\Module\PrestashopCheckout\Configuration\BatchConfigurationProcessor;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
+use PrestaShop\Module\PrestashopCheckout\OrderStates;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPresenter;
 use PrestaShop\Module\PrestashopCheckout\Settings\RoundingSettings;
+use PrestaShop\Module\PrestashopCheckout\Validator\BatchConfigurationValidator;
 use Psr\SimpleCache\CacheInterface;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
@@ -839,6 +843,119 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         }
 
         $this->exitWithResponse($response);
+    }
+
+    public function ajaxProcessFetchConfiguration()
+    {
+        $response = [];
+
+        $query = new DbQuery();
+        $query->select('name, value, date_add, date_upd');
+        $query->from('configuration');
+        $query->where('name LIKE "PS_CHECKOUT_%"');
+
+        /** @var int|null $shopId When multishop is disabled, it returns null, so we don't have to restrict results by shop */
+        $shopId = Shop::getContextShopID(true);
+
+        // When ShopId is not NULL, we have to retrieve global values with id_shop = NULL and shop values with id_shop = ShopId
+        if ($shopId) {
+            $query->where('id_shop IS NULL OR id_shop = ' . (int) $shopId);
+        }
+
+        $configurations = Db::getInstance()->executeS($query);
+
+        $response = [
+            'httpCode' => 200,
+            'status' => !empty($configurations),
+            'configuration' => array_map(function ($configuration) {
+                return [
+                    'name' => $configuration['name'],
+                    'value' => $configuration['value'],
+                ];
+            }, $configurations),
+        ];
+
+        $this->exitWithResponse($response);
+    }
+
+    public function ajaxProcessGetMappedOrderStates()
+    {
+        /** @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration $configuration */
+        $configuration = $this->module->getService('ps_checkout.configuration');
+
+        $mappedOrderStates = [
+            OrderStates::PS_CHECKOUT_STATE_PENDING => [
+                    'default' => '0',
+                    'value' => $configuration->get(OrderStates::PS_CHECKOUT_STATE_PENDING, ['default' => '0']),
+                ],
+            OrderStates::PS_CHECKOUT_STATE_COMPLETED => [
+                    'default' => $configuration->get('PS_OS_PAYMENT'),
+                    'value' => $configuration->get(OrderStates::PS_CHECKOUT_STATE_COMPLETED, ['default' => '0']),
+                ],
+            OrderStates::PS_CHECKOUT_STATE_CANCELED => [
+                    'default' => $configuration->get('PS_OS_CANCELED'),
+                    'value' => $configuration->get(OrderStates::PS_CHECKOUT_STATE_CANCELED, ['default' => '0']),
+                ],
+            OrderStates::PS_CHECKOUT_STATE_ERROR => [
+                    'default' => $configuration->get('PS_OS_ERROR'),
+                    'value' => $configuration->get(OrderStates::PS_CHECKOUT_STATE_ERROR, ['default' => '0']),
+                ],
+            OrderStates::PS_CHECKOUT_STATE_REFUNDED => [
+                    'default' => $configuration->get('PS_OS_REFUND'),
+                    'value' => $configuration->get(OrderStates::PS_CHECKOUT_STATE_REFUNDED, ['default' => '0']),
+                ],
+            OrderStates::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED => [
+                    'default' => '0',
+                    'value' => $configuration->get(OrderStates::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED, ['default' => '0']),
+                ],
+            OrderStates::PS_CHECKOUT_STATE_PARTIALLY_PAID => [
+                    'default' => '0',
+                    'value' => $configuration->get(OrderStates::PS_CHECKOUT_STATE_PARTIALLY_PAID, ['default' => '0']),
+                ],
+            OrderStates::PS_CHECKOUT_STATE_AUTHORIZED => [
+                    'default' => '0',
+                    'value' => $configuration->get(OrderStates::PS_CHECKOUT_STATE_AUTHORIZED, ['default' => '0']),
+                ],
+        ];
+
+        $this->exitWithResponse([
+            'status' => true,
+            'mappedOrderStates' => $mappedOrderStates,
+        ]);
+    }
+
+    public function ajaxProcessBatchSaveConfiguration()
+    {
+        /** @var BatchConfigurationValidator $configurationValidator */
+        $configurationValidator = $this->module->getService('ps_checkout.validator.batch_configuration');
+        /** @var BatchConfigurationProcessor $batchConfigurationProcessor */
+        $batchConfigurationProcessor = $this->module->getService('ps_checkout.configuration.batch_processor');
+
+        $configuration = json_decode(Tools::getValue('configuration'), true);
+        try {
+            $configurationValidator->validateAjaxBatchConfiguration($configuration);
+            $batchConfigurationProcessor->saveBatchConfiguration($configuration);
+
+            $this->exitWithResponse([
+                'status' => true,
+            ]);
+        } catch (Exception $exception) {
+            $this->exitWithResponse([
+                'httpCode' => 500,
+                'status' => false,
+                'error' => $exception->getMessage(),
+            ]);
+        }
+    }
+
+    public function ajaxProcessGetOrderStates()
+    {
+        $orderStates = OrderState::getOrderStates(Context::getContext()->language->id);
+
+        $this->exitWithResponse([
+            'status' => true,
+            'orderStates' => $orderStates,
+        ]);
     }
 
     /**

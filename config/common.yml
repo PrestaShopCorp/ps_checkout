@@ -277,6 +277,10 @@ services:
       - '@ps_checkout.express_checkout.configuration'
       - '@ps_checkout.pay_later.configuration'
 
+  ps_checkout.validator.batch_configuration:
+    class: 'PrestaShop\Module\PrestashopCheckout\Validator\BatchConfigurationValidator'
+    public: true
+
   ps_checkout.cache.directory:
     class: 'PrestaShop\ModuleLibCacheDirectoryProvider\Cache\CacheDirectoryProvider'
     public: true
@@ -321,6 +325,12 @@ services:
     arguments:
       - '@ps_checkout.webhook.service.secret_token'
       - ['@ps_checkout.webhook.handler.event.configuration_updated']
+
+  ps_checkout.configuration.batch_processor:
+    class: 'PrestaShop\Module\PrestashopCheckout\Configuration\BatchConfigurationProcessor'
+    public: true
+    arguments:
+      - '@ps_checkout.configuration'
 
   ps_accounts.installer:
     class: 'PrestaShop\PsAccountsInstaller\Installer\Installer'
