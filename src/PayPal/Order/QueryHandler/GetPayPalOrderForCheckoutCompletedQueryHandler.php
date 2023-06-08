@@ -98,10 +98,6 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
             new PayPalOrderFetchedEvent($getPayPalOrderQuery->getOrderId()->getValue(), $orderPayPal->getOrder())
         );
 
-        $result = new GetPayPalOrderForCheckoutCompletedQueryResult($orderPayPal->getOrder());
-
-        $this->paypalOrderEventDispatcher->dispatch($result->getPayPalOrder());
-
-        return $result;
+        return new GetPayPalOrderForCheckoutCompletedQueryResult($orderPayPal->getOrder());
     }
 }
