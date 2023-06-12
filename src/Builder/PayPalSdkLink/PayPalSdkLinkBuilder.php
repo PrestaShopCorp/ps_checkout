@@ -259,15 +259,15 @@ class PayPalSdkLinkBuilder
         $context = \Context::getContext();
         $code = '';
 
+        if (\Validate::isLoadedObject($context->country)) {
+            $code = strtoupper($context->country->iso_code);
+        }
+
         if (\Validate::isLoadedObject($context->cart) && $context->cart->id_address_invoice) {
             $address = new \Address($context->cart->id_address_invoice);
             $country = new \Country($address->id_country);
 
             $code = strtoupper($country->iso_code);
-        }
-
-        if (\Validate::isLoadedObject($context->country)) {
-            $code = strtoupper($context->country->iso_code);
         }
 
         if ($code === 'UK') {
@@ -412,7 +412,7 @@ class PayPalSdkLinkBuilder
             }
             if ($fundingSource['active']
                 && $fundingSource['name'] === 'sofort'
-                && (($context->currency->iso_code === 'EUR' && in_array($country, ['AU', 'BE', 'DE', 'ES', 'IT', 'NL'], true))
+                && (($context->currency->iso_code === 'EUR' && in_array($country, ['AT', 'BE', 'DE', 'ES', 'NL'], true))
                 || ($context->currency->iso_code === 'GBP' && in_array($country, ['GB', 'UK'], true)))
             ) {
                 $fundingSourcesEnabled[] = $fundingSource['name'];

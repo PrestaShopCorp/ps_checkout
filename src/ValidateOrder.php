@@ -23,6 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use Psr\SimpleCache\CacheInterface;
 
@@ -75,7 +76,7 @@ class ValidateOrder
      * @param array{cartId: int, amount: float, currencyId: int, secureKey: string, isExpressCheckout: bool, isHostedFields: bool, fundingSource: string, liabilityShift: string, liabilityShifted: bool, authenticationStatus: string, authenticationReason: string} $payload
      *
      * @throws PsCheckoutException
-     * @throws \PrestaShopException
+     * @throws \PrestaShopException|\Psr\SimpleCache\InvalidArgumentException
      */
     public function validateOrder($payload)
     {
@@ -87,7 +88,7 @@ class ValidateOrder
         $order = $paypalOrder->getOrder();
 
         if (empty($order)) {
-            throw new PsCheckoutException(sprintf('Unable to retrieve Paypal Order for %s', $this->paypalOrderId), PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
+            throw new OrderNotFoundException(sprintf('Unable to retrieve Paypal Order for %s', $this->paypalOrderId), OrderNotFoundException::NOT_FOUND);
         }
 
         if ($payload['isHostedFields']) {
