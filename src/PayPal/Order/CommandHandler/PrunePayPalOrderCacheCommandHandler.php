@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCacheCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\PrunePayPalOrderCacheCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCacheUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use Psr\SimpleCache\CacheException;
@@ -37,38 +37,38 @@ class PrunePayPalOrderCacheCommandHandler
     /**
      * @var CacheInterface
      */
-    private $cache;
+    private $orderPayPalCache;
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
-     * @param CacheInterface $cache
+     * @param CacheInterface $orderPayPalCache
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, CacheInterface $cache)
+    public function __construct(EventDispatcherInterface $eventDispatcher, CacheInterface $orderPayPalCache)
     {
         $this->eventDispatcher = $eventDispatcher;
-        $this->cache = $cache;
+        $this->orderPayPalCache = $orderPayPalCache;
     }
 
     /**
-     * @param UpdatePayPalOrderCacheCommand $updatePayPalOrderCacheCommand
+     * @param PrunePayPalOrderCacheCommand $prunePayPalOrderCacheCommand
      *
      * @return void
      *
      * @throws PayPalOrderException
      */
-    public function handle(UpdatePayPalOrderCacheCommand $updatePayPalOrderCacheCommand)
+    public function handle(PrunePayPalOrderCacheCommand $prunePayPalOrderCacheCommand)
     {
         try {
             // Cache used provide pruning (deletion) of all expired cache items to reduce cache size
-            if (method_exists($this->cache, 'prune')) {
-                $this->cache->prune();
+            if (method_exists($this->orderPayPalCache, 'prune')) {
+                $this->orderPayPalCache->prune();
             }
         } catch (CacheException $exception) {
             throw new PayPalOrderException('Unable to prune PayPal Order Cache', PayPalOrderException::CACHE_EXCEPTION, $exception);
         }
 
         $this->eventDispatcher->dispatch(
-            new PayPalOrderCacheUpdatedEvent($updatePayPalOrderCacheCommand->getOrderId()->getValue())
+            new PayPalOrderCacheUpdatedEvent($prunePayPalOrderCacheCommand->getOrderId()->getValue())
         );
     }
 }

@@ -44,6 +44,6 @@ class CheckTransitionPayPalOrderStatusService
             throw new OrderException(sprintf('The oldStatus doesn\'t exist (%s)', $oldStatus), OrderException::STATUS_CHECK_AVAILABLE_BAD_PARAMETER);
         }
 
-        return in_array($newStatus, PayPalOrderStatus::TRANSITION_AVAILABLE[$oldStatus]);
+        return in_array($newStatus, PayPalOrderStatus::TRANSITION_AVAILABLE[$oldStatus], true);
     }
 }

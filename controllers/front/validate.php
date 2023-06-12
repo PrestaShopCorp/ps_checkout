@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -23,6 +24,8 @@ use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQueryResult;
 
 /**
  * This controller receive ajax call to capture/authorize payment and create a PrestaShop Order
@@ -92,14 +95,48 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                 isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields']
             ));
 
-            // @todo Fetch data from database using a Query then returns response created from QueryResult
+            $this->sendOkResponse($this->generateResponse());
+        } catch (Exception $exception) {
+            $response = $this->generateResponse();
+
+            if (!empty($response)) {
+                $this->sendOkResponse($response);
+            }
+
+            $this->handleException($exception);
+        }
+    }
+
+    private function generateResponse()
+    {
+        if (!$this->module->currentOrder) {
+            return null;
+        }
+
+        try {
+            /** @var \PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface $commandBus */
+            $commandBus = $this->module->getService('ps_checkout.bus.command');
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId($this->context->cart->id);
+
+            if (!Validate::isLoadedObject($psCheckoutCart)) {
+                return null;
+            }
+
+            /** @var GetPayPalOrderForOrderConfirmationQueryResult $paypalOrder */
+            $paypalOrder = $commandBus->handle(new GetPayPalOrderForOrderConfirmationQuery(
+                $psCheckoutCart->paypal_order
+            ));
+
             $response = [
-                'status' => '',
-                'paypalOrderId' => '',
-                'transactionIdentifier' => '',
+                'status' => $psCheckoutCart->paypal_status,
+                'paypalOrderId' => $psCheckoutCart->paypal_order,
+                'transactionIdentifier' => isset($paypalOrder->getOrder()['purchase_units'][0]['payments']['captures'][0]) ? $paypalOrder->getOrder()['purchase_units'][0]['payments']['captures'][0]['id'] : null,
             ];
 
-            $this->sendOkResponse($response);
+            return $response;
         } catch (Exception $exception) {
             $this->handleException($exception);
         }
@@ -255,6 +292,26 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                     break;
                 case PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_CANCELED:
                     $exceptionMessageForCustomer = $this->module->l('Card holder authentication canceled, please choose another payment method or try again.');
+                    $notifyCustomerService = false;
+                    break;
+                case PsCheckoutException::CART_PRODUCT_MISSING:
+                    $exceptionMessageForCustomer = $this->module->l('Cart doesn\'t contains product.');
+                    $notifyCustomerService = false;
+                    break;
+                case PsCheckoutException::CART_PRODUCT_UNAVAILABLE:
+                    $exceptionMessageForCustomer = $this->module->l('Cart contains product unavailable.');
+                    $notifyCustomerService = false;
+                    break;
+                case PsCheckoutException::CART_ADDRESS_INVOICE_INVALID:
+                    $exceptionMessageForCustomer = $this->module->l('Cart invoice address is invalid.');
+                    $notifyCustomerService = false;
+                    break;
+                case PsCheckoutException::CART_ADDRESS_DELIVERY_INVALID:
+                    $exceptionMessageForCustomer = $this->module->l('Cart delivery address is invalid.');
+                    $notifyCustomerService = false;
+                    break;
+                case PsCheckoutException::CART_DELIVERY_OPTION_INVALID:
+                    $exceptionMessageForCustomer = $this->module->l('Cart delivery option is unavailable.');
                     $notifyCustomerService = false;
                     break;
             }

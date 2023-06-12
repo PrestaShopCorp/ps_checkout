@@ -289,14 +289,27 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      */
     public function buildApplicationContextNode()
     {
+        $context = \Context::getContext();
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
         $node['application_context'] = [
             'brand_name' => \Configuration::get(
                 'PS_SHOP_NAME',
                 null,
                 null,
-                (int) \Context::getContext()->shop->id
+                (int) $context->shop->id
             ),
             'shipping_preference' => $this->expressCheckout ? 'GET_FROM_FILE' : 'SET_PROVIDED_ADDRESS',
+            'return_url' => \Context::getContext()->link->getPageLink(
+                'order-confirmation',
+                true,
+                (int) $context->cart->id_lang,
+                [
+                    'id_cart' => (int) $context->cart->id,
+                    'key' => $context->cart->secure_key,
+                    'id_module' => (int) $module->id,
+                ]
+            ),
         ];
 
         $this->getPayload()->addAndMergeItems($node);

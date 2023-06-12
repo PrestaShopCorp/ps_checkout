@@ -35,15 +35,15 @@ class OrderStateConfiguration
     private $orderStateConfigurationName;
 
     /**
-     * @param int $orderStateId
      * @param string $orderStateConfigurationName
+     * @param int $orderStateId
      *
      * @throws OrderStateException
      */
-    public function __construct($orderStateId, $orderStateConfigurationName)
+    public function __construct($orderStateConfigurationName, $orderStateId)
     {
-        $this->orderStateId = new OrderStateId($orderStateId);
         $this->orderStateConfigurationName = $orderStateConfigurationName;
+        $this->orderStateId = new OrderStateId($orderStateId);
     }
 
     /**

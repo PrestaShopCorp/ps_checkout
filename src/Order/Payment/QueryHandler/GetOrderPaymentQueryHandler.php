@@ -20,9 +20,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Payment\QueryHandler;
 
+use Order;
+use OrderPayment;
 use PrestaShop\Module\PrestashopCheckout\Order\Payment\Exception\OrderPaymentException;
 use PrestaShop\Module\PrestashopCheckout\Order\Payment\Query\GetOrderPaymentQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Payment\Query\GetOrderPaymentQueryResult;
+use PrestaShopException;
 
 class GetOrderPaymentQueryHandler
 {
@@ -31,29 +34,31 @@ class GetOrderPaymentQueryHandler
      *
      * @return GetOrderPaymentQueryResult
      *
-     * @throws \PrestaShopException
+     * @throws PrestaShopException
      * @throws OrderPaymentException
      */
     public function handle(GetOrderPaymentQuery $query)
     {
-        $orderPaymentResult = \Db::getInstance()->executeS(
-            'SELECT *
-			    FROM `' . _DB_PREFIX_ . 'order_payment`
-			    WHERE `transaction_id` = \'' . pSQL($query->getTransactionId()->getValue()) . '\''
-        );
+        $order = new Order($query->getOrderId()->getValue());
+        /** @var OrderPayment[] $orderPayments */
+        $orderPayments = $order->getOrderPaymentCollection();
 
-        if (empty($orderPaymentResult)) {
+        if (empty($orderPayments)) {
             throw new OrderPaymentException('No PrestaShop OrderPayment associated to this PayPal capture id at this time.', OrderPaymentException::INVALID_ID);
         }
 
-        $orderPayment = end($orderPaymentResult);
+        foreach ($orderPayments as $orderPayment) {
+            if ($orderPayment->transaction_id === $query->getTransactionId()->getValue()) {
+                return new GetOrderPaymentQueryResult(
+                    $orderPayment->transaction_id,
+                    $orderPayment->order_reference,
+                    $orderPayment->amount,
+                    $orderPayment->payment_method,
+                    $orderPayment->date_add
+                );
+            }
+        }
 
-        return new GetOrderPaymentQueryResult(
-            $orderPayment['transaction_id'],
-            $orderPayment['order_reference'],
-            $orderPayment['amount'],
-            $orderPayment['payment_method'],
-            $orderPayment['date_add']
-        );
+        throw new OrderPaymentException('No PrestaShop OrderPayment associated to this PayPal capture id at this time.', OrderPaymentException::INVALID_ID);
     }
 }

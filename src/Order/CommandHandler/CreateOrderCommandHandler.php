@@ -30,6 +30,7 @@ use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
@@ -94,14 +95,13 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
                 $cart->secure_key
             );
         } catch (Exception $exception) {
-            throw new OrderException(sprintf('Failed to create order from Cart #%s.', $cart->id), OrderException::FAILED_ADD_ORDER, $exception);
+            throw new OrderException(sprintf('Failed to create order from Cart #%s.', var_export($cart->id, true)), OrderException::FAILED_ADD_ORDER, $exception);
         }
 
         if (!$cart->orderExists()) {
-            throw new OrderException(sprintf('Failed to create order from Cart #%s.', $cart->id), OrderException::ORDER_NOT_FOUND);
+            throw new OrderNotFoundException(sprintf('Failed to create order from Cart #%s.', var_export($cart->id, true)), OrderNotFoundException::NOT_FOUND);
         }
 
-        // TODO Manque le orderPaypal | Quid d'avoir un tableau avec les infos de ps dont on a besoin (ex: cart amount, totalAmountPaid ...)
         // It happens this returns null in case of override or weird modules
         if ($paymentModule->currentOrder) {
             $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) $paymentModule->currentOrder, (int) $cart->id));
@@ -125,6 +125,6 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
             return;
         }
 
-        throw new OrderException(sprintf('Unable to retrieve order identifier from Cart #%s.', $cart->id), OrderException::ORDER_NOT_FOUND);
+        throw new OrderNotFoundException(sprintf('Unable to retrieve order identifier from Cart #%s.', var_export($cart->id, true)), OrderNotFoundException::NOT_FOUND);
     }
 }

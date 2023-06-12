@@ -23,6 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Order;
 use Exception;
 use Order;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Order\ValueObject\OrderId;
 
 class AbstractOrderHandler
@@ -39,11 +40,11 @@ class AbstractOrderHandler
         try {
             $order = new Order($orderId->getValue());
         } catch (Exception $exception) {
-            throw new OrderException(sprintf('Error occurred when trying to get order object #%s', $orderId->getValue()), OrderException::ORDER_NOT_FOUND, $exception);
+            throw new OrderNotFoundException(sprintf('Error occurred when trying to get order object #%s', $orderId->getValue()),OrderNotFoundException::NOT_FOUND, $exception);
         }
 
         if ($order->id !== $orderId->getValue()) {
-            throw new OrderException(sprintf('Order with id "%d" was not found.', $orderId->getValue()), OrderException::ORDER_NOT_FOUND);
+            throw new OrderNotFoundException(sprintf('Order with id "%d" was not found.', $orderId->getValue()), OrderNotFoundException::NOT_FOUND);
         }
 
         return $order;

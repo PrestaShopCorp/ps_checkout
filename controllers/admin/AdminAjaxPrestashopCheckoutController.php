@@ -467,10 +467,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         ]);
 
         if (isset($response['httpCode']) && $response['httpCode'] === 200) {
-            /** @var CacheInterface $paypalOrderCache */
-            $paypalOrderCache = $this->module->getService('ps_checkout.cache.paypal.order');
-            if ($paypalOrderCache->has($orderPayPalId)) {
-                $paypalOrderCache->delete($orderPayPalId);
+            /** @var CacheInterface $orderPayPalCache */
+            $orderPayPalCache = $this->module->getService('ps_checkout.cache.paypal.order');
+            if ($orderPayPalCache->has($orderPayPalId)) {
+                $orderPayPalCache->delete($orderPayPalId);
             }
 
             $this->ajaxDie(json_encode([

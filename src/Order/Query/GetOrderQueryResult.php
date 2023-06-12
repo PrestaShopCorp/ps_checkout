@@ -22,31 +22,59 @@ namespace PrestaShop\Module\PrestashopCheckout\Order\Query;
 
 class GetOrderQueryResult
 {
-    /** @var int */
+    /**
+     * @var int
+     */
     private $id;
 
-    /** @var int */
+    /**
+     * @var int
+     */
     private $currentState;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $hasBeenPaid;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $hasBeenShipped;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $hasBeenDelivered;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
+    private $hasBeenTotallyRefund;
+
+    /**
+     * @var bool
+     */
     private $isInPreparation;
 
-    /** @var string */
+    /**
+     * @var bool
+     */
+    private $isInPending;
+
+    /**
+     * @var string
+     */
     private $totalAmount;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $totalAmountPaid;
 
-    /** @var int */
+    /**
+     * @var int
+     */
     private $currencyId;
 
     /**
@@ -55,7 +83,9 @@ class GetOrderQueryResult
      * @param bool $hasBeenPaid
      * @param bool $hasBeenShipped
      * @param bool $hasBeenDelivered
+     * @param bool $hasBeenTotallyRefund
      * @param bool $isInPreparation
+     * @param bool $isInPending
      * @param string $totalAmount
      * @param string $totalAmountPaid
      */
@@ -65,7 +95,9 @@ class GetOrderQueryResult
         $hasBeenPaid,
         $hasBeenShipped,
         $hasBeenDelivered,
+        $hasBeenTotallyRefund,
         $isInPreparation,
+        $isInPending,
         $totalAmount,
         $totalAmountPaid,
         $currencyId
@@ -75,7 +107,9 @@ class GetOrderQueryResult
         $this->hasBeenPaid = $hasBeenPaid;
         $this->hasBeenShipped = $hasBeenShipped;
         $this->hasBeenDelivered = $hasBeenDelivered;
+        $this->hasBeenTotallyRefund = $hasBeenTotallyRefund;
         $this->isInPreparation = $isInPreparation;
+        $this->isInPending = $isInPending;
         $this->totalAmount = $totalAmount;
         $this->totalAmountPaid = $totalAmountPaid;
         $this->currencyId = $currencyId;
@@ -92,7 +126,7 @@ class GetOrderQueryResult
     /**
      * @return int
      */
-    public function getCurrentState()
+    public function getCurrentStateId()
     {
         return $this->currentState;
     }
@@ -119,6 +153,14 @@ class GetOrderQueryResult
     public function hasBeenDelivered()
     {
         return $this->hasBeenDelivered;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasBeenTotallyRefund()
+    {
+        return $this->hasBeenTotallyRefund;
     }
 
     /**
@@ -151,5 +193,13 @@ class GetOrderQueryResult
     public function getCurrencyId()
     {
         return $this->currencyId;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInPending()
+    {
+        return $this->isInPending;
     }
 }

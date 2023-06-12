@@ -21,7 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\State\Query;
 
 use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateConfiguration;
-use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
 
 class GetOrderStateConfigurationQueryResult
 {
@@ -240,21 +239,12 @@ class GetOrderStateConfigurationQueryResult
     }
 
     /**
-     * @param OrderStateId $orderStateId
+     * @todo Remove this
      *
-     * @return void
+     * @param $orderStateName
+     *
+     * @return int|false
      */
-    public function getKeyById($orderStateId)
-    {
-        foreach ($this as $orderState) {
-            if ($orderState->getOrderStateId() == $orderStateId->getValue()) {
-                return $orderState->getOrderStateConfigurationName();
-            }
-        }
-
-        return false;
-    }
-
     public function getIdByKey($orderStateName)
     {
         foreach ($this as $orderState) {

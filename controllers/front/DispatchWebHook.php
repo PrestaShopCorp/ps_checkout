@@ -24,6 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\Webhook;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Dispatcher\OrderDispatcher;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\WebHookValidation;
 
@@ -99,24 +100,23 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             }
 
             $validationValues->validateBodyDatas($bodyValues);
+            $this->setAtributesBodyValues($bodyValues);
 
             if (false === $this->checkPSLSignature($bodyValues)) {
                 throw new PsCheckoutException('Invalid PSL signature', PsCheckoutException::PSCHECKOUT_WEBHOOK_PSL_SIGNATURE_INVALID);
             }
-
-            $this->setAtributesBodyValues($bodyValues);
 
             // Check if have execution permissions
             if (false === $this->checkExecutionPermissions()) {
                 return false;
             }
 
-            $this->module->getLogger()->info(
-                'Webhook received',
-                [
-                    'payload' => $bodyValues,
-                ]
-            );
+//            $this->module->getLogger()->info(
+//                'Webhook received',
+//                [
+//                    'payload' => $bodyValues,
+//                ]
+//            );
 
             return $this->dispatchWebHook();
         } catch (Exception $exception) {
@@ -321,7 +321,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
     private function handleException(Exception $exception)
     {
         $this->module->getLogger()->log(
-            PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND === $exception->getCode() ? Logger::NOTICE : Logger::ERROR,
+            PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND === $exception->getCode() || OrderNotFoundException::NOT_FOUND? Logger::NOTICE : Logger::ERROR,
             'Webhook exception ' . $exception->getCode(),
             [
                 'merchantId' => $this->merchantId,
@@ -374,6 +374,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
             case PsCheckoutException::PSCHECKOUT_WEBHOOK_ORDER_ID_EMPTY:
             case PsCheckoutException::PSCHECKOUT_MERCHANT_IDENTIFIER_MISSING:
             case PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND:
+            case OrderNotFoundException::NOT_FOUND:
                 $httpCode = 422;
                 break;
         }

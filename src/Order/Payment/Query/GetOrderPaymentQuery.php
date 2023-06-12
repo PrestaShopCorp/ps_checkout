@@ -20,20 +20,39 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Payment\Query;
 
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
+use PrestaShop\Module\PrestashopCheckout\Order\ValueObject\OrderId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\ValueObject\PayPalCaptureId;
 
 class GetOrderPaymentQuery
 {
-    /** @var PayPalCaptureId */
+    /**
+     * @var OrderId
+     */
+    private $orderId;
+
+    /**
+     * @var PayPalCaptureId
+     */
     private $transactionId;
 
     /**
+     * @param string $orderId
+     * @param string $transactionId
+     *
      * @throws PayPalCaptureException
+     * @throws OrderException
      */
-    public function __construct($transactionId)
+    public function __construct($orderId, $transactionId)
     {
+        $this->orderId = new OrderId($orderId);
         $this->transactionId = new PayPalCaptureId($transactionId);
+    }
+
+    public function getOrderId()
+    {
+        return $this->orderId;
     }
 
     public function getTransactionId()
