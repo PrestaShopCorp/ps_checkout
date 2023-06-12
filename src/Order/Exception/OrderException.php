@@ -34,4 +34,9 @@ class OrderException extends PsCheckoutException
     const FAILED_UPDATE_ORDER_STATUS = 8;
     const ORDER_STATUS_NOT_FOUND = 9;
     const MODULE_INSTANCE_NOT_FOUND = 10;
+    const ORDER_MATRICE_ERROR = 11;
+    const ORDER_CHECK_AMOUNT_BAD_PARAMETER = 12;
+    const STATUS_CHECK_AVAILABLE_BAD_PARAMETER = 13;
+    const INVALID_PAYPAL_ORDER_STATE = 14;
+    const TRANSITION_NOT_ALLOWED = 15;
 }

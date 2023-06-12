@@ -18,28 +18,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query;
+namespace PrestaShop\Module\PrestashopCheckout\Order\State\Query;
 
-class GetPayPalOrderQueryResult
+class GetOrderStateConfigurationQuery
 {
-    /**
-     * @var array
-     */
-    private $order;
-
-    /**
-     * @param array $order
-     */
-    public function __construct(array $order)
-    {
-        $this->order = $order;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOrder()
-    {
-        return $this->order;
-    }
 }

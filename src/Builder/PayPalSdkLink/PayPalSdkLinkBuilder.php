@@ -259,15 +259,15 @@ class PayPalSdkLinkBuilder
         $context = \Context::getContext();
         $code = '';
 
+        if (\Validate::isLoadedObject($context->country)) {
+            $code = strtoupper($context->country->iso_code);
+        }
+
         if (\Validate::isLoadedObject($context->cart) && $context->cart->id_address_invoice) {
             $address = new \Address($context->cart->id_address_invoice);
             $country = new \Country($address->id_country);
 
             $code = strtoupper($country->iso_code);
-        }
-
-        if (\Validate::isLoadedObject($context->country)) {
-            $code = strtoupper($context->country->iso_code);
         }
 
         if ($code === 'UK') {

@@ -20,32 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event;
 
-use PrestaShop\Module\PrestashopCheckout\Event\Event;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\ValueObject\PayPalCaptureId;
-
-class PayPalCaptureRefundedEvent extends Event
+class PayPalCaptureRefundedEvent extends PayPalCaptureEvent
 {
-    /**
-     * @var PayPalCaptureId
-     */
-    private $captureId;
-
-    /**
-     * @param string $captureId
-     *
-     * @throws PayPalCaptureException
-     */
-    public function __construct($captureId)
-    {
-        $this->captureId = new PayPalCaptureId($captureId);
-    }
-
-    /**
-     * @return PayPalCaptureId
-     */
-    public function getPayPalCaptureId()
-    {
-        return $this->captureId;
-    }
 }

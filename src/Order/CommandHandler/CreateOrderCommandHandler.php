@@ -30,6 +30,7 @@ use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShopDatabaseException;
 use PrestaShopException;
 
@@ -94,16 +95,16 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
                 $cart->secure_key
             );
         } catch (Exception $exception) {
-            throw new OrderException(sprintf('Failed to create order from Cart #%s.', $cart->id), OrderException::FAILED_ADD_ORDER, $exception);
+            throw new OrderException(sprintf('Failed to create order from Cart #%s.', var_export($cart->id, true)), OrderException::FAILED_ADD_ORDER, $exception);
         }
 
         if (!$cart->orderExists()) {
-            throw new OrderException(sprintf('Failed to create order from Cart #%s.', $cart->id), OrderException::ORDER_NOT_FOUND);
+            throw new OrderNotFoundException(sprintf('Failed to create order from Cart #%s.', var_export($cart->id, true)), OrderNotFoundException::NOT_FOUND);
         }
 
         // It happens this returns null in case of override or weird modules
         if ($paymentModule->currentOrder) {
-            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) $paymentModule->currentOrder));
+            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) $paymentModule->currentOrder, (int) $cart->id));
 
             return;
         }
@@ -111,7 +112,7 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
         // Order::getIdByCartId() is available since PrestaShop 1.7.1.0
         if (method_exists(Order::class, 'getIdByCartId')) {
             // @phpstan-ignore-next-line
-            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) Order::getIdByCartId($cart->id)));
+            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) Order::getIdByCartId($cart->id), (int) $cart->id));
 
             return;
         }
@@ -119,11 +120,11 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
         // Order::getIdByCartId() is available before PrestaShop 1.7.1.0, removed since PrestaShop 8.0.0
         if (method_exists(Order::class, 'getOrderByCartId')) {
             // @phpstan-ignore-next-line
-            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) Order::getOrderByCartId($cart->id)));
+            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) Order::getOrderByCartId($cart->id), (int) $cart->id));
 
             return;
         }
 
-        throw new OrderException(sprintf('Unable to retrieve order identifier from Cart #%s.', $cart->id), OrderException::ORDER_NOT_FOUND);
+        throw new OrderNotFoundException(sprintf('Unable to retrieve order identifier from Cart #%s.', var_export($cart->id, true)), OrderNotFoundException::NOT_FOUND);
     }
 }

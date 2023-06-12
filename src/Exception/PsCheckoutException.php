@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -81,4 +82,10 @@ class PsCheckoutException extends \Exception
         self::PSCHECKOUT_VALIDATE_BODY_EMPTY,
         self::PAYPAL_ORDER_IDENTIFIER_MISSING,
     ];
+    const INVALID_CAPTURE_EVENT = 53;
+    const CART_PRODUCT_MISSING = 54;
+    const CART_PRODUCT_UNAVAILABLE = 55;
+    const CART_ADDRESS_INVOICE_INVALID = 56;
+    const CART_ADDRESS_DELIVERY_INVALID = 57;
+    const CART_DELIVERY_OPTION_INVALID = 58;
 }

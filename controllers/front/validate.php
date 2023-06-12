@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -18,10 +19,13 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
+use PrestaShop\Module\PrestashopCheckout\Checkout\Event\CheckoutCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
+use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\ValidateOrder;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQueryResult;
 
 /**
  * This controller receive ajax call to capture/authorize payment and create a PrestaShop Order
@@ -79,70 +83,60 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             }
 
             $this->paypalOrderId = $bodyValues['orderID'];
-            $isExpressCheckout = isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'];
-            $isHostedFields = isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'];
-            $fundingSource = isset($bodyValues['fundingSource']) && Validate::isGenericName($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : null;
-            $liabilityShift = $isHostedFields && isset($bodyValues['liabilityShift']) && Validate::isGenericName($bodyValues['liabilityShift']) ? $bodyValues['liabilityShift'] : null;
-            $liabilityShifted = $isHostedFields ? (isset($bodyValues['liabilityShifted']) && $bodyValues['liabilityShifted']) : null;
-            $authenticationStatus = $isHostedFields && isset($bodyValues['authenticationStatus']) && Validate::isGenericName($bodyValues['authenticationStatus']) ? $bodyValues['authenticationStatus'] : null;
-            $authenticationReason = $isHostedFields && isset($bodyValues['authenticationReason']) && Validate::isGenericName($bodyValues['authenticationReason']) ? $bodyValues['authenticationReason'] : null;
+
+            /** @var EventDispatcherInterface $eventDispatcher */
+            $eventDispatcher = $this->module->getService('ps_checkout.event.dispatcher');
+
+            $eventDispatcher->dispatch(new CheckoutCompletedEvent(
+                $cart->id,
+                $this->paypalOrderId,
+                (isset($bodyValues['fundingSource']) && Validate::isGenericName($bodyValues['fundingSource'])) ? $bodyValues['fundingSource'] : null,
+                isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'],
+                isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields']
+            ));
+
+            $this->sendOkResponse($this->generateResponse());
+        } catch (Exception $exception) {
+            $response = $this->generateResponse();
+
+            if (!empty($response)) {
+                $this->sendOkResponse($response);
+            }
+
+            $this->handleException($exception);
+        }
+    }
+
+    private function generateResponse()
+    {
+        if (!$this->module->currentOrder) {
+            return null;
+        }
+
+        try {
+            /** @var \PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface $commandBus */
+            $commandBus = $this->module->getService('ps_checkout.bus.command');
 
             /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId($this->context->cart->id);
 
-            /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($bodyValues['orderID']);
-
-            if (false !== $psCheckoutCart) {
-                $psCheckoutCart->paypal_funding = $fundingSource;
-                $psCheckoutCart->isExpressCheckout = $isExpressCheckout;
-                $psCheckoutCart->isHostedFields = $isHostedFields;
-                $psCheckoutCartRepository->save($psCheckoutCart);
+            if (!Validate::isLoadedObject($psCheckoutCart)) {
+                return null;
             }
 
-            $this->module->getLogger()->info(
-                'ValidateOrder',
-                [
-                    'paypal_order' => $this->paypalOrderId,
-                    'id_cart' => (int) $this->context->cart->id,
-                    'isExpressCheckout' => $isExpressCheckout,
-                    'isHostedFields' => $isHostedFields,
-                    'fundingSource' => $fundingSource,
-                    'liabilityShift' => $liabilityShift,
-                    'liabilityShifted' => $liabilityShifted,
-                    'authenticationStatus' => $authenticationStatus,
-                    'authenticationReason' => $authenticationReason,
-                ]
-            );
+            /** @var GetPayPalOrderForOrderConfirmationQueryResult $paypalOrder */
+            $paypalOrder = $commandBus->handle(new GetPayPalOrderForOrderConfirmationQuery(
+                $psCheckoutCart->paypal_order
+            ));
 
-            $currency = $this->context->currency;
-            $total = (float) $cart->getOrderTotal(true, Cart::BOTH);
-
-            /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $configurationPayPal */
-            $configurationPayPal = $this->module->getService('ps_checkout.paypal.configuration');
-            $payment = new ValidateOrder($bodyValues['orderID'], $configurationPayPal->getMerchantId());
-
-            $dataOrder = [
-                'cartId' => (int) $cart->id,
-                'amount' => $total,
-                'currencyId' => (int) $currency->id,
-                'secureKey' => $customer->secure_key,
-                'isExpressCheckout' => $isExpressCheckout,
-                'isHostedFields' => $isHostedFields,
-                'fundingSource' => $fundingSource,
-                'liabilityShift' => $liabilityShift,
-                'liabilityShifted' => $liabilityShifted,
-                'authenticationStatus' => $authenticationStatus,
-                'authenticationReason' => $authenticationReason,
+            $response = [
+                'status' => $psCheckoutCart->paypal_status,
+                'paypalOrderId' => $psCheckoutCart->paypal_order,
+                'transactionIdentifier' => isset($paypalOrder->getOrder()['purchase_units'][0]['payments']['captures'][0]) ? $paypalOrder->getOrder()['purchase_units'][0]['payments']['captures'][0]['id'] : null,
             ];
 
-            // If the payment is rejected redirect the client to the last checkout step (422 error)
-            // API call here
-            $response = $payment->validateOrder($dataOrder);
-
-            $this->context->cookie->__unset('paypalEmail');
-
-            $this->sendOkResponse($response);
+            return $response;
         } catch (Exception $exception) {
             $this->handleException($exception);
         }
@@ -298,6 +292,26 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                     break;
                 case PsCheckoutException::PAYPAL_PAYMENT_CARD_SCA_CANCELED:
                     $exceptionMessageForCustomer = $this->module->l('Card holder authentication canceled, please choose another payment method or try again.');
+                    $notifyCustomerService = false;
+                    break;
+                case PsCheckoutException::CART_PRODUCT_MISSING:
+                    $exceptionMessageForCustomer = $this->module->l('Cart doesn\'t contains product.');
+                    $notifyCustomerService = false;
+                    break;
+                case PsCheckoutException::CART_PRODUCT_UNAVAILABLE:
+                    $exceptionMessageForCustomer = $this->module->l('Cart contains product unavailable.');
+                    $notifyCustomerService = false;
+                    break;
+                case PsCheckoutException::CART_ADDRESS_INVOICE_INVALID:
+                    $exceptionMessageForCustomer = $this->module->l('Cart invoice address is invalid.');
+                    $notifyCustomerService = false;
+                    break;
+                case PsCheckoutException::CART_ADDRESS_DELIVERY_INVALID:
+                    $exceptionMessageForCustomer = $this->module->l('Cart delivery address is invalid.');
+                    $notifyCustomerService = false;
+                    break;
+                case PsCheckoutException::CART_DELIVERY_OPTION_INVALID:
+                    $exceptionMessageForCustomer = $this->module->l('Cart delivery option is unavailable.');
                     $notifyCustomerService = false;
                     break;
             }

@@ -20,12 +20,19 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Checkout\Event;
 
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
+use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
 use PrestaShop\Module\PrestashopCheckout\Event\Event;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 
 class CheckoutCompletedEvent extends Event
 {
+    /**
+     * @var CartId
+     */
+    private $cartId;
+
     /**
      * @var PayPalOrderId
      */
@@ -47,19 +54,30 @@ class CheckoutCompletedEvent extends Event
     private $isHostedFields;
 
     /**
+     * @param int $cartId
      * @param string $orderPayPalId
      * @param string $fundingSource
      * @param bool $isExpressCheckout
      * @param bool $isHostedFields
      *
      * @throws PayPalOrderException
+     * @throws CartException
      */
-    public function __construct($orderPayPalId, $fundingSource, $isExpressCheckout, $isHostedFields)
+    public function __construct($cartId, $orderPayPalId, $fundingSource, $isExpressCheckout, $isHostedFields)
     {
+        $this->cartId = new CartId($cartId);
         $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
         $this->fundingSource = $fundingSource;
         $this->isExpressCheckout = $isExpressCheckout;
         $this->isHostedFields = $isHostedFields;
+    }
+
+    /**
+     * @return CartId
+     */
+    public function getCartId()
+    {
+        return $this->cartId;
     }
 
     /**

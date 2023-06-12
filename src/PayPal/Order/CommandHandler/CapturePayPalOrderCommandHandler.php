@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -24,27 +25,34 @@ use Configuration;
 use Context;
 use Exception;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
-use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderEventDispatcher;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\PayPalCaptureEventDispatcher;
 use PrestaShop\Module\PrestashopCheckout\PayPalError;
 use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
 
 class CapturePayPalOrderCommandHandler
 {
     /**
-     * @var EventDispatcherInterface
+     * @var PayPalOrderEventDispatcher
      */
-    private $eventDispatcher;
+    private $paypalOrderEventDispatcher;
 
     /**
-     * @param EventDispatcherInterface $eventDispatcher
+     * @var PayPalCaptureEventDispatcher
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    private $paypalCaptureEventDispatcher;
+
+    /**
+     * @param PayPalOrderEventDispatcher $paypalOrderEventDispatcher
+     * @param PayPalCaptureEventDispatcher $paypalCaptureEventDispatcher
+     */
+    public function __construct(PayPalOrderEventDispatcher $paypalOrderEventDispatcher, PayPalCaptureEventDispatcher $paypalCaptureEventDispatcher)
     {
-        $this->eventDispatcher = $eventDispatcher;
+        $this->paypalOrderEventDispatcher = $paypalOrderEventDispatcher;
+        $this->paypalCaptureEventDispatcher = $paypalCaptureEventDispatcher;
     }
 
     public function handle(CapturePayPalOrderCommand $capturePayPalOrderCommand)
@@ -71,33 +79,33 @@ class CapturePayPalOrderCommandHandler
                 throw new PsCheckoutException(isset($response['body']['error']) ? $response['body']['error'] : 'Unknown error', PsCheckoutException::UNKNOWN);
             }
 
-            if (false === empty($response['body']['purchase_units'][0]['payments']['captures'])) {
-                $transactionIdentifier = $response['body']['purchase_units'][0]['payments']['captures'][0]['id'];
-                $transactionStatus = $response['body']['purchase_units'][0]['payments']['captures'][0]['status'];
+            $capturePayPal = $response['body']['purchase_units'][0]['payments']['captures'][0];
 
-                if ('DECLINED' === $transactionStatus
+            if (false === empty($capturePayPal)) {
+                $captureId = $capturePayPal['id'];
+                $captureStatus = $capturePayPal['status'];
+
+                if (
+                    'DECLINED' === $captureStatus
                     && false === empty($response['body']['payment_source'])
                     && false === empty($response['body']['payment_source'][0]['card'])
-                    && false === empty($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response'])
+                    && false === empty($capturePayPal['processor_response'])
                 ) {
                     $payPalProcessorResponse = new PayPalProcessorResponse(
                         isset($response['body']['payment_source'][0]['card']['brand']) ? $response['body']['payment_source'][0]['card']['brand'] : null,
                         isset($response['body']['payment_source'][0]['card']['type']) ? $response['body']['payment_source'][0]['card']['type'] : null,
-                        isset($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['avs_code']) ? $response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['avs_code'] : null,
-                        isset($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['cvv_code']) ? $response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['cvv_code'] : null,
-                        isset($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['response_code']) ? $response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response']['response_code'] : null
+                        isset($capturePayPal['processor_response']['avs_code']) ? $capturePayPal['processor_response']['avs_code'] : null,
+                        isset($capturePayPal['processor_response']['cvv_code']) ? $capturePayPal['processor_response']['cvv_code'] : null,
+                        isset($capturePayPal['processor_response']['response_code']) ? $capturePayPal['processor_response']['response_code'] : null
                     );
                     $payPalProcessorResponse->throwException();
                 }
             }
 
-            // Update an Aggregate or dispatch an Event with $transactionIdentifier
+            $this->paypalOrderEventDispatcher->dispatch($response['body']);
+            $this->paypalCaptureEventDispatcher->dispatch($response['body']['id'], $capturePayPal);
         } catch (Exception $exception) {
-            throw new PayPalOrderException(sprintf('Unable to capture PayPal Order #%d', $capturePayPalOrderCommand->getOrderId()->getValue()), PayPalOrderException::CANNOT_CAPTURE_ORDER, $exception);
+            throw new PayPalOrderException(sprintf('Unable to capture PayPal Order %s', $capturePayPalOrderCommand->getOrderId()->getValue()), PayPalOrderException::CANNOT_CAPTURE_ORDER, $exception);
         }
-
-        $this->eventDispatcher->dispatch(
-            new PayPalOrderCompletedEvent($capturePayPalOrderCommand->getOrderId()->getValue())
-        );
     }
 }

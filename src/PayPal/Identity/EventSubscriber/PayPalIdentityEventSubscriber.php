@@ -23,11 +23,11 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Identity\EventSubscriber;
 use DateTime;
 use Exception;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
+use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Event\PayPalClientTokenUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePsCheckoutSessionCommand;
-use PrestaShop\Module\PrestashopCheckout\Session\CommandHandler\UpdatePsCheckoutSessionCommandHandler;
 use PrestaShop\Module\PrestashopCheckout\Session\Exception\PsCheckoutSessionException;
 use PrestaShopException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -35,13 +35,16 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class PayPalIdentityEventSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var UpdatePsCheckoutSessionCommandHandler
+     * @var CommandBusInterface
      */
-    private $updatePsCheckoutSessionCommandHandler;
+    private $commandBus;
 
-    public function __construct(UpdatePsCheckoutSessionCommandHandler $updatePsCheckoutSessionCommandHandler)
+    /**
+     * @param CommandBusInterface $commandBus
+     */
+    public function __construct(CommandBusInterface $commandBus)
     {
-        $this->updatePsCheckoutSessionCommandHandler = $updatePsCheckoutSessionCommandHandler;
+        $this->commandBus = $commandBus;
     }
 
     /**
@@ -69,7 +72,7 @@ class PayPalIdentityEventSubscriber implements EventSubscriberInterface
     {
         $psCheckoutCartRepository = new PsCheckoutCartRepository();
         $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId($event->getCartId()->getValue());
-        $this->updatePsCheckoutSessionCommandHandler->handle(
+        $this->commandBus->handle(
             new UpdatePsCheckoutSessionCommand(
                 $psCheckoutCart->getPaypalOrderId(),
                 $event->getCartId()->getValue(),

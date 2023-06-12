@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -28,23 +29,23 @@ class UpdatePayPalOrderCacheCommand
     /**
      * @var PayPalOrderId
      */
-    private $orderId;
+    private $orderPayPalId;
 
     /**
      * @var array
      */
-    private $order;
+    private $orderPayPal;
 
     /**
-     * @param string $orderId
-     * @param array $order
+     * @param string $orderPayPalId
+     * @param array $orderPayPal
      *
      * @throws PayPalOrderException
      */
-    public function __construct($orderId, array $order)
+    public function __construct($orderPayPalId, array $orderPayPal)
     {
-        $this->orderId = new PayPalOrderId($orderId);
-        $this->order = $order;
+        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
+        $this->orderPayPal = $orderPayPal;
     }
 
     /**
@@ -52,14 +53,14 @@ class UpdatePayPalOrderCacheCommand
      */
     public function getOrderId()
     {
-        return $this->orderId;
+        return $this->orderPayPalId;
     }
 
     /**
      * @return array
      */
-    public function getOrder()
+    public function getOrderPayPal()
     {
-        return $this->order;
+        return $this->orderPayPal;
     }
 }

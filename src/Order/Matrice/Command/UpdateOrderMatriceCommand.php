@@ -18,33 +18,51 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query;
+namespace PrestaShop\Module\PrestashopCheckout\Order\Matrice\Command;
 
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
+use PrestaShop\Module\PrestashopCheckout\Order\ValueObject\OrderId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 
-class GetPayPalOrderQuery
+class UpdateOrderMatriceCommand
 {
     /**
-     * @var PayPalOrderId
+     * @var OrderId
      */
     private $orderId;
 
     /**
-     * @param string $orderId
+     * @var PayPalOrderId
+     */
+    private $orderPayPalId;
+
+    /**
+     * @param int $orderId
+     * @param string $orderPayPalId
      *
+     * @throws OrderException
      * @throws PayPalOrderException
      */
-    public function __construct($orderId)
+    public function __construct($orderId, $orderPayPalId)
     {
-        $this->orderId = new PayPalOrderId($orderId);
+        $this->orderId = new OrderId($orderId);
+        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
+    }
+
+    /**
+     * @return OrderId
+     */
+    public function getOrderId()
+    {
+        return $this->orderId;
     }
 
     /**
      * @return PayPalOrderId
      */
-    public function getOrderId()
+    public function getOrderPayPalId()
     {
-        return $this->orderId;
+        return $this->orderPayPalId;
     }
 }

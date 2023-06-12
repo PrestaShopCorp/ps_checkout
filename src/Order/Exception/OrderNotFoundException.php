@@ -18,34 +18,11 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event;
+namespace PrestaShop\Module\PrestashopCheckout\Order\Exception;
 
-use PrestaShop\Module\PrestashopCheckout\Event\Event;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\ValueObject\PayPalCaptureId;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
-class PayPalCaptureDeniedEvent extends Event
+class OrderNotFoundException extends PsCheckoutException
 {
-    /**
-     * @var PayPalCaptureId
-     */
-    private $captureId;
-
-    /**
-     * @param string $captureId
-     *
-     * @throws PayPalCaptureException
-     */
-    public function __construct($captureId)
-    {
-        $this->captureId = new PayPalCaptureId($captureId);
-    }
-
-    /**
-     * @return PayPalCaptureId
-     */
-    public function getPayPalCaptureId()
-    {
-        return $this->captureId;
-    }
+    const NOT_FOUND = 1;
 }

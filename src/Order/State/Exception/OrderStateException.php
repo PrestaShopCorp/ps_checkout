@@ -25,4 +25,5 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 class OrderStateException extends PsCheckoutException
 {
     const INVALID_ID = 1;
+    const TRANSITION_UNAVAILABLE = 2;
 }
