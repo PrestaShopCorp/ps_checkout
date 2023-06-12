@@ -40,7 +40,7 @@ class AbstractOrderHandler
         try {
             $order = new Order($orderId->getValue());
         } catch (Exception $exception) {
-            throw new OrderNotFoundException(sprintf('Error occurred when trying to get order object #%s', $orderId->getValue()),OrderNotFoundException::NOT_FOUND, $exception);
+            throw new OrderNotFoundException(sprintf('Error occurred when trying to get order object #%s', $orderId->getValue()), OrderNotFoundException::NOT_FOUND, $exception);
         }
 
         if ($order->id !== $orderId->getValue()) {
