@@ -24,7 +24,11 @@ class PsCheckoutCart extends ObjectModel
     const STATUS_APPROVED = 'APPROVED';
     const STATUS_COMPLETED = 'COMPLETED';
     const STATUS_VOIDED = 'VOIDED';
-    const PAYER_ACTION_REQUIRED = 'PAYER_ACTION_REQUIRED';
+    const STATUS_PAYER_ACTION_REQUIRED = 'PAYER_ACTION_REQUIRED';
+    const STATUS_CANCELED = 'CANCELED';
+    const STATUS_APPROVAL_REVERSED = 'REVERSED';
+    const STATUS_PENDING_APPROVAL = 'PENDING_APPROVAL';
+    const STATUS_PARTIALLY_COMPLETED = 'PARTIALLY_COMPLETED';
 
     /**
      * @var int|null Cart Identifier
@@ -288,7 +292,7 @@ class PsCheckoutCart extends ObjectModel
     public function isOrderAvailable()
     {
         return $this->getPaypalOrderId()
-            && in_array($this->paypal_status, [PsCheckoutCart::STATUS_CREATED, PsCheckoutCart::STATUS_APPROVED, PsCheckoutCart::PAYER_ACTION_REQUIRED], true)
+            && in_array($this->paypal_status, [PsCheckoutCart::STATUS_CREATED, PsCheckoutCart::STATUS_APPROVED, PsCheckoutCart::STATUS_PAYER_ACTION_REQUIRED], true)
             && !$this->isPayPalOrderExpired();
     }
 }

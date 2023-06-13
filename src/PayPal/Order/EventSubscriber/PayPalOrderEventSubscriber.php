@@ -37,6 +37,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderExcep
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShopException;
 use Ps_checkout;
+use PsCheckoutCart;
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
@@ -138,26 +139,26 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
 
         switch (get_class($event)) {
             case PayPalOrderCreatedEvent::class:
-                $orderStatus = 'CREATED';
+                $orderStatus = PsCheckoutCart::STATUS_CREATED;
                 break;
             case PayPalOrderApprovedEvent::class:
-                $orderStatus = 'APPROVED';
+                $orderStatus = PsCheckoutCart::STATUS_APPROVED;
                 break;
             case PayPalOrderCompletedEvent::class:
-                $orderStatus = 'COMPLETED';
+                $orderStatus = PsCheckoutCart::STATUS_COMPLETED;
                 break;
             case PayPalOrderApprovalReversedEvent::class:
-                $orderStatus = 'PENDING_APPROVAL';
+                $orderStatus = PsCheckoutCart::STATUS_APPROVAL_REVERSED;
                 break;
             case PayPalOrderNotApprovedEvent::class:
-                $orderStatus = 'PENDING';
+                $orderStatus = PsCheckoutCart::STATUS_PAYER_ACTION_REQUIRED;
                 break;
             default:
-                $orderStatus = '';
+                $orderStatus = PsCheckoutCart::STATUS_PENDING_APPROVAL;
         }
 
         // COMPLETED is a final status, always ensure we don't update to previous status due to outdated webhook for example
-        if ($psCheckoutCart->getPaypalStatus() === 'COMPLETED') {
+        if ($psCheckoutCart->getPaypalStatus() === PsCheckoutCart::STATUS_COMPLETED) {
             return;
         }
 
