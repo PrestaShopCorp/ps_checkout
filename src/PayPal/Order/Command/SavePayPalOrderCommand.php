@@ -47,7 +47,6 @@ class SavePayPalOrderCommand
      * @param string $orderPayPal
      *
      * @throws PayPalOrderException
-     * @throws \PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException
      */
     public function __construct($orderPayPalId, $orderPayPalStatus, $orderPayPal)
     {
