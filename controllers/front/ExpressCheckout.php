@@ -21,6 +21,8 @@
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
+use PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShop\Module\PrestashopCheckout\Updater\CustomerUpdater;
 
 /**
@@ -63,7 +65,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
                 throw new PsCheckoutException('PayPal Order identifier missing or invalid', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
             }
 
-            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
@@ -105,9 +107,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
                 $this->payload['orderID']
             );
         } catch (Exception $exception) {
-            /* @var \Psr\Log\LoggerInterface logger */
-            $logger = $this->module->getService('ps_checkout.logger');
-            $logger->error(
+            $this->module->getLogger()->error(
                 sprintf(
                     'ExpressCheckoutController - Exception %s : %s',
                     $exception->getCode(),
@@ -261,10 +261,10 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
         }
 
         if ($country->contains_states) {
-            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository $countryRepository */
+            /** @var CountryRepository $countryRepository */
             $countryRepository = $this->module->getService('ps_checkout.repository.country');
 
-            $idState = $countryRepository->getStateId($state);
+            $idState = $countryRepository->getStateId((int) $idCountry, $state);
         }
 
         // check if a PayPal address already exist for the customer and not used
