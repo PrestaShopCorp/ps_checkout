@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Validator;
 
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
 
 class FrontControllerValidator
@@ -73,12 +74,14 @@ class FrontControllerValidator
                 return $this->payLaterConfiguration->isProductPageMessageActive()
                     || $this->payLaterConfiguration->isProductPageBannerActive()
                     || $this->payLaterConfiguration->isProductPageButtonActive()
-                    || $this->expressCheckoutConfiguration->isProductPageEnabled();
+                    || $this->expressCheckoutConfiguration->isProductPageEnabled()
+                    || \Configuration::get(PayPalConfiguration::PS_CHECKOUT_DISPLAY_LOGO_PRODUCT);
             case 'cart':
                 return $this->payLaterConfiguration->isOrderPageMessageActive()
                     || $this->payLaterConfiguration->isOrderPageBannerActive()
                     || $this->payLaterConfiguration->isCartPageButtonActive()
-                    || $this->expressCheckoutConfiguration->isOrderPageEnabled();
+                    || $this->expressCheckoutConfiguration->isOrderPageEnabled()
+                    || \Configuration::get(PayPalConfiguration::PS_CHECKOUT_DISPLAY_LOGO_CART);
             case 'authentication':
                 return $this->expressCheckoutConfiguration->isCheckoutPageEnabled()
                     || $this->payLaterConfiguration->isOrderPageButtonActive();
@@ -116,6 +119,27 @@ class FrontControllerValidator
             case 'authentication':
                 return $this->expressCheckoutConfiguration->isCheckoutPageEnabled()
                     || $this->payLaterConfiguration->isOrderPageButtonActive();
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $controller
+     *
+     * @return bool
+     */
+    public function shouldDisplayFundingLogo($controller)
+    {
+        if (false === $this->merchantValidator->merchantIsValid()) {
+            return false;
+        }
+
+        switch ($controller) {
+            case 'product':
+                return \Configuration::get(PayPalConfiguration::PS_CHECKOUT_DISPLAY_LOGO_PRODUCT);
+            case 'cart':
+                return \Configuration::get(PayPalConfiguration::PS_CHECKOUT_DISPLAY_LOGO_CART);
         }
 
         return false;

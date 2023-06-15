@@ -15,6 +15,7 @@ import { PaymentOptionsLoaderComponent } from '../components/common/payment-opti
 import { PayLaterMessageComponent } from '../components/ps-checkout-pay-later-message.component';
 import { PayLaterBannerComponent } from '../components/ps-checkout-pay-later-banner.component';
 import { loadScript } from '@paypal/paypal-js';
+import { PaymentMethodLogosComponent } from '../components/common/payment-method-logos.component';
 
 function initService(app) {
   return (service) => () => new service(app);
@@ -120,6 +121,11 @@ export class App {
     new PayLaterBannerComponent(this, props).render();
   }
 
+  async renderPaymentMethodLogos(props) {
+    await this.initPayPalService();
+    new PaymentMethodLogosComponent(this, props).render();
+  }
+
   async render() {
     this.exposeAPI();
 
@@ -183,6 +189,25 @@ export class App {
       ) {
         await this.renderPayLaterOfferBanner({
           placement: 'product'
+        });
+      }
+
+      // Funding source logo
+      if (
+        this.psCheckoutConfig.renderPaymentMethodLogos &&
+        this.prestashopService.isProductPage()
+      ) {
+        await this.renderPaymentMethodLogos({
+          placement: 'product'
+        });
+      }
+
+      if (
+        this.psCheckoutConfig.renderPaymentMethodLogos &&
+        this.prestashopService.isCartPage()
+      ) {
+        await this.renderPaymentMethodLogos({
+          placement: 'cart'
         });
       }
 

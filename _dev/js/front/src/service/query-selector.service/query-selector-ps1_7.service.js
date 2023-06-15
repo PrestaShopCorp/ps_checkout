@@ -190,4 +190,15 @@ export class QuerySelectorPs1_7Service {
 
     return elements;
   }
+
+  static getPaymentMethodLogoContainer(placement) {
+    switch (placement) {
+      case 'product':
+        return document.querySelector(SELECTORS.PAYMENT_METHOD_LOGO_PRODUCT_CONTAINER);
+      case 'cart':
+        return document.querySelector(SELECTORS.PAYMENT_METHOD_LOGO_CART_CONTAINER);
+      default:
+        return;
+    }
+  }
 }
