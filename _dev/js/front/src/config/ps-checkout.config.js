@@ -80,5 +80,7 @@ export const PsCheckoutConfig = {
 
   fundingSourcesSorted: window.ps_checkoutFundingSourcesSorted,
 
-  orderId: window.ps_checkoutPayPalOrderId
+  orderId: window.ps_checkoutPayPalOrderId,
+  imgTitlePaymentMethodLogos: window.ps_checkoutPaymentMethodLogosTitleImg,
+  renderPaymentMethodLogos: window.ps_checkoutRenderPaymentMethodLogos
 };
