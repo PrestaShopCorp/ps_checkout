@@ -139,4 +139,8 @@ export class QuerySelectorService extends BaseClass {
   getCardFieldsCvvError() {
     return this.instance.getCardFieldsCvvError();
   }
+
+  getPaymentMethodLogoContainer(placement) {
+    return this.instance.getPaymentMethodLogoContainer(placement);
+  }
 }
