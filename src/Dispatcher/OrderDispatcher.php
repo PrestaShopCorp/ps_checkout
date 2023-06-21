@@ -46,7 +46,7 @@ class OrderDispatcher implements Dispatcher
     const PS_CHECKOUT_PAYMENT_DENIED = 'PaymentCaptureDenied';
     const PS_CHECKOUT_ORDER_APPROVED = 'CheckoutOrderApproved';
     const PS_CHECKOUT_ORDER_COMPLETED = 'CheckoutOrderCompleted';
-    const PS_CHECKOUT_ORDER_APPROVAL_REVERSED = 'CHECKOUT.PAYMENT-APPROVAL.REVERSED';
+    const PS_CHECKOUT_ORDER_APPROVAL_REVERSED = 'CheckoutPaymentApprovalReversed';
 
     /**
      * Dispatch the Event Type to manage the merchant status
@@ -74,19 +74,19 @@ class OrderDispatcher implements Dispatcher
 
         switch ($payload['eventType']) {
             case static::PS_CHECKOUT_PAYMENT_COMPLETED:
-                $eventDispatcher->dispatch(new PayPalCaptureCompletedEvent($payload['orderId'], $payload['resource']['id'], $payload['resource']));
+                $eventDispatcher->dispatch(new PayPalCaptureCompletedEvent($payload['resource']['id'], $payload['orderId'], $payload['resource']));
                 break;
             case static::PS_CHECKOUT_PAYMENT_PENDING:
-                $eventDispatcher->dispatch(new PayPalCapturePendingEvent($payload['orderId'], $payload['resource']['id'], $payload['resource']));
+                $eventDispatcher->dispatch(new PayPalCapturePendingEvent($payload['resource']['id'], $payload['orderId'], $payload['resource']));
                 break;
             case static::PS_CHECKOUT_PAYMENT_DENIED:
-                $eventDispatcher->dispatch(new PayPalCaptureDeclinedEvent($payload['orderId'], $payload['resource']['id'], $payload['resource']));
+                $eventDispatcher->dispatch(new PayPalCaptureDeclinedEvent($payload['resource']['id'], $payload['orderId'], $payload['resource']));
                 break;
             case static::PS_CHECKOUT_PAYMENT_REFUNDED:
-                $eventDispatcher->dispatch(new PayPalCaptureRefundedEvent($payload['orderId'], $payload['resource']['id'], $payload['resource']));
+                $eventDispatcher->dispatch(new PayPalCaptureRefundedEvent($payload['resource']['id'], $payload['orderId'], $payload['resource']));
                 break;
             case static::PS_CHECKOUT_PAYMENT_REVERSED:
-                $eventDispatcher->dispatch(new PayPalCaptureReversedEvent($payload['orderId'], $payload['resource']['id'], $payload['resource']));
+                $eventDispatcher->dispatch(new PayPalCaptureReversedEvent($payload['resource']['id'], $payload['orderId'], $payload['resource']));
                 break;
             case static::PS_CHECKOUT_ORDER_APPROVED:
                 $eventDispatcher->dispatch(new PayPalOrderApprovedEvent($payload['orderId'], $payload['resource']));
