@@ -103,7 +103,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             ],
             PayPalOrderApprovalReversedEvent::class => [
                 ['saveApprovalReversedPayPalOrder'],
-                ['updateCache'],
+                ['clearCache'],
             ],
         ];
     }
@@ -234,5 +234,15 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         }
 
         $this->orderPayPalCache->set($event->getOrderPayPalId()->getValue(), $newOrderPayPal);
+    }
+
+    /**
+     * @param PayPalOrderApprovalReversedEvent $event
+     *
+     * @throws InvalidArgumentException
+     */
+    public function clearCache(PayPalOrderApprovalReversedEvent $event)
+    {
+        $this->orderPayPalCache->delete($event->getOrderPayPalId()->getValue());
     }
 }
