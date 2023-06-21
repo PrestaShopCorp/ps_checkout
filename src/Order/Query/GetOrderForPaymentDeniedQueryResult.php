@@ -20,17 +20,22 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Query;
 
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
+use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
+use PrestaShop\Module\PrestashopCheckout\Order\ValueObject\OrderId;
+
 class GetOrderForPaymentDeniedQueryResult
 {
     /**
-     * @var int
+     * @var OrderId
      */
-    private $id;
+    private $orderId;
 
     /**
-     * @var int
+     * @var OrderStateId
      */
-    private $currentState;
+    private $currentStateId;
 
     /**
      * @var bool
@@ -38,34 +43,37 @@ class GetOrderForPaymentDeniedQueryResult
     private $hasBeenError;
 
     /**
-     * @param int $id
+     * @param int $orderId
      * @param int $currentState
      * @param bool $hasBeenError
+     *
+     * @throws OrderException
+     * @throws OrderStateException
      */
     public function __construct(
-        $id,
+        $orderId,
         $currentState,
         $hasBeenError
     ) {
-        $this->id = $id;
-        $this->currentState = $currentState;
+        $this->orderId = new OrderId($orderId);
+        $this->currentStateId = new OrderStateId($currentState);
         $this->hasBeenError = $hasBeenError;
     }
 
     /**
-     * @return int
+     * @return OrderId
      */
-    public function getId()
+    public function getOrderId()
     {
-        return $this->id;
+        return $this->orderId;
     }
 
     /**
-     * @return int
+     * @return OrderStateId
      */
     public function getCurrentStateId()
     {
-        return $this->currentState;
+        return $this->currentStateId;
     }
 
     /**

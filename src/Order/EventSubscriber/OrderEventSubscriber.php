@@ -27,6 +27,7 @@ use PrestaShop\Module\PrestashopCheckout\Order\Matrice\Command\UpdateOrderMatric
 use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use PrestaShopException;
 use Ps_checkout;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -69,7 +70,7 @@ class OrderEventSubscriber implements EventSubscriberInterface
      *
      * @return void
      *
-     * @throws \PrestaShopException
+     * @throws PrestaShopException
      * @throws OrderException
      * @throws PayPalOrderException
      * @throws OrderStateException

@@ -37,6 +37,11 @@
                     <dd>{$orderPayPalTransactionStatusTranslated|escape:'html':'UTF-8'}</dd>
                     <dt>{$translations.amountPaid|escape:'html':'UTF-8'}</dt>
                     <dd>{$orderPayPalTransactionAmount|escape:'html':'UTF-8'}</dd>
+                  {else}
+                    <dt>{$translations.orderIdentifier|escape:'html':'UTF-8'}</dt>
+                    <dd>{$orderPayPalId|escape:'html':'UTF-8'}</dd>
+                    <dt>{$translations.orderStatus|escape:'html':'UTF-8'}</dt>
+                    <dd>{$orderPayPalStatus|escape:'html':'UTF-8'}</dd>
                   {/if}
               </dl>
             </div>

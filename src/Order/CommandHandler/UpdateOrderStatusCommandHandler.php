@@ -27,7 +27,6 @@ use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderStatusUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
-use PrestaShop\Module\PrestashopCheckout\Order\State\Service\CheckOrderState;
 use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
 
 class UpdateOrderStatusCommandHandler extends AbstractOrderCommandHandler
@@ -37,18 +36,9 @@ class UpdateOrderStatusCommandHandler extends AbstractOrderCommandHandler
      */
     private $eventDispatcher;
 
-    /**
-     * @var CheckOrderState
-     */
-    private $checkOrderState;
-
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     */
-    public function __construct(EventDispatcherInterface $eventDispatcher, CheckOrderState $checkOrderState)
+    public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
-        $this->checkOrderState = $checkOrderState;
     }
 
     /**
@@ -61,27 +51,25 @@ class UpdateOrderStatusCommandHandler extends AbstractOrderCommandHandler
     public function handle(UpdateOrderStatusCommand $command)
     {
         $order = $this->getOrder($command->getOrderId());
+        $orderCurrentState = (int) $order->getCurrentState();
         $orderState = $this->getOrderStateObject($command->getNewOrderStatusId());
+        $orderStateId = (int) $orderState->id;
 
-        if ($order->getCurrentState() == $orderState->id) {
-            throw new OrderException(sprintf('The order #%d has already been assigned to OrderState #%d', $command->getOrderId()->getValue(), $orderState->id), OrderException::ORDER_HAS_ALREADY_THIS_STATUS);
-        }
-
-        if (!$this->checkOrderState->isOrderStateTransitionAvailable($order->getCurrentState(), $orderState->id)) {
-            throw new OrderException(sprintf('Transition is not valid for order #%d Current order state %d, new order state %d', $command->getOrderId()->getValue(), $order->getCurrentState(), $orderState->id), OrderException::TRANSITION_NOT_ALLOWED);
+        if ($orderCurrentState === $orderStateId) {
+            throw new OrderException(sprintf('The order #%d has already been assigned to OrderState #%d', $command->getOrderId()->getValue(), $orderStateId), OrderException::ORDER_HAS_ALREADY_THIS_STATUS);
         }
 
         // Create new OrderHistory
         $history = new OrderHistory();
         $history->id_order = $order->id;
 
-        $useExistingPayments = false;
+        $useExistingPayments = !$order->hasInvoice();
         if (!$order->hasInvoice()) {
             $useExistingPayments = true;
         }
 
         try {
-            $history->changeIdOrderState((int) $orderState->id, $order, $useExistingPayments);
+            $history->changeIdOrderState($orderStateId, $order, $useExistingPayments);
             // Save all changes
             $historyAdded = $history->addWithemail(true);
         } catch (Exception $exception) {
@@ -92,7 +80,7 @@ class UpdateOrderStatusCommandHandler extends AbstractOrderCommandHandler
             throw new OrderException(sprintf('Failed to update status or sent email when changing OrderState #%d of Order #%d.', $command->getNewOrderStatusId()->getValue(), $command->getOrderId()->getValue()), OrderException::FAILED_UPDATE_ORDER_STATUS);
         }
 
-        $this->eventDispatcher->dispatch(new OrderStatusUpdatedEvent((int) $orderState->id));
+        $this->eventDispatcher->dispatch(new OrderStatusUpdatedEvent($orderStateId));
     }
 
     /**

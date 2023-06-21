@@ -24,7 +24,7 @@
       </div>
     {/if}
 
-    {if $orderPayPalTransactionStatus === 'PENDING'}
+    {if $orderPayPalTransactionStatus === 'PENDING' || $orderPayPalStatus === 'APPROVED' || $orderPayPalStatus === 'CREATED'}
       <div class="alert alert-warning">
           {l s='Your order is waiting for payment confirmation. You will receive an email when your payment has been validated. You can also check the order status in your order history in your account.' mod='ps_checkout'}
       </div>

@@ -22,13 +22,17 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\CommandHandler;
 
 use Currency;
+use DateTimeZone;
 use OrderInvoice;
 use OrderPayment;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
 use PrestaShop\Module\PrestashopCheckout\Order\AbstractOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\AddOrderPaymentCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderPaymentCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
+use PrestaShop\Module\PrestashopCheckout\Order\Payment\Exception\OrderPaymentException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use Validate;
 
 class AddOrderPaymentCommandHandler extends AbstractOrderHandler
@@ -37,19 +41,30 @@ class AddOrderPaymentCommandHandler extends AbstractOrderHandler
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
-
     /**
-     * @param EventDispatcherInterface $eventDispatcher
+     * @var FundingSourceTranslationProvider
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
-    {
+    private $fundingSourceTranslationProvider;
+    /**
+     * @var PayPalConfiguration
+     */
+    private $configuration;
+
+    public function __construct(
+        EventDispatcherInterface $eventDispatcher,
+        FundingSourceTranslationProvider $fundingSourceTranslationProvider,
+        PayPalConfiguration $configuration
+    ) {
         $this->eventDispatcher = $eventDispatcher;
+        $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
+        $this->configuration = $configuration;
     }
 
     /**
      * @param AddOrderPaymentCommand $command
      *
      * @throws OrderException
+     * @throws OrderPaymentException
      */
     public function handle(AddOrderPaymentCommand $command)
     {
@@ -65,22 +80,15 @@ class AddOrderPaymentCommandHandler extends AbstractOrderHandler
         $orderInvoice = $orderHasInvoice ? $order->getNotPaidInvoicesCollection()->getFirst() : null;
 
         if ($orderHasInvoice && !Validate::isLoadedObject($orderInvoice)) {
-            $module = \Module::getInstanceByName('ps_checkout');
-            $module->getLogger()->alert(
-                'Order is already paid',
-                [
-                    'id_order' => $command->getOrderId()->getValue(),
-                ]
-            );
             $orderInvoice = null;
         }
 
         $paymentAdded = $order->addOrderPayment(
             $command->getPaymentAmount(),
-            $command->getPaymentMethod(),
+            $this->fundingSourceTranslationProvider->getPaymentMethodName($command->getPaymentMethod()),
             $command->getPaymentTransactionId(),
             $currency,
-            $command->getPaymentDate()->format('Y-m-d H:i:s'),
+            $command->getPaymentDate()->setTimezone(new DateTimeZone($this->configuration->getTimeZone()))->format('Y-m-d H:i:s'),
             $orderInvoice
         );
 

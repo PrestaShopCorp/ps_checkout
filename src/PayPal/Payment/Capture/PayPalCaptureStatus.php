@@ -44,7 +44,6 @@ class PayPalCaptureStatus
         self::FAILED => [],
         self::DECLINED => [],
         self::COMPLETED => [
-            self::COMPLETED,
             self::REFUND,
             self::PARTIALLY_REFUNDED,
             self::REVERSED,

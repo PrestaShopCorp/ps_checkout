@@ -22,12 +22,8 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler;
 
 use Exception;
-use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
-use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheSettings;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderFetchedEvent;
+use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderEventDispatcher;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
@@ -40,30 +36,13 @@ use Psr\SimpleCache\InvalidArgumentException;
 class GetPayPalOrderForCheckoutCompletedQueryHandler
 {
     /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
      * @var CacheInterface
      */
     private $orderPayPalCache;
 
-    /**
-     * @var PayPalOrderEventDispatcher
-     */
-    private $paypalOrderEventDispatcher;
-
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param CacheInterface $orderPayPalCache
-     * @param PayPalOrderEventDispatcher $paypalOrderEventDispatcher
-     */
-    public function __construct(EventDispatcherInterface $eventDispatcher, CacheInterface $orderPayPalCache, PayPalOrderEventDispatcher $paypalOrderEventDispatcher)
+    public function __construct(CacheInterface $orderPayPalCache)
     {
-        $this->eventDispatcher = $eventDispatcher;
         $this->orderPayPalCache = $orderPayPalCache;
-        $this->paypalOrderEventDispatcher = $paypalOrderEventDispatcher;
     }
 
     /**
@@ -72,31 +51,28 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
      * @return GetPayPalOrderForCheckoutCompletedQueryResult
      *
      * @throws PayPalOrderException
-     * @throws OrderException
      * @throws InvalidArgumentException
      */
     public function handle(GetPayPalOrderForCheckoutCompletedQuery $getPayPalOrderQuery)
     {
         /** @var array{id: string, status: string} $order */
-        $order = $this->orderPayPalCache->get(CacheSettings::PAYPAL_ORDER_ID . $getPayPalOrderQuery->getOrderId()->getValue());
+        $order = $this->orderPayPalCache->get($getPayPalOrderQuery->getOrderPayPalId()->getValue());
 
         if (!empty($order) && $order['status'] === 'APPROVED') {
             return new GetPayPalOrderForCheckoutCompletedQueryResult($order);
         }
 
         try {
-            $orderPayPal = new PaypalOrder($getPayPalOrderQuery->getOrderId()->getValue());
+            $orderPayPal = new PaypalOrder($getPayPalOrderQuery->getOrderPayPalId()->getValue());
+        } catch (HttpTimeoutException $exception) {
+            throw $exception;
         } catch (Exception $exception) {
-            throw new PayPalOrderException(sprintf('Unable to retrieve PayPal Order %s', $getPayPalOrderQuery->getOrderId()->getValue()), PayPalOrderException::CANNOT_RETRIEVE_ORDER, $exception);
+            throw new PayPalOrderException(sprintf('Unable to retrieve PayPal Order %s', $getPayPalOrderQuery->getOrderPayPalId()->getValue()), PayPalOrderException::CANNOT_RETRIEVE_ORDER, $exception);
         }
 
         if (!$orderPayPal->isLoaded()) {
-            throw new PayPalOrderException(sprintf('No data for PayPal Order %s', $getPayPalOrderQuery->getOrderId()->getValue()), PayPalOrderException::EMPTY_ORDER_DATA);
+            throw new PayPalOrderException(sprintf('No data for PayPal Order %s', $getPayPalOrderQuery->getOrderPayPalId()->getValue()), PayPalOrderException::EMPTY_ORDER_DATA);
         }
-
-        $this->eventDispatcher->dispatch(
-            new PayPalOrderFetchedEvent($getPayPalOrderQuery->getOrderId()->getValue(), $orderPayPal->getOrder())
-        );
 
         return new GetPayPalOrderForCheckoutCompletedQueryResult($orderPayPal->getOrder());
     }

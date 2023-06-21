@@ -20,103 +20,46 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Command;
 
-use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 
 class CreateOrderCommand
 {
     /**
-     * @var CartId
+     * @var PayPalOrderId
      */
-    private $cartId;
+    private $orderPayPalId;
 
     /**
-     * @var string
+     * @var array|null
      */
-    private $paymentModuleName;
+    private $capturePayPal;
 
     /**
-     * @var int
+     * @param string $orderPayPalId
+     * @param array|null $capturePayPal
+     *
+     * @throws PayPalOrderException
      */
-    private $orderStateId;
-
-    /**
-     * @var string
-     */
-    private $transactionId;
-
-    /**
-     * @var string
-     */
-    private $paymentMethod;
-
-    /**
-     * @var string
-     */
-    private $paidAmount;
-
-    /**
-     * @param int $cartId
-     * @param string $paymentModuleName
-     * @param int $orderStateId
-     * @param string $paymentMethod
-     * @param string $transactionId
-     * @param string $paidAmount
-     */
-    public function __construct($cartId, $paymentModuleName, $orderStateId, $paymentMethod, $transactionId, $paidAmount)
+    public function __construct($orderPayPalId, $capturePayPal = null)
     {
-        $this->cartId = new CartId($cartId);
-        $this->paymentModuleName = $paymentModuleName;
-        $this->orderStateId = $orderStateId;
-        $this->transactionId = $transactionId;
-        $this->paymentMethod = $paymentMethod;
-        $this->paidAmount = $paidAmount;
+        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
+        $this->capturePayPal = $capturePayPal;
     }
 
     /**
-     * @return CartId
+     * @return PayPalOrderId
      */
-    public function getCartId()
+    public function getOrderPayPalId()
     {
-        return $this->cartId;
+        return $this->orderPayPalId;
     }
 
     /**
-     * @return string
+     * @return array|null
      */
-    public function getPaymentModuleName()
+    public function getCapturePayPal()
     {
-        return $this->paymentModuleName;
-    }
-
-    /**
-     * @return int
-     */
-    public function getOrderStateId()
-    {
-        return $this->orderStateId;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPaymentMethod()
-    {
-        return $this->paymentMethod;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTransactionId()
-    {
-        return $this->transactionId;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPaidAmount()
-    {
-        return $this->paidAmount;
+        return $this->capturePayPal;
     }
 }

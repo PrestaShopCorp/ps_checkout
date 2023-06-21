@@ -22,9 +22,9 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber;
 
 use Exception;
-use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CheckTransitionPayPalOrderStatusService;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovalReversedEvent;
@@ -32,13 +32,11 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedE
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderNotApprovedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShopException;
 use Ps_checkout;
-use PsCheckoutCart;
-use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -49,11 +47,6 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      * @var Ps_checkout
      */
     private $module;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
 
     /**
      * @var PsCheckoutCartRepository
@@ -71,65 +64,51 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     private $checkoutChecker;
 
     /**
-     * @param Ps_checkout $module
-     * @param LoggerInterface $logger
-     * @param PsCheckoutCartRepository $psCheckoutCartRepository
-     * @param CacheInterface $orderPayPalCache
+     * @var CheckTransitionPayPalOrderStatusService
      */
+    private $checkTransitionPayPalOrderStatusService;
+
     public function __construct(
         Ps_checkout $module,
-        LoggerInterface $logger,
         PsCheckoutCartRepository $psCheckoutCartRepository,
-        CacheInterface $orderPayPalCache
+        CacheInterface $orderPayPalCache,
+        CheckoutChecker $checkoutChecker,
+        CheckTransitionPayPalOrderStatusService $checkTransitionPayPalOrderStatusService
     ) {
         $this->module = $module;
-        $this->logger = $logger;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
         $this->orderPayPalCache = $orderPayPalCache;
-        $this->checkoutChecker = $this->module->getService('ps_checkout.checkout.checker');
+        $this->checkoutChecker = $checkoutChecker;
+        $this->checkTransitionPayPalOrderStatusService = $checkTransitionPayPalOrderStatusService;
     }
 
     /**
-     * @return array[]
+     * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
         return [
             PayPalOrderCreatedEvent::class => [
-                ['savePayPalOrder'],
+                ['saveCreatedPayPalOrder'],
                 ['updateCache'],
             ],
             PayPalOrderApprovedEvent::class => [
-                ['savePayPalOrder'],
+                ['saveApprovedPayPalOrder'],
                 ['updateCache'],
                 ['capturePayPalOrder'],
             ],
-            PayPalOrderNotApprovedEvent::class => [
-                ['savePayPalOrder'],
-                ['updateCache'],
-            ],
             PayPalOrderCompletedEvent::class => [
-                ['savePayPalOrder'],
+                ['saveCompletedPayPalOrder'],
                 ['updateCache'],
             ],
             PayPalOrderApprovalReversedEvent::class => [
-                ['savePayPalOrder'],
+                ['saveApprovalReversedPayPalOrder'],
                 ['updateCache'],
             ],
         ];
     }
 
-    /**
-     * @param $event
-     *
-     * @return void
-     *
-     * @throws PayPalOrderException
-     * @throws PsCheckoutException
-     * @throws PrestaShopException
-     * @throws CartException
-     */
-    public function savePayPalOrder($event)
+    public function saveCreatedPayPalOrder(PayPalOrderCreatedEvent $event)
     {
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getOrderPayPalId()->getValue());
 
@@ -137,44 +116,76 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             throw new PsCheckoutException(sprintf('PayPal Order %s is not linked to a cart', $event->getOrderPayPalId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
-        switch (get_class($event)) {
-            case PayPalOrderCreatedEvent::class:
-                $orderStatus = PsCheckoutCart::STATUS_CREATED;
-                break;
-            case PayPalOrderApprovedEvent::class:
-                $orderStatus = PsCheckoutCart::STATUS_APPROVED;
-                break;
-            case PayPalOrderCompletedEvent::class:
-                $orderStatus = PsCheckoutCart::STATUS_COMPLETED;
-                break;
-            case PayPalOrderApprovalReversedEvent::class:
-                $orderStatus = PsCheckoutCart::STATUS_APPROVAL_REVERSED;
-                break;
-            case PayPalOrderNotApprovedEvent::class:
-                $orderStatus = PsCheckoutCart::STATUS_PAYER_ACTION_REQUIRED;
-                break;
-            default:
-                $orderStatus = PsCheckoutCart::STATUS_PENDING_APPROVAL;
-        }
-
-        // COMPLETED is a final status, always ensure we don't update to previous status due to outdated webhook for example
-        if ($psCheckoutCart->getPaypalStatus() === PsCheckoutCart::STATUS_COMPLETED) {
+        if (!$this->checkTransitionPayPalOrderStatusService->checkAvailableStatus($psCheckoutCart->getPaypalStatus(), PayPalOrderStatus::CREATED)) {
             return;
         }
 
-        if ($psCheckoutCart->getPaypalStatus() !== $orderStatus) {
-            $this->module->getService('ps_checkout.bus.command')->handle(new SavePayPalOrderCommand(
-                $event->getOrderPayPalId()->getValue(),
-                $orderStatus,
-                $event->getOrderPayPal()
-            ));
+        $this->module->getService('ps_checkout.bus.command')->handle(new SavePayPalOrderCommand(
+            $event->getOrderPayPalId()->getValue(),
+            PayPalOrderStatus::CREATED,
+            $event->getOrderPayPal()
+        ));
+    }
+
+    public function saveApprovedPayPalOrder(PayPalOrderApprovedEvent $event)
+    {
+        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getOrderPayPalId()->getValue());
+
+        if (false === $psCheckoutCart) {
+            throw new PsCheckoutException(sprintf('PayPal Order %s is not linked to a cart', $event->getOrderPayPalId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
+
+        if (!$this->checkTransitionPayPalOrderStatusService->checkAvailableStatus($psCheckoutCart->getPaypalStatus(), PayPalOrderStatus::APPROVED)) {
+            return;
+        }
+
+        $this->module->getService('ps_checkout.bus.command')->handle(new SavePayPalOrderCommand(
+            $event->getOrderPayPalId()->getValue(),
+            PayPalOrderStatus::APPROVED,
+            $event->getOrderPayPal()
+        ));
+    }
+
+    public function saveCompletedPayPalOrder(PayPalOrderCompletedEvent $event)
+    {
+        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getOrderPayPalId()->getValue());
+
+        if (false === $psCheckoutCart) {
+            throw new PsCheckoutException(sprintf('PayPal Order %s is not linked to a cart', $event->getOrderPayPalId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
+        }
+
+        if (!$this->checkTransitionPayPalOrderStatusService->checkAvailableStatus($psCheckoutCart->getPaypalStatus(), PayPalOrderStatus::COMPLETED)) {
+            return;
+        }
+
+        $this->module->getService('ps_checkout.bus.command')->handle(new SavePayPalOrderCommand(
+            $event->getOrderPayPalId()->getValue(),
+            PayPalOrderStatus::COMPLETED,
+            $event->getOrderPayPal()
+        ));
+    }
+
+    public function saveApprovalReversedPayPalOrder(PayPalOrderApprovalReversedEvent $event)
+    {
+        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getOrderPayPalId()->getValue());
+
+        if (false === $psCheckoutCart) {
+            throw new PsCheckoutException(sprintf('PayPal Order %s is not linked to a cart', $event->getOrderPayPalId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
+        }
+
+        if (!$this->checkTransitionPayPalOrderStatusService->checkAvailableStatus($psCheckoutCart->getPaypalStatus(), PayPalOrderStatus::REVERSED)) {
+            return;
+        }
+
+        $this->module->getService('ps_checkout.bus.command')->handle(new SavePayPalOrderCommand(
+            $event->getOrderPayPalId()->getValue(),
+            PayPalOrderStatus::REVERSED,
+            $event->getOrderPayPal()
+        ));
     }
 
     /**
      * @param PayPalOrderApprovedEvent $event
-     *
-     * @return void
      *
      * @throws PsCheckoutException
      * @throws PrestaShopException
@@ -189,7 +200,12 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             throw new PsCheckoutException(sprintf('PayPal Order %s is not linked to a cart', $event->getOrderPayPalId()->getValue()), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
+        // TODO: Remove this condition when a flag will be added on checkout completed
         if ($psCheckoutCart->isExpressCheckout()) {
+            return;
+        }
+
+        if ($psCheckoutCart->getPaypalStatus() === PayPalOrderStatus::COMPLETED) {
             return;
         }
 
@@ -206,12 +222,17 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     /**
      * @param PayPalOrderEvent $event
      *
-     * @return void
-     *
      * @throws InvalidArgumentException
      */
     public function updateCache(PayPalOrderEvent $event)
     {
-        $this->orderPayPalCache->set($event->getOrderPayPalId()->getValue(), $event->getOrderPayPal());
+        $currentOrderPayPal = $this->orderPayPalCache->get($event->getOrderPayPalId()->getValue());
+        $newOrderPayPal = $event->getOrderPayPal();
+
+        if ($currentOrderPayPal && !$this->checkTransitionPayPalOrderStatusService->checkAvailableStatus($currentOrderPayPal['status'], $newOrderPayPal['status'])) {
+            return;
+        }
+
+        $this->orderPayPalCache->set($event->getOrderPayPalId()->getValue(), $newOrderPayPal);
     }
 }

@@ -523,6 +523,8 @@ class Translations
                     'notificationPendingApproval' => $this->module->l('Your payment needs to be approved, please click the button below.', 'translations'),
                     'notificationPayerActionRequired' => $this->module->l('Your payment needs to be authenticated, please click the button below.', 'translations'),
                     'fundingSource' => $this->module->l('Funding source', 'translations'),
+                    'orderIdentifier' => $this->module->l('Order identifier', 'translations'),
+                    'orderStatus' => $this->module->l('Order status', 'translations'),
                     'transactionIdentifier' => $this->module->l('Transaction identifier', 'translations'),
                     'transactionStatus' => $this->module->l('Transaction status', 'translations'),
                     'amountPaid' => $this->module->l('Amount paid', 'translations'),

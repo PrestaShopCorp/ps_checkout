@@ -29,38 +29,42 @@ class PayPalOrderStatus
     const PAYER_ACTION_REQUIRED = 'PAYER_ACTION_REQUIRED';
     const VOIDED = 'VOIDED';
     const COMPLETED = 'COMPLETED';
+    const CANCELED = 'CANCELED';
+    const REVERSED = 'REVERSED';
 
     const TRANSITION_AVAILABLE = [
         self::CREATED => [
-            self::CREATED,
             self::APPROVED,
             self::PENDING_APPROVAL,
             self::SAVED,
             self::PAYER_ACTION_REQUIRED,
             self::VOIDED,
             self::COMPLETED,
+            self::CANCELED,
         ],
         self::SAVED => [
-            self::SAVED,
             self::VOIDED,
         ],
         self::APPROVED => [
-            self::APPROVED,
             self::PAYER_ACTION_REQUIRED,
             self::COMPLETED,
+            self::REVERSED,
+            self::CANCELED,
         ],
         self::PENDING_APPROVAL => [
-            self::PENDING_APPROVAL,
             self::PAYER_ACTION_REQUIRED,
             self::APPROVED,
+            self::CANCELED,
         ],
         self::PAYER_ACTION_REQUIRED => [
-            self::PAYER_ACTION_REQUIRED,
             self::PENDING_APPROVAL,
             self::APPROVED,
             self::COMPLETED,
+            self::CANCELED,
         ],
-        self::VOIDED => [self::VOIDED],
-        self::COMPLETED => [self::COMPLETED],
+        self::VOIDED => [],
+        self::COMPLETED => [],
+        self::CANCELED => [],
+        self::REVERSED => [],
     ];
 }

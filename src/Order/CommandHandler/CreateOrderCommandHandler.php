@@ -21,18 +21,28 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\CommandHandler;
 
 use Cart;
+use Currency;
 use Exception;
-use Module;
 use Order;
-use PaymentModule;
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Context\ContextStateManager;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
+use PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount;
+use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use PrestaShopCollection;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use Ps_checkout;
+use PsCheckoutCart;
+use Validate;
 
 class CreateOrderCommandHandler extends AbstractOrderCommandHandler
 {
@@ -47,50 +57,128 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
     private $contextStateManager;
 
     /**
-     * @param ContextStateManager $contextStateManager
+     * @var PsCheckoutCartRepository
      */
-    public function __construct(ContextStateManager $contextStateManager, EventDispatcherInterface $eventDispatcher)
-    {
+    private $psCheckoutCartRepository;
+
+    /**
+     * @var OrderStateMapper
+     */
+    private $psOrderStateMapper;
+
+    /**
+     * @var Ps_checkout
+     */
+    private $module;
+
+    /**
+     * @var CheckOrderAmount
+     */
+    private $checkOrderAmount;
+
+    public function __construct(
+        ContextStateManager $contextStateManager,
+        EventDispatcherInterface $eventDispatcher,
+        PsCheckoutCartRepository $psCheckoutCartRepository,
+        OrderStateMapper $psOrderStateMapper,
+        Ps_checkout $module,
+        CheckOrderAmount $checkOrderAmount
+    ) {
         $this->contextStateManager = $contextStateManager;
         $this->eventDispatcher = $eventDispatcher;
+        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
+        $this->psOrderStateMapper = $psOrderStateMapper;
+        $this->module = $module;
+        $this->checkOrderAmount = $checkOrderAmount;
     }
 
     /**
      * @param CreateOrderCommand $command
      *
+     * @return void
+     *
+     * @throws CartException
      * @throws OrderException
+     * @throws OrderNotFoundException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
+     * @throws PsCheckoutException
      */
     public function handle(CreateOrderCommand $command)
     {
-        /** @var PaymentModule|false $paymentModule */
-        $paymentModule = Module::getInstanceByName($command->getPaymentModuleName());
+        /** @var PsCheckoutCart $psCheckoutCart */
+        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($command->getOrderPayPalId()->getValue());
 
-        if (false === $paymentModule) {
-            throw new OrderException(sprintf('Unable to get "%s" module instance.', $command->getPaymentModuleName()), OrderException::MODULE_INSTANCE_NOT_FOUND);
+        $cart = new Cart($psCheckoutCart->getIdCart());
+
+        if (!Validate::isLoadedObject($cart)) {
+            throw new PsCheckoutException('Cart not found', PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
-        $cart = new Cart($command->getCartId()->getValue());
+        $orders = new PrestaShopCollection(Order::class);
+        $orders->where('id_cart', '=', (int) $cart->id);
+
+        if ($orders->count()) {
+            return;
+        }
+
+        $fundingSource = $psCheckoutCart->getPaypalFundingSource();
+        $transactionId = $orderStateId = $paidAmount = '';
+        $capture = $command->getCapturePayPal();
+        $currencyId = (int) $cart->id_currency;
+
+        if ($capture) {
+            $transactionId = $capture['id'];
+            $paidAmount = $capture['status'] === 'COMPLETED' ? $capture['amount']['value'] : '';
+            $currencyId = Currency::getIdByIsoCode($capture['amount']['currency_code'], (int) $cart->id_shop);
+        }
+
+        if ($paidAmount) {
+            switch ($this->checkOrderAmount->checkAmount((string) $paidAmount, (string) $cart->getOrderTotal(true, \Cart::BOTH))) {
+                case CheckOrderAmount::ORDER_NOT_FULL_PAID:
+                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PARTIALLY_PAID);
+                    break;
+                case CheckOrderAmount::ORDER_FULL_PAID:
+                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PAYMENT_ACCEPTED);
+                    break;
+                case CheckOrderAmount::ORDER_TO_MUCH_PAID:
+                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PAYMENT_ACCEPTED);
+            }
+        } else {
+            switch ($fundingSource) {
+                case 'card':
+                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT);
+                    break;
+                case 'paypal':
+                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT);
+                    break;
+                default:
+                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT);
+            }
+        }
+
+        /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
+        $fundingSourceTranslationProvider = $this->module->getService('ps_checkout.funding_source.translation');
+
         $this->setCartContext($this->contextStateManager, $cart);
 
         $extraVars = [];
 
         // Transaction identifier is needed only when an OrderPayment will be created
         // It requires a positive paid amount and an OrderState that's consider the associated order as validated.
-        if ($command->getPaidAmount() && $command->getTransactionId()) {
-            $extraVars['transaction_id'] = $command->getTransactionId();
+        if ($paidAmount && $transactionId) {
+            $extraVars['transaction_id'] = $transactionId;
         }
 
         try {
-            $paymentModule->validateOrder(
+            $this->module->validateOrder(
                 (int) $cart->id,
-                $command->getOrderStateId(),
-                $command->getPaidAmount(),
-                $command->getPaymentMethod(),
+                $orderStateId,
+                $paidAmount,
+                $fundingSourceTranslationProvider->getPaymentMethodName($fundingSource),
                 null,
                 $extraVars,
-                null,
+                $currencyId,
                 false,
                 $cart->secure_key
             );
@@ -102,29 +190,15 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
             throw new OrderNotFoundException(sprintf('Failed to create order from Cart #%s.', var_export($cart->id, true)), OrderNotFoundException::NOT_FOUND);
         }
 
-        // It happens this returns null in case of override or weird modules
-        if ($paymentModule->currentOrder) {
-            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) $paymentModule->currentOrder, (int) $cart->id));
+        $orders = new PrestaShopCollection(Order::class);
+        $orders->where('id_cart', '=', (int) $cart->id);
 
-            return;
+        if (!$orders->count()) {
+            throw new OrderNotFoundException(sprintf('Unable to retrieve order identifier from Cart #%s.', var_export($cart->id, true)), OrderNotFoundException::NOT_FOUND);
         }
 
-        // Order::getIdByCartId() is available since PrestaShop 1.7.1.0
-        if (method_exists(Order::class, 'getIdByCartId')) {
-            // @phpstan-ignore-next-line
-            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) Order::getIdByCartId($cart->id), (int) $cart->id));
-
-            return;
+        foreach ($orders as $order) {
+            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) $order->id, (int) $cart->id));
         }
-
-        // Order::getIdByCartId() is available before PrestaShop 1.7.1.0, removed since PrestaShop 8.0.0
-        if (method_exists(Order::class, 'getOrderByCartId')) {
-            // @phpstan-ignore-next-line
-            $this->eventDispatcher->dispatch(new OrderCreatedEvent((int) Order::getOrderByCartId($cart->id), (int) $cart->id));
-
-            return;
-        }
-
-        throw new OrderNotFoundException(sprintf('Unable to retrieve order identifier from Cart #%s.', var_export($cart->id, true)), OrderNotFoundException::NOT_FOUND);
     }
 }

@@ -26,21 +26,21 @@ class GetPayPalOrderForOrderConfirmationQueryResult
     /**
      * @var array
      */
-    private $order;
+    private $orderPayPal;
 
     /**
-     * @param array $order
+     * @param array $orderPayPal
      */
-    public function __construct(array $order)
+    public function __construct(array $orderPayPal)
     {
-        $this->order = $order;
+        $this->orderPayPal = $orderPayPal;
     }
 
     /**
      * @return array
      */
-    public function getOrder()
+    public function getOrderPayPal()
     {
-        return $this->order;
+        return $this->orderPayPal;
     }
 }

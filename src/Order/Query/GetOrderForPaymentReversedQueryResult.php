@@ -20,17 +20,22 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Query;
 
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
+use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
+use PrestaShop\Module\PrestashopCheckout\Order\ValueObject\OrderId;
+
 class GetOrderForPaymentReversedQueryResult
 {
     /**
-     * @var int
+     * @var OrderId
      */
-    private $id;
+    private $orderId;
 
     /**
-     * @var int
+     * @var OrderStateId
      */
-    private $currentState;
+    private $currentStateId;
 
     /**
      * @var bool
@@ -43,37 +48,40 @@ class GetOrderForPaymentReversedQueryResult
     private $hasBeenTotallyRefund;
 
     /**
-     * @param int $id
-     * @param int $currentState
+     * @param int $orderId
+     * @param int $currentStateId
      * @param bool $hasBeenPaid
      * @param bool $hasBeenTotallyRefund
+     *
+     * @throws OrderException
+     * @throws OrderStateException
      */
     public function __construct(
-        $id,
-        $currentState,
+        $orderId,
+        $currentStateId,
         $hasBeenPaid,
         $hasBeenTotallyRefund
     ) {
-        $this->id = $id;
-        $this->currentState = $currentState;
+        $this->orderId = new OrderId($orderId);
+        $this->currentStateId = new OrderStateId($currentStateId);
         $this->hasBeenPaid = $hasBeenPaid;
         $this->hasBeenTotallyRefund = $hasBeenTotallyRefund;
     }
 
     /**
-     * @return int
+     * @return OrderId
      */
-    public function getId()
+    public function getOrderId()
     {
-        return $this->id;
+        return $this->orderId;
     }
 
     /**
-     * @return int
+     * @return OrderStateId
      */
     public function getCurrentStateId()
     {
-        return $this->currentState;
+        return $this->currentStateId;
     }
 
     /**

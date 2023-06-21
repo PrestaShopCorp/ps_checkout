@@ -20,8 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
+use PrestaShop\Module\PrestashopCheckout\Cart\Cache\CacheSettings;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheSettings;
 use Psr\SimpleCache\CacheInterface;
 
 class PsCheckoutCartRepository

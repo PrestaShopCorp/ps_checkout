@@ -21,28 +21,29 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 
+use Order;
+use OrderPayment;
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQueryResult;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheSettings;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use PrestaShopCollection;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use Psr\SimpleCache\CacheInterface;
+use Validate;
 
 class GetOrderForPaymentCompletedQueryHandler
 {
     /**
-     * @var CacheInterface
+     * @var PsCheckoutCartRepository
      */
-    private $orderPrestaShopcache;
+    private $psCheckoutCartRepository;
 
-    /**
-     * @param CacheInterface $orderPrestaShopcache
-     */
-    public function __construct(CacheInterface $orderPrestaShopcache)
+    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository)
     {
-        $this->orderPrestaShopcache = $orderPrestaShopcache;
+        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
     }
 
     /**
@@ -56,42 +57,48 @@ class GetOrderForPaymentCompletedQueryHandler
      */
     public function handle(GetOrderForPaymentCompletedQuery $query)
     {
-        /** @var GetOrderForPaymentCompletedQueryResult $result */
-        $result = $this->orderPrestaShopcache->get(CacheSettings::CART_ID . $query->getCartId()->getValue());
-        if (!empty($result) && $result instanceof GetOrderForPaymentCompletedQueryResult) {
-            return $result;
+        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($query->getOrderPayPalId()->getValue());
+
+        if (!$psCheckoutCart) {
+            throw new CartNotFoundException('No PrestaShop Cart associated to this PayPal Order at this time.');
         }
 
-        $orderId = null;
-        // Order::getIdByCartId() is available since PrestaShop 1.7.1.0
-        if (method_exists(\Order::class, 'getIdByCartId')) {
-            // @phpstan-ignore-next-line
-            $orderId = (int) \Order::getIdByCartId($query->getCartId()->getValue());
-        } elseif (method_exists(\Order::class, 'getOrderByCartId')) { // Order::getIdByCartId() is available before PrestaShop 1.7.1.0, removed since PrestaShop 8.0.0
-            // @phpstan-ignore-next-line
-            $orderId = (int) \Order::getOrderByCartId($query->getCartId()->getValue());
+        $orders = new PrestaShopCollection(Order::class);
+        $orders->where('id_cart', '=', $psCheckoutCart->getIdCart());
+
+        if (!$orders->count()) {
+            throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.');
         }
 
-        if (!$orderId) {
-            throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.', OrderNotFoundException::NOT_FOUND);
+        /** @var Order $order */
+        $order = $orders->getFirst();
+
+        if (!Validate::isLoadedObject($order)) {
+            throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.');
         }
 
-        $order = new \Order($orderId);
+        /** @var OrderPayment[] $orderPayments */
+        $orderPayments = $order->getOrderPaymentCollection();
+        $orderPaymentId = null;
 
-        if (!\Validate::isLoadedObject($order)) {
-            throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.', OrderNotFoundException::NOT_FOUND);
+        if (!empty($orderPayments)) {
+            foreach ($orderPayments as $orderPayment) {
+                if ($orderPayment->transaction_id === $query->getCapturePayPalId()->getValue()) {
+                    $orderPaymentId = (int) $orderPayment->id;
+                }
+            }
         }
-        $result = new GetOrderForPaymentCompletedQueryResult(
+
+        return new GetOrderForPaymentCompletedQueryResult(
             (int) $order->id,
+            (int) $order->id_cart,
             (int) $order->getCurrentState(),
             (bool) $order->hasBeenPaid(),
             (string) $order->getTotalProductsWithTaxes(),
             (string) $order->getTotalPaid(),
-            (int) $order->id_currency
+            (int) $order->id_currency,
+            $psCheckoutCart->getPaypalFundingSource(),
+            $orderPaymentId
         );
-
-        $this->orderPrestaShopcache->set(CacheSettings::CART_ID . $query->getCartId()->getValue(), $result);
-
-        return $result;
     }
 }

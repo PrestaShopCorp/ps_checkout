@@ -227,7 +227,15 @@ class PsCheckoutCart extends ObjectModel
      */
     public function isPaypalClientTokenExpired()
     {
-        return empty($this->paypal_token_expire) || strtotime($this->paypal_token_expire) > time();
+        if (empty($this->paypal_token_expire)) {
+            return true;
+        }
+
+        try {
+            return (new DateTime())->diff(new DateTime($this->paypal_token_expire))->invert === 1;
+        } catch (Exception $e) {
+            return true;
+        }
     }
 
     /**
@@ -243,7 +251,15 @@ class PsCheckoutCart extends ObjectModel
      */
     public function isPaypalAuthorizationExpired()
     {
-        return empty($this->paypal_authorization_expire) || strtotime($this->paypal_authorization_expire) > time();
+        if (empty($this->paypal_authorization_expire)) {
+            return true;
+        }
+
+        try {
+            return (new DateTime())->diff(new DateTime($this->paypal_authorization_expire))->invert === 1;
+        } catch (Exception $e) {
+            return true;
+        }
     }
 
     /**

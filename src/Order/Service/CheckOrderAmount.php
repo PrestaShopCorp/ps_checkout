@@ -45,17 +45,17 @@ class CheckOrderAmount
     public function checkAmount($totalAmount, $totalAmountPaid)
     {
         if (!is_string($totalAmount)) {
-            throw new OrderException(sprintf('Type of totalAmount (%s) is not string', gettype($totalAmount)), OrderException::ORDER_CHECK_AMOUNT_BAD_PARAMETER);
+            throw new OrderException(sprintf('Type of totalAmount (%s) is not string', var_export($totalAmount, true)), OrderException::ORDER_CHECK_AMOUNT_BAD_PARAMETER);
         }
         if (!is_numeric($totalAmount)) {
-            throw new OrderException(sprintf('Type of totalAmount (%s) is not numeric', $totalAmount), OrderException::ORDER_CHECK_AMOUNT_BAD_PARAMETER);
+            throw new OrderException(sprintf('Type of totalAmount (%s) is not numeric', var_export($totalAmount, true)), OrderException::ORDER_CHECK_AMOUNT_BAD_PARAMETER);
         }
 
         if (!is_string($totalAmountPaid)) {
-            throw new OrderException(sprintf('Type of totalAmountPaid (%s) is not string', gettype($totalAmountPaid)), OrderException::ORDER_CHECK_AMOUNT_BAD_PARAMETER);
+            throw new OrderException(sprintf('Type of totalAmountPaid (%s) is not string', var_export($totalAmountPaid, true)), OrderException::ORDER_CHECK_AMOUNT_BAD_PARAMETER);
         }
         if (!is_numeric($totalAmountPaid)) {
-            throw new OrderException(sprintf('Type of totalAmountPaid (%s) is not numeric', $totalAmountPaid), OrderException::ORDER_CHECK_AMOUNT_BAD_PARAMETER);
+            throw new OrderException(sprintf('Type of totalAmountPaid (%s) is not numeric', var_export($totalAmountPaid, true)), OrderException::ORDER_CHECK_AMOUNT_BAD_PARAMETER);
         }
 
         if ((float) $totalAmount == (float) $totalAmountPaid) {

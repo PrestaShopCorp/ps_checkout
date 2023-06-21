@@ -56,29 +56,13 @@ class Order extends PaymentClient
     {
         $this->setRoute('/payments/order/capture');
 
-        $response = $this->post([
+        return $this->post([
             'mode' => $fundingSource,
             'orderId' => (string) $orderId,
             'payee' => [
                 'merchant_id' => $merchantId,
             ],
         ]);
-
-//        /** @var \Ps_checkout $module */
-//        $module = \Module::getInstanceByName('ps_checkout');
-//
-//        /** @var \Symfony\Component\Cache\Simple\FilesystemCache $captureCache */
-//        $captureCache = $module->getService('ps_checkout.cache.paypal.capture');
-//
-//        $responseBody = isset($response['body']) ? $response['body'] : null;
-//
-//        if ($responseBody) {
-//            $capture = $responseBody['purchase_units'][0]['payments']['captures'][0];
-//
-//            $captureCache->set($capture['id'], $capture);
-//        }
-
-        return $response;
     }
 
     /**
