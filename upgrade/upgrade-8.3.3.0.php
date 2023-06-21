@@ -38,6 +38,26 @@ function upgrade_module_8_3_3_0($module)
 
     $module->registerHook('displayPaymentReturn');
     $module->registerHook('displayOrderDetail');
+    $module->registerHook('displayHeader');
+
+    try {
+        $db = Db::getInstance();
+        $db->delete(
+            'pscheckout_cart',
+            'paypal_order IS NULL'
+        );
+        $db->update(
+            'pscheckout_cart',
+            [
+                'paypal_token' => null,
+                'paypal_token_expire' => null,
+            ],
+            'paypal_token IS NOT NULL',
+            0,
+            true
+        );
+    } catch (Exception $e) {
+    }
 
     // Restore initial PrestaShop shop context
     if (Shop::CONTEXT_SHOP === $savedShopContext) {
