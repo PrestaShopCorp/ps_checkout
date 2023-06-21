@@ -20,17 +20,29 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Query;
 
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
+use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
+use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
+use PrestaShop\Module\PrestashopCheckout\Order\ValueObject\OrderId;
+
 class GetOrderForPaymentCompletedQueryResult
 {
     /**
-     * @var int
+     * @var OrderId
      */
-    private $id;
+    private $orderId;
 
     /**
-     * @var int
+     * @var CartId
      */
-    private $currentState;
+    private $cartId;
+
+    /**
+     * @var OrderStateId
+     */
+    private $currentStateId;
 
     /**
      * @var bool
@@ -53,43 +65,74 @@ class GetOrderForPaymentCompletedQueryResult
     private $currencyId;
 
     /**
-     * @param int $id
-     * @param int $currentState
+     * @var string
+     */
+    private $paymentMethod;
+
+    /**
+     * @var int|null
+     */
+    private $orderPaymentId;
+
+    /**
+     * @param int $orderId
+     * @param int $cartId
+     * @param int $currentStateId
      * @param bool $hasBeenPaid
      * @param string $totalAmount
      * @param string $totalAmountPaid
      * @param int $currencyId
+     * @param string $paymentMethod
+     * @param int|null $orderPaymentId
+     *
+     * @throws OrderException
+     * @throws CartException
+     * @throws OrderStateException
      */
     public function __construct(
-        $id,
-        $currentState,
+        $orderId,
+        $cartId,
+        $currentStateId,
         $hasBeenPaid,
         $totalAmount,
         $totalAmountPaid,
-        $currencyId
+        $currencyId,
+        $paymentMethod,
+        $orderPaymentId = null
     ) {
-        $this->id = $id;
-        $this->currentState = $currentState;
+        $this->orderId = new OrderId($orderId);
+        $this->cartId = new CartId($cartId);
+        $this->currentStateId = new OrderStateId($currentStateId);
         $this->hasBeenPaid = $hasBeenPaid;
         $this->totalAmount = $totalAmount;
         $this->totalAmountPaid = $totalAmountPaid;
         $this->currencyId = $currencyId;
+        $this->paymentMethod = $paymentMethod;
+        $this->orderPaymentId = $orderPaymentId;
     }
 
     /**
-     * @return int
+     * @return OrderId
      */
-    public function getId()
+    public function getOrderId()
     {
-        return $this->id;
+        return $this->orderId;
     }
 
     /**
-     * @return int
+     * @return CartId
+     */
+    public function getCartId()
+    {
+        return $this->cartId;
+    }
+
+    /**
+     * @return OrderStateId
      */
     public function getCurrentStateId()
     {
-        return $this->currentState;
+        return $this->currentStateId;
     }
 
     /**
@@ -122,5 +165,21 @@ class GetOrderForPaymentCompletedQueryResult
     public function getCurrencyId()
     {
         return $this->currencyId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaymentMethod()
+    {
+        return $this->paymentMethod;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getOrderPaymentId()
+    {
+        return $this->orderPaymentId;
     }
 }

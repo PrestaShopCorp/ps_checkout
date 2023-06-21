@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -23,16 +22,24 @@ namespace PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber;
 
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker;
+use PrestaShop\Module\PrestashopCheckout\Checkout\Command\UpdatePaymentMethodSelectedCommand;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Event\CheckoutCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
+use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
+use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQueryResult;
-use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePaymentMethodSelectedCommand;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use PrestaShopDatabaseException;
+use PrestaShopException;
 use Ps_checkout;
+use PsCheckoutCart;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Validate;
 
 class CheckoutEventSubscriber implements EventSubscriberInterface
 {
@@ -105,23 +112,53 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
      *
      * @return void
      *
+     * @throws PayPalException
      * @throws PayPalOrderException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      * @throws PsCheckoutException
      */
     public function proceedToPayment(CheckoutCompletedEvent $event)
     {
-        /** @var GetPayPalOrderForCheckoutCompletedQueryResult $getPayPalOrderForCheckoutCompletedQueryResult */
-        $getPayPalOrderForCheckoutCompletedQueryResult = $this->module->getService('ps_checkout.bus.command')->handle(new GetPayPalOrderForCheckoutCompletedQuery(
-            $event->getPayPalOrderId()->getValue()
-        ));
+        try {
+            /** @var GetPayPalOrderForCheckoutCompletedQueryResult $getPayPalOrderForCheckoutCompletedQueryResult */
+            $getPayPalOrderForCheckoutCompletedQueryResult = $this->module->getService('ps_checkout.bus.command')->handle(new GetPayPalOrderForCheckoutCompletedQuery(
+                $event->getPayPalOrderId()->getValue()
+            ));
+        } catch (HttpTimeoutException $exception) {
+            return $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
+        }
 
         $this->checkoutChecker->continueWithAuthorization($event->getCartId()->getValue(), $getPayPalOrderForCheckoutCompletedQueryResult->getPayPalOrder());
 
-        $this->commandBus->handle(
-            new CapturePayPalOrderCommand(
-                $event->getPayPalOrderId()->getValue(),
-                $event->getFundingSource()
-            )
-        );
+        try {
+            $this->commandBus->handle(
+                new CapturePayPalOrderCommand(
+                    $event->getPayPalOrderId()->getValue(),
+                    $event->getFundingSource()
+                )
+            );
+        } catch (PayPalException $exception) {
+            if ($exception->getCode() === PayPalException::ORDER_NOT_APPROVED) {
+                return $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
+            } elseif ($exception->getCode() === PayPalException::RESOURCE_NOT_FOUND) {
+                /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
+                $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
+                $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
+
+                if (Validate::isLoadedObject($psCheckoutCart)) {
+                    $psCheckoutCart->paypal_status = PsCheckoutCart::STATUS_CANCELED;
+                    $psCheckoutCartRepository->save($psCheckoutCart);
+                }
+
+                throw $exception;
+            } elseif ($exception->getCode() === PayPalException::ORDER_ALREADY_CAPTURED) {
+                return;
+            } else {
+                throw $exception;
+            }
+        } catch (HttpTimeoutException $exception) {
+            return $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
+        }
     }
 }

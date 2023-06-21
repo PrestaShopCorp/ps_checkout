@@ -21,6 +21,8 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\Command;
 
 use DateTimeImmutable;
+use Exception;
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\ValueObject\OrderId;
 
 class AddOrderPaymentCommand
@@ -62,6 +64,9 @@ class AddOrderPaymentCommand
      * @param string $paymentAmount
      * @param int $paymentCurrencyId
      * @param string|null $transactionId
+     *
+     * @throws OrderException
+     * @throws Exception
      */
     public function __construct(
         $orderId,

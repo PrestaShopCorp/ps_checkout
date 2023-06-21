@@ -97,10 +97,10 @@ class PayPalOrderSummaryViewBuilder
             throw new PsCheckoutException('Unable to retrieve cart data');
         }
 
-        $orderPayPal = $this->orderPayPalProvider->getById($psCheckoutCart->paypal_order);
-
-        if (!$orderPayPal) {
-            throw new PsCheckoutException('Unable to retrieve PayPal order data');
+        try {
+            $orderPayPal = $this->orderPayPalProvider->getById($psCheckoutCart->paypal_order);
+        } catch (Exception $exception) {
+            $orderPayPal = [];
         }
 
         $orderPayPalDataProvider = new PaypalOrderDataProvider($orderPayPal);

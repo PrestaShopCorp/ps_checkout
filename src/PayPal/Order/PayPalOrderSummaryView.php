@@ -88,7 +88,7 @@ class PayPalOrderSummaryView
      */
     public function getTemplateVars()
     {
-        $orderStatus = $this->orderPayPalDataProvider->getOrderStatus();
+        $orderStatus = $this->orderPayPalDataProvider->getOrderStatus() ? $this->orderPayPalDataProvider->getOrderStatus() : $this->checkoutDataProvider->getPaypalOrderStatus();
         $orderTransactionStatus = $this->orderPayPalDataProvider->getTransactionStatus();
         $fundingSource = $this->checkoutDataProvider->getFundingSourceName();
 

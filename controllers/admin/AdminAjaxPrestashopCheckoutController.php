@@ -344,7 +344,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
         $psCheckoutCartCollection->where('id_cart', '=', (int) $order->id_cart);
-        $psCheckoutCartCollection->orderBy('date_upd', 'DESC');
+        $psCheckoutCartCollection->orderBy('date_upd', 'ASC');
 
         if (!$psCheckoutCartCollection->count()) {
             http_response_code(500);
@@ -390,6 +390,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             'moduleLogoUri' => $this->module->getPathUri() . 'logo.png',
             'orderPaymentDisplayName' => $fundingSourceTranslationProvider->getPaymentMethodName($psCheckoutCart->paypal_funding),
             'orderPaymentLogoUri' => $this->module->getPathUri() . 'views/img/' . $psCheckoutCart->paypal_funding . '.svg',
+            'psCheckoutCart' => $psCheckoutCart,
         ]);
 
         $this->ajaxDie(json_encode([

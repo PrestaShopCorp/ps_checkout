@@ -28,23 +28,23 @@ class GetCurrentPayPalOrderStatusQuery
     /**
      * @var PayPalOrderId
      */
-    private $paypalOrderId;
+    private $orderPayPalId;
 
     /**
-     * @param string $orderId
+     * @param string $orderPayPalId
      *
      * @throws PayPalOrderException
      */
-    public function __construct($paypalOrderId)
+    public function __construct($orderPayPalId)
     {
-        $this->paypalOrderId = new PayPalOrderId($paypalOrderId);
+        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
     }
 
     /**
      * @return PayPalOrderId
      */
-    public function getPayPalOrderId()
+    public function getOrderPayPalId()
     {
-        return $this->paypalOrderId;
+        return $this->orderPayPalId;
     }
 }

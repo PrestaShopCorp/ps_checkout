@@ -201,9 +201,9 @@ class ValidateOrder
                     $payPalProcessorResponse->throwException();
                 }
             }
-            /** @var CacheInterface $paypalOrderCache */
-            $paypalOrderCache = $module->getService('ps_checkout.cache.paypal.order');
-            $paypalOrderCache->set($response['body']['id'], $response['body']);
+            /** @var CacheInterface $orderPayPalCache */
+            $orderPayPalCache = $module->getService('ps_checkout.cache.paypal.order');
+            $orderPayPalCache->set($response['body']['id'], $response['body']);
 
             if (false === $psCheckoutCart) {
                 $psCheckoutCart = new \PsCheckoutCart();

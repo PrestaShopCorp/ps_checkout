@@ -299,6 +299,10 @@ class PayPalError
                 throw new PayPalException('External funding details not found.', PayPalException::NO_EXTERNAL_FUNDING_DETAILS_FOUND);
             case 'PAYMENT_DENIED':
                 throw new PayPalException('Payment denied.', PayPalException::PAYMENT_DENIED);
+            case 'CARD_BRAND_NOT_SUPPORTED':
+                throw new PayPalException('Processing of this card brand is not supported. Use another type of card.', PayPalException::CARD_BRAND_NOT_SUPPORTED);
+            case 'RESOURCE_NOT_FOUND':
+                throw new PayPalException('The specified resource does not exist.', PayPalException::RESOURCE_NOT_FOUND);
             default:
                 throw new PayPalException($this->message, PayPalException::UNKNOWN);
         }

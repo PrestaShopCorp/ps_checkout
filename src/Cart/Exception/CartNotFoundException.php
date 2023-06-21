@@ -18,8 +18,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Order\State\Query;
+namespace PrestaShop\Module\PrestashopCheckout\Cart\Exception;
 
-class GetOrderStateConfigurationQuery
+class CartNotFoundException extends CartException
 {
 }

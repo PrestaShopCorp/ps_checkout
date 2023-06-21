@@ -20,31 +20,31 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Query;
 
-use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
-use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 
 class GetOrderForPaymentDeniedQuery
 {
     /**
-     * @var CartId
+     * @var PayPalOrderId
      */
-    private $cartId;
+    private $orderPayPalId;
 
     /**
-     * @param int $cartId
+     * @param string $orderPayPalId
      *
-     * @throws CartException
+     * @throws PayPalOrderException
      */
-    public function __construct($cartId)
+    public function __construct($orderPayPalId)
     {
-        $this->cartId = new CartId($cartId);
+        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
     }
 
     /**
-     * @return CartId
+     * @return PayPalOrderId
      */
-    public function getCartId()
+    public function getOrderPayPalId()
     {
-        return $this->cartId;
+        return $this->orderPayPalId;
     }
 }

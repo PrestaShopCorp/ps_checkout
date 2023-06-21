@@ -22,43 +22,34 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
 use Exception;
-use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use PsCheckoutCart;
 
 class SavePayPalOrderCommandHandler
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
     /**
      * @var PsCheckoutCartRepository
      */
     private $psCheckoutCartRepository;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param PsCheckoutCartRepository $psCheckoutCartRepository
-     */
-    public function __construct(EventDispatcherInterface $eventDispatcher, PsCheckoutCartRepository $psCheckoutCartRepository)
+    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository)
     {
-        $this->eventDispatcher = $eventDispatcher;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
     }
 
     public function handle(SavePayPalOrderCommand $savePayPalOrderCommand)
     {
         try {
-            /** @var \PsCheckoutCart|false $psCheckoutCart */
+            /** @var PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($savePayPalOrderCommand->getOrderPayPalId()->getValue());
 
             $psCheckoutCart->paypal_order = $savePayPalOrderCommand->getOrderPayPalId()->getValue();
             $psCheckoutCart->paypal_status = $savePayPalOrderCommand->getOrderPaypalStatus();
+            $psCheckoutCart->paypal_token = null;
+            $psCheckoutCart->paypal_token_expire = null;
             $this->psCheckoutCartRepository->save($psCheckoutCart);
-            // Update an Aggregate or dispatch an Event with $transactionIdentifier
         } catch (Exception $exception) {
             throw new PayPalOrderException(sprintf('Unable to retrieve PrestaShop cart #%d', $savePayPalOrderCommand->getOrderPayPalId()->getValue()), PayPalOrderException::SESSION_EXCEPTION, $exception);
         }

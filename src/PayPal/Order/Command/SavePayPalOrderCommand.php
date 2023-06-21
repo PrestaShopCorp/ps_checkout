@@ -44,11 +44,11 @@ class SavePayPalOrderCommand
     /**
      * @param string $orderPayPalId
      * @param string $orderPayPalStatus
-     * @param string $orderPayPal
+     * @param array $orderPayPal
      *
      * @throws PayPalOrderException
      */
-    public function __construct($orderPayPalId, $orderPayPalStatus, $orderPayPal)
+    public function __construct($orderPayPalId, $orderPayPalStatus, array $orderPayPal)
     {
         $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
         $this->orderPayPalStatus = $orderPayPalStatus;

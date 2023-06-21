@@ -24,10 +24,15 @@ use Module;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovalReversedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderEventDispatcher;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeclinedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureRefundedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\PayPalCaptureEventDispatcher;
 use Ps_checkout;
 use Psr\Log\LoggerInterface;
 
@@ -67,30 +72,31 @@ class OrderDispatcher implements Dispatcher
         /** @var LoggerInterface $logger */
         $logger = $module->getService('ps_checkout.logger');
 
-        /** @var PayPalCaptureEventDispatcher $paypalCaptureEventDispatcher */
-        $paypalCaptureEventDispatcher = $module->getService('ps_checkout.paypal.capture.dispatcher');
-
-        /** @var PayPalOrderEventDispatcher $paypalOrderEventDispatcher */
-        $paypalOrderEventDispatcher = $module->getService('ps_checkout.paypal.order.dispatcher');
-
         switch ($payload['eventType']) {
             case static::PS_CHECKOUT_PAYMENT_COMPLETED:
+                $eventDispatcher->dispatch(new PayPalCaptureCompletedEvent($payload['orderId'], $payload['resource']['id'], $payload['resource']));
+                break;
             case static::PS_CHECKOUT_PAYMENT_PENDING:
+                $eventDispatcher->dispatch(new PayPalCapturePendingEvent($payload['orderId'], $payload['resource']['id'], $payload['resource']));
+                break;
             case static::PS_CHECKOUT_PAYMENT_DENIED:
+                $eventDispatcher->dispatch(new PayPalCaptureDeclinedEvent($payload['orderId'], $payload['resource']['id'], $payload['resource']));
+                break;
             case static::PS_CHECKOUT_PAYMENT_REFUNDED:
+                $eventDispatcher->dispatch(new PayPalCaptureRefundedEvent($payload['orderId'], $payload['resource']['id'], $payload['resource']));
+                break;
             case static::PS_CHECKOUT_PAYMENT_REVERSED:
-                $paypalCaptureEventDispatcher->dispatch($payload['resource']['supplementary_data']['related_ids']['order_id'], $payload['resource']);
-
-                return true;
+                $eventDispatcher->dispatch(new PayPalCaptureReversedEvent($payload['orderId'], $payload['resource']['id'], $payload['resource']));
+                break;
             case static::PS_CHECKOUT_ORDER_APPROVED:
+                $eventDispatcher->dispatch(new PayPalOrderApprovedEvent($payload['orderId'], $payload['resource']));
+                break;
             case static::PS_CHECKOUT_ORDER_COMPLETED:
-                $paypalOrderEventDispatcher->dispatch($payload['resource']);
-
-                return true;
+                $eventDispatcher->dispatch(new PayPalOrderCompletedEvent($payload['orderId'], $payload['resource']));
+                break;
             case static::PS_CHECKOUT_ORDER_APPROVAL_REVERSED:
                 $eventDispatcher->dispatch(new PayPalOrderApprovalReversedEvent($payload['orderId'], $payload['resource']));
-
-                return true;
+                break;
             default:
                 $logger->warning(
                     'Unknown webhook, cannot be processed.',
@@ -98,8 +104,8 @@ class OrderDispatcher implements Dispatcher
                         'payload' => $payload,
                     ]
                 );
-
-                return true;
         }
+
+        return true;
     }
 }

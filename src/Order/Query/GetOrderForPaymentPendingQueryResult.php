@@ -21,17 +21,22 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Query;
 
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
+use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
+use PrestaShop\Module\PrestashopCheckout\Order\ValueObject\OrderId;
+
 class GetOrderForPaymentPendingQueryResult
 {
     /**
-     * @var int
+     * @var OrderId
      */
-    private $id;
+    private $orderId;
 
     /**
-     * @var int
+     * @var OrderStateId
      */
-    private $currentState;
+    private $currentStateId;
 
     /**
      * @var bool
@@ -39,34 +44,45 @@ class GetOrderForPaymentPendingQueryResult
     private $isInPending;
 
     /**
-     * @param int $id
-     * @param int $currentState
+     * @var string
+     */
+    private $paymentMethod;
+
+    /**
+     * @param int $orderId
+     * @param int $currentStateId
      * @param bool $isInPending
+     * @param string $paymentMethod
+     *
+     * @throws OrderException
+     * @throws OrderStateException
      */
     public function __construct(
-        $id,
-        $currentState,
-        $isInPending
+        $orderId,
+        $currentStateId,
+        $isInPending,
+        $paymentMethod
     ) {
-        $this->id = $id;
-        $this->currentState = $currentState;
+        $this->orderId = new OrderId($orderId);
+        $this->currentStateId = new OrderStateId($currentStateId);
         $this->isInPending = $isInPending;
+        $this->paymentMethod = $paymentMethod;
     }
 
     /**
-     * @return int
+     * @return OrderId
      */
-    public function getId()
+    public function getOrderId()
     {
-        return $this->id;
+        return $this->orderId;
     }
 
     /**
-     * @return int
+     * @return OrderStateId
      */
     public function getCurrentStateId()
     {
-        return $this->currentState;
+        return $this->currentStateId;
     }
 
     /**
@@ -75,5 +91,13 @@ class GetOrderForPaymentPendingQueryResult
     public function isInPending()
     {
         return $this->isInPending;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaymentMethod()
+    {
+        return $this->paymentMethod;
     }
 }

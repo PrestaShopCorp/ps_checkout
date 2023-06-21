@@ -33,8 +33,7 @@ class CheckTransitionPayPalAuthorizationStatusServiceTest extends TestCase
     public function testCheckAvailableStatus($oldStatus, $newStatus, $expectedResult)
     {
         $checkTransition = new CheckTransitionPayPalAuthorizationStatusService();
-        $result = $checkTransition->checkAvailableStatus($oldStatus, $newStatus);
-        $this->assertEquals($expectedResult, $result);
+        $this->assertEquals($expectedResult, $checkTransition->checkAvailableStatus($oldStatus, $newStatus), sprintf('Transition from %s to %s should be %s', $oldStatus, $newStatus, $expectedResult ? 'allowed' : 'not allowed'));
     }
 
     public function statusProvider()

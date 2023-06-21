@@ -21,29 +21,31 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 
+use Configuration;
+use Order;
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Cache\CacheSettings;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use PrestaShopCollection;
 use PrestaShopDatabaseException;
 use PrestaShopException;
-use Psr\SimpleCache\CacheInterface;
+use PsCheckoutCart;
+use Validate;
 
 class GetOrderForPaymentDeniedQueryHandler
 {
     /**
-     * @var CacheInterface
+     * @var PsCheckoutCartRepository
      */
-    private $orderPrestaShopCache;
+    private $psCheckoutCartRepository;
 
-    /**
-     * @param CacheInterface $orderPrestaShopCache
-     */
-    public function __construct(CacheInterface $orderPrestaShopCache)
+    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository)
     {
-        $this->orderPrestaShopCache = $orderPrestaShopCache;
+        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
     }
 
     /**
@@ -57,55 +59,42 @@ class GetOrderForPaymentDeniedQueryHandler
      */
     public function handle(GetOrderForPaymentDeniedQuery $query)
     {
-        /** @var GetOrderForPaymentDeniedQueryResult $result */
-        $result = $this->orderPrestaShopCache->get(CacheSettings::CART_ID . $query->getCartId()->getValue());
-        if (!empty($result) && $result instanceof GetOrderForPaymentDeniedQueryResult) {
-            return $result;
+        /** @var PsCheckoutCart|false $psCheckoutCart */
+        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($query->getOrderPayPalId()->getValue());
+
+        if (!$psCheckoutCart) {
+            throw new CartNotFoundException('No PrestaShop Cart associated to this PayPal Order at this time.');
         }
 
-        $orderId = null;
+        $orders = new PrestaShopCollection(Order::class);
+        $orders->where('id_cart', '=', $psCheckoutCart->getIdCart());
 
-        // Order::getIdByCartId() is available since PrestaShop 1.7.1.0
-        if (method_exists(\Order::class, 'getIdByCartId')) {
-            // @phpstan-ignore-next-line
-            $orderId = (int) \Order::getIdByCartId($query->getCartId()->getValue());
+        if (!$orders->count()) {
+            throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.');
         }
 
-        // Order::getIdByCartId() is available before PrestaShop 1.7.1.0, removed since PrestaShop 8.0.0
-        if (method_exists(\Order::class, 'getOrderByCartId')) {
-            // @phpstan-ignore-next-line
-            $orderId = (int) \Order::getOrderByCartId($query->getCartId()->getValue());
+        /** @var Order $order */
+        $order = $orders->getFirst();
+
+        if (!Validate::isLoadedObject($order)) {
+            throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.');
         }
 
-        if (!$orderId) {
-            throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.', OrderNotFoundException::NOT_FOUND);
-        }
-
-        $order = new \Order($orderId);
-
-        if (!\Validate::isLoadedObject($order)) {
-            throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.', OrderNotFoundException::NOT_FOUND);
-        }
-
-        $result = new GetOrderForPaymentDeniedQueryResult(
+        return new GetOrderForPaymentDeniedQueryResult(
             (int) $order->id,
             (int) $order->getCurrentState(),
             $this->hasBeenError($order)
         );
-
-        $this->orderPrestaShopCache->set(CacheSettings::CART_ID . $query->getCartId()->getValue(), $result);
-
-        return $result;
     }
 
     /**
-     * @param \Order $order
+     * @param Order $order
      *
      * @return bool
      */
-    private function hasBeenError(\Order $order)
+    private function hasBeenError(Order $order)
     {
-        return $order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::PAYMENT_ERROR))
-            || $order->getHistory($order->id_lang, (int) \Configuration::getGlobalValue(OrderStateConfigurationKeys::CANCELED));
+        return count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PAYMENT_ERROR)))
+            || count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::CANCELED)));
     }
 }

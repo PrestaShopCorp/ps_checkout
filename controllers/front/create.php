@@ -119,7 +119,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             // If we have a PayPal Order Id with a status CREATED or APPROVED or PAYER_ACTION_REQUIRED we mark it as CANCELED and create new one
             // This is needed because cart gets updated so we need to update paypal order too
             if (
-                false !== $psCheckoutCart
+                false !== $psCheckoutCart && $psCheckoutCart->getPaypalOrderId()
             ) {
                 $psCheckoutCart->paypal_status = PsCheckoutCart::STATUS_CANCELED;
                 $psCheckoutCartRepository->save($psCheckoutCart);

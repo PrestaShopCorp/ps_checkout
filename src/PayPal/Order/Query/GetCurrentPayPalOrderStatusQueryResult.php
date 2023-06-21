@@ -28,31 +28,31 @@ class GetCurrentPayPalOrderStatusQueryResult
     /**
      * @var PayPalOrderId
      */
-    private $payPalOrderId;
+    private $orderPayPalId;
 
     /**
      * @var string
      */
-    private $payPalOrderStatus;
+    private $orderPayPalStatus;
 
     /**
-     * @param string $payPalOrderId
-     * @param string $payPalOrderStatus
+     * @param string $orderPayPalId
+     * @param string $orderPayPalStatus
      *
      * @throws PayPalOrderException
      */
-    public function __construct($payPalOrderId, $payPalOrderStatus)
+    public function __construct($orderPayPalId, $orderPayPalStatus)
     {
-        $this->payPalOrderId = new PayPalOrderId($payPalOrderId);
-        $this->payPalOrderStatus = $payPalOrderStatus;
+        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
+        $this->orderPayPalStatus = $orderPayPalStatus;
     }
 
     /**
      * @return PayPalOrderId
      */
-    public function getPayPalOrderId()
+    public function getOrderPayPalId()
     {
-        return $this->payPalOrderId;
+        return $this->orderPayPalId;
     }
 
     /**
@@ -60,6 +60,6 @@ class GetCurrentPayPalOrderStatusQueryResult
      */
     public function getStatus()
     {
-        return $this->payPalOrderStatus;
+        return $this->orderPayPalStatus;
     }
 }

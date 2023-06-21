@@ -20,31 +20,46 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\Query;
 
-use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
-use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\ValueObject\PayPalCaptureId;
 
 class GetOrderForPaymentCompletedQuery
 {
     /**
-     * @var CartId
+     * @var PayPalOrderId
      */
-    private $cartId;
+    private $orderPayPalId;
 
     /**
-     * @param int $cartId
-     *
-     * @throws CartException
+     * @var PayPalCaptureId
      */
-    public function __construct($cartId)
+    private $capturePayPalId;
+
+    /**
+     * @param string $orderPayPalId
+     * @param string $capturePayPalId
+     *
+     * @throws PayPalOrderException
+     * @throws PayPalCaptureException
+     */
+    public function __construct($orderPayPalId, $capturePayPalId)
     {
-        $this->cartId = new CartId($cartId);
+        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
+        $this->capturePayPalId = new PayPalCaptureId($capturePayPalId);
     }
 
     /**
-     * @return CartId
+     * @return PayPalOrderId
      */
-    public function getCartId()
+    public function getOrderPayPalId()
     {
-        return $this->cartId;
+        return $this->orderPayPalId;
+    }
+
+    public function getCapturePayPalId()
+    {
+        return $this->capturePayPalId;
     }
 }

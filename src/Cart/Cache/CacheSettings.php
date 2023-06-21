@@ -18,33 +18,10 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Order\State\Query;
+namespace PrestaShop\Module\PrestashopCheckout\Cart\Cache;
 
-use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
-use PrestaShop\Module\PrestashopCheckout\Order\State\ValueObject\OrderStateId;
-
-class GetOrderStateQueryResult
+class CacheSettings
 {
-    /**
-     * @var OrderStateId
-     */
-    private $orderStateId;
-
-    /**
-     * @param int $orderStateId
-     *
-     * @throws OrderStateException
-     */
-    public function __construct($orderStateId)
-    {
-        $this->orderStateId = new OrderStateId($orderStateId);
-    }
-
-    /**
-     * @return OrderStateId
-     */
-    public function getOrderStateId()
-    {
-        return $this->orderStateId;
-    }
+    const CART_ID = 'cart_id_';
+    const PAYPAL_ORDER_ID = 'paypal_order_id_';
 }

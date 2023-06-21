@@ -18,40 +18,32 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Session\CommandHandler;
+namespace PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler;
 
 use Exception;
-use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
+use PrestaShop\Module\PrestashopCheckout\Checkout\Command\UpdatePaymentMethodSelectedCommand;
+use PrestaShop\Module\PrestashopCheckout\Checkout\Exception\PsCheckoutSessionException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use PrestaShop\Module\PrestashopCheckout\Session\Command\UpdatePaymentMethodSelectedCommand;
-use PrestaShop\Module\PrestashopCheckout\Session\Event\PsCheckoutSessionUpdatedEvent;
-use PrestaShop\Module\PrestashopCheckout\Session\Exception\PsCheckoutSessionException;
 use PsCheckoutCart;
 
 class UpdatePaymentMethodSelectedCommandHandler
 {
     /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
      * @var PsCheckoutCartRepository
      */
     private $psCheckoutCartRepository;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param PsCheckoutCartRepository $psCheckoutCartRepository
-     */
-    public function __construct(
-        EventDispatcherInterface $eventDispatcher,
-        PsCheckoutCartRepository $psCheckoutCartRepository
-    ) {
-        $this->eventDispatcher = $eventDispatcher;
+    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository)
+    {
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
     }
 
+    /**
+     * @param UpdatePaymentMethodSelectedCommand $command
+     *
+     * @throws PsCheckoutSessionException
+     */
     public function handle(UpdatePaymentMethodSelectedCommand $command)
     {
         try {
@@ -59,7 +51,7 @@ class UpdatePaymentMethodSelectedCommandHandler
             $psCheckoutCart = $this->psCheckoutCartRepository->findOneByCartId($command->getCartId()->getValue());
 
             if (false === $psCheckoutCart) {
-                throw new PsCheckoutSessionException(sprintf('Unable to retrieve PrestaShop Checkout session #%s', $command->getCartId()->getValue()), PsCheckoutSessionException::UPDATE_FAILED);
+                throw new CartNotFoundException(sprintf('Unable to retrieve PrestaShop Cart #%s', var_export($command->getCartId()->getValue(), true)));
             }
 
             $psCheckoutCart->id_cart = $command->getCartId()->getValue();
@@ -69,11 +61,7 @@ class UpdatePaymentMethodSelectedCommandHandler
             $psCheckoutCart->isExpressCheckout = $command->isExpressCheckout();
             $this->psCheckoutCartRepository->save($psCheckoutCart);
         } catch (Exception $exception) {
-            throw new PsCheckoutSessionException(sprintf('Unable to update PrestaShop Checkout session #%s', $command->getCartId()->getValue()), PsCheckoutSessionException::UPDATE_FAILED, $exception);
+            throw new PsCheckoutSessionException(sprintf('Unable to update PrestaShop Checkout session #%s', var_export($command->getCartId()->getValue(), true)), PsCheckoutSessionException::UPDATE_FAILED, $exception);
         }
-
-        $this->eventDispatcher->dispatch(
-            new PsCheckoutSessionUpdatedEvent($command->getCartId()->getValue())
-        );
     }
 }

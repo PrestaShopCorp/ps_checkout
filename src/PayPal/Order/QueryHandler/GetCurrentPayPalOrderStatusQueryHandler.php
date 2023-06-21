@@ -52,7 +52,7 @@ class GetCurrentPayPalOrderStatusQueryHandler
     public function handle(GetCurrentPayPalOrderStatusQuery $getPayPalOrderQuery)
     {
         try {
-            $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($getPayPalOrderQuery->getPayPalOrderId()->getValue());
+            $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($getPayPalOrderQuery->getOrderPayPalId()->getValue());
         } catch (Exception $exception) {
             throw new PayPalOrderException('Cannot retrieve cart', PayPalOrderException::PRESTASHOP_CART_NOT_FOUND, $exception);
         }
