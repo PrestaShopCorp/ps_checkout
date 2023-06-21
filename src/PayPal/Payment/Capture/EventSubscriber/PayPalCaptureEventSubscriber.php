@@ -125,13 +125,13 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param PayPalCaptureCompletedEvent $event
+     * @param PayPalCaptureEvent $event
      *
      * @return void
      *
      * @throws PayPalOrderException
      */
-    public function createOrder(PayPalCaptureCompletedEvent $event)
+    public function createOrder(PayPalCaptureEvent $event)
     {
         $this->commandBus->handle(new CreateOrderCommand(
             $event->getPayPalOrderId()->getValue(),
