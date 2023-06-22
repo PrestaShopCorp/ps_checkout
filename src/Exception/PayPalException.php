@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -150,4 +151,6 @@ class PayPalException extends PsCheckoutException
     const CURRENCY_NOT_SUPPORTED_FOR_CARD_TYPE = 126;
     const NO_EXTERNAL_FUNDING_DETAILS_FOUND = 127;
     const PAYMENT_DENIED = 128;
+    const CARD_BRAND_NOT_SUPPORTED = 129;
+    const RESOURCE_NOT_FOUND = 130;
 }
