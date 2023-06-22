@@ -49,10 +49,12 @@ class PaypalOrder
     {
         $response = (new Order(\Context::getContext()->link))->fetch($id);
 
-        if (false === $response['status'] && isset($response['body']['message']) && $response['body']['message'] === 'INVALID_RESOURCE_ID') {
+        if (false === $response['status'] && ((isset($response['body']['message']) && $response['body']['message'] === 'INVALID_RESOURCE_ID') || $response['exceptionCode'] === 404)) {
             \Db::getInstance()->update(
                 \PsCheckoutCart::$definition['table'],
-                ['paypal_status = "' . \PsCheckoutCart::STATUS_CANCELED . '"'],
+                [
+                    'paypal_status' => \PsCheckoutCart::STATUS_CANCELED,
+                ],
                 'paypal_order = "' . pSQL($id) . '"'
             );
         }
