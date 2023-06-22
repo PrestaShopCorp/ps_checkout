@@ -46,7 +46,7 @@ class OrderStateMapper
             OrderStateConfigurationKeys::PAYMENT_ERROR => (int) $this->configuration->get(OrderStateConfigurationKeys::PAYMENT_ERROR, ['global' => true]),
             OrderStateConfigurationKeys::OUT_OF_STOCK_UNPAID => (int) $this->configuration->get(OrderStateConfigurationKeys::OUT_OF_STOCK_UNPAID, ['global' => true]),
             OrderStateConfigurationKeys::OUT_OF_STOCK_PAID => (int) $this->configuration->get(OrderStateConfigurationKeys::OUT_OF_STOCK_PAID, ['global' => true]),
-            OrderStateConfigurationKeys::PAYMENT_ACCEPTED => (int) $this->configuration->get(OrderStateConfigurationKeys::PAYMENT_ACCEPTED, ['global' => true]),
+            OrderStateConfigurationKeys::PAYMENT_ACCEPTED => (int) $this->configuration->get(OrderStateConfigurationKeys::PAYMENT_ACCEPTED, ['global' => true]),  /* @phpstan-ignore-line */
             OrderStateConfigurationKeys::REFUNDED => (int) $this->configuration->get(OrderStateConfigurationKeys::REFUNDED, ['global' => true]),
             OrderStateConfigurationKeys::AUTHORIZED => (int) $this->configuration->get(OrderStateConfigurationKeys::AUTHORIZED, ['global' => true]),
             OrderStateConfigurationKeys::PARTIALLY_PAID => (int) $this->configuration->get(OrderStateConfigurationKeys::PARTIALLY_PAID, ['global' => true]), /* @phpstan-ignore-line */
