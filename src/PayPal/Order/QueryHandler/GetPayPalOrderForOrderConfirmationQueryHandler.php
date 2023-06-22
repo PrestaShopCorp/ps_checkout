@@ -26,7 +26,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrd
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
 use Psr\SimpleCache\CacheInterface;
-use Psr\SimpleCache\InvalidArgumentException;
 
 class GetPayPalOrderForOrderConfirmationQueryHandler
 {
@@ -40,14 +39,6 @@ class GetPayPalOrderForOrderConfirmationQueryHandler
         $this->orderPayPalCache = $orderPayPalCache;
     }
 
-    /**
-     * @param GetPayPalOrderForOrderConfirmationQuery $query
-     *
-     * @return GetPayPalOrderForOrderConfirmationQueryResult
-     *
-     * @throws PayPalOrderException
-     * @throws InvalidArgumentException
-     */
     public function handle(GetPayPalOrderForOrderConfirmationQuery $query)
     {
         /** @var array{id: string, status: string} $order */

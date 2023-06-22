@@ -101,7 +101,7 @@ class CheckoutChecker
             throw new PsCheckoutException(sprintf('Cart with id %s not found.', var_export($cartId, true)), PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
         }
 
-        if (!$cart->hasProducts()) {
+        if (!$cart->nbProducts()) {
             throw new PsCheckoutException(sprintf('Cart with id %s has no product. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_MISSING);
         }
 

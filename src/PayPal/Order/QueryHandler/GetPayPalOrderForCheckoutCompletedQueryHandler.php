@@ -28,7 +28,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForChe
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\PaypalOrder;
 use Psr\SimpleCache\CacheInterface;
-use Psr\SimpleCache\InvalidArgumentException;
 
 /**
  * We need to know if the Order Status is APPROVED and in case of Card payment if 3D Secure allow to capture
@@ -45,14 +44,6 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
         $this->orderPayPalCache = $orderPayPalCache;
     }
 
-    /**
-     * @param GetPayPalOrderForCheckoutCompletedQuery $getPayPalOrderQuery
-     *
-     * @return GetPayPalOrderForCheckoutCompletedQueryResult
-     *
-     * @throws PayPalOrderException
-     * @throws InvalidArgumentException
-     */
     public function handle(GetPayPalOrderForCheckoutCompletedQuery $getPayPalOrderQuery)
     {
         /** @var array{id: string, status: string} $order */

@@ -22,7 +22,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 
 use Order;
-use OrderSlipCore;
+use OrderSlip;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
@@ -86,7 +86,7 @@ class GetOrderForPaymentRefundedQueryHandler
             (int) $order->getCurrentState(),
             (bool) $order->hasBeenPaid(),
             $this->hasBeenTotallyRefunded($totalRefund, $order),
-            (string) $order->getTotalProductsWithTaxes(),
+            (string) $order->getTotalProductsWithTaxes(), /* @phpstan-ignore-line */
             (string) $totalRefund,
             (int) $order->id_currency
         );
@@ -99,11 +99,11 @@ class GetOrderForPaymentRefundedQueryHandler
 
     private function getTotalRefund(Order $order)
     {
-        $orderSlips = $order->getOrderSlipsCollection();
+        /** @var OrderSlip[] $orderSlips */
+        $orderSlips = $order->getOrderSlipsCollection()->getResults();
         $refundAmount = 0;
 
         foreach ($orderSlips as $orderSlip) {
-            /* @var OrderSlipCore $orderSlip */
             $refundAmount += $orderSlip->amount + $orderSlip->shipping_cost_amount;
         }
 
