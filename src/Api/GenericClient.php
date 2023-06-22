@@ -20,17 +20,16 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api;
 
-use GuzzleHttp\Exception\RequestException;
+use Exception;
 use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Ring\Exception\RingException;
-use GuzzleHttp\Subscriber\Log\Formatter;
-use GuzzleHttp\Subscriber\Log\LogSubscriber;
+use Http\Client\Exception\TransferException;
+use Link;
+use Module;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
-use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
-use Psr\Http\Client\ClientInterface;
-use Psr\Log\LoggerInterface;
+use Prestashop\ModuleLibGuzzleAdapter\Interfaces\HttpClientInterface;
+use Ps_checkout;
 
 /**
  * Construct the client used to make call to maasland
@@ -40,14 +39,14 @@ class GenericClient
     /**
      * Guzzle Client
      *
-     * @var ClientInterface
+     * @var HttpClientInterface
      */
     protected $client;
 
     /**
      * Class Link in order to generate module link
      *
-     * @var \Link
+     * @var Link
      */
     protected $link;
 
@@ -86,8 +85,8 @@ class GenericClient
 
     public function __construct()
     {
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
+        /** @var Ps_checkout $module */
+        $module = Module::getInstanceByName('ps_checkout');
         /** @var PsAccountRepository $psAccountRepository */
         $psAccountRepository = $module->getService('ps_checkout.repository.prestashop.account');
 
@@ -104,26 +103,11 @@ class GenericClient
      */
     protected function post(array $options = [])
     {
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
-
-        if (method_exists($this->client, 'getEmitter') && true === (bool) $this->getConfiguration(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP, true)) {
-            /** @var LoggerInterface $logger */
-            $logger = $module->getService('ps_checkout.logger');
-
-            $subscriber = new LogSubscriber(
-                $logger,
-                $this->getLogFormatter()
-            );
-
-            $this->client->getEmitter()->attach($subscriber);
-        }
-
         try {
             $response = $this->client->sendRequest(
                 new Request('POST', $this->getRoute(), [], json_encode($options))
             );
-        } catch (RequestException $exception) {
+        } catch (TransferException $exception) {
             return $this->handleException(
                 new PsCheckoutException(
                     $exception->getMessage(),
@@ -131,22 +115,11 @@ class GenericClient
                     $exception
                 )
             );
-        } catch (RingException $exception) {
-            $e = new PsCheckoutException(
-                $exception->getMessage(),
-                PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION,
-                $exception
-            );
-
-            return $this->handleException($e);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return $this->handleException($exception);
         }
 
-        $responseHandler = new ResponseApiHandler();
-        $response = $responseHandler->handleResponse($response);
-
-        return $response;
+        return (new ResponseApiHandler())->handleResponse($response);
     }
 
     /**
@@ -162,7 +135,7 @@ class GenericClient
     /**
      * Setter for client
      *
-     * @param ClientInterface $client
+     * @param HttpClientInterface $client
      */
     protected function setClient($client)
     {
@@ -172,9 +145,9 @@ class GenericClient
     /**
      * Setter for link
      *
-     * @param \Link $link
+     * @param Link $link
      */
-    protected function setLink(\Link $link)
+    protected function setLink(Link $link)
     {
         $this->link = $link;
     }
@@ -212,7 +185,7 @@ class GenericClient
     /**
      * Getter for client
      *
-     * @return ClientInterface
+     * @return HttpClientInterface
      */
     protected function getClient()
     {
@@ -222,7 +195,7 @@ class GenericClient
     /**
      * Getter for Link
      *
-     * @return \Link
+     * @return Link
      */
     protected function getLink()
     {
@@ -249,55 +222,15 @@ class GenericClient
         return $this->catchExceptions;
     }
 
-    /**
-     * @todo To be moved elsewhere
-     *
-     * @param string $key
-     * @param mixed $defaultValue
-     *
-     * @return mixed
-     */
-    private function getConfiguration($key, $defaultValue)
-    {
-        if (false === \Configuration::hasKey($key)) {
-            return $defaultValue;
-        }
-
-        return \Configuration::get(
-            $key,
-            null,
-            null,
-            (int) \Context::getContext()->shop->id
-        );
-    }
-
-    /**
-     * @return string
-     */
-    private function getLogFormatter()
-    {
-        $formatter = $this->getConfiguration(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP_FORMAT, 'DEBUG');
-
-        if ('CLF' === $formatter) {
-            return Formatter::CLF;
-        }
-
-        if ('SHORT' === $formatter) {
-            return Formatter::SHORT;
-        }
-
-        return Formatter::DEBUG;
-    }
-
-    private function handleException(\Exception $exception)
+    private function handleException(Exception $exception)
     {
         $body = '';
         $httpCode = 500;
-        $hasResponse = method_exists($exception, 'hasResponse') ? $exception->hasResponse() : false;
 
-        if (true === $hasResponse && method_exists($exception, 'getResponse')) {
-            $body = $exception->getResponse()->getBody();
-            $httpCode = $exception->getResponse()->getStatusCode();
+        if (method_exists($exception, 'getResponse')) {
+            $response = $exception->getResponse();
+            $body = $response ? $response->getBody() : $body;
+            $httpCode = $response ? $response->getStatusCode() : $httpCode;
         }
 
         return [
