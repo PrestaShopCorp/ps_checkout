@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Logger;
 
+use GuzzleHttp\Subscriber\Log\Formatter;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 
 /**
@@ -95,7 +96,7 @@ class LoggerConfiguration
     public function getMaxFiles()
     {
         return (int) $this->configuration->get(
-            'PS_CHECKOUT_LOGGER_MAX_FILES',
+            LoggerFactory::PS_CHECKOUT_LOGGER_MAX_FILES,
             [
                 'default' => static::MAX_FILES,
                 'global' => true,
@@ -109,11 +110,38 @@ class LoggerConfiguration
     public function getLevel()
     {
         return (int) $this->configuration->get(
-            'PS_CHECKOUT_LOGGER_LEVEL',
+            LoggerFactory::PS_CHECKOUT_LOGGER_LEVEL,
             [
                 'default' => static::LEVEL_ERROR,
                 'global' => true,
             ]
         );
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormatter()
+    {
+        $formatter = $this->configuration->get(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP_FORMAT, [
+            'default' => Formatter::DEBUG,
+        ]);
+
+        if ('CLF' === $formatter) {
+            return Formatter::CLF;
+        }
+
+        if ('SHORT' === $formatter) {
+            return Formatter::SHORT;
+        }
+
+        return Formatter::DEBUG;
+    }
+
+    public function isHttpEnabled()
+    {
+        return $this->configuration->get(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP, [
+            'default' => false,
+        ]);
     }
 }
