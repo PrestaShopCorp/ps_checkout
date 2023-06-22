@@ -318,7 +318,7 @@ class ContextStateManager
             $this->contextFieldsStack = [[]];
         }
 
-        return array_key_last($this->contextFieldsStack);
+        return key(array_slice($this->contextFieldsStack, -1));
     }
 
     /**
