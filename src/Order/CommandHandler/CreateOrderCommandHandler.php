@@ -186,10 +186,6 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
             throw new OrderException(sprintf('Failed to create order from Cart #%s.', var_export($cart->id, true)), OrderException::FAILED_ADD_ORDER, $exception);
         }
 
-        if (!$cart->orderExists()) {
-            throw new OrderNotFoundException(sprintf('Failed to create order from Cart #%s.', var_export($cart->id, true)), OrderNotFoundException::NOT_FOUND);
-        }
-
         $orders = new PrestaShopCollection(Order::class);
         $orders->where('id_cart', '=', (int) $cart->id);
 
