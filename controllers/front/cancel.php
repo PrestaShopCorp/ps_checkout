@@ -20,6 +20,7 @@
 
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 
 /**
  * This controller receive ajax call on customer canceled payment
@@ -55,26 +56,36 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
                 throw new PsCheckoutException('Payload invalid', PsCheckoutException::PSCHECKOUT_WEBHOOK_BODY_EMPTY);
             }
 
-            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            $orderId = isset($bodyValues['orderID']) ? $bodyValues['orderID'] : null;
+            $fundingSource = isset($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : null;
+            $isExpressCheckout = isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'];
+            $isHostedFields = isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'];
+
+            if (empty($orderId)) {
+                throw new PsCheckoutException('Missing PayPal Order Id', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
+            }
+
+            /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($bodyValues['orderID']);
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($orderId);
 
             if (false !== $psCheckoutCart) {
-                $psCheckoutCart->paypal_funding = $bodyValues['fundingSource'];
-                $psCheckoutCart->isExpressCheckout = false;
-                $psCheckoutCart->isHostedFields = false;
+                $psCheckoutCart->paypal_funding = $fundingSource;
+                $psCheckoutCart->isExpressCheckout = $isExpressCheckout;
+                $psCheckoutCart->isHostedFields = $isHostedFields;
+                $psCheckoutCart->paypal_status = PsCheckoutCart::STATUS_CANCELED;
                 $psCheckoutCartRepository->save($psCheckoutCart);
             }
 
             $this->module->getLogger()->info(
                 'Customer canceled payment',
                 [
-                    'PayPalOrderId' => isset($bodyValues['orderID']) ? $bodyValues['orderID'] : null,
-                    'FundingSource' => isset($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : null,
-                    'isExpressCheckout' => isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'],
-                    'isHostedFields' => isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'],
+                    'PayPalOrderId' => $orderId,
+                    'FundingSource' => $fundingSource,
+                    'isExpressCheckout' => $isExpressCheckout,
+                    'isHostedFields' => $isHostedFields,
                 ]
             );
 
@@ -86,9 +97,7 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            /* @var \Psr\Log\LoggerInterface logger */
-            $logger = $this->module->getService('ps_checkout.logger');
-            $logger->error(
+            $this->module->getLogger()->error(
                 'CancelController - Exception ' . $exception->getCode(),
                 [
                     'exception' => $exception,

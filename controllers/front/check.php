@@ -21,6 +21,7 @@
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 
 /**
  * This controller receive ajax call on customer click on a payment button
@@ -56,34 +57,65 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
                 throw new PsCheckoutException('Payload invalid', PsCheckoutException::PSCHECKOUT_WEBHOOK_BODY_EMPTY);
             }
 
-            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            $fundingSource = isset($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : 'paypal';
+            $orderId = isset($bodyValues['orderID']) ? $bodyValues['orderID'] : null;
+            $isExpressCheckout = isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'];
+            $isHostedFields = isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'];
+
+            if (empty($orderId)) {
+                throw new PsCheckoutException('Missing PayPal Order Id', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
+            }
+
+            /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($bodyValues['orderID']);
+            $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($orderId);
 
             if (false === $psCheckoutCart) {
                 $psCheckoutCart = new PsCheckoutCart();
                 $psCheckoutCart->id_cart = (int) $this->context->cart->id;
             }
 
-            if (false === empty($bodyValues['fundingSource'])) {
-                $psCheckoutCart->paypal_funding = $bodyValues['fundingSource'];
+            if ($fundingSource) {
+                $psCheckoutCart->paypal_funding = $fundingSource;
             }
 
-            $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) && (bool) $bodyValues['isExpressCheckout'];
-            $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) && (bool) $bodyValues['isHostedFields'];
+            $psCheckoutCart->isExpressCheckout = $isExpressCheckout;
+            $psCheckoutCart->isHostedFields = $isHostedFields;
             $psCheckoutCartRepository->save($psCheckoutCart);
 
             if (false === empty($psCheckoutCart->paypal_order)) {
-                $isExpressCheckout = (isset($bodyValues['express_checkout']) && $bodyValues['express_checkout']) || empty($this->context->cart->id_address_delivery);
                 $paypalOrder = new CreatePaypalOrderHandler($this->context);
-                $response = $paypalOrder->handle($isExpressCheckout, true, $psCheckoutCart->paypal_order);
+                $response = $paypalOrder->handle($isExpressCheckout || empty($this->context->cart->id_address_delivery), true, $psCheckoutCart->paypal_order);
 
                 if (false === $response['status']) {
-                    $psCheckoutCartRepository->remove($psCheckoutCart);
+                    $this->module->getLogger()->error(
+                        'Failed to patch PayPal Order',
+                        [
+                            'PayPalOrderId' => $orderId,
+                            'FundingSource' => $fundingSource,
+                            'isExpressCheckout' => $isExpressCheckout,
+                            'isHostedFields' => $isHostedFields,
+                            'id_cart' => (int) $this->context->cart->id,
+                            'response' => $response,
+                        ]
+                    );
+                    $psCheckoutCart->paypal_status = PsCheckoutCart::STATUS_CANCELED;
+                    $psCheckoutCartRepository->save($psCheckoutCart);
                     throw new PsCheckoutException(sprintf('Unable to patch PayPal Order - Exception %s : %s', $response['exceptionCode'], $response['exceptionMessage']), PsCheckoutException::PSCHECKOUT_UPDATE_ORDER_HANDLE_ERROR);
                 }
+
+                $this->module->getLogger()->info(
+                    'PayPal Order patched',
+                    [
+                        'PayPalOrderId' => $orderId,
+                        'FundingSource' => $fundingSource,
+                        'isExpressCheckout' => $isExpressCheckout,
+                        'isHostedFields' => $isHostedFields,
+                        'id_cart' => (int) $this->context->cart->id,
+                    ]
+                );
             }
 
             $this->exitWithResponse([
@@ -94,9 +126,7 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            /* @var \Psr\Log\LoggerInterface logger */
-            $logger = $this->module->getService('ps_checkout.logger');
-            $logger->error(
+            $this->module->getLogger()->error(
                 sprintf(
                     'CheckController - Exception %s : %s',
                     $exception->getCode(),

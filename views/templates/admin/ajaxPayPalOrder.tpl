@@ -20,16 +20,26 @@
   {if !$orderPayPal}
     <div class="checkout-modal-container">
       <div class="checkout-modal">
-        <div role="alert" aria-live="polite" aria-atomic="true" class="alert alert-warning">
-          <p>{l s='Transaction details are not available' mod='ps_checkout'}</p>
-        </div>
-        <br/>
-        <p>{l s='The PayPal account that was used to create this order is no longer linked to the PrestaShop Checkout module.' mod='ps_checkout'}</p>
-        <p>{l s='In order to see this information, please reconnect the correct PayPal account.' mod='ps_checkout'}</p>
-        <br/>
-        <button class="checkout-modal-button">
-          <a class="btn" href="{$moduleUrl}">{l s='Go to PrestaShop Checkout' mod='ps_checkout'}</a>
-        </button>
+        {if $psCheckoutCart->getPaypalStatus() === 'CANCELED'}
+          <div role="alert" aria-live="polite" aria-atomic="true" class="alert alert-info">
+            <p>{l s='Transaction details are not available' mod='ps_checkout'} {l s='This PayPal Order has been canceled.' mod='ps_checkout'}</p>
+          </div>
+        {elseif $psCheckoutCart->getPaypalStatus() === 'REVERSED'}
+          <div role="alert" aria-live="polite" aria-atomic="true" class="alert alert-info">
+            <p>{l s='Transaction details are not available' mod='ps_checkout'} {l s='This PayPal Order has been reversed.' mod='ps_checkout'}</p>
+          </div>
+        {else}
+          <div role="alert" aria-live="polite" aria-atomic="true" class="alert alert-warning">
+            <p>{l s='Transaction details are not available' mod='ps_checkout'}</p>
+          </div>
+          <br/>
+          <p>{l s='The PayPal account that was used to create this order is no longer linked to the PrestaShop Checkout module.' mod='ps_checkout'}</p>
+          <p>{l s='In order to see this information, please reconnect the correct PayPal account.' mod='ps_checkout'}</p>
+          <br/>
+          <button class="checkout-modal-button">
+            <a class="btn" href="{$moduleUrl}">{l s='Go to PrestaShop Checkout' mod='ps_checkout'}</a>
+          </button>
+        {/if}
       </div>
     </div>
   {/if}

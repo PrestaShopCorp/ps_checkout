@@ -28,14 +28,14 @@ class PayPalOrderProvider
     /**
      * @var CacheInterface
      */
-    private $cache;
+    private $orderPayPalCache;
 
     /**
-     * @param CacheInterface $cache
+     * @param CacheInterface $orderPayPalCache
      */
-    public function __construct(CacheInterface $cache)
+    public function __construct(CacheInterface $orderPayPalCache)
     {
-        $this->cache = $cache;
+        $this->orderPayPalCache = $orderPayPalCache;
     }
 
     /**
@@ -49,8 +49,8 @@ class PayPalOrderProvider
             return false;
         }
 
-        if ($this->cache->has($id)) {
-            return $this->cache->get($id);
+        if ($this->orderPayPalCache->has($id)) {
+            return $this->orderPayPalCache->get($id);
         }
 
         $orderPayPal = new PaypalOrder($id);
@@ -61,7 +61,7 @@ class PayPalOrderProvider
 
         $data = $orderPayPal->getOrder();
 
-        $this->cache->set($id, $data);
+        $this->orderPayPalCache->set($id, $data);
 
         return $data;
     }

@@ -418,4 +418,14 @@ class PayPalConfiguration
     {
         return (bool) $this->configuration->get(static::PS_CHECKOUT_CARD_HOSTED_FIELDS_ENABLED);
     }
+
+    /**
+     * @return string
+     */
+    public function getTimeZone()
+    {
+        return $this->configuration->get('PS_TIMEZONE', [
+            'default' => date_default_timezone_get(),
+        ]);
+    }
 }

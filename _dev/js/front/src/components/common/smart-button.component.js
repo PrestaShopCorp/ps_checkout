@@ -108,9 +108,7 @@ export class SmartButtonComponent extends BaseComponent {
         onError: error => {
           console.error(error);
           this.data.loader.hide();
-          this.data.notification.showError(
-            error instanceof TypeError ? error.message : ''
-          );
+          this.data.notification.showError(this.handleError(error));
         },
         onApprove: (data, actions) => {
           this.data.loader.show();
@@ -158,6 +156,24 @@ export class SmartButtonComponent extends BaseComponent {
         }
       })
       .render(buttonSelector);
+  }
+
+  handleError(error) {
+    let errorMessage = error;
+
+    if (error instanceof Error) {
+      if (error.message) {
+        errorMessage = error.message;
+
+        if (error.message.includes('CURRENCY_NOT_SUPPORTED_BY_PAYMENT_SOURCE')) {
+          errorMessage = 'Provided currency is not supported by the selected payment method.';
+        } else if (error.message.includes('COUNTRY_NOT_SUPPORTED_BY_PAYMENT_SOURCE')) {
+          errorMessage = 'Provided country is not supported by the selected payment method.';
+        }
+      }
+    }
+
+    return errorMessage;
   }
 
   render() {

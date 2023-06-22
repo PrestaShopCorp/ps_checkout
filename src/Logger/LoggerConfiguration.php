@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Logger;
 
-use Monolog\Logger;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 
 /**
@@ -29,6 +28,53 @@ use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 class LoggerConfiguration
 {
     const MAX_FILES = 15;
+
+    const LEVEL_DEBUG = 100;
+
+    /**
+     * Interesting events
+     *
+     * Examples: User logs in, SQL logs.
+     */
+    const LEVEL_INFO = 200;
+
+    /**
+     * Uncommon events
+     */
+    const LEVEL_NOTICE = 250;
+
+    /**
+     * Exceptional occurrences that are not errors
+     *
+     * Examples: Use of deprecated APIs, poor use of an API,
+     * undesirable things that are not necessarily wrong.
+     */
+    const LEVEL_WARNING = 300;
+
+    /**
+     * Runtime errors
+     */
+    const LEVEL_ERROR = 400;
+
+    /**
+     * Critical conditions
+     *
+     * Example: Application component unavailable, unexpected exception.
+     */
+    const LEVEL_CRITICAL = 500;
+
+    /**
+     * Action must be taken immediately
+     *
+     * Example: Entire website down, database unavailable, etc.
+     * This should trigger the SMS alerts and wake you up.
+     */
+    const LEVEL_ALERT = 550;
+
+    /**
+     * Urgent alert.
+     */
+    const LEVEL_EMERGENCY = 600;
 
     /**
      * @var PrestaShopConfiguration
@@ -65,7 +111,7 @@ class LoggerConfiguration
         return (int) $this->configuration->get(
             'PS_CHECKOUT_LOGGER_LEVEL',
             [
-                'default' => Logger::ERROR,
+                'default' => static::LEVEL_ERROR,
                 'global' => true,
             ]
         );

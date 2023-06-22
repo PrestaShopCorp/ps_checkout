@@ -492,6 +492,48 @@ class Translations
                     ],
                 ],
             ],
+            'paypal' => [
+                'order' => [
+                    'status' => [
+                        'CREATED' => $this->module->l('Created', 'translations'),
+                        'SAVED' => $this->module->l('Saved', 'translations'),
+                        'APPROVED' => $this->module->l('Approved', 'translations'),
+                        'PENDING_APPROVAL' => $this->module->l('Pending approval', 'translations'),
+                        'VOIDED' => $this->module->l('Voided', 'translations'),
+                        'COMPLETED' => $this->module->l('Completed', 'translations'),
+                        'PAYER_ACTION_REQUIRED' => $this->module->l('Payer action required', 'translations'),
+                        'PARTIALLY_COMPLETED' => $this->module->l('Partially completed', 'translations'),
+                    ],
+                ],
+                'capture' => [
+                    'status' => [
+                        'COMPLETED' => $this->module->l('Completed', 'translations'),
+                        'DECLINED' => $this->module->l('Declined', 'translations'),
+                        'PARTIALLY_REFUNDED' => $this->module->l('Partially refunded', 'translations'),
+                        'PENDING' => $this->module->l('Pending', 'translations'),
+                        'REFUNDED' => $this->module->l('Refunded', 'translations'),
+                        'FAILED' => $this->module->l('Failed', 'translations'),
+                    ],
+                ],
+            ],
+            'order' => [
+                'summary' => [
+                    'blockTitle' => $this->module->l('Payment gateway information', 'translations'),
+                    'notificationFailed' => $this->module->l('Your payment has been declined by our payment gateway, please contact us via the link below.', 'translations'),
+                    'notificationPendingApproval' => $this->module->l('Your payment needs to be approved, please click the button below.', 'translations'),
+                    'notificationPayerActionRequired' => $this->module->l('Your payment needs to be authenticated, please click the button below.', 'translations'),
+                    'fundingSource' => $this->module->l('Funding source', 'translations'),
+                    'orderIdentifier' => $this->module->l('Order identifier', 'translations'),
+                    'orderStatus' => $this->module->l('Order status', 'translations'),
+                    'transactionIdentifier' => $this->module->l('Transaction identifier', 'translations'),
+                    'transactionStatus' => $this->module->l('Transaction status', 'translations'),
+                    'amountPaid' => $this->module->l('Amount paid', 'translations'),
+                    'buttonApprove' => $this->module->l('Approve payment', 'translations'),
+                    'buttonPayerAction' => $this->module->l('Authenticate payment', 'translations'),
+                    'externalRedirection' => $this->module->l('You will be redirected to an external secured page of our payment gateway.', 'translations'),
+                    'contactLink' => $this->module->l('If you have any question, please contact us.', 'translations'),
+                ],
+            ],
         ];
 
         return $translations;
