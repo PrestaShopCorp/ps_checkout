@@ -20,16 +20,25 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
+use Configuration;
+use Context;
+use GuzzleHttp\Event\Emitter;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Subscriber\Log\LogSubscriber;
 use GuzzleLogMiddleware\LogMiddleware;
+use Link;
+use Module;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
+use PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
+use PrestaShop\Module\PrestashopCheckout\Version\Version;
 use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
-use Psr\Http\Client\ClientInterface;
+use Prestashop\ModuleLibGuzzleAdapter\Interfaces\HttpClientInterface;
+use Ps_checkout;
+use Psr\Log\LoggerInterface;
 
 /**
  * Construct the client used to make call to maasland
@@ -37,10 +46,10 @@ use Psr\Http\Client\ClientInterface;
 class PaymentClient extends GenericClient
 {
     /**
-     * @param \Link $link
-     * @param ClientInterface|null $client
+     * @param Link $link
+     * @param HttpClientInterface|null $client
      */
-    public function __construct(\Link $link, $client = null)
+    public function __construct(Link $link, $client = null)
     {
         parent::__construct();
 
@@ -48,37 +57,23 @@ class PaymentClient extends GenericClient
 
         // Client can be provided for tests
         if (null === $client) {
-            /** @var \Ps_checkout $module */
-            $module = \Module::getInstanceByName('ps_checkout');
+            /** @var Ps_checkout $module */
+            $module = Module::getInstanceByName('ps_checkout');
 
-            /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
+            /** @var Version $version */
             $version = $module->getService('ps_checkout.module.version');
 
-            /** @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration $configuration */
-            $configuration = $module->getService('ps_checkout.configuration');
+            /** @var LoggerConfiguration $loggerConfiguration */
+            $loggerConfiguration = $module->getService('ps_checkout.logger.configuration');
 
-            $handlerStack = null;
-
-            $isLoggerEnabled = (bool) $configuration->get(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP, [
-                'default' => true,
-                'global' => true,
-            ]);
-
-            if ($isLoggerEnabled
-                && defined('\GuzzleHttp\ClientInterface::MAJOR_VERSION')
-                && class_exists(HandlerStack::class)
-                && class_exists(LogMiddleware::class)
-            ) {
-                $handlerStack = HandlerStack::create();
-                $handlerStack->push(new LogMiddleware($module->getLogger()));
-            }
+            /** @var LoggerInterface $loggerConfiguration */
+            $logger = $module->getService('ps_checkout.logger');
 
             $clientConfiguration = [
                 'base_url' => (new PaymentEnv())->getPaymentApiUrl(),
                 'verify' => $this->getVerify(),
                 'timeout' => $this->timeout,
                 'exceptions' => $this->catchExceptions,
-                'handler' => $handlerStack,
                 'headers' => [
                     'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
                     'Accept' => 'application/json',
@@ -89,14 +84,38 @@ class PaymentClient extends GenericClient
                         'DispatchWebHook',
                         [],
                         true,
-                        (int) $configuration->get('PS_LANG_DEFAULT'),
-                        (int) \Context::getContext()->shop->id
+                        (int) Configuration::get('PS_LANG_DEFAULT'),
+                        (int) Context::getContext()->shop->id
                     ),
                     'Bn-Code' => (new ShopContext())->getBnCode(),
                     'Module-Version' => $version->getSemVersion(), // version of the module
                     'Prestashop-Version' => _PS_VERSION_, // prestashop version
                 ],
             ];
+
+            if (
+                $loggerConfiguration->isHttpEnabled()
+                && defined('\GuzzleHttp\ClientInterface::MAJOR_VERSION')
+                && class_exists(HandlerStack::class)
+                && class_exists(LogMiddleware::class)
+            ) {
+                $handlerStack = HandlerStack::create();
+                $handlerStack->push(new LogMiddleware($logger));
+                $clientConfiguration['handler'] = $handlerStack;
+            } elseif (
+                $loggerConfiguration->isHttpEnabled()
+                && defined('\GuzzleHttp\ClientInterface::VERSION')
+                && class_exists(Emitter::class)
+                && class_exists(LogSubscriber::class)
+            ) {
+                $emitter = new Emitter();
+                $emitter->attach(new LogSubscriber(
+                    $logger,
+                    $loggerConfiguration->getFormatter()
+                ));
+
+                $clientConfiguration['emitter'] = $emitter;
+            }
 
             $client = (new ClientFactory())->getClient($clientConfiguration);
         }

@@ -20,15 +20,16 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api;
 
-use GuzzleHttp\Exception\RequestException;
+use Exception;
 use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Ring\Exception\RingException;
+use Http\Client\Exception\TransferException;
 use Link;
+use Module;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
+use Prestashop\ModuleLibGuzzleAdapter\Interfaces\HttpClientInterface;
 use Ps_checkout;
-use Psr\Http\Client\ClientInterface;
 
 /**
  * Construct the client used to make call to maasland
@@ -38,7 +39,7 @@ class GenericClient
     /**
      * Guzzle Client
      *
-     * @var ClientInterface
+     * @var HttpClientInterface
      */
     protected $client;
 
@@ -85,7 +86,7 @@ class GenericClient
     public function __construct()
     {
         /** @var Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
+        $module = Module::getInstanceByName('ps_checkout');
         /** @var PsAccountRepository $psAccountRepository */
         $psAccountRepository = $module->getService('ps_checkout.repository.prestashop.account');
 
@@ -106,7 +107,7 @@ class GenericClient
             $response = $this->client->sendRequest(
                 new Request('POST', $this->getRoute(), [], json_encode($options))
             );
-        } catch (RequestException $exception) {
+        } catch (TransferException $exception) {
             return $this->handleException(
                 new PsCheckoutException(
                     $exception->getMessage(),
@@ -114,21 +115,11 @@ class GenericClient
                     $exception
                 )
             );
-        } catch (RingException $exception) {
-            $e = new PsCheckoutException(
-                $exception->getMessage(),
-                PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION,
-                $exception
-            );
-
-            return $this->handleException($e);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return $this->handleException($exception);
         }
 
-        $responseHandler = new ResponseApiHandler();
-
-        return $responseHandler->handleResponse($response);
+        return (new ResponseApiHandler())->handleResponse($response);
     }
 
     /**
@@ -144,7 +135,7 @@ class GenericClient
     /**
      * Setter for client
      *
-     * @param ClientInterface $client
+     * @param HttpClientInterface $client
      */
     protected function setClient($client)
     {
@@ -194,7 +185,7 @@ class GenericClient
     /**
      * Getter for client
      *
-     * @return ClientInterface
+     * @return HttpClientInterface
      */
     protected function getClient()
     {
@@ -221,15 +212,25 @@ class GenericClient
         return $this->timeout;
     }
 
-    private function handleException(\Exception $exception)
+    /**
+     * Getter for exceptions mode
+     *
+     * @return bool
+     */
+    protected function getExceptionsMode()
+    {
+        return $this->catchExceptions;
+    }
+
+    private function handleException(Exception $exception)
     {
         $body = '';
         $httpCode = 500;
-        $hasResponse = method_exists($exception, 'hasResponse') ? $exception->hasResponse() : false;
 
-        if (true === $hasResponse && method_exists($exception, 'getResponse')) {
-            $body = $exception->getResponse()->getBody();
-            $httpCode = $exception->getResponse()->getStatusCode();
+        if (method_exists($exception, 'getResponse')) {
+            $response = $exception->getResponse();
+            $body = $response ? $response->getBody() : $body;
+            $httpCode = $response ? $response->getStatusCode() : $httpCode;
         }
 
         return [
