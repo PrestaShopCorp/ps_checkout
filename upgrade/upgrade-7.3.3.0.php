@@ -1,4 +1,29 @@
-<?php
+
+
+
+
+    // Installing FundingSource if table pscheckout_funding_source is empty
+    try {
+        $db = Db::getInstance();
+        if (!$db->getValue("SELECT COUNT(*) FROM ". _DB_PREFIX_ ."'pscheckout_funding_source'")) {
+            $db->insert(
+                'pscheckout_funding_source',
+                [
+                    ['name' => 'paypal', 'active' => 1, 'position' => 1, 'id_shop' => $savedShopId],
+                    ['name' => 'paylater', 'active' => 1, 'position' => 2, 'id_shop' => $savedShopId],
+                    ['name' => 'card', 'active' => 1, 'position' => 3, 'id_shop' => $savedShopId],
+                    ['name' => 'bancontact', 'active' => 1, 'position' => 4, 'id_shop' => $savedShopId],
+                    ['name' => 'eps', 'active' => 1, 'position' => 5, 'id_shop' => $savedShopId],
+                    ['name' => 'giropay', 'active' => 1, 'position' => 6, 'id_shop' => $savedShopId],
+                    ['name' => 'ideal', 'active' => 1, 'position' => 7, 'id_shop' => $savedShopId],
+                    ['name' => 'mybank', 'active' => 1, 'position' => 8, 'id_shop' => $savedShopId],
+                    ['name' => 'p24', 'active' => 1, 'position' => 9, 'id_shop' => $savedShopId],
+                    ['name' => 'sofort', 'active' => 1, 'position' => 10, 'id_shop' => $savedShopId],
+                ]
+            );
+        }
+    } catch (Exception $e) {
+    }<?php
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -39,6 +64,29 @@ function upgrade_module_7_3_3_0($module)
     $module->registerHook('displayPaymentReturn');
     $module->registerHook('displayOrderDetail');
     $module->registerHook('displayHeader');
+
+    // Installing FundingSource if table pscheckout_funding_source is empty
+    try {
+        $db = Db::getInstance();
+        if (!$db->getValue("SELECT COUNT(*) FROM ". _DB_PREFIX_ ."'pscheckout_funding_source'")) {
+            $db->insert(
+                'pscheckout_funding_source',
+                [
+                    ['name' => 'paypal', 'active' => 1, 'position' => 1, 'id_shop' => $savedShopId],
+                    ['name' => 'paylater', 'active' => 1, 'position' => 2, 'id_shop' => $savedShopId],
+                    ['name' => 'card', 'active' => 1, 'position' => 3, 'id_shop' => $savedShopId],
+                    ['name' => 'bancontact', 'active' => 1, 'position' => 4, 'id_shop' => $savedShopId],
+                    ['name' => 'eps', 'active' => 1, 'position' => 5, 'id_shop' => $savedShopId],
+                    ['name' => 'giropay', 'active' => 1, 'position' => 6, 'id_shop' => $savedShopId],
+                    ['name' => 'ideal', 'active' => 1, 'position' => 7, 'id_shop' => $savedShopId],
+                    ['name' => 'mybank', 'active' => 1, 'position' => 8, 'id_shop' => $savedShopId],
+                    ['name' => 'p24', 'active' => 1, 'position' => 9, 'id_shop' => $savedShopId],
+                    ['name' => 'sofort', 'active' => 1, 'position' => 10, 'id_shop' => $savedShopId],
+                ]
+            );
+        }
+    } catch (Exception $e) {
+    }
 
     try {
         $db = Db::getInstance();
