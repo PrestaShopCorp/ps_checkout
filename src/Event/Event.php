@@ -24,10 +24,12 @@ use Symfony\Component\EventDispatcher\Event as ComponentEvent;
 use Symfony\Contracts\EventDispatcher\Event as ContractEvent;
 
 if (class_exists(ComponentEvent::class)) {
+    // @phpstan-ignore-next-line
     class Event extends ComponentEvent
     {
     }
 } else {
+    // @phpstan-ignore-next-line
     class Event extends ContractEvent
     {
     }

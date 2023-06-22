@@ -24,7 +24,6 @@ use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\AddOrderPaymentCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
-use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQuery;
@@ -36,20 +35,16 @@ use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQ
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount;
-use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeclinedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureRefundedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
 use Ps_checkout;
 use Psr\SimpleCache\CacheInterface;
-use Psr\SimpleCache\InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalCaptureEventSubscriber implements EventSubscriberInterface
@@ -124,13 +119,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param PayPalCaptureEvent $event
-     *
-     * @return void
-     *
-     * @throws PayPalOrderException
-     */
     public function createOrder(PayPalCaptureEvent $event)
     {
         $this->commandBus->handle(new CreateOrderCommand(
@@ -139,15 +127,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         ));
     }
 
-    /**
-     * @param PayPalCaptureCompletedEvent $event
-     *
-     * @return void
-     *
-     * @throws OrderException
-     * @throws PayPalOrderException
-     * @throws PayPalCaptureException
-     */
     public function createOrderPayment(PayPalCaptureCompletedEvent $event)
     {
         /** @var GetOrderForPaymentCompletedQueryResult $order */
@@ -169,14 +148,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         ));
     }
 
-    /**
-     * @param PayPalCaptureCompletedEvent $event
-     *
-     * @throws OrderException
-     * @throws OrderStateException
-     * @throws PayPalOrderException
-     * @throws PayPalCaptureException
-     */
     public function setPaymentCompletedOrderStatus(PayPalCaptureCompletedEvent $event)
     {
         /** @var GetOrderForPaymentCompletedQueryResult $order */
@@ -197,13 +168,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param PayPalCapturePendingEvent $event
-     *
-     * @throws OrderException
-     * @throws OrderStateException
-     * @throws PayPalOrderException
-     */
     public function setPaymentPendingOrderStatus(PayPalCapturePendingEvent $event)
     {
         /** @var GetOrderForPaymentPendingQueryResult $order */
@@ -227,13 +191,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $newOrderStateId));
     }
 
-    /**
-     * @param PayPalCaptureDeclinedEvent $event
-     *
-     * @throws OrderException
-     * @throws OrderStateException
-     * @throws PayPalOrderException
-     */
     public function setPaymentDeclinedOrderStatus(PayPalCaptureDeclinedEvent $event)
     {
         /** @var GetOrderForPaymentDeniedQueryResult $order */
@@ -246,13 +203,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PAYMENT_ERROR)));
     }
 
-    /**
-     * @param PayPalCaptureRefundedEvent $event
-     *
-     * @throws OrderException
-     * @throws OrderStateException
-     * @throws PayPalOrderException
-     */
     public function setPaymentRefundedOrderStatus(PayPalCaptureRefundedEvent $event)
     {
         /** @var GetOrderForPaymentRefundedQueryResult $order */
@@ -269,14 +219,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param PayPalCaptureReversedEvent $event
-     *
-     * @throws OrderException
-     * @throws OrderStateException
-     * @throws PayPalCaptureException
-     * @throws PayPalOrderException
-     */
     public function setPaymentReversedOrderStatus(PayPalCaptureReversedEvent $event)
     {
         /** @var GetOrderForPaymentReversedQueryResult $order */
@@ -289,13 +231,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::REFUNDED)));
     }
 
-    /**
-     * @param PayPalCaptureEvent $event
-     *
-     * @return void
-     *
-     * @throws InvalidArgumentException
-     */
     public function updateCache(PayPalCaptureEvent $event)
     {
         $this->capturePayPalCache->set($event->getPayPalCaptureId()->getValue(), $event->getCapture());

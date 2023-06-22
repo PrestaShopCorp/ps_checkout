@@ -34,21 +34,11 @@ class GetCurrentPayPalOrderStatusQueryHandler
      */
     private $psCheckoutCartRepository;
 
-    /**
-     * @param PsCheckoutCartRepository $psCheckoutCartRepository
-     */
     public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository)
     {
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
     }
 
-    /**
-     * @param GetCurrentPayPalOrderStatusQuery $getPayPalOrderQuery
-     *
-     * @return GetCurrentPayPalOrderStatusQueryResult
-     *
-     * @throws PayPalOrderException
-     */
     public function handle(GetCurrentPayPalOrderStatusQuery $getPayPalOrderQuery)
     {
         try {
