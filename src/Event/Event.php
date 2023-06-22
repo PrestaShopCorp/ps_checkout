@@ -30,7 +30,7 @@ if (class_exists(ComponentEvent::class)) {
     }
 } else {
     // @phpstan-ignore-next-line
-    class Event extends ContractEvent  /* @phpstan-ignore-line */
+    class Event extends ContractEvent /* @phpstan-ignore-line */
     {
     }
 }
