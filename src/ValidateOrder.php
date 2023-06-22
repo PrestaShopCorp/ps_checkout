@@ -74,9 +74,6 @@ class ValidateOrder
 
     /**
      * @param array{cartId: int, amount: float, currencyId: int, secureKey: string, isExpressCheckout: bool, isHostedFields: bool, fundingSource: string, liabilityShift: string, liabilityShifted: bool, authenticationStatus: string, authenticationReason: string} $payload
-     *
-     * @throws PsCheckoutException
-     * @throws \PrestaShopException|\Psr\SimpleCache\InvalidArgumentException
      */
     public function validateOrder($payload)
     {

@@ -314,7 +314,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
     private function handleException(Exception $exception)
     {
         $this->module->getLogger()->log(
-            PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND === $exception->getCode() || OrderNotFoundException::NOT_FOUND ? Logger::NOTICE : Logger::ERROR,
+            in_array($exception->getCode(), [PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND, OrderNotFoundException::NOT_FOUND], true) ? Logger::NOTICE : Logger::ERROR,
             'Webhook exception ' . $exception->getCode(),
             [
                 'merchantId' => $this->merchantId,

@@ -32,6 +32,8 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShopCollection;
 use PrestaShopDatabaseException;
 use PrestaShopException;
+use PsCheckoutCart;
+use Validate;
 
 class GetOrderForPaymentReversedQueryHandler
 {
@@ -87,12 +89,12 @@ class GetOrderForPaymentReversedQueryHandler
 
     private function hasBeenTotallyRefunded(Order $order)
     {
-        $orderSlips = $order->getOrderSlipsCollection();
+        /** @var OrderSlip[] $orderSlips */
+        $orderSlips = $order->getOrderSlipsCollection()->getResults();
         $refundAmount = 0;
 
         if (!empty($orderSlips)) {
             foreach ($orderSlips as $orderSlip) {
-                /* @var OrderSlip $orderSlip */
                 $refundAmount += $orderSlip->amount + $orderSlip->shipping_cost_amount;
             }
         }
