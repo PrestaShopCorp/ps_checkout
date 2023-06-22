@@ -94,7 +94,7 @@ class GetOrderForPaymentCompletedQueryHandler
             (int) $order->id_cart,
             (int) $order->getCurrentState(),
             (bool) $order->hasBeenPaid(),
-            (string) $order->getTotalProductsWithTaxes(),
+            (string) $order->getTotalProductsWithTaxes(), /* @phpstan-ignore-line */
             (string) $order->getTotalPaid(),
             (int) $order->id_currency,
             $psCheckoutCart->getPaypalFundingSource(),

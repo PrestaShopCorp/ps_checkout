@@ -21,7 +21,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber;
 
-use Exception;
 use PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CheckTransitionPayPalOrderStatusService;
@@ -32,13 +31,10 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedE
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use PrestaShopException;
 use Ps_checkout;
 use Psr\SimpleCache\CacheInterface;
-use Psr\SimpleCache\InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalOrderEventSubscriber implements EventSubscriberInterface
@@ -184,14 +180,6 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         ));
     }
 
-    /**
-     * @param PayPalOrderApprovedEvent $event
-     *
-     * @throws PsCheckoutException
-     * @throws PrestaShopException
-     * @throws PayPalOrderException
-     * @throws Exception
-     */
     public function capturePayPalOrder(PayPalOrderApprovedEvent $event)
     {
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getOrderPayPalId()->getValue());
@@ -219,11 +207,6 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param PayPalOrderEvent $event
-     *
-     * @throws InvalidArgumentException
-     */
     public function updateCache(PayPalOrderEvent $event)
     {
         $currentOrderPayPal = $this->orderPayPalCache->get($event->getOrderPayPalId()->getValue());
@@ -236,11 +219,6 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         $this->orderPayPalCache->set($event->getOrderPayPalId()->getValue(), $newOrderPayPal);
     }
 
-    /**
-     * @param PayPalOrderApprovalReversedEvent $event
-     *
-     * @throws InvalidArgumentException
-     */
     public function clearCache(PayPalOrderApprovalReversedEvent $event)
     {
         $this->orderPayPalCache->delete($event->getOrderPayPalId()->getValue());

@@ -49,7 +49,7 @@ class OrderStateMapper
             OrderStateConfigurationKeys::PAYMENT_ACCEPTED => (int) $this->configuration->get(OrderStateConfigurationKeys::PAYMENT_ACCEPTED, ['global' => true]),
             OrderStateConfigurationKeys::REFUNDED => (int) $this->configuration->get(OrderStateConfigurationKeys::REFUNDED, ['global' => true]),
             OrderStateConfigurationKeys::AUTHORIZED => (int) $this->configuration->get(OrderStateConfigurationKeys::AUTHORIZED, ['global' => true]),
-            OrderStateConfigurationKeys::PARTIALLY_PAID => (int) $this->configuration->get(OrderStateConfigurationKeys::PARTIALLY_PAID, ['global' => true]),
+            OrderStateConfigurationKeys::PARTIALLY_PAID => (int) $this->configuration->get(OrderStateConfigurationKeys::PARTIALLY_PAID, ['global' => true]), /* @phpstan-ignore-line */
             OrderStateConfigurationKeys::PARTIALLY_REFUNDED => (int) $this->configuration->get(OrderStateConfigurationKeys::PARTIALLY_REFUNDED, ['global' => true]),
             OrderStateConfigurationKeys::WAITING_CAPTURE => (int) $this->configuration->get(OrderStateConfigurationKeys::WAITING_CAPTURE, ['global' => true]),
             OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT => (int) $this->configuration->get(OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT, ['global' => true]),

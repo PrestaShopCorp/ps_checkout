@@ -126,7 +126,9 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
                 $event->getPayPalOrderId()->getValue()
             ));
         } catch (HttpTimeoutException $exception) {
-            return $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
+            $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
+
+            return;
         }
 
         $this->checkoutChecker->continueWithAuthorization($event->getCartId()->getValue(), $getPayPalOrderForCheckoutCompletedQueryResult->getPayPalOrder());
@@ -140,7 +142,9 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
             );
         } catch (PayPalException $exception) {
             if ($exception->getCode() === PayPalException::ORDER_NOT_APPROVED) {
-                return $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
+                $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
+
+                return;
             } elseif ($exception->getCode() === PayPalException::RESOURCE_NOT_FOUND) {
                 /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
                 $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
@@ -158,7 +162,9 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
                 throw $exception;
             }
         } catch (HttpTimeoutException $exception) {
-            return $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
+            $this->commandBus->handle(new CreateOrderCommand($event->getPayPalOrderId()->getValue()));
+
+            return;
         }
     }
 }
