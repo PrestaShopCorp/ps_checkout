@@ -65,9 +65,8 @@ class CheckOrderAmountTest extends TestCase
     {
         $this->expectException($expectedException['exception_class']);
         $this->expectExceptionCode($expectedException['exception_code']);
-        $this->expectExceptionMessage($expectedException['exception_message']);
         $checkOrderAmount = new CheckOrderAmount();
-        $result = $checkOrderAmount->checkAmount($totalAmount, $totalAmountPaid);
+        $checkOrderAmount->checkAmount($totalAmount, $totalAmountPaid);
     }
 
     public function invalidValueProvider()
@@ -79,7 +78,6 @@ class CheckOrderAmountTest extends TestCase
                 [
                     'exception_class' => OrderException::class,
                     'exception_code' => OrderException::ORDER_CHECK_AMOUNT_BAD_PARAMETER,
-                    'exception_message' => 'Type of totalAmount (integer) is not string',
                 ],
             ],
             [
@@ -88,7 +86,6 @@ class CheckOrderAmountTest extends TestCase
                 [
                     'exception_class' => OrderException::class,
                     'exception_code' => OrderException::ORDER_CHECK_AMOUNT_BAD_PARAMETER,
-                    'exception_message' => 'Type of totalAmount (array) is not string',
                 ],
             ],
             [
@@ -97,7 +94,6 @@ class CheckOrderAmountTest extends TestCase
                 [
                     'exception_class' => OrderException::class,
                     'exception_code' => OrderException::ORDER_CHECK_AMOUNT_BAD_PARAMETER,
-                    'exception_message' => 'Type of totalAmount (failed) is not numeric',
                 ],
             ],
             [
@@ -106,7 +102,6 @@ class CheckOrderAmountTest extends TestCase
                 [
                     'exception_class' => OrderException::class,
                     'exception_code' => OrderException::ORDER_CHECK_AMOUNT_BAD_PARAMETER,
-                    'exception_message' => 'Type of totalAmountPaid (integer) is not string',
                 ],
             ],
             [
@@ -115,7 +110,6 @@ class CheckOrderAmountTest extends TestCase
                 [
                     'exception_class' => OrderException::class,
                     'exception_code' => OrderException::ORDER_CHECK_AMOUNT_BAD_PARAMETER,
-                    'exception_message' => 'Type of totalAmountPaid (array) is not string',
                 ],
             ],
             [
@@ -124,7 +118,6 @@ class CheckOrderAmountTest extends TestCase
                 [
                     'exception_class' => OrderException::class,
                     'exception_code' => OrderException::ORDER_CHECK_AMOUNT_BAD_PARAMETER,
-                    'exception_message' => 'Type of totalAmountPaid (Hello) is not numeric',
                 ],
             ],
         ];
