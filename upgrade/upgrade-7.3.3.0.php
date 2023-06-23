@@ -22,7 +22,7 @@ if (!defined('_PS_VERSION_')) {
 }
 
 /**
- * Update main function for module version 8.3.3.0
+ * Update main function for module version 7.3.3.0
  *
  * @param Ps_checkout $module
  *
@@ -119,7 +119,7 @@ function upgrade_module_7_3_3_0($module)
             ) {
                 switch ($configuration_key) {
                     case 'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT':
-                        ps_checkout_create_order_state_7_3_3_0(
+                        ps_checkout_create_order_state_8_3_3_0(
                             'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT',
                             '#34209E',
                             [
@@ -135,7 +135,7 @@ function upgrade_module_7_3_3_0($module)
                         );
                         break;
                     case 'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT':
-                        ps_checkout_create_order_state_7_3_3_0(
+                        ps_checkout_create_order_state_8_3_3_0(
                             'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT',
                             '#34209E',
                             [
@@ -151,7 +151,7 @@ function upgrade_module_7_3_3_0($module)
                         );
                         break;
                     case 'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT':
-                        ps_checkout_create_order_state_7_3_3_0(
+                        ps_checkout_create_order_state_8_3_3_0(
                             'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT',
                             '#34209E',
                             [
@@ -167,7 +167,7 @@ function upgrade_module_7_3_3_0($module)
                         );
                         break;
                     case 'PS_CHECKOUT_STATE_AUTHORIZED':
-                        ps_checkout_create_order_state_7_3_3_0(
+                        ps_checkout_create_order_state_8_3_3_0(
                             'PS_CHECKOUT_STATE_AUTHORIZED',
                             '#3498D8',
                             [
@@ -183,7 +183,7 @@ function upgrade_module_7_3_3_0($module)
                         );
                         break;
                     case 'PS_CHECKOUT_STATE_PARTIAL_REFUND':
-                        ps_checkout_create_order_state_7_3_3_0(
+                        ps_checkout_create_order_state_8_3_3_0(
                             'PS_CHECKOUT_STATE_PARTIAL_REFUND',
                             '#01B887',
                             [
@@ -199,7 +199,7 @@ function upgrade_module_7_3_3_0($module)
                         );
                         break;
                     case 'PS_CHECKOUT_STATE_WAITING_CAPTURE':
-                        ps_checkout_create_order_state_7_3_3_0(
+                        ps_checkout_create_order_state_8_3_3_0(
                             'PS_CHECKOUT_STATE_WAITING_CAPTURE',
                             '#3498D8',
                             [
