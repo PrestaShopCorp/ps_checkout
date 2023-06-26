@@ -28,7 +28,6 @@ use Module;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
-use Prestashop\ModuleLibGuzzleAdapter\Interfaces\HttpClientInterface;
 use Ps_checkout;
 
 /**
@@ -38,8 +37,6 @@ class GenericClient
 {
     /**
      * Guzzle Client
-     *
-     * @var HttpClientInterface
      */
     protected $client;
 
@@ -135,7 +132,7 @@ class GenericClient
     /**
      * Setter for client
      *
-     * @param HttpClientInterface $client
+     * @param object $client Guzzle client
      */
     protected function setClient($client)
     {
@@ -185,7 +182,7 @@ class GenericClient
     /**
      * Getter for client
      *
-     * @return HttpClientInterface
+     * @return object Guzzle client
      */
     protected function getClient()
     {

@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Logger;
 
-use GuzzleHttp\Subscriber\Log\Formatter;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 
 /**
@@ -116,26 +115,6 @@ class LoggerConfiguration
                 'global' => true,
             ]
         );
-    }
-
-    /**
-     * @return string
-     */
-    public function getFormatter()
-    {
-        $formatter = $this->configuration->get(LoggerFactory::PS_CHECKOUT_LOGGER_HTTP_FORMAT, [
-            'default' => Formatter::DEBUG,
-        ]);
-
-        if ('CLF' === $formatter) {
-            return Formatter::CLF;
-        }
-
-        if ('SHORT' === $formatter) {
-            return Formatter::SHORT;
-        }
-
-        return Formatter::DEBUG;
     }
 
     public function isHttpEnabled()
