@@ -24,6 +24,7 @@ use Configuration;
 use Context;
 use GuzzleHttp\Event\Emitter;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Subscriber\Log\Formatter;
 use GuzzleHttp\Subscriber\Log\LogSubscriber;
 use GuzzleLogMiddleware\LogMiddleware;
 use Link;
@@ -36,7 +37,6 @@ use PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\Version\Version;
 use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
-use Prestashop\ModuleLibGuzzleAdapter\Interfaces\HttpClientInterface;
 use Ps_checkout;
 use Psr\Log\LoggerInterface;
 
@@ -47,7 +47,7 @@ class PaymentClient extends GenericClient
 {
     /**
      * @param Link $link
-     * @param HttpClientInterface|null $client
+     * @param object|null $client
      */
     public function __construct(Link $link, $client = null)
     {
@@ -66,7 +66,7 @@ class PaymentClient extends GenericClient
             /** @var LoggerConfiguration $loggerConfiguration */
             $loggerConfiguration = $module->getService('ps_checkout.logger.configuration');
 
-            /** @var LoggerInterface $loggerConfiguration */
+            /** @var LoggerInterface $logger */
             $logger = $module->getService('ps_checkout.logger');
 
             $clientConfiguration = [
@@ -107,11 +107,12 @@ class PaymentClient extends GenericClient
                 && defined('\GuzzleHttp\ClientInterface::VERSION')
                 && class_exists(Emitter::class)
                 && class_exists(LogSubscriber::class)
+                && class_exists(Formatter::class)
             ) {
                 $emitter = new Emitter();
                 $emitter->attach(new LogSubscriber(
                     $logger,
-                    $loggerConfiguration->getFormatter()
+                    Formatter::DEBUG
                 ));
 
                 $clientConfiguration['emitter'] = $emitter;
