@@ -28,7 +28,7 @@ if (class_exists(ComponentEvent::class)) {
     class Event extends ComponentEvent
     {
     }
-} else {
+} elseif (class_exists(ContractEvent::class)) {
     // @phpstan-ignore-next-line
     class Event extends ContractEvent /* @phpstan-ignore-line */
     {
