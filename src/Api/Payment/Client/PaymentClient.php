@@ -20,13 +20,25 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
+use Configuration;
+use Context;
+use GuzzleHttp\Event\Emitter;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Subscriber\Log\Formatter;
+use GuzzleHttp\Subscriber\Log\LogSubscriber;
+use GuzzleLogMiddleware\LogMiddleware;
+use Link;
+use Module;
 use PrestaShop\Module\PrestashopCheckout\Api\GenericClient;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
+use PrestaShop\Module\PrestashopCheckout\Version\Version;
 use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
-use Psr\Http\Client\ClientInterface;
+use Ps_checkout;
+use Psr\Log\LoggerInterface;
 
 /**
  * Construct the client used to make call to maasland
@@ -34,10 +46,10 @@ use Psr\Http\Client\ClientInterface;
 class PaymentClient extends GenericClient
 {
     /**
-     * @param \Link $link
-     * @param ClientInterface|null $client
+     * @param Link $link
+     * @param object|null $client
      */
-    public function __construct(\Link $link, $client = null)
+    public function __construct(Link $link, $client = null)
     {
         parent::__construct();
 
@@ -45,7 +57,19 @@ class PaymentClient extends GenericClient
 
         // Client can be provided for tests
         if (null === $client) {
-            $client = (new ClientFactory())->getClient([
+            /** @var Ps_checkout $module */
+            $module = Module::getInstanceByName('ps_checkout');
+
+            /** @var Version $version */
+            $version = $module->getService('ps_checkout.module.version');
+
+            /** @var LoggerConfiguration $loggerConfiguration */
+            $loggerConfiguration = $module->getService('ps_checkout.logger.configuration');
+
+            /** @var LoggerInterface $logger */
+            $logger = $module->getService('ps_checkout.logger');
+
+            $clientConfiguration = [
                 'base_url' => (new PaymentEnv())->getPaymentApiUrl(),
                 'verify' => $this->getVerify(),
                 'timeout' => $this->timeout,
@@ -60,14 +84,41 @@ class PaymentClient extends GenericClient
                         'DispatchWebHook',
                         [],
                         true,
-                        (int) \Configuration::get('PS_LANG_DEFAULT'),
-                        (int) \Context::getContext()->shop->id
+                        (int) Configuration::get('PS_LANG_DEFAULT'),
+                        (int) Context::getContext()->shop->id
                     ),
                     'Bn-Code' => (new ShopContext())->getBnCode(),
-                    'Module-Version' => \Ps_checkout::VERSION, // version of the module
+                    'Module-Version' => $version->getSemVersion(), // version of the module
                     'Prestashop-Version' => _PS_VERSION_, // prestashop version
                 ],
-            ]);
+            ];
+
+            if (
+                $loggerConfiguration->isHttpEnabled()
+                && defined('\GuzzleHttp\ClientInterface::MAJOR_VERSION')
+                && class_exists(HandlerStack::class)
+                && class_exists(LogMiddleware::class)
+            ) {
+                $handlerStack = HandlerStack::create();
+                $handlerStack->push(new LogMiddleware($logger));
+                $clientConfiguration['handler'] = $handlerStack;
+            } elseif (
+                $loggerConfiguration->isHttpEnabled()
+                && defined('\GuzzleHttp\ClientInterface::VERSION')
+                && class_exists(Emitter::class)
+                && class_exists(LogSubscriber::class)
+                && class_exists(Formatter::class)
+            ) {
+                $emitter = new Emitter();
+                $emitter->attach(new LogSubscriber(
+                    $logger,
+                    Formatter::DEBUG
+                ));
+
+                $clientConfiguration['emitter'] = $emitter;
+            }
+
+            $client = (new ClientFactory())->getClient($clientConfiguration);
         }
 
         $this->setClient($client);
@@ -107,14 +158,16 @@ class PaymentClient extends GenericClient
                 return $response;
             }
 
-            if (isset($response['exceptionCode'])
+            if (
+                isset($response['exceptionCode'])
                 && $response['exceptionCode'] === PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION
                 && false !== strpos($response['exceptionMessage'], 'cURL error 28')
             ) {
                 throw new HttpTimeoutException($response['exceptionMessage'], PsCheckoutException::PSL_TIMEOUT);
             }
 
-            if (isset($response['body']['message'])
+            if (
+                isset($response['body']['message'])
                 && ($response['body']['message'] === 'Error: ETIMEDOUT' || $response['body']['message'] === 'Error: ESOCKETTIMEDOUT')
             ) {
                 throw new HttpTimeoutException($response['body']['message'], PsCheckoutException::PSL_TIMEOUT);

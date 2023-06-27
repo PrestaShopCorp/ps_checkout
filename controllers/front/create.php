@@ -21,6 +21,8 @@
 
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 
 /**
  * This controller receive ajax call to create a PayPal Order
@@ -94,7 +96,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
             }
 
-            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
+            /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
@@ -114,16 +116,17 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 ]);
             }
 
-            // If we have a PayPal Order Id with a status CREATED or APPROVED we delete it and create new one
+            // If we have a PayPal Order Id with a status CREATED or APPROVED or PAYER_ACTION_REQUIRED we mark it as CANCELED and create new one
             // This is needed because cart gets updated so we need to update paypal order too
             if (
-                false !== $psCheckoutCart
+                false !== $psCheckoutCart && $psCheckoutCart->getPaypalOrderId()
             ) {
-                $psCheckoutCartRepository->remove($psCheckoutCart);
+                $psCheckoutCart->paypal_status = PsCheckoutCart::STATUS_CANCELED;
+                $psCheckoutCartRepository->save($psCheckoutCart);
                 $psCheckoutCart = false;
             }
 
-            $paypalOrder = new PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler($this->context);
+            $paypalOrder = new CreatePaypalOrderHandler($this->context);
             $response = $paypalOrder->handle($isExpressCheckout);
 
             if (false === $response['status']) {
@@ -134,19 +137,36 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 throw new PsCheckoutException('Paypal order id is missing.', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
             }
 
+            $paymentSource = isset($response['body']['payment_source']) ? key($response['body']['payment_source']) : 'paypal';
+            $fundingSource = isset($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : $paymentSource;
+            $orderId = isset($bodyValues['orderID']) ? $bodyValues['orderID'] : null;
+            $isExpressCheckout = isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'];
+            $isHostedFields = isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'];
+
+            $this->module->getLogger()->info(
+                'PayPal Order created',
+                [
+                    'PayPalOrderId' => $orderId,
+                    'FundingSource' => $fundingSource,
+                    'isExpressCheckout' => $isExpressCheckout,
+                    'isHostedFields' => $isHostedFields,
+                    'id_cart' => (int) $this->context->cart->id,
+                ]
+            );
+
             if (false === $psCheckoutCart) {
                 $psCheckoutCart = new PsCheckoutCart();
                 $psCheckoutCart->id_cart = (int) $this->context->cart->id;
             }
 
-            $psCheckoutCart->paypal_funding = isset($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : 'paypal';
+            $psCheckoutCart->paypal_funding = $fundingSource;
             $psCheckoutCart->paypal_order = $response['body']['id'];
             $psCheckoutCart->paypal_status = $response['body']['status'];
-            $psCheckoutCart->paypal_intent = 'CAPTURE' === Configuration::get('PS_CHECKOUT_INTENT') ? 'CAPTURE' : 'AUTHORIZE';
+            $psCheckoutCart->paypal_intent = 'AUTHORIZE' === Configuration::get('PS_CHECKOUT_INTENT') ? 'AUTHORIZE' : 'CAPTURE';
             $psCheckoutCart->paypal_token = $response['body']['client_token'];
             $psCheckoutCart->paypal_token_expire = (new DateTime())->modify('+3550 seconds')->format('Y-m-d H:i:s');
-            $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) && (bool) $bodyValues['isExpressCheckout'];
-            $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) && (bool) $bodyValues['isHostedFields'];
+            $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'];
+            $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'];
             $psCheckoutCartRepository->save($psCheckoutCart);
 
             $this->exitWithResponse([
@@ -159,9 +179,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            /* @var \Psr\Log\LoggerInterface logger */
-            $logger = $this->module->getService('ps_checkout.logger');
-            $logger->error(
+            $this->module->getLogger()->error(
                 'CreateController - Exception ' . $exception->getCode(),
                 [
                     'exception' => $exception,
