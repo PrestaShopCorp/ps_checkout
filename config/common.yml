@@ -505,6 +505,7 @@ services:
       - "@ps_checkout.module"
       - "@ps_checkout.order.service.check_order_amount"
       - "@ps_checkout.cache.paypal.capture"
+      - "@ps_checkout.cache.paypal.order"
       - "@ps_checkout.order.state.service.order_state_mapper"
 
   ps_checkout.event.dispatcher.symfony:

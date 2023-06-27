@@ -70,6 +70,11 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     private $capturePayPalCache;
 
     /**
+     * @var CacheInterface
+     */
+    private $orderPayPalCache;
+
+    /**
      * @var OrderStateMapper
      */
     private $orderStateMapper;
@@ -78,12 +83,14 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         Ps_checkout $module,
         CheckOrderAmount $checkOrderAmount,
         CacheInterface $capturePayPalCache,
+        CacheInterface $orderPayPalCache,
         OrderStateMapper $orderStateMapper
     ) {
         $this->module = $module;
         $this->checkOrderAmount = $checkOrderAmount;
         $this->commandBus = $this->module->getService('ps_checkout.bus.command');
         $this->capturePayPalCache = $capturePayPalCache;
+        $this->orderPayPalCache = $orderPayPalCache;
         $this->orderStateMapper = $orderStateMapper;
     }
 
@@ -234,5 +241,22 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     public function updateCache(PayPalCaptureEvent $event)
     {
         $this->capturePayPalCache->set($event->getPayPalCaptureId()->getValue(), $event->getCapture());
+
+        $needToClearOrderPayPalCache = true;
+        $orderPayPalCache = $this->orderPayPalCache->get($event->getPayPalOrderId()->getValue());
+
+        if ($orderPayPalCache && isset($orderPayPalCache['purchase_units'][0]['payments']['captures'])) {
+            foreach ($orderPayPalCache['purchase_units'][0]['payments']['captures'] as $key => $capture) {
+                if ($capture['id'] === $event->getPayPalCaptureId()->getValue()) {
+                    $needToClearOrderPayPalCache = false;
+                    $orderPayPalCache['purchase_units'][0]['payments']['captures'][$key] = $event->getCapture();
+                    $this->orderPayPalCache->set($event->getPayPalOrderId()->getValue(), $orderPayPalCache);
+                }
+            }
+        }
+
+        if ($needToClearOrderPayPalCache) {
+            $this->orderPayPalCache->delete($event->getPayPalOrderId()->getValue());
+        }
     }
 }
