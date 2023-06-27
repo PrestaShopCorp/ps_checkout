@@ -1242,14 +1242,20 @@ class Ps_checkout extends PaymentModule
             $legalFreeText .= PHP_EOL . PHP_EOL;
         }
 
-        $legalFreeText .= $this->l('PayPal Order Id : ') . $psCheckoutCart->paypal_order . PHP_EOL;
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderTranslationProvider $translationService */
+        $translationService = $this->getService('ps_checkout.paypal.order.translations');
+        $translations = $translationService->getSummaryTranslations();
+
+        $legalFreeText .= $translations['blockTitle'] . PHP_EOL;
+        $legalFreeText .= $translations['orderIdentifier'] . ' ' . $psCheckoutCart->getPaypalOrderId() . PHP_EOL;
+        $legalFreeText .= $translations['orderStatus'] . ' ' . $psCheckoutCart->getPaypalStatus() . PHP_EOL;
 
         /** @var \OrderPayment[] $orderPayments */
         $orderPayments = $order->getOrderPaymentCollection();
 
         foreach ($orderPayments as $orderPayment) {
             if (false === empty($orderPayment->transaction_id)) {
-                $legalFreeText .= $this->l('PayPal Transaction Id : ') . $orderPayment->transaction_id . PHP_EOL;
+                $legalFreeText .= $translations['transactionIdentifier'] . ' ' . $orderPayment->transaction_id . PHP_EOL;
             }
         }
 
