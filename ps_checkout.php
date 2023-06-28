@@ -42,9 +42,11 @@ class Ps_checkout extends PaymentModule
         'displayPaymentTop',
         'displayPaymentByBinaries',
         'actionFrontControllerSetMedia',
-        'header',
+        'displayHeader',
         'actionObjectOrderPaymentAddAfter',
         'actionObjectOrderPaymentUpdateAfter',
+        'displayPaymentReturn',
+        'displayOrderDetail',
     ];
 
     /**
@@ -121,7 +123,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '7.3.2.0';
+    const VERSION = '7.3.3.0';
 
     const INTEGRATION_DATE = '2022-14-06';
 
@@ -140,7 +142,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '7.3.2.0';
+        $this->version = '7.3.3.0';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -179,6 +181,7 @@ class Ps_checkout extends PaymentModule
             $this->installHooks() &&
             (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
+            (new PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceInstaller())->createFundingSources() &&
             $this->installTabs() &&
             $this->disableIncompatibleCountries() &&
             $this->disableIncompatibleCurrencies();
@@ -712,17 +715,16 @@ class Ps_checkout extends PaymentModule
         /** @var Order $order */
         $order = (isset($params['objOrder'])) ? $params['objOrder'] : $params['order'];
 
-        if ($order->module !== $this->name) {
+        if (!Validate::isLoadedObject($order) || $order->module !== $this->name) {
             return '';
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService('ps_checkout.context.shop');
-        $this->context->smarty->assign([
-            'status' => $order->valid ? 'completed' : 'pending',
-            'isShop17' => $shopContext->isShop17(),
-            'isAuthorized' => 'AUTHORIZE' === Configuration::get('PS_CHECKOUT_INTENT'),
-        ]);
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder $orderSummaryViewBuilder */
+        $orderSummaryViewBuilder = $this->getService('ps_checkout.paypal.builder.view_order_summary');
+
+        $orderSummaryView = $orderSummaryViewBuilder->build($order);
+
+        $this->context->smarty->assign($orderSummaryView->getTemplateVars());
 
         return $this->display(__FILE__, 'views/templates/hook/displayOrderConfirmation.tpl');
     }
@@ -1240,14 +1242,20 @@ class Ps_checkout extends PaymentModule
             $legalFreeText .= PHP_EOL . PHP_EOL;
         }
 
-        $legalFreeText .= $this->l('PayPal Order Id : ') . $psCheckoutCart->paypal_order . PHP_EOL;
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderTranslationProvider $translationService */
+        $translationService = $this->getService('ps_checkout.paypal.order.translations');
+        $translations = $translationService->getSummaryTranslations();
+
+        $legalFreeText .= $translations['blockTitle'] . PHP_EOL;
+        $legalFreeText .= $translations['orderIdentifier'] . ' ' . $psCheckoutCart->getPaypalOrderId() . PHP_EOL;
+        $legalFreeText .= $translations['orderStatus'] . ' ' . $psCheckoutCart->getPaypalStatus() . PHP_EOL;
 
         /** @var \OrderPayment[] $orderPayments */
         $orderPayments = $order->getOrderPaymentCollection();
 
         foreach ($orderPayments as $orderPayment) {
             if (false === empty($orderPayment->transaction_id)) {
-                $legalFreeText .= $this->l('PayPal Transaction Id : ') . $orderPayment->transaction_id . PHP_EOL;
+                $legalFreeText .= $translations['transactionIdentifier'] . ' ' . $orderPayment->transaction_id . PHP_EOL;
             }
         }
 
@@ -1467,7 +1475,7 @@ class Ps_checkout extends PaymentModule
         );
     }
 
-    public function hookHeader()
+    public function hookDisplayHeader()
     {
         $controller = Tools::getValue('controller');
 
@@ -1630,5 +1638,57 @@ class Ps_checkout extends PaymentModule
                 (bool) Shop::isFeatureActive()
             )
         );
+    }
+
+    /**
+     * Display payment status on order confirmation page
+     *
+     * @param array{cookie: Cookie, cart: Cart, altern: int, order: Order, objOrder: Order} $params
+     *
+     * @return string
+     */
+    public function hookDisplayPaymentReturn(array $params)
+    {
+        /** @var Order $order */
+        $order = (isset($params['objOrder'])) ? $params['objOrder'] : $params['order'];
+
+        if (!Validate::isLoadedObject($order) || $order->module !== $this->name) {
+            return '';
+        }
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder $orderSummaryViewBuilder */
+        $orderSummaryViewBuilder = $this->getService('ps_checkout.paypal.builder.view_order_summary');
+
+        $orderSummaryView = $orderSummaryViewBuilder->build($order);
+
+        $this->context->smarty->assign($orderSummaryView->getTemplateVars());
+
+        return $this->display(__FILE__, 'views/templates/hook/displayPaymentReturn.tpl');
+    }
+
+    /**
+     * Display payment status on order detail page
+     *
+     * @param array{cookie: Cookie, cart: Cart, altern: int, order: Order} $params
+     *
+     * @return string
+     */
+    public function hookDisplayOrderDetail(array $params)
+    {
+        /** @var Order $order */
+        $order = $params['order'];
+
+        if (!Validate::isLoadedObject($order) || $order->module !== $this->name) {
+            return '';
+        }
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder $orderSummaryViewBuilder */
+        $orderSummaryViewBuilder = $this->getService('ps_checkout.paypal.builder.view_order_summary');
+
+        $orderSummaryView = $orderSummaryViewBuilder->build($order);
+
+        $this->context->smarty->assign($orderSummaryView->getTemplateVars());
+
+        return $this->display(__FILE__, 'views/templates/hook/displayOrderDetail.tpl');
     }
 }

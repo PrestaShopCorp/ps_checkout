@@ -123,16 +123,6 @@ export class App {
     new PayLaterBannerComponent(this, props).render();
   }
 
-  async renderPayLaterOfferMessage(props) {
-    await this.initPayPalService();
-    new PayLaterMessageComponent(this, props).render();
-  }
-
-  async renderPayLaterOfferBanner(props) {
-    await this.initPayPalService();
-    new PayLaterBannerComponent(this, props).render();
-  }
-
   async render() {
     this.exposeAPI();
 

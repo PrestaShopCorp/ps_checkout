@@ -344,11 +344,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
         $psCheckoutCartCollection->where('id_cart', '=', (int) $order->id_cart);
+        $psCheckoutCartCollection->orderBy('date_upd', 'ASC');
 
-        /** @var PsCheckoutCart|false $psCheckoutCart */
-        $psCheckoutCart = $psCheckoutCartCollection->getFirst();
-
-        if (false === $psCheckoutCart) {
+        if (!$psCheckoutCartCollection->count()) {
             http_response_code(500);
             $this->ajaxDie(json_encode([
                 'status' => false,
@@ -361,6 +359,15 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                     ),
                 ],
             ]));
+        }
+
+        $psCheckoutCart = null;
+
+        foreach ($psCheckoutCartCollection->getResults() as $psCheckoutCart) {
+            /** @var PsCheckoutCart $psCheckoutCart */
+            if ($psCheckoutCart->getPaypalStatus() === PsCheckoutCart::STATUS_COMPLETED) {
+                break;
+            }
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider $paypalOrderProvider */
@@ -383,6 +390,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             'moduleLogoUri' => $this->module->getPathUri() . 'logo.png',
             'orderPaymentDisplayName' => $fundingSourceTranslationProvider->getPaymentMethodName($psCheckoutCart->paypal_funding),
             'orderPaymentLogoUri' => $this->module->getPathUri() . 'views/img/' . $psCheckoutCart->paypal_funding . '.svg',
+            'psCheckoutCart' => $psCheckoutCart,
         ]);
 
         $this->ajaxDie(json_encode([
@@ -467,10 +475,10 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         ]);
 
         if (isset($response['httpCode']) && $response['httpCode'] === 200) {
-            /** @var CacheInterface $paypalOrderCache */
-            $paypalOrderCache = $this->module->getService('ps_checkout.cache.paypal.order');
-            if ($paypalOrderCache->has($orderPayPalId)) {
-                $paypalOrderCache->delete($orderPayPalId);
+            /** @var CacheInterface $orderPayPalCache */
+            $orderPayPalCache = $this->module->getService('ps_checkout.cache.paypal.order');
+            if ($orderPayPalCache->has($orderPayPalId)) {
+                $orderPayPalCache->delete($orderPayPalId);
             }
 
             $this->ajaxDie(json_encode([
