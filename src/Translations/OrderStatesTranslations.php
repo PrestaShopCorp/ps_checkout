@@ -23,35 +23,15 @@ namespace PrestaShop\Module\PrestashopCheckout\Translations;
 class OrderStatesTranslations
 {
     const STANDARD_ISO_CODE = 'en';
-    const PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT = [
-        'en' => 'Waiting for PayPal payment',
-        'fr' => 'En attente de paiement par PayPal',
-        'es' => 'Esperando el pago con PayPal',
-        'it' => 'In attesa di pagamento con PayPal',
-        'nl' => 'Wachten op PayPal-betaling',
-        'de' => 'Warten auf PayPal-Zahlung',
-        'pl' => 'Oczekiwanie na płatność PayPal',
-        'pt' => 'Aguardando pagamento pelo PayPal',
-    ];
-    const PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT = [
-        'en' => 'Waiting for Credit Card Payment',
-        'fr' => 'En attente de paiement par Carte de Crédit',
-        'es' => 'Esperando el pago con tarjeta de crédito',
-        'it' => 'In attesa di pagamento con carta di credito',
-        'nl' => 'Wachten op creditcard-betaling',
-        'de' => 'Warten auf Kreditkartenzahlung',
-        'pl' => 'Oczekiwanie na płatność kartą kredytową',
-        'pt' => 'Aguardando pagamento por cartão de crédito',
-    ];
-    const PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT = [
-        'en' => 'Waiting for Local Payment Method Payment',
-        'fr' => 'En attente de paiement par moyen de paiement local',
-        'es' => 'Esperando el pago con un método de pago local',
-        'it' => 'In attesa di pagamento con metodo di pagamento locale',
-        'nl' => 'Wachten op nlaatselijke betaling',
-        'de' => 'Warten auf Zahlung per lokaler Zahlungsmethode',
-        'pl' => 'Oczekiwanie na płatność lokalnym środkiem płatności',
-        'pt' => 'Aguardando pagamento pelo método de pagamento local',
+    const PS_CHECKOUT_STATE_WAITING_PAYMENT = [
+        'en' => 'Waiting for payment',
+        'fr' => 'En attente de paiement',
+        'es' => 'Esperando el pago',
+        'it' => 'In attesa di pagamento',
+        'nl' => 'Wachten op betaling',
+        'de' => 'Warten auf Zahlung',
+        'pl' => 'Oczekiwanie na płatność',
+        'pt' => 'Aguardando pagamento',
     ];
     const PS_CHECKOUT_STATE_AUTHORIZED = [
         'en' => 'Authorized. To be captured by merchant',
@@ -94,9 +74,7 @@ class OrderStatesTranslations
         $isoCode = $this->confirmIsoCode($isoCode);
 
         return [
-            'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT[$isoCode],
-            'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT[$isoCode],
-            'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT[$isoCode],
+            'PS_CHECKOUT_STATE_WAITING_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_PAYMENT[$isoCode],
             'PS_CHECKOUT_STATE_AUTHORIZED' => self::PS_CHECKOUT_STATE_AUTHORIZED[$isoCode],
             'PS_CHECKOUT_STATE_PARTIAL_REFUND' => self::PS_CHECKOUT_STATE_PARTIAL_REFUND[$isoCode],
             'PS_CHECKOUT_STATE_WAITING_CAPTURE' => self::PS_CHECKOUT_STATE_WAITING_CAPTURE[$isoCode],
@@ -112,9 +90,7 @@ class OrderStatesTranslations
      */
     private function confirmIsoCode($isoCode)
     {
-        if (!array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT) ||
-            !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT) ||
-            !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT) ||
+        if (!array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_PAYMENT) ||
             !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_AUTHORIZED) ||
             !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_PARTIAL_REFUND) ||
             !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_CAPTURE)) {
