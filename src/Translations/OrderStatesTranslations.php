@@ -23,6 +23,16 @@ namespace PrestaShop\Module\PrestashopCheckout\Translations;
 class OrderStatesTranslations
 {
     const STANDARD_ISO_CODE = 'en';
+    const PS_CHECKOUT_STATE_WAITING_PAYMENT = [
+        'en' => 'Waiting payment',
+        'fr' => 'En attente de paiement',
+        'es' => 'Esperando el pago',
+        'it' => 'In attesa di pagamento',
+        'nl' => 'Wachten op betaling',
+        'de' => 'Warten auf Zahlung',
+        'pl' => 'Oczekiwanie na płatność',
+        'pt' => 'Aguardando pagamento'
+    ];
     const PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT = [
         'en' => 'Waiting for PayPal payment',
         'fr' => 'En attente de paiement par PayPal',
@@ -94,6 +104,7 @@ class OrderStatesTranslations
         $isoCode = $this->confirmIsoCode($isoCode);
 
         return [
+            'PS_CHECKOUT_STATE_WAITING_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_PAYMENT[$isoCode],
             'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT[$isoCode],
             'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT[$isoCode],
             'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT[$isoCode],
@@ -112,7 +123,8 @@ class OrderStatesTranslations
      */
     private function confirmIsoCode($isoCode)
     {
-        if (!array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT) ||
+        if (!array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_PAYMENT) ||
+            !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT) ||
             !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT) ||
             !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT) ||
             !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_AUTHORIZED) ||
