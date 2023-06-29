@@ -50,6 +50,7 @@ class OrderPendingPresenter implements PresenterInterface
             if ($key == 'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT' ||
                 $key == 'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT' ||
                 $key == 'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT' ||
+                $key == 'PS_CHECKOUT_STATE_WAITING_PAYMENT' ||
                 $key == 'PS_CHECKOUT_STATE_WAITING_CAPTURE'
             ) {
                 $idState = (int) \Configuration::getGlobalValue($key);
