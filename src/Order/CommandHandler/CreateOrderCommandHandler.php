@@ -145,16 +145,7 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
                     $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PAYMENT_ACCEPTED);
             }
         } else {
-            switch ($fundingSource) {
-                case 'card':
-                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT);
-                    break;
-                case 'paypal':
-                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT);
-                    break;
-                default:
-                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT);
-            }
+            $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_PAYMENT);
         }
 
         /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
