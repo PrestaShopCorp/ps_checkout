@@ -31,7 +31,7 @@ class OrderStatesTranslations
         'nl' => 'Wachten op betaling',
         'de' => 'Warten auf Zahlung',
         'pl' => 'Oczekiwanie na płatność',
-        'pt' => 'Aguardando pagamento'
+        'pt' => 'Aguardando pagamento',
     ];
     const PS_CHECKOUT_STATE_AUTHORIZED = [
         'en' => 'Authorized. To be captured by merchant',
@@ -75,9 +75,6 @@ class OrderStatesTranslations
 
         return [
             'PS_CHECKOUT_STATE_WAITING_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_PAYMENT[$isoCode],
-            'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT[$isoCode],
-            'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT[$isoCode],
-            'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT' => self::PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT[$isoCode],
             'PS_CHECKOUT_STATE_AUTHORIZED' => self::PS_CHECKOUT_STATE_AUTHORIZED[$isoCode],
             'PS_CHECKOUT_STATE_PARTIAL_REFUND' => self::PS_CHECKOUT_STATE_PARTIAL_REFUND[$isoCode],
             'PS_CHECKOUT_STATE_WAITING_CAPTURE' => self::PS_CHECKOUT_STATE_WAITING_CAPTURE[$isoCode],
@@ -94,9 +91,6 @@ class OrderStatesTranslations
     private function confirmIsoCode($isoCode)
     {
         if (!array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_PAYMENT) ||
-            !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT) ||
-            !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT) ||
-            !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT) ||
             !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_AUTHORIZED) ||
             !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_PARTIAL_REFUND) ||
             !array_key_exists($isoCode, self::PS_CHECKOUT_STATE_WAITING_CAPTURE)) {
