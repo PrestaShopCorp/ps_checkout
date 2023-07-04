@@ -20,7 +20,7 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <div class="card">
+            <div class="card" data-test="ps-checkout-card">
                 <h3 class="card-header">
                     <i class="material-icons">extension</i> {l s='One module, all payments methods.' mod='ps_checkout'}
                 </h3>
