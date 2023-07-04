@@ -23,6 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Order\CommandHandler;
 use Address;
 use Cart;
 use Configuration;
+use Context;
 use Country;
 use Currency;
 use Customer;
@@ -118,5 +119,21 @@ class AbstractOrderCommandHandler extends AbstractOrderHandler
         }
 
         return $this->associatedLanguage;
+    }
+
+    protected function shouldSetCartContext(Context $context, Cart $cart)
+    {
+        return !Validate::isLoadedObject($context->cart)
+            || (int) $context->cart->id !== (int) $cart->id
+            || !Validate::isLoadedObject($context->customer)
+            || (int) $context->customer->id !== (int) $cart->id_customer
+            || !Validate::isLoadedObject($context->shop)
+            || (int) $context->shop->id !== (int) $cart->id_shop
+            || !Validate::isLoadedObject($context->currency)
+            || (int) $context->currency->id !== (int) $cart->id_currency
+            || !Validate::isLoadedObject($context->language)
+            || (int) $context->language->id !== (int) $cart->id_lang
+            || !Validate::isLoadedObject($context->country)
+            || (int) $context->country->id !== (int) $this->getCartTaxCountry($cart)->id;
     }
 }

@@ -160,7 +160,9 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
         /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
         $fundingSourceTranslationProvider = $this->module->getService('ps_checkout.funding_source.translation');
 
-        $this->setCartContext($this->contextStateManager, $cart);
+        if ($this->shouldSetCartContext($this->contextStateManager->getContext(), $cart)) {
+            $this->setCartContext($this->contextStateManager, $cart);
+        }
 
         $extraVars = [];
 
