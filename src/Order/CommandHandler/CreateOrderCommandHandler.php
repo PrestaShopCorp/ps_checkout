@@ -109,7 +109,11 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
         /** @var PsCheckoutCart $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($command->getOrderPayPalId()->getValue());
 
-        $cart = new Cart($psCheckoutCart->getIdCart());
+        if (Validate::isLoadedObject($this->contextStateManager->getContext()->cart) && (int) $this->contextStateManager->getContext()->cart->id === $psCheckoutCart->getIdCart()) {
+            $cart = $this->contextStateManager->getContext()->cart;
+        } else {
+            $cart = new Cart($psCheckoutCart->getIdCart());
+        }
 
         if (!Validate::isLoadedObject($cart)) {
             throw new PsCheckoutException('Cart not found', PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
@@ -120,6 +124,12 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
 
         if ($orders->count()) {
             return;
+        }
+
+        $products = $cart->getProducts(true);
+
+        if (empty($products)) {
+            throw new PsCheckoutException(sprintf('Cart with id %s has no product. Cannot create the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_MISSING);
         }
 
         $fundingSource = $psCheckoutCart->getPaypalFundingSource();
