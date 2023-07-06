@@ -22,22 +22,61 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal;
 
 use Configuration;
 use Context;
+use DateTime;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use PrestaShopDatabaseException;
+use PrestaShopException;
+use PsCheckoutCart;
+use Validate;
 
 class PayPalClientTokenProvider
 {
     /**
+     * @var PsCheckoutCartRepository
+     */
+    private $psCheckoutCartRepository;
+
+    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository)
+    {
+        $this->psCheckoutCartRepository = $psCheckoutCartRepository;
+    }
+
+    /**
      * @return string
      *
      * @throws PsCheckoutException
+     * @throws PrestaShopDatabaseException
+     * @throws PrestaShopException
      */
     public function getPayPalClientToken()
     {
         $context = Context::getContext();
+
+        if (!Validate::isLoadedObject($context->cart)) {
+            return '';
+        }
+
+        $psCheckoutCart = $this->psCheckoutCartRepository->findOneByCartId((int) $context->cart->id);
+
+        if ($psCheckoutCart && !$psCheckoutCart->isPaypalClientTokenExpired()) {
+            return $psCheckoutCart->getPaypalClientToken();
+        }
+
         $apiOrder = new Order($context->link);
         $merchantId = Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT', null, null, $context->shop->id);
+        $clientToken = $apiOrder->generateClientToken($merchantId);
 
-        return $apiOrder->generateClientToken($merchantId);
+        if (!$psCheckoutCart) {
+            $psCheckoutCart = new PsCheckoutCart();
+            $psCheckoutCart->id_cart = (int) $context->cart->id;
+        }
+
+        $psCheckoutCart->paypal_token = $clientToken;
+        $psCheckoutCart->paypal_token_expire = (new DateTime())->modify('+3550 seconds')->format('Y-m-d H:i:s');
+        $this->psCheckoutCartRepository->save($psCheckoutCart);
+
+        return $clientToken;
     }
 }

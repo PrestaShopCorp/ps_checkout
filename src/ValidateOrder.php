@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -22,10 +23,13 @@ namespace PrestaShop\Module\PrestashopCheckout;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use Psr\SimpleCache\CacheInterface;
 
 /**
+ * @deprecated This file will be removed
+ *
  * Class that allow to validate an order
  */
 class ValidateOrder
@@ -70,9 +74,6 @@ class ValidateOrder
 
     /**
      * @param array{cartId: int, amount: float, currencyId: int, secureKey: string, isExpressCheckout: bool, isHostedFields: bool, fundingSource: string, liabilityShift: string, liabilityShifted: bool, authenticationStatus: string, authenticationReason: string} $payload
-     *
-     * @throws PsCheckoutException
-     * @throws \PrestaShopException
      */
     public function validateOrder($payload)
     {
@@ -84,7 +85,7 @@ class ValidateOrder
         $order = $paypalOrder->getOrder();
 
         if (empty($order)) {
-            throw new PsCheckoutException(sprintf('Unable to retrieve Paypal Order for %s', $this->paypalOrderId), PsCheckoutException::PRESTASHOP_ORDER_NOT_FOUND);
+            throw new OrderNotFoundException(sprintf('Unable to retrieve Paypal Order for %s', $this->paypalOrderId), OrderNotFoundException::NOT_FOUND);
         }
 
         if ($payload['isHostedFields']) {
@@ -181,7 +182,8 @@ class ValidateOrder
                 $transactionIdentifier = $response['body']['purchase_units'][0]['payments']['captures'][0]['id'];
                 $transactionStatus = $response['body']['purchase_units'][0]['payments']['captures'][0]['status'];
 
-                if (self::CAPTURE_STATUS_DECLINED === $transactionStatus
+                if (
+                    self::CAPTURE_STATUS_DECLINED === $transactionStatus
                     && false === empty($response['body']['payment_source'])
                     && false === empty($response['body']['payment_source'][0]['card'])
                     && false === empty($response['body']['purchase_units'][0]['payments']['captures'][0]['processor_response'])
@@ -196,10 +198,9 @@ class ValidateOrder
                     $payPalProcessorResponse->throwException();
                 }
             }
-
-            /** @var CacheInterface $paypalOrderCache */
-            $paypalOrderCache = $module->getService('ps_checkout.cache.paypal.order');
-            $paypalOrderCache->set($response['body']['id'], $response['body']);
+            /** @var CacheInterface $orderPayPalCache */
+            $orderPayPalCache = $module->getService('ps_checkout.cache.paypal.order');
+            $orderPayPalCache->set($response['body']['id'], $response['body']);
 
             if (false === $psCheckoutCart) {
                 $psCheckoutCart = new \PsCheckoutCart();

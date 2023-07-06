@@ -21,25 +21,28 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Handler;
 
+use Context;
+use Module;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
+use Ps_checkout;
 
 class CreatePaypalOrderHandler
 {
     /**
      * Prestashop context object
      *
-     * @var \Context
+     * @var Context
      */
     private $context;
 
-    public function __construct(\Context $context = null)
+    public function __construct(Context $context = null)
     {
         if (null === $context) {
-            $context = \Context::getContext();
+            $context = Context::getContext();
         }
 
         $this->context = $context;
@@ -61,8 +64,8 @@ class CreatePaypalOrderHandler
 
         $builder = new OrderPayloadBuilder($cartPresenter, true);
 
-        /** @var \Ps_checkout $module */
-        $module = \Module::getInstanceByName('ps_checkout');
+        /** @var Ps_checkout $module */
+        $module = Module::getInstanceByName('ps_checkout');
 
         /** @var ShopContext $shopContext */
         $shopContext = $module->getService('ps_checkout.context.shop');
@@ -116,19 +119,6 @@ class CreatePaypalOrderHandler
             } else {
                 $paypalOrder = (new Order($this->context->link))->create($payload);
             }
-        }
-
-        if (isset($paypalOrder['body']['id'])) {
-            $module->getLogger()->info(
-                sprintf(
-                    '%s PayPal Order',
-                    $updateOrder ? 'Update' : 'Create'
-                ),
-                [
-                    'paypal_order' => $paypalOrder['body']['id'],
-                    'id_cart' => (int) $this->context->cart->id,
-                ]
-            );
         }
 
         return $paypalOrder;
