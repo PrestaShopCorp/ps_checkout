@@ -54,7 +54,7 @@ function upgrade_module_7_3_4_0($module)
         'nl' => 'Wachten op betaling',
         'de' => 'Warten auf Zahlung',
         'pl' => 'Oczekiwanie na płatność',
-        'pt' => 'Aguardando pagamento pelo',
+        'pt' => 'Aguardando pagamento',
     ]);
 
     return true;
