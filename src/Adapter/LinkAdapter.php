@@ -58,7 +58,10 @@ class LinkAdapter
     public function getAdminLink($controller, $withToken = true, $sfRouteParams = [], $params = [])
     {
         if ((new ShopContext())->isShop17()) {
-            return $this->link->getAdminLink($controller, $withToken, $sfRouteParams, $params);
+            $shop = \Context::getContext()->shop;
+            $link = $this->link->getAdminLink($controller, $withToken, $sfRouteParams, $params);
+
+            return str_replace($shop->physical_uri . $shop->virtual_uri, $shop->physical_uri, $link);
         }
 
         $paramsAsString = '';
