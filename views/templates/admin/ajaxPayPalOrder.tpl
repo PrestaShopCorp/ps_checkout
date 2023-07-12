@@ -66,6 +66,16 @@
           <dd data-test="balance-value">{$orderPayPal.balance}</dd>
           <dt data-grid-area="payment">{l s='Payment mode' mod='ps_checkout'}</dt>
           <dd data-test="payment-mode-value">{$orderPaymentDisplayName|escape:'html':'UTF-8'} <img src="{$orderPaymentLogoUri}" alt="{$orderPaymentDisplayName|escape:'html':'UTF-8'}" title="{$orderPaymentDisplayName|escape:'html':'UTF-8'}" height="20"></dd>
+          <dt data-grid-area="environment">
+            <span data-test="payment-env-value" class="badge rounded badge-paypal-environment-{if $isProductionEnv}live{else}sandbox{/if}" data-value="{$psCheckoutCart->getEnvironment()|escape:'html':'UTF-8'}">
+              {if $isProductionEnv}
+                  {l s='Production Environment' mod='ps_checkout'}
+              {else}
+                  {l s='Test Environment' mod='ps_checkout'}
+              {/if}
+            </span>
+          </dt>
+          <dd></dd>
         </dl>
       </div>
     </div>
