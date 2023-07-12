@@ -234,6 +234,7 @@ function upgrade_module_7_3_3_1($module)
         );
     } catch (Exception $exception) {
         PrestaShopLogger::addLog($exception->getMessage(), 3, $exception->getCode(), 'Module', $module->id, false);
+
         return false;
     }
 
