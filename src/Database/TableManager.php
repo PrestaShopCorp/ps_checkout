@@ -64,6 +64,7 @@ class TableManager
               `paypal_token` text DEFAULT NULL,
               `paypal_token_expire` datetime NULL,
               `paypal_authorization_expire` datetime NULL,
+              `environment` varchar(20) NULL,
               `isExpressCheckout` tinyint(1) unsigned DEFAULT 0 NOT NULL,
               `isHostedFields` tinyint(1) unsigned DEFAULT 0 NOT NULL,
               `date_add` datetime NOT NULL,
