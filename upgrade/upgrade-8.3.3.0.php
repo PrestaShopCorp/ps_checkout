@@ -66,7 +66,7 @@ function upgrade_module_8_3_3_0($module)
         foreach (Shop::getShops(false, null, true) as $shopId) {
             $currentPosition = isset($maxPositionByShops[(int) $shopId]) ? $maxPositionByShops[(int) $shopId] + 1 : 1;
             foreach ($fundingSources as $fundingSource) {
-                if (!in_array($fundingSource, $availableFundingSourcesByShops[(int) $shopId], true)) {
+                if (!isset($availableFundingSourcesByShops[(int) $shopId]) || !in_array($fundingSource, $availableFundingSourcesByShops[(int) $shopId], true)) {
                     $db->insert(
                         'pscheckout_funding_source',
                         [
@@ -233,7 +233,9 @@ function upgrade_module_8_3_3_0($module)
             true
         );
     } catch (Exception $exception) {
-        PrestaShopLogger::addLog($exception->getMessage(), 3, $exception->getCode(), Ps_checkout::class, $module->id, false);
+        PrestaShopLogger::addLog($exception->getMessage(), 3, $exception->getCode(), 'Module', $module->id, false);
+
+        return false;
     }
 
     // Restore initial PrestaShop shop context
