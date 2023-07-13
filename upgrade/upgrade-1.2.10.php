@@ -17,9 +17,6 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
-
-use PrestaShop\Module\PrestashopCheckout\OrderStates;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -33,20 +30,6 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_2_10($module)
 {
-    foreach (OrderStates::ORDER_STATES as $key => $value) {
-        $idState = \Configuration::getGlobalValue($key);
-
-        $update = \Db::getInstance()->update(
-            OrderStates::ORDER_STATE_TABLE,
-            ['color' => $value],
-            'module_name = "ps_checkout" AND id_order_state = ' . (int) $idState
-        );
-
-        if ($update !== true) {
-            return false;
-        }
-    }
-
     // Force PrestaShop to upgrade for all shop to avoid issues
     $savedShopContext = Shop::getContext();
     $savedShopId = Shop::getContextShopID();

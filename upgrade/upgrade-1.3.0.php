@@ -36,7 +36,6 @@ function upgrade_module_1_3_0($module)
     $savedGroupShopId = Shop::getContextShopGroupID();
     Shop::setContext(Shop::CONTEXT_ALL);
 
-    (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates();
     $module->registerHook('actionObjectShopAddAfter');
 
     // Restore initial PrestaShop shop context

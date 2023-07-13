@@ -80,7 +80,7 @@ class GetOrderForApprovalReversedQueryHandler
             throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.');
         }
 
-        $hasBeenCanceled = count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::CANCELED)));
+        $hasBeenCanceled = count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_CANCELED)));
 
         return new GetOrderForApprovalReversedQueryResult(
             (int) $order->id,
