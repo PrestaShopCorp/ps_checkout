@@ -115,7 +115,7 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_LIVE_STEP_VIEWED' => false,
         'PS_CHECKOUT_INTEGRATION_DATE' => self::INTEGRATION_DATE,
         'PS_CHECKOUT_WEBHOOK_SECRET' => '',
-        'PS_CHECKOUT_LIABILITY_SHIFT_REQ' => '1',
+        'PS_CHECKOUT_LIABILITY_SHIFT_REQ' => '0',
     ];
 
     public $confirmUninstall;
