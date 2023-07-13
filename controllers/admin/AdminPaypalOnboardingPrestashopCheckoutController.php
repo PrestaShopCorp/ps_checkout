@@ -54,7 +54,7 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
                     [
                         'configure' => 'ps_checkout',
                     ]
-                )
+                ) . '#/authentication'
             );
         } catch (Exception $e) {
             $this->errors[] = $e->getMessage();
