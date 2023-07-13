@@ -57,8 +57,12 @@ class LinkAdapter
      */
     public function getAdminLink($controller, $withToken = true, $sfRouteParams = [], $params = [])
     {
+        $shop = \Context::getContext()->shop;
+
         if ((new ShopContext())->isShop17()) {
-            return $this->link->getAdminLink($controller, $withToken, $sfRouteParams, $params);
+            $link = $this->link->getAdminLink($controller, $withToken, $sfRouteParams, $params);
+
+            return $shop->virtual_uri !== '' ? str_replace($shop->physical_uri . $shop->virtual_uri, $shop->physical_uri, $link) : $link;
         }
 
         $paramsAsString = '';
@@ -66,6 +70,8 @@ class LinkAdapter
             $paramsAsString .= "&$key=$value";
         }
 
-        return \Tools::getShopDomainSsl(true) . __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_) . '/' . $this->link->getAdminLink($controller, $withToken) . $paramsAsString;
+        $link = \Tools::getShopDomainSsl(true) . __PS_BASE_URI__ . basename(_PS_ADMIN_DIR_) . '/' . $this->link->getAdminLink($controller, $withToken) . $paramsAsString;
+
+        return $shop->virtual_uri !== '' ? str_replace($shop->physical_uri . $shop->virtual_uri, $shop->physical_uri, $link) : $link;
     }
 }
