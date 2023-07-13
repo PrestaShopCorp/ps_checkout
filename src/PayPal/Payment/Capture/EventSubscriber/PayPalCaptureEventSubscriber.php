@@ -184,18 +184,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        switch ($order->getPaymentMethod()) {
-            case 'card':
-                $newOrderStateId = $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT);
-                break;
-            case 'paypal':
-                $newOrderStateId = $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT);
-                break;
-            default:
-                $newOrderStateId = $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT);
-        }
-
-        $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $newOrderStateId));
+        $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_PAYMENT)));
     }
 
     public function setPaymentDeclinedOrderStatus(PayPalCaptureDeclinedEvent $event)

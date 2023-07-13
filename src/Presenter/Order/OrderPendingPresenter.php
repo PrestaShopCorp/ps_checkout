@@ -47,7 +47,8 @@ class OrderPendingPresenter implements PresenterInterface
         $orderTranslations = new OrderStatesTranslations();
         $orderTranslations = $orderTranslations->getTranslations($context->language->iso_code);
         foreach (OrderStates::ORDER_STATES as $key => $value) {
-            if ($key == 'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT' ||
+            if ($key == 'PS_CHECKOUT_STATE_WAITING_PAYMENT' ||
+                $key == 'PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT' ||
                 $key == 'PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT' ||
                 $key == 'PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT' ||
                 $key == 'PS_CHECKOUT_STATE_WAITING_CAPTURE'
