@@ -12,19 +12,3 @@ services:
   ps_checkout.logger.file.reader:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader'
     public: true
-
-  ps_checkout.repository.orderpayment:
-    class: 'PrestaShop\Module\PrestashopCheckout\Repository\OrderPaymentRepository'
-    public: true
-
-  ps_checkout.repository.order:
-    class: 'PrestaShop\Module\PrestashopCheckout\Repository\OrderRepository'
-    public: true
-
-  ps_checkout.presenter.order.pending:
-    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter'
-    public: true
-
-  ps_checkout.presenter.transaction:
-    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter'
-    public: true

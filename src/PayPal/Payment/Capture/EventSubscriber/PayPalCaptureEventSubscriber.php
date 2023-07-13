@@ -167,10 +167,10 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         switch ($this->checkOrderAmount->checkAmount((string) $order->getTotalAmount(), (string) $event->getCapture()['amount']['value'])) {
             case CheckOrderAmount::ORDER_FULL_PAID:
             case CheckOrderAmount::ORDER_TO_MUCH_PAID:
-                $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PAYMENT_ACCEPTED)));
+                $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED)));
                 break;
             case CheckOrderAmount::ORDER_NOT_FULL_PAID:
-                $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PARTIALLY_PAID)));
+                $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID)));
                 break;
         }
     }
@@ -184,7 +184,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_PAYMENT)));
+        $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PENDING)));
     }
 
     public function setPaymentDeclinedOrderStatus(PayPalCaptureDeclinedEvent $event)
@@ -196,7 +196,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PAYMENT_ERROR)));
+        $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_ERROR)));
     }
 
     public function setPaymentRefundedOrderStatus(PayPalCaptureRefundedEvent $event)
@@ -209,9 +209,9 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         }
 
         if ($this->checkOrderAmount->checkAmount($order->getTotalAmount(), $order->getTotalRefund()) == CheckOrderAmount::ORDER_NOT_FULL_PAID) {
-            $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PARTIALLY_REFUNDED)));
+            $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED)));
         } else {
-            $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::REFUNDED)));
+            $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED)));
         }
     }
 
@@ -224,7 +224,7 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::REFUNDED)));
+        $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED)));
     }
 
     public function updateCache(PayPalCaptureEvent $event)
