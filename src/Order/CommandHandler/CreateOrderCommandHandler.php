@@ -146,16 +146,16 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
         if ($paidAmount) {
             switch ($this->checkOrderAmount->checkAmount((string) $paidAmount, (string) $cart->getOrderTotal(true, \Cart::BOTH))) {
                 case CheckOrderAmount::ORDER_NOT_FULL_PAID:
-                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PARTIALLY_PAID);
+                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID);
                     break;
                 case CheckOrderAmount::ORDER_FULL_PAID:
-                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PAYMENT_ACCEPTED);
+                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED);
                     break;
                 case CheckOrderAmount::ORDER_TO_MUCH_PAID:
-                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PAYMENT_ACCEPTED);
+                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED);
             }
         } else {
-            $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_PAYMENT);
+            $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PENDING);
         }
 
         /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */

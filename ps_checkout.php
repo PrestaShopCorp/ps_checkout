@@ -179,12 +179,13 @@ class Ps_checkout extends PaymentModule
         $result = parent::install() &&
             $this->installConfiguration() &&
             $this->installHooks() &&
-            (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
             (new PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceInstaller())->createFundingSources() &&
             $this->installTabs() &&
             $this->disableIncompatibleCountries() &&
             $this->disableIncompatibleCurrencies();
+
+        (new \PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateInstaller())->install();
 
         // Restore initial PrestaShop shop context
         if (Shop::CONTEXT_SHOP === $savedShopContext) {
