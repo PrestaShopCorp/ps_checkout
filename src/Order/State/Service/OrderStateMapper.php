@@ -55,6 +55,7 @@ class OrderStateMapper
             OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT => (int) $this->configuration->get(OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT, ['global' => true]),
             OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT => (int) $this->configuration->get(OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT, ['global' => true]),
             OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT => (int) $this->configuration->get(OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT, ['global' => true]),
+            OrderStateConfigurationKeys::WAITING_PAYMENT => (int) $this->configuration->get(OrderStateConfigurationKeys::WAITING_PAYMENT, ['global' => true]),
         ];
     }
 
