@@ -92,16 +92,21 @@ function upgrade_module_6_3_4_0($module)
 
         // Check module OrderState
         $moduleOrderStates = [
+            'PS_CHECKOUT_STATE_PENDING' => (int) Configuration::getGlobalValue('PS_CHECKOUT_STATE_PENDING'),
+            'PS_CHECKOUT_STATE_COMPLETED' => (int) Configuration::getGlobalValue('PS_OS_PAYMENT'),
+            'PS_CHECKOUT_STATE_CANCELED' => (int) Configuration::getGlobalValue('PS_OS_CANCELED'),
+            'PS_CHECKOUT_STATE_ERROR' => (int) Configuration::getGlobalValue('PS_OS_ERROR'),
+            'PS_CHECKOUT_STATE_REFUNDED' => (int) Configuration::getGlobalValue('PS_OS_REFUND'),
+            'PS_CHECKOUT_STATE_PARTIALLY_REFUNDED' => (int) Configuration::getGlobalValue('PS_CHECKOUT_STATE_PARTIAL_REFUND'),
+            'PS_CHECKOUT_STATE_PARTIALLY_PAID' => (int) Configuration::getGlobalValue('PS_CHECKOUT_STATE_PARTIALLY_PAID'),
             'PS_CHECKOUT_STATE_AUTHORIZED' => (int) Configuration::getGlobalValue('PS_CHECKOUT_STATE_AUTHORIZED'),
-            'PS_CHECKOUT_STATE_PARTIAL_REFUND' => (int) Configuration::getGlobalValue('PS_CHECKOUT_STATE_PARTIAL_REFUND'),
-            'PS_CHECKOUT_STATE_WAITING_CAPTURE' => (int) Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_CAPTURE'),
-            'PS_CHECKOUT_STATE_WAITING_PAYMENT' => (int) Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_PAYMENT'),
         ];
         $moduleOrderStatesId = array_values($moduleOrderStates);
         $moduleOrderStatesIdToDelete = [
             (int) Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT'),
             (int) Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT'),
             (int) Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT'),
+            (int) Configuration::getGlobalValue('PS_CHECKOUT_STATE_WAITING_CAPTURE'),
         ];
 
         $orderStateCollection = new PrestaShopCollection(OrderState::class);
@@ -149,9 +154,9 @@ function upgrade_module_6_3_4_0($module)
                             ]
                         );
                         break;
-                    case 'PS_CHECKOUT_STATE_PARTIAL_REFUND':
+                    case 'PS_CHECKOUT_STATE_PARTIALLY_REFUNDED':
                         ps_checkout_create_order_state_6_3_4_0(
-                            'PS_CHECKOUT_STATE_PARTIAL_REFUND',
+                            'PS_CHECKOUT_STATE_PARTIALLY_REFUNDED',
                             '#01B887',
                             [
                                 'en' => 'Partial refund',
@@ -165,8 +170,8 @@ function upgrade_module_6_3_4_0($module)
                             ]
                         );
                         break;
-                    case 'PS_CHECKOUT_STATE_WAITING_PAYMENT':
-                        ps_checkout_create_order_state_6_3_4_0('PS_CHECKOUT_STATE_WAITING_PAYMENT', '#34209E', [
+                    case 'PS_CHECKOUT_STATE_PENDING':
+                        ps_checkout_create_order_state_6_3_4_0('PS_CHECKOUT_STATE_PENDING', '#34209E', [
                             'en' => 'Waiting for payment',
                             'fr' => 'En attente de paiement',
                             'es' => 'Esperando el pago',
@@ -177,23 +182,25 @@ function upgrade_module_6_3_4_0($module)
                             'pt' => 'Aguardando pagamento',
                         ]);
                         break;
-                    case 'PS_CHECKOUT_STATE_WAITING_CAPTURE':
+                    case 'PS_CHECKOUT_STATE_PARTIALLY_PAID':
                         ps_checkout_create_order_state_6_3_4_0(
-                            'PS_CHECKOUT_STATE_WAITING_CAPTURE',
+                            'PS_CHECKOUT_STATE_PARTIALLY_PAID',
                             '#3498D8',
                             [
-                                'en' => 'Waiting capture',
-                                'fr' => 'En attente de capture',
-                                'es' => 'Esperando la captura',
-                                'it' => 'In attesa di essere acquisito',
-                                'nl' => 'Wachten op registratie',
-                                'de' => 'Warten auf Erfassung',
-                                'pl' => 'Oczekiwanie na transfer',
-                                'pt' => 'Aguardando a captura',
+                                'en' => 'Partial payment',
+                                'fr' => 'Paiement partiel',
+                                'es' => 'Pago parcial',
+                                'it' => 'Pagamento parziale',
+                                'nl' => 'Gedeeltelijke betaling',
+                                'de' => 'Teilweise Zahlung',
+                                'pl' => 'Częściowa płatność',
+                                'pt' => 'Pagamento parcial',
                             ]
                         );
                         break;
                 }
+            } else {
+                Configuration::updateGlobalValue($configuration_key, $id_order_state);
             }
         }
     } catch (Exception $exception) {
@@ -245,4 +252,15 @@ function ps_checkout_create_order_state_6_3_4_0($configuration_key, $color, $nam
     $orderState->template = [];
     $orderState->save();
     Configuration::updateGlobalValue($configuration_key, $orderState->id);
+    $orderStateImage = $configuration_key === 'PS_CHECKOUT_STATE_PARTIALLY_REFUNDED' ? 'refund.gif' : 'waiting.gif';
+    $moduleOrderStateImgPath = _PS_MODULE_DIR_ . 'ps_checkout/views/img/OrderStatesIcons/' . $orderStateImage;
+    $coreOrderStateImgPath = _PS_IMG_DIR_ . 'os/' . $orderState->id . '.gif';
+
+    if (
+        Tools::file_exists_cache($moduleOrderStateImgPath)
+        && !Tools::file_exists_cache($coreOrderStateImgPath)
+        && is_writable(_PS_IMG_DIR_ . 'os/')
+    ) {
+        Tools::copy($moduleOrderStateImgPath, $coreOrderStateImgPath);
+    }
 }
