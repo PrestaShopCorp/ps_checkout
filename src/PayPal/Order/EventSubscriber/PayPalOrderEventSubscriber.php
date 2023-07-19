@@ -248,7 +248,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         $this->commandBus->handle(
             new UpdateOrderStatusCommand(
                 $order->getOrderId()->getValue(),
-                $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::CANCELED)
+                $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_CANCELED)
             )
         );
     }
