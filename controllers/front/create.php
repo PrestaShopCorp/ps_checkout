@@ -93,7 +93,10 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             // END Express Checkout
 
             if (false === Validate::isLoadedObject($this->context->cart)) {
-                throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
+                $this->exitWithResponse([
+                    'httpCode' => 400,
+                    'body' => 'No cart found.',
+                ]);
             }
 
             /** @var PsCheckoutCartRepository $psCheckoutCartRepository */

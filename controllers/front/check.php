@@ -42,19 +42,28 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
     {
         try {
             if (false === Validate::isLoadedObject($this->context->cart)) {
-                throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
+                $this->exitWithResponse([
+                    'httpCode' => 400,
+                    'body' => 'No cart found.',
+                ]);
             }
 
             $bodyContent = file_get_contents('php://input');
 
             if (empty($bodyContent)) {
-                throw new PsCheckoutException('Payload invalid', PsCheckoutException::PSCHECKOUT_WEBHOOK_BODY_EMPTY);
+                $this->exitWithResponse([
+                    'httpCode' => 400,
+                    'body' => 'Payload invalid',
+                ]);
             }
 
             $bodyValues = json_decode($bodyContent, true);
 
             if (empty($bodyValues)) {
-                throw new PsCheckoutException('Payload invalid', PsCheckoutException::PSCHECKOUT_WEBHOOK_BODY_EMPTY);
+                $this->exitWithResponse([
+                    'httpCode' => 400,
+                    'body' => 'Payload invalid',
+                ]);
             }
 
             $fundingSource = isset($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : 'paypal';
@@ -63,7 +72,10 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
             $isHostedFields = isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'];
 
             if (empty($orderId)) {
-                throw new PsCheckoutException('Missing PayPal Order Id', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
+                $this->exitWithResponse([
+                    'httpCode' => 400,
+                    'body' => 'Missing PayPal Order Id',
+                ]);
             }
 
             /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
