@@ -52,17 +52,26 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             $bodyContent = file_get_contents('php://input');
 
             if (empty($bodyContent)) {
-                throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
+                $this->exitWithResponse([
+                    'httpCode' => 400,
+                    'body' => 'Payload invalid',
+                ]);
             }
 
             $this->payload = json_decode($bodyContent, true);
 
             if (empty($this->payload)) {
-                throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
+                $this->exitWithResponse([
+                    'httpCode' => 400,
+                    'body' => 'Payload invalid',
+                ]);
             }
 
             if (empty($this->payload['orderID']) || false === Validate::isGenericName($this->payload['orderID'])) {
-                throw new PsCheckoutException('PayPal Order identifier missing or invalid', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
+                $this->exitWithResponse([
+                    'httpCode' => 400,
+                    'body' => 'Payload invalid',
+                ]);
             }
 
             /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
