@@ -29,7 +29,8 @@ use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner;
-use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
+use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateInstaller;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
@@ -890,43 +891,25 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         /** @var OrderStateMapper $orderStateMapper */
         $orderStateMapper = $this->module->getService('ps_checkout.order.state.service.order_state_mapper');
+        $mappedOrderStates = [];
+
+        try {
+            $mappedOrderStates = $orderStateMapper->getMappedOrderStates();
+        } catch (OrderStateException $exception) {
+            if ($exception->getCode() === OrderStateException::INVALID_MAPPING) {
+                (new OrderStateInstaller())->install();
+            }
+
+            $this->exitWithResponse([
+                'httpCode' => 500,
+                'status' => false,
+                'error' => $exception->getMessage(),
+            ]);
+        }
 
         $this->exitWithResponse([
             'status' => true,
-            'mappedOrderStates' => [
-                OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PENDING => [
-                    'default' => '0',
-                    'value' => (string) $orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PENDING),
-                ],
-                OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED => [
-                    'default' => (string) $orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_OS_PAYMENT),
-                    'value' => (string) $orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED),
-                ],
-                OrderStateConfigurationKeys::PS_CHECKOUT_STATE_CANCELED => [
-                    'default' => (string) $orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_OS_CANCELED),
-                    'value' => (string) $orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_CANCELED),
-                ],
-                OrderStateConfigurationKeys::PS_CHECKOUT_STATE_ERROR => [
-                    'default' => (string) $orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_OS_ERROR),
-                    'value' => (string) $orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_ERROR),
-                ],
-                OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED => [
-                    'default' => (string) $orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_OS_REFUND),
-                    'value' => (string) $orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED),
-                ],
-                OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED => [
-                    'default' => '0',
-                    'value' => (string) $orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED),
-                ],
-                OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID => [
-                    'default' => '0',
-                    'value' => (string) $orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID),
-                ],
-                OrderStateConfigurationKeys::PS_CHECKOUT_STATE_AUTHORIZED => [
-                    'default' => '0',
-                    'value' => (string) $orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_AUTHORIZED),
-                ],
-            ],
+            'mappedOrderStates' => $mappedOrderStates,
         ]);
     }
 

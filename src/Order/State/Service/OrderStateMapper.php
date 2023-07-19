@@ -20,8 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\State\Service;
 
-use InvalidArgumentException;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 
 class OrderStateMapper
@@ -49,6 +49,8 @@ class OrderStateMapper
      * @param string $key
      *
      * @return int
+     *
+     * @throws OrderStateException
      */
     public function getIdByKey($key)
     {
@@ -56,21 +58,58 @@ class OrderStateMapper
             return $this->orderStateMapping[$key];
         }
 
-        throw new InvalidArgumentException(sprintf('Order state key "%s" is not mapped', var_export($key, true)));
+        throw new OrderStateException(sprintf('Order state key "%s" is not mapped', var_export($key, true)), OrderStateException::INVALID_MAPPING);
     }
 
     /**
      * @return array
+     *
+     * @throws OrderStateException
      */
-    public function getOrderStateMapping()
+    public function getMappedOrderStates()
     {
-        return $this->orderStateMapping;
+        return [
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PENDING => [
+                'default' => '0',
+                'value' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PENDING),
+            ],
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED => [
+                'default' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_OS_PAYMENT),
+                'value' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED),
+            ],
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_CANCELED => [
+                'default' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_OS_CANCELED),
+                'value' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_CANCELED),
+            ],
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_ERROR => [
+                'default' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_OS_ERROR),
+                'value' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_ERROR),
+            ],
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED => [
+                'default' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_OS_REFUND),
+                'value' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED),
+            ],
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED => [
+                'default' => '0',
+                'value' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED),
+            ],
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID => [
+                'default' => '0',
+                'value' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID),
+            ],
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_AUTHORIZED => [
+                'default' => '0',
+                'value' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_AUTHORIZED),
+            ],
+        ];
     }
 
     /**
      * @param int $orderCurrentState
      *
      * @return string
+     *
+     * @throws OrderStateException
      */
     public function getKeyById($orderCurrentState)
     {
@@ -80,7 +119,7 @@ class OrderStateMapper
             return $orderStateMapping[$orderCurrentState];
         }
 
-        throw new InvalidArgumentException(sprintf('Order state id "%s" is not mapped', var_export($orderCurrentState, true)));
+        throw new OrderStateException(sprintf('Order state id "%s" is not mapped', var_export($orderCurrentState, true)), OrderStateException::INVALID_MAPPING);
     }
 
     private function initialize()
