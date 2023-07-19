@@ -47,49 +47,6 @@ function upgrade_module_8_3_4_0($module)
 
         $db = Db::getInstance();
 
-        // Installing FundingSource if table pscheckout_funding_source is empty or incomplete - including BLIK
-        $fundingSources = ['paypal', 'paylater', 'card', 'bancontact', 'eps', 'giropay', 'ideal', 'mybank', 'p24', 'sofort', 'blik'];
-        $availableFundingSourcesByShops = [];
-        $maxPositionByShops = [];
-        $availableFundingSources = $db->executeS('SELECT * FROM ' . _DB_PREFIX_ . 'pscheckout_funding_source');
-
-        if (!empty($availableFundingSources)) {
-            foreach ($availableFundingSources as $availableFundingSource) {
-                $currentPosition = (int) $availableFundingSource['position'];
-                $shopId = (int) $availableFundingSource['id_shop'];
-
-                if (
-                    !isset($maxPositionByShops[$shopId])
-                    || $maxPositionByShops[$shopId] < $currentPosition
-                ) {
-                    $maxPositionByShops[$shopId] = $currentPosition;
-                }
-
-                $availableFundingSourcesByShops[$shopId][] = $availableFundingSource['name'];
-            }
-        }
-
-        foreach (Shop::getShops(false, null, true) as $shopId) {
-            $currentPosition = isset($maxPositionByShops[(int) $shopId]) ? $maxPositionByShops[(int) $shopId] + 1 : 1;
-            foreach ($fundingSources as $fundingSource) {
-                if (
-                    !isset($availableFundingSourcesByShops[(int) $shopId])
-                    || !in_array($fundingSource, $availableFundingSourcesByShops[(int) $shopId], true)
-                ) {
-                    $db->insert(
-                        'pscheckout_funding_source',
-                        [
-                            'name' => pSQL($fundingSource),
-                            'active' => 1,
-                            'position' => (int) $currentPosition,
-                            'id_shop' => (int) $savedShopId,
-                        ]
-                    );
-                    ++$currentPosition;
-                }
-            }
-        }
-
         // Check module OrderState
         $moduleOrderStates = [
             'PS_CHECKOUT_STATE_PENDING' => (int) Configuration::getGlobalValue('PS_CHECKOUT_STATE_PENDING'),
@@ -201,6 +158,49 @@ function upgrade_module_8_3_4_0($module)
                 }
             } else {
                 Configuration::updateGlobalValue($configuration_key, $id_order_state);
+            }
+        }
+
+        // Installing FundingSource if table pscheckout_funding_source is empty or incomplete - including BLIK
+        $fundingSources = ['paypal', 'paylater', 'card', 'bancontact', 'eps', 'giropay', 'ideal', 'mybank', 'p24', 'sofort', 'blik'];
+        $availableFundingSourcesByShops = [];
+        $maxPositionByShops = [];
+        $availableFundingSources = $db->executeS('SELECT * FROM ' . _DB_PREFIX_ . 'pscheckout_funding_source');
+
+        if (!empty($availableFundingSources)) {
+            foreach ($availableFundingSources as $availableFundingSource) {
+                $currentPosition = (int) $availableFundingSource['position'];
+                $shopId = (int) $availableFundingSource['id_shop'];
+
+                if (
+                    !isset($maxPositionByShops[$shopId])
+                    || $maxPositionByShops[$shopId] < $currentPosition
+                ) {
+                    $maxPositionByShops[$shopId] = $currentPosition;
+                }
+
+                $availableFundingSourcesByShops[$shopId][] = $availableFundingSource['name'];
+            }
+        }
+
+        foreach ($shopsList as $shopId) {
+            $currentPosition = isset($maxPositionByShops[(int) $shopId]) ? $maxPositionByShops[(int) $shopId] + 1 : 1;
+            foreach ($fundingSources as $fundingSource) {
+                if (
+                    !isset($availableFundingSourcesByShops[(int) $shopId])
+                    || !in_array($fundingSource, $availableFundingSourcesByShops[(int) $shopId], true)
+                ) {
+                    $db->insert(
+                        'pscheckout_funding_source',
+                        [
+                            'name' => pSQL($fundingSource),
+                            'active' => 1,
+                            'position' => (int) $currentPosition,
+                            'id_shop' => (int) $shopId,
+                        ]
+                    );
+                    ++$currentPosition;
+                }
             }
         }
     } catch (Exception $exception) {
