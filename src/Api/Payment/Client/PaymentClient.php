@@ -164,6 +164,11 @@ class PaymentClient extends GenericClient
                 && false !== strpos($response['exceptionMessage'], 'cURL error 28')
             ) {
                 throw new HttpTimeoutException($response['exceptionMessage'], PsCheckoutException::PSL_TIMEOUT);
+            } elseif (
+                isset($response['exceptionCode'])
+                && $response['exceptionCode'] === PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION
+            ) {
+                throw new PsCheckoutException($response['exceptionMessage'], PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION);
             }
 
             if (
