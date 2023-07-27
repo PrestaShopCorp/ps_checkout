@@ -148,11 +148,16 @@ class PaymentClient extends GenericClient
      * @return array
      *
      * @throws HttpTimeoutException
+     * @throws PsCheckoutException
      */
     private function postWithRetry(array $options, $delay = 2, $retries = 2)
     {
         try {
             $response = parent::post($options);
+
+            if ($response['httpCode'] === 401) {
+                throw new PsCheckoutException('Unauthorized', PsCheckoutException::PSCHECKOUT_HTTP_UNAUTHORIZED);
+            }
 
             if (false !== $response['status']) {
                 return $response;
