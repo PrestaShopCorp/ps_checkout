@@ -101,11 +101,6 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
 
             $this->sendOkResponse($this->generateResponse());
         } catch (Exception $exception) {
-            $this->module->getLogger()->error('CheckoutCompletedEvent failed', [
-                'exception_class' => get_class($exception),
-                'exception_message' => $exception->getMessage(),
-                'exception_code' => $exception->getCode(),
-            ]);
             $response = $this->generateResponse();
 
             if (!empty($response)) {
