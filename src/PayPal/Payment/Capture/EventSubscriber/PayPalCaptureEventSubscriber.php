@@ -24,6 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\AddOrderPaymentCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQuery;
@@ -136,8 +137,12 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
     public function createOrderPayment(PayPalCaptureCompletedEvent $event)
     {
-        /** @var GetOrderForPaymentCompletedQueryResult $order */
-        $order = $this->commandBus->handle(new GetOrderForPaymentCompletedQuery($event->getPayPalOrderId()->getValue(), $event->getPayPalCaptureId()->getValue()));
+        try {
+            /** @var GetOrderForPaymentCompletedQueryResult $order */
+            $order = $this->commandBus->handle(new GetOrderForPaymentCompletedQuery($event->getPayPalOrderId()->getValue(), $event->getPayPalCaptureId()->getValue()));
+        } catch (OrderNotFoundException $exception) {
+            return;
+        }
 
         if ($order->getOrderPaymentId()) {
             return;
@@ -157,8 +162,12 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
     public function setPaymentCompletedOrderStatus(PayPalCaptureCompletedEvent $event)
     {
-        /** @var GetOrderForPaymentCompletedQueryResult $order */
-        $order = $this->commandBus->handle(new GetOrderForPaymentCompletedQuery($event->getPayPalOrderId()->getValue(), $event->getPayPalCaptureId()->getValue()));
+        try {
+            /** @var GetOrderForPaymentCompletedQueryResult $order */
+            $order = $this->commandBus->handle(new GetOrderForPaymentCompletedQuery($event->getPayPalOrderId()->getValue(), $event->getPayPalCaptureId()->getValue()));
+        } catch (OrderNotFoundException $exception) {
+            return;
+        }
 
         if ($order->hasBeenPaid()) {
             return;
@@ -177,8 +186,12 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
     public function setPaymentPendingOrderStatus(PayPalCapturePendingEvent $event)
     {
-        /** @var GetOrderForPaymentPendingQueryResult $order */
-        $order = $this->commandBus->handle(new GetOrderForPaymentPendingQuery($event->getPayPalOrderId()->getValue()));
+        try {
+            /** @var GetOrderForPaymentPendingQueryResult $order */
+            $order = $this->commandBus->handle(new GetOrderForPaymentPendingQuery($event->getPayPalOrderId()->getValue()));
+        } catch (OrderNotFoundException $exception) {
+            return;
+        }
 
         if ($order->isInPending()) {
             return;
@@ -189,8 +202,12 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
     public function setPaymentDeclinedOrderStatus(PayPalCaptureDeclinedEvent $event)
     {
-        /** @var GetOrderForPaymentDeniedQueryResult $order */
-        $order = $this->commandBus->handle(new GetOrderForPaymentDeniedQuery($event->getPayPalOrderId()->getValue()));
+        try {
+            /** @var GetOrderForPaymentDeniedQueryResult $order */
+            $order = $this->commandBus->handle(new GetOrderForPaymentDeniedQuery($event->getPayPalOrderId()->getValue()));
+        } catch (OrderNotFoundException $exception) {
+            return;
+        }
 
         if ($order->hasBeenError()) {
             return;
@@ -201,8 +218,12 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
     public function setPaymentRefundedOrderStatus(PayPalCaptureRefundedEvent $event)
     {
-        /** @var GetOrderForPaymentRefundedQueryResult $order */
-        $order = $this->commandBus->handle(new GetOrderForPaymentRefundedQuery($event->getPayPalOrderId()->getValue()));
+        try {
+            /** @var GetOrderForPaymentRefundedQueryResult $order */
+            $order = $this->commandBus->handle(new GetOrderForPaymentRefundedQuery($event->getPayPalOrderId()->getValue()));
+        } catch (OrderNotFoundException $exception) {
+            return;
+        }
 
         if (!$order->hasBeenPaid() || $order->hasBeenTotallyRefund()) {
             return;
@@ -217,8 +238,12 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
     public function setPaymentReversedOrderStatus(PayPalCaptureReversedEvent $event)
     {
-        /** @var GetOrderForPaymentReversedQueryResult $order */
-        $order = $this->commandBus->handle(new GetOrderForPaymentReversedQuery($event->getPayPalOrderId()->getValue(), $event->getPayPalCaptureId()->getValue()));
+        try {
+            /** @var GetOrderForPaymentReversedQueryResult $order */
+            $order = $this->commandBus->handle(new GetOrderForPaymentReversedQuery($event->getPayPalOrderId()->getValue(), $event->getPayPalCaptureId()->getValue()));
+        } catch (OrderNotFoundException $exception) {
+            return;
+        }
 
         if (!$order->hasBeenPaid() || $order->hasBeenTotallyRefund()) {
             return;
