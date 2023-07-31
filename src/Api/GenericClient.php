@@ -29,6 +29,7 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use Ps_checkout;
+use RuntimeException;
 
 /**
  * Construct the client used to make call to maasland
@@ -105,6 +106,14 @@ class GenericClient
                 new Request('POST', $this->getRoute(), [], json_encode($options))
             );
         } catch (TransferException $exception) {
+            return $this->handleException(
+                new PsCheckoutException(
+                    $exception->getMessage(),
+                    PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION,
+                    $exception
+                )
+            );
+        } catch (RuntimeException $exception) {
             return $this->handleException(
                 new PsCheckoutException(
                     $exception->getMessage(),
