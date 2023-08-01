@@ -224,13 +224,14 @@ function upgrade_module_7_3_4_0($module)
 function ps_checkout_create_order_state_7_3_4_0($configuration_key, $color, $nameByLangIsoCode)
 {
     $orderStateNameByLangId = [];
-    foreach ($nameByLangIsoCode as $langIsoCode => $name) {
-        foreach (Language::getLanguages(false) as $language) {
-            if (Tools::strtolower($language['iso_code']) === $langIsoCode) {
-                $orderStateNameByLangId[(int) $language['id_lang']] = $name;
-            } elseif (isset($nameByLangIsoCode['en'])) {
-                $orderStateNameByLangId[(int) $language['id_lang']] = $nameByLangIsoCode['en'];
-            }
+
+    foreach (Language::getLanguages(false) as $language) {
+        $languageIsoCode = Tools::strtolower($language['iso_code']);
+
+        if (isset($nameByLangIsoCode[$languageIsoCode])) {
+            $orderStateNameByLangId[(int) $language['id_lang']] = $nameByLangIsoCode[$languageIsoCode];
+        } elseif (isset($nameByLangIsoCode['en'])) {
+            $orderStateNameByLangId[(int) $language['id_lang']] = $nameByLangIsoCode['en'];
         }
     }
 
