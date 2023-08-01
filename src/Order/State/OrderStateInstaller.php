@@ -152,13 +152,13 @@ class OrderStateInstaller
     {
         $orderStateNameByLangId = [];
 
-        foreach ($nameByLangIsoCode as $langIsoCode => $name) {
-            foreach ($this->languages as $language) {
-                if (Tools::strtolower($language['iso_code']) === $langIsoCode) {
-                    $orderStateNameByLangId[(int) $language['id_lang']] = $name;
-                } elseif (isset($nameByLangIsoCode['en'])) {
-                    $orderStateNameByLangId[(int) $language['id_lang']] = $nameByLangIsoCode['en'];
-                }
+        foreach ($this->languages as $language) {
+            $languageIsoCode = Tools::strtolower($language['iso_code']);
+
+            if (isset($nameByLangIsoCode[$languageIsoCode])) {
+                $orderStateNameByLangId[(int) $language['id_lang']] = $nameByLangIsoCode[$languageIsoCode];
+            } elseif (isset($nameByLangIsoCode['en'])) {
+                $orderStateNameByLangId[(int) $language['id_lang']] = $nameByLangIsoCode['en'];
             }
         }
 
