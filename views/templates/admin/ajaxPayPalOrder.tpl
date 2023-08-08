@@ -16,7 +16,7 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  *}
-<div>
+<div data-test="checkout-payment-block">
   {if !$orderPayPal}
     <div class="checkout-modal-container">
       <div class="checkout-modal">
@@ -50,22 +50,22 @@
         <h3 class="panel__title">{l s='PayPal Order' mod='ps_checkout'}</h3>
         <dl class="panel__infos">
           <dt data-grid-area="reference">{l s='Reference' mod='ps_checkout'}</dt>
-          <dd>{$orderPayPal.id|escape:'html':'UTF-8'}</dd>
+          <dd data-test="reference-value">{$orderPayPal.id|escape:'html':'UTF-8'}</dd>
           <dt data-grid-area="status">{l s='Status' mod='ps_checkout'}</dt>
-          <dd>
+          <dd data-test="status-value">
             <span class="badge rounded badge-{$orderPayPal.status.class|escape:'html':'UTF-8'}" data-value="{$orderPayPal.status.value|escape:'html':'UTF-8'}">
               {$orderPayPal.status.translated|escape:'html':'UTF-8'}
             </span>
           </dd>
           <dt data-grid-area="total">{l s='Total' mod='ps_checkout'}</dt>
-          <dd>{$orderPayPal.total}</dd>
+          <dd data-test="total-value">{$orderPayPal.total}</dd>
           <dt data-grid-area="balance">
             {l s='Balance' mod='ps_checkout'}
             <i class="balance-info-icon" title="{l s='Total amount you will receive on your bank account: the order amount, minus transaction fees, minus potential refunds' mod='ps_checkout'}"></i>
           </dt>
-          <dd>{$orderPayPal.balance}</dd>
+          <dd data-test="balance-value">{$orderPayPal.balance}</dd>
           <dt data-grid-area="payment">{l s='Payment mode' mod='ps_checkout'}</dt>
-          <dd>{$orderPaymentDisplayName|escape:'html':'UTF-8'} <img src="{$orderPaymentLogoUri}" alt="{$orderPaymentDisplayName|escape:'html':'UTF-8'}" title="{$orderPaymentDisplayName|escape:'html':'UTF-8'}" height="20"></dd>
+          <dd data-test="payment-mode-value">{$orderPaymentDisplayName|escape:'html':'UTF-8'} <img src="{$orderPaymentLogoUri}" alt="{$orderPaymentDisplayName|escape:'html':'UTF-8'}" title="{$orderPaymentDisplayName|escape:'html':'UTF-8'}" height="20"></dd>
         </dl>
       </div>
     </div>
