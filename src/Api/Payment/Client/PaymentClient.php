@@ -155,7 +155,7 @@ class PaymentClient extends GenericClient
         try {
             $response = parent::post($options);
 
-            if ($response['httpCode'] === 401) {
+            if ($response['httpCode'] === 401 || false !== strpos($response['exceptionMessage'], 'Unauthorized')) {
                 throw new PsCheckoutException('Unauthorized', PsCheckoutException::PSCHECKOUT_HTTP_UNAUTHORIZED);
             }
 
