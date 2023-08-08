@@ -86,7 +86,7 @@ class GetOrderForPaymentRefundedQueryHandler
             (int) $order->getCurrentState(),
             (bool) $order->hasBeenPaid(),
             $this->hasBeenTotallyRefunded($totalRefund, $order),
-            (string) $order->getTotalProductsWithTaxes(), /* @phpstan-ignore-line */
+            (string) $order->getTotalPaid(),
             (string) $totalRefund,
             (int) $order->id_currency
         );

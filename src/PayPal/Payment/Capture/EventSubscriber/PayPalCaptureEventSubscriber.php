@@ -229,7 +229,11 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($this->checkOrderAmount->checkAmount($order->getTotalAmount(), $order->getTotalRefund()) == CheckOrderAmount::ORDER_NOT_FULL_PAID) {
+        $capture = $event->getCapture();
+        // In case there no OrderSlip for this refund, we use the refund amount from payload
+        $totalRefunded = $order->getTotalRefund() ? $order->getTotalRefund() : $capture['amount']['value'];
+
+        if ($this->checkOrderAmount->checkAmount($order->getTotalAmount(), $totalRefunded) === CheckOrderAmount::ORDER_NOT_FULL_PAID) {
             $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED)));
         } else {
             $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED)));
