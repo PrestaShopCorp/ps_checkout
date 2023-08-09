@@ -155,6 +155,8 @@ function upgrade_module_6_3_4_0($module)
                             ]
                         );
                         break;
+                    default:
+                        Configuration::updateGlobalValue($configuration_key, $id_order_state);
                 }
             } else {
                 Configuration::updateGlobalValue($configuration_key, $id_order_state);
