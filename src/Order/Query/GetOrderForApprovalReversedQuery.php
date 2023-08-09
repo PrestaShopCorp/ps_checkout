@@ -18,12 +18,33 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Order\State\Exception;
+namespace PrestaShop\Module\PrestashopCheckout\Order\Query;
 
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 
-class OrderStateException extends PsCheckoutException
+class GetOrderForApprovalReversedQuery
 {
-    const INVALID_ID = 1;
-    const INVALID_MAPPING = 2;
+    /**
+     * @var PayPalOrderId
+     */
+    private $orderPayPalId;
+
+    /**
+     * @param string $orderPayPalId
+     *
+     * @throws PayPalOrderException
+     */
+    public function __construct($orderPayPalId)
+    {
+        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
+    }
+
+    /**
+     * @return PayPalOrderId
+     */
+    public function getOrderPayPalId()
+    {
+        return $this->orderPayPalId;
+    }
 }

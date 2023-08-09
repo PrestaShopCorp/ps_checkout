@@ -19,7 +19,6 @@
  */
 
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalClientTokenProvider;
 
 /**
@@ -41,7 +40,10 @@ class Ps_CheckoutTokenModuleFrontController extends AbstractFrontController
     {
         try {
             if (false === Validate::isLoadedObject($this->context->cart)) {
-                throw new PsCheckoutException('No cart found.', PsCheckoutException::PRESTASHOP_CONTEXT_INVALID);
+                $this->exitWithResponse([
+                    'httpCode' => 400,
+                    'body' => 'No cart found.',
+                ]);
             }
 
             /** @var PayPalClientTokenProvider $clientTokenProvider */

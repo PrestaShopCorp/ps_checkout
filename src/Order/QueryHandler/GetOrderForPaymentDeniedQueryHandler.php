@@ -94,7 +94,7 @@ class GetOrderForPaymentDeniedQueryHandler
      */
     private function hasBeenError(Order $order)
     {
-        return count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PAYMENT_ERROR)))
-            || count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::CANCELED)));
+        return count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_ERROR)))
+            || count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_CANCELED)));
     }
 }

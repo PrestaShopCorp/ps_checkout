@@ -24,6 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\AddOrderPaymentCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQuery;
@@ -136,8 +137,12 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
     public function createOrderPayment(PayPalCaptureCompletedEvent $event)
     {
-        /** @var GetOrderForPaymentCompletedQueryResult $order */
-        $order = $this->commandBus->handle(new GetOrderForPaymentCompletedQuery($event->getPayPalOrderId()->getValue(), $event->getPayPalCaptureId()->getValue()));
+        try {
+            /** @var GetOrderForPaymentCompletedQueryResult $order */
+            $order = $this->commandBus->handle(new GetOrderForPaymentCompletedQuery($event->getPayPalOrderId()->getValue(), $event->getPayPalCaptureId()->getValue()));
+        } catch (OrderNotFoundException $exception) {
+            return;
+        }
 
         if ($order->getOrderPaymentId()) {
             return;
@@ -157,8 +162,12 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
 
     public function setPaymentCompletedOrderStatus(PayPalCaptureCompletedEvent $event)
     {
-        /** @var GetOrderForPaymentCompletedQueryResult $order */
-        $order = $this->commandBus->handle(new GetOrderForPaymentCompletedQuery($event->getPayPalOrderId()->getValue(), $event->getPayPalCaptureId()->getValue()));
+        try {
+            /** @var GetOrderForPaymentCompletedQueryResult $order */
+            $order = $this->commandBus->handle(new GetOrderForPaymentCompletedQuery($event->getPayPalOrderId()->getValue(), $event->getPayPalCaptureId()->getValue()));
+        } catch (OrderNotFoundException $exception) {
+            return;
+        }
 
         if ($order->hasBeenPaid()) {
             return;
@@ -167,75 +176,84 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         switch ($this->checkOrderAmount->checkAmount((string) $order->getTotalAmount(), (string) $event->getCapture()['amount']['value'])) {
             case CheckOrderAmount::ORDER_FULL_PAID:
             case CheckOrderAmount::ORDER_TO_MUCH_PAID:
-                $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PAYMENT_ACCEPTED)));
+                $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED)));
                 break;
             case CheckOrderAmount::ORDER_NOT_FULL_PAID:
-                $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PARTIALLY_PAID)));
+                $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID)));
                 break;
         }
     }
 
     public function setPaymentPendingOrderStatus(PayPalCapturePendingEvent $event)
     {
-        /** @var GetOrderForPaymentPendingQueryResult $order */
-        $order = $this->commandBus->handle(new GetOrderForPaymentPendingQuery($event->getPayPalOrderId()->getValue()));
+        try {
+            /** @var GetOrderForPaymentPendingQueryResult $order */
+            $order = $this->commandBus->handle(new GetOrderForPaymentPendingQuery($event->getPayPalOrderId()->getValue()));
+        } catch (OrderNotFoundException $exception) {
+            return;
+        }
 
         if ($order->isInPending()) {
             return;
         }
 
-        switch ($order->getPaymentMethod()) {
-            case 'card':
-                $newOrderStateId = $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT);
-                break;
-            case 'paypal':
-                $newOrderStateId = $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT);
-                break;
-            default:
-                $newOrderStateId = $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT);
-        }
-
-        $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $newOrderStateId));
+        $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PENDING)));
     }
 
     public function setPaymentDeclinedOrderStatus(PayPalCaptureDeclinedEvent $event)
     {
-        /** @var GetOrderForPaymentDeniedQueryResult $order */
-        $order = $this->commandBus->handle(new GetOrderForPaymentDeniedQuery($event->getPayPalOrderId()->getValue()));
+        try {
+            /** @var GetOrderForPaymentDeniedQueryResult $order */
+            $order = $this->commandBus->handle(new GetOrderForPaymentDeniedQuery($event->getPayPalOrderId()->getValue()));
+        } catch (OrderNotFoundException $exception) {
+            return;
+        }
 
         if ($order->hasBeenError()) {
             return;
         }
 
-        $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PAYMENT_ERROR)));
+        $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_ERROR)));
     }
 
     public function setPaymentRefundedOrderStatus(PayPalCaptureRefundedEvent $event)
     {
-        /** @var GetOrderForPaymentRefundedQueryResult $order */
-        $order = $this->commandBus->handle(new GetOrderForPaymentRefundedQuery($event->getPayPalOrderId()->getValue()));
+        try {
+            /** @var GetOrderForPaymentRefundedQueryResult $order */
+            $order = $this->commandBus->handle(new GetOrderForPaymentRefundedQuery($event->getPayPalOrderId()->getValue()));
+        } catch (OrderNotFoundException $exception) {
+            return;
+        }
 
         if (!$order->hasBeenPaid() || $order->hasBeenTotallyRefund()) {
             return;
         }
 
-        if ($this->checkOrderAmount->checkAmount($order->getTotalAmount(), $order->getTotalRefund()) == CheckOrderAmount::ORDER_NOT_FULL_PAID) {
-            $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PARTIALLY_REFUNDED)));
+        $capture = $event->getCapture();
+        // In case there no OrderSlip for this refund, we use the refund amount from payload
+        $totalRefunded = $order->getTotalRefund() ? $order->getTotalRefund() : $capture['amount']['value'];
+
+        if ($this->checkOrderAmount->checkAmount($order->getTotalAmount(), $totalRefunded) === CheckOrderAmount::ORDER_NOT_FULL_PAID) {
+            $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED)));
         } else {
-            $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::REFUNDED)));
+            $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED)));
         }
     }
 
     public function setPaymentReversedOrderStatus(PayPalCaptureReversedEvent $event)
     {
-        /** @var GetOrderForPaymentReversedQueryResult $order */
-        $order = $this->commandBus->handle(new GetOrderForPaymentReversedQuery($event->getPayPalOrderId()->getValue(), $event->getPayPalCaptureId()->getValue()));
+        try {
+            /** @var GetOrderForPaymentReversedQueryResult $order */
+            $order = $this->commandBus->handle(new GetOrderForPaymentReversedQuery($event->getPayPalOrderId()->getValue(), $event->getPayPalCaptureId()->getValue()));
+        } catch (OrderNotFoundException $exception) {
+            return;
+        }
 
         if (!$order->hasBeenPaid() || $order->hasBeenTotallyRefund()) {
             return;
         }
 
-        $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::REFUNDED)));
+        $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED)));
     }
 
     public function updateCache(PayPalCaptureEvent $event)
