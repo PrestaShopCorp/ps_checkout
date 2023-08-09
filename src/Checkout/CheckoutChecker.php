@@ -108,7 +108,10 @@ class CheckoutChecker
             throw new PsCheckoutException(sprintf('Cart with id %s has no product. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_MISSING);
         }
 
-        if (!$this->isAllProductsInStock($cart)) {
+        if (!$this->isAllProductsInStock($cart)
+            || !$this->checkAllProductsAreStillAvailableInThisState($cart)
+            || !$this->checkAllProductsHaveMinimalQuantities($cart)
+        ) {
             throw new PsCheckoutException(sprintf('Cart with id %s contains products unavailable. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_UNAVAILABLE);
         }
 
@@ -140,9 +143,7 @@ class CheckoutChecker
         }
 
         if (version_compare(_PS_VERSION_, '1.7.3.2', '>=')) {
-            return $cart->isAllProductsInStock() !== true ||
-                (method_exists($cart, 'checkAllProductsAreStillAvailableInThisState') && $cart->checkAllProductsAreStillAvailableInThisState() !== true) ||
-                (method_exists($cart, 'checkAllProductsHaveMinimalQuantities') && $cart->checkAllProductsHaveMinimalQuantities() !== true);
+            return $cart->isAllProductsInStock();
         }
 
         foreach ($cart->getProducts() as $product) {
@@ -155,6 +156,34 @@ class CheckoutChecker
             if ($productQuantity < 0 && !$availableOutOfStock) {
                 return false;
             }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param Cart $cart
+     *
+     * @return bool
+     */
+    private function checkAllProductsAreStillAvailableInThisState(Cart $cart)
+    {
+        if (method_exists($cart, 'checkAllProductsAreStillAvailableInThisState')) {
+            return $cart->checkAllProductsAreStillAvailableInThisState();
+        }
+
+        return true;
+    }
+
+    /**
+     * @param Cart $cart
+     *
+     * @return bool
+     */
+    private function checkAllProductsHaveMinimalQuantities(Cart $cart)
+    {
+        if (method_exists($cart, 'checkAllProductsHaveMinimalQuantities')) {
+            return $cart->checkAllProductsHaveMinimalQuantities();
         }
 
         return true;
