@@ -115,7 +115,7 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_LIVE_STEP_VIEWED' => false,
         'PS_CHECKOUT_INTEGRATION_DATE' => self::INTEGRATION_DATE,
         'PS_CHECKOUT_WEBHOOK_SECRET' => '',
-        'PS_CHECKOUT_LIABILITY_SHIFT_REQ' => '1',
+        'PS_CHECKOUT_LIABILITY_SHIFT_REQ' => '0',
     ];
 
     public $confirmUninstall;
@@ -123,7 +123,7 @@ class Ps_checkout extends PaymentModule
 
     // Needed in order to retrieve the module version easier (in api call headers) than instanciate
     // the module each time to get the version
-    const VERSION = '7.3.3.1';
+    const VERSION = '7.3.4.0';
 
     const INTEGRATION_DATE = '2022-14-06';
 
@@ -142,7 +142,7 @@ class Ps_checkout extends PaymentModule
 
         // We cannot use the const VERSION because the const is not computed by addons marketplace
         // when the zip is uploaded
-        $this->version = '7.3.3.1';
+        $this->version = '7.3.4.0';
         $this->author = 'PrestaShop';
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
@@ -179,12 +179,13 @@ class Ps_checkout extends PaymentModule
         $result = parent::install() &&
             $this->installConfiguration() &&
             $this->installHooks() &&
-            (new PrestaShop\Module\PrestashopCheckout\OrderStates())->installPaypalStates() &&
             (new PrestaShop\Module\PrestashopCheckout\Database\TableManager())->createTable() &&
             (new PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceInstaller())->createFundingSources() &&
             $this->installTabs() &&
             $this->disableIncompatibleCountries() &&
             $this->disableIncompatibleCurrencies();
+
+        (new \PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateInstaller())->install();
 
         // Restore initial PrestaShop shop context
         if (Shop::CONTEXT_SHOP === $savedShopContext) {

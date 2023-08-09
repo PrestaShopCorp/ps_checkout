@@ -107,6 +107,12 @@ class FundingSourceCollectionBuilder
         $sofort->setIsEnabled($this->configuration->isEnabled('sofort'));
         $sofort->setCountries($this->eligibilityConstraint->getCountries('sofort'));
 
-        return [$paypal, $paylater, $card, $bancontact, $eps, $giropay, $ideal, $mybank, $p24, $sofort];
+        // BLIK
+        $blik = new FundingSourceEntity('blik');
+        $blik->setPosition($this->configuration->getPosition('blik', 11));
+        $blik->setIsEnabled($this->configuration->isEnabled('blik'));
+        $blik->setCountries($this->eligibilityConstraint->getCountries('blik'));
+
+        return [$paypal, $paylater, $card, $bancontact, $eps, $giropay, $ideal, $mybank, $p24, $sofort, $blik];
     }
 }

@@ -17,13 +17,29 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+
 use Monolog\Logger;
+use PrestaShop\Module\PrestashopCheckout\Configuration\BatchConfigurationProcessor;
+use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
+use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository;
+use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
+use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep;
+use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
+use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateInstaller;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPresenter;
+use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Settings\RoundingSettings;
+use PrestaShop\Module\PrestashopCheckout\Validator\BatchConfigurationValidator;
+use PrestaShop\Module\PrestashopCheckout\Webhook\WebhookSecretTokenService;
 use Psr\SimpleCache\CacheInterface;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
@@ -68,7 +84,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessUpdatePaymentMethodsOrder()
     {
         $paymentOptions = json_decode(Tools::getValue('paymentMethods'), true);
-        /** @var PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository $fundingSourceConfigurationRepository */
+        /** @var FundingSourceConfigurationRepository $fundingSourceConfigurationRepository */
         $fundingSourceConfigurationRepository = $this->module->getService('ps_checkout.funding_source.configuration.repository');
 
         foreach ($paymentOptions as $key => $paymentOption) {
@@ -96,7 +112,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessLiveStepConfirmed()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep $stepLive */
+        /** @var LiveStep $stepLive */
         $stepLive = $this->module->getService('ps_checkout.step.live');
         $stepLive->confirmed(true);
 
@@ -108,7 +124,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessLiveStepViewed()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep $stepLive */
+        /** @var LiveStep $stepLive */
         $stepLive = $this->module->getService('ps_checkout.step.live');
         $stepLive->viewed(true);
 
@@ -120,7 +136,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessValueBannerClosed()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner $valueBanner */
+        /** @var ValueBanner $valueBanner */
         $valueBanner = $this->module->getService('ps_checkout.step.value');
         $valueBanner->closed(true);
 
@@ -135,7 +151,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessEditRoundingSettings()
     {
-        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        /** @var PayPalConfiguration $paypalConfiguration */
         $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
         $paypalConfiguration->setRoundType(RoundingSettings::ROUND_ON_EACH_ITEM);
         $paypalConfiguration->setPriceRoundMode(RoundingSettings::ROUND_UP_AWAY_FROM_ZERO);
@@ -144,25 +160,16 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     }
 
     /**
-     * AJAX: Retrieve Reporting informations
+     * @deprecated No more used
      */
     public function ajaxProcessGetReportingDatas()
     {
-        try {
-            /** @var PrestaShop\Module\PrestashopCheckout\Presenter\Order\OrderPendingPresenter $pendingOrder */
-            $pendingOrder = $this->module->getService('ps_checkout.presenter.order.pending');
-            /** @var PrestaShop\Module\PrestashopCheckout\Presenter\Transaction\TransactionPresenter $transactionOrder */
-            $transactionOrder = $this->module->getService('ps_checkout.presenter.transaction');
-            $this->ajaxDie(
-                json_encode([
-                    'orders' => $pendingOrder->present(),
-                    'transactions' => $transactionOrder->present(),
-                ])
-            );
-        } catch (Exception $exception) {
-            http_response_code(500);
-            $this->ajaxDie(json_encode(strip_tags($exception->getMessage())));
-        }
+        $this->ajaxDie(
+            json_encode([
+                'orders' => [],
+                'transactions' => [],
+            ])
+        );
     }
 
     /**
@@ -172,7 +179,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         $paymentOption = json_decode(Tools::getValue('paymentOption'), true);
 
-        /** @var PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository $fundingSourceConfigurationRepository */
+        /** @var FundingSourceConfigurationRepository $fundingSourceConfigurationRepository */
         $fundingSourceConfigurationRepository = $this->module->getService('ps_checkout.funding_source.configuration.repository');
 
         $fundingSourceConfigurationRepository->save($paymentOption);
@@ -185,7 +192,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessUpdateCreditCardFields()
     {
-        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        /** @var PayPalConfiguration $paypalConfiguration */
         $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
 
         $paypalConfiguration->setCardPaymentEnabled((bool) Tools::getValue('hostedFieldsEnabled'));
@@ -198,7 +205,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessToggleECOrderPage()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
+        /** @var ExpressCheckoutConfiguration $ecConfiguration */
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
         $ecConfiguration->setOrderPage((bool) Tools::getValue('status'));
 
@@ -212,7 +219,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessToggleECCheckoutPage()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
+        /** @var ExpressCheckoutConfiguration $ecConfiguration */
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
         $ecConfiguration->setCheckoutPage(Tools::getValue('status') ? true : false);
 
@@ -226,7 +233,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessToggleECProductPage()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $ecConfiguration */
+        /** @var ExpressCheckoutConfiguration $ecConfiguration */
         $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
         $ecConfiguration->setProductPage(Tools::getValue('status') ? true : false);
 
@@ -370,7 +377,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             }
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider $paypalOrderProvider */
+        /** @var PayPalOrderProvider $paypalOrderProvider */
         $paypalOrderProvider = $this->module->getService('ps_checkout.paypal.provider.order');
 
         $paypalOrder = $paypalOrderProvider->getById($psCheckoutCart->paypal_order);
@@ -378,7 +385,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             $paypalOrder = [];
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider $fundingSourceTranslationProvider */
+        /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
         $fundingSourceTranslationProvider = $this->module->getService('ps_checkout.funding_source.translation');
         $presenter = new OrderPresenter($this->module, $paypalOrder);
 
@@ -452,7 +459,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             ]));
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $configurationPayPal */
+        /** @var PayPalConfiguration $configurationPayPal */
         $configurationPayPal = $this->module->getService('ps_checkout.paypal.configuration');
 
         $response = (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order($this->context->link))->refund([
@@ -722,7 +729,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
      */
     public function ajaxProcessGetOrRefreshToken()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccountRepository */
+        /** @var PsAccountRepository $psAccountRepository */
         $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
 
         try {
@@ -790,7 +797,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
     private function togglePayLaterConfiguration($method)
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
+        /** @var PayPalPayLaterConfiguration $payLaterConfiguration */
         $payLaterConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
         $payLaterConfiguration->$method(Tools::getValue('status') ? true : false);
 
@@ -799,7 +806,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
     public function ajaxProcessUpsertSecretToken()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Webhook\WebhookSecretTokenService $webhookSecretTokenService */
+        /** @var WebhookSecretTokenService $webhookSecretTokenService */
         $webhookSecretTokenService = $this->module->getService('ps_checkout.webhook.service.secret_token');
 
         $secret = (string) Tools::getValue('body');
@@ -847,6 +854,97 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         }
 
         $this->exitWithResponse($response);
+    }
+
+    public function ajaxProcessFetchConfiguration()
+    {
+        $query = new DbQuery();
+        $query->select('name, value, date_add, date_upd');
+        $query->from('configuration');
+        $query->where('name LIKE "PS_CHECKOUT_%"');
+
+        /** @var int|null $shopId When multishop is disabled, it returns null, so we don't have to restrict results by shop */
+        $shopId = Shop::getContextShopID(true);
+
+        // When ShopId is not NULL, we have to retrieve global values with id_shop = NULL and shop values with id_shop = ShopId
+        if ($shopId) {
+            $query->where('id_shop IS NULL OR id_shop = ' . (int) $shopId);
+        }
+
+        $configurations = Db::getInstance()->executeS($query);
+
+        $response = [
+            'httpCode' => 200,
+            'status' => !empty($configurations),
+            'configuration' => array_map(function ($configuration) {
+                return [
+                    'name' => $configuration['name'],
+                    'value' => $configuration['value'],
+                ];
+            }, $configurations),
+        ];
+
+        $this->exitWithResponse($response);
+    }
+
+    public function ajaxProcessGetMappedOrderStates()
+    {
+        /** @var OrderStateMapper $orderStateMapper */
+        $orderStateMapper = $this->module->getService('ps_checkout.order.state.service.order_state_mapper');
+        $mappedOrderStates = [];
+
+        try {
+            $mappedOrderStates = $orderStateMapper->getMappedOrderStates();
+        } catch (OrderStateException $exception) {
+            if ($exception->getCode() === OrderStateException::INVALID_MAPPING) {
+                (new OrderStateInstaller())->install();
+            }
+
+            $this->exitWithResponse([
+                'httpCode' => 500,
+                'status' => false,
+                'error' => $exception->getMessage(),
+            ]);
+        }
+
+        $this->exitWithResponse([
+            'status' => true,
+            'mappedOrderStates' => $mappedOrderStates,
+        ]);
+    }
+
+    public function ajaxProcessBatchSaveConfiguration()
+    {
+        /** @var BatchConfigurationValidator $configurationValidator */
+        $configurationValidator = $this->module->getService('ps_checkout.validator.batch_configuration');
+        /** @var BatchConfigurationProcessor $batchConfigurationProcessor */
+        $batchConfigurationProcessor = $this->module->getService('ps_checkout.configuration.batch_processor');
+
+        $configuration = json_decode(Tools::getValue('configuration'), true);
+        try {
+            $configurationValidator->validateAjaxBatchConfiguration($configuration);
+            $batchConfigurationProcessor->saveBatchConfiguration($configuration);
+
+            $this->exitWithResponse([
+                'status' => true,
+            ]);
+        } catch (Exception $exception) {
+            $this->exitWithResponse([
+                'httpCode' => 500,
+                'status' => false,
+                'error' => $exception->getMessage(),
+            ]);
+        }
+    }
+
+    public function ajaxProcessGetOrderStates()
+    {
+        $orderStates = OrderState::getOrderStates($this->context->language->id);
+
+        $this->exitWithResponse([
+            'status' => true,
+            'orderStates' => $orderStates,
+        ]);
     }
 
     /**

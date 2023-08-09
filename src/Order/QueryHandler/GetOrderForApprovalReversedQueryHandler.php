@@ -21,13 +21,14 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\QueryHandler;
 
+use Configuration;
 use Order;
-use OrderSlip;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
-use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQuery;
-use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQueryResult;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForApprovalReversedQuery;
+use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForApprovalReversedQueryResult;
+use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShopCollection;
 use PrestaShopDatabaseException;
@@ -35,7 +36,7 @@ use PrestaShopException;
 use PsCheckoutCart;
 use Validate;
 
-class GetOrderForPaymentRefundedQueryHandler
+class GetOrderForApprovalReversedQueryHandler
 {
     /**
      * @var PsCheckoutCartRepository
@@ -48,15 +49,15 @@ class GetOrderForPaymentRefundedQueryHandler
     }
 
     /**
-     * @param GetOrderForPaymentRefundedQuery $query
+     * @param GetOrderForApprovalReversedQuery $query
      *
-     * @return GetOrderForPaymentRefundedQueryResult
+     * @return GetOrderForApprovalReversedQueryResult
      *
      * @throws PsCheckoutException
      * @throws PrestaShopDatabaseException
      * @throws PrestaShopException
      */
-    public function handle(GetOrderForPaymentRefundedQuery $query)
+    public function handle(GetOrderForApprovalReversedQuery $query)
     {
         /** @var PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($query->getOrderPayPalId()->getValue());
@@ -79,34 +80,13 @@ class GetOrderForPaymentRefundedQueryHandler
             throw new OrderNotFoundException('No PrestaShop Order associated to this PayPal Order at this time.');
         }
 
-        $totalRefund = $this->getTotalRefund($order);
+        $hasBeenCanceled = count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_CANCELED)));
 
-        return new GetOrderForPaymentRefundedQueryResult(
+        return new GetOrderForApprovalReversedQueryResult(
             (int) $order->id,
             (int) $order->getCurrentState(),
             (bool) $order->hasBeenPaid(),
-            $this->hasBeenTotallyRefunded($totalRefund, $order),
-            (string) $order->getTotalPaid(),
-            (string) $totalRefund,
-            (int) $order->id_currency
+            (bool) $hasBeenCanceled
         );
-    }
-
-    private function hasBeenTotallyRefunded($refundAmount, $order)
-    {
-        return $refundAmount >= $order->total_paid;
-    }
-
-    private function getTotalRefund(Order $order)
-    {
-        /** @var OrderSlip[] $orderSlips */
-        $orderSlips = $order->getOrderSlipsCollection()->getResults();
-        $refundAmount = 0;
-
-        foreach ($orderSlips as $orderSlip) {
-            $refundAmount += $orderSlip->amount + $orderSlip->shipping_cost_amount;
-        }
-
-        return $refundAmount;
     }
 }

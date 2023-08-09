@@ -30,6 +30,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrder
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureCompletedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeclinedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\PayPalCaptureStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPalError;
@@ -77,22 +78,6 @@ class CapturePayPalOrderCommandHandler
         $orderPayPal = $response['body'];
         $capturePayPal = $orderPayPal['purchase_units'][0]['payments']['captures'][0];
 
-        if (
-            'DECLINED' === $capturePayPal['status']
-            && false === empty($response['body']['payment_source'])
-            && false === empty($response['body']['payment_source'][0]['card'])
-            && false === empty($capturePayPal['processor_response'])
-        ) {
-            $payPalProcessorResponse = new PayPalProcessorResponse(
-                isset($response['body']['payment_source'][0]['card']['brand']) ? $response['body']['payment_source'][0]['card']['brand'] : null,
-                isset($response['body']['payment_source'][0]['card']['type']) ? $response['body']['payment_source'][0]['card']['type'] : null,
-                isset($capturePayPal['processor_response']['avs_code']) ? $capturePayPal['processor_response']['avs_code'] : null,
-                isset($capturePayPal['processor_response']['cvv_code']) ? $capturePayPal['processor_response']['cvv_code'] : null,
-                isset($capturePayPal['processor_response']['response_code']) ? $capturePayPal['processor_response']['response_code'] : null
-            );
-            $payPalProcessorResponse->throwException();
-        }
-
         if ($orderPayPal['status'] === PayPalOrderStatus::COMPLETED) {
             $this->eventDispatcher->dispatch(new PayPalOrderCompletedEvent($orderPayPal['id'], $orderPayPal));
         }
@@ -103,6 +88,28 @@ class CapturePayPalOrderCommandHandler
 
         if ($capturePayPal['status'] === PayPalCaptureStatus::COMPLETED) {
             $this->eventDispatcher->dispatch(new PayPalCaptureCompletedEvent($capturePayPal['id'], $orderPayPal['id'], $capturePayPal));
+        }
+
+        if ($capturePayPal['status'] === PayPalCaptureStatus::DECLINED || $capturePayPal['status'] === PayPalCaptureStatus::FAILED) {
+            $this->eventDispatcher->dispatch(new PayPalCaptureDeclinedEvent($capturePayPal['id'], $orderPayPal['id'], $capturePayPal));
+        }
+
+        if (
+            PayPalCaptureStatus::DECLINED === $capturePayPal['status']
+            && false === empty($orderPayPal['payment_source'])
+            && false === empty($orderPayPal['payment_source']['card'])
+            && false === empty($capturePayPal['processor_response'])
+        ) {
+            $payPalProcessorResponse = new PayPalProcessorResponse(
+                isset($orderPayPal['payment_source']['card']['brand']) ? $orderPayPal['payment_source']['card']['brand'] : null,
+                isset($orderPayPal['payment_source']['card']['type']) ? $orderPayPal['payment_source']['card']['type'] : null,
+                isset($capturePayPal['processor_response']['avs_code']) ? $capturePayPal['processor_response']['avs_code'] : null,
+                isset($capturePayPal['processor_response']['cvv_code']) ? $capturePayPal['processor_response']['cvv_code'] : null,
+                isset($capturePayPal['processor_response']['response_code']) ? $capturePayPal['processor_response']['response_code'] : null
+            );
+            $payPalProcessorResponse->throwException();
+        } elseif (PayPalCaptureStatus::DECLINED === $capturePayPal['status'] || PayPalCaptureStatus::FAILED === $capturePayPal['status']) {
+            throw new PsCheckoutException('PayPal declined the capture', PsCheckoutException::PAYPAL_PAYMENT_CAPTURE_DECLINED);
         }
     }
 }

@@ -25,6 +25,7 @@ use Configuration;
 use Customer;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
+use Product;
 use Psr\Log\LoggerInterface;
 use Validate;
 
@@ -107,9 +108,9 @@ class CheckoutChecker
             throw new PsCheckoutException(sprintf('Cart with id %s has no product. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_MISSING);
         }
 
-        if ($cart->isAllProductsInStock() !== true ||
-            (method_exists($cart, 'checkAllProductsAreStillAvailableInThisState') && $cart->checkAllProductsAreStillAvailableInThisState() !== true) ||
-            (method_exists($cart, 'checkAllProductsHaveMinimalQuantities') && $cart->checkAllProductsHaveMinimalQuantities() !== true)
+        if (!$this->isAllProductsInStock($cart)
+            || !$this->checkAllProductsAreStillAvailableInThisState($cart)
+            || !$this->checkAllProductsHaveMinimalQuantities($cart)
         ) {
             throw new PsCheckoutException(sprintf('Cart with id %s contains products unavailable. Cannot capture the order.', var_export($cart->id, true)), PsCheckoutException::CART_PRODUCT_UNAVAILABLE);
         }
@@ -133,5 +134,58 @@ class CheckoutChecker
         if ($paypalOrderAmount + 0.05 < $cartAmount || $paypalOrderAmount - 0.05 > $cartAmount) {
             throw new PsCheckoutException('The transaction amount does not match with the cart amount.', PsCheckoutException::DIFFERENCE_BETWEEN_TRANSACTION_AND_CART);
         }
+    }
+
+    private function isAllProductsInStock(Cart $cart)
+    {
+        if (!Configuration::get('PS_STOCK_MANAGEMENT')) {
+            return true;
+        }
+
+        if (version_compare(_PS_VERSION_, '1.7.3.2', '>=')) {
+            return $cart->isAllProductsInStock();
+        }
+
+        foreach ($cart->getProducts() as $product) {
+            $availableOutOfStock = Product::isAvailableWhenOutOfStock($product['out_of_stock']);
+            $productQuantity = Product::getQuantity(
+                $product['id_product'],
+                !empty($product['id_product_attribute']) ? $product['id_product_attribute'] : null
+            );
+
+            if ($productQuantity < 0 && !$availableOutOfStock) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param Cart $cart
+     *
+     * @return bool
+     */
+    private function checkAllProductsAreStillAvailableInThisState(Cart $cart)
+    {
+        if (method_exists($cart, 'checkAllProductsAreStillAvailableInThisState')) {
+            return $cart->checkAllProductsAreStillAvailableInThisState();
+        }
+
+        return true;
+    }
+
+    /**
+     * @param Cart $cart
+     *
+     * @return bool
+     */
+    private function checkAllProductsHaveMinimalQuantities(Cart $cart)
+    {
+        if (method_exists($cart, 'checkAllProductsHaveMinimalQuantities')) {
+            return $cart->checkAllProductsHaveMinimalQuantities();
+        }
+
+        return true;
     }
 }

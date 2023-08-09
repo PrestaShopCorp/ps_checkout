@@ -95,8 +95,25 @@ class GetOrderForPaymentPendingQueryHandler
      */
     private function isInPending(Order $order)
     {
-        return count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT)))
-            || count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT)))
-            || count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT)));
+        if (count($order->getHistory($order->id_lang, (int) Configuration::getGlobalValue(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PENDING)))) {
+            return true;
+        }
+
+        // Check deprecated states
+        $deprecatedStates = [
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT,
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT,
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT,
+        ];
+
+        foreach ($deprecatedStates as $deprecatedState) {
+            $deprecatedStateId = (int) Configuration::getGlobalValue($deprecatedState);
+
+            if ($deprecatedStateId && count($order->getHistory($order->id_lang, $deprecatedStateId))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

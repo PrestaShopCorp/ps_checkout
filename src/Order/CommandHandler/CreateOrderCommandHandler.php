@@ -34,7 +34,9 @@ use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
+use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateInstaller;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShopCollection;
@@ -143,28 +145,26 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
             $currencyId = Currency::getIdByIsoCode($capture['amount']['currency_code'], (int) $cart->id_shop);
         }
 
-        if ($paidAmount) {
-            switch ($this->checkOrderAmount->checkAmount((string) $paidAmount, (string) $cart->getOrderTotal(true, \Cart::BOTH))) {
-                case CheckOrderAmount::ORDER_NOT_FULL_PAID:
-                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PARTIALLY_PAID);
-                    break;
-                case CheckOrderAmount::ORDER_FULL_PAID:
-                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PAYMENT_ACCEPTED);
-                    break;
-                case CheckOrderAmount::ORDER_TO_MUCH_PAID:
-                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PAYMENT_ACCEPTED);
+        try {
+            if ($paidAmount) {
+                switch ($this->checkOrderAmount->checkAmount((string) $paidAmount, (string) $cart->getOrderTotal(true, \Cart::BOTH))) {
+                    case CheckOrderAmount::ORDER_NOT_FULL_PAID:
+                        $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID);
+                        break;
+                    case CheckOrderAmount::ORDER_FULL_PAID:
+                        $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED);
+                        break;
+                    case CheckOrderAmount::ORDER_TO_MUCH_PAID:
+                        $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED);
+                }
+            } else {
+                $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PENDING);
             }
-        } else {
-            switch ($fundingSource) {
-                case 'card':
-                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT);
-                    break;
-                case 'paypal':
-                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT);
-                    break;
-                default:
-                    $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT);
+        } catch (OrderStateException $exception) {
+            if ($exception->getCode() === OrderStateException::INVALID_MAPPING) {
+                (new OrderStateInstaller())->install();
             }
+            $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PENDING);
         }
 
         /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
