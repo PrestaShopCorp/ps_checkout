@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Order\State\Service;
 
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
 
 class OrderStateMapper
@@ -41,27 +42,15 @@ class OrderStateMapper
     public function __construct(PrestaShopConfiguration $configuration)
     {
         $this->configuration = $configuration;
-        $this->orderStateMapping = [
-            OrderStateConfigurationKeys::CANCELED => (int) $this->configuration->get(OrderStateConfigurationKeys::CANCELED, ['global' => true]),
-            OrderStateConfigurationKeys::PAYMENT_ERROR => (int) $this->configuration->get(OrderStateConfigurationKeys::PAYMENT_ERROR, ['global' => true]),
-            OrderStateConfigurationKeys::OUT_OF_STOCK_UNPAID => (int) $this->configuration->get(OrderStateConfigurationKeys::OUT_OF_STOCK_UNPAID, ['global' => true]),
-            OrderStateConfigurationKeys::OUT_OF_STOCK_PAID => (int) $this->configuration->get(OrderStateConfigurationKeys::OUT_OF_STOCK_PAID, ['global' => true]),
-            OrderStateConfigurationKeys::PAYMENT_ACCEPTED => (int) $this->configuration->get(OrderStateConfigurationKeys::PAYMENT_ACCEPTED, ['global' => true]), /* @phpstan-ignore-line */
-            OrderStateConfigurationKeys::REFUNDED => (int) $this->configuration->get(OrderStateConfigurationKeys::REFUNDED, ['global' => true]),
-            OrderStateConfigurationKeys::AUTHORIZED => (int) $this->configuration->get(OrderStateConfigurationKeys::AUTHORIZED, ['global' => true]),
-            OrderStateConfigurationKeys::PARTIALLY_PAID => (int) $this->configuration->get(OrderStateConfigurationKeys::PARTIALLY_PAID, ['global' => true]), /* @phpstan-ignore-line */
-            OrderStateConfigurationKeys::PARTIALLY_REFUNDED => (int) $this->configuration->get(OrderStateConfigurationKeys::PARTIALLY_REFUNDED, ['global' => true]),
-            OrderStateConfigurationKeys::WAITING_CAPTURE => (int) $this->configuration->get(OrderStateConfigurationKeys::WAITING_CAPTURE, ['global' => true]),
-            OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT => (int) $this->configuration->get(OrderStateConfigurationKeys::WAITING_CREDIT_CARD_PAYMENT, ['global' => true]),
-            OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT => (int) $this->configuration->get(OrderStateConfigurationKeys::WAITING_PAYPAL_PAYMENT, ['global' => true]),
-            OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT => (int) $this->configuration->get(OrderStateConfigurationKeys::WAITING_LOCAL_PAYMENT, ['global' => true]),
-        ];
+        $this->initialize();
     }
 
     /**
      * @param string $key
      *
      * @return int
+     *
+     * @throws OrderStateException
      */
     public function getIdByKey($key)
     {
@@ -69,21 +58,58 @@ class OrderStateMapper
             return $this->orderStateMapping[$key];
         }
 
-        throw new \InvalidArgumentException(sprintf('Order state key "%s" is not mapped', var_export($key, true)));
+        throw new OrderStateException(sprintf('Order state key "%s" is not mapped', var_export($key, true)), OrderStateException::INVALID_MAPPING);
     }
 
     /**
      * @return array
+     *
+     * @throws OrderStateException
      */
-    public function getOrderStateMapping()
+    public function getMappedOrderStates()
     {
-        return $this->orderStateMapping;
+        return [
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PENDING => [
+                'default' => '0',
+                'value' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PENDING),
+            ],
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED => [
+                'default' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_OS_PAYMENT),
+                'value' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED),
+            ],
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_CANCELED => [
+                'default' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_OS_CANCELED),
+                'value' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_CANCELED),
+            ],
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_ERROR => [
+                'default' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_OS_ERROR),
+                'value' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_ERROR),
+            ],
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED => [
+                'default' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_OS_REFUND),
+                'value' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED),
+            ],
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED => [
+                'default' => '0',
+                'value' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED),
+            ],
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID => [
+                'default' => '0',
+                'value' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID),
+            ],
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_AUTHORIZED => [
+                'default' => '0',
+                'value' => (string) $this->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_AUTHORIZED),
+            ],
+        ];
     }
 
     /**
      * @param int $orderCurrentState
      *
      * @return string
+     *
+     * @throws OrderStateException
      */
     public function getKeyById($orderCurrentState)
     {
@@ -93,6 +119,34 @@ class OrderStateMapper
             return $orderStateMapping[$orderCurrentState];
         }
 
-        throw new \InvalidArgumentException(sprintf('Order state id "%s" is not mapped', var_export($orderCurrentState, true)));
+        throw new OrderStateException(sprintf('Order state id "%s" is not mapped', var_export($orderCurrentState, true)), OrderStateException::INVALID_MAPPING);
+    }
+
+    private function initialize()
+    {
+        $this->orderStateMapping = [
+            // PrestaShop native order statuses
+            OrderStateConfigurationKeys::PS_OS_CANCELED => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_OS_CANCELED, ['global' => true]),
+            OrderStateConfigurationKeys::PS_OS_ERROR => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_OS_ERROR, ['global' => true]),
+            OrderStateConfigurationKeys::PS_OS_OUTOFSTOCK_UNPAID => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_OS_OUTOFSTOCK_UNPAID, ['global' => true]),
+            OrderStateConfigurationKeys::PS_OS_OUTOFSTOCK_PAID => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_OS_OUTOFSTOCK_PAID, ['global' => true]),
+            OrderStateConfigurationKeys::PS_OS_PAYMENT => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_OS_PAYMENT, ['global' => true]),
+            OrderStateConfigurationKeys::PS_OS_REFUND => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_OS_REFUND, ['global' => true]),
+            // PrestaShop Checkout order statuses
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PENDING => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PENDING, ['global' => true]),
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_COMPLETED, ['global' => true]),
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_CANCELED => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_CANCELED, ['global' => true]),
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_ERROR => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_ERROR, ['global' => true]),
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED, ['global' => true]),
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED, ['global' => true]),
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_PAID, ['global' => true]),
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_AUTHORIZED => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_AUTHORIZED, ['global' => true]),
+            // PrestaShop Checkout deprecated order statuses
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIAL_REFUND => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIAL_REFUND, ['global' => true]),
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_WAITING_CAPTURE => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_WAITING_CAPTURE, ['global' => true]),
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_WAITING_CREDIT_CARD_PAYMENT, ['global' => true]),
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_WAITING_LOCAL_PAYMENT, ['global' => true]),
+            OrderStateConfigurationKeys::PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT => (int) $this->configuration->get(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_WAITING_PAYPAL_PAYMENT, ['global' => true]),
+        ];
     }
 }

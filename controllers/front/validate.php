@@ -53,17 +53,26 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             $bodyContent = file_get_contents('php://input');
 
             if (empty($bodyContent)) {
-                throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
+                $this->exitWithResponse([
+                    'httpCode' => 400,
+                    'body' => 'Payload invalid',
+                ]);
             }
 
             $bodyValues = json_decode($bodyContent, true);
 
             if (empty($bodyValues)) {
-                throw new PsCheckoutException('Body cannot be empty', PsCheckoutException::PSCHECKOUT_VALIDATE_BODY_EMPTY);
+                $this->exitWithResponse([
+                    'httpCode' => 400,
+                    'body' => 'Payload invalid',
+                ]);
             }
 
             if (empty($bodyValues['orderID']) || false === Validate::isGenericName($bodyValues['orderID'])) {
-                throw new PsCheckoutException('PayPal Order identifier invalid', PsCheckoutException::PAYPAL_ORDER_IDENTIFIER_MISSING);
+                $this->exitWithResponse([
+                    'httpCode' => 400,
+                    'body' => 'Missing PayPal Order Id',
+                ]);
             }
 
             $this->paypalOrderId = $bodyValues['orderID'];
@@ -73,7 +82,10 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($this->paypalOrderId);
 
             if (!Validate::isLoadedObject($psCheckoutCart)) {
-                throw new PsCheckoutException('The cart cannot be found', PsCheckoutException::PRESTASHOP_CART_NOT_FOUND);
+                $this->exitWithResponse([
+                    'httpCode' => 400,
+                    'body' => 'No cart found.',
+                ]);
             }
 
             /** @var EventDispatcherInterface $eventDispatcher */
@@ -89,11 +101,6 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
 
             $this->sendOkResponse($this->generateResponse());
         } catch (Exception $exception) {
-            $this->module->getLogger()->error('CheckoutCompletedEvent failed', [
-                'exception_class' => get_class($exception),
-                'exception_message' => $exception->getMessage(),
-                'exception_code' => $exception->getCode(),
-            ]);
             $response = $this->generateResponse();
 
             if (!empty($response)) {

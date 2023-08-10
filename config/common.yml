@@ -291,6 +291,10 @@ services:
       - "@ps_checkout.express_checkout.configuration"
       - "@ps_checkout.pay_later.configuration"
 
+  ps_checkout.validator.batch_configuration:
+    class: 'PrestaShop\Module\PrestashopCheckout\Validator\BatchConfigurationValidator'
+    public: true
+
   ps_checkout.cache.directory:
     class: 'PrestaShop\ModuleLibCacheDirectoryProvider\Cache\CacheDirectoryProvider'
     public: true
@@ -422,6 +426,12 @@ services:
       - "@ps_checkout.webhook.service.secret_token"
       - ["@ps_checkout.webhook.handler.event.configuration_updated"]
 
+  ps_checkout.configuration.batch_processor:
+    class: 'PrestaShop\Module\PrestashopCheckout\Configuration\BatchConfigurationProcessor'
+    public: true
+    arguments:
+      - '@ps_checkout.configuration'
+
   ps_accounts.installer:
     class: 'PrestaShop\PsAccountsInstaller\Installer\Installer'
     public: true
@@ -462,6 +472,7 @@ services:
         PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentPendingQuery: "ps_checkout.query.handler.order.get_order_for_payment_pending"
         PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQuery: "ps_checkout.query.handler.order.get_order_for_payment_refunded"
         PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQuery: "ps_checkout.query.handler.order.get_order_for_payment_reversed"
+        PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForApprovalReversedQuery: "ps_checkout.query.handler.order.get_order_for_approval_reversed"
         PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query\GetClientTokenPayPalQuery: "ps_checkout.query.handler.paypal.identity.get_client_token"
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetCurrentPayPalOrderStatusQuery: "ps_checkout.query.handler.paypal.order.get_current_paypal_order_status"
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery: "ps_checkout.query.handler.paypal.order.get_paypal_order_for_checkout_completed"
@@ -497,6 +508,7 @@ services:
       - "@ps_checkout.cache.paypal.order"
       - "@ps_checkout.checkout.checker"
       - "@ps_checkout.paypal.order.service.check_transition_paypal_order_status"
+      - "@ps_checkout.order.state.service.order_state_mapper"
 
   ps_checkout.event.subscriber.paypal.capture:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber'
@@ -600,6 +612,12 @@ services:
 
   ps_checkout.query.handler.order.get_order_for_payment_reversed:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentReversedQueryHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.repository.pscheckoutcart"
+
+  ps_checkout.query.handler.order.get_order_for_approval_reversed:
+    class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForApprovalReversedQueryHandler'
     public: true
     arguments:
       - "@ps_checkout.repository.pscheckoutcart"

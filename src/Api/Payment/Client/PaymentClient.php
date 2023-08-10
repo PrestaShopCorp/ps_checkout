@@ -148,11 +148,16 @@ class PaymentClient extends GenericClient
      * @return array
      *
      * @throws HttpTimeoutException
+     * @throws PsCheckoutException
      */
     private function postWithRetry(array $options, $delay = 2, $retries = 2)
     {
         try {
             $response = parent::post($options);
+
+            if ($response['httpCode'] === 401 || false !== strpos($response['exceptionMessage'], 'Unauthorized')) {
+                throw new PsCheckoutException('Unauthorized', PsCheckoutException::PSCHECKOUT_HTTP_UNAUTHORIZED);
+            }
 
             if (false !== $response['status']) {
                 return $response;
@@ -164,6 +169,11 @@ class PaymentClient extends GenericClient
                 && false !== strpos($response['exceptionMessage'], 'cURL error 28')
             ) {
                 throw new HttpTimeoutException($response['exceptionMessage'], PsCheckoutException::PSL_TIMEOUT);
+            } elseif (
+                isset($response['exceptionCode'])
+                && $response['exceptionCode'] === PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION
+            ) {
+                throw new PsCheckoutException($response['exceptionMessage'], PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION);
             }
 
             if (
