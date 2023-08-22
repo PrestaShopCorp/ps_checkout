@@ -22,6 +22,7 @@ use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * This controller receive ajax call on customer click on a payment button
@@ -117,6 +118,10 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
                     $psCheckoutCartRepository->save($psCheckoutCart);
                     throw new PsCheckoutException(sprintf('Unable to patch PayPal Order - Exception %s : %s', $response['exceptionCode'], $response['exceptionMessage']), PsCheckoutException::PSCHECKOUT_UPDATE_ORDER_HANDLE_ERROR);
                 }
+
+                /** @var CacheInterface $orderPayPalCache */
+                $orderPayPalCache = $this->module->getService('ps_checkout.cache.paypal.order');
+                $orderPayPalCache->delete($psCheckoutCart->getPaypalOrderId());
 
                 $this->module->getLogger()->info(
                     'PayPal Order patched',
