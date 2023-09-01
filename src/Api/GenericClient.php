@@ -112,6 +112,14 @@ class GenericClient
                     $exception
                 )
             );
+        } catch (\RuntimeException $exception) {
+            return $this->handleException(
+                new PsCheckoutException(
+                    $exception->getMessage(),
+                    PsCheckoutException::PSCHECKOUT_RUNTIME_EXCEPTION,
+                    $exception
+                )
+            );
         } catch (Exception $exception) {
             return $this->handleException($exception);
         }

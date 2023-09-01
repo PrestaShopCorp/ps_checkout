@@ -88,4 +88,5 @@ class PsCheckoutException extends \Exception
     const CART_ADDRESS_INVOICE_INVALID = 56;
     const CART_ADDRESS_DELIVERY_INVALID = 57;
     const CART_DELIVERY_OPTION_INVALID = 58;
+    const PSCHECKOUT_RUNTIME_EXCEPTION = 59;
 }
