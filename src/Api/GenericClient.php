@@ -105,10 +105,6 @@ class GenericClient
 
         try {
             $response = $this->client->sendRequest($request);
-        } catch (\GuzzleHttp\Ring\Exception\ConnectException $exception) {
-            return $this->handleException(new NetworkException($exception->getMessage(), $request, $exception));
-        } catch (\GuzzleHttp\Ring\Exception\RingException $exception) {
-            return $this->handleException(new TransferException($exception->getMessage(), 0, $exception));
         } catch (Exception $exception) {
             return $this->handleException($exception);
         }
