@@ -50,22 +50,29 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
     public function postProcess()
     {
         try {
-            $bodyContent = file_get_contents('php://input');
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $bodyContent = file_get_contents('php://input');
 
-            if (empty($bodyContent)) {
-                $this->exitWithResponse([
-                    'httpCode' => 400,
-                    'body' => 'Payload invalid',
-                ]);
-            }
+                if (empty($bodyContent)) {
+                    $this->exitWithResponse([
+                        'httpCode' => 400,
+                        'body' => 'Payload invalid',
+                    ]);
+                }
 
-            $bodyValues = json_decode($bodyContent, true);
+                $bodyValues = json_decode($bodyContent, true);
 
-            if (empty($bodyValues)) {
-                $this->exitWithResponse([
-                    'httpCode' => 400,
-                    'body' => 'Payload invalid',
-                ]);
+                if (empty($bodyValues)) {
+                    $this->exitWithResponse([
+                        'httpCode' => 400,
+                        'body' => 'Payload invalid',
+                    ]);
+                }
+            } else {
+                $bodyValues = [
+                    'orderID' => Tools::getValue('token'),
+                    'payerID' => Tools::getValue('PayerID'),
+                ];
             }
 
             if (empty($bodyValues['orderID']) || false === Validate::isGenericName($bodyValues['orderID'])) {
@@ -94,9 +101,9 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             $eventDispatcher->dispatch(new CheckoutCompletedEvent(
                 $psCheckoutCart->getIdCart(),
                 $this->paypalOrderId,
-                (isset($bodyValues['fundingSource']) && Validate::isGenericName($bodyValues['fundingSource'])) ? $bodyValues['fundingSource'] : null,
-                isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'],
-                isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields']
+                (isset($bodyValues['fundingSource']) && Validate::isGenericName($bodyValues['fundingSource'])) ? $bodyValues['fundingSource'] : $psCheckoutCart->getPaypalFundingSource(),
+                isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'] || $psCheckoutCart->isExpressCheckout(),
+                isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'] || $psCheckoutCart->isHostedFields()
             ));
 
             $this->sendOkResponse($this->generateResponse());
@@ -199,6 +206,23 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
         $order = $orders->getFirst();
 
         $cart = new Cart($psCheckoutCart->getIdCart());
+
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            Tools::redirect($this->context->link->getPageLink(
+                'order-confirmation',
+                true,
+                (int) $order->id_lang,
+                [
+                    'paypal_status' => $response['status'],
+                    'paypal_order' => $response['paypalOrderId'],
+                    'paypal_transaction' => $response['transactionIdentifier'],
+                    'id_cart' => $psCheckoutCart->getIdCart(),
+                    'id_module' => (int) $this->module->id,
+                    'id_order' => (int) $order->id,
+                    'key' => $cart->secure_key,
+                ]
+            ));
+        }
 
         $this->exitWithResponse([
             'status' => true,

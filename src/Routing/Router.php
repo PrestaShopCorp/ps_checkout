@@ -37,6 +37,14 @@ class Router
     /**
      * @return string
      */
+    public function getCheckoutValidateLink()
+    {
+        return $this->context->link->getModuleLink('ps_checkout', 'validate', [], true, $this->context->language->id, $this->context->shop->id);
+    }
+
+    /**
+     * @return string
+     */
     public function getContactLink($orderId = null)
     {
         return $this->context->link->getPageLink('contact', true, $this->context->language->id, ['id_order' => (int) $orderId]);
