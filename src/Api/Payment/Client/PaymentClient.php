@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
-use Configuration;
 use Context;
 use GuzzleHttp\Event\Emitter;
 use GuzzleHttp\HandlerStack;
@@ -34,6 +33,7 @@ use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\Exception\HttpTimeoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Routing\Router;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\Module\PrestashopCheckout\Version\Version;
 use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
@@ -69,6 +69,9 @@ class PaymentClient extends GenericClient
             /** @var LoggerInterface $logger */
             $logger = $module->getService('ps_checkout.logger');
 
+            /** @var Router $router */
+            $router = $module->getService('ps_checkout.prestashop.router');
+
             $clientConfiguration = [
                 'base_url' => (new PaymentEnv())->getPaymentApiUrl(),
                 'verify' => $this->getVerify(),
@@ -79,14 +82,7 @@ class PaymentClient extends GenericClient
                     'Accept' => 'application/json',
                     'Authorization' => 'Bearer ' . $this->token,  // Token we get from PsAccounts
                     'Shop-Id' => $this->shopUid,                  // Shop UUID we get from PsAccounts
-                    'Hook-Url' => $this->link->getModuleLink(
-                        'ps_checkout',
-                        'DispatchWebHook',
-                        [],
-                        true,
-                        (int) Configuration::get('PS_LANG_DEFAULT'),
-                        (int) Context::getContext()->shop->id
-                    ),
+                    'Hook-Url' => $router->getDispatchWebhookLink((int) Context::getContext()->shop->id),
                     'Bn-Code' => (new ShopContext())->getBnCode(),
                     'Module-Version' => $version->getSemVersion(), // version of the module
                     'Prestashop-Version' => _PS_VERSION_, // prestashop version
