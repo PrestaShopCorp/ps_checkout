@@ -20,12 +20,14 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Payload;
 
+use Context;
 use libphonenumber\PhoneNumberType;
 use libphonenumber\PhoneNumberUtil;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PaypalCountryCodeMatrice;
+use PrestaShop\Module\PrestashopCheckout\Routing\Router;
 
 /**
  * Build the payload for creating paypal order
@@ -161,7 +163,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         ];
 
         $psCheckoutCartCollection = new \PrestaShopCollection('PsCheckoutCart');
-        $psCheckoutCartCollection->where('id_cart', '=', (int) \Context::getContext()->cart->id);
+        $psCheckoutCartCollection->where('id_cart', '=', (int) Context::getContext()->cart->id);
 
         /** @var \PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $psCheckoutCartCollection->getFirst();
@@ -292,6 +294,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         $context = \Context::getContext();
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
+        /** @var Router $router */
+        $router = $module->getService('ps_checkout.prestashop.router');
         $node['application_context'] = [
             'brand_name' => \Configuration::get(
                 'PS_SHOP_NAME',
@@ -300,16 +304,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 (int) $context->shop->id
             ),
             'shipping_preference' => $this->expressCheckout ? 'GET_FROM_FILE' : 'SET_PROVIDED_ADDRESS',
-            'return_url' => \Context::getContext()->link->getPageLink(
-                'order-confirmation',
-                true,
-                (int) $context->cart->id_lang,
-                [
-                    'id_cart' => (int) $context->cart->id,
-                    'key' => $context->cart->secure_key,
-                    'id_module' => (int) $module->id,
-                ]
-            ),
+            'return_url' => $router->getCheckoutValidateLink(),
         ];
 
         $this->getPayload()->addAndMergeItems($node);
