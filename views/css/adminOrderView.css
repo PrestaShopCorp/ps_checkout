@@ -8,6 +8,20 @@
   color: #fff;
 }
 
+#ps_checkout .badge.badge-paypal-environment-sandbox {
+  background-color: #5E5E5E;
+  color: #FFF;
+  font-size: 12px;
+  border-radius: 10px!important;
+}
+
+#ps_checkout .badge.badge-paypal-environment-live {
+  background-color: #174EEF;
+  color: #FFF;
+  font-size: 12px;
+  border-radius: 10px!important;
+}
+
 #ps_checkout .panel-wrapper {
   flex-grow: 1;
   padding: 18px 14px;
