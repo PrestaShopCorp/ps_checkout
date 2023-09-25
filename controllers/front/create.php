@@ -157,6 +157,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                     'isExpressCheckout' => $isExpressCheckout,
                     'isHostedFields' => $isHostedFields,
                     'id_cart' => (int) $this->context->cart->id,
+                    'amount' => $this->context->cart->getOrderTotal(true, Cart::BOTH),
                     'environment' => $configuration->getPaymentMode(),
                     'intent' => $configuration->getIntent(),
                 ]
