@@ -71,7 +71,7 @@ class PsCheckoutCart extends ObjectModel
     public $paypal_authorization_expire;
 
     /**
-     * @var string PayPal environment information
+     * @var string|null PayPal environment information
      */
     public $environment = 'LIVE';
 
@@ -261,7 +261,7 @@ class PsCheckoutCart extends ObjectModel
      */
     public function getEnvironment()
     {
-        return $this->environment;
+        return $this->environment === 'SANDBOX' ? $this->environment : 'LIVE';
     }
 
     /**
