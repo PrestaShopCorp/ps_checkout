@@ -20,7 +20,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Routing;
 
+use Configuration;
 use Context;
+use Shop;
 
 class Router
 {
@@ -35,10 +37,37 @@ class Router
     }
 
     /**
+     * @param int|null $orderId
+     *
      * @return string
      */
     public function getContactLink($orderId = null)
     {
         return $this->context->link->getPageLink('contact', true, $this->context->language->id, ['id_order' => (int) $orderId]);
+    }
+
+    /**
+     * @param int $idShop
+     *
+     * @return string
+     */
+    public function getDispatchWebhookLink($idShop)
+    {
+        $idLang = Configuration::get('PS_LANG_DEFAULT');
+
+        return $this->getBaseLink($idShop) . 'index.php?controller=DispatchWebHook&module=ps_checkout&fc=module&id_lang=' . (int) $idLang . '&id_shop=' . (int) $idShop;
+    }
+
+    /**
+     * @param int $idShop
+     *
+     * @return string
+     */
+    private function getBaseLink($idShop)
+    {
+        $shop = new Shop($idShop);
+        $base = Configuration::get('PS_SSL_ENABLED') ? 'https://' . $shop->domain_ssl : 'http://' . $shop->domain;
+
+        return $base . $shop->physical_uri;
     }
 }
