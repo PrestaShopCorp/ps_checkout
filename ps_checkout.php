@@ -1272,6 +1272,7 @@ class Ps_checkout extends PaymentModule
     {
         /** @var Shop $shop */
         $shop = $params['object'];
+        $now = date('Y-m-d H:i:s');
 
         $toggleShopConfigurationCommandHandler = new \PrestaShop\Module\PrestashopCheckout\Configuration\ToggleShopConfigurationCommandHandler();
         $toggleShopConfigurationCommandHandler->handle(
@@ -1281,9 +1282,45 @@ class Ps_checkout extends PaymentModule
             )
         );
 
-        $this->installConfiguration();
+        foreach ($this->configurationList as $name => $value) {
+            if (Configuration::hasKey($name, null, (int) $shop->id_shop_group, (int) $shop->id)) {
+                Db::getInstance()->update(
+                    'configuration',
+                    [
+                        'name' => pSQL($name),
+                        'value' => pSQL($value),
+                        'date_add' => pSQL($now),
+                        'date_upd' => pSQL($now),
+                        'id_shop' => (int) $shop->id,
+                        'id_shop_group' => (int) $shop->id_shop_group,
+                    ],
+                    'name = \'' . pSQL($name) . '\', id_shop = ' . (int) $shop->id . ', id_shop_group = ' . (int) $shop->id_shop_group,
+                    1,
+                    true,
+                    false
+                );
+            } else {
+                Db::getInstance()->insert(
+                    'configuration',
+                    [
+                        'name' => pSQL($name),
+                        'value' => pSQL($value),
+                        'date_add' => pSQL($now),
+                        'date_upd' => pSQL($now),
+                        'id_shop' => (int) $shop->id,
+                        'id_shop_group' => (int) $shop->id_shop_group,
+                    ],
+                    true,
+                    false
+                );
+            }
+
+            Configuration::set($name, $value, (int) $shop->id_shop_group, (int) $shop->id);
+        }
+
         $this->addCheckboxCarrierRestrictionsForModule([(int) $shop->id]);
         $this->addCheckboxCountryRestrictionsForModule([(int) $shop->id]);
+
         if ($this->currencies_mode === 'checkbox') {
             $this->addCheckboxCurrencyRestrictionsForModule([(int) $shop->id]);
         } elseif ($this->currencies_mode === 'radio') {
