@@ -32,6 +32,7 @@ use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateInstaller;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
@@ -398,6 +399,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             'orderPaymentDisplayName' => $fundingSourceTranslationProvider->getPaymentMethodName($psCheckoutCart->paypal_funding),
             'orderPaymentLogoUri' => $this->module->getPathUri() . 'views/img/' . $psCheckoutCart->paypal_funding . '.svg',
             'psCheckoutCart' => $psCheckoutCart,
+            'isProductionEnv' => $psCheckoutCart->getEnvironment() === Mode::LIVE,
         ]);
 
         $this->ajaxDie(json_encode([
