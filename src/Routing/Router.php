@@ -37,8 +37,6 @@ class Router
     }
 
     /**
-     * @param int|null $orderId
-     *
      * @return string
      */
     public function getCheckoutValidateLink()
@@ -47,6 +45,8 @@ class Router
     }
 
     /**
+     * @param int|null $orderId
+     *
      * @return string
      */
     public function getContactLink($orderId = null)
