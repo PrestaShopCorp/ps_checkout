@@ -61,9 +61,7 @@ class Router
      */
     public function getDispatchWebhookLink($idShop)
     {
-        $idLang = Configuration::get('PS_LANG_DEFAULT');
-
-        return $this->getBaseLink($idShop) . 'index.php?controller=DispatchWebHook&module=ps_checkout&fc=module&id_lang=' . (int) $idLang . '&id_shop=' . (int) $idShop;
+        return $this->context->link->getModuleLink('ps_checkout', 'DispatchWebHook', [], true, (int) Configuration::get('PS_LANG_DEFAULT'), (int) $idShop);
     }
 
     /**
