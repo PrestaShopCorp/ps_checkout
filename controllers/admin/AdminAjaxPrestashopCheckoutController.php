@@ -378,6 +378,24 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             }
         }
 
+        /** @var PayPalConfiguration $configurationPayPal */
+        $configurationPayPal = $this->module->getService('ps_checkout.paypal.configuration');
+
+        if ($configurationPayPal->getPaymentMode() !== $psCheckoutCart->getEnvironment()) {
+            http_response_code(422);
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    strtr(
+                        $this->l('PayPal Order [PAYPAL_ORDER_ID] is not in the same environment as PrestaShop Checkout'),
+                        [
+                            '[PAYPAL_ORDER_ID]' => $psCheckoutCart->paypal_order,
+                        ]
+                    ),
+                ],
+            ]));
+        }
+
         /** @var PayPalOrderProvider $paypalOrderProvider */
         $paypalOrderProvider = $this->module->getService('ps_checkout.paypal.provider.order');
 
