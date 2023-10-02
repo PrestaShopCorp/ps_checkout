@@ -58,7 +58,7 @@ export class PrestashopPs1_7Service {
     if (document.body.id !== 'checkout') return false;
     const step = document.querySelector('#checkout-personal-information-step');
 
-    return step && step.classList.contains('-current');
+    return step && (step.classList.contains('-current') || step.classList.contains('step--current'));
   }
 
   static isIframeProductPage() {
