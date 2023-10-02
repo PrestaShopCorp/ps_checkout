@@ -80,7 +80,7 @@ export class PaymentOptionComponent extends BaseComponent {
         : this.$('funding-source.name.default');
     let element = Array.prototype.slice
       .call(this.data.HTMLElementContainer.querySelectorAll('*'))
-      .find(item => item.innerHTML.trim() === label.trim());
+      .find(item => item.innerText.trim() === label.trim());
 
     if (!element) {
       console.error('HTMLElement label "' + label.trim() + '" not found.');
