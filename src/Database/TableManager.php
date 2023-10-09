@@ -46,7 +46,7 @@ class TableManager
      */
     public function createTable()
     {
-        return $this->db->execute('
+        $result = $this->db->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_order_matrice` (
             `id_order_matrice` int(10) unsigned NOT NULL AUTO_INCREMENT,
             `id_order_prestashop` int(10) unsigned NOT NULL,
@@ -81,6 +81,10 @@ class TableManager
             INDEX (`id_shop`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');
+
+        $this->checkTable();
+
+        return (bool) $result;
     }
 
     /**
@@ -90,8 +94,8 @@ class TableManager
      */
     public function dropTable()
     {
+        // Avoid to loose PayPal data if module is reset or uninstall
         return true;
-        //return $this->db->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'pscheckout_cart`');
     }
 
     /**
@@ -108,5 +112,34 @@ class TableManager
             FROM `' . _DB_PREFIX_ . 'pscheckout_order_matrice` AS om
             INNER JOIN `' . _DB_PREFIX_ . 'orders` AS o ON (om.id_order_prestashop = o.id_order)
         ');
+    }
+
+    /**
+     * Check if existing database is up to date
+     * Due to `CREATE TABLE IF NOT EXISTS` we need to check if table is up to date
+     *
+     * @return void
+     */
+    public function checkTable()
+    {
+        $databaseFields = [];
+        $fields = $this->db->executeS('SHOW COLUMNS FROM `' . _DB_PREFIX_ . 'pscheckout_cart`');
+
+        if (!empty($fields)) {
+            foreach ($fields as $field) {
+                $databaseFields[] = $field['Field'];
+                if ($field['Field'] === 'paypal_token' && $field['Type'] !== 'text') {
+                    $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` CHANGE `paypal_token` `paypal_token` text DEFAULT NULL;');
+                }
+            }
+        }
+
+        $objectDefinition = \PsCheckoutCart::$definition;
+        $objectFields = array_keys($objectDefinition['fields']);
+        $missingFields = array_diff($objectFields, $databaseFields);
+
+        if (in_array('environment', $missingFields, true)) {
+            $this->db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` ADD COLUMN `environment` varchar(20) DEFAULT NULL;');
+        }
     }
 }
