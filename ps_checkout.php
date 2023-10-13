@@ -134,6 +134,8 @@ class Ps_checkout extends PaymentModule
      * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
      */
     private $serviceContainer;
+    private static $merchantIsValid;
+    private static $currencyIsAllowed;
 
     public function __construct()
     {
@@ -393,6 +395,10 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayPersonalInformationTop()
     {
+        if (!$this->merchantIsValid()) {
+            return '';
+        }
+
         return $this->display(__FILE__, 'views/templates/hook/displayPersonalInformationTop.tpl');
     }
 
@@ -503,6 +509,10 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayFooterProduct()
     {
+        if (!$this->merchantIsValid()) {
+            return '';
+        }
+
         return $this->display(__FILE__, 'views/templates/hook/displayFooterProduct.tpl');
     }
 
@@ -552,6 +562,10 @@ class Ps_checkout extends PaymentModule
      */
     public function hookActionAfterDeleteProductInCart()
     {
+        if (!$this->merchantIsValid()) {
+            return;
+        }
+
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService('ps_checkout.context.shop');
 
@@ -567,6 +581,10 @@ class Ps_checkout extends PaymentModule
      */
     public function hookActionCartUpdateQuantityBefore()
     {
+        if (!$this->merchantIsValid()) {
+            return;
+        }
+
         if (false === Validate::isLoadedObject($this->context->cart)) {
             return;
         }
@@ -592,6 +610,10 @@ class Ps_checkout extends PaymentModule
      */
     public function hookActionBeforeCartUpdateQty()
     {
+        if (!$this->merchantIsValid()) {
+            return;
+        }
+
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService('ps_checkout.context.shop');
 
@@ -713,6 +735,10 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayOrderConfirmation(array $params)
     {
+        if (!$this->merchantIsValid()) {
+            return '';
+        }
+
         /** @var Order $order */
         $order = (isset($params['objOrder'])) ? $params['objOrder'] : $params['order'];
 
@@ -740,19 +766,45 @@ class Ps_checkout extends PaymentModule
      */
     public function checkCurrency($cart)
     {
+        if (isset(static::$currencyIsAllowed[$cart->id_currency])) {
+            return static::$currencyIsAllowed[$cart->id_currency];
+        }
+
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository $codeRepository */
+        $codeRepository = $this->getService('ps_checkout.repository.paypal.code');
         $currency_order = Currency::getCurrencyInstance($cart->id_currency);
+        $isCurrencySupported = false;
+
+        foreach (array_keys($codeRepository->getCurrencyCodes()) as $supportedCurrencyCode) {
+            if (strcasecmp($supportedCurrencyCode, $currency_order->iso_code) === 0) {
+                $isCurrencySupported = true;
+            }
+        }
+
+        if (!$isCurrencySupported) {
+            static::$currencyIsAllowed[$cart->id_currency] = false;
+
+            return false;
+        }
+
         /** @var array $currencies_module */
         $currencies_module = $this->getCurrency($cart->id_currency);
 
         if (empty($currencies_module)) {
+            static::$currencyIsAllowed[$cart->id_currency] = false;
+
             return false;
         }
 
         foreach ($currencies_module as $currency_module) {
             if ($currency_order->id == $currency_module['id_currency']) {
+                static::$currencyIsAllowed[$cart->id_currency] = true;
+
                 return true;
             }
         }
+
+        static::$currencyIsAllowed[$cart->id_currency] = false;
 
         return false;
     }
@@ -876,10 +928,13 @@ class Ps_checkout extends PaymentModule
      */
     public function merchantIsValid()
     {
-        /** @var \PrestaShop\Module\PrestashopCheckout\Validator\MerchantValidator $merchantValidator */
-        $merchantValidator = $this->getService('ps_checkout.validator.merchant');
+        if (static::$merchantIsValid === null) {
+            /** @var \PrestaShop\Module\PrestashopCheckout\Validator\MerchantValidator $merchantValidator */
+            $merchantValidator = $this->getService('ps_checkout.validator.merchant');
+            static::$merchantIsValid = $merchantValidator->merchantIsValid();
+        }
 
-        return $merchantValidator->merchantIsValid();
+        return static::$merchantIsValid;
     }
 
     /**
@@ -1205,6 +1260,10 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayInvoiceLegalFreeText(array $params)
     {
+        if (!$this->merchantIsValid()) {
+            return '';
+        }
+
         /** @var \Order $order */
         $order = $params['order'];
 
@@ -1515,6 +1574,10 @@ class Ps_checkout extends PaymentModule
 
     public function hookDisplayHeader()
     {
+        if (!$this->merchantIsValid()) {
+            return '';
+        }
+
         $controller = Tools::getValue('controller');
 
         if (empty($controller) && isset($this->context->controller->php_self)) {
@@ -1687,6 +1750,10 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayPaymentReturn(array $params)
     {
+        if (!$this->merchantIsValid()) {
+            return '';
+        }
+
         /** @var Order $order */
         $order = (isset($params['objOrder'])) ? $params['objOrder'] : $params['order'];
 
@@ -1713,6 +1780,10 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayOrderDetail(array $params)
     {
+        if (!$this->merchantIsValid()) {
+            return '';
+        }
+
         /** @var Order $order */
         $order = $params['order'];
 
