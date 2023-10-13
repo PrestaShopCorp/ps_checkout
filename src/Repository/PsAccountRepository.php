@@ -37,6 +37,7 @@ class PsAccountRepository
 
     /**
      * @param PrestaShopConfiguration $configuration
+     * @param PsAccounts $psAccountsFacade
      */
     public function __construct(PrestaShopConfiguration $configuration, PsAccounts $psAccountsFacade)
     {
@@ -58,42 +59,28 @@ class PsAccountRepository
         return new PsAccount(
             $this->getIdToken(),
             $this->getRefreshToken(),
-            $this->getEmail(),
-            $this->getLocalId()
-//            $this->getPsxForm()
+            $this->getEmail()
         );
     }
 
     /**
-     * Retrieve the status of the psx form : return true if the form is completed, otherwise return false.
-     * If on ready, the merchant doesn't need to complete the form, so return true to act like if the
-     * user complete the form
+     * @deprecated 3.0.0 Moved to PS Accounts
      *
      * @return bool
      */
     public function psxFormIsCompleted()
     {
-        // TODO: Remove all code related to PSX form. Since it's not used any more we return true to be sure to not make any breaking changes
         return true;
-//
-//        if (getenv('PLATEFORM') === 'PSREADY') { // if on ready, the user is already onboarded
-//            return true;
-//        }
-//
-//        return !empty($this->getPsxForm());
     }
 
     /**
-     * Get the status of the firebase onboarding
-     * Only check idToken: is the only one truly mandatory
+     * Check if user and shop are linked with PS Accounts
      *
      * @return bool
      */
     public function onBoardingIsCompleted()
     {
-        return !empty($this->getIdToken());
-        // Commented out because psx form is no longer used
-        // && $this->psxFormIsCompleted();
+        return $this->isAccountLinked();
     }
 
     /**
@@ -121,11 +108,15 @@ class PsAccountRepository
             return false;
         }
 
-        return (string) $this->psAccountsService->getOrRefreshToken();
+        try {
+            return (string) $this->psAccountsService->getOrRefreshToken();
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     /**
-     * Get firebase localId from database
+     * @deprecated PS Accounts v5.1.1
      *
      * @return string|bool
      */
@@ -157,13 +148,11 @@ class PsAccountRepository
      *
      * @param bool $toArray
      *
-     * @return string|bool|array
+     * @return string|array
      */
     public function getPsxForm($toArray = false)
     {
-        $form = $this->configuration->get(PsAccount::PS_CHECKOUT_PSX_FORM);
-
-        return $toArray ? json_decode($form, true) : $form;
+        return $toArray ? '' : [];
     }
 
     /**
@@ -196,15 +185,17 @@ class PsAccountRepository
 
     /**
      * @return bool
-     *
-     * @throws Exception
      */
     public function isAccountLinked()
     {
-        if (!$this->psAccountsService) {
+        if (!$this->psAccountsService || !method_exists($this->psAccountsService, 'isAccountLinked')) {
             return false;
         }
 
-        return $this->psAccountsService->isAccountLinked();
+        try {
+            return $this->psAccountsService->isAccountLinked();
+        } catch (Exception $e) {
+            return false;
+        }
     }
 }
