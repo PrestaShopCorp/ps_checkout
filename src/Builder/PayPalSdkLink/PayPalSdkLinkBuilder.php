@@ -216,7 +216,7 @@ class PayPalSdkLinkBuilder
      */
     private function shouldIncludeHostedFieldsComponent()
     {
-        if ('order' !== $this->getPageName()) {
+        if ('order' !== $this->getPageName() || in_array('card', $this->getFundingSourcesDisabled(), true)) {
             return false;
         }
 
