@@ -32,7 +32,20 @@ function upgrade_module_8_3_5_0($module)
 {
     try {
         $db = Db::getInstance();
-        $db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` ADD COLUMN `environment` varchar(20) DEFAULT NULL;');
+        $databaseFields = [];
+        $fields = $db->executeS('SHOW COLUMNS FROM `' . _DB_PREFIX_ . 'pscheckout_cart`');
+
+        if (!empty($fields)) {
+            foreach ($fields as $field) {
+                if (isset($field['Field'])) {
+                    $databaseFields[] = $field['Field'];
+                }
+            }
+        }
+
+        if (!empty($databaseFields) && !in_array('environment', $databaseFields, true)) {
+            $db->execute('ALTER TABLE `' . _DB_PREFIX_ . 'pscheckout_cart` ADD COLUMN `environment` varchar(20) DEFAULT NULL;');
+        }
     } catch (Exception $exception) {
         PrestaShopLogger::addLog($exception->getMessage(), 4, 1, 'Module', $module->id);
 
