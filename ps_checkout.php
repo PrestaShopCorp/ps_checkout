@@ -421,6 +421,10 @@ class Ps_checkout extends PaymentModule
         $paymentOptions = [];
 
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {
+            if ($fundingSource->name === 'paylater') {
+                continue;
+            }
+
             if ($count === 8) {
                 break;
             }
@@ -471,6 +475,10 @@ class Ps_checkout extends PaymentModule
         $paymentOptions = [];
 
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {
+            if ($fundingSource->name === 'paylater') {
+                continue;
+            }
+
             if ($count === 8) {
                 break;
             }
