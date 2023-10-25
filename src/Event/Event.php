@@ -20,17 +20,17 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Event;
 
-use Symfony\Component\EventDispatcher\Event as ComponentEvent;
-use Symfony\Contracts\EventDispatcher\Event as ContractEvent;
+use Symfony\Component\EventDispatcher\Event as SymfonyComponentEvent;
+use Symfony\Contracts\EventDispatcher\Event as SymfonyContractEvent;
 
-if (class_exists(ComponentEvent::class)) {
+if (class_exists(SymfonyComponentEvent::class)) {
     // @phpstan-ignore-next-line
-    class Event extends ComponentEvent
+    class Event extends SymfonyComponentEvent
     {
     }
-} elseif (class_exists(ContractEvent::class)) {
+} elseif (class_exists(SymfonyContractEvent::class)) {
     // @phpstan-ignore-next-line
-    class Event extends ContractEvent /* @phpstan-ignore-line */
+    class Event extends SymfonyContractEvent /* @phpstan-ignore-line */
     {
     }
 }

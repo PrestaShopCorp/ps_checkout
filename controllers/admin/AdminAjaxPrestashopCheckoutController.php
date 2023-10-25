@@ -32,6 +32,7 @@ use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateInstaller;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
@@ -377,6 +378,24 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             }
         }
 
+        /** @var PayPalConfiguration $configurationPayPal */
+        $configurationPayPal = $this->module->getService('ps_checkout.paypal.configuration');
+
+        if ($configurationPayPal->getPaymentMode() !== $psCheckoutCart->getEnvironment()) {
+            http_response_code(422);
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [
+                    strtr(
+                        $this->l('PayPal Order [PAYPAL_ORDER_ID] is not in the same environment as PrestaShop Checkout'),
+                        [
+                            '[PAYPAL_ORDER_ID]' => $psCheckoutCart->paypal_order,
+                        ]
+                    ),
+                ],
+            ]));
+        }
+
         /** @var PayPalOrderProvider $paypalOrderProvider */
         $paypalOrderProvider = $this->module->getService('ps_checkout.paypal.provider.order');
 
@@ -398,6 +417,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
             'orderPaymentDisplayName' => $fundingSourceTranslationProvider->getPaymentMethodName($psCheckoutCart->paypal_funding),
             'orderPaymentLogoUri' => $this->module->getPathUri() . 'views/img/' . $psCheckoutCart->paypal_funding . '.svg',
             'psCheckoutCart' => $psCheckoutCart,
+            'isProductionEnv' => $psCheckoutCart->getEnvironment() === Mode::LIVE,
         ]);
 
         $this->ajaxDie(json_encode([
