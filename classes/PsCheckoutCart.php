@@ -71,6 +71,11 @@ class PsCheckoutCart extends ObjectModel
     public $paypal_authorization_expire;
 
     /**
+     * @var string|null PayPal environment information
+     */
+    public $environment = 'LIVE';
+
+    /**
      * @var bool
      */
     public $isExpressCheckout = false;
@@ -144,6 +149,11 @@ class PsCheckoutCart extends ObjectModel
             'paypal_authorization_expire' => [
                 'type' => self::TYPE_DATE,
                 'validate' => 'isDate',
+                'allow_null' => true,
+                'required' => false,
+            ],
+            'environment' => [
+                'type' => self::TYPE_STRING,
                 'allow_null' => true,
                 'required' => false,
             ],
@@ -244,6 +254,14 @@ class PsCheckoutCart extends ObjectModel
     public function getPaypalAuthorizationExpireDate()
     {
         return $this->paypal_authorization_expire;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEnvironment()
+    {
+        return $this->environment === 'SANDBOX' ? $this->environment : 'LIVE';
     }
 
     /**

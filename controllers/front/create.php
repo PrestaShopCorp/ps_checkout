@@ -22,6 +22,7 @@
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 
 /**
@@ -145,6 +146,8 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             $orderId = isset($bodyValues['orderID']) ? $bodyValues['orderID'] : null;
             $isExpressCheckout = isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'];
             $isHostedFields = isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'];
+            /** @var PayPalConfiguration $configuration */
+            $configuration = $this->module->getService('ps_checkout.paypal.configuration');
 
             $this->module->getLogger()->info(
                 'PayPal Order created',
@@ -154,6 +157,9 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                     'isExpressCheckout' => $isExpressCheckout,
                     'isHostedFields' => $isHostedFields,
                     'id_cart' => (int) $this->context->cart->id,
+                    'amount' => $this->context->cart->getOrderTotal(true, Cart::BOTH),
+                    'environment' => $configuration->getPaymentMode(),
+                    'intent' => $configuration->getIntent(),
                 ]
             );
 
@@ -165,9 +171,10 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             $psCheckoutCart->paypal_funding = $fundingSource;
             $psCheckoutCart->paypal_order = $response['body']['id'];
             $psCheckoutCart->paypal_status = $response['body']['status'];
-            $psCheckoutCart->paypal_intent = 'AUTHORIZE' === Configuration::get('PS_CHECKOUT_INTENT') ? 'AUTHORIZE' : 'CAPTURE';
+            $psCheckoutCart->paypal_intent = $configuration->getIntent();
             $psCheckoutCart->paypal_token = $response['body']['client_token'];
             $psCheckoutCart->paypal_token_expire = (new DateTime())->modify('+3550 seconds')->format('Y-m-d H:i:s');
+            $psCheckoutCart->environment = $configuration->getPaymentMode();
             $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'];
             $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'];
             $psCheckoutCartRepository->save($psCheckoutCart);
