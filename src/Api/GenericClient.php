@@ -22,6 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Api;
 
 use Exception;
 use GuzzleHttp\Psr7\Request;
+use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\TransferException;
 use Link;
 use Module;
@@ -29,7 +30,6 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use Ps_checkout;
-use RuntimeException;
 
 /**
  * Construct the client used to make call to maasland
@@ -101,26 +101,10 @@ class GenericClient
      */
     protected function post(array $options = [])
     {
+        $request = new Request('POST', $this->getRoute(), [], json_encode($options));
+
         try {
-            $response = $this->client->sendRequest(
-                new Request('POST', $this->getRoute(), [], json_encode($options))
-            );
-        } catch (TransferException $exception) {
-            return $this->handleException(
-                new PsCheckoutException(
-                    $exception->getMessage(),
-                    PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION,
-                    $exception
-                )
-            );
-        } catch (RuntimeException $exception) {
-            return $this->handleException(
-                new PsCheckoutException(
-                    $exception->getMessage(),
-                    PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION,
-                    $exception
-                )
-            );
+            $response = $this->client->sendRequest($request);
         } catch (Exception $exception) {
             return $this->handleException($exception);
         }
@@ -232,6 +216,12 @@ class GenericClient
     {
         $body = '';
         $httpCode = 500;
+        $exceptionCode = $exception->getCode();
+        $exceptionMessage = $exception->getMessage();
+
+        if ($exception instanceof NetworkException || $exception instanceof TransferException) {
+            $exceptionCode = PsCheckoutException::PSCHECKOUT_HTTP_EXCEPTION;
+        }
 
         if (method_exists($exception, 'getResponse')) {
             $response = $exception->getResponse();
@@ -243,8 +233,8 @@ class GenericClient
             'status' => false,
             'httpCode' => $httpCode,
             'body' => $body,
-            'exceptionCode' => $exception->getCode(),
-            'exceptionMessage' => $exception->getMessage(),
+            'exceptionCode' => $exceptionCode,
+            'exceptionMessage' => $exceptionMessage,
         ];
     }
 
