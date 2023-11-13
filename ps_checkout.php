@@ -961,16 +961,16 @@ class Ps_checkout extends PaymentModule
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
         $version = $this->getService('ps_checkout.module.version');
-
+        $this->context->controller->registerStylesheet(
+            'ps-checkout-css-paymentOptions',
+            $this->getPathUri() . 'views/css/payments.css?version=' . $version->getSemVersion(),
+            [
+                'server' => 'remote',
+            ]
+        );
         if ($frontControllerValidator->shouldLoadFrontCss($controller)) {
             if (method_exists($this->context->controller, 'registerStylesheet')) {
-                $this->context->controller->registerStylesheet(
-                    'ps-checkout-css-paymentOptions',
-                    $this->getPathUri() . 'views/css/payments.css?version=' . $version->getSemVersion(),
-                    [
-                        'server' => 'remote',
-                    ]
-                );
+
             } else {
                 $this->context->controller->addCss(
                     $this->getPathUri() . 'views/css/payments16.css?version=' . $version->getSemVersion(),
