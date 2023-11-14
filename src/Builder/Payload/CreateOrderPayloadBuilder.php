@@ -152,12 +152,12 @@ class CreateOrderPayloadBuilder extends Builder
             ],
             'email_address' => !empty($this->data['customer']['email']) ? $this->data['customer']['email'] : '',
             'address' => [
-                'address_line_1' => !empty($this->data['invoiceAddress']['address1']) ? $this->data['deliveryAddress']['address1'] : '',
-                'address_line_2' => !empty($this->data['invoiceAddress']['address2']) ? $this->data['deliveryAddress']['address2'] : '',
-                'admin_area_1' => !empty($this->data['invoiceAddressState']['name']) ? $this->data['deliveryAddressState']['name'] : '',
-                'admin_area_2' => !empty($this->data['invoiceAddress']['city']) ? $this->data['deliveryAddress']['city'] : '',
-                'country_code' => !empty($this->data['invoiceAddressCountry']['iso_code']) ? $this->data['deliveryAddressCountry']['iso_code'] : '',
-                'postal_code' => !empty($this->data['invoiceAddress']['postcode']) ? $this->data['deliveryAddress']['postcode'] : '',
+                'address_line_1' => !empty($this->data['invoiceAddress']['address1']) ? $this->data['invoiceAddress']['address1'] : '',
+                'address_line_2' => !empty($this->data['invoiceAddress']['address2']) ? $this->data['invoiceAddress']['address2'] : '',
+                'admin_area_1' => !empty($this->data['invoiceAddressState']['name']) ? $this->data['invoiceAddressState']['name'] : '',
+                'admin_area_2' => !empty($this->data['invoiceAddress']['city']) ? $this->data['invoiceAddress']['city'] : '',
+                'country_code' => !empty($this->data['invoiceAddressCountry']['iso_code']) ? $this->data['invoiceAddressCountry']['iso_code'] : '',
+                'postal_code' => !empty($this->data['invoiceAddress']['postcode']) ? $this->data['invoiceAddress']['postcode'] : '',
             ],
         ];
 
