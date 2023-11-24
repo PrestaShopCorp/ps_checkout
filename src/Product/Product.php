@@ -33,10 +33,10 @@ class Product
     /** @var int */
     private $quantity;
 
-    /** @var boolean */
+    /** @var bool */
     private $isInStock;
 
-    /** @var boolean */
+    /** @var bool */
     private $isAvailableForOrder;
 
     /** @var string */
@@ -77,7 +77,7 @@ class Product
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getQuantity()
     {

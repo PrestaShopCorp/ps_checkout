@@ -39,15 +39,15 @@ class DiscountTest extends TestCase
             [
                 [
                     'name' => '30EUR discount',
-                    'value' => '30'
-                ]
+                    'value' => '30',
+                ],
             ],
             [
                 [
                     'name' => 'Black friday offer',
-                    'value' => '24.99'
-                ]
-            ]
+                    'value' => '24.99',
+                ],
+            ],
         ];
     }
 
@@ -56,37 +56,26 @@ class DiscountTest extends TestCase
         return [
             [
                 [
-                    'name' => 14.99,
-                    'value' => '30'
-                ],
-                [
-                    'class' => DiscountException::class,
-                    'code' => DiscountException::INVALID_NAME,
-                    'message' => 'Discount name is not a string'
-                ]
-            ],
-            [
-                [
                     'name' => '30EUR discount',
-                    'value' => 30
+                    'value' => 30,
                 ],
                 [
                     'class' => DiscountException::class,
                     'code' => DiscountException::INVALID_VALUE,
-                    'message' => 'Discount value is not supported'
-                ]
+                    'message' => 'Discount value is not supported',
+                ],
             ],
             [
                 [
                     'name' => '50% discount',
-                    'value' => '50%'
+                    'value' => '50%',
                 ],
                 [
                     'class' => DiscountException::class,
                     'code' => DiscountException::INVALID_VALUE,
-                    'message' => 'Discount value is not supported'
-                ]
-            ]
+                    'message' => 'Discount value is not supported',
+                ],
+            ],
         ];
     }
 }

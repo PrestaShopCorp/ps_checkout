@@ -39,21 +39,21 @@ class AmountTest extends TestCase
             [
                 [
                     'value' => '24.99',
-                    'currencyCode' => 'EUR'
+                    'currencyCode' => 'EUR',
                 ],
             ],
             [
                 [
                     'value' => '25.00',
-                    'currencyCode' => 'USD'
-                ]
+                    'currencyCode' => 'USD',
+                ],
             ],
             [
                 [
                     'value' => '17',
-                    'currencyCode' => 'JPY'
-                ]
-            ]
+                    'currencyCode' => 'JPY',
+                ],
+            ],
         ];
     }
 
@@ -63,47 +63,47 @@ class AmountTest extends TestCase
             [
                 [
                     'value' => 'twenty',
-                    'currencyCode' => 'EUR'
+                    'currencyCode' => 'EUR',
                 ],
                 [
                     'class' => AmountException::class,
                     'code' => AmountException::INVALID_AMOUNT,
-                    'message' => 'Amount value twenty is not a numeric'
-                ]
+                    'message' => 'Amount value twenty is not a numeric',
+                ],
             ],
             [
                 [
                     'value' => '23..66',
-                    'currencyCode' => 'USD'
+                    'currencyCode' => 'USD',
                 ],
                 [
                     'class' => AmountException::class,
                     'code' => AmountException::INVALID_AMOUNT,
-                    'message' => 'Amount value 23..66 is not a numeric'
-                ]
+                    'message' => 'Amount value 23..66 is not a numeric',
+                ],
             ],
             [
                 [
                     'value' => '24.99',
-                    'currencyCode' => 'FRA'
+                    'currencyCode' => 'FRA',
                 ],
                 [
                     'class' => AmountException::class,
                     'code' => AmountException::INVALID_CURRENCY,
-                    'message' => 'Currency code FRA is not supported'
-                ]
+                    'message' => 'Currency code FRA is not supported',
+                ],
             ],
             [
                 [
                     'value' => '24.99',
-                    'currencyCode' => 'JPY'
+                    'currencyCode' => 'JPY',
                 ],
                 [
                     'class' => AmountException::class,
                     'code' => AmountException::UNEXPECTED_DECIMAL_AMOUNT,
-                    'message' => 'Currency code JPY does not support decimal amount'
-                ]
-            ]
+                    'message' => 'Currency code JPY does not support decimal amount',
+                ],
+            ],
         ];
     }
 }

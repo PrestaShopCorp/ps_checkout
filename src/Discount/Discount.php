@@ -38,7 +38,7 @@ class Discount
      */
     public function __construct($name, $value)
     {
-        $this->name = $this->assertDiscountNameIsValid($name);
+        $this->name = $name;
         $this->value = $this->assertDiscountValueIsValid($value);
     }
 
@@ -56,22 +56,6 @@ class Discount
     public function getValue()
     {
         return $this->value;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return string
-     *
-     * @throws DiscountException
-     */
-    public function assertDiscountNameIsValid($name)
-    {
-        if (is_string($name)) {
-            return $name;
-        }
-
-        throw new DiscountException('Discount name is not a string', DiscountException::INVALID_NAME);
     }
 
     /**

@@ -24,5 +24,4 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
 class ProductException extends PsCheckoutException
 {
-
 }
