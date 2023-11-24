@@ -67,7 +67,7 @@ class Amount
      */
     public function assertAmountIsValid($amount)
     {
-        if (is_numeric($amount)) {
+        if (is_string($amount) && is_numeric($amount)) {
             return $amount;
         }
 
