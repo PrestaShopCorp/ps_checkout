@@ -25,5 +25,4 @@ class LocaleException extends PsCheckoutException
 {
     const WRONG_TYPE_CODE = 1;
     const INVALID_CODE = 2;
-
 }

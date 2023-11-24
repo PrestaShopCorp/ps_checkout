@@ -28,5 +28,4 @@ class ShopException extends PsCheckoutException
     const WRONG_TYPE_CANCEL_URL = 3;
     const INVALID_RETURN_URL = 4;
     const INVALID_CANCEL_URL = 5;
-
 }

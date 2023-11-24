@@ -25,7 +25,8 @@ use PrestaShop\Module\PrestashopCheckout\Exception\ShopException;
 /**
  * Get the shop context
  */
-class Shop{
+class Shop
+{
     /** @var int */
     private $id;
     /** @var string */
@@ -37,6 +38,7 @@ class Shop{
      * @param $id
      * @param $returnUrl
      * @param $cancelUrl
+     *
      * @throws ShopException
      */
     public function __construct($id, $returnUrl, $cancelUrl)
@@ -96,36 +98,34 @@ class Shop{
 
     private function assertShopIdIsValid($id)
     {
-        if(!is_int($id))
-        {
-            throw new ShopException(sprintf('ID is not an int (%s)',getType($id)),ShopException::WRONG_TYPE_ID);
+        if (!is_int($id)) {
+            throw new ShopException(sprintf('ID is not an int (%s)', gettype($id)), ShopException::WRONG_TYPE_ID);
         }
+
         return $id;
     }
 
     private function assertShopReturnUrlIsValid($returnUrl)
     {
-        if(!is_string($returnUrl))
-        {
-            throw new ShopException(sprintf('ReturnUrl is not a string (%s)',getType($returnUrl)),ShopException::WRONG_TYPE_RETURN_URL);
+        if (!is_string($returnUrl)) {
+            throw new ShopException(sprintf('ReturnUrl is not a string (%s)', gettype($returnUrl)), ShopException::WRONG_TYPE_RETURN_URL);
         }
-        if(!filter_var($returnUrl,FILTER_VALIDATE_URL))
-        {
-            throw new ShopException('ReturnUrl is not valid url',ShopException::INVALID_RETURN_URL);
+        if (!filter_var($returnUrl, FILTER_VALIDATE_URL)) {
+            throw new ShopException('ReturnUrl is not valid url', ShopException::INVALID_RETURN_URL);
         }
+
         return $returnUrl;
     }
 
     private function assertShopCancelUrlIsValid($cancelUrl)
     {
-        if(!is_string($cancelUrl))
-        {
-            throw new ShopException(sprintf('CancelUrl is not a string (%s)',getType($cancelUrl)),ShopException::WRONG_TYPE_CANCEL_URL);
+        if (!is_string($cancelUrl)) {
+            throw new ShopException(sprintf('CancelUrl is not a string (%s)', gettype($cancelUrl)), ShopException::WRONG_TYPE_CANCEL_URL);
         }
-        if(!filter_var($cancelUrl,FILTER_VALIDATE_URL))
-        {
-            throw new ShopException('CancelUrl is not valid url',ShopException::INVALID_CANCEL_URL);
+        if (!filter_var($cancelUrl, FILTER_VALIDATE_URL)) {
+            throw new ShopException('CancelUrl is not valid url', ShopException::INVALID_CANCEL_URL);
         }
+
         return $cancelUrl;
     }
 }

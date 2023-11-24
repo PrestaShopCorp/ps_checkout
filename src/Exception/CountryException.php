@@ -26,5 +26,4 @@ class CountryException extends PsCheckoutException
     const WRONG_TYPE_CODE = 1;
     const INVALID_CODE = 2;
     const WRONG_TYPE_NAME = 3;
-
 }

@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-
 use PrestaShop\Module\PrestashopCheckout\Exception\CurrencyException;
 
 class Currency
@@ -34,6 +33,7 @@ class Currency
     /**
      * @param string $name
      * @param string $code
+     *
      * @throws CurrencyException
      */
     public function __construct($name, $code)
@@ -76,30 +76,36 @@ class Currency
 
     /**
      * @param string $code
+     *
      * @return string
+     *
      * @throws CurrencyException
      */
     private function assertCurrencyCodeIsValid($code)
     {
-        if(!is_string($code)){
-            throw new CurrencyException(sprintf('CODE is not a string (%s)',getType($code)),CurrencyException::WRONG_TYPE_CODE);
+        if (!is_string($code)) {
+            throw new CurrencyException(sprintf('CODE is not a string (%s)', gettype($code)), CurrencyException::WRONG_TYPE_CODE);
         }
-        if(preg_match('/^[A-Z]{3}$/',$code) === 0){
-            throw new CurrencyException('Invalid code',CurrencyException::INVALID_CODE);
+        if (preg_match('/^[A-Z]{3}$/', $code) === 0) {
+            throw new CurrencyException('Invalid code', CurrencyException::INVALID_CODE);
         }
+
         return $code;
     }
 
     /**
      * @param string $name
+     *
      * @return string
+     *
      * @throws CurrencyException
      */
     private function assertCurrencyNameIsValid($name)
     {
-        if(!is_string($name)){
-            throw new CurrencyException(sprintf('NAME is not a string (%s)',getType($name)),CurrencyException::WRONG_TYPE_NAME);
+        if (!is_string($name)) {
+            throw new CurrencyException(sprintf('NAME is not a string (%s)', gettype($name)), CurrencyException::WRONG_TYPE_NAME);
         }
+
         return $name;
     }
 }

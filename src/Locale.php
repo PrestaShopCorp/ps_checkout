@@ -29,6 +29,7 @@ class Locale
 
     /**
      * @param $code
+     *
      * @throws LocaleException
      */
     public function __construct($code)
@@ -54,16 +55,18 @@ class Locale
 
     /**
      * @return string
+     *
      * @throws LocaleException
      */
     private function assertLocaleCodeIsValid($code)
     {
-        if(!is_string($code)){
-            throw new LocaleException(sprintf('CODE is not a string (%s)',getType($code)),LocaleException::WRONG_TYPE_CODE);
+        if (!is_string($code)) {
+            throw new LocaleException(sprintf('CODE is not a string (%s)', gettype($code)), LocaleException::WRONG_TYPE_CODE);
         }
-        if(preg_match('/^[A-Z]{2}$/',$code) === 0){
-            throw new LocaleException('Invalid code',LocaleException::INVALID_CODE);
+        if (preg_match('/^[A-Z]{2}$/', $code) === 0) {
+            throw new LocaleException('Invalid code', LocaleException::INVALID_CODE);
         }
+
         return $code;
     }
 }

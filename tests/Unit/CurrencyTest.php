@@ -7,17 +7,17 @@ use PrestaShop\Module\PrestashopCheckout\Exception\CurrencyException;
 
 class CurrencyTest extends TestCase
 {
-
     /**
      * @dataProvider invalidCurrencyProvider
+     *
      * @throws CurrencyException
      */
-    public function test__constructInvalid($name,$code,$exception)
+    public function testConstructInvalid($name, $code, $exception)
     {
         $this->expectException($exception['class']);
         $this->expectExceptionCode($exception['code']);
         $this->expectExceptionMessage($exception['message']);
-        new Currency($name,$code);
+        new Currency($name, $code);
     }
 
     public function invalidCurrencyProvider()
@@ -29,8 +29,8 @@ class CurrencyTest extends TestCase
                 [
                     'class' => CurrencyException::class,
                     'code' => CurrencyException::INVALID_CODE,
-                    'message' => 'Invalid code'
-                ]
+                    'message' => 'Invalid code',
+                ],
             ],
             [
                 'Dollars',
@@ -38,8 +38,8 @@ class CurrencyTest extends TestCase
                 [
                     'class' => CurrencyException::class,
                     'code' => CurrencyException::WRONG_TYPE_CODE,
-                    'message' => 'CODE is not a string (integer)'
-                ]
+                    'message' => 'CODE is not a string (integer)',
+                ],
             ],
             [
                 'Dollars',
@@ -47,8 +47,8 @@ class CurrencyTest extends TestCase
                 [
                     'class' => CurrencyException::class,
                     'code' => CurrencyException::INVALID_CODE,
-                    'message' => 'Invalid code'
-                ]
+                    'message' => 'Invalid code',
+                ],
             ],
             [
                 3,
@@ -56,8 +56,8 @@ class CurrencyTest extends TestCase
                 [
                     'class' => CurrencyException::class,
                     'code' => CurrencyException::WRONG_TYPE_NAME,
-                    'message' => 'NAME is not a string (integer)'
-                ]
+                    'message' => 'NAME is not a string (integer)',
+                ],
             ],
         ];
     }

@@ -7,12 +7,12 @@ use PrestaShop\Module\PrestashopCheckout\Exception\LocaleException;
 
 class LocaleTest extends TestCase
 {
-
     /**
      * @dataProvider invalidLocaleProvider
+     *
      * @throws LocaleException
      */
-    public function test__constructInvalid($code,$exception)
+    public function testConstructInvalid($code, $exception)
     {
         $this->expectException($exception['class']);
         $this->expectExceptionCode($exception['code']);
@@ -28,24 +28,24 @@ class LocaleTest extends TestCase
                 [
                     'class' => LocaleException::class,
                     'code' => LocaleException::INVALID_CODE,
-                    'message' => 'Invalid code'
-                ]
+                    'message' => 'Invalid code',
+                ],
             ],
             [
                 12,
                 [
                     'class' => LocaleException::class,
                     'code' => LocaleException::WRONG_TYPE_CODE,
-                    'message' => 'CODE is not a string (integer)'
-                ]
+                    'message' => 'CODE is not a string (integer)',
+                ],
             ],
             [
                 '12',
                 [
                     'class' => LocaleException::class,
                     'code' => LocaleException::INVALID_CODE,
-                    'message' => 'Invalid code'
-                ]
+                    'message' => 'Invalid code',
+                ],
             ],
         ];
     }
