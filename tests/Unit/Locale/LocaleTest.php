@@ -1,9 +1,10 @@
 <?php
 
-namespace PrestaShop\Module\PrestashopCheckout;
+namespace Tests\Unit\Locale;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\PrestashopCheckout\Exception\LocaleException;
+use PrestaShop\Module\PrestashopCheckout\Locale\Exception\LocaleException;
+use PrestaShop\Module\PrestashopCheckout\Locale\Locale;
 
 class LocaleTest extends TestCase
 {

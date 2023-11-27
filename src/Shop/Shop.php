@@ -49,7 +49,7 @@ class Shop
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -57,7 +57,7 @@ class Shop
     }
 
     /**
-     * @param mixed $id
+     * @param int $id
      */
     public function setId($id)
     {
@@ -65,7 +65,7 @@ class Shop
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getReturnUrl()
     {
@@ -73,7 +73,7 @@ class Shop
     }
 
     /**
-     * @param mixed $returnUrl
+     * @param string $returnUrl
      */
     public function setReturnUrl($returnUrl)
     {
@@ -81,7 +81,7 @@ class Shop
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCancelUrl()
     {
@@ -89,7 +89,7 @@ class Shop
     }
 
     /**
-     * @param mixed $cancelUrl
+     * @param string $cancelUrl
      */
     public function setCancelUrl($cancelUrl)
     {

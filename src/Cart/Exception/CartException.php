@@ -25,4 +25,10 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 class CartException extends PsCheckoutException
 {
     const INVALID_ID = 1;
+    const WRONG_TYPE_TOTAL = 2;
+    const WRONG_TYPE_TOTAL_WT_TAXES = 3;
+    const WRONG_TYPE_PRODUCTS = 4;
+    const WRONG_TYPE_PRODUCT = 5;
+    const WRONG_TYPE_DISCOUNTS = 6;
+    const WRONG_TYPE_DISCOUNT = 7;
 }

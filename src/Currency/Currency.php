@@ -18,9 +18,9 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout;
+namespace PrestaShop\Module\PrestashopCheckout\Currency;
 
-use PrestaShop\Module\PrestashopCheckout\Exception\CurrencyException;
+use PrestaShop\Module\PrestashopCheckout\Currency\Exception\CurrencyException;
 
 class Currency
 {

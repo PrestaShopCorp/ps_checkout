@@ -1,9 +1,10 @@
 <?php
 
-namespace PrestaShop\Module\PrestashopCheckout;
+namespace Tests\Unit\Country;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\PrestashopCheckout\Exception\CountryException;
+use PrestaShop\Module\PrestashopCheckout\Country\Country;
+use PrestaShop\Module\PrestashopCheckout\Country\Exception\CountryException;
 
 class CountryTest extends TestCase
 {

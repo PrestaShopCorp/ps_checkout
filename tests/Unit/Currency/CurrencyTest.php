@@ -1,9 +1,10 @@
 <?php
 
-namespace PrestaShop\Module\PrestashopCheckout;
+namespace Tests\Unit\Currency;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\PrestashopCheckout\Exception\CurrencyException;
+use PrestaShop\Module\PrestashopCheckout\Currency\Currency;
+use PrestaShop\Module\PrestashopCheckout\Currency\Exception\CurrencyException;
 
 class CurrencyTest extends TestCase
 {

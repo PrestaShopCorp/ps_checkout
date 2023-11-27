@@ -18,23 +18,44 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout;
+namespace PrestaShop\Module\PrestashopCheckout\Country;
 
-use PrestaShop\Module\PrestashopCheckout\Exception\LocaleException;
+use PrestaShop\Module\PrestashopCheckout\Country\Exception\CountryException;
 
-class Locale
+class Country
 {
+    /** @var string */
+    private $name;
+
     /** @var string */
     private $code;
 
     /**
-     * @param $code
+     * @param string $name
+     * @param string $code
      *
-     * @throws LocaleException
+     * @throws CountryException
      */
-    public function __construct($code)
+    public function __construct($name, $code)
     {
-        $this->code = $this->assertLocaleCodeIsValid($code);
+        $this->name = $this->assertCountryNameIsValid($name);
+        $this->code = $this->assertCountryCodeIsValid($code);
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 
     /**
@@ -53,20 +74,24 @@ class Locale
         $this->code = $code;
     }
 
-    /**
-     * @return string
-     *
-     * @throws LocaleException
-     */
-    private function assertLocaleCodeIsValid($code)
+    private function assertCountryCodeIsValid($code)
     {
         if (!is_string($code)) {
-            throw new LocaleException(sprintf('CODE is not a string (%s)', gettype($code)), LocaleException::WRONG_TYPE_CODE);
+            throw new CountryException(sprintf('CODE is not a string (%s)', gettype($code)), CountryException::WRONG_TYPE_CODE);
         }
         if (preg_match('/^[A-Z]{2}$/', $code) === 0) {
-            throw new LocaleException('Invalid code', LocaleException::INVALID_CODE);
+            throw new CountryException('Invalid code', CountryException::INVALID_CODE);
         }
 
         return $code;
+    }
+
+    private function assertCountryNameIsValid($name)
+    {
+        if (!is_string($name)) {
+            throw new CountryException(sprintf('NAME is not a string (%s)', gettype($name)), CountryException::WRONG_TYPE_NAME);
+        }
+
+        return $name;
     }
 }
