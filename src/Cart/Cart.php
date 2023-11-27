@@ -20,16 +20,13 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Cart;
 
-use _PHPStan_446ead745\Nette\Neon\Exception;
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
 use PrestaShop\Module\PrestashopCheckout\Discount\Discount;
-use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
-use PrestaShop\Module\PrestashopCheckout\Exception\CountryException;
 use PrestaShop\Module\PrestashopCheckout\Product\Product;
 
 class Cart
 {
-
     /** @var CartId */
     private $cartId;
     /** @var string */
@@ -42,23 +39,40 @@ class Cart
     private $products;
 
     /** @var array<Discount> */
-    private $discount;
+    private $discounts;
 
     /**
      * @param int $cartId
      * @param string $total
      * @param string $total_wt_taxes
      * @param Product[] $products
-     * @param Discount[] $discount
+     * @param Discount[] $discounts
+     *
      * @throws CartException
      */
-    public function __construct($cartId,$total, $total_wt_taxes, array $products, array $discount)
+    public function __construct($cartId, $total, $total_wt_taxes, array $products, array $discounts)
     {
         $this->cartId = new CartId($cartId);
         $this->total = $this->assertValidTotal($total);
         $this->total_wt_taxes = $this->assertValidTotalWtTaxes($total_wt_taxes);
         $this->products = $this->assertValidProducts($products);
-        $this->discount = $this->assertValidDiscounts($discount);
+        $this->discounts = $this->assertValidDiscounts($discounts);
+    }
+
+    /**
+     * @return int
+     */
+    public function getCartId()
+    {
+        return $this->cartId->getValue();
+    }
+
+    /**
+     * @param CartId $cartId
+     */
+    public function setCartId($cartId)
+    {
+        $this->cartId = $cartId;
     }
 
     /**
@@ -112,88 +126,96 @@ class Cart
     /**
      * @return Discount[]
      */
-    public function getDiscount()
+    public function getDiscounts()
     {
-        return $this->discount;
+        return $this->discounts;
     }
 
     /**
-     * @param Discount[] $discount
+     * @param Discount[] $discounts
      */
-    public function setDiscount($discount)
+    public function setDiscounts($discounts)
     {
-        $this->discount = $discount;
+        $this->discounts = $discounts;
     }
 
     /**
      * @param $total
+     *
      * @return string
+     *
      * @throws CartException
      */
-    private function assertValidTotal($total){
-        if(!is_string($total))
-        {
-            throw new CartException(sprintf('TOTAL is not a string (%s)', gettype($total)),CartException::WRONG_TYPE_TOTAL);
+    private function assertValidTotal($total)
+    {
+        if (!is_string($total)) {
+            throw new CartException(sprintf('TOTAL is not a string (%s)', gettype($total)), CartException::WRONG_TYPE_TOTAL);
         }
-        if(!is_numeric($total))
-        {
-            throw new CartException('TOTAL is not numeric',CartException::WRONG_TYPE_TOTAL);
+        if (!is_numeric($total)) {
+            throw new CartException('TOTAL is not numeric', CartException::WRONG_TYPE_TOTAL);
         }
+
         return $total;
     }
 
     /**
      * @param $totalWtTaxes
+     *
      * @return string
+     *
      * @throws CartException
      */
-    private function assertValidTotalWtTaxes($totalWtTaxes){
-        if(!is_string($totalWtTaxes))
-        {
-            throw new CartException(sprintf('TOTAL WT TAXES is not a string (%s)', gettype($totalWtTaxes)),CartException::WRONG_TYPE_TOTAL_WT_TAXES);
+    private function assertValidTotalWtTaxes($totalWtTaxes)
+    {
+        if (!is_string($totalWtTaxes)) {
+            throw new CartException(sprintf('TOTAL WT TAXES is not a string (%s)', gettype($totalWtTaxes)), CartException::WRONG_TYPE_TOTAL_WT_TAXES);
         }
-        if(!is_numeric($totalWtTaxes))
-        {
-            throw new CartException('TOTAL WT TAXES is not numeric',CartException::WRONG_TYPE_TOTAL_WT_TAXES);
+        if (!is_numeric($totalWtTaxes)) {
+            throw new CartException('TOTAL WT TAXES is not numeric', CartException::WRONG_TYPE_TOTAL_WT_TAXES);
         }
+
         return $totalWtTaxes;
     }
 
     /**
      * @param $products
+     *
      * @return array
+     *
      * @throws CartException
      */
-    private function assertValidProducts($products){
-        if(!is_array($products))
-        {
-            throw new CartException(sprintf('PRODUCTS is not an array (%s)', gettype($products)),CartException::WRONG_TYPE_PRODUCTS);
+    private function assertValidProducts($products)
+    {
+        if (!is_array($products)) {
+            throw new CartException(sprintf('PRODUCTS is not an array (%s)', gettype($products)), CartException::WRONG_TYPE_PRODUCTS);
         }
         foreach ($products as $product) {
-            if(gettype($product) === Product::class)
-            {
-                throw new CartException(sprintf('PRODUCT is not a product (%s)',gettype($product)),CartException::WRONG_TYPE_PRODUCT);
+            if (gettype($product) === Product::class) {
+                throw new CartException(sprintf('PRODUCT is not a product (%s)', gettype($product)), CartException::WRONG_TYPE_PRODUCT);
             }
         }
+
         return $products;
     }
 
     /**
      * @param $discounts
+     *
      * @return array
+     *
      * @throws CartException
      */
-    private function assertValidDiscounts($discounts){
-        if(!is_array($discounts))
-        {
-            throw new CartException(sprintf('DISCOUNTS is not an array (%s)', gettype($discounts)),CartException::WRONG_TYPE_DISCOUNTS);
+    private function assertValidDiscounts($discounts)
+    {
+        if (!is_array($discounts)) {
+            throw new CartException(sprintf('DISCOUNTS is not an array (%s)', gettype($discounts)), CartException::WRONG_TYPE_DISCOUNTS);
         }
         foreach ($discounts as $discount) {
-            if(gettype($discount) === Discount::class)
-            {
-                throw new CartException(sprintf('DISCOUNT is not a discount (%s)',gettype($discount)),CartException::WRONG_TYPE_DISCOUNT);
+            if (gettype($discount) === Discount::class) {
+                throw new CartException(sprintf('DISCOUNT is not a discount (%s)', gettype($discount)), CartException::WRONG_TYPE_DISCOUNT);
             }
         }
+
         return $discounts;
     }
 }
