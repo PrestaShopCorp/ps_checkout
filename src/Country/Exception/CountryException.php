@@ -19,7 +19,9 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Exception;
+namespace PrestaShop\Module\PrestashopCheckout\Country\Exception;
+
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
 class CountryException extends PsCheckoutException
 {
