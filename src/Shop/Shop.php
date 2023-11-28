@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Shop;
 
 use PrestaShop\Module\PrestashopCheckout\Exception\ShopException;
+use PrestaShop\Module\PrestashopCheckout\Shop\ValueObject\ShopId;
 
 /**
  * Get the shop context
@@ -43,7 +44,7 @@ class Shop
      */
     public function __construct($id, $returnUrl, $cancelUrl)
     {
-        $this->id = $this->assertShopIdIsValid($id);
+        $this->id = new ShopId($id);
         $this->returnUrl = $this->assertShopReturnUrlIsValid($returnUrl);
         $this->cancelUrl = $this->assertShopCancelUrlIsValid($cancelUrl);
     }
@@ -94,15 +95,6 @@ class Shop
     public function setCancelUrl($cancelUrl)
     {
         $this->cancelUrl = $cancelUrl;
-    }
-
-    private function assertShopIdIsValid($id)
-    {
-        if (!is_int($id)) {
-            throw new ShopException(sprintf('ID is not an int (%s)', gettype($id)), ShopException::WRONG_TYPE_ID);
-        }
-
-        return $id;
     }
 
     private function assertShopReturnUrlIsValid($returnUrl)

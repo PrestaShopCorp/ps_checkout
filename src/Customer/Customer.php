@@ -18,13 +18,15 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Exception;
+namespace PrestaShop\Module\PrestashopCheckout\Customer;
 
-class ShopException extends PsCheckoutException
+class Customer
 {
-    const WRONG_TYPE_ID = 1;
-    const WRONG_TYPE_RETURN_URL = 2;
-    const WRONG_TYPE_CANCEL_URL = 3;
-    const INVALID_RETURN_URL = 4;
-    const INVALID_CANCEL_URL = 5;
+    /**
+     * @return bool
+     */
+    public function isLoggedIn()
+    {
+        return true;
+    }
 }
