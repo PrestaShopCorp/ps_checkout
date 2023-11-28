@@ -84,6 +84,7 @@ class CheckoutContextBuilder
 
     /**
      * @return Shop
+     *
      * @throws ShopException
      */
     private function buildShop()

@@ -20,44 +20,33 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Rule;
 
-class RulesEngine
+class InRule implements RuleInterface
 {
     /**
-     * @var RuleInterface[]
+     * @var mixed
      */
-    private $rules = [];
+    private $value;
 
     /**
-     * @return bool
+     * @var array
+     */
+    private $list;
+
+    /**
+     * @param mixed $value
+     * @param array $list
+     */
+    public function __construct($value, array $list)
+    {
+        $this->value = $value;
+        $this->list = $list;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function evaluate()
     {
-        foreach ($this->rules as $rule) {
-            if ($rule->evaluate()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @param RuleInterface $rule
-     *
-     * @return void
-     */
-    public function addRule(RuleInterface $rule)
-    {
-        $this->rules[] = $rule;
-    }
-
-    /**
-     * @param RuleInterface[] $rules
-     *
-     * @return void
-     */
-    public function addRules(array $rules)
-    {
-        $this->rules = array_merge($this->rules, $rules);
+        return in_array($this->value, $this->list, true);
     }
 }

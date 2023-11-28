@@ -38,9 +38,9 @@ class OrRule implements RuleInterface
     /**
      * {@inheritdoc}
      */
-    public function evaluate() {
-        foreach ($this->rules as $rule)
-        {
+    public function evaluate()
+    {
+        foreach ($this->rules as $rule) {
             if ($rule->evaluate()) {
                 return true;
             }

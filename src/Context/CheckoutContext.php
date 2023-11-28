@@ -23,9 +23,9 @@ namespace PrestaShop\Module\PrestashopCheckout\Context;
 use PrestaShop\Module\PrestashopCheckout\Cart\Cart;
 use PrestaShop\Module\PrestashopCheckout\Configuration\Configuration;
 use PrestaShop\Module\PrestashopCheckout\Customer\Customer;
+use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSource;
 use PrestaShop\Module\PrestashopCheckout\Merchant\Merchant;
 use PrestaShop\Module\PrestashopCheckout\Shop\Shop;
-use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSource;
 
 class CheckoutContext
 {
@@ -143,7 +143,7 @@ class CheckoutContext
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isPaymentSourceEligible()
     {
