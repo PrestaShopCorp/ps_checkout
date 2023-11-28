@@ -22,56 +22,30 @@ namespace PrestaShop\Module\PrestashopCheckout\PaymentSource;
 
 use PrestaShop\Module\PrestashopCheckout\Rule\RuleInterface;
 
-class PaymentSource
+class PaymentSourceUseCase
 {
-    /**
-     * @var string
-     */
-    private $name;
+    /** @var string */
+    private $type;
 
-    /**
-     * @var string
-     */
-    private $displayName;
-
-    /**
-     * @var RuleInterface[]
-     */
+    /** @var RuleInterface[] */
     private $rules;
 
     /**
-     * @var PaymentSourceUseCase[]
-     */
-    private $useCases;
-
-    /**
-     * @param string $name
-     * @param string $displayName
+     * @param string $type
      * @param RuleInterface[] $rules
-     * @param PaymentSourceUseCase[] $useCases
      */
-    public function __construct($name, $displayName, $rules, $useCases)
+    public function __construct($type, $rules)
     {
-        $this->name = $name;
-        $this->displayName = $displayName;
+        $this->type = $type;
         $this->rules = $rules;
-        $this->useCases = $useCases;
     }
 
     /**
      * @return string
      */
-    public function getName()
+    public function getType()
     {
-        return $this->name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDisplayName()
-    {
-        return $this->displayName;
+        return $this->type;
     }
 
     /**
@@ -80,13 +54,5 @@ class PaymentSource
     public function getRules()
     {
         return $this->rules;
-    }
-
-    /**
-     * @return PaymentSourceUseCase[]
-     */
-    public function getUseCases()
-    {
-        return $this->useCases;
     }
 }
