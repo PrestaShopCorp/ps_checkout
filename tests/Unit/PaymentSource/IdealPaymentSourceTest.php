@@ -12,19 +12,19 @@ use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\PageTypeE
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\PaymentSource;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\PaymentSourceUseCase;
 
-class PaymentSourceTest extends TestCase
+class IdealPaymentSourceTest extends TestCase
 {
     /**
-     * @dataProvider invalidBancontactDataProvider
+     * @dataProvider invalidIdealDataProvider
      */
-    public function testInvalidBancontactPaymentSource($data)
+    public function testInvalidIdealPaymentSource($data)
     {
         $paymentSource = new PaymentSource(
-            'bancontact',
-            'Bancontact',
+            'ideal',
+            'Ideal',
             [
-                new AmountEligibilityRule($data['amount'], '1'),
-                new CountryEligibilityRule($data['buyerCountry'], ['BE']),
+                new AmountEligibilityRule($data['amount'], '0.01'),
+                new CountryEligibilityRule($data['buyerCountry'], ['NL']),
                 new CurrencyEligibilityRule($data['currency'], ['EUR']),
                 new ExcludedCountryEligibilityRule($data['merchantCountry'], ['RU', 'JP', 'BR']),
             ],
@@ -38,17 +38,15 @@ class PaymentSourceTest extends TestCase
                 )
             ]
         );
-
-
     }
 
-    public function invalidBancontactDataProvider()
+    public function invalidIdealDataProvider()
     {
         return [
             [
                 [
-                    'amount' => '0.99', // Invalid amount
-                    'buyerCountry' => 'BE',
+                    'amount' => '0', // Invalid amount
+                    'buyerCountry' => 'NL',
                     'currency' => 'EUR',
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'FR',
@@ -68,7 +66,7 @@ class PaymentSourceTest extends TestCase
             [
                 [
                     'amount' => '9.90',
-                    'buyerCountry' => 'BE',
+                    'buyerCountry' => 'NL',
                     'currency' => 'USD', // Invalid currency
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'US',
@@ -78,9 +76,9 @@ class PaymentSourceTest extends TestCase
             [
                 [
                     'amount' => '39.99',
-                    'buyerCountry' => 'BE',
+                    'buyerCountry' => 'NL',
                     'currency' => 'EUR',
-                    'intent' => 'VALIDATE', // Invalid intent
+                    'intent' => 'AUTHORIZE', // Invalid intent
                     'merchantCountry' => 'FR',
                     'pageType' => 'checkout'
                 ],
@@ -88,7 +86,7 @@ class PaymentSourceTest extends TestCase
             [
                 [
                     'amount' => '15',
-                    'buyerCountry' => 'BE',
+                    'buyerCountry' => 'NL',
                     'currency' => 'EUR',
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'JP', // Invalid merchant country
@@ -98,7 +96,7 @@ class PaymentSourceTest extends TestCase
             [
                 [
                     'amount' => '39.99',
-                    'buyerCountry' => 'BE',
+                    'buyerCountry' => 'NL',
                     'currency' => 'EUR',
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'FR',
