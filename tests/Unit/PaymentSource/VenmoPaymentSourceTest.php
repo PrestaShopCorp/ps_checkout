@@ -6,50 +6,50 @@ use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\AmountEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\CountryEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\CurrencyEligibilityRule;
+use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\ExcludedCountryEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\IntentEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\PageTypeEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\PaymentSource;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\PaymentSourceUseCase;
-use PrestaShop\Module\PrestashopCheckout\Rule\NotRule;
 
-class BancontactPaymentSourceTest extends TestCase
+class VenmoPaymentSourceTest extends TestCase
 {
     /**
-     * @dataProvider invalidBancontactDataProvider
+     * @dataProvider invalidVenmoDataProvider
      */
-    public function testInvalidBancontactPaymentSource($data)
+    public function testInvalidVenmoPaymentSource($data)
     {
-        $paymentSource = new PaymentSource(
-            'bancontact',
-            'Bancontact',
+         new PaymentSource(
+            'venmo',
+            'Venmo',
             [
                 new AmountEligibilityRule($data['amount'], '1'),
-                new CountryEligibilityRule($data['buyerCountry'], ['BE']),
-                new CurrencyEligibilityRule($data['currency'], ['EUR']),
-                new NotRule(new CountryEligibilityRule($data['merchantCountry'], ['RU', 'JP', 'BR'])),
+                new CountryEligibilityRule($data['buyerCountry'], ['US']),
+                new CurrencyEligibilityRule($data['currency'], ['USD']),
+                new CountryEligibilityRule($data['merchantCountry'], ['US']),
             ],
             [
                 new PaymentSourceUseCase(
                     'ECM',
                     [
                         new IntentEligibilityRule($data['intent'], ['CAPTURE']),
-                        new PageTypeEligibilityRule($data['pageType'], ['checkout'])
+                        new PageTypeEligibilityRule($data['pageType'], ['authentication', 'cart', 'checkout', 'product'])
                     ]
                 )
             ]
         );
     }
 
-    public function invalidBancontactDataProvider()
+    public function invalidVenmoDataProvider()
     {
         return [
             [
                 [
                     'amount' => '0.99', // Invalid amount
-                    'buyerCountry' => 'BE',
-                    'currency' => 'EUR',
+                    'buyerCountry' => 'US',
+                    'currency' => 'USD',
                     'intent' => 'CAPTURE',
-                    'merchantCountry' => 'FR',
+                    'merchantCountry' => 'US',
                     'pageType' => 'checkout'
                 ],
             ],
@@ -57,7 +57,7 @@ class BancontactPaymentSourceTest extends TestCase
                 [
                     'amount' => '39.99',
                     'buyerCountry' => 'FR', // Invalid buyer country
-                    'currency' => 'EUR',
+                    'currency' => 'USD',
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'US',
                     'pageType' => 'checkout'
@@ -66,8 +66,8 @@ class BancontactPaymentSourceTest extends TestCase
             [
                 [
                     'amount' => '9.90',
-                    'buyerCountry' => 'BE',
-                    'currency' => 'USD', // Invalid currency
+                    'buyerCountry' => 'US',
+                    'currency' => 'EUR', // Invalid currency
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'US',
                     'pageType' => 'checkout'
@@ -76,30 +76,30 @@ class BancontactPaymentSourceTest extends TestCase
             [
                 [
                     'amount' => '39.99',
-                    'buyerCountry' => 'BE',
-                    'currency' => 'EUR',
+                    'buyerCountry' => 'US',
+                    'currency' => 'USD',
                     'intent' => 'AUTHORIZE', // Invalid intent
-                    'merchantCountry' => 'FR',
+                    'merchantCountry' => 'US',
                     'pageType' => 'checkout'
                 ],
             ],
             [
                 [
                     'amount' => '15',
-                    'buyerCountry' => 'BE',
-                    'currency' => 'EUR',
+                    'buyerCountry' => 'US',
+                    'currency' => 'USD',
                     'intent' => 'CAPTURE',
-                    'merchantCountry' => 'JP', // Invalid merchant country
+                    'merchantCountry' => 'FR', // Invalid merchant country
                     'pageType' => 'checkout'
                 ],
             ],
             [
                 [
                     'amount' => '39.99',
-                    'buyerCountry' => 'BE',
-                    'currency' => 'EUR',
+                    'buyerCountry' => 'US',
+                    'currency' => 'USD',
                     'intent' => 'CAPTURE',
-                    'merchantCountry' => 'FR',
+                    'merchantCountry' => 'US',
                     'pageType' => 'product' // Invalid pageType
                 ],
             ]

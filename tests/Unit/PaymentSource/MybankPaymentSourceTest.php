@@ -3,14 +3,13 @@
 namespace Tests\Unit\Amount;
 
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\AmountEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\CountryEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\CurrencyEligibilityRule;
-use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\ExcludedCountryEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\IntentEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\PageTypeEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\PaymentSource;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\PaymentSourceUseCase;
+use PrestaShop\Module\PrestashopCheckout\Rule\NotRule;
 
 class MyBankPaymentSourceTest extends TestCase
 {
@@ -25,7 +24,7 @@ class MyBankPaymentSourceTest extends TestCase
             [
                 new CountryEligibilityRule($data['buyerCountry'], ['IT']),
                 new CurrencyEligibilityRule($data['currency'], ['EUR']),
-                new ExcludedCountryEligibilityRule($data['merchantCountry'], ['RU', 'JP', 'BR']),
+                new NotRule(new CountryEligibilityRule($data['merchantCountry'], ['RU', 'JP', 'BR'])),
             ],
             [
                 new PaymentSourceUseCase(

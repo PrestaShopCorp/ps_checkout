@@ -10,22 +10,39 @@ use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\IntentEli
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\PageTypeEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\PaymentSource;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\PaymentSourceUseCase;
+use PrestaShop\Module\PrestashopCheckout\Rule\AndRule;
 use PrestaShop\Module\PrestashopCheckout\Rule\NotRule;
+use PrestaShop\Module\PrestashopCheckout\Rule\OrRule;
 
-class BancontactPaymentSourceTest extends TestCase
+class SofortPaymentSourceTest extends TestCase
 {
     /**
-     * @dataProvider invalidBancontactDataProvider
+     * @dataProvider invalidSofortDataProvider
      */
-    public function testInvalidBancontactPaymentSource($data)
+    public function testInvalidSofortPaymentSource($data)
     {
         $paymentSource = new PaymentSource(
-            'bancontact',
-            'Bancontact',
+            'sofort',
+            'SOFORT',
             [
-                new AmountEligibilityRule($data['amount'], '1'),
-                new CountryEligibilityRule($data['buyerCountry'], ['BE']),
-                new CurrencyEligibilityRule($data['currency'], ['EUR']),
+                new OrRule(
+                    [
+                        new AndRule(
+                            [
+                                new AmountEligibilityRule($data['amount'], '1'),
+                                new CurrencyEligibilityRule($data['currency'], ['EUR']),
+                            ]
+                        ),
+                        new AndRule(
+                            [
+                                // TODO : on a pas de valeur pour GBP
+                                new AmountEligibilityRule($data['amount'], '1.10'),
+                                new CurrencyEligibilityRule($data['currency'], ['GBP']),
+                            ]
+                        )
+                    ]
+                ),
+                new CountryEligibilityRule($data['buyerCountry'], ['AT', 'BE', 'DE', 'ES', 'NL', 'UK']),
                 new NotRule(new CountryEligibilityRule($data['merchantCountry'], ['RU', 'JP', 'BR'])),
             ],
             [
@@ -40,16 +57,16 @@ class BancontactPaymentSourceTest extends TestCase
         );
     }
 
-    public function invalidBancontactDataProvider()
+    public function invalidSofortDataProvider()
     {
         return [
             [
                 [
                     'amount' => '0.99', // Invalid amount
-                    'buyerCountry' => 'BE',
+                    'buyerCountry' => 'NL',
                     'currency' => 'EUR',
                     'intent' => 'CAPTURE',
-                    'merchantCountry' => 'FR',
+                    'merchantCountry' => 'US',
                     'pageType' => 'checkout'
                 ],
             ],
@@ -66,7 +83,7 @@ class BancontactPaymentSourceTest extends TestCase
             [
                 [
                     'amount' => '9.90',
-                    'buyerCountry' => 'BE',
+                    'buyerCountry' => 'IT',
                     'currency' => 'USD', // Invalid currency
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'US',
@@ -76,7 +93,7 @@ class BancontactPaymentSourceTest extends TestCase
             [
                 [
                     'amount' => '39.99',
-                    'buyerCountry' => 'BE',
+                    'buyerCountry' => 'NL',
                     'currency' => 'EUR',
                     'intent' => 'AUTHORIZE', // Invalid intent
                     'merchantCountry' => 'FR',
@@ -86,7 +103,7 @@ class BancontactPaymentSourceTest extends TestCase
             [
                 [
                     'amount' => '15',
-                    'buyerCountry' => 'BE',
+                    'buyerCountry' => 'NL',
                     'currency' => 'EUR',
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'JP', // Invalid merchant country
@@ -96,7 +113,7 @@ class BancontactPaymentSourceTest extends TestCase
             [
                 [
                     'amount' => '39.99',
-                    'buyerCountry' => 'BE',
+                    'buyerCountry' => 'NL',
                     'currency' => 'EUR',
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'FR',
