@@ -526,18 +526,34 @@ class Ps_checkout extends PaymentModule
 
     public function getContent()
     {
-        /** @var \PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts $psAccountsFacade */
-        $psAccountsFacade = $this->getService('ps_accounts.facade');
-        $env = new \PrestaShop\Module\PrestashopCheckout\Environment\Env();
+        try {
+            /** @var \PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts $psAccountsFacade */
+            $psAccountsFacade = $this->getService('ps_accounts.facade');
+            /** @var \PrestaShop\PsAccountsInstaller\Installer\Presenter\InstallerPresenter $psAccountsPresenter */
+            $psAccountsPresenter = $psAccountsFacade->getPsAccountsPresenter();
+            // @phpstan-ignore-next-line
+            $contextPsAccounts = $psAccountsPresenter->present($this->name);
+        } catch (Exception $exception) {
+            $contextPsAccounts = [];
+            $this->getLogger()->error(
+                'Failed to get PsAccounts context',
+                [
+                    'exception' => get_class($exception),
+                    'exceptionCode' => $exception->getCode(),
+                    'exceptionMessage' => $exception->getMessage(),
+                ]
+            );
+        }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter $storePresenter */
         $storePresenter = $this->getService('ps_checkout.store.store');
 
         Media::addJsDef([
             'store' => $storePresenter->present(),
-            'contextPsAccounts' => $psAccountsFacade->getPsAccountsPresenter()->present(),
+            'contextPsAccounts' => $contextPsAccounts,
         ]);
 
+        $env = new \PrestaShop\Module\PrestashopCheckout\Environment\Env();
         $boSdkUrl = $env->getEnv('CHECKOUT_BO_SDK_URL');
         if (substr($boSdkUrl, -3) !== '.js') {
             $boSdkVersion = $env->getEnv('CHECKOUT_BO_SDK_VERSION');
