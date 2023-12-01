@@ -20,35 +20,10 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule;
 
+use PrestaShop\Module\PrestashopCheckout\Rule\InRule;
 use PrestaShop\Module\PrestashopCheckout\Rule\RuleInterface;
 
-class CurrencyEligibilityRule implements RuleInterface
+class CurrencyEligibilityRule extends InRule implements RuleInterface
 {
-    /**
-     * @var string
-     */
-    private $currency;
 
-    /**
-     * @var string[]
-     */
-    private $supportedCurrencies;
-
-    /**
-     * @param string $currency
-     * @param string[] $supportedCurrencies
-     */
-    public function __construct($currency, array $supportedCurrencies)
-    {
-        $this->currency = $currency;
-        $this->supportedCurrencies = $supportedCurrencies;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function evaluate()
-    {
-        return in_array($this->currency, $this->supportedCurrencies, true);
-    }
 }

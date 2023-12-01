@@ -20,35 +20,10 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule;
 
+use PrestaShop\Module\PrestashopCheckout\Rule\InRule;
 use PrestaShop\Module\PrestashopCheckout\Rule\RuleInterface;
 
-class IntentEligibilityRule implements RuleInterface
+class IntentEligibilityRule extends InRule implements RuleInterface
 {
-    /**
-     * @var string
-     */
-    private $intent;
 
-    /**
-     * @var string[]
-     */
-    private $supportedIntents;
-
-    /**
-     * @param string $intent
-     * @param string[] $supportedIntents
-     */
-    public function __construct($intent, array $supportedIntents)
-    {
-        $this->intent = $intent;
-        $this->supportedIntents = $supportedIntents;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function evaluate()
-    {
-        return in_array($this->intent, $this->supportedIntents, true);
-    }
 }

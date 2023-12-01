@@ -20,35 +20,10 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule;
 
+use PrestaShop\Module\PrestashopCheckout\Rule\InRule;
 use PrestaShop\Module\PrestashopCheckout\Rule\RuleInterface;
 
-class CountryEligibilityRule implements RuleInterface
+class CountryEligibilityRule extends InRule implements RuleInterface
 {
-    /**
-     * @var string
-     */
-    private $country;
 
-    /**
-     * @var string[]
-     */
-    private $supportedCountries;
-
-    /**
-     * @param string $country
-     * @param string[] $supportedCountries
-     */
-    public function __construct($country, array $supportedCountries)
-    {
-        $this->country = $country;
-        $this->supportedCountries = $supportedCountries;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function evaluate()
-    {
-        return in_array($this->country, $this->supportedCountries, true);
-    }
 }

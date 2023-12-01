@@ -20,19 +20,17 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule;
 
+use PrestaShop\Module\PrestashopCheckout\Rule\InRule;
+use PrestaShop\Module\PrestashopCheckout\Rule\NotRule;
 use PrestaShop\Module\PrestashopCheckout\Rule\RuleInterface;
 
 class ExcludedCountryEligibilityRule implements RuleInterface
 {
     /**
-     * @var string
+     * @var NotRule
      */
-    private $country;
+    private $rule;
 
-    /**
-     * @var string[]
-     */
-    private $excludedCountries;
 
     /**
      * @param string $country
@@ -40,8 +38,7 @@ class ExcludedCountryEligibilityRule implements RuleInterface
      */
     public function __construct($country, array $excludedCountries)
     {
-        $this->country = $country;
-        $this->excludedCountries = $excludedCountries;
+        $this->rule = new NotRule(new InRule($country,$excludedCountries));
     }
 
     /**
@@ -49,6 +46,6 @@ class ExcludedCountryEligibilityRule implements RuleInterface
      */
     public function evaluate()
     {
-        return !in_array($this->country, $this->excludedCountries, true);
+        return $this->rule->evaluate();
     }
 }
