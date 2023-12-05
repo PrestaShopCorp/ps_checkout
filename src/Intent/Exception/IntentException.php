@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -18,34 +19,13 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule;
+namespace PrestaShop\Module\PrestashopCheckout\Intent\Exception;
 
-use PrestaShop\Module\PrestashopCheckout\Rule\InRule;
-use PrestaShop\Module\PrestashopCheckout\Rule\NotRule;
-use PrestaShop\Module\PrestashopCheckout\Rule\RuleInterface;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
-class ExcludedCountryEligibilityRule implements RuleInterface
+class IntentException extends PsCheckoutException
 {
-    /**
-     * @var NotRule
-     */
-    private $rule;
-
-
-    /**
-     * @param string $country
-     * @param string[] $excludedCountries
-     */
-    public function __construct($country, array $excludedCountries)
-    {
-        $this->rule = new NotRule(new InRule($country,$excludedCountries));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function evaluate()
-    {
-        return $this->rule->evaluate();
-    }
+    const WRONG_TYPE_INTENT = 1;
+    const INVALID_INTENT = 2;
+    const WRONG_TYPE_ALLOWED_INTENT = 3;
 }
