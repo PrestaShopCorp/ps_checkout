@@ -20,10 +20,50 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule;
 
+use PrestaShop\Module\PrestashopCheckout\Intent\Exception\IntentException;
+use PrestaShop\Module\PrestashopCheckout\Intent\ValueObject\Intent;
 use PrestaShop\Module\PrestashopCheckout\Rule\InRule;
 use PrestaShop\Module\PrestashopCheckout\Rule\RuleInterface;
 
-class IntentEligibilityRule extends InRule implements RuleInterface
+class IntentEligibilityRule implements RuleInterface
 {
+    /**
+     * @var RuleInterface
+     */
+    private $rule;
 
+    /**
+     * @param Intent $intent
+     * @param array $allowedIntent
+     *
+     * @throws IntentException
+     */
+    public function __construct(Intent $intent, array $allowedIntent)
+    {
+        $this->rule = new InRule($intent->getValue(), $this->assertIsValidIntentList($allowedIntent));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function evaluate()
+    {
+        return $this->rule->evaluate();
+    }
+
+    /**
+     * @param array $allowedIntent
+     *
+     * @return array
+     *
+     * @throws IntentException
+     */
+    private function assertIsValidIntentList(array $allowedIntent)
+    {
+        foreach ($allowedIntent as $aIntent) {
+            new Intent($aIntent); // check if the intent is string and valid
+        }
+
+        return $allowedIntent;
+    }
 }
