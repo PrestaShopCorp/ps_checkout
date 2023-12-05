@@ -21,10 +21,11 @@
 namespace PrestaShop\Module\PrestashopCheckout\Locale;
 
 use PrestaShop\Module\PrestashopCheckout\Locale\Exception\LocaleException;
+use PrestaShop\Module\PrestashopCheckout\Locale\ValueObject\LocaleCode;
 
 class Locale
 {
-    /** @var string */
+    /** @var LocaleCode */
     private $code;
 
     /**
@@ -34,15 +35,15 @@ class Locale
      */
     public function __construct($code)
     {
-        $this->code = $this->assertLocaleCodeIsValid($code);
+        $this->code = new LocaleCode($code);
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCode()
     {
-        return $this->code;
+        return $this->code->getValue();
     }
 
     /**
@@ -51,22 +52,5 @@ class Locale
     public function setCode($code)
     {
         $this->code = $code;
-    }
-
-    /**
-     * @return string
-     *
-     * @throws LocaleException
-     */
-    private function assertLocaleCodeIsValid($code)
-    {
-        if (!is_string($code)) {
-            throw new LocaleException(sprintf('CODE is not a string (%s)', gettype($code)), LocaleException::WRONG_TYPE_CODE);
-        }
-        if (preg_match('/^[A-Z]{2}$/', $code) === 0) {
-            throw new LocaleException('Invalid code', LocaleException::INVALID_CODE);
-        }
-
-        return $code;
     }
 }
