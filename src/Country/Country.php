@@ -21,13 +21,14 @@
 namespace PrestaShop\Module\PrestashopCheckout\Country;
 
 use PrestaShop\Module\PrestashopCheckout\Country\Exception\CountryException;
+use PrestaShop\Module\PrestashopCheckout\Country\ValueObject\CountryCode;
 
 class Country
 {
     /** @var string */
     private $name;
 
-    /** @var string */
+    /** @var CountryCode */
     private $code;
 
     /**
@@ -39,7 +40,7 @@ class Country
     public function __construct($name, $code)
     {
         $this->name = $this->assertCountryNameIsValid($name);
-        $this->code = $this->assertCountryCodeIsValid($code);
+        $this->code = new CountryCode($code);
     }
 
     /**
@@ -59,33 +60,30 @@ class Country
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCode()
     {
-        return $this->code;
+        return $this->code->getValue();
     }
 
     /**
-     * @param mixed $code
+     * @param $code
+     *
+     * @return void
      */
     public function setCode($code)
     {
         $this->code = $code;
     }
 
-    private function assertCountryCodeIsValid($code)
-    {
-        if (!is_string($code)) {
-            throw new CountryException(sprintf('CODE is not a string (%s)', gettype($code)), CountryException::WRONG_TYPE_CODE);
-        }
-        if (preg_match('/^[A-Z]{2}$/', $code) === 0) {
-            throw new CountryException('Invalid code', CountryException::INVALID_CODE);
-        }
-
-        return $code;
-    }
-
+    /**
+     * @param $name
+     *
+     * @return string
+     *
+     * @throws CountryException
+     */
     private function assertCountryNameIsValid($name)
     {
         if (!is_string($name)) {

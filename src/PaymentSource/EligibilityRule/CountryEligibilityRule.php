@@ -20,10 +20,46 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule;
 
+use PrestaShop\Module\PrestashopCheckout\Country\Exception\CountryException;
+use PrestaShop\Module\PrestashopCheckout\Country\ValueObject\CountryCode;
 use PrestaShop\Module\PrestashopCheckout\Rule\InRule;
 use PrestaShop\Module\PrestashopCheckout\Rule\RuleInterface;
 
-class CountryEligibilityRule extends InRule implements RuleInterface
+class CountryEligibilityRule implements RuleInterface
 {
+    /** @var RuleInterface */
+    private $rule;
 
+    /**
+     * @param $countryCode
+     * @param $allowedCountry
+     *
+     * @throws CountryException
+     */
+    public function __construct($countryCode, $allowedCountry)
+    {
+        $cCode = new CountryCode($countryCode);
+        $this->rule = new InRule($cCode->getValue(), $this->assertIsValidCountryList($allowedCountry));
+    }
+
+    /**
+     * @param array $allowedCountry
+     *
+     * @return array
+     *
+     * @throws CountryException
+     */
+    private function assertIsValidCountryList($allowedCountry)
+    {
+        foreach ($allowedCountry as $aCountry) {
+            new CountryCode($aCountry); // check if the country is string and valid
+        }
+
+        return $allowedCountry;
+    }
+
+    public function evaluate()
+    {
+        return $this->rule->evaluate();
+    }
 }
