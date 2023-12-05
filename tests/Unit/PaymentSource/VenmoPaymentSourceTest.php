@@ -11,16 +11,16 @@ use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\PageTypeE
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\PaymentSource;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\PaymentSourceUseCase;
 
-class GooglePayPaymentSourceTest extends TestCase
+class VenmoPaymentSourceTest extends TestCase
 {
     /**
-     * @dataProvider invalidGooglePayDataProvider
+     * @dataProvider invalidVenmoDataProvider
      */
-    public function testInvalidGooglePayPaymentSource($data)
+    public function testInvalidVenmoPaymentSource($data)
     {
-        $paymentSource = new PaymentSource(
-            'googlepay',
-            'Google Pay',
+        new PaymentSource(
+            'venmo',
+            'Venmo',
             [
                 new AmountEligibilityRule($data['amount'], '1'),
                 new CountryEligibilityRule($data['buyerCountry'], ['US']),
@@ -39,7 +39,7 @@ class GooglePayPaymentSourceTest extends TestCase
         );
     }
 
-    public function invalidGooglePayDataProvider()
+    public function invalidVenmoDataProvider()
     {
         return [
             [
@@ -49,7 +49,7 @@ class GooglePayPaymentSourceTest extends TestCase
                     'currency' => 'USD',
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'US',
-                    'pageType' => 'authentication',
+                    'pageType' => 'checkout',
                 ],
             ],
             [
@@ -59,7 +59,7 @@ class GooglePayPaymentSourceTest extends TestCase
                     'currency' => 'USD',
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'US',
-                    'pageType' => 'cart',
+                    'pageType' => 'checkout',
                 ],
             ],
             [
@@ -79,7 +79,7 @@ class GooglePayPaymentSourceTest extends TestCase
                     'currency' => 'USD',
                     'intent' => 'AUTHORIZE', // Invalid intent
                     'merchantCountry' => 'US',
-                    'pageType' => 'product',
+                    'pageType' => 'checkout',
                 ],
             ],
             [
@@ -99,7 +99,7 @@ class GooglePayPaymentSourceTest extends TestCase
                     'currency' => 'USD',
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'US',
-                    'pageType' => 'index', // Invalid pageType
+                    'pageType' => 'product', // Invalid pageType
                 ],
             ],
         ];

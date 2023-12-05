@@ -6,12 +6,12 @@ use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\AmountEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\CountryEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\CurrencyEligibilityRule;
-use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\ExcludedCountryEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\IntentEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\PageTypeEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\PaymentSource;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\PaymentSourceUseCase;
 use PrestaShop\Module\PrestashopCheckout\Rule\AndRule;
+use PrestaShop\Module\PrestashopCheckout\Rule\NotRule;
 use PrestaShop\Module\PrestashopCheckout\Rule\OrRule;
 
 class P24PaymentSourceTest extends TestCase
@@ -39,20 +39,20 @@ class P24PaymentSourceTest extends TestCase
                                 new AmountEligibilityRule($data['amount'], '0.50'),
                                 new CurrencyEligibilityRule($data['currency'], ['EUR']),
                             ]
-                        )
+                        ),
                     ]
                 ),
                 new CountryEligibilityRule($data['buyerCountry'], ['PL']),
-                new ExcludedCountryEligibilityRule($data['merchantCountry'], ['RU', 'JP', 'BR']),
+                new NotRule(new CountryEligibilityRule($data['merchantCountry'], ['RU', 'JP', 'BR'])),
             ],
             [
                 new PaymentSourceUseCase(
                     'ECM',
                     [
                         new IntentEligibilityRule($data['intent'], ['CAPTURE']),
-                        new PageTypeEligibilityRule($data['pageType'], ['checkout'])
+                        new PageTypeEligibilityRule($data['pageType'], ['checkout']),
                     ]
-                )
+                ),
             ]
         );
     }
@@ -67,7 +67,7 @@ class P24PaymentSourceTest extends TestCase
                     'currency' => 'PLN',
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'US',
-                    'pageType' => 'checkout'
+                    'pageType' => 'checkout',
                 ],
             ],
             [
@@ -77,7 +77,7 @@ class P24PaymentSourceTest extends TestCase
                     'currency' => 'EUR',
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'US',
-                    'pageType' => 'checkout'
+                    'pageType' => 'checkout',
                 ],
             ],
             [
@@ -87,7 +87,7 @@ class P24PaymentSourceTest extends TestCase
                     'currency' => 'USD', // Invalid currency
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'US',
-                    'pageType' => 'checkout'
+                    'pageType' => 'checkout',
                 ],
             ],
             [
@@ -97,7 +97,7 @@ class P24PaymentSourceTest extends TestCase
                     'currency' => 'EUR',
                     'intent' => 'AUTHORIZE', // Invalid intent
                     'merchantCountry' => 'FR',
-                    'pageType' => 'checkout'
+                    'pageType' => 'checkout',
                 ],
             ],
             [
@@ -107,7 +107,7 @@ class P24PaymentSourceTest extends TestCase
                     'currency' => 'EUR',
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'JP', // Invalid merchant country
-                    'pageType' => 'checkout'
+                    'pageType' => 'checkout',
                 ],
             ],
             [
@@ -117,9 +117,9 @@ class P24PaymentSourceTest extends TestCase
                     'currency' => 'EUR',
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'FR',
-                    'pageType' => 'product' // Invalid pageType
+                    'pageType' => 'product', // Invalid pageType
                 ],
-            ]
+            ],
         ];
     }
 }

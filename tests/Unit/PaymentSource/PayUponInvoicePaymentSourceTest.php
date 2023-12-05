@@ -37,7 +37,7 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                         new PageTypeEligibilityRule($data['pageType'], ['checkout']),
                         new VirtualGoodsEligibilityRule($data['virtualGoods'], false),
                     ]
-                )
+                ),
             ]
         );
     }
@@ -55,7 +55,7 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'DE',
                     'pageType' => 'checkout',
-                    'virtualGoods' => false
+                    'virtualGoods' => false,
                 ],
                 [
                     'amount' => '2600', // Invalid amount > maximal
@@ -66,7 +66,7 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'DE',
                     'pageType' => 'checkout',
-                    'virtualGoods' => false
+                    'virtualGoods' => false,
                 ],
                 [
                     'amount' => '239.99',
@@ -77,7 +77,7 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'DE',
                     'pageType' => 'checkout',
-                    'virtualGoods' => false
+                    'virtualGoods' => false,
                 ],
                 [
                     'amount' => '239.99',
@@ -88,7 +88,7 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'DE',
                     'pageType' => 'checkout',
-                    'virtualGoods' => false
+                    'virtualGoods' => false,
                 ],
                 [
                     'amount' => '239.99',
@@ -99,7 +99,7 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'DE',
                     'pageType' => 'checkout',
-                    'virtualGoods' => false
+                    'virtualGoods' => false,
                 ],
                 [
                     'amount' => '239.99',
@@ -110,7 +110,7 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'DE',
                     'pageType' => 'checkout',
-                    'virtualGoods' => false
+                    'virtualGoods' => false,
                 ],
                 [
                     'amount' => '239.99',
@@ -121,7 +121,7 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'intent' => 'AUTHORIZE', // Invalid intent
                     'merchantCountry' => 'DE',
                     'pageType' => 'checkout',
-                    'virtualGoods' => false
+                    'virtualGoods' => false,
                 ],
                 [
                     'amount' => '239.99',
@@ -132,7 +132,7 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'FR', // Invalid merchantCountry
                     'pageType' => 'checkout',
-                    'virtualGoods' => false
+                    'virtualGoods' => false,
                 ],
                 [
                     'amount' => '239.99',
@@ -143,7 +143,7 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'DE',
                     'pageType' => 'cart', // Invalid pageType
-                    'virtualGoods' => false
+                    'virtualGoods' => false,
                 ],
                 [
                     'amount' => '239.99',
@@ -154,7 +154,7 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'DE',
                     'pageType' => 'checkout',
-                    'virtualGoods' => true // Invalid virtualGoods
+                    'virtualGoods' => true, // Invalid virtualGoods
                 ],
             ],
         ];
