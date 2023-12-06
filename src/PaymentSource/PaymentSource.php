@@ -50,7 +50,7 @@ class PaymentSource
      * @param RuleInterface[] $rules
      * @param PaymentSourceUseCase[] $useCases
      */
-    public function __construct($name, $displayName, $rules, $useCases)
+    public function __construct($name, $displayName, array $rules, array $useCases)
     {
         $this->name = $name;
         $this->displayName = $displayName;
