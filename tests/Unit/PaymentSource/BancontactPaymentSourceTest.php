@@ -1,8 +1,12 @@
 <?php
 
-namespace Tests\Unit\Amount;
+namespace Tests\Unit\PaymentSource;
 
 use PHPUnit\Framework\TestCase;
+use PrestaShop\Module\PrestashopCheckout\Country\Exception\CountryException;
+use PrestaShop\Module\PrestashopCheckout\Currency\Exception\CurrencyException;
+use PrestaShop\Module\PrestashopCheckout\Intent\Exception\IntentException;
+use PrestaShop\Module\PrestashopCheckout\Intent\ValueObject\Intent;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\AmountEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\CountryEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\CurrencyEligibilityRule;
@@ -10,14 +14,20 @@ use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\IntentEli
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\PageTypeEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\PaymentSource;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\PaymentSourceUseCase;
+use PrestaShop\Module\PrestashopCheckout\PaymentSourceUseCase\Exception\PaymentSourceUseCaseException;
 use PrestaShop\Module\PrestashopCheckout\Rule\NotRule;
 
 class BancontactPaymentSourceTest extends TestCase
 {
     /**
      * @dataProvider invalidBancontactDataProvider
+     *
+     * @throws IntentException
+     * @throws PaymentSourceUseCaseException
+     * @throws CurrencyException
+     * @throws CountryException
      */
-    public function testInvalidBancontactPaymentSource($data)
+    public function testInvalidBancontactPaymentSource($data, $paymentSourceRulesExpected, $paymentSourceUseCaseExpected)
     {
         $paymentSource = new PaymentSource(
             'bancontact',
@@ -32,12 +42,38 @@ class BancontactPaymentSourceTest extends TestCase
                 new PaymentSourceUseCase(
                     'ECM',
                     [
-                        new IntentEligibilityRule($data['intent'], ['CAPTURE']),
+                        new IntentEligibilityRule(new Intent($data['intent']), ['CAPTURE']),
                         new PageTypeEligibilityRule($data['pageType'], ['checkout']),
                     ]
                 ),
             ]
         );
+        $this->rulesTesting($paymentSource->getRules(), $paymentSourceRulesExpected);
+        $this->UseCasesTesting($paymentSource->getUseCases(), $paymentSourceUseCaseExpected);
+    }
+
+    public function rulesTesting($rules, $resultExpected)
+    {
+        foreach ($rules as $rule) {
+            $this->assertEquals($rule->evaluate(), $resultExpected[get_class($rule)]);
+        }
+    }
+
+    private function UseCasesTesting($useCases, $resultExpected)
+    {
+        foreach ($useCases as $useCase) {
+            $isAvailableUseCase = true;
+            foreach ($useCase->getRules() as $rule) {
+                $isAvailableUseCase = $rule->evaluate();
+                if (!$isAvailableUseCase) {
+                    $this->assertFalse(in_array($useCase->getType(), $resultExpected));
+                    break;
+                }
+            }
+            if ($isAvailableUseCase) {
+                $this->assertTrue(in_array($useCase->getType(), $resultExpected));
+            }
+        }
     }
 
     public function invalidBancontactDataProvider()
@@ -52,6 +88,15 @@ class BancontactPaymentSourceTest extends TestCase
                     'merchantCountry' => 'FR',
                     'pageType' => 'checkout',
                 ],
+                [
+                    AmountEligibilityRule::class => false,
+                    CountryEligibilityRule::class => true,
+                    CurrencyEligibilityRule::class => true,
+                    NotRule::class => true,
+                ],
+                [
+                    'ECM',
+                ],
             ],
             [
                 [
@@ -61,6 +106,15 @@ class BancontactPaymentSourceTest extends TestCase
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'US',
                     'pageType' => 'checkout',
+                ],
+                [
+                    AmountEligibilityRule::class => true,
+                    CountryEligibilityRule::class => false,
+                    CurrencyEligibilityRule::class => true,
+                    NotRule::class => true,
+                ],
+                [
+                    'ECM',
                 ],
             ],
             [
@@ -72,6 +126,15 @@ class BancontactPaymentSourceTest extends TestCase
                     'merchantCountry' => 'US',
                     'pageType' => 'checkout',
                 ],
+                [
+                    AmountEligibilityRule::class => true,
+                    CountryEligibilityRule::class => true,
+                    CurrencyEligibilityRule::class => false,
+                    NotRule::class => true,
+                ],
+                [
+                    'ECM',
+                ],
             ],
             [
                 [
@@ -81,6 +144,14 @@ class BancontactPaymentSourceTest extends TestCase
                     'intent' => 'AUTHORIZE', // Invalid intent
                     'merchantCountry' => 'FR',
                     'pageType' => 'checkout',
+                ],
+                [
+                    AmountEligibilityRule::class => true,
+                    CountryEligibilityRule::class => true,
+                    CurrencyEligibilityRule::class => true,
+                    NotRule::class => true,
+                ],
+                [
                 ],
             ],
             [
@@ -92,6 +163,15 @@ class BancontactPaymentSourceTest extends TestCase
                     'merchantCountry' => 'JP', // Invalid merchant country
                     'pageType' => 'checkout',
                 ],
+                [
+                    AmountEligibilityRule::class => true,
+                    CountryEligibilityRule::class => true,
+                    CurrencyEligibilityRule::class => true,
+                    NotRule::class => false,
+                ],
+                [
+                    'ECM',
+                ],
             ],
             [
                 [
@@ -101,6 +181,14 @@ class BancontactPaymentSourceTest extends TestCase
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'FR',
                     'pageType' => 'product', // Invalid pageType
+                ],
+                [
+                    AmountEligibilityRule::class => true,
+                    CountryEligibilityRule::class => true,
+                    CurrencyEligibilityRule::class => true,
+                    NotRule::class => true,
+                ],
+                [
                 ],
             ],
         ];
