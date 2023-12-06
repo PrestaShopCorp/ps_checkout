@@ -20,10 +20,45 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule;
 
+use PrestaShop\Module\PrestashopCheckout\Currency\Exception\CurrencyException;
+use PrestaShop\Module\PrestashopCheckout\Currency\ValueObject\CurrencyCode;
 use PrestaShop\Module\PrestashopCheckout\Rule\InRule;
 use PrestaShop\Module\PrestashopCheckout\Rule\RuleInterface;
 
-class CurrencyEligibilityRule extends InRule implements RuleInterface
+class CurrencyEligibilityRule implements RuleInterface
 {
+    private $rule;
 
+    /**
+     * @param $currencyCode
+     * @param $allowedCurrency
+     *
+     * @throws CurrencyException
+     */
+    public function __construct($currencyCode, $allowedCurrency)
+    {
+        $cCode = new CurrencyCode($currencyCode);
+        $this->rule = new InRule($cCode->getValue(), $this->assertIsValidCurrencyList($allowedCurrency));
+    }
+
+    /**
+     * @param array $allowedCurrency
+     *
+     * @return array
+     *
+     * @throws CurrencyException
+     */
+    private function assertIsValidCurrencyList($allowedCurrency)
+    {
+        foreach ($allowedCurrency as $aCurrency) {
+            new CurrencyCode($aCurrency); // check if the currency is string and valid
+        }
+
+        return $allowedCurrency;
+    }
+
+    public function evaluate()
+    {
+        return $this->rule->evaluate();
+    }
 }

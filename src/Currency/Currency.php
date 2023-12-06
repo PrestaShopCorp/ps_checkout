@@ -21,13 +21,14 @@
 namespace PrestaShop\Module\PrestashopCheckout\Currency;
 
 use PrestaShop\Module\PrestashopCheckout\Currency\Exception\CurrencyException;
+use PrestaShop\Module\PrestashopCheckout\Currency\ValueObject\CurrencyCode;
 
 class Currency
 {
     /** @var string */
     private $name;
 
-    /** @var string */
+    /** @var CurrencyCode */
     private $code;
 
     /**
@@ -39,7 +40,7 @@ class Currency
     public function __construct($name, $code)
     {
         $this->name = $this->assertCurrencyNameIsValid($name);
-        $this->code = $this->assertCurrencyCodeIsValid($code);
+        $this->code = new CurrencyCode($code);
     }
 
     /**
@@ -63,7 +64,7 @@ class Currency
      */
     public function getCode()
     {
-        return $this->code;
+        return $this->code->getValue();
     }
 
     /**
@@ -72,25 +73,6 @@ class Currency
     public function setCode($code)
     {
         $this->code = $code;
-    }
-
-    /**
-     * @param string $code
-     *
-     * @return string
-     *
-     * @throws CurrencyException
-     */
-    private function assertCurrencyCodeIsValid($code)
-    {
-        if (!is_string($code)) {
-            throw new CurrencyException(sprintf('CODE is not a string (%s)', gettype($code)), CurrencyException::WRONG_TYPE_CODE);
-        }
-        if (preg_match('/^[A-Z]{3}$/', $code) === 0) {
-            throw new CurrencyException('Invalid code', CurrencyException::INVALID_CODE);
-        }
-
-        return $code;
     }
 
     /**
