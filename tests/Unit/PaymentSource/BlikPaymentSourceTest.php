@@ -51,7 +51,7 @@ class BlikPaymentSourceTest extends TestCase
         $this->UseCasesTesting($paymentSource->getUseCases(), $paymentSourceUseCaseExpected);
     }
 
-    public function rulesTesting($rules, $resultExpected)
+    private function rulesTesting($rules, $resultExpected)
     {
         foreach ($rules as $rule) {
             $this->assertEquals($rule->evaluate(), $resultExpected[get_class($rule)]);
