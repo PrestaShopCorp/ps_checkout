@@ -753,19 +753,24 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
 
         try {
-            $token = $psAccountRepository->getIdToken();
-
-            $this->ajaxDie(json_encode([
+            $this->exitWithResponse([
+                'httpCode' => 200,
                 'status' => true,
-                'token' => $token,
-            ], JSON_PRETTY_PRINT));
-        } catch (\Exception $exception) {
-            http_response_code($exception->getCode());
-
-            $this->ajaxDie(json_encode([
+                'token' => $psAccountRepository->getIdToken(),
+                'shopId' => $psAccountRepository->getShopUuid(),
+                'isAccountLinked' => $psAccountRepository->isAccountLinked(),
+            ]);
+        } catch (Exception $exception) {
+            $this->exitWithResponse([
+                'httpCode' => 500,
                 'status' => false,
-                'error' => $exception->getMessage(),
-            ], JSON_PRETTY_PRINT));
+                'error' => sprintf(
+                    '%s %d : %s',
+                    get_class($exception),
+                    $exception->getCode(),
+                    $exception->getMessage()
+                ),
+            ]);
         }
     }
 
