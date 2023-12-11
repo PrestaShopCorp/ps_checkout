@@ -1,8 +1,10 @@
 <?php
 
-namespace Tests\Unit\Amount;
+namespace Tests\Unit\PaymentSource;
 
 use PHPUnit\Framework\TestCase;
+use PrestaShop\Module\PrestashopCheckout\Intent\Exception\IntentException;
+use PrestaShop\Module\PrestashopCheckout\Intent\ValueObject\Intent;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\AmountEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\CountryEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\CurrencyEligibilityRule;
@@ -15,8 +17,10 @@ class PayUponInvoicePaymentSourceTest extends TestCase
 {
     /**
      * @dataProvider invalidPayUponInvoiceDataProvider
+     *
+     * @throws IntentException
      */
-    public function testInvalidPayUponInvoicePaymentSource($data)
+    public function testInvalidPayUponInvoicePaymentSource($data, $paymentSourceRulesExpected, $paymentSourceUseCaseExpected)
     {
         $paymentSource = new PaymentSource(
             'payuponinvoice',
@@ -33,13 +37,39 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     [
                         new B2BEligibilityRule($data['B2B'], false),
                         new B2CEligibilityRule($data['B2C'], true),
-                        new IntentEligibilityRule($data['intent'], ['CAPTURE']),
+                        new IntentEligibilityRule(new Intent($data['intent']), ['CAPTURE']),
                         new PageTypeEligibilityRule($data['pageType'], ['checkout']),
                         new VirtualGoodsEligibilityRule($data['virtualGoods'], false),
                     ]
                 ),
             ]
         );
+        $this->rulesTesting($paymentSource->getRules(), $paymentSourceRulesExpected);
+        $this->UseCasesTesting($paymentSource->getUseCases(), $paymentSourceUseCaseExpected);
+    }
+
+    private function rulesTesting($rules, $resultExpected)
+    {
+        foreach ($rules as $key => $rule) {
+            $this->assertEquals($rule->evaluate(), $resultExpected[$key]);
+        }
+    }
+
+    private function UseCasesTesting($useCases, $resultExpected)
+    {
+        foreach ($useCases as $useCase) {
+            $isAvailableUseCase = true;
+            foreach ($useCase->getRules() as $rule) {
+                $isAvailableUseCase = $rule->evaluate();
+                if (!$isAvailableUseCase) {
+                    $this->assertFalse(in_array($useCase->getType(), $resultExpected));
+                    break;
+                }
+            }
+            if ($isAvailableUseCase) {
+                $this->assertTrue(in_array($useCase->getType(), $resultExpected));
+            }
+        }
     }
 
     public function invalidPayUponInvoiceDataProvider()
@@ -58,6 +88,17 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'virtualGoods' => false,
                 ],
                 [
+                    false,
+                    true,
+                    true,
+                    true,
+                ],
+                [
+                    'ECM',
+                ],
+            ],
+            [
+                [
                     'amount' => '2600', // Invalid amount > maximal
                     'B2B' => false,
                     'B2C' => true,
@@ -68,6 +109,17 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'pageType' => 'checkout',
                     'virtualGoods' => false,
                 ],
+                [
+                    false,
+                    true,
+                    true,
+                    true,
+                ],
+                [
+                    'ECM',
+                ],
+            ],
+            [
                 [
                     'amount' => '239.99',
                     'B2B' => true, // Invalid B2B
@@ -80,6 +132,16 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'virtualGoods' => false,
                 ],
                 [
+                    true,
+                    true,
+                    true,
+                    true,
+                ],
+                [
+                ],
+            ],
+            [
+                [
                     'amount' => '239.99',
                     'B2B' => false,
                     'B2C' => false, // Invalid B2C
@@ -90,6 +152,16 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'pageType' => 'checkout',
                     'virtualGoods' => false,
                 ],
+                [
+                    true,
+                    true,
+                    true,
+                    true,
+                ],
+                [
+                ],
+            ],
+            [
                 [
                     'amount' => '239.99',
                     'B2B' => false,
@@ -102,6 +174,16 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'virtualGoods' => false,
                 ],
                 [
+                    true,
+                    true,
+                    true,
+                    true,
+                ],
+                [
+                ],
+            ],
+            [
+                [
                     'amount' => '239.99',
                     'B2B' => false,
                     'B2C' => true,
@@ -112,6 +194,17 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'pageType' => 'checkout',
                     'virtualGoods' => false,
                 ],
+                [
+                    true,
+                    true,
+                    false,
+                    true,
+                ],
+                [
+                    'ECM',
+                ],
+            ],
+            [
                 [
                     'amount' => '239.99',
                     'B2B' => false,
@@ -124,6 +217,16 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'virtualGoods' => false,
                 ],
                 [
+                    true,
+                    true,
+                    true,
+                    true,
+                ],
+                [
+                ],
+            ],
+            [
+                [
                     'amount' => '239.99',
                     'B2B' => false,
                     'B2C' => true,
@@ -134,6 +237,17 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'pageType' => 'checkout',
                     'virtualGoods' => false,
                 ],
+                [
+                    true,
+                    true,
+                    true,
+                    false,
+                ],
+                [
+                    'ECM',
+                ],
+            ],
+            [
                 [
                     'amount' => '239.99',
                     'B2B' => false,
@@ -146,6 +260,16 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'virtualGoods' => false,
                 ],
                 [
+                    true,
+                    true,
+                    true,
+                    true,
+                ],
+                [
+                ],
+            ],
+            [
+                [
                     'amount' => '239.99',
                     'B2B' => false,
                     'B2C' => true,
@@ -156,6 +280,13 @@ class PayUponInvoicePaymentSourceTest extends TestCase
                     'pageType' => 'checkout',
                     'virtualGoods' => true, // Invalid virtualGoods
                 ],
+            ], [
+                true,
+                true,
+                true,
+                true,
+            ],
+            [
             ],
         ];
     }
