@@ -1,8 +1,12 @@
 <?php
 
-namespace Tests\Unit\Amount;
+namespace Tests\Unit\PaymentSource;
 
 use PHPUnit\Framework\TestCase;
+use PrestaShop\Module\PrestashopCheckout\Country\Exception\CountryException;
+use PrestaShop\Module\PrestashopCheckout\Currency\Exception\CurrencyException;
+use PrestaShop\Module\PrestashopCheckout\Intent\Exception\IntentException;
+use PrestaShop\Module\PrestashopCheckout\Intent\ValueObject\Intent;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\AmountEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\CountryEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\CurrencyEligibilityRule;
@@ -10,6 +14,7 @@ use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\IntentEli
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\EligibilityRule\PageTypeEligibilityRule;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\PaymentSource;
 use PrestaShop\Module\PrestashopCheckout\PaymentSource\PaymentSourceUseCase;
+use PrestaShop\Module\PrestashopCheckout\PaymentSourceUseCase\Exception\PaymentSourceUseCaseException;
 use PrestaShop\Module\PrestashopCheckout\Rule\AndRule;
 use PrestaShop\Module\PrestashopCheckout\Rule\NotRule;
 use PrestaShop\Module\PrestashopCheckout\Rule\OrRule;
@@ -18,8 +23,17 @@ class SofortPaymentSourceTest extends TestCase
 {
     /**
      * @dataProvider invalidSofortDataProvider
+     *
+     * @param $data
+     * @param $paymentSourceRulesExpected
+     * @param $paymentSourceUseCaseExpected
+     *
+     * @throws IntentException
+     * @throws PaymentSourceUseCaseException
+     * @throws CurrencyException
+     * @throws CountryException
      */
-    public function testInvalidSofortPaymentSource($data)
+    public function testInvalidSofortPaymentSource($data, $paymentSourceRulesExpected, $paymentSourceUseCaseExpected)
     {
         $paymentSource = new PaymentSource(
             'sofort',
@@ -49,12 +63,38 @@ class SofortPaymentSourceTest extends TestCase
                 new PaymentSourceUseCase(
                     'ECM',
                     [
-                        new IntentEligibilityRule($data['intent'], ['CAPTURE']),
+                        new IntentEligibilityRule(new Intent($data['intent']), ['CAPTURE']),
                         new PageTypeEligibilityRule($data['pageType'], ['checkout']),
                     ]
                 ),
             ]
         );
+        $this->rulesTesting($paymentSource->getRules(), $paymentSourceRulesExpected);
+        $this->UseCasesTesting($paymentSource->getUseCases(), $paymentSourceUseCaseExpected);
+    }
+
+    private function rulesTesting($rules, $resultExpected)
+    {
+        foreach ($rules as $rule) {
+            $this->assertEquals($rule->evaluate(), $resultExpected[get_class($rule)]);
+        }
+    }
+
+    private function UseCasesTesting($useCases, $resultExpected)
+    {
+        foreach ($useCases as $useCase) {
+            $isAvailableUseCase = true;
+            foreach ($useCase->getRules() as $rule) {
+                $isAvailableUseCase = $rule->evaluate();
+                if (!$isAvailableUseCase) {
+                    $this->assertFalse(in_array($useCase->getType(), $resultExpected));
+                    break;
+                }
+            }
+            if ($isAvailableUseCase) {
+                $this->assertTrue(in_array($useCase->getType(), $resultExpected));
+            }
+        }
     }
 
     public function invalidSofortDataProvider()
@@ -69,6 +109,14 @@ class SofortPaymentSourceTest extends TestCase
                     'merchantCountry' => 'US',
                     'pageType' => 'checkout',
                 ],
+                [
+                    OrRule::class => false,
+                    CountryEligibilityRule::class => true,
+                    NotRule::class => true,
+                ],
+                [
+                    'ECM',
+                ],
             ],
             [
                 [
@@ -79,15 +127,31 @@ class SofortPaymentSourceTest extends TestCase
                     'merchantCountry' => 'US',
                     'pageType' => 'checkout',
                 ],
+                [
+                    OrRule::class => true,
+                    CountryEligibilityRule::class => false,
+                    NotRule::class => true,
+                ],
+                [
+                    'ECM',
+                ],
             ],
             [
                 [
                     'amount' => '9.90',
-                    'buyerCountry' => 'IT',
+                    'buyerCountry' => 'AT',
                     'currency' => 'USD', // Invalid currency
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'US',
                     'pageType' => 'checkout',
+                ],
+                [
+                    OrRule::class => false,
+                    CountryEligibilityRule::class => true,
+                    NotRule::class => true,
+                ],
+                [
+                    'ECM',
                 ],
             ],
             [
@@ -99,6 +163,13 @@ class SofortPaymentSourceTest extends TestCase
                     'merchantCountry' => 'FR',
                     'pageType' => 'checkout',
                 ],
+                [
+                    OrRule::class => true,
+                    CountryEligibilityRule::class => true,
+                    NotRule::class => true,
+                ],
+                [
+                ],
             ],
             [
                 [
@@ -109,6 +180,14 @@ class SofortPaymentSourceTest extends TestCase
                     'merchantCountry' => 'JP', // Invalid merchant country
                     'pageType' => 'checkout',
                 ],
+                [
+                    OrRule::class => true,
+                    CountryEligibilityRule::class => true,
+                    NotRule::class => false,
+                ],
+                [
+                    'ECM',
+                ],
             ],
             [
                 [
@@ -118,6 +197,13 @@ class SofortPaymentSourceTest extends TestCase
                     'intent' => 'CAPTURE',
                     'merchantCountry' => 'FR',
                     'pageType' => 'product', // Invalid pageType
+                ],
+                [
+                    OrRule::class => true,
+                    CountryEligibilityRule::class => true,
+                    NotRule::class => true,
+                ],
+                [
                 ],
             ],
         ];
