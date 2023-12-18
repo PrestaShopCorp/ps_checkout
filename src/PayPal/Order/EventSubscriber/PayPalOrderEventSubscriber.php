@@ -214,7 +214,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($psCheckoutCart->getPaypalStatus() === PayPalOrderStatus::COMPLETED) {
+        if (in_array($psCheckoutCart->getPaypalStatus(), [PayPalOrderStatus::COMPLETED, PayPalOrderStatus::CANCELED], true)) {
             return;
         }
 
