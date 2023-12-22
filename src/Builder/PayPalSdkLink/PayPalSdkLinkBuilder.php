@@ -87,6 +87,7 @@ class PayPalSdkLinkBuilder
 
         if ($this->shouldIncludeHostedFieldsComponent()) {
             $components[] = 'hosted-fields';
+            $components[] = 'card-fields';
         }
 
         if ($this->shouldIncludeMessagesComponent()) {
@@ -106,6 +107,7 @@ class PayPalSdkLinkBuilder
         if ('SANDBOX' === $this->configuration->getPaymentMode()) {
             $params['debug'] = 'true';
 //            $params['buyer-country'] = $this->getCountry();
+            $params['buyer-country'] = 'US';
         }
 
         $fundingSourcesDisabled = $this->getFundingSourcesDisabled();
