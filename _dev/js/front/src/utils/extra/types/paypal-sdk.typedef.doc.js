@@ -38,6 +38,7 @@
  * @property {function} Marks.isEligible
  * @property {function} Marks.render
  * @property {object} HostedFields
+ * @property {object} CardFields
  * @property {function} HostedFields.isEligible
  * @property {function} HostedFields.render
  * @property {object} Messages
