@@ -18,22 +18,21 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
+namespace PrestaShop\Module\PrestashopCheckout\Http;
 
-use PrestaShop\Module\PrestashopCheckout\Http\PsrClientAdapter;
+use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
 use Psr\Http\Message\RequestInterface;
 
-/**
- * Construct the client used to make call to maasland
- */
-class OldPaymentClient extends GenericClient
+class PsrClientAdapter implements HttpClientInterface
 {
-    /** @var PsrClientAdapter */
     private $client;
 
-    public function __construct(PaymentClientConfigurationBuilder $configurationBuilder)
+    /**
+     * @param array $configuration
+     */
+    public function __construct(array $configuration)
     {
-        $this->client = new PsrClientAdapter($configurationBuilder->build());
+        $this->client = (new ClientFactory())->getClient($configuration);
     }
 
     /**
