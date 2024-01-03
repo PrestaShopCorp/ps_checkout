@@ -18,26 +18,50 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
+namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Service;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\OldPaymentClient;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
 
-/**
- * Handle Webhook requests
- */
-class Webhook extends OldPaymentClient
+class PaymentService
 {
-    /**
-     * Tells if the webhook came from the PSL
-     *
-     * @param array $payload
-     *
-     * @return array
-     */
-    public function getShopSignature(array $payload)
-    {
-        $this->setRoute('/payments/shop/verify_webhook_signature');
+    /** @var PaymentClient */
+    private $paymentClient;
 
-        return $this->post($payload);
+    /**
+     * @param PaymentClient $paymentClient
+     */
+    public function __construct(PaymentClient $paymentClient)
+    {
+        $this->paymentClient = $paymentClient;
+    }
+
+    public function createOrder(array $data)
+    {
+        // TODO
+    }
+
+    public function updateOrder(array $data)
+    {
+        // TODO
+    }
+
+    public function getOrder(array $data)
+    {
+        // TODO
+    }
+
+    public function captureOrder(array $data)
+    {
+        // TODO
+    }
+
+    public function refundOrder(array $data)
+    {
+        // TODO
+    }
+
+    public function getIdentityToken(array $data)
+    {
+        // TODO
     }
 }
