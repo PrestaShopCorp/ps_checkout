@@ -18,26 +18,33 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
+namespace PrestaShop\Module\PrestashopCheckout\Http;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\OldPaymentClient;
+use Http\Client\Exception\HttpException;
+use Http\Client\Exception\NetworkException;
+use Http\Client\Exception\RequestException;
+use Http\Client\Exception\TransferException;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
- * Handle Webhook requests
+ * Interface HttpClientInterface
+ *
+ * This interface provides a PSR-18 compliant implementation for PHP 5.6
  */
-class Webhook extends OldPaymentClient
+interface HttpClientInterface
 {
     /**
-     * Tells if the webhook came from the PSL
+     * Sends a PSR-7 request and returns a PSR-7 response.
      *
-     * @param array $payload
+     * @param RequestInterface $request
      *
-     * @return array
+     * @return ResponseInterface
+     *
+     * @throws NetworkException
+     * @throws HttpException
+     * @throws RequestException
+     * @throws TransferException
      */
-    public function getShopSignature(array $payload)
-    {
-        $this->setRoute('/payments/shop/verify_webhook_signature');
-
-        return $this->post($payload);
-    }
+    public function sendRequest(RequestInterface $request);
 }

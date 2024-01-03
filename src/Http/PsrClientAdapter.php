@@ -18,26 +18,28 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
+namespace PrestaShop\Module\PrestashopCheckout\Http;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\OldPaymentClient;
+use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
+use Psr\Http\Message\RequestInterface;
 
-/**
- * Handle Webhook requests
- */
-class Webhook extends OldPaymentClient
+class PsrClientAdapter implements HttpClientInterface
 {
-    /**
-     * Tells if the webhook came from the PSL
-     *
-     * @param array $payload
-     *
-     * @return array
-     */
-    public function getShopSignature(array $payload)
-    {
-        $this->setRoute('/payments/shop/verify_webhook_signature');
+    private $client;
 
-        return $this->post($payload);
+    /**
+     * @param array $configuration
+     */
+    public function __construct(array $configuration)
+    {
+        $this->client = (new ClientFactory())->getClient($configuration);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sendRequest(RequestInterface $request)
+    {
+        return $this->client->sendRequest($request);
     }
 }
