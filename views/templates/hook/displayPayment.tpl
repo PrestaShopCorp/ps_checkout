@@ -51,8 +51,8 @@
               {if $fundingSource == 'card' && $isHostedFieldsAvailable}
                 <form id="ps_checkout-hosted-fields-form" class="form-horizontal">
                   <div class="form-group">
-                    <label class="form-control-label" for="ps_checkout-hosted-fields-card-holder-name">{l s='Cardholder Name (optional)' mod='ps_checkout'}</label>
-                    <div id="ps_checkout-hosted-fields-card-holder-name" class="form-control">
+                    <label class="form-control-label" for="ps_checkout-hosted-fields-card-name">{l s='Cardholder Name (optional)' mod='ps_checkout'}</label>
+                    <div id="ps_checkout-hosted-fields-card-name" class="form-control">
                     </div>
                   </div>
                   <div class="form-group">

@@ -323,17 +323,22 @@
   margin: 0 0.25em;
 }
 
+#ps_checkout-hosted-fields-card-name {
+  position: relative;
+  /*height: 45px;*/
+  margin-top: 6px;
+}
 #ps_checkout-hosted-fields-card-number {
   position: relative;
-  height: 45px;
+  /*height: 45px;*/
   margin-top: 6px;
 }
 #ps_checkout-hosted-fields-card-expiration-date {
-  height: 45px;
+  /*height: 45px;*/
   margin-top: 6px;
 }
 #ps_checkout-hosted-fields-card-cvv {
-  height: 45px;
+  /*height: 45px;*/
   margin-top: 6px;
 }
 
@@ -506,10 +511,29 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
   display: table-cell;
 }
 
+#ps_checkout-hosted-fields-form.loading > *:not(#ps_checkout-hosted-fields-form-loader){
+  display: none;
+}
+
+#ps_checkout-hosted-fields-form:not(.loading) > #ps_checkout-hosted-fields-form-loader{
+  display: none;
+}
+
 #cart .ps-checkout-express-separator {
   text-align: center;
 }
 
 .cart-detailed-totals + #ps-checkout-pp-message-container{
   padding: 0 1rem 1rem;
+}
+
+#ps_checkout-hosted-fields-error-name.hidden,
+#ps_checkout-hosted-fields-error-number.hidden,
+#ps_checkout-hosted-fields-error-expiry.hidden,
+#ps_checkout-hosted-fields-error-cvv.hidden {
+  display: none;
+}
+
+#ps_checkout-hosted-fields-form-loader {
+  text-align: center;
 }

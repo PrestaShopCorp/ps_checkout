@@ -46,6 +46,17 @@
  */
 
 /**
+ * @typedef PayPayCardFieldsOptions
+ * @type {*}
+ *
+ * @property {function} createOrder
+ * @property {function} onApprove
+ * @property {function} onError
+ * @property {function} inputEvents
+ * @property {object} style
+ */
+
+/**
  * @typedef PaypalPayLaterOfferEvents
  * @type {*}
  *
@@ -281,180 +292,85 @@ export class PayPalService extends BaseClass {
 
   /**
    * @param {*} fieldSelectors
+   * @param {string} fieldSelectors.name
    * @param {string} fieldSelectors.number
    * @param {string} fieldSelectors.cvv
    * @param {string} fieldSelectors.expirationDate
-   * @param {PaypalHostedFieldsEvents} events
-   * @returns {*}
+   *
+   * @param {PayPayCardFieldsOptions} options
+   *
+   * @returns {PayPalSdk.CardFields}
    */
-  getCardFields(fieldSelectors, events) {
-    const style = {
-      ...{
-        input: {
-          'font-size': '17px',
-          'font-family': 'helvetica, tahoma, calibri, sans-serif',
-          color: '#3a3a3a'
-        },
-        ':focus': {
-          color: 'black'
-        }
-      },
-      ...(this.configPayPal.hostedFieldsCustomization || {}),
-      ...(window.ps_checkout.hostedFieldsCustomization || {})
-    };
+  async getCardFields(fieldSelectors, options) {
+    const cardFields = this.sdk.CardFields(options);
 
-    return this.sdk.CardFields(events).render({
-      styles: style,
-      fields: {
-        name: {
-          selector: fieldSelectors.name,
-          placeholder: this.$('paypal.hosted-fields.placeholder.card-number')
-        },
-        number: {
-          selector: fieldSelectors.number,
-          placeholder: this.$('paypal.hosted-fields.placeholder.card-number')
-        },
-        cvv: {
-          selector: fieldSelectors.cvv,
-          placeholder: this.$('paypal.hosted-fields.placeholder.cvv')
-        },
-        expirationDate: {
-          selector: fieldSelectors.expirationDate,
-          placeholder: this.$(
-            'paypal.hosted-fields.placeholder.expiration-date'
-          )
-        }
-      },
-      ...events
-    })
-      .then(cardFields => {
-        const nameField = document.querySelector(fieldSelectors.name);
-        const numberField = document.querySelector(fieldSelectors.number);
-        const cvvField = document.querySelector(fieldSelectors.cvv);
-        const expirationDateField = document.querySelector(
-          fieldSelectors.expirationDate
-        );
+    const nameFieldSelector = document.querySelector(fieldSelectors.name);
+    const numberFieldSelector = document.querySelector(fieldSelectors.number);
+    const expiryFieldSelector = document.querySelector(
+      fieldSelectors.expirationDate
+    );
+    const cvvFieldSelector = document.querySelector(fieldSelectors.cvv);
 
-        const cardNameField = cardFields.NameField();
-        const cardNumberField = cardFields.NumberField();
-        const cardExpiryField = cardFields.ExpiryField();
-        const cardCvvField = cardFields.CVVField();
 
-        try {
-          cardNameField.render(nameField);
-          cardNumberField.render(numberField);
-          cardCvvField.render(cvvField);
-          cardExpiryField.render(expirationDateField);
-        } catch (e) {
-          return console.error("Failed to render CardFields", e);
-        }
+    const nameField = cardFields.NameField({
+      placeholder: this.$('paypal.hosted-fields.placeholder.card-name')
+    });
+    const numberField = cardFields.NumberField({
+      placeholder: this.$('paypal.hosted-fields.placeholder.card-number')
+    });
+    const expiryField = cardFields.ExpiryField({
+      placeholder: this.$('paypal.hosted-fields.placeholder.expiration-date')
+    });
+    const cvvField = cardFields.CVVField({
+      placeholder: this.$(
+        'paypal.hosted-fields.placeholder.cvv'
+      )
+    });
 
-        const cardHolderNameLabel = document.querySelector(
-          `label[for="${c.id}"]`
-        );
-        const numberLabel = document.querySelector(
-          `label[for="${numberField.id}"]`
-        );
-        const cvvLabel = document.querySelector(`label[for="${cvvField.id}"]`);
-        const expirationDateLabel = document.querySelector(
-          `label[for="${expirationDateField.id}"]`
-        );
 
-        numberLabel.innerHTML = this.$(
-          'paypal.hosted-fields.label.card-number'
-        );
-        cvvLabel.innerHTML = this.$('paypal.hosted-fields.label.cvv');
-        expirationDateLabel.innerHTML = this.$(
-          'paypal.hosted-fields.label.expiration-date'
-        );
+    // await Promise.all(
+    //   [
+    //     cardNameField.render(nameField),
+    //     cardNumberField.render(numberField),
+    //     cardCvvField.render(cvvField),
+    //     cardExpiryField.render(expirationDateField)
+    //   ]
+    // ).catch(e => {
+    //   return console.error("Failed to render CardFields", e);
+    // }) ;
 
-        return cardFields;
-      })
-      .then(cardFields => {
-        cardFields.on('focus', event => {
-          window.ps_checkout.events.dispatchEvent(
-            new CustomEvent('hostedFieldsFocus', {
-              detail: { ps_checkout: window.ps_checkout, event: event }
-            })
-          );
-        });
-        cardFields.on('blur', event => {
-          window.ps_checkout.events.dispatchEvent(
-            new CustomEvent('hostedFieldsBlur', {
-              detail: { ps_checkout: window.ps_checkout, event: event }
-            })
-          );
-        });
-        cardFields.on('empty', event => {
-          window.ps_checkout.events.dispatchEvent(
-            new CustomEvent('hostedFieldsEmpty', {
-              detail: { ps_checkout: window.ps_checkout, event: event }
-            })
-          );
-        });
-        cardFields.on('notEmpty', event => {
-          window.ps_checkout.events.dispatchEvent(
-            new CustomEvent('hostedFieldsNotEmpty', {
-              detail: { ps_checkout: window.ps_checkout, event: event }
-            })
-          );
-        });
-        cardFields.on('validityChange', event => {
-          window.ps_checkout.events.dispatchEvent(
-            new CustomEvent('hostedFieldsValidityChange', {
-              detail: { ps_checkout: window.ps_checkout, event: event }
-            })
-          );
-        });
-        cardFields.on('inputSubmitRequest', () => {
-          window.ps_checkout.events.dispatchEvent(
-            new CustomEvent('hostedFieldsInputSubmitRequest', {
-              detail: { ps_checkout: window.ps_checkout }
-            })
-          );
-        });
-        cardFields.on('cardTypeChange', event => {
-          window.ps_checkout.events.dispatchEvent(
-            new CustomEvent('hostedFieldsCardTypeChange', {
-              detail: { ps_checkout: window.ps_checkout, event: event }
-            })
-          );
+    try {
+      await numberField.render(numberFieldSelector);
+      await expiryField.render(expiryFieldSelector);
+      await cvvField.render(cvvFieldSelector);
+      await nameField.render(nameFieldSelector);
+    } catch (e) {
+      return console.error("Failed to render CardFields", e);
+    }
 
-          // Change card bg depending on card type
-          if (event.cards.length === 1) {
-            document.querySelector('.default-credit-card').style.display =
-              'none';
+    const nameLabel = document.querySelector(
+      `label[for="${nameFieldSelector.id}"]`
+    );
+    const numberLabel = document.querySelector(
+      `label[for="${numberFieldSelector.id}"]`
+    );
+    const cvvLabel = document.querySelector(`label[for="${cvvFieldSelector.id}"]`);
+    const expirationDateLabel = document.querySelector(
+      `label[for="${expiryFieldSelector.id}"]`
+    );
 
-            const cardImage = document.getElementById('card-image');
-            cardImage.className = '';
-            cardImage.classList.add(event.cards[0].type);
+    nameLabel.innerHTML = this.$(
+      'paypal.hosted-fields.label.card-name'
+    );
+    numberLabel.innerHTML = this.$(
+      'paypal.hosted-fields.label.card-number'
+    );
+    cvvLabel.innerHTML = this.$('paypal.hosted-fields.label.cvv');
+    expirationDateLabel.innerHTML = this.$(
+      'paypal.hosted-fields.label.expiration-date'
+    );
 
-            document.querySelector('header').classList.add('header-slide');
-
-            // Change the CVV length for AmericanExpress cards
-            if (event.cards[0].code.size === 4) {
-              cardFields.setAttribute({
-                field: 'cvv',
-                attribute: 'placeholder',
-                value: 'XXXX'
-              });
-            }
-          } else {
-            document.querySelector('.default-credit-card').style.display =
-              'block';
-            const cardImage = document.getElementById('card-image');
-            cardImage.className = '';
-
-            cardFields.setAttribute({
-              field: 'cvv',
-              attribute: 'placeholder',
-              value: 'XXX'
-            });
-          }
-        });
-
-        return cardFields;
-      });
+    return cardFields;
   }
 
   getEligibleFundingSources(cache = false) {
