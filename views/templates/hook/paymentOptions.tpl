@@ -32,21 +32,20 @@
   </div>
   <div class="form-group">
     <label class="form-control-label" for="ps_checkout-hosted-fields-card-name">{l s='Cardholder Name (optional)' mod='ps_checkout'}</label>
-    <div id="ps_checkout-hosted-fields-card-name">
-    </div>
+    <div id="ps_checkout-hosted-fields-card-name"></div>
+    <div id="ps_checkout-hosted-fields-error-name" class="alert alert-danger hidden">{l s='Card holder name is invalid' mod='ps_checkout'}</div>
   </div>
   <div class="form-group">
     <label class="form-control-label" for="ps_checkout-hosted-fields-card-number">{l s='Card number' mod='ps_checkout'}</label>
-    <div id="ps_checkout-hosted-fields-card-number" >
-      <div id="card-image">
-        <img class="default-credit-card" src="{$modulePath}views/img/credit_card.png" alt="">
-      </div>
-    </div>
+    <div id="ps_checkout-hosted-fields-card-number" ></div>
+    <div id="ps_checkout-hosted-fields-error-number" class="alert alert-danger hidden">{l s='Card number is invalid' mod='ps_checkout'}</div>
+    <div id="ps_checkout-hosted-fields-error-vendor" class="alert alert-danger hidden">{l s='Card vendor is invalid' mod='ps_checkout'}</div>
   </div>
   <div class="row">
     <div class="form-group col-xs-6 col-6">
       <label class="form-control-label" for="ps_checkout-hosted-fields-card-expiration-date">{l s='Expiry date' mod='ps_checkout'}</label>
       <div id="ps_checkout-hosted-fields-card-expiration-date" ></div>
+      <div id="ps_checkout-hosted-fields-error-expiry" class="alert alert-danger hidden">{l s='Card expiration date is invalid' mod='ps_checkout'}</div>
     </div>
     <div class="form-group col-xs-6 col-6">
       <label class="form-control-label" for="ps_checkout-hosted-fields-card-cvv">{l s='CVC' mod='ps_checkout'}</label>
@@ -59,13 +58,8 @@
         </div>
       </div>
       <div id="ps_checkout-hosted-fields-card-cvv" ></div>
+      <div id="ps_checkout-hosted-fields-error-cvv" class="alert alert-danger hidden">{l s='CVV code is invalid' mod='ps_checkout'}</div>
     </div>
-  </div>
-  <div id="ps_checkout-hosted-fields-errors">
-    <div id="ps_checkout-hosted-fields-error-name" class="alert alert-danger hidden">NAME</div>
-    <div id="ps_checkout-hosted-fields-error-number" class="alert alert-danger hidden">NUMBER</div>
-    <div id="ps_checkout-hosted-fields-error-expiry" class="alert alert-danger hidden">EXPIRY</div>
-    <div id="ps_checkout-hosted-fields-error-cvv" class="alert alert-danger hidden">CVV</div>
   </div>
   <div id="payments-sdk__contingency-lightbox"></div>
 </form>

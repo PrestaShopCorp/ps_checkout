@@ -529,6 +529,7 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
 
 #ps_checkout-hosted-fields-error-name.hidden,
 #ps_checkout-hosted-fields-error-number.hidden,
+#ps_checkout-hosted-fields-error-vendor.hidden,
 #ps_checkout-hosted-fields-error-expiry.hidden,
 #ps_checkout-hosted-fields-error-cvv.hidden {
   display: none;
