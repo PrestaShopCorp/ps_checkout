@@ -26,16 +26,18 @@
  *
  * Script tags will be removed and some HTML5 element can cause an Exception due to DOMDocument class
  *}
-
-<form id="ps_checkout-hosted-fields-form" class="form-horizontal">
+<form id="ps_checkout-hosted-fields-form" class="form-horizontal loading">
+  <div id="ps_checkout-hosted-fields-form-loader">
+    <img src="{$modulePath}views/img/tail-spin.svg" alt="">
+  </div>
   <div class="form-group">
-    <label class="form-control-label" for="ps_checkout-hosted-fields-card-holder-name">{l s='Cardholder Name (optional)' mod='ps_checkout'}</label>
-    <div id="ps_checkout-hosted-fields-card-holder-name" class="form-control">
+    <label class="form-control-label" for="ps_checkout-hosted-fields-card-name">{l s='Cardholder Name (optional)' mod='ps_checkout'}</label>
+    <div id="ps_checkout-hosted-fields-card-name">
     </div>
   </div>
   <div class="form-group">
     <label class="form-control-label" for="ps_checkout-hosted-fields-card-number">{l s='Card number' mod='ps_checkout'}</label>
-    <div id="ps_checkout-hosted-fields-card-number" class="form-control">
+    <div id="ps_checkout-hosted-fields-card-number" >
       <div id="card-image">
         <img class="default-credit-card" src="{$modulePath}views/img/credit_card.png" alt="">
       </div>
@@ -44,7 +46,7 @@
   <div class="row">
     <div class="form-group col-xs-6 col-6">
       <label class="form-control-label" for="ps_checkout-hosted-fields-card-expiration-date">{l s='Expiry date' mod='ps_checkout'}</label>
-      <div id="ps_checkout-hosted-fields-card-expiration-date" class="form-control"></div>
+      <div id="ps_checkout-hosted-fields-card-expiration-date" ></div>
     </div>
     <div class="form-group col-xs-6 col-6">
       <label class="form-control-label" for="ps_checkout-hosted-fields-card-cvv">{l s='CVC' mod='ps_checkout'}</label>
@@ -56,8 +58,14 @@
           </div>
         </div>
       </div>
-      <div id="ps_checkout-hosted-fields-card-cvv" class="form-control"></div>
+      <div id="ps_checkout-hosted-fields-card-cvv" ></div>
     </div>
+  </div>
+  <div id="ps_checkout-hosted-fields-errors">
+    <div id="ps_checkout-hosted-fields-error-name" class="alert alert-danger hidden">NAME</div>
+    <div id="ps_checkout-hosted-fields-error-number" class="alert alert-danger hidden">NUMBER</div>
+    <div id="ps_checkout-hosted-fields-error-expiry" class="alert alert-danger hidden">EXPIRY</div>
+    <div id="ps_checkout-hosted-fields-error-cvv" class="alert alert-danger hidden">CVV</div>
   </div>
   <div id="payments-sdk__contingency-lightbox"></div>
 </form>

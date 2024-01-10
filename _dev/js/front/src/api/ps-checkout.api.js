@@ -216,7 +216,7 @@ export class PsCheckoutApi extends BaseClass {
             paypal_transaction
           );
 
-          window.location.href = confirmationUrl.toString();
+          // window.location.href = confirmationUrl.toString();
         }
 
         if (response.error && 'INSTRUMENT_DECLINED' === response.error) {
