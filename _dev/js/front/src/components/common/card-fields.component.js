@@ -50,7 +50,6 @@ export class CardFieldsComponent extends BaseComponent {
     payPalService: 'PayPalService',
     psCheckoutApi: 'PsCheckoutApi',
     psCheckoutService: 'PsCheckoutService',
-    sdk: 'PayPalSDK',
   };
 
   created() {
@@ -77,9 +76,14 @@ export class CardFieldsComponent extends BaseComponent {
     this.data.HTMLElementCardNumber = this.getCardNumber();
     this.data.HTMLElementCardCVV = this.getCardCVV();
     this.data.HTMLElementCardExpirationDate = this.getCardExpirationDate();
-    this.data.HTMLElementSection = this.getSection();
 
-    this.data.clearCardFields = () => {console.log('CLEAR CARD FIELDS')};
+    this.data.HTMLElementCardNameError= this.getCardNameFieldError();
+    this.data.HTMLElementCardNumberError= this.getCardNumberFieldError();
+    this.data.HTMLElementCardVendorError= this.getCardVendorFieldError();
+    this.data.HTMLElementCardExpiryError= this.getCardExpiryFieldError();
+    this.data.HTMLElementCardCvvError= this.getCardCvvFieldError();
+
+    this.data.HTMLElementSection = this.getSection();
   }
 
 
@@ -127,6 +131,11 @@ export class CardFieldsComponent extends BaseComponent {
     return document.querySelector(cardNameErrorSelector);
   }
 
+  getCardVendorFieldError() {
+    const cardVendorErrorSelector = `#ps_checkout-hosted-fields-error-vendor`;
+    return document.querySelector(cardVendorErrorSelector);
+  }
+
   getCardExpiryFieldError() {
     const cardNameErrorSelector = `#ps_checkout-hosted-fields-error-expiry`;
     return document.querySelector(cardNameErrorSelector);
@@ -164,15 +173,16 @@ export class CardFieldsComponent extends BaseComponent {
       this.data.cardFieldsState.fields.cardNameField;
     const hideError = isFocused || !this.data.cardFieldsFocused.name || isValid || isPotentiallyValid;
 
-    this.getCardNameFieldError().classList.toggle('hidden', hideError)
+    this.data.HTMLElementCardNameError.classList.toggle('hidden', hideError)
   }
 
   toggleCardNumberFieldError() {
     const { isFocused, isEmpty, isValid, isPotentiallyValid } =
       this.data.cardFieldsState.fields.cardNumberField;
-    const hideError = isPotentiallyValid && (isFocused || !this.data.cardFieldsFocused.number || isValid);
+    const hideError = isFocused || !this.data.cardFieldsFocused.number || isValid;
 
-    this.getCardNumberFieldError().classList.toggle('hidden', hideError)
+    this.data.HTMLElementCardNumberError.classList.toggle('hidden', !isPotentiallyValid || hideError)
+    this.data.HTMLElementCardVendorError.classList.toggle('hidden', isPotentiallyValid)
   }
 
   toggleCardExpiryFieldError() {
@@ -180,14 +190,14 @@ export class CardFieldsComponent extends BaseComponent {
       this.data.cardFieldsState.fields.cardExpiryField;
     const hideError = isPotentiallyValid && (isFocused || !this.data.cardFieldsFocused.expiry || isValid);
 
-    this.getCardExpiryFieldError().classList.toggle('hidden', hideError)
+    this.data.HTMLElementCardExpiryError.classList.toggle('hidden', hideError)
   }
   toggleCardCvvFieldError() {
     const { isFocused, isEmpty, isValid, isPotentiallyValid } =
       this.data.cardFieldsState.fields.cardCvvField;
     const hideError = isPotentiallyValid && (isFocused || !this.data.cardFieldsFocused.cvv || isValid);
 
-    this.getCardCvvFieldError().classList.toggle('hidden', hideError)
+    this.data.HTMLElementCardCvvError.classList.toggle('hidden', hideError)
   }
 
   toggleCardFieldErrors() {
@@ -210,16 +220,6 @@ export class CardFieldsComponent extends BaseComponent {
       : this.data.HTMLElementButton.setAttribute('disabled', '');
 
     this.toggleCardFieldErrors();
-  }
-
-  clearCardFields() {
-    console.log('CARD-FIELDS', this.data.cardFields);
-    if (this.data.cardFields) {
-      this.data.cardFields.NameField.clear();
-      this.data.card.NumberField.clear()
-      this.data.card.CVVField.clear()
-      this.data.card.ExpiryField.clear()
-    }
   }
 
   renderPayPalCardFields() {
@@ -251,7 +251,6 @@ export class CardFieldsComponent extends BaseComponent {
         {
           style,
           createOrder: async (data) => {
-            console.log('createOrder', data);
             this.data.HTMLElementButton.setAttribute('disabled', true);
 
             return this.psCheckoutApi
@@ -271,15 +270,10 @@ export class CardFieldsComponent extends BaseComponent {
               })
           },
           onApprove: async (data) => {
-            console.log('onApprove', data);
             return this.psCheckoutApi.postValidateOrder({
               ...data,
               fundingSource: this.data.name,
               isHostedFields: true
-            })
-            .then(data => {
-              this.clearCardFields();
-              return data;
             })
             .catch(error => {
               let message = error.message || '';
@@ -294,7 +288,7 @@ export class CardFieldsComponent extends BaseComponent {
             })
           },
           onError: async (error) => {
-            console.log('onError', error);
+            this.data.loader.hide();
             let message = error.message || '';
             this.data.notification.showError(message);
             this.data.HTMLElementButton.removeAttribute('disabled');
@@ -323,7 +317,6 @@ export class CardFieldsComponent extends BaseComponent {
              */
             onBlur: (event) => {
               this.updateCardFieldsState(event);
-              this.data.clearCardFields();
               window.ps_checkout.events.dispatchEvent(
                 new CustomEvent('hostedFieldsBlur', {
                   detail: { ps_checkout: window.ps_checkout, event }
@@ -335,15 +328,12 @@ export class CardFieldsComponent extends BaseComponent {
              */
             onInputSubmitRequest: (event) => {
               this.updateCardFieldsState(event);
-              console.log('SUBMIT', event, this.sdk.CardFields());
             },
           }
 
         },
       )
       .then(cardFields => {
-        this.data.clearCardFields = cardFields.clear;
-        console.log(cardFields, this.data.cardFields);
         this.data.HTMLElementCardForm.classList.toggle('loading', false);
         if (this.data.HTMLElement !== null) {
           this.data.HTMLElementButton.addEventListener('click', event => {
@@ -352,9 +342,7 @@ export class CardFieldsComponent extends BaseComponent {
             // this.data.HTMLElementButton.classList.toggle('disabled', true);
             this.data.HTMLElementButton.setAttribute('disabled', '');
 
-            cardFields.submit({contingencies: this.getContingencies()}).then((data) => {
-              console.log(this.data.cardFields);
-            });
+            cardFields.submit({contingencies: this.getContingencies()});
           });
         }
       });
