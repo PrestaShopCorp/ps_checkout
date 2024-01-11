@@ -295,7 +295,7 @@ export class PayPalService extends BaseClass {
    * @param {string} fieldSelectors.name
    * @param {string} fieldSelectors.number
    * @param {string} fieldSelectors.cvv
-   * @param {string} fieldSelectors.expirationDate
+   * @param {string} fieldSelectors.expiry
    *
    * @param {PayPayCardFieldsOptions} options
    *
@@ -303,13 +303,6 @@ export class PayPalService extends BaseClass {
    */
   async getCardFields(fieldSelectors, options) {
     const cardFields = this.sdk.CardFields(options);
-
-    const nameFieldSelector = document.querySelector(fieldSelectors.name);
-    const numberFieldSelector = document.querySelector(fieldSelectors.number);
-    const expiryFieldSelector = document.querySelector(
-      fieldSelectors.expirationDate
-    );
-    const cvvFieldSelector = document.querySelector(fieldSelectors.cvv);
 
 
     const nameField = cardFields.NameField({
@@ -340,35 +333,29 @@ export class PayPalService extends BaseClass {
     // }) ;
 
     try {
-      await numberField.render(numberFieldSelector);
-      await expiryField.render(expiryFieldSelector);
-      await cvvField.render(cvvFieldSelector);
-      await nameField.render(nameFieldSelector);
+      await numberField.render(fieldSelectors.number);
+      await expiryField.render(fieldSelectors.expiry);
+      await cvvField.render(fieldSelectors.cvv);
+      await nameField.render(fieldSelectors.name);
     } catch (e) {
       return console.error("Failed to render CardFields", e);
     }
 
     const nameLabel = document.querySelector(
-      `label[for="${nameFieldSelector.id}"]`
+      `label[for="${fieldSelectors.name.id}"]`
     );
     const numberLabel = document.querySelector(
-      `label[for="${numberFieldSelector.id}"]`
+      `label[for="${fieldSelectors.number.id}"]`
     );
-    const cvvLabel = document.querySelector(`label[for="${cvvFieldSelector.id}"]`);
+    const cvvLabel = document.querySelector(`label[for="${fieldSelectors.cvv.id}"]`);
     const expirationDateLabel = document.querySelector(
-      `label[for="${expiryFieldSelector.id}"]`
+      `label[for="${fieldSelectors.expiry.id}"]`
     );
 
-    nameLabel.innerHTML = this.$(
-      'paypal.hosted-fields.label.card-name'
-    );
-    numberLabel.innerHTML = this.$(
-      'paypal.hosted-fields.label.card-number'
-    );
+    nameLabel.innerHTML = this.$('paypal.hosted-fields.label.card-name');
+    numberLabel.innerHTML = this.$('paypal.hosted-fields.label.card-number');
     cvvLabel.innerHTML = this.$('paypal.hosted-fields.label.cvv');
-    expirationDateLabel.innerHTML = this.$(
-      'paypal.hosted-fields.label.expiration-date'
-    );
+    expirationDateLabel.innerHTML = this.$('paypal.hosted-fields.label.expiration-date');
 
     return cardFields;
   }

@@ -50,6 +50,7 @@ export class CardFieldsComponent extends BaseComponent {
     payPalService: 'PayPalService',
     psCheckoutApi: 'PsCheckoutApi',
     psCheckoutService: 'PsCheckoutService',
+    querySelectorService: 'QuerySelectorService',
   };
 
   created() {
@@ -66,96 +67,27 @@ export class CardFieldsComponent extends BaseComponent {
       expiry: false,
       cvv: false,
     }
-
     this.data.HTMLElement = this.props.HTMLElement;
-    this.data.HTMLElementCardForm = this.getCardForm();
-    this.data.HTMLElementBaseButton = this.getBaseButton();
+    this.data.HTMLElementCardForm = this.querySelectorService.getCardFieldsFormContainer();
+    this.data.HTMLElementBaseButton = this.querySelectorService.getBasePaymentConfirmation();
     this.data.HTMLElementButton = null;
     this.data.HTMLElementButtonWrapper = this.getButtonWrapper();
-    this.data.HTMLElementCardHolderName = this.getCardHolderName();
-    this.data.HTMLElementCardNumber = this.getCardNumber();
-    this.data.HTMLElementCardCVV = this.getCardCVV();
-    this.data.HTMLElementCardExpirationDate = this.getCardExpirationDate();
 
-    this.data.HTMLElementCardNameError= this.getCardNameFieldError();
-    this.data.HTMLElementCardNumberError= this.getCardNumberFieldError();
-    this.data.HTMLElementCardVendorError= this.getCardVendorFieldError();
-    this.data.HTMLElementCardExpiryError= this.getCardExpiryFieldError();
-    this.data.HTMLElementCardCvvError= this.getCardCvvFieldError();
+    this.data.HTMLElementCardHolderName = this.querySelectorService.getCardFieldsNameInputContainer();
+    this.data.HTMLElementCardNumber = this.querySelectorService.getCardFieldsNumberInputContainer();
+    this.data.HTMLElementCardExpiry = this.querySelectorService.getCardFieldsExpiryInputContainer();
+    this.data.HTMLElementCardCvv = this.querySelectorService.getCardFieldsCvvInputContainer();
 
-    this.data.HTMLElementSection = this.getSection();
+    this.data.HTMLElementCardNameError= this.querySelectorService.getCardFieldsNameError();
+    this.data.HTMLElementCardNumberError= this.querySelectorService.getCardFieldsNumberError();
+    this.data.HTMLElementCardVendorError= this.querySelectorService.getCardFieldsVendorError();
+    this.data.HTMLElementCardExpiryError= this.querySelectorService.getCardFieldsExpiryError();
+    this.data.HTMLElementCardCvvError= this.querySelectorService.getCardFieldsCvvError();
   }
 
-
-  getCardForm() {
-    const cardFromSelector = `#ps_checkout-hosted-fields-form`;
-    return document.querySelector(cardFromSelector);
-  }
-  getBaseButton() {
-    const buttonSelector = `#payment-confirmation button`;
-    return document.querySelector(buttonSelector);
-  }
   getButtonWrapper() {
     const buttonWrapper = `.ps_checkout-button[data-funding-source=${this.data.name}]`;
     return document.querySelector(buttonWrapper);
-  }
-
-  getCardHolderName() {
-    const cardHolderNameId = '#ps_checkout-hosted-fields-card-name';
-    return document.getElementById(cardHolderNameId);
-  }
-  getCardNumber() {
-    const cardNumberId = '#ps_checkout-hosted-fields-card-number';
-    return document.getElementById(cardNumberId);
-  }
-  getCardCVV() {
-    const cardCVVId = '#ps_checkout-hosted-fields-card-cvv';
-    return document.getElementById(cardCVVId);
-  }
-  getCardExpirationDate() {
-    const cardExpirationDateId =
-      '#ps_checkout-hosted-fields-card-expiration-date';
-    return document.getElementById(cardExpirationDateId);
-  }
-  getSection() {
-    const sectionSelector = `.js-payment-ps_checkout-${this.data.name}`;
-    return document.querySelector(sectionSelector);
-  }
-  getCardNameFieldError() {
-    const cardNameErrorSelector = `#ps_checkout-hosted-fields-error-name`;
-    return document.querySelector(cardNameErrorSelector);
-  }
-
-  getCardNumberFieldError() {
-    const cardNameErrorSelector = `#ps_checkout-hosted-fields-error-number`;
-    return document.querySelector(cardNameErrorSelector);
-  }
-
-  getCardVendorFieldError() {
-    const cardVendorErrorSelector = `#ps_checkout-hosted-fields-error-vendor`;
-    return document.querySelector(cardVendorErrorSelector);
-  }
-
-  getCardExpiryFieldError() {
-    const cardNameErrorSelector = `#ps_checkout-hosted-fields-error-expiry`;
-    return document.querySelector(cardNameErrorSelector);
-  }
-
-  getCardCvvFieldError() {
-    const cardNameErrorSelector = `#ps_checkout-hosted-fields-error-cvv`;
-    return document.querySelector(cardNameErrorSelector);
-  }
-
-  getContingencies() {
-    switch (this.config.hostedFieldsContingencies) {
-      case '3D_SECURE':
-      case 'SCA_ALWAYS':
-        return ['SCA_ALWAYS'];
-      case 'NONE':
-        return undefined;
-      default:
-        return ['SCA_WHEN_REQUIRED'];
-    }
   }
 
   isSubmittable() {
@@ -164,14 +96,22 @@ export class CardFieldsComponent extends BaseComponent {
       : this.data.validity;
   }
 
-  setFieldFocus(fieldName) {
+  isFormValid() {
+    const {cardNameField, cardNumberField, cardExpiryField, cardCvvField } = this.data.cardFieldsState.fields;
+    return (cardNameField.isEmpty || cardNameField.isValid) &&
+      cardNumberField.isValid &&
+      cardExpiryField.isValid &&
+      cardCvvField.isValid
+  }
+
+  setFocusedField(fieldName) {
     this.data.cardFieldsFocused[fieldName] = true;
   }
 
   toggleCardNameFieldError() {
     const { isFocused, isEmpty, isValid, isPotentiallyValid } =
       this.data.cardFieldsState.fields.cardNameField;
-    const hideError = isFocused || !this.data.cardFieldsFocused.name || isValid || isPotentiallyValid;
+    const hideError = isEmpty || isFocused || isValid;
 
     this.data.HTMLElementCardNameError.classList.toggle('hidden', hideError)
   }
@@ -195,12 +135,12 @@ export class CardFieldsComponent extends BaseComponent {
   toggleCardCvvFieldError() {
     const { isFocused, isEmpty, isValid, isPotentiallyValid } =
       this.data.cardFieldsState.fields.cardCvvField;
-    const hideError = isPotentiallyValid && (isFocused || !this.data.cardFieldsFocused.cvv || isValid);
+    const hideError = isFocused || !this.data.cardFieldsFocused.cvv || isValid;
 
     this.data.HTMLElementCardCvvError.classList.toggle('hidden', hideError)
   }
 
-  toggleCardFieldErrors() {
+  toggleCardFieldsErrors() {
     this.toggleCardNameFieldError();
     this.toggleCardNumberFieldError();
     this.toggleCardExpiryFieldError();
@@ -211,15 +151,15 @@ export class CardFieldsComponent extends BaseComponent {
    * @param {PaypalCardFieldsEvent} event
    */
   updateCardFieldsState(event) {
-    this.setFieldFocus(event.emittedBy);
-    this.data.validity = event.isFormValid;
+    this.setFocusedField(event.emittedBy);
     this.data.cardFieldsState = event;
+    this.data.validity = this.isFormValid();
 
     this.isSubmittable()
       ? this.data.HTMLElementButton.removeAttribute('disabled')
       : this.data.HTMLElementButton.setAttribute('disabled', '');
 
-    this.toggleCardFieldErrors();
+    this.toggleCardFieldsErrors();
   }
 
   renderPayPalCardFields() {
@@ -243,10 +183,10 @@ export class CardFieldsComponent extends BaseComponent {
     this.payPalService
       .getCardFields(
         {
-          name: '#ps_checkout-hosted-fields-card-name',
-          number: '#ps_checkout-hosted-fields-card-number',
-          cvv: '#ps_checkout-hosted-fields-card-cvv',
-          expirationDate: '#ps_checkout-hosted-fields-card-expiration-date'
+          name: this.data.HTMLElementCardHolderName,
+          number: this.data.HTMLElementCardNumber,
+          cvv: this.data.HTMLElementCardCvv,
+          expiry: this.data.HTMLElementCardExpiry
         },
         {
           style,
@@ -342,7 +282,7 @@ export class CardFieldsComponent extends BaseComponent {
             // this.data.HTMLElementButton.classList.toggle('disabled', true);
             this.data.HTMLElementButton.setAttribute('disabled', '');
 
-            cardFields.submit({contingencies: this.getContingencies()});
+            cardFields.submit();
           });
         }
       });
