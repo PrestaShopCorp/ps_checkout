@@ -37,6 +37,7 @@ export class PaymentOptionComponent extends BaseComponent {
   static Inject = {
     config: 'PsCheckoutConfig',
     payPalService: 'PayPalService',
+    querySelectorService: 'QuerySelectorService',
     $: '$'
   };
 
@@ -48,8 +49,7 @@ export class PaymentOptionComponent extends BaseComponent {
     this.data.HTMLElementLabel = this.getLabel();
     this.data.HTMLElementMark = this.props.HTMLElementMark || null;
 
-    this.data.HTMLElementHostedFields = this.getHostedFields();
-    this.data.HTMLElementCardFields = this.getCardFields();
+    this.data.HTMLElementCardFields =this.querySelectorService.getCardFieldsFormContainer();
     this.data.HTMLElementSmartButton = this.getSmartButton();
     this.data.HTMLElementPaymentFields = this.getPaymentFields();
   }
@@ -57,26 +57,6 @@ export class PaymentOptionComponent extends BaseComponent {
   getContainer() {
     const wrapperId = `${this.data.HTMLElement.id}-container`;
     return document.getElementById(wrapperId);
-  }
-
-  getHostedFields() {
-    const hostedFieldsFormId = 'ps_checkout-hosted-fields-form';
-
-    return (
-      this.data.name === 'card'
-      && this.config.hostedFieldsEnabled
-      && document.getElementById(hostedFieldsFormId)
-    );
-  }
-
-  getCardFields() {
-    const cardFieldsFormId = 'ps_checkout-hosted-fields-form';
-
-    return (
-      this.data.name === 'card'
-      && this.config.hostedFieldsEnabled
-      && document.getElementById(cardFieldsFormId)
-    );
   }
 
   getPaymentFields() {
@@ -172,26 +152,24 @@ export class PaymentOptionComponent extends BaseComponent {
     this.renderMark();
     this.renderPaymentFields();
 
-    let isHostedFieldsEligible = this.payPalService.isHostedFieldsEligible();
-    if (this.data.HTMLElementHostedFields && !isHostedFieldsEligible) {
-      this.data.HTMLElementHostedFields.style.display = 'none';
-    }
+    const isCardFieldsEligible = this.payPalService.isCardFieldsEligible();
+    // Check if all fields required for cardFields are present in DOM
+    const isCardFieldsAvailable = this.data.name === 'card'
+      && this.config.hostedFieldsEnabled
+      && this.querySelectorService.getCardFieldsNameInputContainer()
+      && this.querySelectorService.getCardFieldsNumberInputContainer()
+      && this.querySelectorService.getCardFieldsExpiryInputContainer()
+      && this.querySelectorService.getCardFieldsCvvInputContainer();
 
-    let isCardFieldsEligible = this.payPalService.isCardFieldsEligible();
-    if (this.data.HTMLElementCardFields && !isCardFieldsEligible) {
+    if (this.data.HTMLElementCardFields && (!isCardFieldsEligible || !isCardFieldsAvailable)) {
       this.data.HTMLElementCardFields.style.display = 'none';
     }
 
-    if (this.data.HTMLElementCardFields && isCardFieldsEligible) {
+    if (this.data.HTMLElementCardFields && isCardFieldsEligible && isCardFieldsAvailable) {
+      this.data.HTMLElementCardFields.style.display = '';
       this.children.cardFields = new CardFieldsComponent(this.app, {
         fundingSource: this.props.fundingSource,
         HTMLElement: this.data.HTMLElementCardFields
-      }).render();
-    } else if (this.data.HTMLElementHostedFields && isHostedFieldsEligible) {
-      this.children.hostedFields = new HostedFieldsComponent(this.app, {
-        fundingSource: this.props.fundingSource,
-
-        HTMLElement: this.data.HTMLElementHostedFields
       }).render();
     } else {
       this.children.smartButton = new SmartButtonComponent(this.app, {
@@ -207,11 +185,9 @@ export class PaymentOptionComponent extends BaseComponent {
           fundingSource: this.data.name,
           HTMLElement: this.data.HTMLElement,
           HTMLElementContainer: this.data.HTMLElementContainer,
-          HTMLElementBinary: this.data.HTMLElementCardFields && isCardFieldsEligible ?
-            this.children.cardFields.data.HTMLElementButton.parentElement :
-            (this.data.HTMLElementHostedFields && isHostedFieldsEligible
-            ? this.children.hostedFields.data.HTMLElementButton.parentElement
-            : this.data.HTMLElementSmartButton)
+          HTMLElementBinary: this.data.HTMLElementCardFields && isCardFieldsEligible && isCardFieldsAvailable
+            ? this.children.cardFields.data.HTMLElementButton.parentElement
+            : this.data.HTMLElementSmartButton
         }
       })
     );

@@ -741,7 +741,7 @@ class Ps_checkout extends PaymentModule
 
             if ('card' === $fundingSource->name && $configurationPayPal->isHostedFieldsEnabled() && in_array($configurationPayPal->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true)) {
                 $this->context->smarty->assign('modulePath', $this->getPathUri());
-                $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/paymentOptions.tpl'));
+                $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/markup/cardFields.tpl'));
             }
 
             $paymentOptions[] = $paymentOption;
