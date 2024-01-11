@@ -511,14 +511,6 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
   display: table-cell;
 }
 
-#ps_checkout-hosted-fields-form.loading > *:not(#ps_checkout-hosted-fields-form-loader){
-  display: none;
-}
-
-#ps_checkout-hosted-fields-form:not(.loading) > #ps_checkout-hosted-fields-form-loader{
-  display: none;
-}
-
 #cart .ps-checkout-express-separator {
   text-align: center;
 }
@@ -527,14 +519,19 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
   padding: 0 1rem 1rem;
 }
 
-#ps_checkout-hosted-fields-error-name.hidden,
-#ps_checkout-hosted-fields-error-number.hidden,
-#ps_checkout-hosted-fields-error-vendor.hidden,
-#ps_checkout-hosted-fields-error-expiry.hidden,
-#ps_checkout-hosted-fields-error-cvv.hidden {
+#ps_checkout-card-fields-form.loading > *:not(#ps_checkout-card-fields-form-loader),
+#ps_checkout-card-fields-form:not(.loading) > #ps_checkout-card-fields-form-loader {
   display: none;
 }
 
-#ps_checkout-hosted-fields-form-loader {
+#ps_checkout-card-fields-name-error.hidden,
+#ps_checkout-card-fields-number-error.hidden,
+#ps_checkout-card-fields-vendor-error.hidden,
+#ps_checkout-card-fields-expiry-error.hidden,
+#ps_checkout-card-fields-cvv-error.hidden {
+  display: none;
+}
+
+#ps_checkout-card-fields-form-loader {
   text-align: center;
 }
