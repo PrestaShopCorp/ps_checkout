@@ -35,22 +35,22 @@ class GetCustomerPaymentMethodTokensQueryResult
     private $customerId;
 
     /**
-     * @var int
+     * @var int|null
      */
     private $totalItems;
 
     /**
-     * @var int
+     * @var int|null
      */
     private $totalPages;
 
     /**
      * @param array $paymentTokens
      * @param CustomerId $customerId
-     * @param int $totalItems
-     * @param int $totalPages
+     * @param int|null $totalItems
+     * @param int|null $totalPages
      */
-    public function __construct(array $paymentTokens, CustomerId $customerId, $totalItems, $totalPages)
+    public function __construct(array $paymentTokens, CustomerId $customerId, $totalItems = null, $totalPages = null)
     {
         $this->paymentTokens = $paymentTokens;
         $this->customerId = $customerId;
@@ -75,7 +75,7 @@ class GetCustomerPaymentMethodTokensQueryResult
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getTotalItems()
     {
@@ -83,7 +83,7 @@ class GetCustomerPaymentMethodTokensQueryResult
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getTotalPages()
     {
