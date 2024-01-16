@@ -25,7 +25,12 @@ use Context;
 use Module;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
+use PrestaShop\Module\PrestashopCheckout\DTO\Orders\CreatePayPalOrderRequest;
+use PrestaShop\Module\PrestashopCheckout\DTO\Orders\CreatePayPalOrderResponse;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderHttpClientInterface;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use Ps_checkout;
@@ -38,14 +43,15 @@ class CreatePaypalOrderHandler
      * @var Context
      */
     private $context;
+    /**
+     * @var PayPalOrderHttpClientInterface
+     */
+    private $orderHttpClient;
 
-    public function __construct(Context $context = null)
+    public function __construct(PrestaShopContext $context, PayPalOrderHttpClientInterface $orderHttpClient)
     {
-        if (null === $context) {
-            $context = Context::getContext();
-        }
-
         $this->context = $context;
+        $this->orderHttpClient = $orderHttpClient;
     }
 
     /**
@@ -104,9 +110,9 @@ class CreatePaypalOrderHandler
 
         // Create the paypal order or update it
         if (true === $updateOrder) {
-            $paypalOrder = (new Order($this->context->link))->patch($payload);
+            $paypalOrder = (new Order($this->context->getLink()))->patch($payload);
         } else {
-            $paypalOrder = (new Order($this->context->link))->create($payload);
+            $paypalOrder = (new Order($this->context->getLink()))->create($payload);
         }
 
         // Retry with minimal payload when full payload failed (only on 1.7)
@@ -122,5 +128,16 @@ class CreatePaypalOrderHandler
         }
 
         return $paypalOrder;
+    }
+
+
+    /**
+     * @param CreatePayPalOrderRequest $payload
+     * @return CreatePayPalOrderResponse
+     * @throws PayPalOrderException
+     */
+    public function createOrder(CreatePayPalOrderRequest $payload)
+    {
+        return $this->orderHttpClient->createOrder($payload);
     }
 }

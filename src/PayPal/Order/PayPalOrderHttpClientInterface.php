@@ -22,6 +22,8 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order;
 
 use PrestaShop\Module\PrestashopCheckout\DTO\Orders\CreatePayPalOrderRequest;
 use PrestaShop\Module\PrestashopCheckout\DTO\Orders\CreatePayPalOrderResponse;
+use PrestaShop\Module\PrestashopCheckout\DTO\Orders\PatchPayPalOrderRequest;
+use PrestaShop\Module\PrestashopCheckout\DTO\Orders\PatchPayPalOrderResponse;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 
 interface PayPalOrderHttpClientInterface
@@ -34,4 +36,13 @@ interface PayPalOrderHttpClientInterface
      * @throws PayPalOrderException
      */
     public function createOrder(CreatePayPalOrderRequest $payload);
+
+    /**
+     * @param PatchPayPalOrderRequest $payload
+     *
+     * @return PatchPayPalOrderResponse
+     *
+     * @throws PayPalOrderException
+     */
+    public function patchOrder(PatchPayPalOrderRequest $payload);
 }
