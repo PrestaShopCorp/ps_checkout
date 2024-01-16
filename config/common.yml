@@ -564,6 +564,12 @@ services:
     arguments:
       - "@ps_checkout.event.dispatcher"
 
+  ps_checkout.command.handler.paypal.order.create_paypal_order:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CreatePayPalOrderCommandHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.event.dispatcher"
+
   ps_checkout.command.handler.paypal.order.capture_paypal_order:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CapturePayPalOrderCommandHandler'
     public: true
@@ -575,6 +581,13 @@ services:
     public: true
     arguments:
       - "@ps_checkout.repository.pscheckoutcart"
+
+  ps_checkout.query.handler.paypal.order.get__paypal_order:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler'
+    public: true
+    arguments:
+      - "@ps_checkout.repository.pscheckoutcart"
+
 
   ps_checkout.query.handler.paypal.order.get_current_paypal_order_status:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetCurrentPayPalOrderStatusQueryHandler'
