@@ -22,4 +22,45 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
 
 class PayPalOrderCreatedEvent extends PayPalOrderEvent
 {
+    /**
+     * @var int
+     */
+    private $cartId;
+    /**
+     * @var bool
+     */
+    private $isHostedFields;
+    /**
+     * @var bool
+     */
+    private $isExpressCheckout;
+
+    public function __construct($orderPayPalId, $orderPayPal, $cartId, $isHostedFields, $isExpressCheckout)
+    {
+        parent::__construct($orderPayPalId, $orderPayPal);
+        $this->cartId = $cartId;
+        $this->isHostedFields = $isHostedFields;
+        $this->isExpressCheckout = $isExpressCheckout;
+    }
+
+
+    public function getCartId() {
+        return $this->cartId;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHostedFields()
+    {
+        return $this->isHostedFields;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExpressCheckout()
+    {
+        return $this->isExpressCheckout;
+    }
 }

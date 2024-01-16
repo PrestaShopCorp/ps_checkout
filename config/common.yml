@@ -505,6 +505,7 @@ services:
       - "@ps_checkout.checkout.checker"
       - "@ps_checkout.paypal.order.service.check_transition_paypal_order_status"
       - "@ps_checkout.order.state.service.order_state_mapper"
+      - '@ps_checkout.paypal.configuration'
 
   ps_checkout.event.subscriber.paypal.capture:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber'
@@ -568,7 +569,10 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CreatePayPalOrderCommandHandler'
     public: true
     arguments:
-      - "@ps_checkout.event.dispatcher"
+      - '@?'
+      - '@?'
+      - '@ps_checkout.handler.order.create_order'
+      - '@ps_checkout.event.dispatcher'
 
   ps_checkout.command.handler.paypal.order.capture_paypal_order:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CapturePayPalOrderCommandHandler'
@@ -581,6 +585,7 @@ services:
     public: true
     arguments:
       - "@ps_checkout.repository.pscheckoutcart"
+      - '@ps_checkout.paypal.configuration'
 
   ps_checkout.query.handler.paypal.order.get__paypal_order:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler'
@@ -664,3 +669,9 @@ services:
     public: true
     arguments:
       - "@ps_checkout.logger"
+
+  ps_checkout.handler.order.create_order:
+    class: 'PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler'
+    public: true
+    arguments:
+      [ '@ps_checkout.context.prestashop', '@?' ]
