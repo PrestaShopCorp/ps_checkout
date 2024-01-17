@@ -88,15 +88,14 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     private $payPalConfiguration;
 
     public function __construct(
-        Ps_checkout                             $module,
-        PsCheckoutCartRepository                $psCheckoutCartRepository,
-        CacheInterface                          $orderPayPalCache,
-        CheckoutChecker                         $checkoutChecker,
+        Ps_checkout $module,
+        PsCheckoutCartRepository $psCheckoutCartRepository,
+        CacheInterface $orderPayPalCache,
+        CheckoutChecker $checkoutChecker,
         CheckTransitionPayPalOrderStatusService $checkTransitionPayPalOrderStatusService,
-        OrderStateMapper                        $orderStateMapper,
-        PayPalConfiguration                     $payPalConfiguration
-    )
-    {
+        OrderStateMapper $orderStateMapper,
+        PayPalConfiguration $payPalConfiguration
+    ) {
         $this->module = $module;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
         $this->orderPayPalCache = $orderPayPalCache;
@@ -162,13 +161,11 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     public function saveApprovedPayPalOrder(PayPalOrderApprovedEvent $event)
     {
         $this->updateCheckoutCartStatus($event, PayPalOrderStatus::APPROVED);
-
     }
 
     public function saveCompletedPayPalOrder(PayPalOrderCompletedEvent $event)
     {
         $this->updateCheckoutCartStatus($event, PayPalOrderStatus::COMPLETED);
-
     }
 
     public function saveApprovalReversedPayPalOrder(PayPalOrderApprovalReversedEvent $event)

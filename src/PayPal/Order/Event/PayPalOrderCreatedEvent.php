@@ -43,8 +43,8 @@ class PayPalOrderCreatedEvent extends PayPalOrderEvent
         $this->isExpressCheckout = $isExpressCheckout;
     }
 
-
-    public function getCartId() {
+    public function getCartId()
+    {
         return $this->cartId;
     }
 

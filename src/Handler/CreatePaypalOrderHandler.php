@@ -130,10 +130,11 @@ class CreatePaypalOrderHandler
         return $paypalOrder;
     }
 
-
     /**
      * @param CreatePayPalOrderRequest $payload
+     *
      * @return CreatePayPalOrderResponse
+     *
      * @throws PayPalOrderException
      */
     public function createOrder(CreatePayPalOrderRequest $payload)
