@@ -20,16 +20,13 @@
  */
 
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
+use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
-use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
-
 
 /**
  * This controller receive ajax call to create a PayPal Order
@@ -111,7 +108,6 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
 
             $order = $commandBus->handle(new GetPayPalOrderQuery(null, new CartId($cartId)));
             $orderId = $order['id'];
-
 
             // If we have a PayPal Order Id with a status CREATED or APPROVED or PAYER_ACTION_REQUIRED we mark it as CANCELED and create new one
             // This is needed because cart gets updated so we need to update paypal order too

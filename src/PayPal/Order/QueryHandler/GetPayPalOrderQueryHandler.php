@@ -44,7 +44,6 @@ class GetPayPalOrderQueryHandler
         $this->checkoutCartRepository = $checkoutCartRepository;
     }
 
-
     /**
      * @param GetPayPalOrderQuery $query
      *
