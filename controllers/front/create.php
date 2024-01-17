@@ -25,6 +25,7 @@ use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
@@ -106,38 +107,19 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             $isHostedFields = isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'];
             $isExpressCheckout = (isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout']) || empty($this->context->cart->id_address_delivery);
 
-            $orderId = $commandBus->handle(new CreatePayPalOrderCommand(new CartId($cartId), $fundingSource, $isHostedFields, $isExpressCheckout));
+            $commandBus->handle(new CreatePayPalOrderCommand(new CartId($cartId), $fundingSource, $isHostedFields, $isExpressCheckout));
 
+            $order = $commandBus->handle(new GetPayPalOrderQuery(null, new CartId($cartId)));
+            $orderId = $order['id'];
 
-
-            //================================================================================================//
-
-            /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
-            $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
-
-            /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
-
-
-            if (false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout() && $psCheckoutCart->isOrderAvailable()) {
-                $this->exitWithResponse([
-                    'status' => true,
-                    'httpCode' => 200,
-                    'body' => [
-                        'orderID' => $orderId,
-                    ],
-                    'exceptionCode' => null,
-                    'exceptionMessage' => null,
-                ]);
-            }
 
             // If we have a PayPal Order Id with a status CREATED or APPROVED or PAYER_ACTION_REQUIRED we mark it as CANCELED and create new one
             // This is needed because cart gets updated so we need to update paypal order too
-            if ($psCheckoutCart && $psCheckoutCart->getPaypalOrderId()) {
-                $psCheckoutCart->paypal_status = PsCheckoutCart::STATUS_CANCELED;
-                $psCheckoutCartRepository->save($psCheckoutCart);
+//            if ($psCheckoutCart && $psCheckoutCart->getPaypalOrderId()) {
+//                $psCheckoutCart->paypal_status = PsCheckoutCart::STATUS_CANCELED;
+//                $psCheckoutCartRepository->save($psCheckoutCart);
 //                $psCheckoutCart = false;
-            }
+//            }
 
 //            $paypalOrder = $this->module->getService('ps_checkout.handler.order.create_order');
 //            $response = $paypalOrder->handle($isExpressCheckout);
@@ -171,22 +153,6 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
 //                    'intent' => $configuration->getIntent(),
 //                ]
 //            );
-
-//            if (false === $psCheckoutCart) {
-//                $psCheckoutCart = new PsCheckoutCart();
-//                $psCheckoutCart->id_cart = (int) $this->context->cart->id;
-//            }
-//
-//            $psCheckoutCart->paypal_funding = $fundingSource;
-//            $psCheckoutCart->paypal_order = $response['body']['id'];
-//            $psCheckoutCart->paypal_status = $response['body']['status'];
-//            $psCheckoutCart->paypal_intent = $configuration->getIntent();
-//            $psCheckoutCart->paypal_token = $response['body']['client_token'];
-//            $psCheckoutCart->paypal_token_expire = (new DateTime())->modify('+3550 seconds')->format('Y-m-d H:i:s');
-//            $psCheckoutCart->environment = $configuration->getPaymentMode();
-//            $psCheckoutCart->isExpressCheckout = isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'];
-//            $psCheckoutCart->isHostedFields = isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'];
-//            $psCheckoutCartRepository->save($psCheckoutCart);
 
             $this->exitWithResponse([
                 'status' => true,

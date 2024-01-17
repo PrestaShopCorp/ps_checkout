@@ -372,8 +372,12 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder'
     public: true
     arguments:
-      - '@ps_checkout.translations.translations'
-      - '@ps_checkout.funding_source.translation'
+      - '@ps_checkout.repository.pscheckoutcart'
+      - '@ps_checkout.paypal.provider.order'
+      - '@ps_checkout.prestashop.router'
+      - '@ps_checkout.paypal.order.translations'
+      - '@ps_checkout.context.shop'
+
 
   ps_checkout.paypal.builder.view_order_summary:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder'
@@ -587,12 +591,12 @@ services:
       - "@ps_checkout.repository.pscheckoutcart"
       - '@ps_checkout.paypal.configuration'
 
-  ps_checkout.query.handler.paypal.order.get__paypal_order:
+  ps_checkout.query.handler.paypal.order.get_paypal_order:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler'
     public: true
     arguments:
-      - "@ps_checkout.repository.pscheckoutcart"
-
+      - '@ps_checkout.cache.paypal.order'
+      - '@ps_checkout.repository.pscheckoutcart'
 
   ps_checkout.query.handler.paypal.order.get_current_paypal_order_status:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetCurrentPayPalOrderStatusQueryHandler'

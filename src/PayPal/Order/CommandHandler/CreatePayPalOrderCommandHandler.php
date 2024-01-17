@@ -77,7 +77,7 @@ class CreatePayPalOrderCommandHandler
     /**
      * @param CreatePayPalOrderCommand $command
      *
-     * @return string
+     * @return void
      *
      * @throws PayPalOrderException
      * @throws CartNotFoundException
@@ -94,6 +94,5 @@ class CreatePayPalOrderCommandHandler
             $command->isHostedFields(),
             $command->isExpressCheckout()
         ));
-        return $order->getId();
     }
 }
