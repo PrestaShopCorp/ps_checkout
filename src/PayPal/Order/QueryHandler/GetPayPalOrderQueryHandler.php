@@ -21,9 +21,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryResult\GetPayPalOrderQueryResult;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
