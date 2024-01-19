@@ -52,32 +52,32 @@ class OrderComparatorTest extends TestCase
             [
                 new PayPalOrder(new PayPalOrderId('123'), 'CREATED', 'CREATE'),
                 new PayPalOrder(new PayPalOrderId('123'), 'CREATED', 'CAPTURE'),
-                'intent'
+                'intent',
             ],
             [
                 new PayPalOrder(new PayPalOrderId('123'), 'CREATED', 'CAPTURE', null, [new PayPalOrderPurchaseUnit('123', 123, 'EUR', 100)]),
                 new PayPalOrder(new PayPalOrderId('123'), 'CREATED', 'CAPTURE', null, [new PayPalOrderPurchaseUnit('123', 123, 'USD', 100)]),
-                'purchase_units'
+                'purchase_units',
             ],
             [
                 new PayPalOrder(new PayPalOrderId('123'), 'CREATED', 'CAPTURE', null, [new PayPalOrderPurchaseUnit('123', 123, 'EUR', 100)]),
                 new PayPalOrder(new PayPalOrderId('123'), 'CREATED', 'CAPTURE', null, [new PayPalOrderPurchaseUnit('123', 123, 'USD', 50)]),
-                'purchase_units'
+                'purchase_units',
             ],
             [
                 new PayPalOrder(new PayPalOrderId('123'), 'CREATED', 'CAPTURE', new PayPalOrderPaymentSource('paypal', 'PAYPAL')),
                 new PayPalOrder(new PayPalOrderId('123'), 'CREATED', 'CAPTURE', null, [new PayPalOrderPurchaseUnit('123', 123, 'USD', 50)]),
-                'payment_source'
+                'payment_source',
             ],
             [
                 new PayPalOrder(new PayPalOrderId('123'), 'CREATED', 'CAPTURE', new PayPalOrderPaymentSource('paypal', 'PAYPAL')),
                 new PayPalOrder(new PayPalOrderId('123'), 'CREATED', 'CAPTURE', null, [new PayPalOrderPurchaseUnit('123', 123, 'USD', 50)]),
-                ['payment_source', 'purchase_units']
+                ['payment_source', 'purchase_units'],
             ],
             [
                 new PayPalOrder(new PayPalOrderId('123'), 'CREATED', 'CREATE', new PayPalOrderPaymentSource('paypal', 'PAYPAL')),
                 new PayPalOrder(new PayPalOrderId('123'), 'CREATED', 'CAPTURE', null, [new PayPalOrderPurchaseUnit('123', 123, 'USD', 50)]),
-                ['intent', 'payment_source', 'purchase_units']
+                ['intent', 'payment_source', 'purchase_units'],
             ],
         ];
     }
