@@ -19,11 +19,11 @@ class PayPalOrder
      */
     private $intent;
     /**
-     * @var array|null
+     * @var PayPalOrderPaymentSource|null
      */
     private $paymentSource;
     /**
-     * @var array|null
+     * @var PayPalOrderPurchaseUnit[]
      */
     private $purchaseUnits;
     /**
@@ -39,7 +39,7 @@ class PayPalOrder
      */
     private $links;
 
-    public function __construct(PayPalOrderId $id = null, $status = null, $intent = null, $paymentSource = [], $purchaseUnits = [], $payer = [], $createTime = null, $links = [] )
+    public function __construct(PayPalOrderId $id = null, $status = null, $intent = null, PayPalOrderPaymentSource $paymentSource = null, $purchaseUnits = [], $payer = [], $createTime = null, $links = [] )
     {
         $this->id = $id;
         $this->status = $status;
@@ -100,7 +100,7 @@ class PayPalOrder
     }
 
     /**
-     * @return array
+     * @return PayPalOrderPaymentSource
      */
     public function getPaymentSource()
     {
@@ -108,7 +108,7 @@ class PayPalOrder
     }
 
     /**
-     * @param array $paymentSource
+     * @param PayPalOrderPaymentSource $paymentSource
      */
     public function setPaymentSource($paymentSource)
     {
@@ -124,7 +124,7 @@ class PayPalOrder
     }
 
     /**
-     * @param array $purchaseUnits
+     * @param PayPalOrderPurchaseUnit[] $purchaseUnits
      */
     public function setPurchaseUnits($purchaseUnits)
     {
@@ -179,14 +179,19 @@ class PayPalOrder
         $this->links = $links;
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         return [
             'id' => $this->id ? $this->id->getValue() : null,
             'status' => $this->status,
             'intent' => $this->intent,
-            'payment_source' => $this->paymentSource,
-            'purchase_units' => $this->purchaseUnits,
+            'payment_source' => $this->paymentSource === null ? null : $this->paymentSource->toArray(),
+            'purchase_units' => array_map(function(PayPalOrderPurchaseUnit $purchaseUnit) {
+                return $purchaseUnit->toArray();
+            }, $this->purchaseUnits),
             'payer' => $this->payer,
             'create_time' => $this->createTime,
             'links' => $this->links
