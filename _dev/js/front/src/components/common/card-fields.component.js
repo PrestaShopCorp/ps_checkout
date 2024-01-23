@@ -176,7 +176,7 @@ export class CardFieldsComponent extends BaseComponent {
           'font-size': '17px',
           'font-family': 'helvetica, tahoma, calibri, sans-serif',
           color: '#3a3a3a',
-          padding: '8px 10px'
+          padding: '8px 12px'
         },
         ':focus': {
           color: 'black'
