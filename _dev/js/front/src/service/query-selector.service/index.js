@@ -98,4 +98,45 @@ export class QuerySelectorService extends BaseClass {
   getPayLaterOfferBannerContainerSelector(placement) {
     return this.instance.getPayLaterOfferBannerContainerSelector(placement);
   }
+
+  getCardFieldsFormContainer() {
+    return this.instance.getCardFieldsFormContainer();
+  }
+
+  getCardFieldsNameInputContainer() {
+    return this.instance.getCardFieldsNameInputContainer();
+  }
+
+  getCardFieldsNameError() {
+    return this.instance.getCardFieldsNameError();
+
+  }
+
+  getCardFieldsNumberInputContainer() {
+    return this.instance.getCardFieldsNumberInputContainer();
+  }
+
+  getCardFieldsNumberError() {
+    return this.instance.getCardFieldsNumberError();
+  }
+
+  getCardFieldsVendorError() {
+    return this.instance.getCardFieldsVendorError();
+  }
+
+  getCardFieldsExpiryInputContainer() {
+    return this.instance.getCardFieldsExpiryInputContainer();
+  }
+
+  getCardFieldsExpiryError() {
+    return this.instance.getCardFieldsExpiryError();
+  }
+
+  getCardFieldsCvvInputContainer() {
+    return this.instance.getCardFieldsCvvInputContainer();
+  }
+
+  getCardFieldsCvvError() {
+    return this.instance.getCardFieldsCvvError();
+  }
 }

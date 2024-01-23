@@ -46,6 +46,17 @@
  */
 
 /**
+ * @typedef PayPayCardFieldsOptions
+ * @type {*}
+ *
+ * @property {function} createOrder
+ * @property {function} onApprove
+ * @property {function} onError
+ * @property {function} inputEvents
+ * @property {object} style
+ */
+
+/**
  * @typedef PaypalPayLaterOfferEvents
  * @type {*}
  *
@@ -244,7 +255,7 @@ export class PayPalService extends BaseClass {
 
           // Change card bg depending on card type
           if (event.cards.length === 1) {
-            document.querySelector('.defautl-credit-card').style.display =
+            document.querySelector('.default-credit-card').style.display =
               'none';
 
             const cardImage = document.getElementById('card-image');
@@ -262,7 +273,7 @@ export class PayPalService extends BaseClass {
               });
             }
           } else {
-            document.querySelector('.defautl-credit-card').style.display =
+            document.querySelector('.default-credit-card').style.display =
               'block';
             const cardImage = document.getElementById('card-image');
             cardImage.className = '';
@@ -279,6 +290,64 @@ export class PayPalService extends BaseClass {
       });
   }
 
+  /**
+   * @param {*} fieldSelectors
+   * @param {string} fieldSelectors.name
+   * @param {string} fieldSelectors.number
+   * @param {string} fieldSelectors.cvv
+   * @param {string} fieldSelectors.expiry
+   *
+   * @param {PayPayCardFieldsOptions} options
+   *
+   * @returns {PayPalSdk.CardFields}
+   */
+  async getCardFields(fieldSelectors, options) {
+    const cardFields = this.sdk.CardFields(options);
+
+
+    const nameField = cardFields.NameField({
+      placeholder: this.$('paypal.hosted-fields.placeholder.card-name')
+    });
+    const numberField = cardFields.NumberField({
+      placeholder: this.$('paypal.hosted-fields.placeholder.card-number')
+    });
+    const expiryField = cardFields.ExpiryField({
+      placeholder: this.$('paypal.hosted-fields.placeholder.expiration-date')
+    });
+    const cvvField = cardFields.CVVField({
+      placeholder: this.$(
+        'paypal.hosted-fields.placeholder.cvv'
+      )
+    });
+
+    try {
+      await numberField.render(fieldSelectors.number);
+      await expiryField.render(fieldSelectors.expiry);
+      await cvvField.render(fieldSelectors.cvv);
+      await nameField.render(fieldSelectors.name);
+    } catch (e) {
+      return console.error("Failed to render CardFields", e);
+    }
+
+    const nameLabel = document.querySelector(
+      `label[for="${fieldSelectors.name.id}"]`
+    );
+    const numberLabel = document.querySelector(
+      `label[for="${fieldSelectors.number.id}"]`
+    );
+    const cvvLabel = document.querySelector(`label[for="${fieldSelectors.cvv.id}"]`);
+    const expirationDateLabel = document.querySelector(
+      `label[for="${fieldSelectors.expiry.id}"]`
+    );
+
+    nameLabel.innerHTML = this.$('paypal.hosted-fields.label.card-name');
+    numberLabel.innerHTML = this.$('paypal.hosted-fields.label.card-number');
+    cvvLabel.innerHTML = this.$('paypal.hosted-fields.label.cvv');
+    expirationDateLabel.innerHTML = this.$('paypal.hosted-fields.label.expiration-date');
+
+    return cardFields;
+  }
+
   getEligibleFundingSources(cache = false) {
     if (!this.eligibleFundingSources || cache) {
       const paypalFundingSources = this.sdk.getFundingSources();
@@ -293,8 +362,9 @@ export class PayPalService extends BaseClass {
           mark: this.sdk.Marks({ fundingSource })
         }))
         .filter((fundingSource) => {
-          if (fundingSource.name === 'card' && this.configPrestaShop.hostedFieldsEnabled && !this.isHostedFieldsEligible()) {
-            console.error('Hosted Fields (CCF) eligibility is declined. Switching to PayPal branded card fields (SCF)');
+          if (fundingSource.name === 'card' && this.configPrestaShop.hostedFieldsEnabled && !this.isCardFieldsEligible()) {
+            console.log(this.configPrestaShop.hostedFieldsEnabled, this.isCardFieldsEligible());
+            console.error('Card Fields (CCF) eligibility is declined. Switching to PayPal branded card fields (SCF)');
           }
           console.log(fundingSource.name, fundingSource.mark.isEligible());
 
@@ -311,6 +381,10 @@ export class PayPalService extends BaseClass {
 
   isHostedFieldsEligible() {
     return this.sdk.HostedFields && this.sdk.HostedFields.isEligible();
+  }
+
+  isCardFieldsEligible() {
+    return this.sdk.CardFields && this.sdk.CardFields().isEligible();
   }
 
   /**

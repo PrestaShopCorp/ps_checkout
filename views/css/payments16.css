@@ -473,3 +473,20 @@
 #ps_checkout-canceled img, #ps_checkout-error img{
   margin-right: 10px;
 }
+
+#ps_checkout-card-fields-form.loading > *:not(#ps_checkout-card-fields-form-loader),
+#ps_checkout-card-fields-form:not(.loading) > #ps_checkout-card-fields-form-loader {
+  display: none;
+}
+
+#ps_checkout-card-fields-name-error.hidden,
+#ps_checkout-card-fields-number-error.hidden,
+#ps_checkout-card-fields-vendor-error.hidden,
+#ps_checkout-card-fields-expiry-error.hidden,
+#ps_checkout-card-fields-cvv-error.hidden {
+  display: none;
+}
+
+#ps_checkout-card-fields-form-loader {
+  text-align: center;
+}
