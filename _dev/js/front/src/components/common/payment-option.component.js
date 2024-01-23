@@ -18,7 +18,6 @@
  */
 import { BaseComponent } from '../../core/dependency-injection/base.component';
 
-import { HostedFieldsComponent } from './hosted-fields.component';
 import { MarkComponent } from './marker.component';
 import { SmartButtonComponent } from './smart-button.component';
 import { PaymentFieldsComponent } from "./payment-fields.component";

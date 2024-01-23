@@ -45,6 +45,7 @@ export const DefaultSelectors1_6 = {
   PAY_LATER_BANNER_CONTAINER: '.header-container',
 
   CARD_FIELDS: {
+    FORM: '#ps_checkout-card-fields-form',
     NAME: '#ps_checkout-card-fields-card-name',
     NUMBER: '#ps_checkout-card-fields-card-number',
     EXPIRY: '#ps_checkout-card-fields-card-expiry',
