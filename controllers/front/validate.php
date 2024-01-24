@@ -402,6 +402,10 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
                     $exceptionMessageForCustomer = $this->module->l('Transaction expired, please try again.');
                     $notifyCustomerService = false;
                     break;
+                case PayPalException::PAYMENT_SOURCE_CANNOT_BE_USED:
+                    $exceptionMessageForCustomer = $this->module->l('The selected payment method does not support this type of transaction. Please choose another payment method or contact support for assistance.');
+                    $notifyCustomerService = false;
+                    break;
             }
         }
 
