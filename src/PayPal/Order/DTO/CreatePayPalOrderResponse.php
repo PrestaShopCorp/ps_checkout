@@ -36,7 +36,7 @@ class CreatePayPalOrderResponse
      */
     private $update_time;
     /**
-     * @var PaymentSourceRequest
+     * @var PaymentSourceResponse
      */
     private $payment_source;
     /**
@@ -52,7 +52,7 @@ class CreatePayPalOrderResponse
      */
     private $payer;
     /**
-     * @var PurchaseUnitRequest[]
+     * @var PurchaseUnit[]
      */
     private $purchase_units;
     /**
@@ -60,7 +60,7 @@ class CreatePayPalOrderResponse
      */
     private $status;
     /**
-     * @var Link[]
+     * @var LinkDescription[]
      */
     private $links;
 
