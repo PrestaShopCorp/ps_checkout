@@ -66,6 +66,11 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     private $isPatch;
 
     /**
+     * @var bool
+     */
+    private $isCard = false;
+
+    /**
      * @param array $cart
      * @param bool $isPatch
      */
@@ -102,6 +107,11 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         if (false === $this->isUpdate) {
             $this->buildApplicationContextNode();
         }
+
+        if ($this->isCard) {
+            $this->buildPaymentSourceNode();
+            $this->buildSupplementaryDataNode();
+        }
     }
 
     /**
@@ -127,6 +137,11 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
 
         if (false === $this->isUpdate) {
             $this->buildApplicationContextNode();
+        }
+
+        if ($this->isCard) {
+            $this->buildPaymentSourceNode();
+            $this->buildSupplementaryDataNode();
         }
     }
 
@@ -190,9 +205,6 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      */
     public function buildShippingNode()
     {
-        $countryCodeMatrice = new PaypalCountryCodeMatrice();
-        $shippingCountryIsoCode = $this->getCountryIsoCodeById($this->cart['addresses']['shipping']->id_country);
-
         $gender = new \Gender($this->cart['customer']->id_gender, $this->cart['language']->id);
         $genderName = $gender->name;
 
@@ -200,14 +212,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
             'name' => [
                 'full_name' => $genderName . ' ' . $this->cart['addresses']['shipping']->lastname . ' ' . $this->cart['addresses']['shipping']->firstname,
             ],
-            'address' => [
-                'address_line_1' => (string) $this->cart['addresses']['shipping']->address1,
-                'address_line_2' => (string) $this->cart['addresses']['shipping']->address2,
-                'admin_area_1' => (string) $this->getStateNameById($this->cart['addresses']['shipping']->id_state),
-                'admin_area_2' => (string) $this->cart['addresses']['shipping']->city,
-                'country_code' => (string) $countryCodeMatrice->getPaypalIsoCode($shippingCountryIsoCode),
-                'postal_code' => (string) $this->cart['addresses']['shipping']->postcode,
-            ],
+            'address' => $this->getAddressPortable('shipping'),
         ];
 
         $this->getPayload()->addAndMergeItems($node);
@@ -218,7 +223,6 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      */
     public function buildPayerNode()
     {
-        $countryCodeMatrice = new PaypalCountryCodeMatrice();
         $payerCountryIsoCode = $this->getCountryIsoCodeById($this->cart['addresses']['invoice']->id_country);
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
@@ -229,14 +233,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 'surname' => (string) $this->cart['addresses']['invoice']->lastname,
             ],
             'email_address' => (string) $this->cart['customer']->email,
-            'address' => [
-                'address_line_1' => (string) $this->cart['addresses']['invoice']->address1,
-                'address_line_2' => (string) $this->cart['addresses']['invoice']->address2,
-                'admin_area_1' => (string) $this->getStateNameById($this->cart['addresses']['invoice']->id_state), //The highest level sub-division in a country, which is usually a province, state, or ISO-3166-2 subdivision.
-                'admin_area_2' => (string) $this->cart['addresses']['invoice']->city, // A city, town, or village. Smaller than admin_area_level_1
-                'country_code' => (string) $countryCodeMatrice->getPaypalIsoCode($payerCountryIsoCode),
-                'postal_code' => (string) $this->cart['addresses']['invoice']->postcode,
-            ],
+            'address' => $this->getAddressPortable('invoice'),
         ];
 
         // Add optional birthdate if provided
@@ -406,6 +403,78 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         $this->getPayload()->addAndMergeItems($node);
     }
 
+    private function buildPaymentSourceNode()
+    {
+        /** @var \Ps_checkout $module */
+        $module = \Module::getInstanceByName('ps_checkout');
+        /** @var PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $module->getService('ps_checkout.paypal.configuration');
+
+        $node = [
+            'payment_source' => [
+                'card' => [
+                    'name' => $this->cart['addresses']['invoice']->firstname . ' ' . $this->cart['addresses']['invoice']->lastname,
+                    'billing_address' => $this->getAddressPortable('invoice'),
+                    'attributes' => [
+                        'verification' => [
+                            'method' => $paypalConfiguration->getHostedFieldsContingencies(),
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->getPayload()->addAndMergeItems($node);
+    }
+
+    private function buildSupplementaryDataNode()
+    {
+        $payload = $this->getPayload()->getArray();
+        $node = [
+            'supplementary_data' => [
+                'card' => [
+                    'level_2' => [
+//                        'invoice_id' => '',
+                        'tax_total' => $payload['amount']['breakdown']['tax_total'],
+                    ],
+                    'level_3' => [
+                        'shipping_amount' => $payload['amount']['breakdown']['shipping'],
+                        'duty_amount' => [
+                            'currency_code' => $payload['amount']['currency_code'],
+                            'value' => $payload['amount']['value'],
+                        ],
+                        'discount_amount' => $payload['amount']['breakdown']['discount'],
+                        'shipping_address' => $this->getAddressPortable('shipping'),
+                        'line_items' => $payload['items'],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->getPayload()->addAndMergeItems($node);
+    }
+
+    /**
+     * @param "shipping"|"invoice" $addressType
+     *
+     * @return string[]
+     */
+    private function getAddressPortable($addressType)
+    {
+        $countryCodeMatrice = new PaypalCountryCodeMatrice();
+        $address = $this->cart['addresses'][$addressType];
+        $payerCountryIsoCode = $this->getCountryIsoCodeById($address->id_country);
+
+        return [
+            'address_line_1' => $address->address1,
+            'address_line_2' => $address->address2,
+            'admin_area_1' => (string) $this->getStateNameById($address->id_state),
+            'admin_area_2' => $address->city,
+            'country_code' => (string) $countryCodeMatrice->getPaypalIsoCode($payerCountryIsoCode),
+            'postal_code' => $address->postcode,
+        ];
+    }
+
     /**
      * Function that allow to truncate fields to match the
      * paypal api requirements
@@ -447,7 +516,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
      */
     private function formatAmount($amount)
     {
-        return sprintf("%01.{$this->getNbDecimalToRound()}f", $amount);
+        return sprintf("%01.{$this->getNbDecimalToRound()}F", $amount);
     }
 
     /**
@@ -512,6 +581,22 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
     public function setPaypalOrderId($id)
     {
         $this->paypalOrderId = $id;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCard()
+    {
+        return $this->isCard;
+    }
+
+    /**
+     * @param bool $isCard
+     */
+    public function setIsCard($isCard)
+    {
+        $this->isCard = $isCard;
     }
 
     /**
