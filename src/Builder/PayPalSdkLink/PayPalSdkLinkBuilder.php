@@ -51,6 +51,9 @@ class PayPalSdkLinkBuilder
     /** @var ExpressCheckoutConfiguration */
     private $expressCheckoutConfiguration;
 
+    /** @var array */
+    private static $cache = [];
+
     /**
      * @param PayPalConfiguration $configuration
      * @param PayPalPayLaterConfiguration $payLaterConfiguration
@@ -347,6 +350,50 @@ class PayPalSdkLinkBuilder
         return '';
     }
 
+    // TODO : Remove everything Sofort related after October 2024 when its no longer supported by PayPal
+    private function isSofortAvailableForMerchant()
+    {
+        if (isset(self::$cache['sofortAvailability'])) {
+            return self::$cache['sofortAvailability'];
+        }
+
+        $query = new \DbQuery();
+        $query->select('date_add');
+        $query->from('configuration');
+        $query->where('name = "PS_CHECKOUT_PAYPAL_EMAIL_STATUS"');
+
+        $shopId = \Shop::getContextShopID(true);
+        if ($shopId) {
+            $query->where('id_shop IS NULL OR id_shop = ' . (int) $shopId);
+        }
+
+        $dateAdd = \Db::getInstance()->getValue($query);
+        $dtZone = new \DateTimeZone('UTC');
+
+        $createdAt = new \DateTime($dateAdd, $dtZone);
+        $now = new \DateTime('now', $dtZone);
+        $deprecationDate = new \DateTime('2024-02-01', $dtZone);
+        $unavailabilityDate = new \DateTime('2024-09-30', $dtZone);
+
+        if ($now > $unavailabilityDate) {
+            // Sofort is totally unavailable after September 30, 2024.
+            self::$cache['sofortAvailability'] = false;
+
+            return false;
+        }
+
+        if ($now > $deprecationDate && $createdAt >= $deprecationDate) {
+            // Sofort is unavailable for merchants onboarded after February 01, 2024.
+            self::$cache['sofortAvailability'] = false;
+
+            return false;
+        }
+
+        self::$cache['sofortAvailability'] = true;
+
+        return true;
+    }
+
     private function getEligibleAlternativePaymentMethods()
     {
         $fundingSourcesEnabled = [];
@@ -414,6 +461,7 @@ class PayPalSdkLinkBuilder
                 && $fundingSource['name'] === 'sofort'
                 && (($context->currency->iso_code === 'EUR' && in_array($country, ['AT', 'BE', 'DE', 'ES', 'NL'], true))
                 || ($context->currency->iso_code === 'GBP' && in_array($country, ['GB', 'UK'], true)))
+                && $this->isSofortAvailableForMerchant()
             ) {
                 $fundingSourcesEnabled[] = $fundingSource['name'];
             }
