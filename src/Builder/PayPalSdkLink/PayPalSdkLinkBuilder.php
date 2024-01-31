@@ -360,7 +360,7 @@ class PayPalSdkLinkBuilder
         $query = new \DbQuery();
         $query->select('date_add');
         $query->from('configuration');
-        $query->where('name = "PS_CHECKOUT_PAYPAL_EMAIL_STATUS"');
+        $query->where('name = "PS_CHECKOUT_PAYPAL_ID_MERCHANT"');
 
         $shopId = \Shop::getContextShopID(true);
         if ($shopId) {
@@ -368,10 +368,17 @@ class PayPalSdkLinkBuilder
         }
 
         $dateAdd = \Db::getInstance()->getValue($query);
-        $dtZone = new \DateTimeZone('UTC');
 
-        $createdAt = new \DateTime($dateAdd, $dtZone);
+        if (empty($dateAdd) || strpos($dateAdd, '0000-00-00') !== false) {
+            // Sofort is unavailable for merchants who have not onboarded yet.
+            self::$cache['sofortAvailability'] = false;
+
+            return false;
+        }
+
+        $dtZone = new \DateTimeZone('UTC');
         $now = new \DateTime('now', $dtZone);
+        $createdAt = new \DateTime($dateAdd, $dtZone);
         $deprecationDate = new \DateTime('2024-02-01', $dtZone);
         $unavailabilityDate = new \DateTime('2024-09-30', $dtZone);
 
