@@ -303,6 +303,8 @@ class PayPalError
                 throw new PayPalException('Processing of this card brand is not supported. Use another type of card.', PayPalException::CARD_BRAND_NOT_SUPPORTED);
             case 'RESOURCE_NOT_FOUND':
                 throw new PayPalException('The specified resource does not exist.', PayPalException::RESOURCE_NOT_FOUND);
+            case 'PAYMENT_SOURCE_CANNOT_BE_USED':
+                throw new PayPalException('The provided payment source cannot be used to pay for the order. Please try again with a different payment source by creating a new order.', PayPalException::PAYMENT_SOURCE_CANNOT_BE_USED);
             default:
                 throw new PayPalException($this->message, PayPalException::UNKNOWN);
         }
