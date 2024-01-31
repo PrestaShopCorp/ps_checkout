@@ -30,24 +30,24 @@
   <div id="ps_checkout-card-fields-form-loader">
     <img src="{$modulePath}views/img/tail-spin.svg" alt="">
   </div>
-  <div class="form-group">
+  <div>
     <label class="form-control-label" for="ps_checkout-card-fields-name">{l s='Cardholder Name (optional)' mod='ps_checkout'}</label>
     <div id="ps_checkout-card-fields-name"></div>
     <div id="ps_checkout-card-fields-name-error" class="alert alert-danger hidden">{l s='Card holder name is invalid' mod='ps_checkout'}</div>
   </div>
-  <div class="form-group">
+  <div>
     <label class="form-control-label" for="ps_checkout-card-fields-number">{l s='Card number' mod='ps_checkout'}</label>
     <div id="ps_checkout-card-fields-number" ></div>
     <div id="ps_checkout-card-fields-number-error" class="alert alert-danger hidden">{l s='Card number is invalid' mod='ps_checkout'}</div>
     <div id="ps_checkout-card-fields-vendor-error" class="alert alert-danger hidden">{l s='Card vendor is invalid' mod='ps_checkout'}</div>
   </div>
   <div class="row">
-    <div class="form-group col-xs-6 col-6">
+    <div class="col-xs-6 col-6">
       <label class="form-control-label" for="ps_checkout-card-fields-expiry">{l s='Card expiration date' mod='ps_checkout'}</label>
       <div id="ps_checkout-card-fields-expiry" ></div>
       <div id="ps_checkout-card-fields-expiry-error" class="alert alert-danger hidden">{l s='Card expiration date is invalid' mod='ps_checkout'}</div>
     </div>
-    <div class="form-group col-xs-6 col-6">
+    <div class="col-xs-6 col-6">
       <label class="form-control-label" for="ps_checkout-card-fields-cvv">{l s='CVC' mod='ps_checkout'}</label>
       <div class="ps_checkout-info-wrapper">
         <div class="ps_checkout-info-button" onmouseenter="cvvEnter()" onmouseleave="cvvLeave()">i
