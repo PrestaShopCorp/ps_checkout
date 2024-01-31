@@ -100,7 +100,7 @@ class Ps_CheckoutCheckModuleFrontController extends AbstractFrontController
 
             if (false === empty($psCheckoutCart->paypal_order)) {
                 $paypalOrder = new CreatePaypalOrderHandler($this->context);
-                $response = $paypalOrder->handle($isExpressCheckout || empty($this->context->cart->id_address_delivery), true, $psCheckoutCart->paypal_order);
+                $response = $paypalOrder->handle($isExpressCheckout || empty($this->context->cart->id_address_delivery), $psCheckoutCart->paypal_funding === 'card', true, $psCheckoutCart->paypal_order);
 
                 if (false === $response['status']) {
                     $this->module->getLogger()->error(
