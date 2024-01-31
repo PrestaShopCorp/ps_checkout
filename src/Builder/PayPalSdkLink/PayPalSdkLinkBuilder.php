@@ -90,6 +90,7 @@ class PayPalSdkLinkBuilder
 
         if ($this->shouldIncludeHostedFieldsComponent()) {
             $components[] = 'hosted-fields';
+            $components[] = 'card-fields';
         }
 
         if ($this->shouldIncludeMessagesComponent()) {

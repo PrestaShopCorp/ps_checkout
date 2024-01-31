@@ -741,7 +741,7 @@ class Ps_checkout extends PaymentModule
 
             if ('card' === $fundingSource->name && $configurationPayPal->isHostedFieldsEnabled() && in_array($configurationPayPal->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true)) {
                 $this->context->smarty->assign('modulePath', $this->getPathUri());
-                $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/paymentOptions.tpl'));
+                $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/markup/cardFields.tpl'));
             }
 
             $paymentOptions[] = $paymentOption;
@@ -1125,6 +1125,8 @@ class Ps_checkout extends PaymentModule
                 'checkout.order.amount.total' => $this->l('The total amount of your order comes to'),
                 'checkout.order.included.tax' => $this->l('(tax incl.)'),
                 'checkout.order.confirm.label' => $this->l('Please confirm your order by clicking "I confirm my order".'),
+                'paypal.hosted-fields.label.card-name' => $this->l('Card holder name'),
+                'paypal.hosted-fields.placeholder.card-name' => $this->l('Card holder name'),
                 'paypal.hosted-fields.label.card-number' => $this->l('Card number'),
                 'paypal.hosted-fields.placeholder.card-number' => $this->l('Card number'),
                 'paypal.hosted-fields.label.expiration-date' => $this->l('Expiry date'),

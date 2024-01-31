@@ -181,7 +181,7 @@
   backface-visibility: hidden;
 }
 
-.defautl-credit-card {
+.default-credit-card {
   position: absolute;
   top: 2px;
   right: 10px;
@@ -323,17 +323,22 @@
   margin: 0 0.25em;
 }
 
+#ps_checkout-hosted-fields-card-name {
+  position: relative;
+  /*height: 45px;*/
+  margin-top: 6px;
+}
 #ps_checkout-hosted-fields-card-number {
   position: relative;
-  height: 45px;
+  /*height: 45px;*/
   margin-top: 6px;
 }
 #ps_checkout-hosted-fields-card-expiration-date {
-  height: 45px;
+  /*height: 45px;*/
   margin-top: 6px;
 }
 #ps_checkout-hosted-fields-card-cvv {
-  height: 45px;
+  /*height: 45px;*/
   margin-top: 6px;
 }
 
@@ -512,4 +517,21 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
 
 .cart-detailed-totals + #ps-checkout-pp-message-container{
   padding: 0 1rem 1rem;
+}
+
+#ps_checkout-card-fields-form.loading > *:not(#ps_checkout-card-fields-form-loader),
+#ps_checkout-card-fields-form:not(.loading) > #ps_checkout-card-fields-form-loader {
+  display: none;
+}
+
+#ps_checkout-card-fields-name-error.hidden,
+#ps_checkout-card-fields-number-error.hidden,
+#ps_checkout-card-fields-vendor-error.hidden,
+#ps_checkout-card-fields-expiry-error.hidden,
+#ps_checkout-card-fields-cvv-error.hidden {
+  display: none;
+}
+
+#ps_checkout-card-fields-form-loader {
+  text-align: center;
 }
