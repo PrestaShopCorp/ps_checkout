@@ -153,4 +153,5 @@ class PayPalException extends PsCheckoutException
     const PAYMENT_DENIED = 128;
     const CARD_BRAND_NOT_SUPPORTED = 129;
     const RESOURCE_NOT_FOUND = 130;
+    const PAYMENT_SOURCE_CANNOT_BE_USED = 131;
 }
