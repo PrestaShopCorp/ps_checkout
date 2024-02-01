@@ -120,25 +120,4 @@ class FrontControllerValidator
 
         return false;
     }
-
-    /**
-     * @param string $controller
-     *
-     * @return bool
-     */
-    public function shouldGeneratePayPalClientToken($controller)
-    {
-        if (false === $this->merchantValidator->merchantIsValid()) {
-            return false;
-        }
-
-        switch ($controller) {
-            // Payment step
-            case 'orderopc':
-            case 'order':
-                return true;
-        }
-
-        return false;
-    }
 }
