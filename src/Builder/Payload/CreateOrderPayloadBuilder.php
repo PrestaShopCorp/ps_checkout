@@ -57,6 +57,11 @@ class CreateOrderPayloadBuilder extends Builder
         if (empty($this->data['ps_checkout']['isUpdate'])) {
             $this->buildApplicationContextNode();
         }
+
+        if ($this->data['ps_checkout']['isCard']) {
+            $this->buildPaymentSourceNode();
+            $this->buildSupplementaryDataNode();
+        }
     }
 
     /**
@@ -127,14 +132,7 @@ class CreateOrderPayloadBuilder extends Builder
                     . (!empty($this->data['deliveryAddress']['lastname']) ? $this->data['deliveryAddress']['lastname'] : '')
                 ),
             ],
-            'address' => [
-                'address_line_1' => !empty($this->data['deliveryAddress']['address1']) ? $this->data['deliveryAddress']['address1'] : '',
-                'address_line_2' => !empty($this->data['deliveryAddress']['address2']) ? $this->data['deliveryAddress']['address2'] : '',
-                'admin_area_1' => !empty($this->data['deliveryAddressState']['name']) ? $this->data['deliveryAddressState']['name'] : '',
-                'admin_area_2' => !empty($this->data['deliveryAddress']['city']) ? $this->data['deliveryAddress']['city'] : '',
-                'country_code' => !empty($this->data['deliveryAddressCountry']['iso_code']) ? $this->data['deliveryAddressCountry']['iso_code'] : '',
-                'postal_code' => !empty($this->data['deliveryAddress']['postcode']) ? $this->data['deliveryAddress']['postcode'] : '',
-            ],
+            'address' => $this->getAddressPortable('deliveryAddress'),
         ];
 
         $this->getPayload()->addAndMergeItems($node);
@@ -151,14 +149,7 @@ class CreateOrderPayloadBuilder extends Builder
                 'surname' => !empty($this->data['invoiceAddress']['lastname']) ? $this->data['invoiceAddress']['lastname'] : '',
             ],
             'email_address' => !empty($this->data['customer']['email']) ? $this->data['customer']['email'] : '',
-            'address' => [
-                'address_line_1' => !empty($this->data['invoiceAddress']['address1']) ? $this->data['invoiceAddress']['address1'] : '',
-                'address_line_2' => !empty($this->data['invoiceAddress']['address2']) ? $this->data['invoiceAddress']['address2'] : '',
-                'admin_area_1' => !empty($this->data['invoiceAddressState']['name']) ? $this->data['invoiceAddressState']['name'] : '',
-                'admin_area_2' => !empty($this->data['invoiceAddress']['city']) ? $this->data['invoiceAddress']['city'] : '',
-                'country_code' => !empty($this->data['invoiceAddressCountry']['iso_code']) ? $this->data['invoiceAddressCountry']['iso_code'] : '',
-                'postal_code' => !empty($this->data['invoiceAddress']['postcode']) ? $this->data['invoiceAddress']['postcode'] : '',
-            ],
+            'address' => $this->getAddressPortable('invoiceAddress'),
         ];
 
         // Add optional birthdate if provided
@@ -282,6 +273,71 @@ class CreateOrderPayloadBuilder extends Builder
         $this->getPayload()->addAndMergeItems($node);
     }
 
+    private function buildPaymentSourceNode()
+    {
+        $node = [
+            'payment_source' => [
+                'card' => [
+                    'name' => $this->data['invoiceAddress']['firstname'] . ' ' . $this->data['invoiceAddress']['lastname'],
+                    'billing_address' => $this->getAddressPortable('invoiceAddress'),
+                    'attributes' => [
+                        'verification' => [
+                            'method' => $this->data['ps_checkout']['3DS'],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->getPayload()->addAndMergeItems($node);
+    }
+
+    private function buildSupplementaryDataNode()
+    {
+        $payload = $this->getPayload()->getArray();
+        $node = [
+            'supplementary_data' => [
+                'card' => [
+                    'level_2' => [
+//                        'invoice_id' => '',
+                        'tax_total' => $payload['amount']['breakdown']['tax_total'],
+                    ],
+                    'level_3' => [
+                        'shipping_amount' => $payload['amount']['breakdown']['shipping'],
+                        'duty_amount' => [
+                            'currency_code' => $payload['amount']['currency_code'],
+                            'value' => $payload['amount']['value'],
+                        ],
+                        'discount_amount' => $payload['amount']['breakdown']['discount'],
+                        'shipping_address' => $this->getAddressPortable('deliveryAddress'),
+                        'line_items' => $payload['items'],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->getPayload()->addAndMergeItems($node);
+    }
+
+    /**
+     * @param "deliveryAddress"|"invoiceAddress" $addressType
+     *
+     * @return string[]
+     */
+    private function getAddressPortable($addressType)
+    {
+        $address = $this->data[$addressType];
+
+        return [
+            'address_line_1' => !empty($address['address1']) ? $address['address1'] : '',
+            'address_line_2' => !empty($address['address2']) ? $address['address2'] : '',
+            'admin_area_1' => !empty($this->data["{$addressType}State"]['name']) ? $this->data["{$addressType}State"]['name'] : '',
+            'admin_area_2' => !empty($address['city']) ? $address['city'] : '',
+            'country_code' => !empty($this->data["{$addressType}Country"]['iso_code']) ? $this->data["{$addressType}Country"]['iso_code'] : '',
+            'postal_code' => !empty($address['postcode']) ? $address['postcode'] : '',
+        ];
+    }
+
     /**
      * Get decimal to round correspondent to the payment currency used
      * Advise from PayPal: Always round to 2 decimals except for HUF, JPY and TWD
@@ -305,7 +361,7 @@ class CreateOrderPayloadBuilder extends Builder
      */
     private function formatAmount($amount)
     {
-        return sprintf("%01.{$this->getNbDecimalToRound()}f", $amount);
+        return sprintf("%01.{$this->getNbDecimalToRound()}F", $amount);
     }
 
     /**

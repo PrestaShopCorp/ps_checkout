@@ -57,7 +57,7 @@ class CreatePaypalOrderHandler
      *
      * @throws PsCheckoutException
      */
-    public function handle($expressCheckout = false, $updateOrder = false, $paypalOrderId = null)
+    public function handle($expressCheckout = false, $isCardPayment = false, $updateOrder = false, $paypalOrderId = null)
     {
         // Present an improved cart in order to create the payload
         $cartPresenter = (new CartPresenter())->present();
@@ -70,32 +70,21 @@ class CreatePaypalOrderHandler
         /** @var ShopContext $shopContext */
         $shopContext = $module->getService('ps_checkout.context.shop');
 
-        // Build full payload in 1.7
+        $builder->setIsCard($isCardPayment);
+
+        // enable express checkout mode if in express checkout
+        $builder->setExpressCheckout($expressCheckout);
+
+        // enable update mode if we build an order for update it
+        $builder->setIsUpdate($updateOrder);
+        if ($updateOrder) {
+            $builder->setPaypalOrderId($paypalOrderId);
+        }
+
         if ($shopContext->isShop17()) {
-            // enable express checkout mode if in express checkout
-            if (true === $expressCheckout) {
-                $builder->setExpressCheckout(true);
-            }
-
-            // enable update mode if we build an order for update it
-            if (true === $updateOrder) {
-                $builder->setIsUpdate(true);
-                $builder->setPaypalOrderId($paypalOrderId);
-            }
-
+            // Build full payload in 1.7
             $builder->buildFullPayload();
         } else {
-            // enable express checkout mode if in express checkout
-            if (true === $expressCheckout) {
-                $builder->setExpressCheckout(true);
-            }
-
-            // enable update mode if we build an order for update it
-            if (true === $updateOrder) {
-                $builder->setIsUpdate(true);
-                $builder->setPaypalOrderId($paypalOrderId);
-            }
-
             // if on 1.6 always build minimal payload
             $builder->buildMinimalPayload();
         }
