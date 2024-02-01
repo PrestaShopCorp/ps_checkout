@@ -206,7 +206,7 @@ export class CardFieldsComponent extends BaseComponent {
               .postCreateOrder({
                 ...data,
                 fundingSource: this.data.name,
-                isCardFields: true,
+                isHostedFields: true,
                 // vault: storeCardInVault
               })
               .then(data => {
