@@ -351,12 +351,6 @@ services:
     arguments:
       - "@ps_checkout.cache.paypal.order"
 
-  ps_checkout.paypal.provider.client_token:
-    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalClientTokenProvider'
-    public: true
-    arguments:
-      - "@ps_checkout.repository.pscheckoutcart"
-
   ps_checkout.prestashop.router:
     class: 'PrestaShop\Module\PrestashopCheckout\Routing\Router'
     public: true
@@ -469,7 +463,6 @@ services:
         PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQuery: "ps_checkout.query.handler.order.get_order_for_payment_refunded"
         PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQuery: "ps_checkout.query.handler.order.get_order_for_payment_reversed"
         PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForApprovalReversedQuery: "ps_checkout.query.handler.order.get_order_for_approval_reversed"
-        PrestaShop\Module\PrestashopCheckout\PayPal\Identity\Query\GetClientTokenPayPalQuery: "ps_checkout.query.handler.paypal.identity.get_client_token"
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetCurrentPayPalOrderStatusQuery: "ps_checkout.query.handler.paypal.order.get_current_paypal_order_status"
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery: "ps_checkout.query.handler.paypal.order.get_paypal_order_for_checkout_completed"
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery: "ps_checkout.query.handler.paypal.order.get_paypal_order_for_order_confirmation"
@@ -617,12 +610,6 @@ services:
     public: true
     arguments:
       - "@ps_checkout.repository.pscheckoutcart"
-
-  ps_checkout.query.handler.paypal.identity.get_client_token:
-    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Identity\QueryHandler\GetClientTokenPayPalQueryHandler'
-    public: true
-    arguments:
-      - "@ps_checkout.event.dispatcher"
 
   ps_checkout.query.handler.paypal.order.get_paypal_order_for_checkout_completed:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForCheckoutCompletedQueryHandler'

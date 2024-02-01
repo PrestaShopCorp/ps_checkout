@@ -19,7 +19,6 @@
  */
 
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
-use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalClientTokenProvider;
 
 /**
  * This controller receive ajax call to retrieve a PayPal Client Token
@@ -46,9 +45,6 @@ class Ps_CheckoutTokenModuleFrontController extends AbstractFrontController
                 ]);
             }
 
-            /** @var PayPalClientTokenProvider $clientTokenProvider */
-            $clientTokenProvider = $this->module->getService('ps_checkout.paypal.provider.client_token');
-
             /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
             $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
 
@@ -58,13 +54,6 @@ class Ps_CheckoutTokenModuleFrontController extends AbstractFrontController
             if (false === $psCheckoutCart) {
                 $psCheckoutCart = new PsCheckoutCart();
                 $psCheckoutCart->id_cart = (int) $this->context->cart->id;
-            }
-
-            if ($psCheckoutCart->isPaypalClientTokenExpired()) {
-                $psCheckoutCart->paypal_order = '';
-                $psCheckoutCart->paypal_token = $clientTokenProvider->getPayPalClientToken();
-                $psCheckoutCart->paypal_token_expire = (new DateTime())->modify('+3550 seconds')->format('Y-m-d H:i:s');
-                $psCheckoutCartRepository->save($psCheckoutCart);
             }
 
             $this->exitWithResponse([
