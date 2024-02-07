@@ -34,10 +34,30 @@ class Card3DSecureTest extends TestCase
     /**
      * @dataProvider orderProvider
      */
-    public function testCard3DSecure(array $order, $expectedResult)
+    public function testContinueWithAuthorization(array $order, $expectedResult)
     {
         $validator = new Card3DSecure();
         $actualResult = $validator->continueWithAuthorization($order);
+        $this->assertEquals($expectedResult, $actualResult);
+    }
+
+    /**
+     * @dataProvider orderIsLiabilityShiftedProvider
+     */
+    public function testIsLiabilityShifted(array $order, $expectedResult)
+    {
+        $validator = new Card3DSecure();
+        $actualResult = $validator->isLiabilityShifted($order);
+        $this->assertEquals($expectedResult, $actualResult);
+    }
+
+    /**
+     * @dataProvider orderIs3DSecureAvailableProvider
+     */
+    public function testIs3DSecureAvailable(array $order, $expectedResult)
+    {
+        $validator = new Card3DSecure();
+        $actualResult = $validator->is3DSecureAvailable($order);
         $this->assertEquals($expectedResult, $actualResult);
     }
 
@@ -254,6 +274,440 @@ class Card3DSecureTest extends TestCase
                     ],
                 ],
                 Card3DSecure::NO_DECISION,
+            ],
+        ];
+    }
+
+    public function orderIsLiabilityShiftedProvider()
+    {
+        return [
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_POSSIBLE,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_YES,
+                                    'authentication_status' => Card3DSecure::AUTHENTICATION_RESULT_YES,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                true,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_NO,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_YES,
+                                    'authentication_status' => Card3DSecure::AUTHENTICATION_RESULT_NO,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                false,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_NO,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_YES,
+                                    'authentication_status' => Card3DSecure::AUTHENTICATION_RESULT_REJECTED,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                false,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_POSSIBLE,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_YES,
+                                    'authentication_status' => Card3DSecure::AUTHENTICATION_RESULT_ATTEMPTED,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                false,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_UNKNOWN,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_YES,
+                                    'authentication_status' => Card3DSecure::AUTHENTICATION_RESULT_UNABLE,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                false,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_NO,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_YES,
+                                    'authentication_status' => Card3DSecure::AUTHENTICATION_RESULT_UNABLE,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                false,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_UNKNOWN,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_YES,
+                                    'authentication_status' => Card3DSecure::AUTHENTICATION_RESULT_CHALLENGE_REQUIRED,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                false,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_NO,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_YES,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                false,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_NO,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_NO,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                false,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_NO,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_UNAVAILABLE,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                false,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_UNKNOWN,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_UNAVAILABLE,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                false,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_NO,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_BYPASS,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                false,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_UNKNOWN,
+                            ],
+                        ],
+                    ],
+                ],
+                false,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'last_digits' => '1083',
+                            'brand' => 'VISA',
+                            'type' => 'UNKNOWN',
+                        ],
+                    ],
+                ],
+                false,
+            ],
+        ];
+    }
+
+    public function orderIs3DSecureAvailableProvider()
+    {
+        return [
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_POSSIBLE,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_YES,
+                                    'authentication_status' => Card3DSecure::AUTHENTICATION_RESULT_YES,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                true,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_NO,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_YES,
+                                    'authentication_status' => Card3DSecure::AUTHENTICATION_RESULT_NO,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                true,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_NO,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_YES,
+                                    'authentication_status' => Card3DSecure::AUTHENTICATION_RESULT_REJECTED,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                true,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_POSSIBLE,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_YES,
+                                    'authentication_status' => Card3DSecure::AUTHENTICATION_RESULT_ATTEMPTED,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                true,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_UNKNOWN,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_YES,
+                                    'authentication_status' => Card3DSecure::AUTHENTICATION_RESULT_UNABLE,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                true,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_NO,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_YES,
+                                    'authentication_status' => Card3DSecure::AUTHENTICATION_RESULT_UNABLE,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                true,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_UNKNOWN,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_YES,
+                                    'authentication_status' => Card3DSecure::AUTHENTICATION_RESULT_CHALLENGE_REQUIRED,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                true,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_NO,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_YES,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                true,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_NO,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_NO,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                false,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_NO,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_UNAVAILABLE,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                true,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_UNKNOWN,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_UNAVAILABLE,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                true,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_NO,
+                                'three_d_secure' => [
+                                    'enrollment_status' => Card3DSecure::ENROLLMENT_STATUS_BYPASS,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                false,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'authentication_result' => [
+                                'liability_shift' => Card3DSecure::LIABILITY_SHIFT_UNKNOWN,
+                            ],
+                        ],
+                    ],
+                ],
+                false,
+            ],
+            [
+                [
+                    'payment_source' => [
+                        'card' => [
+                            'last_digits' => '1083',
+                            'brand' => 'VISA',
+                            'type' => 'UNKNOWN',
+                        ],
+                    ],
+                ],
+                false,
             ],
         ];
     }

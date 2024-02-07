@@ -569,6 +569,7 @@ services:
     public: true
     arguments:
       - "@ps_checkout.event.dispatcher"
+      - "@ps_checkout.cache.paypal.order"
 
   ps_checkout.command.handler.paypal.order.save_paypal_order:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\SavePayPalOrderCommandHandler'
