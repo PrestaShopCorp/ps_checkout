@@ -132,12 +132,48 @@
                     <dd>{$orderPayPalTransaction.id}</dd>
                     <dt>{l s='Status' mod='ps_checkout'}</dt>
                     <dd>
-                        <span class="badge rounded badge-{$orderPayPalTransaction.status.class|escape:'html':'UTF-8'}">
-                          {$orderPayPalTransaction.status.translated|escape:'html':'UTF-8'}
-                        </span>
+                      <span class="badge rounded badge-{$orderPayPalTransaction.status.class|escape:'html':'UTF-8'}">
+                        {$orderPayPalTransaction.status.translated|escape:'html':'UTF-8'}
+                      </span>
                     </dd>
                     <dt>{l s='Amount (Tax incl.)' mod='ps_checkout'}</dt>
                     <dd>{$orderPayPalTransaction.amount} {$orderPayPalTransaction.currency}</dd>
+                    {if $psCheckoutCart->paypal_funding === 'card'}
+                    <dt>{l s='3D Secure' mod='ps_checkout'}</dt>
+                    <dd>
+                      {if $orderPayPal.is3DSecureAvailable && $orderPayPal.isLiabilityShifted}
+                      <span class="badge rounded badge-success">
+                        {l s='Success' mod='ps_checkout'}
+                      </span>
+                      {elseif $orderPayPal.is3DSecureAvailable && !$orderPayPal.isLiabilityShifted}
+                      <span class="badge rounded badge-warning">
+                        {l s='Failed' mod='ps_checkout'}
+                      </span>
+                      {else}
+                      <span class="badge rounded badge-danger">
+                        {l s='Card does not support 3D Secure' mod='ps_checkout'}
+                      </span>
+                      {/if}
+                    </dd>
+                    <dt>{l s='Liability shift' mod='ps_checkout'}</dt>
+                    <dd>
+                      {if $orderPayPal.isLiabilityShifted}
+                        <span class="badge rounded badge-success">
+                        {l s='Bank' mod='ps_checkout'}
+                        </span>
+                        <div class="liability-explanation">
+                          {l s='You can safely proceed with the order.' mod='ps_checkout'}
+                        </div>
+                      {else}
+                        <span class="badge rounded badge-warning">
+                        {l s='Merchant' mod='ps_checkout'}
+                        </span>
+                        <div class="liability-explanation">
+                          {l s='We advice you not to honor the order immediately, wait a few days in case of chargeback and contact the consumer to ensure authenticity of the transaction. For this type of cases we also recommend to consider Chargeback protection.' mod='ps_checkout'}
+                        </div>
+                      {/if}
+                    </dd>
+                    {/if}
                   </dl>
                 </div>
                   {if $orderPayPalTransaction.gross_amount || $orderPayPalTransaction.paypal_fee || $orderPayPalTransaction.net_amount}

@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Order;
 
 use Module;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Date\DatePresenter;
 use PsCheckoutCart;
 
@@ -55,12 +56,16 @@ class OrderPresenter
             return [];
         }
 
+        $card3DSecure = new Card3DSecure();
+
         return array_merge(
             [
                 'id' => $this->orderPayPal['id'],
                 'intent' => $this->orderPayPal['intent'],
                 'status' => $this->getOrderStatus(),
                 'transactions' => $this->getTransactions(),
+                'is3DSecureAvailable' => $card3DSecure->is3DSecureAvailable($this->orderPayPal),
+                'isLiabilityShifted' => $card3DSecure->isLiabilityShifted($this->orderPayPal),
             ],
             $this->getOrderTotals()
         );
