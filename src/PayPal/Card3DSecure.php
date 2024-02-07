@@ -79,17 +79,13 @@ class Card3DSecure
      */
     public function continueWithAuthorization(array $order)
     {
-        if (!isset($order['payment_source'])) {
-            return static::NO_DECISION;
-        }
-        if (!isset($order['payment_source']['card'])) {
-            return static::NO_DECISION;
-        }
-        if (!isset($order['payment_source']['card']['authentication_result'])) {
+        $cardAuthenticationResult = $this->getAuthenticationResult($order);
+
+        if (!$cardAuthenticationResult) {
             return static::NO_DECISION;
         }
 
-        $liabilityShift = isset($order['payment_source']['card']['authentication_result']['liability_shift']) ? $order['payment_source']['card']['authentication_result']['liability_shift'] : null;
+        $liabilityShift = $this->getLiabilityShift($cardAuthenticationResult);
 
         if ($liabilityShift === static::LIABILITY_SHIFT_POSSIBLE) {
             return static::PROCEED;
@@ -99,11 +95,48 @@ class Card3DSecure
             return static::RETRY;
         }
 
-        if ($liabilityShift === static::LIABILITY_SHIFT_NO && isset($order['payment_source']['card']['authentication_result']['three_d_secure'])) {
-            return $this->noLiabilityShift($order['payment_source']['card']['authentication_result']['three_d_secure']);
+        $threeDSecure = $this->get3DSecure($cardAuthenticationResult);
+
+        if ($liabilityShift === static::LIABILITY_SHIFT_NO && $threeDSecure) {
+            return $this->noLiabilityShift($cardAuthenticationResult);
         }
 
         return static::NO_DECISION;
+    }
+
+    /**
+     * @param array $order
+     *
+     * @return bool
+     */
+    public function is3DSecureAvailable(array $order)
+    {
+        $cardAuthenticationResult = $this->getAuthenticationResult($order);
+
+        if (!$cardAuthenticationResult) {
+            return false;
+        }
+
+        $threeDSecure = $this->get3DSecure($cardAuthenticationResult);
+        $enrollmentStatus = $this->getEnrollmentStatus($threeDSecure);
+
+        return $enrollmentStatus === self::ENROLLMENT_STATUS_YES || $enrollmentStatus === self::ENROLLMENT_STATUS_UNAVAILABLE;
+    }
+
+    /**
+     * @param array $order
+     *
+     * @return bool
+     */
+    public function isLiabilityShifted(array $order)
+    {
+        $cardAuthenticationResult = $this->getAuthenticationResult($order);
+        $liabilityShift = $this->getLiabilityShift($cardAuthenticationResult);
+        $threeDSecure = $this->get3DSecure($cardAuthenticationResult);
+        $authenticationStatus = $this->getAuthenticationStatus($threeDSecure);
+
+        return ($liabilityShift === self::LIABILITY_SHIFT_POSSIBLE || $liabilityShift === self::LIABILITY_SHIFT_YES)
+            && $authenticationStatus === self::AUTHENTICATION_RESULT_YES;
     }
 
     /**
@@ -113,8 +146,9 @@ class Card3DSecure
      */
     private function noLiabilityShift(array $cardAuthenticationResult)
     {
-        $enrollmentStatus = isset($cardAuthenticationResult['enrollment_status']) ? $cardAuthenticationResult['enrollment_status'] : null;
-        $authenticationStatus = isset($cardAuthenticationResult['authentication_status']) ? $cardAuthenticationResult['authentication_status'] : null;
+        $threeDSecure = $this->get3DSecure($cardAuthenticationResult);
+        $enrollmentStatus = $this->getEnrollmentStatus($threeDSecure);
+        $authenticationStatus = $this->getAuthenticationStatus($threeDSecure);
 
         if ($enrollmentStatus === static::ENROLLMENT_STATUS_BYPASS && !$authenticationStatus) {
             return static::PROCEED;
@@ -145,5 +179,55 @@ class Card3DSecure
         }
 
         return static::NO_DECISION;
+    }
+
+    /**
+     * @param array $order
+     *
+     * @return array|null
+     */
+    private function getAuthenticationResult(array $order)
+    {
+        return isset($order['payment_source']['card']['authentication_result']) ? $order['payment_source']['card']['authentication_result'] : null;
+    }
+
+    /**
+     * @param array|null $cardAuthenticationResult
+     *
+     * @return string|null
+     */
+    private function getLiabilityShift($cardAuthenticationResult)
+    {
+        return isset($cardAuthenticationResult['liability_shift']) ? $cardAuthenticationResult['liability_shift'] : null;
+    }
+
+    /**
+     * @param array|null $cardAuthenticationResult
+     *
+     * @return array|null
+     */
+    private function get3DSecure($cardAuthenticationResult)
+    {
+        return isset($cardAuthenticationResult['three_d_secure']) ? $cardAuthenticationResult['three_d_secure'] : null;
+    }
+
+    /**
+     * @param array|null $threeDSecure
+     *
+     * @return string|null
+     */
+    public function getAuthenticationStatus($threeDSecure)
+    {
+        return isset($threeDSecure['authentication_status']) ? $threeDSecure['authentication_status'] : null;
+    }
+
+    /**
+     * @param array|null $threeDSecure
+     *
+     * @return string|null
+     */
+    private function getEnrollmentStatus($threeDSecure)
+    {
+        return isset($threeDSecure['enrollment_status']) ? $threeDSecure['enrollment_status'] : null;
     }
 }
