@@ -17,6 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 import { BaseComponent } from '../../core/dependency-injection/base.component';
+import { loadScript } from '@paypal/paypal-js';
 
 export class PayPalSdkComponent extends BaseComponent {
   static Inject = {
@@ -29,44 +30,22 @@ export class PayPalSdkComponent extends BaseComponent {
   }
 
   render() {
-    const script = document.createElement('script');
-
-    script.setAttribute('async', '');
-    script.setAttribute('id', this.config.id);
-    script.setAttribute('src', this.config.src);
-    script.setAttribute('data-namespace', this.config.namespace);
-
-    if (this.config.card3dsEnabled) {
-      script.setAttribute('data-enable-3ds', '');
-    }
-
-    if (this.config.cspNonce) {
-      script.setAttribute('data-csp-nonce', this.config.cspNonce);
-    }
-
-    if (this.config.orderId) {
-      script.setAttribute('data-order-id', this.config.orderId);
-    }
-
-    if (this.config.partnerAttributionId) {
-      script.setAttribute('data-partner-attribution-id', this.config.partnerAttributionId);
-    }
-
-    script.setAttribute('data-client-token', this.props.token);
-
-    document.head.appendChild(script);
-
     this.promise = new Promise((resolve, reject) => {
-      script.onload = () => {
-        this.sdk = window[this.config.namespace];
-        resolve(this.sdk);
-      };
-
-      script.onerror = () => {
-        reject();
-      };
+      loadScript(this.config.sdkConfig)
+        .then((paypal) => {
+          this.sdk = paypal;
+          resolve(this.sdk);
+        })
+        .catch((error) => {
+          console.error('Unable to load the PayPal JavaScript SDK.', error);
+          reject();
+        });
     });
 
     return this;
+  }
+
+  reload() {
+    this.render();
   }
 }
