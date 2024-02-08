@@ -49,7 +49,6 @@ export class CardFieldsComponent extends BaseComponent {
     configPayPal: 'PayPalSdkConfig',
     payPalService: 'PayPalService',
     psCheckoutApi: 'PsCheckoutApi',
-    psCheckoutService: 'PsCheckoutService',
     querySelectorService: 'QuerySelectorService',
   };
 

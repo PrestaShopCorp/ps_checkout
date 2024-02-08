@@ -10,7 +10,6 @@ import { PsCheckoutExpressPayLaterComponent } from '../components/ps-checkout-pa
 import { HTMLElementService } from '../service/html-element.service';
 import { PayPalService } from '../service/paypal.service';
 import { PrestashopService } from '../service/prestashop.service';
-import { PsCheckoutService } from '../service/ps-checkout.service';
 import { TranslationService } from '../service/translation.service';
 import { QuerySelectorService } from '../service/query-selector.service';
 import { PaymentOptionsLoaderComponent } from '../components/common/payment-options-loader.component';
@@ -36,7 +35,6 @@ function initContainer(app) {
   bottle.factory('HTMLElementService', serviceFactory(HTMLElementService));
   bottle.factory('QuerySelectorService', serviceFactory(QuerySelectorService));
   bottle.factory('PsCheckoutApi', serviceFactory(PsCheckoutApi));
-  bottle.factory('PsCheckoutService', serviceFactory(PsCheckoutService));
   bottle.factory('TranslationService', serviceFactory(TranslationService));
   bottle.factory(
     'PaymentOptionsLoaderComponent',
@@ -55,9 +53,7 @@ export class App {
     initContainer(this);
 
     this.psCheckoutConfig = this.container.PsCheckoutConfig;
-
     this.prestashopService = this.container.PrestashopService;
-    this.psCheckoutService = this.container.PsCheckoutService;
     this.paymentOptionsLoader = this.container.PaymentOptionsLoaderComponent;
 
     this.$ = this.container.$;
@@ -81,10 +77,6 @@ export class App {
 
   async initPayPalService() {
     if (!this.container.PayPalSDK) {
-      const token = this.psCheckoutConfig.hostedFieldsEnabled && this.prestashopService.isOrderPage()
-        ? await this.psCheckoutService.getPayPalToken()
-        : '';
-
       try {
         const sdk = await new PayPalSdkComponent(this).render().promise;
 
