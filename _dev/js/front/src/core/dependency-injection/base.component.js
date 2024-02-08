@@ -19,11 +19,11 @@
 import { BaseClass } from './base.class';
 
 export class BaseComponent extends BaseClass {
-  constructor(app, props) {
+  constructor(app, props = {}) {
     super(app);
 
     this.data = {};
-    this.props = props || {};
+    this.props = props;
 
     this.children = {};
 

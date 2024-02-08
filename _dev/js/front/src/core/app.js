@@ -86,9 +86,7 @@ export class App {
         : '';
 
       try {
-        const sdk = await new PayPalSdkComponent(this, {
-          token
-        }).render().promise;
+        const sdk = await new PayPalSdkComponent(this).render().promise;
 
         this.bottle.value('PayPalSDK', sdk);
         this.bottle.factory('PayPalService', initService(this)(PayPalService));
