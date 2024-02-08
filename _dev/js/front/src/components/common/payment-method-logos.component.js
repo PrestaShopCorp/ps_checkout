@@ -99,7 +99,7 @@ export class PaymentMethodLogosComponent extends BaseComponent {
 
       containerParentElement.append(containerLogoElement);
 
-      querySelector.append(containerParentElement);
+      querySelector.parentNode.insertBefore(containerParentElement, querySelector.nextSibling);
 
       return containerLogoElement;
     }

@@ -55,7 +55,7 @@ export const DefaultSelectors1_6 = {
     VENDOR_ERROR: '#ps_checkout-card-fields-vendor-error',
     EXPIRY_ERROR: '#ps_checkout-card-fields-expiry-error',
     CVV_ERROR: '#ps_checkout-card-fields-cvv-error',
-  }
+  },
 
   PAYMENT_METHOD_LOGO_PRODUCT_CONTAINER: 'body.product .box-cart-bottom .buttons_bottom_block',
   PAYMENT_METHOD_LOGO_CART_CONTAINER: 'body.order .cart_navigation_extra'

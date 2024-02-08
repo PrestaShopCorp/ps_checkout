@@ -474,6 +474,16 @@
   margin-right: 10px;
 }
 
+#ps_checkout-payment-method-logo-block-container {
+  text-align: center;
+}
+
+#ps_checkout-payment-method-logos-container {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 #ps_checkout-card-fields-form.loading > *:not(#ps_checkout-card-fields-form-loader),
 #ps_checkout-card-fields-form:not(.loading) > #ps_checkout-card-fields-form-loader {
   display: none;
