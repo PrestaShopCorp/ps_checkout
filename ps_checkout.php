@@ -1035,7 +1035,6 @@ class Ps_checkout extends PaymentModule
         }
 
         // BEGIN To be refactored in services
-        $payPalClientToken = '';
         $payPalOrderId = '';
         $cartFundingSource = 'paypal';
         $psCheckoutCart = false;
@@ -1054,7 +1053,6 @@ class Ps_checkout extends PaymentModule
         if (false !== $psCheckoutCart && $psCheckoutCart->isOrderAvailable()) {
             $payPalOrderId = $psCheckoutCart->getPaypalOrderId();
             $cartFundingSource = $psCheckoutCart->getPaypalFundingSource();
-            $payPalClientToken = $psCheckoutCart->getPaypalClientToken();
         }
         // END To be refactored in services
 
@@ -1064,7 +1062,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'LoaderImage' => $this->getPathUri() . 'views/img/loader.svg',
             $this->name . 'PayPalButtonConfiguration' => $payPalConfiguration->getButtonConfiguration(),
             $this->name . 'CardFundingSourceImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'),
-            $this->name . 'GetTokenURL' => $this->context->link->getModuleLink($this->name, 'token', [], true),
+            $this->name . 'GetTokenURL' => $this->context->link->getModuleLink($this->name, 'token', [], true), // TODO: Remove this along with controller?
             $this->name . 'CreateUrl' => $this->context->link->getModuleLink($this->name, 'create', [], true),
             $this->name . 'CheckUrl' => $this->context->link->getModuleLink($this->name, 'check', [], true),
             $this->name . 'ValidateUrl' => $this->context->link->getModuleLink($this->name, 'validate', [], true),
@@ -1073,7 +1071,6 @@ class Ps_checkout extends PaymentModule
             $this->name . 'CheckoutUrl' => $this->getCheckoutPageUrl(),
             $this->name . 'ConfirmUrl' => $this->context->link->getPageLink('order-confirmation', true, (int) $this->context->language->id),
             $this->name . 'PayPalSdkConfig' => $payPalSdkConfigurationBuilder->buildConfiguration(),
-            $this->name . 'PayPalClientToken' => $payPalClientToken,
             $this->name . 'PayPalOrderId' => $payPalOrderId,
             $this->name . 'FundingSource' => $cartFundingSource,
             $this->name . 'HostedFieldsEnabled' => $isCardAvailable && $payPalConfiguration->isHostedFieldsEnabled() && in_array($payPalConfiguration->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true),
