@@ -32,8 +32,6 @@ use PrestaShop\Module\PrestashopCheckout\ShopContext;
  */
 class PayPalSdkConfigurationBuilder
 {
-    const BASE_LINK = 'https://www.paypal.com/sdk/js';
-
     /**
      * @var PayPalConfiguration
      */
