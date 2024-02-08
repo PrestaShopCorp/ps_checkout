@@ -61,6 +61,7 @@ class PayPalSdkConfigurationBuilder
      * @param PayPalPayLaterConfiguration $payLaterConfiguration
      * @param FundingSourceConfigurationRepository $fundingSourceConfigurationRepository
      * @param ExpressCheckoutConfiguration $expressCheckoutConfiguration
+     * @param ShopContext $shopContext
      */
     public function __construct(
         PayPalConfiguration $configuration,
