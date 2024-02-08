@@ -36,7 +36,9 @@ export class NotificationComponent extends BaseComponent {
   }
 
   hideConditions() {
-    this.notificationConditions.style.display = 'none';
+    if (this.notificationConditions) {
+      this.notificationConditions.style.display = 'none';
+    }
   }
 
   hideError() {
@@ -48,7 +50,9 @@ export class NotificationComponent extends BaseComponent {
   }
 
   showConditions() {
-    this.notificationConditions.style.display = 'block';
+    if (this.notificationConditions) {
+      this.notificationConditions.style.display = 'block';
+    }
   }
 
   showError(message) {
