@@ -42,7 +42,6 @@ class Ps_checkout extends PaymentModule
         'displayPaymentTop',
         'displayPaymentByBinaries',
         'actionFrontControllerSetMedia',
-        'displayHeader',
         'actionObjectOrderPaymentAddAfter',
         'actionObjectOrderPaymentUpdateAfter',
         'displayPaymentReturn',
@@ -115,7 +114,7 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_LIVE_STEP_VIEWED' => false,
         'PS_CHECKOUT_INTEGRATION_DATE' => self::INTEGRATION_DATE,
         'PS_CHECKOUT_WEBHOOK_SECRET' => '',
-        'PS_CHECKOUT_LIABILITY_SHIFT_REQ' => '0',
+        'PS_CHECKOUT_LIABILITY_SHIFT_REQ' => '1',
     ];
 
     public $confirmUninstall;
@@ -1001,8 +1000,8 @@ class Ps_checkout extends PaymentModule
             return;
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder $payPalSdkLinkBuilder */
-        $payPalSdkLinkBuilder = $this->getService('ps_checkout.sdk.paypal.linkbuilder');
+        /** @var \PrestaShop\Module\PrestashopCheckout\Builder\PaypalSdkConfiguration\PayPalSdkConfigurationBuilder $payPalSdkConfigurationBuilder */
+        $payPalSdkConfigurationBuilder = $this->getService('ps_checkout.sdk.paypal.configurationbuilder');
 
         /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $expressCheckoutConfiguration */
         $expressCheckoutConfiguration = $this->getService('ps_checkout.express_checkout.configuration');
@@ -1036,7 +1035,6 @@ class Ps_checkout extends PaymentModule
         }
 
         // BEGIN To be refactored in services
-        $payPalClientToken = '';
         $payPalOrderId = '';
         $cartFundingSource = 'paypal';
         $psCheckoutCart = false;
@@ -1055,7 +1053,6 @@ class Ps_checkout extends PaymentModule
         if (false !== $psCheckoutCart && $psCheckoutCart->isOrderAvailable()) {
             $payPalOrderId = $psCheckoutCart->getPaypalOrderId();
             $cartFundingSource = $psCheckoutCart->getPaypalFundingSource();
-            $payPalClientToken = $psCheckoutCart->getPaypalClientToken();
         }
         // END To be refactored in services
 
@@ -1065,7 +1062,6 @@ class Ps_checkout extends PaymentModule
             $this->name . 'LoaderImage' => $this->getPathUri() . 'views/img/loader.svg',
             $this->name . 'PayPalButtonConfiguration' => $payPalConfiguration->getButtonConfiguration(),
             $this->name . 'CardFundingSourceImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'),
-            $this->name . 'GetTokenURL' => $this->context->link->getModuleLink($this->name, 'token', [], true),
             $this->name . 'CreateUrl' => $this->context->link->getModuleLink($this->name, 'create', [], true),
             $this->name . 'CheckUrl' => $this->context->link->getModuleLink($this->name, 'check', [], true),
             $this->name . 'ValidateUrl' => $this->context->link->getModuleLink($this->name, 'validate', [], true),
@@ -1073,8 +1069,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'ExpressCheckoutUrl' => $this->context->link->getModuleLink($this->name, 'ExpressCheckout', [], true),
             $this->name . 'CheckoutUrl' => $this->getCheckoutPageUrl(),
             $this->name . 'ConfirmUrl' => $this->context->link->getPageLink('order-confirmation', true, (int) $this->context->language->id),
-            $this->name . 'PayPalSdkUrl' => $payPalSdkLinkBuilder->buildLink(),
-            $this->name . 'PayPalClientToken' => $payPalClientToken,
+            $this->name . 'PayPalSdkConfig' => $payPalSdkConfigurationBuilder->buildConfiguration(),
             $this->name . 'PayPalOrderId' => $payPalOrderId,
             $this->name . 'FundingSource' => $cartFundingSource,
             $this->name . 'HostedFieldsEnabled' => $isCardAvailable && $payPalConfiguration->isHostedFieldsEnabled() && in_array($payPalConfiguration->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true),
@@ -1584,41 +1579,6 @@ class Ps_checkout extends PaymentModule
                 'step' => 1,
             ]
         );
-    }
-
-    public function hookDisplayHeader()
-    {
-        if (!$this->merchantIsValid()) {
-            return '';
-        }
-
-        $controller = Tools::getValue('controller');
-
-        if (empty($controller) && isset($this->context->controller->php_self)) {
-            $controller = $this->context->controller->php_self;
-        }
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\Validator\FrontControllerValidator $frontControllerValidator */
-        $frontControllerValidator = $this->getService('ps_checkout.validator.front_controller');
-
-        if ($frontControllerValidator->shouldLoadFrontJS($controller)) {
-            // No need to prefetch if script will be loaded
-            return '';
-        }
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder $payPalSdkLinkBuilder */
-        $payPalSdkLinkBuilder = $this->getService('ps_checkout.sdk.paypal.linkbuilder');
-
-        $this->context->smarty->assign([
-            'contentToPrefetch' => [
-                [
-                    'link' => $payPalSdkLinkBuilder->buildLink(),
-                    'type' => 'script',
-                ],
-            ],
-        ]);
-
-        return $this->display(__FILE__, 'views/templates/hook/header.tpl');
     }
 
     /**

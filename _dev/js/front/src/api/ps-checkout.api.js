@@ -127,44 +127,6 @@ export class PsCheckoutApi extends BaseClass {
       .then(({ body: { orderID } }) => orderID);
   }
 
-  getGetToken() {
-    return (
-      fetch(this.config.getTokenUrl, {
-        method: 'get',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json'
-        }
-      })
-        .then((response) => {
-          const contentType = response.headers.get('content-type');
-          const isJsonResponse =
-            contentType && contentType.indexOf('application/json') !== -1;
-
-          if (isJsonResponse) {
-            if (false === response.ok) {
-              return response.json().then((response) => {
-                throw response.body && response.body.error
-                  ? response.body.error
-                  : { message: 'Unknown error' };
-              });
-            }
-
-            return response.json();
-          }
-
-          throw new Error('Invalid response');
-        })
-        .then(({ body: { token } }) => {
-          window.ps_checkoutPayPalClientToken = token;
-          return token;
-        })
-        // TODO: Handle error
-        .catch(() => {})
-    );
-  }
-
   postValidateOrder(data, actions) {
     return fetch(this.config.validateOrderUrl, {
       method: 'post',

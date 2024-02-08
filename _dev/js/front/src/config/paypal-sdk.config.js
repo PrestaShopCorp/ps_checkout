@@ -16,24 +16,22 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
-export const PayPalSdkConfig = () => {
-  return {
-    sdkConfig: {
-      dataNamespace: 'ps_checkoutPayPalSdkInstance',
-      orderId: window.ps_checkoutPayPalOrderId,
-      dataClientToken: window.ps_checkoutPayPalClientToken,
-      ...window.ps_checkoutPayPalSdkConfig
-    },
-    buttonCustomization: window.ps_checkoutPayPalButtonConfiguration,
-    paymentFieldsCustomization: window.ps_checkout.paymentFieldsCustomization,
-    expressCheckoutButtonCustomization:
-      window.ps_checkoutExpressCheckoutButtonCustomization,
-    hostedFieldsCustomization:
-      window.ps_checkoutHostedFieldsCustomizationConfiguration,
-    payLaterOfferMessageCustomization:
-      window.ps_checkoutPayLaterOfferMessageCustomization,
-    payLaterOfferBannerCustomization:
-      window.ps_checkoutPayLaterOfferBannerCustomization,
-    partnerAttributionId: window.ps_checkoutPartnerAttributionId
-  };
+export const PayPalSdkConfig = {
+  sdkConfig: {
+    dataNamespace: 'ps_checkoutPayPalSdkInstance',
+    orderId: window.ps_checkoutPayPalOrderId,
+    ...window.ps_checkoutPayPalSdkConfig
+  },
+  buttonCustomization: window.ps_checkoutPayPalButtonConfiguration,
+  paymentFieldsCustomization: window.ps_checkout.paymentFieldsCustomization,
+  expressCheckoutButtonCustomization:
+  window.ps_checkoutExpressCheckoutButtonCustomization,
+  hostedFieldsCustomization:
+  window.ps_checkoutHostedFieldsCustomizationConfiguration,
+  payLaterOfferMessageCustomization:
+  window.ps_checkoutPayLaterOfferMessageCustomization,
+  payLaterOfferBannerCustomization:
+  window.ps_checkoutPayLaterOfferBannerCustomization,
+  partnerAttributionId: window.ps_checkoutPartnerAttributionId
 };
+

@@ -49,7 +49,6 @@ export class CardFieldsComponent extends BaseComponent {
     configPayPal: 'PayPalSdkConfig',
     payPalService: 'PayPalService',
     psCheckoutApi: 'PsCheckoutApi',
-    psCheckoutService: 'PsCheckoutService',
     querySelectorService: 'QuerySelectorService',
   };
 
@@ -78,11 +77,11 @@ export class CardFieldsComponent extends BaseComponent {
     this.data.HTMLElementCardExpiry = this.querySelectorService.getCardFieldsExpiryInputContainer();
     this.data.HTMLElementCardCvv = this.querySelectorService.getCardFieldsCvvInputContainer();
 
-    this.data.HTMLElementCardNameError= this.querySelectorService.getCardFieldsNameError();
-    this.data.HTMLElementCardNumberError= this.querySelectorService.getCardFieldsNumberError();
-    this.data.HTMLElementCardVendorError= this.querySelectorService.getCardFieldsVendorError();
-    this.data.HTMLElementCardExpiryError= this.querySelectorService.getCardFieldsExpiryError();
-    this.data.HTMLElementCardCvvError= this.querySelectorService.getCardFieldsCvvError();
+    this.data.HTMLElementCardNameError = this.querySelectorService.getCardFieldsNameError();
+    this.data.HTMLElementCardNumberError = this.querySelectorService.getCardFieldsNumberError();
+    this.data.HTMLElementCardVendorError = this.querySelectorService.getCardFieldsVendorError();
+    this.data.HTMLElementCardExpiryError = this.querySelectorService.getCardFieldsExpiryError();
+    this.data.HTMLElementCardCvvError = this.querySelectorService.getCardFieldsCvvError();
   }
 
   getButtonWrapper() {
@@ -282,8 +281,13 @@ export class CardFieldsComponent extends BaseComponent {
         if (this.data.HTMLElement !== null) {
           this.data.HTMLElementButton.addEventListener('click', event => {
             event.preventDefault();
+
+            if (!this.data.validity) {
+              this.data.HTMLElementButton.setAttribute('disabled', '');
+              return;
+            }
+
             this.data.loader.show();
-            // this.data.HTMLElementButton.classList.toggle('disabled', true);
             this.data.HTMLElementButton.setAttribute('disabled', '');
 
             cardFields.submit();
