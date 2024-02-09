@@ -20,25 +20,13 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
-use PrestaShop\Module\PrestashopCheckout\Http\HttpClientInterface;
-use PrestaShop\Module\PrestashopCheckout\Http\PsrClientAdapter;
-use Psr\Http\Message\RequestInterface;
+use PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder;
+use PrestaShop\Module\PrestashopCheckout\Http\PsrHttpClientAdapter;
 
-class PaymentClient implements HttpClientInterface
+class PaymentClient extends PsrHttpClientAdapter
 {
-    /** @var PsrClientAdapter */
-    private $client;
-
     public function __construct(PaymentClientConfigurationBuilder $configurationBuilder)
     {
-        $this->client = new PsrClientAdapter($configurationBuilder->build());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sendRequest(RequestInterface $request)
-    {
-        return $this->client->sendRequest($request);
+        parent::__construct($configurationBuilder->build());
     }
 }

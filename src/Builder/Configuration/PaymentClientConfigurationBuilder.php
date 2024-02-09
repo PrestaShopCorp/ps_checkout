@@ -18,10 +18,10 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
+namespace PrestaShop\Module\PrestashopCheckout\Builder\Configuration;
 
-use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
-use PrestaShop\Module\PrestashopCheckout\Environment\Env;
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
+use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Routing\Router;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
@@ -31,8 +31,8 @@ class PaymentClientConfigurationBuilder
 {
     const TIMEOUT = 10;
 
-    /** @var Env */
-    private $env;
+    /** @var PaymentEnv */
+    private $paymentEnv;
 
     /** @var Router */
     private $router;
@@ -43,26 +43,23 @@ class PaymentClientConfigurationBuilder
     /** @var PsAccountRepository */
     private $psAccountRepository;
 
-    /** @var PrestaShopConfiguration */
-    private $prestaShopConfiguration;
-
-    /** @var CertFileProvider */
-    private $certFileProvider;
+    /**
+     * @var PrestaShopContext
+     */
+    private $prestaShopContext;
 
     public function __construct(
-        Env $env,
+        PaymentEnv $paymentEnv,
         Router $router,
         ShopContext $shopContext,
         PsAccountRepository $psAccountRepository,
-        PrestaShopConfiguration $prestaShopConfiguration,
-        CertFileProvider $certFileProvider
+        PrestaShopContext $prestaShopContext
     ) {
-        $this->env = $env;
+        $this->paymentEnv = $paymentEnv;
         $this->router = $router;
         $this->shopContext = $shopContext;
         $this->psAccountRepository = $psAccountRepository;
-        $this->prestaShopConfiguration = $prestaShopConfiguration;
-        $this->certFileProvider = $certFileProvider;
+        $this->prestaShopContext = $prestaShopContext;
     }
 
     /**
@@ -71,19 +68,33 @@ class PaymentClientConfigurationBuilder
     public function build()
     {
         return [
-            'base_url' => $this->env->getPaymentApiUrl(),
-            'verify' => $this->certFileProvider->getPath(),
+            'base_url' => $this->paymentEnv->getPaymentApiUrl(),
+            'verify' => $this->getVerify(),
             'timeout' => static::TIMEOUT,
             'headers' => [
                 'Content-Type' => 'application/vnd.checkout.v1+json', // api version to use (psl side)
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer ' . $this->psAccountRepository->getIdToken(),  // Token we get from PsAccounts
                 'Shop-Id' => $this->psAccountRepository->getShopUuid(),  // Shop UUID we get from PsAccounts
-                'Hook-Url' => $this->router->getDispatchWebhookLink((int) Context::getContext()->shop->id),
+                'Hook-Url' => $this->router->getDispatchWebhookLink($this->prestaShopContext->getShopId()),
                 'Bn-Code' => $this->shopContext->getBnCode(),
                 'Module-Version' => Ps_checkout::VERSION, // version of the module
                 'Prestashop-Version' => _PS_VERSION_, // prestashop version
             ],
         ];
+    }
+
+    /**
+     * @see https://docs.guzzlephp.org/en/5.3/clients.html#verify
+     *
+     * @return true|string
+     */
+    protected function getVerify()
+    {
+        if (defined('_PS_CACHE_CA_CERT_FILE_') && file_exists(constant('_PS_CACHE_CA_CERT_FILE_'))) {
+            return constant('_PS_CACHE_CA_CERT_FILE_');
+        }
+
+        return true;
     }
 }
