@@ -25,17 +25,17 @@ use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\RequestException;
 use Http\Client\Exception\TransferException;
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient;
 use Psr\Http\Message\ResponseInterface;
 
 class PaymentService
 {
     /**
-     * @var PaymentClient
+     * @var PayPalOrderHttpClient
      */
     private $client;
 
-    public function __construct(PaymentClient $client)
+    public function __construct(PayPalOrderHttpClient $client)
     {
         $this->client = $client;
     }

@@ -667,7 +667,7 @@ services:
       - '@ps_checkout.repository.prestashop.account'
       - '@ps_checkout.context.prestashop'
 
-  PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient:
-    class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient'
+  PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient'
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder'

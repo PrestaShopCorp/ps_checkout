@@ -23,7 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 use PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder;
 use PrestaShop\Module\PrestashopCheckout\Http\PsrHttpClientAdapter;
 
-class PaymentClient extends PsrHttpClientAdapter
+class PayPalOrderHttpClient extends PsrHttpClientAdapter
 {
     public function __construct(PaymentClientConfigurationBuilder $configurationBuilder)
     {
