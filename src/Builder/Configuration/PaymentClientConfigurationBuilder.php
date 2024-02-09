@@ -26,8 +26,9 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Routing\Router;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use Ps_checkout;
+use src\Builder\Configuration\ConfigurationBuilderInterface;
 
-class PaymentClientConfigurationBuilder
+class PaymentClientConfigurationBuilder implements ConfigurationBuilderInterface
 {
     const TIMEOUT = 10;
 
