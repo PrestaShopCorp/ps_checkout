@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService;
 use PrestaShop\Module\PrestashopCheckout\Cart\CartRepositoryInterface;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
@@ -34,23 +35,31 @@ class CreatePayPalOrderCommandHandler
      * @var CartRepositoryInterface
      */
     private $cartRepository;
+
     /**
      * @var CreatePayPalOrderPayloadBuilderInterface
      */
     private $createPayPalOrderPayloadBuilder;
+
     /**
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
+    /**
+     * @var PaymentService
+     */
+    private $paymentService;
 
     public function __construct(
         CartRepositoryInterface $cartRepository,
         CreatePayPalOrderPayloadBuilderInterface $createPayPalOrderPayloadBuilder,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        PaymentService $paymentService
     ) {
         $this->cartRepository = $cartRepository;
         $this->createPayPalOrderPayloadBuilder = $createPayPalOrderPayloadBuilder;
         $this->eventDispatcher = $eventDispatcher;
+        $this->paymentService = $paymentService;
     }
 
     /**
@@ -65,12 +74,13 @@ class CreatePayPalOrderCommandHandler
     {
         $cart = $this->cartRepository->getCartById($command->getCartId());
         $payload = $this->createPayPalOrderPayloadBuilder->build($cart, $command->getFundingSource());
-//        $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
-//            $order->getId(),
-//            $order->toArray(),
-//            $command->getCartId(),
-//            $command->isHostedFields(),
-//            $command->isExpressCheckout()
-//        ));
+        $order = $this->paymentService->createOrder($payload);
+        $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
+            $order->getId(),
+            $order->toArray(),
+            $command->getCartId(),
+            $command->isHostedFields(),
+            $command->isExpressCheckout()
+        ));
     }
 }

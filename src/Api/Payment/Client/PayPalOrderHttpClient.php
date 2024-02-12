@@ -20,13 +20,58 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
+use GuzzleHttp\Psr7\Request;
+use Http\Client\Exception\HttpException;
+use Http\Client\Exception\NetworkException;
+use Http\Client\Exception\RequestException;
+use Http\Client\Exception\TransferException;
 use PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder;
 use PrestaShop\Module\PrestashopCheckout\Http\PsrHttpClientAdapter;
+use PrestaShop\Module\PrestashopCheckout\Http\Request\CreatePayPalOrderRequest;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class PayPalOrderHttpClient extends PsrHttpClientAdapter
 {
     public function __construct(PaymentClientConfigurationBuilder $configurationBuilder)
     {
         parent::__construct($configurationBuilder->build());
+    }
+
+    /**
+     * @param RequestInterface $request
+     * @return ResponseInterface
+     *
+     * @throws HttpException
+     */
+    public function sendRequest(RequestInterface $request)
+    {
+        try {
+            return parent::sendRequest($request);
+        } catch (NetworkException $exception) {
+            // Thrown when the request cannot be completed because of network issues.
+            // No response here
+        } catch (HttpException $exception) {
+            // Thrown when a response was received but the request itself failed.
+            // There a response here
+            // So this one contains why response failed with Maasland error response
+            if ($exception->getResponse()->getStatusCode() === 500) {
+                // Internal Server Error: retry then stop using Maasland for XXX times after X failed retries, requires a circuit breaker
+            }
+            if ($exception->getResponse()->getStatusCode() === 503) {
+                // Service Unavailable: we should stop using Maasland, requires a circuit breaker
+            }
+            // response status code 4XX throw exception to be catched on specific method
+            throw $exception; // Avoid this to be catched next
+        } catch (RequestException $exception) {
+            // No response here
+        } catch (TransferException $exception) {
+            // others without response
+        }
+    }
+
+    public function createOrder($payload, $options = [])
+    {
+        return $this->sendRequest(new Request('POST', '/payments/order/create', $options, $payload));
     }
 }
