@@ -29,7 +29,7 @@ class GetPayPalOrderQueryResult
     private $order;
 
     /**
-     * @param $order array{id: string, status: string, intent: string, payment_source: array, purchase_units: array, payer: array, create_time: string, links: array}
+     * @param array{id: string, status: string, intent: string, payment_source: array, purchase_units: array, payer: array, create_time: string, links: array} $order
      */
     public function __construct($order)
     {

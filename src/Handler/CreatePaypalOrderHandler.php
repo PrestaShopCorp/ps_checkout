@@ -40,7 +40,7 @@ class CreatePaypalOrderHandler
     /**
      * Prestashop context object
      *
-     * @var Context
+     * @var PrestaShopContext
      */
     private $context;
     /**
@@ -121,9 +121,9 @@ class CreatePaypalOrderHandler
             $payload = $builder->presentPayload()->getArray();
 
             if (true === $updateOrder) {
-                $paypalOrder = (new Order($this->context->link))->patch($payload);
+                $paypalOrder = (new Order($this->context->getLink()))->patch($payload);
             } else {
-                $paypalOrder = (new Order($this->context->link))->create($payload);
+                $paypalOrder = (new Order($this->context->getLink()))->create($payload);
             }
         }
 

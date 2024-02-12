@@ -21,6 +21,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber;
 
+use DateTime;
+use Exception;
 use PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
