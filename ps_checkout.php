@@ -1000,7 +1000,7 @@ class Ps_checkout extends PaymentModule
             return;
         }
 
-        /** @var \PrestaShop\Module\PrestashopCheckout\Builder\PaypalSdkConfiguration\PayPalSdkConfigurationBuilder $payPalSdkConfigurationBuilder */
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Sdk\PayPalSdkConfigurationBuilder $payPalSdkConfigurationBuilder */
         $payPalSdkConfigurationBuilder = $this->getService('ps_checkout.sdk.paypal.configurationbuilder');
 
         /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $expressCheckoutConfiguration */
