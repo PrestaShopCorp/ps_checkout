@@ -20,6 +20,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\DTO\Orders;
 
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PaymentSourceRequest;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PurchaseUnitRequest;
+
 class CreatePayPalOrderRequest
 {
     /**

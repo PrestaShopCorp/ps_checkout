@@ -20,7 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Cart;
 
-use PrestaShop\Module\PrestashopCheckout\DTO\Orders\PurchaseUnitRequest;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PurchaseUnitRequest;
 
 interface CartInterface
 {
