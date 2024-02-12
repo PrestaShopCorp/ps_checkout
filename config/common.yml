@@ -115,7 +115,7 @@ services:
       - "@ps_checkout.configuration"
 
   ps_checkout.sdk.paypal.configurationbuilder:
-    class: 'PrestaShop\Module\PrestashopCheckout\Builder\PaypalSdkConfiguration\PayPalSdkConfigurationBuilder'
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Sdk\PayPalSdkConfigurationBuilder'
     public: true
     arguments:
       - "@ps_checkout.paypal.configuration"
