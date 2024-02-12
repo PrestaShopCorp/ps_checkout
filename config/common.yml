@@ -577,7 +577,6 @@ services:
     arguments:
       - '@?'
       - '@?'
-      - '@ps_checkout.handler.order.create_order'
       - '@ps_checkout.event.dispatcher'
 
   ps_checkout.command.handler.paypal.order.capture_paypal_order:
@@ -675,9 +674,3 @@ services:
     public: true
     arguments:
       - "@ps_checkout.logger"
-
-  ps_checkout.handler.order.create_order:
-    class: 'PrestaShop\Module\PrestashopCheckout\Handler\CreatePaypalOrderHandler'
-    public: true
-    arguments:
-      [ '@ps_checkout.context.prestashop', '@?' ]

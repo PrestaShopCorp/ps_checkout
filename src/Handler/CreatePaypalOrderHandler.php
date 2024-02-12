@@ -43,15 +43,10 @@ class CreatePaypalOrderHandler
      * @var PrestaShopContext
      */
     private $context;
-    /**
-     * @var PayPalOrderHttpClientInterface
-     */
-    private $orderHttpClient;
 
-    public function __construct(PrestaShopContext $context, PayPalOrderHttpClientInterface $orderHttpClient)
+    public function __construct(\Context $context)
     {
         $this->context = $context;
-        $this->orderHttpClient = $orderHttpClient;
     }
 
     /**
@@ -128,17 +123,5 @@ class CreatePaypalOrderHandler
         }
 
         return $paypalOrder;
-    }
-
-    /**
-     * @param CreatePayPalOrderRequest $payload
-     *
-     * @return CreatePayPalOrderResponse
-     *
-     * @throws PayPalOrderException
-     */
-    public function createOrder(CreatePayPalOrderRequest $payload)
-    {
-        return $this->orderHttpClient->createOrder($payload);
     }
 }

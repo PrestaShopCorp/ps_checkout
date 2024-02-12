@@ -25,7 +25,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use Psr\SimpleCache\CacheInterface;
-use Psr\SimpleCache\InvalidArgumentException;
 
 class GetPayPalOrderQueryHandler
 {
@@ -49,7 +48,6 @@ class GetPayPalOrderQueryHandler
      *
      * @return GetPayPalOrderQueryResult
      *
-     * @throws InvalidArgumentException
      * @throws \PrestaShopException
      */
     public function handle(GetPayPalOrderQuery $query)
