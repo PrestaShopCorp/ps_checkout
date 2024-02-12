@@ -80,10 +80,12 @@ export class App {
       loadScript(PayPalSdkConfig.sdkConfig)
         .then((paypal) => {
           this.bottle.value('PayPalSDK', paypal);
-          this.bottle.factory(
-            'PayPalService',
-            initService(this)(PayPalService)
-          );
+          if (!this.container.PayPalService) {
+            this.bottle.factory(
+              'PayPalService',
+              initService(this)(PayPalService)
+            );
+          }
           resolve(paypal);
         })
         .catch((error) => {
