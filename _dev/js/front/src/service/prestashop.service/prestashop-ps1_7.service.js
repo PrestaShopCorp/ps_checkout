@@ -109,6 +109,8 @@ export class PrestashopPs1_7Service {
   static onUpdatedCart(listener) {
     if (window['prestashop'] && window['prestashop'].on) {
       window['prestashop'].on('updatedCart', listener);
+      window['prestashop'].on('updatedAddressForm', listener);
+      window['prestashop'].on('updatedDeliveryForm', listener);
     } else {
       console.error('');
     }

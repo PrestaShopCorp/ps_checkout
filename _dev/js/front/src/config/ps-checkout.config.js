@@ -82,5 +82,7 @@ export const PsCheckoutConfig = {
 
   orderId: window.ps_checkoutPayPalOrderId,
   imgTitlePaymentMethodLogos: window.ps_checkoutPaymentMethodLogosTitleImg,
-  renderPaymentMethodLogos: window.ps_checkoutRenderPaymentMethodLogos
+  renderPaymentMethodLogos: window.ps_checkoutRenderPaymentMethodLogos,
+  cardSupportedBrands: window.ps_checkoutCardBrands,
+  cardLogoBrands: window.ps_checkoutCardLogos
 };
