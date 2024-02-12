@@ -55,21 +55,11 @@ class Ps_checkout extends PaymentModule
      */
     const HOOK_LIST_17 = [
         'paymentOptions',
-        'displayExpressCheckout',
         'displayFooterProduct',
         'displayPersonalInformationTop',
         'actionCartUpdateQuantityBefore',
         'displayInvoiceLegalFreeText',
         'actionObjectProductInCartDeleteAfter',
-    ];
-
-    /**
-     * Hook to install for 1.7.1
-     *
-     * @var array
-     */
-    const HOOK_LIST_171 = [
-        'displayProductAdditionalInfo',
     ];
 
     /**
@@ -218,12 +208,6 @@ class Ps_checkout extends PaymentModule
         if ($shopContext->isShop17()) {
             $result = $result && (bool) $this->registerHook(self::HOOK_LIST_17);
             $this->updatePosition(\Hook::getIdByName('paymentOptions'), false, 1);
-        }
-
-        // Install specific to prestashop 1.7.1
-        if ($shopContext->isShop171()) {
-            $result = $result && (bool) $this->registerHook(self::HOOK_LIST_171);
-            $this->updatePosition(\Hook::getIdByName('displayProductAdditionalInfo'), false, 1);
         }
 
         return $result;
@@ -399,116 +383,6 @@ class Ps_checkout extends PaymentModule
         }
 
         return $this->display(__FILE__, 'views/templates/hook/displayPersonalInformationTop.tpl');
-    }
-
-    /**
-     * Express checkout and payment method logo block on the cart page
-     */
-    public function hookDisplayExpressCheckout()
-    {
-        if (!$this->merchantIsValid()) {
-            return '';
-        }
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payIn4XService */
-        $payIn4XService = $this->getService('ps_checkout.pay_later.configuration');
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
-        $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
-
-        $count = 0;
-        $paymentOptions = [];
-
-        foreach ($fundingSourceProvider->getAll() as $fundingSource) {
-            if ($fundingSource->name === 'paylater') {
-                continue;
-            }
-
-            if ($count === 8) {
-                break;
-            }
-
-            $count += $fundingSource->name === 'card'
-                ? 3
-                : 1;
-
-            while ($count > 8) {
-                array_pop($paymentOptions);
-                --$count;
-            }
-            $paymentOptions[] = $fundingSource->name;
-        }
-
-        $width = 25;
-        if ($count == 6) {
-            $width = 33;
-        }
-
-        if ($count < 6) {
-            $width = 20;
-        }
-
-        $this->context->smarty->assign([
-            'width' => $width,
-            'modulePath' => $this->getPathUri(),
-            'paymentOptions' => $paymentOptions,
-            'payIn4XisOrderPageEnabled' => $payIn4XService->isOrderPageMessageActive(),
-        ]);
-
-        return $this->display(__FILE__, 'views/templates/hook/displayExpressCheckout.tpl');
-    }
-
-    /**
-     * Payment method logo block on product page
-     */
-    public function hookDisplayProductAdditionalInfo()
-    {
-        if (!$this->merchantIsValid()) {
-            return '';
-        }
-
-        /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
-        $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
-
-        $count = 0;
-        $paymentOptions = [];
-
-        foreach ($fundingSourceProvider->getAll() as $fundingSource) {
-            if ($fundingSource->name === 'paylater') {
-                continue;
-            }
-
-            if ($count === 8) {
-                break;
-            }
-
-            $count += $fundingSource->name === 'card'
-                ? 3
-                : 1;
-
-            while ($count > 8) {
-                array_pop($paymentOptions);
-                --$count;
-            }
-            $paymentOptions[] = $fundingSource->name;
-        }
-
-        $width = 25;
-        if ($count == 6) {
-            $width = 33;
-        }
-
-        if ($count < 6) {
-            $width = 20;
-        }
-
-        $this->context->smarty->assign([
-            'width' => $width,
-            'modulePath' => $this->getPathUri(),
-            'paymentOptions' => $paymentOptions,
-        ]);
-
-        return $this->display(__FILE__, 'views/templates/hook/displayProductAdditionalInfo.tpl');
     }
 
     /**
@@ -1062,6 +936,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'LoaderImage' => $this->getPathUri() . 'views/img/loader.svg',
             $this->name . 'PayPalButtonConfiguration' => $payPalConfiguration->getButtonConfiguration(),
             $this->name . 'CardFundingSourceImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'),
+            $this->name . 'PaymentMethodLogosTitleImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/lock_checkout.svg'),
             $this->name . 'CreateUrl' => $this->context->link->getModuleLink($this->name, 'create', [], true),
             $this->name . 'CheckUrl' => $this->context->link->getModuleLink($this->name, 'check', [], true),
             $this->name . 'ValidateUrl' => $this->context->link->getModuleLink($this->name, 'validate', [], true),
@@ -1092,6 +967,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'CspNonce' => $payPalConfiguration->getCSPNonce(),
             $this->name . 'PartnerAttributionId' => $shopContext->getBnCode(),
             $this->name . 'CartProductCount' => $cartProductCount,
+            $this->name . 'RenderPaymentMethodLogos' => $frontControllerValidator->shouldDisplayFundingLogo($controller),
             $this->name . 'FundingSourcesSorted' => $fundingSourcesSorted,
             $this->name . 'PayWithTranslations' => $payWithTranslations,
             $this->name . 'CheckoutTranslations' => [
@@ -1116,6 +992,7 @@ class Ps_checkout extends PaymentModule
                 'paypal.hosted-fields.placeholder.expiration-date' => $this->l('MM/YY'),
                 'paypal.hosted-fields.label.cvv' => $this->l('CVC'),
                 'paypal.hosted-fields.placeholder.cvv' => $this->l('XXX'),
+                'payment-method-logos.title' => $this->l('100% secure payments'),
                 'express-button.cart.separator' => $this->l('or'),
                 'express-button.checkout.express-checkout' => $this->l('Express Checkout'),
                 'error.paypal-sdk' => $this->l('No PayPal Javascript SDK Instance'),
