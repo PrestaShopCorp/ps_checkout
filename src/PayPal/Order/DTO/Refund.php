@@ -1,4 +1,22 @@
 <?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
@@ -136,9 +154,9 @@ class Refund
     /**
      * Gets status_details.
      *
-     * @return RefundStatusDetails|null
+     * @return Reason|null
      */
-    public function getStatusDetails(): ?RefundStatusDetails
+    public function getStatusDetails()
     {
         return $this->status_details;
     }
@@ -146,11 +164,11 @@ class Refund
     /**
      * Sets status_details.
      *
-     * @param RefundStatusDetails|null $status_details
+     * @param Reason|null $status_details
      *
      * @return $this
      */
-    public function setStatusDetails(RefundStatusDetails $status_details = null)
+    public function setStatusDetails(Reason $status_details = null)
     {
         $this->status_details = $status_details;
 
@@ -306,7 +324,7 @@ class Refund
      *
      * @return MerchantPayableBreakdown|null
      */
-    public function getSellerPayableBreakdown(): ?MerchantPayableBreakdown
+    public function getSellerPayableBreakdown()
     {
         return $this->seller_payable_breakdown;
     }
@@ -328,9 +346,9 @@ class Refund
     /**
      * Gets payer.
      *
-     * @return PayeeBase|null
+     * @return Payee|null
      */
-    public function getPayer(): ?PayeeBase
+    public function getPayer()
     {
         return $this->payer;
     }
@@ -338,11 +356,11 @@ class Refund
     /**
      * Sets payer.
      *
-     * @param PayeeBase|null $payer
+     * @param Payee|null $payer
      *
      * @return $this
      */
-    public function setPayer(PayeeBase $payer = null)
+    public function setPayer(Payee $payer = null)
     {
         $this->payer = $payer;
 
@@ -354,7 +372,7 @@ class Refund
      *
      * @return LinkDescription[]|null
      */
-    public function getLinks(): ?array
+    public function getLinks()
     {
         return $this->links;
     }

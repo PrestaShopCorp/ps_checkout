@@ -113,7 +113,7 @@ class CreatePayPalOrderResponse
     }
 
     /**
-     * @return null
+     * @return PaymentSourceResponse|null
      */
     public function getPaymentSource()
     {
@@ -121,7 +121,7 @@ class CreatePayPalOrderResponse
     }
 
     /**
-     * @param PaymentSourceRequest $payment_source
+     * @param PaymentSourceResponse $payment_source
      */
     public function setPaymentSource($payment_source)
     {
@@ -177,7 +177,7 @@ class CreatePayPalOrderResponse
     }
 
     /**
-     * @return PurchaseUnitRequest[]
+     * @return PurchaseUnit[]
      */
     public function getPurchaseUnits()
     {
@@ -185,7 +185,7 @@ class CreatePayPalOrderResponse
     }
 
     /**
-     * @param PurchaseUnitRequest[] $purchase_units
+     * @param PurchaseUnit[] $purchase_units
      */
     public function setPurchaseUnits($purchase_units)
     {
@@ -209,7 +209,7 @@ class CreatePayPalOrderResponse
     }
 
     /**
-     * @return Link[]
+     * @return LinkDescription[]
      */
     public function getLinks()
     {
@@ -217,7 +217,7 @@ class CreatePayPalOrderResponse
     }
 
     /**
-     * @param Link[] $links
+     * @param LinkDescription[] $links
      */
     public function setLinks($links)
     {
