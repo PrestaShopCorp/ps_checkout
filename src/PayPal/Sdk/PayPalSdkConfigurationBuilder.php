@@ -125,7 +125,7 @@ class PayPalSdkConfigurationBuilder
 
         $eligibleAlternativePaymentMethods = $this->getEligibleAlternativePaymentMethods();
 
-        if (false === empty($eligibleAlternativePaymentMethods)) {
+        if (false === empty($eligibleAlternativePaymentMethods) && $this->shouldIncludeButtonsComponent()) {
             $params['locale'] = $this->getLocale();
             $components[] = 'payment-fields';
         }
@@ -267,16 +267,18 @@ class PayPalSdkConfigurationBuilder
     {
         $context = \Context::getContext();
         $code = '';
+        $taxAddressType = \Configuration::get('PS_TAX_ADDRESS_TYPE');
 
         if (\Validate::isLoadedObject($context->country)) {
             $code = strtoupper($context->country->iso_code);
         }
 
-        if (\Validate::isLoadedObject($context->cart) && $context->cart->id_address_invoice) {
-            $address = new \Address($context->cart->id_address_invoice);
+        if (\Validate::isLoadedObject($context->cart)) {
+            $taxAddressId = property_exists($context->cart, $taxAddressType) ? $context->cart->{$taxAddressType} : $context->cart->id_address_delivery;
+            $address = new \Address($taxAddressId);
             $country = new \Country($address->id_country);
 
-            $code = strtoupper($country->iso_code);
+            $code = \Validate::isLoadedObject($country) ? strtoupper($country->iso_code) : $code;
         }
 
         if ($code === 'UK') {
