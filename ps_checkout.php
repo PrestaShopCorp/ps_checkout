@@ -55,8 +55,6 @@ class Ps_checkout extends PaymentModule
      */
     const HOOK_LIST_17 = [
         'paymentOptions',
-        'displayFooterProduct',
-        'displayPersonalInformationTop',
         'actionCartUpdateQuantityBefore',
         'displayInvoiceLegalFreeText',
         'actionObjectProductInCartDeleteAfter',
@@ -105,6 +103,8 @@ class Ps_checkout extends PaymentModule
         'PS_CHECKOUT_INTEGRATION_DATE' => self::INTEGRATION_DATE,
         'PS_CHECKOUT_WEBHOOK_SECRET' => '',
         'PS_CHECKOUT_LIABILITY_SHIFT_REQ' => '1',
+        'PS_CHECKOUT_DISPLAY_LOGO_PRODUCT' => '1',
+        'PS_CHECKOUT_DISPLAY_LOGO_CART' => '1',
     ];
 
     public $confirmUninstall;
@@ -373,30 +373,6 @@ class Ps_checkout extends PaymentModule
         return $uninstallTabCompleted;
     }
 
-    /**
-     * Express checkout on the first step of the checkout
-     */
-    public function hookDisplayPersonalInformationTop()
-    {
-        if (!$this->merchantIsValid()) {
-            return '';
-        }
-
-        return $this->display(__FILE__, 'views/templates/hook/displayPersonalInformationTop.tpl');
-    }
-
-    /**
-     * Express checkout on the product page
-     */
-    public function hookDisplayFooterProduct()
-    {
-        if (!$this->merchantIsValid()) {
-            return '';
-        }
-
-        return $this->display(__FILE__, 'views/templates/hook/displayFooterProduct.tpl');
-    }
-
     public function getContent()
     {
         try {
@@ -614,7 +590,7 @@ class Ps_checkout extends PaymentModule
 
             if ('card' === $fundingSource->name && $configurationPayPal->isHostedFieldsEnabled() && in_array($configurationPayPal->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true)) {
                 $this->context->smarty->assign('modulePath', $this->getPathUri());
-                $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/markup/cardFields.tpl'));
+                $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/cardFields.tpl'));
             }
 
             $paymentOptions[] = $paymentOption;
@@ -899,6 +875,17 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
         $version = $this->getService('ps_checkout.module.version');
 
+        $advancedCheckoutEligibility = new \PrestaShop\Module\PrestashopCheckout\PayPal\AdvancedCheckoutEligibility();
+        $supportedCardBrands = $advancedCheckoutEligibility->getSupportedCardBrands();
+
+        if (Validate::isLoadedObject($this->context->currency) && Validate::isLoadedObject($this->context->country)) {
+            $supportedCardBrandsByContext = $advancedCheckoutEligibility->getSupportedCardBrandsByContext(
+                $this->context->country->iso_code === 'GB' ? 'UK' : $this->context->country->iso_code,
+                $this->context->currency->iso_code
+            );
+            $supportedCardBrands = $supportedCardBrandsByContext ? $supportedCardBrandsByContext : $supportedCardBrands;
+        }
+
         $fundingSourcesSorted = [];
         $payWithTranslations = [];
         $isCardAvailable = false;
@@ -940,6 +927,18 @@ class Ps_checkout extends PaymentModule
             $this->name . 'LoaderImage' => $this->getPathUri() . 'views/img/loader.svg',
             $this->name . 'PayPalButtonConfiguration' => $payPalConfiguration->getButtonConfiguration(),
             $this->name . 'CardFundingSourceImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'),
+            $this->name . 'CardLogos' => [
+                'AMEX' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/amex.svg'),
+                'CB_NATIONALE' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/cb.svg'),
+                'DINERS' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/diners.svg'),
+                'DISCOVER' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/discover.svg'),
+                'JCB' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/jcb.svg'),
+                'MAESTRO' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/maestro.svg'),
+                'MASTERCARD' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/mastercard.svg'),
+                'UNIONPAY' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/unionpay.svg'),
+                'VISA' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/visa.svg'),
+            ],
+            $this->name . 'CardBrands' => $supportedCardBrands,
             $this->name . 'PaymentMethodLogosTitleImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/lock_checkout.svg'),
             $this->name . 'CreateUrl' => $this->context->link->getModuleLink($this->name, 'create', [], true),
             $this->name . 'CheckUrl' => $this->context->link->getModuleLink($this->name, 'check', [], true),

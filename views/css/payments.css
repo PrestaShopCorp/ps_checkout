@@ -346,6 +346,7 @@
   margin-top: 6px;
 }
 
+#ps_checkout-card-fields-form label,
 label[for="ps_checkout-hosted-fields-card-cvv"] {
   white-space: nowrap;
 }
@@ -496,6 +497,7 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
 #ps_checkout-payment-method-logos-container {
   display: inline-flex;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 #cart #ps_checkout-payment-method-logo-block-container {

@@ -113,16 +113,33 @@ export class PaymentMethodLogosComponent extends BaseComponent {
 
   renderCustomMark(fundingSource, containerQuerySelector) {
     const src = this.config.customMark[fundingSource];
-
+    let logoList = [];
     let containerElement = document.createElement('div');
+
+    if (this.config.cardSupportedBrands && this.config.cardLogoBrands) {
+      this.config.cardSupportedBrands.forEach(brand => {
+        if (this.config.cardLogoBrands[brand]) {
+          let customMarkImg = document.createElement('img');
+          customMarkImg.classList.add('cards-logo');
+          customMarkImg.setAttribute('alt', brand);
+          customMarkImg.setAttribute('src', this.config.cardLogoBrands[brand]);
+          logoList.push(customMarkImg);
+          let space = document.createElement('span');
+          space.classList.add('paypal-button-space');
+          space.innerText = ' ';
+          logoList.push(space);
+        }
+      });
+    } else {
+      let customMarkImg = document.createElement('img');
+      customMarkImg.classList.add('cards-logo');
+      customMarkImg.setAttribute('alt', fundingSource);
+      customMarkImg.setAttribute('src', src);
+      logoList.push(customMarkImg);
+    }
+
+    logoList.forEach(customMarkImg => containerElement.append(customMarkImg));
     containerElement.classList.add('paypal-mark');
-
-    let customMarkImg = document.createElement('img');
-    customMarkImg.classList.add('cards-logo');
-    customMarkImg.setAttribute('alt', fundingSource);
-    customMarkImg.setAttribute('src', src);
-    containerElement.append(customMarkImg);
-
     containerQuerySelector.append(containerElement);
   }
 }
