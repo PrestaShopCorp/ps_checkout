@@ -46,13 +46,32 @@ export class MarkComponent extends BaseComponent {
 
   renderCustomMark() {
     const src = this.config.customMark[this.data.name];
+    let logoList = [];
 
-    this.data.HTMLElementImage = document.createElement('img');
-    this.data.HTMLElementImage.classList.add('ps-checkout-funding-img');
-    this.data.HTMLElementImage.setAttribute('alt', this.data.name);
-    this.data.HTMLElementImage.setAttribute('src', src);
+    if (this.config.cardSupportedBrands && this.config.cardLogoBrands) {
+      this.config.cardSupportedBrands.forEach(brand => {
+        if (this.config.cardLogoBrands[brand]) {
+          let customMarkImg = document.createElement('img');
+          customMarkImg.classList.add('cards-logo');
+          customMarkImg.setAttribute('alt', brand);
+          customMarkImg.setAttribute('src', this.config.cardLogoBrands[brand]);
+          logoList.push(customMarkImg);
+          let space = document.createElement('span');
+          space.classList.add('paypal-button-space');
+          space.innerText = ' ';
+          logoList.push(space);
+        }
+      });
+    } else {
+      let customMarkImg = document.createElement('img');
+      customMarkImg.classList.add('cards-logo');
+      customMarkImg.setAttribute('alt', this.data.name);
+      customMarkImg.setAttribute('src', src);
+      logoList.push(customMarkImg);
+    }
 
-    this.data.HTMLElement.append(this.data.HTMLElementImage);
+    this.data.HTMLElement.classList.add('paypal-mark');
+    logoList.forEach(customMarkImg => this.data.HTMLElement.append(customMarkImg));
   }
 
   render() {
