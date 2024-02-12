@@ -1,9 +1,10 @@
 <?php
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
+
 class CardFromRequest
 {
-        /**
+    /**
      * The year and month, in ISO-8601 &#x60;YYYY-MM&#x60; date format. See [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6).
      *
      * @var string|null
@@ -19,6 +20,7 @@ class CardFromRequest
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -40,7 +42,7 @@ class CardFromRequest
     /**
      * Sets expiry.
      *
-     * @param string|null $expiry  The year and month, in ISO-8601 `YYYY-MM` date format. See [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6).
+     * @param string|null $expiry The year and month, in ISO-8601 `YYYY-MM` date format. See [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6).
      *
      * @return $this
      */
@@ -64,7 +66,7 @@ class CardFromRequest
     /**
      * Sets last_digits.
      *
-     * @param string|null $last_digits  The last digits of the payment card.
+     * @param string|null $last_digits the last digits of the payment card
      *
      * @return $this
      */
@@ -75,5 +77,3 @@ class CardFromRequest
         return $this;
     }
 }
-
-

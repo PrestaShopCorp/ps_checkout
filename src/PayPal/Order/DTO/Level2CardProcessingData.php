@@ -14,8 +14,10 @@ class Level2CardProcessingData
      * @var Amount|null
      */
     protected $tax_total;
+
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -23,6 +25,7 @@ class Level2CardProcessingData
         $this->invoice_id = isset($data['invoice_id']) ? $data['invoice_id'] : null;
         $this->tax_total = isset($data['tax_total']) ? $data['tax_total'] : null;
     }
+
     /**
      * Gets invoice_id.
      *
@@ -32,18 +35,21 @@ class Level2CardProcessingData
     {
         return $this->invoice_id;
     }
+
     /**
      * Sets invoice_id.
      *
-     * @param string|null $invoice_id  Use this field to pass a purchase identification value of up to 12 ASCII characters for AIB and 17 ASCII characters for all other processors.
+     * @param string|null $invoice_id use this field to pass a purchase identification value of up to 12 ASCII characters for AIB and 17 ASCII characters for all other processors
      *
      * @return $this
      */
     public function setInvoiceId($invoice_id = null)
     {
         $this->invoice_id = $invoice_id;
+
         return $this;
     }
+
     /**
      * Gets tax_total.
      *
@@ -53,6 +59,7 @@ class Level2CardProcessingData
     {
         return $this->tax_total;
     }
+
     /**
      * Sets tax_total.
      *
@@ -63,6 +70,7 @@ class Level2CardProcessingData
     public function setTaxTotal(Amount $tax_total = null)
     {
         $this->tax_total = $tax_total;
+
         return $this;
     }
 }

@@ -4,7 +4,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
 class Tracker
 {
-        /**
+    /**
      * The tracker id.
      *
      * @var string|null
@@ -46,6 +46,7 @@ class Tracker
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -71,7 +72,7 @@ class Tracker
     /**
      * Sets id.
      *
-     * @param string|null $id  The tracker id.
+     * @param string|null $id the tracker id
      *
      * @return $this
      */
@@ -119,7 +120,7 @@ class Tracker
     /**
      * Sets items.
      *
-     * @param TrackerItem[]|null $items  An array of details of items in the shipment.
+     * @param TrackerItem[]|null $items an array of details of items in the shipment
      *
      * @return $this
      */
@@ -143,7 +144,7 @@ class Tracker
     /**
      * Sets links.
      *
-     * @param LinkDescription[]|null $links  An array of request-related HATEOAS links.
+     * @param LinkDescription[]|null $links an array of request-related HATEOAS links
      *
      * @return $this
      */
@@ -167,7 +168,7 @@ class Tracker
     /**
      * Sets create_time.
      *
-     * @param string|null $create_time  The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
+     * @param string|null $create_time The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
      *
      * @return $this
      */
@@ -191,7 +192,7 @@ class Tracker
     /**
      * Sets update_time.
      *
-     * @param string|null $update_time  The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
+     * @param string|null $update_time The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
      *
      * @return $this
      */
@@ -202,5 +203,3 @@ class Tracker
         return $this;
     }
 }
-
-

@@ -18,8 +18,10 @@ class CobrandedCard
      * @var Amount|null
      */
     protected $amount;
+
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -28,6 +30,7 @@ class CobrandedCard
         $this->payee = isset($data['payee']) ? $data['payee'] : null;
         $this->amount = isset($data['amount']) ? $data['amount'] : null;
     }
+
     /**
      * Gets labels.
      *
@@ -37,18 +40,21 @@ class CobrandedCard
     {
         return $this->labels;
     }
+
     /**
      * Sets labels.
      *
-     * @param string[]|null $labels  Array of labels for the cobranded card.
+     * @param string[]|null $labels array of labels for the cobranded card
      *
      * @return $this
      */
     public function setLabels(array $labels = null)
     {
         $this->labels = $labels;
+
         return $this;
     }
+
     /**
      * Gets payee.
      *
@@ -58,6 +64,7 @@ class CobrandedCard
     {
         return $this->payee;
     }
+
     /**
      * Sets payee.
      *
@@ -68,8 +75,10 @@ class CobrandedCard
     public function setPayee(Payee $payee = null)
     {
         $this->payee = $payee;
+
         return $this;
     }
+
     /**
      * Gets amount.
      *
@@ -79,6 +88,7 @@ class CobrandedCard
     {
         return $this->amount;
     }
+
     /**
      * Sets amount.
      *
@@ -89,6 +99,7 @@ class CobrandedCard
     public function setAmount(Amount $amount = null)
     {
         $this->amount = $amount;
+
         return $this;
     }
 }

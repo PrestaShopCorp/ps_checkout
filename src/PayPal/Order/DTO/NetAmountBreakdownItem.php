@@ -1,9 +1,10 @@
 <?php
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
+
 class NetAmountBreakdownItem
 {
-        /**
+    /**
      * @var Amount|null
      */
     protected $payable_amount;
@@ -20,6 +21,7 @@ class NetAmountBreakdownItem
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -101,5 +103,3 @@ class NetAmountBreakdownItem
         return $this;
     }
 }
-
-

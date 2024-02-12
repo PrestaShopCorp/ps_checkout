@@ -1,9 +1,10 @@
 <?php
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
+
 class MerchantPayableBreakdown
 {
-        /**
+    /**
      * @var Amount|null
      */
     protected $gross_amount;
@@ -49,6 +50,7 @@ class MerchantPayableBreakdown
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -196,7 +198,7 @@ class MerchantPayableBreakdown
     /**
      * Sets platform_fees.
      *
-     * @param PlatformFee[]|null $platform_fees  An array of platform or partner fees, commissions, or brokerage fees for the refund.
+     * @param PlatformFee[]|null $platform_fees an array of platform or partner fees, commissions, or brokerage fees for the refund
      *
      * @return $this
      */
@@ -220,7 +222,7 @@ class MerchantPayableBreakdown
     /**
      * Sets net_amount_breakdown.
      *
-     * @param NetAmountBreakdownItem[]|null $net_amount_breakdown  An array of breakdown values for the net amount. Returned when the currency of the refund is different from the currency of the PayPal account where the payee holds their funds.
+     * @param NetAmountBreakdownItem[]|null $net_amount_breakdown An array of breakdown values for the net amount. Returned when the currency of the refund is different from the currency of the PayPal account where the payee holds their funds.
      *
      * @return $this
      */
@@ -255,5 +257,3 @@ class MerchantPayableBreakdown
         return $this;
     }
 }
-
-

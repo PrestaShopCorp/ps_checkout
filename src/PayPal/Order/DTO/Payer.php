@@ -144,5 +144,4 @@ class Payer
     {
         $this->address = $address;
     }
-
 }

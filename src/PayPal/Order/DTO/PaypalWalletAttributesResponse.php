@@ -14,8 +14,10 @@ class PaypalWalletAttributesResponse
      * @var CobrandedCard[]|null
      */
     protected $cobranded_cards;
+
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -23,6 +25,7 @@ class PaypalWalletAttributesResponse
         $this->vault = isset($data['vault']) ? $data['vault'] : null;
         $this->cobranded_cards = isset($data['cobranded_cards']) ? $data['cobranded_cards'] : null;
     }
+
     /**
      * Gets vault.
      *
@@ -32,6 +35,7 @@ class PaypalWalletAttributesResponse
     {
         return $this->vault;
     }
+
     /**
      * Sets vault.
      *
@@ -42,8 +46,10 @@ class PaypalWalletAttributesResponse
     public function setVault(VaultResponse $vault = null)
     {
         $this->vault = $vault;
+
         return $this;
     }
+
     /**
      * Gets cobranded_cards.
      *
@@ -53,16 +59,18 @@ class PaypalWalletAttributesResponse
     {
         return $this->cobranded_cards;
     }
+
     /**
      * Sets cobranded_cards.
      *
-     * @param CobrandedCard[]|null $cobranded_cards  An array of merchant cobranded cards used by buyer to complete an order. This array will be present if a merchant has onboarded their cobranded card with PayPal and provided corresponding label(s).
+     * @param CobrandedCard[]|null $cobranded_cards An array of merchant cobranded cards used by buyer to complete an order. This array will be present if a merchant has onboarded their cobranded card with PayPal and provided corresponding label(s).
      *
      * @return $this
      */
     public function setCobrandedCards(array $cobranded_cards = null)
     {
         $this->cobranded_cards = $cobranded_cards;
+
         return $this;
     }
 }

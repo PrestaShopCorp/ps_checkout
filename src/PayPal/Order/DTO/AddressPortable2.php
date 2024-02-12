@@ -62,8 +62,10 @@ class AddressPortable2
      * @var AddressDetails|null
      */
     protected $address_details;
+
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -79,6 +81,7 @@ class AddressPortable2
         $this->postal_code = isset($data['postal_code']) ? $data['postal_code'] : null;
         $this->address_details = isset($data['address_details']) ? $data['address_details'] : null;
     }
+
     /**
      * Gets country_code.
      *
@@ -88,18 +91,21 @@ class AddressPortable2
     {
         return $this->country_code;
     }
+
     /**
      * Sets country_code.
      *
-     * @param string $country_code  The [2-character ISO 3166-1 code](/api/rest/reference/country-codes/) that identifies the country or region.<blockquote><strong>Note:</strong> The country code for Great Britain is <code>GB</code> and not <code>UK</code> as used in the top-level domain names for that country. Use the `C2` country code for China worldwide for comparable uncontrolled price (CUP) method, bank card, and cross-border transactions.</blockquote>
+     * @param string $country_code The [2-character ISO 3166-1 code](/api/rest/reference/country-codes/) that identifies the country or region.<blockquote><strong>Note:</strong> The country code for Great Britain is <code>GB</code> and not <code>UK</code> as used in the top-level domain names for that country. Use the `C2` country code for China worldwide for comparable uncontrolled price (CUP) method, bank card, and cross-border transactions.</blockquote>
      *
      * @return $this
      */
     public function setCountryCode($country_code)
     {
         $this->country_code = $country_code;
+
         return $this;
     }
+
     /**
      * Gets address_line_1.
      *
@@ -109,18 +115,21 @@ class AddressPortable2
     {
         return $this->address_line_1;
     }
+
     /**
      * Sets address_line_1.
      *
-     * @param string|null $address_line_1  The first line of the address, such as number and street, for example, `173 Drury Lane`. Needed for data entry, and Compliance and Risk checks. This field needs to pass the full address.
+     * @param string|null $address_line_1 The first line of the address, such as number and street, for example, `173 Drury Lane`. Needed for data entry, and Compliance and Risk checks. This field needs to pass the full address.
      *
      * @return $this
      */
     public function setAddressLine1($address_line_1 = null)
     {
         $this->address_line_1 = $address_line_1;
+
         return $this;
     }
+
     /**
      * Gets address_line_2.
      *
@@ -130,18 +139,21 @@ class AddressPortable2
     {
         return $this->address_line_2;
     }
+
     /**
      * Sets address_line_2.
      *
-     * @param string|null $address_line_2  The second line of the address, for example, a suite or apartment number.
+     * @param string|null $address_line_2 the second line of the address, for example, a suite or apartment number
      *
      * @return $this
      */
     public function setAddressLine2($address_line_2 = null)
     {
         $this->address_line_2 = $address_line_2;
+
         return $this;
     }
+
     /**
      * Gets address_line_3.
      *
@@ -151,18 +163,21 @@ class AddressPortable2
     {
         return $this->address_line_3;
     }
+
     /**
      * Sets address_line_3.
      *
-     * @param string|null $address_line_3  The third line of the address, if needed. Examples include a street complement for Brazil, direction text, such as `next to Walmart`, or a landmark in an Indian address.
+     * @param string|null $address_line_3 The third line of the address, if needed. Examples include a street complement for Brazil, direction text, such as `next to Walmart`, or a landmark in an Indian address.
      *
      * @return $this
      */
     public function setAddressLine3($address_line_3 = null)
     {
         $this->address_line_3 = $address_line_3;
+
         return $this;
     }
+
     /**
      * Gets admin_area_4.
      *
@@ -172,18 +187,21 @@ class AddressPortable2
     {
         return $this->admin_area_4;
     }
+
     /**
      * Sets admin_area_4.
      *
-     * @param string|null $admin_area_4  The neighborhood, ward, or district. This is smaller than `admin_area_level_3` or `sub_locality`. Value is:<ul><li>The postal sorting code that is used in Guernsey and many French territories, such as French Guiana.</li><li>The fine-grained administrative levels in China.</li></ul>
+     * @param string|null $admin_area_4 The neighborhood, ward, or district. This is smaller than `admin_area_level_3` or `sub_locality`. Value is:<ul><li>The postal sorting code that is used in Guernsey and many French territories, such as French Guiana.</li><li>The fine-grained administrative levels in China.</li></ul>
      *
      * @return $this
      */
     public function setAdminArea4($admin_area_4 = null)
     {
         $this->admin_area_4 = $admin_area_4;
+
         return $this;
     }
+
     /**
      * Gets admin_area_3.
      *
@@ -193,18 +211,21 @@ class AddressPortable2
     {
         return $this->admin_area_3;
     }
+
     /**
      * Sets admin_area_3.
      *
-     * @param string|null $admin_area_3  The sub-locality, suburb, neighborhood, or district. This is smaller than `admin_area_level_2`. Value is:<ul><li>Brazil. Suburb, *bairro*, or neighborhood.</li><li>India. Sub-locality or district. Street name information isn't always available, but a sub-locality or district can be a very small area.</li></ul>
+     * @param string|null $admin_area_3 The sub-locality, suburb, neighborhood, or district. This is smaller than `admin_area_level_2`. Value is:<ul><li>Brazil. Suburb, *bairro*, or neighborhood.</li><li>India. Sub-locality or district. Street name information isn't always available, but a sub-locality or district can be a very small area.</li></ul>
      *
      * @return $this
      */
     public function setAdminArea3($admin_area_3 = null)
     {
         $this->admin_area_3 = $admin_area_3;
+
         return $this;
     }
+
     /**
      * Gets admin_area_2.
      *
@@ -214,18 +235,21 @@ class AddressPortable2
     {
         return $this->admin_area_2;
     }
+
     /**
      * Sets admin_area_2.
      *
-     * @param string|null $admin_area_2  A city, town, or village. Smaller than `admin_area_level_1`.
+     * @param string|null $admin_area_2 A city, town, or village. Smaller than `admin_area_level_1`.
      *
      * @return $this
      */
     public function setAdminArea2($admin_area_2 = null)
     {
         $this->admin_area_2 = $admin_area_2;
+
         return $this;
     }
+
     /**
      * Gets admin_area_1.
      *
@@ -235,18 +259,21 @@ class AddressPortable2
     {
         return $this->admin_area_1;
     }
+
     /**
      * Sets admin_area_1.
      *
-     * @param string|null $admin_area_1  The highest-level sub-division in a country, which is usually a province, state, or ISO-3166-2 subdivision. This data is formatted for postal delivery, for example, `CA` and not `California`. Value, by country, is:<ul><li>UK. A county.</li><li>US. A state.</li><li>Canada. A province.</li><li>Japan. A prefecture.</li><li>Switzerland. A *kanton*.</li></ul>
+     * @param string|null $admin_area_1 The highest-level sub-division in a country, which is usually a province, state, or ISO-3166-2 subdivision. This data is formatted for postal delivery, for example, `CA` and not `California`. Value, by country, is:<ul><li>UK. A county.</li><li>US. A state.</li><li>Canada. A province.</li><li>Japan. A prefecture.</li><li>Switzerland. A *kanton*.</li></ul>
      *
      * @return $this
      */
     public function setAdminArea1($admin_area_1 = null)
     {
         $this->admin_area_1 = $admin_area_1;
+
         return $this;
     }
+
     /**
      * Gets postal_code.
      *
@@ -256,18 +283,21 @@ class AddressPortable2
     {
         return $this->postal_code;
     }
+
     /**
      * Sets postal_code.
      *
-     * @param string|null $postal_code  The postal code, which is the ZIP code or equivalent. Typically required for countries with a postal code or an equivalent. See [postal code](https://en.wikipedia.org/wiki/Postal_code).
+     * @param string|null $postal_code The postal code, which is the ZIP code or equivalent. Typically required for countries with a postal code or an equivalent. See [postal code](https://en.wikipedia.org/wiki/Postal_code).
      *
      * @return $this
      */
     public function setPostalCode($postal_code = null)
     {
         $this->postal_code = $postal_code;
+
         return $this;
     }
+
     /**
      * Gets address_details.
      *
@@ -277,6 +307,7 @@ class AddressPortable2
     {
         return $this->address_details;
     }
+
     /**
      * Sets address_details.
      *
@@ -287,6 +318,7 @@ class AddressPortable2
     public function setAddressDetails(AddressDetails $address_details = null)
     {
         $this->address_details = $address_details;
+
         return $this;
     }
 }

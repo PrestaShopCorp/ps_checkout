@@ -4,11 +4,10 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
 class SellerProtection
 {
-        /**
+    /**
      * Indicates whether the transaction is eligible for seller protection. For information, see [PayPal Seller Protection for Merchants](https://www.paypal.com/us/webapps/mpp/security/seller-protection).
      *
      * @var string|null
-
      */
     protected $status;
 
@@ -21,6 +20,7 @@ class SellerProtection
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -42,7 +42,7 @@ class SellerProtection
     /**
      * Sets status.
      *
-     * @param string|null $status  Indicates whether the transaction is eligible for seller protection. For information, see [PayPal Seller Protection for Merchants](https://www.paypal.com/us/webapps/mpp/security/seller-protection).
+     * @param string|null $status Indicates whether the transaction is eligible for seller protection. For information, see [PayPal Seller Protection for Merchants](https://www.paypal.com/us/webapps/mpp/security/seller-protection).
      *
      * @return $this
      */
@@ -66,7 +66,7 @@ class SellerProtection
     /**
      * Sets dispute_categories.
      *
-     * @param string[]|null $dispute_categories  An array of conditions that are covered for the transaction.
+     * @param string[]|null $dispute_categories an array of conditions that are covered for the transaction
      *
      * @return $this
      */
@@ -77,5 +77,3 @@ class SellerProtection
         return $this;
     }
 }
-
-

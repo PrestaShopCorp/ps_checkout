@@ -4,7 +4,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
 class BlikOneClickResponse
 {
-        /**
+    /**
      * The merchant generated, unique reference serving as a primary identifier for accounts connected between Blik and a merchant.
      *
      * @var string|null
@@ -13,6 +13,7 @@ class BlikOneClickResponse
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -33,7 +34,7 @@ class BlikOneClickResponse
     /**
      * Sets consumer_reference.
      *
-     * @param string|null $consumer_reference  The merchant generated, unique reference serving as a primary identifier for accounts connected between Blik and a merchant.
+     * @param string|null $consumer_reference the merchant generated, unique reference serving as a primary identifier for accounts connected between Blik and a merchant
      *
      * @return $this
      */
@@ -44,5 +45,3 @@ class BlikOneClickResponse
         return $this;
     }
 }
-
-

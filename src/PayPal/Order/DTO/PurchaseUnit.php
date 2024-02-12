@@ -7,7 +7,6 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
  *
  * The purchase unit details. Used to capture required information for the payment contract.
  *
- * @package \
  * @author  OpenAPI Generator team
  */
 class PurchaseUnit
@@ -93,6 +92,7 @@ class PurchaseUnit
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -221,7 +221,7 @@ class PurchaseUnit
     /**
      * Sets description.
      *
-     * @param string|null $description The purchase description.
+     * @param string|null $description the purchase description
      *
      * @return $this
      */
@@ -269,7 +269,7 @@ class PurchaseUnit
     /**
      * Sets invoice_id.
      *
-     * @param string|null $invoice_id The API caller-provided external invoice ID for this order.
+     * @param string|null $invoice_id the API caller-provided external invoice ID for this order
      *
      * @return $this
      */
@@ -341,7 +341,7 @@ class PurchaseUnit
     /**
      * Sets items.
      *
-     * @param Item[]|null $items  An array of items that the customer purchases from the merchant.
+     * @param Item[]|null $items an array of items that the customer purchases from the merchant
      *
      * @return $this
      */
@@ -424,5 +424,3 @@ class PurchaseUnit
         return $this;
     }
 }
-
-

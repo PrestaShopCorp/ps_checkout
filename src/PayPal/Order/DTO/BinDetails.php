@@ -4,7 +4,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
 class BinDetails
 {
-        /**
+    /**
      * The Bank Identification Number (BIN) signifies the number that is being used to identify the granular level details (except the PII information) of the card.
      *
      * @var string|null
@@ -34,6 +34,7 @@ class BinDetails
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -57,7 +58,7 @@ class BinDetails
     /**
      * Sets bin.
      *
-     * @param string|null $bin  The Bank Identification Number (BIN) signifies the number that is being used to identify the granular level details (except the PII information) of the card.
+     * @param string|null $bin the Bank Identification Number (BIN) signifies the number that is being used to identify the granular level details (except the PII information) of the card
      *
      * @return $this
      */
@@ -81,7 +82,7 @@ class BinDetails
     /**
      * Sets issuing_bank.
      *
-     * @param string|null $issuing_bank  The issuer of the card instrument.
+     * @param string|null $issuing_bank the issuer of the card instrument
      *
      * @return $this
      */
@@ -105,7 +106,7 @@ class BinDetails
     /**
      * Sets bin_country_code.
      *
-     * @param string|null $bin_country_code  The [two-character ISO 3166-1 code](/api/rest/reference/country-codes/) that identifies the country or region.<blockquote><strong>Note:</strong> The country code for Great Britain is <code>GB</code> and not <code>UK</code> as used in the top-level domain names for that country. Use the `C2` country code for China worldwide for comparable uncontrolled price (CUP) method, bank card, and cross-border transactions.</blockquote>
+     * @param string|null $bin_country_code The [two-character ISO 3166-1 code](/api/rest/reference/country-codes/) that identifies the country or region.<blockquote><strong>Note:</strong> The country code for Great Britain is <code>GB</code> and not <code>UK</code> as used in the top-level domain names for that country. Use the `C2` country code for China worldwide for comparable uncontrolled price (CUP) method, bank card, and cross-border transactions.</blockquote>
      *
      * @return $this
      */
@@ -129,7 +130,7 @@ class BinDetails
     /**
      * Sets products.
      *
-     * @param string[]|null $products  The type of card product assigned to the BIN by the issuer. These values are defined by the issuer and may change over time. Some examples include: PREPAID_GIFT, CONSUMER, CORPORATE.
+     * @param string[]|null $products The type of card product assigned to the BIN by the issuer. These values are defined by the issuer and may change over time. Some examples include: PREPAID_GIFT, CONSUMER, CORPORATE.
      *
      * @return $this
      */
@@ -140,5 +141,3 @@ class BinDetails
         return $this;
     }
 }
-
-

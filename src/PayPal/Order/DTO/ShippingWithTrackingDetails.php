@@ -37,6 +37,7 @@ class ShippingWithTrackingDetails
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -85,7 +86,7 @@ class ShippingWithTrackingDetails
     /**
      * Sets type.
      *
-     * @param string|null $type  The method by which the payer wants to get their items from the payee e.g shipping, in-person pickup. Either type or options but not both may be present.
+     * @param string|null $type The method by which the payer wants to get their items from the payee e.g shipping, in-person pickup. Either type or options but not both may be present.
      *
      * @return $this
      */
@@ -109,7 +110,7 @@ class ShippingWithTrackingDetails
     /**
      * Sets options.
      *
-     * @param ShippingOption[]|null $options  An array of shipping options that the payee or merchant offers to the payer to ship or pick up their items.
+     * @param ShippingOption[]|null $options an array of shipping options that the payee or merchant offers to the payer to ship or pick up their items
      *
      * @return $this
      */
@@ -157,7 +158,7 @@ class ShippingWithTrackingDetails
     /**
      * Sets trackers.
      *
-     * @param Tracker[]|null $trackers  An array of trackers for a transaction.
+     * @param Tracker[]|null $trackers an array of trackers for a transaction
      *
      * @return $this
      */
@@ -168,5 +169,3 @@ class ShippingWithTrackingDetails
         return $this;
     }
 }
-
-

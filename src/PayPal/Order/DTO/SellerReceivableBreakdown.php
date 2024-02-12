@@ -43,6 +43,7 @@ class SellerReceivableBreakdown
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -213,7 +214,7 @@ class SellerReceivableBreakdown
     /**
      * Sets platform_fees.
      *
-     * @param PlatformFee[]|null $platform_fees  An array of platform or partner fees, commissions, or brokerage fees that associated with the captured payment.
+     * @param PlatformFee[]|null $platform_fees an array of platform or partner fees, commissions, or brokerage fees that associated with the captured payment
      *
      * @return $this
      */
@@ -224,5 +225,3 @@ class SellerReceivableBreakdown
         return $this;
     }
 }
-
-

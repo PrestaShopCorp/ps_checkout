@@ -1,9 +1,10 @@
 <?php
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
+
 class Reason
 {
-        /**
+    /**
      * The reason why the captured payment status is &#x60;PENDING&#x60; or &#x60;DENIED&#x60;.
      *
      * @var string|null
@@ -12,6 +13,7 @@ class Reason
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -32,7 +34,7 @@ class Reason
     /**
      * Sets reason.
      *
-     * @param string|null $reason  The reason why the captured payment status is `PENDING` or `DENIED`.
+     * @param string|null $reason the reason why the captured payment status is `PENDING` or `DENIED`
      *
      * @return $this
      */
@@ -43,5 +45,3 @@ class Reason
         return $this;
     }
 }
-
-

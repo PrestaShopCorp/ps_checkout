@@ -46,6 +46,7 @@ class Bancontact
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -71,7 +72,7 @@ class Bancontact
     /**
      * Sets name.
      *
-     * @param string|null $name  The full name representation like Mr J Smith.
+     * @param string|null $name the full name representation like Mr J Smith
      *
      * @return $this
      */
@@ -95,7 +96,7 @@ class Bancontact
     /**
      * Sets country_code.
      *
-     * @param string|null $country_code  The [two-character ISO 3166-1 code](/api/rest/reference/country-codes/) that identifies the country or region.<blockquote><strong>Note:</strong> The country code for Great Britain is <code>GB</code> and not <code>UK</code> as used in the top-level domain names for that country. Use the `C2` country code for China worldwide for comparable uncontrolled price (CUP) method, bank card, and cross-border transactions.</blockquote>
+     * @param string|null $country_code The [two-character ISO 3166-1 code](/api/rest/reference/country-codes/) that identifies the country or region.<blockquote><strong>Note:</strong> The country code for Great Britain is <code>GB</code> and not <code>UK</code> as used in the top-level domain names for that country. Use the `C2` country code for China worldwide for comparable uncontrolled price (CUP) method, bank card, and cross-border transactions.</blockquote>
      *
      * @return $this
      */
@@ -119,7 +120,7 @@ class Bancontact
     /**
      * Sets bic.
      *
-     * @param string|null $bic  The business identification code (BIC). In payments systems, a BIC is used to identify a specific business, most commonly a bank.
+     * @param string|null $bic The business identification code (BIC). In payments systems, a BIC is used to identify a specific business, most commonly a bank.
      *
      * @return $this
      */
@@ -143,7 +144,7 @@ class Bancontact
     /**
      * Sets iban_last_chars.
      *
-     * @param string|null $iban_last_chars  The last characters of the IBAN used to pay.
+     * @param string|null $iban_last_chars the last characters of the IBAN used to pay
      *
      * @return $this
      */
@@ -167,7 +168,7 @@ class Bancontact
     /**
      * Sets card_last_digits.
      *
-     * @param string|null $card_last_digits  The last digits of the card used to fund the Bancontact payment.
+     * @param string|null $card_last_digits the last digits of the card used to fund the Bancontact payment
      *
      * @return $this
      */
@@ -202,5 +203,3 @@ class Bancontact
         return $this;
     }
 }
-
-

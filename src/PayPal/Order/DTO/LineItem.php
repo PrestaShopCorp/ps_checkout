@@ -1,6 +1,7 @@
 <?php
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
+
 class LineItem
 {
     /**
@@ -61,8 +62,10 @@ class LineItem
      * @var string|null
      */
     protected $unit_of_measure;
+
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -79,6 +82,7 @@ class LineItem
         $this->total_amount = isset($data['total_amount']) ? $data['total_amount'] : null;
         $this->unit_of_measure = isset($data['unit_of_measure']) ? $data['unit_of_measure'] : null;
     }
+
     /**
      * Gets name.
      *
@@ -88,18 +92,21 @@ class LineItem
     {
         return $this->name;
     }
+
     /**
      * Sets name.
      *
-     * @param string $name  The item name or title.
+     * @param string $name the item name or title
      *
      * @return $this
      */
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
+
     /**
      * Gets unit_amount.
      *
@@ -109,6 +116,7 @@ class LineItem
     {
         return $this->unit_amount;
     }
+
     /**
      * Sets unit_amount.
      *
@@ -119,8 +127,10 @@ class LineItem
     public function setUnitAmount(Amount $unit_amount)
     {
         $this->unit_amount = $unit_amount;
+
         return $this;
     }
+
     /**
      * Gets quantity.
      *
@@ -130,18 +140,21 @@ class LineItem
     {
         return $this->quantity;
     }
+
     /**
      * Sets quantity.
      *
-     * @param string $quantity  The item quantity. Must be a whole number.
+     * @param string $quantity The item quantity. Must be a whole number.
      *
      * @return $this
      */
     public function setQuantity($quantity)
     {
         $this->quantity = $quantity;
+
         return $this;
     }
+
     /**
      * Gets tax.
      *
@@ -151,6 +164,7 @@ class LineItem
     {
         return $this->tax;
     }
+
     /**
      * Sets tax.
      *
@@ -161,8 +175,10 @@ class LineItem
     public function setTax(Amount $tax = null)
     {
         $this->tax = $tax;
+
         return $this;
     }
+
     /**
      * Gets description.
      *
@@ -172,18 +188,21 @@ class LineItem
     {
         return $this->description;
     }
+
     /**
      * Sets description.
      *
-     * @param string|null $description  The detailed item description.
+     * @param string|null $description the detailed item description
      *
      * @return $this
      */
     public function setDescription($description = null)
     {
         $this->description = $description;
+
         return $this;
     }
+
     /**
      * Gets sku.
      *
@@ -193,18 +212,21 @@ class LineItem
     {
         return $this->sku;
     }
+
     /**
      * Sets sku.
      *
-     * @param string|null $sku  The stock keeping unit (SKU) for the item.
+     * @param string|null $sku the stock keeping unit (SKU) for the item
      *
      * @return $this
      */
     public function setSku($sku = null)
     {
         $this->sku = $sku;
+
         return $this;
     }
+
     /**
      * Gets category.
      *
@@ -214,18 +236,21 @@ class LineItem
     {
         return $this->category;
     }
+
     /**
      * Sets category.
      *
-     * @param string|null $category  The item category type.
+     * @param string|null $category the item category type
      *
      * @return $this
      */
     public function setCategory($category = null)
     {
         $this->category = $category;
+
         return $this;
     }
+
     /**
      * Gets commodity_code.
      *
@@ -235,18 +260,21 @@ class LineItem
     {
         return $this->commodity_code;
     }
+
     /**
      * Sets commodity_code.
      *
-     * @param string|null $commodity_code  Code used to classify items purchased and track the total amount spent across various categories of products and services. Different corporate purchasing organizations may use different standards, but the United Nations Standard Products and Services Code (UNSPSC) is frequently used.
+     * @param string|null $commodity_code Code used to classify items purchased and track the total amount spent across various categories of products and services. Different corporate purchasing organizations may use different standards, but the United Nations Standard Products and Services Code (UNSPSC) is frequently used.
      *
      * @return $this
      */
     public function setCommodityCode($commodity_code = null)
     {
         $this->commodity_code = $commodity_code;
+
         return $this;
     }
+
     /**
      * Gets discount_amount.
      *
@@ -256,6 +284,7 @@ class LineItem
     {
         return $this->discount_amount;
     }
+
     /**
      * Sets discount_amount.
      *
@@ -266,8 +295,10 @@ class LineItem
     public function setDiscountAmount(Amount $discount_amount = null)
     {
         $this->discount_amount = $discount_amount;
+
         return $this;
     }
+
     /**
      * Gets total_amount.
      *
@@ -277,6 +308,7 @@ class LineItem
     {
         return $this->total_amount;
     }
+
     /**
      * Sets total_amount.
      *
@@ -287,8 +319,10 @@ class LineItem
     public function setTotalAmount(Amount $total_amount = null)
     {
         $this->total_amount = $total_amount;
+
         return $this;
     }
+
     /**
      * Gets unit_of_measure.
      *
@@ -298,16 +332,18 @@ class LineItem
     {
         return $this->unit_of_measure;
     }
+
     /**
      * Sets unit_of_measure.
      *
-     * @param string|null $unit_of_measure  Unit of measure is a standard used to express the magnitude of a quantity in international trade. Most commonly used (but not limited to) examples are: Acre (ACR), Ampere (AMP), Centigram (CGM), Centimetre (CMT), Cubic inch (INQ), Cubic metre (MTQ), Fluid ounce (OZA), Foot (FOT), Hour (HUR), Item (ITM), Kilogram (KGM), Kilometre (KMT), Kilowatt (KWT), Liquid gallon (GLL), Liter (LTR), Pounds (LBS), Square foot (FTK).
+     * @param string|null $unit_of_measure Unit of measure is a standard used to express the magnitude of a quantity in international trade. Most commonly used (but not limited to) examples are: Acre (ACR), Ampere (AMP), Centigram (CGM), Centimetre (CMT), Cubic inch (INQ), Cubic metre (MTQ), Fluid ounce (OZA), Foot (FOT), Hour (HUR), Item (ITM), Kilogram (KGM), Kilometre (KMT), Kilowatt (KWT), Liquid gallon (GLL), Liter (LTR), Pounds (LBS), Square foot (FTK).
      *
      * @return $this
      */
     public function setUnitOfMeasure($unit_of_measure = null)
     {
         $this->unit_of_measure = $unit_of_measure;
+
         return $this;
     }
 }

@@ -1,9 +1,10 @@
 <?php
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
+
 class ShippingOption
 {
-        /**
+    /**
      * A unique ID that identifies a payer-selected shipping option.
      *
      * @var string
@@ -36,6 +37,7 @@ class ShippingOption
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -60,7 +62,7 @@ class ShippingOption
     /**
      * Sets id.
      *
-     * @param string $id  A unique ID that identifies a payer-selected shipping option.
+     * @param string $id a unique ID that identifies a payer-selected shipping option
      *
      * @return $this
      */
@@ -84,7 +86,7 @@ class ShippingOption
     /**
      * Sets label.
      *
-     * @param string $label  A description that the payer sees, which helps them choose an appropriate shipping option. For example, `Free Shipping`, `USPS Priority Shipping`, `Expédition prioritaire USPS`, or `USPS yōuxiān fā huò`. Localize this description to the payer's locale.
+     * @param string $label A description that the payer sees, which helps them choose an appropriate shipping option. For example, `Free Shipping`, `USPS Priority Shipping`, `Expédition prioritaire USPS`, or `USPS yōuxiān fā huò`. Localize this description to the payer's locale.
      *
      * @return $this
      */
@@ -108,7 +110,7 @@ class ShippingOption
     /**
      * Sets selected.
      *
-     * @param bool $selected  If the API request sets `selected = true`, it represents the shipping option that the payee or merchant expects to be pre-selected for the payer when they first view the `shipping.options` in the PayPal Checkout experience. As part of the response if a `shipping.option` contains `selected=true`, it represents the shipping option that the payer selected during the course of checkout with PayPal. Only one `shipping.option` can be set to `selected=true`.
+     * @param bool $selected If the API request sets `selected = true`, it represents the shipping option that the payee or merchant expects to be pre-selected for the payer when they first view the `shipping.options` in the PayPal Checkout experience. As part of the response if a `shipping.option` contains `selected=true`, it represents the shipping option that the payer selected during the course of checkout with PayPal. Only one `shipping.option` can be set to `selected=true`.
      *
      * @return $this
      */
@@ -167,5 +169,3 @@ class ShippingOption
         return $this;
     }
 }
-
-

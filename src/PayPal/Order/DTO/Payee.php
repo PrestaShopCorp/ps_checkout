@@ -20,6 +20,7 @@ class Payee
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -41,7 +42,7 @@ class Payee
     /**
      * Sets email_address.
      *
-     * @param string|null $email_address  The internationalized email address.<blockquote><strong>Note:</strong> Up to 64 characters are allowed before and 255 characters are allowed after the <code>@</code> sign. However, the generally accepted maximum length for an email address is 254 characters. The pattern verifies that an unquoted <code>@</code> sign exists.</blockquote>
+     * @param string|null $email_address The internationalized email address.<blockquote><strong>Note:</strong> Up to 64 characters are allowed before and 255 characters are allowed after the <code>@</code> sign. However, the generally accepted maximum length for an email address is 254 characters. The pattern verifies that an unquoted <code>@</code> sign exists.</blockquote>
      *
      * @return $this
      */
@@ -65,7 +66,7 @@ class Payee
     /**
      * Sets merchant_id.
      *
-     * @param string|null $merchant_id  The account identifier for a PayPal account.
+     * @param string|null $merchant_id the account identifier for a PayPal account
      *
      * @return $this
      */
@@ -76,5 +77,3 @@ class Payee
         return $this;
     }
 }
-
-

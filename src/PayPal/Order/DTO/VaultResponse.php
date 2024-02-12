@@ -32,6 +32,7 @@ class VaultResponse
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -55,7 +56,7 @@ class VaultResponse
     /**
      * Sets id.
      *
-     * @param string|null $id  The PayPal-generated ID for the saved payment source.
+     * @param string|null $id the PayPal-generated ID for the saved payment source
      *
      * @return $this
      */
@@ -79,7 +80,7 @@ class VaultResponse
     /**
      * Sets status.
      *
-     * @param string|null $status  The vault status.
+     * @param string|null $status the vault status
      *
      * @return $this
      */
@@ -127,7 +128,7 @@ class VaultResponse
     /**
      * Sets links.
      *
-     * @param LinkDescription[]|null $links  An array of request-related HATEOAS links.
+     * @param LinkDescription[]|null $links an array of request-related HATEOAS links
      *
      * @return $this
      */
@@ -138,5 +139,3 @@ class VaultResponse
         return $this;
     }
 }
-
-

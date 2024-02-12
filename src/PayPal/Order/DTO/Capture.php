@@ -4,7 +4,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
 class Capture
 {
-        /**
+    /**
      * The status of the captured payment.
      *
      * @var string|null
@@ -97,6 +97,7 @@ class Capture
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -131,7 +132,7 @@ class Capture
     /**
      * Sets status.
      *
-     * @param string|null $status  The status of the captured payment.
+     * @param string|null $status the status of the captured payment
      *
      * @return $this
      */
@@ -179,7 +180,7 @@ class Capture
     /**
      * Sets id.
      *
-     * @param string|null $id  The PayPal-generated ID for the captured payment.
+     * @param string|null $id the PayPal-generated ID for the captured payment
      *
      * @return $this
      */
@@ -227,7 +228,7 @@ class Capture
     /**
      * Sets invoice_id.
      *
-     * @param string|null $invoice_id  The API caller-provided external invoice number for this order. Appears in both the payer's transaction history and the emails that the payer receives.
+     * @param string|null $invoice_id The API caller-provided external invoice number for this order. Appears in both the payer's transaction history and the emails that the payer receives.
      *
      * @return $this
      */
@@ -251,7 +252,7 @@ class Capture
     /**
      * Sets custom_id.
      *
-     * @param string|null $custom_id  The API caller-provided external ID. Used to reconcile API caller-initiated transactions with PayPal transactions. Appears in transaction and settlement reports.
+     * @param string|null $custom_id The API caller-provided external ID. Used to reconcile API caller-initiated transactions with PayPal transactions. Appears in transaction and settlement reports.
      *
      * @return $this
      */
@@ -323,7 +324,7 @@ class Capture
     /**
      * Sets final_capture.
      *
-     * @param bool|null $final_capture  Indicates whether you can make additional captures against the authorized payment. Set to `true` if you do not intend to capture additional payments against the authorization. Set to `false` if you intend to capture additional payments against the authorization.
+     * @param bool|null $final_capture Indicates whether you can make additional captures against the authorized payment. Set to `true` if you do not intend to capture additional payments against the authorization. Set to `false` if you intend to capture additional payments against the authorization.
      *
      * @return $this
      */
@@ -395,7 +396,7 @@ class Capture
     /**
      * Sets links.
      *
-     * @param LinkDescription[]|null $links  An array of related [HATEOAS links](/docs/api/reference/api-responses/#hateoas-links).
+     * @param LinkDescription[]|null $links an array of related [HATEOAS links](/docs/api/reference/api-responses/#hateoas-links)
      *
      * @return $this
      */
@@ -443,7 +444,7 @@ class Capture
     /**
      * Sets create_time.
      *
-     * @param string|null $create_time  The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
+     * @param string|null $create_time The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
      *
      * @return $this
      */
@@ -467,7 +468,7 @@ class Capture
     /**
      * Sets update_time.
      *
-     * @param string|null $update_time  The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
+     * @param string|null $update_time The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
      *
      * @return $this
      */
@@ -478,5 +479,3 @@ class Capture
         return $this;
     }
 }
-
-

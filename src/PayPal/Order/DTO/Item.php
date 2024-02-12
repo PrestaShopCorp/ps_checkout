@@ -4,7 +4,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
 class Item
 {
-        /**
+    /**
      * The item name or title.
      *
      * @var string
@@ -51,6 +51,7 @@ class Item
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -77,7 +78,7 @@ class Item
     /**
      * Sets name.
      *
-     * @param string $name  The item name or title.
+     * @param string $name the item name or title
      *
      * @return $this
      */
@@ -125,7 +126,7 @@ class Item
     /**
      * Sets quantity.
      *
-     * @param string $quantity  The item quantity. Must be a whole number.
+     * @param string $quantity The item quantity. Must be a whole number.
      *
      * @return $this
      */
@@ -173,7 +174,7 @@ class Item
     /**
      * Sets description.
      *
-     * @param string|null $description  The detailed item description.
+     * @param string|null $description the detailed item description
      *
      * @return $this
      */
@@ -197,7 +198,7 @@ class Item
     /**
      * Sets sku.
      *
-     * @param string|null $sku  The stock keeping unit (SKU) for the item.
+     * @param string|null $sku the stock keeping unit (SKU) for the item
      *
      * @return $this
      */
@@ -221,7 +222,7 @@ class Item
     /**
      * Sets category.
      *
-     * @param string|null $category  The item category type.
+     * @param string|null $category the item category type
      *
      * @return $this
      */
@@ -232,5 +233,3 @@ class Item
         return $this;
     }
 }
-
-

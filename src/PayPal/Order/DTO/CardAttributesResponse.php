@@ -1,15 +1,17 @@
 <?php
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
+
 class CardAttributesResponse
 {
-        /**
+    /**
      * @var VaultResponse|null
      */
     protected $vault;
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -41,5 +43,3 @@ class CardAttributesResponse
         return $this;
     }
 }
-
-

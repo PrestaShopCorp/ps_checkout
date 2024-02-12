@@ -4,7 +4,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
 class ProcessorResponse
 {
-        /**
+    /**
      * The address verification code for Visa, Discover, Mastercard, or American Express transactions.
      *
      * @var string|null
@@ -34,6 +34,7 @@ class ProcessorResponse
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -57,7 +58,7 @@ class ProcessorResponse
     /**
      * Sets avs_code.
      *
-     * @param string|null $avs_code  The address verification code for Visa, Discover, Mastercard, or American Express transactions.
+     * @param string|null $avs_code the address verification code for Visa, Discover, Mastercard, or American Express transactions
      *
      * @return $this
      */
@@ -81,7 +82,7 @@ class ProcessorResponse
     /**
      * Sets cvv_code.
      *
-     * @param string|null $cvv_code  The card verification value code for Visa, Discover, Mastercard, or American Express.
+     * @param string|null $cvv_code the card verification value code for Visa, Discover, Mastercard, or American Express
      *
      * @return $this
      */
@@ -105,7 +106,7 @@ class ProcessorResponse
     /**
      * Sets response_code.
      *
-     * @param string|null $response_code  Processor response code for the non-PayPal payment processor errors.
+     * @param string|null $response_code processor response code for the non-PayPal payment processor errors
      *
      * @return $this
      */
@@ -129,7 +130,7 @@ class ProcessorResponse
     /**
      * Sets payment_advice_code.
      *
-     * @param string|null $payment_advice_code  The declined payment transactions might have payment advice codes. The card networks, like Visa and Mastercard, return payment advice codes.
+     * @param string|null $payment_advice_code The declined payment transactions might have payment advice codes. The card networks, like Visa and Mastercard, return payment advice codes.
      *
      * @return $this
      */
@@ -140,5 +141,3 @@ class ProcessorResponse
         return $this;
     }
 }
-
-

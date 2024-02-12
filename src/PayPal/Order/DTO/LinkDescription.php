@@ -27,6 +27,7 @@ class LinkDescription
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -97,7 +98,7 @@ class LinkDescription
     /**
      * Sets method.
      *
-     * @param string|null $method The HTTP method required to make the related call.
+     * @param string|null $method the HTTP method required to make the related call
      *
      * @return $this
      */
@@ -108,5 +109,3 @@ class LinkDescription
         return $this;
     }
 }
-
-

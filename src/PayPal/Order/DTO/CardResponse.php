@@ -4,7 +4,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
 class CardResponse
 {
-        /**
+    /**
      * The card holder&#39;s name as it appears on the card.
      *
      * @var string|null
@@ -66,6 +66,7 @@ class CardResponse
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -95,7 +96,7 @@ class CardResponse
     /**
      * Sets name.
      *
-     * @param string|null $name  The card holder's name as it appears on the card.
+     * @param string|null $name the card holder's name as it appears on the card
      *
      * @return $this
      */
@@ -119,7 +120,7 @@ class CardResponse
     /**
      * Sets last_digits.
      *
-     * @param string|null $last_digits  The last digits of the payment card.
+     * @param string|null $last_digits the last digits of the payment card
      *
      * @return $this
      */
@@ -167,7 +168,7 @@ class CardResponse
     /**
      * Sets available_networks.
      *
-     * @param string[]|null $available_networks  Array of brands or networks associated with the card.
+     * @param string[]|null $available_networks array of brands or networks associated with the card
      *
      * @return $this
      */
@@ -191,7 +192,7 @@ class CardResponse
     /**
      * Sets type.
      *
-     * @param string|null $type  The payment card type.
+     * @param string|null $type the payment card type
      *
      * @return $this
      */
@@ -287,7 +288,7 @@ class CardResponse
     /**
      * Sets expiry.
      *
-     * @param string|null $expiry  The year and month, in ISO-8601 `YYYY-MM` date format. See [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6).
+     * @param string|null $expiry The year and month, in ISO-8601 `YYYY-MM` date format. See [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6).
      *
      * @return $this
      */
@@ -322,5 +323,3 @@ class CardResponse
         return $this;
     }
 }
-
-

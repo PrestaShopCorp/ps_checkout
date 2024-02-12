@@ -1,9 +1,10 @@
 <?php
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
+
 class PaymentInstruction
 {
-        /**
+    /**
      * An array of various fees, commissions, tips, or donations. This field is only applicable to merchants that been enabled for PayPal Commerce Platform for Marketplaces and Platforms capability.
      *
      * @var PlatformFee[]|null
@@ -31,6 +32,7 @@ class PaymentInstruction
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -54,7 +56,7 @@ class PaymentInstruction
     /**
      * Sets platform_fees.
      *
-     * @param PlatformFee[]|null $platform_fees  An array of various fees, commissions, tips, or donations. This field is only applicable to merchants that been enabled for PayPal Commerce Platform for Marketplaces and Platforms capability.
+     * @param PlatformFee[]|null $platform_fees An array of various fees, commissions, tips, or donations. This field is only applicable to merchants that been enabled for PayPal Commerce Platform for Marketplaces and Platforms capability.
      *
      * @return $this
      */
@@ -102,7 +104,7 @@ class PaymentInstruction
     /**
      * Sets payee_pricing_tier_id.
      *
-     * @param string|null $payee_pricing_tier_id  This field is only enabled for selected merchants/partners to use and provides the ability to trigger a specific pricing rate/plan for a payment transaction. The list of eligible 'payee_pricing_tier_id' would be provided to you by your Account Manager. Specifying values other than the one provided to you by your account manager would result in an error.
+     * @param string|null $payee_pricing_tier_id This field is only enabled for selected merchants/partners to use and provides the ability to trigger a specific pricing rate/plan for a payment transaction. The list of eligible 'payee_pricing_tier_id' would be provided to you by your Account Manager. Specifying values other than the one provided to you by your account manager would result in an error.
      *
      * @return $this
      */
@@ -126,7 +128,7 @@ class PaymentInstruction
     /**
      * Sets payee_receivable_fx_rate_id.
      *
-     * @param string|null $payee_receivable_fx_rate_id  FX identifier generated returned by PayPal to be used for payment processing in order to honor FX rate (for eligible integrations) to be used when amount is settled/received into the payee account.
+     * @param string|null $payee_receivable_fx_rate_id FX identifier generated returned by PayPal to be used for payment processing in order to honor FX rate (for eligible integrations) to be used when amount is settled/received into the payee account
      *
      * @return $this
      */
@@ -137,5 +139,3 @@ class PaymentInstruction
         return $this;
     }
 }
-
-

@@ -1,9 +1,10 @@
 <?php
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
+
 class PaymentCollection
 {
-        /**
+    /**
      * An array of authorized payments for a purchase unit. A purchase unit can have zero or more authorized payments.
      *
      * @var AuthorizationWithAdditionalData[]|null
@@ -26,6 +27,7 @@ class PaymentCollection
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -48,7 +50,7 @@ class PaymentCollection
     /**
      * Sets authorizations.
      *
-     * @param AuthorizationWithAdditionalData[]|null $authorizations  An array of authorized payments for a purchase unit. A purchase unit can have zero or more authorized payments.
+     * @param AuthorizationWithAdditionalData[]|null $authorizations An array of authorized payments for a purchase unit. A purchase unit can have zero or more authorized payments.
      *
      * @return $this
      */
@@ -72,7 +74,7 @@ class PaymentCollection
     /**
      * Sets captures.
      *
-     * @param Capture[]|null $captures  An array of captured payments for a purchase unit. A purchase unit can have zero or more captured payments.
+     * @param Capture[]|null $captures An array of captured payments for a purchase unit. A purchase unit can have zero or more captured payments.
      *
      * @return $this
      */
@@ -96,7 +98,7 @@ class PaymentCollection
     /**
      * Sets refunds.
      *
-     * @param Refund[]|null $refunds  An array of refunds for a purchase unit. A purchase unit can have zero or more refunds.
+     * @param Refund[]|null $refunds An array of refunds for a purchase unit. A purchase unit can have zero or more refunds.
      *
      * @return $this
      */
@@ -107,5 +109,3 @@ class PaymentCollection
         return $this;
     }
 }
-
-

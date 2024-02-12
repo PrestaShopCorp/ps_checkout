@@ -4,7 +4,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
 class Refund
 {
-        /**
+    /**
      * The status of the refund.
      *
      * @var string|null
@@ -89,6 +89,7 @@ class Refund
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -121,7 +122,7 @@ class Refund
     /**
      * Sets status.
      *
-     * @param string|null $status  The status of the refund.
+     * @param string|null $status the status of the refund
      *
      * @return $this
      */
@@ -169,7 +170,7 @@ class Refund
     /**
      * Sets id.
      *
-     * @param string|null $id  The PayPal-generated ID for the refund.
+     * @param string|null $id the PayPal-generated ID for the refund
      *
      * @return $this
      */
@@ -217,7 +218,7 @@ class Refund
     /**
      * Sets invoice_id.
      *
-     * @param string|null $invoice_id  The API caller-provided external invoice number for this order. Appears in both the payer's transaction history and the emails that the payer receives.
+     * @param string|null $invoice_id The API caller-provided external invoice number for this order. Appears in both the payer's transaction history and the emails that the payer receives.
      *
      * @return $this
      */
@@ -241,7 +242,7 @@ class Refund
     /**
      * Sets custom_id.
      *
-     * @param string|null $custom_id  The API caller-provided external ID. Used to reconcile API caller-initiated transactions with PayPal transactions. Appears in transaction and settlement reports.
+     * @param string|null $custom_id The API caller-provided external ID. Used to reconcile API caller-initiated transactions with PayPal transactions. Appears in transaction and settlement reports.
      *
      * @return $this
      */
@@ -265,7 +266,7 @@ class Refund
     /**
      * Sets acquirer_reference_number.
      *
-     * @param string|null $acquirer_reference_number  Reference ID issued for the card transaction. This ID can be used to track the transaction across processors, card brands and issuing banks.
+     * @param string|null $acquirer_reference_number Reference ID issued for the card transaction. This ID can be used to track the transaction across processors, card brands and issuing banks.
      *
      * @return $this
      */
@@ -289,7 +290,7 @@ class Refund
     /**
      * Sets note_to_payer.
      *
-     * @param string|null $note_to_payer  The reason for the refund. Appears in both the payer's transaction history and the emails that the payer receives.
+     * @param string|null $note_to_payer The reason for the refund. Appears in both the payer's transaction history and the emails that the payer receives.
      *
      * @return $this
      */
@@ -361,7 +362,7 @@ class Refund
     /**
      * Sets links.
      *
-     * @param LinkDescription[]|null $links  An array of related [HATEOAS links](/docs/api/reference/api-responses/#hateoas-links).
+     * @param LinkDescription[]|null $links an array of related [HATEOAS links](/docs/api/reference/api-responses/#hateoas-links)
      *
      * @return $this
      */
@@ -385,7 +386,7 @@ class Refund
     /**
      * Sets create_time.
      *
-     * @param string|null $create_time  The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
+     * @param string|null $create_time The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
      *
      * @return $this
      */
@@ -409,7 +410,7 @@ class Refund
     /**
      * Sets update_time.
      *
-     * @param string|null $update_time  The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
+     * @param string|null $update_time The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
      *
      * @return $this
      */
@@ -420,5 +421,3 @@ class Refund
         return $this;
     }
 }
-
-

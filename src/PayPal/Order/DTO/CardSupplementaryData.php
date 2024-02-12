@@ -12,8 +12,10 @@ class CardSupplementaryData
      * @var Level3CardProcessingData|null
      */
     protected $level_3;
+
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -21,6 +23,7 @@ class CardSupplementaryData
         $this->level_2 = isset($data['level_2']) ? $data['level_2'] : null;
         $this->level_3 = isset($data['level_3']) ? $data['level_3'] : null;
     }
+
     /**
      * Gets level_2.
      *
@@ -30,6 +33,7 @@ class CardSupplementaryData
     {
         return $this->level_2;
     }
+
     /**
      * Sets level_2.
      *
@@ -40,8 +44,10 @@ class CardSupplementaryData
     public function setLevel2(Level2CardProcessingData $level_2 = null)
     {
         $this->level_2 = $level_2;
+
         return $this;
     }
+
     /**
      * Gets level_3.
      *
@@ -51,6 +57,7 @@ class CardSupplementaryData
     {
         return $this->level_3;
     }
+
     /**
      * Sets level_3.
      *
@@ -61,6 +68,7 @@ class CardSupplementaryData
     public function setLevel3(Level3CardProcessingData $level_3 = null)
     {
         $this->level_3 = $level_3;
+
         return $this;
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
+
 class Level3CardProcessingData
 {
     /**
@@ -31,8 +32,10 @@ class Level3CardProcessingData
      * @var LineItem[]|null
      */
     protected $line_items;
+
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -44,6 +47,7 @@ class Level3CardProcessingData
         $this->ships_from_postal_code = isset($data['ships_from_postal_code']) ? $data['ships_from_postal_code'] : null;
         $this->line_items = isset($data['line_items']) ? $data['line_items'] : null;
     }
+
     /**
      * Gets shipping_amount.
      *
@@ -53,6 +57,7 @@ class Level3CardProcessingData
     {
         return $this->shipping_amount;
     }
+
     /**
      * Sets shipping_amount.
      *
@@ -63,8 +68,10 @@ class Level3CardProcessingData
     public function setShippingAmount(Amount $shipping_amount = null)
     {
         $this->shipping_amount = $shipping_amount;
+
         return $this;
     }
+
     /**
      * Gets duty_amount.
      *
@@ -74,6 +81,7 @@ class Level3CardProcessingData
     {
         return $this->duty_amount;
     }
+
     /**
      * Sets duty_amount.
      *
@@ -84,8 +92,10 @@ class Level3CardProcessingData
     public function setDutyAmount(Amount $duty_amount = null)
     {
         $this->duty_amount = $duty_amount;
+
         return $this;
     }
+
     /**
      * Gets discount_amount.
      *
@@ -95,6 +105,7 @@ class Level3CardProcessingData
     {
         return $this->discount_amount;
     }
+
     /**
      * Sets discount_amount.
      *
@@ -105,8 +116,10 @@ class Level3CardProcessingData
     public function setDiscountAmount(Amount $discount_amount = null)
     {
         $this->discount_amount = $discount_amount;
+
         return $this;
     }
+
     /**
      * Gets shipping_address.
      *
@@ -116,6 +129,7 @@ class Level3CardProcessingData
     {
         return $this->shipping_address;
     }
+
     /**
      * Sets shipping_address.
      *
@@ -126,8 +140,10 @@ class Level3CardProcessingData
     public function setShippingAddress(AddressRequest $shipping_address = null)
     {
         $this->shipping_address = $shipping_address;
+
         return $this;
     }
+
     /**
      * Gets ships_from_postal_code.
      *
@@ -137,18 +153,21 @@ class Level3CardProcessingData
     {
         return $this->ships_from_postal_code;
     }
+
     /**
      * Sets ships_from_postal_code.
      *
-     * @param string|null $ships_from_postal_code  Use this field to specify the postal code of the shipping location.
+     * @param string|null $ships_from_postal_code use this field to specify the postal code of the shipping location
      *
      * @return $this
      */
     public function setShipsFromPostalCode($ships_from_postal_code = null)
     {
         $this->ships_from_postal_code = $ships_from_postal_code;
+
         return $this;
     }
+
     /**
      * Gets line_items.
      *
@@ -158,16 +177,18 @@ class Level3CardProcessingData
     {
         return $this->line_items;
     }
+
     /**
      * Sets line_items.
      *
-     * @param LineItem[]|null $line_items  A list of the items that were purchased with this payment. If your merchant account has been configured for Level 3 processing this field will be passed to the processor on your behalf.
+     * @param LineItem[]|null $line_items A list of the items that were purchased with this payment. If your merchant account has been configured for Level 3 processing this field will be passed to the processor on your behalf.
      *
      * @return $this
      */
     public function setLineItems(array $line_items = null)
     {
         $this->line_items = $line_items;
+
         return $this;
     }
 }

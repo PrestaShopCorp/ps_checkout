@@ -4,11 +4,10 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
 class AuthorizationWithAdditionalData
 {
-        /**
+    /**
      * The status for the authorized payment.
      *
      * @var string|null
-
      */
     protected $status;
 
@@ -88,6 +87,7 @@ class AuthorizationWithAdditionalData
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -120,7 +120,7 @@ class AuthorizationWithAdditionalData
     /**
      * Sets status.
      *
-     * @param string|null $status  The status for the authorized payment.
+     * @param string|null $status the status for the authorized payment
      *
      * @return $this
      */
@@ -168,7 +168,7 @@ class AuthorizationWithAdditionalData
     /**
      * Sets id.
      *
-     * @param string|null $id  The PayPal-generated ID for the authorized payment.
+     * @param string|null $id the PayPal-generated ID for the authorized payment
      *
      * @return $this
      */
@@ -216,7 +216,7 @@ class AuthorizationWithAdditionalData
     /**
      * Sets invoice_id.
      *
-     * @param string|null $invoice_id  The API caller-provided external invoice number for this order. Appears in both the payer's transaction history and the emails that the payer receives.
+     * @param string|null $invoice_id The API caller-provided external invoice number for this order. Appears in both the payer's transaction history and the emails that the payer receives.
      *
      * @return $this
      */
@@ -240,7 +240,7 @@ class AuthorizationWithAdditionalData
     /**
      * Sets custom_id.
      *
-     * @param string|null $custom_id  The API caller-provided external ID. Used to reconcile API caller-initiated transactions with PayPal transactions. Appears in transaction and settlement reports.
+     * @param string|null $custom_id The API caller-provided external ID. Used to reconcile API caller-initiated transactions with PayPal transactions. Appears in transaction and settlement reports.
      *
      * @return $this
      */
@@ -312,7 +312,7 @@ class AuthorizationWithAdditionalData
     /**
      * Sets expiration_time.
      *
-     * @param string|null $expiration_time  The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
+     * @param string|null $expiration_time The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
      *
      * @return $this
      */
@@ -336,7 +336,7 @@ class AuthorizationWithAdditionalData
     /**
      * Sets links.
      *
-     * @param LinkDescription[]|null $links  An array of related [HATEOAS links](/docs/api/reference/api-responses/#hateoas-links).
+     * @param LinkDescription[]|null $links an array of related [HATEOAS links](/docs/api/reference/api-responses/#hateoas-links)
      *
      * @return $this
      */
@@ -360,7 +360,7 @@ class AuthorizationWithAdditionalData
     /**
      * Sets create_time.
      *
-     * @param string|null $create_time  The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
+     * @param string|null $create_time The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
      *
      * @return $this
      */
@@ -384,7 +384,7 @@ class AuthorizationWithAdditionalData
     /**
      * Sets update_time.
      *
-     * @param string|null $update_time  The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
+     * @param string|null $update_time The date and time, in [Internet date and time format](https://tools.ietf.org/html/rfc3339#section-5.6). Seconds are required while fractional seconds are optional.<blockquote><strong>Note:</strong> The regular expression provides guidance but does not reject all invalid dates.</blockquote>
      *
      * @return $this
      */
@@ -419,5 +419,3 @@ class AuthorizationWithAdditionalData
         return $this;
     }
 }
-
-

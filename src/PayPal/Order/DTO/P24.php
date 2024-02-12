@@ -4,7 +4,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
 class P24
 {
-        /**
+    /**
      * The full name representation like Mr J Smith.
      *
      * @var string|null
@@ -48,6 +48,7 @@ class P24
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -73,7 +74,7 @@ class P24
     /**
      * Sets name.
      *
-     * @param string|null $name  The full name representation like Mr J Smith.
+     * @param string|null $name the full name representation like Mr J Smith
      *
      * @return $this
      */
@@ -97,7 +98,7 @@ class P24
     /**
      * Sets email.
      *
-     * @param string|null $email  The internationalized email address.<blockquote><strong>Note:</strong> Up to 64 characters are allowed before and 255 characters are allowed after the <code>@</code> sign. However, the generally accepted maximum length for an email address is 254 characters. The pattern verifies that an unquoted <code>@</code> sign exists.</blockquote>
+     * @param string|null $email The internationalized email address.<blockquote><strong>Note:</strong> Up to 64 characters are allowed before and 255 characters are allowed after the <code>@</code> sign. However, the generally accepted maximum length for an email address is 254 characters. The pattern verifies that an unquoted <code>@</code> sign exists.</blockquote>
      *
      * @return $this
      */
@@ -121,7 +122,7 @@ class P24
     /**
      * Sets country_code.
      *
-     * @param string|null $country_code  The [two-character ISO 3166-1 code](/api/rest/reference/country-codes/) that identifies the country or region.<blockquote><strong>Note:</strong> The country code for Great Britain is <code>GB</code> and not <code>UK</code> as used in the top-level domain names for that country. Use the `C2` country code for China worldwide for comparable uncontrolled price (CUP) method, bank card, and cross-border transactions.</blockquote>
+     * @param string|null $country_code The [two-character ISO 3166-1 code](/api/rest/reference/country-codes/) that identifies the country or region.<blockquote><strong>Note:</strong> The country code for Great Britain is <code>GB</code> and not <code>UK</code> as used in the top-level domain names for that country. Use the `C2` country code for China worldwide for comparable uncontrolled price (CUP) method, bank card, and cross-border transactions.</blockquote>
      *
      * @return $this
      */
@@ -145,7 +146,7 @@ class P24
     /**
      * Sets payment_descriptor.
      *
-     * @param string|null $payment_descriptor  P24 generated payment description.
+     * @param string|null $payment_descriptor P24 generated payment description
      *
      * @return $this
      */
@@ -169,7 +170,7 @@ class P24
     /**
      * Sets method_id.
      *
-     * @param string|null $method_id  Numeric identifier of the payment scheme or bank used for the payment.
+     * @param string|null $method_id numeric identifier of the payment scheme or bank used for the payment
      *
      * @return $this
      */
@@ -193,7 +194,7 @@ class P24
     /**
      * Sets method_description.
      *
-     * @param string|null $method_description  Friendly name of the payment scheme or bank used for the payment.
+     * @param string|null $method_description friendly name of the payment scheme or bank used for the payment
      *
      * @return $this
      */
@@ -204,5 +205,3 @@ class P24
         return $this;
     }
 }
-
-

@@ -40,8 +40,10 @@ class AddressDetails
      * @var string|null
      */
     protected $sub_building;
+
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -53,6 +55,7 @@ class AddressDetails
         $this->building_name = isset($data['building_name']) ? $data['building_name'] : null;
         $this->sub_building = isset($data['sub_building']) ? $data['sub_building'] : null;
     }
+
     /**
      * Gets street_number.
      *
@@ -62,18 +65,21 @@ class AddressDetails
     {
         return $this->street_number;
     }
+
     /**
      * Sets street_number.
      *
-     * @param string|null $street_number  The street number.
+     * @param string|null $street_number the street number
      *
      * @return $this
      */
     public function setStreetNumber($street_number = null)
     {
         $this->street_number = $street_number;
+
         return $this;
     }
+
     /**
      * Gets street_name.
      *
@@ -83,18 +89,21 @@ class AddressDetails
     {
         return $this->street_name;
     }
+
     /**
      * Sets street_name.
      *
-     * @param string|null $street_name  The street name. Just `Drury` in `Drury Lane`.
+     * @param string|null $street_name The street name. Just `Drury` in `Drury Lane`.
      *
      * @return $this
      */
     public function setStreetName($street_name = null)
     {
         $this->street_name = $street_name;
+
         return $this;
     }
+
     /**
      * Gets street_type.
      *
@@ -104,18 +113,21 @@ class AddressDetails
     {
         return $this->street_type;
     }
+
     /**
      * Sets street_type.
      *
-     * @param string|null $street_type  The street type. For example, avenue, boulevard, road, or expressway.
+     * @param string|null $street_type The street type. For example, avenue, boulevard, road, or expressway.
      *
      * @return $this
      */
     public function setStreetType($street_type = null)
     {
         $this->street_type = $street_type;
+
         return $this;
     }
+
     /**
      * Gets delivery_service.
      *
@@ -125,18 +137,21 @@ class AddressDetails
     {
         return $this->delivery_service;
     }
+
     /**
      * Sets delivery_service.
      *
-     * @param string|null $delivery_service  The delivery service. Post office box, bag number, or post office name.
+     * @param string|null $delivery_service The delivery service. Post office box, bag number, or post office name.
      *
      * @return $this
      */
     public function setDeliveryService($delivery_service = null)
     {
         $this->delivery_service = $delivery_service;
+
         return $this;
     }
+
     /**
      * Gets building_name.
      *
@@ -146,18 +161,21 @@ class AddressDetails
     {
         return $this->building_name;
     }
+
     /**
      * Sets building_name.
      *
-     * @param string|null $building_name  A named locations that represents the premise. Usually a building name or number or collection of buildings with a common name or number. For example, <code>Craven House</code>.
+     * @param string|null $building_name A named locations that represents the premise. Usually a building name or number or collection of buildings with a common name or number. For example, <code>Craven House</code>.
      *
      * @return $this
      */
     public function setBuildingName($building_name = null)
     {
         $this->building_name = $building_name;
+
         return $this;
     }
+
     /**
      * Gets sub_building.
      *
@@ -167,16 +185,18 @@ class AddressDetails
     {
         return $this->sub_building;
     }
+
     /**
      * Sets sub_building.
      *
-     * @param string|null $sub_building  The first-order entity below a named building or location that represents the sub-premises. Usually a single building within a collection of buildings with a common name. Can be a flat, story, floor, room, or apartment.
+     * @param string|null $sub_building The first-order entity below a named building or location that represents the sub-premises. Usually a single building within a collection of buildings with a common name. Can be a flat, story, floor, room, or apartment.
      *
      * @return $this
      */
     public function setSubBuilding($sub_building = null)
     {
         $this->sub_building = $sub_building;
+
         return $this;
     }
 }

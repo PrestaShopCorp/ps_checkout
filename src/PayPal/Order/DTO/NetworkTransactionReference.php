@@ -4,7 +4,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
 class NetworkTransactionReference
 {
-        /**
+    /**
      * Transaction reference id returned by the scheme. For Visa and Amex, this is the \&quot;Tran id\&quot; field in response. For MasterCard, this is the \&quot;BankNet reference id\&quot; field in response. For Discover, this is the \&quot;NRID\&quot; field in response. The pattern we expect for this field from Visa/Amex/CB/Discover is numeric, Mastercard/BNPP is alphanumeric and Paysecure is alphanumeric with special character -.
      *
      * @var string
@@ -32,6 +32,7 @@ class NetworkTransactionReference
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -55,7 +56,7 @@ class NetworkTransactionReference
     /**
      * Sets id.
      *
-     * @param string $id  Transaction reference id returned by the scheme. For Visa and Amex, this is the \"Tran id\" field in response. For MasterCard, this is the \"BankNet reference id\" field in response. For Discover, this is the \"NRID\" field in response. The pattern we expect for this field from Visa/Amex/CB/Discover is numeric, Mastercard/BNPP is alphanumeric and Paysecure is alphanumeric with special character -.
+     * @param string $id Transaction reference id returned by the scheme. For Visa and Amex, this is the \"Tran id\" field in response. For MasterCard, this is the \"BankNet reference id\" field in response. For Discover, this is the \"NRID\" field in response. The pattern we expect for this field from Visa/Amex/CB/Discover is numeric, Mastercard/BNPP is alphanumeric and Paysecure is alphanumeric with special character -.
      *
      * @return $this
      */
@@ -79,7 +80,7 @@ class NetworkTransactionReference
     /**
      * Sets date.
      *
-     * @param string|null $date  The date that the transaction was authorized by the scheme. This field may not be returned for all networks. MasterCard refers to this field as \"BankNet reference date.
+     * @param string|null $date The date that the transaction was authorized by the scheme. This field may not be returned for all networks. MasterCard refers to this field as \"BankNet reference date.
      *
      * @return $this
      */
@@ -127,7 +128,7 @@ class NetworkTransactionReference
     /**
      * Sets acquirer_reference_number.
      *
-     * @param string|null $acquirer_reference_number  Reference ID issued for the card transaction. This ID can be used to track the transaction across processors, card brands and issuing banks.
+     * @param string|null $acquirer_reference_number Reference ID issued for the card transaction. This ID can be used to track the transaction across processors, card brands and issuing banks.
      *
      * @return $this
      */
@@ -138,5 +139,3 @@ class NetworkTransactionReference
         return $this;
     }
 }
-
-

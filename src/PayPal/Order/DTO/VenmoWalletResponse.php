@@ -1,9 +1,10 @@
 <?php
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
+
 class VenmoWalletResponse
 {
-        /**
+    /**
      * The internationalized email address.&lt;blockquote&gt;&lt;strong&gt;Note:&lt;/strong&gt; Up to 64 characters are allowed before and 255 characters are allowed after the &lt;code&gt;@&lt;/code&gt; sign. However, the generally accepted maximum length for an email address is 254 characters. The pattern verifies that an unquoted &lt;code&gt;@&lt;/code&gt; sign exists.&lt;/blockquote&gt;
      *
      * @var string|null
@@ -46,6 +47,7 @@ class VenmoWalletResponse
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -72,7 +74,7 @@ class VenmoWalletResponse
     /**
      * Sets email_address.
      *
-     * @param string|null $email_address  The internationalized email address.<blockquote><strong>Note:</strong> Up to 64 characters are allowed before and 255 characters are allowed after the <code>@</code> sign. However, the generally accepted maximum length for an email address is 254 characters. The pattern verifies that an unquoted <code>@</code> sign exists.</blockquote>
+     * @param string|null $email_address The internationalized email address.<blockquote><strong>Note:</strong> Up to 64 characters are allowed before and 255 characters are allowed after the <code>@</code> sign. However, the generally accepted maximum length for an email address is 254 characters. The pattern verifies that an unquoted <code>@</code> sign exists.</blockquote>
      *
      * @return $this
      */
@@ -96,7 +98,7 @@ class VenmoWalletResponse
     /**
      * Sets account_id.
      *
-     * @param string|null $account_id  The PayPal payer ID, which is a masked version of the PayPal account number intended for use with third parties. The account number is reversibly encrypted and a proprietary variant of Base32 is used to encode the result.
+     * @param string|null $account_id The PayPal payer ID, which is a masked version of the PayPal account number intended for use with third parties. The account number is reversibly encrypted and a proprietary variant of Base32 is used to encode the result.
      *
      * @return $this
      */
@@ -120,7 +122,7 @@ class VenmoWalletResponse
     /**
      * Sets user_name.
      *
-     * @param string|null $user_name  The Venmo user name chosen by the user, also know as a Venmo handle.
+     * @param string|null $user_name the Venmo user name chosen by the user, also know as a Venmo handle
      *
      * @return $this
      */
@@ -227,5 +229,3 @@ class VenmoWalletResponse
         return $this;
     }
 }
-
-

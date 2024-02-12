@@ -32,8 +32,10 @@ class TrackerItem
      * @var mixed|null
      */
     protected $upc;
+
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -44,6 +46,7 @@ class TrackerItem
         $this->image_url = isset($data['image_url']) ? $data['image_url'] : null;
         $this->upc = isset($data['upc']) ? $data['upc'] : null;
     }
+
     /**
      * Gets name.
      *
@@ -53,18 +56,21 @@ class TrackerItem
     {
         return $this->name;
     }
+
     /**
      * Sets name.
      *
-     * @param string|null $name  The item name or title.
+     * @param string|null $name the item name or title
      *
      * @return $this
      */
     public function setName($name = null)
     {
         $this->name = $name;
+
         return $this;
     }
+
     /**
      * Gets quantity.
      *
@@ -74,18 +80,21 @@ class TrackerItem
     {
         return $this->quantity;
     }
+
     /**
      * Sets quantity.
      *
-     * @param string|null $quantity  The item quantity. Must be a whole number.
+     * @param string|null $quantity The item quantity. Must be a whole number.
      *
      * @return $this
      */
     public function setQuantity($quantity = null)
     {
         $this->quantity = $quantity;
+
         return $this;
     }
+
     /**
      * Gets sku.
      *
@@ -95,18 +104,21 @@ class TrackerItem
     {
         return $this->sku;
     }
+
     /**
      * Sets sku.
      *
-     * @param string|null $sku  The stock keeping unit (SKU) for the item. This can contain unicode characters.
+     * @param string|null $sku The stock keeping unit (SKU) for the item. This can contain unicode characters.
      *
      * @return $this
      */
     public function setSku($sku = null)
     {
         $this->sku = $sku;
+
         return $this;
     }
+
     /**
      * Gets image_url.
      *
@@ -116,18 +128,21 @@ class TrackerItem
     {
         return $this->image_url;
     }
+
     /**
      * Sets image_url.
      *
-     * @param string|null $image_url  The URL of the item's image. File type and size restrictions apply. An image that violates these restrictions will not be honored.
+     * @param string|null $image_url The URL of the item's image. File type and size restrictions apply. An image that violates these restrictions will not be honored.
      *
      * @return $this
      */
     public function setImageUrl($image_url = null)
     {
         $this->image_url = $image_url;
+
         return $this;
     }
+
     /**
      * Gets upc.
      *
@@ -137,6 +152,7 @@ class TrackerItem
     {
         return $this->upc;
     }
+
     /**
      * Sets upc.
      *
@@ -147,6 +163,7 @@ class TrackerItem
     public function setUpc($upc = null)
     {
         $this->upc = $upc;
+
         return $this;
     }
 }

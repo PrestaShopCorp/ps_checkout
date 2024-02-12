@@ -1,6 +1,7 @@
 <?php
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
+
 class ThreeDSecureAuthenticationResponse
 {
     /**
@@ -15,6 +16,7 @@ class ThreeDSecureAuthenticationResponse
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -71,5 +73,3 @@ class ThreeDSecureAuthenticationResponse
         return $this;
     }
 }
-
-

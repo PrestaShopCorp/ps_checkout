@@ -4,7 +4,7 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
 class ExchangeRate
 {
-        /**
+    /**
      * The [three-character ISO-4217 currency code](/api/rest/reference/currency-codes/) that identifies the currency.
      *
      * @var string|null
@@ -27,6 +27,7 @@ class ExchangeRate
 
     /**
      * Constructor
+     *
      * @param mixed[] $data Associated array of property values initializing the model
      */
     public function __construct(array $data = null)
@@ -49,7 +50,7 @@ class ExchangeRate
     /**
      * Sets source_currency.
      *
-     * @param string|null $source_currency  The [three-character ISO-4217 currency code](/api/rest/reference/currency-codes/) that identifies the currency.
+     * @param string|null $source_currency the [three-character ISO-4217 currency code](/api/rest/reference/currency-codes/) that identifies the currency
      *
      * @return $this
      */
@@ -73,7 +74,7 @@ class ExchangeRate
     /**
      * Sets target_currency.
      *
-     * @param string|null $target_currency  The [three-character ISO-4217 currency code](/api/rest/reference/currency-codes/) that identifies the currency.
+     * @param string|null $target_currency the [three-character ISO-4217 currency code](/api/rest/reference/currency-codes/) that identifies the currency
      *
      * @return $this
      */
@@ -97,7 +98,7 @@ class ExchangeRate
     /**
      * Sets value.
      *
-     * @param string|null $value  The target currency amount. Equivalent to one unit of the source currency. Formatted as integer or decimal value with one to 15 digits to the right of the decimal point.
+     * @param string|null $value The target currency amount. Equivalent to one unit of the source currency. Formatted as integer or decimal value with one to 15 digits to the right of the decimal point.
      *
      * @return $this
      */
@@ -108,5 +109,3 @@ class ExchangeRate
         return $this;
     }
 }
-
-
