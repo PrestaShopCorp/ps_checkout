@@ -26,6 +26,7 @@ use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\RequestException;
 use Http\Client\Exception\TransferException;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient;
+use PrestaShop\Module\PrestashopCheckout\DTO\Orders\CreatePayPalOrderRequest;
 use Psr\Http\Message\ResponseInterface;
 
 class PaymentService
@@ -40,10 +41,15 @@ class PaymentService
         $this->client = $client;
     }
 
-    public function createOrder(array $payload)
+    /**
+     * @param CreatePayPalOrderRequest $request
+     * @return ResponseInterface|void
+     */
+    public function createOrder(CreatePayPalOrderRequest $request)
     {
+        $payload = (array) $request;
         try {
-            return $this->sendRequest('POST', '/payments/order/create', [], $payload);
+            return $this->client->createOrder($payload);
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
             if ($response->getStatusCode() === 400) {
