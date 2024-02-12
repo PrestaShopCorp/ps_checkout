@@ -18,28 +18,53 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Cart;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PurchaseUnitRequest;
-
-interface CartInterface
+class Amount
 {
     /**
-     * @return int
+     * @var string
      */
-    public function getId();
+    private $currency_code;
+
+    /**
+     * @var string
+     */
+    private $value;
 
     /**
      * @return string
      */
-    public function getCurrencyCode();
-
-    public function getCustomer();
-
-    public function getBillingAddress();
+    public function getCurrencyCode()
+    {
+        return $this->currency_code;
+    }
 
     /**
-     * @return PurchaseUnitRequest[]
+     * @param string $currency_code
+     *
+     * @return void
      */
-    public function getPurchaseUnits();
+    public function setCurrencyCode($currency_code)
+    {
+        $this->currency_code = $currency_code;
+    }
+
+    /**
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return void
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
 }

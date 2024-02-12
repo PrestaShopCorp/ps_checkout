@@ -18,28 +18,52 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Cart;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PurchaseUnitRequest;
-
-interface CartInterface
+class VenmoExperienceContextRequest
 {
     /**
-     * @return int
+     * @var string
      */
-    public function getId();
+    private $brand_name;
+    /**
+     * @var string
+     */
+    private $shipping_preference;
 
     /**
      * @return string
      */
-    public function getCurrencyCode();
-
-    public function getCustomer();
-
-    public function getBillingAddress();
+    public function getBrandName()
+    {
+        return $this->brand_name;
+    }
 
     /**
-     * @return PurchaseUnitRequest[]
+     * @param string $brand_name
+     *
+     * @return void
      */
-    public function getPurchaseUnits();
+    public function setBrandName($brand_name)
+    {
+        $this->brand_name = $brand_name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShippingPreference()
+    {
+        return $this->shipping_preference;
+    }
+
+    /**
+     * @param string $shipping_preference
+     *
+     * @return void
+     */
+    public function setShippingPreference($shipping_preference)
+    {
+        $this->shipping_preference = $shipping_preference;
+    }
 }

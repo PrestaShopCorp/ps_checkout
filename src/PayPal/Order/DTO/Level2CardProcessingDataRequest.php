@@ -18,28 +18,52 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Cart;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PurchaseUnitRequest;
-
-interface CartInterface
+class Level2CardProcessingDataRequest
 {
     /**
-     * @return int
+     * @var string
      */
-    public function getId();
+    private $invoice_id;
+    /**
+     * @var Amount
+     */
+    private $tax_total;
 
     /**
      * @return string
      */
-    public function getCurrencyCode();
-
-    public function getCustomer();
-
-    public function getBillingAddress();
+    public function getInvoiceId()
+    {
+        return $this->invoice_id;
+    }
 
     /**
-     * @return PurchaseUnitRequest[]
+     * @param string $invoice_id
+     *
+     * @return void
      */
-    public function getPurchaseUnits();
+    public function setInvoiceId($invoice_id)
+    {
+        $this->invoice_id = $invoice_id;
+    }
+
+    /**
+     * @return Amount
+     */
+    public function getTaxTotal()
+    {
+        return $this->tax_total;
+    }
+
+    /**
+     * @param Amount $tax_total
+     *
+     * @return void
+     */
+    public function setTaxTotal(Amount $tax_total)
+    {
+        $this->tax_total = $tax_total;
+    }
 }

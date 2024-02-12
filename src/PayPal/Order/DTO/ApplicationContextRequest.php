@@ -18,28 +18,30 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Cart;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PurchaseUnitRequest;
-
-interface CartInterface
+class ApplicationContextRequest
 {
     /**
-     * @return int
+     * @var StoredPaymentSourceRequest
      */
-    public function getId();
+    private $stored_payment_source;
 
     /**
-     * @return string
+     * @return StoredPaymentSourceRequest
      */
-    public function getCurrencyCode();
-
-    public function getCustomer();
-
-    public function getBillingAddress();
+    public function getStoredPaymentSource()
+    {
+        return $this->stored_payment_source;
+    }
 
     /**
-     * @return PurchaseUnitRequest[]
+     * @param StoredPaymentSourceRequest $stored_payment_source
+     *
+     * @return void
      */
-    public function getPurchaseUnits();
+    public function setStoredPaymentSource(StoredPaymentSourceRequest $stored_payment_source)
+    {
+        $this->stored_payment_source = $stored_payment_source;
+    }
 }

@@ -18,28 +18,30 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Cart;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PurchaseUnitRequest;
-
-interface CartInterface
+class AmountWithBreakdown extends Amount
 {
     /**
-     * @return int
+     * @var AmountBreakdown
      */
-    public function getId();
+    private $breakdown;
 
     /**
-     * @return string
+     * @return AmountBreakdown
      */
-    public function getCurrencyCode();
-
-    public function getCustomer();
-
-    public function getBillingAddress();
+    public function getBreakdown()
+    {
+        return $this->breakdown;
+    }
 
     /**
-     * @return PurchaseUnitRequest[]
+     * @param AmountBreakdown $breakdown
+     *
+     * @return void
      */
-    public function getPurchaseUnits();
+    public function setBreakdown(AmountBreakdown $breakdown)
+    {
+        $this->breakdown = $breakdown;
+    }
 }

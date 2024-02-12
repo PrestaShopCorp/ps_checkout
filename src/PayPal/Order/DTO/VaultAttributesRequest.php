@@ -18,28 +18,30 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Cart;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PurchaseUnitRequest;
-
-interface CartInterface
+class VaultAttributesRequest
 {
     /**
-     * @return int
+     * @var string
      */
-    public function getId();
+    public $store_in_vault;
 
     /**
      * @return string
      */
-    public function getCurrencyCode();
-
-    public function getCustomer();
-
-    public function getBillingAddress();
+    public function getStoreInVault()
+    {
+        return $this->store_in_vault;
+    }
 
     /**
-     * @return PurchaseUnitRequest[]
+     * @param string $store_in_vault
+     *
+     * @return void
      */
-    public function getPurchaseUnits();
+    public function setStoreInVault($store_in_vault)
+    {
+        $this->store_in_vault = $store_in_vault;
+    }
 }

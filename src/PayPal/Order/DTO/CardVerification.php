@@ -18,28 +18,30 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Cart;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PurchaseUnitRequest;
-
-interface CartInterface
+class CardVerification
 {
     /**
-     * @return int
+     * @var string
      */
-    public function getId();
+    private $method;
 
     /**
      * @return string
      */
-    public function getCurrencyCode();
-
-    public function getCustomer();
-
-    public function getBillingAddress();
+    public function getMethod()
+    {
+        return $this->method;
+    }
 
     /**
-     * @return PurchaseUnitRequest[]
+     * @param string $method
+     *
+     * @return void
      */
-    public function getPurchaseUnits();
+    public function setMethod($method)
+    {
+        $this->method = $method;
+    }
 }

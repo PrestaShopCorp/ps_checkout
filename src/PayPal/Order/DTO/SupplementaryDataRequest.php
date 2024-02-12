@@ -18,28 +18,30 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Cart;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PurchaseUnitRequest;
-
-interface CartInterface
+class SupplementaryDataRequest
 {
     /**
-     * @return int
+     * @var CardSupplementaryDataRequest
      */
-    public function getId();
+    private $card;
 
     /**
-     * @return string
+     * @return CardSupplementaryDataRequest
      */
-    public function getCurrencyCode();
-
-    public function getCustomer();
-
-    public function getBillingAddress();
+    public function getCard()
+    {
+        return $this->card;
+    }
 
     /**
-     * @return PurchaseUnitRequest[]
+     * @param CardSupplementaryDataRequest $card
+     *
+     * @return void
      */
-    public function getPurchaseUnits();
+    public function setCard(CardSupplementaryDataRequest $card)
+    {
+        $this->card = $card;
+    }
 }

@@ -18,28 +18,52 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Cart;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PurchaseUnitRequest;
-
-interface CartInterface
+class CardExperienceContextRequest
 {
     /**
-     * @return int
+     * @var string
      */
-    public function getId();
+    private $return_url;
+    /**
+     * @var string
+     */
+    private $cancel_url;
 
     /**
      * @return string
      */
-    public function getCurrencyCode();
-
-    public function getCustomer();
-
-    public function getBillingAddress();
+    public function getReturnUrl()
+    {
+        return $this->return_url;
+    }
 
     /**
-     * @return PurchaseUnitRequest[]
+     * @param string $return_url
+     *
+     * @return void
      */
-    public function getPurchaseUnits();
+    public function setReturnUrl($return_url)
+    {
+        $this->return_url = $return_url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCancelUrl()
+    {
+        return $this->cancel_url;
+    }
+
+    /**
+     * @param string $cancel_url
+     *
+     * @return void
+     */
+    public function setCancelUrl($cancel_url)
+    {
+        $this->cancel_url = $cancel_url;
+    }
 }

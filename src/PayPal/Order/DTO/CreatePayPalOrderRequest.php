@@ -18,10 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\DTO\Orders;
-
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PaymentSourceRequest;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PurchaseUnitRequest;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
 class CreatePayPalOrderRequest
 {
@@ -37,6 +34,14 @@ class CreatePayPalOrderRequest
      * @var PaymentSourceRequest
      */
     private $payment_source;
+    /**
+     * @var ApplicationContextRequest
+     */
+    private $application_context;
+    /**
+     * @var string
+     */
+    private $processing_instruction;
 
     /**
      * @return string
@@ -48,6 +53,8 @@ class CreatePayPalOrderRequest
 
     /**
      * @param string $intent
+     *
+     * @return void
      */
     public function setIntent($intent)
     {
@@ -64,6 +71,8 @@ class CreatePayPalOrderRequest
 
     /**
      * @param PurchaseUnitRequest[] $purchase_units
+     *
+     * @return void
      */
     public function setPurchaseUnits(array $purchase_units)
     {
@@ -80,9 +89,47 @@ class CreatePayPalOrderRequest
 
     /**
      * @param PaymentSourceRequest $payment_source
+     *
+     * @return void
      */
     public function setPaymentSource(PaymentSourceRequest $payment_source)
     {
         $this->payment_source = $payment_source;
+    }
+
+    /**
+     * @return ApplicationContextRequest
+     */
+    public function getApplicationContext()
+    {
+        return $this->application_context;
+    }
+
+    /**
+     * @param ApplicationContextRequest $application_context
+     *
+     * @return void
+     */
+    public function setApplicationContext(ApplicationContextRequest $application_context)
+    {
+        $this->application_context = $application_context;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProcessingInstruction()
+    {
+        return $this->processing_instruction;
+    }
+
+    /**
+     * @param string $processing_instruction
+     *
+     * @return void
+     */
+    public function setProcessingInstruction($processing_instruction)
+    {
+        $this->processing_instruction = $processing_instruction;
     }
 }

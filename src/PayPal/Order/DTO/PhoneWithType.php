@@ -18,28 +18,52 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Cart;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PurchaseUnitRequest;
-
-interface CartInterface
+class PhoneWithType
 {
     /**
-     * @return int
+     * @var Phone
      */
-    public function getId();
+    private $phone_number;
+    /**
+     * @var string
+     */
+    private $phone_type;
+
+    /**
+     * @return Phone
+     */
+    public function getPhoneNumber()
+    {
+        return $this->phone_number;
+    }
+
+    /**
+     * @param Phone $phone_number
+     *
+     * @return void
+     */
+    public function setPhoneNumber(Phone $phone_number)
+    {
+        $this->phone_number = $phone_number;
+    }
 
     /**
      * @return string
      */
-    public function getCurrencyCode();
-
-    public function getCustomer();
-
-    public function getBillingAddress();
+    public function getPhoneType()
+    {
+        return $this->phone_type;
+    }
 
     /**
-     * @return PurchaseUnitRequest[]
+     * @param string $phone_type
+     *
+     * @return void
      */
-    public function getPurchaseUnits();
+    public function setPhoneType($phone_type)
+    {
+        $this->phone_type = $phone_type;
+    }
 }
