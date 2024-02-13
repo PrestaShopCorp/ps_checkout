@@ -20,12 +20,12 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\OldPaymentClient;
 
 /**
  * Handle Webhook requests
  */
-class Webhook extends PaymentClient
+class Webhook extends OldPaymentClient
 {
     /**
      * Tells if the webhook came from the PSL

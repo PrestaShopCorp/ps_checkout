@@ -21,13 +21,13 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\OldPaymentClient;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
 /**
  * Handle order requests
  */
-class Order extends PaymentClient
+class Order extends OldPaymentClient
 {
     /**
      * Create order to paypal api
