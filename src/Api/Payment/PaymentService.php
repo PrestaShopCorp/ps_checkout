@@ -22,9 +22,6 @@ namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
 use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception\HttpException;
-use Http\Client\Exception\NetworkException;
-use Http\Client\Exception\RequestException;
-use Http\Client\Exception\TransferException;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderRequest;
 use Psr\Http\Message\ResponseInterface;
@@ -43,6 +40,7 @@ class PaymentService
 
     /**
      * @param CreatePayPalOrderRequest $request
+     *
      * @return ResponseInterface|void
      */
     public function createOrder(CreatePayPalOrderRequest $request)
