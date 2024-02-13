@@ -369,7 +369,6 @@ services:
       - '@ps_checkout.paypal.order.translations'
       - '@ps_checkout.context.shop'
 
-
   ps_checkout.paypal.builder.view_order_summary:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder'
     public: true
