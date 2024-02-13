@@ -27,7 +27,6 @@ use Http\Client\Exception\RequestException;
 use Http\Client\Exception\TransferException;
 use PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder;
 use PrestaShop\Module\PrestashopCheckout\Http\PsrHttpClientAdapter;
-use PrestaShop\Module\PrestashopCheckout\Http\Request\CreatePayPalOrderRequest;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -40,6 +39,7 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
 
     /**
      * @param RequestInterface $request
+     *
      * @return ResponseInterface
      *
      * @throws HttpException
@@ -73,6 +73,7 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
     /**
      * @param array $payload
      * @param array $options
+     *
      * @return ResponseInterface
      */
     public function createOrder(array $payload, array $options = [])
@@ -83,6 +84,7 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
     /**
      * @param array $payload
      * @param array $options
+     *
      * @return ResponseInterface
      */
     public function updateOrder(array $payload, array $options = [])
@@ -93,6 +95,7 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
     /**
      * @param array $payload
      * @param array $options
+     *
      * @return ResponseInterface
      */
     public function fetchOrder(array $payload, array $options = [])
@@ -103,6 +106,7 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
     /**
      * @param array $payload
      * @param array $options
+     *
      * @return ResponseInterface
      */
     public function captureOrder(array $payload, array $options = [])
@@ -113,6 +117,7 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
     /**
      * @param array $payload
      * @param array $options
+     *
      * @return ResponseInterface
      */
     public function refundOrder(array $payload, array $options = [])
@@ -123,6 +128,7 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
     /**
      * @param array $payload
      * @param array $options
+     *
      * @return ResponseInterface
      */
     public function generateClientToken(array $payload, array $options = [])
