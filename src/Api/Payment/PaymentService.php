@@ -26,7 +26,7 @@ use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\RequestException;
 use Http\Client\Exception\TransferException;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient;
-use PrestaShop\Module\PrestashopCheckout\DTO\Orders\CreatePayPalOrderRequest;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderRequest;
 use Psr\Http\Message\ResponseInterface;
 
 class PaymentService

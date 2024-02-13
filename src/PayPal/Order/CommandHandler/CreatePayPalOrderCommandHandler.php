@@ -74,10 +74,11 @@ class CreatePayPalOrderCommandHandler
     {
         $cart = $this->cartRepository->getCartById($command->getCartId());
         $payload = $this->createPayPalOrderPayloadBuilder->build($cart, $command->getFundingSource());
-        $order = $this->paymentService->createOrder($payload);
+        $response = $this->paymentService->createOrder($payload);
+        $order = $response->getBody();
         $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
-            $order->getId(),
-            $order->toArray(),
+            $order['id'],
+            $order,
             $command->getCartId(),
             $command->isHostedFields(),
             $command->isExpressCheckout()
