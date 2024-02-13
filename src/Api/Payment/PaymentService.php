@@ -121,21 +121,21 @@ class PaymentService
 
     public function updateOrder(array $payload)
     {
-        return $this->sendRequest('POST', '/payments/order/update', [], $payload);
+        return $this->client->updateOrder($payload);
     }
 
     /**
-     * @param array{order_id: string} $data
+     * @param string $orderId
      *
      * @return ResponseInterface
      */
-    public function getOrder(array $data)
+    public function getOrder($orderId)
     {
         $payload = [
-            'orderId' => $data['order_id'],
+            'orderId' => $orderId,
         ];
 
-        return $this->sendRequest('POST', '/payments/order/fetch', [], $payload);
+        return $this->client->fetchOrder($payload);
     }
 
     /**
@@ -153,30 +153,30 @@ class PaymentService
             ],
         ];
 
-        return $this->sendRequest('POST', '/payments/order/capture', [], $payload);
+        return $this->client->captureOrder($payload);
     }
 
     public function refundOrder(array $payload)
     {
-        return $this->sendRequest('POST', '/payments/order/refund', [], $payload);
+        return $this->client->refundOrder($payload);
     }
 
     /**
-     * @param array{merchant_id: string} $data
+     * @param string $merchantId
      *
      * @return ResponseInterface
      */
-    public function getIdentityToken(array $data)
+    public function getIdentityToken($merchantId)
     {
         $payload = [
             'return_payload' => true,
             'payee' => [
-                'merchant_id' => $data['merchant_id'],
+                'merchant_id' => $merchantId,
             ],
         ];
 
         try {
-            return $this->sendRequest('POST', '/payments/order/generate_client_token', [], $payload);
+            return $this->client->generateClientToken($payload);
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
             if ($response->getStatusCode() === 400) {
@@ -193,50 +193,6 @@ class PaymentService
             }
 
             return $response;
-        }
-    }
-
-    /**
-     * @param string $method
-     * @param string $uri
-     * @param array $options
-     * @param array $payload
-     *
-     * @return ResponseInterface
-     *
-     * @throws NetworkException
-     * @throws HttpException
-     * @throws RequestException
-     * @throws TransferException
-     */
-    private function sendRequest($method, $uri, $options, $payload)
-    {
-        try {
-            return $this->client->sendRequest(new Request($method, $uri, $options, json_encode($payload)));
-        } catch (NetworkException $exception) {
-            throw $exception; // TODO Replace
-            // Thrown when the request cannot be completed because of network issues.
-            // No response here
-        } catch (HttpException $exception) {
-            // Thrown when a response was received but the request itself failed.
-            // There a response here
-            // So this one contains why response failed with Maasland error response
-            if ($exception->getResponse()->getStatusCode() === 500) {
-                throw $exception; // TODO Replace
-                // Internal Server Error: retry then stop using Maasland for XXX times after X failed retries, requires a circuit breaker
-            }
-            if ($exception->getResponse()->getStatusCode() === 503) {
-                throw $exception; // TODO Replace
-                // Service Unavailable: we should stop using Maasland, requires a circuit breaker
-            }
-            // response status code 4XX throw exception to be catched on specific method
-            throw $exception; // Avoid this to be catched next
-        } catch (RequestException $exception) {
-            throw $exception; // TODO Replace
-            // No response here
-        } catch (TransferException $exception) {
-            throw $exception; // TODO Replace
-            // others without response
         }
     }
 }
