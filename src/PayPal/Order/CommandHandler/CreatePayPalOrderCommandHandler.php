@@ -20,41 +20,36 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
-use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
+use PrestaShop\Module\PrestashopCheckout\Cart\CartRepositoryInterface;
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
-use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CreatePayPalOrderPayloadBuilderInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
-use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 class CreatePayPalOrderCommandHandler
 {
+    /**
+     * @var CartRepositoryInterface
+     */
+    private $cartRepository;
+    /**
+     * @var CreatePayPalOrderPayloadBuilderInterface
+     */
+    private $createPayPalOrderPayloadBuilder;
     /**
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
 
-    /**
-     * @var CheckoutHttpClient
-     */
-    private $httpClient;
-    /**
-     * @var ShopContext
-     */
-    private $shopContext;
-
     public function __construct(
-        CheckoutHttpClient $httpClient,
-        EventDispatcherInterface $eventDispatcher,
-        ShopContext $shopContext
+        CartRepositoryInterface $cartRepository,
+        CreatePayPalOrderPayloadBuilderInterface $createPayPalOrderPayloadBuilder,
+        EventDispatcherInterface $eventDispatcher
     ) {
-        $this->httpClient = $httpClient;
+        $this->cartRepository = $cartRepository;
+        $this->createPayPalOrderPayloadBuilder = $createPayPalOrderPayloadBuilder;
         $this->eventDispatcher = $eventDispatcher;
-        $this->shopContext = $shopContext;
     }
 
     /**
@@ -62,34 +57,19 @@ class CreatePayPalOrderCommandHandler
      *
      * @return void
      *
-     * @throws PayPalException
      * @throws PayPalOrderException
-     * @throws PsCheckoutException
+     * @throws CartNotFoundException
      */
     public function handle(CreatePayPalOrderCommand $command)
     {
-        $cartPresenter = (new CartPresenter())->present();
-        $builder = new OrderPayloadBuilder($cartPresenter);
-        $builder->setIsCard($command->getFundingSource() === 'card');
-        $builder->setExpressCheckout($command->isExpressCheckout());
-
-        if ($this->shopContext->isShop17()) {
-            // Build full payload in 1.7
-            $builder->buildFullPayload();
-        } else {
-            // if on 1.6 always build minimal payload
-            $builder->buildMinimalPayload();
-        }
-
-        $response = $this->httpClient->createOrder($builder->presentPayload()->getArray());
-        $order = json_decode($response->getBody(), true);
-        $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
-            $order['id'],
-            $order,
-            $command->getCartId()->getValue(),
-            $command->isHostedFields(),
-            $command->isExpressCheckout(),
-            $command->getFundingSource()
-        ));
+        $cart = $this->cartRepository->getCartById($command->getCartId());
+        $payload = $this->createPayPalOrderPayloadBuilder->build($cart, $command->getFundingSource());
+//        $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
+//            $order->getId(),
+//            $order->toArray(),
+//            $command->getCartId(),
+//            $command->isHostedFields(),
+//            $command->isExpressCheckout()
+//        ));
     }
 }
