@@ -21,12 +21,11 @@
 namespace PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Query;
 
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 
 class GetCustomerPaymentMethodTokensQuery
 {
     /**
-     * @var PayPalCustomerId
+     * @var CustomerId
      */
     private $customerId;
 

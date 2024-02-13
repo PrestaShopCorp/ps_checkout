@@ -55,12 +55,12 @@ class GetCustomerPaymentMethodTokensQueryHandler
      */
     public function handle(GetCustomerPaymentMethodTokensQuery $query)
     {
-        $customerIdPayPal = $query->getCustomerId() ? $this->customerRepository->findPayPalCustomerIdByCustomerId($query->getCustomerId()) : null;
+        $customerIdPayPal = $query->getCustomerId()->getValue() ? $this->customerRepository->findPayPalCustomerIdByCustomerId($query->getCustomerId()) : null;
         $paymentTokens = $this->paymentMethodTokenRepository->findByCustomerId($customerIdPayPal, $query->getPageSize(), $query->getPageNumber());
 
         if ($query->isTotalCountRequired()) {
             $totalItems = $this->paymentMethodTokenRepository->getTotalItems($customerIdPayPal);
-            $totalPages = ceil($totalItems / $query->getPageSize());
+            $totalPages = (int) ceil($totalItems / $query->getPageSize());
         } else {
             $totalItems = null;
             $totalPages = null;

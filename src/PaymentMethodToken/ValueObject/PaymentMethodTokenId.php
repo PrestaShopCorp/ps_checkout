@@ -67,7 +67,7 @@ class PaymentMethodTokenId
             throw new InvalidArgumentException('PayPal Vault ID must be between 1 and 36 characters long.');
         }
 
-        if (preg_match('^[0-9a-zA-Z_-]+$', $id) !== 1) {
+        if (preg_match('/^[0-9a-zA-Z_-]+$/', $id) !== 1) {
             throw new InvalidArgumentException('PayPal Vault ID must be alphanumeric.');
         }
     }

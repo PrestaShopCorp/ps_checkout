@@ -48,7 +48,7 @@ class GetCustomerPaymentMethodTokensQueryResult
      * @param array $paymentTokens
      * @param CustomerId $customerId
      * @param int $totalItems
-     * @param int $totalPages
+     * @param int|null $totalPages
      */
     public function __construct(array $paymentTokens, CustomerId $customerId, $totalItems, $totalPages)
     {
