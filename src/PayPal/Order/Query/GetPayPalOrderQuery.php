@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -18,20 +19,41 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderRequest;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderResponse;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
+use PrestaShop\PrestaShop\Core\Domain\Order\ValueObject\OrderId;
 
-interface PayPalOrderHttpClientInterface
+class GetPayPalOrderQuery
 {
     /**
-     * @param CreatePayPalOrderRequest $payload
-     *
-     * @return CreatePayPalOrderResponse
-     *
-     * @throws PayPalOrderException
+     * @var OrderId|null
      */
-    public function createOrder(CreatePayPalOrderRequest $payload);
+    private $orderId;
+    /**
+     * @var CartId|null
+     */
+    private $cartId;
+
+    public function __construct(OrderId $orderId = null, CartId $cartId = null)
+    {
+        $this->orderId = $orderId;
+        $this->cartId = $cartId;
+    }
+
+    /**
+     * @return OrderId
+     */
+    public function getOrderId()
+    {
+        return $this->orderId;
+    }
+
+    /**
+     * @return CartId|null
+     */
+    public function getCartId()
+    {
+        return $this->cartId;
+    }
 }

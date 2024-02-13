@@ -33,15 +33,25 @@ class CreatePayPalOrderCommand
      * @var string
      */
     private $fundingSource;
+    /**
+     * @var bool
+     */
+    private $isHostedFields;
+    /**
+     * @var bool
+     */
+    private $isExpressCheckout;
 
     /**
      * @param CartId $cartId
      * @param string $fundingSource
      */
-    public function __construct(CartId $cartId, $fundingSource)
+    public function __construct(CartId $cartId, $fundingSource, $isHostedFields, $isExpressCheckout)
     {
         $this->cartId = $cartId;
         $this->fundingSource = $fundingSource;
+        $this->isHostedFields = $isHostedFields;
+        $this->isExpressCheckout = $isExpressCheckout;
     }
 
     /**
@@ -58,5 +68,21 @@ class CreatePayPalOrderCommand
     public function getFundingSource()
     {
         return $this->fundingSource;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHostedFields()
+    {
+        return $this->isHostedFields;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExpressCheckout()
+    {
+        return $this->isExpressCheckout;
     }
 }

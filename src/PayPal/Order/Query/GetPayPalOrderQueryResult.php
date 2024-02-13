@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -18,17 +19,28 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\DTO\Orders;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query;
 
-class CreatePayPalOrderResponse
+class GetPayPalOrderQueryResult
 {
-    public function getId()
+    /**
+     * @var array
+     */
+    private $order;
+
+    /**
+     * @param array{id: string, status: string, intent: string, payment_source: array, purchase_units: array, payer: array, create_time: string, links: array} $order
+     */
+    public function __construct($order)
     {
-        return '';
+        $this->order = $order;
     }
 
-    public function toArray()
+    /**
+     * @return array
+     */
+    public function getOrder()
     {
-        return [];
+        return $this->order;
     }
 }
