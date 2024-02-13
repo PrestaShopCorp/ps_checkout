@@ -651,3 +651,23 @@ services:
     public: true
     arguments:
       - "@ps_checkout.logger"
+
+  PrestaShop\Module\PrestashopCheckout\Environment\Env:
+    class: 'PrestaShop\Module\PrestashopCheckout\Environment\Env'
+
+  PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv:
+    class: 'PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv'
+
+  PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder:
+    class: 'PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder'
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv'
+      - '@ps_checkout.prestashop.router'
+      - '@ps_checkout.context.shop'
+      - '@ps_checkout.repository.prestashop.account'
+      - '@ps_checkout.context.prestashop'
+
+  PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient'
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder'
