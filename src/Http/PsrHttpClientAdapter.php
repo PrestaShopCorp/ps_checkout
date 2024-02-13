@@ -24,22 +24,22 @@ use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
 use Psr\Http\Message\RequestInterface;
 
  abstract class PsrHttpClientAdapter implements HttpClientInterface
-{
-    private $client;
+ {
+     private $client;
 
-    /**
-     * @param array $configuration
-     */
-    public function __construct(array $configuration)
-    {
-        $this->client = (new ClientFactory())->getClient($configuration);
-    }
+     /**
+      * @param array $configuration
+      */
+     public function __construct(array $configuration)
+     {
+         $this->client = (new ClientFactory())->getClient($configuration);
+     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendRequest(RequestInterface $request)
-    {
-        return $this->client->sendRequest($request);
-    }
-}
+     /**
+      * {@inheritdoc}
+      */
+     public function sendRequest(RequestInterface $request)
+     {
+         return $this->client->sendRequest($request);
+     }
+ }
