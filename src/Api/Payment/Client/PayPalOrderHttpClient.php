@@ -18,28 +18,15 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Http;
+namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Client;
 
-use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
-use Psr\Http\Message\RequestInterface;
+use PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder;
+use PrestaShop\Module\PrestashopCheckout\Http\PsrHttpClientAdapter;
 
-class PsrClientAdapter implements HttpClientInterface
+class PayPalOrderHttpClient extends PsrHttpClientAdapter
 {
-    private $client;
-
-    /**
-     * @param array $configuration
-     */
-    public function __construct(array $configuration)
+    public function __construct(PaymentClientConfigurationBuilder $configurationBuilder)
     {
-        $this->client = (new ClientFactory())->getClient($configuration);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sendRequest(RequestInterface $request)
-    {
-        return $this->client->sendRequest($request);
+        parent::__construct($configurationBuilder->build());
     }
 }

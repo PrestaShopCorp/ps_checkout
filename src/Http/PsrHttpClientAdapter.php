@@ -26,7 +26,7 @@ use Http\Client\Exception\TransferException;
 use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
 use Psr\Http\Message\RequestInterface;
 
-class PsrHttpClientAdapter implements HttpClientInterface
+abstract class PsrHttpClientAdapter implements HttpClientInterface
 {
     private $client;
 

@@ -25,17 +25,17 @@ use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\RequestException;
 use Http\Client\Exception\TransferException;
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient;
 use Psr\Http\Message\ResponseInterface;
 
 class PaymentService
 {
     /**
-     * @var PaymentClient
+     * @var PayPalOrderHttpClient
      */
     private $client;
 
-    public function __construct(PaymentClient $client)
+    public function __construct(PayPalOrderHttpClient $client)
     {
         $this->client = $client;
     }
@@ -128,6 +128,7 @@ class PaymentService
         $payload = [
             'orderId' => $data['order_id'],
         ];
+
         return $this->sendRequest('POST', '/payments/order/fetch', [], $payload);
     }
 
@@ -145,6 +146,7 @@ class PaymentService
                 'merchant_id' => $data['merchant_id'],
             ],
         ];
+
         return $this->sendRequest('POST', '/payments/order/capture', [], $payload);
     }
 
@@ -183,6 +185,8 @@ class PaymentService
             if ($response->getStatusCode() === 422) {
                 // UNPROCESSABLE_ENTITY
             }
+
+            return $response;
         }
     }
 
@@ -204,6 +208,7 @@ class PaymentService
         try {
             return $this->client->sendRequest(new Request($method, $uri, $options, json_encode($payload)));
         } catch (NetworkException $exception) {
+            throw $exception; // TODO Replace
             // Thrown when the request cannot be completed because of network issues.
             // No response here
         } catch (HttpException $exception) {
@@ -211,16 +216,20 @@ class PaymentService
             // There a response here
             // So this one contains why response failed with Maasland error response
             if ($exception->getResponse()->getStatusCode() === 500) {
+                throw $exception; // TODO Replace
                 // Internal Server Error: retry then stop using Maasland for XXX times after X failed retries, requires a circuit breaker
             }
             if ($exception->getResponse()->getStatusCode() === 503) {
+                throw $exception; // TODO Replace
                 // Service Unavailable: we should stop using Maasland, requires a circuit breaker
             }
             // response status code 4XX throw exception to be catched on specific method
             throw $exception; // Avoid this to be catched next
         } catch (RequestException $exception) {
-           // No response here
+            throw $exception; // TODO Replace
+            // No response here
         } catch (TransferException $exception) {
+            throw $exception; // TODO Replace
             // others without response
         }
     }

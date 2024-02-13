@@ -20,17 +20,17 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment\Service;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient;
 
 class PaymentService
 {
-    /** @var PaymentClient */
+    /** @var PayPalOrderHttpClient */
     private $paymentClient;
 
     /**
-     * @param PaymentClient $paymentClient
+     * @param PayPalOrderHttpClient $paymentClient
      */
-    public function __construct(PaymentClient $paymentClient)
+    public function __construct(PayPalOrderHttpClient $paymentClient)
     {
         $this->paymentClient = $paymentClient;
     }
