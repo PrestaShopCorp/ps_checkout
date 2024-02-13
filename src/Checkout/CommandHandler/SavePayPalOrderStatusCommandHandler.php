@@ -46,6 +46,7 @@ class SavePayPalOrderStatusCommandHandler
      */
     public function handle(SavePayPalOrderStatusCommand $command)
     {
+        // TODO: To be repurposed
         try {
             /** @var PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($command->getOrderPayPalId()->getValue());

@@ -83,6 +83,10 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      * @var CommandBusInterface
      */
     private $commandBus;
+    /**
+     * @var PayPalConfiguration
+     */
+    private $payPalConfiguration;
 
     public function __construct(
         Ps_checkout $module,
@@ -90,7 +94,8 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         CacheInterface $orderPayPalCache,
         CheckoutChecker $checkoutChecker,
         CheckTransitionPayPalOrderStatusService $checkTransitionPayPalOrderStatusService,
-        OrderStateMapper $orderStateMapper
+        OrderStateMapper $orderStateMapper,
+        PayPalConfiguration $payPalConfiguration
     ) {
         $this->module = $module;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
@@ -99,6 +104,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         $this->checkTransitionPayPalOrderStatusService = $checkTransitionPayPalOrderStatusService;
         $this->orderStateMapper = $orderStateMapper;
         $this->commandBus = $this->module->getService('ps_checkout.bus.command');
+        $this->payPalConfiguration = $payPalConfiguration;
     }
 
     /**
@@ -133,8 +139,6 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
 
     public function saveCreatedPayPalOrder(PayPalOrderCreatedEvent $event)
     {
-        /** @var PayPalConfiguration $configuration */
-        $configuration = $this->module->getService('ps_checkout.paypal.configuration');
         $order = $event->getOrderPayPal();
 
         $this->commandBus->handle(new SaveCheckoutCommand(
@@ -145,7 +149,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             $event->getFundingSource(),
             $event->isExpressCheckout(),
             $event->isHostedFields(),
-            $configuration->getPaymentMode()
+            $this->payPalConfiguration->getPaymentMode()
         ));
     }
 

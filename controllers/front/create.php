@@ -20,6 +20,7 @@
  */
 
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCartIdQuery;
@@ -43,6 +44,9 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
     public function postProcess()
     {
         try {
+            /** @var CommandBusInterface $commandBus */
+            $commandBus = $this->module->getService('ps_checkout.bus.command');
+
             // BEGIN Express Checkout
             $bodyValues = [];
             $bodyContent = file_get_contents('php://input');
@@ -115,6 +119,11 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
                 ],
                 'exceptionCode' => null,
                 'exceptionMessage' => null,
+            ]);
+        } catch (CartNotFoundException $exception) {
+            $this->exitWithResponse([
+                'httpCode' => 400,
+                'body' => 'No cart found.',
             ]);
         } catch (Exception $exception) {
             $this->module->getLogger()->error(

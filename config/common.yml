@@ -369,6 +369,7 @@ services:
       - '@ps_checkout.paypal.order.translations'
       - '@ps_checkout.context.shop'
 
+
   ps_checkout.paypal.builder.view_order_summary:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder'
     public: true
@@ -469,6 +470,7 @@ services:
         PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForApprovalReversedQuery: "ps_checkout.query.handler.order.get_order_for_approval_reversed"
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCartIdQuery: "ps_checkout.query.handler.paypal.order.get_paypal_order_for_cart_id"
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetCurrentPayPalOrderStatusQuery: "ps_checkout.query.handler.paypal.order.get_current_paypal_order_status"
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery: "ps_checkout.query.handler.paypal.order.get_paypal_order"
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery: "ps_checkout.query.handler.paypal.order.get_paypal_order_for_checkout_completed"
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery: "ps_checkout.query.handler.paypal.order.get_paypal_order_for_order_confirmation"
         PrestaShop\Module\PrestashopCheckout\Checkout\Command\UpdatePaymentMethodSelectedCommand: "ps_checkout.query.handler.checkout.update_payment_method_selected"
@@ -504,6 +506,7 @@ services:
       - "@ps_checkout.checkout.checker"
       - "@ps_checkout.paypal.order.service.check_transition_paypal_order_status"
       - "@ps_checkout.order.state.service.order_state_mapper"
+      - '@ps_checkout.paypal.configuration'
 
   ps_checkout.event.subscriber.paypal.capture:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber'
@@ -578,9 +581,9 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CreatePayPalOrderCommandHandler'
     public: true
     arguments:
-      - "@ps_checkout.http.client.checkout"
-      - "@ps_checkout.event.dispatcher"
-      - "@ps_checkout.context.shop"
+      - '@?'
+      - '@?'
+      - '@ps_checkout.event.dispatcher'
 
   ps_checkout.command.handler.paypal.order.update_paypal_order:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\UpdatePayPalOrderCommandHandler'
@@ -597,6 +600,15 @@ services:
       - "@ps_checkout.http.client.checkout"
       - "@ps_checkout.event.dispatcher"
       - "@ps_checkout.cache.paypal.order"
+      - "@ps_checkout.repository.pscheckoutcart"
+      - '@ps_checkout.paypal.configuration'
+
+  ps_checkout.query.handler.paypal.order.get_paypal_order:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler'
+    public: true
+    arguments:
+      - '@ps_checkout.cache.paypal.order'
+      - '@ps_checkout.repository.pscheckoutcart'
 
   ps_checkout.query.handler.paypal.order.get_current_paypal_order_status:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetCurrentPayPalOrderStatusQueryHandler'
@@ -723,15 +735,12 @@ services:
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder'
 
-  ps_checkout.environment.payment:
-    class: 'PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv'
-    public: true
 
   ps_checkout.http.client.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClientConfigurationBuilder'
     public: true
     arguments:
-      - "@ps_checkout.environment.payment"
+      - '@PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv'
       - "@ps_checkout.prestashop.router"
       - "@ps_checkout.context.shop"
       - "@ps_checkout.repository.prestashop.account"
