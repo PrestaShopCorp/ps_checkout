@@ -52,7 +52,7 @@ class GetPayPalOrderQueryHandler
      */
     public function handle(GetPayPalOrderQuery $query)
     {
-        $orderId = $query->getOrderId() ? $query->getOrderId()->getValue() : null;
+        $orderId = !$query->getOrderId()->getValue() ? null : $query->getOrderId()->getValue();
 
         if (!$orderId) {
             $psCheckoutCart = $this->checkoutCartRepository->findOneByCartId($query->getCartId()->getValue());

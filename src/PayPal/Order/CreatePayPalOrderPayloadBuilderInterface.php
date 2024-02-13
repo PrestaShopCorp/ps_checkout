@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order;
 
 use PrestaShop\Module\PrestashopCheckout\Cart\CartInterface;
-use PrestaShop\Module\PrestashopCheckout\DTO\Orders\CreatePayPalOrderRequest;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderRequest;
 
 interface CreatePayPalOrderPayloadBuilderInterface
 {
