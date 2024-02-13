@@ -70,8 +70,63 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
         }
     }
 
-    public function createOrder($payload, $options = [])
+    /**
+     * @param array $payload
+     * @param array $options
+     * @return ResponseInterface
+     */
+    public function createOrder(array $payload, array $options = [])
     {
         return $this->sendRequest(new Request('POST', '/payments/order/create', $options, $payload));
+    }
+
+    /**
+     * @param array $payload
+     * @param array $options
+     * @return ResponseInterface
+     */
+    public function updateOrder(array $payload, array $options = [])
+    {
+        return $this->sendRequest(new Request('POST', '/payments/order/update', $options, $payload));
+    }
+
+    /**
+     * @param array $payload
+     * @param array $options
+     * @return ResponseInterface
+     */
+    public function fetchOrder(array $payload, array $options = [])
+    {
+        return $this->sendRequest(new Request('POST', '/payments/order/fetch', $options, $payload));
+    }
+
+    /**
+     * @param array $payload
+     * @param array $options
+     * @return ResponseInterface
+     */
+    public function captureOrder(array $payload, array $options = [])
+    {
+        return $this->sendRequest(new Request('POST', '/payments/order/capture', $options, $payload));
+    }
+
+    /**
+     * @param array $payload
+     * @param array $options
+     * @return ResponseInterface
+     */
+    public function refundOrder(array $payload, array $options = [])
+    {
+        return $this->sendRequest(new Request('POST', '/payments/order/refund', $options, $payload));
+    }
+
+    /**
+     * @param array $payload
+     * @param array $options
+     * @return ResponseInterface
+     */
+    public function generateClientToken(array $payload, array $options = [])
+    {
+        return $this->sendRequest(new Request('POST', '/payments/order/generate_client_token', $options, $payload));
     }
 }
