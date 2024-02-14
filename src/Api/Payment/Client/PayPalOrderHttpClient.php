@@ -64,8 +64,10 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
             // response status code 4XX throw exception to be catched on specific method
             throw $exception; // Avoid this to be catched next
         } catch (RequestException $exception) {
+            throw $exception;
             // No response here
         } catch (TransferException $exception) {
+            throw $exception;
             // others without response
         }
     }
@@ -78,7 +80,7 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
      */
     public function createOrder(array $payload, array $options = [])
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/create', $options, $payload));
+        return $this->sendRequest(new Request('POST', '/payments/order/create', $options, json_encode($payload)));
     }
 
     /**
@@ -89,7 +91,7 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
      */
     public function updateOrder(array $payload, array $options = [])
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/update', $options, $payload));
+        return $this->sendRequest(new Request('POST', '/payments/order/update', $options, json_encode($payload)));
     }
 
     /**
@@ -100,7 +102,7 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
      */
     public function fetchOrder(array $payload, array $options = [])
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/fetch', $options, $payload));
+        return $this->sendRequest(new Request('POST', '/payments/order/fetch', $options, json_encode($payload)));
     }
 
     /**
@@ -111,7 +113,7 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
      */
     public function captureOrder(array $payload, array $options = [])
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/capture', $options, $payload));
+        return $this->sendRequest(new Request('POST', '/payments/order/capture', $options, json_encode($payload)));
     }
 
     /**
@@ -122,7 +124,7 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
      */
     public function refundOrder(array $payload, array $options = [])
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/refund', $options, $payload));
+        return $this->sendRequest(new Request('POST', '/payments/order/refund', $options, json_encode($payload)));
     }
 
     /**
@@ -133,6 +135,6 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
      */
     public function generateClientToken(array $payload, array $options = [])
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/generate_client_token', $options, $payload));
+        return $this->sendRequest(new Request('POST', '/payments/order/generate_client_token', $options, json_encode($payload)));
     }
 }
