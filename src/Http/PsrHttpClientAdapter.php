@@ -24,10 +24,14 @@ use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\TransferException;
 use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 
 class PsrHttpClientAdapter implements HttpClientInterface
 {
+    /**
+     * @var ClientInterface
+     */
     private $client;
 
     /**
