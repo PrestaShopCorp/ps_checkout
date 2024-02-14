@@ -21,10 +21,14 @@
 namespace PrestaShop\Module\PrestashopCheckout\Http;
 
 use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 
  abstract class PsrHttpClientAdapter implements HttpClientInterface
  {
+     /**
+      * @var ClientInterface
+      */
      private $client;
 
      /**
