@@ -75,7 +75,7 @@ class CreatePayPalOrderCommandHandler
         $cart = $this->cartRepository->getCartById($command->getCartId());
         $payload = $this->createPayPalOrderPayloadBuilder->build($cart, $command->getFundingSource());
         $response = $this->paymentService->createOrder($payload);
-        $order = $response->getBody();
+        $order = json_decode($response->getBody()->getContents());
         $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
             $order['id'],
             $order,

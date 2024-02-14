@@ -455,7 +455,7 @@ services:
         PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand: "ps_checkout.command.handler.order.create_order"
         PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand: "ps_checkout.command.handler.order.update_order_status"
         PrestaShop\Module\PrestashopCheckout\Order\Matrice\Command\UpdateOrderMatriceCommand: "ps_checkout.command.handler.order.matrice.update_order_matrice"
-        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand: "ps_checkout.command.handler.paypal.order.create_paypal_order"
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CreatePayPalOrderCommandHandler'
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCommand: "ps_checkout.command.handler.paypal.order.update_paypal_order"
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand: "ps_checkout.command.handler.paypal.order.capture_paypal_order"
         PrestaShop\Module\PrestashopCheckout\Checkout\Command\CancelCheckoutCommand: "ps_checkout.command.handler.checkout.cancel_checkout"
@@ -576,13 +576,14 @@ services:
     arguments:
       - "@ps_checkout.event.dispatcher"
 
-  ps_checkout.command.handler.paypal.order.create_paypal_order:
+  PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CreatePayPalOrderCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CreatePayPalOrderCommandHandler'
     public: true
     arguments:
       - '@?'
       - '@?'
       - '@ps_checkout.event.dispatcher'
+      - '@PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService'
 
   ps_checkout.command.handler.paypal.order.update_paypal_order:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\UpdatePayPalOrderCommandHandler'
@@ -735,6 +736,11 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient'
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder'
+
+  PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService'
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient'
 
   ps_checkout.http.client.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClientConfigurationBuilder'

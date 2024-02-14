@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
-use GuzzleHttp\Psr7\Request;
 use Http\Client\Exception\HttpException;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderRequest;
