@@ -18,66 +18,37 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
+use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
-use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalClientTokenProvider;
+use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQueryResult;
+use Psr\Log\LoggerInterface;
 
 /**
- * This controller receive ajax call to retrieve a PayPal Client Token
+ * This controller receive ajax call to retrieve a PayPal User Id Token
  */
 class Ps_CheckoutTokenModuleFrontController extends AbstractFrontController
 {
     /**
-     * @var Ps_checkout
-     */
-    public $module;
-
-    /**
      * @see FrontController::postProcess()
-     *
-     * @todo Move logic to a Service and refactor
      */
     public function postProcess()
     {
         try {
-            if (false === Validate::isLoadedObject($this->context->cart)) {
-                $this->exitWithResponse([
-                    'httpCode' => 400,
-                    'body' => 'No cart found.',
-                ]);
-            }
-
-            /** @var PayPalClientTokenProvider $clientTokenProvider */
-            $clientTokenProvider = $this->module->getService('ps_checkout.paypal.provider.client_token');
-
-            /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
-            $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
-
-            /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
-
-            if (false === $psCheckoutCart) {
-                $psCheckoutCart = new PsCheckoutCart();
-                $psCheckoutCart->id_cart = (int) $this->context->cart->id;
-            }
-
-            if ($psCheckoutCart->isPaypalClientTokenExpired()) {
-                $psCheckoutCart->paypal_order = '';
-                $psCheckoutCart->paypal_token = $clientTokenProvider->getPayPalClientToken();
-                $psCheckoutCart->paypal_token_expire = (new DateTime())->modify('+3550 seconds')->format('Y-m-d H:i:s');
-                $psCheckoutCartRepository->save($psCheckoutCart);
-            }
+            /** @var CommandBusInterface $commandBus */
+            $commandBus = $this->module->getService('ps_checkout.bus.command');
+            /** @var GetPayPalGetUserIdTokenQueryResult $getPayPalGetUserIdTokenQueryResult */
+            $getPayPalGetUserIdTokenQueryResult = $commandBus->handle(new GetPayPalGetUserIdTokenQuery($this->getCustomerId()));
 
             $this->exitWithResponse([
                 'status' => true,
                 'httpCode' => 200,
                 'body' => [
-                    'token' => $psCheckoutCart->paypal_token,
+                    'token' => $getPayPalGetUserIdTokenQueryResult->getUserIdToken(),
                 ],
-                'exceptionCode' => null,
-                'exceptionMessage' => null,
             ]);
         } catch (Exception $exception) {
-            /* @var \Psr\Log\LoggerInterface logger */
+            /** @var LoggerInterface $logger */
             $logger = $this->module->getService('ps_checkout.logger');
             $logger->error(
                 sprintf(
