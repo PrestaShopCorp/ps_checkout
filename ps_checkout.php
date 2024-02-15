@@ -646,7 +646,11 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder $orderSummaryViewBuilder */
         $orderSummaryViewBuilder = $this->getService('ps_checkout.paypal.builder.view_order_summary');
 
-        $orderSummaryView = $orderSummaryViewBuilder->build($order);
+        try {
+            $orderSummaryView = $orderSummaryViewBuilder->build($order);
+        } catch (Exception $e) {
+            return '';
+        }
 
         $this->context->smarty->assign($orderSummaryView->getTemplateVars());
 
@@ -1615,7 +1619,11 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder $orderSummaryViewBuilder */
         $orderSummaryViewBuilder = $this->getService('ps_checkout.paypal.builder.view_order_summary');
 
-        $orderSummaryView = $orderSummaryViewBuilder->build($order);
+        try {
+            $orderSummaryView = $orderSummaryViewBuilder->build($order);
+        } catch (Exception $e) {
+            return '';
+        }
 
         $this->context->smarty->assign($orderSummaryView->getTemplateVars());
 
@@ -1645,7 +1653,11 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder $orderSummaryViewBuilder */
         $orderSummaryViewBuilder = $this->getService('ps_checkout.paypal.builder.view_order_summary');
 
-        $orderSummaryView = $orderSummaryViewBuilder->build($order);
+        try {
+            $orderSummaryView = $orderSummaryViewBuilder->build($order);
+        } catch (Exception $exception) {
+            return '';
+        }
 
         $this->context->smarty->assign($orderSummaryView->getTemplateVars());
 
