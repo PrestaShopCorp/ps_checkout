@@ -137,9 +137,9 @@ class FrontControllerValidator
 
         switch ($controller) {
             case 'product':
-                return \Configuration::get(PayPalConfiguration::PS_CHECKOUT_DISPLAY_LOGO_PRODUCT);
+                return (bool) \Configuration::get(PayPalConfiguration::PS_CHECKOUT_DISPLAY_LOGO_PRODUCT);
             case 'cart':
-                return \Configuration::get(PayPalConfiguration::PS_CHECKOUT_DISPLAY_LOGO_CART);
+                return (bool) \Configuration::get(PayPalConfiguration::PS_CHECKOUT_DISPLAY_LOGO_CART);
         }
 
         return false;
