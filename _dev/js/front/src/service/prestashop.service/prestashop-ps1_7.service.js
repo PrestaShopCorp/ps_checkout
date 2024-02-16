@@ -58,7 +58,7 @@ export class PrestashopPs1_7Service {
     if (document.body.id !== 'checkout') return false;
     const step = document.querySelector('#checkout-personal-information-step');
 
-    return step && step.classList.contains('-current');
+    return step && (step.classList.contains('-current') || step.classList.contains('step--current'));
   }
 
   static isIframeProductPage() {
@@ -109,6 +109,8 @@ export class PrestashopPs1_7Service {
   static onUpdatedCart(listener) {
     if (window['prestashop'] && window['prestashop'].on) {
       window['prestashop'].on('updatedCart', listener);
+      window['prestashop'].on('updatedAddressForm', listener);
+      window['prestashop'].on('updatedDeliveryForm', listener);
     } else {
       console.error('');
     }

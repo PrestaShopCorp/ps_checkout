@@ -114,14 +114,15 @@ services:
     arguments:
       - "@ps_checkout.configuration"
 
-  ps_checkout.sdk.paypal.linkbuilder:
-    class: 'PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink\PayPalSdkLinkBuilder'
+  ps_checkout.sdk.paypal.configurationbuilder:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Sdk\PayPalSdkConfigurationBuilder'
     public: true
     arguments:
       - "@ps_checkout.paypal.configuration"
       - "@ps_checkout.pay_later.configuration"
       - "@ps_checkout.funding_source.configuration.repository"
       - "@ps_checkout.express_checkout.configuration"
+      - '@ps_checkout.context.shop'
 
   ps_checkout.repository.prestashop.account:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository'

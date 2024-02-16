@@ -18,21 +18,20 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Builder\PayPalSdkLink;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Sdk;
 
 use PrestaShop\Module\PrestashopCheckout\Environment\PaypalEnv;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
+use PrestaShop\Module\PrestashopCheckout\ShopContext;
 
 /**
  * Build sdk link
  */
-class PayPalSdkLinkBuilder
+class PayPalSdkConfigurationBuilder
 {
-    const BASE_LINK = 'https://www.paypal.com/sdk/js';
-
     /**
      * @var PayPalConfiguration
      */
@@ -51,6 +50,9 @@ class PayPalSdkLinkBuilder
     /** @var ExpressCheckoutConfiguration */
     private $expressCheckoutConfiguration;
 
+    /** @var ShopContext */
+    private $shopContext;
+
     /** @var array */
     private static $cache = [];
 
@@ -59,25 +61,26 @@ class PayPalSdkLinkBuilder
      * @param PayPalPayLaterConfiguration $payLaterConfiguration
      * @param FundingSourceConfigurationRepository $fundingSourceConfigurationRepository
      * @param ExpressCheckoutConfiguration $expressCheckoutConfiguration
+     * @param ShopContext $shopContext
      */
     public function __construct(
         PayPalConfiguration $configuration,
         PayPalPayLaterConfiguration $payLaterConfiguration,
         FundingSourceConfigurationRepository $fundingSourceConfigurationRepository,
-        ExpressCheckoutConfiguration $expressCheckoutConfiguration
+        ExpressCheckoutConfiguration $expressCheckoutConfiguration,
+        ShopContext $shopContext
     ) {
         $this->configuration = $configuration;
         $this->payLaterConfiguration = $payLaterConfiguration;
         $this->fundingSourceConfigurationRepository = $fundingSourceConfigurationRepository;
         $this->expressCheckoutConfiguration = $expressCheckoutConfiguration;
+        $this->shopContext = $shopContext;
     }
 
     /**
-     * @todo To be refactored with Service Container and Dependency Injection
-     *
-     * @return string
+     * @return array
      */
-    public function buildLink()
+    public function buildConfiguration()
     {
         $components = [
             'marks',
@@ -97,29 +100,32 @@ class PayPalSdkLinkBuilder
         }
 
         $params = [
-            'client-id' => (new PaypalEnv())->getPaypalClientId(),
-            'merchant-id' => $this->configuration->getMerchantId(),
+            'clientId' => (new PaypalEnv())->getPaypalClientId(),
+            'merchantId' => $this->configuration->getMerchantId(),
             'currency' => \Context::getContext()->currency->iso_code,
             'intent' => strtolower($this->configuration->getIntent()),
             'commit' => 'order' === $this->getPageName() ? 'true' : 'false',
             'vault' => 'false',
-            'integration-date' => $this->configuration->getIntegrationDate(),
+            'integrationDate' => $this->configuration->getIntegrationDate(),
+            'dataPartnerAttributionId' => $this->shopContext->getBnCode(),
+            'dataCspNonce' => $this->configuration->getCSPNonce(),
+            'dataEnable3ds' => $this->configuration->is3dSecureEnabled(),
         ];
 
         if ('SANDBOX' === $this->configuration->getPaymentMode()) {
-            $params['debug'] = 'true';
-//            $params['buyer-country'] = $this->getCountry();
+//            $params['debug'] = 'true';
+            $params['buyerCountry'] = $this->getCountry();
         }
 
         $fundingSourcesDisabled = $this->getFundingSourcesDisabled();
 
         if (false === empty($fundingSourcesDisabled)) {
-            $params['disable-funding'] = implode(',', $fundingSourcesDisabled);
+            $params['disableFunding'] = implode(',', $fundingSourcesDisabled);
         }
 
         $eligibleAlternativePaymentMethods = $this->getEligibleAlternativePaymentMethods();
 
-        if (false === empty($eligibleAlternativePaymentMethods)) {
+        if (false === empty($eligibleAlternativePaymentMethods) && $this->shouldIncludeButtonsComponent()) {
             $params['locale'] = $this->getLocale();
             $components[] = 'payment-fields';
         }
@@ -133,12 +139,12 @@ class PayPalSdkLinkBuilder
         }
 
         if (false === empty($eligibleAlternativePaymentMethods)) {
-            $params['enable-funding'] = implode(',', $eligibleAlternativePaymentMethods);
+            $params['enableFunding'] = implode(',', $eligibleAlternativePaymentMethods);
         }
 
         $params['components'] = implode(',', $components);
 
-        return self::BASE_LINK . '?' . urldecode(http_build_query($params));
+        return $params;
     }
 
     /**
@@ -261,16 +267,18 @@ class PayPalSdkLinkBuilder
     {
         $context = \Context::getContext();
         $code = '';
+        $taxAddressType = \Configuration::get('PS_TAX_ADDRESS_TYPE');
 
         if (\Validate::isLoadedObject($context->country)) {
             $code = strtoupper($context->country->iso_code);
         }
 
-        if (\Validate::isLoadedObject($context->cart) && $context->cart->id_address_invoice) {
-            $address = new \Address($context->cart->id_address_invoice);
+        if (\Validate::isLoadedObject($context->cart)) {
+            $taxAddressId = property_exists($context->cart, $taxAddressType) ? $context->cart->{$taxAddressType} : $context->cart->id_address_delivery;
+            $address = new \Address($taxAddressId);
             $country = new \Country($address->id_country);
 
-            $code = strtoupper($country->iso_code);
+            $code = \Validate::isLoadedObject($country) ? strtoupper($country->iso_code) : $code;
         }
 
         if ($code === 'UK') {
