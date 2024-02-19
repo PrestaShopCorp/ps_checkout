@@ -351,3 +351,11 @@
 .checkout-modal-button .btn {
   color: #FFFFFF;
 }
+
+#ps_checkout .tabpanel__infos .liability-explanation {
+  font-weight: 400;
+  background-color: #EEEEEE;
+  padding: 4px 8px;
+  margin-top: 5px;
+  display: inline-block;
+}

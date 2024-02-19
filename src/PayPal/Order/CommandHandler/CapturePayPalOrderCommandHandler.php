@@ -35,6 +35,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapt
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\PayPalCaptureStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPalError;
 use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
+use Psr\SimpleCache\CacheInterface;
 
 class CapturePayPalOrderCommandHandler
 {
@@ -42,10 +43,15 @@ class CapturePayPalOrderCommandHandler
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
+    /**
+     * @var CacheInterface
+     */
+    private $orderPayPalCache;
 
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct(EventDispatcherInterface $eventDispatcher, CacheInterface $orderPayPalCache)
     {
         $this->eventDispatcher = $eventDispatcher;
+        $this->orderPayPalCache = $orderPayPalCache;
     }
 
     public function handle(CapturePayPalOrderCommand $capturePayPalOrderCommand)
@@ -76,6 +82,11 @@ class CapturePayPalOrderCommandHandler
         }
 
         $orderPayPal = $response['body'];
+
+        $payPalOrderFromCache = $this->orderPayPalCache->get($orderPayPal['id']);
+
+        $orderPayPal = array_replace_recursive($payPalOrderFromCache, $orderPayPal);
+
         $capturePayPal = $orderPayPal['purchase_units'][0]['payments']['captures'][0];
 
         if ($orderPayPal['status'] === PayPalOrderStatus::COMPLETED) {
