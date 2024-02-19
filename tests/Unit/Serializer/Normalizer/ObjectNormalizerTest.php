@@ -20,9 +20,17 @@
 
 namespace Tests\Unit\Serializer\Normalizer;
 
+use PhpParser\JsonDecoder;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceEntity;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CardResponse;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderResponse;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\LinkDescription;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PaymentSourceResponse;
 use PrestaShop\Module\PrestashopCheckout\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
+use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
+use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer as SymfonyObjectNormalizer;
@@ -40,6 +48,27 @@ class ObjectNormalizerTest extends TestCase
         $this->assertEquals($expectedJson, $json);
     }
 
+    /**
+     * @dataProvider objectProvider
+     */
+    public function testDeserialize($expectedObject, $json)
+    {
+        $serializer = new Serializer([new ObjectNormalizer(new SymfonyObjectNormalizer()), new ArrayDenormalizer()], [new JsonEncoder(), new JsonDecoder()]);
+        $newObject = $serializer->deserialize($json, FundingSourceEntity::class, JsonEncoder::FORMAT);
+        $this->assertEquals($expectedObject, $newObject);
+    }
+
+    /**
+     * @dataProvider createPayPalOrderResponseObjectProvider
+     */
+    public function testDeserializePayPalOrderResponse($expectedObject, $json)
+    {
+        $extractor = new PropertyInfoExtractor([], [new PhpDocExtractor(), new ReflectionExtractor()]);
+        $serializer = new Serializer([new ObjectNormalizer(new SymfonyObjectNormalizer(null, null, null, $extractor)), new ArrayDenormalizer()], [new JsonEncoder(), new JsonDecoder()]);
+        $newObject = $serializer->deserialize($json, CreatePayPalOrderResponse::class, JsonEncoder::FORMAT);
+        $this->assertEquals($expectedObject, $newObject);
+    }
+
     public function objectProvider()
     {
         $fundingSourceEntity = new FundingSourceEntity('paypal');
@@ -49,11 +78,30 @@ class ObjectNormalizerTest extends TestCase
         return [
             [
                 new FundingSourceEntity('paypal'),
-                '{"name":"paypal","countries":[],"isEnabled":true,"isToggleable":true}'
+                '{"name":"paypal","countries":[],"isEnabled":true,"isToggleable":true}',
             ],
             [
                 $fundingSourceEntity,
-                '{"name":"paypal","position":0,"countries":["US","FR"],"isEnabled":true,"isToggleable":true}'
+                '{"name":"paypal","position":0,"countries":["US","FR"],"isEnabled":true,"isToggleable":true}',
+            ],
+        ];
+    }
+
+    public function createPayPalOrderResponseObjectProvider()
+    {
+        return [
+            [
+                (new CreatePayPalOrderResponse())
+                    ->setId('SOME_ID')
+                    ->setLinks([new LinkDescription(['href' => 'HREF', 'rel' => 'REL', 'method' => 'METHOD'])]),
+                '{"id": "SOME_ID", "links": [{"href":"HREF","rel":"REL","method":"METHOD"}]}',
+            ],
+            [
+                (new CreatePayPalOrderResponse())
+                    ->setId('SOME_ID')
+                    ->setLinks([new LinkDescription(['href' => 'HREF', 'rel' => 'REL', 'method' => 'METHOD'])])
+                    ->setPaymentSource(new PaymentSourceResponse(['card' => new CardResponse(['name' => 'AMEX'])])),
+                '{"id": "SOME_ID","payment_source": {"card": {"name":"AMEX"}},"links": [{"href":"HREF","rel":"REL","method":"METHOD"}]}',
             ],
         ];
     }
