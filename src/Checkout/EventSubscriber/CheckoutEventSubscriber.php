@@ -61,11 +61,11 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
     /**
      * @param Ps_checkout $module
      */
-    public function __construct(Ps_checkout $module)
+    public function __construct(Ps_checkout $module, CheckoutChecker $checkoutChecker, CommandBusInterface $commandBus)
     {
         $this->module = $module;
-        $this->checkoutChecker = $this->module->getService('ps_checkout.checkout.checker');
-        $this->commandBus = $this->module->getService('ps_checkout.bus.command');
+        $this->checkoutChecker = $checkoutChecker;
+        $this->commandBus = $commandBus;
     }
 
     /**

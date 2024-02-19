@@ -482,32 +482,34 @@ services:
       - "@ps_checkout.logger"
       - "@ps_checkout.logger.configuration"
 
-  ps_checkout.event.subscriber.checkout:
+  PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber\CheckoutEventSubscriber:
     class: 'PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber\CheckoutEventSubscriber'
     public: true
     arguments:
       - "@ps_checkout.module"
+      - '@PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker'
+      - '@ps_checkout.bus.command'
 
-  ps_checkout.event.subscriber.order:
+  PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber'
     public: true
     arguments:
       - "@ps_checkout.module"
       - "@ps_checkout.repository.pscheckoutcart"
 
-  ps_checkout.event.subscriber.paypal.order:
+  PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber'
     public: true
     arguments:
       - "@ps_checkout.module"
       - "@ps_checkout.repository.pscheckoutcart"
       - "@ps_checkout.cache.paypal.order"
-      - "@ps_checkout.checkout.checker"
+      - '@PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker'
       - "@ps_checkout.paypal.order.service.check_transition_paypal_order_status"
       - "@ps_checkout.order.state.service.order_state_mapper"
       - '@ps_checkout.paypal.configuration'
 
-  ps_checkout.event.subscriber.paypal.capture:
+  PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber'
     public: true
     arguments:
@@ -532,12 +534,12 @@ services:
     factory: ["@ps_checkout.event.dispatcher.factory", "create"]
     arguments:
       - [
-          "@ps_checkout.event.subscriber.checkout",
-          "@ps_checkout.event.subscriber.order",
-          "@ps_checkout.event.subscriber.paypal.order",
-          "@ps_checkout.event.subscriber.paypal.capture",
+          '@PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber\CheckoutEventSubscriber',
+          '@PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber',
+          '@PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber',
+          '@PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber',
           '@PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscriber\PayPalRefundEventSubscriber'
-        ]
+      ]
 
   ps_checkout.event.dispatcher:
     class: 'PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
@@ -709,7 +711,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\CheckTransitionPayPalCaptureStatusService'
     public: true
 
-  ps_checkout.checkout.checker:
+  PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker:
     class: 'PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker'
     public: true
     arguments:
