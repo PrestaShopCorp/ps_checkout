@@ -146,11 +146,11 @@
                         {l s='Success' mod='ps_checkout'}
                       </span>
                       {elseif $orderPayPal.is3DSecureAvailable && !$orderPayPal.isLiabilityShifted}
-                      <span class="badge rounded badge-warning">
+                      <span class="badge rounded badge-danger">
                         {l s='Failed' mod='ps_checkout'}
                       </span>
                       {else}
-                      <span class="badge rounded badge-danger">
+                      <span class="badge rounded badge-warning">
                         {l s='Card does not support 3D Secure' mod='ps_checkout'}
                       </span>
                       {/if}
