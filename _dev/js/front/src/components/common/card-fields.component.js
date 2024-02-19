@@ -49,8 +49,7 @@ export class CardFieldsComponent extends BaseComponent {
     configPayPal: 'PayPalSdkConfig',
     payPalService: 'PayPalService',
     psCheckoutApi: 'PsCheckoutApi',
-    psCheckoutService: 'PsCheckoutService',
-    querySelectorService: 'QuerySelectorService',
+    querySelectorService: 'QuerySelectorService'
   };
 
   created() {
@@ -65,24 +64,33 @@ export class CardFieldsComponent extends BaseComponent {
       name: false,
       number: false,
       expiry: false,
-      cvv: false,
-    }
+      cvv: false
+    };
     this.data.HTMLElement = this.props.HTMLElement;
     this.data.HTMLElementCardForm = this.querySelectorService.getCardFieldsFormContainer();
     this.data.HTMLElementBaseButton = this.getBaseButton();
     this.data.HTMLElementButton = null;
     this.data.HTMLElementButtonWrapper = this.getButtonWrapper();
 
-    this.data.HTMLElementCardHolderName = this.querySelectorService.getCardFieldsNameInputContainer();
-    this.data.HTMLElementCardNumber = this.querySelectorService.getCardFieldsNumberInputContainer();
-    this.data.HTMLElementCardExpiry = this.querySelectorService.getCardFieldsExpiryInputContainer();
-    this.data.HTMLElementCardCvv = this.querySelectorService.getCardFieldsCvvInputContainer();
+    this.data.HTMLElementCardHolderName =
+      this.querySelectorService.getCardFieldsNameInputContainer();
+    this.data.HTMLElementCardNumber =
+      this.querySelectorService.getCardFieldsNumberInputContainer();
+    this.data.HTMLElementCardExpiry =
+      this.querySelectorService.getCardFieldsExpiryInputContainer();
+    this.data.HTMLElementCardCvv =
+      this.querySelectorService.getCardFieldsCvvInputContainer();
 
-    this.data.HTMLElementCardNameError= this.querySelectorService.getCardFieldsNameError();
-    this.data.HTMLElementCardNumberError= this.querySelectorService.getCardFieldsNumberError();
-    this.data.HTMLElementCardVendorError= this.querySelectorService.getCardFieldsVendorError();
-    this.data.HTMLElementCardExpiryError= this.querySelectorService.getCardFieldsExpiryError();
-    this.data.HTMLElementCardCvvError= this.querySelectorService.getCardFieldsCvvError();
+    this.data.HTMLElementCardNameError =
+      this.querySelectorService.getCardFieldsNameError();
+    this.data.HTMLElementCardNumberError =
+      this.querySelectorService.getCardFieldsNumberError();
+    this.data.HTMLElementCardVendorError =
+      this.querySelectorService.getCardFieldsVendorError();
+    this.data.HTMLElementCardExpiryError =
+      this.querySelectorService.getCardFieldsExpiryError();
+    this.data.HTMLElementCardCvvError =
+      this.querySelectorService.getCardFieldsCvvError();
   }
 
   getBaseButton() {
@@ -102,11 +110,14 @@ export class CardFieldsComponent extends BaseComponent {
   }
 
   isFormValid() {
-    const {cardNameField, cardNumberField, cardExpiryField, cardCvvField } = this.data.cardFieldsState.fields;
-    return (cardNameField.isEmpty || cardNameField.isValid) &&
+    const { cardNameField, cardNumberField, cardExpiryField, cardCvvField } =
+      this.data.cardFieldsState.fields;
+    return (
+      (cardNameField.isEmpty || cardNameField.isValid) &&
       cardNumberField.isValid &&
       cardExpiryField.isValid &&
       cardCvvField.isValid
+    );
   }
 
   setFocusedField(fieldName) {
@@ -118,31 +129,40 @@ export class CardFieldsComponent extends BaseComponent {
       this.data.cardFieldsState.fields.cardNameField;
     const hideError = isEmpty || isFocused || isValid;
 
-    this.data.HTMLElementCardNameError.classList.toggle('hidden', hideError)
+    this.data.HTMLElementCardNameError.classList.toggle('hidden', hideError);
   }
 
   toggleCardNumberFieldError() {
     const { isFocused, isEmpty, isValid, isPotentiallyValid } =
       this.data.cardFieldsState.fields.cardNumberField;
-    const hideError = isFocused || !this.data.cardFieldsFocused.number || isValid;
+    const hideError =
+      isFocused || !this.data.cardFieldsFocused.number || isValid;
 
-    this.data.HTMLElementCardNumberError.classList.toggle('hidden', !isPotentiallyValid || hideError)
-    this.data.HTMLElementCardVendorError.classList.toggle('hidden', isPotentiallyValid)
+    this.data.HTMLElementCardNumberError.classList.toggle(
+      'hidden',
+      !isPotentiallyValid || hideError
+    );
+    this.data.HTMLElementCardVendorError.classList.toggle(
+      'hidden',
+      isPotentiallyValid
+    );
   }
 
   toggleCardExpiryFieldError() {
     const { isFocused, isEmpty, isValid, isPotentiallyValid } =
       this.data.cardFieldsState.fields.cardExpiryField;
-    const hideError = isPotentiallyValid && (isFocused || !this.data.cardFieldsFocused.expiry || isValid);
+    const hideError =
+      isPotentiallyValid &&
+      (isFocused || !this.data.cardFieldsFocused.expiry || isValid);
 
-    this.data.HTMLElementCardExpiryError.classList.toggle('hidden', hideError)
+    this.data.HTMLElementCardExpiryError.classList.toggle('hidden', hideError);
   }
   toggleCardCvvFieldError() {
     const { isFocused, isEmpty, isValid, isPotentiallyValid } =
       this.data.cardFieldsState.fields.cardCvvField;
     const hideError = isFocused || !this.data.cardFieldsFocused.cvv || isValid;
 
-    this.data.HTMLElementCardCvvError.classList.toggle('hidden', hideError)
+    this.data.HTMLElementCardCvvError.classList.toggle('hidden', hideError);
   }
 
   toggleCardFieldsErrors() {
@@ -205,36 +225,38 @@ export class CardFieldsComponent extends BaseComponent {
             return this.psCheckoutApi
               .postCreateOrder({
                 ...data,
-                fundingSource: this.data.name,
-                isHostedFields: true,
+                isHostedFields: true
                 // vault: storeCardInVault
               })
-              .then(data => {
+              .then((data) => {
                 return data;
               })
-              .catch(error => {
+              .catch((error) => {
                 this.data.notification.showError(
                   `${error.message} ${error.name}`
                 );
-              })
+              });
           },
           onApprove: async (data) => {
-            return this.psCheckoutApi.postValidateOrder({
-              ...data,
-              fundingSource: this.data.name,
-              isHostedFields: true
-            })
-            .catch(error => {
-              let message = error.message || '';
+            return this.psCheckoutApi
+              .postValidateOrder({
+                ...data,
+                fundingSource: this.data.name,
+                isHostedFields: true
+              })
+              .catch((error) => {
+                let message = error.message || '';
 
-              if (!message) {
-                message = `Unknown error, code: ${error.code || 'none'}, description: ${error.description || 'none'}`;
-              }
+                if (!message) {
+                  message = `Unknown error, code: ${
+                    error.code || 'none'
+                  }, description: ${error.description || 'none'}`;
+                }
 
-              this.data.loader.hide();
-              this.data.notification.showError(message);
-              this.data.HTMLElementButton.removeAttribute('disabled');
-            })
+                this.data.loader.hide();
+                this.data.notification.showError(message);
+                this.data.HTMLElementButton.removeAttribute('disabled');
+              });
           },
           onError: async (error) => {
             this.data.loader.hide();
@@ -277,18 +299,27 @@ export class CardFieldsComponent extends BaseComponent {
              */
             onInputSubmitRequest: (event) => {
               this.updateCardFieldsState(event);
-            },
+            }
           }
-
-        },
+        }
       )
-      .then(cardFields => {
+      .then((cardFields) => {
         this.data.HTMLElementCardForm.classList.toggle('loading', false);
+
+        if (this.data.HTMLElementCardForm.style.display === 'none') {
+          this.data.HTMLElementCardForm.style.display = 'block';
+        }
+
         if (this.data.HTMLElement !== null) {
-          this.data.HTMLElementButton.addEventListener('click', event => {
+          this.data.HTMLElementButton.addEventListener('click', (event) => {
             event.preventDefault();
+
+            if (!this.data.validity) {
+              this.data.HTMLElementButton.setAttribute('disabled', '');
+              return;
+            }
+
             this.data.loader.show();
-            // this.data.HTMLElementButton.classList.toggle('disabled', true);
             this.data.HTMLElementButton.setAttribute('disabled', '');
 
             cardFields.submit();
@@ -297,12 +328,9 @@ export class CardFieldsComponent extends BaseComponent {
       });
   }
 
-
-
   renderButton() {
-    this.data.HTMLElementButton = this.data.HTMLElementBaseButton.cloneNode(
-      true
-    );
+    this.data.HTMLElementButton =
+      this.data.HTMLElementBaseButton.cloneNode(true);
 
     this.data.HTMLElementButtonWrapper.append(this.data.HTMLElementButton);
     this.data.HTMLElementButton.classList.remove('disabled');
@@ -310,12 +338,12 @@ export class CardFieldsComponent extends BaseComponent {
     this.data.HTMLElementButton.disabled = !this.isSubmittable();
 
     this.data.conditions &&
-    this.data.conditions.onChange(() => {
-      // In some PS versions, the handler fails to disable the button because of the timing.
-      setTimeout(() => {
-        this.data.HTMLElementButton.disabled = !this.isSubmittable();
-      }, 0);
-    });
+      this.data.conditions.onChange(() => {
+        // In some PS versions, the handler fails to disable the button because of the timing.
+        setTimeout(() => {
+          this.data.HTMLElementButton.disabled = !this.isSubmittable();
+        }, 0);
+      });
   }
 
   render() {

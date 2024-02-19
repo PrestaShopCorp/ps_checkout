@@ -22,6 +22,7 @@ import { MarkComponent } from './marker.component';
 import { SmartButtonComponent } from './smart-button.component';
 import { PaymentFieldsComponent } from "./payment-fields.component";
 import {CardFieldsComponent} from "./card-fields.component";
+import {PS_VERSION_1_6} from "../../constants/ps-version.constants";
 
 /**
  * @typedef PaymentOptionComponentProps
@@ -37,6 +38,7 @@ export class PaymentOptionComponent extends BaseComponent {
     config: 'PsCheckoutConfig',
     payPalService: 'PayPalService',
     querySelectorService: 'QuerySelectorService',
+    prestashopService: 'PrestashopService',
     $: '$'
   };
 
@@ -78,9 +80,13 @@ export class PaymentOptionComponent extends BaseComponent {
       this.$(translationKey) !== undefined
         ? this.$(translationKey)
         : this.$('funding-source.name.default');
+
     let element = Array.prototype.slice
       .call(this.data.HTMLElementContainer.querySelectorAll('*'))
-      .find(item => item.innerHTML.trim() === label.trim());
+      .find(
+        item => (this.prestashopService.getVersion() === PS_VERSION_1_6 ? item.innerHTML.trim() : item.innerText.trim())
+          === label.trim()
+      );
 
     if (!element) {
       console.error('HTMLElement label "' + label.trim() + '" not found.');

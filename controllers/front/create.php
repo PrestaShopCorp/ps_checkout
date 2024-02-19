@@ -131,7 +131,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
             }
 
             $paypalOrder = new CreatePaypalOrderHandler($this->context);
-            $response = $paypalOrder->handle($isExpressCheckout);
+            $response = $paypalOrder->handle($isExpressCheckout, isset($bodyValues['fundingSource']) && $bodyValues['fundingSource'] === 'card');
 
             if (false === $response['status']) {
                 throw new PsCheckoutException($response['exceptionMessage'], (int) $response['exceptionCode']);

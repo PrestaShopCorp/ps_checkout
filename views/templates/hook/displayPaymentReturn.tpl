@@ -22,7 +22,7 @@
       <div class="card-block">
         <div class="row">
           <div class="col-md-12">
-            <h3 class="h1 card-title">
+            <h3 class="h3 card-title">
                 {$translations.blockTitle|escape:'html':'UTF-8'}
             </h3>
 

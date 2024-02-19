@@ -65,6 +65,14 @@
  * @property {function} onApply
  */
 
+/**
+ * @typedef PaypalMarks
+ * @type {*}
+ *
+ * @property {function} isEligible
+ * @property {function} render
+ */
+
 import { BaseClass } from '../core/dependency-injection/base.class';
 
 /**
@@ -127,7 +135,7 @@ export class PayPalService extends BaseClass {
 
     if (fundingSource === 'paypal') {
       return style;
-    } else if(fundingSource === 'paylater') {
+    } else if (fundingSource === 'paylater') {
       return { shape: style.shape, color: style.color };
     }
 
@@ -178,7 +186,7 @@ export class PayPalService extends BaseClass {
       },
       ...events
     })
-      .then(hostedFields => {
+      .then((hostedFields) => {
         const numberField = document.querySelector(fieldSelectors.number);
         const cvvField = document.querySelector(fieldSelectors.cvv);
         const expirationDateField = document.querySelector(
@@ -203,36 +211,36 @@ export class PayPalService extends BaseClass {
 
         return hostedFields;
       })
-      .then(hostedFields => {
-        hostedFields.on('focus', event => {
+      .then((hostedFields) => {
+        hostedFields.on('focus', (event) => {
           window.ps_checkout.events.dispatchEvent(
             new CustomEvent('hostedFieldsFocus', {
               detail: { ps_checkout: window.ps_checkout, event: event }
             })
           );
         });
-        hostedFields.on('blur', event => {
+        hostedFields.on('blur', (event) => {
           window.ps_checkout.events.dispatchEvent(
             new CustomEvent('hostedFieldsBlur', {
               detail: { ps_checkout: window.ps_checkout, event: event }
             })
           );
         });
-        hostedFields.on('empty', event => {
+        hostedFields.on('empty', (event) => {
           window.ps_checkout.events.dispatchEvent(
             new CustomEvent('hostedFieldsEmpty', {
               detail: { ps_checkout: window.ps_checkout, event: event }
             })
           );
         });
-        hostedFields.on('notEmpty', event => {
+        hostedFields.on('notEmpty', (event) => {
           window.ps_checkout.events.dispatchEvent(
             new CustomEvent('hostedFieldsNotEmpty', {
               detail: { ps_checkout: window.ps_checkout, event: event }
             })
           );
         });
-        hostedFields.on('validityChange', event => {
+        hostedFields.on('validityChange', (event) => {
           window.ps_checkout.events.dispatchEvent(
             new CustomEvent('hostedFieldsValidityChange', {
               detail: { ps_checkout: window.ps_checkout, event: event }
@@ -246,7 +254,7 @@ export class PayPalService extends BaseClass {
             })
           );
         });
-        hostedFields.on('cardTypeChange', event => {
+        hostedFields.on('cardTypeChange', (event) => {
           window.ps_checkout.events.dispatchEvent(
             new CustomEvent('hostedFieldsCardTypeChange', {
               detail: { ps_checkout: window.ps_checkout, event: event }
@@ -304,7 +312,6 @@ export class PayPalService extends BaseClass {
   async getCardFields(fieldSelectors, options) {
     const cardFields = this.sdk.CardFields(options);
 
-
     const nameField = cardFields.NameField({
       placeholder: this.$('paypal.hosted-fields.placeholder.card-name')
     });
@@ -315,10 +322,19 @@ export class PayPalService extends BaseClass {
       placeholder: this.$('paypal.hosted-fields.placeholder.expiration-date')
     });
     const cvvField = cardFields.CVVField({
-      placeholder: this.$(
-        'paypal.hosted-fields.placeholder.cvv'
-      )
+      placeholder: this.$('paypal.hosted-fields.placeholder.cvv')
     });
+
+    // await Promise.all(
+    //   [
+    //     cardNameField.render(nameField),
+    //     cardNumberField.render(numberField),
+    //     cardCvvField.render(cvvField),
+    //     cardExpiryField.render(expirationDateField)
+    //   ]
+    // ).catch(e => {
+    //   return console.error("Failed to render CardFields", e);
+    // }) ;
 
     try {
       await numberField.render(fieldSelectors.number);
@@ -326,7 +342,7 @@ export class PayPalService extends BaseClass {
       await cvvField.render(fieldSelectors.cvv);
       await nameField.render(fieldSelectors.name);
     } catch (e) {
-      return console.error("Failed to render CardFields", e);
+      return console.error('Failed to render CardFields', e);
     }
 
     const nameLabel = document.querySelector(
@@ -335,7 +351,9 @@ export class PayPalService extends BaseClass {
     const numberLabel = document.querySelector(
       `label[for="${fieldSelectors.number.id}"]`
     );
-    const cvvLabel = document.querySelector(`label[for="${fieldSelectors.cvv.id}"]`);
+    const cvvLabel = document.querySelector(
+      `label[for="${fieldSelectors.cvv.id}"]`
+    );
     const expirationDateLabel = document.querySelector(
       `label[for="${fieldSelectors.expiry.id}"]`
     );
@@ -343,7 +361,9 @@ export class PayPalService extends BaseClass {
     nameLabel.innerHTML = this.$('paypal.hosted-fields.label.card-name');
     numberLabel.innerHTML = this.$('paypal.hosted-fields.label.card-number');
     cvvLabel.innerHTML = this.$('paypal.hosted-fields.label.cvv');
-    expirationDateLabel.innerHTML = this.$('paypal.hosted-fields.label.expiration-date');
+    expirationDateLabel.innerHTML = this.$(
+      'paypal.hosted-fields.label.expiration-date'
+    );
 
     return cardFields;
   }
@@ -355,16 +375,21 @@ export class PayPalService extends BaseClass {
         this.configPrestaShop.fundingSourcesSorted || paypalFundingSources
       )
         .filter(
-          fundingSource => paypalFundingSources.indexOf(fundingSource) >= 0
+          (fundingSource) => paypalFundingSources.indexOf(fundingSource) >= 0
         )
-        .map(fundingSource => ({
+        .map((fundingSource) => ({
           name: fundingSource,
           mark: this.sdk.Marks({ fundingSource })
         }))
         .filter((fundingSource) => {
-          if (fundingSource.name === 'card' && this.configPrestaShop.hostedFieldsEnabled && !this.isCardFieldsEligible()) {
-            console.log(this.configPrestaShop.hostedFieldsEnabled, this.isCardFieldsEligible());
-            console.error('Card Fields (CCF) eligibility is declined. Switching to PayPal branded card fields (SCF)');
+          if (
+            fundingSource.name === 'card' &&
+            this.configPrestaShop.hostedFieldsEnabled &&
+            !this.isCardFieldsEligible()
+          ) {
+            console.warn(
+              'Card Fields (CCF) eligibility is declined. Switching to PayPal branded card fields (SCF)'
+            );
           }
           console.log(fundingSource.name, fundingSource.mark.isEligible());
 
@@ -376,7 +401,7 @@ export class PayPalService extends BaseClass {
   }
 
   isFundingEligible(fundingSource) {
-    return this.getEligibleFundingSources(true).contains(fundingSource);
+    return this.getEligibleFundingSources().contains(fundingSource);
   }
 
   isHostedFieldsEligible() {
@@ -444,7 +469,6 @@ export class PayPalService extends BaseClass {
    * @param {object} fields
    */
   getPaymentFields(fundingSource, fields = {}) {
-    console.log(this.sdk.PaymentFields);
     return this.sdk.PaymentFields && this.sdk.PaymentFields({
       fundingSource: fundingSource,
       style: this.getPaymentFieldsCustomizationStyle(fundingSource),
@@ -462,5 +486,12 @@ export class PayPalService extends BaseClass {
       ...(this.configPayPal.paymentFieldsCustomization || {}),
       ...(window.ps_checkout.paymentFieldsCustomization || {})
     };
+  }
+
+  /**
+   * @returns {PaypalMarks}
+   */
+  getMarks() {
+    return this.sdk.Marks && this.sdk.Marks();
   }
 }
