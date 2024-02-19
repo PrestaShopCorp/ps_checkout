@@ -20,7 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO;
 
-class CreatePayPalOrderRequest
+class CreatePayPalOrderRequest implements CreatePayPalOrderRequestInterface
 {
     /**
      * @var string
