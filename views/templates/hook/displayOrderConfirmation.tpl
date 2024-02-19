@@ -38,7 +38,7 @@
       </div>
     {/if}
 
-    {if $approvalLink || $orderPayPalStatus === 'PENDING_APPROVAL'}
+    {if $approvalLink && $orderPayPalStatus === 'PENDING_APPROVAL'}
       <div class="alert alert-warning">
         <a href="#ps_checkout-displayPaymentReturn" class="alert-link"{if $isShop17} style="margin: initial;padding: initial;"{/if}>
             {$translations.notificationPendingApproval|escape:'html':'UTF-8'}
@@ -46,7 +46,7 @@
       </div>
     {/if}
 
-    {if $payerActionLink || $orderPayPalStatus === 'PAYER_ACTION_REQUIRED'}
+    {if $payerActionLink && $orderPayPalStatus === 'PAYER_ACTION_REQUIRED'}
       <div class="alert alert-warning">
         <a href="#ps_checkout-displayPaymentReturn" class="alert-link"{if $isShop17} style="margin: initial;padding: initial;"{/if}>
             {$translations.notificationPayerActionRequired|escape:'html':'UTF-8'}
