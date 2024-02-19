@@ -42,7 +42,9 @@ class PaymentService
 
     /**
      * @param CreatePayPalOrderRequestInterface $request
+     *
      * @return ResponseInterface|void
+     *
      * @throws InvalidRequestException|NotAuthorizedException|UnprocessableEntityException
      */
     public function createOrder(CreatePayPalOrderRequestInterface $request)
@@ -79,6 +81,7 @@ class PaymentService
                         default:
                             throw new InvalidRequestException(sprintf('InvalidRequest unknown error : %s', $errorMsg), InvalidRequestException::UNKNOWN);
                     }
+                    // no break
                 case 401:
                     switch ($errorMsg) {
                         case 'PERMISSION_DENIED':
@@ -90,6 +93,7 @@ class PaymentService
                         default:
                             throw new NotAuthorizedException(sprintf('NotAuthorized unknown error : %s', $errorMsg), NotAuthorizedException::UNKNOWN);
                     }
+                    // no break
                 case 422:
                     switch ($errorMsg) {
                         case 'AMOUNT_MISMATCH':
@@ -268,9 +272,16 @@ class PaymentService
     private function getErrorMessage($body)
     {
         $body = json_decode($body, true);
-        if ($body['details'][0]['issue']) return $body['details'][0]['issue'];
-        if ($body['name']) return $body['name'];
-        if ($body['error']) return $body['error'];
+        if (isset($body['details'][0]['issue']) && $body['details'][0]['issue']) {
+            return $body['details'][0]['issue'];
+        }
+        if ($body['name']) {
+            return $body['name'];
+        }
+        if ($body['error']) {
+            return $body['error'];
+        }
+
         return '';
     }
 }
