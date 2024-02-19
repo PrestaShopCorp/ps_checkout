@@ -20,6 +20,9 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\DTO\Orders;
 
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\ApplicationContextRequest;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PaymentSourceRequest;
+
 interface CreatePayPalOrderRequestInterface
 {
     public function getIntent();
@@ -33,4 +36,12 @@ interface CreatePayPalOrderRequestInterface
     public function getPaymentSource();
 
     public function setPaymentSource(PaymentSourceRequest $payment_source);
+
+    public function getApplicationContext();
+
+    public function setApplicationContext(ApplicationContextRequest $application_context);
+
+    public function getProcessingInstruction();
+
+    public function setProcessingInstruction($processing_instruction);
 }
