@@ -91,11 +91,11 @@ export class PayPalService extends BaseClass {
   };
 
   getOrderId() {
-    return this.configPayPal.orderId;
+    return this.configPrestaShop.orderId;
   }
 
   getFundingSource() {
-    return this.configPayPal.fundingSource;
+    return this.configPrestaShop.fundingSource;
   }
 
   /**
