@@ -49,7 +49,8 @@ export class CardFieldsComponent extends BaseComponent {
     configPayPal: 'PayPalSdkConfig',
     payPalService: 'PayPalService',
     psCheckoutApi: 'PsCheckoutApi',
-    querySelectorService: 'QuerySelectorService'
+    querySelectorService: 'QuerySelectorService',
+    $: '$'
   };
 
   created() {
@@ -232,9 +233,7 @@ export class CardFieldsComponent extends BaseComponent {
                 return data;
               })
               .catch((error) => {
-                this.data.notification.showError(
-                  `${error.message} ${error.name}`
-                );
+                throw error;
               });
           },
           onApprove: async (data) => {
@@ -260,7 +259,7 @@ export class CardFieldsComponent extends BaseComponent {
           },
           onError: async (error) => {
             this.data.loader.hide();
-            let message = error.message || '';
+            let message = error.message || this.$('checkout.form.error.label');
             this.data.notification.showError(message);
             this.data.HTMLElementButton.removeAttribute('disabled');
           },

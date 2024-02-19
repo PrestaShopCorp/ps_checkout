@@ -19,7 +19,7 @@
 export const PayPalSdkConfig = {
   sdkConfig: {
     dataNamespace: 'ps_checkoutPayPalSdkInstance',
-    orderId: window.ps_checkoutPayPalOrderId,
+    dataOrderId: window.ps_checkoutPayPalOrderId,
     ...window.ps_checkoutPayPalSdkConfig
   },
   buttonCustomization: window.ps_checkoutPayPalButtonConfiguration,

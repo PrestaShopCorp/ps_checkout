@@ -74,6 +74,10 @@ class CapturePayPalOrderCommandHandler
                 (new PayPalError($response['body']['name']))->throwException();
             }
 
+            if (false === empty($response['body']['message'])) {
+                (new PayPalError($response['body']['message']))->throwException();
+            }
+
             if (false === empty($response['exceptionMessage']) && false === empty($response['exceptionCode'])) {
                 throw new PsCheckoutException($response['exceptionMessage'], (int) $response['exceptionCode']);
             }
