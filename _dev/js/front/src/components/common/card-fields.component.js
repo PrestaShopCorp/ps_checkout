@@ -67,10 +67,8 @@ export class CardFieldsComponent extends BaseComponent {
       cvv: false
     };
     this.data.HTMLElement = this.props.HTMLElement;
-    this.data.HTMLElementCardForm =
-      this.querySelectorService.getCardFieldsFormContainer();
-    this.data.HTMLElementBaseButton =
-      this.querySelectorService.getBasePaymentConfirmation();
+    this.data.HTMLElementCardForm = this.querySelectorService.getCardFieldsFormContainer();
+    this.data.HTMLElementBaseButton = this.getBaseButton();
     this.data.HTMLElementButton = null;
     this.data.HTMLElementButtonWrapper = this.getButtonWrapper();
 
@@ -93,6 +91,11 @@ export class CardFieldsComponent extends BaseComponent {
       this.querySelectorService.getCardFieldsExpiryError();
     this.data.HTMLElementCardCvvError =
       this.querySelectorService.getCardFieldsCvvError();
+  }
+
+  getBaseButton() {
+    const buttonSelector = `#payment-confirmation button`;
+    return document.querySelector(buttonSelector);
   }
 
   getButtonWrapper() {
@@ -222,7 +225,6 @@ export class CardFieldsComponent extends BaseComponent {
             return this.psCheckoutApi
               .postCreateOrder({
                 ...data,
-                fundingSource: this.data.name,
                 isHostedFields: true
                 // vault: storeCardInVault
               })

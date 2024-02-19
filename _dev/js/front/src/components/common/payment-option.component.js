@@ -50,7 +50,7 @@ export class PaymentOptionComponent extends BaseComponent {
     this.data.HTMLElementLabel = this.getLabel();
     this.data.HTMLElementMark = this.props.HTMLElementMark || null;
 
-    this.data.HTMLElementCardFields =this.querySelectorService.getCardFieldsFormContainer();
+    this.data.HTMLElementCardFields = this.querySelectorService.getCardFieldsFormContainer();
     this.data.HTMLElementSmartButton = this.getSmartButton();
     this.data.HTMLElementPaymentFields = this.getPaymentFields();
   }
