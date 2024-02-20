@@ -24,8 +24,13 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService;
 use PrestaShop\Module\PrestashopCheckout\Cart\CartRepositoryInterface;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\Exception\InvalidRequestException;
+use PrestaShop\Module\PrestashopCheckout\Exception\NotAuthorizedException;
+use PrestaShop\Module\PrestashopCheckout\Exception\UnprocessableEntityException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CreatePayPalOrderPayloadBuilderInterface;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderRequest;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderResponse;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 
@@ -67,17 +72,19 @@ class CreatePayPalOrderCommandHandler
      *
      * @return void
      *
-     * @throws PayPalOrderException
      * @throws CartNotFoundException
+     * @throws PayPalOrderException
+     * @throws InvalidRequestException
+     * @throws NotAuthorizedException
+     * @throws UnprocessableEntityException
      */
     public function handle(CreatePayPalOrderCommand $command)
     {
         $cart = $this->cartRepository->getCartById($command->getCartId());
         $payload = $this->createPayPalOrderPayloadBuilder->build($cart, $command->getFundingSource());
-        $response = $this->paymentService->createOrder($payload);
-        $order = json_decode($response->getBody()->getContents());
+        $order = $this->paymentService->createOrder($payload);
         $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
-            $order['id'],
+            $order->getId(),
             $order,
             $command->getCartId(),
             $command->isHostedFields(),

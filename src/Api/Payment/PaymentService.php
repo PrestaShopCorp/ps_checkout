@@ -28,7 +28,10 @@ use PrestaShop\Module\PrestashopCheckout\Exception\InvalidRequestException;
 use PrestaShop\Module\PrestashopCheckout\Exception\NotAuthorizedException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\UnprocessableEntityException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderResponse;
+use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 class PaymentService
 {
@@ -36,24 +39,29 @@ class PaymentService
      * @var PayPalOrderHttpClient
      */
     private $client;
+    /**
+     * @var ObjectSerializer
+     */
+    private $serializer;
 
-    public function __construct(PayPalOrderHttpClient $client)
+    public function __construct(PayPalOrderHttpClient $client, ObjectSerializer $serializer)
     {
         $this->client = $client;
+        $this->serializer = $serializer;
     }
 
     /**
      * @param CreatePayPalOrderRequestInterface $request
      *
-     * @return ResponseInterface
+     * @return CreatePayPalOrderResponse
      *
      * @throws InvalidRequestException|NotAuthorizedException|UnprocessableEntityException|PsCheckoutException
      */
     public function createOrder(CreatePayPalOrderRequestInterface $request)
     {
-        $payload = (array) $request;
         try {
-            return $this->client->createOrder($payload);
+            $response = $this->client->createOrder($this->serializer->serialize($request, JsonEncoder::FORMAT));
+            return $this->serializer->deserialize($response->getBody()->getContents(), CreatePayPalOrderResponse::class, JsonEncoder::FORMAT);
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
             $errorMsg = $this->getErrorMessage($response->getBody()->getContents());

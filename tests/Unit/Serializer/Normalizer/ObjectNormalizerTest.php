@@ -28,6 +28,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderRespo
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\LinkDescription;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PaymentSourceResponse;
 use PrestaShop\Module\PrestashopCheckout\Serializer\Normalizer\ObjectNormalizer;
+use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
@@ -43,7 +44,7 @@ class ObjectNormalizerTest extends TestCase
      */
     public function testSerialize($object, $expectedJson)
     {
-        $serializer = new Serializer([new ObjectNormalizer(new SymfonyObjectNormalizer()), new ArrayDenormalizer()], [new JsonEncoder()]);
+        $serializer = new ObjectSerializer();
         $json = $serializer->serialize($object, JsonEncoder::FORMAT, [ObjectNormalizer::PS_SKIP_NULL_VALUES => true]);
         $this->assertEquals($expectedJson, $json);
     }
@@ -53,7 +54,7 @@ class ObjectNormalizerTest extends TestCase
      */
     public function testDeserialize($expectedObject, $json)
     {
-        $serializer = new Serializer([new ObjectNormalizer(new SymfonyObjectNormalizer()), new ArrayDenormalizer()], [new JsonEncoder(), new JsonDecoder()]);
+        $serializer = new ObjectSerializer();
         $newObject = $serializer->deserialize($json, FundingSourceEntity::class, JsonEncoder::FORMAT);
         $this->assertEquals($expectedObject, $newObject);
     }
@@ -63,8 +64,7 @@ class ObjectNormalizerTest extends TestCase
      */
     public function testDeserializePayPalOrderResponse($expectedObject, $json)
     {
-        $extractor = new PropertyInfoExtractor([], [new PhpDocExtractor(), new ReflectionExtractor()]);
-        $serializer = new Serializer([new ObjectNormalizer(new SymfonyObjectNormalizer(null, null, null, $extractor)), new ArrayDenormalizer()], [new JsonEncoder()]);
+        $serializer = new ObjectSerializer();
         $newObject = $serializer->deserialize($json, CreatePayPalOrderResponse::class, JsonEncoder::FORMAT);
         $this->assertEquals($expectedObject, $newObject);
     }
