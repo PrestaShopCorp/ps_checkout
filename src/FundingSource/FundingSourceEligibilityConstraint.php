@@ -40,7 +40,6 @@ class FundingSourceEligibilityConstraint
             'ideal' => ['NL'],
             'mybank' => ['IT'],
             'p24' => ['PL'],
-            'sofort' => ['AT', 'BE', 'DE', 'NL', 'ES'],
             'paylater' => ['FR', 'GB', 'US', 'ES', 'IT'],
         ];
 
