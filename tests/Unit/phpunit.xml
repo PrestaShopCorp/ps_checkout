@@ -1,4 +1,5 @@
-<phpunit stopOnFailure="true"
+<phpunit bootstrap="bootstrap.php"
+         stopOnFailure="true"
          backupGlobals="true"
 >
   <testsuites>

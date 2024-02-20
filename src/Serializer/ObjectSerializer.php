@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Serializer;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Service\SerializerInterface;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
@@ -30,7 +29,7 @@ use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-class ObjectSerializer implements SerializerInterface
+class ObjectSerializer
 {
     const PS_SKIP_NULL_VALUES = 'skip_null_values';
     private $serializer;
@@ -46,8 +45,8 @@ class ObjectSerializer implements SerializerInterface
     }
 
     /**
-     * @param $data
-     * @param $format
+     * @param mixed $data
+     * @param string $format
      * @param bool $skipNullValues
      * @param array $context
      *
@@ -63,9 +62,9 @@ class ObjectSerializer implements SerializerInterface
     /**
      * @template T
      *
-     * @param $data
+     * @param string|array $data
      * @param class-string<T> $type //Class of the object created. For example CreatePayPalOrderResponse::class
-     * @param $format //Format of the data passed. For example JsonEncoder::FORMAT
+     * @param string $format //Format of the data passed. For example JsonEncoder::FORMAT
      * @param array $context //Additional parameters. For example skip null values and etc.
      *
      * @return T
