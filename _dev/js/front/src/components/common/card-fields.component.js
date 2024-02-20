@@ -351,7 +351,10 @@ export class CardFieldsComponent extends BaseComponent {
     this.data.loader = this.app.root.children.loader;
 
     this.renderButton();
-    this.renderPayPalCardFields();
+
+    if (this.data.HTMLElementCardForm) {
+      this.renderPayPalCardFields();
+    }
 
     return this;
   }

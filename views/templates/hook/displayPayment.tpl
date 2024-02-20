@@ -49,7 +49,7 @@
           <div class="payment_module closed">
             <a href="javascript:void(0);">
               {if $fundingSource == 'card' && $isHostedFieldsAvailable}
-                <form id="ps_checkout-card-fields-form" class="form-horizontal loading">
+                <form id="ps_checkout-card-fields-form" class="form-horizontal loading" style="display: none;">
                   <div id="ps_checkout-card-fields-form-loader">
                     <img src="{$modulePath}views/img/tail-spin.svg" alt="">
                   </div>
