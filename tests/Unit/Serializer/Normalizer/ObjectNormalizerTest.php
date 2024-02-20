@@ -64,7 +64,7 @@ class ObjectNormalizerTest extends TestCase
     public function testDeserializePayPalOrderResponse($expectedObject, $json)
     {
         $extractor = new PropertyInfoExtractor([], [new PhpDocExtractor(), new ReflectionExtractor()]);
-        $serializer = new Serializer([new ObjectNormalizer(new SymfonyObjectNormalizer(null, null, null, $extractor)), new ArrayDenormalizer()], [new JsonEncoder(), new JsonDecoder()]);
+        $serializer = new Serializer([new ObjectNormalizer(new SymfonyObjectNormalizer(null, null, null, $extractor)), new ArrayDenormalizer()], [new JsonEncoder()]);
         $newObject = $serializer->deserialize($json, CreatePayPalOrderResponse::class, JsonEncoder::FORMAT);
         $this->assertEquals($expectedObject, $newObject);
     }
@@ -102,6 +102,13 @@ class ObjectNormalizerTest extends TestCase
                     ->setLinks([new LinkDescription(['href' => 'HREF', 'rel' => 'REL', 'method' => 'METHOD'])])
                     ->setPaymentSource(new PaymentSourceResponse(['card' => new CardResponse(['name' => 'AMEX'])])),
                 '{"id": "SOME_ID","payment_source": {"card": {"name":"AMEX"}},"links": [{"href":"HREF","rel":"REL","method":"METHOD"}]}',
+            ],
+            [
+                (new CreatePayPalOrderResponse())
+                    ->setId('SOME_ID')
+                    ->setLinks([new LinkDescription(['href' => 'HREF', 'rel' => 'REL', 'method' => 'METHOD'])])
+                    ->setPaymentSource(new PaymentSourceResponse(['card' => new CardResponse(['name' => 'AMEX'])])),
+                '{"id": "SOME_ID","cart_id": "RANDOM_CART_ID", "payment_source": {"card": {"name":"AMEX"}},"links": [{"href":"HREF","rel":"REL","method":"METHOD"}]}',
             ],
         ];
     }

@@ -698,3 +698,6 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService'
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient'
+
+  PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer:
+    class: 'PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
