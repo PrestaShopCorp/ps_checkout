@@ -60,6 +60,16 @@ function upgrade_module_6_3_6_0($module)
         // Add new configuration for displaying the logo on the product page and the cart
         Configuration::updateGlobalValue('PS_CHECKOUT_DISPLAY_LOGO_PRODUCT', '1');
         Configuration::updateGlobalValue('PS_CHECKOUT_DISPLAY_LOGO_CART', '1');
+
+        clearTemplateCache_6_3_6_0(
+            $module,
+            [
+                'views/templates/admin/ajaxPayPalOrderLegacy.tpl',
+                'views/templates/hook/displayOrderConfirmation.tpl',
+                'views/templates/hook/displayPayment.tpl',
+                'views/templates/hook/displayPaymentReturn.tpl',
+            ]
+        );
     } catch (Exception $exception) {
         PrestaShopLogger::addLog($exception->getMessage(), 3, $exception->getCode(), 'Module', $module->id);
 
@@ -76,4 +86,28 @@ function upgrade_module_6_3_6_0($module)
     }
 
     return true;
+}
+
+/**
+ * PrestaShop 1.6 does not have an automatic cache clear on module upgrade
+ * Native _clearCache() is protected, so we need to create a new method to clear the cache
+ *
+ * @param Ps_checkout $module
+ * @param string[] $templates
+ *
+ * @return void
+ */
+function clearTemplateCache_6_3_6_0(Ps_checkout $module, array $templates)
+{
+    $smarty = Context::getContext()->smarty;
+
+    if (empty($smarty)) {
+        return;
+    }
+
+    foreach ($templates as $template) {
+        $templatePath = $module->getTemplatePath($template);
+        $smarty->clearCompiledTemplate($templatePath);
+        $smarty->clearCache($templatePath);
+    }
 }
