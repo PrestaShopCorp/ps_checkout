@@ -358,57 +358,6 @@ class PayPalSdkConfigurationBuilder
         return '';
     }
 
-    // TODO : Remove everything Sofort related after October 2024 when its no longer supported by PayPal
-    private function isSofortAvailableForMerchant()
-    {
-        if (isset(self::$cache['sofortAvailability'])) {
-            return self::$cache['sofortAvailability'];
-        }
-
-        $query = new \DbQuery();
-        $query->select('date_add');
-        $query->from('configuration');
-        $query->where('name = "PS_CHECKOUT_PAYPAL_ID_MERCHANT"');
-
-        $shopId = \Shop::getContextShopID(true);
-        if ($shopId) {
-            $query->where('id_shop IS NULL OR id_shop = ' . (int) $shopId);
-        }
-
-        $dateAdd = \Db::getInstance()->getValue($query);
-
-        if (empty($dateAdd) || strpos($dateAdd, '0000-00-00') !== false) {
-            // Sofort is unavailable for merchants who have not onboarded yet.
-            self::$cache['sofortAvailability'] = false;
-
-            return false;
-        }
-
-        $dtZone = new \DateTimeZone('UTC');
-        $now = new \DateTime('now', $dtZone);
-        $createdAt = new \DateTime($dateAdd, $dtZone);
-        $deprecationDate = new \DateTime('2024-02-01', $dtZone);
-        $unavailabilityDate = new \DateTime('2024-09-30', $dtZone);
-
-        if ($now > $unavailabilityDate) {
-            // Sofort is totally unavailable after September 30, 2024.
-            self::$cache['sofortAvailability'] = false;
-
-            return false;
-        }
-
-        if ($now > $deprecationDate && $createdAt >= $deprecationDate) {
-            // Sofort is unavailable for merchants onboarded after February 01, 2024.
-            self::$cache['sofortAvailability'] = false;
-
-            return false;
-        }
-
-        self::$cache['sofortAvailability'] = true;
-
-        return true;
-    }
-
     private function getEligibleAlternativePaymentMethods()
     {
         $fundingSourcesEnabled = [];
@@ -469,14 +418,6 @@ class PayPalSdkConfigurationBuilder
                 && $fundingSource['name'] === 'p24'
                 && $country === 'PL'
                 && in_array($context->currency->iso_code, ['EUR', 'PLN'], true)
-            ) {
-                $fundingSourcesEnabled[] = $fundingSource['name'];
-            }
-            if ($fundingSource['active']
-                && $fundingSource['name'] === 'sofort'
-                && (($context->currency->iso_code === 'EUR' && in_array($country, ['AT', 'BE', 'DE', 'ES', 'NL'], true))
-                || ($context->currency->iso_code === 'GBP' && in_array($country, ['GB', 'UK'], true)))
-                && $this->isSofortAvailableForMerchant()
             ) {
                 $fundingSourcesEnabled[] = $fundingSource['name'];
             }
