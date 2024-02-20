@@ -61,6 +61,7 @@ class PaymentService
     {
         try {
             $response = $this->client->createOrder($this->serializer->serialize($request, JsonEncoder::FORMAT));
+
             return $this->serializer->deserialize($response->getBody()->getContents(), CreatePayPalOrderResponse::class, JsonEncoder::FORMAT);
         } catch (HttpException $exception) {
             $response = $exception->getResponse();

@@ -20,7 +20,6 @@
 
 namespace Tests\Unit\Serializer\Normalizer;
 
-use PhpParser\JsonDecoder;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceEntity;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CardResponse;
@@ -29,13 +28,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\LinkDescription;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PaymentSourceResponse;
 use PrestaShop\Module\PrestashopCheckout\Serializer\Normalizer\ObjectNormalizer;
 use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer;
-use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
-use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
-use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer as SymfonyObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
 class ObjectNormalizerTest extends TestCase
 {
