@@ -74,10 +74,12 @@ let {$} = window;
       });
 
       payPalOrderRequest.fail(function(jqXHR, textStatus, errorThrown) {
-        $(config.orderPayPalNotificationsContainer).append(payPalOrderNotification.createErrorHTMLElement({
-          text: errorThrown,
-          class: 'danger',
-        }));
+        if (undefined !== errorThrown && errorThrown) {
+          $(config.orderPayPalNotificationsContainer).append(payPalOrderNotification.createErrorHTMLElement({
+            text: errorThrown,
+            class: 'danger',
+          }));
+        }
 
         if (undefined !== jqXHR.responseJSON && undefined !== jqXHR.responseJSON.content) {
           $(config.orderPayPalNotificationsContainer).append(payPalOrderNotification.createErrorHTMLElement({
