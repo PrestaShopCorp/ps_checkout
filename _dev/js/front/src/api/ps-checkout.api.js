@@ -146,7 +146,7 @@ export class PsCheckoutApi extends BaseClass {
         if (isJsonResponse) {
           if (false === response.ok || response.status >= 400) {
             return response.json().then((response) => {
-              if (actions.restart && response.body && 85 === response.body.error.code) {
+              if (actions?.restart && response.body && 85 === response.body.error.code) {
                 return actions.restart();
               }
 
