@@ -61,6 +61,13 @@ function upgrade_module_6_3_6_0($module)
         Configuration::updateGlobalValue('PS_CHECKOUT_DISPLAY_LOGO_PRODUCT', '1');
         Configuration::updateGlobalValue('PS_CHECKOUT_DISPLAY_LOGO_CART', '1');
 
+        // Remove Sofort
+        Db::getInstance()->delete(
+            'pscheckout_funding_source',
+            'name LIKE "sofort"'
+        );
+
+        // PrestaShop 1.6 does not have an automatic cache clear on module upgrade
         clearTemplateCache_6_3_6_0(
             $module,
             [
