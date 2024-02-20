@@ -60,7 +60,7 @@ class PaymentService
     public function createOrder(CreatePayPalOrderRequestInterface $request)
     {
         try {
-            $response = $this->client->createOrder($this->serializer->serialize($request, JsonEncoder::FORMAT));
+            $response = $this->client->createOrder($this->serializer->serialize($request, JsonEncoder::FORMAT, true));
 
             return $this->serializer->deserialize($response->getBody()->getContents(), CreatePayPalOrderResponse::class, JsonEncoder::FORMAT);
         } catch (HttpException $exception) {

@@ -20,30 +20,26 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Serializer;
 
-use PrestaShop\Module\PrestashopCheckout\Serializer\Normalizer\ObjectNormalizer;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Service\SerializerInterface;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer as SymfonyObjectNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class ObjectSerializer implements SerializerInterface
 {
+    const PS_SKIP_NULL_VALUES = 'skip_null_values';
     private $serializer;
 
     public function __construct()
     {
         $this->serializer = new Serializer(
             [
-                new ObjectNormalizer(
-                    new SymfonyObjectNormalizer(
-                        null,
-                        null,
-                        null,
-                        new PropertyInfoExtractor([], [new PhpDocExtractor(), new ReflectionExtractor()]))),
+                new ObjectNormalizer(null, null, null, new PropertyInfoExtractor([], [new PhpDocExtractor(), new ReflectionExtractor()])),
                 new ArrayDenormalizer(),
             ],
             [new JsonEncoder()]);
@@ -52,22 +48,27 @@ class ObjectSerializer implements SerializerInterface
     /**
      * @param $data
      * @param $format
+     * @param bool $skipNullValues
      * @param array $context
      *
      * @return string
      */
-    public function serialize($data, $format, array $context = [])
+    public function serialize($data, $format, $skipNullValues = false, array $context = [])
     {
-        return $this->serializer->serialize($data, $format, $context);
+        $childContext = [!defined('\Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer::SKIP_NULL_VALUES') ? self::PS_SKIP_NULL_VALUES : AbstractObjectNormalizer::SKIP_NULL_VALUES => $skipNullValues];
+
+        return $this->serializer->serialize($data, $format, array_replace($context, $childContext));
     }
 
     /**
+     * @template T
+     *
      * @param $data
-     * @param $type //Class of the object created. For example CreatePayPalOrderResponse::class
+     * @param class-string<T> $type //Class of the object created. For example CreatePayPalOrderResponse::class
      * @param $format //Format of the data passed. For example JsonEncoder::FORMAT
      * @param array $context //Additional parameters. For example skip null values and etc.
      *
-     * @return array|object|string
+     * @return T
      */
     public function deserialize($data, $type, $format, array $context = [])
     {

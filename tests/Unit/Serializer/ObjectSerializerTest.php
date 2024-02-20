@@ -18,7 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace Tests\Unit\Serializer\Normalizer;
+namespace Serializer;
 
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceEntity;
@@ -26,19 +26,28 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CardResponse;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderResponse;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\LinkDescription;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PaymentSourceResponse;
-use PrestaShop\Module\PrestashopCheckout\Serializer\Normalizer\ObjectNormalizer;
 use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
-class ObjectNormalizerTest extends TestCase
+class ObjectSerializerTest extends TestCase
 {
     /**
      * @dataProvider objectProvider
      */
-    public function testSerialize($object, $expectedJson)
+    public function testSerializeWithoutEmptyValues($object, $expectedJson)
     {
         $serializer = new ObjectSerializer();
-        $json = $serializer->serialize($object, JsonEncoder::FORMAT, [ObjectNormalizer::PS_SKIP_NULL_VALUES => true]);
+        $json = $serializer->serialize($object, JsonEncoder::FORMAT, true);
+        $this->assertEquals($expectedJson, $json);
+    }
+
+    /**
+     * @dataProvider objectWithEmptyValuesProvider
+     */
+    public function testSerializeWithEmptyValues($object, $expectedJson)
+    {
+        $serializer = new ObjectSerializer();
+        $json = $serializer->serialize($object, JsonEncoder::FORMAT);
         $this->assertEquals($expectedJson, $json);
     }
 
@@ -72,6 +81,24 @@ class ObjectNormalizerTest extends TestCase
             [
                 new FundingSourceEntity('paypal'),
                 '{"name":"paypal","countries":[],"isEnabled":true,"isToggleable":true}',
+            ],
+            [
+                $fundingSourceEntity,
+                '{"name":"paypal","position":0,"countries":["US","FR"],"isEnabled":true,"isToggleable":true}',
+            ],
+        ];
+    }
+
+    public function objectWithEmptyValuesProvider()
+    {
+        $fundingSourceEntity = new FundingSourceEntity('paypal');
+        $fundingSourceEntity->setCountries(['US', 'FR']);
+        $fundingSourceEntity->setPosition(0);
+
+        return [
+            [
+                new FundingSourceEntity('paypal'),
+                '{"name":"paypal","position":null,"countries":[],"isEnabled":true,"isToggleable":true}',
             ],
             [
                 $fundingSourceEntity,
