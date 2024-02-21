@@ -399,7 +399,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         /** @var PayPalOrderProvider $paypalOrderProvider */
         $paypalOrderProvider = $this->module->getService('ps_checkout.paypal.provider.order');
 
-        $paypalOrder = $paypalOrderProvider->getById($psCheckoutCart->paypal_order);
+        try {
+            $paypalOrder = $paypalOrderProvider->getById($psCheckoutCart->paypal_order);
+        } catch (Exception $exception) {
+            $paypalOrder = [];
+        }
+
         if ($paypalOrder === false) {
             $paypalOrder = [];
         }
