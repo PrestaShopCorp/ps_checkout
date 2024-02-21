@@ -92,7 +92,7 @@ class CreatePayPalOrderCommandHandler
         $order = $this->paymentService->createOrder($payload);
         $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
             $order->getId(),
-            $this->objectSerializer->normalize($order, 'array'),
+            $this->objectSerializer->toArray($order, false, true),
             $command->getCartId(),
             $command->isHostedFields(),
             $command->isExpressCheckout()

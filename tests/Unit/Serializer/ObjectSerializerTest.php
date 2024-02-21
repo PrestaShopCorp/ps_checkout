@@ -38,7 +38,7 @@ class ObjectSerializerTest extends TestCase
     {
         echo 'Test testSerializeWithoutEmptyValues';
         $serializer = new ObjectSerializer();
-        $json = $serializer->normalize($object, 'array');
+        $json = $serializer->serialize($object, JsonEncoder::FORMAT, true);
         $this->assertEquals($expectedJson, $json);
     }
 
@@ -63,7 +63,17 @@ class ObjectSerializerTest extends TestCase
     }
 
     /**
-     * @dataProvider createPayPalOrderResponseObjectProvider
+     * @dataProvider createPayPalOrderResponseSerializeObjectProvider
+     */
+    public function testSerializePayPalOrderResponse($object, $expectedJson)
+    {
+        $serializer = new ObjectSerializer();
+        $json = $serializer->serialize($object, JsonEncoder::FORMAT, true, true);
+        $this->assertEquals($expectedJson, $json);
+    }
+
+    /**
+     * @dataProvider createPayPalOrderResponseDeserializeObjectProvider
      */
     public function testDeserializePayPalOrderResponse($expectedObject, $json)
     {
@@ -71,6 +81,17 @@ class ObjectSerializerTest extends TestCase
         $newObject = $serializer->deserialize($json, CreatePayPalOrderResponse::class, JsonEncoder::FORMAT);
         $this->assertEquals($expectedObject, $newObject);
     }
+
+    /**
+     * @dataProvider arrayProvider
+     */
+    public function testToArray($object, $expectedArray, $skipNullValues, $convertToSnakeCase)
+    {
+        $serializer = new ObjectSerializer();
+        $newArray = $serializer->toArray($object, $skipNullValues, $convertToSnakeCase);
+        $this->assertEquals($expectedArray, $newArray);
+    }
+
 
     public function objectProvider()
     {
@@ -108,28 +129,118 @@ class ObjectSerializerTest extends TestCase
         ];
     }
 
-    public function createPayPalOrderResponseObjectProvider()
+    public function createPayPalOrderResponseSerializeObjectProvider()
     {
         return [
             [
                 (new CreatePayPalOrderResponse())
                     ->setId('SOME_ID')
                     ->setLinks([new LinkDescription(['href' => 'HREF', 'rel' => 'REL', 'method' => 'METHOD'])]),
-                '{"id": "SOME_ID", "links": [{"href":"HREF","rel":"REL","method":"METHOD"}]}',
+                '{"id":"SOME_ID","links":[{"href":"HREF","rel":"REL","method":"METHOD"}]}',
             ],
             [
                 (new CreatePayPalOrderResponse())
                     ->setId('SOME_ID')
                     ->setLinks([new LinkDescription(['href' => 'HREF', 'rel' => 'REL', 'method' => 'METHOD'])])
                     ->setPaymentSource(new PaymentSourceResponse(['card' => new CardResponse(['name' => 'AMEX'])])),
-                '{"id": "SOME_ID","payment_source": {"card": {"name":"AMEX"}},"links": [{"href":"HREF","rel":"REL","method":"METHOD"}]}',
+                '{"id":"SOME_ID","payment_source":{"card":{"name":"AMEX"}},"links":[{"href":"HREF","rel":"REL","method":"METHOD"}]}',
+            ],
+        ];
+    }
+
+    public function createPayPalOrderResponseDeserializeObjectProvider()
+    {
+        return [
+            [
+                (new CreatePayPalOrderResponse())
+                    ->setId('SOME_ID')
+                    ->setLinks([new LinkDescription(['href' => 'HREF', 'rel' => 'REL', 'method' => 'METHOD'])]),
+                '{"id":"SOME_ID","links":[{"href":"HREF","rel":"REL","method":"METHOD"}]}',
             ],
             [
                 (new CreatePayPalOrderResponse())
                     ->setId('SOME_ID')
                     ->setLinks([new LinkDescription(['href' => 'HREF', 'rel' => 'REL', 'method' => 'METHOD'])])
                     ->setPaymentSource(new PaymentSourceResponse(['card' => new CardResponse(['name' => 'AMEX'])])),
-                '{"id": "SOME_ID","cart_id": "RANDOM_CART_ID", "payment_source": {"card": {"name":"AMEX"}},"links": [{"href":"HREF","rel":"REL","method":"METHOD"}]}',
+                '{"id":"SOME_ID","payment_source":{"card":{"name":"AMEX"}},"links":[{"href":"HREF","rel":"REL","method":"METHOD"}]}',
+            ],
+            [
+                (new CreatePayPalOrderResponse())
+                    ->setId('SOME_ID')
+                    ->setLinks([new LinkDescription(['href' => 'HREF', 'rel' => 'REL', 'method' => 'METHOD'])])
+                    ->setPaymentSource(new PaymentSourceResponse(['card' => new CardResponse(['name' => 'AMEX'])])),
+                '{"id": "SOME_ID","cart_id":"RANDOM_CART_ID","payment_source":{"card":{"name":"AMEX"}},"links":[{"href":"HREF","rel":"REL","method":"METHOD"}]}',
+            ],
+        ];
+    }
+
+    public function arrayProvider()
+    {
+        return [
+            [
+                (new CreatePayPalOrderResponse())
+                    ->setId('SOME_ID')
+                    ->setLinks([new LinkDescription(['href' => 'HREF', 'rel' => 'REL', 'method' => 'METHOD'])])
+                    ->setPaymentSource(new PaymentSourceResponse(['card' => new CardResponse(['name' => 'AMEX'])])),
+                [
+                    'id' => 'SOME_ID',
+                    'create_time' => null,
+                    'update_time' => null,
+                    'payment_source' => [
+                        'card' => [
+                            'name' => 'AMEX',
+                            'last_digits' => null,
+                            'brand' => null,
+                            'available_networks' => null,
+                            'type' => null,
+                            'authentication_result' => null,
+                            'attributes' => null,
+                            'from_request' => null,
+                            'expiry' => null,
+                            'bin_details' => null
+                        ],
+                        'paypal' => null,
+                        'bancontact' => null,
+                        'blik' => null,
+                        'eps' => null,
+                        'giropay' => null,
+                        'ideal' => null,
+                        'mybank' => null,
+                        'p24' => null,
+                        'sofort' => null,
+                        'trustly' => null,
+                        'venmo' => null
+                    ],
+                    'intent' => null,
+                    'processing_instruction' => null,
+                    'payer' => null,
+                    'purchase_units' => null,
+                    'status' => null,
+                    'links' => [
+                        ['href' => 'HREF', 'rel' => 'REL', 'method' => 'METHOD']
+                    ],
+                ],
+                false,
+                true
+            ],
+            [
+                (new CreatePayPalOrderResponse())
+                    ->setId('SOME_ID')
+                    ->setLinks([new LinkDescription(['href' => 'HREF', 'rel' => 'REL', 'method' => 'METHOD'])])
+                    ->setPaymentSource(new PaymentSourceResponse(['card' => new CardResponse(['name' => 'AMEX'])])),
+                [
+                    'id' => 'SOME_ID',
+                    'payment_source' => [
+                        'card' => [
+                            'name' => 'AMEX'
+                        ]
+                    ],
+                    'links' => [
+                        ['href' => 'HREF', 'rel' => 'REL', 'method' => 'METHOD']
+                    ],
+                ],
+                true,
+                true
             ],
         ];
     }

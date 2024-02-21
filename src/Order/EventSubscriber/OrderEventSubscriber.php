@@ -28,7 +28,6 @@ use PrestaShop\Module\PrestashopCheckout\Order\Matrice\Command\UpdateOrderMatric
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShopException;
-use Ps_checkout;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class OrderEventSubscriber implements EventSubscriberInterface
@@ -42,10 +41,6 @@ class OrderEventSubscriber implements EventSubscriberInterface
      */
     private $commandBus;
 
-    /**
-     * @param Ps_checkout $module
-     * @param PsCheckoutCartRepository $psCheckoutCartRepository
-     */
     public function __construct(
         PsCheckoutCartRepository $psCheckoutCartRepository,
         CommandBusInterface $commandBus

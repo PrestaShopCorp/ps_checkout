@@ -147,12 +147,11 @@ class CheckoutEventSubscriber implements EventSubscriberInterface
 
                 return;
             } elseif ($exception->getCode() === PayPalException::RESOURCE_NOT_FOUND) {
-                /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
                 $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($event->getPayPalOrderId()->getValue());
 
                 if (Validate::isLoadedObject($psCheckoutCart)) {
                     $psCheckoutCart->paypal_status = PsCheckoutCart::STATUS_CANCELED;
-                    $psCheckoutCartRepository->save($psCheckoutCart);
+                    $this->psCheckoutCartRepository->save($psCheckoutCart);
                 }
 
                 throw $exception;
