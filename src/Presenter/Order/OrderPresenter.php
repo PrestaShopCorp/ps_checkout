@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Order;
 
 use Module;
+use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Date\DatePresenter;
 use PsCheckoutCart;
@@ -36,6 +37,10 @@ class OrderPresenter
      * @var array
      */
     private $orderPayPal;
+    /**
+     * @var FundingSourceTranslationProvider
+     */
+    private $fundingSourceTranslationProvider;
 
     /**
      * @param Module $module
@@ -45,6 +50,9 @@ class OrderPresenter
     {
         $this->module = $module;
         $this->orderPayPal = $orderPayPal;
+        /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
+        $fundingSourceTranslationProvider = $this->module->getService('ps_checkout.funding_source.translation');
+        $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
     }
 
     /**
@@ -66,6 +74,8 @@ class OrderPresenter
                 'transactions' => $this->getTransactions(),
                 'is3DSecureAvailable' => $card3DSecure->is3DSecureAvailable($this->orderPayPal),
                 'isLiabilityShifted' => $card3DSecure->isLiabilityShifted($this->orderPayPal),
+                'paymentSource' => $this->getPaymentSourceName($this->orderPayPal),
+                'paymentSourceLogo' => $this->getPaymentSourceLogo($this->orderPayPal),
             ],
             $this->getOrderTotals()
         );
@@ -80,27 +90,27 @@ class OrderPresenter
         $class = '';
 
         if (PsCheckoutCart::STATUS_CREATED === $this->orderPayPal['status']) {
-            $translated = $this->module->l('Created', 'translations');
+            $translated = $this->module->l('Created', 'orderpresenter');
             $class = 'info';
         }
 
         if (PsCheckoutCart::STATUS_SAVED === $this->orderPayPal['status']) {
-            $translated = $this->module->l('Saved', 'translations');
+            $translated = $this->module->l('Saved', 'orderpresenter');
             $class = 'info';
         }
 
         if (PsCheckoutCart::STATUS_APPROVED === $this->orderPayPal['status']) {
-            $translated = $this->module->l('Approved', 'translations');
+            $translated = $this->module->l('Approved', 'orderpresenter');
             $class = 'info';
         }
 
         if (PsCheckoutCart::STATUS_VOIDED === $this->orderPayPal['status']) {
-            $translated = $this->module->l('Voided', 'translations');
+            $translated = $this->module->l('Voided', 'orderpresenter');
             $class = 'warning';
         }
 
         if (PsCheckoutCart::STATUS_COMPLETED === $this->orderPayPal['status']) {
-            $translated = $this->module->l('Completed', 'translations');
+            $translated = $this->module->l('Completed', 'orderpresenter');
             $class = 'success';
         }
 
@@ -163,6 +173,7 @@ class OrderPresenter
                         'gross_amount' => isset($payment['seller_receivable_breakdown']['gross_amount']['value']) ? $payment['seller_receivable_breakdown']['gross_amount']['value'] : '',
                         'paypal_fee' => isset($payment['seller_receivable_breakdown']['paypal_fee']['value']) ? $payment['seller_receivable_breakdown']['paypal_fee']['value'] : '',
                         'net_amount' => isset($payment['seller_receivable_breakdown']['net_amount']['value']) ? $payment['seller_receivable_breakdown']['net_amount']['value'] : '',
+                        'seller_protection' => $this->getSellerProtection($payment),
                     ];
                 }
             }
@@ -188,27 +199,27 @@ class OrderPresenter
         $class = '';
 
         if ('COMPLETED' === $status) {
-            $translated = $this->module->l('Completed', 'translations');
+            $translated = $this->module->l('Completed', 'orderpresenter');
             $class = 'success';
         }
 
         if ('PENDING' === $status) {
-            $translated = $this->module->l('Pending', 'translations');
+            $translated = $this->module->l('Pending', 'orderpresenter');
             $class = 'warning';
         }
 
         if ('DECLINED' === $status) {
-            $translated = $this->module->l('Declined', 'translations');
+            $translated = $this->module->l('Declined', 'orderpresenter');
             $class = 'danger';
         }
 
         if ('PARTIALLY_REFUNDED' === $status) {
-            $translated = $this->module->l('Partially refunded', 'translations');
+            $translated = $this->module->l('Partially refunded', 'orderpresenter');
             $class = 'info';
         }
 
         if ('REFUNDED' === $status) {
-            $translated = $this->module->l('Refunded', 'translations');
+            $translated = $this->module->l('Refunded', 'orderpresenter');
             $class = 'info';
         }
 
@@ -230,12 +241,12 @@ class OrderPresenter
         $class = '';
 
         if ('capture' === $type) {
-            $translated = $this->module->l('Payment', 'translations');
+            $translated = $this->module->l('Payment', 'orderpresenter');
             $class = 'payment';
         }
 
         if ('refund' === $type) {
-            $translated = $this->module->l('Refund', 'translations');
+            $translated = $this->module->l('Refund', 'orderpresenter');
             $class = 'refund';
         }
 
@@ -346,5 +357,149 @@ class OrderPresenter
             'fees' => number_format($fees, 2) . " $currency",
             'balance' => number_format($total - $totalRefunded + $fees, 2) . " $currency",
         ];
+    }
+
+    /**
+     * @param array $orderPayPal
+     *
+     * @return string
+     */
+    private function getPaymentSourceName(array $orderPayPal)
+    {
+        if (isset($orderPayPal['payment_source'])) {
+            return $this->fundingSourceTranslationProvider->getPaymentMethodName(key($orderPayPal['payment_source']));
+        }
+
+        return '';
+    }
+
+    /**
+     * @param array $orderPayPal
+     *
+     * @return string
+     */
+    private function getPaymentSourceLogo(array $orderPayPal)
+    {
+        if (isset($orderPayPal['payment_source'])) {
+            $paymentSourceName = key($orderPayPal['payment_source']);
+
+            if ($paymentSourceName === 'card' && isset($orderPayPal['payment_source']['card']['brand'])) {
+                switch ($orderPayPal['payment_source']['card']['brand']) {
+                    case 'CB_NATIONALE':
+                        return $this->module->getPathUri() . 'views/img/cb.svg';
+                    case 'VISA':
+                        return $this->module->getPathUri() . 'views/img/visa.svg';
+                    case 'MASTERCARD':
+                        return $this->module->getPathUri() . 'views/img/mastercard.svg';
+                    case 'AMEX':
+                        return $this->module->getPathUri() . 'views/img/amex.svg';
+                    case 'DISCOVER':
+                        return $this->module->getPathUri() . 'views/img/discover.svg';
+                    case 'JCB':
+                        return $this->module->getPathUri() . 'views/img/jcb.svg';
+                    case 'DINERS':
+                        return $this->module->getPathUri() . 'views/img/diners.svg';
+                    case 'UNIONPAY':
+                        return $this->module->getPathUri() . 'views/img/unionpay.svg';
+                    case 'MAESTRO':
+                        return $this->module->getPathUri() . 'views/img/maestro.svg';
+                }
+            }
+
+            return $this->module->getPathUri() . 'views/img/' . $paymentSourceName . '.svg';
+        }
+
+        return '';
+    }
+
+    /**
+     * @param array $payment
+     *
+     * @return array
+     */
+    private function getSellerProtection(array $payment)
+    {
+        if (empty($payment['seller_protection'])) {
+            return [];
+        }
+
+        $help = [];
+        $status = isset($payment['seller_protection']['status']) ? $payment['seller_protection']['status'] : '';
+        $dispute_categories = isset($payment['seller_protection']['dispute_categories']) ? $this->getDisputeCategoriesValues($payment['seller_protection']['dispute_categories']) : [];
+
+        switch ($status) {
+            case 'ELIGIBLE':
+                $help[] = $this->module->l('Your PayPal balance remains intact if the customer claims that they did not receive an item or the account holder claims that they did not authorize the payment.', 'orderpresenter');
+                if (!empty($dispute_categories)) {
+                    $help[] = $this->module->l('Dispute categories covered:', 'orderpresenter');
+                    $help[] = implode(', ', $dispute_categories);
+                }
+                $help[] = $this->module->l('For more information, please go to the official PayPal website.', 'orderpresenter');
+
+                return [
+                    'value' => $status,
+                    'translated' => $this->module->l('Eligible', 'orderpresenter'),
+                    'help' => implode(' ', $help),
+                    'class' => 'success',
+                ];
+            case 'PARTIALLY_ELIGIBLE':
+                $help[] = $this->module->l('Your PayPal balance remains intact if the customer claims that they did not receive an item.', 'orderpresenter');
+                if (!empty($dispute_categories)) {
+                    $help[] = $this->module->l('Dispute categories covered:', 'orderpresenter');
+                    $help[] = implode(', ', $dispute_categories);
+                }
+                $help[] = $this->module->l('For more information, please go to the official PayPal website.', 'orderpresenter');
+
+                return [
+                    'value' => $status,
+                    'translated' => $this->module->l('Partially eligible', 'orderpresenter'),
+                    'help' => implode(' ', $help),
+                    'class' => 'info',
+                ];
+            case 'NOT_ELIGIBLE':
+                $help[] = $this->module->l('Your PayPal balance is not protected, the transaction is not eligible to the seller protection program.', 'orderpresenter');
+                if (!empty($dispute_categories)) {
+                    $help[] = $this->module->l('Dispute categories covered:', 'orderpresenter');
+                    $help[] = implode(', ', $dispute_categories);
+                }
+                $help[] = $this->module->l('For more information, please go to the official PayPal website.', 'orderpresenter');
+
+                return [
+                    'value' => $status,
+                    'translated' => $this->module->l('Not eligible', 'orderpresenter'),
+                    'help' => implode(' ', $help),
+                    'class' => 'warning',
+                ];
+            default:
+                return [
+                    'value' => $status,
+                    'translated' => $status,
+                    'help' => $status,
+                    'class' => 'info',
+                ];
+        }
+    }
+
+    /**
+     * @param array $dispute_categories
+     *
+     * @return array
+     */
+    private function getDisputeCategoriesValues(array $dispute_categories)
+    {
+        $disputeCategories = [];
+
+        foreach ($dispute_categories as $dispute_category) {
+            switch ($dispute_category) {
+                case 'ITEM_NOT_RECEIVED':
+                    $disputeCategories['ITEM_NOT_RECEIVED'] = $this->module->l('The payer paid for an item that they did not receive.', 'orderpresenter');
+                    break;
+                case 'UNAUTHORIZED_TRANSACTION':
+                    $disputeCategories['UNAUTHORIZED_TRANSACTION'] = $this->module->l('The payer did not authorize the payment.', 'orderpresenter');
+                    break;
+            }
+        }
+
+        return $disputeCategories;
     }
 }

@@ -65,8 +65,12 @@
           </dt>
           <dd data-test="balance-value">{$orderPayPal.balance}</dd>
           <dt data-grid-area="payment">{l s='Payment mode' mod='ps_checkout'}</dt>
-          <dd data-test="payment-mode-value">{$orderPaymentDisplayName|escape:'html':'UTF-8'} <img src="{$orderPaymentLogoUri}" alt="{$orderPaymentDisplayName|escape:'html':'UTF-8'}" title="{$orderPaymentDisplayName|escape:'html':'UTF-8'}" height="20"></dd>
+          <dd data-test="payment-mode-value">{$orderPaymentDisplayName|escape:'html':'UTF-8'} <img src="{$orderPayPal.paymentSourceLogo}" alt="{$orderPaymentDisplayName|escape:'html':'UTF-8'}" title="{$orderPaymentDisplayName|escape:'html':'UTF-8'}" height="20"></dd>
           <dt data-grid-area="environment">
+            {l s='Environment' mod='ps_checkout'}
+            <i class="icon-info-sign" title="{l s='The environment in which the transaction was made: Test or Production' mod='ps_checkout'}"></i>
+          </dt>
+          <dd data-grid-area="environment-value">
             <span data-test="payment-env-value" class="badge rounded badge-paypal-environment-{if $isProductionEnv}live{else}sandbox{/if}" data-value="{$psCheckoutCart->getEnvironment()|escape:'html':'UTF-8'}">
               {if $isProductionEnv}
                 {l s='Production Environment' mod='ps_checkout'}
@@ -74,9 +78,38 @@
                 {l s='Test Environment' mod='ps_checkout'}
               {/if}
             </span>
-          </dt>
-          <dd></dd>
+          </dd>
+          {if $psCheckoutCart->paypal_funding === 'card'}
+            <dt data-grid-area="card-sca">{l s='3D Secure' mod='ps_checkout'}</dt>
+            <dd data-grid-area="card-sca-value">
+              {if $orderPayPal.is3DSecureAvailable && $orderPayPal.isLiabilityShifted}
+                <span class="badge rounded badge-success">{l s='Success' mod='ps_checkout'}</span>
+              {elseif $orderPayPal.is3DSecureAvailable && !$orderPayPal.isLiabilityShifted}
+                <span class="badge rounded badge-danger">{l s='Failed' mod='ps_checkout'}</span>
+              {else}
+                <span class="badge rounded badge-warning">{l s='Card does not support 3D Secure' mod='ps_checkout'}</span>
+              {/if}
+            </dd>
+            <dt data-grid-area="card-liability">{l s='Liability shift' mod='ps_checkout'}</dt>
+            <dd data-grid-area="card-liability-value">
+              {if $orderPayPal.isLiabilityShifted}
+                <span class="badge rounded badge-success">{l s='Bank' mod='ps_checkout'}</span>
+              {else}
+                <span class="badge rounded badge-warning">{l s='Merchant' mod='ps_checkout'}</span>
+              {/if}
+            </dd>
+          {/if}
         </dl>
+        {if $psCheckoutCart->paypal_funding === 'card' && !$orderPayPal.isLiabilityShifted}
+        <div class="liability-explanation">
+          {l s='The bank issuer declined the liability shift. We advice you not to honor the order immediately, wait a few days in case of chargeback and contact the consumer to ensure authenticity of the transaction. For this type of cases we also recommend to consider Chargeback protection.' mod='ps_checkout'}
+        </div>
+        {/if}
+        {if $psCheckoutCart->paypal_funding === 'card' && $orderPayPal.isLiabilityShifted}
+          <div class="liability-explanation">
+            {l s='The bank issuer accepted the liability shift. You can safely honor the order.' mod='ps_checkout'}
+          </div>
+        {/if}
       </div>
     </div>
     {if !empty($orderPayPal.transactions)}
@@ -138,30 +171,15 @@
                     </dd>
                     <dt>{l s='Amount (Tax incl.)' mod='ps_checkout'}</dt>
                     <dd>{$orderPayPalTransaction.amount} {$orderPayPalTransaction.currency}</dd>
-                    {if $psCheckoutCart->paypal_funding === 'card'}
-                      <dt>{l s='3D Secure' mod='ps_checkout'}</dt>
+                    {if !empty($orderPayPalTransaction.seller_protection)}
+                      <dt>
+                        {l s='Seller protection' mod='ps_checkout'}
+                        <i class="icon-info-sign" title="{$orderPayPalTransaction.seller_protection.help|escape:'html':'UTF-8'}"></i>
+                      </dt>
                       <dd>
-                        {if $orderPayPal.is3DSecureAvailable && $orderPayPal.isLiabilityShifted}
-                          <span class="badge rounded badge-success">{l s='Success' mod='ps_checkout'}</span>
-                        {elseif $orderPayPal.is3DSecureAvailable && !$orderPayPal.isLiabilityShifted}
-                          <span class="badge rounded badge-danger">{l s='Failed' mod='ps_checkout'}</span>
-                        {else}
-                          <span class="badge rounded badge-warning">{l s='Card does not support 3D Secure' mod='ps_checkout'}</span>
-                        {/if}
-                      </dd>
-                      <dt>{l s='Liability shift' mod='ps_checkout'}</dt>
-                      <dd>
-                        {if $orderPayPal.isLiabilityShifted}
-                          <span class="badge rounded badge-success">{l s='Bank' mod='ps_checkout'}</span>
-                          <div class="liability-explanation">
-                            {l s='You can safely proceed with the order.' mod='ps_checkout'}
-                          </div>
-                        {else}
-                          <span class="badge rounded badge-warning">{l s='Merchant' mod='ps_checkout'}</span>
-                          <div class="liability-explanation">
-                            {l s='We advice you not to honor the order immediately, wait a few days in case of chargeback and contact the consumer to ensure authenticity of the transaction. For this type of cases we also recommend to consider Chargeback protection.' mod='ps_checkout'}
-                          </div>
-                        {/if}
+                      <span class="badge rounded badge-{$orderPayPalTransaction.seller_protection.class|escape:'html':'UTF-8'}">
+                        {$orderPayPalTransaction.seller_protection.translated|escape:'html':'UTF-8'}
+                      </span>
                       </dd>
                     {/if}
                   </dl>
