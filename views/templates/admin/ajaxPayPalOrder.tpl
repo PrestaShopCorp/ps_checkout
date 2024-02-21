@@ -71,9 +71,9 @@
           <dd data-grid-area="environment-value">
             <span data-test="payment-env-value" class="badge rounded badge-paypal-environment-{if $isProductionEnv}live{else}sandbox{/if}" data-value="{$psCheckoutCart->getEnvironment()|escape:'html':'UTF-8'}">
               {if $isProductionEnv}
-                {l s='Production Environment' mod='ps_checkout'}
+                {l s='Production' mod='ps_checkout'}
               {else}
-                {l s='Test Environment' mod='ps_checkout'}
+                {l s='Test' mod='ps_checkout'}
               {/if}
             </span>
           </dd>

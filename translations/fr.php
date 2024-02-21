@@ -109,8 +109,8 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_a6f74fff222380336900991
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_ea620d61461a00502599f2e6a064b931'] = 'Moyen de paiement';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_0ba29c6a1afacf586b03a26162c72274'] = 'Environnement';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_2cacd34854aed29bd7d0959ace917806'] = 'L\'environnement utilisé pour cette transaction: Test ou Production';
-$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_1e9511daad89204a4514d932d652480e'] = 'Production';
-$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_c85d6a8b7427e52b78fd6ea42502f457'] = 'Test';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_756d97bb256b8580d4d71ee0c547804e'] = 'Production';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_0cbc6611f5540bd0809a388dc95a615b'] = 'Test';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_ecfa6e92f6b49a55e336afde4c64aa14'] = '3D Secure';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_505a83f220c02df2f85c3810cd9ceb38'] = 'Succès';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorderlegacy_d7c8c85bf79bbe1b7188497c32c3b0ca'] = 'Échec';
@@ -152,8 +152,8 @@ $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_99a808d8d16122d70e44bd7f709d3
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_a6f74fff2223803369009919e94f2f96'] = 'Montant à recevoir sur votre compte bancaire : total de la commande moins la commission et les remboursements éventuels';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_0ba29c6a1afacf586b03a26162c72274'] = 'Environnement';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_2cacd34854aed29bd7d0959ace917806'] = 'L\'environnement utilisé pour cette transaction: Test ou Production';
-$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_1e9511daad89204a4514d932d652480e'] = 'Production';
-$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_c85d6a8b7427e52b78fd6ea42502f457'] = 'Test';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_756d97bb256b8580d4d71ee0c547804e'] = 'Production';
+$_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_0cbc6611f5540bd0809a388dc95a615b'] = 'Test';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_ea620d61461a00502599f2e6a064b931'] = 'Moyen de paiement';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_ecfa6e92f6b49a55e336afde4c64aa14'] = '3D Secure';
 $_MODULE['<{ps_checkout}prestashop>ajaxpaypalorder_505a83f220c02df2f85c3810cd9ceb38'] = 'Succès';
