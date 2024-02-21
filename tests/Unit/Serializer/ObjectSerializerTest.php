@@ -38,7 +38,7 @@ class ObjectSerializerTest extends TestCase
     {
         echo 'Test testSerializeWithoutEmptyValues';
         $serializer = new ObjectSerializer();
-        $json = $serializer->serialize($object, JsonEncoder::FORMAT, true);
+        $json = $serializer->normalize($object, 'array');
         $this->assertEquals($expectedJson, $json);
     }
 
@@ -49,7 +49,7 @@ class ObjectSerializerTest extends TestCase
     {
         $serializer = new ObjectSerializer();
         $json = $serializer->serialize($object, JsonEncoder::FORMAT);
-        $this->assertNotEquals($expectedJson, $json);
+        $this->assertEquals($expectedJson, $json);
     }
 
     /**

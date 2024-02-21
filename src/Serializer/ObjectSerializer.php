@@ -24,6 +24,7 @@ use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -72,5 +73,39 @@ class ObjectSerializer
     public function deserialize($data, $type, $format, array $context = [])
     {
         return $this->serializer->deserialize($data, $type, $format, $context);
+    }
+
+    /**
+     * @param mixed $data
+     * @param string $format
+     * @param bool $skipNullValues
+     * @param array $context
+     *
+     * @return array
+     *
+     * @throws ExceptionInterface
+     */
+    public function normalize($data, $format, $skipNullValues = false, array $context = [])
+    {
+        $childContext = [!defined('\Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer::SKIP_NULL_VALUES') ? self::PS_SKIP_NULL_VALUES : AbstractObjectNormalizer::SKIP_NULL_VALUES => $skipNullValues];
+
+        return $this->serializer->normalize($data, $format, array_replace($context, $childContext));
+    }
+
+    /**
+     * @template T
+     *
+     * @param string|array $data
+     * @param class-string<T> $type //Class of the object created. For example CreatePayPalOrderResponse::class
+     * @param string $format //Format of the data passed. For example JsonEncoder::FORMAT
+     * @param array $context //Additional parameters. For example skip null values and etc.
+     *
+     * @return T
+     *
+     * @throws ExceptionInterface
+     */
+    public function denormalize($data, $type, $format, array $context = [])
+    {
+        return $this->serializer->denormalize($data, $type, $format, $context);
     }
 }

@@ -31,6 +31,8 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderC
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CreatePayPalOrderPayloadBuilderInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class CreatePayPalOrderCommandHandler
 {
@@ -52,17 +54,23 @@ class CreatePayPalOrderCommandHandler
      * @var PaymentService
      */
     private $paymentService;
+    /**
+     * @var ObjectSerializer
+     */
+    private $objectSerializer;
 
     public function __construct(
         CartRepositoryInterface $cartRepository,
         CreatePayPalOrderPayloadBuilderInterface $createPayPalOrderPayloadBuilder,
         EventDispatcherInterface $eventDispatcher,
-        PaymentService $paymentService
+        PaymentService $paymentService,
+        ObjectSerializer $objectSerializer
     ) {
         $this->cartRepository = $cartRepository;
         $this->createPayPalOrderPayloadBuilder = $createPayPalOrderPayloadBuilder;
         $this->eventDispatcher = $eventDispatcher;
         $this->paymentService = $paymentService;
+        $this->objectSerializer = $objectSerializer;
     }
 
     /**
@@ -75,6 +83,7 @@ class CreatePayPalOrderCommandHandler
      * @throws InvalidRequestException
      * @throws NotAuthorizedException
      * @throws UnprocessableEntityException
+     * @throws ExceptionInterface
      */
     public function handle(CreatePayPalOrderCommand $command)
     {
@@ -83,7 +92,7 @@ class CreatePayPalOrderCommandHandler
         $order = $this->paymentService->createOrder($payload);
         $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
             $order->getId(),
-            $order,
+            $this->objectSerializer->normalize($order, 'array'),
             $command->getCartId(),
             $command->isHostedFields(),
             $command->isExpressCheckout()

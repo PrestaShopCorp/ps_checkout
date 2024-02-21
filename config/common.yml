@@ -442,7 +442,7 @@ services:
 
   ps_checkout.tactician.bus:
     class: 'League\Tactician\CommandBus'
-    factory: ["@ps_checkout.tactician.bus.factory", "create"]
+    factory: ['@PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory', "create"]
 
   ps_checkout.bus.command:
     class: 'PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusAdapter'
@@ -450,7 +450,7 @@ services:
     arguments:
       - "@ps_checkout.tactician.bus"
 
-  ps_checkout.tactician.bus.factory:
+  PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory:
     class: 'PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory'
     public: true
     arguments:
@@ -503,7 +503,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber'
     public: true
     arguments:
-      - "@ps_checkout.module"
+      - "@ps_checkout.bus.command"
       - "@ps_checkout.repository.pscheckoutcart"
       - "@ps_checkout.cache.paypal.order"
       - '@PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker'
