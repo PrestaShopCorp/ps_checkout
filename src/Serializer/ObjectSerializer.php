@@ -20,7 +20,6 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Serializer;
 
-use PrestaShop\Module\PrestashopCheckout\Serializer\Encoder\ArrayEncoder;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
@@ -31,7 +30,7 @@ use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-class ObjectSerializer
+class ObjectSerializer implements ObjectSerializerInterface
 {
     const PS_SKIP_NULL_VALUES = 'skip_null_values';
     private $serializer;
@@ -47,17 +46,11 @@ class ObjectSerializer
     }
 
     /**
-     * @param mixed $data
-     * @param string $format
-     * @param bool $skipNullValues
-     * @param bool $convertToSnakeCase
-     * @param array $context
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function serialize($data, $format, $skipNullValues = false, $convertToSnakeCase = false, array $context = [])
     {
-        $childContext = [!defined('\Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer::SKIP_NULL_VALUES') ? self::PS_SKIP_NULL_VALUES : AbstractObjectNormalizer::SKIP_NULL_VALUES => $skipNullValues];
+        $childContext = [defined('\Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer::SKIP_NULL_VALUES') ? AbstractObjectNormalizer::SKIP_NULL_VALUES : self::PS_SKIP_NULL_VALUES => $skipNullValues];
 
         if ($convertToSnakeCase) {
             $serializer = new Serializer(
@@ -66,6 +59,7 @@ class ObjectSerializer
                     new ArrayDenormalizer(),
                 ],
                 [new JsonEncoder()]);
+
             return $serializer->serialize($data, $format, array_replace($context, $childContext));
         }
 
@@ -73,14 +67,7 @@ class ObjectSerializer
     }
 
     /**
-     * @template T
-     *
-     * @param string|array $data
-     * @param class-string<T> $type //Class of the object created. For example CreatePayPalOrderResponse::class
-     * @param string $format //Format of the data passed. For example JsonEncoder::FORMAT
-     * @param array $context //Additional parameters. For example skip null values and etc.
-     *
-     * @return T
+     * {@inheritdoc}
      */
     public function deserialize($data, $type, $format, array $context = [])
     {
@@ -88,12 +75,7 @@ class ObjectSerializer
     }
 
     /**
-     * @param mixed $data
-     * @param bool $skipNullValues
-     * @param bool $convertToSnakeCase
-     * @param array $context
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function toArray($data, $skipNullValues = false, $convertToSnakeCase = false, array $context = [])
     {

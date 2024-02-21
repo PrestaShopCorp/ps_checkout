@@ -114,4 +114,4 @@ jobs:
 
       - name: Run PHPUnit
         run: docker run --rm --volumes-from temp-ps -v $PWD:/var/www/html/modules/ps_checkout -e _PS_ROOT_DIR_=/var/www/html/ --workdir=/var/www/html/modules/ps_checkout php:7.2 ./vendor/bin/phpunit -c ./tests/Unit/phpunit.xml
-#        run: php vendor/bin/phpunit --bootstrap tests/Unit/bootstrap.php tests/Unit
+#        run: php vendor/bin/phpunit tests/Unit

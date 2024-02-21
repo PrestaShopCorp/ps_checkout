@@ -29,7 +29,7 @@ use PrestaShop\Module\PrestashopCheckout\Exception\NotAuthorizedException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\UnprocessableEntityException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderResponse;
-use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer;
+use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
@@ -40,11 +40,11 @@ class PaymentService
      */
     private $client;
     /**
-     * @var ObjectSerializer
+     * @var ObjectSerializerInterface
      */
     private $serializer;
 
-    public function __construct(PayPalOrderHttpClient $client, ObjectSerializer $serializer)
+    public function __construct(PayPalOrderHttpClient $client, ObjectSerializerInterface $serializer)
     {
         $this->client = $client;
         $this->serializer = $serializer;

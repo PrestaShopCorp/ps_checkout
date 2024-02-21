@@ -31,7 +31,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderC
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CreatePayPalOrderPayloadBuilderInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
-use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer;
+use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializerInterface;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class CreatePayPalOrderCommandHandler
@@ -55,7 +55,7 @@ class CreatePayPalOrderCommandHandler
      */
     private $paymentService;
     /**
-     * @var ObjectSerializer
+     * @var ObjectSerializerInterface
      */
     private $objectSerializer;
 
@@ -64,7 +64,7 @@ class CreatePayPalOrderCommandHandler
         CreatePayPalOrderPayloadBuilderInterface $createPayPalOrderPayloadBuilder,
         EventDispatcherInterface $eventDispatcher,
         PaymentService $paymentService,
-        ObjectSerializer $objectSerializer
+        ObjectSerializerInterface $objectSerializer
     ) {
         $this->cartRepository = $cartRepository;
         $this->createPayPalOrderPayloadBuilder = $createPayPalOrderPayloadBuilder;

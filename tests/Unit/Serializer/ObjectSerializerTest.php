@@ -32,13 +32,22 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 class ObjectSerializerTest extends TestCase
 {
     /**
+     * @var ObjectSerializer
+     */
+    private $serializer;
+
+    public function __construct($name = null, array $data = [], $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+        $this->serializer = new ObjectSerializer();
+    }
+
+    /**
      * @dataProvider objectProvider
      */
     public function testSerializeWithoutEmptyValues($object, $expectedJson)
     {
-        echo 'Test testSerializeWithoutEmptyValues';
-        $serializer = new ObjectSerializer();
-        $json = $serializer->serialize($object, JsonEncoder::FORMAT, true);
+        $json = $this->serializer->serialize($object, JsonEncoder::FORMAT, true);
         $this->assertEquals($expectedJson, $json);
     }
 
@@ -47,8 +56,7 @@ class ObjectSerializerTest extends TestCase
      */
     public function testSerializeWithEmptyValues($object, $expectedJson)
     {
-        $serializer = new ObjectSerializer();
-        $json = $serializer->serialize($object, JsonEncoder::FORMAT);
+        $json = $this->serializer->serialize($object, JsonEncoder::FORMAT);
         $this->assertEquals($expectedJson, $json);
     }
 
@@ -57,8 +65,7 @@ class ObjectSerializerTest extends TestCase
      */
     public function testDeserialize($expectedObject, $json)
     {
-        $serializer = new ObjectSerializer();
-        $newObject = $serializer->deserialize($json, FundingSourceEntity::class, JsonEncoder::FORMAT);
+        $newObject = $this->serializer->deserialize($json, FundingSourceEntity::class, JsonEncoder::FORMAT);
         $this->assertEquals($expectedObject, $newObject);
     }
 
@@ -67,8 +74,7 @@ class ObjectSerializerTest extends TestCase
      */
     public function testSerializePayPalOrderResponse($object, $expectedJson)
     {
-        $serializer = new ObjectSerializer();
-        $json = $serializer->serialize($object, JsonEncoder::FORMAT, true, true);
+        $json = $this->serializer->serialize($object, JsonEncoder::FORMAT, true, true);
         $this->assertEquals($expectedJson, $json);
     }
 
@@ -77,8 +83,7 @@ class ObjectSerializerTest extends TestCase
      */
     public function testDeserializePayPalOrderResponse($expectedObject, $json)
     {
-        $serializer = new ObjectSerializer();
-        $newObject = $serializer->deserialize($json, CreatePayPalOrderResponse::class, JsonEncoder::FORMAT);
+        $newObject = $this->serializer->deserialize($json, CreatePayPalOrderResponse::class, JsonEncoder::FORMAT);
         $this->assertEquals($expectedObject, $newObject);
     }
 
@@ -87,11 +92,9 @@ class ObjectSerializerTest extends TestCase
      */
     public function testToArray($object, $expectedArray, $skipNullValues, $convertToSnakeCase)
     {
-        $serializer = new ObjectSerializer();
-        $newArray = $serializer->toArray($object, $skipNullValues, $convertToSnakeCase);
+        $newArray = $this->serializer->toArray($object, $skipNullValues, $convertToSnakeCase);
         $this->assertEquals($expectedArray, $newArray);
     }
-
 
     public function objectProvider()
     {
@@ -197,7 +200,7 @@ class ObjectSerializerTest extends TestCase
                             'attributes' => null,
                             'from_request' => null,
                             'expiry' => null,
-                            'bin_details' => null
+                            'bin_details' => null,
                         ],
                         'paypal' => null,
                         'bancontact' => null,
@@ -209,7 +212,7 @@ class ObjectSerializerTest extends TestCase
                         'p24' => null,
                         'sofort' => null,
                         'trustly' => null,
-                        'venmo' => null
+                        'venmo' => null,
                     ],
                     'intent' => null,
                     'processing_instruction' => null,
@@ -217,11 +220,11 @@ class ObjectSerializerTest extends TestCase
                     'purchase_units' => null,
                     'status' => null,
                     'links' => [
-                        ['href' => 'HREF', 'rel' => 'REL', 'method' => 'METHOD']
+                        ['href' => 'HREF', 'rel' => 'REL', 'method' => 'METHOD'],
                     ],
                 ],
                 false,
-                true
+                true,
             ],
             [
                 (new CreatePayPalOrderResponse())
@@ -232,15 +235,15 @@ class ObjectSerializerTest extends TestCase
                     'id' => 'SOME_ID',
                     'payment_source' => [
                         'card' => [
-                            'name' => 'AMEX'
-                        ]
+                            'name' => 'AMEX',
+                        ],
                     ],
                     'links' => [
-                        ['href' => 'HREF', 'rel' => 'REL', 'method' => 'METHOD']
+                        ['href' => 'HREF', 'rel' => 'REL', 'method' => 'METHOD'],
                     ],
                 ],
                 true,
-                true
+                true,
             ],
         ];
     }
