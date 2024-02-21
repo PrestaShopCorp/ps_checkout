@@ -20,16 +20,16 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Presenter\Order;
 
-use Module;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Card3DSecure;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Date\DatePresenter;
+use Ps_checkout;
 use PsCheckoutCart;
 
 class OrderPresenter
 {
     /**
-     * @var Module
+     * @var Ps_checkout
      */
     private $module;
 
@@ -43,10 +43,10 @@ class OrderPresenter
     private $fundingSourceTranslationProvider;
 
     /**
-     * @param Module $module
+     * @param Ps_checkout $module
      * @param array $orderPayPal
      */
-    public function __construct(Module $module, array $orderPayPal)
+    public function __construct(Ps_checkout $module, array $orderPayPal)
     {
         $this->module = $module;
         $this->orderPayPal = $orderPayPal;
