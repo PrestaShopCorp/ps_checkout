@@ -21,10 +21,10 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber;
 
+use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Order\Event\OrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\Matrice\Command\UpdateOrderMatriceCommand;
-use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShopException;
@@ -34,25 +34,24 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class OrderEventSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var Ps_checkout
-     */
-    private $module;
-
-    /**
      * @var PsCheckoutCartRepository
      */
     private $psCheckoutCartRepository;
+    /**
+     * @var CommandBusInterface
+     */
+    private $commandBus;
 
     /**
      * @param Ps_checkout $module
      * @param PsCheckoutCartRepository $psCheckoutCartRepository
      */
     public function __construct(
-        Ps_checkout $module,
-        PsCheckoutCartRepository $psCheckoutCartRepository
+        PsCheckoutCartRepository $psCheckoutCartRepository,
+        CommandBusInterface $commandBus
     ) {
-        $this->module = $module;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
+        $this->commandBus = $commandBus;
     }
 
     /**
@@ -70,17 +69,16 @@ class OrderEventSubscriber implements EventSubscriberInterface
      *
      * @return void
      *
-     * @throws PrestaShopException
      * @throws OrderException
      * @throws PayPalOrderException
-     * @throws OrderStateException
+     * @throws PrestaShopException
      */
     public function updateOrderMatrice(OrderCreatedEvent $event)
     {
         $cartId = $event->getCartId()->getValue();
         $psCheckoutCart = $this->psCheckoutCartRepository->findOneByCartId($cartId);
 
-        $this->module->getService('ps_checkout.bus.command')->handle(new UpdateOrderMatriceCommand(
+        $this->commandBus->handle(new UpdateOrderMatriceCommand(
             $event->getOrderId()->getValue(),
             $psCheckoutCart->getPaypalOrderId()
         ));
