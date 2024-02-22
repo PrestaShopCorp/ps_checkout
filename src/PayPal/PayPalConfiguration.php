@@ -33,8 +33,7 @@ class PayPalConfiguration
     const PS_ROUND_TYPE = 'PS_ROUND_TYPE';
     const PS_PRICE_ROUND_MODE = 'PS_PRICE_ROUND_MODE';
     const INTEGRATION_DATE = 'PS_CHECKOUT_INTEGRATION_DATE';
-    const HOSTED_FIELDS_3DS_DISABLED = 'PS_CHECKOUT_3DS_DISABLED';
-    const HOSTED_FIELDS_CONTINGENCIES = 'PS_CHECKOUT_HOSTEDFIELDS_CONTINGENCIES';
+    const HOSTED_FIELDS_CONTINGENCIES = 'PS_CHECKOUT_HOSTED_FIELDS_CONTINGENCIES';
     const CSP_NONCE = 'PS_CHECKOUT_CSP_NONCE';
     const PS_CHECKOUT_PAYPAL_CB_INLINE = 'PS_CHECKOUT_PAYPAL_CB_INLINE';
     const PS_CHECKOUT_PAYPAL_BUTTON = 'PS_CHECKOUT_PAYPAL_BUTTON';
@@ -237,7 +236,7 @@ class PayPalConfiguration
      */
     public function is3dSecureEnabled()
     {
-        return false === (bool) $this->configuration->get(static::HOSTED_FIELDS_3DS_DISABLED);
+        return $this->getHostedFieldsContingencies() !== 'NONE';
     }
 
     /**

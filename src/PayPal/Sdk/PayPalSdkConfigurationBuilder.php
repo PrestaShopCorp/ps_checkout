@@ -109,8 +109,11 @@ class PayPalSdkConfigurationBuilder
             'integrationDate' => $this->configuration->getIntegrationDate(),
             'dataPartnerAttributionId' => $this->shopContext->getBnCode(),
             'dataCspNonce' => $this->configuration->getCSPNonce(),
-            'dataEnable3ds' => $this->configuration->is3dSecureEnabled(),
         ];
+
+        if ($this->configuration->is3dSecureEnabled()) {
+            $params['dataEnable3ds'] = 'true';
+        }
 
         if ('SANDBOX' === $this->configuration->getPaymentMode()) {
 //            $params['debug'] = 'true';

@@ -415,14 +415,13 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
                 'card' => [
                     'name' => $this->cart['addresses']['invoice']->firstname . ' ' . $this->cart['addresses']['invoice']->lastname,
                     'billing_address' => $this->getAddressPortable('invoice'),
-                    'attributes' => [
-                        'verification' => [
-                            'method' => $paypalConfiguration->getHostedFieldsContingencies(),
-                        ],
-                    ],
                 ],
             ],
         ];
+
+        if ($paypalConfiguration->is3dSecureEnabled()) {
+            $node['payment_source']['card']['attributes']['verification']['method'] = $paypalConfiguration->getHostedFieldsContingencies();
+        }
 
         $this->getPayload()->addAndMergeItems($node);
     }

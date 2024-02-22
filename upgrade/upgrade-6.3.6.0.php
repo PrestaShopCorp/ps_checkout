@@ -44,8 +44,8 @@ function upgrade_module_6_3_6_0($module)
             Configuration::updateValue('PS_CHECKOUT_LIABILITY_SHIFT_REQ', '1', false, null, (int) $shopId);
 
             // Update global value only if it is not already set to SCA_ALWAYS
-            if (Configuration::get('PS_CHECKOUT_HOSTEDFIELDS_CONTINGENCIES', null, null, $shopId) !== 'SCA_ALWAYS') {
-                Configuration::updateValue('PS_CHECKOUT_HOSTEDFIELDS_CONTINGENCIES', 'SCA_WHEN_REQUIRED', false, null, (int) $shopId);
+            if (Configuration::get('PS_CHECKOUT_HOSTED_FIELDS_CONTINGENCIES', null, null, $shopId) !== 'SCA_ALWAYS') {
+                Configuration::updateValue('PS_CHECKOUT_HOSTED_FIELDS_CONTINGENCIES', 'SCA_WHEN_REQUIRED', false, null, (int) $shopId);
             }
         }
 
@@ -53,8 +53,8 @@ function upgrade_module_6_3_6_0($module)
         Configuration::updateGlobalValue('PS_CHECKOUT_LIABILITY_SHIFT_REQ', '1');
 
         // Update global value only if it is not already set to SCA_ALWAYS
-        if (Configuration::getGlobalValue('PS_CHECKOUT_HOSTEDFIELDS_CONTINGENCIES') !== 'SCA_ALWAYS') {
-            Configuration::updateGlobalValue('PS_CHECKOUT_HOSTEDFIELDS_CONTINGENCIES', 'SCA_WHEN_REQUIRED');
+        if (Configuration::getGlobalValue('PS_CHECKOUT_HOSTED_FIELDS_CONTINGENCIES') !== 'SCA_ALWAYS') {
+            Configuration::updateGlobalValue('PS_CHECKOUT_HOSTED_FIELDS_CONTINGENCIES', 'SCA_WHEN_REQUIRED');
         }
 
         // Add new configuration for displaying the logo on the product page and the cart
