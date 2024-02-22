@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "83e53d19b0dc27f33a825b790f2f8fd2",
+    "content-hash": "1ffed083e7949e1d32cb94eaf11a19ad",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -983,6 +983,57 @@
                 "source": "https://github.com/PrestaShopCorp/module-lib-guzzle-adapter/tree/v1.0"
             },
             "time": "2022-09-30T10:25:35+00:00"
+        },
+        {
+            "name": "prestashop/module-lib-mbo-installer",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PrestaShopCorp/module-lib-mbo-installer.git",
+                "reference": "58cde161e40ba62638be2dbc5fde3e09f1733d48"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PrestaShopCorp/module-lib-mbo-installer/zipball/58cde161e40ba62638be2dbc5fde3e09f1733d48",
+                "reference": "58cde161e40ba62638be2dbc5fde3e09f1733d48",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": ">=7.2.5",
+                "prestashop/module-lib-guzzle-adapter": "^1.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.9",
+                "phpunit/phpunit": "^9.5|^8.5|^5.7",
+                "prestashop/php-dev-tools": "^4.2|^3.16"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Prestashop\\ModuleLibMboInstaller\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AFL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "PrestaShop SA",
+                    "email": "contact@prestashop.com"
+                },
+                {
+                    "name": "Mikatux",
+                    "email": "mickael@mayeur.eu"
+                }
+            ],
+            "description": "A helper to ease the download PS MBO from the Addons Marketplace",
+            "support": {
+                "issues": "https://github.com/PrestaShopCorp/module-lib-mbo-installer/issues",
+                "source": "https://github.com/PrestaShopCorp/module-lib-mbo-installer/tree/v2.0.0"
+            },
+            "time": "2023-12-05T14:14:13+00:00"
         },
         {
             "name": "prestashop/module-lib-service-container",
@@ -5695,5 +5746,5 @@
     "platform-overrides": {
         "php": "7.2.34"
     },
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.6.0"
 }
