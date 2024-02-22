@@ -226,6 +226,7 @@ export class CardFieldsComponent extends BaseComponent {
             return this.psCheckoutApi
               .postCreateOrder({
                 ...data,
+                fundingSource: this.data.name,
                 isHostedFields: true
                 // vault: storeCardInVault
               })
