@@ -1,0 +1,154 @@
+<?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+
+namespace PrestaShop\Module\PrestashopCheckout\Entity;
+
+class PayPalOrder
+{
+    /**
+     * @var string
+     */
+    private $id;
+    /**
+     * @var int
+     */
+    private $idCart;
+    /**
+     * @var string
+     */
+    private $fundingSource;
+    /**
+     * @var string
+     */
+    private $status;
+    /**
+     * @var string
+     */
+    private $paymentSource;
+
+    public function __construct($id = null, $idCart = null, $fundingSource = null, $status = null, $paymentSource = null)
+    {
+        $this->id = $id;
+        $this->idCart = $idCart;
+        $this->fundingSource = $fundingSource;
+        $this->status = $status;
+        $this->paymentSource = $paymentSource;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return PayPalOrder
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getIdCart()
+    {
+        return $this->idCart;
+    }
+
+    /**
+     * @param int $idCart
+     *
+     * @return PayPalOrder
+     */
+    public function setIdCart($idCart)
+    {
+        $this->idCart = $idCart;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFundingSource()
+    {
+        return $this->fundingSource;
+    }
+
+    /**
+     * @param string $fundingSource
+     *
+     * @return PayPalOrder
+     */
+    public function setFundingSource($fundingSource)
+    {
+        $this->fundingSource = $fundingSource;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     *
+     * @return PayPalOrder
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPaymentSource()
+    {
+        return $this->paymentSource;
+    }
+
+    /**
+     * @param string $paymentSource
+     *
+     * @return PayPalOrder
+     */
+    public function setPaymentSource($paymentSource)
+    {
+        $this->paymentSource = $paymentSource;
+
+        return $this;
+    }
+}
