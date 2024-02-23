@@ -49,13 +49,34 @@ class PayPalOrderRepository
     }
 
     /**
+     * @param PayPalOrder $payPalOrder
+     *
+     * @return bool
+     *
+     * @throws PrestaShopDatabaseException
+     */
+    public function createPayPalOrder(PayPalOrder $payPalOrder)
+    {
+        return $this->db->insert(
+            self::TABLE_ORDER,
+            [
+                'id' => pSQL($payPalOrder->getId()),
+                'id_cart' => (int) $payPalOrder->getIdCart(),
+                'funding_source' => pSQL($payPalOrder->getFundingSource()),
+                'status' => pSQL($payPalOrder->getStatus()),
+                'payment_source' => pSQL($payPalOrder->getPaymentSource()),
+            ]
+        );
+    }
+
+    /**
      * @param string $orderId
      *
      * @return PayPalOrder
      *
      * @throws EntityNotFoundException
      */
-    public function getOrderById($orderId)
+    public function getPayPalOrderById($orderId)
     {
         $query = new DbQuery();
         $query->select('*')
@@ -76,7 +97,7 @@ class PayPalOrderRepository
      *
      * @throws EntityNotFoundException
      */
-    public function getOrderByCartId($cartId)
+    public function getPayPalOrderByCartId($cartId)
     {
         $query = new DbQuery();
         $query->select('*')
@@ -109,6 +130,44 @@ class PayPalOrderRepository
     }
 
     /**
+     * @param string $payPalOrderId
+     *
+     * @return bool
+     */
+    public function deletePayPalOrder($payPalOrderId)
+    {
+        $orderId = pSQL($payPalOrderId);
+        $sql = 'DELETE FROM `' . _DB_PREFIX_ . self::TABLE_ORDER . "` WHERE `id` = $orderId;"
+            . 'DELETE FROM `' . _DB_PREFIX_ . self::TABLE_AUTHORIZATION . "` WHERE `id_order` = $orderId;"
+            . 'DELETE FROM `' . _DB_PREFIX_ . self::TABLE_REFUND . "` WHERE `id_order` = $orderId;"
+            . 'DELETE FROM `' . _DB_PREFIX_ . self::TABLE_CAPTURE . "` WHERE `id_order` = $orderId;"
+            . 'DELETE FROM `' . _DB_PREFIX_ . self::TABLE_PURCHASE_UNIT . "` WHERE `id_order` = $orderId;";
+
+        return $this->db->execute($sql);
+    }
+
+    /**
+     * @param PayPalOrderAuthorization $payPalOrderAuthorization
+     *
+     * @return bool
+     *
+     * @throws PrestaShopDatabaseException
+     */
+    public function createPayPalOrderAuthorization(PayPalOrderAuthorization $payPalOrderAuthorization)
+    {
+        return $this->db->insert(
+            self::TABLE_AUTHORIZATION,
+            [
+                'id' => pSQL($payPalOrderAuthorization->getId()),
+                'id_order' => pSQL($payPalOrderAuthorization->getIdOrder()),
+                'status' => pSQL($payPalOrderAuthorization->getStatus()),
+                'expiration_time' => pSQL($payPalOrderAuthorization->getExpirationTime()),
+                'seller_protection' => pSQL($payPalOrderAuthorization->getSellerProtection()),
+            ]
+        );
+    }
+
+    /**
      * @param $orderId
      *
      * @return PayPalOrderAuthorization[]
@@ -116,7 +175,7 @@ class PayPalOrderRepository
      * @throws EntityNotFoundException
      * @throws PrestaShopDatabaseException
      */
-    public function getAuthorizations($orderId)
+    public function getPayPalOrderAuthorizations($orderId)
     {
         $query = new DbQuery();
         $query->select('*')
@@ -161,6 +220,28 @@ class PayPalOrderRepository
     }
 
     /**
+     * @param PayPalOrderCapture $payPalOrderCapture
+     *
+     * @return bool
+     *
+     * @throws PrestaShopDatabaseException
+     */
+    public function createPayPalOrderCapture(PayPalOrderCapture $payPalOrderCapture)
+    {
+        return $this->db->insert(
+            self::TABLE_AUTHORIZATION,
+            [
+                'id' => pSQL($payPalOrderCapture->getId()),
+                'id_order' => pSQL($payPalOrderCapture->getIdOrder()),
+                'status' => pSQL($payPalOrderCapture->getStatus()),
+                'final_capture' => (bool) $payPalOrderCapture->getFinalCapture(),
+                'created_at' => pSQL($payPalOrderCapture->getCreatedAt()),
+                'updated_at' => pSQL($payPalOrderCapture->getUpdatedAt()),
+            ]
+        );
+    }
+
+    /**
      * @param $orderId
      *
      * @return PayPalOrderCapture[]
@@ -168,7 +249,7 @@ class PayPalOrderRepository
      * @throws EntityNotFoundException
      * @throws PrestaShopDatabaseException
      */
-    public function getCaptures($orderId)
+    public function getPayPalOrderCaptures($orderId)
     {
         $query = new DbQuery();
         $query->select('*')
@@ -215,6 +296,29 @@ class PayPalOrderRepository
     }
 
     /**
+     * @param PayPalOrderRefund $payPalOrderRefund
+     *
+     * @return bool
+     *
+     * @throws PrestaShopDatabaseException
+     */
+    public function createPayPalOrderRefund(PayPalOrderRefund $payPalOrderRefund)
+    {
+        return $this->db->insert(
+            self::TABLE_REFUND,
+            [
+                'id' => pSQL($payPalOrderRefund->getId()),
+                'id_order' => pSQL($payPalOrderRefund->getIdOrder()),
+                'status' => pSQL($payPalOrderRefund->getStatus()),
+                'invoice_id' => pSQL($payPalOrderRefund->getStatus()),
+                'custom_id' => pSQL($payPalOrderRefund->getCustomId()),
+                'acquirer_reference_number' => pSQL($payPalOrderRefund->getAcquirerReferenceNumber()),
+                'seller_payable_breakdown' => pSQL($payPalOrderRefund->getSellerPayableBreakdown()),
+            ]
+        );
+    }
+
+    /**
      * @param string $orderId
      *
      * @return PayPalOrderRefund[]
@@ -222,7 +326,7 @@ class PayPalOrderRepository
      * @throws EntityNotFoundException
      * @throws PrestaShopDatabaseException
      */
-    public function getRefunds($orderId)
+    public function getPayPalOrderRefunds($orderId)
     {
         $query = new DbQuery();
         $query->select('*')
@@ -269,6 +373,19 @@ class PayPalOrderRepository
         );
     }
 
+    public function createPayPalOrderPurchaseUnit(PayPalOrderPurchaseUnit $payPalOrderPurchaseUnit)
+    {
+        return $this->db->insert(
+            self::TABLE_REFUND,
+            [
+                'id_order' => pSQL($payPalOrderPurchaseUnit->getIdOrder()),
+                'checksum' => pSQL($payPalOrderPurchaseUnit->getChecksum()),
+                'reference_id' => pSQL($payPalOrderPurchaseUnit->getReferenceId()),
+                'items' => pSQL($payPalOrderPurchaseUnit->getItems()),
+            ]
+        );
+    }
+
     /**
      * @param $orderId
      *
@@ -277,7 +394,7 @@ class PayPalOrderRepository
      * @throws EntityNotFoundException
      * @throws PrestaShopDatabaseException
      */
-    public function getPurchaseUnits($orderId)
+    public function getPayPalOrderPurchaseUnits($orderId)
     {
         $query = new DbQuery();
         $query->select('*')
