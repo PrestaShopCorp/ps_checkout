@@ -121,9 +121,9 @@ class PayPalOrderRepository
         return $this->db->update(
             self::TABLE_ORDER,
             [
-                'funding_source' => $payPalOrder->getFundingSource(),
-                'status' => $payPalOrder->getStatus(),
-                'payment_source' => $payPalOrder->getPaymentSource(),
+                'funding_source' => pSQL($payPalOrder->getFundingSource()),
+                'status' => pSQL($payPalOrder->getStatus()),
+                'payment_source' => pSQL($payPalOrder->getPaymentSource()),
             ],
             '`id` = ' . pSQL($payPalOrder->getId())
         );
@@ -211,9 +211,9 @@ class PayPalOrderRepository
         return $this->db->update(
             self::TABLE_AUTHORIZATION,
             [
-                'status' => $payPalOrderAuthorization->getStatus(),
-                'expiration_time' => $payPalOrderAuthorization->getExpirationTime(),
-                'seller_protection' => $payPalOrderAuthorization->getSellerProtection(),
+                'status' => pSQL($payPalOrderAuthorization->getStatus()),
+                'expiration_time' => pSQL($payPalOrderAuthorization->getExpirationTime()),
+                'seller_protection' => pSQL($payPalOrderAuthorization->getSellerProtection()),
             ],
             '`id` = ' . pSQL($payPalOrderAuthorization->getId())
         );
@@ -286,10 +286,10 @@ class PayPalOrderRepository
         return $this->db->update(
             self::TABLE_CAPTURE,
             [
-                'status' => $payPalOrderCapture->getStatus(),
-                'final_capture' => $payPalOrderCapture->getFinalCapture(),
-                'created_at' => $payPalOrderCapture->getCreatedAt(),
-                'updated_at' => $payPalOrderCapture->getUpdatedAt(),
+                'status' => pSQL($payPalOrderCapture->getStatus()),
+                'final_capture' => pSQL($payPalOrderCapture->getFinalCapture()),
+                'created_at' => pSQL($payPalOrderCapture->getCreatedAt()),
+                'updated_at' => pSQL($payPalOrderCapture->getUpdatedAt()),
             ],
             '`id` = ' . pSQL($payPalOrderCapture->getId())
         );
@@ -363,11 +363,11 @@ class PayPalOrderRepository
         return $this->db->update(
             self::TABLE_REFUND,
             [
-                'status' => $payPalOrderRefund->getStatus(),
-                'invoice_id' => $payPalOrderRefund->getInvoiceId(),
-                'custom_id' => $payPalOrderRefund->getCustomId(),
-                'acquirer_reference_number' => $payPalOrderRefund->getAcquirerReferenceNumber(),
-                'seller_payable_breakdown' => $payPalOrderRefund->getSellerPayableBreakdown(),
+                'status' => pSQL($payPalOrderRefund->getStatus()),
+                'invoice_id' => pSQL($payPalOrderRefund->getInvoiceId()),
+                'custom_id' => pSQL($payPalOrderRefund->getCustomId()),
+                'acquirer_reference_number' => pSQL($payPalOrderRefund->getAcquirerReferenceNumber()),
+                'seller_payable_breakdown' => pSQL($payPalOrderRefund->getSellerPayableBreakdown()),
             ],
             '`id` = ' . pSQL($payPalOrderRefund->getId())
         );
