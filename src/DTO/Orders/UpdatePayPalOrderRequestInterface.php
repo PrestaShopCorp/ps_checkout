@@ -18,17 +18,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Exception;
+namespace PrestaShop\Module\PrestashopCheckout\DTO\Orders;
 
-class NotAuthorizedException extends PsCheckoutException
+interface UpdatePayPalOrderRequestInterface
 {
-    const UNKNOWN = 0;
-    const PERMISSION_DENIED = 1;
-    const PERMISSION_DENIED_FOR_DONATION_ITEMS = 2;
-    const MALFORMED_REQUEST = 3;
-    const PAYEE_ACCOUNT_NOT_SUPPORTED = 4;
-    const PAYEE_ACCOUNT_NOT_VERIFIED = 5;
-    const PAYEE_NOT_CONSENTED = 6;
-    const INVALID_TOKEN = 7;
-    const CONSENT_NEEDED = 8;
 }
