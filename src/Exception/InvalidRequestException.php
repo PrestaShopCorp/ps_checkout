@@ -33,4 +33,7 @@ class InvalidRequestException extends PsCheckoutException
     const NOT_SUPPORTED = 8;
     const PAYPAL_REQUEST_ID_REQUIRED = 9;
     const MALFORMED_REQUEST_JSON = 10;
+    const FIELD_NOT_PATCHABLE = 11;
+    const AMOUNT_NOT_PATCHABLE = 12;
+    const INVALID_PATCH_OPERATION = 13;
 }
