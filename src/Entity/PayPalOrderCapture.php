@@ -52,7 +52,7 @@ class PayPalOrderCapture
         $this->id = $id;
         $this->idOrder = $idOrder;
         $this->status = $status;
-        $this->finalCapture = $finalCapture;
+        $this->finalCapture = (bool) $finalCapture;
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
     }
@@ -132,7 +132,7 @@ class PayPalOrderCapture
      */
     public function setFinalCapture($finalCapture)
     {
-        $this->finalCapture = $finalCapture;
+        $this->finalCapture = (bool) $finalCapture;
 
         return $this;
     }

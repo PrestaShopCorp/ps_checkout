@@ -12,6 +12,10 @@ services:
     arguments:
       - "ps_checkout"
 
+  ps_checkout.db:
+    class: Db
+    factory: [ 'Db', 'getInstance' ]
+
   ps_checkout.module.version:
     class: 'PrestaShop\Module\PrestashopCheckout\Version\Version'
     factory: ["PrestaShop\\Module\\PrestashopCheckout\\Version\\Version", "buildFromString"]
@@ -694,3 +698,8 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient'
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder'
+
+  PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'
+    arguments:
+      - '@ps_checkout.db'
