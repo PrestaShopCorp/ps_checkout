@@ -18,18 +18,29 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
 
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 
-class PayPalOrderCreatedEvent extends PayPalOrderEvent
+class UpdatePayPalOrderCommand
 {
+    /**
+     * @var PayPalOrderId
+     */
+    private $orderPayPalId;
+
     /**
      * @var CartId
      */
     private $cartId;
+
+    /**
+     * @var string
+     */
+    private $fundingSource;
 
     /**
      * @var bool
@@ -42,28 +53,29 @@ class PayPalOrderCreatedEvent extends PayPalOrderEvent
     private $isExpressCheckout;
 
     /**
-     * @var string
-     */
-    private $fundingSource;
-
-    /**
      * @param string $orderPayPalId
-     * @param array $orderPayPal
      * @param int $cartId
+     * @param string $fundingSource
      * @param bool $isHostedFields
      * @param bool $isExpressCheckout
-     * @param string $fundingSource
      *
-     * @throws CartException
-     * @throws PayPalOrderException
+     * @throws CartException|PayPalOrderException
      */
-    public function __construct($orderPayPalId, $orderPayPal, $cartId, $isHostedFields, $isExpressCheckout, $fundingSource)
+    public function __construct($orderPayPalId, $cartId, $fundingSource, $isHostedFields, $isExpressCheckout)
     {
-        parent::__construct($orderPayPalId, $orderPayPal);
+        $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
         $this->cartId = new CartId($cartId);
+        $this->fundingSource = $fundingSource;
         $this->isHostedFields = $isHostedFields;
         $this->isExpressCheckout = $isExpressCheckout;
-        $this->fundingSource = $fundingSource;
+    }
+
+    /**
+     * @return PayPalOrderId
+     */
+    public function getPayPalOrderId()
+    {
+        return $this->orderPayPalId;
     }
 
     /**
@@ -72,6 +84,14 @@ class PayPalOrderCreatedEvent extends PayPalOrderEvent
     public function getCartId()
     {
         return $this->cartId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFundingSource()
+    {
+        return $this->fundingSource;
     }
 
     /**
@@ -88,13 +108,5 @@ class PayPalOrderCreatedEvent extends PayPalOrderEvent
     public function isExpressCheckout()
     {
         return $this->isExpressCheckout;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFundingSource()
-    {
-        return $this->fundingSource;
     }
 }

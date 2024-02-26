@@ -37,7 +37,7 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
             ...data,
             fundingSource: this.props.fundingSource,
             isExpressCheckout: true,
-            orderID: this.payPalService.getOrderId(),
+            orderID: this.payPalService.getOrderId()
           },
           actions
         )
@@ -48,7 +48,16 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
   }
 
   onError(error) {
-    return console.error(error);
+    console.error(error);
+
+    return this.psCheckoutApi
+      .postCancelOrder({
+        fundingSource: this.props.fundingSource,
+        isExpressCheckout: true,
+        reason: 'express_checkout_error',
+        error: error instanceof Error ? error.message : error
+      })
+      .catch((error) => console.error(error));
   }
 
   onApprove(data, actions) {
@@ -66,7 +75,8 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
     return this.psCheckoutApi.postCancelOrder({
       ...data,
       fundingSource: this.props.fundingSource,
-      isExpressCheckout: true
+      isExpressCheckout: true,
+      reason: 'express_checkout_cancelled'
     });
   }
 

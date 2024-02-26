@@ -31,8 +31,6 @@ use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQue
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentPendingQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentPendingQueryResult;
-use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQuery;
-use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentReversedQueryResult;
 use PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount;
@@ -42,7 +40,6 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapt
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeclinedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureRefundedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
 use Ps_checkout;
 use Psr\SimpleCache\CacheInterface;
@@ -114,10 +111,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
             PayPalCapturePendingEvent::class => [
                 ['createOrder'],
                 ['setPaymentPendingOrderStatus'],
-                ['updateCache'],
-            ],
-            PayPalCaptureRefundedEvent::class => [
-                ['setPaymentRefundedOrderStatus'],
                 ['updateCache'],
             ],
             PayPalCaptureReversedEvent::class => [
@@ -214,30 +207,6 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
         }
 
         $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_ERROR)));
-    }
-
-    public function setPaymentRefundedOrderStatus(PayPalCaptureRefundedEvent $event)
-    {
-        try {
-            /** @var GetOrderForPaymentRefundedQueryResult $order */
-            $order = $this->commandBus->handle(new GetOrderForPaymentRefundedQuery($event->getPayPalOrderId()->getValue()));
-        } catch (OrderNotFoundException $exception) {
-            return;
-        }
-
-        if (!$order->hasBeenPaid() || $order->hasBeenTotallyRefund()) {
-            return;
-        }
-
-        $capture = $event->getCapture();
-        // In case there no OrderSlip for this refund, we use the refund amount from payload
-        $totalRefunded = $order->getTotalRefund() ? $order->getTotalRefund() : $capture['amount']['value'];
-
-        if ($this->checkOrderAmount->checkAmount($order->getTotalAmount(), $totalRefunded) === CheckOrderAmount::ORDER_NOT_FULL_PAID) {
-            $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED)));
-        } else {
-            $this->commandBus->handle(new UpdateOrderStatusCommand($order->getOrderId()->getValue(), $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED)));
-        }
     }
 
     public function setPaymentReversedOrderStatus(PayPalCaptureReversedEvent $event)

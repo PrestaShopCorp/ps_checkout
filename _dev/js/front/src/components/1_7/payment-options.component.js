@@ -40,7 +40,10 @@ export class PaymentOptionsComponent extends BaseComponent {
           `[data-module-name^="ps_checkout-${fundingSource.name}"]`
         );
 
-        if (this.config.expressCheckout.active && this.payPalService.getFundingSource() === fundingSource.name) {
+        if (
+          this.config.expressCheckout.active &&
+          this.payPalService.getFundingSource() === fundingSource.name
+        ) {
           HTMLElement.click();
         }
 
@@ -63,21 +66,28 @@ export class PaymentOptionsComponent extends BaseComponent {
         this.data.notification.hideCancelled();
         this.data.notification.hideError();
 
-        if (this.config.expressCheckout.active && (('ps_checkout-' + this.payPalService.getFundingSource()) !== radio.dataset.moduleName)) {
-          this.psCheckoutApi.postCancelOrder(
-            {
+        if (
+          this.config.expressCheckout.active &&
+          'ps_checkout-' + this.payPalService.getFundingSource() !==
+            radio.dataset.moduleName
+        ) {
+          this.psCheckoutApi
+            .postCancelOrder({
               orderID: this.payPalService.getOrderId(),
               fundingSource: this.payPalService.getFundingSource(),
-              isExpressCheckout: true
-            }
-          ).then(() => {
-            this.config.expressCheckout.active = false;
+              isExpressCheckout: true,
+              reason: 'payment_option_changed'
+            })
+            .then(() => {
+              this.config.expressCheckout.active = false;
 
-            const expressCheckoutContainer = document.querySelector('#ps_checkout-express-checkout-banner');
-            if (expressCheckoutContainer) {
-              expressCheckoutContainer.style.display = 'none';
-            }
-          });
+              const expressCheckoutContainer = document.querySelector(
+                '#ps_checkout-express-checkout-banner'
+              );
+              if (expressCheckoutContainer) {
+                expressCheckoutContainer.style.display = 'none';
+              }
+            });
         }
       });
     });
