@@ -24,7 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 
-class PayPalOrderCreatedEvent extends PayPalOrderEvent
+class PayPalOrderUpdatedEvent extends PayPalOrderEvent
 {
     /**
      * @var CartId

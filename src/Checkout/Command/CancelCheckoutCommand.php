@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright since 2007 PrestaShop SA and Contributors
  * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
@@ -19,13 +18,20 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command;
+namespace PrestaShop\Module\PrestashopCheckout\Checkout\Command;
 
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
+use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 
-class SavePayPalOrderCommand
+class CancelCheckoutCommand
 {
+    /**
+     * @var CartId
+     */
+    private $cartId;
+
     /**
      * @var PayPalOrderId
      */
@@ -37,22 +43,47 @@ class SavePayPalOrderCommand
     private $orderPayPalStatus;
 
     /**
-     * @var array;
+     * @var string
      */
-    private $orderPayPal;
+    private $fundingSource;
 
     /**
+     * @var bool
+     */
+    private $isExpressCheckout;
+
+    /**
+     * @var bool
+     */
+    private $isHostedFields;
+
+    /**
+     * @param int $cartId
      * @param string $orderPayPalId
      * @param string $orderPayPalStatus
-     * @param array $orderPayPal
+     * @param string $fundingSource
+     * @param bool $isExpressCheckout
+     * @param bool $isHostedFields
      *
+     * @throws CartException
      * @throws PayPalOrderException
      */
-    public function __construct($orderPayPalId, $orderPayPalStatus, array $orderPayPal)
+    public function __construct($cartId, $orderPayPalId, $orderPayPalStatus, $fundingSource, $isExpressCheckout, $isHostedFields)
     {
+        $this->cartId = new CartId($cartId);
         $this->orderPayPalId = new PayPalOrderId($orderPayPalId);
         $this->orderPayPalStatus = $orderPayPalStatus;
-        $this->orderPayPal = $orderPayPal;
+        $this->fundingSource = $fundingSource;
+        $this->isExpressCheckout = $isExpressCheckout;
+        $this->isHostedFields = $isHostedFields;
+    }
+
+    /**
+     * @return CartId
+     */
+    public function getCartId()
+    {
+        return $this->cartId;
     }
 
     /**
@@ -66,16 +97,32 @@ class SavePayPalOrderCommand
     /**
      * @return string
      */
-    public function getOrderPaypalStatus()
+    public function getFundingSource()
     {
-        return $this->orderPayPalStatus;
+        return $this->fundingSource;
     }
 
     /**
-     * @return array
+     * @return bool
      */
-    public function getOrderPayPal()
+    public function isExpressCheckout()
     {
-        return $this->orderPayPal;
+        return $this->isExpressCheckout;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHostedFields()
+    {
+        return $this->isHostedFields;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrderPayPalStatus()
+    {
+        return $this->orderPayPalStatus;
     }
 }

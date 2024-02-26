@@ -40,7 +40,12 @@ class AbstractFrontController extends ModuleFrontController
         $this->exitWithResponse([
             'status' => false,
             'httpCode' => 500,
-            'body' => '',
+            'body' => [
+                'error' => [
+                    'code' => $exception->getCode(),
+                    'message' => $exception->getMessage(),
+                ],
+            ],
             'exceptionCode' => $exception->getCode(),
             'exceptionMessage' => $exception->getMessage(),
         ]);
