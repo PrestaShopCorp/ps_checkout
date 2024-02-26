@@ -94,9 +94,7 @@ class TableManager
             `data` text NOT NULL,
             PRIMARY KEY (`id_customer`, `paypal_customer_id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
-        ')
-                // HERE ==============================================================
-            && $this->db->execute('
+        ') && $this->db->execute('
             CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'pscheckout_order` (
             `id` varchar(50) NOT NULL,
             `id_cart` varchar(50) NOT NULL,

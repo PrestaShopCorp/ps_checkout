@@ -23,30 +23,35 @@ namespace PrestaShop\Module\PrestashopCheckout\Entity;
 class PayPalOrder
 {
     /**
-     * @var string
+     * @var string|null
      */
     private $id;
     /**
-     * @var int
+     * @var int|null
      */
     private $idCart;
     /**
-     * @var string
+     * @var string|null
+     */
+    private $intent;
+    /**
+     * @var string|null
      */
     private $fundingSource;
     /**
-     * @var string
+     * @var string|null
      */
     private $status;
     /**
-     * @var string
+     * @var string|null
      */
     private $paymentSource;
 
-    public function __construct($id = null, $idCart = null, $fundingSource = null, $status = null, $paymentSource = null)
+    public function __construct($id = null, $idCart = null, $intent = null, $fundingSource = null, $status = null, $paymentSource = null)
     {
         $this->id = $id;
         $this->idCart = $idCart;
+        $this->intent = $intent;
         $this->fundingSource = $fundingSource;
         $this->status = $status;
         $this->paymentSource = $paymentSource;
@@ -88,6 +93,26 @@ class PayPalOrder
     public function setIdCart($idCart)
     {
         $this->idCart = $idCart;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getIntent()
+    {
+        return $this->intent;
+    }
+
+    /**
+     * @param string $intent
+     *
+     * @return PayPalOrder
+     */
+    public function setIntent($intent)
+    {
+        $this->intent = $intent;
 
         return $this;
     }
