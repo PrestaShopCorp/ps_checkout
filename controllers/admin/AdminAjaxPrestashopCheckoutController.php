@@ -19,6 +19,7 @@
  */
 
 use Monolog\Logger;
+use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Configuration\BatchConfigurationProcessor;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
 use PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceConfigurationRepository;
@@ -33,6 +34,9 @@ use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateExcepti
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateInstaller;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Mode;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Command\RefundPayPalCaptureCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Exception\PayPalRefundException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Exception\PayPalRefundFailedException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration;
@@ -41,7 +45,6 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Settings\RoundingSettings;
 use PrestaShop\Module\PrestashopCheckout\Validator\BatchConfigurationValidator;
 use PrestaShop\Module\PrestashopCheckout\Webhook\WebhookSecretTokenService;
-use Psr\SimpleCache\CacheInterface;
 
 class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 {
@@ -439,92 +442,60 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessRefundOrder()
     {
         $orderPayPalId = Tools::getValue('orderPayPalRefundOrder');
-        $transactionPayPalId = Tools::getValue('orderPayPalRefundTransaction');
+        $captureId = Tools::getValue('orderPayPalRefundTransaction');
         $amount = Tools::getValue('orderPayPalRefundAmount');
         $currency = Tools::getValue('orderPayPalRefundCurrency');
 
-        if (empty($orderPayPalId) || false === Validate::isGenericName($orderPayPalId)) {
-            http_response_code(400);
-            $this->ajaxDie(json_encode([
-                'status' => false,
-                'errors' => [
-                    $this->l('PayPal Order is invalid.', 'translations'),
-                ],
-            ]));
-        }
+        /** @var CommandBusInterface $commandBus */
+        $commandBus = $this->module->getService('ps_checkout.bus.command');
 
-        if (empty($transactionPayPalId) || false === Validate::isGenericName($transactionPayPalId)) {
-            http_response_code(400);
-            $this->ajaxDie(json_encode([
-                'status' => false,
-                'errors' => [
-                    $this->l('PayPal Transaction is invalid.', 'translations'),
-                ],
-            ]));
-        }
-
-        if (empty($amount) || false === Validate::isPrice($amount) || $amount <= 0) {
-            http_response_code(400);
-            $this->ajaxDie(json_encode([
-                'status' => false,
-                'errors' => [
-                    $this->l('PayPal refund amount is invalid.', 'translations'),
-                ],
-            ]));
-        }
-
-        if (empty($currency) || false === in_array($currency, ['AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'INR', 'ILS', 'JPY', 'MYR', 'MXN', 'TWD', 'NZD', 'NOK', 'PHP', 'PLN', 'GBP', 'RUB', 'SGD', 'SEK', 'CHF', 'THB', 'USD'])) {
-            // https://developer.paypal.com/docs/api/reference/currency-codes/
-            http_response_code(400);
-            $this->ajaxDie(json_encode([
-                'status' => false,
-                'errors' => [
-                    $this->l('PayPal refund currency is invalid.', 'translations'),
-                ],
-            ]));
-        }
-
-        /** @var PayPalConfiguration $configurationPayPal */
-        $configurationPayPal = $this->module->getService('ps_checkout.paypal.configuration');
-
-        $response = (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Order($this->context->link))->refund([
-            'orderId' => $orderPayPalId,
-            'captureId' => $transactionPayPalId,
-            'payee' => [
-                'merchant_id' => $configurationPayPal->getMerchantId(),
-            ],
-            'amount' => [
-                'currency_code' => $currency,
-                'value' => $amount,
-            ],
-            'note_to_payer' => 'Refund by '
-                . Configuration::get(
-                    'PS_SHOP_NAME',
-                    null,
-                    null,
-                    (int) Context::getContext()->shop->id
-                ),
-        ]);
-
-        if (isset($response['httpCode']) && $response['httpCode'] === 200) {
-            /** @var CacheInterface $orderPayPalCache */
-            $orderPayPalCache = $this->module->getService('ps_checkout.cache.paypal.order');
-            if ($orderPayPalCache->has($orderPayPalId)) {
-                $orderPayPalCache->delete($orderPayPalId);
-            }
+        try {
+            $commandBus->handle(new RefundPayPalCaptureCommand($orderPayPalId, $captureId, $currency, $amount));
 
             $this->ajaxDie(json_encode([
                 'status' => true,
                 'content' => $this->l('Refund has been processed by PayPal.', 'translations'),
             ]));
-        } else {
-            http_response_code(isset($response['httpCode']) ? (int) $response['httpCode'] : 500);
+        } catch (PayPalRefundFailedException $exception) {
+            http_response_code($exception->getCode());
             $this->ajaxDie(json_encode([
                 'status' => false,
                 'errors' => [
                     $this->l('Refund cannot be processed by PayPal.', 'translations'),
                 ],
             ]));
+        } catch (PayPalRefundException $invalidArgumentException) {
+            http_response_code(400);
+            $error = '';
+            switch ($invalidArgumentException->getCode()) {
+                case PayPalRefundException::INVALID_ORDER_ID:
+                    $error = $this->l('PayPal Order is invalid.', 'translations');
+                    break;
+                case PayPalRefundException::INVALID_TRANSACTION_ID:
+                    $error = $this->l('PayPal Transaction is invalid.', 'translations');
+                    break;
+                case PayPalRefundException::INVALID_CURRENCY:
+                    $error = $this->l('PayPal refund currency is invalid.', 'translations');
+                    break;
+                case PayPalRefundException::INVALID_AMOUNT:
+                    $error = $this->l('PayPal refund amount is invalid.', 'translations');
+                    break;
+                default:
+                    break;
+            }
+            $this->ajaxDie(json_encode([
+                'status' => false,
+                'errors' => [$error],
+            ]));
+        } catch (Exception $exception) {
+            $this->exitWithResponse([
+                'httpCode' => 500,
+                'status' => false,
+                'errors' => [
+                    $this->l('Refund cannot be processed by PayPal.', 'translations'),
+                ],
+                'error' => $exception->getMessage(),
+            ]);
         }
     }
 
