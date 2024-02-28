@@ -109,8 +109,8 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         }
 
         if ($this->isCard) {
-            //$this->buildPaymentSourceNode();
-            //$this->buildSupplementaryDataNode();
+            $this->buildPaymentSourceNode();
+            $this->buildSupplementaryDataNode();
         }
     }
 
