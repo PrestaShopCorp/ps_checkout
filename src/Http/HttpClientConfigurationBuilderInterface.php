@@ -18,8 +18,12 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event;
+namespace PrestaShop\Module\PrestashopCheckout\Http;
 
-class PayPalCaptureRefundedEvent extends PayPalCaptureEvent
+interface HttpClientConfigurationBuilderInterface
 {
+    /**
+     * @return array
+     */
+    public function build();
 }

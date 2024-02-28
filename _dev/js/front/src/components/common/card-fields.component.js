@@ -260,6 +260,15 @@ export class CardFieldsComponent extends BaseComponent {
             let message = error.message || this.$('checkout.form.error.label');
             this.data.notification.showError(message);
             this.data.HTMLElementButton.removeAttribute('disabled');
+
+            return this.psCheckoutApi
+              .postCancelOrder({
+                fundingSource: this.data.name,
+                isExpressCheckout: this.config.expressCheckout.active,
+                reason: 'card_fields_error',
+                error: error instanceof Error ? error.message : error
+              })
+              .catch((error) => console.error(error));
           },
           inputEvents: {
             /**

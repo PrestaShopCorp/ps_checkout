@@ -23,9 +23,11 @@ namespace PrestaShop\Module\PrestashopCheckout\Handler;
 
 use Context;
 use Module;
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
+use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
+use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use Ps_checkout;
@@ -91,25 +93,36 @@ class CreatePaypalOrderHandler
 
         $payload = $builder->presentPayload()->getArray();
 
+        /** @var CheckoutHttpClient $checkoutHttpClient */
+        $checkoutHttpClient = $module->getService('ps_checkout.http.client.checkout');
+
         // Create the paypal order or update it
-        if (true === $updateOrder) {
-            $paypalOrder = (new Order($this->context->link))->patch($payload);
-        } else {
-            $paypalOrder = (new Order($this->context->link))->create($payload);
-        }
-
-        // Retry with minimal payload when full payload failed (only on 1.7)
-        if (substr((string) $paypalOrder['httpCode'], 0, 1) === '4' && $shopContext->isShop17()) {
-            $builder->buildMinimalPayload();
-            $payload = $builder->presentPayload()->getArray();
-
+        try {
             if (true === $updateOrder) {
-                $paypalOrder = (new Order($this->context->link))->patch($payload);
+                $response = $checkoutHttpClient->updateOrder($payload);
             } else {
-                $paypalOrder = (new Order($this->context->link))->create($payload);
+                $response = $checkoutHttpClient->createOrder($payload);
+            }
+        } catch (PayPalException $exception) {
+            $previousException = $exception->getPrevious();
+            $response = method_exists($previousException, 'getResponse') ? $previousException->getResponse() : null;
+            // Retry with minimal payload when full payload failed (only on 1.7)
+            if ($response && substr((string) $response->getStatusCode(), 0, 1) === '4' && $shopContext->isShop17()) {
+                $builder->buildMinimalPayload();
+                $payload = $builder->presentPayload()->getArray();
+
+                if (true === $updateOrder) {
+                    $response = $checkoutHttpClient->updateOrder($payload);
+                } else {
+                    $response = $checkoutHttpClient->createOrder($payload);
+                }
+            } else {
+                throw $exception;
             }
         }
 
-        return $paypalOrder;
+        $responseHandler = new ResponseApiHandler();
+
+        return $responseHandler->handleResponse($response);
     }
 }

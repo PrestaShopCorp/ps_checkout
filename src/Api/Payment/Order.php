@@ -25,10 +25,13 @@ use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
 
 /**
  * Handle order requests
+ *
+ * @deprecated
  */
 class Order extends PaymentClient
 {
     /**
+     * @deprecated
      * Create order to paypal api
      *
      * @param array $payload Cart details (json)
@@ -43,6 +46,7 @@ class Order extends PaymentClient
     }
 
     /**
+     * @deprecated
      * Capture order funds
      *
      * @param string $orderId paypal
@@ -65,6 +69,7 @@ class Order extends PaymentClient
     }
 
     /**
+     * @deprecated
      * Get paypal order details
      *
      * @param string $orderId paypal
@@ -95,6 +100,7 @@ class Order extends PaymentClient
     }
 
     /**
+     * @deprecated
      * Refund an order
      *
      * @param array $payload
@@ -109,6 +115,7 @@ class Order extends PaymentClient
     }
 
     /**
+     * @deprecated
      * Patch paypal order
      *
      * @param array $payload
