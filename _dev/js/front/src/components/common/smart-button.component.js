@@ -188,6 +188,9 @@ export class SmartButtonComponent extends BaseComponent {
         ) {
           errorMessage =
             'Provided country is not supported by the selected payment method.';
+        } else if (error.message.includes('Detected popup close')) {
+          errorMessage =
+            'The payment failed because the payment window has been closed before the end of the payment process.';
         }
       }
     }
