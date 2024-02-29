@@ -24,14 +24,12 @@ use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
-use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
 use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Command\RefundPayPalCaptureCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Event\PayPalCaptureRefundedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Exception\PayPalRefundFailedException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
-use Psr\SimpleCache\CacheInterface;
 
 class RefundPayPalCaptureCommandHandler
 {
@@ -55,25 +53,19 @@ class RefundPayPalCaptureCommandHandler
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
-    /**
-     * @var CacheInterface
-     */
-    private $orderPayPalCache;
 
     public function __construct(
         CheckoutHttpClient $checkoutHttpClient,
         PayPalConfiguration $payPalConfiguration,
         PrestaShopConfiguration $prestaShopConfiguration,
         PrestaShopContext $prestaShopContext,
-        EventDispatcherInterface $eventDispatcher,
-        CacheInterface $orderPayPalCache
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->checkoutHttpClient = $checkoutHttpClient;
         $this->payPalConfiguration = $payPalConfiguration;
         $this->prestaShopConfiguration = $prestaShopConfiguration;
         $this->prestaShopContext = $prestaShopContext;
         $this->eventDispatcher = $eventDispatcher;
-        $this->orderPayPalCache = $orderPayPalCache;
     }
 
     /**
@@ -101,22 +93,13 @@ class RefundPayPalCaptureCommandHandler
                     ['id_shop' => $this->prestaShopContext->getShopId()]
                 ),
         ]);
-        $responseHandler = new ResponseApiHandler();
-        $response = $responseHandler->handleResponse($response);
 
-        if (isset($response['httpCode']) && $response['httpCode'] === 200) {
-            if ($this->orderPayPalCache->has($command->getOrderPayPalId())) {
-                $this->orderPayPalCache->delete($command->getOrderPayPalId());
-            }
-        } else {
-            throw new PayPalRefundFailedException('', isset($response['httpCode']) ? $response['httpCode'] : 500);
-        }
-
+        $refund = json_decode($response->getBody()->getContents(), true);
         $this->eventDispatcher->dispatch(
             new PayPalCaptureRefundedEvent(
-                $response['body']['id'],
+                $refund['id'],
                 $command->getOrderPayPalId(),
-                $response['body']
+                $refund
             )
         );
     }

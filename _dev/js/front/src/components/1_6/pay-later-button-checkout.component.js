@@ -24,11 +24,14 @@ export class PayLaterButtonCheckoutComponent extends BaseComponent {
     querySelectorService: 'QuerySelectorService',
     prestashopService: 'PrestashopService',
     psCheckoutApi: 'PsCheckoutApi',
+    payPalService: 'PayPalService',
     $: '$'
   };
 
   created() {
-    this.buttonReferenceContainer = this.querySelectorService.getExpressCheckoutButtonContainerCheckout();
+    this.buttonReferenceContainer =
+      this.querySelectorService.getExpressCheckoutButtonContainerCheckout();
+    this.data.orderId = this.payPalService.getOrderId();
   }
 
   renderTitle() {
@@ -55,19 +58,13 @@ export class PayLaterButtonCheckoutComponent extends BaseComponent {
       this.app,
       {
         fundingSource: 'paylater',
-        querySelector: '#ps_checkout-express-button-checkout',
-        createOrder: (data) =>
-          this.psCheckoutApi.postCreateOrder({
-            ...data,
-            fundingSource: 'paylater',
-            isExpressCheckout: true
-          })
+        querySelector: '#ps_checkout-express-button-checkout'
       }
     ).render();
 
     if (
-      this.prestashopService.isNativeOnePageCheckoutPage()
-      && !document.getElementById('ps_checkout-express-button-checkout')
+      this.prestashopService.isNativeOnePageCheckoutPage() &&
+      !document.getElementById('ps_checkout-express-button-checkout')
     ) {
       const separatorText = document.createElement('div');
       separatorText.classList.add('ps_checkout-express-separator');

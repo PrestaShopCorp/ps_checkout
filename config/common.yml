@@ -685,14 +685,13 @@ services:
 
   PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\CommandHandler\RefundPayPalCaptureCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\CommandHandler\RefundPayPalCaptureCommandHandler'
+    public: true
     arguments:
       - '@ps_checkout.http.client.checkout'
       - '@ps_checkout.paypal.configuration'
       - '@ps_checkout.configuration'
       - '@ps_checkout.context.prestashop'
       - '@ps_checkout.event.dispatcher'
-      - '@ps_checkout.cache.paypal.order'
-      - '@ps_checkout.paypal.provider.order'
 
   ps_checkout.paypal.capture.service.check_transition_paypal_capture_status:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\CheckTransitionPayPalCaptureStatusService'

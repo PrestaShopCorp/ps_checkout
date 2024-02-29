@@ -28,7 +28,8 @@ export class ExpressButtonCheckoutComponent extends BaseComponent {
   };
 
   created() {
-    this.buttonReferenceContainer = this.querySelectorService.getExpressCheckoutButtonContainerCheckout();
+    this.buttonReferenceContainer =
+      this.querySelectorService.getExpressCheckoutButtonContainerCheckout();
   }
 
   renderTitle() {
@@ -53,13 +54,7 @@ export class ExpressButtonCheckoutComponent extends BaseComponent {
       this.app,
       {
         fundingSource: 'paypal',
-        querySelector: '#ps_checkout-express-button-checkout',
-        createOrder: (data) =>
-          this.psCheckoutApi.postCreateOrder({
-            ...data,
-            fundingSource: 'paypal',
-            isExpressCheckout: true
-          })
+        querySelector: '#ps_checkout-express-button-checkout'
       }
     ).render();
 
