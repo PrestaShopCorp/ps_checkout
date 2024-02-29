@@ -30,6 +30,7 @@ use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileFinder;
 use PrestaShop\Module\PrestashopCheckout\Logger\LoggerFileReader;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep;
 use PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\ValueBanner;
+use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
 use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateInstaller;
 use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
@@ -451,21 +452,15 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
 
         try {
             $commandBus->handle(new RefundPayPalCaptureCommand($orderPayPalId, $captureId, $currency, $amount));
-
-            $this->ajaxDie(json_encode([
-                'status' => true,
-                'content' => $this->l('Refund has been processed by PayPal.', 'translations'),
-            ]));
         } catch (PayPalRefundFailedException $exception) {
-            http_response_code($exception->getCode());
-            $this->ajaxDie(json_encode([
+            $this->exitWithResponse([
+                'httpCode' => $exception->getCode(),
                 'status' => false,
                 'errors' => [
                     $this->l('Refund cannot be processed by PayPal.', 'translations'),
                 ],
-            ]));
+            ]);
         } catch (PayPalRefundException $invalidArgumentException) {
-            http_response_code(400);
             $error = '';
             switch ($invalidArgumentException->getCode()) {
                 case PayPalRefundException::INVALID_ORDER_ID:
@@ -483,10 +478,28 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 default:
                     break;
             }
-            $this->ajaxDie(json_encode([
+            $this->exitWithResponse([
+                'httpCode' => 400,
                 'status' => false,
                 'errors' => [$error],
-            ]));
+            ]);
+        } catch (OrderException $exception) {
+            if ($exception->getCode() === OrderException::FAILED_UPDATE_ORDER_STATUS) {
+                $this->exitWithResponse([
+                    'httpCode' => 200,
+                    'status' => true,
+                    'content' => $this->l('Refund has been processed by PayPal, but order status change or email sending failed.', 'translations'),
+                ]);
+            } elseif ($exception->getCode() !== OrderException::ORDER_HAS_ALREADY_THIS_STATUS) {
+                $this->exitWithResponse([
+                    'httpCode' => 500,
+                    'status' => false,
+                    'errors' => [
+                        $exception->getMessage(),
+                    ],
+                    'error' => $exception->getMessage(),
+                ]);
+            }
         } catch (Exception $exception) {
             $this->exitWithResponse([
                 'httpCode' => 500,
@@ -497,6 +510,12 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
                 'error' => $exception->getMessage(),
             ]);
         }
+
+        $this->exitWithResponse([
+            'httpCode' => 200,
+            'status' => true,
+            'content' => $this->l('Refund has been processed by PayPal.', 'translations'),
+        ]);
     }
 
     /**
