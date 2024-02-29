@@ -56,6 +56,7 @@ export class CardFieldsComponent extends BaseComponent {
   created() {
     this.data.name = this.props.fundingSource.name;
     this.data.validity = false;
+    this.data.orderId = null;
     /**
      * @property {PaypalCardFieldsEvent} data.cardFieldsState
      */
@@ -231,6 +232,7 @@ export class CardFieldsComponent extends BaseComponent {
                 // vault: storeCardInVault
               })
               .then((data) => {
+                this.data.orderId = data;
                 return data;
               })
               .catch((error) => {
@@ -266,6 +268,7 @@ export class CardFieldsComponent extends BaseComponent {
 
             return this.psCheckoutApi
               .postCancelOrder({
+                orderID: this.data.orderId,
                 fundingSource: this.data.name,
                 isExpressCheckout: this.config.expressCheckout.active,
                 reason: 'card_fields_error',

@@ -110,6 +110,10 @@ class PayPalRefundEventSubscriber implements EventSubscriberInterface
             return;
         }
 
+        if ($this->orderPayPalCache->has($event->getPayPalOrderId()->getValue())) {
+            $this->orderPayPalCache->delete($event->getPayPalOrderId()->getValue());
+        }
+
         if (!$order->hasBeenPaid() || $order->hasBeenTotallyRefund()) {
             return;
         }
@@ -139,23 +143,5 @@ class PayPalRefundEventSubscriber implements EventSubscriberInterface
         if ($this->orderPayPalCache->has($event->getPayPalOrderId()->getValue())) {
             $this->orderPayPalCache->delete($event->getPayPalOrderId()->getValue());
         }
-//        $this->capturePayPalCache->set($event->getPayPalCaptureId()->getValue(), $event->getCapture());
-//
-//        $needToClearOrderPayPalCache = true;
-//        $orderPayPalCache = $this->orderPayPalCache->get($event->getPayPalOrderId()->getValue());
-//
-//        if ($orderPayPalCache && isset($orderPayPalCache['purchase_units'][0]['payments']['captures'])) {
-//            foreach ($orderPayPalCache['purchase_units'][0]['payments']['captures'] as $key => $capture) {
-//                if ($capture['id'] === $event->getPayPalCaptureId()->getValue()) {
-//                    $needToClearOrderPayPalCache = false;
-//                    $orderPayPalCache['purchase_units'][0]['payments']['captures'][$key] = $event->getCapture();
-//                    $this->orderPayPalCache->set($event->getPayPalOrderId()->getValue(), $orderPayPalCache);
-//                }
-//            }
-//        }
-//
-//        if ($needToClearOrderPayPalCache) {
-//            $this->orderPayPalCache->delete($event->getPayPalOrderId()->getValue());
-//        }
     }
 }

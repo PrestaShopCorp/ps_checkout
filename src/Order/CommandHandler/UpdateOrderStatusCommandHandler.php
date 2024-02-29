@@ -73,11 +73,11 @@ class UpdateOrderStatusCommandHandler extends AbstractOrderCommandHandler
             // Save all changes
             $historyAdded = $history->addWithemail(true);
         } catch (Exception $exception) {
-            throw new OrderException(sprintf('Failed to update status or sent email when changing OrderState #%d of Order #%d.', $command->getNewOrderStatusId()->getValue(), $command->getOrderId()->getValue()), OrderException::FAILED_UPDATE_ORDER_STATUS, $exception);
+            throw new OrderException(sprintf('Failed to update status or send email when changing OrderState #%d of Order #%d.', $command->getNewOrderStatusId()->getValue(), $command->getOrderId()->getValue()), OrderException::FAILED_UPDATE_ORDER_STATUS, $exception);
         }
 
         if (!$historyAdded) {
-            throw new OrderException(sprintf('Failed to update status or sent email when changing OrderState #%d of Order #%d.', $command->getNewOrderStatusId()->getValue(), $command->getOrderId()->getValue()), OrderException::FAILED_UPDATE_ORDER_STATUS);
+            throw new OrderException(sprintf('Failed to update status or send email when changing OrderState #%d of Order #%d.', $command->getNewOrderStatusId()->getValue(), $command->getOrderId()->getValue()), OrderException::FAILED_UPDATE_ORDER_STATUS);
         }
 
         $this->eventDispatcher->dispatch(new OrderStatusUpdatedEvent($orderStateId));
