@@ -114,10 +114,6 @@ class PayPalRefundEventSubscriber implements EventSubscriberInterface
             $this->orderPayPalCache->delete($event->getPayPalOrderId()->getValue());
         }
 
-        if (!$order->hasBeenPaid() || $order->hasBeenTotallyRefund()) {
-            return;
-        }
-
         $orderPayPal = $this->orderProvider->getById($event->getPayPalOrderId()->getValue());
 
         if (empty($orderPayPal['purchase_units'][0]['payments']['refunds'])) {
@@ -129,11 +125,16 @@ class PayPalRefundEventSubscriber implements EventSubscriberInterface
         });
 
         $orderFullyRefunded = (float) $order->getTotalAmount() <= (float) $totalRefunded;
+        $newOrderStateId = $this->orderStateMapper->getIdByKey($orderFullyRefunded ? OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED : OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED);
+
+        if (in_array($newOrderStateId, $order->getOrderStateIdHistory())) {
+            return;
+        }
 
         $this->commandBus->handle(
             new UpdateOrderStatusCommand(
                 $order->getOrderId()->getValue(),
-                $this->orderStateMapper->getIdByKey($orderFullyRefunded ? OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED : OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED)
+                $newOrderStateId
             )
         );
     }

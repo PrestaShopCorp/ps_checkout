@@ -46,6 +46,8 @@ class Ps_checkout extends PaymentModule
         'actionObjectOrderPaymentUpdateAfter',
         'displayPaymentReturn',
         'displayOrderDetail',
+        'actionOrderSlipAdd',
+        'displayPDFOrderSlip',
     ];
 
     /**
@@ -1670,5 +1672,216 @@ class Ps_checkout extends PaymentModule
         $this->context->smarty->assign($orderSummaryView->getTemplateVars());
 
         return $this->display(__FILE__, 'views/templates/hook/displayOrderDetail.tpl');
+    }
+
+    /**
+     * Refund based on OrderSlip
+     *
+     * @param array{cookie: Cookie, cart: Cart, altern: int, order: Order} $params
+     *
+     * @return void
+     */
+    public function hookActionOrderSlipAdd(array $params)
+    {
+        try {
+            /** @var Order $order */
+            $order = $params['order'];
+
+            if (!Validate::isLoadedObject($order)) {
+                return;
+            }
+
+            /** @var OrderSlip[]|bool $orderSlipCollection */
+            $orderSlipCollection = $order->getOrderSlipsCollection()->getResults();
+
+            if (!$orderSlipCollection) {
+                return;
+            }
+
+            /** @var OrderSlip $orderSlip */
+            $orderSlip = end($orderSlipCollection);
+
+            if (!Validate::isLoadedObject($orderSlip)) {
+                return;
+            }
+
+            $customer = new Customer((int) $order->id_customer);
+            $useTax = Group::getPriceDisplayMethod((int) $customer->id_default_group);
+
+            if ($useTax) {
+                $amount = $orderSlip->total_products_tax_excl;
+            } else {
+                $amount = $orderSlip->total_products_tax_incl;
+            }
+
+            if ($orderSlip->shipping_cost) {
+                if ($useTax) {
+                    $amount += $orderSlip->total_shipping_tax_excl;
+                } else {
+                    $amount += $orderSlip->total_shipping_tax_incl;
+                }
+            }
+
+            $cartRuleTotal = 0;
+
+            // Refund based on product prices, but do not refund the voucher amount
+            if ($orderSlip->order_slip_type == 1 && is_array($cartRules = $order->getCartRules())) {
+                foreach ($cartRules as $cartRule) {
+                    if ($useTax) {
+                        $cartRuleTotal -= $cartRule['value_tax_excl'];
+                    } else {
+                        $cartRuleTotal -= $cartRule['value'];
+                    }
+                }
+            }
+
+            $amount += $cartRuleTotal;
+
+            if ($amount <= 0) {
+                return;
+            }
+
+            $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
+            $psCheckoutCartCollection->where('id_cart', '=', (int) $order->id_cart);
+            $psCheckoutCartCollection->where('paypal_status', 'in', [PsCheckoutCart::STATUS_COMPLETED, PsCheckoutCart::STATUS_PARTIALLY_COMPLETED]);
+            $psCheckoutCartCollection->orderBy('date_upd', 'ASC');
+
+            if (!$psCheckoutCartCollection->count()) {
+                return;
+            }
+
+            /** @var PsCheckoutCart|bool $psCheckoutCart */
+            $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+
+            if (!$psCheckoutCart) {
+                return;
+            }
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider $paypalOrderProvider */
+            $paypalOrderProvider = $this->getService('ps_checkout.paypal.provider.order');
+
+            try {
+                $paypalOrder = $paypalOrderProvider->getById($psCheckoutCart->paypal_order);
+            } catch (Exception $exception) {
+                return;
+            }
+
+            if (!isset($paypalOrder['purchase_units'][0]['payments']['captures'][0])) {
+                return;
+            }
+
+            $capture = $paypalOrder['purchase_units'][0]['payments']['captures'][0];
+
+            $totalCaptured = (float) $capture['amount']['value'];
+
+            $totalAlreadyRefund = 0;
+
+            if (isset($paypalOrder['purchase_units'][0]['payments']['refunds'])) {
+                $totalAlreadyRefund = array_reduce($paypalOrder['purchase_units'][0]['payments']['refunds'], function ($totalRefunded, $refund) {
+                    return $totalRefunded + (float) $refund['amount']['value'];
+                });
+            }
+
+            if ($totalCaptured < $amount + $totalAlreadyRefund) {
+                throw new \PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException(sprintf('Refund amount %s is greater than captured amount %s', $totalCaptured, $amount));
+            }
+
+            $currency = new Currency($params['order']->id_currency);
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface $commandBus */
+            $commandBus = $this->getService('ps_checkout.bus.command');
+            $commandBus->handle(new \PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Command\RefundPayPalCaptureCommand(
+                $psCheckoutCart->getPaypalOrderId(),
+                $capture['id'],
+                $currency->iso_code,
+                sprintf('%01.2F', $amount)
+            ));
+        } catch (Exception $exception) {
+            // Do not break the Admin process if an exception is thrown
+            $this->getLogger()->error(__FUNCTION__, [
+                'exception' => $exception,
+            ]);
+        }
+    }
+
+    /**
+     * Add content to the PDF OrderSlip.
+     *
+     * @param array{cookie: Cookie, cart: Cart, altern: int, object: OrderSlip} $params
+     *
+     * @return string
+     */
+    public function hookDisplayPDFOrderSlip(array $params)
+    {
+        try {
+            /** @var OrderSlip $orderSlip */
+            $orderSlip = $params['object'];
+            $order = new Order($orderSlip->id_order);
+
+            if ($order->module !== $this->name) {
+                return '';
+            }
+
+            $psCheckoutCartCollection = new PrestaShopCollection('PsCheckoutCart');
+            $psCheckoutCartCollection->where('id_cart', '=', (int) $order->id_cart);
+            $psCheckoutCartCollection->where('paypal_status', 'in', [PsCheckoutCart::STATUS_COMPLETED, PsCheckoutCart::STATUS_PARTIALLY_COMPLETED]);
+            $psCheckoutCartCollection->orderBy('date_upd', 'ASC');
+
+            if (!$psCheckoutCartCollection->count()) {
+                return '';
+            }
+
+            /** @var PsCheckoutCart|bool $psCheckoutCart */
+            $psCheckoutCart = $psCheckoutCartCollection->getFirst();
+
+            if (!$psCheckoutCart) {
+                return '';
+            }
+
+            /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider $paypalOrderProvider */
+            $paypalOrderProvider = $this->getService('ps_checkout.paypal.provider.order');
+
+            try {
+                $paypalOrder = $paypalOrderProvider->getById($psCheckoutCart->paypal_order);
+            } catch (Exception $exception) {
+                return '';
+            }
+
+            if (!isset($paypalOrder['purchase_units'][0]['payments']['refunds'][0])) {
+                return '';
+            }
+
+            foreach ($paypalOrder['purchase_units'][0]['payments']['refunds'] as $refund) {
+                if (number_format($refund['amount']['value'], 2) !== number_format($orderSlip->amount, 2)) {
+                    continue;
+                }
+
+                $paypalRefund = $refund;
+            }
+
+            if (!isset($paypalRefund)) {
+                return '';
+            }
+
+            $this->context->smarty->assign([
+                'refund_id' => $paypalRefund['id'],
+                'refund_amount' => $paypalRefund['amount']['value'],
+                'refund_currency' => $paypalRefund['amount']['currency_code'],
+                'refund_currency_id' => Currency::getIdByIsoCode($paypalRefund['amount']['currency_code'], $order->id_shop),
+                'refund_status' => $paypalRefund['status'],
+                'refund_note_to_payer' => isset($paypalRefund['note_to_payer']) ? $paypalRefund['note_to_payer'] : '',
+                'refund_create_time' => isset($paypalRefund['create_time']) ? $paypalRefund['create_time'] : '',
+                'refund_update_time' => isset($paypalRefund['update_time']) ? $paypalRefund['update_time'] : '',
+            ]);
+
+            return $this->display(__FILE__, 'views/templates/hook/displayPDFOrderSlip.tpl');
+        } catch (Exception $exception) {
+            // Do not break the Admin process if an exception is thrown
+            $this->getLogger()->error(__FUNCTION__, [
+                'exception' => $exception,
+            ]);
+
+            return '';
+        }
     }
 }

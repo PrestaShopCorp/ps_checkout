@@ -627,6 +627,7 @@ services:
     public: true
     arguments:
       - "@ps_checkout.repository.pscheckoutcart"
+      - "@ps_checkout.order.state.service.order_state_mapper"
 
   ps_checkout.query.handler.order.get_order_for_payment_reversed:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\QueryHandler\GetOrderForPaymentReversedQueryHandler'
