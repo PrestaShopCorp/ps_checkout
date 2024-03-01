@@ -27,7 +27,8 @@ export class ExpressButtonProductComponent extends BaseComponent {
   };
 
   created() {
-    this.buttonReferenceContainer = this.querySelectorService.getExpressCheckoutButtonContainerProduct();
+    this.buttonReferenceContainer =
+      this.querySelectorService.getExpressCheckoutButtonContainerProduct();
   }
 
   render() {
@@ -42,28 +43,23 @@ export class ExpressButtonProductComponent extends BaseComponent {
 
     buttonContainer.append(this.checkoutExpressButton);
 
+    const {
+      id_product,
+      id_product_attribute,
+      id_customization,
+      quantity_wanted
+    } = this.prestashopService.getProductDetails();
+
     this.children.expressCheckoutButton = new ExpressCheckoutButtonComponent(
       this.app,
       {
         fundingSource: 'paypal',
-        // TODO: Move this to constant when ExpressCheckoutButton component is created
         querySelector: '#ps-checkout-express-button',
-        createOrder: () => {
-          const {
-            id_product,
-            id_product_attribute,
-            id_customization,
-            quantity_wanted
-          } = this.prestashopService.getProductDetails();
-
-          return this.psCheckoutApi.postCreateOrder({
-            id_product,
-            id_product_attribute,
-            id_customization,
-            quantity_wanted,
-            fundingSource: 'paypal',
-            isExpressCheckout: true
-          });
+        data: {
+          id_product,
+          id_product_attribute,
+          id_customization,
+          quantity_wanted
         }
       }
     ).render();

@@ -25,37 +25,43 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
     $: '$'
   };
 
+  created() {
+    this.data.orderId = this.payPalService.getOrderId();
+  }
+
   onInit(data, actions) {
     return actions.enable();
   }
 
   onClick(data, actions) {
-    return (
-      this.psCheckoutApi
-        .postCheckCartOrder(
-          {
-            ...data,
-            fundingSource: this.props.fundingSource,
-            isExpressCheckout: true,
-            orderID: this.payPalService.getOrderId()
-          },
-          actions
-        )
-        // TODO: Error notification
-        .catch(() => actions.reject())
-    );
-    // TODO: [PAYSHIP-605] Error handling
+    return this.psCheckoutApi
+      .postCheckCartOrder(
+        {
+          ...data,
+          fundingSource: this.props.fundingSource,
+          isExpressCheckout: true,
+          orderID: this.data.orderId
+        },
+        actions
+      )
+      .catch((error) => {
+        actions.reject();
+        throw error;
+      });
   }
 
   onError(error) {
+    const errorText = error?.message ? error.message : error;
+    this.notifyError(errorText);
     console.error(error);
 
     return this.psCheckoutApi
       .postCancelOrder({
+        orderID: this.data.orderId,
         fundingSource: this.props.fundingSource,
         isExpressCheckout: true,
         reason: 'express_checkout_error',
-        error: error instanceof Error ? error.message : error
+        error: errorText
       })
       .catch((error) => console.error(error));
   }
@@ -74,6 +80,7 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
   onCancel(data) {
     return this.psCheckoutApi.postCancelOrder({
       ...data,
+      orderID: this.data.orderId,
       fundingSource: this.props.fundingSource,
       isExpressCheckout: true,
       reason: 'express_checkout_cancelled'
@@ -81,9 +88,55 @@ export class ExpressCheckoutButtonComponent extends BaseComponent {
   }
 
   createOrder(data) {
-    if (this.props.createOrder) {
-      return this.props.createOrder(data);
+    const extraData = this.props?.data ? this.props.data : {};
+
+    return this.psCheckoutApi
+      .postCreateOrder({
+        ...data,
+        ...extraData
+      })
+      .then((data) => {
+        this.data.orderId = data;
+        return data;
+      })
+      .catch((error) => {
+        throw error;
+      });
+  }
+
+  notifyError(message) {
+    const expressCheckoutContainer = document.querySelector(
+      this.props.querySelector
+    );
+    const notificationContainerIdentifier =
+      'ps_checkout-product-notification-container';
+    let notificationContainerElement = document.getElementById(
+      notificationContainerIdentifier
+    );
+
+    if (!notificationContainerElement) {
+      notificationContainerElement = document.createElement('div');
+      notificationContainerElement.id = notificationContainerIdentifier;
+      expressCheckoutContainer.prepend(notificationContainerElement);
     }
+
+    const notificationIdentifier = 'ps_checkout-product-notification-container';
+    const currentNotificationElement = document.querySelector(
+      '#' + notificationContainerIdentifier + ' .' + notificationIdentifier
+    );
+
+    if (currentNotificationElement) {
+      return (currentNotificationElement.textContent = message);
+    }
+
+    const notificationElement = document.createElement('div');
+    notificationElement.classList.add(
+      'alert',
+      'alert-danger',
+      notificationIdentifier
+    );
+    notificationElement.textContent = message;
+    notificationContainerElement.appendChild(notificationElement);
   }
 
   renderPayPalButton() {

@@ -37,6 +37,7 @@ export class SmartButtonComponent extends BaseComponent {
 
   created() {
     this.data.name = this.props.fundingSource.name;
+    this.data.orderId = null;
 
     this.data.HTMLElement = this.props.HTMLElement;
 
@@ -114,6 +115,7 @@ export class SmartButtonComponent extends BaseComponent {
 
           return this.psCheckoutApi
             .postCancelOrder({
+              orderID: this.data.orderId,
               fundingSource: this.data.name,
               isExpressCheckout: this.config.expressCheckout.active,
               reason: 'checkout_error',
@@ -159,6 +161,10 @@ export class SmartButtonComponent extends BaseComponent {
               ...data,
               fundingSource: this.data.name,
               isExpressCheckout: this.config.expressCheckout.active
+            })
+            .then((data) => {
+              this.data.orderId = data;
+              return data;
             })
             .catch((error) => {
               this.data.loader.hide();
