@@ -1,0 +1,89 @@
+<?php
+/**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ */
+
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Query;
+
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Exception\PayPalCaptureException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\ValueObject\PayPalCaptureId;
+
+class GetPayPalRefundQueryResult
+{
+    /** @var PayPalOrderId */
+    private $paypalOrderId;
+
+    /** @var PayPalCaptureId */
+    private $paypalCaptureId;
+
+    /** @var string */
+    private $amount;
+
+    /** @var string */
+    private $currencyIsoCode;
+
+    /**
+     * @param string $paypalOrderId
+     * @param string $paypalCaptureId
+     * @param string $amount
+     * @param string $currencyIsoCode
+     *
+     * @throws PayPalOrderException|PayPalCaptureException
+     */
+    public function __construct($paypalOrderId, $paypalCaptureId, $amount, $currencyIsoCode)
+    {
+        $this->paypalOrderId = new PayPalOrderId($paypalOrderId);
+        $this->paypalCaptureId = new PayPalCaptureId($paypalCaptureId);
+        $this->amount = $amount;
+        $this->currencyIsoCode = $currencyIsoCode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPayPalOrderId()
+    {
+        return $this->paypalOrderId->getValue();
+    }
+
+    /**
+     * @return string
+     */
+    public function getPayPalCaptureId()
+    {
+        return $this->paypalCaptureId->getValue();
+    }
+
+    /**
+     * @return string
+     */
+    public function getAmount()
+    {
+        return $this->amount;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrencyIsoCode()
+    {
+        return $this->currencyIsoCode;
+    }
+}
