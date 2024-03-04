@@ -20,19 +20,19 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\QueryHandler;
 
-use Customer;
 use Currency;
+use Customer;
 use Exception;
 use Group;
 use OrderSlip;
+use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Query\GetPayPalRefundQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Query\GetPayPalRefundQueryResult;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
 use PrestaShopCollection;
 use PrestaShopException;
 use PsCheckoutCart;
 use Validate;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Query\GetPayPalRefundQuery;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\Query\GetPayPalRefundQueryResult;
-use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider;
-use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 
 class GetPayPalRefundQueryHandler
 {
