@@ -65,6 +65,9 @@ class PayPalOrderRepository
                 'funding_source' => pSQL($payPalOrder->getFundingSource()),
                 'status' => pSQL($payPalOrder->getStatus()),
                 'payment_source' => pSQL($payPalOrder->getPaymentSource()),
+                'environment' => pSQL($payPalOrder->getEnvironment()),
+                'is_card_fields' => $payPalOrder->getIsCardFields(),
+                'is_express_checkout' => $payPalOrder->getIsExpressCheckout(),
             ]
         );
     }
@@ -124,6 +127,8 @@ class PayPalOrderRepository
                 'funding_source' => pSQL($payPalOrder->getFundingSource()),
                 'status' => pSQL($payPalOrder->getStatus()),
                 'payment_source' => pSQL($payPalOrder->getPaymentSource()),
+                'is_card_fields' => $payPalOrder->getIsCardFields(),
+                'is_express_checkout' => $payPalOrder->getIsExpressCheckout(),
             ],
             '`id` = ' . pSQL($payPalOrder->getId())
         );
@@ -229,7 +234,7 @@ class PayPalOrderRepository
     public function createPayPalOrderCapture(PayPalOrderCapture $payPalOrderCapture)
     {
         return $this->db->insert(
-            self::TABLE_AUTHORIZATION,
+            self::TABLE_CAPTURE,
             [
                 'id' => pSQL($payPalOrderCapture->getId()),
                 'id_order' => pSQL($payPalOrderCapture->getIdOrder()),
@@ -237,6 +242,8 @@ class PayPalOrderRepository
                 'final_capture' => (bool) $payPalOrderCapture->getFinalCapture(),
                 'created_at' => pSQL($payPalOrderCapture->getCreatedAt()),
                 'updated_at' => pSQL($payPalOrderCapture->getUpdatedAt()),
+                'seller_protection' => pSQL($payPalOrderCapture->getSellerProtection()),
+                'seller_receivable_breakdown' => pSQL($payPalOrderCapture->getSellerReceivableBreakdown()),
             ]
         );
     }
@@ -271,7 +278,9 @@ class PayPalOrderRepository
                 $capture['status'],
                 $capture['final_capture'],
                 $capture['created_at'],
-                $capture['updated_at']
+                $capture['updated_at'],
+                $capture['seller_protection'],
+                $capture['seller_receivable_breakdown']
             );
         }, $queryResult);
     }
@@ -290,6 +299,8 @@ class PayPalOrderRepository
                 'final_capture' => pSQL($payPalOrderCapture->getFinalCapture()),
                 'created_at' => pSQL($payPalOrderCapture->getCreatedAt()),
                 'updated_at' => pSQL($payPalOrderCapture->getUpdatedAt()),
+                'seller_protection' => pSQL($payPalOrderCapture->getSellerProtection()),
+                'seller_receivable_breakdown' => pSQL($payPalOrderCapture->getSellerReceivableBreakdown()),
             ],
             '`id` = ' . pSQL($payPalOrderCapture->getId())
         );
@@ -314,6 +325,7 @@ class PayPalOrderRepository
                 'custom_id' => pSQL($payPalOrderRefund->getCustomId()),
                 'acquirer_reference_number' => pSQL($payPalOrderRefund->getAcquirerReferenceNumber()),
                 'seller_payable_breakdown' => pSQL($payPalOrderRefund->getSellerPayableBreakdown()),
+                'id_order_slip' => pSQL($payPalOrderRefund->getIdOrderSlip()),
             ]
         );
     }
@@ -348,7 +360,8 @@ class PayPalOrderRepository
                 $refund['invoice_id'],
                 $refund['custom_id'],
                 $refund['acquirer_reference_number'],
-                $refund['seller_payable_breakdown']
+                $refund['seller_payable_breakdown'],
+                $refund['id_order_slip']
             );
         }, $queryResult);
     }

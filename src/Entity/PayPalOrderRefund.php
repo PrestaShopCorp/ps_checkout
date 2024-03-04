@@ -50,8 +50,12 @@ class PayPalOrderRefund
      * @var string|null
      */
     private $sellerPayableBreakdown;
+    /**
+     * @var int
+     */
+    private $idOrderSlip;
 
-    public function __construct($id = null, $idOrder = null, $status = null, $invoiceId = null, $customId = null, $acquirerReferenceNumber = null, $sellerPayableBreakdown = null)
+    public function __construct($id = null, $idOrder = null, $status = null, $invoiceId = null, $customId = null, $acquirerReferenceNumber = null, $sellerPayableBreakdown = null, $idOrderSlip = null)
     {
         $this->id = $id;
         $this->idOrder = $idOrder;
@@ -60,6 +64,7 @@ class PayPalOrderRefund
         $this->customId = $customId;
         $this->acquirerReferenceNumber = $acquirerReferenceNumber;
         $this->sellerPayableBreakdown = $sellerPayableBreakdown;
+        $this->idOrderSlip = $idOrderSlip;
     }
 
     /**
@@ -198,6 +203,26 @@ class PayPalOrderRefund
     public function setSellerPayableBreakdown($sellerPayableBreakdown)
     {
         $this->sellerPayableBreakdown = $sellerPayableBreakdown;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getIdOrderSlip()
+    {
+        return $this->idOrderSlip;
+    }
+
+    /**
+     * @param int $idOrderSlip
+     *
+     * @return PayPalOrderRefund
+     */
+    public function setIdOrderSlip($idOrderSlip)
+    {
+        $this->idOrderSlip = (int) $idOrderSlip;
 
         return $this;
     }

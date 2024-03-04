@@ -39,6 +39,9 @@ function upgrade_module_8_4_0_0($module)
             `status` varchar(50) NOT NULL,
             `funding_source` varchar(50) NOT NULL,
             `payment_source` text,
+            `environment` varchar(50) NOT NULL,
+            `is_card_fields` tinyint(1) NOT NULL,
+            `is_express_checkout` tinyint(1) NOT NULL,
             PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');
@@ -50,6 +53,8 @@ function upgrade_module_8_4_0_0($module)
             `final_capture` tinyint(1) NOT NULL,
             `created_at` varchar(50) NOT NULL,
             `updated_at` varchar(50) NOT NULL,
+            `seller_protection` varchar(50) NOT NULL,
+            `seller_receivable_breakdown` text,
             PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');
@@ -62,6 +67,7 @@ function upgrade_module_8_4_0_0($module)
             `custom_id` varchar(50) NOT NULL,
             `acquirer_reference_number` varchar(50) NOT NULL,
             `seller_payable_breakdown` text,
+            `id_order_slip` INT(10) UNSIGNED,
             PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');

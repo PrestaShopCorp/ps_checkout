@@ -46,8 +46,16 @@ class PayPalOrderCapture
      * @var string|null
      */
     private $updatedAt;
+    /**
+     * @var string|null
+     */
+    private $sellerProtection;
+    /**
+     * @var string|null
+     */
+    private $sellerReceivableBreakdown;
 
-    public function __construct($id = null, $idOrder = null, $status = null, $finalCapture = false, $createdAt = null, $updatedAt = null)
+    public function __construct($id = null, $idOrder = null, $status = null, $finalCapture = false, $createdAt = null, $updatedAt = null, $sellerProtection = null, $sellerReceivableBreakdown = null)
     {
         $this->id = $id;
         $this->idOrder = $idOrder;
@@ -55,6 +63,8 @@ class PayPalOrderCapture
         $this->finalCapture = (bool) $finalCapture;
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
+        $this->sellerProtection = $sellerProtection;
+        $this->sellerReceivableBreakdown = $sellerReceivableBreakdown;
     }
 
     /**
@@ -173,6 +183,46 @@ class PayPalOrderCapture
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSellerProtection()
+    {
+        return $this->sellerProtection;
+    }
+
+    /**
+     * @param string $sellerProtection
+     *
+     * @return PayPalOrderCapture
+     */
+    public function setSellerProtection($sellerProtection)
+    {
+        $this->sellerProtection = $sellerProtection;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSellerReceivableBreakdown()
+    {
+        return $this->sellerReceivableBreakdown;
+    }
+
+    /**
+     * @param string $sellerReceivableBreakdown
+     *
+     * @return PayPalOrderCapture
+     */
+    public function setSellerReceivableBreakdown($sellerReceivableBreakdown)
+    {
+        $this->sellerReceivableBreakdown = $sellerReceivableBreakdown;
 
         return $this;
     }

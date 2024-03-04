@@ -46,8 +46,20 @@ class PayPalOrder
      * @var string|null
      */
     private $paymentSource;
+    /**
+     * @var string
+     */
+    private $environment;
+    /**
+     * @var bool
+     */
+    private $isCardFields;
+    /**
+     * @var bool
+     */
+    private $isExpressCheckout;
 
-    public function __construct($id = null, $idCart = null, $intent = null, $fundingSource = null, $status = null, $paymentSource = null)
+    public function __construct($id = null, $idCart = null, $intent = null, $fundingSource = null, $status = null, $paymentSource = null, $environment = 'LIVE', $isCardFields = false, $isExpressCheckout = false)
     {
         $this->id = $id;
         $this->idCart = $idCart;
@@ -55,6 +67,9 @@ class PayPalOrder
         $this->fundingSource = $fundingSource;
         $this->status = $status;
         $this->paymentSource = $paymentSource;
+        $this->environment = $environment;
+        $this->isCardFields = (bool) $isCardFields;
+        $this->isExpressCheckout = (bool) $isExpressCheckout;
     }
 
     /**
@@ -173,6 +188,66 @@ class PayPalOrder
     public function setPaymentSource($paymentSource)
     {
         $this->paymentSource = $paymentSource;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEnvironment()
+    {
+        return $this->environment;
+    }
+
+    /**
+     * @param string $environment
+     *
+     * @return PayPalOrder
+     */
+    public function setEnvironment($environment)
+    {
+        $this->environment = $environment;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsCardFields()
+    {
+        return $this->isCardFields;
+    }
+
+    /**
+     * @param bool $isCardFields
+     *
+     * @return PayPalOrder
+     */
+    public function setIsCardFields($isCardFields)
+    {
+        $this->isCardFields = (bool) $isCardFields;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsExpressCheckout()
+    {
+        return $this->isExpressCheckout;
+    }
+
+    /**
+     * @param bool $isExpressCheckout
+     *
+     * @return PayPalOrder
+     */
+    public function setIsExpressCheckout($isExpressCheckout)
+    {
+        $this->isExpressCheckout = (bool) $isExpressCheckout;
 
         return $this;
     }
