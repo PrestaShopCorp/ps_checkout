@@ -21,14 +21,14 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\OldPaymentClient;
 
 /**
  * Handle order requests
  *
  * @deprecated
  */
-class Order extends PaymentClient
+class Order extends OldPaymentClient
 {
     /**
      * @deprecated
