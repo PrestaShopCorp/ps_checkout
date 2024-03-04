@@ -511,3 +511,11 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
 #ps_checkout-card-fields-form .ps_checkout-card-fields-cvv-label-wrapper>label {
   display: table-cell;
 }
+
+.paypal-pay-later-banner {
+  margin: 0.5em auto;
+}
+
+.paypal-pay-later-banner > span {
+  margin: auto;
+}

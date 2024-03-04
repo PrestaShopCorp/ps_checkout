@@ -508,3 +508,11 @@
 #ps_checkout-card-fields-form-loader {
   text-align: center;
 }
+
+.paypal-pay-later-banner {
+  margin: 0.5em auto;
+}
+
+.paypal-pay-later-banner > span {
+  margin: auto;
+}
