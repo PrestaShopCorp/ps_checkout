@@ -16,6 +16,11 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+
+.payment__option.ps_checkout-payment-option input[type="radio"] {
+  margin-top: .7rem;
+}
+
 .payment-options > div.payment-option[id$="card-container"] > span.custom-radio {
   margin-top: .25rem;
 }
@@ -24,9 +29,8 @@
 }
 
 .product-add-to-cart #ps-checkout-express-button div.paypal-buttons-context-iframe {
-  margin-top: 1.25rem;
-  width: 45%;
-  margin-left: 78px;
+  margin-top: .5rem;
+  width: 60%;
 }
 #checkout-personal-information-step #ps-checkout-express-button {
   display: flex;
@@ -510,4 +514,12 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
 
 #ps_checkout-card-fields-form .ps_checkout-card-fields-cvv-label-wrapper>label {
   display: table-cell;
+}
+
+.paypal-pay-later-banner {
+  margin: 0.5em auto;
+}
+
+.paypal-pay-later-banner > span {
+  margin: auto;
 }

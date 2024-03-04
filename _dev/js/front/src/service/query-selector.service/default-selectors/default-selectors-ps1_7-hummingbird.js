@@ -43,5 +43,21 @@ export const DefaultSelectors1_7Hummingbird = {
   PAY_LATER_OFFER_MESSAGE_CONTAINER_PRODUCT: '.product__prices',
   PAY_LATER_OFFER_MESSAGE_CONTAINER_CART_SUMMARY: '.cart-summary__totals',
 
-  PAY_LATER_BANNER_CONTAINER: '#notifications .container'
+  PAY_LATER_BANNER_CONTAINER: '#notifications .container',
+
+  CARD_FIELDS: {
+    FORM: '#ps_checkout-card-fields-form',
+    NAME: '#ps_checkout-card-fields-name',
+    NUMBER: '#ps_checkout-card-fields-number',
+    EXPIRY: '#ps_checkout-card-fields-expiry',
+    CVV: '#ps_checkout-card-fields-cvv',
+    NAME_ERROR: '#ps_checkout-card-fields-name-error',
+    NUMBER_ERROR: '#ps_checkout-card-fields-number-error',
+    VENDOR_ERROR: '#ps_checkout-card-fields-vendor-error',
+    EXPIRY_ERROR: '#ps_checkout-card-fields-expiry-error',
+    CVV_ERROR: '#ps_checkout-card-fields-cvv-error',
+  },
+
+  PAYMENT_METHOD_LOGO_PRODUCT_CONTAINER: '#product .product__add-to-cart',
+  PAYMENT_METHOD_LOGO_CART_CONTAINER: '#cart .cart-summary .cart-detailed__actions'
 };

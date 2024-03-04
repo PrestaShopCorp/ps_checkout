@@ -23,6 +23,7 @@ export class PayLaterMessagePs1_6Component extends BaseComponent {
     if (null === document.querySelector(containerIdentifier)) {
       let containerElement = document.createElement('div');
       containerElement.id = containerIdentifier.slice(1);
+      containerElement.classList.add('paypal-pay-later-message');
       querySelector.append(containerElement);
     }
   }
