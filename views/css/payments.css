@@ -503,3 +503,11 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
 #cart #ps_checkout-payment-method-logo-block-container {
   text-align: center;
 }
+
+#ps_checkout-card-fields-form .ps_checkout-card-fields-cvv-label-wrapper {
+  display: table;
+}
+
+#ps_checkout-card-fields-form .ps_checkout-card-fields-cvv-label-wrapper>label {
+  display: table-cell;
+}
