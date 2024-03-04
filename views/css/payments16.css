@@ -473,3 +473,11 @@
 #ps_checkout-canceled img, #ps_checkout-error img{
   margin-right: 10px;
 }
+
+#ps_checkout-card-fields-form .ps_checkout-card-fields-cvv-label-wrapper {
+  display: table;
+}
+
+#ps_checkout-card-fields-form .ps_checkout-card-fields-cvv-label-wrapper>label {
+  display: table-cell;
+}
