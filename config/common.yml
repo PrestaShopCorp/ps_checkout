@@ -735,7 +735,6 @@ services:
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder'
 
-
   ps_checkout.http.client.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClientConfigurationBuilder'
     public: true
