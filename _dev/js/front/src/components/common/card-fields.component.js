@@ -204,7 +204,7 @@ export class CardFieldsComponent extends BaseComponent {
           color: 'black'
         },
         body: {
-          padding: '0px'
+          padding: '0 0 5px 0'
         }
       },
       ...(this.configPayPal.hostedFieldsCustomization || {}),
