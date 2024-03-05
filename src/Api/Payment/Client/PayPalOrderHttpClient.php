@@ -42,13 +42,14 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
      *
      * @return ResponseInterface
      *
-     * @throws HttpException
+     * @throws HttpException|RequestException|TransferException|NetworkException
      */
     public function sendRequest(RequestInterface $request)
     {
         try {
             return parent::sendRequest($request);
         } catch (NetworkException $exception) {
+            throw $exception;
             // Thrown when the request cannot be completed because of network issues.
             // No response here
         } catch (HttpException $exception) {
@@ -73,68 +74,68 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
     }
 
     /**
-     * @param array $payload
+     * @param string $payload //Payload JSON
      * @param array $options
      *
      * @return ResponseInterface
      */
-    public function createOrder(array $payload, array $options = [])
+    public function createOrder($payload, array $options = [])
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/create', $options, json_encode($payload)));
+        return $this->sendRequest(new Request('POST', '/payments/order/create', $options, $payload));
     }
 
     /**
-     * @param array $payload
+     * @param string $payload
      * @param array $options
      *
      * @return ResponseInterface
      */
-    public function updateOrder(array $payload, array $options = [])
+    public function updateOrder($payload, array $options = [])
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/update', $options, json_encode($payload)));
+        return $this->sendRequest(new Request('POST', '/payments/order/update', $options, $payload));
     }
 
     /**
-     * @param array $payload
+     * @param string $payload
      * @param array $options
      *
      * @return ResponseInterface
      */
-    public function fetchOrder(array $payload, array $options = [])
+    public function fetchOrder($payload, array $options = [])
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/fetch', $options, json_encode($payload)));
+        return $this->sendRequest(new Request('POST', '/payments/order/fetch', $options, $payload));
     }
 
     /**
-     * @param array $payload
+     * @param string $payload
      * @param array $options
      *
      * @return ResponseInterface
      */
-    public function captureOrder(array $payload, array $options = [])
+    public function captureOrder($payload, array $options = [])
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/capture', $options, json_encode($payload)));
+        return $this->sendRequest(new Request('POST', '/payments/order/capture', $options, $payload));
     }
 
     /**
-     * @param array $payload
+     * @param string $payload
      * @param array $options
      *
      * @return ResponseInterface
      */
-    public function refundOrder(array $payload, array $options = [])
+    public function refundOrder($payload, array $options = [])
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/refund', $options, json_encode($payload)));
+        return $this->sendRequest(new Request('POST', '/payments/order/refund', $options, $payload));
     }
 
     /**
-     * @param array $payload
+     * @param string $payload
      * @param array $options
      *
      * @return ResponseInterface
      */
-    public function generateClientToken(array $payload, array $options = [])
+    public function generateClientToken($payload, array $options = [])
     {
-        return $this->sendRequest(new Request('POST', '/payments/order/generate_client_token', $options, json_encode($payload)));
+        return $this->sendRequest(new Request('POST', '/payments/order/generate_client_token', $options, $payload));
     }
 }
