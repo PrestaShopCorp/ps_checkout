@@ -25,6 +25,7 @@ use PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SaveCheckoutCommand;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SavePayPalOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
+use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
@@ -42,6 +43,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use Ps_checkout;
 use Psr\SimpleCache\CacheInterface;
@@ -87,6 +89,10 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
      * @var PayPalConfiguration
      */
     private $payPalConfiguration;
+    /**
+     * @var PayPalOrderRepository
+     */
+    private $payPalOrderRepository;
 
     public function __construct(
         Ps_checkout $module,
@@ -95,7 +101,8 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         CheckoutChecker $checkoutChecker,
         CheckTransitionPayPalOrderStatusService $checkTransitionPayPalOrderStatusService,
         OrderStateMapper $orderStateMapper,
-        PayPalConfiguration $payPalConfiguration
+        PayPalConfiguration $payPalConfiguration,
+        PayPalOrderRepository $payPalOrderRepository
     ) {
         $this->module = $module;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
@@ -105,6 +112,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         $this->orderStateMapper = $orderStateMapper;
         $this->commandBus = $this->module->getService('ps_checkout.bus.command');
         $this->payPalConfiguration = $payPalConfiguration;
+        $this->payPalOrderRepository = $payPalOrderRepository;
     }
 
     /**
@@ -140,6 +148,17 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     public function saveCreatedPayPalOrder(PayPalOrderCreatedEvent $event)
     {
         $order = $event->getOrderPayPal();
+
+        $payPalOrder = new PayPalOrder(
+            $order['id'],
+            $event->getCartId(),
+            $order['intent'],
+            array_keys($order['payment_source'])[0],
+            $order['status'],
+            json_encode($order['payment_source'])
+        );
+
+        $this->payPalOrderRepository->createPayPalOrder($payPalOrder);
 
         $this->commandBus->handle(new SaveCheckoutCommand(
             $event->getCartId()->getValue(),
