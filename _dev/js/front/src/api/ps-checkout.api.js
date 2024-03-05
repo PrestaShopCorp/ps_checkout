@@ -20,7 +20,8 @@ import { BaseClass } from '../core/dependency-injection/base.class';
 
 export class PsCheckoutApi extends BaseClass {
   static Inject = {
-    config: 'PsCheckoutConfig'
+    config: 'PsCheckoutConfig',
+    $: '$'
   };
 
   postCancelOrder(data) {
@@ -42,11 +43,11 @@ export class PsCheckoutApi extends BaseClass {
           return response.json().then((response) => {
             throw response.body && response.body.error
               ? response.body.error
-              : { message: 'Unknown error' };
+              : { message: this.$('checkout.form.error.label') };
           });
         }
 
-        throw new Error('Invalid response');
+        throw new Error(this.$('checkout.form.error.label'));
       }
     });
   }
@@ -72,14 +73,14 @@ export class PsCheckoutApi extends BaseClass {
                 return response.json().then((response) => {
                   throw response.body && response.body.error
                     ? response.body.error
-                    : { message: 'Unknown error' };
+                    : { message: this.$('checkout.form.error.label') };
                 });
               }
 
               return response.json();
             }
 
-            throw new Error('Invalid response');
+            throw new Error(this.$('checkout.form.error.label'));
           })
           .then((data) => {
             if (!data) {
@@ -111,58 +112,20 @@ export class PsCheckoutApi extends BaseClass {
           contentType && contentType.indexOf('application/json') !== -1;
 
         if (isJsonResponse) {
-          if (false === response.ok) {
+          if (false === response.ok || response.status >= 400) {
             return response.json().then((response) => {
               throw response.body && response.body.error
                 ? response.body.error
-                : { message: 'Unknown error' };
+                : { message: this.$('checkout.form.error.label') };
             });
           }
 
           return response.json();
         }
 
-        throw new Error('Invalid response');
+        throw new Error(this.$('checkout.form.error.label'));
       })
       .then(({ body: { orderID } }) => orderID);
-  }
-
-  getGetToken() {
-    return (
-      fetch(this.config.getTokenUrl, {
-        method: 'get',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json'
-        }
-      })
-        .then((response) => {
-          const contentType = response.headers.get('content-type');
-          const isJsonResponse =
-            contentType && contentType.indexOf('application/json') !== -1;
-
-          if (isJsonResponse) {
-            if (false === response.ok) {
-              return response.json().then((response) => {
-                throw response.body && response.body.error
-                  ? response.body.error
-                  : { message: 'Unknown error' };
-              });
-            }
-
-            return response.json();
-          }
-
-          throw new Error('Invalid response');
-        })
-        .then(({ body: { token } }) => {
-          window.ps_checkoutPayPalClientToken = token;
-          return token;
-        })
-        // TODO: Handle error
-        .catch(() => {})
-    );
   }
 
   postValidateOrder(data, actions) {
@@ -181,18 +144,22 @@ export class PsCheckoutApi extends BaseClass {
           contentType && contentType.indexOf('application/json') !== -1;
 
         if (isJsonResponse) {
-          if (false === response.ok) {
+          if (false === response.ok || response.status >= 400) {
             return response.json().then((response) => {
+              if (actions?.restart && response.body && 85 === response.body.error.code) {
+                return actions.restart();
+              }
+
               throw response.body && response.body.error
                 ? response.body.error
-                : { message: 'Unknown error' };
+                : { message: this.$('checkout.form.error.label') };
             });
           }
 
           return response.json();
         }
 
-        throw new Error('Invalid response');
+        throw new Error(this.$('checkout.form.error.label'));
       })
       .then((response) => {
         if (response.body && response.body.id_order) {
@@ -217,10 +184,6 @@ export class PsCheckoutApi extends BaseClass {
           );
 
           window.location.href = confirmationUrl.toString();
-        }
-
-        if (response.error && 'INSTRUMENT_DECLINED' === response.error) {
-          return actions.restart();
         }
       });
   }
@@ -247,11 +210,11 @@ export class PsCheckoutApi extends BaseClass {
           contentType && contentType.indexOf('application/json') !== -1;
 
         if (isJsonResponse) {
-          if (false === response.ok) {
+          if (false === response.ok || response.status >= 400) {
             return response.json().then((response) => {
               throw response.body && response.body.error
                 ? response.body.error
-                : { message: 'Unknown error' };
+                : { message: this.$('checkout.form.error.label') };
             });
           }
 
@@ -260,7 +223,7 @@ export class PsCheckoutApi extends BaseClass {
           ).toString();
         }
 
-        throw new Error('Invalid response');
+        throw new Error(this.$('checkout.form.error.label'));
       })
     );
   }

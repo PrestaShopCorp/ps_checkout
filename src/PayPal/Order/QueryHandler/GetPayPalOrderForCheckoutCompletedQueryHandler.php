@@ -55,6 +55,7 @@ class GetPayPalOrderForCheckoutCompletedQueryHandler
 
         try {
             $orderPayPal = new PaypalOrder($getPayPalOrderQuery->getOrderPayPalId()->getValue());
+            $this->orderPayPalCache->set($getPayPalOrderQuery->getOrderPayPalId()->getValue(), $orderPayPal->getOrder());
         } catch (HttpTimeoutException $exception) {
             throw $exception;
         } catch (Exception $exception) {

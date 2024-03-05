@@ -23,11 +23,14 @@ export class PayLaterButtonProductComponent extends BaseComponent {
   static Inject = {
     querySelectorService: 'QuerySelectorService',
     psCheckoutApi: 'PsCheckoutApi',
-    prestashopService: 'PrestashopService'
+    prestashopService: 'PrestashopService',
+    payPalService: 'PayPalService'
   };
 
   created() {
-    this.buttonReferenceContainer = this.querySelectorService.getExpressCheckoutButtonContainerProduct();
+    this.buttonReferenceContainer =
+      this.querySelectorService.getExpressCheckoutButtonContainerProduct();
+    this.data.orderId = this.payPalService.getOrderId();
   }
 
   render() {
@@ -44,28 +47,23 @@ export class PayLaterButtonProductComponent extends BaseComponent {
       buttonContainer.append(this.checkoutExpressButton);
     }
 
+    const {
+      id_product,
+      id_product_attribute,
+      id_customization,
+      quantity_wanted
+    } = this.prestashopService.getProductDetails();
+
     this.children.expressCheckoutButton = new ExpressCheckoutButtonComponent(
       this.app,
       {
         fundingSource: 'paylater',
-        // TODO: Move this to constant when ExpressCheckoutButton component is created
         querySelector: '#ps-checkout-express-button',
-        createOrder: () => {
-          const {
-            id_product,
-            id_product_attribute,
-            id_customization,
-            quantity_wanted
-          } = this.prestashopService.getProductDetails();
-
-          return this.psCheckoutApi.postCreateOrder({
-            id_product,
-            id_product_attribute,
-            id_customization,
-            quantity_wanted,
-            fundingSource: 'paylater',
-            isExpressCheckout: true
-          });
+        data: {
+          id_product,
+          id_product_attribute,
+          id_customization,
+          quantity_wanted
         }
       }
     ).render();

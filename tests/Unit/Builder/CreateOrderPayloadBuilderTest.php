@@ -46,6 +46,81 @@ class CreateOrderPayloadBuilderTest extends TestCase
         }
     }
 
+    public function testPaymentSourceAppearsInPayload()
+    {
+        foreach ($this->cartDataProvider() as $scenario => $cartData) {
+            $orderPayloadBuilder = new CreateOrderPayloadBuilder(array_merge(
+                $cartData,
+                $this->shippingAddressDataProvider(),
+                $this->invoiceAddressDataProvider(),
+                $this->customerDataProvider(),
+                $this->currencyDataProvider(),
+                $this->languageDataProvider(),
+                $this->shopDataProvider(),
+                $this->moduleDataProvider()
+            ));
+            $orderPayloadBuilder->buildFullPayload();
+            $payload = $orderPayloadBuilder->presentPayload()->getArray();
+
+            echo 'Starting ' . $scenario . PHP_EOL;
+            $this->assertArrayHasKey('payment_source', $payload);
+            $this->assertEquals($this->moduleDataProvider()['ps_checkout']['3DS'], $payload['payment_source']['card']['attributes']['verification']['method']);
+        }
+    }
+
+    public function testSupplementaryDataAppearsInPayload()
+    {
+        foreach ($this->cartDataProvider() as $scenario => $cartData) {
+            $orderPayloadBuilder = new CreateOrderPayloadBuilder(array_merge(
+                $cartData,
+                $this->shippingAddressDataProvider(),
+                $this->invoiceAddressDataProvider(),
+                $this->customerDataProvider(),
+                $this->currencyDataProvider(),
+                $this->languageDataProvider(),
+                $this->shopDataProvider(),
+                $this->moduleDataProvider()
+            ));
+            $orderPayloadBuilder->buildFullPayload();
+            $payload = $orderPayloadBuilder->presentPayload()->getArray();
+
+            echo 'Starting ' . $scenario . PHP_EOL;
+            $this->assertArrayHasKey('supplementary_data', $payload);
+            $this->assertEquals($payload['amount']['breakdown']['tax_total'], $payload['supplementary_data']['card']['level_2']['tax_total']);
+            $this->assertEquals($payload['amount']['currency_code'], $payload['supplementary_data']['card']['level_3']['duty_amount']['currency_code']);
+            $this->assertEquals($payload['amount']['value'], $payload['supplementary_data']['card']['level_3']['duty_amount']['value']);
+            $this->assertEquals($payload['amount']['breakdown']['shipping'], $payload['supplementary_data']['card']['level_3']['shipping_amount']);
+            $this->assertEquals($payload['amount']['breakdown']['discount'], $payload['supplementary_data']['card']['level_3']['discount_amount']);
+            $this->assertEquals($payload['shipping']['address'], $payload['supplementary_data']['card']['level_3']['shipping_address']);
+            $this->assertEquals($payload['items'], $payload['supplementary_data']['card']['level_3']['line_items']);
+        }
+    }
+
+    public function testPaymentIsNotCard()
+    {
+        foreach ($this->cartDataProvider() as $scenario => $cartData) {
+            $orderPayloadBuilder = new CreateOrderPayloadBuilder(array_merge(
+                $cartData,
+                $this->shippingAddressDataProvider(),
+                $this->invoiceAddressDataProvider(),
+                $this->customerDataProvider(),
+                $this->currencyDataProvider(),
+                $this->languageDataProvider(),
+                $this->shopDataProvider(),
+                array_replace_recursive($this->moduleDataProvider(), ['ps_checkout' => [
+                    'isCard' => false,
+                ]])
+            ));
+            $orderPayloadBuilder->buildFullPayload();
+            $payload = $orderPayloadBuilder->presentPayload()->getArray();
+
+            echo 'Starting ' . $scenario . PHP_EOL;
+
+            $this->assertArrayNotHasKey('payment_source', $payload);
+            $this->assertArrayNotHasKey('supplementary_data', $payload);
+        }
+    }
+
     private function checkAmountCalculation(array $payload)
     {
         $itemTotalAmount = 0;
@@ -5516,6 +5591,8 @@ class CreateOrderPayloadBuilderTest extends TestCase
                 'roundType' => '1',
                 'roundMode' => '2',
                 'isExpressCheckout' => false,
+                'isCard' => true,
+                '3DS' => 'SCA_WHEN_REQUIRED',
             ],
         ];
     }

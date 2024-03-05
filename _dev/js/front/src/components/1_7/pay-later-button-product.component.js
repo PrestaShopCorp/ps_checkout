@@ -25,11 +25,14 @@ export class PayLaterButtonProductComponent extends BaseComponent {
   static Inject = {
     querySelectorService: 'QuerySelectorService',
     psCheckoutApi: 'PsCheckoutApi',
-    prestashopService: 'PrestashopService'
+    prestashopService: 'PrestashopService',
+    payPalService: 'PayPalService'
   };
 
   created() {
-    this.buttonReferenceContainer = this.querySelectorService.getExpressCheckoutButtonContainerProduct();
+    this.buttonReferenceContainer =
+      this.querySelectorService.getExpressCheckoutButtonContainerProduct();
+    this.data.orderId = this.payPalService.getOrderId();
   }
 
   render() {
@@ -37,7 +40,8 @@ export class PayLaterButtonProductComponent extends BaseComponent {
       this.checkoutExpressButton = document.createElement('div');
       this.checkoutExpressButton.id = BUTTON_CONTAINER_SELECTOR;
 
-      const productQuantityHTMLElement = this.buttonReferenceContainer.nextElementSibling;
+      const productQuantityHTMLElement =
+        this.buttonReferenceContainer.nextElementSibling;
 
       this.buttonReferenceContainer.parentNode.insertBefore(
         this.checkoutExpressButton,
@@ -51,28 +55,23 @@ export class PayLaterButtonProductComponent extends BaseComponent {
       this.updateButtonContainerVisibility();
     });
 
+    const {
+      id_product,
+      id_product_attribute,
+      id_customization,
+      quantity_wanted
+    } = this.prestashopService.getProductDetails();
+
     this.children.expressCheckoutButton = new ExpressCheckoutButtonComponent(
       this.app,
       {
         fundingSource: 'paylater',
-        // TODO: Move this to constant when ExpressCheckoutButton component is created
         querySelector: `#${BUTTON_CONTAINER_SELECTOR}`,
-        createOrder: () => {
-          const {
-            id_product,
-            id_product_attribute,
-            id_customization,
-            quantity_wanted
-          } = this.prestashopService.getProductDetails();
-
-          return this.psCheckoutApi.postCreateOrder({
-            id_product,
-            id_product_attribute,
-            id_customization,
-            quantity_wanted,
-            fundingSource: 'paylater',
-            isExpressCheckout: true
-          });
+        data: {
+          id_product,
+          id_product_attribute,
+          id_customization,
+          quantity_wanted
         }
       }
     ).render();
@@ -80,12 +79,15 @@ export class PayLaterButtonProductComponent extends BaseComponent {
     return this;
   }
 
-  updateButtonContainerVisibility()
-  {
+  updateButtonContainerVisibility() {
     if (this.prestashopService.isAddToCartButtonDisabled()) {
-      document.getElementById(BUTTON_CONTAINER_SELECTOR).classList.add('disabled');
+      document
+        .getElementById(BUTTON_CONTAINER_SELECTOR)
+        .classList.add('disabled');
     } else {
-      document.getElementById(BUTTON_CONTAINER_SELECTOR).classList.remove('disabled');
+      document
+        .getElementById(BUTTON_CONTAINER_SELECTOR)
+        .classList.remove('disabled');
     }
   }
 }
