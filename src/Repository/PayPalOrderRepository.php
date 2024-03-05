@@ -66,8 +66,8 @@ class PayPalOrderRepository
                 'status' => pSQL($payPalOrder->getStatus()),
                 'payment_source' => pSQL($payPalOrder->getPaymentSource()),
                 'environment' => pSQL($payPalOrder->getEnvironment()),
-                'is_card_fields' => $payPalOrder->getIsCardFields(),
-                'is_express_checkout' => $payPalOrder->getIsExpressCheckout(),
+                'is_card_fields' => $payPalOrder->isCardFields(),
+                'is_express_checkout' => $payPalOrder->isExpressCheckout(),
             ]
         );
     }
@@ -127,8 +127,8 @@ class PayPalOrderRepository
                 'funding_source' => pSQL($payPalOrder->getFundingSource()),
                 'status' => pSQL($payPalOrder->getStatus()),
                 'payment_source' => pSQL($payPalOrder->getPaymentSource()),
-                'is_card_fields' => $payPalOrder->getIsCardFields(),
-                'is_express_checkout' => $payPalOrder->getIsExpressCheckout(),
+                'is_card_fields' => $payPalOrder->isCardFields(),
+                'is_express_checkout' => $payPalOrder->isExpressCheckout(),
             ],
             '`id` = ' . pSQL($payPalOrder->getId())
         );

@@ -215,7 +215,7 @@ class PayPalOrder
     /**
      * @return bool
      */
-    public function getIsCardFields()
+    public function isCardFields()
     {
         return $this->isCardFields;
     }
@@ -235,7 +235,7 @@ class PayPalOrder
     /**
      * @return bool
      */
-    public function getIsExpressCheckout()
+    public function isExpressCheckout()
     {
         return $this->isExpressCheckout;
     }
