@@ -81,8 +81,26 @@ export class PrestashopPs1_7Service {
     return !!window.ps_checkoutCartProductCount;
   }
 
+  static displayPricesTaxIncluded() {
+    return window.prestashop?.configuration?.display_prices_tax_incl || false;
+  }
+
+  static displayTaxLabel() {
+    return window.prestashop?.configuration?.display_taxes_label || false;
+  }
+
   static getCartAmount() {
-    return window.prestashop?.cart?.totals?.total?.amount || '';
+    let cartAmount = window.prestashop?.cart?.totals?.total?.amount || '';
+
+    if (window.prestashop?.cart?.totals?.total_excluding_tax?.amount && !this.displayPricesTaxIncluded() && !this.displayTaxLabel()) {
+      cartAmount = window.prestashop?.cart?.totals?.total_excluding_tax?.amount;
+    }
+
+    if (window.prestashop?.cart?.totals?.total_including_tax?.amount && (this.displayPricesTaxIncluded() || this.displayTaxLabel())) {
+      cartAmount = window.prestashop?.cart?.totals?.total_including_tax?.amount;
+    }
+
+    return cartAmount;
   }
 
   static getProductPrice() {
