@@ -10,6 +10,7 @@ use PrestaShop\Module\PrestashopCheckout\DTO\Orders\CreatePayPalOrderRequestInte
 use PrestaShop\Module\PrestashopCheckout\Exception\InvalidRequestException;
 use PrestaShop\Module\PrestashopCheckout\Exception\NotAuthorizedException;
 use PrestaShop\Module\PrestashopCheckout\Exception\UnprocessableEntityException;
+use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -82,7 +83,7 @@ class PaymentServiceCreateOrderTest extends TestCase
         $clientMock->method('createOrder')->willThrowException(new HttpException('An error occurred', $requestMock, $responseMock));
 
         $this->expectExceptionCode($errorCode);
-        $paymentService = new PaymentService($clientMock);
+        $paymentService = new PaymentService($clientMock, new ObjectSerializer());
         $paymentService->createOrder($createRequestMock);
     }
 

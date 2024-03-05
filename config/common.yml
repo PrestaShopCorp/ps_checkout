@@ -436,7 +436,7 @@ services:
 
   ps_checkout.tactician.bus:
     class: 'League\Tactician\CommandBus'
-    factory: ["@ps_checkout.tactician.bus.factory", "create"]
+    factory: ['@PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory', "create"]
 
   ps_checkout.bus.command:
     class: 'PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusAdapter'
@@ -444,7 +444,7 @@ services:
     arguments:
       - "@ps_checkout.tactician.bus"
 
-  ps_checkout.tactician.bus.factory:
+  PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory:
     class: 'PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory'
     public: true
     arguments:
@@ -452,7 +452,7 @@ services:
       - "@ps_checkout.logger"
       -
         PrestaShop\Module\PrestashopCheckout\Order\Command\AddOrderPaymentCommand: "ps_checkout.command.handler.order.add_order_payment"
-        PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand: "ps_checkout.command.handler.order.create_order"
+        PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\CreateOrderCommandHandler'
         PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand: "ps_checkout.command.handler.order.update_order_status"
         PrestaShop\Module\PrestashopCheckout\Order\Matrice\Command\UpdateOrderMatriceCommand: "ps_checkout.command.handler.order.matrice.update_order_matrice"
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CreatePayPalOrderCommandHandler'
@@ -486,16 +486,16 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber\CheckoutEventSubscriber'
     public: true
     arguments:
-      - "@ps_checkout.module"
       - '@PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker'
       - '@ps_checkout.bus.command'
+      - '@ps_checkout.repository.pscheckoutcart'
 
   PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber'
     public: true
     arguments:
-      - "@ps_checkout.module"
       - "@ps_checkout.repository.pscheckoutcart"
+      - '@ps_checkout.bus.command'
 
   PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber'
@@ -513,11 +513,11 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber'
     public: true
     arguments:
-      - "@ps_checkout.module"
       - "@ps_checkout.order.service.check_order_amount"
       - "@ps_checkout.cache.paypal.capture"
       - "@ps_checkout.cache.paypal.order"
       - "@ps_checkout.order.state.service.order_state_mapper"
+      - "@ps_checkout.bus.command"
 
   PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscriber\PayPalRefundEventSubscriber:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscriber\PayPalRefundEventSubscriber'
@@ -555,7 +555,7 @@ services:
       - "@ps_checkout.funding_source.translation"
       - "@ps_checkout.paypal.configuration"
 
-  ps_checkout.command.handler.order.create_order:
+  PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\CreateOrderCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\CreateOrderCommandHandler'
     public: true
     arguments:
@@ -565,6 +565,7 @@ services:
       - "@ps_checkout.order.state.service.order_state_mapper"
       - "@ps_checkout.module"
       - "@ps_checkout.order.service.check_order_amount"
+      - '@ps_checkout.funding_source.translation'
 
   ps_checkout.command.handler.order.update_order_status:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdateOrderStatusCommandHandler'
@@ -586,6 +587,7 @@ services:
       - '@?'
       - '@ps_checkout.event.dispatcher'
       - '@PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService'
+      - '@PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
 
   ps_checkout.command.handler.paypal.order.update_paypal_order:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\UpdatePayPalOrderCommandHandler'
@@ -743,6 +745,10 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService'
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient'
+      - '@PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
+
+  PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer:
+    class: 'PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
 
   ps_checkout.http.client.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClientConfigurationBuilder'

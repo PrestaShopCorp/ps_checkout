@@ -18,6 +18,7 @@ class PaymentServiceGetOrderTest extends TestCase
 {
     /**
      * @dataProvider notAuthorizedErrorsProvider
+     *
      * @throws InvalidRequestException|NotAuthorizedException|UnprocessableEntityException|PsCheckoutException
      */
     public function testNotAuthorizedErrorsGetOrder($errorName, $errorCode)
@@ -29,6 +30,7 @@ class PaymentServiceGetOrderTest extends TestCase
      * @param int $statusCode
      * @param string $errorName
      * @param int $errorCode
+     *
      * @throws InvalidRequestException|NotAuthorizedException|UnprocessableEntityException|PsCheckoutException
      */
     private function testErrorsGetOrder($statusCode, $errorName, $errorCode)
@@ -59,22 +61,22 @@ class PaymentServiceGetOrderTest extends TestCase
     private function getNotAuthorizedError($issueError)
     {
         return [
-            "name" => $issueError,
-            "message" => "Authentication failed due to invalid authentication credentials or a missing Authorization header.",
-            "links" => [
+            'name' => $issueError,
+            'message' => 'Authentication failed due to invalid authentication credentials or a missing Authorization header.',
+            'links' => [
                 [
-                    "href" => "https://developer.paypal.com/docs/api/overview/#error",
-                    "rel" => "information_link"
-                ]
-            ]
+                    'href' => 'https://developer.paypal.com/docs/api/overview/#error',
+                    'rel' => 'information_link',
+                ],
+            ],
         ];
     }
 
     private function getInvalidTokenError()
     {
         return [
-            "error" => "invalid_token",
-            "error_description" => "Current version only supports token for response_type"
+            'error' => 'invalid_token',
+            'error_description' => 'Current version only supports token for response_type',
         ];
     }
 
@@ -82,7 +84,7 @@ class PaymentServiceGetOrderTest extends TestCase
     {
         return [
             ['PERMISSION_DENIED', NotAuthorizedException::PERMISSION_DENIED],
-            ['invalid_token', NotAuthorizedException::INVALID_TOKEN]
+            ['invalid_token', NotAuthorizedException::INVALID_TOKEN],
         ];
     }
 }

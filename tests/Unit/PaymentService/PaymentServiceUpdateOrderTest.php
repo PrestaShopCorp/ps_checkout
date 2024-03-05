@@ -19,6 +19,7 @@ class PaymentServiceUpdateOrderTest extends TestCase
 {
     /**
      * @dataProvider invalidRequestErrorsProvider
+     *
      * @throws InvalidRequestException|NotAuthorizedException|UnprocessableEntityException|PsCheckoutException
      */
     public function testInvalidRequestErrorsUpdateOrder($errorName, $errorCode)
@@ -28,6 +29,7 @@ class PaymentServiceUpdateOrderTest extends TestCase
 
     /**
      * @dataProvider notAuthorizedErrorsProvider
+     *
      * @throws InvalidRequestException|NotAuthorizedException|UnprocessableEntityException|PsCheckoutException
      */
     public function testNotAuthorizedErrorsUpdateOrder($errorName, $errorCode)
@@ -37,6 +39,7 @@ class PaymentServiceUpdateOrderTest extends TestCase
 
     /**
      * @dataProvider unprocessableEntityErrorsProvider
+     *
      * @throws InvalidRequestException|NotAuthorizedException|UnprocessableEntityException|PsCheckoutException
      */
     public function testUnprocessableEntityErrorsUpdateOrder($errorName, $errorCode)
@@ -48,6 +51,7 @@ class PaymentServiceUpdateOrderTest extends TestCase
      * @param int $statusCode
      * @param string $errorName
      * @param int $errorCode
+     *
      * @throws InvalidRequestException|NotAuthorizedException|UnprocessableEntityException|PsCheckoutException
      */
     private function testErrorsUpdateOrder($statusCode, $errorName, $errorCode)
@@ -86,63 +90,63 @@ class PaymentServiceUpdateOrderTest extends TestCase
     private function getInvalidRequestError($issueError)
     {
         return [
-            "name" => "INVALID_REQUEST",
-            "message" => "Request is not well-formed, syntactically incorrect, or violates schema.",
-            "debug_id" => "b6b9a374802ea",
-            "details" => [
+            'name' => 'INVALID_REQUEST',
+            'message' => 'Request is not well-formed, syntactically incorrect, or violates schema.',
+            'debug_id' => 'b6b9a374802ea',
+            'details' => [
                 [
-                    "field" => "",
-                    "value" => "",
-                    "location" => "body",
-                    "issue" => $issueError,
-                    "description" => ""
-                ]
+                    'field' => '',
+                    'value' => '',
+                    'location' => 'body',
+                    'issue' => $issueError,
+                    'description' => '',
+                ],
             ],
-            "links" => [
+            'links' => [
                 [
-                    "href" => "https://developer.paypal.com/docs/api/orders/v2/#error-INVALID_PARAMETER_VALUE",
-                    "rel" => "information_link",
-                    "encType" => "application/json"
-                ]
-            ]
+                    'href' => 'https://developer.paypal.com/docs/api/orders/v2/#error-INVALID_PARAMETER_VALUE',
+                    'rel' => 'information_link',
+                    'encType' => 'application/json',
+                ],
+            ],
         ];
     }
 
     private function getNotAuthorizedError($issueError)
     {
         return [
-            "name" => $issueError,
-            "message" => "Authentication failed due to invalid authentication credentials or a missing Authorization header.",
-            "links" => [
+            'name' => $issueError,
+            'message' => 'Authentication failed due to invalid authentication credentials or a missing Authorization header.',
+            'links' => [
                 [
-                    "href" => "https://developer.paypal.com/docs/api/overview/#error",
-                    "rel" => "information_link"
-                ]
-            ]
+                    'href' => 'https://developer.paypal.com/docs/api/overview/#error',
+                    'rel' => 'information_link',
+                ],
+            ],
         ];
     }
 
     private function getUnprocessableEntityError($issueError)
     {
         return [
-            "name" => "UNPROCESSABLE_ENTITY",
-            "details" => [
+            'name' => 'UNPROCESSABLE_ENTITY',
+            'details' => [
                 [
-                    "field" => "",
-                    "value" => "",
-                    "issue" => $issueError,
-                    "description" => ""
-                ]
+                    'field' => '',
+                    'value' => '',
+                    'issue' => $issueError,
+                    'description' => '',
+                ],
             ],
-            "message" => "The requested action could not be performed, semantically incorrect, or failed business validation.",
-            "debug_id" => "c9a75b43fc807",
-            "links" => [
+            'message' => 'The requested action could not be performed, semantically incorrect, or failed business validation.',
+            'debug_id' => 'c9a75b43fc807',
+            'links' => [
                 [
-                    "href" => "https://developer.paypal.com/docs/api/orders/v2/#error-MAX_VALUE_EXCEEDED",
-                    "rel" => "information_link",
-                    "method" => "GET"
-                ]
-            ]
+                    'href' => 'https://developer.paypal.com/docs/api/orders/v2/#error-MAX_VALUE_EXCEEDED',
+                    'rel' => 'information_link',
+                    'method' => 'GET',
+                ],
+            ],
         ];
     }
 
@@ -157,7 +161,7 @@ class PaymentServiceUpdateOrderTest extends TestCase
             ['MISSING_REQUIRED_PARAMETER', InvalidRequestException::MISSING_REQUIRED_PARAMETER],
             ['AMOUNT_NOT_PATCHABLE', InvalidRequestException::AMOUNT_NOT_PATCHABLE],
             ['INVALID_PATCH_OPERATION', InvalidRequestException::INVALID_PATCH_OPERATION],
-            ['ERROR_CURRENTLY_UNKNOWN', InvalidRequestException::UNKNOWN]
+            ['ERROR_CURRENTLY_UNKNOWN', InvalidRequestException::UNKNOWN],
         ];
     }
 
@@ -168,11 +172,12 @@ class PaymentServiceUpdateOrderTest extends TestCase
             ['PAYEE_ACCOUNT_NOT_SUPPORTED', NotAuthorizedException::PAYEE_ACCOUNT_NOT_SUPPORTED],
             ['PAYEE_ACCOUNT_NOT_VERIFIED', NotAuthorizedException::PAYEE_ACCOUNT_NOT_VERIFIED],
             ['PAYEE_NOT_CONSENTED', NotAuthorizedException::PAYEE_NOT_CONSENTED],
-            ['ERROR_CURRENTLY_UNKNOWN', NotAuthorizedException::UNKNOWN]
+            ['ERROR_CURRENTLY_UNKNOWN', NotAuthorizedException::UNKNOWN],
         ];
     }
 
-    public function unprocessableEntityErrorsProvider() {
+    public function unprocessableEntityErrorsProvider()
+    {
         return [
             ['INVALID_JSON_POINTER_FORMAT', UnprocessableEntityException::INVALID_JSON_POINTER_FORMAT],
             ['INVALID_PARAMETER', UnprocessableEntityException::INVALID_PARAMETER],
@@ -187,7 +192,7 @@ class PaymentServiceUpdateOrderTest extends TestCase
             ['MULTIPLE_SHIPPING_OPTION_SELECTED', UnprocessableEntityException::MULTIPLE_SHIPPING_OPTION_SELECTED],
             ['ORDER_ALREADY_COMPLETED', UnprocessableEntityException::ORDER_ALREADY_COMPLETED],
             ['PREFERRED_SHIPPING_OPTION_AMOUNT_MISMATCH', UnprocessableEntityException::PREFERRED_SHIPPING_OPTION_AMOUNT_MISMATCH],
-            ['ERROR_CURRENTLY_UNKNOWN', UnprocessableEntityException::UNKNOWN]
+            ['ERROR_CURRENTLY_UNKNOWN', UnprocessableEntityException::UNKNOWN],
         ];
     }
 }
