@@ -45,6 +45,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
+use PrestaShop\PrestaShop\Core\Foundation\Database\EntityNotFoundException;
 use Ps_checkout;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -149,13 +150,22 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     {
         $order = $event->getOrderPayPal();
 
+        try { // NOT SURE WHAT SHOULD HAPPEN IF ORDER WITH THAT ID ALREADY EXISTS
+            $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById($event->getOrderPayPalId()->getValue());
+            $this->payPalOrderRepository->deletePayPalOrder($payPalOrder->getId());
+        } catch (EntityNotFoundException $e) {
+        }
+
         $payPalOrder = new PayPalOrder(
             $order['id'],
             $event->getCartId(),
             $order['intent'],
             array_keys($order['payment_source'])[0],
             $order['status'],
-            json_encode($order['payment_source'])
+            json_encode($order['payment_source']),
+            $this->payPalConfiguration->getPaymentMode(),
+            $event->isCardFields(),
+            $event->isExpressCheckout()
         );
 
         $this->payPalOrderRepository->createPayPalOrder($payPalOrder);
@@ -167,7 +177,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             $order['intent'],
             $event->getFundingSource(),
             $event->isExpressCheckout(),
-            $event->isHostedFields(),
+            $event->isCardFields(),
             $this->payPalConfiguration->getPaymentMode()
         ));
     }
