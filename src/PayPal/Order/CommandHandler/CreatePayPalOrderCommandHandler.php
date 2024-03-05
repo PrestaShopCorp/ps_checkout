@@ -32,6 +32,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CreatePayPalOrderPayloadBu
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializerInterface;
+use PrestaShop\PrestaShop\Core\Foundation\IoC\Exception;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class CreatePayPalOrderCommandHandler
@@ -83,7 +84,7 @@ class CreatePayPalOrderCommandHandler
      * @throws InvalidRequestException
      * @throws NotAuthorizedException
      * @throws UnprocessableEntityException
-     * @throws ExceptionInterface
+     * @throws Exception
      */
     public function handle(CreatePayPalOrderCommand $command)
     {

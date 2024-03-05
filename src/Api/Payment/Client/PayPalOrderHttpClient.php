@@ -42,13 +42,14 @@ class PayPalOrderHttpClient extends PsrHttpClientAdapter
      *
      * @return ResponseInterface
      *
-     * @throws HttpException
+     * @throws HttpException|RequestException|TransferException|NetworkException
      */
     public function sendRequest(RequestInterface $request)
     {
         try {
             return parent::sendRequest($request);
         } catch (NetworkException $exception) {
+            throw $exception;
             // Thrown when the request cannot be completed because of network issues.
             // No response here
         } catch (HttpException $exception) {
