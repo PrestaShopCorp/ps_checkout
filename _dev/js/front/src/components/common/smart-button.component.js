@@ -37,6 +37,7 @@ export class SmartButtonComponent extends BaseComponent {
 
   created() {
     this.data.name = this.props.fundingSource.name;
+    this.data.orderId = null;
 
     this.data.HTMLElement = this.props.HTMLElement;
 
@@ -91,41 +92,54 @@ export class SmartButtonComponent extends BaseComponent {
           }
 
           return this.psCheckoutApi
-            .postCheckCartOrder({
+            .postCheckCartOrder(
+              {
                 ...data,
                 fundingSource: this.data.name,
                 isExpressCheckout: this.config.expressCheckout.active,
-                orderID: this.payPalService.getOrderId(),
+                orderID: this.payPalService.getOrderId()
               },
               actions
             )
-            .catch(error => {
+            .catch((error) => {
               this.data.loader.hide();
               this.data.notification.showError(error.message);
               return actions.reject();
             });
         },
-        onError: error => {
+        onError: (error) => {
+          let errorMessage = this.handleError(error);
           console.error(error);
           this.data.loader.hide();
-          this.data.notification.showError(this.handleError(error));
+          this.data.notification.showError(errorMessage);
+
+          return this.psCheckoutApi
+            .postCancelOrder({
+              orderID: this.data.orderId,
+              fundingSource: this.data.name,
+              isExpressCheckout: this.config.expressCheckout.active,
+              reason: 'checkout_error',
+              error: errorMessage
+            })
+            .catch((error) => console.error(error));
         },
         onApprove: (data, actions) => {
           this.data.loader.show();
           return this.psCheckoutApi
-            .postValidateOrder({
+            .postValidateOrder(
+              {
                 ...data,
                 fundingSource: this.data.name,
                 isExpressCheckout: this.config.expressCheckout.active
               },
               actions
             )
-            .catch(error => {
+            .catch((error) => {
               this.data.loader.hide();
               this.data.notification.showError(error.message);
             });
         },
-        onCancel: data => {
+        onCancel: (data) => {
           this.data.loader.hide();
           this.data.notification.showCanceled();
 
@@ -133,21 +147,26 @@ export class SmartButtonComponent extends BaseComponent {
             .postCancelOrder({
               ...data,
               fundingSource: this.data.name,
-              isExpressCheckout: this.config.expressCheckout.active
+              isExpressCheckout: this.config.expressCheckout.active,
+              reason: 'checkout_cancelled'
             })
-            .catch(error => {
+            .catch((error) => {
               this.data.loader.hide();
               this.data.notification.showError(error.message);
             });
         },
-        createOrder: data => {
+        createOrder: (data) => {
           return this.psCheckoutApi
             .postCreateOrder({
               ...data,
               fundingSource: this.data.name,
               isExpressCheckout: this.config.expressCheckout.active
             })
-            .catch(error => {
+            .then((data) => {
+              this.data.orderId = data;
+              return data;
+            })
+            .catch((error) => {
               this.data.loader.hide();
               this.data.notification.showError(
                 `${error.message} ${error.name}`
@@ -165,10 +184,19 @@ export class SmartButtonComponent extends BaseComponent {
       if (error.message) {
         errorMessage = error.message;
 
-        if (error.message.includes('CURRENCY_NOT_SUPPORTED_BY_PAYMENT_SOURCE')) {
-          errorMessage = 'Provided currency is not supported by the selected payment method.';
-        } else if (error.message.includes('COUNTRY_NOT_SUPPORTED_BY_PAYMENT_SOURCE')) {
-          errorMessage = 'Provided country is not supported by the selected payment method.';
+        if (
+          error.message.includes('CURRENCY_NOT_SUPPORTED_BY_PAYMENT_SOURCE')
+        ) {
+          errorMessage =
+            'Provided currency is not supported by the selected payment method.';
+        } else if (
+          error.message.includes('COUNTRY_NOT_SUPPORTED_BY_PAYMENT_SOURCE')
+        ) {
+          errorMessage =
+            'Provided country is not supported by the selected payment method.';
+        } else if (error.message.includes('Detected popup close')) {
+          errorMessage =
+            'The payment failed because the payment window has been closed before the end of the payment process.';
         }
       }
     }

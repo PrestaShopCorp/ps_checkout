@@ -20,6 +20,81 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event;
 
+use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
+use PrestaShop\Module\PrestashopCheckout\Cart\ValueObject\CartId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+
 class PayPalOrderCreatedEvent extends PayPalOrderEvent
 {
+    /**
+     * @var CartId
+     */
+    private $cartId;
+
+    /**
+     * @var bool
+     */
+    private $isHostedFields;
+
+    /**
+     * @var bool
+     */
+    private $isExpressCheckout;
+
+    /**
+     * @var string
+     */
+    private $fundingSource;
+
+    /**
+     * @param string $orderPayPalId
+     * @param array $orderPayPal
+     * @param int $cartId
+     * @param bool $isHostedFields
+     * @param bool $isExpressCheckout
+     * @param string $fundingSource
+     *
+     * @throws CartException
+     * @throws PayPalOrderException
+     */
+    public function __construct($orderPayPalId, $orderPayPal, $cartId, $isHostedFields, $isExpressCheckout, $fundingSource)
+    {
+        parent::__construct($orderPayPalId, $orderPayPal);
+        $this->cartId = new CartId($cartId);
+        $this->isHostedFields = $isHostedFields;
+        $this->isExpressCheckout = $isExpressCheckout;
+        $this->fundingSource = $fundingSource;
+    }
+
+    /**
+     * @return CartId
+     */
+    public function getCartId()
+    {
+        return $this->cartId;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHostedFields()
+    {
+        return $this->isHostedFields;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExpressCheckout()
+    {
+        return $this->isExpressCheckout;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFundingSource()
+    {
+        return $this->fundingSource;
+    }
 }

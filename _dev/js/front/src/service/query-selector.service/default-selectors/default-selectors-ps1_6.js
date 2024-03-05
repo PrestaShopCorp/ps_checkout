@@ -42,5 +42,21 @@ export const DefaultSelectors1_6 = {
   PAY_LATER_OFFER_MESSAGE_CONTAINER_PRODUCT: '.content_prices',
   PAY_LATER_OFFER_MESSAGE_CONTAINER_CART_SUMMARY: '#total_price_container',
 
-  PAY_LATER_BANNER_CONTAINER: '.header-container'
+  PAY_LATER_BANNER_CONTAINER: '.header-container',
+
+  CARD_FIELDS: {
+    FORM: '#ps_checkout-card-fields-form',
+    NAME: '#ps_checkout-card-fields-card-name',
+    NUMBER: '#ps_checkout-card-fields-card-number',
+    EXPIRY: '#ps_checkout-card-fields-card-expiry',
+    CVV: '#ps_checkout-card-fields-card-cvv',
+    NAME_ERROR: '#ps_checkout-card-fields-card-name-error',
+    NUMBER_ERROR: '#ps_checkout-card-fields-card-number-error',
+    VENDOR_ERROR: '#ps_checkout-card-fields-card-vendor-error',
+    EXPIRY_ERROR: '#ps_checkout-card-fields-card-expiry-error',
+    CVV_ERROR: '#ps_checkout-card-fields-card-cvv-error',
+  },
+
+  PAYMENT_METHOD_LOGO_PRODUCT_CONTAINER: 'body.product .box-cart-bottom .buttons_bottom_block',
+  PAYMENT_METHOD_LOGO_CART_CONTAINER: 'body.order .cart_navigation_extra'
 };

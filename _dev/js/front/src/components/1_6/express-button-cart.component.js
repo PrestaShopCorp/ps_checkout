@@ -28,7 +28,8 @@ export class ExpressButtonCartComponent extends BaseComponent {
   };
 
   created() {
-    this.buttonReferenceContainer = this.querySelectorService.getExpressCheckoutButtonContainerCart();
+    this.buttonReferenceContainer =
+      this.querySelectorService.getExpressCheckoutButtonContainerCart();
   }
 
   renderComponent() {
@@ -50,14 +51,7 @@ export class ExpressButtonCartComponent extends BaseComponent {
       this.app,
       {
         fundingSource: 'paypal',
-        // TODO: Move this to constant when ExpressCheckoutButton component is created
-        querySelector: '#ps_checkout-express-button-cart',
-        createOrder: (data) =>
-          this.psCheckoutApi.postCreateOrder({
-            ...data,
-            fundingSource: 'paypal',
-            isExpressCheckout: true
-          })
+        querySelector: '#ps_checkout-express-button-cart'
       }
     ).render();
   }
@@ -67,9 +61,9 @@ export class ExpressButtonCartComponent extends BaseComponent {
 
     this.renderComponent();
     this.prestashopService.onUpdatedShoppingCartExtra(() => {
-        if (null === document.querySelector('#ps_checkout-express-button-cart')) {
-          this.renderComponent();
-        }
+      if (null === document.querySelector('#ps_checkout-express-button-cart')) {
+        this.renderComponent();
+      }
     });
 
     return this;

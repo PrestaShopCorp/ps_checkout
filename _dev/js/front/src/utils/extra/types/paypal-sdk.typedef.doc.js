@@ -22,6 +22,19 @@
  */
 
 /**
+ * @typedef PayPalCardField
+ *
+ * @property {function} addClass
+ * @property {function} clear
+ * @property {function} focus
+ * @property {function} removeAttribute
+ * @property {function} removeClass
+ * @property {function} render
+ * @property {function} setAttribute
+ * @property {function} setMessage
+ */
+
+/**
  * @typedef PayPalSdk
  * @type {object}
  *
@@ -38,6 +51,14 @@
  * @property {function} Marks.isEligible
  * @property {function} Marks.render
  * @property {object} HostedFields
+ * @property {object} CardFields
+ * @property {PayPalCardField} CardFields.CVVField
+ * @property {PayPalCardField} CardFields.ExpiryField
+ * @property {PayPalCardField} CardFields.NameField
+ * @property {PayPalCardField} CardFields.NumberField
+ * @property {function} CardFields.getState
+ * @property {function} CardFields.isEligible
+ * @property {function} CardFields.submit
  * @property {function} HostedFields.isEligible
  * @property {function} HostedFields.render
  * @property {object} Messages

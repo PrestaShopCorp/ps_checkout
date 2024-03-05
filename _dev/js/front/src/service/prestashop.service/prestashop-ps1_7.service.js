@@ -58,7 +58,7 @@ export class PrestashopPs1_7Service {
     if (document.body.id !== 'checkout') return false;
     const step = document.querySelector('#checkout-personal-information-step');
 
-    return step && step.classList.contains('-current');
+    return step && (step.classList.contains('-current') || step.classList.contains('step--current'));
   }
 
   static isIframeProductPage() {
@@ -81,8 +81,26 @@ export class PrestashopPs1_7Service {
     return !!window.ps_checkoutCartProductCount;
   }
 
+  static displayPricesTaxIncluded() {
+    return window.prestashop?.configuration?.display_prices_tax_incl || false;
+  }
+
+  static displayTaxLabel() {
+    return window.prestashop?.configuration?.display_taxes_label || false;
+  }
+
   static getCartAmount() {
-    return window.prestashop?.cart?.totals?.total?.amount || '';
+    let cartAmount = window.prestashop?.cart?.totals?.total?.amount || '';
+
+    if (window.prestashop?.cart?.totals?.total_excluding_tax?.amount && !this.displayPricesTaxIncluded() && !this.displayTaxLabel()) {
+      cartAmount = window.prestashop?.cart?.totals?.total_excluding_tax?.amount;
+    }
+
+    if (window.prestashop?.cart?.totals?.total_including_tax?.amount && (this.displayPricesTaxIncluded() || this.displayTaxLabel())) {
+      cartAmount = window.prestashop?.cart?.totals?.total_including_tax?.amount;
+    }
+
+    return cartAmount;
   }
 
   static getProductPrice() {
@@ -109,6 +127,8 @@ export class PrestashopPs1_7Service {
   static onUpdatedCart(listener) {
     if (window['prestashop'] && window['prestashop'].on) {
       window['prestashop'].on('updatedCart', listener);
+      window['prestashop'].on('updatedAddressForm', listener);
+      window['prestashop'].on('updatedDeliveryForm', listener);
     } else {
       console.error('');
     }

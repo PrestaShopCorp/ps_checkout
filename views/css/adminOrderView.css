@@ -185,8 +185,9 @@
   #ps_checkout .panel__infos {
     grid-template-columns: max-content;
     grid-template-areas:
-            "reference referenceValue total totalValue payment paymentValue"
-            "status statusValue balance balanceValue empty empty";
+            "reference referenceValue total totalValue environment environmentValue"
+            "status statusValue balance balanceValue empty empty"
+            "payment paymentValue cardSca cardScaValue cardLiability cardLiabilityValue";
   }
   #ps_checkout [data-grid-area="reference"] {
     grid-area: reference;
@@ -218,6 +219,24 @@
   #ps_checkout [data-grid-area="balance"] + dd {
     grid-area: balanceValue;
   }
+  #ps_checkout [data-grid-area="environment"] {
+    grid-area: environment;
+  }
+  #ps_checkout [data-grid-area="environment"] + dd {
+    grid-area: environmentValue;
+  }
+  #ps_checkout [data-grid-area="card-sca"] {
+    grid-area: cardSca;
+  }
+  #ps_checkout [data-grid-area="card-sca"] + dd {
+    grid-area: cardScaValue;
+  }
+  #ps_checkout [data-grid-area="card-liability"] {
+    grid-area: cardLiability;
+  }
+  #ps_checkout [data-grid-area="card-liability"] + dd {
+    grid-area: cardLiabilityValue;
+  }
   #ps_checkout .tabpanel__infos dd {
     font-weight: 700;
     text-align: left;
@@ -244,7 +263,9 @@
   background: rgba(56, 56, 56, 0.33);
 }
 
-#ps_checkout .balance-info-icon:after {
+#ps_checkout .balance-info-icon:after,
+#ps_checkout .environment-info-icon:after,
+#ps_checkout .seller-protection-info-icon:after{
   font-style: normal;
   font-family: "Material Icons";
   content: "\E001";
@@ -334,7 +355,7 @@
 .checkout-modal-button {
   align-items: center;
   background: #442CC7;
-  border: 0px;
+  border: 0;
   border-radius: 4px;
   color: #FFFFFF;
   display: flex;
@@ -350,4 +371,17 @@
 
 .checkout-modal-button .btn {
   color: #FFFFFF;
+}
+
+#ps_checkout .liability-explanation {
+  font-weight: 400;
+  background-color: #EEEEEE;
+  padding: 4px 8px;
+  margin-top: 5px;
+  display: inline-block;
+  width: 100%;
+}
+
+#ps_checkout .badge{
+  white-space: normal;
 }

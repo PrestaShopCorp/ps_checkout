@@ -16,6 +16,11 @@
  * @copyright Since 2007 PrestaShop SA and Contributors
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
+
+.payment__option.ps_checkout-payment-option input[type="radio"] {
+  margin-top: .7rem;
+}
+
 .payment-options > div.payment-option[id$="card-container"] > span.custom-radio {
   margin-top: .25rem;
 }
@@ -24,13 +29,16 @@
 }
 
 .product-add-to-cart #ps-checkout-express-button div.paypal-buttons-context-iframe {
-  margin-top: 1.25rem;
-  width: 45%;
-  margin-left: 78px;
+  margin-top: .5rem;
+  width: 60%;
 }
 #checkout-personal-information-step #ps-checkout-express-button {
   display: flex;
   flex-flow: row wrap;
+
+  /*Fixes z-index problem on hummingbird*/
+  position: relative;
+  z-index: 1;
 }
 .product-add-to-cart #ps-checkout-express-button.disabled{
   display: none!important;
@@ -181,7 +189,7 @@
   backface-visibility: hidden;
 }
 
-.defautl-credit-card {
+.default-credit-card {
   position: absolute;
   top: 2px;
   right: 10px;
@@ -323,20 +331,26 @@
   margin: 0 0.25em;
 }
 
+#ps_checkout-hosted-fields-card-name {
+  position: relative;
+  /*height: 45px;*/
+  margin-top: 6px;
+}
 #ps_checkout-hosted-fields-card-number {
   position: relative;
-  height: 45px;
+  /*height: 45px;*/
   margin-top: 6px;
 }
 #ps_checkout-hosted-fields-card-expiration-date {
-  height: 45px;
+  /*height: 45px;*/
   margin-top: 6px;
 }
 #ps_checkout-hosted-fields-card-cvv {
-  height: 45px;
+  /*height: 45px;*/
   margin-top: 6px;
 }
 
+#ps_checkout-card-fields-form label,
 label[for="ps_checkout-hosted-fields-card-cvv"] {
   white-space: nowrap;
 }
@@ -352,71 +366,8 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
 }
 
 .js-payment-ps_checkout.disabled .ps_checkout-button[data-funding-source="card"] button:disabled {
-  opacity: initial;
-}
-
-.ps_checkout.payment-method-logo-block {
-  margin-top: 1rem;
-
-  text-align: center;
-}
-
-.ps_checkout.payment-method-logo-block.left {
-  text-align: left;
-
-  margin-left: 74px;
-}
-
-.ps_checkout.payment-method-logo-block-title {
-  margin-bottom: 0.5rem;
-  color: #666;
-
-  margin-left: 4px;
-}
-
-.ps_checkout.payment-method-logo {
-  display: inline-block;
-
-  padding: 4px 2px;
-
-  height: 3rem;
-}
-
-.ps_checkout.payment-method-logo.w-fixed {
-  height: 2.5rem;
-  width: 3.5rem;
-}
-
-/* TODO: Check why % dont match ??? */
-.ps_checkout.payment-method-logo.w-25 {
-  width: 20%;
-}
-
-/* TODO: Check why % dont match ??? */
-.ps_checkout.payment-method-logo.w-33 {
-  width: 25%;
-}
-
-/* TODO: Check why % dont match ??? */
-.ps_checkout.payment-method-logo.w-20 {
-  width: 18%;
-}
-
-.ps_checkout.payment-method-logo .wrapper {
-  width: 100%;
-  height: 100%;
-
-  padding: 4px;
-
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background-color: #fff;
-}
-
-.ps_checkout.payment-method-logo img {
-  height: 100%;
-  width: 100%;
-  object-fit: contain;
+  /*TODO: This causes the button to be seen as not disabled on hummingbird. Do we keep it?*/
+  /*opacity: initial;*/
 }
 
 .ps_checkout-info-wrapper {
@@ -512,4 +463,63 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
 
 .cart-detailed-totals + #ps-checkout-pp-message-container{
   padding: 0 1rem 1rem;
+}
+
+#ps_checkout-card-fields-form.loading > *:not(#ps_checkout-card-fields-form-loader),
+#ps_checkout-card-fields-form:not(.loading) > #ps_checkout-card-fields-form-loader {
+  display: none;
+}
+
+#ps_checkout-card-fields-name-error.hidden,
+#ps_checkout-card-fields-number-error.hidden,
+#ps_checkout-card-fields-vendor-error.hidden,
+#ps_checkout-card-fields-expiry-error.hidden,
+#ps_checkout-card-fields-cvv-error.hidden {
+  display: none;
+}
+
+#ps_checkout-card-fields-form-loader {
+  text-align: center;
+}
+
+#product #ps_checkout-payment-method-logo-block-title {
+  padding: 0.5rem 0;
+  color: #666;
+  margin-left: 4px;
+}
+
+#cart #ps_checkout-payment-method-logo-block-title {
+  text-align: center;
+  padding: 0.5rem 0;
+  color: #666;
+}
+
+#ps_checkout-payment-method-logo-block-img {
+  margin: 0 2px 3px 2px;
+}
+
+#ps_checkout-payment-method-logos-container {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#cart #ps_checkout-payment-method-logo-block-container {
+  text-align: center;
+}
+
+#ps_checkout-card-fields-form .ps_checkout-card-fields-cvv-label-wrapper {
+  display: table;
+}
+
+#ps_checkout-card-fields-form .ps_checkout-card-fields-cvv-label-wrapper>label {
+  display: table-cell;
+}
+
+.paypal-pay-later-banner {
+  margin: 0.5em auto;
+}
+
+.paypal-pay-later-banner > span {
+  margin: auto;
 }

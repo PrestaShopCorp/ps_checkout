@@ -23,9 +23,9 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
 use Configuration;
 use Context;
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
@@ -33,8 +33,8 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapt
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureDeclinedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\PayPalCaptureStatus;
-use PrestaShop\Module\PrestashopCheckout\PayPalError;
 use PrestaShop\Module\PrestashopCheckout\PayPalProcessorResponse;
+use Psr\SimpleCache\CacheInterface;
 
 class CapturePayPalOrderCommandHandler
 {
@@ -43,39 +43,42 @@ class CapturePayPalOrderCommandHandler
      */
     private $eventDispatcher;
 
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    /**
+     * @var CacheInterface
+     */
+    private $orderPayPalCache;
+
+    /**
+     * @var CheckoutHttpClient
+     */
+    private $httpClient;
+
+    public function __construct(CheckoutHttpClient $httpClient, EventDispatcherInterface $eventDispatcher, CacheInterface $orderPayPalCache)
     {
+        $this->httpClient = $httpClient;
         $this->eventDispatcher = $eventDispatcher;
+        $this->orderPayPalCache = $orderPayPalCache;
     }
 
     public function handle(CapturePayPalOrderCommand $capturePayPalOrderCommand)
     {
         $context = Context::getContext();
         $merchantId = Configuration::get('PS_CHECKOUT_PAYPAL_ID_MERCHANT', null, null, $context->shop->id);
-        $apiOrder = new Order($context->link);
-        $response = $apiOrder->capture(
-            $capturePayPalOrderCommand->getOrderId()->getValue(),
-            $merchantId,
-            $capturePayPalOrderCommand->getFundingSource()
-        );
 
-        if (false === $response['status']) {
-            if (isset($response['body']['details'][0]['issue'])) {
-                (new PayPalError($response['body']['details'][0]['issue']))->throwException();
-            }
+        $response = $this->httpClient->captureOrder([
+            'mode' => $capturePayPalOrderCommand->getFundingSource(),
+            'orderId' => $capturePayPalOrderCommand->getOrderId()->getValue(),
+            'payee' => [
+                'merchant_id' => $merchantId,
+            ],
+        ]);
 
-            if (isset($response['body']['name'])) {
-                (new PayPalError($response['body']['name']))->throwException();
-            }
+        $orderPayPal = json_decode($response->getBody(), true);
 
-            if (false === empty($response['exceptionMessage']) && false === empty($response['exceptionCode'])) {
-                throw new PsCheckoutException($response['exceptionMessage'], (int) $response['exceptionCode']);
-            }
+        $payPalOrderFromCache = $this->orderPayPalCache->get($orderPayPal['id']);
 
-            throw new PsCheckoutException(isset($response['body']['error']) ? $response['body']['error'] : 'Unknown error', PsCheckoutException::UNKNOWN);
-        }
+        $orderPayPal = array_replace_recursive($payPalOrderFromCache, $orderPayPal);
 
-        $orderPayPal = $response['body'];
         $capturePayPal = $orderPayPal['purchase_units'][0]['payments']['captures'][0];
 
         if ($orderPayPal['status'] === PayPalOrderStatus::COMPLETED) {

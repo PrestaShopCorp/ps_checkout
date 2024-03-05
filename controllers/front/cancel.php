@@ -18,8 +18,9 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
+use PrestaShop\Module\PrestashopCheckout\Checkout\Command\CancelCheckoutCommand;
+use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
-use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 
 /**
  * This controller receive ajax call on customer canceled payment
@@ -68,6 +69,8 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
             $fundingSource = isset($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : null;
             $isExpressCheckout = isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout'];
             $isHostedFields = isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'];
+            $reason = isset($bodyValues['reason']) ? Tools::safeOutput($bodyValues['reason']) : null;
+            $error = isset($bodyValues['error']) ? Tools::safeOutput($bodyValues['error']) : null;
 
             if (empty($orderId)) {
                 $this->exitWithResponse([
@@ -76,27 +79,28 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
                 ]);
             }
 
-            /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
-            $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
+            /** @var CommandBusInterface $commandBus */
+            $commandBus = $this->module->getService('ps_checkout.bus.command');
 
-            /** @var PsCheckoutCart|false $psCheckoutCart */
-            $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($orderId);
+            $commandBus->handle(new CancelCheckoutCommand(
+                $this->context->cart->id,
+                $orderId,
+                PsCheckoutCart::STATUS_CANCELED,
+                $fundingSource,
+                $isExpressCheckout,
+                $isHostedFields
+            ));
 
-            if (false !== $psCheckoutCart) {
-                $psCheckoutCart->paypal_funding = $fundingSource;
-                $psCheckoutCart->isExpressCheckout = $isExpressCheckout;
-                $psCheckoutCart->isHostedFields = $isHostedFields;
-                $psCheckoutCart->paypal_status = PsCheckoutCart::STATUS_CANCELED;
-                $psCheckoutCartRepository->save($psCheckoutCart);
-            }
-
-            $this->module->getLogger()->info(
+            $this->module->getLogger()->log(
+                $error ? 400 : 200,
                 'Customer canceled payment',
                 [
                     'PayPalOrderId' => $orderId,
                     'FundingSource' => $fundingSource,
                     'isExpressCheckout' => $isExpressCheckout,
                     'isHostedFields' => $isHostedFields,
+                    'reason' => $reason,
+                    'error' => $error,
                 ]
             );
 

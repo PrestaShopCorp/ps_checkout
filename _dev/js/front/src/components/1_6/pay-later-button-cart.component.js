@@ -24,11 +24,14 @@ export class PayLaterButtonCartComponent extends BaseComponent {
     querySelectorService: 'QuerySelectorService',
     prestashopService: 'PrestashopService',
     psCheckoutApi: 'PsCheckoutApi',
+    payPalService: 'PayPalService',
     $: '$'
   };
 
   created() {
-    this.buttonReferenceContainer = this.querySelectorService.getExpressCheckoutButtonContainerCart();
+    this.buttonReferenceContainer =
+      this.querySelectorService.getExpressCheckoutButtonContainerCart();
+    this.data.orderId = this.payPalService.getOrderId();
   }
 
   renderComponent() {
@@ -52,14 +55,7 @@ export class PayLaterButtonCartComponent extends BaseComponent {
       this.app,
       {
         fundingSource: 'paylater',
-        // TODO: Move this to constant when ExpressCheckoutButton component is created
-        querySelector: '#ps_checkout-express-button-cart',
-        createOrder: (data) =>
-          this.psCheckoutApi.postCreateOrder({
-            ...data,
-            fundingSource: 'paylater',
-            isExpressCheckout: true
-          })
+        querySelector: '#ps_checkout-express-button-cart'
       }
     ).render();
   }
