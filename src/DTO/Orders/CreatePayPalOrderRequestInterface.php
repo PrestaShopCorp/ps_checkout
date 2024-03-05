@@ -18,32 +18,30 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\Http;
+namespace PrestaShop\Module\PrestashopCheckout\DTO\Orders;
 
-use Prestashop\ModuleLibGuzzleAdapter\ClientFactory;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestInterface;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\ApplicationContextRequest;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PaymentSourceRequest;
 
- abstract class PsrHttpClientAdapter implements HttpClientInterface
- {
-     /**
-      * @var ClientInterface
-      */
-     private $client;
+interface CreatePayPalOrderRequestInterface
+{
+    public function getIntent();
 
-     /**
-      * @param array $configuration
-      */
-     public function __construct(array $configuration)
-     {
-         $this->client = (new ClientFactory())->getClient($configuration);
-     }
+    public function setIntent($intent);
 
-     /**
-      * {@inheritdoc}
-      */
-     public function sendRequest(RequestInterface $request)
-     {
-         return $this->client->sendRequest($request);
-     }
- }
+    public function getPurchaseUnits();
+
+    public function setPurchaseUnits(array $purchase_units);
+
+    public function getPaymentSource();
+
+    public function setPaymentSource(PaymentSourceRequest $payment_source);
+
+    public function getApplicationContext();
+
+    public function setApplicationContext(ApplicationContextRequest $application_context);
+
+    public function getProcessingInstruction();
+
+    public function setProcessingInstruction($processing_instruction);
+}

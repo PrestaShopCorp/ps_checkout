@@ -20,13 +20,19 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService;
 use PrestaShop\Module\PrestashopCheckout\Cart\CartRepositoryInterface;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\Exception\InvalidRequestException;
+use PrestaShop\Module\PrestashopCheckout\Exception\NotAuthorizedException;
+use PrestaShop\Module\PrestashopCheckout\Exception\UnprocessableEntityException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CreatePayPalOrderPayloadBuilderInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializerInterface;
+use PrestaShop\PrestaShop\Core\Foundation\IoC\Exception;
 
 class CreatePayPalOrderCommandHandler
 {
@@ -34,23 +40,37 @@ class CreatePayPalOrderCommandHandler
      * @var CartRepositoryInterface
      */
     private $cartRepository;
+
     /**
      * @var CreatePayPalOrderPayloadBuilderInterface
      */
     private $createPayPalOrderPayloadBuilder;
+
     /**
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
+    /**
+     * @var PaymentService
+     */
+    private $paymentService;
+    /**
+     * @var ObjectSerializerInterface
+     */
+    private $objectSerializer;
 
     public function __construct(
         CartRepositoryInterface $cartRepository,
         CreatePayPalOrderPayloadBuilderInterface $createPayPalOrderPayloadBuilder,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        PaymentService $paymentService,
+        ObjectSerializerInterface $objectSerializer
     ) {
         $this->cartRepository = $cartRepository;
         $this->createPayPalOrderPayloadBuilder = $createPayPalOrderPayloadBuilder;
         $this->eventDispatcher = $eventDispatcher;
+        $this->paymentService = $paymentService;
+        $this->objectSerializer = $objectSerializer;
     }
 
     /**
@@ -58,19 +78,24 @@ class CreatePayPalOrderCommandHandler
      *
      * @return void
      *
-     * @throws PayPalOrderException
      * @throws CartNotFoundException
+     * @throws PayPalOrderException
+     * @throws InvalidRequestException
+     * @throws NotAuthorizedException
+     * @throws UnprocessableEntityException
+     * @throws Exception
      */
     public function handle(CreatePayPalOrderCommand $command)
     {
         $cart = $this->cartRepository->getCartById($command->getCartId());
         $payload = $this->createPayPalOrderPayloadBuilder->build($cart, $command->getFundingSource());
-//        $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
-//            $order->getId(),
-//            $order->toArray(),
-//            $command->getCartId(),
-//            $command->isHostedFields(),
-//            $command->isExpressCheckout()
-//        ));
+        $order = $this->paymentService->createOrder($payload);
+        $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
+            $order->getId(),
+            $this->objectSerializer->toArray($order, false, true),
+            $command->getCartId(),
+            $command->isHostedFields(),
+            $command->isExpressCheckout()
+        ));
     }
 }

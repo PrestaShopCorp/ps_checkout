@@ -45,18 +45,12 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use Ps_checkout;
 use PsCheckoutCart;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalOrderEventSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var Ps_checkout
-     */
-    private $module;
-
     /**
      * @var PsCheckoutCartRepository
      */
@@ -96,7 +90,7 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
     private $payPalOrderRepository;
 
     public function __construct(
-        Ps_checkout $module,
+        CommandBusInterface $commandBus,
         PsCheckoutCartRepository $psCheckoutCartRepository,
         CacheInterface $orderPayPalCache,
         CheckoutChecker $checkoutChecker,
@@ -105,13 +99,12 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         PayPalConfiguration $payPalConfiguration,
         PayPalOrderRepository $payPalOrderRepository
     ) {
-        $this->module = $module;
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
         $this->orderPayPalCache = $orderPayPalCache;
         $this->checkoutChecker = $checkoutChecker;
         $this->checkTransitionPayPalOrderStatusService = $checkTransitionPayPalOrderStatusService;
         $this->orderStateMapper = $orderStateMapper;
-        $this->commandBus = $this->module->getService('ps_checkout.bus.command');
+        $this->commandBus = $commandBus;
         $this->payPalConfiguration = $payPalConfiguration;
         $this->payPalOrderRepository = $payPalOrderRepository;
     }

@@ -239,10 +239,6 @@ services:
     arguments:
       - "@ps_checkout.module"
 
-  ps_checkout.funding_source.entity:
-    class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceEntity'
-    public: true
-
   ps_checkout.repository.country:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\CountryRepository'
     public: true
@@ -450,7 +446,7 @@ services:
 
   ps_checkout.tactician.bus:
     class: 'League\Tactician\CommandBus'
-    factory: ["@ps_checkout.tactician.bus.factory", "create"]
+    factory: ['@PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory', "create"]
 
   ps_checkout.bus.command:
     class: 'PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusAdapter'
@@ -458,7 +454,7 @@ services:
     arguments:
       - "@ps_checkout.tactician.bus"
 
-  ps_checkout.tactician.bus.factory:
+  PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory:
     class: 'PrestaShop\Module\PrestashopCheckout\CommandBus\TacticianCommandBusFactory'
     public: true
     arguments:
@@ -466,11 +462,11 @@ services:
       - "@ps_checkout.logger"
       -
         PrestaShop\Module\PrestashopCheckout\Order\Command\AddOrderPaymentCommand: "ps_checkout.command.handler.order.add_order_payment"
-        PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand: "ps_checkout.command.handler.order.create_order"
+        PrestaShop\Module\PrestashopCheckout\Order\Command\CreateOrderCommand: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\CreateOrderCommandHandler'
         PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand: "ps_checkout.command.handler.order.update_order_status"
         PrestaShop\Module\PrestashopCheckout\Order\Matrice\Command\UpdateOrderMatriceCommand: "ps_checkout.command.handler.order.matrice.update_order_matrice"
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand: "ps_checkout.command.handler.paypal.order.capture_paypal_order"
-        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand: "ps_checkout.command.handler.paypal.order.create_paypal_order"
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CreatePayPalOrderCommandHandler'
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand: "ps_checkout.command.handler.paypal.order.save_paypal_order"
         PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentCompletedQuery: "ps_checkout.query.handler.order.get_order_for_payment_completed"
         PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentDeniedQuery: "ps_checkout.query.handler.order.get_order_for_payment_denied"
@@ -492,50 +488,52 @@ services:
       - "@ps_checkout.logger"
       - "@ps_checkout.logger.configuration"
 
-  ps_checkout.event.subscriber.checkout:
+  PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber\CheckoutEventSubscriber:
     class: 'PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber\CheckoutEventSubscriber'
     public: true
     arguments:
-      - "@ps_checkout.module"
+      - '@PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker'
+      - '@ps_checkout.bus.command'
+      - '@ps_checkout.repository.pscheckoutcart'
 
-  ps_checkout.event.subscriber.order:
+  PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber'
     public: true
     arguments:
-      - "@ps_checkout.module"
       - "@ps_checkout.repository.pscheckoutcart"
+      - '@ps_checkout.bus.command'
 
-  ps_checkout.event.subscriber.paypal.order:
+  PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber'
     public: true
     arguments:
-      - "@ps_checkout.module"
+      - "@ps_checkout.bus.command"
       - "@ps_checkout.repository.pscheckoutcart"
       - "@ps_checkout.cache.paypal.order"
-      - "@ps_checkout.checkout.checker"
+      - '@PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker'
       - "@ps_checkout.paypal.order.service.check_transition_paypal_order_status"
       - "@ps_checkout.order.state.service.order_state_mapper"
       - '@ps_checkout.paypal.configuration'
 
-  ps_checkout.event.subscriber.paypal.capture:
+  PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber'
     public: true
     arguments:
-      - "@ps_checkout.module"
       - "@ps_checkout.order.service.check_order_amount"
       - "@ps_checkout.cache.paypal.capture"
       - "@ps_checkout.cache.paypal.order"
       - "@ps_checkout.order.state.service.order_state_mapper"
+      - '@ps_checkout.bus.command'
 
   ps_checkout.event.dispatcher.symfony:
     class: 'Symfony\Component\EventDispatcher\EventDispatcherInterface'
     factory: ["@ps_checkout.event.dispatcher.factory", "create"]
     arguments:
       - [
-          "@ps_checkout.event.subscriber.checkout",
-          "@ps_checkout.event.subscriber.order",
-          "@ps_checkout.event.subscriber.paypal.order",
-          "@ps_checkout.event.subscriber.paypal.capture",
+          '@PrestaShop\Module\PrestashopCheckout\Checkout\EventSubscriber\CheckoutEventSubscriber',
+          '@PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber',
+          '@PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber',
+          '@PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber',
         ]
 
   ps_checkout.event.dispatcher:
@@ -552,7 +550,7 @@ services:
       - "@ps_checkout.funding_source.translation"
       - "@ps_checkout.paypal.configuration"
 
-  ps_checkout.command.handler.order.create_order:
+  PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\CreateOrderCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\CreateOrderCommandHandler'
     public: true
     arguments:
@@ -562,6 +560,7 @@ services:
       - "@ps_checkout.order.state.service.order_state_mapper"
       - "@ps_checkout.module"
       - "@ps_checkout.order.service.check_order_amount"
+      - '@ps_checkout.funding_source.translation'
 
   ps_checkout.command.handler.order.update_order_status:
     class: 'PrestaShop\Module\PrestashopCheckout\Order\CommandHandler\UpdateOrderStatusCommandHandler'
@@ -575,13 +574,15 @@ services:
     arguments:
       - "@ps_checkout.event.dispatcher"
 
-  ps_checkout.command.handler.paypal.order.create_paypal_order:
+  PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CreatePayPalOrderCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CreatePayPalOrderCommandHandler'
     public: true
     arguments:
       - '@?'
       - '@?'
       - '@ps_checkout.event.dispatcher'
+      - '@PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService'
+      - '@PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
 
   ps_checkout.command.handler.paypal.order.capture_paypal_order:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CapturePayPalOrderCommandHandler'
@@ -673,7 +674,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\CheckTransitionPayPalCaptureStatusService'
     public: true
 
-  ps_checkout.checkout.checker:
+  PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker:
     class: 'PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker'
     public: true
     arguments:
@@ -699,7 +700,17 @@ services:
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder'
 
+
   PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'
     arguments:
       - '@ps_checkout.db'
+
+  PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService:
+    class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService'
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient'
+      - '@PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
+
+  PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer:
+    class: 'PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
