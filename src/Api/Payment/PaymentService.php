@@ -20,6 +20,7 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
+use Exception;
 use Http\Client\Exception\HttpException;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient;
 use PrestaShop\Module\PrestashopCheckout\DTO\Orders\CreatePayPalOrderRequestInterface;
@@ -28,7 +29,10 @@ use PrestaShop\Module\PrestashopCheckout\Exception\InvalidRequestException;
 use PrestaShop\Module\PrestashopCheckout\Exception\NotAuthorizedException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Exception\UnprocessableEntityException;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderResponse;
+use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializerInterface;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 class PaymentService
 {
@@ -36,24 +40,30 @@ class PaymentService
      * @var PayPalOrderHttpClient
      */
     private $client;
+    /**
+     * @var ObjectSerializerInterface
+     */
+    private $serializer;
 
-    public function __construct(PayPalOrderHttpClient $client)
+    public function __construct(PayPalOrderHttpClient $client, ObjectSerializerInterface $serializer)
     {
         $this->client = $client;
+        $this->serializer = $serializer;
     }
 
     /**
      * @param CreatePayPalOrderRequestInterface $request
      *
-     * @return ResponseInterface
+     * @return CreatePayPalOrderResponse
      *
      * @throws InvalidRequestException|NotAuthorizedException|UnprocessableEntityException|PsCheckoutException
      */
     public function createOrder(CreatePayPalOrderRequestInterface $request)
     {
-        $payload = (array) $request;
         try {
-            return $this->client->createOrder($payload);
+            $response = $this->client->createOrder($this->serializer->serialize($request, JsonEncoder::FORMAT, true));
+
+            return $this->serializer->deserialize($response->getBody()->getContents(), CreatePayPalOrderResponse::class, JsonEncoder::FORMAT);
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
             $errorMsg = $this->getErrorMessage($response->getBody()->getContents());
@@ -185,6 +195,7 @@ class PaymentService
                         default:
                             throw new UnprocessableEntityException(sprintf('UnprocessableEntity unknown error : %s', $errorMsg), UnprocessableEntityException::UNKNOWN);
                     }
+                    // no break
                 default:
                     throw new PsCheckoutException(sprintf('Unknown error : %s', $errorMsg), PsCheckoutException::UNKNOWN);
             }
@@ -193,14 +204,15 @@ class PaymentService
 
     /**
      * @param UpdatePayPalOrderRequestInterface $request
+     *
      * @return ResponseInterface
+     *
      * @throws InvalidRequestException|NotAuthorizedException|UnprocessableEntityException|PsCheckoutException
      */
     public function updateOrder(UpdatePayPalOrderRequestInterface $request)
     {
-        $payload = (array) $request;
         try {
-            return $this->client->updateOrder($payload);
+            return $this->client->updateOrder($this->serializer->serialize($request, JsonEncoder::FORMAT, true));
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
             $errorMsg = $this->getErrorMessage($response->getBody()->getContents());
@@ -226,6 +238,7 @@ class PaymentService
                         default:
                             throw new InvalidRequestException(sprintf('InvalidRequest unknown error : %s', $errorMsg), InvalidRequestException::UNKNOWN);
                     }
+                    // no break
                 case 401:
                     switch ($errorMsg) {
                         case 'PERMISSION_DENIED':
@@ -239,6 +252,7 @@ class PaymentService
                         default:
                             throw new NotAuthorizedException(sprintf('NotAuthorized unknown error : %s', $errorMsg), NotAuthorizedException::UNKNOWN);
                     }
+                    // no break
                 case 422:
                     switch ($errorMsg) {
                         case 'INVALID_JSON_POINTER_FORMAT':
@@ -270,6 +284,7 @@ class PaymentService
                         default:
                             throw new UnprocessableEntityException(sprintf('UnprocessableEntity unknown error : %s', $errorMsg), UnprocessableEntityException::UNKNOWN);
                     }
+                    // no break
                 default:
                     throw new PsCheckoutException(sprintf('Unknown error : %s', $errorMsg), PsCheckoutException::UNKNOWN);
             }
@@ -290,7 +305,7 @@ class PaymentService
         ];
 
         try {
-            return $this->client->fetchOrder($payload);
+            return $this->client->fetchOrder($this->serializer->serialize($payload, JsonEncoder::FORMAT, true));
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
             $errorMsg = $this->getErrorMessage($response->getBody()->getContents());
@@ -304,6 +319,7 @@ class PaymentService
                         default:
                             throw new NotAuthorizedException(sprintf('NotAuthorized unknown error : %s', $errorMsg), NotAuthorizedException::UNKNOWN);
                     }
+                    // no break
                 default:
                     throw new PsCheckoutException(sprintf('Unknown error : %s', $errorMsg), PsCheckoutException::UNKNOWN);
             }
@@ -328,7 +344,7 @@ class PaymentService
         ];
 
         try {
-            return $this->client->captureOrder($payload);
+            return $this->client->captureOrder($this->serializer->serialize($payload, JsonEncoder::FORMAT, true));
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
             $errorMsg = $this->getErrorMessage($response->getBody()->getContents());
@@ -344,6 +360,7 @@ class PaymentService
                         default:
                             throw new InvalidRequestException(sprintf('InvalidRequest unknown error : %s', $errorMsg), InvalidRequestException::UNKNOWN);
                     }
+                    // no break
                 case 401:
                     switch ($errorMsg) {
                         case 'CONSENT_NEEDED':
@@ -355,6 +372,7 @@ class PaymentService
                         default:
                             throw new NotAuthorizedException(sprintf('NotAuthorized unknown error : %s', $errorMsg), NotAuthorizedException::UNKNOWN);
                     }
+                    // no break
                 case 422:
                     switch ($errorMsg) {
                         case 'AGREEMENT_ALREADY_CANCELLED':
@@ -410,6 +428,7 @@ class PaymentService
                         default:
                             throw new UnprocessableEntityException(sprintf('UnprocessableEntity unknown error : %s', $errorMsg), UnprocessableEntityException::UNKNOWN);
                     }
+                    // no break
                 default:
                     throw new PsCheckoutException(sprintf('Unknown error : %s', $errorMsg), PsCheckoutException::UNKNOWN);
             }
@@ -422,7 +441,7 @@ class PaymentService
     public function refundOrder(array $payload)
     {
         try {
-            return $this->client->refundOrder($payload);
+            return $this->client->refundOrder($this->serializer->serialize($payload, JsonEncoder::FORMAT, true));
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
             $errorMsg = $this->getErrorMessage($response->getBody()->getContents());
@@ -434,6 +453,7 @@ class PaymentService
                         default:
                             throw new NotAuthorizedException(sprintf('NotAuthorized unknown error : %s', $errorMsg), NotAuthorizedException::UNKNOWN);
                     }
+                    // no break
                 case 422:
                     switch ($errorMsg) {
                         case 'CANNOT_PROCESS_REFUNDS':
@@ -443,6 +463,7 @@ class PaymentService
                         default:
                             throw new UnprocessableEntityException(sprintf('UnprocessableEntity unknown error : %s', $errorMsg), UnprocessableEntityException::UNKNOWN);
                     }
+                    // no break
                 default:
                     throw new PsCheckoutException(sprintf('Unknown error : %s', $errorMsg), PsCheckoutException::UNKNOWN);
             }
@@ -453,6 +474,8 @@ class PaymentService
      * @param string $merchantId
      *
      * @return ResponseInterface
+     *
+     * @throws Exception
      */
     public function getIdentityToken($merchantId)
     {
@@ -464,11 +487,14 @@ class PaymentService
         ];
 
         try {
-            return $this->client->generateClientToken($payload);
+            return $this->client->generateClientToken($this->serializer->serialize($payload, JsonEncoder::FORMAT, true));
         } catch (HttpException $exception) {
             $response = $exception->getResponse();
             $errorMsg = $this->getErrorMessage($response->getBody()->getContents());
             // Il y a rien dans la doc PayPal pour les erreurs sur IdentityToken
+            throw new Exception('Temp exception');
+        } catch (Exception $exception) {
+            throw $exception;
         }
     }
 
@@ -480,9 +506,16 @@ class PaymentService
     private function getErrorMessage($body)
     {
         $body = json_decode($body, true);
-        if (isset($body['details'][0]['issue'])) return $body['details'][0]['issue'];
-        if (isset($body['name'])) return $body['name'];
-        if (isset($body['error'])) return $body['error'];
+        if (isset($body['details'][0]['issue'])) {
+            return $body['details'][0]['issue'];
+        }
+        if (isset($body['name'])) {
+            return $body['name'];
+        }
+        if (isset($body['error'])) {
+            return $body['error'];
+        }
+
         return '';
     }
 }

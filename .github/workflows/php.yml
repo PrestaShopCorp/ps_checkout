@@ -88,6 +88,9 @@ jobs:
   phpunit:
     name: PHPUnit
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        presta-versions: [ '8.0.0', 'latest' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -106,5 +109,9 @@ jobs:
 
       - run: composer install
 
+      - name: Pull PrestaShop files (Tag ${{ matrix.presta-versions }})
+        run: docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop:${{ matrix.presta-versions }}
+
       - name: Run PHPUnit
-        run: php vendor/bin/phpunit tests/Unit
+        run: docker run --rm --volumes-from temp-ps -v $PWD:/var/www/html/modules/ps_checkout -e _PS_ROOT_DIR_=/var/www/html/ --workdir=/var/www/html/modules/ps_checkout php:7.2 ./vendor/bin/phpunit -c ./tests/Unit/phpunit.xml
+#        run: php vendor/bin/phpunit tests/Unit

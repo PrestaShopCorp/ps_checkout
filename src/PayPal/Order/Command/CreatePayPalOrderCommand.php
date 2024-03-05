@@ -45,6 +45,8 @@ class CreatePayPalOrderCommand
     /**
      * @param CartId $cartId
      * @param string $fundingSource
+     * @param bool $isHostedFields
+     * @param bool $isExpressCheckout
      */
     public function __construct(CartId $cartId, $fundingSource, $isHostedFields, $isExpressCheckout)
     {

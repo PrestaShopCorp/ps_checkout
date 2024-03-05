@@ -78,6 +78,8 @@ class CreatePayPalOrderResponse
     public function setId($id)
     {
         $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -94,6 +96,8 @@ class CreatePayPalOrderResponse
     public function setCreateTime($create_time)
     {
         $this->create_time = $create_time;
+
+        return $this;
     }
 
     /**
@@ -110,6 +114,8 @@ class CreatePayPalOrderResponse
     public function setUpdateTime($update_time)
     {
         $this->update_time = $update_time;
+
+        return $this;
     }
 
     /**
@@ -126,6 +132,8 @@ class CreatePayPalOrderResponse
     public function setPaymentSource($payment_source)
     {
         $this->payment_source = $payment_source;
+
+        return $this;
     }
 
     /**
@@ -142,6 +150,8 @@ class CreatePayPalOrderResponse
     public function setIntent($intent)
     {
         $this->intent = $intent;
+
+        return $this;
     }
 
     /**
@@ -158,6 +168,8 @@ class CreatePayPalOrderResponse
     public function setProcessingInstruction($processing_instruction)
     {
         $this->processing_instruction = $processing_instruction;
+
+        return $this;
     }
 
     /**
@@ -174,6 +186,8 @@ class CreatePayPalOrderResponse
     public function setPayer($payer)
     {
         $this->payer = $payer;
+
+        return $this;
     }
 
     /**
@@ -190,6 +204,8 @@ class CreatePayPalOrderResponse
     public function setPurchaseUnits($purchase_units)
     {
         $this->purchase_units = $purchase_units;
+
+        return $this;
     }
 
     /**
@@ -206,6 +222,8 @@ class CreatePayPalOrderResponse
     public function setStatus($status)
     {
         $this->status = $status;
+
+        return $this;
     }
 
     /**
@@ -222,5 +240,7 @@ class CreatePayPalOrderResponse
     public function setLinks($links)
     {
         $this->links = $links;
+
+        return $this;
     }
 }
