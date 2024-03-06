@@ -62,11 +62,13 @@ class ItemRequest
     /**
      * @param string $name
      *
-     * @return void
+     * @return self
      */
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -80,11 +82,13 @@ class ItemRequest
     /**
      * @param Amount $unit_amount
      *
-     * @return void
+     * @return self
      */
     public function setUnitAmount(Amount $unit_amount)
     {
         $this->unit_amount = $unit_amount;
+
+        return $this;
     }
 
     /**
@@ -98,11 +102,13 @@ class ItemRequest
     /**
      * @param Amount $tax
      *
-     * @return void
+     * @return self
      */
     public function setTax(Amount $tax)
     {
         $this->tax = $tax;
+
+        return $this;
     }
 
     /**
@@ -116,11 +122,13 @@ class ItemRequest
     /**
      * @param string $quantity
      *
-     * @return void
+     * @return self
      */
     public function setQuantity($quantity)
     {
         $this->quantity = $quantity;
+
+        return $this;
     }
 
     /**
@@ -134,11 +142,13 @@ class ItemRequest
     /**
      * @param string $description
      *
-     * @return void
+     * @return self
      */
     public function setDescription($description)
     {
         $this->description = $description;
+
+        return $this;
     }
 
     /**
@@ -152,11 +162,13 @@ class ItemRequest
     /**
      * @param string $sku
      *
-     * @return void
+     * @return self
      */
     public function setSku($sku)
     {
         $this->sku = $sku;
+
+        return $this;
     }
 
     /**
@@ -170,10 +182,12 @@ class ItemRequest
     /**
      * @param string $category
      *
-     * @return void
+     * @return self
      */
     public function setCategory($category)
     {
         $this->category = $category;
+
+        return $this;
     }
 }

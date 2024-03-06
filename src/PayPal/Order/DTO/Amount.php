@@ -43,11 +43,13 @@ class Amount
     /**
      * @param string $currency_code
      *
-     * @return void
+     * @return self
      */
     public function setCurrencyCode($currency_code)
     {
         $this->currency_code = $currency_code;
+
+        return $this;
     }
 
     /**
@@ -61,10 +63,12 @@ class Amount
     /**
      * @param string $value
      *
-     * @return void
+     * @return self
      */
     public function setValue($value)
     {
         $this->value = $value;
+
+        return $this;
     }
 }

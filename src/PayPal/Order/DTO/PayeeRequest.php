@@ -42,11 +42,13 @@ class PayeeRequest
     /**
      * @param string $email_address
      *
-     * @return void
+     * @return self
      */
     public function setEmailAddress($email_address)
     {
         $this->email_address = $email_address;
+
+        return $this;
     }
 
     /**
@@ -60,10 +62,12 @@ class PayeeRequest
     /**
      * @param string $merchant_id
      *
-     * @return void
+     * @return self
      */
     public function setMerchantId($merchant_id)
     {
         $this->merchant_id = $merchant_id;
+
+        return $this;
     }
 }

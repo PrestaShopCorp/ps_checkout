@@ -62,11 +62,13 @@ class AmountBreakdown
     /**
      * @param Amount $item_total
      *
-     * @return void
+     * @return self
      */
     public function setItemTotal(Amount $item_total)
     {
         $this->item_total = $item_total;
+
+        return $this;
     }
 
     /**
@@ -80,11 +82,13 @@ class AmountBreakdown
     /**
      * @param Amount $shipping
      *
-     * @return void
+     * @return self
      */
     public function setShipping(Amount $shipping)
     {
         $this->shipping = $shipping;
+
+        return $this;
     }
 
     /**
@@ -98,11 +102,13 @@ class AmountBreakdown
     /**
      * @param Amount $handling
      *
-     * @return void
+     * @return self
      */
     public function setHandling(Amount $handling)
     {
         $this->handling = $handling;
+
+        return $this;
     }
 
     /**
@@ -116,11 +122,13 @@ class AmountBreakdown
     /**
      * @param Amount $tax_total
      *
-     * @return void
+     * @return self
      */
     public function setTaxTotal(Amount $tax_total)
     {
         $this->tax_total = $tax_total;
+
+        return $this;
     }
 
     /**
@@ -134,11 +142,13 @@ class AmountBreakdown
     /**
      * @param Amount $insurance
      *
-     * @return void
+     * @return self
      */
     public function setInsurance(Amount $insurance)
     {
         $this->insurance = $insurance;
+
+        return $this;
     }
 
     /**
@@ -152,11 +162,13 @@ class AmountBreakdown
     /**
      * @param Amount $shipping_discount
      *
-     * @return void
+     * @return self
      */
     public function setShippingDiscount(Amount $shipping_discount)
     {
         $this->shipping_discount = $shipping_discount;
+
+        return $this;
     }
 
     /**
@@ -170,10 +182,12 @@ class AmountBreakdown
     /**
      * @param Amount $discount
      *
-     * @return void
+     * @return self
      */
     public function setDiscount(Amount $discount)
     {
         $this->discount = $discount;
+
+        return $this;
     }
 }

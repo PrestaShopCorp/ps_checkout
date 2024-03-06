@@ -74,11 +74,13 @@ class PurchaseUnitRequest
     /**
      * @param string $reference_id
      *
-     * @return void
+     * @return self
      */
     public function setReferenceId($reference_id)
     {
         $this->reference_id = $reference_id;
+
+        return $this;
     }
 
     /**
@@ -92,11 +94,13 @@ class PurchaseUnitRequest
     /**
      * @param AmountWithBreakdown $amount
      *
-     * @return void
+     * @return self
      */
     public function setAmount(AmountWithBreakdown $amount)
     {
         $this->amount = $amount;
+
+        return $this;
     }
 
     /**
@@ -110,11 +114,13 @@ class PurchaseUnitRequest
     /**
      * @param PayeeRequest $payee
      *
-     * @return void
+     * @return self
      */
     public function setPayee(PayeeRequest $payee)
     {
         $this->payee = $payee;
+
+        return $this;
     }
 
     /**
@@ -128,11 +134,13 @@ class PurchaseUnitRequest
     /**
      * @param string $description
      *
-     * @return void
+     * @return self
      */
     public function setDescription($description)
     {
         $this->description = $description;
+
+        return $this;
     }
 
     /**
@@ -146,11 +154,13 @@ class PurchaseUnitRequest
     /**
      * @param string $custom_id
      *
-     * @return void
+     * @return self
      */
     public function setCustomId($custom_id)
     {
         $this->custom_id = $custom_id;
+
+        return $this;
     }
 
     /**
@@ -164,11 +174,13 @@ class PurchaseUnitRequest
     /**
      * @param string $invoice_id
      *
-     * @return void
+     * @return self
      */
     public function setInvoiceId($invoice_id)
     {
         $this->invoice_id = $invoice_id;
+
+        return $this;
     }
 
     /**
@@ -182,11 +194,13 @@ class PurchaseUnitRequest
     /**
      * @param string $soft_descriptor
      *
-     * @return void
+     * @return self
      */
     public function setSoftDescriptor($soft_descriptor)
     {
         $this->soft_descriptor = $soft_descriptor;
+
+        return $this;
     }
 
     /**
@@ -200,11 +214,13 @@ class PurchaseUnitRequest
     /**
      * @param ItemRequest[] $items
      *
-     * @return void
+     * @return self
      */
     public function setItems(array $items)
     {
         $this->items = $items;
+
+        return $this;
     }
 
     /**
@@ -218,11 +234,13 @@ class PurchaseUnitRequest
     /**
      * @param ShippingRequest $shipping
      *
-     * @return void
+     * @return self
      */
     public function setShipping(ShippingRequest $shipping)
     {
         $this->shipping = $shipping;
+
+        return $this;
     }
 
     /**
@@ -236,10 +254,12 @@ class PurchaseUnitRequest
     /**
      * @param SupplementaryDataRequest $supplementary_data
      *
-     * @return void
+     * @return self
      */
     public function setSupplementaryData(SupplementaryDataRequest $supplementary_data)
     {
         $this->supplementary_data = $supplementary_data;
+
+        return $this;
     }
 }

@@ -589,7 +589,7 @@ services:
     public: true
     arguments:
       - '@?'
-      - '@?'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\Order\Builder\Payload\CreatePayPalOrderPayloadBuilder'
       - '@ps_checkout.event.dispatcher'
       - '@PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService'
       - '@PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
@@ -789,3 +789,6 @@ services:
     public: true
     arguments:
       - "@ps_checkout.http.client"
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\Order\Builder\Payload\CreatePayPalOrderPayloadBuilder:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\Builder\Payload\CreatePayPalOrderPayloadBuilder'
