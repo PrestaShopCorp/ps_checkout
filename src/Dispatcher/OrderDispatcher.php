@@ -24,6 +24,9 @@ use Module;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
+use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Event\PaymentMethodTokenCreatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Event\PaymentMethodTokenDeletedEvent;
+use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Event\PaymentMethodTokenDeletionInitiatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovalReversedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderApprovedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
@@ -48,6 +51,9 @@ class OrderDispatcher implements Dispatcher
     const PS_CHECKOUT_ORDER_APPROVED = 'CheckoutOrderApproved';
     const PS_CHECKOUT_ORDER_COMPLETED = 'CheckoutOrderCompleted';
     const PS_CHECKOUT_ORDER_APPROVAL_REVERSED = 'CheckoutPaymentApprovalReversed';
+    const PS_CHECKOUT_VAULT_PAYMENT_TOKEN_CREATED = 'VaultPaymentTokenCreated';
+    const PS_CHECKOUT_VAULT_PAYMENT_TOKEN_DELETED = 'VaultPaymentTokenDeleted';
+    const PS_CHECKOUT_VAULT_PAYMENT_TOKEN_DELETION_INITIATED = 'VaultPaymentTokenDeletionInitiated';
 
     /**
      * Dispatch the Event Type to manage the merchant status
@@ -97,6 +103,15 @@ class OrderDispatcher implements Dispatcher
                 break;
             case static::PS_CHECKOUT_ORDER_APPROVAL_REVERSED:
                 $eventDispatcher->dispatch(new PayPalOrderApprovalReversedEvent($payload['orderId'], $payload['resource']));
+                break;
+            case static::PS_CHECKOUT_VAULT_PAYMENT_TOKEN_CREATED:
+                $eventDispatcher->dispatch(new PaymentMethodTokenCreatedEvent($payload['resource']));
+                break;
+            case static::PS_CHECKOUT_VAULT_PAYMENT_TOKEN_DELETED:
+                $eventDispatcher->dispatch(new PaymentMethodTokenDeletedEvent($payload['resource']));
+                break;
+            case static::PS_CHECKOUT_VAULT_PAYMENT_TOKEN_DELETION_INITIATED:
+                $eventDispatcher->dispatch(new PaymentMethodTokenDeletionInitiatedEvent($payload['resource']));
                 break;
             default:
                 $logger->warning(

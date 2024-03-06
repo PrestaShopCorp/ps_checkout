@@ -24,7 +24,7 @@ use Db;
 use DbQuery;
 use Exception;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
-use PrestaShop\Module\PrestashopCheckout\Vault\ValueObject\PaymentMethodTokenId;
+use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\ValueObject\PaymentMethodTokenId;
 
 class PaymentMethodTokenRepository
 {
