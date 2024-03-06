@@ -82,6 +82,66 @@ export class QuerySelectorPs1_6Service {
     );
   }
 
+  static getCardFieldsFormContainer() {
+    return this.querySelector(
+      SELECTORS.CARD_FIELDS.FORM
+    );
+  }
+
+  static getCardFieldsNameInputContainer() {
+    return this.querySelector(
+      SELECTORS.CARD_FIELDS.NAME
+    );
+  }
+
+  static getCardFieldsNameError() {
+    return this.querySelector(
+      SELECTORS.CARD_FIELDS.NAME_ERROR
+    );
+  }
+
+  static getCardFieldsNumberInputContainer() {
+    return this.querySelector(
+      SELECTORS.CARD_FIELDS.NUMBER
+    );
+  }
+
+  static getCardFieldsNumberError() {
+    return this.querySelector(
+      SELECTORS.CARD_FIELDS.NUMBER_ERROR
+    );
+  }
+
+  static getCardFieldsVendorError() {
+    return this.querySelector(
+      SELECTORS.CARD_FIELDS.VENDOR_ERROR
+    );
+  }
+
+  static getCardFieldsExpiryInputContainer() {
+    return this.querySelector(
+      SELECTORS.CARD_FIELDS.EXPIRY
+    );
+  }
+
+  static getCardFieldsExpiryError() {
+    return this.querySelector(
+      SELECTORS.CARD_FIELDS.EXPIRY_ERROR
+    );
+  }
+
+  static getCardFieldsCvvInputContainer() {
+    return this.querySelector(
+      SELECTORS.CARD_FIELDS.CVV
+    );
+  }
+
+  static getCardFieldsCvvError() {
+    return this.querySelector(
+      SELECTORS.CARD_FIELDS.CVV_ERROR
+    );
+  }
+
   static getPayLaterOfferMessageContainerSelector(placement) {
     switch (placement) {
       case 'product':
@@ -127,5 +187,16 @@ export class QuerySelectorPs1_6Service {
     }
 
     return elements;
+  }
+
+  static getPaymentMethodLogoContainer(placement) {
+    switch (placement) {
+      case 'product':
+        return document.querySelector(SELECTORS.PAYMENT_METHOD_LOGO_PRODUCT_CONTAINER);
+      case 'cart':
+        return document.querySelector(SELECTORS.PAYMENT_METHOD_LOGO_CART_CONTAINER);
+      default:
+        return;
+    }
   }
 }

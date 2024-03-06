@@ -36,7 +36,7 @@ export const PsCheckoutConfig = {
   validateOrderUrl: window.ps_checkoutValidateUrl,
   confirmationUrl: window.ps_checkoutConfirmUrl,
   cancelUrl: window.ps_checkoutCancelUrl,
-  getTokenUrl: window.ps_checkoutGetTokenURL,
+  getTokenUrl: window.ps_checkoutGetTokenURL, // TODO: remove this?
   checkoutCheckoutUrl: window.ps_checkoutCheckoutUrl,
   expressCheckoutUrl: window.ps_checkoutExpressCheckoutUrl,
 
@@ -80,5 +80,10 @@ export const PsCheckoutConfig = {
 
   fundingSourcesSorted: window.ps_checkoutFundingSourcesSorted,
 
-  orderId: window.ps_checkoutPayPalOrderId
+  orderId: window.ps_checkoutPayPalOrderId,
+  imgTitlePaymentMethodLogos: window.ps_checkoutPaymentMethodLogosTitleImg,
+  renderPaymentMethodLogos: window.ps_checkoutRenderPaymentMethodLogos,
+  cardSupportedBrands: window.ps_checkoutCardBrands,
+  cardLogoBrands: window.ps_checkoutCardLogos,
+  fundingSource: window.ps_checkoutFundingSource,
 };

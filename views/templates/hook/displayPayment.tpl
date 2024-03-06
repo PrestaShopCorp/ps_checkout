@@ -49,22 +49,29 @@
           <div class="payment_module closed">
             <a href="javascript:void(0);">
               {if $fundingSource == 'card' && $isHostedFieldsAvailable}
-                <form id="ps_checkout-hosted-fields-form" class="form-horizontal">
-                  <div class="form-group">
-                    <label class="form-control-label" for="ps_checkout-hosted-fields-card-number">{l s='Card number' mod='ps_checkout'}</label>
-                    <div id="ps_checkout-hosted-fields-card-number" class="form-control">
-                      <div id="card-image">
-                        <img class="defautl-credit-card" src="{$modulePath}views/img/credit_card.png" alt="">
-                      </div>
-                    </div>
+                <form id="ps_checkout-card-fields-form" class="form-horizontal loading" style="display: none;">
+                  <div id="ps_checkout-card-fields-form-loader">
+                    <img src="{$modulePath}views/img/tail-spin.svg" alt="">
+                  </div>
+                  <div>
+                    <label class="form-control-label" for="ps_checkout-card-fields-name">{l s='Card holder name' mod='ps_checkout'}</label>
+                    <div id="ps_checkout-card-fields-name"></div>
+                    <div id="ps_checkout-card-fields-name-error" class="alert alert-danger hidden">{l s='Card holder name is invalid' mod='ps_checkout'}</div>
+                  </div>
+                  <div>
+                    <label class="form-control-label" for="ps_checkout-card-fields-number">{l s='Card number' mod='ps_checkout'}</label>
+                    <div id="ps_checkout-card-fields-number"></div>
+                    <div id="ps_checkout-card-fields-number-error" class="alert alert-danger hidden">{l s='Card number is invalid' mod='ps_checkout'}</div>
+                    <div id="ps_checkout-card-fields-vendor-error" class="alert alert-danger hidden">{l s='Card vendor is invalid' mod='ps_checkout'}</div>
                   </div>
                   <div class="row">
-                    <div class="form-group col-xs-6">
-                      <label class="form-control-label" for="ps_checkout-hosted-fields-card-expiration-date">{l s='Expiry date' mod='ps_checkout'}</label>
-                      <div id="ps_checkout-hosted-fields-card-expiration-date" class="form-control"></div>
+                    <div class="col-xs-6">
+                      <label class="form-control-label" for="ps_checkout-card-fields-expiry">{l s='Expiry date' mod='ps_checkout'}</label>
+                      <div id="ps_checkout-card-fields-expiry"></div>
+                      <div id="ps_checkout-card-fields-expiry-error" class="alert alert-danger hidden">{l s='Card expiration date is invalid' mod='ps_checkout'}</div>
                     </div>
-                    <div class="form-group col-xs-6">
-                      <label class="form-control-label" for="ps_checkout-hosted-fields-card-cvv">{l s='CVC' mod='ps_checkout'}</label>
+                    <div class="col-xs-6">
+                      <label class="form-control-label" for="ps_checkout-card-fields-cvv">{l s='CVC' mod='ps_checkout'}</label>
                       <div class="ps_checkout-info-wrapper">
                         <div class="ps_checkout-info-button" onmouseenter="cvvEnter()" onmouseleave="cvvLeave()">i
                           <div class="popup-content" id="cvv-popup">
@@ -73,7 +80,8 @@
                           </div>
                         </div>
                       </div>
-                      <div id="ps_checkout-hosted-fields-card-cvv" class="form-control"></div>
+                      <div id="ps_checkout-card-fields-cvv"></div>
+                      <div id="ps_checkout-card-fields-cvv-error" class="alert alert-danger hidden">{l s='CVV code is invalid' mod='ps_checkout'}</div>
                     </div>
                   </div>
 

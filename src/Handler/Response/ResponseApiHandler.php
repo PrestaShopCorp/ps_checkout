@@ -36,8 +36,7 @@ class ResponseApiHandler
      */
     public function handleResponse(ResponseInterface $response)
     {
-        $response->getBody()->seek(0); // Rewind Stream to avoid empty body
-        $responseContents = json_decode($response->getBody()->getContents(), true);
+        $responseContents = json_decode($response->getBody(), true);
 
         return [
             'status' => $this->responseIsSuccessful($responseContents, $response->getStatusCode()),

@@ -198,7 +198,7 @@
   backface-visibility: hidden;
 }
 
-#ps_checkout-hosted-fields-form .defautl-credit-card {
+#ps_checkout-hosted-fields-form .default-credit-card {
   position: absolute;
   top: 2px;
   right: 10px;
@@ -472,4 +472,47 @@
 }
 #ps_checkout-canceled img, #ps_checkout-error img{
   margin-right: 10px;
+}
+
+#ps_checkout-card-fields-form .ps_checkout-card-fields-cvv-label-wrapper {
+  display: table;
+}
+
+#ps_checkout-card-fields-form .ps_checkout-card-fields-cvv-label-wrapper>label {
+  display: table-cell;
+}
+
+#ps_checkout-payment-method-logo-block-container {
+  text-align: center;
+}
+
+#ps_checkout-payment-method-logos-container {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#ps_checkout-card-fields-form.loading > *:not(#ps_checkout-card-fields-form-loader),
+#ps_checkout-card-fields-form:not(.loading) > #ps_checkout-card-fields-form-loader {
+  display: none;
+}
+
+#ps_checkout-card-fields-name-error.hidden,
+#ps_checkout-card-fields-number-error.hidden,
+#ps_checkout-card-fields-vendor-error.hidden,
+#ps_checkout-card-fields-expiry-error.hidden,
+#ps_checkout-card-fields-cvv-error.hidden {
+  display: none;
+}
+
+#ps_checkout-card-fields-form-loader {
+  text-align: center;
+}
+
+.paypal-pay-later-banner {
+  margin: 0.5em auto;
+}
+
+.paypal-pay-later-banner > span {
+  margin: auto;
 }

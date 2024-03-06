@@ -20,7 +20,11 @@
 
 namespace PrestaShop\Module\PrestashopCheckout;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Order;
+use Module;
+use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
+use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
+use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
+use Ps_checkout;
 
 /**
  * Allow to instantiate a paypal order
@@ -47,20 +51,32 @@ class PaypalOrder
      */
     private function loadOrder($id)
     {
-        $response = (new Order(\Context::getContext()->link))->fetch($id);
+        /** @var Ps_checkout $module */
+        $module = Module::getInstanceByName('ps_checkout');
 
-        if (false === $response['status'] && ((isset($response['body']['message']) && $response['body']['message'] === 'INVALID_RESOURCE_ID') || $response['exceptionCode'] === 404)) {
-            \Db::getInstance()->update(
-                \PsCheckoutCart::$definition['table'],
-                [
-                    'paypal_status' => \PsCheckoutCart::STATUS_CANCELED,
-                ],
-                'paypal_order = "' . pSQL($id) . '"'
-            );
-        }
+        /** @var CheckoutHttpClient $checkoutHttpClient */
+        $checkoutHttpClient = $module->getService('ps_checkout.http.client.checkout');
 
-        if (true === $response['status'] && !empty($response['body'])) {
-            $this->setOrder($response['body']);
+        try {
+            $response = $checkoutHttpClient->fetchOrder([
+                'orderId' => $id,
+            ]);
+            $responseHandler = new ResponseApiHandler();
+            $response = $responseHandler->handleResponse($response);
+
+            if (true === $response['status'] && !empty($response['body'])) {
+                $this->setOrder($response['body']);
+            }
+        } catch (PayPalException $exception) {
+            if ($exception->getCode() === PayPalException::INVALID_RESOURCE_ID) {
+                \Db::getInstance()->update(
+                    \PsCheckoutCart::$definition['table'],
+                    [
+                        'paypal_status' => \PsCheckoutCart::STATUS_CANCELED,
+                    ],
+                    'paypal_order = "' . pSQL($id) . '"'
+                );
+            }
         }
     }
 

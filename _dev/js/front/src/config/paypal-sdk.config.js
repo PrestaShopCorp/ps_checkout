@@ -17,21 +17,21 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 export const PayPalSdkConfig = {
-  id: 'ps_checkoutPayPalSdkScript',
-  namespace: 'ps_checkoutPayPalSdkInstance',
-  src: window.ps_checkoutPayPalSdkUrl,
-  card3dsEnabled: window.ps_checkout3dsEnabled,
-  cspNonce: window.ps_checkoutCspNonce,
-  orderId: window.ps_checkoutPayPalOrderId,
-  fundingSource: window.ps_checkoutFundingSource,
-  clientToken: window.ps_checkoutPayPalClientToken,
+  sdkConfig: {
+    dataNamespace: 'ps_checkoutPayPalSdkInstance',
+    dataOrderId: window.ps_checkoutPayPalOrderId,
+    ...window.ps_checkoutPayPalSdkConfig
+  },
   buttonCustomization: window.ps_checkoutPayPalButtonConfiguration,
   paymentFieldsCustomization: window.ps_checkout.paymentFieldsCustomization,
   expressCheckoutButtonCustomization:
-    window.ps_checkoutExpressCheckoutButtonCustomization,
+  window.ps_checkoutExpressCheckoutButtonCustomization,
   hostedFieldsCustomization:
-    window.ps_checkoutHostedFieldsCustomizationConfiguration,
-  payLaterOfferMessageCustomization: window.ps_checkoutPayLaterOfferMessageCustomization,
-  payLaterOfferBannerCustomization: window.ps_checkoutPayLaterOfferBannerCustomization,
+  window.ps_checkoutHostedFieldsCustomizationConfiguration,
+  payLaterOfferMessageCustomization:
+  window.ps_checkoutPayLaterOfferMessageCustomization,
+  payLaterOfferBannerCustomization:
+  window.ps_checkoutPayLaterOfferBannerCustomization,
   partnerAttributionId: window.ps_checkoutPartnerAttributionId
 };
+

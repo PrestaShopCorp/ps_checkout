@@ -24,4 +24,29 @@
   #content.nobootstrap div.bootstrap.panel {
     display: none;
   }
+
+  .page-sidebar-closed:not(.mobile) #content.nobootstrap,
+  .page-sidebar:not(.mobile) #content.nobootstrap {
+    padding: 100px 0 0 0;
+  }
+
+  #content.nobootstrap .page-head h4.page-subtitle {
+    display: none;
+  }
+
+  #footer {
+    display: none;
+  }
 </style>
+
+<script>
+  // Enhance page title with subtitle and module version
+  const pageTitle = document.querySelector('#content.nobootstrap .page-head h2.page-title');
+  const pageSubtitle = document.querySelector('#content.nobootstrap .page-head h4.page-subtitle');
+
+  if (pageTitle) {
+    pageTitle.textContent = pageTitle.textContent
+      + (pageSubtitle ? ' ' + pageSubtitle.textContent : '')
+      + (window?.store?.context?.moduleVersion ? ' v' + window.store.context.moduleVersion : '')
+  }
+</script>

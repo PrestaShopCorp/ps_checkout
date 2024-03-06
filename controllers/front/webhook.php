@@ -78,7 +78,7 @@ class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
             switch ($exception->getCode()) {
                 case WebhookException::WEBHOOK_SECRET_MISMATCH:
                     $this->exitWithResponse([
-                        'httpCode' => 403,
+                        'httpCode' => 401,
                         'error' => $exception->getMessage(),
                     ]);
                     break;

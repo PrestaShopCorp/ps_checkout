@@ -23,7 +23,7 @@ export class PayLaterBannerPs1_6Component extends BaseComponent {
     if (null === document.querySelector(containerIdentifier)) {
       let containerElement = document.createElement('div');
       containerElement.id = containerIdentifier.slice(1);
-      containerElement.classList.add('container');
+      containerElement.classList.add('container', 'paypal-pay-later-banner');
       querySelector.append(containerElement);
     }
   }
