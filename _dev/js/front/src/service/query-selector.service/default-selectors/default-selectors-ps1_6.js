@@ -22,6 +22,7 @@ export const DefaultSelectors1_6 = {
   CONDITIONS_CHECKBOXES: 'input[name="cgv"]',
 
   LOADER_PARENT: 'body',
+  DIALOG_PARENT: 'body',
 
   NOTIFICATION_CONDITIONS: '.accept-cgv',
   NOTIFICATION_PAYMENT_CANCELLED: '#ps_checkout-canceled',

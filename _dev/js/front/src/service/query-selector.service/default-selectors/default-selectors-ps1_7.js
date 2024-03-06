@@ -22,6 +22,7 @@ export const DefaultSelectors1_7 = {
   CONDITIONS_CHECKBOXES: '#conditions-to-approve input[type="checkbox"]',
 
   LOADER_PARENT: 'body',
+  DIALOG_PARENT: 'body',
 
   NOTIFICATION_CONDITIONS: '.accept-cgv',
   NOTIFICATION_PAYMENT_CANCELLED: '#ps_checkout-canceled',

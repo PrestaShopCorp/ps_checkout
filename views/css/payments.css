@@ -513,3 +513,8 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
 .cart-detailed-totals + #ps-checkout-pp-message-container{
   padding: 0 1rem 1rem;
 }
+
+.ps-checkout.dialog-button-container {
+  margin-top: 25px;
+  text-align: center;
+}

@@ -17,6 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 import { BaseComponent } from '../../core/dependency-injection/base.component';
+import { CancelDialogComponent } from "./cancel-dialog.component";
 
 /**
  * @typedef SmartButtonComponentProps
@@ -125,19 +126,21 @@ export class SmartButtonComponent extends BaseComponent {
               this.data.notification.showError(error.message);
             });
         },
-        onCancel: data => {
+        onCancel: async data => {
           this.data.loader.hide();
           this.data.notification.showCanceled();
 
-          return this.psCheckoutApi
-            .postCancelOrder({
-              ...data,
-              fundingSource: this.data.name,
-              isExpressCheckout: this.config.expressCheckout.active
-            })
-            .catch(error => {
-              this.data.loader.hide();
-              this.data.notification.showError(error.message);
+          // TODO: Check si on est dans un cas de fail ou cancel, si c'est fail ne pas afficher la dialog
+          // TODO: Check si c'est nous qui avons fermé la popup paypal ou pas, ne pas afficher la dialog si c'est nous qui avons fermé
+          this.dialog = new CancelDialogComponent(this.app, {
+            smartButtonData: data,
+            fundingSource: this.data.name,
+            isExpressCheckout: this.config.expressCheckout.active
+          }).render();
+
+          return await this.dialog.show()
+            .then(result => {
+              return result;
             });
         },
         createOrder: data => {

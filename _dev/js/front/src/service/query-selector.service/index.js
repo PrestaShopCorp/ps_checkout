@@ -51,6 +51,10 @@ export class QuerySelectorService extends BaseClass {
     return this.instance.getLoaderParent();
   }
 
+  getDialogParent() {
+    return this.instance.getDialogParent();
+  }
+
   getNotificationConditions() {
     return this.instance.getNotificationConditions();
   }

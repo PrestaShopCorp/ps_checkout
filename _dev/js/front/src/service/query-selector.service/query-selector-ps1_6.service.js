@@ -36,6 +36,10 @@ export class QuerySelectorPs1_6Service {
     return this.querySelector(SELECTORS.LOADER_PARENT);
   }
 
+  static getDialogParent() {
+    return this.querySelector(SELECTORS.DIALOG_PARENT);
+  }
+
   static getNotificationConditions() {
     return this.querySelector(SELECTORS.NOTIFICATION_CONDITIONS);
   }

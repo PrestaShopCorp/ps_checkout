@@ -1143,6 +1143,10 @@ class Ps_checkout extends PaymentModule
                 'error.paypal-sdk.contingency.error' => $this->l('An error occurred on card holder authentication, please choose another payment method or try again.'),
                 'error.paypal-sdk.contingency.failure' => $this->l('Card holder authentication failed, please choose another payment method or try again.'),
                 'error.paypal-sdk.contingency.unknown' => $this->l('Card holder authentication cannot be checked, please choose another payment method or try again.'),
+                'dialog-cancel-payment.label.dialogTitle' => $this->l('Payment cancel'),
+                'dialog-cancel-payment.label.dialogMessage' => $this->l('Do you want to cancel your payment ?'),
+                'dialog-cancel-payment.label.dialogButtonFalse' => $this->l('No, I want to continue with the payment process'),
+                'dialog-cancel-payment.label.dialogButtonTrue' => $this->l('Yes'),
             ],
         ]);
 
