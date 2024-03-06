@@ -274,9 +274,9 @@ class CreatePayPalOrderPayloadBuilder implements CreatePayPalOrderPayloadBuilder
 
         $purchaseUnit->setAmount(
             (new AmountWithBreakdown())
+                ->setBreakdown($amountBreakdown)
                 ->setValue($this->formatAmount($this->data['totalWithTaxes']))
                 ->setCurrencyCode($currencyCode)
-                ->setBreakdown($amountBreakdown)
         );
     }
 

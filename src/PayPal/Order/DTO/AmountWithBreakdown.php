@@ -38,7 +38,7 @@ class AmountWithBreakdown extends Amount
     /**
      * @param AmountBreakdown $breakdown
      *
-     * @return self
+     * @return $this
      */
     public function setBreakdown(AmountBreakdown $breakdown)
     {
