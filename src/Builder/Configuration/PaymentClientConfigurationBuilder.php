@@ -20,12 +20,19 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Builder\Configuration;
 
+use GuzzleHttp\Event\Emitter;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Subscriber\Log\Formatter;
+use GuzzleHttp\Subscriber\Log\LogSubscriber;
+use GuzzleLogMiddleware\LogMiddleware;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv;
+use PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository;
 use PrestaShop\Module\PrestashopCheckout\Routing\Router;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use Ps_checkout;
+use Psr\Log\LoggerInterface;
 
 class PaymentClientConfigurationBuilder implements ConfigurationBuilderInterface
 {
@@ -47,19 +54,31 @@ class PaymentClientConfigurationBuilder implements ConfigurationBuilderInterface
      * @var PrestaShopContext
      */
     private $prestaShopContext;
+    /**
+     * @var LoggerConfiguration
+     */
+    private $loggerConfiguration;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     public function __construct(
         PaymentEnv $paymentEnv,
         Router $router,
         ShopContext $shopContext,
         PsAccountRepository $psAccountRepository,
-        PrestaShopContext $prestaShopContext
+        PrestaShopContext $prestaShopContext,
+        LoggerConfiguration $loggerConfiguration,
+        LoggerInterface $logger
     ) {
         $this->paymentEnv = $paymentEnv;
         $this->router = $router;
         $this->shopContext = $shopContext;
         $this->psAccountRepository = $psAccountRepository;
         $this->prestaShopContext = $prestaShopContext;
+        $this->loggerConfiguration = $loggerConfiguration;
+        $this->logger = $logger;
     }
 
     /**
@@ -67,7 +86,7 @@ class PaymentClientConfigurationBuilder implements ConfigurationBuilderInterface
      */
     public function build()
     {
-        return [
+        $configuration = [
             'base_url' => $this->paymentEnv->getPaymentApiUrl(),
             'verify' => $this->getVerify(),
             'timeout' => static::TIMEOUT,
@@ -82,6 +101,33 @@ class PaymentClientConfigurationBuilder implements ConfigurationBuilderInterface
                 'Prestashop-Version' => _PS_VERSION_, // prestashop version
             ],
         ];
+
+        if (
+            $this->loggerConfiguration->isHttpEnabled()
+            && defined('\GuzzleHttp\ClientInterface::MAJOR_VERSION')
+            && class_exists(HandlerStack::class)
+            && class_exists(LogMiddleware::class)
+        ) {
+            $handlerStack = HandlerStack::create();
+            $handlerStack->push(new LogMiddleware($this->logger));
+            $configuration['handler'] = $handlerStack;
+        } elseif (
+            $this->loggerConfiguration->isHttpEnabled()
+            && defined('\GuzzleHttp\ClientInterface::VERSION')
+            && class_exists(Emitter::class)
+            && class_exists(LogSubscriber::class)
+            && class_exists(Formatter::class)
+        ) {
+            $emitter = new Emitter();
+            $emitter->attach(new LogSubscriber(
+                $this->logger,
+                Formatter::DEBUG
+            ));
+
+            $configuration['emitter'] = $emitter;
+        }
+
+        return $configuration;
     }
 
     /**
