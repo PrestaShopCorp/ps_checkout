@@ -62,7 +62,7 @@ class ItemRequest
     /**
      * @param string $name
      *
-     * @return self
+     * @return $this
      */
     public function setName($name)
     {
@@ -82,7 +82,7 @@ class ItemRequest
     /**
      * @param Amount $unit_amount
      *
-     * @return self
+     * @return $this
      */
     public function setUnitAmount(Amount $unit_amount)
     {
@@ -102,7 +102,7 @@ class ItemRequest
     /**
      * @param Amount $tax
      *
-     * @return self
+     * @return $this
      */
     public function setTax(Amount $tax)
     {
@@ -122,7 +122,7 @@ class ItemRequest
     /**
      * @param string $quantity
      *
-     * @return self
+     * @return $this
      */
     public function setQuantity($quantity)
     {
@@ -142,7 +142,7 @@ class ItemRequest
     /**
      * @param string $description
      *
-     * @return self
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -162,7 +162,7 @@ class ItemRequest
     /**
      * @param string $sku
      *
-     * @return self
+     * @return $this
      */
     public function setSku($sku)
     {
@@ -182,7 +182,7 @@ class ItemRequest
     /**
      * @param string $category
      *
-     * @return self
+     * @return $this
      */
     public function setCategory($category)
     {

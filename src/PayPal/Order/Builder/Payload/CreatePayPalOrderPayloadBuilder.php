@@ -27,14 +27,23 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\Amount;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\AmountBreakdown;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\AmountWithBreakdown;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\ApplicationContextRequest;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CardAttributesRequest;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CardRequest;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CardSupplementaryDataRequest;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CardVerification;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderRequest;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\ItemRequest;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\Level2CardProcessingDataRequest;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\Level3CardProcessingDataRequest;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\LineItemRequest;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\Name;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PayeeRequest;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\Payer;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PaymentSourceRequest;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\PurchaseUnitRequest;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\ShippingRequest;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\StoredPaymentSourceRequest;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\SupplementaryDataRequest;
 
 class CreatePayPalOrderPayloadBuilder implements CreatePayPalOrderPayloadBuilderInterface
 {
@@ -52,7 +61,12 @@ class CreatePayPalOrderPayloadBuilder implements CreatePayPalOrderPayloadBuilder
     {
         $this->data = $data;
         $this->buildBaseNode();
-        $this->buildPurchaseUnitsNode();
+        $this->buildPurchaseUnitsNode($fundingSource);
+
+        if ($fundingSource === 'card') {
+            $this->buildCardPaymentSourceNode();
+        }
+
         if (empty($this->data['ps_checkout']['isExpressCheckout']) && empty($this->data['ps_checkout']['isUpdate'])) {
             $this->buildPayerNode();
         }
@@ -67,19 +81,19 @@ class CreatePayPalOrderPayloadBuilder implements CreatePayPalOrderPayloadBuilder
     /**
      * Build payload without cart details
      */
-    public function buildMinimalPayload()
-    {
-        $this->buildBaseNode();
-        $this->buildPurchaseUnitsNode();
-
-        if (empty($this->data['ps_checkout']['isExpressCheckout']) && empty($this->data['ps_checkout']['isUpdate'])) {
-            $this->buildPayerNode();
-        }
-
-        if (empty($this->data['ps_checkout']['isUpdate'])) {
-            $this->buildApplicationContextNode();
-        }
-    }
+//    public function buildMinimalPayload()
+//    {
+//        $this->buildBaseNode();
+//        $this->buildPurchaseUnitsNode();
+//
+//        if (empty($this->data['ps_checkout']['isExpressCheckout']) && empty($this->data['ps_checkout']['isUpdate'])) {
+//            $this->buildPayerNode();
+//        }
+//
+//        if (empty($this->data['ps_checkout']['isUpdate'])) {
+//            $this->buildApplicationContextNode();
+//        }
+//    }
 
     /**
      * Build the basic payload
@@ -122,7 +136,7 @@ class CreatePayPalOrderPayloadBuilder implements CreatePayPalOrderPayloadBuilder
             (new Name())
                 ->setGivenName(!empty($this->data['invoiceAddress']['firstname']) ? $this->data['invoiceAddress']['firstname'] : '')
                 ->setSurname(!empty($this->data['invoiceAddress']['lastname']) ? $this->data['invoiceAddress']['lastname'] : '')
-            )
+        )
             ->setEmailAddress(!empty($this->data['customer']['email']) ? $this->data['customer']['email'] : '')
             ->setAddress($this->buildAddress($this->data['invoiceAddress'], $this->data['invoiceAddressCountry'], $this->data['invoiceAddressState']));
 
@@ -173,7 +187,12 @@ class CreatePayPalOrderPayloadBuilder implements CreatePayPalOrderPayloadBuilder
         $this->payload->setApplicationContext($applicationContext);
     }
 
-    public function buildPurchaseUnitsNode()
+    /**
+     * @param string $fundingSource
+     *
+     * @return void
+     */
+    public function buildPurchaseUnitsNode($fundingSource)
     {
         $purchaseUnit = (new PurchaseUnitRequest())
             ->setPayee((new PayeeRequest())->setMerchantId($this->data['ps_checkout']['merchant_id']))
@@ -191,6 +210,10 @@ class CreatePayPalOrderPayloadBuilder implements CreatePayPalOrderPayloadBuilder
 
         if (empty($this->data['ps_checkout']['isExpressCheckout'])) {
             $this->buildShippingNode($purchaseUnit);
+        }
+
+        if ($fundingSource === 'card') {
+            $this->buildSupplementaryDataNode($purchaseUnit);
         }
 
         $this->payload->setPurchaseUnits([$purchaseUnit]);
@@ -278,6 +301,57 @@ class CreatePayPalOrderPayloadBuilder implements CreatePayPalOrderPayloadBuilder
                 ->setValue($this->formatAmount($this->data['totalWithTaxes']))
                 ->setCurrencyCode($currencyCode)
         );
+    }
+
+    private function buildCardPaymentSourceNode()
+    {
+        $paymentSource = (new PaymentSourceRequest())
+            ->setCard(
+                (new CardRequest())
+                    ->setName($this->data['invoiceAddress']['firstname'] . ' ' . $this->data['invoiceAddress']['lastname'])
+                    ->setBillingAddress($this->buildAddress($this->data['invoiceAddress'], $this->data['invoiceAddressCountry'], $this->data['invoiceAddressState']))
+                    ->setAttributes(
+                        (new CardAttributesRequest())
+                            ->setVerification((new CardVerification())->setMethod($this->data['ps_checkout']['3DS']))
+                    )
+            );
+
+        $this->payload->setPaymentSource($paymentSource);
+    }
+
+    private function buildSupplementaryDataNode(PurchaseUnitRequest $purchaseUnit)
+    {
+        $level3CardLineItems = array_map(function (ItemRequest $item) {
+            return (new LineItemRequest())
+                ->setName($item->getName())
+                ->setUnitAmount($item->getUnitAmount())
+                ->setTax($item->getTax())
+                ->setQuantity($item->getQuantity())
+                ->setDescription($item->getDescription())
+                ->setSku($item->getSku())
+                ->setCategory($item->getCategory());
+        }, $purchaseUnit->getItems());
+
+        $supplementaryData = (new SupplementaryDataRequest())->setCard(
+            (new CardSupplementaryDataRequest())
+                ->setLevel2(
+                    (new Level2CardProcessingDataRequest())->setTaxTotal($purchaseUnit->getAmount()->getBreakdown()->getTaxTotal())
+                )
+                ->setLevel3(
+                    (new Level3CardProcessingDataRequest())
+                        ->setShippingAmount($purchaseUnit->getAmount()->getBreakdown()->getShipping())
+                        ->setDutyAmount(
+                            (new Amount())
+                                ->setValue($purchaseUnit->getAmount()->getValue())
+                                ->setCurrencyCode($purchaseUnit->getAmount()->getCurrencyCode())
+                        )
+                        ->setDiscountAmount($purchaseUnit->getAmount()->getBreakdown()->getDiscount())
+                        ->setShippingAddress($purchaseUnit->getShipping()->getAddress())
+                        ->setLineItems($level3CardLineItems)
+                )
+        );
+
+        $purchaseUnit->setSupplementaryData($supplementaryData);
     }
 
     /**

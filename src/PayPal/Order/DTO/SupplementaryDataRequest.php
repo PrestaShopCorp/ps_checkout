@@ -38,10 +38,12 @@ class SupplementaryDataRequest
     /**
      * @param CardSupplementaryDataRequest $card
      *
-     * @return void
+     * @return $this
      */
     public function setCard(CardSupplementaryDataRequest $card)
     {
         $this->card = $card;
+
+        return $this;
     }
 }

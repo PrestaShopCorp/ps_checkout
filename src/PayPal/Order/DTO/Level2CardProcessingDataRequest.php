@@ -42,11 +42,13 @@ class Level2CardProcessingDataRequest
     /**
      * @param string $invoice_id
      *
-     * @return void
+     * @return $this
      */
     public function setInvoiceId($invoice_id)
     {
         $this->invoice_id = $invoice_id;
+
+        return $this;
     }
 
     /**
@@ -60,10 +62,12 @@ class Level2CardProcessingDataRequest
     /**
      * @param Amount $tax_total
      *
-     * @return void
+     * @return $this
      */
     public function setTaxTotal(Amount $tax_total)
     {
         $this->tax_total = $tax_total;
+
+        return $this;
     }
 }

@@ -42,11 +42,13 @@ class CardSupplementaryDataRequest
     /**
      * @param Level2CardProcessingDataRequest $level_2
      *
-     * @return void
+     * @return $this
      */
     public function setLevel2(Level2CardProcessingDataRequest $level_2)
     {
         $this->level_2 = $level_2;
+
+        return $this;
     }
 
     /**
@@ -60,10 +62,12 @@ class CardSupplementaryDataRequest
     /**
      * @param Level3CardProcessingDataRequest $level_3
      *
-     * @return void
+     * @return $this
      */
     public function setLevel3(Level3CardProcessingDataRequest $level_3)
     {
         $this->level_3 = $level_3;
+
+        return $this;
     }
 }
