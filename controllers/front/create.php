@@ -19,8 +19,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
+use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCartIdQuery;
