@@ -72,24 +72,19 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
             $reason = isset($bodyValues['reason']) ? Tools::safeOutput($bodyValues['reason']) : null;
             $error = isset($bodyValues['error']) ? Tools::safeOutput($bodyValues['error']) : null;
 
-            if (empty($orderId)) {
-                $this->exitWithResponse([
-                    'httpCode' => 400,
-                    'body' => 'Missing PayPal Order Id',
-                ]);
+            if ($orderId) {
+                /** @var CommandBusInterface $commandBus */
+                $commandBus = $this->module->getService('ps_checkout.bus.command');
+
+                $commandBus->handle(new CancelCheckoutCommand(
+                    $this->context->cart->id,
+                    $orderId,
+                    PsCheckoutCart::STATUS_CANCELED,
+                    $fundingSource,
+                    $isExpressCheckout,
+                    $isHostedFields
+                ));
             }
-
-            /** @var CommandBusInterface $commandBus */
-            $commandBus = $this->module->getService('ps_checkout.bus.command');
-
-            $commandBus->handle(new CancelCheckoutCommand(
-                $this->context->cart->id,
-                $orderId,
-                PsCheckoutCart::STATUS_CANCELED,
-                $fundingSource,
-                $isExpressCheckout,
-                $isHostedFields
-            ));
 
             $this->module->getLogger()->log(
                 $error ? 400 : 200,
@@ -97,6 +92,7 @@ class Ps_CheckoutCancelModuleFrontController extends AbstractFrontController
                 [
                     'PayPalOrderId' => $orderId,
                     'FundingSource' => $fundingSource,
+                    'id_cart' => $this->context->cart->id,
                     'isExpressCheckout' => $isExpressCheckout,
                     'isHostedFields' => $isHostedFields,
                     'reason' => $reason,
