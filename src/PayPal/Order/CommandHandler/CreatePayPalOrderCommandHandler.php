@@ -93,9 +93,10 @@ class CreatePayPalOrderCommandHandler
         $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
             $order->getId(),
             $this->objectSerializer->toArray($order, false, true),
-            $command->getCartId(),
+            $command->getCartId()->getValue(),
             $command->isHostedFields(),
-            $command->isExpressCheckout()
+            $command->isExpressCheckout(),
+            $command->getFundingSource()
         ));
     }
 }
