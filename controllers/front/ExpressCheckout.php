@@ -75,7 +75,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
             }
 
             /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
-            $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
+            $psCheckoutCartRepository = $this->module->getService(PsCheckoutCartRepository::class);
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($this->payload['orderID']);
@@ -271,7 +271,7 @@ class ps_checkoutExpressCheckoutModuleFrontController extends AbstractFrontContr
 
         if ($country->contains_states) {
             /** @var CountryRepository $countryRepository */
-            $countryRepository = $this->module->getService('ps_checkout.repository.country');
+            $countryRepository = $this->module->getService(CountryRepository::class);
 
             $idState = $countryRepository->getStateId((int) $idCountry, $state);
         }

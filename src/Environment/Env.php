@@ -70,7 +70,7 @@ class Env
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
 
-        $this->setMode($module->getService('ps_checkout.paypal.configuration')->getPaymentMode());
+        $this->setMode($module->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class)->getPaymentMode());
     }
 
     /**
