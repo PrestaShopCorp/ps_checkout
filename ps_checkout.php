@@ -275,8 +275,8 @@ class Ps_checkout extends PaymentModule
      */
     public function disableIncompatibleCountries()
     {
-        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $this->getService(PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
         $incompatibleCodes = $paypalConfiguration->getIncompatibleCountryCodes(false);
         $result = true;
 
@@ -301,8 +301,8 @@ class Ps_checkout extends PaymentModule
      */
     public function disableIncompatibleCurrencies()
     {
-        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $this->getService(PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
         $incompatibleCodes = $paypalConfiguration->getIncompatibleCurrencyCodes(false);
         $result = true;
 
@@ -399,8 +399,8 @@ class Ps_checkout extends PaymentModule
             );
         }
 
-        /** @var PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter $storePresenter */
-        $storePresenter = $this->getService(PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter::class);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter $storePresenter */
+        $storePresenter = $this->getService(\PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter::class);
 
         Media::addJsDef([
             'store' => $storePresenter->present(),
@@ -700,10 +700,10 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayAdminAfterHeader()
     {
-        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $this->getService(PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
-        /** @var PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
-        $psAccount = $this->getService(PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository::class);
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
+        $psAccount = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository::class);
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
         $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule $moduleContext */
