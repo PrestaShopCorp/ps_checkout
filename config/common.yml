@@ -5,7 +5,6 @@ imports:
   - { resource: ./logger.yml }
   - { resource: ./query-handlers.yml }
   - { resource: ./repository.yml }
-  - { resource: ./service.yml }
 services:
   # From PS 1.7.0 to PS 1.7.3, the bundled version of Symfony is 2.x on which the _defaults
   # key is invalid. To prevent error on these versions, each service has to be specifically
@@ -181,7 +180,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfigurationOptionsResolver'
     public: true
     arguments:
-      - '@=service("PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider").getIdentifier()'
+      - '@=service("PrestaShop\\Module\\PrestashopCheckout\\Shop\\ShopProvider").getIdentifier()'
 
   PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration:
     class: 'PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration'
@@ -322,7 +321,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceCollection'
     public: true
     arguments:
-      - '@=service("PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceCollectionBuilder").create()'
+      - '@=service("PrestaShop\\Module\\PrestashopCheckout\\FundingSource\\FundingSourceCollectionBuilder").create()'
 
   PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider:
     class: 'PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider'

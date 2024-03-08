@@ -11,7 +11,7 @@ services:
     public: true
     arguments:
       - '@=service("ps_checkout.module").name'
-      - '@=service("PrestaShop\Module\PrestashopCheckout\Shop\ShopProvider").getIdentifier()'
+      - '@=service("PrestaShop\\Module\\PrestashopCheckout\\Shop\\ShopProvider").getIdentifier()'
 
   PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration'
@@ -23,10 +23,10 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerHandlerFactory'
     public: true
     arguments:
-      - '@=service("PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory").getPath()'
-      - '@=service("PrestaShop\Module\PrestashopCheckout\Logger\LoggerFilename").get()'
-      - '@=service("PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration").getMaxFiles()'
-      - '@=service("PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration").getLevel()'
+      - '@=service("PrestaShop\\Module\\PrestashopCheckout\\Logger\\LoggerDirectory").getPath()'
+      - '@=service("PrestaShop\\Module\\PrestashopCheckout\\Logger\\LoggerFilename").get()'
+      - '@=service("PrestaShop\\Module\\PrestashopCheckout\\Logger\\LoggerConfiguration").getMaxFiles()'
+      - '@=service("PrestaShop\\Module\\PrestashopCheckout\\Logger\\LoggerConfiguration").getLevel()'
 
   ps_checkout.logger.handler:
     class: 'Monolog\Handler\HandlerInterface'

@@ -15,7 +15,7 @@ services:
     arguments:
       - "paypal-orders"
       - 3600
-      - '@=service("PrestaShop\ModuleLibCacheDirectoryProvider\Cache\CacheDirectoryProvider").getPath()'
+      - '@=service("PrestaShop\\ModuleLibCacheDirectoryProvider\\Cache\\CacheDirectoryProvider").getPath()'
 
   ps_checkout.cache.paypal.order:
     class: 'Symfony\Component\Cache\Simple\ChainCache'
@@ -34,7 +34,7 @@ services:
     arguments:
       - "paypal-capture"
       - 3600
-      - '@=service("PrestaShop\ModuleLibCacheDirectoryProvider\Cache\CacheDirectoryProvider").getPath()'
+      - '@=service("PrestaShop\\ModuleLibCacheDirectoryProvider\\Cache\\CacheDirectoryProvider").getPath()'
 
   ps_checkout.cache.paypal.capture:
     class: 'Symfony\Component\Cache\Simple\ChainCache'
