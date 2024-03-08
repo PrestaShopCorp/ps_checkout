@@ -329,6 +329,11 @@ services:
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceCollectionBuilder'
       - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourcePresenter'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
+
+  ps_checkout.repository.paypal.code:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository'
+    public: true
 
   PrestaShop\Module\PrestashopCheckout\Validator\MerchantValidator:
     class: 'PrestaShop\Module\PrestashopCheckout\Validator\MerchantValidator'
@@ -483,3 +488,8 @@ services:
     public: true
     arguments:
       - "@ps_checkout.http.client"
+
+  PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
+    arguments:
+      - '@ps_checkout.db'

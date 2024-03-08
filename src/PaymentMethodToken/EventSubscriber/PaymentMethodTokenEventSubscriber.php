@@ -25,8 +25,8 @@ use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Command\SavePaymentM
 use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Event\PaymentMethodTokenCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Event\PaymentMethodTokenDeletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Event\PaymentMethodTokenDeletionInitiatedEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Ps_checkout;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
 {
@@ -56,7 +56,7 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
             ],
             PaymentMethodTokenDeletionInitiatedEvent::class => [
                 [''], // No sé
-            ]
+            ],
         ];
     }
 
@@ -72,6 +72,5 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
 
     public function deletePaymentMethodToken(PaymentMethodTokenDeletedEvent $event)
     {
-
     }
 }

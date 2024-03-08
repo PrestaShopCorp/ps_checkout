@@ -589,7 +589,29 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $configurationPayPal */
         $configurationPayPal = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
 
+        /** @var PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration $psConfiguration */
+        $psConfiguration = $this->getService('ps_checkout.configuration');
+
+        $vaultingEnabled = $psConfiguration->get(
+            'PS_CHECKOUT_VAULTING',
+            [
+                'id_shop' => \Context::getContext()->shop->id,
+                'default' => '0',
+            ]
+        );
+
         $paymentOptions = [];
+
+        if ((int) $vaultingEnabled) {
+            foreach ($fundingSourceProvider->getSavedTokens($cart->id_customer) as $fundingSource) {
+                $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+                $paymentOption->setModuleName($this->name . '-' . $fundingSource->name);
+                $paymentOption->setCallToActionText($fundingSource->label);
+                $paymentOption->setBinary(false);
+
+                $paymentOptions[] = $paymentOption;
+            }
+        }
 
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {
             $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();

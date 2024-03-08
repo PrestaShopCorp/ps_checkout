@@ -22,5 +22,4 @@ namespace PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Event;
 
 class PaymentMethodTokenDeletedEvent extends PaymentMethodTokenEvent
 {
-
 }

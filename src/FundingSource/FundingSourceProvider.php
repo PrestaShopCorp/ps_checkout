@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\FundingSource;
 
+use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
+
 class FundingSourceProvider
 {
     /**
@@ -31,6 +33,10 @@ class FundingSourceProvider
      * @var FundingSourcePresenter
      */
     private $presenter;
+    /**
+     * @var PaymentTokenRepository
+     */
+    private $paymentTokenRepository;
 
     /**
      * @param FundingSourceCollectionBuilder $fundingSourceCollectionBuilder
@@ -38,10 +44,12 @@ class FundingSourceProvider
      */
     public function __construct(
         FundingSourceCollectionBuilder $fundingSourceCollectionBuilder,
-        FundingSourcePresenter $presenter
+        FundingSourcePresenter $presenter,
+        PaymentTokenRepository $paymentTokenRepository
     ) {
         $this->collection = new FundingSourceCollection($fundingSourceCollectionBuilder->create());
         $this->presenter = $presenter;
+        $this->paymentTokenRepository = $paymentTokenRepository;
     }
 
     /**
@@ -65,5 +73,12 @@ class FundingSourceProvider
         }
 
         return $fundingSources;
+    }
+
+    public function getSavedTokens($customerId)
+    {
+        return array_map(function ($paymentToken) {
+            return $this->presenter->presentPaymentToken($paymentToken);
+        }, $this->paymentTokenRepository->getAllByCustomerId($customerId));
     }
 }
