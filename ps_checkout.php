@@ -376,9 +376,6 @@ class Ps_checkout extends PaymentModule
     public function getContent()
     {
         try {
-            $mboInstaller = new \Prestashop\ModuleLibMboInstaller\DependencyBuilder($this);
-            $requiredDependencies = $mboInstaller->handleDependencies();
-            $hasRequiredDependencies = $mboInstaller->areDependenciesMet();
             /** @var \PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts $psAccountsFacade */
             $psAccountsFacade = $this->getService('ps_accounts.facade');
             /** @var \PrestaShop\PsAccountsInstaller\Installer\Presenter\InstallerPresenter $psAccountsPresenter */
@@ -387,8 +384,6 @@ class Ps_checkout extends PaymentModule
             $contextPsAccounts = $psAccountsPresenter->present($this->name);
         } catch (Exception $exception) {
             $contextPsAccounts = [];
-            $requiredDependencies = [];
-            $hasRequiredDependencies = false;
             $this->getLogger()->error(
                 'Failed to get PsAccounts context',
                 [
@@ -422,6 +417,27 @@ class Ps_checkout extends PaymentModule
         }
 
         $this->context->controller->addJS($boSdkUrl, false);
+        $isShopContext = !(Shop::isFeatureActive() && Shop::getContext() !== Shop::CONTEXT_SHOP);
+        $requiredDependencies = [];
+        $hasRequiredDependencies = true;
+
+        if ($isShopContext) {
+            try {
+                $mboInstaller = new \Prestashop\ModuleLibMboInstaller\DependencyBuilder($this);
+                $requiredDependencies = $mboInstaller->handleDependencies();
+                $hasRequiredDependencies = $mboInstaller->areDependenciesMet();
+            } catch (Exception $exception) {
+                $this->getLogger()->error(
+                    'Failed to get required dependencies',
+                    [
+                        'exception' => get_class($exception),
+                        'exceptionCode' => $exception->getCode(),
+                        'exceptionMessage' => $exception->getMessage(),
+                    ]
+                );
+            }
+        }
+
         $this->context->smarty->assign([
             'requiredDependencies' => $requiredDependencies,
             'hasRequiredDependencies' => $hasRequiredDependencies,
