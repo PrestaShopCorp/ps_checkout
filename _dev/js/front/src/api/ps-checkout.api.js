@@ -146,7 +146,11 @@ export class PsCheckoutApi extends BaseClass {
         if (isJsonResponse) {
           if (false === response.ok || response.status >= 400) {
             return response.json().then((response) => {
-              if (actions?.restart && response.body && 85 === response.body.error.code) {
+              if (
+                actions?.restart &&
+                response.body &&
+                85 === response.body.error.code
+              ) {
                 return actions.restart();
               }
 
@@ -221,6 +225,8 @@ export class PsCheckoutApi extends BaseClass {
           window.location.href = new URL(
             this.config.checkoutCheckoutUrl
           ).toString();
+
+          return;
         }
 
         throw new Error(this.$('checkout.form.error.label'));
