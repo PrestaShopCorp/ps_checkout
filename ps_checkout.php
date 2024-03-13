@@ -916,7 +916,7 @@ class Ps_checkout extends PaymentModule
         foreach ($fundingSourceProvider->getSavedTokens($this->context->customer->id) as $fundingSource) {
             $fundingSourcesSorted[] = $fundingSource->name;
             $payWithTranslations[$fundingSource->name] = $fundingSource->label;
-            $vaultedPaymentMarks[$fundingSource->name] = $this->getPathUri() .'views/img/' . $fundingSource->paymentSource .'.svg';
+            $vaultedPaymentMarks[$fundingSource->name] = $this->getPathUri() . 'views/img/' . $fundingSource->paymentSource . '.svg';
         }
 
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {

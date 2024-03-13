@@ -93,7 +93,9 @@ class FundingSourceProvider
 
     /**
      * @param int $customerId
+     *
      * @return FundingSource[]
+     *
      * @throws \PrestaShopDatabaseException
      */
     public function getSavedTokens($customerId)
@@ -109,7 +111,7 @@ class FundingSourceProvider
         if ((int) $customerId && (int) $vaultingEnabled) {
             return array_map(function ($paymentToken) {
                 return $this->presenter->presentPaymentToken($paymentToken);
-            }, $this->paymentTokenRepository->getAllByCustomerId((int)$customerId));
+            }, $this->paymentTokenRepository->getAllByCustomerId((int) $customerId));
         }
 
         return [];
