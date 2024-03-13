@@ -28,6 +28,9 @@ use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQuery;
 use PrestaShop\Module\PrestashopCheckout\Order\Query\GetOrderForPaymentRefundedQueryResult;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Exception\OrderStateException;
+use PrestaShop\Module\PrestashopCheckout\Order\State\OrderStateConfigurationKeys;
+use PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShopCollection;
 use PrestaShopDatabaseException;
@@ -42,9 +45,15 @@ class GetOrderForPaymentRefundedQueryHandler
      */
     private $psCheckoutCartRepository;
 
-    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository)
+    /**
+     * @var OrderStateMapper
+     */
+    private $orderStateMapper;
+
+    public function __construct(PsCheckoutCartRepository $psCheckoutCartRepository, OrderStateMapper $orderStateMapper)
     {
         $this->psCheckoutCartRepository = $psCheckoutCartRepository;
+        $this->orderStateMapper = $orderStateMapper;
     }
 
     /**
@@ -88,7 +97,8 @@ class GetOrderForPaymentRefundedQueryHandler
             $this->hasBeenTotallyRefunded($totalRefund, $order),
             (string) $order->getTotalPaid(),
             (string) $totalRefund,
-            (int) $order->id_currency
+            (int) $order->id_currency,
+            $this->getOrderStateHistory($order)
         );
     }
 
@@ -108,5 +118,40 @@ class GetOrderForPaymentRefundedQueryHandler
         }
 
         return $refundAmount;
+    }
+
+    /**
+     * @param Order $order
+     *
+     * @return int[]
+     */
+    private function getOrderStateHistory(Order $order)
+    {
+        $orderHistory = $order->getHistory($order->id_lang);
+
+        if (!$orderHistory) {
+            return [];
+        }
+
+        try {
+            $orderStateRefundedId = $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_REFUNDED);
+            $orderStatePartiallyRefundedId = $this->orderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PARTIALLY_REFUNDED);
+        } catch (OrderStateException $exception) {
+            return [];
+        }
+
+        $orderStateIdHistory = [];
+
+        foreach ($orderHistory as $historyItem) {
+            $orderStateId = (int) $historyItem['id_order_state'];
+
+            if ($orderStateId !== $orderStateRefundedId && $orderStateId !== $orderStatePartiallyRefundedId) {
+                continue;
+            }
+
+            $orderStateIdHistory[] = $orderStateId;
+        }
+
+        return $orderStateIdHistory;
     }
 }
