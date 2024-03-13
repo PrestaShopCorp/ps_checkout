@@ -48,6 +48,9 @@ export class PaymentTokenComponent extends BaseComponent {
       this.querySelectorService.getBasePaymentConfirmation();
     this.data.HTMLElementButton = null;
     this.data.HTMLElementButtonWrapper = this.getButtonWrapper();
+
+    this.data.fundingSource = this.data.name.split('-')[0];
+    this.data.tokenId = this.data.name.split('-')[1];
   }
 
   getButtonWrapper() {
@@ -68,7 +71,8 @@ export class PaymentTokenComponent extends BaseComponent {
   createOrder() {
     return this.psCheckoutApi.postCreateOrder(
       {
-        fundingSource: this.data.name
+        fundingSource: this.data.fundingSource,
+        tokenId: this.data.tokenId
       }
     )
       .then((data) => {

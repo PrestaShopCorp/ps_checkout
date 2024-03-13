@@ -608,7 +608,6 @@ class Ps_checkout extends PaymentModule
                 $paymentOption->setModuleName($this->name . '-' . $fundingSource->name);
                 $paymentOption->setCallToActionText($fundingSource->label);
                 $paymentOption->setBinary(true);
-                $paymentOption->setLogo($this->getPathUri() . 'views/img/' . $fundingSource->paymentSource.'.svg');
                 $paymentOption->setAdditionalInformation('THIS IS VAULTED PAYMENT METHOD');
 
                 $paymentOptions[] = $paymentOption;
@@ -922,10 +921,12 @@ class Ps_checkout extends PaymentModule
         $fundingSourcesSorted = [];
         $payWithTranslations = [];
         $isCardAvailable = false;
+        $vaultedPaymentMarks = [];
 
         foreach ($fundingSourceProvider->getSavedTokens(\Context::getContext()->customer->id) as $fundingSource) {
             $fundingSourcesSorted[] = $fundingSource->name;
             $payWithTranslations[$fundingSource->name] = $fundingSource->label;
+            $vaultedPaymentMarks[$fundingSource->name] = $this->getPathUri() .'views/img/' . $fundingSource->paymentSource .'.svg';
         }
 
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {
@@ -965,6 +966,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'LoaderImage' => $this->getPathUri() . 'views/img/loader.svg',
             $this->name . 'PayPalButtonConfiguration' => $payPalConfiguration->getButtonConfiguration(),
             $this->name . 'CardFundingSourceImg' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/payment-cards.png'),
+            $this->name . 'VaultedPaymentMarks' => $vaultedPaymentMarks,
             $this->name . 'CardLogos' => [
                 'AMEX' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/amex.svg'),
                 'CB_NATIONALE' => Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/cb.svg'),

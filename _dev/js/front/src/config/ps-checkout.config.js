@@ -47,7 +47,8 @@ export const PsCheckoutConfig = {
 
   loaderImage: window.ps_checkoutLoaderImage,
   customMark: {
-    card: window.ps_checkoutCardFundingSourceImg
+    card: window.ps_checkoutCardFundingSourceImg,
+    ...window.ps_checkoutVaultedPaymentMarks
   },
 
   autoRenderDisabled: window.ps_checkoutAutoRenderDisabled,

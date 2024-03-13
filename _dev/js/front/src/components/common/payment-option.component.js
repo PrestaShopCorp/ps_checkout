@@ -129,13 +129,11 @@ export class PaymentOptionComponent extends BaseComponent {
       }
     }
 
-    if (!this.props.fundingSource.name.includes('token')) {
-      this.children.Marker = this.marker = new MarkComponent(this.app, {
-        fundingSource: this.props.fundingSource,
+    this.children.Marker = this.marker = new MarkComponent(this.app, {
+      fundingSource: this.props.fundingSource,
 
-        HTMLElement: this.data.HTMLElementMarker
-      }).render();
-    }
+      HTMLElement: this.data.HTMLElementMarker
+    }).render();
   }
 
   renderPaymentFields() {
