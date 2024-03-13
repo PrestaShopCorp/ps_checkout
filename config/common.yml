@@ -126,11 +126,11 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber'
     public: true
     arguments:
+      - '@ps_checkout.module'
       - '@PrestaShop\Module\PrestashopCheckout\Order\Service\CheckOrderAmount'
       - "@ps_checkout.cache.paypal.capture"
       - "@ps_checkout.cache.paypal.order"
       - '@PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper'
-      - "@ps_checkout.bus.command"
 
   PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscriber\PayPalRefundEventSubscriber:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscriber\PayPalRefundEventSubscriber'
@@ -330,6 +330,8 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceCollectionBuilder'
       - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourcePresenter'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration'
+      - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
 
   ps_checkout.repository.paypal.code:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository'

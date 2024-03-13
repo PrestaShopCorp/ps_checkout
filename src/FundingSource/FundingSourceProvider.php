@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\FundingSource;
 
+use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
+use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 
 class FundingSourceProvider
@@ -37,20 +39,33 @@ class FundingSourceProvider
      * @var PaymentTokenRepository
      */
     private $paymentTokenRepository;
+    /**
+     * @var PrestaShopConfiguration
+     */
+    private $prestaShopConfiguration;
+    /**
+     * @var PrestaShopContext
+     */
+    private $prestaShopContext;
 
     /**
      * @param FundingSourceCollectionBuilder $fundingSourceCollectionBuilder
      * @param FundingSourcePresenter $presenter
      * @param PaymentTokenRepository $paymentTokenRepository
+     * @param PrestaShopConfiguration $prestaShopConfiguration
      */
     public function __construct(
         FundingSourceCollectionBuilder $fundingSourceCollectionBuilder,
         FundingSourcePresenter $presenter,
-        PaymentTokenRepository $paymentTokenRepository
+        PaymentTokenRepository $paymentTokenRepository,
+        PrestaShopConfiguration $prestaShopConfiguration,
+        PrestaShopContext $prestaShopContext
     ) {
         $this->collection = new FundingSourceCollection($fundingSourceCollectionBuilder->create());
         $this->presenter = $presenter;
         $this->paymentTokenRepository = $paymentTokenRepository;
+        $this->prestaShopConfiguration = $prestaShopConfiguration;
+        $this->prestaShopContext = $prestaShopContext;
     }
 
     /**
@@ -83,8 +98,20 @@ class FundingSourceProvider
      */
     public function getSavedTokens($customerId)
     {
-        return array_map(function ($paymentToken) {
-            return $this->presenter->presentPaymentToken($paymentToken);
-        }, $this->paymentTokenRepository->getAllByCustomerId((int) $customerId));
+        $vaultingEnabled = $this->prestaShopConfiguration->get(
+            'PS_CHECKOUT_VAULTING',
+            [
+                'id_shop' => (int) $this->prestaShopContext->getShopId(),
+                'default' => '0',
+            ]
+        );
+
+        if ((int) $customerId && (int) $vaultingEnabled) {
+            return array_map(function ($paymentToken) {
+                return $this->presenter->presentPaymentToken($paymentToken);
+            }, $this->paymentTokenRepository->getAllByCustomerId((int)$customerId));
+        }
+
+        return [];
     }
 }

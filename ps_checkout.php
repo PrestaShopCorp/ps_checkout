@@ -592,26 +592,16 @@ class Ps_checkout extends PaymentModule
         /** @var PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration $psConfiguration */
         $psConfiguration = $this->getService('ps_checkout.configuration');
 
-        $vaultingEnabled = $psConfiguration->get(
-            'PS_CHECKOUT_VAULTING',
-            [
-                'id_shop' => (int) $cart->id_shop,
-                'default' => '0',
-            ]
-        );
-
         $paymentOptions = [];
 
-        if ((int) $vaultingEnabled) {
-            foreach ($fundingSourceProvider->getSavedTokens($cart->id_customer) as $fundingSource) {
-                $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-                $paymentOption->setModuleName($this->name . '-' . $fundingSource->name);
-                $paymentOption->setCallToActionText($fundingSource->label);
-                $paymentOption->setBinary(true);
-                $paymentOption->setAdditionalInformation('THIS IS VAULTED PAYMENT METHOD');
+        foreach ($fundingSourceProvider->getSavedTokens($cart->id_customer) as $fundingSource) {
+            $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+            $paymentOption->setModuleName($this->name . '-' . $fundingSource->name);
+            $paymentOption->setCallToActionText($fundingSource->label);
+            $paymentOption->setBinary(true);
+            $paymentOption->setAdditionalInformation('THIS IS VAULTED PAYMENT METHOD');
 
-                $paymentOptions[] = $paymentOption;
-            }
+            $paymentOptions[] = $paymentOption;
         }
 
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {
@@ -923,7 +913,7 @@ class Ps_checkout extends PaymentModule
         $isCardAvailable = false;
         $vaultedPaymentMarks = [];
 
-        foreach ($fundingSourceProvider->getSavedTokens(\Context::getContext()->customer->id) as $fundingSource) {
+        foreach ($fundingSourceProvider->getSavedTokens($this->context->customer->id) as $fundingSource) {
             $fundingSourcesSorted[] = $fundingSource->name;
             $payWithTranslations[$fundingSource->name] = $fundingSource->label;
             $vaultedPaymentMarks[$fundingSource->name] = $this->getPathUri() .'views/img/' . $fundingSource->paymentSource .'.svg';
