@@ -92,7 +92,8 @@ class FundingSourcePresenter
             0,
             [],
             true,
-            false
+            false,
+            $paymentToken->getPaymentSource()
         );
     }
 }

@@ -595,7 +595,7 @@ class Ps_checkout extends PaymentModule
         $vaultingEnabled = $psConfiguration->get(
             'PS_CHECKOUT_VAULTING',
             [
-                'id_shop' => \Context::getContext()->shop->id,
+                'id_shop' => (int) $cart->id_shop,
                 'default' => '0',
             ]
         );
@@ -608,7 +608,7 @@ class Ps_checkout extends PaymentModule
                 $paymentOption->setModuleName($this->name . '-' . $fundingSource->name);
                 $paymentOption->setCallToActionText($fundingSource->label);
                 $paymentOption->setBinary(true);
-                $paymentOption->setLogo($this->getPathUri() . 'views/img/tail-spin.svg');
+                $paymentOption->setLogo($this->getPathUri() . 'views/img/' . $fundingSource->paymentSource.'.svg');
                 $paymentOption->setAdditionalInformation('THIS IS VAULTED PAYMENT METHOD');
 
                 $paymentOptions[] = $paymentOption;

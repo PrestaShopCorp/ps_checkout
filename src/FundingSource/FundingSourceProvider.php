@@ -77,7 +77,7 @@ class FundingSourceProvider
     }
 
     /**
-     * @param $customerId
+     * @param int $customerId
      * @return FundingSource[]
      * @throws \PrestaShopDatabaseException
      */
@@ -85,6 +85,6 @@ class FundingSourceProvider
     {
         return array_map(function ($paymentToken) {
             return $this->presenter->presentPaymentToken($paymentToken);
-        }, $this->paymentTokenRepository->getAllByCustomerId($customerId));
+        }, $this->paymentTokenRepository->getAllByCustomerId((int) $customerId));
     }
 }
