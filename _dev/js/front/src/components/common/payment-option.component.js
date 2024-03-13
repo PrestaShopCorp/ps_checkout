@@ -23,6 +23,7 @@ import { SmartButtonComponent } from './smart-button.component';
 import { PaymentFieldsComponent } from "./payment-fields.component";
 import {CardFieldsComponent} from "./card-fields.component";
 import {PS_VERSION_1_6} from "../../constants/ps-version.constants";
+import {PaymentTokenComponent} from "./payment-token.component";
 
 /**
  * @typedef PaymentOptionComponentProps
@@ -128,11 +129,13 @@ export class PaymentOptionComponent extends BaseComponent {
       }
     }
 
-    this.children.Marker = this.marker = new MarkComponent(this.app, {
-      fundingSource: this.props.fundingSource,
+    if (!this.props.fundingSource.name.includes('token')) {
+      this.children.Marker = this.marker = new MarkComponent(this.app, {
+        fundingSource: this.props.fundingSource,
 
-      HTMLElement: this.data.HTMLElementMarker
-    }).render();
+        HTMLElement: this.data.HTMLElementMarker
+      }).render();
+    }
   }
 
   renderPaymentFields() {
@@ -170,7 +173,12 @@ export class PaymentOptionComponent extends BaseComponent {
       this.data.HTMLElementCardFields.style.display = 'none';
     }
 
-    if (this.data.HTMLElementCardFields && isCardFieldsEligible && isCardFieldsAvailable) {
+    if (this.props.fundingSource.name.includes('token')) {
+      this.children.paymentToken = new PaymentTokenComponent(this.app, {
+        fundingSource: this.props.fundingSource,
+        HTMLElement: this.data.HTMLElementSmartButton
+      }).render();
+    } else if (this.data.HTMLElementCardFields && isCardFieldsEligible && isCardFieldsAvailable) {
       this.data.HTMLElementCardFields.style.display = '';
       this.children.cardFields = new CardFieldsComponent(this.app, {
         fundingSource: this.props.fundingSource,

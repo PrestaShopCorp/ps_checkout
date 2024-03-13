@@ -41,6 +41,7 @@ class FundingSourceProvider
     /**
      * @param FundingSourceCollectionBuilder $fundingSourceCollectionBuilder
      * @param FundingSourcePresenter $presenter
+     * @param PaymentTokenRepository $paymentTokenRepository
      */
     public function __construct(
         FundingSourceCollectionBuilder $fundingSourceCollectionBuilder,
@@ -75,6 +76,11 @@ class FundingSourceProvider
         return $fundingSources;
     }
 
+    /**
+     * @param $customerId
+     * @return FundingSource[]
+     * @throws \PrestaShopDatabaseException
+     */
     public function getSavedTokens($customerId)
     {
         return array_map(function ($paymentToken) {

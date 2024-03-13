@@ -607,7 +607,9 @@ class Ps_checkout extends PaymentModule
                 $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
                 $paymentOption->setModuleName($this->name . '-' . $fundingSource->name);
                 $paymentOption->setCallToActionText($fundingSource->label);
-                $paymentOption->setBinary(false);
+                $paymentOption->setBinary(true);
+                $paymentOption->setLogo($this->getPathUri() . 'views/img/tail-spin.svg');
+                $paymentOption->setAdditionalInformation('THIS IS VAULTED PAYMENT METHOD');
 
                 $paymentOptions[] = $paymentOption;
             }
@@ -920,6 +922,11 @@ class Ps_checkout extends PaymentModule
         $fundingSourcesSorted = [];
         $payWithTranslations = [];
         $isCardAvailable = false;
+
+        foreach ($fundingSourceProvider->getSavedTokens(\Context::getContext()->customer->id) as $fundingSource) {
+            $fundingSourcesSorted[] = $fundingSource->name;
+            $payWithTranslations[$fundingSource->name] = $fundingSource->label;
+        }
 
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {
             $fundingSourcesSorted[] = $fundingSource->name;
@@ -1442,6 +1449,10 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
         $fundingSourceProvider = $this->getService(\PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider::class);
         $paymentOptions = [];
+
+        foreach ($fundingSourceProvider->getSavedTokens($cart->id_customer) as $fundingSource) {
+            $paymentOptions[] = $fundingSource->name;
+        }
 
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {
             $paymentOptions[] = $fundingSource->name;
