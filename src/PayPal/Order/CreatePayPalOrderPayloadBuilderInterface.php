@@ -28,8 +28,9 @@ interface CreatePayPalOrderPayloadBuilderInterface
     /**
      * @param CartInterface $cart
      * @param string $fundingSource
+     * @param array $data
      *
      * @return CreatePayPalOrderRequest
      */
-    public function build(CartInterface $cart, $fundingSource);
+    public function build(CartInterface $cart, $fundingSource, $data);
 }

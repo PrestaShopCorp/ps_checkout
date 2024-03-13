@@ -65,6 +65,8 @@ class Payer
     public function setEmailAddress($email_address)
     {
         $this->email_address = $email_address;
+
+        return $this;
     }
 
     /**
@@ -81,6 +83,8 @@ class Payer
     public function setPayerId($payer_id)
     {
         $this->payer_id = $payer_id;
+
+        return $this;
     }
 
     /**
@@ -97,6 +101,8 @@ class Payer
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -113,6 +119,8 @@ class Payer
     public function setPhone($phone)
     {
         $this->phone = $phone;
+
+        return $this;
     }
 
     /**
@@ -129,6 +137,8 @@ class Payer
     public function setBirthDate($birth_date)
     {
         $this->birth_date = $birth_date;
+
+        return $this;
     }
 
     /**
@@ -145,6 +155,8 @@ class Payer
     public function setTaxInfo($tax_info)
     {
         $this->tax_info = $tax_info;
+
+        return $this;
     }
 
     /**
@@ -161,5 +173,7 @@ class Payer
     public function setAddress($address)
     {
         $this->address = $address;
+
+        return $this;
     }
 }

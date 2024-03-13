@@ -46,11 +46,13 @@ class CardAttributesRequest
     /**
      * @param CustomerRequest $customer
      *
-     * @return void
+     * @return $this
      */
     public function setCustomer(CustomerRequest $customer)
     {
         $this->customer = $customer;
+
+        return $this;
     }
 
     /**
@@ -64,11 +66,13 @@ class CardAttributesRequest
     /**
      * @param VaultAttributesRequest $vault
      *
-     * @return void
+     * @return $this
      */
     public function setVault(VaultAttributesRequest $vault)
     {
         $this->vault = $vault;
+
+        return $this;
     }
 
     /**
@@ -82,10 +86,12 @@ class CardAttributesRequest
     /**
      * @param CardVerification $verification
      *
-     * @return void
+     * @return $this
      */
     public function setVerification(CardVerification $verification)
     {
         $this->verification = $verification;
+
+        return $this;
     }
 }

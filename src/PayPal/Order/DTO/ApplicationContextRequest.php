@@ -38,10 +38,12 @@ class ApplicationContextRequest
     /**
      * @param StoredPaymentSourceRequest $stored_payment_source
      *
-     * @return void
+     * @return self
      */
     public function setStoredPaymentSource(StoredPaymentSourceRequest $stored_payment_source)
     {
         $this->stored_payment_source = $stored_payment_source;
+
+        return $this;
     }
 }

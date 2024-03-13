@@ -90,11 +90,13 @@ class PaymentSourceRequest
     /**
      * @param CardRequest $card
      *
-     * @return void
+     * @return $this
      */
     public function setCard(CardRequest $card)
     {
         $this->card = $card;
+
+        return $this;
     }
 
     /**

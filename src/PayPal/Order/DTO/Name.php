@@ -62,11 +62,13 @@ class Name
     /**
      * @param string $prefix
      *
-     * @return void
+     * @return self
      */
     public function setPrefix($prefix)
     {
         $this->prefix = $prefix;
+
+        return $this;
     }
 
     /**
@@ -80,11 +82,13 @@ class Name
     /**
      * @param string $given_name
      *
-     * @return void
+     * @return self
      */
     public function setGivenName($given_name)
     {
         $this->given_name = $given_name;
+
+        return $this;
     }
 
     /**
@@ -98,11 +102,13 @@ class Name
     /**
      * @param string $surname
      *
-     * @return void
+     * @return self
      */
     public function setSurname($surname)
     {
         $this->surname = $surname;
+
+        return $this;
     }
 
     /**
@@ -116,11 +122,13 @@ class Name
     /**
      * @param string $middle_name
      *
-     * @return void
+     * @return self
      */
     public function setMiddleName($middle_name)
     {
         $this->middle_name = $middle_name;
+
+        return $this;
     }
 
     /**
@@ -134,11 +142,13 @@ class Name
     /**
      * @param string $suffix
      *
-     * @return void
+     * @return self
      */
     public function setSuffix($suffix)
     {
         $this->suffix = $suffix;
+
+        return $this;
     }
 
     /**
@@ -152,11 +162,13 @@ class Name
     /**
      * @param string $alternate_full_name
      *
-     * @return void
+     * @return self
      */
     public function setAlternateFullName($alternate_full_name)
     {
         $this->alternate_full_name = $alternate_full_name;
+
+        return $this;
     }
 
     /**
@@ -170,10 +182,12 @@ class Name
     /**
      * @param string $full_name
      *
-     * @return void
+     * @return self
      */
     public function setFullName($full_name)
     {
         $this->full_name = $full_name;
+
+        return $this;
     }
 }

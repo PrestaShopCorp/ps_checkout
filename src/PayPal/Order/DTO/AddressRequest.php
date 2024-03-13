@@ -78,11 +78,13 @@ class AddressRequest
     /**
      * @param string $address_line_1
      *
-     * @return void
+     * @return self
      */
     public function setAddressLine1($address_line_1)
     {
         $this->address_line_1 = $address_line_1;
+
+        return $this;
     }
 
     /**
@@ -96,11 +98,13 @@ class AddressRequest
     /**
      * @param string $address_line_2
      *
-     * @return void
+     * @return self
      */
     public function setAddressLine2($address_line_2)
     {
         $this->address_line_2 = $address_line_2;
+
+        return $this;
     }
 
     /**
@@ -114,11 +118,13 @@ class AddressRequest
     /**
      * @param string $address_line_3
      *
-     * @return void
+     * @return self
      */
     public function setAddressLine3($address_line_3)
     {
         $this->address_line_3 = $address_line_3;
+
+        return $this;
     }
 
     /**
@@ -132,11 +138,13 @@ class AddressRequest
     /**
      * @param string $admin_area_1
      *
-     * @return void
+     * @return self
      */
     public function setAdminArea1($admin_area_1)
     {
         $this->admin_area_1 = $admin_area_1;
+
+        return $this;
     }
 
     /**
@@ -150,11 +158,13 @@ class AddressRequest
     /**
      * @param string $admin_area_2
      *
-     * @return void
+     * @return self
      */
     public function setAdminArea2($admin_area_2)
     {
         $this->admin_area_2 = $admin_area_2;
+
+        return $this;
     }
 
     /**
@@ -168,11 +178,13 @@ class AddressRequest
     /**
      * @param string $admin_area_3
      *
-     * @return void
+     * @return self
      */
     public function setAdminArea3($admin_area_3)
     {
         $this->admin_area_3 = $admin_area_3;
+
+        return $this;
     }
 
     /**
@@ -186,11 +198,13 @@ class AddressRequest
     /**
      * @param string $admin_area_4
      *
-     * @return void
+     * @return self
      */
     public function setAdminArea4($admin_area_4)
     {
         $this->admin_area_4 = $admin_area_4;
+
+        return $this;
     }
 
     /**
@@ -204,11 +218,13 @@ class AddressRequest
     /**
      * @param string $postal_code
      *
-     * @return void
+     * @return self
      */
     public function setPostalCode($postal_code)
     {
         $this->postal_code = $postal_code;
+
+        return $this;
     }
 
     /**
@@ -222,10 +238,12 @@ class AddressRequest
     /**
      * @param string $country_code
      *
-     * @return void
+     * @return self
      */
     public function setCountryCode($country_code)
     {
         $this->country_code = $country_code;
+
+        return $this;
     }
 }

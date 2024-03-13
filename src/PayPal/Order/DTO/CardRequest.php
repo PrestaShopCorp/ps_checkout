@@ -58,11 +58,13 @@ class CardRequest
     /**
      * @param string $name
      *
-     * @return void
+     * @return $this
      */
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -76,11 +78,13 @@ class CardRequest
     /**
      * @param AddressRequest $billing_address
      *
-     * @return void
+     * @return $this
      */
     public function setBillingAddress(AddressRequest $billing_address)
     {
         $this->billing_address = $billing_address;
+
+        return $this;
     }
 
     /**
@@ -94,11 +98,13 @@ class CardRequest
     /**
      * @param CardAttributesRequest $attributes
      *
-     * @return void
+     * @return $this
      */
     public function setAttributes(CardAttributesRequest $attributes)
     {
         $this->attributes = $attributes;
+
+        return $this;
     }
 
     /**
@@ -112,11 +118,13 @@ class CardRequest
     /**
      * @param string $vault_id
      *
-     * @return void
+     * @return $this
      */
     public function setVaultId($vault_id)
     {
         $this->vault_id = $vault_id;
+
+        return $this;
     }
 
     /**
@@ -130,11 +138,13 @@ class CardRequest
     /**
      * @param CardStoredCredentialsRequest $stored_credentials
      *
-     * @return void
+     * @return $this
      */
     public function setStoredCredentials(CardStoredCredentialsRequest $stored_credentials)
     {
         $this->stored_credentials = $stored_credentials;
+
+        return $this;
     }
 
     /**
@@ -148,10 +158,12 @@ class CardRequest
     /**
      * @param CardExperienceContextRequest $experience_context
      *
-     * @return void
+     * @return $this
      */
     public function setExperienceContext(CardExperienceContextRequest $experience_context)
     {
         $this->experience_context = $experience_context;
+
+        return $this;
     }
 }

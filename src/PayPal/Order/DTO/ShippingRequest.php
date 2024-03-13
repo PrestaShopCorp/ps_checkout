@@ -50,11 +50,13 @@ class ShippingRequest
     /**
      * @param Name $name
      *
-     * @return void
+     * @return self
      */
     public function setName(Name $name)
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -68,11 +70,13 @@ class ShippingRequest
     /**
      * @param string $type
      *
-     * @return void
+     * @return self
      */
     public function setType($type)
     {
         $this->type = $type;
+
+        return $this;
     }
 
     /**
@@ -86,11 +90,13 @@ class ShippingRequest
     /**
      * @param ShippingOptionRequest[] $options
      *
-     * @return void
+     * @return self
      */
     public function setOptions(array $options)
     {
         $this->options = $options;
+
+        return $this;
     }
 
     /**
@@ -104,10 +110,12 @@ class ShippingRequest
     /**
      * @param AddressRequest $address
      *
-     * @return void
+     * @return self
      */
     public function setAddress(AddressRequest $address)
     {
         $this->address = $address;
+
+        return $this;
     }
 }

@@ -58,11 +58,13 @@ class Level3CardProcessingDataRequest
     /**
      * @param Amount $shipping_amount
      *
-     * @return void
+     * @return $this
      */
     public function setShippingAmount(Amount $shipping_amount)
     {
         $this->shipping_amount = $shipping_amount;
+
+        return $this;
     }
 
     /**
@@ -76,11 +78,13 @@ class Level3CardProcessingDataRequest
     /**
      * @param Amount $duty_amount
      *
-     * @return void
+     * @return $this
      */
     public function setDutyAmount(Amount $duty_amount)
     {
         $this->duty_amount = $duty_amount;
+
+        return $this;
     }
 
     /**
@@ -94,11 +98,13 @@ class Level3CardProcessingDataRequest
     /**
      * @param Amount $discount_amount
      *
-     * @return void
+     * @return $this
      */
     public function setDiscountAmount(Amount $discount_amount)
     {
         $this->discount_amount = $discount_amount;
+
+        return $this;
     }
 
     /**
@@ -112,11 +118,13 @@ class Level3CardProcessingDataRequest
     /**
      * @param AddressRequest $shipping_address
      *
-     * @return void
+     * @return $this
      */
     public function setShippingAddress(AddressRequest $shipping_address)
     {
         $this->shipping_address = $shipping_address;
+
+        return $this;
     }
 
     /**
@@ -130,11 +138,13 @@ class Level3CardProcessingDataRequest
     /**
      * @param string $ships_from_postal_code
      *
-     * @return void
+     * @return $this
      */
     public function setShipsFromPostalCode($ships_from_postal_code)
     {
         $this->ships_from_postal_code = $ships_from_postal_code;
+
+        return $this;
     }
 
     /**
@@ -148,10 +158,12 @@ class Level3CardProcessingDataRequest
     /**
      * @param LineItemRequest[] $line_items
      *
-     * @return void
+     * @return $this
      */
     public function setLineItems(array $line_items)
     {
         $this->line_items = $line_items;
+
+        return $this;
     }
 }

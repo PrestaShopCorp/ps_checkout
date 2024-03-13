@@ -38,10 +38,12 @@ class CardVerification
     /**
      * @param string $method
      *
-     * @return void
+     * @return $this
      */
     public function setMethod($method)
     {
         $this->method = $method;
+
+        return $this;
     }
 }

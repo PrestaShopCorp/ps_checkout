@@ -50,11 +50,13 @@ class StoredPaymentSourceRequest
     /**
      * @param string $payment_initiator
      *
-     * @return void
+     * @return self
      */
     public function setPaymentInitiator($payment_initiator)
     {
         $this->payment_initiator = $payment_initiator;
+
+        return $this;
     }
 
     /**
@@ -68,11 +70,13 @@ class StoredPaymentSourceRequest
     /**
      * @param string $payment_type
      *
-     * @return void
+     * @return self
      */
     public function setPaymentType($payment_type)
     {
         $this->payment_type = $payment_type;
+
+        return $this;
     }
 
     /**
@@ -86,11 +90,13 @@ class StoredPaymentSourceRequest
     /**
      * @param string $usage
      *
-     * @return void
+     * @return self
      */
     public function setUsage($usage)
     {
         $this->usage = $usage;
+
+        return $this;
     }
 
     /**
@@ -104,10 +110,12 @@ class StoredPaymentSourceRequest
     /**
      * @param PreviousNetworkTransactionReferenceRequest $previous_network_transaction_reference
      *
-     * @return void
+     * @return self
      */
     public function setPreviousNetworkTransactionReference(PreviousNetworkTransactionReferenceRequest $previous_network_transaction_reference)
     {
         $this->previous_network_transaction_reference = $previous_network_transaction_reference;
+
+        return $this;
     }
 }

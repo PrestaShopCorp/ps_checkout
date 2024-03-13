@@ -29,6 +29,10 @@ class CreatePayPalOrderRequest implements CreatePayPalOrderRequestInterface
      */
     private $intent;
     /**
+     * @var Payer
+     */
+    private $payer;
+    /**
      * @var PurchaseUnitRequest[]
      */
     private $purchase_units;
@@ -56,11 +60,13 @@ class CreatePayPalOrderRequest implements CreatePayPalOrderRequestInterface
     /**
      * @param string $intent
      *
-     * @return void
+     * @return self
      */
     public function setIntent($intent)
     {
         $this->intent = $intent;
+
+        return $this;
     }
 
     /**
@@ -74,11 +80,13 @@ class CreatePayPalOrderRequest implements CreatePayPalOrderRequestInterface
     /**
      * @param PurchaseUnitRequest[] $purchase_units
      *
-     * @return void
+     * @return self
      */
     public function setPurchaseUnits(array $purchase_units)
     {
         $this->purchase_units = $purchase_units;
+
+        return $this;
     }
 
     /**
@@ -92,11 +100,13 @@ class CreatePayPalOrderRequest implements CreatePayPalOrderRequestInterface
     /**
      * @param PaymentSourceRequest $payment_source
      *
-     * @return void
+     * @return self
      */
     public function setPaymentSource(PaymentSourceRequest $payment_source)
     {
         $this->payment_source = $payment_source;
+
+        return $this;
     }
 
     /**
@@ -110,11 +120,13 @@ class CreatePayPalOrderRequest implements CreatePayPalOrderRequestInterface
     /**
      * @param ApplicationContextRequest $application_context
      *
-     * @return void
+     * @return self
      */
     public function setApplicationContext(ApplicationContextRequest $application_context)
     {
         $this->application_context = $application_context;
+
+        return $this;
     }
 
     /**
@@ -128,10 +140,30 @@ class CreatePayPalOrderRequest implements CreatePayPalOrderRequestInterface
     /**
      * @param string $processing_instruction
      *
-     * @return void
+     * @return self
      */
     public function setProcessingInstruction($processing_instruction)
     {
         $this->processing_instruction = $processing_instruction;
+
+        return $this;
+    }
+
+    /**
+     * @return Payer
+     */
+    public function getPayer()
+    {
+        return $this->payer;
+    }
+
+    /**
+     * @param Payer $payer
+     */
+    public function setPayer($payer)
+    {
+        $this->payer = $payer;
+
+        return $this;
     }
 }
