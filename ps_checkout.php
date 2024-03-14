@@ -594,12 +594,26 @@ class Ps_checkout extends PaymentModule
 
         $paymentOptions = [];
 
+        $vaultingEnabled = (bool) $psConfiguration->get(
+            'PS_CHECKOUT_VAULTING',
+            [
+                'id_shop' => (int) $cart->id_shop,
+                'default' => '0',
+            ]
+        );
+
         foreach ($fundingSourceProvider->getSavedTokens($cart->id_customer) as $fundingSource) {
             $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
             $paymentOption->setModuleName($this->name . '-' . $fundingSource->name);
             $paymentOption->setCallToActionText($fundingSource->label);
             $paymentOption->setBinary(true);
-            $paymentOption->setAdditionalInformation('THIS IS VAULTED PAYMENT METHOD');
+
+            $this->context->smarty->assign([
+                'fundingSource' => $fundingSource->name,
+                'paymentSource' => $fundingSource->paymentSource,
+                'vaultId' => explode('-', $fundingSource->name)[1]
+            ]);
+            $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultTokenForm.tpl'));
 
             $paymentOptions[] = $paymentOption;
         }
@@ -609,10 +623,16 @@ class Ps_checkout extends PaymentModule
             $paymentOption->setModuleName($this->name . '-' . $fundingSource->name);
             $paymentOption->setCallToActionText($fundingSource->label);
             $paymentOption->setBinary(true);
+            $this->context->smarty->assign([
+                'vaultingEnabled' => $vaultingEnabled,
+                'fundingSource' => $fundingSource->name
+            ]);
 
             if ('card' === $fundingSource->name && $configurationPayPal->isHostedFieldsEnabled() && in_array($configurationPayPal->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true)) {
-                $this->context->smarty->assign('modulePath', $this->getPathUri());
+                $this->context->smarty->assign('modulePath',$this->getPathUri());
                 $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/cardFields.tpl'));
+            } else if (in_array($fundingSource->name, ['paypal', /*'venmo'*/])) {
+                $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultPaymentForm.tpl'));
             }
 
             $paymentOptions[] = $paymentOption;

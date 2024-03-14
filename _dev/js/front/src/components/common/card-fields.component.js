@@ -186,6 +186,18 @@ export class CardFieldsComponent extends BaseComponent {
     this.toggleCardFieldsErrors();
   }
 
+  getVaultFormData() {
+    if (this.data.HTMLElementCardForm) {
+      const formData = new FormData(this.data.HTMLElementCardForm);
+      return {
+        vault: formData.get(`ps_checkout-vault-payment-${this.data.name}`) === '1',
+        favorite: formData.get(`ps_checkout-favorite-payment-${this.data.name}`) === '1'
+      };
+
+    }
+    return {};
+  }
+
   renderPayPalCardFields() {
     this.data.HTMLElementCardForm.classList.toggle('loading', true);
 
@@ -223,6 +235,7 @@ export class CardFieldsComponent extends BaseComponent {
 
             return this.psCheckoutApi
               .postCreateOrder({
+                ...this.getVaultFormData(),
                 ...data,
                 fundingSource: this.data.name,
                 isHostedFields: true

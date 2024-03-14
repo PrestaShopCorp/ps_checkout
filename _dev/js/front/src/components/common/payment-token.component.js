@@ -44,13 +44,9 @@ export class PaymentTokenComponent extends BaseComponent {
     this.data.conditions = this.app.root.children.conditionsCheckbox;
     this.data.loader = this.app.root.children.loader;
     this.data.notification = this.app.root.children.notification;
-    this.data.HTMLElementBaseButton =
-      this.querySelectorService.getBasePaymentConfirmation();
+    this.data.HTMLElementBaseButton = this.querySelectorService.getBasePaymentConfirmation();
     this.data.HTMLElementButton = null;
     this.data.HTMLElementButtonWrapper = this.getButtonWrapper();
-
-    this.data.fundingSource = this.data.name.split('-')[0];
-    this.data.tokenId = this.data.name.split('-')[1];
   }
 
   getButtonWrapper() {
@@ -68,13 +64,22 @@ export class PaymentTokenComponent extends BaseComponent {
     this.createOrder().then(() => this.validateOrder());
   }
 
+  getVaultFormData() {
+    const form = document.querySelector(`form#ps_checkout-vault-token-form-${this.data.name}`);
+    if (form) {
+      const formData = new FormData(form);
+      return {
+        favorite: formData.get(`ps_checkout-favorite-payment-${this.data.name}`) === '1',
+        fundingSource: formData.get(`ps_checkout-funding-source-${this.data.name}`),
+        vaultId: formData.get(`ps_checkout-vault-id-${this.data.name}`)
+      };
+
+    }
+    return {};
+  }
+
   createOrder() {
-    return this.psCheckoutApi.postCreateOrder(
-      {
-        fundingSource: this.data.fundingSource,
-        tokenId: this.data.tokenId
-      }
-    )
+    return this.psCheckoutApi.postCreateOrder(this.getVaultFormData())
       .then((data) => {
         this.data.orderId = data;
         this.validateOrder();
@@ -93,7 +98,6 @@ export class PaymentTokenComponent extends BaseComponent {
       this.data.HTMLElementButton.removeAttribute('disabled');
     }).catch((error) => this.handleError(error));
   }
-
 
   renderButton() {
     this.data.HTMLElementButton =

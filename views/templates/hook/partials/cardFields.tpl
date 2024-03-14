@@ -26,6 +26,8 @@
  *
  * Script tags will be removed and some HTML5 element can cause an Exception due to DOMDocument class
  *}
+<div>
+
 <form id="ps_checkout-card-fields-form" class="form-horizontal loading">
   <div id="ps_checkout-card-fields-form-loader">
     <img src="{$modulePath}views/img/tail-spin.svg" alt="">
@@ -60,9 +62,14 @@
       <div id="ps_checkout-card-fields-cvv" ></div>
       <div id="ps_checkout-card-fields-cvv-error" class="alert alert-danger hidden">{l s='CVV code is invalid' mod='ps_checkout'}</div>
     </div>
+    {if $vaultingEnabled}
+      {include file='module:ps_checkout/views/templates/hook/partials/vaultPaymentFields.tpl' fundingSource='card'}
+    {/if}
   </div>
   <div id="payments-sdk__contingency-lightbox"></div>
 </form>
+</div>
+
 <script>
   function cvvEnter() {
     var popup = document.getElementById("cvv-popup");
