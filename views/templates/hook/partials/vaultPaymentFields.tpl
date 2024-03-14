@@ -26,17 +26,17 @@
  *
  * Script tags will be removed and some HTML5 element can cause an Exception due to DOMDocument class
  *}
-<div class="ps_checkout-vault-payment-container-{$fundingSource}">
+<div class="ps_checkout-vault-payment-container-{$paymentIdentifier}">
   <div class="col-xs-12">
-    <label class="form-control-label" for="ps_checkout-vault-payment-{$fundingSource}">
-      <input type="checkbox" value="1" name="ps_checkout-vault-payment-{$fundingSource}">
+    <label class="form-control-label" for="ps_checkout-vault-payment-{$paymentIdentifier}">
+      <input type="checkbox" value="1" name="ps_checkout-vault-payment-{$paymentIdentifier}">
       {l s='Securely store payment details for future purchases' mod='ps_checkout'}
     </label>
   </div>
   <div class="col-xs-12">
-    <label class="form-control-label" for="ps_checkout-favorite-payment-{$fundingSource}">
-      <input type="checkbox" value="1" name="ps_checkout-favorite-payment-{$fundingSource}">
-      {if $fundingSource=='card'}
+    <label class="form-control-label" for="ps_checkout-favorite-payment-{$paymentIdentifier}">
+      <input type="checkbox" value="1" name="ps_checkout-favorite-payment-{$paymentIdentifier}">
+      {if $paymentIdentifier=='card'}
         {l s='Make this card favorite / default ' mod='ps_checkout'}
       {else}
         {l s='Make this account favorite / default ' mod='ps_checkout'}

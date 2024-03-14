@@ -63,7 +63,7 @@
       <div id="ps_checkout-card-fields-cvv-error" class="alert alert-danger hidden">{l s='CVV code is invalid' mod='ps_checkout'}</div>
     </div>
     {if $vaultingEnabled}
-      {include file='module:ps_checkout/views/templates/hook/partials/vaultPaymentFields.tpl' fundingSource='card'}
+      {include file='module:ps_checkout/views/templates/hook/partials/vaultPaymentFields.tpl' paymentIdentifier='card'}
     {/if}
   </div>
   <div id="payments-sdk__contingency-lightbox"></div>

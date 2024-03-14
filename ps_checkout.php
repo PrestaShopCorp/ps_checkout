@@ -609,8 +609,8 @@ class Ps_checkout extends PaymentModule
             $paymentOption->setBinary(true);
 
             $this->context->smarty->assign([
-                'fundingSource' => $fundingSource->name,
-                'paymentSource' => $fundingSource->paymentSource,
+                'paymentIdentifier' => $fundingSource->name,
+                'fundingSource' => $fundingSource->paymentSource,
                 'vaultId' => explode('-', $fundingSource->name)[1]
             ]);
             $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultTokenForm.tpl'));
@@ -625,7 +625,7 @@ class Ps_checkout extends PaymentModule
             $paymentOption->setBinary(true);
             $this->context->smarty->assign([
                 'vaultingEnabled' => $vaultingEnabled,
-                'fundingSource' => $fundingSource->name
+                'paymentIdentifier' => $fundingSource->name
             ]);
 
             if ('card' === $fundingSource->name && $configurationPayPal->isHostedFieldsEnabled() && in_array($configurationPayPal->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true)) {

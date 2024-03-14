@@ -27,7 +27,7 @@
  * Script tags will be removed and some HTML5 element can cause an Exception due to DOMDocument class
  *}
 {if $vaultingEnabled}
-  <form id="ps_checkout-vault-payment-form-{$fundingSource}" class="form-horizontal">
-    {include file='module:ps_checkout/views/templates/hook/partials/vaultPaymentFields.tpl' fundingSource=$fundingSource}
+  <form id="ps_checkout-vault-payment-form-{$paymentIdentifier}" class="form-horizontal">
+    {include file='module:ps_checkout/views/templates/hook/partials/vaultPaymentFields.tpl' paymentIdentifier=$paymentIdentifier}
   </form>
 {/if}
