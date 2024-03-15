@@ -21,8 +21,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Entity;
 
-use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\ValueObject\PaymentTokenId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 
 class PaymentToken
 {
@@ -37,14 +37,6 @@ class PaymentToken
      */
     private $payPalCustomerId;
     /**
-     * @var int
-     */
-    private $customerId;
-    /**
-     * @var int
-     */
-    private $shopId;
-    /**
      * @var string
      */
     private $paymentSource;
@@ -56,26 +48,27 @@ class PaymentToken
      * @var bool
      */
     private $isFavorite;
-
+    /**
+     * @var string
+     */
+    private $merchantId;
 
     /**
      * @param string $id
      * @param string $payPalCustomerId
-     * @param int $customerId
-     * @param int $shopId
      * @param string $paymentSource
      * @param array $data
+     * @param string $merchantId
      * @param bool $isFavorite
      */
-    public function __construct($id, $payPalCustomerId, $customerId, $shopId, $paymentSource, $data, $isFavorite = false)
+    public function __construct($id, $payPalCustomerId, $paymentSource, $data, $merchantId, $isFavorite = false)
     {
         $this->id = new PaymentTokenId($id);
         $this->payPalCustomerId = new PayPalCustomerId($payPalCustomerId);
-        $this->customerId = (int) $customerId;
-        $this->shopId = $shopId;
         $this->paymentSource = $paymentSource;
         $this->data = $data;
         $this->isFavorite = $isFavorite;
+        $this->merchantId = $merchantId;
     }
 
     /**
@@ -114,26 +107,6 @@ class PaymentToken
     public function setPayPalCustomerId($payPalCustomerId)
     {
         $this->payPalCustomerId = $payPalCustomerId;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCustomerId()
-    {
-        return $this->customerId;
-    }
-
-    /**
-     * @param mixed $customerId
-     *
-     * @return PaymentToken
-     */
-    public function setCustomerId($customerId)
-    {
-        $this->customerId = (int) $customerId;
 
         return $this;
     }
@@ -199,21 +172,21 @@ class PaymentToken
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getShopId()
+    public function getMerchantId()
     {
-        return $this->shopId;
+        return $this->merchantId;
     }
 
     /**
-     * @param int $shopId
+     * @param string $merchantId
      *
      * @return PaymentToken
      */
-    public function setShopId($shopId)
+    public function setMerchantId($merchantId)
     {
-        $this->shopId = (int) $shopId;
+        $this->merchantId = $merchantId;
 
         return $this;
     }

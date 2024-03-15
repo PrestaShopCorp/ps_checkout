@@ -43,10 +43,9 @@ class SavePaymentTokenCommandHandler
         $token = new PaymentToken(
             $command->getPaymentTokenId()->getValue(),
             $command->getPaypalCustomerId()->getValue(),
-            $command->getCustomerId(),
-            $command->getShopId(),
             $command->getPaymentSource(),
             $command->getPaymentMethodTokenData(),
+            $command->getMerchantId(),
             $command->isFavorite()
         );
 

@@ -22,4 +22,22 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event;
 
 class PaymentTokenCreatedEvent extends PaymentTokenEvent
 {
+    /**
+     * @var string
+     */
+    private $merchantId;
+
+    public function __construct($resource, $merchantId)
+    {
+        parent::__construct($resource);
+        $this->merchantId = $merchantId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMerchantId()
+    {
+        return $this->merchantId;
+    }
 }

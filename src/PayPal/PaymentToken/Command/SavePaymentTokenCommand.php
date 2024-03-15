@@ -36,30 +36,25 @@ class SavePaymentTokenCommand
 
     /** @var array */
     private $paymentMethodTokenData;
-    /** @var int */
-    private $customerId;
-    /** @var int */
-    private $shopId;
     /** @var bool */
     private $setFavorite;
+    /** @var string */
+    private $merchantId;
 
     /**
      * @param PaymentTokenId $paymentTokenId
      * @param PayPalCustomerId $paypalCustomerId
-     * @param int $customerId
-     * @param int $shopId
      * @param string $paymentSource
      * @param array $paymentMethodTokenData
      */
-    public function __construct($paymentTokenId, $paypalCustomerId, $customerId, $shopId, $paymentSource, $paymentMethodTokenData, $setFavorite = false)
+    public function __construct($paymentTokenId, $paypalCustomerId, $paymentSource, $paymentMethodTokenData, $merchantId, $setFavorite = false)
     {
         $this->paymentTokenId = $paymentTokenId;
         $this->paypalCustomerId = $paypalCustomerId;
         $this->paymentSource = $paymentSource;
         $this->paymentMethodTokenData = $paymentMethodTokenData;
-        $this->customerId = $customerId;
-        $this->shopId = $shopId;
         $this->setFavorite = $setFavorite;
+        $this->merchantId = $merchantId;
     }
 
     /**
@@ -95,26 +90,18 @@ class SavePaymentTokenCommand
     }
 
     /**
-     * @return int
-     */
-    public function getCustomerId()
-    {
-        return $this->customerId;
-    }
-
-    /**
-     * @return int
-     */
-    public function getShopId()
-    {
-        return $this->shopId;
-    }
-
-    /**
      * @return bool
      */
     public function isFavorite()
     {
         return $this->setFavorite;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMerchantId()
+    {
+        return $this->merchantId;
     }
 }

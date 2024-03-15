@@ -50,12 +50,13 @@ class GetCustomerPaymentTokensQueryHandler
      */
     public function handle(GetCustomerPaymentTokensQuery $query)
     {
-//        $customerIdPayPal = $query->getCustomerId() ? $this->customerRepository->findPayPalCustomerIdByCustomerId($query->getCustomerId()) : null;
-        $paymentTokens = $this->paymentTokenRepository->findByPrestaShopCustomerId($query->getCustomerId(), $query->getPageSize(), $query->getPageNumber());
+        //        $customerIdPayPal = $query->getCustomerId() ? $this->customerRepository->findPayPalCustomerIdByCustomerId($query->getCustomerId()) : null;
+//        $paymentTokens = $this->paymentTokenRepository->findByPrestaShopCustomerId($query->getCustomerId()->getValue(), $query->getPageSize(), $query->getPageNumber());
+        $paymentTokens = $this->paymentTokenRepository->findByPrestaShopCustomerId($query->getCustomerId()->getValue());
 
         if ($query->isTotalCountRequired()) {
-            $totalItems = $this->paymentMethodTokenRepository->getTotalItems($customerIdPayPal);
-            $totalPages = (int) ceil($totalItems / $query->getPageSize());
+            $totalItems = $this->paymentTokenRepository->getCount($query->getCustomerId()->getValue());
+            $totalPages = ceil($totalItems / $query->getPageSize());
         } else {
             $totalItems = null;
             $totalPages = null;

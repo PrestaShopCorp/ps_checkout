@@ -66,10 +66,9 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
         $this->commandBus->handle(new SavePaymentTokenCommand(
             $event->getResource()['id'],
             $event->getResource()['customer_id'],
-            $event->getCustomerId(),
-            $event->getShopId(),
             $event->getResource()['payment_source'],
-            $event->getResource()
+            $event->getResource(),
+            $event->getMerchantId()
         ));
     }
 
