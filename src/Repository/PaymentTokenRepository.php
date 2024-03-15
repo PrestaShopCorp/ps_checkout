@@ -18,7 +18,6 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-
 namespace PrestaShop\Module\PrestashopCheckout\Repository;
 
 use Db;
@@ -60,6 +59,7 @@ class PaymentTokenRepository
 
     /**
      * @param PaymentTokenId $paymentTokenId
+     *
      * @return bool
      */
     public function deleteById(PaymentTokenId $paymentTokenId)
@@ -125,6 +125,7 @@ class PaymentTokenRepository
 
     /**
      * @param PaymentTokenId $id
+     *
      * @return PaymentToken|false
      */
     public function findById(PaymentTokenId $id)
@@ -144,6 +145,7 @@ class PaymentTokenRepository
 
     /**
      * @param PaymentTokenId $id
+     *
      * @return bool
      */
     public function setTokenFavorite(PaymentTokenId $id)
@@ -153,8 +155,10 @@ class PaymentTokenRepository
             $customerId = $token->getPayPalCustomerId()->getValue();
             $sql = 'UPDATE ' . _DB_PREFIX_ . PaymentToken::TABLE . " SET `is_favorite` = 0 WHERE id_customer = $customerId;";
             $sql .= 'UPDATE ' . _DB_PREFIX_ . PaymentToken::TABLE . " SET `is_favorite` = 1 WHERE id = {$id->getValue()};";
+
             return $this->db->execute($sql);
         }
+
         return false;
     }
 
@@ -179,6 +183,7 @@ class PaymentTokenRepository
 
     /**
      * @param array $data
+     *
      * @return PaymentToken
      */
     private function buildPaymentTokenObject($data)
@@ -189,7 +194,7 @@ class PaymentTokenRepository
             $data['payment_source'],
             json_decode($data['data'], true),
             $data['merchant_id'],
-            (bool)$data['is_favorite']
+            (bool) $data['is_favorite']
         );
     }
 }

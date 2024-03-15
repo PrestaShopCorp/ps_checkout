@@ -21,8 +21,6 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query;
 
 use Exception;
-use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\PaymentMethodTokenRepository;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\PayPalCustomerRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 
 class GetCustomerPaymentTokensQueryHandler
@@ -37,7 +35,6 @@ class GetCustomerPaymentTokensQueryHandler
      */
     public function __construct(PaymentTokenRepository $paymentTokenRepository)
     {
-
         $this->paymentTokenRepository = $paymentTokenRepository;
     }
 

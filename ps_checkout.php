@@ -605,7 +605,7 @@ class Ps_checkout extends PaymentModule
             $this->context->smarty->assign([
                 'paymentIdentifier' => $fundingSource->name,
                 'fundingSource' => $fundingSource->paymentSource,
-                'vaultId' => explode('-', $fundingSource->name)[1]
+                'vaultId' => explode('-', $fundingSource->name)[1],
             ]);
             $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultTokenForm.tpl'));
 
@@ -619,13 +619,13 @@ class Ps_checkout extends PaymentModule
             $paymentOption->setBinary(true);
             $this->context->smarty->assign([
                 'vaultingEnabled' => $vaultingEnabled,
-                'paymentIdentifier' => $fundingSource->name
+                'paymentIdentifier' => $fundingSource->name,
             ]);
 
             if ('card' === $fundingSource->name && $configurationPayPal->isHostedFieldsEnabled() && in_array($configurationPayPal->getCardHostedFieldsStatus(), ['SUBSCRIBED', 'LIMITED'], true)) {
-                $this->context->smarty->assign('modulePath',$this->getPathUri());
+                $this->context->smarty->assign('modulePath', $this->getPathUri());
                 $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/cardFields.tpl'));
-            } else if (in_array($fundingSource->name, ['paypal', /*'venmo'*/])) {
+            } elseif (in_array($fundingSource->name, ['paypal'/*'venmo'*/])) {
                 $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultPaymentForm.tpl'));
             }
 

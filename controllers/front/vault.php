@@ -20,8 +20,8 @@
 
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
-use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Query\GetCustomerPaymentMethodTokensQuery;
-use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Query\GetCustomerPaymentMethodTokensQueryResult;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQuery;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQueryResult;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -37,8 +37,8 @@ class Ps_CheckoutVaultModuleFrontController extends AbstractFrontController
         try {
             /** @var CommandBusInterface $commandBus */
             $commandBus = $this->module->getService('ps_checkout.bus.command');
-            /** @var GetCustomerPaymentMethodTokensQueryResult $getCustomerPaymentMethodTokensQueryResult */
-            $getCustomerPaymentMethodTokensQueryResult = $commandBus->handle(new GetCustomerPaymentMethodTokensQuery(
+            /** @var GetCustomerPaymentTokensQueryResult $getCustomerPaymentMethodTokensQueryResult */
+            $getCustomerPaymentMethodTokensQueryResult = $commandBus->handle(new GetCustomerPaymentTokensQuery(
                 $this->getCustomerId(),
                 $this->getPageSize(),
                 $this->getPageNumber()

@@ -20,8 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command;
 
-use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 
 class SavePaymentTokenCommand
 {
