@@ -86,6 +86,9 @@ services:
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderQueryHandler'
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForCheckoutCompletedQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForCheckoutCompletedQueryHandler'
         PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\QueryHandler\GetPayPalOrderForOrderConfirmationQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\SavePaymentTokenCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\SavePaymentTokenCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\DeletePaymentTokenCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\DeletePaymentTokenCommandHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQueryHandler'
 
   PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherFactory:
     class: 'PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherFactory'
@@ -330,7 +333,7 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceCollectionBuilder'
       - '@PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourcePresenter'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
-      - '@PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
       - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
 
   ps_checkout.repository.paypal.code:
@@ -491,7 +494,4 @@ services:
     arguments:
       - "@ps_checkout.http.client"
 
-  PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository:
-    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
-    arguments:
-      - '@ps_checkout.db'
+

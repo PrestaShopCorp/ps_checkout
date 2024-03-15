@@ -18,11 +18,12 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Query;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query;
 
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
+use PrestaShop\Module\PrestashopCheckout\Entity\PaymentToken;
 
-class GetCustomerPaymentMethodTokensQueryResult
+class GetCustomerPaymentTokensQueryResult
 {
     /**
      * @var array
@@ -45,7 +46,7 @@ class GetCustomerPaymentMethodTokensQueryResult
     private $totalPages;
 
     /**
-     * @param array $paymentTokens
+     * @param PaymentToken[] $paymentTokens
      * @param CustomerId $customerId
      * @param int $totalItems
      * @param int $totalPages
@@ -59,7 +60,7 @@ class GetCustomerPaymentMethodTokensQueryResult
     }
 
     /**
-     * @return array
+     * @return PaymentToken[]
      */
     public function getPaymentTokens()
     {

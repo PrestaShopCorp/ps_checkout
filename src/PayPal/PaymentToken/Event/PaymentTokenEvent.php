@@ -18,8 +18,28 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Event;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event;
 
-class PaymentMethodTokenCreatedEvent extends PaymentMethodTokenEvent
+use PrestaShop\Module\PrestashopCheckout\Event\Event;
+
+class PaymentTokenEvent extends Event
 {
+    /** @var array */
+    private $resource;
+
+    /**
+     * @param array $resource
+     */
+    public function __construct($resource)
+    {
+        $this->resource = $resource;
+    }
+
+    /**
+     * @return array
+     */
+    public function getResource()
+    {
+        return $this->resource;
+    }
 }

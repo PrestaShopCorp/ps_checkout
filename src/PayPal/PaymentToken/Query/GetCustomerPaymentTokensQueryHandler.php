@@ -18,45 +18,40 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Query;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query;
 
 use Exception;
-use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\PaymentMethodTokenRepository;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\PaymentMethodTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\PayPalCustomerRepository;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 
-class GetCustomerPaymentMethodTokensQueryHandler
+class GetCustomerPaymentTokensQueryHandler
 {
     /**
-     * @var PayPalCustomerRepository
+     * @var PaymentTokenRepository
      */
-    private $customerRepository;
+    private $paymentTokenRepository;
 
     /**
-     * @var PaymentMethodTokenRepository
+     * @param PaymentTokenRepository $paymentTokenRepository
      */
-    private $paymentMethodTokenRepository;
-
-    /**
-     * @param PayPalCustomerRepository $customerRepository
-     * @param PaymentMethodTokenRepository $paymentMethodTokenRepository
-     */
-    public function __construct(PayPalCustomerRepository $customerRepository, PaymentMethodTokenRepository $paymentMethodTokenRepository)
+    public function __construct(PaymentTokenRepository $paymentTokenRepository)
     {
-        $this->customerRepository = $customerRepository;
-        $this->paymentMethodTokenRepository = $paymentMethodTokenRepository;
+
+        $this->paymentTokenRepository = $paymentTokenRepository;
     }
 
     /**
-     * @param GetCustomerPaymentMethodTokensQuery $query
+     * @param GetCustomerPaymentTokensQuery $query
      *
-     * @return GetCustomerPaymentMethodTokensQueryResult
+     * @return GetCustomerPaymentTokensQueryResult
      *
      * @throws Exception
      */
-    public function handle(GetCustomerPaymentMethodTokensQuery $query)
+    public function handle(GetCustomerPaymentTokensQuery $query)
     {
-        $customerIdPayPal = $query->getCustomerId() ? $this->customerRepository->findPayPalCustomerIdByCustomerId($query->getCustomerId()) : null;
-        $paymentTokens = $this->paymentMethodTokenRepository->findByCustomerId($customerIdPayPal, $query->getPageSize(), $query->getPageNumber());
+//        $customerIdPayPal = $query->getCustomerId() ? $this->customerRepository->findPayPalCustomerIdByCustomerId($query->getCustomerId()) : null;
+        $paymentTokens = $this->paymentTokenRepository->findByPrestaShopCustomerId($query->getCustomerId(), $query->getPageSize(), $query->getPageNumber());
 
         if ($query->isTotalCountRequired()) {
             $totalItems = $this->paymentMethodTokenRepository->getTotalItems($customerIdPayPal);
@@ -66,7 +61,7 @@ class GetCustomerPaymentMethodTokensQueryHandler
             $totalPages = null;
         }
 
-        return new GetCustomerPaymentMethodTokensQueryResult(
+        return new GetCustomerPaymentTokensQueryResult(
             $paymentTokens,
             $query->getCustomerId(),
             $totalItems,

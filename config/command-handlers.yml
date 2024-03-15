@@ -92,3 +92,13 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration'
       - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
       - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\DeletePaymentTokenCommandHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\DeletePaymentTokenCommandHandler'
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\SavePaymentTokenCommandHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\SavePaymentTokenCommandHandler'
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'

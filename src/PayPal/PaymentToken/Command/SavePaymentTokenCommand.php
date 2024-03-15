@@ -18,15 +18,15 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Command;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command;
 
-use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\ValueObject\PaymentMethodTokenId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 
-class SavePaymentMethodTokenCommand
+class SavePaymentTokenCommand
 {
-    /** @var PaymentMethodTokenId */
-    private $paymentMethodTokenId;
+    /** @var PaymentTokenId */
+    private $paymentTokenId;
 
     /** @var PayPalCustomerId */
     private $paypalCustomerId;
@@ -36,27 +36,38 @@ class SavePaymentMethodTokenCommand
 
     /** @var array */
     private $paymentMethodTokenData;
+    /** @var int */
+    private $customerId;
+    /** @var int */
+    private $shopId;
+    /** @var bool */
+    private $setFavorite;
 
     /**
-     * @param PaymentMethodTokenId $paymentMethodTokenId
+     * @param PaymentTokenId $paymentTokenId
      * @param PayPalCustomerId $paypalCustomerId
+     * @param int $customerId
+     * @param int $shopId
      * @param string $paymentSource
      * @param array $paymentMethodTokenData
      */
-    public function __construct($paymentMethodTokenId, $paypalCustomerId, $paymentSource, $paymentMethodTokenData)
+    public function __construct($paymentTokenId, $paypalCustomerId, $customerId, $shopId, $paymentSource, $paymentMethodTokenData, $setFavorite = false)
     {
-        $this->paymentMethodTokenId = $paymentMethodTokenId;
+        $this->paymentTokenId = $paymentTokenId;
         $this->paypalCustomerId = $paypalCustomerId;
         $this->paymentSource = $paymentSource;
         $this->paymentMethodTokenData = $paymentMethodTokenData;
+        $this->customerId = $customerId;
+        $this->shopId = $shopId;
+        $this->setFavorite = $setFavorite;
     }
 
     /**
-     * @return PaymentMethodTokenId
+     * @return PaymentTokenId
      */
-    public function getPaymentMethodTokenId()
+    public function getPaymentTokenId()
     {
-        return $this->paymentMethodTokenId;
+        return $this->paymentTokenId;
     }
 
     /**
@@ -81,5 +92,29 @@ class SavePaymentMethodTokenCommand
     public function getPaymentMethodTokenData()
     {
         return $this->paymentMethodTokenData;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCustomerId()
+    {
+        return $this->customerId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getShopId()
+    {
+        return $this->shopId;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFavorite()
+    {
+        return $this->setFavorite;
     }
 }

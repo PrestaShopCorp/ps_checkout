@@ -18,13 +18,14 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\EventSubscriber;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\EventSubscriber;
 
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
-use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Command\SavePaymentMethodTokenCommand;
-use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Event\PaymentMethodTokenCreatedEvent;
-use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Event\PaymentMethodTokenDeletedEvent;
-use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Event\PaymentMethodTokenDeletionInitiatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\DeletePaymentTokenCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\SavePaymentTokenCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenCreatedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletedEvent;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletionInitiatedEvent;
 use Ps_checkout;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -48,21 +49,21 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            PaymentMethodTokenCreatedEvent::class => [
+            PaymentTokenCreatedEvent::class => [
                 ['saveCreatedPaymentMethodToken'],
             ],
-            PaymentMethodTokenDeletedEvent::class => [
+            PaymentTokenDeletedEvent::class => [
                 ['deletePaymentMethodToken'],
             ],
-            PaymentMethodTokenDeletionInitiatedEvent::class => [
+            PaymentTokenDeletionInitiatedEvent::class => [
                 [''], // No sé
             ],
         ];
     }
 
-    public function saveCreatedPaymentMethodToken(PaymentMethodTokenCreatedEvent $event)
+    public function saveCreatedPaymentMethodToken(PaymentTokenCreatedEvent $event)
     {
-        $this->commandBus->handle(new SavePaymentMethodTokenCommand(
+        $this->commandBus->handle(new SavePaymentTokenCommand(
             $paymentMethodTokenId,
             $paypalCustomerId,
             $paymentSource,
@@ -70,7 +71,10 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
         ));
     }
 
-    public function deletePaymentMethodToken(PaymentMethodTokenDeletedEvent $event)
+    public function deletePaymentMethodToken(PaymentTokenDeletedEvent $event)
     {
+        $this->commandBus->handle(new DeletePaymentTokenCommand(
+            $paymentTokenId,
+        ));
     }
 }

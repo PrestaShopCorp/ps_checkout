@@ -18,11 +18,11 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Query;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query;
 
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 
-class GetCustomerPaymentMethodTokensQuery
+class GetCustomerPaymentTokensQuery
 {
     /**
      * @var CustomerId

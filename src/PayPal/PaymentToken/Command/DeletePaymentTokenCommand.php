@@ -18,28 +18,28 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Event;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command;
 
-use PrestaShop\Module\PrestashopCheckout\Event\Event;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 
-class PaymentMethodTokenEvent extends Event
+class DeletePaymentTokenCommand
 {
-    /** @var array */
-    private $resource;
+    /** @var PaymentTokenId */
+    private $paymentTokenId;
 
     /**
-     * @param array $resource
+     * @param PaymentTokenId $paymentTokenId
      */
-    public function __construct($resource)
+    public function __construct($paymentTokenId)
     {
-        $this->resource = $resource;
+        $this->paymentTokenId = $paymentTokenId;
     }
 
     /**
-     * @return array
+     * @return PaymentTokenId
      */
-    public function getResource()
+    public function getPaymentTokenId()
     {
-        return $this->resource;
+        return $this->paymentTokenId;
     }
 }

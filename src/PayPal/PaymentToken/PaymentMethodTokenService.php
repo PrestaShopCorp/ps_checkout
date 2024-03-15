@@ -18,7 +18,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PaymentMethodToken;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken;
 
 use Exception;
 use GuzzleHttp\Psr7\Request;

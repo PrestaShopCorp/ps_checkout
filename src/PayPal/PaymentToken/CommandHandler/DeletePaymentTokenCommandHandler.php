@@ -18,8 +18,27 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Event;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler;
 
-class PaymentMethodTokenDeletedEvent extends PaymentMethodTokenEvent
+use Exception;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\DeletePaymentTokenCommand;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
+
+class DeletePaymentTokenCommandHandler
 {
+    /** @var PaymentTokenRepository */
+    private $paymentTokenRepository;
+
+    public function __construct(PaymentTokenRepository $paymentTokenRepository)
+    {
+        $this->paymentTokenRepository = $paymentTokenRepository;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function handle(DeletePaymentTokenCommand $command)
+    {
+        $this->paymentTokenRepository->deleteById($command->getPaymentTokenId()->getValue());
+    }
 }

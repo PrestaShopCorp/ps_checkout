@@ -24,6 +24,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Repository;
 use Db;
 use DbQuery;
 use PrestaShop\Module\PrestashopCheckout\Entity\PaymentToken;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 use PrestaShopDatabaseException;
 
 class PaymentTokenRepository
@@ -43,11 +44,13 @@ class PaymentTokenRepository
         return $this->db->insert(
             PaymentToken::TABLE,
             [
-                'id' => $paymentToken->getId(),
-                'paypal_customer_id' => $paymentToken->getPayPalCustomerId(),
-                'payment_source' => $paymentToken->getPaymentSource(),
-                'data' => $paymentToken->getData(),
-                'is_favorite' => $paymentToken->isFavorite(),
+                'id' => pSQL($paymentToken->getId()->getValue()),
+                'paypal_customer_id' => pSQL($paymentToken->getPayPalCustomerId()->getValue()),
+                'id_customer' => (int) $paymentToken->getCustomerId(),
+                'id_shop' => (int) $paymentToken->getShopId(),
+                'payment_source' => pSQL($paymentToken->getPaymentSource()),
+                'data' => json_encode($paymentToken->getData()),
+                'is_favorite' => (bool) $paymentToken->isFavorite(),
             ],
             false,
             true,
@@ -56,19 +59,42 @@ class PaymentTokenRepository
     }
 
     /**
-     * @param $customerId
+     * @param string $paymentTokenId
+     * @return bool
+     */
+    public function deleteById($paymentTokenId)
+    {
+        return $this->db->delete(
+            PaymentToken::TABLE,
+            'id = ' . pSQL($paymentTokenId)
+        );
+    }
+
+    /**
+     * @param int $shopId
+     * @return bool
+     */
+    public function deleteByShopId($shopId)
+    {
+        return $this->db->delete(
+            PaymentToken::TABLE,
+            'id_shop = ' . (int) $shopId
+        );
+    }
+
+    /**
+     * @param int $psCustomerId
      *
      * @return PaymentToken[]
      *
      * @throws PrestaShopDatabaseException
      */
-    public function getAllByCustomerId($customerId)
+    public function findByPrestaShopCustomerId($psCustomerId)
     {
         $query = new DbQuery();
-        $query->select('t.`id`, t.`paypal_customer_id`, t.`payment_source`, t.`data`, t.`is_favorite`')
+        $query->select('t.*')
             ->from(PaymentToken::TABLE, 't')
-            ->leftJoin('pscheckout_customer', 'c', 't.`paypal_customer_id` = c.`paypal_customer_id`')
-            ->where('c.`id_customer` =' . (int) $customerId)
+            ->where('t.`id_customer` =' . (int) $psCustomerId)
             ->orderBy('t.`is_favorite` DESC')
             ->orderBy('t.`id` ASC');
         $queryResult = $this->db->executeS($query);
@@ -77,14 +103,78 @@ class PaymentTokenRepository
             return [];
         }
 
-        return array_map(function ($paymentSource) {
-            return new PaymentToken(
-                $paymentSource['id'],
-                $paymentSource['paypal_customer_id'],
-                $paymentSource['payment_source'],
-                $paymentSource['data'],
-                (bool) $paymentSource['is_favorite']
-            );
+        return array_map(function ($paymentToken) {
+            return $this->buildPaymentTokenObject($paymentToken);
         }, $queryResult);
+    }
+
+    /**
+     * @param PaymentTokenId $id
+     * @return PaymentToken|false
+     */
+    public function findById(PaymentTokenId $id)
+    {
+        $query = new DbQuery();
+        $query->select('*')
+            ->from(PaymentToken::TABLE)
+            ->where('id = ' . $id->getValue());
+        $result = $this->db->getRow($query);
+
+        if ($result && is_array($result)) {
+            return $this->buildPaymentTokenObject($result);
+        }
+
+        return false;
+    }
+
+    /**
+     * @param PaymentTokenId $id
+     * @return bool
+     */
+    public function setTokenFavorite(PaymentTokenId $id)
+    {
+        $token = $this->findById($id);
+        if ($token) {
+            $customerId = $token->getCustomerId();
+            $sql = 'UPDATE ' . _DB_PREFIX_ . PaymentToken::TABLE . " SET `is_favorite` = 0 WHERE id_customer = $customerId;";
+            $sql .= 'UPDATE ' . _DB_PREFIX_ . PaymentToken::TABLE . " SET `is_favorite` = 1 WHERE id = {$id->getValue()};";
+            return $this->db->execute($sql);
+        }
+        return false;
+    }
+
+    /**
+     * @param int|null $shopId
+     *
+     * @return int
+     */
+    public function getCount($shopId = null)
+    {
+        $query = new DbQuery();
+        $query->select('COUNT(*)')
+            ->from(PaymentToken::TABLE, 't');
+
+        if ($shopId) {
+            $query->where('t.`id_shop` =' . (int) $shopId);
+        }
+
+        return (int) $this->db->getValue($query);
+    }
+
+    /**
+     * @param array $data
+     * @return PaymentToken
+     */
+    private function buildPaymentTokenObject($data)
+    {
+        return new PaymentToken(
+            $data['id'],
+            $data['paypal_customer_id'],
+            $data['id_customer'],
+            $data['id_shop'],
+            $data['payment_source'],
+            json_decode($data['data'], true),
+            (bool)$data['is_favorite']
+        );
     }
 }

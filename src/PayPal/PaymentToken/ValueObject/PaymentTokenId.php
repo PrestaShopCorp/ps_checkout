@@ -18,11 +18,11 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\ValueObject;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject;
 
 use InvalidArgumentException;
 
-class PaymentMethodTokenId
+class PaymentTokenId
 {
     /**
      * @var string

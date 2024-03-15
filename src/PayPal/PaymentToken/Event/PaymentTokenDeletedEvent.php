@@ -18,8 +18,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
-namespace PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\Event;
+namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event;
 
-class PaymentMethodTokenDeletionInitiatedEvent extends PaymentMethodTokenEvent
+class PaymentTokenDeletedEvent extends PaymentTokenEvent
 {
 }

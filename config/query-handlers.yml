@@ -66,3 +66,8 @@ services:
     public: true
     arguments:
       - "@ps_checkout.cache.paypal.order"
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQueryHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQueryHandler'
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'

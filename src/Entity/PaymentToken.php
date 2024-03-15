@@ -21,24 +21,35 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Entity;
 
+use PrestaShop\Module\PrestashopCheckout\PaymentMethodToken\ValueObject\PaymentTokenId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
+
 class PaymentToken
 {
     const TABLE = 'pscheckout_payment_token';
 
     /**
-     * @var string
+     * @var PaymentTokenId
      */
     private $id;
     /**
-     * @var string
+     * @var PayPalCustomerId
      */
     private $payPalCustomerId;
+    /**
+     * @var int
+     */
+    private $customerId;
+    /**
+     * @var int
+     */
+    private $shopId;
     /**
      * @var string
      */
     private $paymentSource;
     /**
-     * @var string
+     * @var array
      */
     private $data;
     /**
@@ -46,24 +57,29 @@ class PaymentToken
      */
     private $isFavorite;
 
+
     /**
      * @param string $id
      * @param string $payPalCustomerId
+     * @param int $customerId
+     * @param int $shopId
      * @param string $paymentSource
-     * @param string $data
+     * @param array $data
      * @param bool $isFavorite
      */
-    public function __construct($id, $payPalCustomerId, $paymentSource, $data, $isFavorite = false)
+    public function __construct($id, $payPalCustomerId, $customerId, $shopId, $paymentSource, $data, $isFavorite = false)
     {
-        $this->id = $id;
-        $this->payPalCustomerId = $payPalCustomerId;
+        $this->id = new PaymentTokenId($id);
+        $this->payPalCustomerId = new PayPalCustomerId($payPalCustomerId);
+        $this->customerId = (int) $customerId;
+        $this->shopId = $shopId;
         $this->paymentSource = $paymentSource;
         $this->data = $data;
         $this->isFavorite = $isFavorite;
     }
 
     /**
-     * @return string
+     * @return PaymentTokenId
      */
     public function getId()
     {
@@ -83,7 +99,7 @@ class PaymentToken
     }
 
     /**
-     * @return string
+     * @return PayPalCustomerId
      */
     public function getPayPalCustomerId()
     {
@@ -98,6 +114,26 @@ class PaymentToken
     public function setPayPalCustomerId($payPalCustomerId)
     {
         $this->payPalCustomerId = $payPalCustomerId;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCustomerId()
+    {
+        return $this->customerId;
+    }
+
+    /**
+     * @param mixed $customerId
+     *
+     * @return PaymentToken
+     */
+    public function setCustomerId($customerId)
+    {
+        $this->customerId = (int) $customerId;
 
         return $this;
     }
@@ -123,7 +159,7 @@ class PaymentToken
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getData()
     {
@@ -131,7 +167,7 @@ class PaymentToken
     }
 
     /**
-     * @param string $data
+     * @param array $data
      *
      * @return PaymentToken
      */
@@ -158,6 +194,26 @@ class PaymentToken
     public function setIsFavorite($isFavorite)
     {
         $this->isFavorite = $isFavorite;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getShopId()
+    {
+        return $this->shopId;
+    }
+
+    /**
+     * @param int $shopId
+     *
+     * @return PaymentToken
+     */
+    public function setShopId($shopId)
+    {
+        $this->shopId = (int) $shopId;
 
         return $this;
     }
