@@ -59,14 +59,14 @@ class PaymentTokenRepository
     }
 
     /**
-     * @param string $paymentTokenId
+     * @param PaymentTokenId $paymentTokenId
      * @return bool
      */
-    public function deleteById($paymentTokenId)
+    public function deleteById(PaymentTokenId $paymentTokenId)
     {
         return $this->db->delete(
             PaymentToken::TABLE,
-            'id = ' . pSQL($paymentTokenId)
+            'id = ' . pSQL($paymentTokenId->getValue())
         );
     }
 

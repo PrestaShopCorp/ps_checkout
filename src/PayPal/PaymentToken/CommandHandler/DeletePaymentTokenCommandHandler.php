@@ -39,6 +39,6 @@ class DeletePaymentTokenCommandHandler
      */
     public function handle(DeletePaymentTokenCommand $command)
     {
-        $this->paymentTokenRepository->deleteById($command->getPaymentTokenId()->getValue());
+        $this->paymentTokenRepository->deleteById($command->getPaymentTokenId());
     }
 }
