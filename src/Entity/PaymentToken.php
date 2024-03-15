@@ -85,7 +85,7 @@ class PaymentToken
      */
     public function setId($id)
     {
-        $this->id = $id;
+        $this->id = new PaymentTokenId($id);
 
         return $this;
     }
@@ -105,7 +105,7 @@ class PaymentToken
      */
     public function setPayPalCustomerId($payPalCustomerId)
     {
-        $this->payPalCustomerId = $payPalCustomerId;
+        $this->payPalCustomerId = new PayPalCustomerId($payPalCustomerId);
 
         return $this;
     }
