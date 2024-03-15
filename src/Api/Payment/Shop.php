@@ -20,14 +20,14 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PaymentClient;
+use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\OldPaymentClient;
 use PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration;
 use PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration;
 
 /**
  * Handle request to maasland regarding the shop/merchant status
  */
-class Shop extends PaymentClient
+class Shop extends OldPaymentClient
 {
     /**
      * Used to notify PSL on settings update
