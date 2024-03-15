@@ -35,7 +35,7 @@ class SavePaymentTokenCommand
     private $paymentSource;
 
     /** @var array */
-    private $paymentMethodTokenData;
+    private $paymentTokenData;
     /** @var bool */
     private $setFavorite;
     /** @var string */
@@ -45,14 +45,14 @@ class SavePaymentTokenCommand
      * @param PaymentTokenId $paymentTokenId
      * @param PayPalCustomerId $paypalCustomerId
      * @param string $paymentSource
-     * @param array $paymentMethodTokenData
+     * @param array $paymentTokenData
      */
-    public function __construct($paymentTokenId, $paypalCustomerId, $paymentSource, $paymentMethodTokenData, $merchantId, $setFavorite = false)
+    public function __construct($paymentTokenId, $paypalCustomerId, $paymentSource, $paymentTokenData, $merchantId, $setFavorite = false)
     {
         $this->paymentTokenId = $paymentTokenId;
         $this->paypalCustomerId = $paypalCustomerId;
         $this->paymentSource = $paymentSource;
-        $this->paymentMethodTokenData = $paymentMethodTokenData;
+        $this->paymentTokenData = $paymentTokenData;
         $this->setFavorite = $setFavorite;
         $this->merchantId = $merchantId;
     }
@@ -84,9 +84,9 @@ class SavePaymentTokenCommand
     /**
      * @return array
      */
-    public function getPaymentMethodTokenData()
+    public function getPaymentTokenData()
     {
-        return $this->paymentMethodTokenData;
+        return $this->paymentTokenData;
     }
 
     /**

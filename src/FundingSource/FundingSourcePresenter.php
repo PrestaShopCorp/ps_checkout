@@ -80,7 +80,7 @@ class FundingSourcePresenter
         } else {
             $fundingSourceName = $this->translation->getVaultedPaymentMethodName(
                 false,
-                $paymentToken->getData()['payment_source']['paypal']['email_address']
+                $paymentToken->getData()['payment_source'][$paymentToken->getPaymentSource()]['email_address']
             );
         }
 
