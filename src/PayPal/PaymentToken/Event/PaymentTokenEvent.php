@@ -24,15 +24,23 @@ use PrestaShop\Module\PrestashopCheckout\Event\Event;
 
 class PaymentTokenEvent extends Event
 {
+    /** @var int */
+    private $customerId;
+
+    /** @var int */
+    private $shopId;
+
     /** @var array */
     private $resource;
 
     /**
      * @param array $resource
      */
-    public function __construct($resource)
+    public function __construct($resource, $customerId, $shopId)
     {
         $this->resource = $resource;
+        $this->shopId = $shopId;
+        $this->customerId = $customerId;
     }
 
     /**
@@ -41,5 +49,21 @@ class PaymentTokenEvent extends Event
     public function getResource()
     {
         return $this->resource;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCustomerId()
+    {
+        return $this->customerId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getShopId()
+    {
+        return $this->shopId;
     }
 }

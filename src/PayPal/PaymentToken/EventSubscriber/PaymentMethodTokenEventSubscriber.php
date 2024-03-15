@@ -64,9 +64,11 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
     public function saveCreatedPaymentMethodToken(PaymentTokenCreatedEvent $event)
     {
         $this->commandBus->handle(new SavePaymentTokenCommand(
-            $paymentMethodTokenId,
-            $paypalCustomerId,
-            $paymentSource,
+            $event->getResource()['id'],
+            $event->getResource()['customer_id'],
+            $event->getCustomerId(),
+            $event->getShopId(),
+            $event->getResource()['payment_source'],
             $event->getResource()
         ));
     }
@@ -74,7 +76,7 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
     public function deletePaymentMethodToken(PaymentTokenDeletedEvent $event)
     {
         $this->commandBus->handle(new DeletePaymentTokenCommand(
-            $paymentTokenId,
+            $event->getResource()['id']
         ));
     }
 }
