@@ -24,6 +24,7 @@ use Exception;
 use PrestaShop\Module\PrestashopCheckout\Entity\PaymentToken;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\SavePaymentTokenCommand;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
+use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 
 class SavePaymentTokenCommandHandler
 {
@@ -48,7 +49,10 @@ class SavePaymentTokenCommandHandler
             $command->getMerchantId(),
             $command->isFavorite()
         );
-
         $this->paymentTokenRepository->save($token);
+
+        if ($command->isFavorite()) {
+            $this->paymentTokenRepository->setTokenFavorite($command->getPaymentTokenId());
+        }
     }
 }

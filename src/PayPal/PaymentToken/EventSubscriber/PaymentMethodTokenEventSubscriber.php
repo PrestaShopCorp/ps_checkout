@@ -21,11 +21,13 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\EventSubscriber;
 
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
+use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrder;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\DeletePaymentTokenCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\SavePaymentTokenCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletionInitiatedEvent;
+use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use Ps_checkout;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -36,11 +38,16 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
 
     /** @var CommandBusInterface */
     private $commandBus;
+    /**
+     * @var PayPalOrderRepository
+     */
+    private $payPalOrderRepository;
 
-    public function __construct(Ps_checkout $module)
+    public function __construct(Ps_checkout $module, PayPalOrderRepository $payPalOrderRepository)
     {
         $this->module = $module;
         $this->commandBus = $this->module->getService('ps_checkout.bus.command');
+        $this->payPalOrderRepository = $payPalOrderRepository;
     }
 
     /**
@@ -64,12 +71,23 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
     public function saveCreatedPaymentMethodToken(PaymentTokenCreatedEvent $event)
     {
         $resource = $event->getResource();
+        $orderId = isset($resource['metadata']['order_id']) ? $resource['metadata']['order_id'] : null;
+        $setFavorite = false;
+
+        if ($orderId) {
+            try {
+                $order = $this->payPalOrderRepository->getPayPalOrderById($orderId);
+                $setFavorite = strpos($order->getCustomerIntent(), PayPalOrder::CUSTOMER_INTENT_FAVORITE) !== false;
+            } catch (\Exception $exception) {}
+        }
+
         $this->commandBus->handle(new SavePaymentTokenCommand(
             $resource['id'],
             $resource['customer']['id'],
             array_keys($resource['payment_source'])[0],
             $resource,
-            $event->getMerchantId()
+            $event->getMerchantId(),
+            $setFavorite
         ));
     }
 
