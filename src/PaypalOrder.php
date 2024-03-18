@@ -55,7 +55,7 @@ class PaypalOrder
         $module = Module::getInstanceByName('ps_checkout');
 
         /** @var CheckoutHttpClient $checkoutHttpClient */
-        $checkoutHttpClient = $module->getService('ps_checkout.http.client.checkout');
+        $checkoutHttpClient = $module->getService(CheckoutHttpClient::class);
 
         try {
             $response = $checkoutHttpClient->fetchOrder([

@@ -51,7 +51,7 @@ class OrderPresenter
         $this->module = $module;
         $this->orderPayPal = $orderPayPal;
         /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
-        $fundingSourceTranslationProvider = $this->module->getService('ps_checkout.funding_source.translation');
+        $fundingSourceTranslationProvider = $this->module->getService(FundingSourceTranslationProvider::class);
         $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
     }
 

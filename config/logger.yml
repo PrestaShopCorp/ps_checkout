@@ -1,0 +1,48 @@
+services:
+  PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory:
+    class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory'
+    public: true
+    arguments:
+      - !php/const _PS_VERSION_
+      - !php/const _PS_ROOT_DIR_
+
+  PrestaShop\Module\PrestashopCheckout\Logger\LoggerFilename:
+    class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFilename'
+    public: true
+    arguments:
+      - '@=service("ps_checkout.module").name'
+      - '@=service("PrestaShop\\Module\\PrestashopCheckout\\Shop\\ShopProvider").getIdentifier()'
+
+  PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration:
+    class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration'
+
+  PrestaShop\Module\PrestashopCheckout\Logger\LoggerHandlerFactory:
+    class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerHandlerFactory'
+    public: true
+    arguments:
+      - '@=service("PrestaShop\\Module\\PrestashopCheckout\\Logger\\LoggerDirectory").getPath()'
+      - '@=service("PrestaShop\\Module\\PrestashopCheckout\\Logger\\LoggerFilename").get()'
+      - '@=service("PrestaShop\\Module\\PrestashopCheckout\\Logger\\LoggerConfiguration").getMaxFiles()'
+      - '@=service("PrestaShop\\Module\\PrestashopCheckout\\Logger\\LoggerConfiguration").getLevel()'
+
+  ps_checkout.logger.handler:
+    class: 'Monolog\Handler\HandlerInterface'
+    public: true
+    factory: ['@PrestaShop\Module\PrestashopCheckout\Logger\LoggerHandlerFactory', "build"]
+
+  PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory:
+    class: 'PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory'
+    public: true
+    arguments:
+      - '@=service("ps_checkout.module").name'
+      - "@ps_checkout.logger.handler"
+
+  ps_checkout.logger:
+    class: 'Psr\Log\LoggerInterface'
+    public: true
+    factory: ['@PrestaShop\Module\PrestashopCheckout\Logger\LoggerFactory', "build"]
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Logger\LoggerDirectory'

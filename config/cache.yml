@@ -1,0 +1,54 @@
+services:
+  PrestaShop\ModuleLibCacheDirectoryProvider\Cache\CacheDirectoryProvider:
+    class: 'PrestaShop\ModuleLibCacheDirectoryProvider\Cache\CacheDirectoryProvider'
+    public: true
+    arguments:
+      - !php/const _PS_VERSION_
+      - !php/const _PS_ROOT_DIR_
+      - !php/const _PS_MODE_DEV_
+
+  ps_checkout.cache.array.paypal.order:
+    class: 'Symfony\Component\Cache\Simple\ArrayCache'
+
+  ps_checkout.cache.filesystem.paypal.order:
+    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
+    arguments:
+      - "paypal-orders"
+      - 3600
+      - '@=service("PrestaShop\\ModuleLibCacheDirectoryProvider\\Cache\\CacheDirectoryProvider").getPath()'
+
+  ps_checkout.cache.paypal.order:
+    class: 'Symfony\Component\Cache\Simple\ChainCache'
+    public: true
+    arguments:
+      - [
+        "@ps_checkout.cache.array.paypal.order",
+        "@ps_checkout.cache.filesystem.paypal.order",
+      ]
+
+  ps_checkout.cache.array.paypal.capture:
+    class: 'Symfony\Component\Cache\Simple\ArrayCache'
+
+  ps_checkout.cache.filesystem.paypal.capture:
+    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
+    arguments:
+      - "paypal-capture"
+      - 3600
+      - '@=service("PrestaShop\\ModuleLibCacheDirectoryProvider\\Cache\\CacheDirectoryProvider").getPath()'
+
+  ps_checkout.cache.paypal.capture:
+    class: 'Symfony\Component\Cache\Simple\ChainCache'
+    public: true
+    arguments:
+      - [
+        "@ps_checkout.cache.array.paypal.capture",
+        "@ps_checkout.cache.filesystem.paypal.capture",
+      ]
+
+  ps_checkout.cache.pscheckoutcart:
+    class: 'Symfony\Component\Cache\Simple\ArrayCache'
+    public: true
+
+  ps_checkout.cache.order:
+    class: 'Symfony\Component\Cache\Simple\ArrayCache'
+    public: true

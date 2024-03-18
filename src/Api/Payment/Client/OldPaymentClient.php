@@ -64,13 +64,13 @@ class OldPaymentClient extends GenericClient
             $version = $module->getService('ps_checkout.module.version');
 
             /** @var LoggerConfiguration $loggerConfiguration */
-            $loggerConfiguration = $module->getService('ps_checkout.logger.configuration');
+            $loggerConfiguration = $module->getService(LoggerConfiguration::class);
 
             /** @var LoggerInterface $logger */
             $logger = $module->getService('ps_checkout.logger');
 
             /** @var Router $router */
-            $router = $module->getService('ps_checkout.prestashop.router');
+            $router = $module->getService(Router::class);
 
             $clientConfiguration = [
                 'base_url' => (new PaymentEnv())->getPaymentApiUrl(),
