@@ -153,9 +153,9 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
         /** @var PrestaShopConfiguration $configuration */
-        $configuration = $module->getService('ps_checkout.configuration');
+        $configuration = $module->getService(PrestaShopConfiguration::class);
         /** @var PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $module->getService('ps_checkout.paypal.configuration');
+        $paypalConfiguration = $module->getService(PayPalConfiguration::class);
 
         $shopName = $configuration->get('PS_SHOP_NAME');
         $merchantId = $paypalConfiguration->getMerchantId();
@@ -292,7 +292,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
         /** @var Router $router */
-        $router = $module->getService('ps_checkout.prestashop.router');
+        $router = $module->getService(Router::class);
         $node['application_context'] = [
             'brand_name' => \Configuration::get(
                 'PS_SHOP_NAME',
@@ -408,7 +408,7 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
         /** @var PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $module->getService('ps_checkout.paypal.configuration');
+        $paypalConfiguration = $module->getService(PayPalConfiguration::class);
 
         $node = [
             'payment_source' => [

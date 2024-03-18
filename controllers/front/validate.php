@@ -23,6 +23,7 @@ use PrestaShop\Module\PrestashopCheckout\Checkout\Event\CheckoutCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
+use PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Query\GetPayPalOrderForOrderConfirmationQuery;
@@ -85,7 +86,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             $this->paypalOrderId = $bodyValues['orderID'];
 
             /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
-            $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
+            $psCheckoutCartRepository = $this->module->getService(PsCheckoutCartRepository::class);
             $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($this->paypalOrderId);
 
             if (!Validate::isLoadedObject($psCheckoutCart)) {
@@ -96,7 +97,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             }
 
             /** @var EventDispatcherInterface $eventDispatcher */
-            $eventDispatcher = $this->module->getService('ps_checkout.event.dispatcher');
+            $eventDispatcher = $this->module->getService(SymfonyEventDispatcherAdapter::class);
 
             $eventDispatcher->dispatch(new CheckoutCompletedEvent(
                 $psCheckoutCart->getIdCart(),
@@ -129,7 +130,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
             $commandBus = $this->module->getService('ps_checkout.bus.command');
 
             /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
-            $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
+            $psCheckoutCartRepository = $this->module->getService(PsCheckoutCartRepository::class);
             $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($this->paypalOrderId);
 
             if (!Validate::isLoadedObject($psCheckoutCart)) {
@@ -188,7 +189,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
         }
 
         /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
-        $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
+        $psCheckoutCartRepository = $this->module->getService(PsCheckoutCartRepository::class);
         $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($this->paypalOrderId);
 
         if (!Validate::isLoadedObject($psCheckoutCart)) {
@@ -447,7 +448,7 @@ class Ps_CheckoutValidateModuleFrontController extends AbstractFrontController
     private function notifyCustomerService(Exception $exception)
     {
         /** @var PsCheckoutCartRepository $psCheckoutCartRepository */
-        $psCheckoutCartRepository = $this->module->getService('ps_checkout.repository.pscheckoutcart');
+        $psCheckoutCartRepository = $this->module->getService(PsCheckoutCartRepository::class);
         $psCheckoutCart = $psCheckoutCartRepository->findOneByPayPalOrderId($this->paypalOrderId);
 
         if (!Validate::isLoadedObject($psCheckoutCart)) {

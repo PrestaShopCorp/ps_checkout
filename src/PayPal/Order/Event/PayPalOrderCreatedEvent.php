@@ -34,13 +34,11 @@ class PayPalOrderCreatedEvent extends PayPalOrderEvent
     /**
      * @var bool
      */
-    private $isHostedFields;
-
+    private $isCardFields;
     /**
      * @var bool
      */
     private $isExpressCheckout;
-
     /**
      * @var string
      */
@@ -50,18 +48,18 @@ class PayPalOrderCreatedEvent extends PayPalOrderEvent
      * @param string $orderPayPalId
      * @param array $orderPayPal
      * @param int $cartId
-     * @param bool $isHostedFields
+     * @param bool $isCardFields
      * @param bool $isExpressCheckout
      * @param string $fundingSource
      *
      * @throws CartException
      * @throws PayPalOrderException
      */
-    public function __construct($orderPayPalId, $orderPayPal, $cartId, $isHostedFields, $isExpressCheckout, $fundingSource)
+    public function __construct($orderPayPalId, $orderPayPal, $cartId, $isCardFields, $isExpressCheckout, $fundingSource)
     {
         parent::__construct($orderPayPalId, $orderPayPal);
         $this->cartId = new CartId($cartId);
-        $this->isHostedFields = $isHostedFields;
+        $this->isCardFields = $isCardFields;
         $this->isExpressCheckout = $isExpressCheckout;
         $this->fundingSource = $fundingSource;
     }
@@ -77,9 +75,9 @@ class PayPalOrderCreatedEvent extends PayPalOrderEvent
     /**
      * @return bool
      */
-    public function isHostedFields()
+    public function isCardFields()
     {
-        return $this->isHostedFields;
+        return $this->isCardFields;
     }
 
     /**

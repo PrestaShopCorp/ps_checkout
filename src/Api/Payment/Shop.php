@@ -41,9 +41,9 @@ class Shop extends OldPaymentClient
         /** @var \Ps_checkout $module */
         $module = \Module::getInstanceByName('ps_checkout');
         /** @var PrestaShopConfiguration $configuration */
-        $configuration = $module->getService('ps_checkout.configuration');
+        $configuration = $module->getService(PrestaShopConfiguration::class);
         /** @var ExpressCheckoutConfiguration $ecConfiguration */
-        $ecConfiguration = $module->getService('ps_checkout.express_checkout.configuration');
+        $ecConfiguration = $module->getService(ExpressCheckoutConfiguration::class);
 
         return $this->post([
             'settings' => [

@@ -77,6 +77,10 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
      * @var CheckOrderAmount
      */
     private $checkOrderAmount;
+    /**
+     * @var FundingSourceTranslationProvider
+     */
+    private $fundingSourceTranslationProvider;
 
     public function __construct(
         ContextStateManager $contextStateManager,
@@ -84,7 +88,8 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
         PsCheckoutCartRepository $psCheckoutCartRepository,
         OrderStateMapper $psOrderStateMapper,
         Ps_checkout $module,
-        CheckOrderAmount $checkOrderAmount
+        CheckOrderAmount $checkOrderAmount,
+        FundingSourceTranslationProvider $fundingSourceTranslationProvider
     ) {
         $this->contextStateManager = $contextStateManager;
         $this->eventDispatcher = $eventDispatcher;
@@ -92,6 +97,7 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
         $this->psOrderStateMapper = $psOrderStateMapper;
         $this->module = $module;
         $this->checkOrderAmount = $checkOrderAmount;
+        $this->fundingSourceTranslationProvider = $fundingSourceTranslationProvider;
     }
 
     /**
@@ -167,9 +173,6 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
             $orderStateId = $this->psOrderStateMapper->getIdByKey(OrderStateConfigurationKeys::PS_CHECKOUT_STATE_PENDING);
         }
 
-        /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
-        $fundingSourceTranslationProvider = $this->module->getService('ps_checkout.funding_source.translation');
-
         if ($this->shouldSetCartContext($this->contextStateManager->getContext(), $cart)) {
             $this->setCartContext($this->contextStateManager, $cart);
         }
@@ -187,7 +190,7 @@ class CreateOrderCommandHandler extends AbstractOrderCommandHandler
                 (int) $cart->id,
                 $orderStateId,
                 $paidAmount,
-                $fundingSourceTranslationProvider->getPaymentMethodName($fundingSource),
+                $this->fundingSourceTranslationProvider->getPaymentMethodName($fundingSource),
                 null,
                 $extraVars,
                 $currencyId,

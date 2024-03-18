@@ -209,7 +209,7 @@ class ps_checkoutDispatchWebHookModuleFrontController extends AbstractFrontContr
     private function checkExecutionPermissions()
     {
         /** @var PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+        $psAccountRepository = $this->module->getService(PsAccountRepository::class);
 
         if ($this->shopId !== $psAccountRepository->getShopUuid()) {
             throw new PsCheckoutException('shopId wrong', PsCheckoutException::PSCHECKOUT_WEBHOOK_SHOP_ID_INVALID);

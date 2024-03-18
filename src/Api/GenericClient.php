@@ -86,7 +86,7 @@ class GenericClient
         /** @var Ps_checkout $module */
         $module = Module::getInstanceByName('ps_checkout');
         /** @var PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $module->getService('ps_checkout.repository.prestashop.account');
+        $psAccountRepository = $module->getService(PsAccountRepository::class);
 
         $this->shopUid = $psAccountRepository->getShopUuid();
         $this->token = $psAccountRepository->getIdToken();

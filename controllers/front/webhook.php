@@ -49,7 +49,7 @@ class Ps_CheckoutWebhookModuleFrontController extends AbstractFrontController
 
         try {
             /** @var WebhookHandler $webhookHandler */
-            $webhookHandler = $this->module->getService('ps_checkout.webhook.handler');
+            $webhookHandler = $this->module->getService(WebhookHandler::class);
 
             if (empty($_SERVER['HTTP_WEBHOOK_SECRET']) || !$webhookHandler->authenticate($_SERVER['HTTP_WEBHOOK_SECRET'])) {
                 throw new WebhookException('Webhook secret mismatch', WebhookException::WEBHOOK_SECRET_MISMATCH);

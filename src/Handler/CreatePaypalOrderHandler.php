@@ -66,7 +66,7 @@ class CreatePaypalOrderHandler
         $module = Module::getInstanceByName('ps_checkout');
 
         /** @var ShopContext $shopContext */
-        $shopContext = $module->getService('ps_checkout.context.shop');
+        $shopContext = $module->getService(ShopContext::class);
 
         $builder->setIsCard($isCardPayment);
 
@@ -90,7 +90,7 @@ class CreatePaypalOrderHandler
         $payload = $builder->presentPayload()->getArray();
 
         /** @var CheckoutHttpClient $checkoutHttpClient */
-        $checkoutHttpClient = $module->getService('ps_checkout.http.client.checkout');
+        $checkoutHttpClient = $module->getService(CheckoutHttpClient::class);
 
         // Create the paypal order or update it
         try {

@@ -90,7 +90,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     {
         $paymentOptions = json_decode(Tools::getValue('paymentMethods'), true);
         /** @var FundingSourceConfigurationRepository $fundingSourceConfigurationRepository */
-        $fundingSourceConfigurationRepository = $this->module->getService('ps_checkout.funding_source.configuration.repository');
+        $fundingSourceConfigurationRepository = $this->module->getService(FundingSourceConfigurationRepository::class);
 
         foreach ($paymentOptions as $key => $paymentOption) {
             $paymentOption['position'] = $key + 1;
@@ -106,7 +106,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessUpdatePaymentMode()
     {
         /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
+        $paypalConfiguration = $this->module->getService(PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
         $paypalConfiguration->setPaymentMode(Tools::getValue('paymentMode'));
 
         $this->ajaxDie(json_encode(true));
@@ -118,7 +118,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessLiveStepConfirmed()
     {
         /** @var LiveStep $stepLive */
-        $stepLive = $this->module->getService('ps_checkout.step.live');
+        $stepLive = $this->module->getService(LiveStep::class);
         $stepLive->confirmed(true);
 
         $this->ajaxDie(json_encode(true));
@@ -130,7 +130,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessLiveStepViewed()
     {
         /** @var LiveStep $stepLive */
-        $stepLive = $this->module->getService('ps_checkout.step.live');
+        $stepLive = $this->module->getService(LiveStep::class);
         $stepLive->viewed(true);
 
         $this->ajaxDie(json_encode(true));
@@ -142,7 +142,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessValueBannerClosed()
     {
         /** @var ValueBanner $valueBanner */
-        $valueBanner = $this->module->getService('ps_checkout.step.value');
+        $valueBanner = $this->module->getService(ValueBanner::class);
         $valueBanner->closed(true);
 
         $this->ajaxDie(json_encode(true));
@@ -157,7 +157,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessEditRoundingSettings()
     {
         /** @var PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
+        $paypalConfiguration = $this->module->getService(PayPalConfiguration::class);
         $paypalConfiguration->setRoundType(RoundingSettings::ROUND_ON_EACH_ITEM);
         $paypalConfiguration->setPriceRoundMode(RoundingSettings::ROUND_UP_AWAY_FROM_ZERO);
 
@@ -185,7 +185,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         $paymentOption = json_decode(Tools::getValue('paymentOption'), true);
 
         /** @var FundingSourceConfigurationRepository $fundingSourceConfigurationRepository */
-        $fundingSourceConfigurationRepository = $this->module->getService('ps_checkout.funding_source.configuration.repository');
+        $fundingSourceConfigurationRepository = $this->module->getService(FundingSourceConfigurationRepository::class);
 
         $fundingSourceConfigurationRepository->save($paymentOption);
 
@@ -198,7 +198,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessUpdateCreditCardFields()
     {
         /** @var PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
+        $paypalConfiguration = $this->module->getService(PayPalConfiguration::class);
 
         $paypalConfiguration->setCardPaymentEnabled((bool) Tools::getValue('hostedFieldsEnabled'));
 
@@ -211,7 +211,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessToggleECOrderPage()
     {
         /** @var ExpressCheckoutConfiguration $ecConfiguration */
-        $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
+        $ecConfiguration = $this->module->getService(ExpressCheckoutConfiguration::class);
         $ecConfiguration->setOrderPage((bool) Tools::getValue('status'));
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
@@ -225,7 +225,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessToggleECCheckoutPage()
     {
         /** @var ExpressCheckoutConfiguration $ecConfiguration */
-        $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
+        $ecConfiguration = $this->module->getService(ExpressCheckoutConfiguration::class);
         $ecConfiguration->setCheckoutPage(Tools::getValue('status') ? true : false);
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
@@ -239,7 +239,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessToggleECProductPage()
     {
         /** @var ExpressCheckoutConfiguration $ecConfiguration */
-        $ecConfiguration = $this->module->getService('ps_checkout.express_checkout.configuration');
+        $ecConfiguration = $this->module->getService(ExpressCheckoutConfiguration::class);
         $ecConfiguration->setProductPage(Tools::getValue('status') ? true : false);
 
         (new PrestaShop\Module\PrestashopCheckout\Api\Payment\Shop(Context::getContext()->link))->updateSettings();
@@ -383,7 +383,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         }
 
         /** @var PayPalConfiguration $configurationPayPal */
-        $configurationPayPal = $this->module->getService('ps_checkout.paypal.configuration');
+        $configurationPayPal = $this->module->getService(PayPalConfiguration::class);
 
         if ($configurationPayPal->getPaymentMode() !== $psCheckoutCart->getEnvironment()) {
             http_response_code(422);
@@ -401,7 +401,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         }
 
         /** @var PayPalOrderProvider $paypalOrderProvider */
-        $paypalOrderProvider = $this->module->getService('ps_checkout.paypal.provider.order');
+        $paypalOrderProvider = $this->module->getService(PayPalOrderProvider::class);
 
         try {
             $paypalOrder = $paypalOrderProvider->getById($psCheckoutCart->paypal_order);
@@ -414,7 +414,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         }
 
         /** @var FundingSourceTranslationProvider $fundingSourceTranslationProvider */
-        $fundingSourceTranslationProvider = $this->module->getService('ps_checkout.funding_source.translation');
+        $fundingSourceTranslationProvider = $this->module->getService(FundingSourceTranslationProvider::class);
         $presenter = new OrderPresenter($this->module, $paypalOrder);
 
         $this->context->smarty->assign([
@@ -667,7 +667,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessGetLogFiles()
     {
         /** @var LoggerFileFinder $loggerFileFinder */
-        $loggerFileFinder = $this->module->getService('ps_checkout.logger.file.finder');
+        $loggerFileFinder = $this->module->getService(LoggerFileFinder::class);
 
         header('Content-type: application/json');
         $this->ajaxDie(json_encode($loggerFileFinder->getLogFileNames()));
@@ -695,9 +695,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
         }
 
         /** @var LoggerDirectory $loggerDirectory */
-        $loggerDirectory = $this->module->getService('ps_checkout.logger.directory');
+        $loggerDirectory = $this->module->getService(LoggerDirectory::class);
         /** @var LoggerFileReader $loggerFileReader */
-        $loggerFileReader = $this->module->getService('ps_checkout.logger.file.reader');
+        $loggerFileReader = $this->module->getService(LoggerFileReader::class);
         $fileData = [];
 
         try {
@@ -733,7 +733,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessSavePaypalButtonConfiguration()
     {
         /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $this->module->getService('ps_checkout.paypal.configuration');
+        $paypalConfiguration = $this->module->getService(PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
         $paypalConfiguration->setButtonConfiguration(json_decode(Tools::getValue('configuration')));
 
         $this->ajaxDie(json_encode(true));
@@ -745,7 +745,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessGetOrRefreshToken()
     {
         /** @var PsAccountRepository $psAccountRepository */
-        $psAccountRepository = $this->module->getService('ps_checkout.repository.prestashop.account');
+        $psAccountRepository = $this->module->getService(PsAccountRepository::class);
 
         try {
             $this->exitWithResponse([
@@ -818,7 +818,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     private function togglePayLaterConfiguration($method)
     {
         /** @var PayPalPayLaterConfiguration $payLaterConfiguration */
-        $payLaterConfiguration = $this->module->getService('ps_checkout.pay_later.configuration');
+        $payLaterConfiguration = $this->module->getService(PayPalPayLaterConfiguration::class);
         $payLaterConfiguration->$method(Tools::getValue('status') ? true : false);
 
         $this->ajaxDie(json_encode(true));
@@ -827,7 +827,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessUpsertSecretToken()
     {
         /** @var WebhookSecretTokenService $webhookSecretTokenService */
-        $webhookSecretTokenService = $this->module->getService('ps_checkout.webhook.service.secret_token');
+        $webhookSecretTokenService = $this->module->getService(WebhookSecretTokenService::class);
 
         $secret = (string) Tools::getValue('body');
 
@@ -910,7 +910,7 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessGetMappedOrderStates()
     {
         /** @var OrderStateMapper $orderStateMapper */
-        $orderStateMapper = $this->module->getService('ps_checkout.order.state.service.order_state_mapper');
+        $orderStateMapper = $this->module->getService(OrderStateMapper::class);
         $mappedOrderStates = [];
 
         try {
@@ -936,9 +936,9 @@ class AdminAjaxPrestashopCheckoutController extends ModuleAdminController
     public function ajaxProcessBatchSaveConfiguration()
     {
         /** @var BatchConfigurationValidator $configurationValidator */
-        $configurationValidator = $this->module->getService('ps_checkout.validator.batch_configuration');
+        $configurationValidator = $this->module->getService(BatchConfigurationValidator::class);
         /** @var BatchConfigurationProcessor $batchConfigurationProcessor */
-        $batchConfigurationProcessor = $this->module->getService('ps_checkout.configuration.batch_processor');
+        $batchConfigurationProcessor = $this->module->getService(BatchConfigurationProcessor::class);
 
         $configuration = json_decode(Tools::getValue('configuration'), true);
         try {
