@@ -194,7 +194,7 @@ class Ps_checkout extends PaymentModule
     {
         $result = (bool) $this->registerHook(self::HOOK_LIST);
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService('ps_checkout.context.shop');
+        $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
 
         // Install specific to prestashop 1.6
         if (!$shopContext->isShop17()) {
@@ -275,8 +275,8 @@ class Ps_checkout extends PaymentModule
      */
     public function disableIncompatibleCountries()
     {
-        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $this->getService('ps_checkout.paypal.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
         $incompatibleCodes = $paypalConfiguration->getIncompatibleCountryCodes(false);
         $result = true;
 
@@ -301,8 +301,8 @@ class Ps_checkout extends PaymentModule
      */
     public function disableIncompatibleCurrencies()
     {
-        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $this->getService('ps_checkout.paypal.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
         $incompatibleCodes = $paypalConfiguration->getIncompatibleCurrencyCodes(false);
         $result = true;
 
@@ -395,7 +395,7 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter $storePresenter */
-        $storePresenter = $this->getService('ps_checkout.store.store');
+        $storePresenter = $this->getService(\PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter::class);
 
         Media::addJsDef([
             'store' => $storePresenter->present(),
@@ -465,7 +465,7 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService('ps_checkout.context.shop');
+        $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
 
         if ($shopContext->isShop17()) {
             return;
@@ -488,7 +488,7 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
-        $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
+        $psCheckoutCartRepository = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository::class);
 
         /** @var PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
@@ -513,7 +513,7 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService('ps_checkout.context.shop');
+        $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
 
         if ($shopContext->isShop17()) {
             return;
@@ -535,7 +535,7 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
-        $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
+        $fundingSourceProvider = $this->getService(\PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider::class);
         $paymentOptions = [];
 
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {
@@ -543,16 +543,16 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService('ps_checkout.context.shop');
+        $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
-        $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
+        $psCheckoutCartRepository = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository::class);
 
         /** @var PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
 
-        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $configurationPayPal */
-        $configurationPayPal = $this->getService('ps_checkout.paypal.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $configurationPayPal */
+        $configurationPayPal = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
 
         $isExpressCheckout = false !== $psCheckoutCart && $psCheckoutCart->isExpressCheckout;
 
@@ -600,10 +600,10 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
-        $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
+        $fundingSourceProvider = $this->getService(\PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider::class);
 
-        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $configurationPayPal */
-        $configurationPayPal = $this->getService('ps_checkout.paypal.configuration');
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $configurationPayPal */
+        $configurationPayPal = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
 
         $paymentOptions = [];
 
@@ -645,7 +645,7 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder $orderSummaryViewBuilder */
-        $orderSummaryViewBuilder = $this->getService('ps_checkout.paypal.builder.view_order_summary');
+        $orderSummaryViewBuilder = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder::class);
 
         try {
             $orderSummaryView = $orderSummaryViewBuilder->build($order);
@@ -673,7 +673,7 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository $codeRepository */
-        $codeRepository = $this->getService('ps_checkout.repository.paypal.code');
+        $codeRepository = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PayPalCodeRepository::class);
         $currency_order = Currency::getCurrencyInstance($cart->id_currency);
         $isCurrencySupported = false;
 
@@ -716,14 +716,14 @@ class Ps_checkout extends PaymentModule
      */
     public function hookDisplayAdminAfterHeader()
     {
-        /** @var PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
-        $paypalConfiguration = $this->getService('ps_checkout.paypal.configuration');
-        /** @var PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
-        $psAccount = $this->getService('ps_checkout.repository.prestashop.account');
+        /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $paypalConfiguration */
+        $paypalConfiguration = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
+        /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository $psAccount */
+        $psAccount = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PsAccountRepository::class);
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService('ps_checkout.context.shop');
+        $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
         /** @var \PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule $moduleContext */
-        $moduleContext = $this->getService('ps_checkout.store.module.context');
+        $moduleContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ContextModule::class);
         $isShop17 = $shopContext->isShop17();
         $isFullyOnboarded = $psAccount->onBoardingIsCompleted() && $paypalConfiguration->getMerchantId();
 
@@ -832,7 +832,7 @@ class Ps_checkout extends PaymentModule
     {
         if (static::$merchantIsValid === null) {
             /** @var \PrestaShop\Module\PrestashopCheckout\Validator\MerchantValidator $merchantValidator */
-            $merchantValidator = $this->getService('ps_checkout.validator.merchant');
+            $merchantValidator = $this->getService(\PrestaShop\Module\PrestashopCheckout\Validator\MerchantValidator::class);
             static::$merchantIsValid = $merchantValidator->merchantIsValid();
         }
 
@@ -851,7 +851,7 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Validator\FrontControllerValidator $frontControllerValidator */
-        $frontControllerValidator = $this->getService('ps_checkout.validator.front_controller');
+        $frontControllerValidator = $this->getService(\PrestaShop\Module\PrestashopCheckout\Validator\FrontControllerValidator::class);
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
         $version = $this->getService('ps_checkout.module.version');
@@ -880,22 +880,22 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Sdk\PayPalSdkConfigurationBuilder $payPalSdkConfigurationBuilder */
-        $payPalSdkConfigurationBuilder = $this->getService('ps_checkout.sdk.paypal.configurationbuilder');
+        $payPalSdkConfigurationBuilder = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\Sdk\PayPalSdkConfigurationBuilder::class);
 
         /** @var \PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration $expressCheckoutConfiguration */
-        $expressCheckoutConfiguration = $this->getService('ps_checkout.express_checkout.configuration');
+        $expressCheckoutConfiguration = $this->getService(\PrestaShop\Module\PrestashopCheckout\ExpressCheckout\ExpressCheckoutConfiguration::class);
 
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $payPalConfiguration */
-        $payPalConfiguration = $this->getService('ps_checkout.paypal.configuration');
+        $payPalConfiguration = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
 
         /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
-        $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
+        $fundingSourceProvider = $this->getService(\PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider::class);
 
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration $payLaterConfiguration */
-        $payLaterConfiguration = $this->getService('ps_checkout.pay_later.configuration');
+        $payLaterConfiguration = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalPayLaterConfiguration::class);
 
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService('ps_checkout.context.shop');
+        $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Version\Version $version */
         $version = $this->getService('ps_checkout.module.version');
@@ -934,7 +934,7 @@ class Ps_checkout extends PaymentModule
         if (Validate::isLoadedObject($this->context->cart)) {
             $cartProductCount = (int) $this->context->cart->nbProducts();
             /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
-            $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
+            $psCheckoutCartRepository = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository::class);
 
             /** @var PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
@@ -1067,7 +1067,7 @@ class Ps_checkout extends PaymentModule
     public function addCheckboxCarrierRestrictionsForModule(array $shopsList = [])
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService('ps_checkout.context.shop');
+        $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
         if (false === $shopContext->isShop17()) {
             return true;
         }
@@ -1189,13 +1189,13 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
-        $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
+        $psCheckoutCartRepository = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository::class);
 
         /** @var PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $order->id_cart);
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration $psConfiguration */
-        $psConfiguration = $this->getService('ps_checkout.configuration');
+        $psConfiguration = $this->getService(\PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration::class);
 
         // No PayPal Order found for this Order
         if (false === $psCheckoutCart) {
@@ -1217,7 +1217,7 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderTranslationProvider $translationService */
-        $translationService = $this->getService('ps_checkout.paypal.order.translations');
+        $translationService = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderTranslationProvider::class);
         $translations = $translationService->getSummaryTranslations();
 
         $legalFreeText .= $translations['blockTitle'] . PHP_EOL;
@@ -1366,10 +1366,10 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService('ps_checkout.context.shop');
+        $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $psCheckoutCartRepository */
-        $psCheckoutCartRepository = $this->getService('ps_checkout.repository.pscheckoutcart');
+        $psCheckoutCartRepository = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository::class);
 
         /** @var PsCheckoutCart|false $psCheckoutCart */
         $psCheckoutCart = $psCheckoutCartRepository->findOneByCartId((int) $this->context->cart->id);
@@ -1434,7 +1434,7 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider $fundingSourceProvider */
-        $fundingSourceProvider = $this->getService('ps_checkout.funding_source.provider');
+        $fundingSourceProvider = $this->getService(\PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceProvider::class);
         $paymentOptions = [];
 
         foreach ($fundingSourceProvider->getAll() as $fundingSource) {
@@ -1456,7 +1456,7 @@ class Ps_checkout extends PaymentModule
     private function getCheckoutPageUrl()
     {
         /** @var \PrestaShop\Module\PrestashopCheckout\ShopContext $shopContext */
-        $shopContext = $this->getService('ps_checkout.context.shop');
+        $shopContext = $this->getService(\PrestaShop\Module\PrestashopCheckout\ShopContext::class);
 
         if ($shopContext->isShop17()) {
             return $this->context->link->getPageLink(
@@ -1546,7 +1546,7 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository $repository */
-        $repository = $this->getService('ps_checkout.repository.pscheckoutcart');
+        $repository = $this->getService(\PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository::class);
 
         $psCheckoutCart = $repository->findOneByCartId($id_cart);
 
@@ -1555,7 +1555,7 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider $paypalOrderProvider */
-        $paypalOrderProvider = $this->getService('ps_checkout.paypal.provider.order');
+        $paypalOrderProvider = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider::class);
 
         $paypalOrder = $paypalOrderProvider->getById($psCheckoutCart->paypal_order);
 
@@ -1576,7 +1576,7 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider $fundingSourceTranslationProvider */
-        $fundingSourceTranslationProvider = $this->getService('ps_checkout.funding_source.translation');
+        $fundingSourceTranslationProvider = $this->getService(\PrestaShop\Module\PrestashopCheckout\FundingSource\FundingSourceTranslationProvider::class);
 
         \Db::getInstance()->update(
             'order_payment',
@@ -1641,7 +1641,7 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder $orderSummaryViewBuilder */
-        $orderSummaryViewBuilder = $this->getService('ps_checkout.paypal.builder.view_order_summary');
+        $orderSummaryViewBuilder = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder::class);
 
         try {
             $orderSummaryView = $orderSummaryViewBuilder->build($order);
@@ -1675,7 +1675,7 @@ class Ps_checkout extends PaymentModule
         }
 
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder $orderSummaryViewBuilder */
-        $orderSummaryViewBuilder = $this->getService('ps_checkout.paypal.builder.view_order_summary');
+        $orderSummaryViewBuilder = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderSummaryViewBuilder::class);
 
         try {
             $orderSummaryView = $orderSummaryViewBuilder->build($order);
