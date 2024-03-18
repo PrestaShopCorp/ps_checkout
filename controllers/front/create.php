@@ -99,13 +99,17 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
 
             $cartId = (int) $this->context->cart->id;
 
+            $vaultId = isset($bodyValues['vaultId']) ? $bodyValues['vaultId'] : null;
+            $vault = isset($bodyValues['vault']) && $bodyValues['vault'];
+            $favorite = isset($bodyValues['favorite'])  && $bodyValues['favorite'];;
+
             $fundingSource = isset($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : 'paypal';
-            $isHostedFields = isset($bodyValues['isHostedFields']) && $bodyValues['isHostedFields'];
+            $isCardFields = isset($bodyValues['isCardFields']) && $bodyValues['isCardFields'];
             $isExpressCheckout = (isset($bodyValues['isExpressCheckout']) && $bodyValues['isExpressCheckout']) || empty($this->context->cart->id_address_delivery);
 
             /** @var CommandBusInterface $commandBus */
             $commandBus = $this->module->getService('ps_checkout.bus.command');
-            $commandBus->handle(new CreatePayPalOrderCommand($cartId, $fundingSource, $isHostedFields, $isExpressCheckout));
+            $commandBus->handle(new CreatePayPalOrderCommand($cartId, $fundingSource, $isCardFields, $isExpressCheckout));
 
             /** @var GetPayPalOrderForCartIdQueryResult $getPayPalOrderForCartIdQueryResult */
             $getPayPalOrderForCartIdQueryResult = $commandBus->handle(new GetPayPalOrderForCartIdQuery($cartId));

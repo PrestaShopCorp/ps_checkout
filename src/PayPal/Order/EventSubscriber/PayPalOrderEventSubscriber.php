@@ -158,14 +158,15 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
 
         $payPalOrder = new PayPalOrder(
             $order['id'],
-            $event->getCartId(),
+            $event->getCartId()->getValue(),
             $order['intent'],
             array_keys($order['payment_source'])[0],
             $order['status'],
-            json_encode($order['payment_source']),
+            $order['payment_source'],
             $this->payPalConfiguration->getPaymentMode(),
             $event->isCardFields(),
-            $event->isExpressCheckout()
+            $event->isExpressCheckout(),
+            $event->getCustomerIntent()
         );
 
         $this->payPalOrderRepository->createPayPalOrder($payPalOrder);

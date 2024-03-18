@@ -22,6 +22,8 @@ namespace PrestaShop\Module\PrestashopCheckout\Entity;
 
 class PayPalOrderPurchaseUnit
 {
+    const TABLE = 'pscheckout_purchase_unit';
+
     /**
      * @var string|null
      */

@@ -238,8 +238,7 @@ export class CardFieldsComponent extends BaseComponent {
                 ...this.getVaultFormData(),
                 ...data,
                 fundingSource: this.data.name,
-                isHostedFields: true
-                // vault: storeCardInVault
+                isCardFields: true
               })
               .then((data) => {
                 this.data.orderId = data;

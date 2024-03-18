@@ -22,6 +22,8 @@ namespace PrestaShop\Module\PrestashopCheckout\Entity;
 
 class PayPalOrderRefund
 {
+    const TABLE = 'pscheckout_refund';
+
     /**
      * @var string|null
      */

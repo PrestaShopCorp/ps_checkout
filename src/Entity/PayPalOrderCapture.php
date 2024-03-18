@@ -22,6 +22,8 @@ namespace PrestaShop\Module\PrestashopCheckout\Entity;
 
 class PayPalOrderCapture
 {
+    const TABLE = 'pscheckout_capture';
+
     /**
      * @var string|null
      */

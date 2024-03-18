@@ -101,11 +101,14 @@ class TableManager
             `id` varchar(50) NOT NULL,
             `id_cart` varchar(50) NOT NULL,
             `status` varchar(50) NOT NULL,
+            `intent` varchar(50) NOT NULL,
             `final_capture` tinyint(1) NOT NULL,,
+            `funding_source` varchar(50) NOT NULL,
             `payment_source` text,
             `environment` varchar(50) NOT NULL,
             `is_card_fields` tinyint(1) NOT NULL,
             `is_express_checkout` tinyint(1) NOT NULL,
+            `customer_intent` varchar(50),
             PRIMARY KEY (`id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ') && $this->db->execute('

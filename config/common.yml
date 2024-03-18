@@ -89,6 +89,7 @@ services:
         PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\SavePaymentTokenCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\SavePaymentTokenCommandHandler'
         PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\DeletePaymentTokenCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\DeletePaymentTokenCommandHandler'
         PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\Customer\Command\SavePayPalCustomerCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\Customer\CommandHandler\SavePayPalCustomerCommandHandler'
 
   PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherFactory:
     class: 'PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherFactory'

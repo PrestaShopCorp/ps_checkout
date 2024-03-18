@@ -22,6 +22,10 @@ namespace PrestaShop\Module\PrestashopCheckout\Entity;
 
 class PayPalOrder
 {
+    const TABLE = 'pscheckout_order';
+    const CUSTOMER_INTENT_VAULT = 'VAULT';
+    const CUSTOMER_INTENT_FAVORITE = 'FAVORITE';
+
     /**
      * @var string|null
      */
@@ -43,7 +47,7 @@ class PayPalOrder
      */
     private $status;
     /**
-     * @var string|null
+     * @var array
      */
     private $paymentSource;
     /**
@@ -58,8 +62,12 @@ class PayPalOrder
      * @var bool
      */
     private $isExpressCheckout;
+    /**
+     * @var string|null
+     */
+    private $customerIntent;
 
-    public function __construct($id = null, $idCart = null, $intent = null, $fundingSource = null, $status = null, $paymentSource = null, $environment = 'LIVE', $isCardFields = false, $isExpressCheckout = false)
+    public function __construct($id = null, $idCart = null, $intent = null, $fundingSource = null, $status = null, $paymentSource = [], $environment = 'LIVE', $isCardFields = false, $isExpressCheckout = false, $customerIntent = null)
     {
         $this->id = $id;
         $this->idCart = $idCart;
@@ -70,6 +78,7 @@ class PayPalOrder
         $this->environment = $environment;
         $this->isCardFields = (bool) $isCardFields;
         $this->isExpressCheckout = (bool) $isExpressCheckout;
+        $this->customerIntent = $customerIntent;
     }
 
     /**
@@ -173,7 +182,7 @@ class PayPalOrder
     }
 
     /**
-     * @return string|null
+     * @return array
      */
     public function getPaymentSource()
     {
@@ -248,6 +257,26 @@ class PayPalOrder
     public function setIsExpressCheckout($isExpressCheckout)
     {
         $this->isExpressCheckout = (bool) $isExpressCheckout;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCustomerIntent()
+    {
+        return $this->customerIntent;
+    }
+
+    /**
+     * @param string $customerIntent
+     *
+     * @return PayPalOrder
+     */
+    public function setCustomerIntent($customerIntent)
+    {
+        $this->customerIntent = $customerIntent;
 
         return $this;
     }

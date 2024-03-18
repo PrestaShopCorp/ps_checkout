@@ -35,3 +35,8 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
     arguments:
       - '@ps_checkout.db'
+
+  PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository:
+    class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
+    arguments:
+      - '@ps_checkout.db'

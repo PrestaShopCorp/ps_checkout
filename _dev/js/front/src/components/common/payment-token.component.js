@@ -69,9 +69,9 @@ export class PaymentTokenComponent extends BaseComponent {
     if (form) {
       const formData = new FormData(form);
       return {
-        favorite: formData.get(`ps_checkout-favorite-payment-${this.data.name}`) === '1',
         fundingSource: formData.get(`ps_checkout-funding-source-${this.data.name}`),
-        vaultId: formData.get(`ps_checkout-vault-id-${this.data.name}`)
+        vaultId: formData.get(`ps_checkout-vault-id-${this.data.name}`),
+        favorite: formData.get(`ps_checkout-favorite-payment-${this.data.name}`) === '1'
       };
 
     }

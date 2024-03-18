@@ -102,3 +102,8 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandler\SavePaymentTokenCommandHandler'
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\Customer\CommandHandler\SavePayPalCustomerCommandHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Customer\CommandHandler\SavePayPalCustomerCommandHandler'
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'

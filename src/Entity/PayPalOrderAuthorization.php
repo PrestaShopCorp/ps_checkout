@@ -22,6 +22,8 @@ namespace PrestaShop\Module\PrestashopCheckout\Entity;
 
 class PayPalOrderAuthorization
 {
+    const TABLE = 'pscheckout_authorization';
+
     /**
      * @var string|null
      */
