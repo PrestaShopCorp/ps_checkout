@@ -78,7 +78,8 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
             try {
                 $order = $this->payPalOrderRepository->getPayPalOrderById($orderId);
                 $setFavorite = strpos($order->getCustomerIntent(), PayPalOrder::CUSTOMER_INTENT_FAVORITE) !== false;
-            } catch (\Exception $exception) {}
+            } catch (\Exception $exception) {
+            }
         }
 
         $this->commandBus->handle(new SavePaymentTokenCommand(

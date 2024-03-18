@@ -101,7 +101,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
 
             $vaultId = isset($bodyValues['vaultId']) ? $bodyValues['vaultId'] : null;
             $vault = isset($bodyValues['vault']) && $bodyValues['vault'];
-            $favorite = isset($bodyValues['favorite'])  && $bodyValues['favorite'];;
+            $favorite = isset($bodyValues['favorite']) && $bodyValues['favorite'];
 
             $fundingSource = isset($bodyValues['fundingSource']) ? $bodyValues['fundingSource'] : 'paypal';
             $isCardFields = isset($bodyValues['isCardFields']) && $bodyValues['isCardFields'];

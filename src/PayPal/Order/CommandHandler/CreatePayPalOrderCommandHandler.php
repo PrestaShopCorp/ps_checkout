@@ -30,11 +30,11 @@ use PrestaShop\Module\PrestashopCheckout\Exception\InvalidRequestException;
 use PrestaShop\Module\PrestashopCheckout\Exception\NotAuthorizedException;
 use PrestaShop\Module\PrestashopCheckout\Exception\UnprocessableEntityException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
-use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CreatePayPalOrderPayloadBuilderInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializerInterface;
 use PrestaShop\PrestaShop\Core\Foundation\IoC\Exception;
 
@@ -109,16 +109,16 @@ class CreatePayPalOrderCommandHandler
                 $payPalCustomerId = new PayPalCustomerId($order->getPaymentSource()->getPaypal()->getAttributes()->getVault()->getCustomer()->getId());
                 $customerId = new CustomerId($cart->getCustomer()->getId());
                 $this->payPalCustomerRepository->save($customerId, $payPalCustomerId);
-            } catch (\Exception $exception) {}
+            } catch (\Exception $exception) {
+            }
         }
 
         if ($command->favorite()) {
             $customerIntent[] = PayPalOrder::CUSTOMER_INTENT_FAVORITE;
         }
 
-        if ($order->getPaymentSource()->getPaypal()->getAttributes()->getVault()->getCustomer()->getId())
-
-        $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
+        if ($order->getPaymentSource()->getPaypal()->getAttributes()->getVault()->getCustomer()->getId()) {
+            $this->eventDispatcher->dispatch(new PayPalOrderCreatedEvent(
             $order->getId(),
             $this->objectSerializer->toArray($order, false, true),
             $command->getCartId()->getValue(),
@@ -127,5 +127,6 @@ class CreatePayPalOrderCommandHandler
             $command->isExpressCheckout(),
             !empty($customerIntent) ? implode(',', $customerIntent) : null
         ));
+        }
     }
 }

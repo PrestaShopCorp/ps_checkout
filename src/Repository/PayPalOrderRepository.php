@@ -32,7 +32,6 @@ use PrestaShopDatabaseException;
 
 class PayPalOrderRepository
 {
-
     /**
      * @var Db
      */
@@ -64,7 +63,7 @@ class PayPalOrderRepository
                 'environment' => pSQL($payPalOrder->getEnvironment()),
                 'is_card_fields' => $payPalOrder->isCardFields(),
                 'is_express_checkout' => $payPalOrder->isExpressCheckout(),
-                'customer_intent' => pSQL($payPalOrder->getCustomerIntent())
+                'customer_intent' => pSQL($payPalOrder->getCustomerIntent()),
             ]
         );
     }
