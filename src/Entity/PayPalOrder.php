@@ -190,7 +190,7 @@ class PayPalOrder
     }
 
     /**
-     * @param string $paymentSource
+     * @param array $paymentSource
      *
      * @return PayPalOrder
      */

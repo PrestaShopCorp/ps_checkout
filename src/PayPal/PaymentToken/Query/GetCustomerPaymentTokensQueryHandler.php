@@ -62,7 +62,7 @@ class GetCustomerPaymentTokensQueryHandler
             $paymentTokens,
             $query->getCustomerId(),
             $totalItems,
-            $totalPages
+            (int) $totalPages
         );
     }
 }
