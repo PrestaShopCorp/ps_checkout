@@ -269,7 +269,7 @@
   opacity: 100;
 }
 
-.ps-checkout.popup {
+.ps-checkout.popup, .ps-checkout.ps-checkout-modal {
   position: absolute;
   top: 0;
   left: 0;
@@ -285,24 +285,29 @@
   border-radius: 15px;
 }
 
+.ps-checkout.ps-checkout-modal {
+  border-radius: 0;
+  height: fit-content;
+}
+
 @media (max-width: 992px) {
-  .ps-checkout.popup {
+  .ps-checkout.popup, .ps-checkout.ps-checkout-modal {
     width: 600px;
   }
 }
 
 @media (max-width: 768px) {
-  .ps-checkout.popup {
+  .ps-checkout.popup, .ps-checkout.ps-checkout-modal {
     width: 500px;
   }
 }
 
 @media (max-width: 576px) {
-  .ps-checkout.popup {
+  .ps-checkout.popup, .ps-checkout.ps-checkout-modal {
     width: 350px;
   }
 
-  .ps-checkout.text {
+  .ps-checkout.text, .ps-checkout.content {
     font-size: 20px;
   }
 }
@@ -312,6 +317,30 @@
   margin: 0 auto;
   margin-top: 45px;
   text-align: center;
+}
+
+.ps-checkout.ps-checkout-modal .ps-checkout.text {
+  margin: 40px 15px;
+}
+
+.ps-checkout.content {
+  margin: 15px;
+}
+
+.ps-checkout.footer {
+  padding: 15px;
+  width: 100%;
+  text-align: right;
+}
+
+.ps-checkout.footer > button + button{
+  margin-left: 10px;
+}
+
+.ps-checkout.footer button.ps-checkout.btn.danger {
+  color: #fff;
+  background-color: #ff4c4c;
+  border-color: #ff4c4c;
 }
 
 .ps-checkout.subtext {
@@ -504,7 +533,7 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
   text-align: center;
 }
 
-form>a.ps_checkout-vault-token-delete {
+form a.ps_checkout-vault-token-delete {
   cursor: pointer;
   text-decoration: underline !important;
   font-size: 0.75rem;

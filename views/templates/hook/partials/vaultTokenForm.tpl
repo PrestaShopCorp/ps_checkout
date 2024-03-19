@@ -39,5 +39,6 @@
     {/if}
     <input type="hidden" name="ps_checkout-funding-source-{$paymentIdentifier}" value="{$fundingSource}">
     <input type="hidden" name="ps_checkout-vault-id-{$paymentIdentifier}" value="{$vaultId}">
+    <input type="hidden" name="ps_checkout-vault-label-{$paymentIdentifier}" value="{$label}">
   </div>
 </form>

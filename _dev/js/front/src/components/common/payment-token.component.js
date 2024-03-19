@@ -17,6 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  */
 import { BaseComponent } from '../../core/dependency-injection/base.component';
+import {ModalComponent} from "./modal.component";
 
 /**
  * @typedef PaymentTokenComponentProps
@@ -33,6 +34,7 @@ export class PaymentTokenComponent extends BaseComponent {
     payPalService: 'PayPalService',
     psCheckoutApi: 'PsCheckoutApi',
     querySelectorService: 'QuerySelectorService',
+    $: '$'
   };
 
   created() {
@@ -52,10 +54,33 @@ export class PaymentTokenComponent extends BaseComponent {
     this.data.HTMLElementDeleteButton = this.getDeleteButton();
 
     this.data.disabled = false;
+    this.data.modal = null;
   }
 
-  deletePaymentToken() {
-    this.data.HTMLElementButton.setAttribute('disabled', '');
+  showModal() {
+    if (!this.data.modal) {
+      const modalContent = document.createElement('div');
+      const line1 = document.createElement('p');
+      line1.innerText = this.$('checkout.payment.token.delete.modal.content');
+      const paymentLabel = document.createElement('p');
+      paymentLabel.innerText = this.getPaymentLabel();
+      modalContent.append(line1, paymentLabel);
+
+      this.data.modal = new ModalComponent(this.app, {
+        header: this.$('checkout.payment.token.delete.modal.header'),
+        content: modalContent,
+        confirmText: this.$('checkout.payment.token.delete.modal.confirm-button'),
+        confirmType: 'danger',
+        onClose: (() => {
+          this.data.HTMLElementButton.removeAttribute('disabled');
+        }),
+        onConfirm: (() => {this.onDeleteConfirm()})
+      }).render();
+    }
+    this.data.modal.show();
+  }
+
+  onDeleteConfirm() {
     const vaultId = this.getVaultFormData().vaultId;
     this.psCheckoutApi.postDeleteVaultedToken({vaultId}).then(() => {
       this.data.disabled = true;
@@ -72,8 +97,7 @@ export class PaymentTokenComponent extends BaseComponent {
     button.addEventListener('click', (event) => {
       event.preventDefault();
       this.data.HTMLElementButton.setAttribute('disabled', '');
-
-      this.deletePaymentToken();
+      this.showModal();
     });
 
     return button;
@@ -94,6 +118,15 @@ export class PaymentTokenComponent extends BaseComponent {
     this.createOrder().then(() => this.validateOrder());
   }
 
+  getPaymentLabel() {
+    const form = document.querySelector(`form#ps_checkout-vault-token-form-${this.data.name}`);
+    if (form) {
+      const formData = new FormData(form);
+      return formData.get(`ps_checkout-vault-label-${this.data.name}`);
+    }
+    return '';
+  }
+
   getVaultFormData() {
     const form = document.querySelector(`form#ps_checkout-vault-token-form-${this.data.name}`);
     if (form) {
@@ -103,7 +136,6 @@ export class PaymentTokenComponent extends BaseComponent {
         vaultId: formData.get(`ps_checkout-vault-id-${this.data.name}`),
         favorite: formData.get(`ps_checkout-favorite-payment-${this.data.name}`) === '1'
       };
-
     }
     return {};
   }

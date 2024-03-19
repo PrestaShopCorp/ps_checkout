@@ -603,6 +603,7 @@ class Ps_checkout extends PaymentModule
                 'paymentIdentifier' => $fundingSource->name,
                 'fundingSource' => $fundingSource->paymentSource,
                 'isFavorite' => $fundingSource->isFavorite,
+                'label' => $fundingSource->label,
                 'vaultId' => explode('-', $fundingSource->name)[1],
             ]);
             $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultTokenForm.tpl'));
@@ -1051,6 +1052,11 @@ class Ps_checkout extends PaymentModule
                 'error.paypal-sdk.contingency.error' => $this->l('An error occurred on card holder authentication, please choose another payment method or try again.'),
                 'error.paypal-sdk.contingency.failure' => $this->l('Card holder authentication failed, please choose another payment method or try again.'),
                 'error.paypal-sdk.contingency.unknown' => $this->l('Card holder authentication cannot be checked, please choose another payment method or try again.'),
+                'ok' => $this->l('Ok'),
+                'cancel' => $this->l('Cancel'),
+                'checkout.payment.token.delete.modal.header' => $this->l('Delete this payment method?'),
+                'checkout.payment.token.delete.modal.content' => $this->l('The following payment method will be deleted from your account:'),
+                'checkout.payment.token.delete.modal.confirm-button' => $this->l('Delete payment method'),
             ],
         ]);
 
