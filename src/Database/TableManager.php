@@ -102,7 +102,6 @@ class TableManager
             `id_cart` varchar(50) NOT NULL,
             `status` varchar(50) NOT NULL,
             `intent` varchar(50) NOT NULL,
-            `final_capture` tinyint(1) NOT NULL,,
             `funding_source` varchar(50) NOT NULL,
             `payment_source` text,
             `environment` varchar(50) NOT NULL,
