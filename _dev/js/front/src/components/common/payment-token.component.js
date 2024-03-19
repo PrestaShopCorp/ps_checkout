@@ -39,7 +39,9 @@ export class PaymentTokenComponent extends BaseComponent {
     this.data.name = this.props.fundingSource.name;
     this.data.orderId = this.payPalService.getOrderId();
 
-    this.data.HTMLElement = this.props.HTMLElement;
+    this.data.HTMLElementRadio = this.props.HTMLElementRadio;
+    this.data.HTMLElementContainer = this.props.HTMLElementContainer;
+    this.data.HTMLElementForm = this.props.HTMLElementForm;
 
     this.data.conditions = this.app.root.children.conditionsCheckbox;
     this.data.loader = this.app.root.children.loader;
@@ -47,6 +49,34 @@ export class PaymentTokenComponent extends BaseComponent {
     this.data.HTMLElementBaseButton = this.querySelectorService.getBasePaymentConfirmation();
     this.data.HTMLElementButton = null;
     this.data.HTMLElementButtonWrapper = this.getButtonWrapper();
+    this.data.HTMLElementDeleteButton = this.getDeleteButton();
+
+    this.data.disabled = false;
+  }
+
+  deletePaymentToken() {
+    this.data.HTMLElementButton.setAttribute('disabled', '');
+    const vaultId = this.getVaultFormData().vaultId;
+    this.psCheckoutApi.postDeleteVaultedToken({vaultId}).then(() => {
+      this.data.disabled = true;
+      this.data.HTMLElementRadio.setAttribute('disabled', '');
+      this.data.HTMLElementRadio.classList.add('disabled');
+      this.data.HTMLElementContainer.style.display = 'none';
+      this.data.HTMLElementForm.style.display = 'none';
+    }).catch((error) => this.handleError(error));
+  }
+
+  getDeleteButton() {
+    const button = document.querySelector(`#delete-${this.data.name}`);
+
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.data.HTMLElementButton.setAttribute('disabled', '');
+
+      this.deletePaymentToken();
+    });
+
+    return button;
   }
 
   getButtonWrapper() {
@@ -126,10 +156,8 @@ export class PaymentTokenComponent extends BaseComponent {
     });
   }
 
-
-
   isSubmittable() {
-    return this.data.conditions ? this.data.conditions.isChecked() : false;
+    return (this.data.conditions ? this.data.conditions.isChecked() : false) && !this.data.disabled;
   }
 
   render() {

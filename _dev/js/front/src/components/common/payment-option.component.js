@@ -75,6 +75,11 @@ export class PaymentOptionComponent extends BaseComponent {
     );
   }
 
+  getPaymentForm() {
+    const container = `pay-with-${this.data.HTMLElement.id}-form`;
+    return document.getElementById(container);
+  }
+
   getLabel() {
     const translationKey = `funding-source.name.${this.data.name}`;
     const label =
@@ -174,7 +179,9 @@ export class PaymentOptionComponent extends BaseComponent {
     if (this.props.fundingSource.name.includes('token')) {
       this.children.paymentToken = new PaymentTokenComponent(this.app, {
         fundingSource: this.props.fundingSource,
-        HTMLElement: this.data.HTMLElementSmartButton
+        HTMLElementRadio: this.data.HTMLElement,
+        HTMLElementContainer: this.data.HTMLElementContainer,
+        HTMLElementForm: this.getPaymentForm()
       }).render();
     } else if (this.data.HTMLElementCardFields && isCardFieldsEligible && isCardFieldsAvailable) {
       this.data.HTMLElementCardFields.style.display = '';

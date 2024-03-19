@@ -589,9 +589,6 @@ class Ps_checkout extends PaymentModule
         /** @var \PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration $configurationPayPal */
         $configurationPayPal = $this->getService(\PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration::class);
 
-        /** @var PrestaShop\Module\PrestashopCheckout\Configuration\PrestaShopConfiguration $psConfiguration */
-        $psConfiguration = $this->getService('ps_checkout.configuration');
-
         $paymentOptions = [];
 
         $vaultingEnabled = $configurationPayPal->isVaultingEnabled();
@@ -605,6 +602,7 @@ class Ps_checkout extends PaymentModule
             $this->context->smarty->assign([
                 'paymentIdentifier' => $fundingSource->name,
                 'fundingSource' => $fundingSource->paymentSource,
+                'isFavorite' => $fundingSource->isFavorite,
                 'vaultId' => explode('-', $fundingSource->name)[1],
             ]);
             $paymentOption->setForm($this->context->smarty->fetch('module:ps_checkout/views/templates/hook/partials/vaultTokenForm.tpl'));
@@ -991,6 +989,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'ExpressCheckoutUrl' => $this->context->link->getModuleLink($this->name, 'ExpressCheckout', [], true),
             $this->name . 'CheckoutUrl' => $this->getCheckoutPageUrl(),
             $this->name . 'ConfirmUrl' => $this->context->link->getPageLink('order-confirmation', true, (int) $this->context->language->id),
+            $this->name . 'VaultUrl' => $this->context->link->getPageLink('vault', true, (int) $this->context->language->id),
             $this->name . 'PayPalSdkConfig' => $payPalSdkConfigurationBuilder->buildConfiguration(),
             $this->name . 'PayPalOrderId' => $payPalOrderId,
             $this->name . 'FundingSource' => $cartFundingSource,

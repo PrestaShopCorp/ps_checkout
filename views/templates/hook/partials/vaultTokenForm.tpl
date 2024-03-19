@@ -26,12 +26,17 @@
  *
  * Script tags will be removed and some HTML5 element can cause an Exception due to DOMDocument class
  *}
-<form id="ps_checkout-vault-token-form-{$paymentIdentifier}" class="form-horizontal">
+<form id="ps_checkout-vault-token-form-{$paymentIdentifier}" class="form-horizontal ps_checkout-vault-token-form">
   <div class="col-xs-12">
-    <label class="form-control-label" for="ps_checkout-favorite-payment-{$paymentIdentifier}">
-      <input type="checkbox" value="1" name="ps_checkout-favorite-payment-{$paymentIdentifier}">
-      {l s='Make this my preferred payment method ' mod='ps_checkout'}
-    </label>
+    <a id="delete-{$paymentIdentifier}" class="ps_checkout-vault-token-delete">{l s='Delete' mod='ps_checkout'}</a>
+  </div>
+  <div class="col-xs-12">
+    {if !$isFavorite}
+      <label for="ps_checkout-favorite-payment-{$paymentIdentifier}">
+        <input type="checkbox" value="1" name="ps_checkout-favorite-payment-{$paymentIdentifier}">
+        {l s='Make this my preferred payment method' mod='ps_checkout'}
+      </label>
+    {/if}
     <input type="hidden" name="ps_checkout-funding-source-{$paymentIdentifier}" value="{$fundingSource}">
     <input type="hidden" name="ps_checkout-vault-id-{$paymentIdentifier}" value="{$vaultId}">
   </div>

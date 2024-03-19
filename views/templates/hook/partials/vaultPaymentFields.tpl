@@ -28,13 +28,13 @@
  *}
 <div class="ps_checkout-vault-payment-container-{$paymentIdentifier}">
   <div class="col-xs-12">
-    <label class="form-control-label" for="ps_checkout-vault-payment-{$paymentIdentifier}">
+    <label for="ps_checkout-vault-payment-{$paymentIdentifier}">
       <input type="checkbox" value="1" name="ps_checkout-vault-payment-{$paymentIdentifier}">
       {l s='Securely store payment details for future purchases' mod='ps_checkout'}
     </label>
   </div>
   <div class="col-xs-12">
-    <label class="form-control-label" for="ps_checkout-favorite-payment-{$paymentIdentifier}">
+    <label for="ps_checkout-favorite-payment-{$paymentIdentifier}">
       <input type="checkbox" value="1" name="ps_checkout-favorite-payment-{$paymentIdentifier}">
       {if $paymentIdentifier=='card'}
         {l s='Make this card favorite / default ' mod='ps_checkout'}

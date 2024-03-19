@@ -503,3 +503,11 @@ label[for="ps_checkout-hosted-fields-card-cvv"] {
 #cart #ps_checkout-payment-method-logo-block-container {
   text-align: center;
 }
+
+form>a.ps_checkout-vault-token-delete {
+  cursor: pointer;
+  text-decoration: underline !important;
+  font-size: 0.75rem;
+  margin-bottom: 0.75rem;
+  display: inline-block;
+}

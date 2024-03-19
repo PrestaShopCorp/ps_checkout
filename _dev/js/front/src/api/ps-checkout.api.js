@@ -227,4 +227,35 @@ export class PsCheckoutApi extends BaseClass {
       })
     );
   }
+
+  postDeleteVaultedToken(data) {
+    return fetch(this.config.vaultUrl, {
+      method: 'post',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      ...(data ? { body: JSON.stringify(data) } : {})
+    })
+      .then((response) => {
+        const contentType = response.headers.get('content-type');
+        const isJsonResponse =
+          contentType && contentType.indexOf('application/json') !== -1;
+
+        if (isJsonResponse) {
+          if (false === response.ok || response.status >= 400) {
+            return response.json().then((response) => {
+              throw response.body && response.body.error
+                ? response.body.error
+                : { message: this.$('checkout.form.error.label') };
+            });
+          }
+
+          return response.json();
+        }
+
+        throw new Error(this.$('checkout.form.error.label'));
+      });
+  }
 }

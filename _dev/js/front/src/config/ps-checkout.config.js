@@ -39,6 +39,7 @@ export const PsCheckoutConfig = {
   getTokenUrl: window.ps_checkoutGetTokenURL, // TODO: remove this?
   checkoutCheckoutUrl: window.ps_checkoutCheckoutUrl,
   expressCheckoutUrl: window.ps_checkoutExpressCheckoutUrl,
+  vaultUrl: window.ps_checkoutVaultUrl,
 
   hostedFieldsEnabled: window.ps_checkoutHostedFieldsEnabled,
   hostedFieldsContingencies: window.ps_checkoutHostedFieldsContingencies,

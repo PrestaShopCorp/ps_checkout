@@ -64,8 +64,8 @@ class FundingSourceTranslationProvider
             'maxima' => 'Maxima',
             'mercadopago' => 'Mercado Pago',
             'sepa' => 'SEPA',
-            'token-card' => $module->l('Pay with card %s', 'fundingsourcetranslationprovider'),
-            'token-account' => $module->l('Pay with PayPal Account %s', 'fundingsourcetranslationprovider'),
+            'token-card' => $module->l('Saved payment method %s', 'fundingsourcetranslationprovider'),
+            'token-account' => $module->l('Saved payment method PayPal %s', 'fundingsourcetranslationprovider'),
         ];
 
         $payByTranslation = $module->l('Pay by %s', 'fundingsourcetranslationprovider');

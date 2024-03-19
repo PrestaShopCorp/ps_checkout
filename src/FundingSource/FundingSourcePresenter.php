@@ -73,9 +73,10 @@ class FundingSourcePresenter
     public function presentPaymentToken(PaymentToken $paymentToken)
     {
         if ($paymentToken->getPaymentSource() === 'card') {
+            $cardDetails = $paymentToken->getData()['payment_source']['card'];
             $fundingSourceName = $this->translation->getVaultedPaymentMethodName(
                 true,
-                $paymentToken->getData()['payment_source']['card']['last_digits']
+                $cardDetails['brand'] . ' *' . $cardDetails['last_digits']
             );
         } else {
             $fundingSourceName = $this->translation->getVaultedPaymentMethodName(
@@ -91,7 +92,8 @@ class FundingSourcePresenter
             [],
             true,
             false,
-            $paymentToken->getPaymentSource()
+            $paymentToken->getPaymentSource(),
+            $paymentToken->isFavorite()
         );
     }
 }
