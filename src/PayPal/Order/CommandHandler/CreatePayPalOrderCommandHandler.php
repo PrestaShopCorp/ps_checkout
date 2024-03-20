@@ -32,8 +32,10 @@ use PrestaShop\Module\PrestashopCheckout\Exception\UnprocessableEntityException;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CreatePayPalOrderPayloadBuilderInterface;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderResponse;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializerInterface;
 use PrestaShop\PrestaShop\Core\Foundation\IoC\Exception;
@@ -66,6 +68,10 @@ class CreatePayPalOrderCommandHandler
      * @var PayPalCustomerRepository
      */
     private $payPalCustomerRepository;
+    /**
+     * @var PaymentTokenRepository
+     */
+    private $paymentTokenRepository;
 
     public function __construct(
         CartRepositoryInterface $cartRepository,
@@ -73,7 +79,8 @@ class CreatePayPalOrderCommandHandler
         EventDispatcherInterface $eventDispatcher,
         PaymentService $paymentService,
         ObjectSerializerInterface $objectSerializer,
-        PayPalCustomerRepository $payPalCustomerRepository
+        PayPalCustomerRepository $payPalCustomerRepository,
+        PaymentTokenRepository $paymentTokenRepository
     ) {
         $this->cartRepository = $cartRepository;
         $this->createPayPalOrderPayloadBuilder = $createPayPalOrderPayloadBuilder;
@@ -81,6 +88,7 @@ class CreatePayPalOrderCommandHandler
         $this->paymentService = $paymentService;
         $this->objectSerializer = $objectSerializer;
         $this->payPalCustomerRepository = $payPalCustomerRepository;
+        $this->paymentTokenRepository = $paymentTokenRepository;
     }
 
     /**
@@ -115,6 +123,9 @@ class CreatePayPalOrderCommandHandler
 
         if ($command->favorite()) {
             $customerIntent[] = PayPalOrder::CUSTOMER_INTENT_FAVORITE;
+            if ($command->getPaymentTokenId()) {
+                $this->paymentTokenRepository->setTokenFavorite($command->getPaymentTokenId());
+            }
         }
 
         if ($order->getPaymentSource()->getPaypal()->getAttributes()->getVault()->getCustomer()->getId()) {
