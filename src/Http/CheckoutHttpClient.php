@@ -27,11 +27,12 @@ use Http\Client\Exception\RequestException;
 use Http\Client\Exception\TransferException;
 use PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder;
 use PrestaShop\Module\PrestashopCheckout\Http\PsrHttpClientAdapter;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\CheckoutHttpClientInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class CheckoutHttpClient extends PsrHttpClientAdapter
+class CheckoutHttpClient extends PsrHttpClientAdapter implements CheckoutHttpClientInterface
 {
     public function __construct(PaymentClientConfigurationBuilder $configurationBuilder)
     {

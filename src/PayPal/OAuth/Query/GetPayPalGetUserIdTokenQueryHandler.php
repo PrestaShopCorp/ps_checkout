@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query;
 
 use Exception;
-use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\PayPalCustomerRepository;
+use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\OAuthService;
 
 class GetPayPalGetUserIdTokenQueryHandler

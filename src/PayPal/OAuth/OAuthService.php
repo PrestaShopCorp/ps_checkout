@@ -22,13 +22,14 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\OAuth;
 
 use Exception;
 use GuzzleHttp\Psr7\Request;
+use PrestaShop\Module\PrestashopCheckout\Http\HttpClientInterface;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
 
 class OAuthService
 {
     private $httpClient;
 
-    public function __construct($httpClient)
+    public function __construct(HttpClientInterface $httpClient)
     {
         $this->httpClient = $httpClient;
     }

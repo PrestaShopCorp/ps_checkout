@@ -28,15 +28,18 @@ services:
 
   PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'
+    public: true
     arguments:
       - '@ps_checkout.db'
 
   PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
+    public: true
     arguments:
       - '@ps_checkout.db'
 
   PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
+    public: true
     arguments:
       - '@ps_checkout.db'
