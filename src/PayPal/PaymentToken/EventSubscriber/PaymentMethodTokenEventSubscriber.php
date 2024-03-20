@@ -22,11 +22,11 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\EventSubscrib
 
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrder;
-use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\DeletePaymentTokenCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\SavePaymentTokenCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Event\PaymentTokenDeletionInitiatedEvent;
+use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use Ps_checkout;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -42,12 +42,17 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
      * @var PayPalOrderRepository
      */
     private $payPalOrderRepository;
+    /**
+     * @var PaymentTokenRepository
+     */
+    private $paymentTokenRepository;
 
-    public function __construct(Ps_checkout $module, PayPalOrderRepository $payPalOrderRepository)
+    public function __construct(Ps_checkout $module, PayPalOrderRepository $payPalOrderRepository, PaymentTokenRepository $paymentTokenRepository)
     {
         $this->module = $module;
         $this->commandBus = $this->module->getService('ps_checkout.bus.command');
         $this->payPalOrderRepository = $payPalOrderRepository;
+        $this->paymentTokenRepository = $paymentTokenRepository;
     }
 
     /**
@@ -94,8 +99,6 @@ class PaymentMethodTokenEventSubscriber implements EventSubscriberInterface
 
     public function deletePaymentMethodToken(PaymentTokenDeletedEvent $event)
     {
-        $this->commandBus->handle(new DeletePaymentTokenCommand(
-            $event->getResource()['id']
-        ));
+        $this->paymentTokenRepository->deleteById($event->getResource()['id']);
     }
 }

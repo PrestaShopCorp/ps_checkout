@@ -146,6 +146,13 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\Order\State\Service\OrderStateMapper'
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalOrderProvider'
 
+  PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\EventSubscriber\PaymentMethodTokenEventSubscriber:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\EventSubscriber\PaymentMethodTokenEventSubscriber'
+    arguments:
+      - '@ps_checkout.module'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
+
   ps_checkout.event.dispatcher.symfony:
     class: 'Symfony\Component\EventDispatcher\EventDispatcherInterface'
     factory: [ '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherFactory', "create" ]
@@ -155,7 +162,8 @@ services:
         '@PrestaShop\Module\PrestashopCheckout\Order\EventSubscriber\OrderEventSubscriber',
         '@PrestaShop\Module\PrestashopCheckout\PayPal\Order\EventSubscriber\PayPalOrderEventSubscriber',
         '@PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\EventSubscriber\PayPalCaptureEventSubscriber',
-        '@PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscriber\PayPalRefundEventSubscriber'
+        '@PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Refund\EventSubscriber\PayPalRefundEventSubscriber',
+        '@PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\EventSubscriber\PaymentMethodTokenEventSubscriber'
       ]
 
   PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter:

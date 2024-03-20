@@ -41,6 +41,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapt
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCapturePendingEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Payment\Capture\Event\PayPalCaptureReversedEvent;
+use Ps_checkout;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -72,17 +73,17 @@ class PayPalCaptureEventSubscriber implements EventSubscriberInterface
     private $orderStateMapper;
 
     public function __construct(
+        Ps_checkout $module,
         CheckOrderAmount $checkOrderAmount,
         CacheInterface $capturePayPalCache,
         CacheInterface $orderPayPalCache,
-        OrderStateMapper $orderStateMapper,
-        CommandBusInterface $commandBus
+        OrderStateMapper $orderStateMapper
     ) {
         $this->checkOrderAmount = $checkOrderAmount;
         $this->capturePayPalCache = $capturePayPalCache;
         $this->orderPayPalCache = $orderPayPalCache;
         $this->orderStateMapper = $orderStateMapper;
-        $this->commandBus = $commandBus;
+        $this->commandBus = $module->getService('ps_checkout.bus.command');
     }
 
     /**
