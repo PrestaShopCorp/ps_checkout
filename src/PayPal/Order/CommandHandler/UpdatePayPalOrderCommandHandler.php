@@ -26,7 +26,7 @@ use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartException;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
+use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\UpdatePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderUpdatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
@@ -41,7 +41,7 @@ class UpdatePayPalOrderCommandHandler
     private $eventDispatcher;
 
     /**
-     * @var CheckoutHttpClient
+     * @var MaaslandHttpClient
      */
     private $httpClient;
 
@@ -51,12 +51,12 @@ class UpdatePayPalOrderCommandHandler
     private $shopContext;
 
     /**
-     * @param CheckoutHttpClient $httpClient
+     * @param MaaslandHttpClient $httpClient
      * @param EventDispatcherInterface $eventDispatcher
      * @param ShopContext $shopContext
      */
     public function __construct(
-        CheckoutHttpClient $httpClient,
+        MaaslandHttpClient $httpClient,
         EventDispatcherInterface $eventDispatcher,
         ShopContext $shopContext
     ) {

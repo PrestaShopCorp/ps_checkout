@@ -20,19 +20,24 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command;
 
+use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 
 class DeletePaymentTokenCommand
 {
     /** @var PaymentTokenId */
     private $paymentTokenId;
+    /** @var CustomerId */
+    private $customerId;
 
     /**
      * @param PaymentTokenId $paymentTokenId
+     * @param CustomerId $customerId
      */
-    public function __construct($paymentTokenId)
+    public function __construct(PaymentTokenId $paymentTokenId, CustomerId $customerId)
     {
         $this->paymentTokenId = $paymentTokenId;
+        $this->customerId = $customerId;
     }
 
     /**
@@ -41,5 +46,13 @@ class DeletePaymentTokenCommand
     public function getPaymentTokenId()
     {
         return $this->paymentTokenId;
+    }
+
+    /**
+     * @return CustomerId
+     */
+    public function getCustomerId()
+    {
+        return $this->customerId;
     }
 }

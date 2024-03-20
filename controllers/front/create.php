@@ -44,14 +44,11 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
     public function postProcess()
     {
         try {
-            /** @var CommandBusInterface $commandBus */
-            $commandBus = $this->module->getService('ps_checkout.bus.command');
-
             // BEGIN Express Checkout
             $bodyValues = [];
             $bodyContent = file_get_contents('php://input');
 
-            if (false === empty($bodyContent)) {
+            if (!empty($bodyContent)) {
                 $bodyValues = json_decode($bodyContent, true);
             }
 
@@ -109,7 +106,7 @@ class Ps_CheckoutCreateModuleFrontController extends AbstractFrontController
 
             /** @var CommandBusInterface $commandBus */
             $commandBus = $this->module->getService('ps_checkout.bus.command');
-            $commandBus->handle(new CreatePayPalOrderCommand($cartId, $fundingSource, $isCardFields, $isExpressCheckout));
+            $commandBus->handle(new CreatePayPalOrderCommand($cartId, $fundingSource, $isCardFields, $isExpressCheckout, $vaultId, $favorite, $vault));
 
             /** @var GetPayPalOrderForCartIdQueryResult $getPayPalOrderForCartIdQueryResult */
             $getPayPalOrderForCartIdQueryResult = $commandBus->handle(new GetPayPalOrderForCartIdQuery($cartId));

@@ -23,13 +23,13 @@ namespace Tests\Unit\Http;
 use Http\Client\Exception\HttpException;
 use PHPUnit\Framework\TestCase;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
-use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
+use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\Http\HttpClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
-class CheckoutHttpClientTest extends TestCase
+class MaaslandHttpClientTest extends TestCase
 {
     /**
      * @dataProvider invalidRequestErrorsProvider
@@ -132,7 +132,7 @@ class CheckoutHttpClientTest extends TestCase
         $httpClient->method('sendRequest')->willThrowException(new HttpException('An error occurred', $requestMock, $responseMock));
         $this->expectExceptionCode($errorCode);
         $this->expectException(PayPalException::class);
-        $checkoutHttpClient = new CheckoutHttpClient($httpClient);
+        $checkoutHttpClient = new MaaslandHttpClient($httpClient);
         $checkoutHttpClient->createOrder([]);
     }
 

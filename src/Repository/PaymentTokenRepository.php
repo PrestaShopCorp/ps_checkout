@@ -66,7 +66,7 @@ class PaymentTokenRepository
     {
         return $this->db->delete(
             PaymentToken::TABLE,
-            'id = ' . pSQL($paymentTokenId->getValue())
+            '`id` = "' . pSQL($paymentTokenId->getValue()) . '"'
         );
     }
 

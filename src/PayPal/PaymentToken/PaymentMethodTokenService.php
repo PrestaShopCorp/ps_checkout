@@ -22,15 +22,22 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken;
 
 use Exception;
 use GuzzleHttp\Psr7\Request;
+use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCustomerId;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 
 class PaymentMethodTokenService
 {
     private $httpClient;
+    /**
+     * @var CheckoutHttpClient
+     */
+    private $checkoutHttpClient;
 
-    public function __construct($httpClient)
+    public function __construct($httpClient, CheckoutHttpClient $checkoutHttpClient)
     {
         $this->httpClient = $httpClient;
+        $this->checkoutHttpClient = $checkoutHttpClient;
     }
 
     /**
@@ -55,6 +62,19 @@ class PaymentMethodTokenService
             return $data['payment_tokens'];
         } catch (Exception $exception) {
             throw new Exception('Failed to fetch PayPal Payment Method tokens.', 0, $exception);
+        }
+    }
+
+    public function deletePaymentToken(PaymentTokenId $paymentTokenId)
+    {
+        try {
+            $response = $this->checkoutHttpClient->deletePaymentToken(json_encode(['vaultId' => $paymentTokenId->getValue()]));
+
+            if ($response->getStatusCode() !== 200) {
+                throw new Exception('Failed to delete payment token', $response->getStatusCode());
+            }
+        } catch (Exception $exception) {
+            throw new Exception('Failed to delete payment token', 0, $exception);
         }
     }
 }

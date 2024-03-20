@@ -22,7 +22,7 @@ namespace PrestaShop\Module\PrestashopCheckout\Api\Payment;
 
 use Exception;
 use Http\Client\Exception\HttpException;
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient;
+use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
 use PrestaShop\Module\PrestashopCheckout\DTO\Orders\CreatePayPalOrderRequestInterface;
 use PrestaShop\Module\PrestashopCheckout\DTO\Orders\UpdatePayPalOrderRequestInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\InvalidRequestException;
@@ -37,7 +37,7 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 class PaymentService
 {
     /**
-     * @var PayPalOrderHttpClient
+     * @var CheckoutHttpClient
      */
     private $client;
     /**
@@ -45,7 +45,7 @@ class PaymentService
      */
     private $serializer;
 
-    public function __construct(PayPalOrderHttpClient $client, ObjectSerializerInterface $serializer)
+    public function __construct(CheckoutHttpClient $client, ObjectSerializerInterface $serializer)
     {
         $this->client = $client;
         $this->serializer = $serializer;

@@ -4,7 +4,7 @@ namespace Tests\Unit\PaymentService;
 
 use Http\Client\Exception\HttpException;
 use PHPUnit\Framework\TestCase;
-use PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient;
+use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService;
 use PrestaShop\Module\PrestashopCheckout\Exception\InvalidRequestException;
 use PrestaShop\Module\PrestashopCheckout\Exception\NotAuthorizedException;
@@ -50,7 +50,7 @@ class PaymentServiceGetOrderTest extends TestCase
         $responseMock->method('getStatusCode')->willReturn($statusCode);
         $responseMock->method('getBody')->willReturn($streamMock);
 
-        $clientMock = $this->createMock(PayPalOrderHttpClient::class);
+        $clientMock = $this->createMock(CheckoutHttpClient::class);
         $clientMock->method('fetchOrder')->willThrowException(new HttpException('An error occurred', $requestMock, $responseMock));
 
         $this->expectExceptionCode($errorCode);

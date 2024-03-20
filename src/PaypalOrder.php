@@ -23,7 +23,7 @@ namespace PrestaShop\Module\PrestashopCheckout;
 use Module;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
-use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
+use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use Ps_checkout;
 
 /**
@@ -54,8 +54,8 @@ class PaypalOrder
         /** @var Ps_checkout $module */
         $module = Module::getInstanceByName('ps_checkout');
 
-        /** @var CheckoutHttpClient $checkoutHttpClient */
-        $checkoutHttpClient = $module->getService(CheckoutHttpClient::class);
+        /** @var MaaslandHttpClient $checkoutHttpClient */
+        $checkoutHttpClient = $module->getService(MaaslandHttpClient::class);
 
         try {
             $response = $checkoutHttpClient->fetchOrder([

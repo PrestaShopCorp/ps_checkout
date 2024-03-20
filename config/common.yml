@@ -460,22 +460,22 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\Logger\LoggerConfiguration'
       - "@ps_checkout.logger"
 
-  PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient:
-    class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient'
+  PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient:
+    class: 'PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder'
 
   PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService:
     class: 'PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService'
     arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Api\Payment\Client\PayPalOrderHttpClient'
+      - '@PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'
       - '@PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
 
   PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer:
     class: 'PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
 
-  PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClientConfigurationBuilder:
-    class: 'PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClientConfigurationBuilder'
+  PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClientConfigurationBuilder:
+    class: 'PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClientConfigurationBuilder'
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Environment\PaymentEnv'
@@ -495,12 +495,16 @@ services:
     public: true
     factory: ['@PrestaShop\Module\PrestashopCheckout\Http\HttpClientFactory', "create"]
     arguments:
-      - '@PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClientConfigurationBuilder'
+      - '@PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClientConfigurationBuilder'
 
-  PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient:
-    class: 'PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'
+  PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient:
+    class: 'PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient'
     public: true
     arguments:
       - "@ps_checkout.http.client"
 
-
+  PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\PaymentMethodTokenService:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\PaymentMethodTokenService'
+    arguments:
+      - '@?'
+      - '@PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'

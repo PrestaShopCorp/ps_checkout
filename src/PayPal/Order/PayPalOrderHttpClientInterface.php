@@ -24,7 +24,7 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderReque
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\DTO\CreatePayPalOrderResponse;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
 
-interface PayPalOrderHttpClientInterface
+interface CheckoutHttpClientInterface
 {
     /**
      * @param CreatePayPalOrderRequest $payload

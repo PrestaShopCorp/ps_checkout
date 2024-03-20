@@ -25,7 +25,7 @@ use Configuration;
 use Context;
 use PrestaShop\Module\PrestashopCheckout\Event\EventDispatcherInterface;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
-use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
+use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CapturePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCompletedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\PayPalOrderStatus;
@@ -49,11 +49,11 @@ class CapturePayPalOrderCommandHandler
     private $orderPayPalCache;
 
     /**
-     * @var CheckoutHttpClient
+     * @var MaaslandHttpClient
      */
     private $httpClient;
 
-    public function __construct(CheckoutHttpClient $httpClient, EventDispatcherInterface $eventDispatcher, CacheInterface $orderPayPalCache)
+    public function __construct(MaaslandHttpClient $httpClient, EventDispatcherInterface $eventDispatcher, CacheInterface $orderPayPalCache)
     {
         $this->httpClient = $httpClient;
         $this->eventDispatcher = $eventDispatcher;

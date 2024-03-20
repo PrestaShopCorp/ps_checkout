@@ -27,7 +27,7 @@ use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Handler\Response\ResponseApiHandler;
-use PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient;
+use PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient;
 use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use Ps_checkout;
@@ -89,8 +89,8 @@ class CreatePaypalOrderHandler
 
         $payload = $builder->presentPayload()->getArray();
 
-        /** @var CheckoutHttpClient $checkoutHttpClient */
-        $checkoutHttpClient = $module->getService(CheckoutHttpClient::class);
+        /** @var MaaslandHttpClient $checkoutHttpClient */
+        $checkoutHttpClient = $module->getService(MaaslandHttpClient::class);
 
         // Create the paypal order or update it
         try {

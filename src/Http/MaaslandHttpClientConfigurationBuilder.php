@@ -34,7 +34,7 @@ use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use Ps_checkout;
 use Psr\Log\LoggerInterface;
 
-class CheckoutHttpClientConfigurationBuilder implements HttpClientConfigurationBuilderInterface
+class MaaslandHttpClientConfigurationBuilder implements HttpClientConfigurationBuilderInterface
 {
     const TIMEOUT = 10;
 

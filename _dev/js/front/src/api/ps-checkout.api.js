@@ -236,7 +236,7 @@ export class PsCheckoutApi extends BaseClass {
         'Content-Type': 'application/json',
         Accept: 'application/json'
       },
-      ...(data ? { body: JSON.stringify(data) } : {})
+      ...(data ? { body: JSON.stringify({action: 'deleteToken', ...data}) } : {})
     })
       .then((response) => {
         const contentType = response.headers.get('content-type');

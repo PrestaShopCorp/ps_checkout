@@ -22,16 +22,22 @@ namespace PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\CommandHandle
 
 use Exception;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\DeletePaymentTokenCommand;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\PaymentMethodTokenService;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 
 class DeletePaymentTokenCommandHandler
 {
     /** @var PaymentTokenRepository */
     private $paymentTokenRepository;
+    /**
+     * @var PaymentMethodTokenService
+     */
+    private $paymentMethodTokenService;
 
-    public function __construct(PaymentTokenRepository $paymentTokenRepository)
+    public function __construct(PaymentMethodTokenService $paymentMethodTokenService, PaymentTokenRepository $paymentTokenRepository)
     {
         $this->paymentTokenRepository = $paymentTokenRepository;
+        $this->paymentMethodTokenService = $paymentMethodTokenService;
     }
 
     /**
@@ -39,6 +45,19 @@ class DeletePaymentTokenCommandHandler
      */
     public function handle(DeletePaymentTokenCommand $command)
     {
-        $this->paymentTokenRepository->deleteById($command->getPaymentTokenId());
+        $tokenBelongsToCustomer = false;
+        $tokens = $this->paymentTokenRepository->findByPrestaShopCustomerId($command->getCustomerId()->getValue());
+
+        foreach ($tokens as $token) {
+            $tokenBelongsToCustomer |= $token->getId()->getValue() === $command->getPaymentTokenId()->getValue();
+        }
+
+        if ($tokenBelongsToCustomer) {
+            // TODO: Uncomment when we have delete token specifications
+//            $this->paymentMethodTokenService->deletePaymentToken($command->getPaymentTokenId());
+            $this->paymentTokenRepository->deleteById($command->getPaymentTokenId());
+        } else {
+            throw new Exception("Failed to remove saved payment token");
+        }
     }
 }

@@ -25,106 +25,17 @@ use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Http\Client\Exception\RequestException;
 use Http\Client\Exception\TransferException;
-use PrestaShop\Module\PrestashopCheckout\Exception\PayPalException;
-use PrestaShop\Module\PrestashopCheckout\PayPalError;
+use PrestaShop\Module\PrestashopCheckout\Builder\Configuration\PaymentClientConfigurationBuilder;
+use PrestaShop\Module\PrestashopCheckout\Http\PsrHttpClientAdapter;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\ValueObject\PaymentTokenId;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class CheckoutHttpClient implements HttpClientInterface
+class CheckoutHttpClient extends PsrHttpClientAdapter
 {
-    /**
-     * @var HttpClientInterface
-     */
-    private $httpClient;
-
-    public function __construct(HttpClientInterface $httpClient)
+    public function __construct(PaymentClientConfigurationBuilder $configurationBuilder)
     {
-        $this->httpClient = $httpClient;
-    }
-
-    /**
-     * @param array $payload
-     * @param array $options
-     *
-     * @return ResponseInterface
-     *
-     * @throws NetworkException
-     * @throws HttpException
-     * @throws RequestException
-     * @throws TransferException
-     * @throws PayPalException
-     */
-    public function createOrder(array $payload, array $options = [])
-    {
-        return $this->sendRequest(new Request('POST', '/payments/order/create', $options, json_encode($payload)));
-    }
-
-    /**
-     * @param array $payload
-     * @param array $options
-     *
-     * @return ResponseInterface
-     *
-     * @throws NetworkException
-     * @throws HttpException
-     * @throws RequestException
-     * @throws TransferException
-     * @throws PayPalException
-     */
-    public function updateOrder(array $payload, array $options = [])
-    {
-        return $this->sendRequest(new Request('POST', '/payments/order/update', $options, json_encode($payload)));
-    }
-
-    /**
-     * @param array $payload
-     * @param array $options
-     *
-     * @return ResponseInterface
-     *
-     * @throws NetworkException
-     * @throws HttpException
-     * @throws RequestException
-     * @throws TransferException
-     * @throws PayPalException
-     */
-    public function fetchOrder(array $payload, array $options = [])
-    {
-        return $this->sendRequest(new Request('POST', '/payments/order/fetch', $options, json_encode($payload)));
-    }
-
-    /**
-     * @param array $payload
-     * @param array $options
-     *
-     * @return ResponseInterface
-     *
-     * @throws NetworkException
-     * @throws HttpException
-     * @throws RequestException
-     * @throws TransferException
-     * @throws PayPalException
-     */
-    public function captureOrder(array $payload, array $options = [])
-    {
-        return $this->sendRequest(new Request('POST', '/payments/order/capture', $options, json_encode($payload)));
-    }
-
-    /**
-     * @param array $payload
-     * @param array $options
-     *
-     * @return ResponseInterface
-     *
-     * @throws NetworkException
-     * @throws HttpException
-     * @throws RequestException
-     * @throws TransferException
-     * @throws PayPalException
-     */
-    public function refundOrder(array $payload, array $options = [])
-    {
-        return $this->sendRequest(new Request('POST', '/payments/order/refund', $options, json_encode($payload)));
+        parent::__construct($configurationBuilder->build());
     }
 
     /**
@@ -132,53 +43,111 @@ class CheckoutHttpClient implements HttpClientInterface
      *
      * @return ResponseInterface
      *
-     * @throws NetworkException
-     * @throws HttpException
-     * @throws RequestException
-     * @throws TransferException
-     * @throws PayPalException
+     * @throws HttpException|RequestException|TransferException|NetworkException
      */
     public function sendRequest(RequestInterface $request)
     {
         try {
-            $response = $this->httpClient->sendRequest($request);
-        } catch (HttpException $exception) {
-            $response = $exception->getResponse();
-            $message = $this->extractMessage(json_decode($response->getBody(), true));
-
-            if ($message) {
-                (new PayPalError($message))->throwException($exception);
-            }
-
+            return parent::sendRequest($request);
+        } catch (NetworkException $exception) {
             throw $exception;
+            // Thrown when the request cannot be completed because of network issues.
+            // No response here
+        } catch (HttpException $exception) {
+            // Thrown when a response was received but the request itself failed.
+            // There a response here
+            // So this one contains why response failed with Maasland error response
+            if ($exception->getResponse()->getStatusCode() === 500) {
+                // Internal Server Error: retry then stop using Maasland for XXX times after X failed retries, requires a circuit breaker
+            }
+            if ($exception->getResponse()->getStatusCode() === 503) {
+                // Service Unavailable: we should stop using Maasland, requires a circuit breaker
+            }
+            // response status code 4XX throw exception to be catched on specific method
+            throw $exception; // Avoid this to be catched next
+        } catch (RequestException $exception) {
+            throw $exception;
+            // No response here
+        } catch (TransferException $exception) {
+            throw $exception;
+            // others without response
         }
-
-        return $response;
     }
 
     /**
-     * @param array $body
+     * @param string $payload //Payload JSON
+     * @param array $options
      *
-     * @return string
+     * @return ResponseInterface
      */
-    private function extractMessage(array $body)
+    public function createOrder($payload, array $options = [])
     {
-        if (isset($body['details'][0]['issue']) && preg_match('/^[0-9A-Z_]+$/', $body['details'][0]['issue']) === 1) {
-            return $body['details'][0]['issue'];
-        }
+        return $this->sendRequest(new Request('POST', '/payments/order/create', $options, $payload));
+    }
 
-        if (isset($body['error']) && preg_match('/^[0-9A-Z_]+$/', $body['error']) === 1) {
-            return $body['error'];
-        }
+    /**
+     * @param string $payload
+     * @param array $options
+     *
+     * @return ResponseInterface
+     */
+    public function updateOrder($payload, array $options = [])
+    {
+        return $this->sendRequest(new Request('POST', '/payments/order/update', $options, $payload));
+    }
 
-        if (isset($body['message']) && preg_match('/^[0-9A-Z_]+$/', $body['message']) === 1) {
-            return $body['message'];
-        }
+    /**
+     * @param string $payload
+     * @param array $options
+     *
+     * @return ResponseInterface
+     */
+    public function fetchOrder($payload, array $options = [])
+    {
+        return $this->sendRequest(new Request('POST', '/payments/order/fetch', $options, $payload));
+    }
 
-        if (isset($body['name']) && preg_match('/^[0-9A-Z_]+$/', $body['name']) === 1) {
-            return $body['name'];
-        }
+    /**
+     * @param string $payload
+     * @param array $options
+     *
+     * @return ResponseInterface
+     */
+    public function captureOrder($payload, array $options = [])
+    {
+        return $this->sendRequest(new Request('POST', '/payments/order/capture', $options, $payload));
+    }
 
-        return '';
+    /**
+     * @param string $payload
+     * @param array $options
+     *
+     * @return ResponseInterface
+     */
+    public function refundOrder($payload, array $options = [])
+    {
+        return $this->sendRequest(new Request('POST', '/payments/order/refund', $options, $payload));
+    }
+
+    /**
+     * @param string $payload
+     * @param array $options
+     *
+     * @return ResponseInterface
+     */
+    public function generateClientToken($payload, array $options = [])
+    {
+        return $this->sendRequest(new Request('POST', '/payments/order/generate_client_token', $options, $payload));
+    }
+
+    /**
+     * @param string $payload
+     * @param array $options
+     *
+     * @return ResponseInterface
+     */
+    public function deletePaymentToken($payload, array $options = [])
+    {
+        return $this->sendRequest(new Request('DELETE', '/vault/payment-tokens', $options, $payload));
     }
 }
