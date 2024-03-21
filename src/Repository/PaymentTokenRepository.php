@@ -49,6 +49,7 @@ class PaymentTokenRepository
                 'payment_source' => pSQL($paymentToken->getPaymentSource()),
                 'data' => json_encode($paymentToken->getData()),
                 'merchant_id' => $paymentToken->getMerchantId(),
+                'status' => $paymentToken->getStatus(),
                 'is_favorite' => (bool) $paymentToken->isFavorite(),
             ],
             false,
@@ -194,6 +195,7 @@ class PaymentTokenRepository
             $data['payment_source'],
             json_decode($data['data'], true),
             $data['merchant_id'],
+            $data['status'],
             (bool) $data['is_favorite']
         );
     }

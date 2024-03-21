@@ -163,7 +163,9 @@ class TableManager
             `paypal_customer_id` varchar(50) NOT NULL,
             `payment_source` varchar(50) NOT NULL,
             `data` text NOT NULL,
-            PRIMARY KEY (`id_customer`, `paypal_customer_id`)
+            `merchant_id` varchar(50) NOT NULL,
+            `status` varchar(50) NOT NULL,
+            PRIMARY KEY (`id`, `paypal_customer_id`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=UTF8;
         ');
 

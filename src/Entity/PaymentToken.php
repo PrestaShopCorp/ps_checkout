@@ -51,6 +51,10 @@ class PaymentToken
      * @var string
      */
     private $merchantId;
+    /**
+     * @var string
+     */
+    private $status;
 
     /**
      * @param string $id
@@ -60,7 +64,7 @@ class PaymentToken
      * @param string $merchantId
      * @param bool $isFavorite
      */
-    public function __construct($id, $payPalCustomerId, $paymentSource, $data, $merchantId, $isFavorite = false)
+    public function __construct($id, $payPalCustomerId, $paymentSource, $data, $merchantId, $status, $isFavorite = false)
     {
         $this->id = new PaymentTokenId($id);
         $this->payPalCustomerId = new PayPalCustomerId($payPalCustomerId);
@@ -68,6 +72,7 @@ class PaymentToken
         $this->data = $data;
         $this->isFavorite = $isFavorite;
         $this->merchantId = $merchantId;
+        $this->status = $status;
     }
 
     /**
@@ -186,6 +191,26 @@ class PaymentToken
     public function setMerchantId($merchantId)
     {
         $this->merchantId = $merchantId;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     *
+     * @return PaymentToken
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
 
         return $this;
     }
