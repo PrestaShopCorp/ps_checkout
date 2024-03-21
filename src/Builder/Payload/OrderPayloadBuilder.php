@@ -535,14 +535,14 @@ class OrderPayloadBuilder extends Builder implements PayloadBuilderInterface
         $address = $this->cart['addresses'][$addressType];
         $payerCountryIsoCode = $this->getCountryIsoCodeById($address->id_country);
 
-        return [
+        return array_filter([
             'address_line_1' => $address->address1,
             'address_line_2' => $address->address2,
-            'admin_area_1' => (string) $this->getStateNameById($address->id_state),
+            'admin_area_1' => $this->getStateNameById($address->id_state),
             'admin_area_2' => $address->city,
-            'country_code' => (string) $countryCodeMatrice->getPaypalIsoCode($payerCountryIsoCode),
+            'country_code' => $countryCodeMatrice->getPaypalIsoCode($payerCountryIsoCode),
             'postal_code' => $address->postcode,
-        ];
+        ]);
     }
 
     /**
