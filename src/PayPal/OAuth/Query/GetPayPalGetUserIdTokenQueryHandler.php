@@ -21,6 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query;
 
 use Exception;
+use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\OAuthService;
 
@@ -35,15 +36,20 @@ class GetPayPalGetUserIdTokenQueryHandler
      * @var PayPalCustomerRepository
      */
     private $customerRepository;
+    /**
+     * @var PayPalConfiguration
+     */
+    private $payPalConfiguration;
 
     /**
      * @param OAuthService $OAuthService
      * @param PayPalCustomerRepository $customerRepository
      */
-    public function __construct(OAuthService $OAuthService, PayPalCustomerRepository $customerRepository)
+    public function __construct(OAuthService $OAuthService, PayPalCustomerRepository $customerRepository, PayPalConfiguration $payPalConfiguration)
     {
         $this->OAuthService = $OAuthService;
         $this->customerRepository = $customerRepository;
+        $this->payPalConfiguration = $payPalConfiguration;
     }
 
     /**
@@ -56,7 +62,7 @@ class GetPayPalGetUserIdTokenQueryHandler
     public function handle(GetPayPalGetUserIdTokenQuery $query)
     {
         $customerIdPayPal = $query->getCustomerId() ? $this->customerRepository->findPayPalCustomerIdByCustomerId($query->getCustomerId()) : null;
-
-        return new GetPayPalGetUserIdTokenQueryResult($this->OAuthService->getUserIdToken($customerIdPayPal));
+        $merchantId = $this->payPalConfiguration->getMerchantId();
+        return new GetPayPalGetUserIdTokenQueryResult($this->OAuthService->getUserIdToken($merchantId, $customerIdPayPal));
     }
 }

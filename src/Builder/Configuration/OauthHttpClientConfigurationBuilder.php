@@ -34,30 +34,40 @@ use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use Ps_checkout;
 use Psr\Log\LoggerInterface;
 
-class PaymentClientConfigurationBuilder implements HttpClientConfigurationBuilderInterface
+class OauthHttpClientConfigurationBuilder implements HttpClientConfigurationBuilderInterface
 {
     const TIMEOUT = 10;
 
-    /** @var PaymentEnv */
+    /**
+     * @var PaymentEnv
+     */
     private $paymentEnv;
 
-    /** @var Router */
+    /**
+     * @var Router
+     */
     private $router;
 
-    /** @var ShopContext */
+    /**
+     * @var ShopContext
+     */
     private $shopContext;
 
-    /** @var PsAccountRepository */
+    /**
+     * @var PsAccountRepository
+     */
     private $psAccountRepository;
 
     /**
      * @var PrestaShopContext
      */
     private $prestaShopContext;
+
     /**
      * @var LoggerConfiguration
      */
     private $loggerConfiguration;
+
     /**
      * @var LoggerInterface
      */

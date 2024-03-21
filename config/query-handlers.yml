@@ -79,3 +79,4 @@ services:
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\OAuthService'
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
