@@ -78,7 +78,7 @@ class PaymentTokenRepository
      *
      * @throws PrestaShopDatabaseException
      */
-    public function findByPrestaShopCustomerId($psCustomerId)
+    public function findByPrestaShopCustomerId($psCustomerId, $onlyVaulted = false)
     {
         $query = new DbQuery();
         $query->select('t.*')
@@ -87,6 +87,11 @@ class PaymentTokenRepository
             ->where('c.`id_customer` =' . (int) $psCustomerId)
             ->orderBy('t.`is_favorite` DESC')
             ->orderBy('t.`id` ASC');
+
+        if ($onlyVaulted) {
+            $query->where('t.`status` = "VAULTED"');
+        }
+
         $queryResult = $this->db->executeS($query);
 
         if (!$queryResult) {
