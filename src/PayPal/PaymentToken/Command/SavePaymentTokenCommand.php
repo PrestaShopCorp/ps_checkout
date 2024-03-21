@@ -40,6 +40,8 @@ class SavePaymentTokenCommand
     private $setFavorite;
     /** @var string */
     private $merchantId;
+    /** @var string */
+    private $status;
 
     /**
      * @param PaymentTokenId $paymentTokenId
@@ -47,7 +49,7 @@ class SavePaymentTokenCommand
      * @param string $paymentSource
      * @param array $paymentTokenData
      */
-    public function __construct($paymentTokenId, $paypalCustomerId, $paymentSource, $paymentTokenData, $merchantId, $setFavorite = false)
+    public function __construct($paymentTokenId, $paypalCustomerId, $status, $paymentSource, $paymentTokenData, $merchantId, $setFavorite = false)
     {
         $this->paymentTokenId = $paymentTokenId;
         $this->paypalCustomerId = $paypalCustomerId;
@@ -55,6 +57,7 @@ class SavePaymentTokenCommand
         $this->paymentTokenData = $paymentTokenData;
         $this->setFavorite = $setFavorite;
         $this->merchantId = $merchantId;
+        $this->status = $status;
     }
 
     /**
@@ -103,5 +106,13 @@ class SavePaymentTokenCommand
     public function getMerchantId()
     {
         return $this->merchantId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
 }
