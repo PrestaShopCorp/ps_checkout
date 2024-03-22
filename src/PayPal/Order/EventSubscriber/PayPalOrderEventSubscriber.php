@@ -26,6 +26,7 @@ use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SaveCheckoutCommand;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SavePayPalOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrder;
+use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderCapture;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
@@ -168,6 +169,22 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             $event->isExpressCheckout(),
             $event->getCustomerIntent()
         );
+
+        if (!empty($order['purchase_units'][0]['payments']['captures'])) {
+            foreach ($order['purchase_units'][0]['payments']['captures'] as $capture) {
+                $payPalCapture = new PayPalOrderCapture(
+                    $capture['id'],
+                    $event->getOrderPayPalId()->getValue(),
+                    $capture['status'],
+                    $capture['create_time'],
+                    $capture['update_time'],
+                    $capture['seller_protection'],
+                    $capture['seller_receivable_breakdown'],
+                    $capture['final_capture']
+                );
+                $this->payPalOrderRepository->createPayPalOrderCapture($payPalCapture);
+            }
+        }
 
         $this->payPalOrderRepository->createPayPalOrder($payPalOrder);
 

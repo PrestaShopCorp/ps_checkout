@@ -114,10 +114,6 @@ export class PaymentTokenComponent extends BaseComponent {
     this.data.HTMLElementButton.removeAttribute('disabled');
   }
 
-  submitOrder() {
-    this.createOrder().then(() => this.validateOrder());
-  }
-
   getPaymentLabel() {
     const form = document.querySelector(`form#ps_checkout-vault-token-form-${this.data.name}`);
     if (form) {
@@ -141,24 +137,20 @@ export class PaymentTokenComponent extends BaseComponent {
   }
 
   createOrder() {
-    return this.psCheckoutApi.postCreateOrder(this.getVaultFormData())
+    this.redirectToPaymentPage();
+
+    this.psCheckoutApi.postCreateOrder(this.getVaultFormData())
       .then((data) => {
         this.data.orderId = data;
-        this.validateOrder();
+        this.redirectToPaymentPage();
       })
       .catch((error) => this.handleError(error));
   }
 
-  validateOrder() {
-    this.psCheckoutApi.postValidateOrder(
-      {
-        orderID: this.data.orderId,
-        fundingSource: this.data.name,
-      }
-    ).then(() => {
-      this.data.loader.hide();
-      this.data.HTMLElementButton.removeAttribute('disabled');
-    }).catch((error) => this.handleError(error));
+  redirectToPaymentPage() {
+    const confirmationUrl = new URL(this.config.paymentUrl);
+    confirmationUrl.searchParams.append('orderID', this.data.orderId);
+    window.location.href = confirmationUrl.toString();
   }
 
   renderButton() {
@@ -184,7 +176,7 @@ export class PaymentTokenComponent extends BaseComponent {
       this.data.loader.show();
       this.data.HTMLElementButton.setAttribute('disabled', '');
 
-      this.submitOrder();
+      this.createOrder();
     });
   }
 

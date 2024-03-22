@@ -96,7 +96,7 @@ class FundingSourceProvider
         if ((int) $customerId && $this->payPalConfiguration->isVaultingEnabled()) {
             return array_map(function ($paymentToken) {
                 return $this->presenter->presentPaymentToken($paymentToken);
-            }, $this->paymentTokenRepository->findByPrestaShopCustomerId((int) $customerId));
+            }, $this->paymentTokenRepository->findByPrestaShopCustomerId((int) $customerId, true));
         }
 
         return [];

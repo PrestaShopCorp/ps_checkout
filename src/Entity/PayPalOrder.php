@@ -20,6 +20,8 @@
 
 namespace PrestaShop\Module\PrestashopCheckout\Entity;
 
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
+
 class PayPalOrder
 {
     const TABLE = 'pscheckout_order';
@@ -27,23 +29,23 @@ class PayPalOrder
     const CUSTOMER_INTENT_FAVORITE = 'FAVORITE';
 
     /**
-     * @var string|null
+     * @var string
      */
     private $id;
     /**
-     * @var int|null
+     * @var int
      */
     private $idCart;
     /**
-     * @var string|null
+     * @var string
      */
     private $intent;
     /**
-     * @var string|null
+     * @var string
      */
     private $fundingSource;
     /**
-     * @var string|null
+     * @var string
      */
     private $status;
     /**
@@ -67,9 +69,9 @@ class PayPalOrder
      */
     private $customerIntent;
 
-    public function __construct($id = null, $idCart = null, $intent = null, $fundingSource = null, $status = null, $paymentSource = [], $environment = 'LIVE', $isCardFields = false, $isExpressCheckout = false, $customerIntent = null)
+    public function __construct($id, $idCart, $intent, $fundingSource, $status, $paymentSource = [], $environment = 'LIVE', $isCardFields = false, $isExpressCheckout = false, $customerIntent = null)
     {
-        $this->id = $id;
+        $this->id = new PayPalOrderId($id);
         $this->idCart = $idCart;
         $this->intent = $intent;
         $this->fundingSource = $fundingSource;
@@ -82,7 +84,7 @@ class PayPalOrder
     }
 
     /**
-     * @return string|null
+     * @return PayPalOrderId
      */
     public function getId()
     {
@@ -90,11 +92,11 @@ class PayPalOrder
     }
 
     /**
-     * @param string $id
+     * @param PayPalOrderId $id
      *
      * @return PayPalOrder
      */
-    public function setId($id)
+    public function setId(PayPalOrderId $id)
     {
         $this->id = $id;
 
@@ -102,7 +104,7 @@ class PayPalOrder
     }
 
     /**
-     * @return int|null
+     * @return int
      */
     public function getIdCart()
     {
@@ -122,7 +124,7 @@ class PayPalOrder
     }
 
     /**
-     * @return string|null
+     * @return string
      */
     public function getIntent()
     {
@@ -142,7 +144,7 @@ class PayPalOrder
     }
 
     /**
-     * @return string|null
+     * @return string
      */
     public function getFundingSource()
     {
@@ -162,7 +164,7 @@ class PayPalOrder
     }
 
     /**
-     * @return string|null
+     * @return string
      */
     public function getStatus()
     {

@@ -40,6 +40,8 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
       - '@PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService'
       - '@PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository'
 
   PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\UpdatePayPalOrderCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\UpdatePayPalOrderCommandHandler'

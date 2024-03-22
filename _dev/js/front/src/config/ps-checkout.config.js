@@ -36,7 +36,7 @@ export const PsCheckoutConfig = {
   validateOrderUrl: window.ps_checkoutValidateUrl,
   confirmationUrl: window.ps_checkoutConfirmUrl,
   cancelUrl: window.ps_checkoutCancelUrl,
-  getTokenUrl: window.ps_checkoutGetTokenURL, // TODO: remove this?
+  paymentUrl: window.ps_checkoutPaymentUrl,
   checkoutCheckoutUrl: window.ps_checkoutCheckoutUrl,
   expressCheckoutUrl: window.ps_checkoutExpressCheckoutUrl,
   vaultUrl: window.ps_checkoutVaultUrl,

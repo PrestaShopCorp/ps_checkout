@@ -27,6 +27,7 @@ use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderAuthorization;
 use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderCapture;
 use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderPurchaseUnit;
 use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderRefund;
+use PrestaShop\Module\PrestashopCheckout\PayPal\Order\ValueObject\PayPalOrderId;
 use PrestaShop\PrestaShop\Core\Foundation\Database\EntityNotFoundException;
 use PrestaShopDatabaseException;
 
@@ -69,18 +70,18 @@ class PayPalOrderRepository
     }
 
     /**
-     * @param string $payPalOrderId
+     * @param PayPalOrderId $payPalOrderId
      *
      * @return PayPalOrder
      *
      * @throws EntityNotFoundException
      */
-    public function getPayPalOrderById($payPalOrderId)
+    public function getPayPalOrderById(PayPalOrderId $payPalOrderId)
     {
         $query = new DbQuery();
         $query->select('*')
             ->from(PayPalOrder::TABLE, 'o')
-            ->where('o.`id_order` = ' . pSQL($payPalOrderId));
+            ->where('o.`id_order` = "' . pSQL($payPalOrderId->getValue()) . '"');
         $queryResult = $this->db->getRow($query);
         if (!$queryResult) {
             throw new EntityNotFoundException('PayPal Order not found');

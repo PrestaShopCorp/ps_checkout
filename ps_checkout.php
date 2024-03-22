@@ -989,6 +989,7 @@ class Ps_checkout extends PaymentModule
             $this->name . 'CancelUrl' => $this->context->link->getModuleLink($this->name, 'cancel', [], true),
             $this->name . 'ExpressCheckoutUrl' => $this->context->link->getModuleLink($this->name, 'ExpressCheckout', [], true),
             $this->name . 'VaultUrl' => $this->context->link->getModuleLink($this->name, 'vault', [], true),
+            $this->name . 'PaymentUrl' => $this->context->link->getModuleLink($this->name, 'payment', [], true),
             $this->name . 'CheckoutUrl' => $this->getCheckoutPageUrl(),
             $this->name . 'ConfirmUrl' => $this->context->link->getPageLink('order-confirmation', true, (int) $this->context->language->id),
             $this->name . 'PayPalSdkConfig' => $payPalSdkConfigurationBuilder->buildConfiguration(),

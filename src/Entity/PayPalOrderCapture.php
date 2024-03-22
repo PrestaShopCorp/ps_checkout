@@ -25,15 +25,15 @@ class PayPalOrderCapture
     const TABLE = 'pscheckout_capture';
 
     /**
-     * @var string|null
+     * @var string
      */
     private $id;
     /**
-     * @var string|null
+     * @var string
      */
     private $idOrder;
     /**
-     * @var string|null
+     * @var string
      */
     private $status;
     /**
@@ -41,23 +41,23 @@ class PayPalOrderCapture
      */
     private $finalCapture;
     /**
-     * @var string|null
+     * @var string
      */
     private $createdAt;
     /**
-     * @var string|null
+     * @var string
      */
     private $updatedAt;
     /**
-     * @var string|null
+     * @var string
      */
     private $sellerProtection;
     /**
-     * @var string|null
+     * @var array
      */
     private $sellerReceivableBreakdown;
 
-    public function __construct($id = null, $idOrder = null, $status = null, $finalCapture = false, $createdAt = null, $updatedAt = null, $sellerProtection = null, $sellerReceivableBreakdown = null)
+    public function __construct($id, $idOrder, $status, $createdAt, $updatedAt, $sellerProtection, $sellerReceivableBreakdown, $finalCapture = false,)
     {
         $this->id = $id;
         $this->idOrder = $idOrder;

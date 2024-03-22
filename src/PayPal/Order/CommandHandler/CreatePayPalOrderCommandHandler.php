@@ -106,6 +106,7 @@ class CreatePayPalOrderCommandHandler
     public function handle(CreatePayPalOrderCommand $command)
     {
         $cart = $this->cartRepository->getCartById($command->getCartId());
+        // TODO: check if payment token belongs to current customer
         $payload = $this->createPayPalOrderPayloadBuilder->build($cart, $command->getFundingSource(), $command->vault(), $command->getPaymentTokenId());
         $order = $this->paymentService->createOrder($payload);
         $customerIntent = [];
