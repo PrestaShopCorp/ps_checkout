@@ -137,8 +137,6 @@ export class PaymentTokenComponent extends BaseComponent {
   }
 
   createOrder() {
-    this.redirectToPaymentPage();
-
     this.psCheckoutApi.postCreateOrder(this.getVaultFormData())
       .then((data) => {
         this.data.orderId = data;

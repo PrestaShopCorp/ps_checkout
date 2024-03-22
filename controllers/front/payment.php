@@ -60,7 +60,7 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
             $payPalOrder = $payPalOrderRepository->getPayPalOrderById($this->paypalOrderId);
 
             if ($payPalOrder->getIdCart() !== $this->context->cart->id) {
-                throw new Exception('PayPal order doe not belong to this customer');
+                throw new Exception('PayPal order does not belong to this customer');
             }
 
             $payPalOrderFromCache = $payPalOrderProvider->getById($payPalOrder->getId()->getValue());
