@@ -35,8 +35,9 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\CreatePayPalOrderCommandHandler'
     public: true
     arguments:
-      - '@?'
-      - '@?'
+      - '@PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient'
+      - '@PrestaShop\Module\PrestashopCheckout\ShopContext'
+      - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
       - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
       - '@PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService'
       - '@PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializer'
@@ -58,8 +59,8 @@ services:
       - '@PrestaShop\Module\PrestashopCheckout\Http\MaaslandHttpClient'
       - '@PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherAdapter'
       - "@ps_checkout.cache.paypal.order"
-      - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
-      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
+      - '@PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
 
   PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\SaveCheckoutCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\SaveCheckoutCommandHandler'
