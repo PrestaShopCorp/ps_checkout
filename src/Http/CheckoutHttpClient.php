@@ -150,6 +150,7 @@ class CheckoutHttpClient extends PsrHttpClientAdapter implements CheckoutHttpCli
     public function deletePaymentToken($merchantId, PaymentTokenId $paymentTokenId, array $options = [])
     {
         $tokenId = $paymentTokenId->getValue();
+
         return $this->sendRequest(new Request('DELETE', "/payment-token/$merchantId/$tokenId", $options));
     }
 }

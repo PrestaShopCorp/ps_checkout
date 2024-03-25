@@ -21,9 +21,9 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query;
 
 use Exception;
+use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\OAuthService;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
-use PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\OAuthService;
 
 class GetPayPalGetUserIdTokenQueryHandler
 {
@@ -63,6 +63,7 @@ class GetPayPalGetUserIdTokenQueryHandler
     {
         $customerIdPayPal = $query->getCustomerId() ? $this->customerRepository->findPayPalCustomerIdByCustomerId($query->getCustomerId()) : null;
         $merchantId = $this->payPalConfiguration->getMerchantId();
+
         return new GetPayPalGetUserIdTokenQueryResult($this->OAuthService->getUserIdToken($merchantId, $customerIdPayPal));
     }
 }

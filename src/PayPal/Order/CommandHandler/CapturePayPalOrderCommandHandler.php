@@ -105,7 +105,8 @@ class CapturePayPalOrderCommandHandler
                 $payPalCustomerId = new PayPalCustomerId($orderPayPal['payment_source']['card']['attributes']['vault']['customer']['id']);
                 $customerId = new CustomerId($this->prestaShopContext->getCustomerId());
                 $this->payPalCustomerRepository->save($customerId, $payPalCustomerId);
-            } catch (\Exception $exception) {}
+            } catch (\Exception $exception) {
+            }
         }
 
         if ($orderPayPal['status'] === PayPalOrderStatus::COMPLETED) {

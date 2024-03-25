@@ -57,7 +57,7 @@ class PayPalOrderCapture
      */
     private $sellerReceivableBreakdown;
 
-    public function __construct($id, $idOrder, $status, $createdAt, $updatedAt, $sellerProtection, $sellerReceivableBreakdown, $finalCapture = false,)
+    public function __construct($id, $idOrder, $status, $createdAt, $updatedAt, $sellerProtection, $sellerReceivableBreakdown, $finalCapture = false)
     {
         $this->id = $id;
         $this->idOrder = $idOrder;

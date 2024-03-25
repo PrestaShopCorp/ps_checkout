@@ -21,7 +21,7 @@
 namespace PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler;
 
 use PrestaShop\Module\PrestashopCheckout\Api\Payment\PaymentService;
-use PrestaShop\Module\PrestashopCheckout\Cart\CartRepositoryInterface;
+use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 use PrestaShop\Module\PrestashopCheckout\Cart\Exception\CartNotFoundException;
 use PrestaShop\Module\PrestashopCheckout\Context\PrestaShopContext;
 use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
@@ -35,13 +35,12 @@ use PrestaShop\Module\PrestashopCheckout\PayPal\Customer\ValueObject\PayPalCusto
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\CreatePayPalOrderCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Event\PayPalOrderCreatedEvent;
 use PrestaShop\Module\PrestashopCheckout\PayPal\Order\Exception\PayPalOrderException;
+use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
 use PrestaShop\Module\PrestashopCheckout\Repository\PaymentTokenRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository;
 use PrestaShop\Module\PrestashopCheckout\Serializer\ObjectSerializerInterface;
 use PrestaShop\Module\PrestashopCheckout\ShopContext;
 use PrestaShop\PrestaShop\Core\Foundation\IoC\Exception;
-use PrestaShop\Module\PrestashopCheckout\Presenter\Cart\CartPresenter;
-use PrestaShop\Module\PrestashopCheckout\Builder\Payload\OrderPayloadBuilder;
 
 class CreatePayPalOrderCommandHandler
 {
@@ -77,7 +76,6 @@ class CreatePayPalOrderCommandHandler
      * @var PrestaShopContext
      */
     private $prestaShopContext;
-
 
     public function __construct(
         MaaslandHttpClient $maaslandHttpClient,
@@ -152,7 +150,8 @@ class CreatePayPalOrderCommandHandler
                     $payPalCustomerId = new PayPalCustomerId($order['payment_source']['paypal']['attributes']['vault']['customer']['id']);
                     $customerId = new CustomerId($this->prestaShopContext->getCustomerId());
                     $this->payPalCustomerRepository->save($customerId, $payPalCustomerId);
-                } catch (\Exception $exception) {}
+                } catch (\Exception $exception) {
+                }
             }
         }
 

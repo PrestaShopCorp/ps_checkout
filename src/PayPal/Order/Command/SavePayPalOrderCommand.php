@@ -10,10 +10,25 @@ class SavePayPalOrderCommand
      * @var array
      */
     private $order;
+    /**
+     * @var CartId|null
+     */
     private $cartId;
+    /**
+     * @var string|null
+     */
     private $paymentMode;
+    /**
+     * @var string|null
+     */
     private $customerIntent;
+    /**
+     * @var bool|null
+     */
     private $isExpressCheckout;
+    /**
+     * @var bool|null
+     */
     private $isCardFields;
 
     /**
@@ -46,7 +61,7 @@ class SavePayPalOrderCommand
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getPaymentMode()
     {
@@ -54,7 +69,7 @@ class SavePayPalOrderCommand
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
     public function getCustomerIntent()
     {
@@ -62,7 +77,7 @@ class SavePayPalOrderCommand
     }
 
     /**
-     * @return mixed
+     * @return bool|null
      */
     public function isExpressCheckout()
     {
@@ -70,7 +85,7 @@ class SavePayPalOrderCommand
     }
 
     /**
-     * @return mixed
+     * @return bool|null
      */
     public function isCardFields()
     {

@@ -20,7 +20,6 @@
 
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
 use PrestaShop\Module\PrestashopCheckout\Controller\AbstractFrontController;
-use PrestaShop\Module\PrestashopCheckout\Customer\ValueObject\CustomerId;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Command\DeletePaymentTokenCommand;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQuery;
 use PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQueryResult;
@@ -70,7 +69,6 @@ class Ps_CheckoutVaultModuleFrontController extends AbstractFrontController
                 }
             }
 
-
             /** @var GetCustomerPaymentTokensQueryResult $getCustomerPaymentMethodTokensQueryResult */
             $getCustomerPaymentMethodTokensQueryResult = $commandBus->handle(new GetCustomerPaymentTokensQuery(
                 $customerId,
@@ -105,6 +103,5 @@ class Ps_CheckoutVaultModuleFrontController extends AbstractFrontController
 
     private function deleteToken()
     {
-
     }
 }

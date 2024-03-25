@@ -56,7 +56,7 @@ class DeletePaymentTokenCommandHandler
             $this->paymentMethodTokenService->deletePaymentToken($command->getPaymentTokenId());
             $this->paymentTokenRepository->deleteById($command->getPaymentTokenId());
         } else {
-            throw new Exception("Failed to remove saved payment token");
+            throw new Exception('Failed to remove saved payment token');
         }
     }
 }

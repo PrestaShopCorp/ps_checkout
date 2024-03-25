@@ -136,7 +136,8 @@ class PayPalSdkConfigurationBuilder
                 /** @var GetPayPalGetUserIdTokenQueryResult $queryResult */
                 $queryResult = $this->commandBus->handle(new GetPayPalGetUserIdTokenQuery(new CustomerId($this->prestaShopContext->getCustomerId())));
                 $params['dataUserIdToken'] = $queryResult->getUserIdToken();
-            } catch (Exception $exception) {}
+            } catch (Exception $exception) {
+            }
         }
 
         if ($this->configuration->is3dSecureEnabled()) {

@@ -25,8 +25,6 @@ use PrestaShop\Module\PrestashopCheckout\Checkout\CheckoutChecker;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SaveCheckoutCommand;
 use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SavePayPalOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\CommandBus\CommandBusInterface;
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrder;
-use PrestaShop\Module\PrestashopCheckout\Entity\PayPalOrderCapture;
 use PrestaShop\Module\PrestashopCheckout\Exception\PsCheckoutException;
 use PrestaShop\Module\PrestashopCheckout\Order\Command\UpdateOrderStatusCommand;
 use PrestaShop\Module\PrestashopCheckout\Order\Exception\OrderNotFoundException;
@@ -193,7 +191,8 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
 
         try {
             $this->commandBus->handle(new SavePayPalOrderCommand($event->getOrderPayPal()));
-        } catch (\Exception $exception) {}
+        } catch (\Exception $exception) {
+        }
 
         $this->commandBus->handle(new SavePayPalOrderStatusCommand(
             $event->getOrderPayPalId()->getValue(),
@@ -215,7 +214,8 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
 
         try {
             $this->commandBus->handle(new SavePayPalOrderCommand($event->getOrderPayPal()));
-        } catch (\Exception $exception) {}
+        } catch (\Exception $exception) {
+        }
 
         $this->commandBus->handle(new SavePayPalOrderStatusCommand(
             $event->getOrderPayPalId()->getValue(),

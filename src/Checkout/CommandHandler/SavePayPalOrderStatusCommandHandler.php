@@ -26,7 +26,6 @@ use PrestaShop\Module\PrestashopCheckout\Checkout\Command\SavePayPalOrderStatusC
 use PrestaShop\Module\PrestashopCheckout\Checkout\Exception\PsCheckoutSessionException;
 use PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository;
 use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
-use PrestaShop\PrestaShop\Core\Foundation\Database\EntityNotFoundException;
 use PsCheckoutCart;
 
 class SavePayPalOrderStatusCommandHandler
@@ -58,12 +57,12 @@ class SavePayPalOrderStatusCommandHandler
             $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById($command->getOrderPayPalId());
             $payPalOrder->setStatus($command->getOrderPayPalStatus());
             $this->payPalOrderRepository->updatePayPalOrder($payPalOrder);
-        } catch (Exception $exception) {}
+        } catch (Exception $exception) {
+        }
 
         try {
             /** @var PsCheckoutCart|false $psCheckoutCart */
             $psCheckoutCart = $this->psCheckoutCartRepository->findOneByPayPalOrderId($command->getOrderPayPalId()->getValue());
-
 
             if (false === $psCheckoutCart) {
                 throw new CartNotFoundException(sprintf('Unable to retrieve PayPal Order %s', var_export($command->getOrderPayPalId()->getValue(), true)));

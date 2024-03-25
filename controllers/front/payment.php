@@ -90,7 +90,6 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
                 }
             }
         } catch (Exception $exception) {
-
         }
     }
 
@@ -103,7 +102,9 @@ class Ps_CheckoutPaymentModuleFrontController extends AbstractFrontController
      * @param int $cartId
      * @param string $captureId
      * @param string $payPalOrderStatus
+     *
      * @return void
+     *
      * @throws PrestaShopException
      */
     private function redirectToOrderConfirmationPage($cartId, $captureId, $payPalOrderStatus)
