@@ -92,6 +92,7 @@ services:
         PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\PaymentToken\Query\GetCustomerPaymentTokensQueryHandler'
         PrestaShop\Module\PrestashopCheckout\PayPal\Customer\Command\SavePayPalCustomerCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\Customer\CommandHandler\SavePayPalCustomerCommandHandler'
         PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQuery: 'PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\Query\GetPayPalGetUserIdTokenQueryHandler'
+        PrestaShop\Module\PrestashopCheckout\PayPal\Order\Command\SavePayPalOrderCommand: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\SavePayPalOrderCommandHandler'
 
   PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherFactory:
     class: 'PrestaShop\Module\PrestashopCheckout\Event\SymfonyEventDispatcherFactory'
@@ -468,6 +469,7 @@ services:
     arguments:
       - '@?'
       - '@PrestaShop\Module\PrestashopCheckout\Http\CheckoutHttpClient'
+      - '@PrestaShop\Module\PrestashopCheckout\PayPal\PayPalConfiguration'
 
   PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\OAuthService:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\OAuth\OAuthService'

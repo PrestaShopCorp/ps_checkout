@@ -190,7 +190,7 @@ class PayPalOrderRefund
     }
 
     /**
-     * @return string|null
+     * @return array
      */
     public function getSellerPayableBreakdown()
     {
@@ -198,7 +198,7 @@ class PayPalOrderRefund
     }
 
     /**
-     * @param string|null $sellerPayableBreakdown
+     * @param array $sellerPayableBreakdown
      *
      * @return PayPalOrderRefund
      */

@@ -49,6 +49,7 @@ use PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository;
 use PrestaShop\PrestaShop\Core\Foundation\Database\EntityNotFoundException;
 use Ps_checkout;
 use Psr\SimpleCache\CacheInterface;
+use src\PayPal\Order\Command\SavePayPalOrderCommand;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PayPalOrderEventSubscriber implements EventSubscriberInterface
@@ -152,41 +153,19 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         $order = $event->getOrderPayPal();
 
         try { // NOT SURE WHAT SHOULD HAPPEN IF ORDER WITH THAT ID ALREADY EXISTS
-            $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById($event->getOrderPayPalId()->getValue());
+            $payPalOrder = $this->payPalOrderRepository->getPayPalOrderById($event->getOrderPayPalId());
             $this->payPalOrderRepository->deletePayPalOrder($payPalOrder->getId());
         } catch (EntityNotFoundException $e) {
         }
 
-        $payPalOrder = new PayPalOrder(
-            $order['id'],
-            $event->getCartId()->getValue(),
-            $order['intent'],
-            array_keys($order['payment_source'])[0],
-            $order['status'],
-            $order['payment_source'],
+        $this->commandBus->handle(new SavePayPalOrderCommand(
+            $order,
+            $event->getCartId(),
             $this->payPalConfiguration->getPaymentMode(),
-            $event->isCardFields(),
+            $event->getCustomerIntent(),
             $event->isExpressCheckout(),
-            $event->getCustomerIntent()
-        );
-
-        if (!empty($order['purchase_units'][0]['payments']['captures'])) {
-            foreach ($order['purchase_units'][0]['payments']['captures'] as $capture) {
-                $payPalCapture = new PayPalOrderCapture(
-                    $capture['id'],
-                    $event->getOrderPayPalId()->getValue(),
-                    $capture['status'],
-                    $capture['create_time'],
-                    $capture['update_time'],
-                    $capture['seller_protection'],
-                    $capture['seller_receivable_breakdown'],
-                    $capture['final_capture']
-                );
-                $this->payPalOrderRepository->createPayPalOrderCapture($payPalCapture);
-            }
-        }
-
-        $this->payPalOrderRepository->createPayPalOrder($payPalOrder);
+            $event->isCardFields()
+        ));
 
         $this->commandBus->handle(new SaveCheckoutCommand(
             $event->getCartId()->getValue(),
@@ -212,6 +191,10 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
             return;
         }
 
+        try {
+            $this->commandBus->handle(new SavePayPalOrderCommand($event->getOrderPayPal()));
+        } catch (\Exception $exception) {}
+
         $this->commandBus->handle(new SavePayPalOrderStatusCommand(
             $event->getOrderPayPalId()->getValue(),
             PayPalOrderStatus::APPROVED
@@ -229,6 +212,10 @@ class PayPalOrderEventSubscriber implements EventSubscriberInterface
         if (!$this->checkTransitionPayPalOrderStatusService->checkAvailableStatus($psCheckoutCart->getPaypalStatus(), PayPalOrderStatus::COMPLETED)) {
             return;
         }
+
+        try {
+            $this->commandBus->handle(new SavePayPalOrderCommand($event->getOrderPayPal()));
+        } catch (\Exception $exception) {}
 
         $this->commandBus->handle(new SavePayPalOrderStatusCommand(
             $event->getOrderPayPalId()->getValue(),

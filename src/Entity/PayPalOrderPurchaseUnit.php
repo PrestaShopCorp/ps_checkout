@@ -110,7 +110,7 @@ class PayPalOrderPurchaseUnit
     }
 
     /**
-     * @return string|null
+     * @return array
      */
     public function getItems()
     {
@@ -118,7 +118,7 @@ class PayPalOrderPurchaseUnit
     }
 
     /**
-     * @param string|null $items
+     * @param array $items
      *
      * @return PayPalOrderPurchaseUnit
      */

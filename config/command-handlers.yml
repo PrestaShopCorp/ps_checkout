@@ -79,6 +79,7 @@ services:
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'
 
   PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\UpdatePaymentMethodSelectedCommandHandler:
     class: 'PrestaShop\Module\PrestashopCheckout\Checkout\CommandHandler\UpdatePaymentMethodSelectedCommandHandler'
@@ -114,3 +115,9 @@ services:
     public: true
     arguments:
       - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalCustomerRepository'
+
+  PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\SavePayPalOrderCommandHandler:
+    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\Order\CommandHandler\SavePayPalOrderCommandHandler'
+    public: true
+    arguments:
+      - '@PrestaShop\Module\PrestashopCheckout\Repository\PayPalOrderRepository'

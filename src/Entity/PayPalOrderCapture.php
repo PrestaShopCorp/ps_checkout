@@ -210,7 +210,7 @@ class PayPalOrderCapture
     }
 
     /**
-     * @return string|null
+     * @return array
      */
     public function getSellerReceivableBreakdown()
     {
@@ -218,7 +218,7 @@ class PayPalOrderCapture
     }
 
     /**
-     * @param string $sellerReceivableBreakdown
+     * @param array $sellerReceivableBreakdown
      *
      * @return PayPalOrderCapture
      */
